@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -6,6 +5,7 @@ import { string } from 'yup';
 import { addBusinessDays } from 'date-fns';
 import { DatePickerField, DatePickerFieldProps } from '../DatePickerField';
 import { DatePickerFieldDefault } from '@/src/components/form/fields/default/DatePickerFieldDefault';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -55,12 +55,12 @@ describe('DatePickerField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: {
         date: DatePickerFieldDefault,
       },
     });
-    (addBusinessDays as any).mockClear();
+    (addBusinessDays as $TSFixMe).mockClear();
   });
 
   it('renders the default implementation correctly', () => {
@@ -93,7 +93,7 @@ describe('DatePickerField Component', () => {
         </div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { date: CustomDatePickerField },
     });
 
@@ -112,7 +112,7 @@ describe('DatePickerField Component', () => {
         </div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { date: CustomDatePickerField },
     });
 
@@ -139,7 +139,7 @@ describe('DatePickerField Component', () => {
       );
     });
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { date: CustomDatePickerField },
     });
 
@@ -165,7 +165,7 @@ describe('DatePickerField Component', () => {
         <div data-testid='prop-date-picker-field'>Prop Date Picker Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { date: CustomDatePickerFieldFromContext },
     });
 
@@ -238,7 +238,7 @@ describe('DatePickerField Component', () => {
           <div data-testid='custom-date-picker-field'>Custom Date Picker</div>
         ));
 
-      (useFormFields as any).mockReturnValue({
+      (useFormFields as $TSFixMe).mockReturnValue({
         components: { date: CustomDatePickerField },
       });
 
@@ -265,7 +265,7 @@ describe('DatePickerField Component', () => {
           <div data-testid='custom-date-picker-field'>Custom Date Picker</div>
         ));
 
-      (useFormFields as any).mockReturnValue({
+      (useFormFields as $TSFixMe).mockReturnValue({
         components: { date: CustomDatePickerField },
       });
 

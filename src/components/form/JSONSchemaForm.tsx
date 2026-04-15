@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { Fragment } from 'react';
 import { useFormContext } from 'react-hook-form';
 import omit from 'lodash.omit';
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { Statement } from '@/src/components/form/Statement';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
-import { Components, JSFFieldset, JSFFields } from '@/src/types/remoteFlows';
+import { Components, JSFFieldset, JSFFields, $TSFixMe } from '@/src/types/remoteFlows';
 import { StatementComponentProps } from '@/src/types/fields';
 import { checkFieldHasForcedValue, getFieldsWithFlatFieldsets } from './utils';
 
@@ -37,7 +36,7 @@ export const JSONSchemaFormFields = ({
 
   const wrapWithCustomWrapper = (
     content: React.ReactNode,
-    field: any,
+    field: $TSFixMe,
     key: string,
   ) => {
     if (field.WrapperComponent) {
@@ -71,7 +70,7 @@ export const JSONSchemaFormFields = ({
               name={fieldProps.name as string}
               description={fieldProps.description as string}
               value={fieldProps.const as string}
-              statement={fieldProps.statement as any}
+              statement={fieldProps.statement as $TSFixMe}
               label={fieldProps.label as string}
               helpCenter={fieldProps.meta?.helpCenter}
             />,
@@ -81,7 +80,7 @@ export const JSONSchemaFormFields = ({
         }
 
         if (field.Component) {
-          const { Component } = field as any;
+          const { Component } = field as $TSFixMe;
           const fieldProps = omit(field, ['Component', 'WrapperComponent']);
           return wrapWithCustomWrapper(
             <>

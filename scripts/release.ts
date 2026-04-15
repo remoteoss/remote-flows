@@ -1,8 +1,8 @@
 #!/usr/bin/env tsx
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync } from 'fs';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 import { createInterface } from 'readline';
 
 interface Commit {
@@ -99,9 +99,9 @@ async function getCommitsFromGitHubAPI(): Promise<Commit[]> {
     // Get all commits, not just merge commits
     const commits = data.commits
       .filter(
-        (commit: any) => !commit.commit.message.includes('Merge pull request'),
+        (commit: $TSFixMe) => !commit.commit.message.includes('Merge pull request'),
       )
-      .map((commit: any) => ({
+      .map((commit: $TSFixMe) => ({
         hash: commit.sha.substring(0, 7),
         subject: commit.commit.message.split('\n')[0],
         body: commit.commit.message.split('\n').slice(1).join('\n').trim(),

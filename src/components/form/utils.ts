@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Field } from '@/src/flows/types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { JSFFields } from '@/src/types/remoteFlows';
@@ -93,9 +92,8 @@ export function convertFromCents(amount?: number | string | null) {
   return round(normalizedValue / 100);
 }
 
-const trimStringValues = (values: Record<string, any>) =>
-  Object.entries(values || {}).reduce<Record<string, any>>(
-    (result, [key, value]) => {
+const trimStringValues = (values: Record<string, $TSFixMe>) =>
+  Object.entries(values || {}).reduce<Record<string, $TSFixMe>>((result, [key, value]) => {
       if (Array.isArray(value)) {
         // If the value is an array, recursively process each element
         result[key] = value.map((item) =>
@@ -125,8 +123,8 @@ const trimStringValues = (values: Record<string, any>) =>
  * @param {Object} values - List with form values { name: value }.
  * @param {Array} fields - Respective form fields configuration.
  */
-function prefillReadOnlyFields(values: Record<string, any>, fields: any[]) {
-  const newValues: Record<string, any> = {};
+function prefillReadOnlyFields(values: Record<string, $TSFixMe>, fields: $TSFixMe[]) {
+  const newValues: Record<string, $TSFixMe> = {};
 
   fields.forEach((field) => {
     const fieldName = field.name;
@@ -161,10 +159,10 @@ function prefillReadOnlyFields(values: Record<string, any>, fields: any[]) {
  * @return {Object} – Raw form values mapped to the field name
  */
 function extractFieldsetFieldsValues(
-  fields: any[],
+  fields: $TSFixMe[],
   formValues: Record<string, unknown>,
 ) {
-  return fields.reduce<Record<string, any>>((nestedAcc, subField) => {
+  return fields.reduce<Record<string, $TSFixMe>>((nestedAcc, subField) => {
     const isFieldsetValueGroupingDisabled =
       subField.type === supportedTypes.FIELDSET &&
       subField.valueGroupingDisabled;
@@ -184,7 +182,7 @@ function extractFieldsetFieldsValues(
   }, {});
 }
 
-export const fieldTypesTransformations: Record<string, any> = {
+export const fieldTypesTransformations: Record<string, $TSFixMe> = {
   [supportedTypes.COUNTRIES]: {
     /**
      * @param {String[] | { name: String }[]} value
@@ -195,7 +193,7 @@ export const fieldTypesTransformations: Record<string, any> = {
      * @example edge cases: [{name: 'Peru'}, {name: 'Germany'}] -> ['Peru', 'Germany']
      */
     transformValueToAPI:
-      (field: any) => (selectedCountries: string[] | { name: string }[]) => {
+      (field: $TSFixMe) => (selectedCountries: string[] | { name: string }[]) => {
         if (!field.multiple || typeof selectedCountries === 'string') {
           return selectedCountries;
         }
@@ -217,10 +215,10 @@ export const fieldTypesTransformations: Record<string, any> = {
      * @example
      * [{ value: 'Hungria' }] -> ['Hungria']
      */
-    transformValue: (selectedCountry: any | any[]) => {
+    transformValue: (selectedCountry: $TSFixMe | $TSFixMe[]) => {
       // name or label are used in dragon. value is used in json-schema-form
       // TODO: it should be the same everywhere — read more at !5667
-      const getCountryValue = (opt: any) =>
+      const getCountryValue = (opt: $TSFixMe) =>
         opt?.name || opt?.value || opt?.label;
       return Array.isArray(selectedCountry)
         ? selectedCountry.map(getCountryValue) // support multi countries
@@ -246,7 +244,7 @@ export const fieldTypesTransformations: Record<string, any> = {
     transformValueToAPI: () => convertToCents,
   },
   [supportedTypes.RADIO]: {
-    transformValueToAPI: (field: any) => (value: string) => {
+    transformValueToAPI: (field: $TSFixMe) => (value: string) => {
       if (field.transformToBool) {
         return value === 'yes';
       }
@@ -254,7 +252,7 @@ export const fieldTypesTransformations: Record<string, any> = {
     },
   },
   [supportedTypes.CHECKBOX]: {
-    transformValueToAPI: (field: any) => (value: string | boolean) => {
+    transformValueToAPI: (field: $TSFixMe) => (value: string | boolean) => {
       if (value === undefined) {
         return false;
       }
@@ -277,7 +275,7 @@ export const fieldTypesTransformations: Record<string, any> = {
      * { value: '1', label: 'One' } -> "One"
      * {} -> ""
      */
-    transformValue: (option: any | any[]) =>
+    transformValue: (option: $TSFixMe | $TSFixMe[]) =>
       Array.isArray(option)
         ? option.map((opt) => opt.value) // multi-options
         : (option?.value ?? ''), // Fallback to '' in case user removes all options,
@@ -293,8 +291,8 @@ export const fieldTypesTransformations: Record<string, any> = {
   },
 };
 export async function parseFormValuesToAPI(
-  formValues: Record<string, any> = {},
-  fields: any[],
+  formValues: Record<string, $TSFixMe> = {},
+  fields: $TSFixMe[],
 ) {
   const filteredFields = fields.filter(
     (field) =>
@@ -304,7 +302,7 @@ export async function parseFormValuesToAPI(
 
   const parsedFieldsWithValues = await Promise.all(
     filteredFields.map(async (field) => {
-      const acc: Record<string, any> = {};
+      const acc: Record<string, $TSFixMe> = {};
 
       switch (field.type) {
         case supportedTypes.FIELDSET: {
@@ -359,13 +357,13 @@ export async function parseFormValuesToAPI(
         case supportedTypes.GROUP_ARRAY: {
           // NOTE: The field `name` in group arrays represents a path, but we only
           // need the last part of it which is represented by `nameKey`.
-          const transformedFields = field?.fields?.().map((subField: any) => ({
+          const transformedFields = field?.fields?.().map((subField: $TSFixMe) => ({
             ...subField,
             name: subField.nameKey || '',
           }));
 
           const parsedFieldValues = await Promise.all(
-            formValues[field.name]?.map((fieldValues: Record<string, any>) =>
+            formValues[field.name]?.map((fieldValues: Record<string, $TSFixMe>) =>
               parseFormValuesToAPI(fieldValues, transformedFields),
             ) || [],
           );
@@ -429,7 +427,7 @@ export async function parseFormValuesToAPI(
   );
 }
 
-function isFieldVisible(field: any, formValues: Record<string, unknown>) {
+function isFieldVisible(field: $TSFixMe, formValues: Record<string, unknown>) {
   if (field.visibilityCondition) {
     return field.visibilityCondition(formValues);
   }
@@ -442,7 +440,7 @@ function isFieldVisible(field: any, formValues: Record<string, unknown>) {
 }
 
 function applyFieldDynamicProperties(
-  field: any,
+  field: $TSFixMe,
   values: Record<string, unknown> | Record<string, unknown>[],
 ) {
   if (field.calculateDynamicProperties) {
@@ -456,12 +454,12 @@ function applyFieldDynamicProperties(
 }
 
 function excludeValuesInvisible(
-  values: any,
-  fields: any[],
+  values: $TSFixMe,
+  fields: $TSFixMe[],
   keepTruthyInvisibleValues?: boolean,
   parentFieldKeyPath?: string,
 ) {
-  const valuesAsked: Record<string, any> = {};
+  const valuesAsked: Record<string, $TSFixMe> = {};
 
   fields
     .map((field) => applyFieldDynamicProperties(field, values))
@@ -516,9 +514,9 @@ function excludeValuesInvisible(
   return valuesAsked;
 }
 
-function removeEmptyValues<T extends Record<string, any>>(
+function removeEmptyValues<T extends Record<string, $TSFixMe>>(
   obj: T,
-): Record<string, any> {
+): Record<string, $TSFixMe> {
   return Object.fromEntries(
     Object.entries(obj).filter(
       ([, value]) => value !== undefined && value !== null && value !== '',
@@ -526,7 +524,7 @@ function removeEmptyValues<T extends Record<string, any>>(
   );
 }
 
-function cleanUnderscoreFields(obj: Record<string, any>): Record<string, any> {
+function cleanUnderscoreFields(obj: Record<string, $TSFixMe>): Record<string, $TSFixMe> {
   if (Array.isArray(obj)) {
     return obj.map(cleanUnderscoreFields);
   }
@@ -538,15 +536,15 @@ function cleanUnderscoreFields(obj: Record<string, any>): Record<string, any> {
         }
         return acc;
       },
-      {} as Record<string, any>,
+      {} as Record<string, $TSFixMe>,
     );
   }
   return obj;
 }
 
 export async function parseSubmitValues(
-  formValues: Record<string, any>,
-  fields: any[],
+  formValues: Record<string, $TSFixMe>,
+  fields: $TSFixMe[],
   config?: { keepInvisibleValues?: boolean },
 ) {
   const visibleFormValues = config?.keepInvisibleValues
@@ -570,7 +568,7 @@ export async function parseSubmitValues(
 }
 
 export async function parseJSFToValidate(
-  formValues: Record<string, any>,
+  formValues: Record<string, $TSFixMe>,
   fields: JSFFields,
   config: { isPartialValidation: boolean } = {
     isPartialValidation: false,
@@ -598,7 +596,7 @@ function getDefaultValueForType(type: string) {
 }
 
 function getInitialDefaultValue(
-  defaultValues: Record<string, any>,
+  defaultValues: Record<string, $TSFixMe>,
   field: Field,
 ) {
   // getNestedValue is needed because some values could be nested object, like billing address
@@ -627,7 +625,7 @@ function getInitialDefaultValue(
       : null;
 
   // nullish coalescing but excluding empty strings. (to support 0 (zero) as valid numbers)
-  const excludeString = (val: any) => (val === '' ? undefined : val);
+  const excludeString = (val: $TSFixMe) => (val === '' ? undefined : val);
 
   return (
     excludeString(generatedValue) ??
@@ -746,7 +744,7 @@ export function getFieldsWithFlatFieldsets({
   fieldsets = {},
   values,
 }: {
-  fields: any[];
+  fields: $TSFixMe[];
   fieldsets: Record<string, { propertiesByName: string[]; title: string }>;
   values: Record<string, unknown>;
 }) {
@@ -768,7 +766,7 @@ export function getFieldsWithFlatFieldsets({
 
     const childFields = flatFieldsetFields
       .map((name) => fields.find((f) => f.name === name))
-      .filter((field): field is any => !!field);
+      .filter((field): field is $TSFixMe => !!field);
 
     return {
       ...rest,
@@ -800,7 +798,7 @@ export function getFieldsWithFlatFieldsets({
     accumulatedFieldsSorted.splice(
       fieldsetPosition,
       0,
-      field as unknown as any,
+      field as unknown as $TSFixMe,
     );
 
     return accumulatedFieldsSorted;
@@ -860,7 +858,7 @@ export function getMinStartDate(minOnBoardingTime: number) {
  * @param field - The field to check.
  * @returns True if the field has a forced value, false otherwise.
  */
-export function checkFieldHasForcedValue(field: any) {
+export function checkFieldHasForcedValue(field: $TSFixMe) {
   // A field to be considered "forced value" must:
   return (
     field.const !== undefined && // Only accepts a specific value

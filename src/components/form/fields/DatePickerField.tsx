@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '@/src/components/ui/form';
 
 import { useFormFields } from '@/src/context';
-import { Components, JSFField } from '@/src/types/remoteFlows';
+import { Components, JSFField, $TSFixMe } from '@/src/types/remoteFlows';
 import { getMinStartDate } from '@/src/components/form/utils';
 
 export type DatePickerFieldProps = JSFField & {
-  onChange?: (value: any) => void;
+  onChange?: (value: $TSFixMe) => void;
   component?: Components['date'];
 };
 
@@ -60,7 +59,7 @@ export function DatePickerField({
           <Component
             field={{
               ...field,
-              onChange: (value: any) => {
+              onChange: (value: $TSFixMe) => {
                 field.onChange(value);
                 onChange?.(value);
               },

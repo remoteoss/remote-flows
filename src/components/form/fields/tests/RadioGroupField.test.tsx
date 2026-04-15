@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { RadioGroupField } from '../RadioGroupField';
-import { JSFField } from '@/src/types/remoteFlows';
+import { JSFField, $TSFixMe } from '@/src/types/remoteFlows';
 import { RadioGroupFieldDefault } from '@/src/components/form/fields/default/RadioGroupFieldDefault';
 
 type RadioGroupFieldProps = JSFField & {
@@ -16,7 +15,7 @@ type RadioGroupFieldProps = JSFField & {
     disabled?: boolean;
     description?: string;
   }[];
-  component?: any;
+  component?: $TSFixMe;
 };
 
 // Mock dependencies
@@ -63,7 +62,7 @@ describe('RadioGroupField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: {
         radio: RadioGroupFieldDefault,
       },
@@ -95,7 +94,7 @@ describe('RadioGroupField Component', () => {
         <div data-testid='custom-radio-field'>Custom Radio Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { radio: CustomRadioGroupField },
     });
 
@@ -112,7 +111,7 @@ describe('RadioGroupField Component', () => {
         <div data-testid='custom-radio-field'>Custom Radio Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { radio: CustomRadioGroupField },
     });
 
@@ -146,7 +145,7 @@ describe('RadioGroupField Component', () => {
       );
     });
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { radio: CustomRadioGroupField },
     });
 
@@ -170,12 +169,12 @@ describe('RadioGroupField Component', () => {
         <div data-testid='prop-radio-field'>Prop Radio Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { radio: CustomRadioGroupFieldFromContext },
     });
 
     renderWithFormContext({
-      ...(defaultProps as any),
+      ...(defaultProps as $TSFixMe),
       onChange: mockOnChange,
       component: CustomRadioGroupFieldProp,
     });

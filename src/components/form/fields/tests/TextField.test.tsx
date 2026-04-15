@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
@@ -6,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { TextField, TextFieldProps } from '../TextField';
 import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -47,7 +47,7 @@ describe('TextField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: {
         text: TextFieldDefault,
       },
@@ -78,7 +78,7 @@ describe('TextField Component', () => {
         <div data-testid='custom-text-field'>Custom Text Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { text: CustomTextField },
     });
 
@@ -95,7 +95,7 @@ describe('TextField Component', () => {
         <div data-testid='custom-text-field'>Custom Text Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { text: CustomTextField },
     });
 
@@ -114,7 +114,7 @@ describe('TextField Component', () => {
         <div data-testid='custom-text-field'>Custom Text Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { text: CustomTextField },
     });
 
@@ -144,7 +144,7 @@ describe('TextField Component', () => {
       return <input data-testid='custom-input' onChange={handleChange} />;
     });
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { text: CustomTextField },
     });
 
@@ -168,7 +168,7 @@ describe('TextField Component', () => {
         <div data-testid='prop-text-field'>Prop Text Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { text: CustomTextFieldFromContext },
     });
 

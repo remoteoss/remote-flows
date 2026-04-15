@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 
 import { useFormFields } from '@/src/context';
-import { Components, JSFField } from '@/src/types/remoteFlows';
+import { Components, JSFField, $TSFixMe } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '../../ui/form';
 import { TextFieldDataProps } from '@/src/types/fields';
@@ -11,7 +10,7 @@ export type TextFieldProps = React.ComponentProps<'input'> & {
   name: string;
 } & Partial<
     JSFField & {
-      onChange?: (value: any) => void;
+      onChange?: (value: $TSFixMe) => void;
       component?: Components['text'];
       includeErrorMessage?: boolean;
       additionalProps?: Record<string, unknown>;
@@ -22,7 +21,7 @@ type CustomTextFieldProps = TextFieldDataProps & {
   /**
    * @deprecated avoid using this prop in custom components
    */
-  onChange?: (value: any) => void;
+  onChange?: (value: $TSFixMe) => void;
 };
 
 export function TextField({
@@ -66,7 +65,7 @@ export function TextField({
           <Component
             field={{
               ...field,
-              onChange: (value: any) => {
+              onChange: (value: $TSFixMe) => {
                 field.onChange(value);
                 onChange?.(value);
               },

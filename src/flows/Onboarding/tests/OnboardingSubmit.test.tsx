@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { OnboardingSubmit } from '../components/OnboardingSubmit';
 import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -20,11 +20,11 @@ describe('OnboardingSubmit Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useOnboardingContext as any).mockReturnValue({
+    (useOnboardingContext as $TSFixMe).mockReturnValue({
       formId: mockFormId,
       onboardingBag: { isSubmitting: false },
     });
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: {
         button: ButtonDefault,
       },
@@ -82,7 +82,7 @@ describe('OnboardingSubmit Component', () => {
         <button data-testid='custom-button'>{children}</button>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { button: CustomButton },
     });
 
@@ -106,7 +106,7 @@ describe('OnboardingSubmit Component', () => {
         </button>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { button: CustomButton },
     });
 
@@ -147,7 +147,7 @@ describe('OnboardingSubmit Component', () => {
       ),
     );
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { button: CustomButton },
     });
 
@@ -181,7 +181,7 @@ describe('OnboardingSubmit Component', () => {
   });
 
   it('handles missing formId gracefully', () => {
-    (useOnboardingContext as any).mockReturnValue({
+    (useOnboardingContext as $TSFixMe).mockReturnValue({
       formId: undefined,
       onboardingBag: {},
     });
@@ -207,7 +207,7 @@ describe('OnboardingSubmit Component', () => {
         </button>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { button: CustomButton },
     });
 

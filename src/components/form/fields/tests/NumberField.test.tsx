@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
@@ -6,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { number } from 'yup';
 import { NumberField } from '../NumberField';
 import { TextFieldProps } from '../TextField';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 import { NumberFieldDefault } from '@/src/components/form/fields/default/NumberFieldDefault';
 import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 
@@ -49,7 +49,7 @@ describe('NumberField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: {
         number: NumberFieldDefault,
         text: TextFieldDefault,
@@ -81,7 +81,7 @@ describe('NumberField Component', () => {
         <div data-testid='custom-number-field'>Custom Number Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { number: CustomNumberField },
     });
 
@@ -98,7 +98,7 @@ describe('NumberField Component', () => {
         <div data-testid='custom-number-field'>Custom Number Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { number: CustomNumberField },
     });
 
@@ -119,7 +119,7 @@ describe('NumberField Component', () => {
       return <input data-testid='custom-input' onChange={handleChange} />;
     });
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { number: CustomNumberField },
     });
 
@@ -143,7 +143,7 @@ describe('NumberField Component', () => {
         <div data-testid='prop-number-field'>Prop Number Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { number: CustomNumberFieldFromContext },
     });
 

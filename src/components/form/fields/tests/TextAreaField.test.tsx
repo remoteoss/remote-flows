@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
@@ -6,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { TextAreaField, TextAreaFieldProps } from '../TextAreaField';
 import { TextAreaFieldDefault } from '@/src/components/form/fields/default/TextAreaFieldDefault';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -47,7 +47,7 @@ describe('TextAreaField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: {
         textarea: TextAreaFieldDefault,
       },
@@ -78,7 +78,7 @@ describe('TextAreaField Component', () => {
         <div data-testid='custom-textarea-field'>Custom TextArea Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { textarea: CustomTextAreaField },
     });
 
@@ -95,7 +95,7 @@ describe('TextAreaField Component', () => {
         <div data-testid='custom-textarea-field'>Custom TextArea Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { textarea: CustomTextAreaField },
     });
 
@@ -116,7 +116,7 @@ describe('TextAreaField Component', () => {
       return <textarea data-testid='custom-textarea' onChange={handleChange} />;
     });
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { textarea: CustomTextAreaField },
     });
 
@@ -140,7 +140,7 @@ describe('TextAreaField Component', () => {
         <div data-testid='prop-textarea-field'>Prop TextArea Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { textarea: CustomTextAreaFieldFromContext },
     });
 

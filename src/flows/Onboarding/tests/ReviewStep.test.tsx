@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { ReviewStep } from '@/src/flows/Onboarding/components/ReviewStep';
 import { CreditRiskStatus, Employment } from '@/src/flows/Onboarding/types';
 import { render, screen } from '@testing-library/react';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 // Mock the context
 vi.mock('@/src/flows/Onboarding/context', () => ({
@@ -30,7 +30,7 @@ describe('ReviewStep Component', () => {
       <div data-testid='rendered-content'>Test Content</div>,
     );
 
-    (useOnboardingContext as any).mockReturnValue({
+    (useOnboardingContext as $TSFixMe).mockReturnValue({
       onboardingBag: mockOnboardingBag,
       creditScore: mockCreditScore,
     });
@@ -38,7 +38,7 @@ describe('ReviewStep Component', () => {
 
   describe('deposit_required scenarios', () => {
     it('should render with creditRiskState "deposit_required" when deposit is required and status allows it', () => {
-      (useOnboardingContext as any).mockReturnValue({
+      (useOnboardingContext as $TSFixMe).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'deposit_required',
           employment: { status: 'created' },
@@ -58,7 +58,7 @@ describe('ReviewStep Component', () => {
     });
 
     it('should render with creditRiskState "deposit_required" when onboardingReservesStatus is deposit_required', () => {
-      (useOnboardingContext as any).mockReturnValue({
+      (useOnboardingContext as $TSFixMe).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'no_deposit_required',
           onboardingReservesStatus: 'deposit_required',
@@ -79,7 +79,7 @@ describe('ReviewStep Component', () => {
     });
 
     it('should render with creditRiskState "deposit_required" when either creditRiskStatus or onboardingReservesStatus is deposit_required', () => {
-      (useOnboardingContext as any).mockReturnValue({
+      (useOnboardingContext as $TSFixMe).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'deposit_required',
           onboardingReservesStatus: 'no_deposit_required',
@@ -100,7 +100,7 @@ describe('ReviewStep Component', () => {
     });
 
     it('should not show deposit_required when employment status is "invited"', () => {
-      (useOnboardingContext as any).mockReturnValue({
+      (useOnboardingContext as $TSFixMe).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'deposit_required',
           employment: { status: 'invited' },
@@ -120,7 +120,7 @@ describe('ReviewStep Component', () => {
     });
 
     it('should not show deposit_required when employment status is "created_reserve_paid"', () => {
-      (useOnboardingContext as any).mockReturnValue({
+      (useOnboardingContext as $TSFixMe).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'deposit_required',
           employment: { status: 'created_reserve_paid' },
@@ -142,7 +142,7 @@ describe('ReviewStep Component', () => {
 
   describe('invite scenarios', () => {
     it('should render with creditRiskState "invite" when creditRiskStatus is not in CREDIT_RISK_STATUSES', () => {
-      (useOnboardingContext as any).mockReturnValue({
+      (useOnboardingContext as $TSFixMe).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'ready',
           employment: { status: 'created' },
@@ -164,7 +164,7 @@ describe('ReviewStep Component', () => {
 
   describe('invite_successful scenarios', () => {
     it('should render with creditRiskState "invite_successful" when showInviteSuccessful is true and employment status is in statusesToNotShowDeposit', () => {
-      (useOnboardingContext as any).mockReturnValue({
+      (useOnboardingContext as $TSFixMe).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'deposit_required',
           employment: { status: 'invited' },
@@ -186,7 +186,7 @@ describe('ReviewStep Component', () => {
 
   describe('referred scenarios', () => {
     it('should render with creditRiskState "referred" when creditRiskStatus is "referred"', () => {
-      (useOnboardingContext as any).mockReturnValue({
+      (useOnboardingContext as $TSFixMe).mockReturnValue({
         onboardingBag: { creditRiskStatus: 'referred' },
       });
 
@@ -201,7 +201,7 @@ describe('ReviewStep Component', () => {
 
   describe('edge cases and null scenarios', () => {
     it('should handle missing employment gracefully', () => {
-      (useOnboardingContext as any).mockReturnValue({
+      (useOnboardingContext as $TSFixMe).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'deposit_required',
           employment: undefined,
@@ -221,7 +221,7 @@ describe('ReviewStep Component', () => {
     });
 
     it('should handle missing employment status gracefully', () => {
-      (useOnboardingContext as any).mockReturnValue({
+      (useOnboardingContext as $TSFixMe).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'deposit_required',
           employment: {},
@@ -241,7 +241,7 @@ describe('ReviewStep Component', () => {
     });
 
     it('should handle undefined creditRiskStatus', () => {
-      (useOnboardingContext as any).mockReturnValue({
+      (useOnboardingContext as $TSFixMe).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: undefined,
           employment: { status: 'created' },
@@ -263,7 +263,7 @@ describe('ReviewStep Component', () => {
 
   describe('complex scenarios', () => {
     it('should prioritize deposit_required_successful over deposit_required when showReserveInvoice is true', () => {
-      (useOnboardingContext as any).mockReturnValue({
+      (useOnboardingContext as $TSFixMe).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'deposit_required',
           employment: { status: 'created' },
@@ -283,7 +283,7 @@ describe('ReviewStep Component', () => {
     });
 
     it('should prioritize invite_successful over invite when showInviteSuccessful is true', () => {
-      (useOnboardingContext as any).mockReturnValue({
+      (useOnboardingContext as $TSFixMe).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'ready',
           employment: { status: 'created' },
@@ -316,7 +316,7 @@ describe('ReviewStep Component', () => {
       creditRiskStatuses.forEach((status) => {
         mockRender.mockClear();
 
-        (useOnboardingContext as any).mockReturnValue({
+        (useOnboardingContext as $TSFixMe).mockReturnValue({
           onboardingBag: {
             creditRiskStatus: status,
             employment: { status: 'created' },
@@ -348,7 +348,7 @@ describe('ReviewStep Component', () => {
 
   describe('render prop functionality', () => {
     it('should call the render prop with correct arguments', () => {
-      (useOnboardingContext as any).mockReturnValue({
+      (useOnboardingContext as $TSFixMe).mockReturnValue({
         onboardingBag: {
           creditRiskStatus: 'ready',
           employment: { status: 'created' },
