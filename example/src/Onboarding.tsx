@@ -206,6 +206,8 @@ const OnBoardingRender = ({
 }: MultiStepFormProps) => {
   const currentStepIndex = onboardingBag.stepState.currentStep.index;
 
+  // When using dynamic_steps feature, you need to filter and use step.index for comparison
+  // Otherwise, you can use the steps array directly with sequential indices
   const stepTitle = onboardingBag.steps[currentStepIndex].label;
 
   if (onboardingBag.isLoading) {
@@ -259,7 +261,7 @@ const OnboardingWithProps = ({
       employmentId={employmentId}
       externalId={externalId}
       options={{
-        features: ['onboarding_reserves'],
+        features: ['onboarding_reserves', 'dynamic_steps'],
         jsonSchemaVersion: {
           employment_basic_information: 3,
         },

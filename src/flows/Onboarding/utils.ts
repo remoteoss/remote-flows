@@ -12,6 +12,7 @@ export type StepKeys =
 type StepConfig = {
   includeSelectCountry?: boolean;
   includeEngagementAgreementDetails?: boolean;
+  useDynamicSteps?: boolean;
 };
 
 export function buildSteps(config: StepConfig = {}) {
@@ -52,12 +53,30 @@ export function buildSteps(config: StepConfig = {}) {
     },
   ];
 
-  const stepsArray = stepDefinitions.map((step, index) => ({
-    name: step.name,
-    index,
-    label: step.label,
-    visible: step.visible,
-  }));
+  // When useDynamicSteps is false (default/legacy behavior):
+  // - Filter out hidden steps first
+  // - Assign sequential indices (0, 1, 2, 3...)
+  // - This maintains backwards compatibility with existing implementations
+  //
+  // When useDynamicSteps is true (new behavior):
+  // - Keep all steps including hidden ones
+  // - Preserve original indices even for hidden steps
+  // - Consumers must filter by `visible` property
+  const stepsArray = config.useDynamicSteps
+    ? stepDefinitions.map((step, index) => ({
+        name: step.name,
+        index,
+        label: step.label,
+        visible: step.visible,
+      }))
+    : stepDefinitions
+        .filter((step) => step.visible)
+        .map((step, index) => ({
+          name: step.name,
+          index,
+          label: step.label,
+          visible: step.visible,
+        }));
 
   const steps = stepsArray.reduce(
     (acc, step) => {

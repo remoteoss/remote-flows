@@ -148,13 +148,16 @@ export const useOnboarding = ({
 
   const [includeEngagementAgreementDetails] = useState<boolean>(false);
 
+  const useDynamicSteps = options?.features?.includes('dynamic_steps') ?? false;
+
   const { steps, stepsArray } = useMemo(
     () =>
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
         includeEngagementAgreementDetails,
+        useDynamicSteps,
       }),
-    [includeEngagementAgreementDetails, skipSteps],
+    [includeEngagementAgreementDetails, skipSteps, useDynamicSteps],
   );
 
   const onStepChange = useCallback(
@@ -970,7 +973,13 @@ export const useOnboarding = ({
     canInvite,
 
     /**
-     * Steps array
+     * Steps array for dynamic step navigation
+     * When 'dynamic_steps' feature is enabled:
+     * - Returns all steps including hidden ones with their original indices
+     * - Consumers must filter by `visible` property
+     * When disabled (default):
+     * - Returns only visible steps with sequential indices
+     * - Maintains backwards compatibility with existing implementations
      * @returns {Array<{name: string, visible: boolean, index: number, label: string}>}
      */
     steps: stepsArray,
