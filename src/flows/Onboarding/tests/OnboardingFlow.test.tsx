@@ -36,7 +36,7 @@ import {
 } from '@/src/flows/Onboarding/tests/helpers';
 import userEvent from '@testing-library/user-event';
 import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
-import { getYearMonthDate } from '@/src/common/dates';
+/* import { getYearMonthDate } from '@/src/common/dates'; */
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
