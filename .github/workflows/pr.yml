@@ -131,20 +131,20 @@ jobs:
         run: |
           # Create worktree for base branch
           git worktree add ../base-branch origin/${{ github.base_ref }}
-          
+
           cd ../base-branch
-          
+
           # Check if scripts exist in base
           if [ ! -f "scripts/compare-coverage.ts" ] || [ ! -f "scripts/extract-coverage.ts" ]; then
             echo "Coverage scripts not found in base branch, skipping"
             exit 0
           fi
-          
+
           # Install deps and run tests in worktree
           npm ci --include=optional --ignore-scripts
           npm run test:coverage
           npm run coverage:extract -- --output out/base-coverage.json
-          
+
           # Copy base coverage back to main workspace
           cp out/base-coverage.json $GITHUB_WORKSPACE/out/base-coverage.json
 
@@ -153,7 +153,7 @@ jobs:
         run: |
           # Run comparison (handles missing base file gracefully)
           npm exec tsx scripts/compare-coverage.ts out/current-coverage.json out/base-coverage.json > out/coverage-report.md 2>&1 || true
-          
+
           # Set output for PR comment
           echo "report<<EOF" >> $GITHUB_OUTPUT
           cat out/coverage-report.md >> $GITHUB_OUTPUT
