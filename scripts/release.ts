@@ -2,8 +2,8 @@
 
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync } from 'fs';
-import { $TSFixMe } from '@/src/types/remoteFlows';
 import { createInterface } from 'readline';
+import { $TSFixMe } from './types';
 
 interface Commit {
   hash: string;
