@@ -244,12 +244,9 @@ const OnBoardingRender = ({
 }: MultiStepFormProps) => {
   const currentStepIndex = onboardingBag.stepState.currentStep.index;
 
-<<<<<<< HEAD
-=======
   // When using dynamic_steps feature, you need to filter and use step.index for comparison
   // Otherwise, you can use the steps array directly with sequential indices
   //const stepTitle = STEPS[currentStepIndex];
->>>>>>> main
   const stepTitle = onboardingBag.steps[currentStepIndex].label;
 
   if (onboardingBag.isLoading) {
@@ -260,8 +257,6 @@ const OnBoardingRender = ({
     <>
       <div className='steps-navigation'>
         <ul>
-<<<<<<< HEAD
-=======
           {/* {STEPS.map((step, index) => (
             <li
               key={index}
@@ -270,7 +265,6 @@ const OnBoardingRender = ({
               {step}
             </li>
           ))} */}
->>>>>>> main
           {onboardingBag.steps
             .filter((step) => step.visible)
             .map((step, index) => (
