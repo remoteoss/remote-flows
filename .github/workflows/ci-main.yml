@@ -6,7 +6,50 @@ on:
       - main
 
 jobs:
-  unit-tests:
+  lint-and-format:
+    name: Lint and Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24.14.1'
+
+      - name: Install dependencies
+        run: npm ci --include=optional --ignore-scripts
+
+      - name: Run format check
+        run: npm run check-format
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run type check
+        run: npm run type-check
+
+  build-and-exports:
+    name: Build and Check Exports
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24.14.1'
+
+      - name: Install dependencies
+        run: npm ci --include=optional --ignore-scripts
+
+      - name: Build
+        run: npm run build
+
+      - name: Check exports
+        run: npm run check-exports
+
+  tests:
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
@@ -20,8 +63,8 @@ jobs:
       - name: Install dependencies
         run: npm ci --include=optional --ignore-scripts
 
-      - name: Run CI checks and tests
-        run: npm run ci
+      - name: Run tests
+        run: npm run test
 
   example-checks:
     name: Example App Checks
@@ -109,7 +152,15 @@ jobs:
   e2e-tests:
     name: E2E Tests
     runs-on: ubuntu-latest
-    needs: [unit-tests, example-checks, deploy-remote-flows, deploy-example-app]
+    needs:
+      [
+        lint-and-format,
+        build-and-exports,
+        tests,
+        example-checks,
+        deploy-remote-flows,
+        deploy-example-app,
+      ]
     steps:
       - uses: actions/checkout@v6
 
@@ -162,7 +213,8 @@ jobs:
 
   deploy-production:
     name: Deploy to Production
-    needs: [unit-tests, example-checks, e2e-tests]
+    needs:
+      [lint-and-format, build-and-exports, tests, example-checks, e2e-tests]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
