@@ -36,6 +36,7 @@ import {
   useUpdateBenefitsOffers,
   useUpdateEmployment,
   useUpsertContractEligibility,
+  useEngagementAgreementDetailsSchema,
 } from '@/src/flows/Onboarding/api';
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
@@ -70,6 +71,7 @@ const getLoadingStates = ({
   isLoadingBenefitOffers,
   isLoadingCompany,
   isLoadingCountries,
+  isLoadingEngagementAgreementDetails,
   employmentStatus,
   employmentId,
   currentStepName,
@@ -83,6 +85,7 @@ const getLoadingStates = ({
   isLoadingBenefitOffers: boolean;
   isLoadingCompany: boolean;
   isLoadingCountries: boolean;
+  isLoadingEngagementAgreementDetails: boolean;
   employmentStatus?: Employment['status'];
   employmentId?: string;
   currentStepName: string;
@@ -96,7 +99,8 @@ const getLoadingStates = ({
     isLoadingBenefitsOffersSchema ||
     isLoadingBenefitOffers ||
     isLoadingCompany ||
-    isLoadingCountries;
+    isLoadingCountries ||
+    isLoadingEngagementAgreementDetails;
 
   const isEmploymentReadOnly =
     employmentStatus &&
@@ -146,7 +150,26 @@ export const useOnboarding = ({
     },
   });
 
-  const [includeEngagementAgreementDetails] = useState<boolean>(false);
+  const [internalEmploymentId, setInternalEmploymentId] = useState<
+    string | undefined
+  >(employmentId);
+  const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
+    countryCode || null,
+  );
+
+  const [
+    includeEngagementAgreementDetails,
+    setIncludeEngagementAgreementDetails,
+  ] = useState<boolean>(false);
+
+  const {
+    data: employment,
+    isLoading: isLoadingEmployment,
+    refetch: refetchEmployment,
+  } = useEmploymentQuery({
+    employmentId: internalEmploymentId as string,
+    queryParams: { exclude_files: true },
+  });
 
   const useDynamicSteps = options?.features?.includes('dynamic_steps') ?? false;
 
@@ -179,30 +202,61 @@ export const useOnboarding = ({
     setStepValues,
   } = useStepState(steps, onStepChange);
 
+  const engagementAgreementDetailsFieldValues = useMemo(() => {
+    return {
+      // TODO: missing here data from the server if there's ANY
+      ...onboardingInitialValues,
+      ...stepState.values?.engagement_agreement_details,
+      ...fieldValues,
+    };
+  }, [
+    onboardingInitialValues,
+    stepState.values?.engagement_agreement_details,
+    fieldValues,
+  ]);
+
+  const {
+    data: engagementAgreementDetailsSchema,
+    isLoading: isLoadingEngagementAgreementDetails,
+  } = useEngagementAgreementDetailsSchema(
+    internalCountryCode as string,
+    engagementAgreementDetailsFieldValues,
+    {
+      jsfModify: options?.jsfModify,
+      queryOptions: {
+        enabled:
+          !!internalCountryCode &&
+          (stepState.currentStep.name === 'engagement_agreement_details' ||
+            Boolean(employmentId)),
+      },
+    },
+  );
+
+  useEffect(() => {
+    const hasFields = Boolean(
+      engagementAgreementDetailsSchema?.fields &&
+      engagementAgreementDetailsSchema.fields.length > 0,
+    );
+    if (hasFields !== includeEngagementAgreementDetails) {
+      setIncludeEngagementAgreementDetails(hasFields);
+    }
+  }, [
+    engagementAgreementDetailsSchema?.fields,
+    includeEngagementAgreementDetails,
+  ]);
+
   const fieldsMetaRef = useRef<{
     select_country: Meta;
     basic_information: Meta;
+    engagement_agreement_details: Meta;
     contract_details: Meta;
     benefits: Meta;
   }>({
     select_country: {},
     basic_information: {},
+    engagement_agreement_details: {},
     contract_details: {},
     benefits: {},
-  });
-  const [internalEmploymentId, setInternalEmploymentId] = useState<
-    string | undefined
-  >(employmentId);
-  const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
-    countryCode || null,
-  );
-  const {
-    data: employment,
-    isLoading: isLoadingEmployment,
-    refetch: refetchEmployment,
-  } = useEmploymentQuery({
-    employmentId: internalEmploymentId as string,
-    queryParams: { exclude_files: true },
   });
 
   // if the employment is loaded, country code has not been set yet
@@ -469,8 +523,8 @@ export const useOnboarding = ({
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
-      // TODO: Fix later when we have the engagement agreement details form
-      engagement_agreement_details: [],
+      engagement_agreement_details:
+        engagementAgreementDetailsSchema?.fields || [],
       contract_details: contractDetailsForm?.fields || [],
       benefits: benefitOffersSchema?.fields || [],
       review: [],
@@ -478,6 +532,7 @@ export const useOnboarding = ({
     [
       selectCountryForm?.fields,
       basicInformationForm?.fields,
+      engagementAgreementDetailsSchema?.fields,
       contractDetailsForm?.fields,
       benefitOffersSchema?.fields,
     ],
@@ -489,8 +544,8 @@ export const useOnboarding = ({
   > = {
     select_country: null,
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
-    // TODO: Fix later when we have the engagement agreement details form
-    engagement_agreement_details: null,
+    engagement_agreement_details:
+      engagementAgreementDetailsSchema?.meta['x-jsf-fieldsets'],
     contract_details: contractDetailsForm?.meta['x-jsf-fieldsets'],
     benefits: null,
     review: null,
@@ -553,6 +608,18 @@ export const useOnboarding = ({
     onboardingInitialValues,
   ]);
 
+  const engagementAgreementDetailsInitialValues = useMemo(() => {
+    // TODO: Check this later...
+    const initialValues = {
+      ...onboardingInitialValues,
+    };
+
+    return getInitialValues(
+      stepFields.engagement_agreement_details,
+      initialValues,
+    );
+  }, [stepFields.engagement_agreement_details, onboardingInitialValues]);
+
   const initialValues = useMemo(() => {
     if (employment) {
       return {
@@ -563,6 +630,7 @@ export const useOnboarding = ({
           stepFields['basic_information'],
           basicInformationInitialValues,
         ),
+        engagement_agreement_details: engagementAgreementDetailsInitialValues,
         contract_details:
           // if contract details is null, it means it has not been filled yet, so we can't enable the ack fields
           employment?.contract_details !== null
@@ -577,12 +645,14 @@ export const useOnboarding = ({
     return {
       select_country: selectCountryInitialValues,
       basic_information: basicInformationInitialValues,
+      engagement_agreement_details: engagementAgreementDetailsInitialValues,
       contract_details: contractDetailsInitialValues,
       benefits: benefitsInitialValues,
     };
   }, [
     selectCountryInitialValues,
     basicInformationInitialValues,
+    engagementAgreementDetailsInitialValues,
     contractDetailsInitialValues,
     benefitsInitialValues,
     employment,
@@ -599,6 +669,7 @@ export const useOnboarding = ({
           isLoadingBenefitsOffersSchema,
           isLoadingBenefitOffers,
           isLoadingCompany,
+          isLoadingEngagementAgreementDetails,
           isLoadingCountries,
           employmentId,
           employmentStatus: employmentStatus,
@@ -614,6 +685,7 @@ export const useOnboarding = ({
         isLoadingBenefitOffers,
         isLoadingCompany,
         isLoadingCountries,
+        isLoadingEngagementAgreementDetails,
         employmentId,
         employmentStatus,
         stepFields.basic_information,
@@ -633,6 +705,10 @@ export const useOnboarding = ({
           basicInformationInitialValues,
           stepFields.basic_information,
         ),
+        engagement_agreement_details: prettifyFormValues(
+          engagementAgreementDetailsInitialValues,
+          stepFields.engagement_agreement_details,
+        ),
         contract_details: prettifyFormValues(
           contractDetailsInitialValues,
           stepFields.contract_details,
@@ -646,10 +722,9 @@ export const useOnboarding = ({
       setStepValues({
         select_country: selectCountryInitialValues,
         basic_information: basicInformationInitialValues,
+        engagement_agreement_details: engagementAgreementDetailsInitialValues,
         contract_details: contractDetailsInitialValues,
         benefits: benefitsInitialValues,
-        // TODO: Fix later when we have the engagement agreement details form
-        engagement_agreement_details: {},
         review: {},
       });
 
@@ -657,6 +732,7 @@ export const useOnboarding = ({
     }
   }, [
     basicInformationInitialValues,
+    engagementAgreementDetailsInitialValues,
     benefitsInitialValues,
     contractDetailsInitialValues,
     goToStep,
@@ -664,6 +740,7 @@ export const useOnboarding = ({
     selectCountryInitialValues,
     setStepValues,
     stepFields.basic_information,
+    stepFields.engagement_agreement_details,
     stepFields.benefits,
     stepFields.contract_details,
     stepFields.select_country,
@@ -680,6 +757,19 @@ export const useOnboarding = ({
       return await parseJSFToValidate(values, basicInformationForm?.fields, {
         isPartialValidation: false,
       });
+    }
+    // TODO: Check this later...
+    if (
+      engagementAgreementDetailsSchema &&
+      stepState.currentStep.name === 'engagement_agreement_details'
+    ) {
+      return await parseJSFToValidate(
+        values,
+        engagementAgreementDetailsSchema?.fields,
+        {
+          isPartialValidation: false,
+        },
+      );
     }
 
     if (
@@ -768,6 +858,12 @@ export const useOnboarding = ({
         }
 
         return;
+      }
+      case 'engagement_agreement_details': {
+        // For now, just proceed to next step without saving
+        // The engagement agreement details will be part of the employment data
+        // TODO: Add API call if needed to save engagement agreement details separately
+        return Promise.resolve({ data: {} });
       }
       case 'contract_details': {
         const payload: EmploymentFullParams = {
@@ -889,6 +985,19 @@ export const useOnboarding = ({
         return basicInformationForm?.handleValidation(parsedValues);
       }
 
+      // TODO: Check this later...
+      if (
+        engagementAgreementDetailsSchema &&
+        stepState.currentStep.name === 'engagement_agreement_details'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          engagementAgreementDetailsSchema?.fields,
+          { isPartialValidation: false },
+        );
+        return engagementAgreementDetailsSchema?.handleValidation(parsedValues);
+      }
+
       if (
         contractDetailsForm &&
         stepState.currentStep.name === 'contract_details'
@@ -973,6 +1082,9 @@ export const useOnboarding = ({
     canInvite,
 
     /**
+<<<<<<< HEAD
+     * Steps array
+=======
      * Steps array for dynamic step navigation
      * When 'dynamic_steps' feature is enabled:
      * - Returns all steps including hidden ones with their original indices
@@ -980,6 +1092,7 @@ export const useOnboarding = ({
      * When disabled (default):
      * - Returns only visible steps with sequential indices
      * - Maintains backwards compatibility with existing implementations
+>>>>>>> main
      * @returns {Array<{name: string, visible: boolean, index: number, label: string}>}
      */
     steps: stepsArray,
