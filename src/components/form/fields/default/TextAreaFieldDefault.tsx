@@ -8,6 +8,7 @@ import {
 import { Textarea } from '@/src/components/ui/textarea';
 import { cn } from '@/src/lib/utils';
 import { FieldComponentProps } from '@/src/types/fields';
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 
 export function TextAreaFieldDefault({
   field,
@@ -40,7 +41,8 @@ export function TextAreaFieldDefault({
         <div className='flex items-center justify-between'>
           {description && (
             <FormDescription className='RemoteFlows__TextArea__Description'>
-              {description}
+              {description}{' '}
+              <HelpCenter helpCenter={fieldData.meta?.helpCenter} />
             </FormDescription>
           )}
           {maxLength && (
