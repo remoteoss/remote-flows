@@ -23,6 +23,14 @@ jobs:
       - name: Run CI checks and tests
         run: npm run ci
 
+      - name: Install example dependencies
+        working-directory: ./example
+        run: npm ci --include=optional --ignore-scripts
+
+      - name: Lint and type-check example app
+        working-directory: ./example
+        run: npm run lint && npm run type-check
+
   deploy-remote-flows:
     name: Deploy Remote Flows Preview
     runs-on: ubuntu-latest
