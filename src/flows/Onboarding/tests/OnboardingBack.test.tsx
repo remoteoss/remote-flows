@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { OnboardingBack } from '../components/OnboardingBack';
 import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -20,13 +20,13 @@ describe('OnboardingBack Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useOnboardingContext as any).mockReturnValue({
+    (useOnboardingContext as $TSFixMe).mockReturnValue({
       onboardingBag: {
         back: mockBack,
         isEmploymentReadOnly: false,
       },
     });
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: {
         button: ButtonDefault,
       },
@@ -74,7 +74,7 @@ describe('OnboardingBack Component', () => {
         <button data-testid='custom-button'>{children}</button>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { button: CustomButton },
     });
 
@@ -94,7 +94,7 @@ describe('OnboardingBack Component', () => {
         </button>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { button: CustomButton },
     });
 
@@ -138,7 +138,7 @@ describe('OnboardingBack Component', () => {
         ),
       );
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { button: CustomButton },
     });
 
@@ -195,13 +195,13 @@ describe('OnboardingBack Component', () => {
 
     beforeEach(() => {
       vi.clearAllMocks();
-      (useOnboardingContext as any).mockReturnValue({
+      (useOnboardingContext as $TSFixMe).mockReturnValue({
         onboardingBag: {
           back: mockBack,
           isEmploymentReadOnly: true,
         },
       });
-      (useFormFields as any).mockReturnValue({
+      (useFormFields as $TSFixMe).mockReturnValue({
         components: { button: ButtonDefault },
       });
     });
@@ -225,7 +225,7 @@ describe('OnboardingBack Component', () => {
           </button>
         ));
 
-      (useFormFields as any).mockReturnValue({
+      (useFormFields as $TSFixMe).mockReturnValue({
         components: { button: CustomButton },
       });
 

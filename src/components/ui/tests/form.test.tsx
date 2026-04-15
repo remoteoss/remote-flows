@@ -3,6 +3,7 @@ import { screen, render } from '@testing-library/react';
 import { TestProviders } from '@/src/tests/testHelpers';
 import { PropsWithChildren } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 const wrapper = ({ children }: PropsWithChildren) => {
   const TestComponent = () => {
@@ -45,8 +46,7 @@ describe('Form', () => {
         return <span data-testid='test'>hello this is my message</span>;
       };
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const renderComponent: any = () => {
+      const renderComponent: $TSFixMe = () => {
         return <TestComponent />;
       };
       render(<FormDescription>{renderComponent}</FormDescription>, {

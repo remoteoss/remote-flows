@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
@@ -6,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { boolean } from 'yup';
 import { CheckBoxField, CheckBoxFieldProps } from '../CheckBoxField';
 import { CheckboxFieldDefault } from '@/src/components/form/fields/default/CheckboxFieldDefault';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -47,7 +47,7 @@ describe('CheckBoxField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: {
         checkbox: CheckboxFieldDefault,
       },
@@ -78,7 +78,7 @@ describe('CheckBoxField Component', () => {
         <div data-testid='custom-checkbox-field'>Custom Checkbox Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { checkbox: CustomCheckboxField },
     });
 
@@ -95,7 +95,7 @@ describe('CheckBoxField Component', () => {
         <div data-testid='custom-checkbox-field'>Custom Checkbox Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { checkbox: CustomCheckboxField },
     });
 
@@ -122,7 +122,7 @@ describe('CheckBoxField Component', () => {
       );
     });
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { checkbox: CustomCheckboxField },
     });
 
@@ -207,7 +207,7 @@ describe('CheckBoxField Component', () => {
         <div data-testid='prop-checkbox-field'>Prop Checkbox Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { checkbox: CustomCheckboxFieldFromContext },
     });
 

@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
-import { Components, JSFField } from '@/src/types/remoteFlows';
+import { Components, JSFField, $TSFixMe } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '../../ui/form';
 
@@ -8,7 +7,7 @@ type MultiSelectFieldProps = JSFField & {
   placeholder?: string;
   options: Array<{ value: string; label: string }>;
   className?: string;
-  onChange?: (value: any) => void;
+  onChange?: (value: $TSFixMe) => void;
   component?: Components['select'];
 };
 
@@ -49,7 +48,7 @@ export function MultiSelectField({
           <Component
             field={{
               ...field,
-              onChange: (value: any) => {
+              onChange: (value: $TSFixMe) => {
                 field.onChange(value);
                 onChange?.(value);
               },

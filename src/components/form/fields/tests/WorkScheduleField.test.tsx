@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { act } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { WorkScheduleField } from '../WorkScheduleField';
 import { DailySchedule } from '../workScheduleUtils';
-import { JSFField } from '@/src/types/remoteFlows';
+import { JSFField, $TSFixMe } from '@/src/types/remoteFlows';
 import { Components } from '@/src/types/remoteFlows';
 import * as yup from 'yup';
 import { WorkScheduleFieldDefault } from '@/src/components/form/fields/default/WorkScheduleFieldDefault';
@@ -20,7 +19,7 @@ vi.mock('@/src/context', () => ({
 type WorkScheduleFieldProps = JSFField & {
   name: string;
   default: DailySchedule[];
-  onChange?: (value: any) => void;
+  onChange?: (value: $TSFixMe) => void;
   component?: Components['work-schedule'];
 };
 
@@ -103,7 +102,7 @@ describe('WorkScheduleField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: {
         'work-schedule': WorkScheduleFieldDefault,
         checkbox: CheckboxFieldDefault,
@@ -224,7 +223,7 @@ describe('WorkScheduleField Component', () => {
         <div data-testid='custom-work-schedule'>Custom Work Schedule</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { 'work-schedule': CustomWorkSchedule },
     });
 
@@ -247,7 +246,7 @@ describe('WorkScheduleField Component', () => {
         <div data-testid='prop-work-schedule'>Prop Work Schedule</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { 'work-schedule': CustomWorkScheduleFromContext },
     });
 

@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import { JSFField } from '@/src/types/remoteFlows';
+import { JSFField, $TSFixMe } from '@/src/types/remoteFlows';
 import { useFormFields } from '@/src/context';
 import { FormField } from '@/src/components/ui/form';
 import { Components } from '@/src/types/remoteFlows';
@@ -16,7 +15,7 @@ import {
 type WorkScheduleFieldProps = JSFField & {
   name: string;
   default: DailySchedule[];
-  onChange?: (value: any) => void;
+  onChange?: (value: $TSFixMe) => void;
   component?: Components['work-schedule'];
 };
 
@@ -70,7 +69,7 @@ export function WorkScheduleField(props: WorkScheduleFieldProps) {
           <Component
             field={{
               ...field,
-              onChange: (value: any) => {
+              onChange: (value: $TSFixMe) => {
                 field.onChange(value);
                 props.onChange?.(value);
               },

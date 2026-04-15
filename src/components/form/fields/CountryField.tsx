@@ -1,13 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useFormFields } from '@/src/context';
-import { Components, JSFField } from '@/src/types/remoteFlows';
+import { Components, JSFField, $TSFixMe } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '../../ui/form';
 
 type CountryFieldProps = JSFField & {
   options: Array<{ value: string; label: string }>;
-  onChange?: (value: any) => void;
+  onChange?: (value: $TSFixMe) => void;
   $meta: {
     regions: Record<string, string[]>;
     subregions: Record<string, string[]>;
@@ -54,7 +52,7 @@ export function CountryField({
           <Component
             field={{
               ...field,
-              onChange: (value: any) => {
+              onChange: (value: $TSFixMe) => {
                 field.onChange(value);
                 onChange?.(value);
               },

@@ -217,7 +217,7 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
   credentials?: RequestCredentials;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export type $TSFixMe = any;
 
 // Extend the global Window interface to include RemoteFlowsSDK

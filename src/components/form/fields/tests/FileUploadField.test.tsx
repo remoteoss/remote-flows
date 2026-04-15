@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
@@ -6,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { FileUploadField, FileUploadFieldProps } from '../FileUploadField';
 import { FileUploadFieldDefault } from '@/src/components/form/fields/default/FileUploadFieldDefault';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 // Mock dependencies
 vi.mock('@/src/context', () => ({
@@ -47,7 +47,7 @@ describe('FileUploadField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: {
         file: FileUploadFieldDefault,
       },
@@ -82,7 +82,7 @@ describe('FileUploadField Component', () => {
         </div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { file: CustomFileUploadField },
     });
 
@@ -101,7 +101,7 @@ describe('FileUploadField Component', () => {
         </div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { file: CustomFileUploadField },
     });
 
@@ -129,7 +129,7 @@ describe('FileUploadField Component', () => {
       );
     });
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { file: CustomFileUploadField },
     });
 
@@ -158,7 +158,7 @@ describe('FileUploadField Component', () => {
         <div data-testid='prop-file-upload-field'>Prop File Upload Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { file: CustomFileUploadFieldFromContext },
     });
 
