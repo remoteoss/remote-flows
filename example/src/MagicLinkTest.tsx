@@ -49,6 +49,7 @@ const MagicLinkTestContent = () => {
     try {
       const response = await magicLink.mutateAsync({
         path,
+        user_id: userId,
       });
 
       if (response.data) {
