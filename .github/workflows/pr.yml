@@ -18,6 +18,14 @@ jobs:
         with:
           node-version: '24.14.1'
 
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies
         run: npm ci --include=optional --ignore-scripts
 
@@ -50,6 +58,14 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '24.14.1'
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install main package dependencies
         run: npm ci --include=optional --ignore-scripts
@@ -84,6 +100,14 @@ jobs:
         with:
           node-version: '24.14.1'
 
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies
         run: npm ci --include=optional --ignore-scripts
 
@@ -102,77 +126,37 @@ jobs:
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Checkout base branch
+      - name: Setup base branch worktree and run coverage
         if: steps.check-scripts.outputs.exists == 'true'
         run: |
-          git fetch origin ${{ github.base_ref }}
-          git checkout origin/${{ github.base_ref }}
-
-      - name: Check if coverage scripts exist in base branch
-        if: steps.check-scripts.outputs.exists == 'true'
-        id: check-base-scripts
-        run: |
-          if [ -f "scripts/compare-coverage.ts" ] && [ -f "scripts/extract-coverage.ts" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
+          # Create worktree for base branch
+          git worktree add ../base-branch origin/${{ github.base_ref }}
+          
+          cd ../base-branch
+          
+          # Check if scripts exist in base
+          if [ ! -f "scripts/compare-coverage.ts" ] || [ ! -f "scripts/extract-coverage.ts" ]; then
+            echo "Coverage scripts not found in base branch, skipping"
+            exit 0
           fi
-
-      - name: Install dependencies (base)
-        if: steps.check-scripts.outputs.exists == 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        run: npm ci --include=optional --ignore-scripts
-
-      - name: Run tests with coverage (base)
-        if: steps.check-scripts.outputs.exists == 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        run: npm run test:coverage
-
-      - name: Extract base coverage
-        if: steps.check-scripts.outputs.exists == 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        run: npm run coverage:extract -- --output out/base-coverage.json
-
-      - name: Upload base coverage
-        if: steps.check-scripts.outputs.exists == 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        uses: actions/upload-artifact@v6
-        with:
-          name: base-coverage
-          path: out/base-coverage.json
-          retention-days: 1
-
-      - name: Checkout PR branch
-        if: steps.check-scripts.outputs.exists == 'true'
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-
-      - name: Install dependencies (PR branch)
-        if: steps.check-scripts.outputs.exists == 'true'
-        run: npm ci --include=optional --ignore-scripts
-
-      - name: Download current coverage
-        uses: actions/download-artifact@v8
-        with:
-          name: current-coverage
-          path: out
-
-      - name: Download base coverage
-        uses: actions/download-artifact@v8
-        with:
-          name: base-coverage
-          path: out
-        continue-on-error: true
+          
+          # Install deps and run tests in worktree
+          npm ci --include=optional --ignore-scripts
+          npm run test:coverage
+          npm run coverage:extract -- --output out/base-coverage.json
+          
+          # Copy base coverage back to main workspace
+          cp out/base-coverage.json $GITHUB_WORKSPACE/out/base-coverage.json
 
       - name: Compare coverage
         id: compare
         run: |
-          # Run comparison (will handle missing base file gracefully)
+          # Run comparison (handles missing base file gracefully)
           npm exec tsx scripts/compare-coverage.ts out/current-coverage.json out/base-coverage.json > out/coverage-report.md 2>&1 || true
-
-          # Read the report for the PR comment
-          REPORT=$(cat out/coverage-report.md)
-
-          # Set output for PR comment (escape for GitHub Actions)
+          
+          # Set output for PR comment
           echo "report<<EOF" >> $GITHUB_OUTPUT
-          echo "$REPORT" >> $GITHUB_OUTPUT
+          cat out/coverage-report.md >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Post PR comment
@@ -215,6 +199,11 @@ jobs:
             }
         env:
           COVERAGE_REPORT: ${{ steps.compare.outputs.report }}
+
+      - name: Cleanup worktree
+        if: always() && steps.check-scripts.outputs.exists == 'true'
+        run: |
+          git worktree remove ../base-branch --force || true
 
       - name: Upload coverage analysis
         uses: actions/upload-artifact@v6
@@ -298,6 +287,14 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '24.14.1'
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install main package dependencies
         run: npm ci --include=optional --ignore-scripts

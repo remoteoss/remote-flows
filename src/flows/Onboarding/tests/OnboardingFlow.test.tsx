@@ -441,82 +441,84 @@ describe('OnboardingFlow', () => {
     await fillCountry('PRT');
   });
 
-  it('should render the seniority_date field when the user selects yes in the radio button', async () => {
-    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
+  // Commented out to test coverage comparison
+  // it('should render the seniority_date field when the user selects yes in the radio button', async () => {
+  //   render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
-    await fillCountry('PRT');
+  //   await fillCountry('PRT');
 
-    await fillRadio('Does the employee have a seniority date?', 'Yes');
+  //   await fillRadio('Does the employee have a seniority date?', 'Yes');
 
-    await waitFor(() => {
-      expect(screen.getByTestId('seniority_date')).toBeInTheDocument();
-    });
-  });
+  //   await waitFor(() => {
+  //     expect(screen.getByTestId('seniority_date')).toBeInTheDocument();
+  //   });
+  // });
 
-  it('should call POST /employments when country is changed and basic information is resubmitted', async () => {
-    const postSpy = vi.fn();
+  //   // Commented out to test coverage comparison
+  // it('should call POST /employments when country is changed and basic information is resubmitted', async () => {
+  //   const postSpy = vi.fn();
 
-    server.use(
-      http.post('*/v1/employments', async ({ request }) => {
-        const requestBody = await request.json();
-        postSpy(requestBody);
-        return HttpResponse.json(employmentCreatedResponse);
-      }),
-    );
+  //   server.use(
+  //     http.post('*/v1/employments', async ({ request }) => {
+  //       const requestBody = await request.json();
+  //       postSpy(requestBody);
+  //       return HttpResponse.json(employmentCreatedResponse);
+  //     }),
+  //   );
 
-    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
+  //   render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
-    // Wait for select country step
-    await fillCountry('PRT');
+  //   // Wait for select country step
+  //   await fillCountry('PRT');
 
-    await fillBasicInformation({
-      fullName: 'John Doe Portugal',
-      personalEmail: 'john.portugal@example.com',
-      workEmail: 'john.portugal@remote.com',
-      jobTitle: 'Software Engineer',
-    });
+  //   await fillBasicInformation({
+  //     fullName: 'John Doe Portugal',
+  //     personalEmail: 'john.portugal@example.com',
+  //     workEmail: 'john.portugal@remote.com',
+  //     jobTitle: 'Software Engineer',
+  //   });
 
-    let nextButton = screen.getByText(/Next Step/i);
-    nextButton.click();
+  //   let nextButton = screen.getByText(/Next Step/i);
+  //   nextButton.click();
 
-    await screen.findByText(/Step: Contract Details/i);
+  //   await screen.findByText(/Step: Contract Details/i);
 
-    await waitFor(() => {
-      expect(postSpy).toHaveBeenCalledTimes(1);
-    });
-    expect(postSpy.mock.calls[0][0]).toMatchObject({
-      country_code: 'PRT',
-      type: 'employee',
-    });
+  //   await waitFor(() => {
+  //     expect(postSpy).toHaveBeenCalledTimes(1);
+  //   });
+  //   expect(postSpy.mock.calls[0][0]).toMatchObject({
+  //     country_code: 'PRT',
+  //     type: 'employee',
+  //   });
 
-    let backButton = screen.getByRole('button', { name: 'Back' });
-    backButton.click();
-    await screen.findByText(/Step: Basic Information/i);
+  //   let backButton = screen.getByRole('button', { name: 'Back' });
+  //   backButton.click();
+  //   await screen.findByText(/Step: Basic Information/i);
 
-    backButton = screen.getByRole('button', { name: 'Back' });
-    backButton.click();
-    await screen.findByText(/Step: Select Country/i);
+  //   backButton = screen.getByRole('button', { name: 'Back' });
+  //   backButton.click();
+  //   await screen.findByText(/Step: Select Country/i);
 
-    await fillCountry('ESP');
+  //   await fillCountry('ESP');
 
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
-    });
+  //   await waitFor(() => {
+  //     expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+  //   });
 
-    nextButton = screen.getByText(/Next Step/i);
-    nextButton.click();
+  //   nextButton = screen.getByText(/Next Step/i);
+  //   nextButton.click();
 
-    await screen.findByText(/Step: Contract Details/i);
+  //   await screen.findByText(/Step: Contract Details/i);
 
-    // Verify second POST was called with Spain
-    await waitFor(() => {
-      expect(postSpy).toHaveBeenCalledTimes(2);
-    });
-    expect(postSpy.mock.calls[1][0]).toMatchObject({
-      country_code: 'ESP',
-      type: 'employee',
-    });
-  });
+  //   // Verify second POST was called with Spain
+  //   await waitFor(() => {
+  //     expect(postSpy).toHaveBeenCalledTimes(2);
+  //   });
+  //   expect(postSpy.mock.calls[1][0]).toMatchObject({
+  //     country_code: 'ESP',
+  //     type: 'employee',
+  //   });
+  // });
 
   it('should fill the first step, go to the second step and go back to the first step', async () => {
     mockRender.mockImplementation(
@@ -730,81 +732,82 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Contract Details/i);
   });
 
-  it('should fill the contract details step and go to the benefits step', async () => {
-    render(
-      <OnboardingFlow
-        employmentId={generateUniqueEmploymentId()}
-        {...defaultProps}
-      />,
-      {
-        wrapper: TestProviders,
-      },
-    );
+  // Commented out to test coverage comparison
+  // it('should fill the contract details step and go to the benefits step', async () => {
+  //   render(
+  //     <OnboardingFlow
+  //       employmentId={generateUniqueEmploymentId()}
+  //       {...defaultProps}
+  //     />,
+  //     {
+  //       wrapper: TestProviders,
+  //     },
+  //   );
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+  //   await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    await fillCountry('PRT');
+  //   await fillCountry('PRT');
 
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentDefaultResponse.data.employment.personal_email,
-      );
-    });
+  //   await waitFor(() => {
+  //     expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
+  //       employmentDefaultResponse.data.employment.personal_email,
+  //     );
+  //   });
 
-    let nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
+  //   let nextButton = screen.getByText(/Next Step/i);
+  //   expect(nextButton).toBeInTheDocument();
 
-    nextButton.click();
+  //   nextButton.click();
 
-    await screen.findByText(/Step: Contract Details/i);
+  //   await screen.findByText(/Step: Contract Details/i);
 
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
-    });
+  //   await waitFor(() => {
+  //     expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
+  //   });
 
-    nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
+  //   nextButton = screen.getByText(/Next Step/i);
+  //   expect(nextButton).toBeInTheDocument();
+  //   nextButton.click();
 
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(3);
-    });
+  //   await waitFor(() => {
+  //     expect(mockOnSubmit).toHaveBeenCalledTimes(3);
+  //   });
 
-    // Get the second call to mockOnSubmit (index 1)
-    const contractDetailsSubmission = mockOnSubmit.mock.calls[2][0];
+  //   // Get the second call to mockOnSubmit (index 1)
+  //   const contractDetailsSubmission = mockOnSubmit.mock.calls[2][0];
 
-    // Assert the contract details submission
-    expect(contractDetailsSubmission).toEqual({
-      annual_gross_salary: 2000000,
-      annual_training_hours_ack: 'acknowledged',
-      available_pto: 22,
-      available_pto_type: 'unlimited',
-      contract_duration_type: 'indefinite',
-      equity_compensation: {
-        offer_equity_compensation: 'no',
-      },
-      experience_level:
-        'Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy',
-      has_bonus: 'no',
-      has_commissions: 'no',
-      has_signing_bonus: 'no',
-      probation_length_days: 40,
-      role_description:
-        employmentDefaultResponse.data.employment.contract_details
-          .role_description,
-      salary_installments_confirmation: 'acknowledged',
-      work_address: {
-        is_home_address: 'yes',
-      },
-      work_from_home_allowance_ack: 'acknowledged',
-      work_hours_per_week: 40,
-      work_schedule: 'full_time',
-      working_hours_exemption: 'no',
-    });
+  //   // Assert the contract details submission
+  //   expect(contractDetailsSubmission).toEqual({
+  //     annual_gross_salary: 2000000,
+  //     annual_training_hours_ack: 'acknowledged',
+  //     available_pto: 22,
+  //     available_pto_type: 'unlimited',
+  //     contract_duration_type: 'indefinite',
+  //     equity_compensation: {
+  //       offer_equity_compensation: 'no',
+  //     },
+  //     experience_level:
+  //       'Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy',
+  //     has_bonus: 'no',
+  //     has_commissions: 'no',
+  //     has_signing_bonus: 'no',
+  //     probation_length_days: 40,
+  //     role_description:
+  //       employmentDefaultResponse.data.employment.contract_details
+  //         .role_description,
+  //     salary_installments_confirmation: 'acknowledged',
+  //     work_address: {
+  //       is_home_address: 'yes',
+  //     },
+  //     work_from_home_allowance_ack: 'acknowledged',
+  //     work_hours_per_week: 40,
+  //     work_schedule: 'full_time',
+  //     working_hours_exemption: 'no',
+  //   });
 
-    // Verify we move to the next step (Benefits)
-    await screen.findByText(/Step: Benefits/i);
-  });
+  //   // Verify we move to the next step (Benefits)
+  //   await screen.findByText(/Step: Benefits/i);
+  // });
 
   it('should show validation errors when submitting benefits step without selecting any benefits', async () => {
     server.use(
@@ -871,139 +874,141 @@ describe('OnboardingFlow', () => {
     });
   });
 
-  it('should go to the third step and check that benefits are initalized correctly', async () => {
-    render(
-      <OnboardingFlow
-        employmentId={generateUniqueEmploymentId()}
-        {...defaultProps}
-      />,
-      {
-        wrapper: TestProviders,
-      },
-    );
+  // Commented out to test coverage comparison
+  // it('should go to the third step and check that benefits are initalized correctly', async () => {
+  //   render(
+  //     <OnboardingFlow
+  //       employmentId={generateUniqueEmploymentId()}
+  //       {...defaultProps}
+  //     />,
+  //     {
+  //       wrapper: TestProviders,
+  //     },
+  //   );
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await fillCountry('PRT');
+  //   await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+  //   await fillCountry('PRT');
 
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
-        employmentDefaultResponse.data.employment.personal_email,
-      );
-    });
+  //   await waitFor(() => {
+  //     expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
+  //       employmentDefaultResponse.data.employment.personal_email,
+  //     );
+  //   });
 
-    let nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
+  //   let nextButton = screen.getByText(/Next Step/i);
+  //   expect(nextButton).toBeInTheDocument();
 
-    nextButton.click();
+  //   nextButton.click();
 
-    await screen.findByText(/Step: Contract Details/i);
+  //   await screen.findByText(/Step: Contract Details/i);
 
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
-    });
+  //   await waitFor(() => {
+  //     expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
+  //   });
 
-    nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
+  //   nextButton = screen.getByText(/Next Step/i);
+  //   expect(nextButton).toBeInTheDocument();
+  //   nextButton.click();
 
-    await screen.findByText(/Step: Benefits/i);
+  //   await screen.findByText(/Step: Benefits/i);
 
-    await assertRadioValue(
-      '0e0293ae-eec6-4d0e-9176-51c46eed435e.value',
-      'Meal Card Standard 2025',
-    );
+  //   await assertRadioValue(
+  //     '0e0293ae-eec6-4d0e-9176-51c46eed435e.value',
+  //     'Meal Card Standard 2025',
+  //   );
 
-    await assertRadioValue(
-      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54.value',
-      'Basic Health Plan 2025',
-    );
+  //   await assertRadioValue(
+  //     'baa1ce1d-39ea-4eec-acf0-88fc8a357f54.value',
+  //     'Basic Health Plan 2025',
+  //   );
 
-    await assertRadioValue(
-      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
-      'Life Insurance 50K',
-    );
+  //   await assertRadioValue(
+  //     '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
+  //     'Life Insurance 50K',
+  //   );
 
-    await fillRadio(
-      '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
-      "I don't want to offer this benefit.",
-    );
+  //   await fillRadio(
+  //     '072e0edb-bfca-46e8-a449-9eed5cbaba33.value',
+  //     "I don't want to offer this benefit.",
+  //   );
 
-    nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
+  //   nextButton = screen.getByText(/Next Step/i);
+  //   expect(nextButton).toBeInTheDocument();
+  //   nextButton.click();
 
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledTimes(4);
-    });
+  //   await waitFor(() => {
+  //     expect(mockOnSubmit).toHaveBeenCalledTimes(4);
+  //   });
 
-    const benefitsSubmission = mockOnSubmit.mock.calls[3][0];
+  //   const benefitsSubmission = mockOnSubmit.mock.calls[3][0];
 
-    // Assert the contract details submission
-    expect(benefitsSubmission).toEqual({
-      '072e0edb-bfca-46e8-a449-9eed5cbaba33': {
-        filter: '73a134db-4743-4d81-a1ec-1887f2240c5c',
-        value: 'no',
-      },
-      '0e0293ae-eec6-4d0e-9176-51c46eed435e': {
-        value: '601d28b6-efde-4b8f-b9e2-e394792fc594',
-      },
-      'baa1ce1d-39ea-4eec-acf0-88fc8a357f54': {
-        filter: '866c0615-a810-429b-b480-3a4f6ca6157d',
-        value: '45e47ffd-e1d9-4c5f-b367-ad717c30801b',
-      },
-    });
-  });
+  //   // Assert the contract details submission
+  //   expect(benefitsSubmission).toEqual({
+  //     '072e0edb-bfca-46e8-a449-9eed5cbaba33': {
+  //       filter: '73a134db-4743-4d81-a1ec-1887f2240c5c',
+  //       value: 'no',
+  //     },
+  //     '0e0293ae-eec6-4d0e-9176-51c46eed435e': {
+  //       value: '601d28b6-efde-4b8f-b9e2-e394792fc594',
+  //     },
+  //     'baa1ce1d-39ea-4eec-acf0-88fc8a357f54': {
+  //       filter: '866c0615-a810-429b-b480-3a4f6ca6157d',
+  //       value: '45e47ffd-e1d9-4c5f-b367-ad717c30801b',
+  //     },
+  //   });
+  // });
 
-  it("should invite the employee when the user clicks on the 'Invite Employee' button", async () => {
-    server.use(
-      http.post('*/v1/employments/*/invite', () => {
-        return HttpResponse.json(inviteResponse);
-      }),
-    );
-    render(
-      <OnboardingFlow
-        employmentId={generateUniqueEmploymentId()}
-        {...defaultProps}
-      />,
-      {
-        wrapper: TestProviders,
-      },
-    );
+  // Commented out to test coverage comparison
+  // it("should invite the employee when the user clicks on the 'Invite Employee' button", async () => {
+  //   server.use(
+  //     http.post('*/v1/employments/*/invite', () => {
+  //       return HttpResponse.json(inviteResponse);
+  //     }),
+  //   );
+  //   render(
+  //     <OnboardingFlow
+  //       employmentId={generateUniqueEmploymentId()}
+  //       {...defaultProps}
+  //     />,
+  //     {
+  //       wrapper: TestProviders,
+  //     },
+  //   );
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-    await fillCountry('PRT');
+  //   await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+  //   await fillCountry('PRT');
 
-    let nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
+  //   let nextButton = screen.getByText(/Next Step/i);
+  //   expect(nextButton).toBeInTheDocument();
 
-    nextButton.click();
+  //   nextButton.click();
 
-    await screen.findByText(/Step: Contract Details/i);
+  //   await screen.findByText(/Step: Contract Details/i);
 
-    nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
+  //   nextButton = screen.getByText(/Next Step/i);
+  //   expect(nextButton).toBeInTheDocument();
+  //   nextButton.click();
 
-    await screen.findByText(/Step: Benefits/i);
+  //   await screen.findByText(/Step: Benefits/i);
 
-    nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
-    nextButton.click();
+  //   nextButton = screen.getByText(/Next Step/i);
+  //   expect(nextButton).toBeInTheDocument();
+  //   nextButton.click();
 
-    await screen.findByText(/Step: Review/i);
+  //   await screen.findByText(/Step: Review/i);
 
-    const inviteEmployeeButton = screen.getByText(/Invite Employee/i);
-    expect(inviteEmployeeButton).toBeInTheDocument();
+  //   const inviteEmployeeButton = screen.getByText(/Invite Employee/i);
+  //   expect(inviteEmployeeButton).toBeInTheDocument();
 
-    inviteEmployeeButton.click();
+  //   inviteEmployeeButton.click();
 
-    // it should be called
-    await waitFor(() => {
-      expect(mockOnSuccess).toHaveBeenCalledTimes(4);
-    });
+  //   // it should be called
+  //   await waitFor(() => {
+  //     expect(mockOnSuccess).toHaveBeenCalledTimes(4);
+  //   });
 
-    expect(mockOnSuccess.mock.calls[3][0]).toEqual(inviteResponse);
-  });
+  //   expect(mockOnSuccess.mock.calls[3][0]).toEqual(inviteResponse);
+  // });
 
   it('should call POST when submitting basic information', async () => {
     const postSpy = vi.fn();
@@ -1551,113 +1556,114 @@ describe('OnboardingFlow', () => {
     expect(nameLabel).toBeInTheDocument();
   });
 
-  it('should handle 422 validation errors with field errors when creating employment', async () => {
-    // Mock the POST endpoint to return a 422 error with field errors
-    server.use(
-      http.post('*/v1/employments', () => {
-        return HttpResponse.json(
-          {
-            errors: {
-              provisional_start_date: ['cannot be in a holiday'],
-              email: ['has already been taken'],
-            },
-          },
-          { status: 422 },
-        );
-      }),
-    );
+  // Commented out to test coverage comparison
+  // it('should handle 422 validation errors with field errors when creating employment', async () => {
+  //   // Mock the POST endpoint to return a 422 error with field errors
+  //   server.use(
+  //     http.post('*/v1/employments', () => {
+  //       return HttpResponse.json(
+  //         {
+  //           errors: {
+  //             provisional_start_date: ['cannot be in a holiday'],
+  //             email: ['has already been taken'],
+  //           },
+  //         },
+  //         { status: 422 },
+  //       );
+  //     }),
+  //   );
 
-    mockRender.mockImplementation(
-      ({ onboardingBag, components }: OnboardingRenderProps) => {
-        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+  //   mockRender.mockImplementation(
+  //     ({ onboardingBag, components }: OnboardingRenderProps) => {
+  //       const currentStepIndex = onboardingBag.stepState.currentStep.index;
 
-        const steps: Record<number, string> = {
-          [0]: 'Basic Information',
-          [1]: 'Contract Details',
-          [2]: 'Benefits',
-          [3]: 'Review',
-        };
+  //       const steps: Record<number, string> = {
+  //         [0]: 'Basic Information',
+  //         [1]: 'Contract Details',
+  //         [2]: 'Benefits',
+  //         [3]: 'Review',
+  //       };
 
-        return (
-          <>
-            <h1>Step: {steps[currentStepIndex]}</h1>
-            <MultiStepFormWithoutCountry
-              onboardingBag={onboardingBag}
-              components={components}
-            />
-          </>
-        );
-      },
-    );
+  //       return (
+  //         <>
+  //           <h1>Step: {steps[currentStepIndex]}</h1>
+  //           <MultiStepFormWithoutCountry
+  //             onboardingBag={onboardingBag}
+  //             components={components}
+  //           />
+  //         </>
+  //       );
+  //     },
+  //   );
 
-    render(
-      <OnboardingFlow
-        countryCode='PRT'
-        skipSteps={['select_country']}
-        {...defaultProps}
-      />,
-      { wrapper: TestProviders },
-    );
+  //   render(
+  //     <OnboardingFlow
+  //       countryCode='PRT'
+  //       skipSteps={['select_country']}
+  //       {...defaultProps}
+  //     />,
+  //     { wrapper: TestProviders },
+  //   );
 
-    await screen.findByText(/Step: Basic Information/i);
+  //   await screen.findByText(/Step: Basic Information/i);
 
-    const currentDate = getYearMonthDate(new Date());
+  //   const currentDate = getYearMonthDate(new Date());
 
-    // Fill in the form with data that will trigger the 422 error
-    await fillBasicInformation({
-      fullName: 'John Doe',
-      personalEmail: 'existing@email.com', // This will trigger "has already been taken"
-      workEmail: 'john.doe@remote.com',
-      jobTitle: 'Software Engineer',
-      provisionalStartDate: `${currentDate.year}-${currentDate.month}-${currentDate.day}`, // This will trigger "cannot be in a holiday"
-      hasSeniorityDate: 'No',
-    });
+  //   // Fill in the form with data that will trigger the 422 error
+  //   await fillBasicInformation({
+  //     fullName: 'John Doe',
+  //     personalEmail: 'existing@email.com', // This will trigger "has already been taken"
+  //     workEmail: 'john.doe@remote.com',
+  //     jobTitle: 'Software Engineer',
+  //     provisionalStartDate: `${currentDate.year}-${currentDate.month}-${currentDate.day}`, // This will trigger "cannot be in a holiday"
+  //     hasSeniorityDate: 'No',
+  //   });
 
-    const nextButton = screen.getByText(/Next Step/i);
-    expect(nextButton).toBeInTheDocument();
+  //   const nextButton = screen.getByText(/Next Step/i);
+  //   expect(nextButton).toBeInTheDocument();
 
-    nextButton.click();
+  //   nextButton.click();
 
-    // Wait for the error to be called
-    await waitFor(() => {
-      expect(mockOnError).toHaveBeenCalledTimes(1);
-    });
+  //   // Wait for the error to be called
+  //   await waitFor(() => {
+  //     expect(mockOnError).toHaveBeenCalledTimes(1);
+  //   });
 
-    // Get the error call arguments
-    const errorCall = mockOnError.mock.calls[0][0];
+  //   // Get the error call arguments
+  //   const errorCall = mockOnError.mock.calls[0][0];
 
-    // Verify the error structure
-    expect(errorCall.error).toBeInstanceOf(Error);
-    expect(errorCall.rawError).toEqual({
-      errors: {
-        provisional_start_date: ['cannot be in a holiday'],
-        email: ['has already been taken'],
-      },
-    });
-    expect(errorCall.fieldErrors.length).toBe(2);
+  //   // Verify the error structure
+  //   expect(errorCall.error).toBeInstanceOf(Error);
+  //   expect(errorCall.rawError).toEqual({
+  //     errors: {
+  //       provisional_start_date: ['cannot be in a holiday'],
+  //       email: ['has already been taken'],
+  //     },
+  //   });
+  //   expect(errorCall.fieldErrors.length).toBe(2);
 
-    // Verify the field errors are normalized with user-friendly labels
-    const provisionalStartDateError = errorCall.fieldErrors.find(
-      (error: NormalizedFieldError) => error.field === 'provisional_start_date',
-    );
-    const personalEmailError = errorCall.fieldErrors.find(
-      (error: NormalizedFieldError) => error.field === 'email',
-    );
+  //   // Verify the field errors are normalized with user-friendly labels
+  //   const provisionalStartDateError = errorCall.fieldErrors.find(
+  //     (error: NormalizedFieldError) => error.field === 'provisional_start_date',
+  //   );
+  //   const personalEmailError = errorCall.fieldErrors.find(
+  //     (error: NormalizedFieldError) => error.field === 'email',
+  //   );
 
-    expect(provisionalStartDateError.messages).toEqual([
-      'cannot be in a holiday',
-    ]);
-    expect(provisionalStartDateError.userFriendlyLabel).toBe(
-      'Provisional start date',
-    );
+  //   expect(provisionalStartDateError.messages).toEqual([
+  //     'cannot be in a holiday',
+  //   ]);
+  //   expect(provisionalStartDateError.userFriendlyLabel).toBe(
+  //     'Provisional start date',
+  //   );
 
-    expect(personalEmailError).toBeDefined();
-    expect(personalEmailError.messages).toEqual(['has already been taken']);
-    expect(personalEmailError.userFriendlyLabel).toBe('Personal email');
+  //   expect(personalEmailError).toBeDefined();
+  //   expect(personalEmailError.messages).toEqual(['has already been taken']);
+  //   expect(personalEmailError.userFriendlyLabel).toBe('Personal email');
 
-    // Verify we stay on the same step (don't advance)
-    await screen.findByText(/Step: Basic Information/i);
-  });
+  //   // Verify we stay on the same step (don't advance)
+  //   await screen.findByText(/Step: Basic Information/i);
+  // });
 
   it('should handle 422 validation errors with field errors when updating employment in contract details step', async () => {
     const user = userEvent.setup();
