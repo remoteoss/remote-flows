@@ -35,13 +35,6 @@ export const InviteSection = ({
     </div>
   );
 };
-const STEPS = [
-  'Select Country',
-  'Basic Information',
-  'Contract Details',
-  'Benefits',
-  'Review & Invite',
-];
 
 type MultiStepFormProps = {
   onboardingBag: OnboardingRenderProps['onboardingBag'];
@@ -207,13 +200,24 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
   }
 };
 
+/* const STEPS = [
+  'Select Country',
+  'Basic Information',
+  'Contract Details',
+  'Benefits',
+  'Review & Invite',
+];
+ */
 const OnBoardingRender = ({
   onboardingBag,
   components,
 }: MultiStepFormProps) => {
   const currentStepIndex = onboardingBag.stepState.currentStep.index;
 
-  const stepTitle = STEPS[currentStepIndex];
+  // When using dynamic_steps feature, you need to filter and use step.index for comparison
+  // Otherwise, you can use the steps array directly with sequential indices
+  //const stepTitle = STEPS[currentStepIndex];
+  const stepTitle = onboardingBag.steps[currentStepIndex].label;
 
   if (onboardingBag.isLoading) {
     return <p>Loading...</p>;
@@ -223,14 +227,24 @@ const OnBoardingRender = ({
     <>
       <div className='steps-navigation'>
         <ul>
-          {STEPS.map((step, index) => (
+          {/* {STEPS.map((step, index) => (
             <li
               key={index}
               className={`step-item ${index === currentStepIndex ? 'active' : ''}`}
             >
               {step}
             </li>
-          ))}
+          ))} */}
+          {onboardingBag.steps
+            .filter((step) => step.visible)
+            .map((step, index) => (
+              <li
+                key={step.name}
+                className={`step-item ${step.index === currentStepIndex ? 'active' : ''}`}
+              >
+                {index + 1}. {step.label}
+              </li>
+            ))}
         </ul>
       </div>
 
@@ -264,7 +278,7 @@ const OnboardingWithProps = ({
       employmentId={employmentId}
       externalId={externalId}
       options={{
-        features: ['onboarding_reserves'],
+        features: ['onboarding_reserves', 'dynamic_steps'],
         jsonSchemaVersion: {
           employment_basic_information: 3,
         },

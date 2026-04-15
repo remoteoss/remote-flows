@@ -1,33 +1,97 @@
 import { Employment, OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { Step } from '@/src/flows/useStepState';
 
-type StepKeys =
+export type StepKeys =
   | 'select_country'
   | 'basic_information'
+  | 'engagement_agreement_details'
   | 'contract_details'
   | 'benefits'
   | 'review';
 
-export const STEPS: Record<StepKeys, Step<StepKeys>> = {
-  select_country: {
-    index: 0,
-    name: 'select_country',
-  },
-  basic_information: { index: 1, name: 'basic_information' },
-  contract_details: { index: 2, name: 'contract_details' },
-  benefits: { index: 3, name: 'benefits' },
-  review: { index: 4, name: 'review' },
-} as const;
+type StepConfig = {
+  includeSelectCountry?: boolean;
+  includeEngagementAgreementDetails?: boolean;
+  useDynamicSteps?: boolean;
+};
 
-export const STEPS_WITHOUT_SELECT_COUNTRY: Record<
-  Exclude<StepKeys, 'select_country'>,
-  Step<Exclude<StepKeys, 'select_country'>>
-> = {
-  basic_information: { index: 0, name: 'basic_information' },
-  contract_details: { index: 1, name: 'contract_details' },
-  benefits: { index: 2, name: 'benefits' },
-  review: { index: 3, name: 'review' },
-} as const;
+export function buildSteps(config: StepConfig = {}) {
+  const stepDefinitions: Array<{
+    name: StepKeys;
+    label: string;
+    visible: boolean;
+  }> = [
+    {
+      name: 'select_country',
+      label: 'Select Country',
+      visible: Boolean(config?.includeSelectCountry),
+    },
+    {
+      name: 'basic_information',
+      label: 'Basic Information',
+      visible: true,
+    },
+    {
+      name: 'engagement_agreement_details',
+      label: 'Engagement Agreement Details',
+      visible: Boolean(config?.includeEngagementAgreementDetails),
+    },
+    {
+      name: 'contract_details',
+      label: 'Contract Details',
+      visible: true,
+    },
+    {
+      name: 'benefits',
+      label: 'Benefits',
+      visible: true,
+    },
+    {
+      name: 'review',
+      label: 'Review',
+      visible: true,
+    },
+  ];
+
+  // When useDynamicSteps is false (default/legacy behavior):
+  // - Filter out hidden steps first
+  // - Assign sequential indices (0, 1, 2, 3...)
+  // - This maintains backwards compatibility with existing implementations
+  //
+  // When useDynamicSteps is true (new behavior):
+  // - Keep all steps including hidden ones
+  // - Preserve original indices even for hidden steps
+  // - Consumers must filter by `visible` property
+  const stepsArray = config.useDynamicSteps
+    ? stepDefinitions.map((step, index) => ({
+        name: step.name,
+        index,
+        label: step.label,
+        visible: step.visible,
+      }))
+    : stepDefinitions
+        .filter((step) => step.visible)
+        .map((step, index) => ({
+          name: step.name,
+          index,
+          label: step.label,
+          visible: step.visible,
+        }));
+
+  const steps = stepsArray.reduce(
+    (acc, step) => {
+      acc[step.name] = {
+        index: step.index,
+        name: step.name,
+        visible: step.visible,
+      };
+      return acc;
+    },
+    {} as Record<string, Step<StepKeys>>,
+  );
+
+  return { steps, stepsArray };
+}
 
 /**
  * Array of employment statuses that are allowed to proceed to the review step.
