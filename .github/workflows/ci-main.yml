@@ -109,7 +109,7 @@ jobs:
   e2e-tests:
     name: E2E Tests
     runs-on: ubuntu-latest
-    needs: [unit-tests, example-checks, deploy-remote-flows, deploy-example-app]
+    needs: [unit-tests, example-checks, deploy-remote-flows]
     steps:
       - uses: actions/checkout@v6
 
@@ -134,16 +134,10 @@ jobs:
         with:
           name: remote-flows-url
 
-      - name: Download example-app URL
-        uses: actions/download-artifact@v8
-        with:
-          name: example-app-url
-
-      - name: Set deployment URLs
-        id: set-urls
+      - name: Set deployment URL
+        id: set-url
         run: |
           echo "REMOTE_FLOWS_URL=$(cat remote-flows-url.txt)" >> $GITHUB_ENV
-          echo "EXAMPLE_APP_URL=$(cat example-app-url.txt)" >> $GITHUB_ENV
 
       - name: Run Playwright tests
         env:
@@ -160,9 +154,9 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-  deploy-production:
-    name: Deploy to Production
-    needs: [unit-tests, example-checks, e2e-tests]
+  deploy-remote-flows-production:
+    name: Deploy Remote Flows to Production
+    needs: [e2e-tests]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -177,6 +171,13 @@ jobs:
           vercel-args: '--prod'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-comment: true
+
+  deploy-example-app-production:
+    name: Deploy Example App to Production
+    needs: [unit-tests, example-checks, deploy-example-app]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
 
       - name: Promote example app to production
         uses: amondnet/vercel-action@v25
