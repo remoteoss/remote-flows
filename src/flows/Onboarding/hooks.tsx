@@ -11,8 +11,8 @@ import {
   getContractDetailsSchemaVersion,
   getBasicInformationSchemaVersion,
   reviewStepAllowedEmploymentStatus,
-  STEPS,
-  STEPS_WITHOUT_SELECT_COUNTRY,
+  buildSteps,
+  StepKeys,
 } from '@/src/flows/Onboarding/utils';
 import { prettifyFormValues } from '@/src/lib/utils';
 import {
@@ -53,12 +53,10 @@ const jsonSchemaToEmployment: Partial<
   contract_details: 'contract_details',
 };
 
-const stepToFormSchemaMap: Record<
-  keyof typeof STEPS,
-  JSONSchemaFormType | null
-> = {
+const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
   select_country: null,
   basic_information: 'employment_basic_information',
+  engagement_agreement_details: null,
   contract_details: 'contract_details',
   benefits: null,
   review: null,
@@ -147,12 +145,20 @@ export const useOnboarding = ({
       isUpdating: Boolean(employmentId),
     },
   });
-  const stepsToUse = skipSteps?.includes('select_country')
-    ? STEPS_WITHOUT_SELECT_COUNTRY
-    : STEPS;
+
+  const [includeEngagementAgreementDetails] = useState<boolean>(false);
+
+  const { steps, stepsArray } = useMemo(
+    () =>
+      buildSteps({
+        includeSelectCountry: !skipSteps?.includes('select_country'),
+        includeEngagementAgreementDetails,
+      }),
+    [includeEngagementAgreementDetails, skipSteps],
+  );
 
   const onStepChange = useCallback(
-    (step: Step<keyof typeof STEPS>) => {
+    (step: Step<StepKeys>) => {
       updateErrorContext({
         step: step.name,
       });
@@ -168,10 +174,7 @@ export const useOnboarding = ({
     nextStep,
     goToStep,
     setStepValues,
-  } = useStepState(
-    stepsToUse as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
-    onStepChange,
-  );
+  } = useStepState(steps, onStepChange);
 
   const fieldsMetaRef = useRef<{
     select_country: Meta;
@@ -446,7 +449,7 @@ export const useOnboarding = ({
   const initialValuesBenefitOffers = useMemo(() => {
     if (stepState.currentStep.name === 'benefits') {
       const benefitsFormValues = {
-        ...stepState.values?.[stepState.currentStep.name as keyof typeof STEPS], // Restore values for the current step
+        ...stepState.values?.[stepState.currentStep.name as StepKeys], // Restore values for the current step
         ...fieldValues,
       };
       return mergeWith({}, benefitOffers, benefitsFormValues);
@@ -459,10 +462,12 @@ export const useOnboarding = ({
     fieldValues,
   ]);
 
-  const stepFields: Record<keyof typeof STEPS, JSFFields> = useMemo(
+  const stepFields: Record<StepKeys, JSFFields> = useMemo(
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
+      // TODO: Fix later when we have the engagement agreement details form
+      engagement_agreement_details: [],
       contract_details: contractDetailsForm?.fields || [],
       benefits: benefitOffersSchema?.fields || [],
       review: [],
@@ -476,11 +481,13 @@ export const useOnboarding = ({
   );
 
   const stepFieldsWithFlatFieldsets: Record<
-    keyof typeof STEPS,
+    StepKeys,
     JSFFieldset | null | undefined
   > = {
     select_country: null,
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
+    // TODO: Fix later when we have the engagement agreement details form
+    engagement_agreement_details: null,
     contract_details: contractDetailsForm?.meta['x-jsf-fieldsets'],
     benefits: null,
     review: null,
@@ -638,6 +645,8 @@ export const useOnboarding = ({
         basic_information: basicInformationInitialValues,
         contract_details: contractDetailsInitialValues,
         benefits: benefitsInitialValues,
+        // TODO: Fix later when we have the engagement agreement details form
+        engagement_agreement_details: {},
         review: {},
       });
 
@@ -789,7 +798,7 @@ export const useOnboarding = ({
     nextStep();
   }
 
-  function goTo(step: keyof typeof STEPS) {
+  function goTo(step: StepKeys) {
     goToStep(step);
   }
 
@@ -959,5 +968,11 @@ export const useOnboarding = ({
      * @returns {boolean}
      */
     canInvite,
+
+    /**
+     * Steps array
+     * @returns {Array<{name: string, visible: boolean, index: number, label: string}>}
+     */
+    steps: stepsArray,
   };
 };
