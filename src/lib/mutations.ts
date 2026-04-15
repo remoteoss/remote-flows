@@ -1,13 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Meta } from '@/src/types/remoteFlows';
+import { Meta, $TSFixMe } from '@/src/types/remoteFlows';
 import { UseMutationResult } from '@tanstack/react-query';
 
 type MutationData<T> =
-  T extends UseMutationResult<infer R, any, any, any> ? R : never;
+  T extends UseMutationResult<infer R, $TSFixMe, $TSFixMe, $TSFixMe>
+    ? R
+    : never;
 type MutationVariables<T> =
-  T extends UseMutationResult<any, any, infer V, any> ? V : never;
+  T extends UseMutationResult<$TSFixMe, $TSFixMe, infer V, $TSFixMe>
+    ? V
+    : never;
 type MutationError<T> =
-  T extends UseMutationResult<any, infer E, any, any> ? E : never;
+  T extends UseMutationResult<$TSFixMe, infer E, $TSFixMe, $TSFixMe>
+    ? E
+    : never;
 
 /**
  * Unwraps the .data property from the response type
@@ -39,7 +44,7 @@ type PromiseResult<D, E> = SuccessResponse<D> | ErrorResponse<E>;
  * @param error - The error response object
  * @returns Array of field errors with field name and messages
  */
-export function extractFieldErrors(error: any): FieldError[] {
+export function extractFieldErrors(error: $TSFixMe): FieldError[] {
   const errors = error.error || error;
   if (!errors || !errors.errors || typeof errors.errors !== 'object') return [];
 
@@ -49,7 +54,7 @@ export function extractFieldErrors(error: any): FieldError[] {
     if (Array.isArray(value)) {
       fieldErrors.push({
         field: key,
-        messages: value.map((msg: any) => String(msg)),
+        messages: value.map((msg: $TSFixMe) => String(msg)),
       });
       return;
     }
@@ -58,7 +63,7 @@ export function extractFieldErrors(error: any): FieldError[] {
         if (Array.isArray(nestedValue)) {
           fieldErrors.push({
             field: nestedKey,
-            messages: nestedValue.map((msg: any) => String(msg)),
+            messages: nestedValue.map((msg: $TSFixMe) => String(msg)),
           });
         }
       });
@@ -76,7 +81,7 @@ export function extractFieldErrors(error: any): FieldError[] {
  * @returns
  */
 export function mutationToPromise<
-  T extends UseMutationResult<any, any, any, any>,
+  T extends UseMutationResult<$TSFixMe, $TSFixMe, $TSFixMe, $TSFixMe>,
 >(mutation: T) {
   type Data = MutationData<T>;
   type Variables = MutationVariables<T>;

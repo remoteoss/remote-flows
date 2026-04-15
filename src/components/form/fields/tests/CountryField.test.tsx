@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import {
   act,
@@ -10,7 +9,7 @@ import {
 import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { CountryField } from '../CountryField';
-import { JSFField } from '@/src/types/remoteFlows';
+import { JSFField, $TSFixMe } from '@/src/types/remoteFlows';
 import { CountryFieldDefault } from '@/src/components/form/fields/default/CountryFieldDefault';
 
 // Mock dependencies
@@ -20,7 +19,7 @@ type CountryFieldProps = JSFField & {
   placeholder?: string;
   options: Array<{ value: string; label: string }>;
   className?: string;
-  onChange?: (value: any) => void;
+  onChange?: (value: $TSFixMe) => void;
   $meta: {
     regions: Record<string, string[]>;
     subregions: Record<string, string[]>;
@@ -74,7 +73,7 @@ describe('CountryField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockImplementation(() => ({
+    (useFormFields as $TSFixMe).mockImplementation(() => ({
       components: {
         countries: CountryFieldDefault,
       },
@@ -109,7 +108,7 @@ describe('CountryField Component', () => {
         <div data-testid='custom-select-field'>Custom Select Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { countries: CustomSelectField },
     });
 
@@ -126,7 +125,7 @@ describe('CountryField Component', () => {
         <div data-testid='custom-select-field'>Custom Select Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { countries: CustomSelectField },
     });
 
@@ -155,7 +154,7 @@ describe('CountryField Component', () => {
       );
     });
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { countries: CustomSelectField },
     });
 
@@ -232,12 +231,12 @@ describe('CountryField Component', () => {
         <div data-testid='prop-country-field'>Prop Country Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { countries: CustomCountryFieldFromContext },
     });
 
     renderWithFormContext({
-      ...(defaultProps as any),
+      ...(defaultProps as $TSFixMe),
       onChange: mockOnChange,
       component: CustomCountryFieldProp,
     });

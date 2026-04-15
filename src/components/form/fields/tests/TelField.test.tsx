@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -6,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { object, string } from 'yup';
 import { TelField, TelFieldDataProps } from '../TelField';
 import { TelFieldDefault } from '../default/TelFieldDefault';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 vi.mock('@/src/context', () => ({
@@ -114,7 +114,7 @@ describe('TelField Component - Split UI', () => {
 
   const renderWithFormContext = (
     props: TelFieldDataProps,
-    defaultValues?: any,
+    defaultValues?: $TSFixMe,
   ) => {
     const TestComponent = () => {
       const methods = useForm({
@@ -137,7 +137,7 @@ describe('TelField Component - Split UI', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { tel: TelFieldDefault },
     });
   });

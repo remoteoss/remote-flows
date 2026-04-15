@@ -52,7 +52,7 @@ export type OnboardingRenderProps = {
   };
 };
 
-type OnboardingFeatures = 'onboarding_reserves';
+type OnboardingFeatures = 'onboarding_reserves' | 'dynamic_steps';
 
 /**
  * JSON schema version configuration for a specific country
@@ -150,7 +150,8 @@ export type OnboardingFlowProps = {
     /**
      * The features to use for the onboarding.
      * This is used to enable or disable features for the onboarding.
-     * Currently only supports enabling the onboarding reserves feature.
+     * - 'onboarding_reserves': Enable onboarding reserves feature
+     * - 'dynamic_steps': Enable dynamic step generation with visibility control (opt-in, will be default in next major version)
      */
     features?: OnboardingFeatures[];
   };

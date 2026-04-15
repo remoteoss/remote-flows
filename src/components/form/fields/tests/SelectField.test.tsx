@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
@@ -6,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { string } from 'yup';
 import { SelectField } from '../SelectField';
 import { SelectFieldDefault } from '@/src/components/form/fields/default/SelectFieldDefault';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type SelectFieldProps = React.ComponentProps<typeof SelectField>;
 
@@ -53,7 +53,7 @@ describe('SelectField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: {
         select: SelectFieldDefault,
       },
@@ -93,7 +93,7 @@ describe('SelectField Component', () => {
         <div data-testid='custom-select-field'>Custom Select Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { select: CustomSelectField },
     });
 
@@ -110,7 +110,7 @@ describe('SelectField Component', () => {
         <div data-testid='custom-select-field'>Custom Select Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { select: CustomSelectField },
     });
 
@@ -139,7 +139,7 @@ describe('SelectField Component', () => {
       );
     });
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { select: CustomSelectField },
     });
 
@@ -163,7 +163,7 @@ describe('SelectField Component', () => {
         <div data-testid='prop-select-field'>Prop Select Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { select: CustomSelectFieldFromContext },
     });
 
@@ -234,7 +234,7 @@ describe('SelectField Component', () => {
         );
       });
 
-      (useFormFields as any).mockReturnValue({
+      (useFormFields as $TSFixMe).mockReturnValue({
         components: { select: CustomSelectField },
       });
 
@@ -273,7 +273,7 @@ describe('SelectField Component', () => {
         );
       });
 
-      (useFormFields as any).mockReturnValue({
+      (useFormFields as $TSFixMe).mockReturnValue({
         components: { select: CustomSelectField },
       });
 

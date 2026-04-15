@@ -16,8 +16,7 @@ class MockPointerEvent extends Event {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-window.PointerEvent = MockPointerEvent as any;
+window.PointerEvent = MockPointerEvent as $TSFixMe;
 window.HTMLElement.prototype.scrollIntoView = vi.fn();
 window.HTMLElement.prototype.releasePointerCapture = vi.fn();
 window.HTMLElement.prototype.hasPointerCapture = vi.fn();

@@ -1,4 +1,5 @@
 import { SupportedTypes } from '../components/form/fields/types';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type ParsedRadioValues = Record<string, unknown>;
 
@@ -33,8 +34,7 @@ export function parseFormRadioValues(
 }
 
 export function findFieldsByType(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fields: Record<string, any>,
+  fields: Record<string, $TSFixMe>,
   type: SupportedTypes,
 ) {
   const fieldsNames = [];

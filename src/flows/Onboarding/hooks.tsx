@@ -150,6 +150,7 @@ export const useOnboarding = ({
     },
   });
 
+<<<<<<< HEAD
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
@@ -171,13 +172,16 @@ export const useOnboarding = ({
     queryParams: { exclude_files: true },
   });
 
+  const useDynamicSteps = options?.features?.includes('dynamic_steps') ?? false;
+
   const { steps, stepsArray } = useMemo(
     () =>
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
         includeEngagementAgreementDetails,
+        useDynamicSteps
       }),
-    [includeEngagementAgreementDetails, skipSteps],
+    [includeEngagementAgreementDetails, skipSteps, useDynamicSteps],
   );
 
   const onStepChange = useCallback(
@@ -503,7 +507,7 @@ export const useOnboarding = ({
   const initialValuesBenefitOffers = useMemo(() => {
     if (stepState.currentStep.name === 'benefits') {
       const benefitsFormValues = {
-        ...stepState.values?.[stepState.currentStep.name as StepKeys],
+        ...stepState.values?.[stepState.currentStep.name as StepKeys], // Restore values for the current step
         ...fieldValues,
       };
       return mergeWith({}, benefitOffers, benefitsFormValues);
@@ -722,6 +726,8 @@ export const useOnboarding = ({
         engagement_agreement_details: engagementAgreementDetailsInitialValues,
         contract_details: contractDetailsInitialValues,
         benefits: benefitsInitialValues,
+        // TODO: Fix later when we have the engagement agreement details form
+        engagement_agreement_details: {},
         review: {},
       });
 
@@ -1079,7 +1085,17 @@ export const useOnboarding = ({
     canInvite,
 
     /**
+<<<<<<< HEAD
      * Steps array
+=======
+     * Steps array for dynamic step navigation
+     * When 'dynamic_steps' feature is enabled:
+     * - Returns all steps including hidden ones with their original indices
+     * - Consumers must filter by `visible` property
+     * When disabled (default):
+     * - Returns only visible steps with sequential indices
+     * - Maintains backwards compatibility with existing implementations
+>>>>>>> main
      * @returns {Array<{name: string, visible: boolean, index: number, label: string}>}
      */
     steps: stepsArray,

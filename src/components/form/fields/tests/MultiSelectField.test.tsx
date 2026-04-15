@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormFields } from '@/src/context';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
@@ -6,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { array } from 'yup';
 import { MultiSelectField } from '../MultiSelectField';
 import { MultiSelectFieldDefault } from '@/src/components/form/fields/default/MultiSelectFieldDefault';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type MultiSelectFieldProps = React.ComponentProps<typeof MultiSelectField>;
 
@@ -41,7 +41,7 @@ describe('MultiSelectField Component', () => {
   // Helper function to render the component with a form context
   const renderWithFormContext = (
     props: MultiSelectFieldProps,
-    defaultValues?: any,
+    defaultValues?: $TSFixMe,
   ) => {
     const TestComponent = () => {
       const methods = useForm({
@@ -59,7 +59,7 @@ describe('MultiSelectField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: {
         'multi-select': MultiSelectFieldDefault,
       },
@@ -173,7 +173,7 @@ describe('MultiSelectField Component', () => {
         </div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { 'multi-select': CustomMultiSelectField },
     });
 
@@ -192,7 +192,7 @@ describe('MultiSelectField Component', () => {
         </div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { 'multi-select': CustomMultiSelectField },
     });
 
@@ -222,7 +222,7 @@ describe('MultiSelectField Component', () => {
       );
     });
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { 'multi-select': CustomMultiSelectField },
     });
 
@@ -248,7 +248,7 @@ describe('MultiSelectField Component', () => {
         <div data-testid='prop-multi-select-field'>Prop Multi-Select Field</div>
       ));
 
-    (useFormFields as any).mockReturnValue({
+    (useFormFields as $TSFixMe).mockReturnValue({
       components: { 'multi-select': CustomMultiSelectFieldFromContext },
     });
 
