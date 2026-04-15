@@ -27,9 +27,13 @@ jobs:
         working-directory: ./example
         run: npm ci --include=optional --ignore-scripts
 
-      - name: Lint and type-check example app
+      - name: Lint example app
         working-directory: ./example
-        run: npm run lint && npm run type-check
+        run: npm run lint
+
+      - name: Type-check example app
+        working-directory: ./example
+        run: npm run type-check
 
   deploy-remote-flows:
     name: Deploy Remote Flows Preview
