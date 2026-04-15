@@ -206,7 +206,8 @@ jobs:
 
   deploy-remote-flows-production:
     name: Deploy Remote Flows to Production
-    needs: [lint-and-format, build-and-exports, tests, example-checks, e2e-tests]
+    needs:
+      [lint-and-format, build-and-exports, tests, example-checks, e2e-tests]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -224,7 +225,14 @@ jobs:
 
   deploy-example-app-production:
     name: Deploy Example App to Production
-    needs: [lint-and-format, build-and-exports, tests, example-checks, deploy-example-app]
+    needs:
+      [
+        lint-and-format,
+        build-and-exports,
+        tests,
+        example-checks,
+        deploy-example-app,
+      ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
