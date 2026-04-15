@@ -7,8 +7,8 @@ on:
       - release/*
 
 jobs:
-  checks-and-tests:
-    name: Checks and Tests
+  lint-and-format:
+    name: Lint and Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -21,8 +21,48 @@ jobs:
       - name: Install dependencies
         run: npm ci --include=optional --ignore-scripts
 
-      - name: Run checks
-        run: npm run build && npm run check-format && npm run check-exports && npm run lint && npm run type-check
+      - name: Run format check
+        run: npm run check-format
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run type check
+        run: npm run type-check
+
+  build-and-exports:
+    name: Build and Check Exports
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24.14.1'
+
+      - name: Install dependencies
+        run: npm ci --include=optional --ignore-scripts
+
+      - name: Build
+        run: npm run build
+
+      - name: Check exports
+        run: npm run check-exports
+
+  tests:
+    name: Tests with Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24.14.1'
+
+      - name: Install dependencies
+        run: npm ci --include=optional --ignore-scripts
 
       - name: Run tests with coverage
         run: npm run test:coverage
@@ -137,7 +177,7 @@ jobs:
   coverage-compare:
     name: Compare Coverage
     runs-on: ubuntu-latest
-    needs: [checks-and-tests, base-coverage]
+    needs: [tests, base-coverage]
     permissions:
       contents: read
       pull-requests: write
@@ -290,7 +330,9 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       [
-        checks-and-tests,
+        lint-and-format,
+        build-and-exports,
+        tests,
         example-checks,
         deploy-remote-flows,
         deploy-example-app,
