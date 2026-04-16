@@ -5,7 +5,6 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { JSFCustomComponentProps } from '@/src/types/remoteFlows';
 import { StatementComponentProps } from '@/src/types/fields';
 
-// Mock statement component
 const MockStatement = ({ data }: StatementComponentProps) => (
   <div data-testid='mock-statement' data-severity={data.severity}>
     {data.title && <div data-testid='statement-title'>{data.title}</div>}
@@ -21,15 +20,19 @@ vi.mock('@/src/context', () => ({
   })),
 }));
 
-// Mock custom component that uses setValue
-const CustomToggle = ({ setValue, options }: JSFCustomComponentProps) => {
+const CustomToggle = ({
+  setValue,
+  value,
+  options,
+}: JSFCustomComponentProps) => {
   return (
-    <div data-testid='custom-toggle'>
+    <div data-testid='custom-toggle' data-value={value || ''}>
       {options?.map((option) => (
         <button
           key={option.value}
           data-testid={`toggle-${option.value}`}
           onClick={() => setValue(option.value)}
+          aria-pressed={value === option.value}
         >
           {option.label}
         </button>
@@ -38,333 +41,212 @@ const CustomToggle = ({ setValue, options }: JSFCustomComponentProps) => {
   );
 };
 
-describe('Custom JSF Component with setValue', () => {
-  it('should update form value when custom component calls setValue', async () => {
-    const user = userEvent.setup();
+const CustomValueDisplay = ({ value }: JSFCustomComponentProps) => (
+  <div data-testid='value-display'>{value || 'empty'}</div>
+);
 
-    const TestComponent = () => {
-      const methods = useForm({
-        defaultValues: { payment_type: '' },
+const createToggleField = (overrides = {}) => ({
+  name: 'payment_type',
+  label: 'Payment Type',
+  Component: CustomToggle,
+  options: [
+    { value: 'monthly', label: 'Monthly' },
+    { value: 'weekly', label: 'Weekly' },
+  ],
+  ...overrides,
+});
+
+const createFieldsetField = (innerField: Record<string, unknown>) => ({
+  name: 'payment_info',
+  label: 'Payment Information',
+  description: 'Payment details',
+  inputType: 'fieldset' as const,
+  type: 'fieldset' as const,
+  fields: [
+    {
+      ...innerField,
+      inputType: 'text' as const,
+      type: 'text' as const,
+    },
+  ],
+  isFlatFieldset: false,
+  variant: 'outset' as const,
+});
+
+const renderWithForm = (
+  fields: Array<Record<string, unknown>>,
+  defaultValues: Record<string, unknown> = {},
+) => {
+  const TestComponent = () => {
+    const methods = useForm({ defaultValues });
+    return (
+      <FormProvider {...methods}>
+        <JSONSchemaFormFields fields={fields} />
+        <div data-testid='form-value'>{JSON.stringify(methods.watch())}</div>
+      </FormProvider>
+    );
+  };
+  return render(<TestComponent />);
+};
+
+describe('Custom JSF Component', () => {
+  describe.each([
+    {
+      context: 'at root level',
+      defaultValues: { payment_type: '' },
+      createFields: (field: Record<string, unknown>) => [field],
+    },
+    {
+      context: 'inside fieldset',
+      defaultValues: { payment_info: { payment_type: '' } },
+      createFields: (field: Record<string, unknown>) => [
+        createFieldsetField(field),
+      ],
+    },
+  ])('setValue $context', ({ defaultValues, createFields }) => {
+    it('should update form value when called', async () => {
+      const user = userEvent.setup();
+      const fields = createFields(createToggleField());
+
+      renderWithForm(fields, defaultValues);
+
+      expect(screen.getByTestId('custom-toggle')).toBeInTheDocument();
+
+      await user.click(screen.getByTestId('toggle-monthly'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('form-value')).toHaveTextContent('monthly');
       });
 
-      const fields = [
-        {
-          name: 'payment_type',
-          label: 'Payment Type',
-          Component: CustomToggle,
-          options: [
-            { value: 'monthly', label: 'Monthly' },
-            { value: 'weekly', label: 'Weekly' },
-          ],
-        },
-      ];
+      await user.click(screen.getByTestId('toggle-weekly'));
 
-      return (
-        <FormProvider {...methods}>
-          <JSONSchemaFormFields fields={fields} />
-          <div data-testid='form-value'>{methods.watch('payment_type')}</div>
-        </FormProvider>
-      );
-    };
-
-    render(<TestComponent />);
-
-    // Custom component should render
-    expect(screen.getByTestId('custom-toggle')).toBeInTheDocument();
-
-    // Initially empty
-    expect(screen.getByTestId('form-value')).toHaveTextContent('');
-
-    // Click the monthly button
-    await user.click(screen.getByTestId('toggle-monthly'));
-
-    // Form value should update
-    await waitFor(() => {
-      expect(screen.getByTestId('form-value')).toHaveTextContent('monthly');
-    });
-
-    // Click the weekly button
-    await user.click(screen.getByTestId('toggle-weekly'));
-
-    // Form value should update again
-    await waitFor(() => {
-      expect(screen.getByTestId('form-value')).toHaveTextContent('weekly');
-    });
-  });
-
-  it('should update form value when custom component calls setValue inside a fieldset', async () => {
-    const user = userEvent.setup();
-
-    const TestComponent = () => {
-      const methods = useForm({
-        defaultValues: { payment_info: { payment_type: '' } },
+      await waitFor(() => {
+        expect(screen.getByTestId('form-value')).toHaveTextContent('weekly');
       });
-
-      const fields = [
-        {
-          name: 'payment_info',
-          label: 'Payment Information',
-          description: 'Payment details',
-          inputType: 'fieldset' as const,
-          type: 'fieldset' as const,
-          fields: [
-            {
-              name: 'payment_type',
-              label: 'Payment Type',
-              Component: CustomToggle,
-              options: [
-                { value: 'monthly', label: 'Monthly' },
-                { value: 'weekly', label: 'Weekly' },
-              ],
-              inputType: 'text' as const,
-              type: 'text' as const,
-            },
-          ],
-          isFlatFieldset: false,
-          variant: 'outset' as const,
-        },
-      ];
-
-      return (
-        <FormProvider {...methods}>
-          <JSONSchemaFormFields fields={fields} />
-          <div data-testid='form-value'>
-            {methods.watch('payment_info.payment_type')}
-          </div>
-        </FormProvider>
-      );
-    };
-
-    render(<TestComponent />);
-
-    // Custom component should render inside fieldset
-    expect(screen.getByTestId('custom-toggle')).toBeInTheDocument();
-
-    // Initially empty
-    expect(screen.getByTestId('form-value')).toHaveTextContent('');
-
-    // Click the monthly button
-    await user.click(screen.getByTestId('toggle-monthly'));
-
-    // Form value should update with nested path
-    await waitFor(() => {
-      expect(screen.getByTestId('form-value')).toHaveTextContent('monthly');
-    });
-
-    // Click the weekly button
-    await user.click(screen.getByTestId('toggle-weekly'));
-
-    // Form value should update again
-    await waitFor(() => {
-      expect(screen.getByTestId('form-value')).toHaveTextContent('weekly');
     });
   });
 
-  it('should render statement prop alongside custom component', () => {
-    const TestComponent = () => {
-      const methods = useForm({
-        defaultValues: { payment_type: '' },
+  describe('value prop', () => {
+    it('should pass initial value to custom component', () => {
+      const field = createToggleField({
+        Component: CustomValueDisplay,
       });
 
-      const fields = [
-        {
-          name: 'payment_type',
-          label: 'Payment Type',
-          Component: CustomToggle,
-          options: [
-            { value: 'monthly', label: 'Monthly' },
-            { value: 'weekly', label: 'Weekly' },
-          ],
-          statement: {
-            title: 'Important Notice',
-            description: 'Please select your preferred payment frequency.',
-            severity: 'info',
-          },
-        },
-      ];
+      renderWithForm([field], { payment_type: 'monthly' });
 
-      return (
-        <FormProvider {...methods}>
-          <JSONSchemaFormFields fields={fields} />
-        </FormProvider>
-      );
-    };
+      expect(screen.getByTestId('value-display')).toHaveTextContent('monthly');
+    });
 
-    render(<TestComponent />);
-
-    // Custom component should render
-    expect(screen.getByTestId('custom-toggle')).toBeInTheDocument();
-
-    // Statement should render alongside the custom component
-    expect(screen.getByTestId('mock-statement')).toBeInTheDocument();
-    expect(screen.getByTestId('statement-title')).toHaveTextContent(
-      'Important Notice',
-    );
-    expect(screen.getByTestId('statement-description')).toHaveTextContent(
-      'Please select your preferred payment frequency.',
-    );
-    expect(screen.getByTestId('mock-statement')).toHaveAttribute(
-      'data-severity',
-      'info',
-    );
-  });
-
-  it('should render extra prop alongside custom component', () => {
-    const ExtraContent = () => (
-      <div data-testid='extra-content'>Additional info here</div>
-    );
-
-    const TestComponent = () => {
-      const methods = useForm({
-        defaultValues: { payment_type: '' },
+    it('should pass empty value when no default', () => {
+      const field = createToggleField({
+        Component: CustomValueDisplay,
       });
 
-      const fields = [
-        {
-          name: 'payment_type',
-          label: 'Payment Type',
-          Component: CustomToggle,
-          options: [
-            { value: 'monthly', label: 'Monthly' },
-            { value: 'weekly', label: 'Weekly' },
-          ],
-          extra: <ExtraContent />,
-        },
-      ];
+      renderWithForm([field], { payment_type: '' });
 
-      return (
-        <FormProvider {...methods}>
-          <JSONSchemaFormFields fields={fields} />
-        </FormProvider>
+      expect(screen.getByTestId('value-display')).toHaveTextContent('empty');
+    });
+
+    it('should update value prop when form changes', async () => {
+      const user = userEvent.setup();
+      const field = createToggleField();
+
+      renderWithForm([field], { payment_type: '' });
+
+      expect(screen.getByTestId('custom-toggle')).toHaveAttribute(
+        'data-value',
+        '',
       );
-    };
 
-    render(<TestComponent />);
+      await user.click(screen.getByTestId('toggle-monthly'));
 
-    // Custom component should render
-    expect(screen.getByTestId('custom-toggle')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByTestId('custom-toggle')).toHaveAttribute(
+          'data-value',
+          'monthly',
+        );
+      });
+    });
 
-    // Extra content should render alongside the custom component
-    expect(screen.getByTestId('extra-content')).toBeInTheDocument();
-    expect(screen.getByTestId('extra-content')).toHaveTextContent(
-      'Additional info here',
-    );
+    it('should reflect value in aria-pressed', async () => {
+      const user = userEvent.setup();
+      const field = createToggleField();
+
+      renderWithForm([field], { payment_type: 'weekly' });
+
+      expect(screen.getByTestId('toggle-weekly')).toHaveAttribute(
+        'aria-pressed',
+        'true',
+      );
+      expect(screen.getByTestId('toggle-monthly')).toHaveAttribute(
+        'aria-pressed',
+        'false',
+      );
+
+      await user.click(screen.getByTestId('toggle-monthly'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('toggle-monthly')).toHaveAttribute(
+          'aria-pressed',
+          'true',
+        );
+      });
+    });
   });
 
-  it('should render statement prop alongside custom component inside fieldset', () => {
-    const TestComponent = () => {
-      const methods = useForm({
-        defaultValues: { payment_info: { payment_type: '' } },
+  describe.each([
+    {
+      prop: 'statement',
+      config: {
+        title: 'Important Notice',
+        description: 'Please select your preferred payment frequency.',
+        severity: 'info',
+      },
+      verify: () => {
+        expect(screen.getByTestId('mock-statement')).toBeInTheDocument();
+        expect(screen.getByTestId('statement-title')).toHaveTextContent(
+          'Important Notice',
+        );
+        expect(screen.getByTestId('statement-description')).toHaveTextContent(
+          'Please select your preferred payment frequency.',
+        );
+        expect(screen.getByTestId('mock-statement')).toHaveAttribute(
+          'data-severity',
+          'info',
+        );
+      },
+    },
+    {
+      prop: 'extra',
+      config: <div data-testid='extra-content'>Additional info here</div>,
+      verify: () => {
+        expect(screen.getByTestId('extra-content')).toBeInTheDocument();
+        expect(screen.getByTestId('extra-content')).toHaveTextContent(
+          'Additional info here',
+        );
+      },
+    },
+  ])(
+    'rendering $prop alongside custom component',
+    ({ prop, config, verify }) => {
+      it('should render at root level', () => {
+        const field = createToggleField({ [prop]: config });
+
+        renderWithForm([field], { payment_type: '' });
+
+        expect(screen.getByTestId('custom-toggle')).toBeInTheDocument();
+        verify();
       });
 
-      const fields = [
-        {
-          name: 'payment_info',
-          label: 'Payment Information',
-          description: 'Payment details',
-          inputType: 'fieldset' as const,
-          type: 'fieldset' as const,
-          fields: [
-            {
-              name: 'payment_type',
-              label: 'Payment Type',
-              Component: CustomToggle,
-              options: [
-                { value: 'monthly', label: 'Monthly' },
-                { value: 'weekly', label: 'Weekly' },
-              ],
-              inputType: 'text' as const,
-              type: 'text' as const,
-              statement: {
-                title: 'Fieldset Statement Title',
-                description: 'This statement is inside a fieldset.',
-                severity: 'warning',
-              },
-            },
-          ],
-          isFlatFieldset: false,
-          variant: 'outset' as const,
-        },
-      ];
+      it('should render inside fieldset', () => {
+        const field = createToggleField({ [prop]: config });
+        const fields = [createFieldsetField(field)];
 
-      return (
-        <FormProvider {...methods}>
-          <JSONSchemaFormFields fields={fields} />
-        </FormProvider>
-      );
-    };
+        renderWithForm(fields, { payment_info: { payment_type: '' } });
 
-    render(<TestComponent />);
-
-    // Custom component should render inside fieldset
-    expect(screen.getByTestId('custom-toggle')).toBeInTheDocument();
-
-    // Statement should render alongside the custom component inside fieldset
-    expect(screen.getByTestId('mock-statement')).toBeInTheDocument();
-    expect(screen.getByTestId('statement-title')).toHaveTextContent(
-      'Fieldset Statement Title',
-    );
-    expect(screen.getByTestId('statement-description')).toHaveTextContent(
-      'This statement is inside a fieldset.',
-    );
-    expect(screen.getByTestId('mock-statement')).toHaveAttribute(
-      'data-severity',
-      'warning',
-    );
-  });
-
-  it('should render extra prop alongside custom component inside fieldset', () => {
-    const ExtraContent = () => (
-      <div data-testid='fieldset-extra'>Fieldset extra content</div>
-    );
-
-    const TestComponent = () => {
-      const methods = useForm({
-        defaultValues: { payment_info: { payment_type: '' } },
+        expect(screen.getByTestId('custom-toggle')).toBeInTheDocument();
+        verify();
       });
-
-      const fields = [
-        {
-          name: 'payment_info',
-          label: 'Payment Information',
-          description: 'Payment details',
-          inputType: 'fieldset' as const,
-          type: 'fieldset' as const,
-          fields: [
-            {
-              name: 'payment_type',
-              label: 'Payment Type',
-              Component: CustomToggle,
-              options: [
-                { value: 'monthly', label: 'Monthly' },
-                { value: 'weekly', label: 'Weekly' },
-              ],
-              inputType: 'text' as const,
-              type: 'text' as const,
-              extra: <ExtraContent />,
-            },
-          ],
-          isFlatFieldset: false,
-          variant: 'outset' as const,
-        },
-      ];
-
-      return (
-        <FormProvider {...methods}>
-          <JSONSchemaFormFields fields={fields} />
-        </FormProvider>
-      );
-    };
-
-    render(<TestComponent />);
-
-    // Custom component should render inside fieldset
-    expect(screen.getByTestId('custom-toggle')).toBeInTheDocument();
-
-    // Extra content should render alongside the custom component inside fieldset
-    expect(screen.getByTestId('fieldset-extra')).toBeInTheDocument();
-    expect(screen.getByTestId('fieldset-extra')).toHaveTextContent(
-      'Fieldset extra content',
-    );
-  });
+    },
+  );
 });
