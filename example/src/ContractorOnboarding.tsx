@@ -113,7 +113,7 @@ const PricingPlanCards = ({
 const Switcher = (props: JSFCustomComponentProps) => {
   return (
     <Tabs
-      defaultValue={props.value || ''}
+      value={props.value || ''}
       onValueChange={(value) => {
         props.setValue(value);
       }}

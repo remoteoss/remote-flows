@@ -1,5 +1,6 @@
 import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
 import { useEffect, useRef } from 'react';
+import equal from 'fast-deep-equal';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
@@ -27,9 +28,7 @@ export function useJSONSchemaForm({
   // Watch form changes and trigger checkFieldUpdates
   useEffect(() => {
     const subscription = form?.watch((values) => {
-      const hasChanged = Object.keys(values).some(
-        (key) => values[key] !== prevValuesRef.current[key],
-      );
+      const hasChanged = !equal(values, prevValuesRef.current);
       if (hasChanged) {
         checkFieldUpdates(values);
         prevValuesRef.current = JSON.parse(JSON.stringify(values));
