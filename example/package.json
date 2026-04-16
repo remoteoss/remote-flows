@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "commonjs",
   "scripts": {
+    "audit": "npm audit --audit-level=high",
     "dev": "nodemon ./dev_server.js",
     "build": "tsc -b && vite build",
     "lint": "oxlint .",
