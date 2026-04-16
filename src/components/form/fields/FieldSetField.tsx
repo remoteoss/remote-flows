@@ -282,6 +282,7 @@ export function FieldSetField({
                     key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
                   >
                     <Component
+                      {...field}
                       value={
                         watch(
                           `${isFlatFieldset ? field.name : `${name}.${field.name}`}`,
@@ -293,7 +294,6 @@ export function FieldSetField({
                           value,
                         );
                       }}
-                      {...field}
                     />
                     {field.statement ? (
                       <Statement

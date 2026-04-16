@@ -90,9 +90,9 @@ export const JSONSchemaFormFields = ({
           return wrapWithCustomWrapper(
             <>
               <Component
+                {...fieldProps}
                 value={watch(field.name) as string}
                 setValue={(value: unknown) => setValue(field.name, value)}
-                {...fieldProps}
               />
               {field.statement ? (
                 <Statement
