@@ -1,9 +1,7 @@
-import { useEffect, useRef } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
 import { $TSFixMe, JSFFields } from '@/src/types/remoteFlows';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
-import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
 import { BasicInformationFormPayload } from '@/src/flows/Onboarding/types';
 import { Components } from '@/src/types/remoteFlows';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
@@ -13,6 +11,7 @@ import {
   ContractorOnboardingContractDetailsFormPayload,
 } from '@/src/flows/ContractorOnboarding/types';
 import { normalizeFieldErrors } from '@/src/lib/mutations';
+import { useJsonSchemaForm } from '@/src/components/form/useJSONSchemaForm';
 
 type ContractorOnboardingFormProps = {
   onSubmit: (
@@ -34,17 +33,11 @@ export function ContractorOnboardingForm({
 }: ContractorOnboardingFormProps) {
   const { formId, contractorOnboardingBag, formRef } =
     useContractorOnboardingContext();
-  const prevValuesRef = useRef(defaultValues);
 
-  const resolver = useJsonSchemasValidationFormResolver(
-    contractorOnboardingBag.handleValidation,
-  );
-
-  const form = useForm({
-    resolver,
+  const form = useJsonSchemaForm({
+    handleValidation: contractorOnboardingBag.handleValidation,
     defaultValues,
-    shouldUnregister: false,
-    mode: 'onBlur',
+    checkFieldUpdates: contractorOnboardingBag.checkFieldUpdates,
   });
 
   // Register the form's setValue method with the context so other components can access it
@@ -60,20 +53,6 @@ export function ContractorOnboardingForm({
     if (contractorOnboardingBag.employmentId) {
       contractorOnboardingBag?.checkFieldUpdates(form.getValues());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    const subscription = form?.watch((values) => {
-      const hasChanged = Object.keys(values).some(
-        (key) => values[key] !== prevValuesRef.current[key],
-      );
-      if (hasChanged) {
-        contractorOnboardingBag?.checkFieldUpdates(values);
-        prevValuesRef.current = JSON.parse(JSON.stringify(values));
-      }
-    });
-    return () => subscription?.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
