@@ -11,7 +11,7 @@ import {
   ContractorOnboardingContractDetailsFormPayload,
 } from '@/src/flows/ContractorOnboarding/types';
 import { normalizeFieldErrors } from '@/src/lib/mutations';
-import { useJsonSchemaForm } from '@/src/components/form/useJSONSchemaForm';
+import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
 
 type ContractorOnboardingFormProps = {
   onSubmit: (
@@ -34,7 +34,7 @@ export function ContractorOnboardingForm({
   const { formId, contractorOnboardingBag, formRef } =
     useContractorOnboardingContext();
 
-  const form = useJsonSchemaForm({
+  const form = useJSONSchemaForm({
     handleValidation: contractorOnboardingBag.handleValidation,
     defaultValues,
     checkFieldUpdates: contractorOnboardingBag.checkFieldUpdates,

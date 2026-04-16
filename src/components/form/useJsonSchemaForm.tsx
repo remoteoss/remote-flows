@@ -10,7 +10,7 @@ type UseJsonSchemaFormOptions = {
   checkFieldUpdates: (values: FieldValues) => void;
   initialValues?: Record<string, unknown>;
 };
-export function useJsonSchemaForm({
+export function useJSONSchemaForm({
   handleValidation,
   defaultValues,
   checkFieldUpdates,
