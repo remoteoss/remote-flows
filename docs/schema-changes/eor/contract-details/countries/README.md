@@ -47,7 +47,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | -------------------- | ---- | ---------------- | ------------ |
 | United Arab Emirates | ARE  | v3               | March 2026   |
 | Belarus              | BLR  | v2               | March 2026   |
-| China                | CHN  | v2               | March 2026   |
+| China                | CHN  | v3               | March 2026   |
 | Switzerland          | CHE  | v2               | March 2026   |
 | Czech Republic       | CZE  | v2               | March 2026   |
 | Hong Kong            | HKG  | v2               | March 2026   |
