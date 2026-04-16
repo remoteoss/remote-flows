@@ -117,7 +117,7 @@ jobs:
           echo "${{ steps.vercel-remote-flows.outputs.preview-url }}" > remote-flows-url.txt
 
       - name: Upload deployment URL
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: remote-flows-url
           path: remote-flows-url.txt
@@ -144,7 +144,7 @@ jobs:
           echo "${{ steps.vercel-example-app.outputs.preview-url }}" > example-app-url.txt
 
       - name: Upload deployment URL
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: example-app-url
           path: example-app-url.txt
@@ -197,7 +197,7 @@ jobs:
         working-directory: ./example
         run: npx playwright test --project=chromium
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
