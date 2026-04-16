@@ -236,4 +236,6 @@ type MetaValues = {
   desiredCurrency?: string;
 };
 
-export type Meta = Record<string, MetaValues>;
+export interface Meta {
+  [key: string]: MetaValues | Meta;
+}

@@ -1,5 +1,99 @@
-import { ErrorResponse, mutationToPromise } from '@/src/lib/mutations';
-import { $TSFixMe } from '@/src/types/remoteFlows';
+import {
+  ErrorResponse,
+  mutationToPromise,
+  normalizeFieldErrors,
+  FieldError,
+} from '@/src/lib/mutations';
+import { $TSFixMe, Meta } from '@/src/types/remoteFlows';
+
+describe('normalizeFieldErrors', () => {
+  it('should return empty array when no errors', () => {
+    expect(normalizeFieldErrors([])).toEqual([]);
+  });
+
+  it('should use field name when no meta provided', () => {
+    const fieldErrors: FieldError[] = [
+      { field: 'email', messages: ['Email is required'] },
+    ];
+
+    const result = normalizeFieldErrors(fieldErrors);
+
+    expect(result).toEqual([
+      {
+        field: 'email',
+        messages: ['Email is required'],
+        userFriendlyLabel: 'email',
+      },
+    ]);
+  });
+
+  it('should use label from meta when available', () => {
+    const fieldErrors: FieldError[] = [
+      { field: 'email', messages: ['Email is required'] },
+    ];
+    const meta: Meta = { email: { label: 'Email Address' } };
+
+    const result = normalizeFieldErrors(fieldErrors, meta);
+
+    expect(result).toEqual([
+      {
+        field: 'email',
+        messages: ['Email is required'],
+        userFriendlyLabel: 'Email Address',
+      },
+    ]);
+  });
+
+  it('should handle one level nested field with slash notation', () => {
+    const fieldErrors: FieldError[] = [
+      {
+        field: 'service_duration/expiration_date',
+        messages: ['date must be after start date'],
+      },
+    ];
+    const meta: Meta = {
+      service_duration: {
+        expiration_date: { label: 'Service end date' },
+      },
+    };
+
+    const result = normalizeFieldErrors(fieldErrors, meta);
+
+    expect(result).toEqual([
+      {
+        field: 'service_duration/expiration_date',
+        messages: ['date must be after start date'],
+        userFriendlyLabel: 'Service end date',
+      },
+    ]);
+  });
+
+  it('should handle multiple level nested fields', () => {
+    const fieldErrors: FieldError[] = [
+      {
+        field: 'contact/address/street',
+        messages: ['Street is required'],
+      },
+    ];
+    const meta: Meta = {
+      contact: {
+        address: {
+          street: { label: 'Street Address' },
+        },
+      },
+    };
+
+    const result = normalizeFieldErrors(fieldErrors, meta);
+
+    expect(result).toEqual([
+      {
+        field: 'contact/address/street',
+        messages: ['Street is required'],
+        userFriendlyLabel: 'Street Address',
+      },
+    ]);
+  });
+});
 
 describe('mutationToPromise', () => {
   describe('mutateAsync', () => {

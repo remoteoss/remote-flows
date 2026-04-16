@@ -191,8 +191,29 @@ export function normalizeFieldErrors(
   }
 
   return fieldErrors.map((fieldError) => {
-    const fieldMeta = meta?.[fieldError.field];
-    const userFriendlyLabel = fieldMeta?.label || fieldError.field;
+    let fieldMeta = meta?.[fieldError.field];
+    let userFriendlyLabel: string = fieldError.field;
+
+    // If not found directly, try nested path (e.g., "service_duration/expiration_date")
+    if (!fieldMeta && meta && fieldError.field.includes('/')) {
+      const pathParts = fieldError.field.split('/');
+      let current: $TSFixMe = meta;
+
+      for (const part of pathParts) {
+        if (current && typeof current === 'object') {
+          current = current[part];
+        } else {
+          current = undefined;
+          break;
+        }
+      }
+
+      fieldMeta = current;
+    }
+
+    if (typeof fieldMeta?.label === 'string') {
+      userFriendlyLabel = fieldMeta.label;
+    }
 
     return {
       ...fieldError,
