@@ -79,8 +79,10 @@ export function DatePickerFieldDefault({
         </PopoverContent>
       </Popover>
       {description ? (
-        <FormDescription>
-          {description} <HelpCenter helpCenter={fieldData.meta?.helpCenter} />
+        <FormDescription
+          helpCenter={<HelpCenter helpCenter={fieldData.meta?.helpCenter} />}
+        >
+          {description}
         </FormDescription>
       ) : null}
       {fieldState.error && (
