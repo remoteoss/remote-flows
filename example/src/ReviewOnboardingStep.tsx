@@ -5,7 +5,8 @@ import {
   Employment,
   CreditRiskState,
   NormalizedFieldError,
-  Meta,
+  MetaValues,
+  NestedMeta,
 } from '@remoteoss/remote-flows';
 import { AlertError } from './AlertError';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
@@ -110,47 +111,48 @@ export function ReviewMeta({
   meta,
   isNested = false,
 }: {
-  meta: Meta;
+  meta: NestedMeta;
   isNested?: boolean;
 }) {
+  if (!meta) return null;
+
   return (
     <div className={isNested ? 'onboarding-values' : 'onboarding-values pl-3'}>
       {Object.entries(meta).map(([key, value]) => {
-        const label = value?.label;
-        const prettyValue = value?.prettyValue;
+        if (!value) return null;
 
-        // If this has a label and prettyValue, it's a field - render it
-        if (label && prettyValue !== undefined && prettyValue !== '') {
-          let displayValue;
+        const isLeafNode =
+          typeof value === 'object' &&
+          ('label' in value || 'prettyValue' in value || 'inputType' in value);
 
-          // Handle file uploads (array of File objects)
-          if (value?.inputType === 'file' && Array.isArray(prettyValue)) {
-            displayValue = prettyValue
-              .map((file: File) => file.name)
-              .join(', ');
+        if (isLeafNode) {
+          const metaValue = value as MetaValues;
+          const label = metaValue.label;
+          const prettyValue = metaValue.prettyValue;
+
+          if (label && prettyValue !== undefined && prettyValue !== '') {
+            let displayValue;
+
+            if (metaValue.inputType === 'file' && Array.isArray(prettyValue)) {
+              displayValue = prettyValue
+                .map((file: File) => file.name)
+                .join(', ');
+            } else if (typeof prettyValue === 'boolean') {
+              displayValue = prettyValue ? 'Yes' : 'No';
+            } else {
+              displayValue = prettyValue;
+            }
+
+            return (
+              <pre key={key}>
+                {label}: {displayValue}
+              </pre>
+            );
           }
-          // Handle boolean prettyValue
-          else if (typeof prettyValue === 'boolean') {
-            displayValue = prettyValue ? 'Yes' : 'No';
-          }
-          // Handle other types
-          else {
-            displayValue = prettyValue;
-          }
-
-          return (
-            <pre key={key}>
-              {label}: {displayValue}
-            </pre>
-          );
-        }
-
-        // If this is an object without label/prettyValue, it's a fieldset
-        // Recursively render its nested fields with indentation
-        if (value && typeof value === 'object' && !label && !prettyValue) {
+        } else if (typeof value === 'object') {
           return (
             <div key={key}>
-              <ReviewMeta meta={value as Meta} isNested />
+              <ReviewMeta meta={value as NestedMeta} isNested />
             </div>
           );
         }

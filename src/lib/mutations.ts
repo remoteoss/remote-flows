@@ -1,4 +1,4 @@
-import { Meta, $TSFixMe } from '@/src/types/remoteFlows';
+import { $TSFixMe, NestedMeta } from '@/src/types/remoteFlows';
 import { UseMutationResult } from '@tanstack/react-query';
 
 type MutationData<T> =
@@ -184,7 +184,7 @@ export interface NormalizedFieldError extends FieldError {
  */
 export function normalizeFieldErrors(
   fieldErrors: FieldError[],
-  meta?: Meta,
+  meta?: NestedMeta,
 ): NormalizedFieldError[] {
   if (!fieldErrors || fieldErrors.length === 0) {
     return [];

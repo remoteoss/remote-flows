@@ -4,7 +4,7 @@ import {
   normalizeFieldErrors,
   FieldError,
 } from '@/src/lib/mutations';
-import { $TSFixMe, Meta } from '@/src/types/remoteFlows';
+import { $TSFixMe, Meta, NestedMeta } from '@/src/types/remoteFlows';
 
 describe('normalizeFieldErrors', () => {
   it('should return empty array when no errors', () => {
@@ -51,7 +51,7 @@ describe('normalizeFieldErrors', () => {
         messages: ['date must be after start date'],
       },
     ];
-    const meta: Meta = {
+    const meta: NestedMeta = {
       service_duration: {
         expiration_date: { label: 'Service end date' },
       },
@@ -75,7 +75,7 @@ describe('normalizeFieldErrors', () => {
         messages: ['Street is required'],
       },
     ];
-    const meta: Meta = {
+    const meta: NestedMeta = {
       contact: {
         address: {
           street: { label: 'Street Address' },

@@ -229,13 +229,23 @@ declare global {
   }
 }
 
-type MetaValues = {
+export type MetaValues = {
   label?: string;
   prettyValue?: string | boolean;
   inputType?: string;
   desiredCurrency?: string;
 };
 
-export interface Meta {
-  [key: string]: MetaValues | Meta;
+/**
+ * Meta is a record of field names and their values.
+ * @deprecated Use NestedMeta instead.
+ */
+export type Meta = Record<string, MetaValues>;
+
+/**
+ * NestedMeta is a record of field names and their values.
+ * This is used to retrieve the label for a field from the meta data.
+ */
+export interface NestedMeta {
+  [key: string]: MetaValues | NestedMeta;
 }
