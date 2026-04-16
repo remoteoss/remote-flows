@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { ValidationError } from 'yup';
 import DOMPurify from 'dompurify';
-import { JSFFields, Meta } from '@/src/types/remoteFlows';
+import { JSFFields, NestedMeta } from '@/src/types/remoteFlows';
 import {
   NormalizedFieldError,
   normalizeFieldErrors,
@@ -292,7 +292,7 @@ export function isStructuredError(err: unknown): err is {
  */
 export function handleStepError(
   err: unknown,
-  fieldsMeta?: Meta,
+  fieldsMeta?: NestedMeta,
 ): {
   error: Error;
   rawError: Record<string, unknown>;

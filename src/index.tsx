@@ -123,6 +123,8 @@ export type {
   DrawerComponentProps,
   PDFPreviewComponentProps,
   Meta,
+  NestedMeta,
+  MetaValues,
 } from '@/src/types/remoteFlows';
 
 export type {
