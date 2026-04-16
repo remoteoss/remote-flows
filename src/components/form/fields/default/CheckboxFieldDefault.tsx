@@ -67,9 +67,10 @@ export const CheckboxFieldDefault = ({
         </>
       </FormControl>
       {description && (
-        <FormDescription>
-          {fieldData.description}{' '}
-          <HelpCenter helpCenter={fieldData.meta?.helpCenter} />
+        <FormDescription
+          helpCenter={<HelpCenter helpCenter={fieldData.meta?.helpCenter} />}
+        >
+          {description}
         </FormDescription>
       )}
       {fieldState.error && <FormMessage />}

@@ -40,9 +40,13 @@ export function TextAreaFieldDefault({
       {(description || maxLength) && (
         <div className='flex items-center justify-between'>
           {description && (
-            <FormDescription className='RemoteFlows__TextArea__Description'>
-              {description}{' '}
-              <HelpCenter helpCenter={fieldData.meta?.helpCenter} />
+            <FormDescription
+              className='RemoteFlows__TextArea__Description'
+              helpCenter={
+                <HelpCenter helpCenter={fieldData.meta?.helpCenter} />
+              }
+            >
+              {description}
             </FormDescription>
           )}
           {maxLength && (
