@@ -98,7 +98,7 @@ jobs:
       - name: Check cache for base coverage
         if: steps.check-scripts.outputs.exists == 'true'
         id: cache-base
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: base-coverage.json
           key: coverage-${{ github.base_ref }}-${{ github.event.pull_request.base.sha }}
