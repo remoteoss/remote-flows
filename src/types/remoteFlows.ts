@@ -64,6 +64,7 @@ export type JSFField = {
  */
 export type JSFCustomComponentProps = JSFField & {
   setValue: (value: unknown) => void;
+  value: string;
 };
 
 export type TableComponentProps<T = $TSFixMe> = {

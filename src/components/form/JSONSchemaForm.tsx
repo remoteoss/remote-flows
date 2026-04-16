@@ -26,7 +26,7 @@ export const JSONSchemaFormFields = ({
   fieldValues,
   components,
 }: JSONSchemaFormFieldsProps) => {
-  const { setValue } = useFormContext();
+  const { setValue, watch } = useFormContext();
 
   if (!fields || fields.length === 0) return null;
 
@@ -90,6 +90,7 @@ export const JSONSchemaFormFields = ({
           return wrapWithCustomWrapper(
             <>
               <Component
+                value={watch(field.name) as string}
                 setValue={(value: unknown) => setValue(field.name, value)}
                 {...fieldProps}
               />

@@ -70,7 +70,7 @@ export function ContractorOnboardingForm({
       );
       if (hasChanged) {
         contractorOnboardingBag?.checkFieldUpdates(values);
-        prevValuesRef.current = { ...values };
+        prevValuesRef.current = JSON.parse(JSON.stringify(values));
       }
     });
     return () => subscription?.unsubscribe();
