@@ -12,7 +12,6 @@ import {
   parseJSFToValidate,
 } from '@/src/components/form/utils';
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
-
 import {
   useCreateContractorContractDocument,
   useGetContractDocumentSignatureSchema,
