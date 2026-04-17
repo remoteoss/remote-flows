@@ -1,5 +1,29 @@
 # @remoteoss/remote-flows
 
+## 1.26.0
+
+### Minor Changes
+
+#### Features
+
+- add dynamic steps (#922) [#922](https://github.com/remoteoss/remote-flows/pull/922)
+- update dependency dompurify to v3.4.0 [security] (#928) [#928](https://github.com/remoteoss/remote-flows/pull/928)
+- add help center article in textarea (#921) [#921](https://github.com/remoteoss/remote-flows/pull/921)
+- fix submission contract-details in contractor-onboarding as switcher component wasn't working correctly (#932) [#932](https://github.com/remoteoss/remote-flows/pull/932)
+
+#### Fixes
+
+- nested fields are parsed in the error messages (#930) [#930](https://github.com/remoteoss/remote-flows/pull/930)
+
+#### Chores
+
+- paralelize jobs and improve CI (#923) [#923](https://github.com/remoteoss/remote-flows/pull/923)
+- update dependency vite to ^8.0.8 (#929) [#929](https://github.com/remoteoss/remote-flows/pull/929)
+- update vitest monorepo to ^4.1.4 (#931) [#931](https://github.com/remoteoss/remote-flows/pull/931)
+- update actions/cache action to v5 (#933) [#933](https://github.com/remoteoss/remote-flows/pull/933)
+- update actions/upload-artifact action to v7 (#934) [#934](https://github.com/remoteoss/remote-flows/pull/934)
+- update actions/github-script action to v9 (#935) [#935](https://github.com/remoteoss/remote-flows/pull/935)
+
 ## 1.25.0
 
 ### Minor Changes
