@@ -282,13 +282,18 @@ export function FieldSetField({
                     key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
                   >
                     <Component
-                      setValue={(value: unknown) =>
-                        setValue(
-                          isFlatFieldset ? field.name : `${name}.${field.name}`,
-                          value,
-                        )
-                      }
                       {...field}
+                      value={
+                        watch(
+                          `${isFlatFieldset ? field.name : `${name}.${field.name}`}`,
+                        ) as string
+                      }
+                      setValue={(value: unknown) => {
+                        setValue(
+                          `${isFlatFieldset ? field.name : `${name}.${field.name}`}`,
+                          value,
+                        );
+                      }}
                     />
                     {field.statement ? (
                       <Statement
