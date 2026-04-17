@@ -2,9 +2,6 @@ import { JSFFieldset } from '@/src/types/remoteFlows';
 import type {
   ModifyConfig,
   FormResult,
-  FormResultLegacy,
-  FormErrors,
-  FormErrorsLegacy,
 } from '@remoteoss/remote-json-schema-form-kit';
 
 type Success<T> = {
@@ -104,15 +101,8 @@ export type FlowOptions = {
   };
 };
 
-export type JSONSchemaFormResultWithFieldsets = (
-  | FormResult
-  | FormResultLegacy
-) & {
+export type JSONSchemaFormResultWithFieldsets = FormResult & {
   meta: {
     'x-jsf-fieldsets': JSFFieldset;
   };
-};
-
-export type ValidationResult = {
-  formErrors?: FormErrors | FormErrorsLegacy;
 };
