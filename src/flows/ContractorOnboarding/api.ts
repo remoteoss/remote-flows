@@ -1,4 +1,3 @@
-import { FormResult } from '@remoteoss/remote-json-schema-form-kit';
 import { useMemo } from 'react';
 import {
   CreateContractDocument,
@@ -618,7 +617,7 @@ export const useGetEligibilityQuestionnaire = ({
   return useQuery<
     EligibilityQuestionnaireJsonSchemaResponse['data'],
     Error,
-    FormResult
+    JSONSchemaFormResultWithFieldsets
   >({
     queryKey: ['eligibility-questionnaire'],
     queryFn: async (): Promise<
