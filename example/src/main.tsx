@@ -5,6 +5,10 @@ import { ContractorOnboardingWithProps } from './ContractorOnboarding.tsx';
 import App from './App.tsx';
 
 const RenderApplication = () => {
+  if (import.meta.env.VITE_DEMO_COST_CALCULATOR === 'true') {
+    return <CostCalculatorWithPremiumBenefits />;
+  }
+
   if (import.meta.env.VITE_NEW_PREMIUM_BENEFITS === 'true') {
     return <CostCalculatorWithPremiumBenefits />;
   }
