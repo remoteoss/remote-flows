@@ -245,24 +245,83 @@ const FormPanel = ({
   });
 
   const fieldsWithWrappers = useMemo(() => {
-    return fields.map((field) => {
-      const diff = diffMap.get(field.name);
-      const diffType = diff?.diffType || 'unchanged';
-      const changes = diff?.changes;
+    // Recursive function to apply wrappers to fields and their nested fields
+    const applyWrappers = (
+      fields: JSFField[],
+      diffMap: Map<
+        string,
+        {
+          diffType: 'added' | 'removed' | 'modified' | 'unchanged';
+          changes?: unknown;
+        }
+      >,
+    ): JSFField[] => {
+      return fields.map((field) => {
+        const diff = diffMap.get(field.name);
+        const diffType = diff?.diffType || 'unchanged';
+        const changes = diff?.changes;
 
-      return {
-        ...field,
-        WrapperComponent: ({ children }: { children: React.ReactNode }) => (
-          <FieldWrapper
-            diffType={diffType}
-            fieldName={field.name}
-            changes={changes as never}
-          >
-            {children}
-          </FieldWrapper>
-        ),
-      };
-    });
+        // If this field has nested fields (e.g., fieldset), recursively apply wrappers
+        const nestedFields = (field as never as { fields?: JSFField[] }).fields;
+        let processedField = field;
+
+        if (nestedFields && Array.isArray(nestedFields)) {
+          // Build a nested diff map from the changes.nestedFields
+          const nestedDiffMap = new Map<
+            string,
+            {
+              diffType: 'added' | 'removed' | 'modified' | 'unchanged';
+              changes?: unknown;
+            }
+          >();
+
+          if (
+            changes &&
+            typeof changes === 'object' &&
+            'nestedFields' in changes &&
+            Array.isArray(changes.nestedFields)
+          ) {
+            (
+              changes.nestedFields as Array<{
+                fieldName: string;
+                diffType: 'added' | 'removed' | 'modified' | 'unchanged';
+                changes?: unknown;
+              }>
+            ).forEach((nestedDiff) => {
+              nestedDiffMap.set(nestedDiff.fieldName, {
+                diffType: nestedDiff.diffType,
+                changes: nestedDiff.changes,
+              });
+            });
+          }
+
+          // Recursively apply wrappers to nested fields
+          const wrappedNestedFields = applyWrappers(
+            nestedFields,
+            nestedDiffMap,
+          );
+          processedField = {
+            ...field,
+            fields: wrappedNestedFields,
+          } as JSFField;
+        }
+
+        return {
+          ...processedField,
+          WrapperComponent: ({ children }: { children: React.ReactNode }) => (
+            <FieldWrapper
+              diffType={diffType}
+              fieldName={field.name}
+              changes={changes as never}
+            >
+              {children}
+            </FieldWrapper>
+          ),
+        };
+      });
+    };
+
+    return applyWrappers(fields, diffMap);
   }, [fields, diffMap]);
 
   return (

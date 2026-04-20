@@ -229,44 +229,60 @@ export function FieldSetField({
               }
 
               const fieldType = field.type;
+              const fieldKey = `${isFlatFieldset ? field.name : `${name}.${field.name}`}`;
 
               const isForcedValue = checkFieldHasForcedValue(field);
 
+              // Helper function to wrap content with WrapperComponent if present
+              const wrapWithCustomWrapper = (
+                content: React.ReactNode,
+                key: string,
+              ) => {
+                if (field.WrapperComponent) {
+                  return (
+                    <field.WrapperComponent key={key}>
+                      {content}
+                    </field.WrapperComponent>
+                  );
+                }
+                return <Fragment key={key}>{content}</Fragment>;
+              };
+
               if (isForcedValue) {
-                return (
+                return wrapWithCustomWrapper(
                   <ForcedValueField
-                    key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
-                    name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
+                    name={fieldKey}
                     description={field.description}
                     value={field.const}
                     statement={field.statement}
                     label={field.label}
                     helpCenter={field.meta?.helpCenter}
-                  />
+                  />,
+                  fieldKey,
                 );
               }
 
               // Handle nested fieldsets
               if (fieldType === 'fieldset') {
-                return (
+                return wrapWithCustomWrapper(
                   <FieldSetField
-                    key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
                     {...field}
-                    name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
+                    name={fieldKey}
                     components={components}
-                  />
+                  />,
+                  fieldKey,
                 );
               }
 
               if (fieldType === 'fieldset-flat') {
-                return (
+                return wrapWithCustomWrapper(
                   <FieldSetField
-                    key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
                     {...field}
-                    name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
+                    name={fieldKey}
                     components={components}
                     isFlatFieldset
-                  />
+                  />,
+                  fieldKey,
                 );
               }
               // We need to do the check after checking (field.type || field.inputType) === 'fieldset' or (field.type || field.inputType) === 'fieldset-flat'
@@ -277,22 +293,13 @@ export function FieldSetField({
                 const { Component } = field as {
                   Component: React.ComponentType<$TSFixMe>;
                 };
-                return (
-                  <Fragment
-                    key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
-                  >
+                return wrapWithCustomWrapper(
+                  <>
                     <Component
                       {...field}
-                      value={
-                        watch(
-                          `${isFlatFieldset ? field.name : `${name}.${field.name}`}`,
-                        ) as string
-                      }
+                      value={watch(fieldKey) as string}
                       setValue={(value: unknown) => {
-                        setValue(
-                          `${isFlatFieldset ? field.name : `${name}.${field.name}`}`,
-                          value,
-                        );
+                        setValue(fieldKey, value);
                       }}
                     />
                     {field.statement ? (
@@ -301,7 +308,8 @@ export function FieldSetField({
                       />
                     ) : null}
                     {field.extra ? field.extra : null}
-                  </Fragment>
+                  </>,
+                  fieldKey,
                 );
               }
 
@@ -315,13 +323,11 @@ export function FieldSetField({
                 FieldComponent = baseFields['multi-select'];
               }
 
-              return (
-                <Fragment
-                  key={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
-                >
+              return wrapWithCustomWrapper(
+                <>
                   <FieldComponent
                     {...field}
-                    name={`${isFlatFieldset ? field.name : `${name}.${field.name}`}`}
+                    name={fieldKey}
                     component={components?.[fieldType as keyof Components]}
                   />
                   {field.statement ? (
@@ -330,7 +336,8 @@ export function FieldSetField({
                     />
                   ) : null}
                   {field.extra ? field.extra : null}
-                </Fragment>
+                </>,
+                fieldKey,
               );
             })}
             {extra ? extra : null}
