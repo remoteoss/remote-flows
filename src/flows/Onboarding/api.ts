@@ -319,7 +319,9 @@ export const useUpdateEmploymentEngagementAgreementDetails = () => {
     mutationFn: ({
       employmentId,
       ...payload
-    }: EmploymentEngagementAgreementDetailsParams & { employmentId: string }) => {
+    }: EmploymentEngagementAgreementDetailsParams & {
+      employmentId: string;
+    }) => {
       return postUpdateEmploymentEngagementAgreementDetails({
         client: client as Client,
         headers: {
