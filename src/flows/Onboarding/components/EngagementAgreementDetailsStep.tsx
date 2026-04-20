@@ -47,7 +47,7 @@ export function EngagementAgreementDetailsStep({
       await onSubmit?.(parsedValues as $TSFixMe);
       const response = await onboardingBag.onSubmit(payload);
       if (response?.data) {
-        await onSuccess?.(response?.data);
+        await onSuccess?.(response?.data as SuccessResponse);
         onboardingBag?.next();
         return;
       }
