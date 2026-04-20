@@ -6,6 +6,7 @@ import {
   normalizeFieldErrors,
 } from '@/src/lib/mutations';
 import { EngagementAgreementDetailsFormPayload } from '@/src/flows/Onboarding/types';
+import { SuccessResponse } from '@/src/client';
 
 type EngagementAgreementDetailsStepProps = {
   /*
@@ -18,8 +19,7 @@ type EngagementAgreementDetailsStepProps = {
   /*
    * The function is called when the form submission is successful.
    */
-  // TODO: Add type later... EngagementAgreementDetailsFormPayload
-  onSuccess?: (data: unknown) => void | Promise<void>;
+  onSuccess?: (data: SuccessResponse) => void | Promise<void>;
   /*
    * The function is called when an error occurs during form submission.
    */
