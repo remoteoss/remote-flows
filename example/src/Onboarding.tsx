@@ -10,7 +10,7 @@ import {
   SelectCountrySuccess,
   SelectCountryFormPayload,
   NormalizedFieldError,
-  EmploymentEngagementAgreementDetailsParams,
+  EngagementAgreementDetailsFormPayload,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
 import { ReviewOnboardingStep } from './ReviewOnboardingStep';
@@ -124,7 +124,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
       return (
         <>
           <EngagementAgreementDetailsStep
-            onSubmit={(payload: EmploymentEngagementAgreementDetailsParams) =>
+            onSubmit={(payload: EngagementAgreementDetailsFormPayload) =>
               console.log('payload', payload)
             }
             onSuccess={(data: SuccessResponse) => console.log('data', data)}
