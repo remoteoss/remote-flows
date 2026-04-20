@@ -10,6 +10,7 @@ import {
   SelectCountrySuccess,
   SelectCountryFormPayload,
   NormalizedFieldError,
+  $TSFixMe,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
 import { ReviewOnboardingStep } from './ReviewOnboardingStep';
@@ -49,6 +50,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     SubmitButton,
     BackButton,
     SelectCountryStep,
+    EngagementAgreementDetailsStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -114,6 +116,34 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Create Employment & Continue
+            </SubmitButton>
+          </div>
+        </>
+      );
+    case 'engagement_agreement_details':
+      return (
+        <>
+          {/* TODO: Add type later... => EngagementAgreementDetailsFormPayload */}
+          <EngagementAgreementDetailsStep
+            onSubmit={(payload: $TSFixMe) => console.log('payload', payload)}
+            onSuccess={(data: $TSFixMe) => console.log('data', data)}
+            onError={({ error, fieldErrors }) =>
+              setErrors({ apiError: error.message, fieldErrors })
+            }
+          />
+          <AlertError errors={errors} />
+          <div className='buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Previous Step
+            </BackButton>
+            <SubmitButton
+              className='submit-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Continue
             </SubmitButton>
           </div>
         </>
