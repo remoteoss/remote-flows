@@ -13,6 +13,7 @@ import { FlowOptions, JSFModify } from '@/src/flows/types';
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
 import { ReviewStep } from '@/src/flows/Onboarding/components/ReviewStep';
 import { SaveDraftButton } from '@/src/flows/Onboarding/components/SaveDraftButton';
+import { EngagementAgreementDetailsStep } from '@/src/flows/Onboarding/components/EngagementAgreementDetailsStep';
 
 export type OnboardingRenderProps = {
   /**
@@ -25,6 +26,7 @@ export type OnboardingRenderProps = {
    * The components used in the onboarding flow.
    * This includes different steps, submit button, back button.
    * @see {@link BasicInformationStep}
+   * @see {@link EngagementAgreementDetailsStep}
    * @see {@link ContractDetailsStep}
    * @see {@link OnboardingSubmit}
    * @see {@link OnboardingBack}
@@ -40,6 +42,7 @@ export type OnboardingRenderProps = {
     SubmitButton: typeof OnboardingSubmit;
     BackButton: typeof OnboardingBack;
     BasicInformationStep: typeof BasicInformationStep;
+    EngagementAgreementDetailsStep: typeof EngagementAgreementDetailsStep;
     OnboardingInvite: typeof OnboardingInvite;
     ContractDetailsStep: typeof ContractDetailsStep;
     BenefitsStep: typeof BenefitsStep;
