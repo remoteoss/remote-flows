@@ -1,5 +1,6 @@
 import {
   EmploymentCreateParams,
+  EmploymentEngagementAgreementDetailsParams,
   Employment as EmploymentResponse,
 } from '@/src/client';
 import { BasicInformationStep } from '@/src/flows/Onboarding/components/BasicInformationStep';
@@ -197,6 +198,9 @@ export type BenefitsFormPayload = Record<
 >;
 
 export type ContractDetailsFormPayload = Record<string, unknown>;
+
+export type EngagementAgreementDetailsFormPayload =
+  EmploymentEngagementAgreementDetailsParams;
 
 export type CreditRiskStatus =
   | 'not_started'

@@ -2,17 +2,19 @@ import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { OnboardingForm } from '@/src/flows/Onboarding/components/OnboardingForm';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import {
-  /* normalizeFieldErrors, */
   NormalizedFieldError,
+  normalizeFieldErrors,
 } from '@/src/lib/mutations';
+import { EngagementAgreementDetailsFormPayload } from '@/src/flows/Onboarding/types';
 
 type EngagementAgreementDetailsStepProps = {
   /*
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
 
-  // TODO: Add type later... EngagementAgreementDetailsFormPayload
-  onSubmit?: (payload: Record<string, unknown>) => void | Promise<void>;
+  onSubmit?: (
+    payload: EngagementAgreementDetailsFormPayload,
+  ) => void | Promise<void>;
   /*
    * The function is called when the form submission is successful.
    */
@@ -42,7 +44,7 @@ export function EngagementAgreementDetailsStep({
   const handleSubmit = async (payload: $TSFixMe) => {
     try {
       const parsedValues = await onboardingBag.parseFormValues(payload);
-      await onSubmit?.(parsedValues as Record<string, unknown>);
+      await onSubmit?.(parsedValues as $TSFixMe);
       const response = await onboardingBag.onSubmit(payload);
       if (response?.data) {
         await onSuccess?.(response?.data);
@@ -50,7 +52,7 @@ export function EngagementAgreementDetailsStep({
         return;
       }
       // TODO: enable later...
-      /* if (response?.error) {
+      if (response?.error) {
         const normalizedFieldErrors = normalizeFieldErrors(
           response?.fieldErrors || [],
           onboardingBag.meta?.fields?.engagement_agreement_details,
@@ -61,7 +63,7 @@ export function EngagementAgreementDetailsStep({
           rawError: response?.rawError,
           fieldErrors: normalizedFieldErrors,
         });
-      } */
+      }
     } catch (error: unknown) {
       onError?.({
         error: error as Error,

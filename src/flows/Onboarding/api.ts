@@ -5,6 +5,7 @@ import {
   ConvertCurrencyParams,
   CreateContractEligibilityParams,
   EmploymentCreateParams,
+  EmploymentEngagementAgreementDetailsParams,
   EmploymentFullParams,
   getIndexBenefitOffer,
   getShowCompany,
@@ -20,6 +21,7 @@ import {
   postCreateRiskReserve,
   postInviteEmploymentInvitation,
   PostInviteEmploymentInvitationData,
+  postUpdateEmploymentEngagementAgreementDetails,
   putUpdateBenefitOffer,
   UnifiedEmploymentUpsertBenefitOffersRequest,
 } from '@/src/client';
@@ -304,6 +306,28 @@ export const useUpdateEmployment = (
         query: {
           skip_benefits: true,
           ...jsonSchemaQueryParams,
+        },
+      });
+    },
+  });
+};
+
+export const useUpdateEmploymentEngagementAgreementDetails = () => {
+  const { client } = useClient();
+
+  return useMutation({
+    mutationFn: ({
+      employmentId,
+      ...payload
+    }: EmploymentEngagementAgreementDetailsParams & { employmentId: string }) => {
+      return postUpdateEmploymentEngagementAgreementDetails({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body: payload,
+        path: {
+          employment_id: employmentId,
         },
       });
     },

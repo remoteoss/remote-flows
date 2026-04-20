@@ -36,6 +36,7 @@ import {
   useJSONSchemaForm,
   useUpdateBenefitsOffers,
   useUpdateEmployment,
+  useUpdateEmploymentEngagementAgreementDetails,
   useUpsertContractEligibility,
 } from '@/src/flows/Onboarding/api';
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
@@ -300,6 +301,8 @@ export const useOnboarding = ({
     options,
   );
   const updateBenefitsOffersMutation = useUpdateBenefitsOffers(options);
+  const updateEngagementAgreementMutation =
+    useUpdateEmploymentEngagementAgreementDetails();
   const updateContractEligibilityMutation = useUpsertContractEligibility();
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
@@ -310,6 +313,9 @@ export const useOnboarding = ({
   const { mutateAsync: updateBenefitsOffersMutationAsync } = mutationToPromise(
     updateBenefitsOffersMutation,
   );
+  // TODO: refactor all uses in onboarding together to avoid having mixed behaviour
+  const { mutateAsync: updateEngagementAgreementMutationAsync } =
+    mutationToPromise(updateEngagementAgreementMutation);
   const { mutateAsync: updateContractEligibilityMutationAsync } =
     mutationToPromise(updateContractEligibilityMutation);
 
@@ -859,10 +865,10 @@ export const useOnboarding = ({
         return;
       }
       case 'engagement_agreement_details': {
-        // For now, just proceed to next step without saving
-        // The engagement agreement details will be part of the employment data
-        // TODO: Add API call if needed to save engagement agreement details separately
-        return Promise.resolve({ data: {} });
+        return updateEngagementAgreementMutationAsync({
+          employmentId: internalEmploymentId as string,
+          engagement_agreement_details: parsedValues,
+        });
       }
       case 'contract_details': {
         const payload: EmploymentFullParams = {
@@ -947,6 +953,7 @@ export const useOnboarding = ({
       createEmploymentMutation.isPending ||
       updateEmploymentMutation.isPending ||
       updateBenefitsOffersMutation.isPending ||
+      updateEngagementAgreementMutation.isPending ||
       updateContractEligibilityMutation.isPending,
     /**
      * Initial form values
