@@ -10,6 +10,7 @@ import {
   getIndexBenefitOffer,
   getShowCompany,
   getShowCompanyEmploymentOnboardingReservesStatus,
+  getShowEmploymentEngagementAgreementDetails,
   getShowEngagementAgreementDetailsCountry,
   getShowFormCountry,
   getShowSchema,
@@ -112,6 +113,35 @@ export const useBenefitOffers = (employmentId: string | undefined) => {
       ),
   });
 };
+
+export const useEmploymentEngagementAgreementDetails = (
+  employmentId: string | undefined,
+) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['employment-engagement-agreement-details', employmentId],
+    retry: false,
+    enabled: !!employmentId,
+    queryFn: async () => {
+      return getShowEmploymentEngagementAgreementDetails({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          employment_id: employmentId as string,
+        },
+      }).then((response) => {
+        if (response.error || !response.data) {
+          throw new Error('Failed to fetch engagement agreement details');
+        }
+        return response;
+      });
+    },
+    select: ({ data }) => data?.data?.details,
+  });
+};
+
 /**
  * Use this hook to invite an employee to the onboarding flow
  * @returns

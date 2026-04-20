@@ -243,6 +243,17 @@ export const ReviewOnboardingStep = ({
       >
         Edit Basic Information
       </button>
+      <h2 className='title'>Engagement Agreement Details</h2>
+      <ReviewMeta
+        meta={onboardingBag.meta.fields.engagement_agreement_details}
+      />
+      <button
+        className='back-button'
+        onClick={() => onboardingBag.goTo('engagement_agreement_details')}
+        disabled={onboardingBag.isEmploymentReadOnly}
+      >
+        Edit Engagement Agreement Details
+      </button>
       <h2 className='title'>Contract Details</h2>
       <ReviewMeta meta={onboardingBag.meta.fields.contract_details} />
       <button

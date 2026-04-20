@@ -31,6 +31,7 @@ import {
   useCompany,
   useCountriesSchemaField,
   useCreateEmployment,
+  useEmploymentEngagementAgreementDetails,
   useEmploymentOnboardingReservesStatus,
   useEngagementAgreementDetailsSchema,
   useJSONSchemaForm,
@@ -68,6 +69,7 @@ const getLoadingStates = ({
   isLoadingBasicInformationForm,
   isLoadingContractDetailsForm,
   isLoadingEngagementAgreementDetails,
+  isLoadingEmploymentEngagementAgreementDetails,
   isLoadingEmployment,
   isLoadingBenefitsOffersSchema,
   isLoadingBenefitOffers,
@@ -82,6 +84,7 @@ const getLoadingStates = ({
   isLoadingBasicInformationForm: boolean;
   isLoadingContractDetailsForm: boolean;
   isLoadingEngagementAgreementDetails: boolean;
+  isLoadingEmploymentEngagementAgreementDetails: boolean;
   isLoadingEmployment: boolean;
   isLoadingBenefitsOffersSchema: boolean;
   isLoadingBenefitOffers: boolean;
@@ -97,6 +100,7 @@ const getLoadingStates = ({
     isLoadingBasicInformationForm ||
     isLoadingContractDetailsForm ||
     isLoadingEngagementAgreementDetails ||
+    isLoadingEmploymentEngagementAgreementDetails ||
     isLoadingEmployment ||
     isLoadingBenefitsOffersSchema ||
     isLoadingBenefitOffers ||
@@ -268,6 +272,11 @@ export const useOnboarding = ({
 
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
+
+  const {
+    data: employmentEngagementAgreementDetails,
+    isLoading: isLoadingEmploymentEngagementAgreementDetails,
+  } = useEmploymentEngagementAgreementDetails(internalEmploymentId);
 
   const {
     data: company,
@@ -589,16 +598,20 @@ export const useOnboarding = ({
   ]);
 
   const engagementAgreementDetailsInitialValues = useMemo(() => {
-    // TODO: Check this later...
     const initialValues = {
       ...onboardingInitialValues,
+      ...employmentEngagementAgreementDetails,
     };
 
     return getInitialValues(
       stepFields.engagement_agreement_details,
       initialValues,
     );
-  }, [stepFields.engagement_agreement_details, onboardingInitialValues]);
+  }, [
+    stepFields.engagement_agreement_details,
+    onboardingInitialValues,
+    employmentEngagementAgreementDetails,
+  ]);
 
   const contractDetailsInitialValues = useMemo(() => {
     const initialValues = {
@@ -671,6 +684,7 @@ export const useOnboarding = ({
           isLoadingBasicInformationForm,
           isLoadingContractDetailsForm,
           isLoadingEngagementAgreementDetails,
+          isLoadingEmploymentEngagementAgreementDetails,
           isLoadingEmployment,
           isLoadingBenefitsOffersSchema,
           isLoadingBenefitOffers,
@@ -686,6 +700,7 @@ export const useOnboarding = ({
         isLoadingBasicInformationForm,
         isLoadingContractDetailsForm,
         isLoadingEngagementAgreementDetails,
+        isLoadingEmploymentEngagementAgreementDetails,
         isLoadingEmployment,
         isLoadingBenefitsOffersSchema,
         isLoadingBenefitOffers,
