@@ -10,7 +10,7 @@ import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 type TerminationFormProps = {
   onSubmit: (payload: TerminationFormValues) => void;
   fields?: JSFFields;
-  defaultValues?: FieldValues;
+  defaultValues: Record<string, unknown>;
 };
 
 export function TerminationForm({
@@ -26,7 +26,7 @@ export function TerminationForm({
     handleValidation: terminationBag.handleValidation as (
       values: FieldValues,
     ) => Promise<ValidationResult | null>,
-    defaultValues: defaultValues || {},
+    defaultValues: defaultValues,
     checkFieldUpdates: terminationBag.checkFieldUpdates as (
       values: FieldValues,
     ) => void,
