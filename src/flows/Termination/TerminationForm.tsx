@@ -1,16 +1,15 @@
 import { JSFFields } from '@/src/types/remoteFlows';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
-import { useEffect } from 'react';
 import { useTerminationContext } from './context';
 import { TerminationFormValues } from '@/src/flows/Termination/types';
-import { useForm } from 'react-hook-form';
-import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
+import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
+import { FieldValues } from 'react-hook-form';
 
 type TerminationFormProps = {
   onSubmit: (payload: TerminationFormValues) => void;
   fields?: JSFFields;
-  defaultValues?: TerminationFormValues;
+  defaultValues?: FieldValues;
 };
 
 export function TerminationForm({
@@ -20,31 +19,11 @@ export function TerminationForm({
 }: TerminationFormProps) {
   const { formId, terminationBag } = useTerminationContext();
 
-  const resolver = useJsonSchemasValidationFormResolver(
-    terminationBag.handleValidation,
-  );
-
-  const form = useForm({
-    resolver,
-    defaultValues: defaultValues,
-    shouldUnregister: false,
-    mode: 'onBlur',
+  const form = useJSONSchemaForm({
+    handleValidation: terminationBag.handleValidation,
+    defaultValues: defaultValues || {},
+    checkFieldUpdates: terminationBag.checkFieldUpdates,
   });
-
-  useEffect(() => {
-    const subscription = form?.watch((values) => {
-      const isAnyFieldDirty = Object.keys(values).some(
-        (key) =>
-          values[key as keyof TerminationFormValues] !==
-          terminationBag?.initialValues?.[key as keyof TerminationFormValues],
-      );
-      if (isAnyFieldDirty) {
-        terminationBag?.checkFieldUpdates(values as TerminationFormValues);
-      }
-    });
-    return () => subscription?.unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const jsonSchemaFields = fields ? fields : (terminationBag?.fields ?? []);
 

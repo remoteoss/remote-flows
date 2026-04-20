@@ -44,6 +44,7 @@ import { AcknowledgeInformationFees } from '@/src/flows/Termination/components/A
 import { usePayrollCalendars } from '@/src/common/api/payroll-calendars';
 import { isInProbationPeriod } from '@/src/common/employment';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
+import { FieldValues } from 'react-hook-form';
 
 type TerminationHookProps = Omit<TerminationFlowProps, 'render'>;
 
@@ -53,7 +54,7 @@ export const useTermination = ({
   initialValues: terminationInitialValues,
 }: TerminationHookProps) => {
   const { fieldValues, setFieldValues, stepState, previousStep, nextStep } =
-    useStepState<keyof typeof STEPS, TerminationFormValues>(STEPS);
+    useStepState<keyof typeof STEPS, FieldValues>(STEPS);
 
   const { data: employment, isLoading: isLoadingEmployment } =
     useEmploymentQuery({ employmentId, queryParams: { exclude_files: true } });
@@ -479,7 +480,7 @@ export const useTermination = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: async (values: TerminationFormValues) => {
+    handleValidation: async (values: FieldValues) => {
       if (terminationHeadlessForm) {
         const parsedValues = await parseJSFToValidate(
           values,
