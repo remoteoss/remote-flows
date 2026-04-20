@@ -6907,6 +6907,53 @@ export type CreatePricingPlanWithoutPartnerTemplateParams = {
 export type Slug = string;
 
 /**
+ * EmploymentEngagementAgreementDetailsResponse
+ */
+export type EmploymentEngagementAgreementDetailsResponse = {
+  data: {
+    /**
+     * EngagementAgreementDetailsParamsDEU
+     */
+    details: {
+      allowances_details?: Array<string> | null;
+      available_pto?: number | null;
+      break_time_per_day?: number | null;
+      business_expenses?: string | null;
+      cba?: string | null;
+      cba_document?: {
+        [key: string]: unknown;
+      } | null;
+      covenants?: Array<string> | null;
+      has_allowances?: string | null;
+      has_bonus?: string | null;
+      has_business_expenses?: string | null;
+      has_business_presence?: string;
+      has_cba?: string | null;
+      has_commissions?: string | null;
+      has_covenants?: string | null;
+      has_illness_remuneration?: string | null;
+      has_overtime_compensation?: string | null;
+      has_pension_scheme?: string | null;
+      has_signing_bonus?: string | null;
+      has_similar_roles?: string;
+      has_similar_work_conditions?: string | null;
+      illness_remuneration_details?: string | null;
+      max_annual_gross_salary?: number | null;
+      min_annual_gross_salary?: number | null;
+      overtime_compensation_begins?: number | null;
+      overtime_compensation_type?: string | null;
+      overtime_pay_percentage?: number | null;
+      pension_scheme?: string | null;
+      similar_roles?: string | null;
+      similar_work_conditions_details?: string | null;
+      work_hours_per_week?: number | null;
+      working_days?: Array<string> | null;
+    };
+    slug: string;
+  };
+};
+
+/**
  * BulkEmploymentImportJobResponse
  */
 export type BulkEmploymentImportJobResponse = {
@@ -21956,6 +22003,54 @@ export type PostBulkCreateScheduledContractorInvoiceResponses = {
 
 export type PostBulkCreateScheduledContractorInvoiceResponse =
   PostBulkCreateScheduledContractorInvoiceResponses[keyof PostBulkCreateScheduledContractorInvoiceResponses];
+
+export type GetShowEmploymentEngagementAgreementDetailsData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/engagement-agreement-details';
+};
+
+export type GetShowEmploymentEngagementAgreementDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetShowEmploymentEngagementAgreementDetailsError =
+  GetShowEmploymentEngagementAgreementDetailsErrors[keyof GetShowEmploymentEngagementAgreementDetailsErrors];
+
+export type GetShowEmploymentEngagementAgreementDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentEngagementAgreementDetailsResponse;
+};
+
+export type GetShowEmploymentEngagementAgreementDetailsResponse =
+  GetShowEmploymentEngagementAgreementDetailsResponses[keyof GetShowEmploymentEngagementAgreementDetailsResponses];
 
 export type PostUpdateEmploymentEngagementAgreementDetailsData = {
   /**

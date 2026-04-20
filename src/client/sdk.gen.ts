@@ -278,6 +278,9 @@ import type {
   GetShowEmploymentCustomFieldValueErrors,
   GetShowEmploymentCustomFieldValueResponses,
   GetShowEmploymentData,
+  GetShowEmploymentEngagementAgreementDetailsData,
+  GetShowEmploymentEngagementAgreementDetailsErrors,
+  GetShowEmploymentEngagementAgreementDetailsResponses,
   GetShowEmploymentErrors,
   GetShowEmploymentOnboardingStepsData,
   GetShowEmploymentOnboardingStepsErrors,
@@ -7359,6 +7362,39 @@ export const postBulkCreateScheduledContractorInvoice = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * Get engagement agreement details
+ *
+ * Returns the engagement agreement details for an employment.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getShowEmploymentEngagementAgreementDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetShowEmploymentEngagementAgreementDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetShowEmploymentEngagementAgreementDetailsResponses,
+    GetShowEmploymentEngagementAgreementDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/{employment_id}/engagement-agreement-details',
+    ...options,
   });
 
 /**
