@@ -6,7 +6,6 @@ export type DiffType = 'added' | 'removed' | 'modified' | 'unchanged';
 export interface FieldDiff {
   fieldName: string;
   diffType: DiffType;
-  orderChanged?: { oldIndex: number; newIndex: number };
   changes?: {
     label?: { old: string; new: string };
     required?: { old: boolean; new: boolean };
@@ -36,7 +35,6 @@ export interface FormDiff {
   removed: string[];
   modified: string[];
   unchanged: string[];
-  reordered: string[];
   fieldDiffs: Map<string, FieldDiff>;
 }
 
@@ -125,8 +123,7 @@ const compareNestedFields = (
   const hasChanges =
     nestedDiff.added.length > 0 ||
     nestedDiff.removed.length > 0 ||
-    nestedDiff.modified.length > 0 ||
-    nestedDiff.reordered.length > 0;
+    nestedDiff.modified.length > 0;
 
   if (!hasChanges) return undefined;
 
@@ -136,13 +133,7 @@ const compareNestedFields = (
 const isFieldModified = (
   field1: JSFField,
   field2: JSFField,
-  index1: number,
-  index2: number,
 ): boolean => {
-  if (index1 !== index2) {
-    return true;
-  }
-
   // Only compare user-facing schema properties, not internal/computed ones
   // Ignore: schema (Yup), computedAttributes, scopedJsonSchema, errorMessage, meta, description
   // Note: nested fields are checked via compareNestedFields to avoid deep equal with problematic properties
@@ -178,8 +169,7 @@ const isFieldModified = (
     return (
       nestedDiff.added.length > 0 ||
       nestedDiff.removed.length > 0 ||
-      nestedDiff.modified.length > 0 ||
-      nestedDiff.reordered.length > 0
+      nestedDiff.modified.length > 0
     );
   })();
 
@@ -291,7 +281,6 @@ export const compareFormFields = (
   const removed: string[] = [];
   const modified: string[] = [];
   const unchanged: string[] = [];
-  const reordered: string[] = [];
   const fieldDiffs = new Map<string, FieldDiff>();
 
   fieldMap2.forEach((_, name) => {
@@ -304,7 +293,7 @@ export const compareFormFields = (
     }
   });
 
-  fieldMap1.forEach(({ field: field1, index: index1 }, name) => {
+  fieldMap1.forEach(({ field: field1 }, name) => {
     if (!fieldMap2.has(name)) {
       removed.push(name);
       fieldDiffs.set(name, {
@@ -312,31 +301,15 @@ export const compareFormFields = (
         diffType: 'removed',
       });
     } else {
-      const { field: field2, index: index2 } = fieldMap2.get(name)!;
+      const { field: field2 } = fieldMap2.get(name)!;
 
-      if (isFieldModified(field1, field2, index1, index2)) {
-        const onlyPositionChanged =
-          index1 !== index2 && !isFieldModified(field1, field2, index1, index1);
-
-        if (onlyPositionChanged) {
-          reordered.push(name);
-          fieldDiffs.set(name, {
-            fieldName: name,
-            diffType: 'unchanged',
-            orderChanged: { oldIndex: index1, newIndex: index2 },
-          });
-        } else {
-          modified.push(name);
-          fieldDiffs.set(name, {
-            fieldName: name,
-            diffType: 'modified',
-            orderChanged:
-              index1 !== index2
-                ? { oldIndex: index1, newIndex: index2 }
-                : undefined,
-            changes: getFieldChanges(field1, field2),
-          });
-        }
+      if (isFieldModified(field1, field2)) {
+        modified.push(name);
+        fieldDiffs.set(name, {
+          fieldName: name,
+          diffType: 'modified',
+          changes: getFieldChanges(field1, field2),
+        });
       } else {
         unchanged.push(name);
         fieldDiffs.set(name, {
@@ -352,19 +325,13 @@ export const compareFormFields = (
     removed,
     modified,
     unchanged,
-    reordered,
     fieldDiffs,
   };
 };
 
 export const getDiffStyles = (
   diffType: DiffType,
-  hasOrderChange?: boolean,
 ): string => {
-  if (hasOrderChange && diffType === 'unchanged') {
-    return 'bg-blue-50 border-l-4 border-blue-500';
-  }
-
   switch (diffType) {
     case 'added':
       return 'bg-green-50 border-l-4 border-green-500';
