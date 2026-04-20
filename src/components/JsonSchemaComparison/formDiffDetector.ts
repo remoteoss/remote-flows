@@ -130,10 +130,7 @@ const compareNestedFields = (
   return Array.from(nestedDiff.fieldDiffs.values());
 };
 
-const isFieldModified = (
-  field1: JSFField,
-  field2: JSFField,
-): boolean => {
+const isFieldModified = (field1: JSFField, field2: JSFField): boolean => {
   // Only compare user-facing schema properties, not internal/computed ones
   // Ignore: schema (Yup), computedAttributes, scopedJsonSchema, errorMessage, meta, description
   // Note: nested fields are checked via compareNestedFields to avoid deep equal with problematic properties
@@ -329,9 +326,7 @@ export const compareFormFields = (
   };
 };
 
-export const getDiffStyles = (
-  diffType: DiffType,
-): string => {
+export const getDiffStyles = (diffType: DiffType): string => {
   switch (diffType) {
     case 'added':
       return 'bg-green-50 border-l-4 border-green-500';

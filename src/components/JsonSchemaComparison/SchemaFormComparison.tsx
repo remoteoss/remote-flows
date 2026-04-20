@@ -212,9 +212,7 @@ const FieldWrapper = ({
 
   return (
     <div className={`p-3 mb-2 rounded ${styles} relative`}>
-      <div className='absolute top-2 right-2'>
-        {badge}
-      </div>
+      <div className='absolute top-2 right-2'>{badge}</div>
       {children}
       {renderChanges()}
     </div>
