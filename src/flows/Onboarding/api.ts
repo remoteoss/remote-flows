@@ -9,6 +9,7 @@ import {
   getIndexBenefitOffer,
   getShowCompany,
   getShowCompanyEmploymentOnboardingReservesStatus,
+  getShowEngagementAgreementDetailsCountry,
   getShowFormCountry,
   getShowSchema,
   patchUpdateEmployment2,
@@ -25,7 +26,10 @@ import {
 
 import { useClient } from '@/src/context';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
-import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
+import {
+  OnboardingFlowProps,
+  OnboardingJsfModify,
+} from '@/src/flows/Onboarding/types';
 import {
   JSONSchemaFormResultWithFieldsets,
   JSONSchemaFormType,
@@ -457,5 +461,42 @@ export const useEmploymentOnboardingReservesStatus = (
       return response;
     },
     select: ({ data }) => data?.data?.status,
+  });
+};
+
+export const useEngagementAgreementDetailsSchema = (
+  countryCode: string,
+  fieldValues: FieldValues,
+  options?: {
+    jsfModify?: OnboardingJsfModify;
+    queryOptions?: { enabled?: boolean };
+  },
+) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['engagement-agreement-details', countryCode],
+    retry: false,
+    enabled: options?.queryOptions?.enabled ?? !!countryCode,
+    queryFn: async () => {
+      const response = await getShowEngagementAgreementDetailsCountry({
+        client: client as Client,
+        path: {
+          country_code: countryCode,
+        },
+      });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch engagement agreement details');
+      }
+
+      return response;
+    },
+    select: ({ data }) => {
+      const jsfSchema = data?.data?.schema || {};
+
+      return createHeadlessForm(jsfSchema, fieldValues, {
+        jsfModify: options?.jsfModify?.engagement_agreement_details,
+      });
+    },
   });
 };
