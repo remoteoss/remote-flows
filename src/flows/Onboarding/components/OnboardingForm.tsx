@@ -7,6 +7,7 @@ import {
   BasicInformationFormPayload,
   BenefitsFormPayload,
   ContractDetailsFormPayload,
+  EngagementAgreementDetailsFormPayload,
 } from '@/src/flows/Onboarding/types';
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { normalizeFieldErrors } from '@/src/lib/mutations';
@@ -17,7 +18,8 @@ type OnboardingFormProps = {
     payload:
       | BasicInformationFormPayload
       | BenefitsFormPayload
-      | ContractDetailsFormPayload,
+      | ContractDetailsFormPayload
+      | EngagementAgreementDetailsFormPayload,
   ) => Promise<void>;
   components?: Components;
   fields?: JSFFields;
