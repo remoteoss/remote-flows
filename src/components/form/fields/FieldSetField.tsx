@@ -1,5 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 import { Fragment, useEffect, useRef } from 'react';
+import omit from 'lodash.omit';
 import { baseFields } from '@/src/components/form/fields/baseFields';
 import { cn, sanitizeHtml } from '@/src/lib/utils';
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
@@ -249,14 +250,15 @@ export function FieldSetField({
               };
 
               if (isForcedValue) {
+                const fieldProps = omit(field, 'WrapperComponent');
                 return wrapWithCustomWrapper(
                   <ForcedValueField
                     name={fieldKey}
-                    description={field.description}
-                    value={field.const}
-                    statement={field.statement}
-                    label={field.label}
-                    helpCenter={field.meta?.helpCenter}
+                    description={fieldProps.description}
+                    value={fieldProps.const}
+                    statement={fieldProps.statement}
+                    label={fieldProps.label}
+                    helpCenter={fieldProps.meta?.helpCenter}
                   />,
                   fieldKey,
                 );
@@ -264,9 +266,10 @@ export function FieldSetField({
 
               // Handle nested fieldsets
               if (fieldType === 'fieldset') {
+                const fieldProps = omit(field, 'WrapperComponent');
                 return wrapWithCustomWrapper(
                   <FieldSetField
-                    {...field}
+                    {...(fieldProps as $TSFixMe)}
                     name={fieldKey}
                     components={components}
                   />,
@@ -275,9 +278,10 @@ export function FieldSetField({
               }
 
               if (fieldType === 'fieldset-flat') {
+                const fieldProps = omit(field, 'WrapperComponent');
                 return wrapWithCustomWrapper(
                   <FieldSetField
-                    {...field}
+                    {...(fieldProps as $TSFixMe)}
                     name={fieldKey}
                     components={components}
                     isFlatFieldset
@@ -293,10 +297,11 @@ export function FieldSetField({
                 const { Component } = field as {
                   Component: React.ComponentType<$TSFixMe>;
                 };
+                const fieldProps = omit(field, 'WrapperComponent');
                 return wrapWithCustomWrapper(
                   <>
                     <Component
-                      {...field}
+                      {...fieldProps}
                       value={watch(fieldKey) as string}
                       setValue={(value: unknown) => {
                         setValue(fieldKey, value);
@@ -323,10 +328,11 @@ export function FieldSetField({
                 FieldComponent = baseFields['multi-select'];
               }
 
+              const fieldProps = omit(field, 'WrapperComponent');
               return wrapWithCustomWrapper(
                 <>
                   <FieldComponent
-                    {...field}
+                    {...fieldProps}
                     name={fieldKey}
                     component={components?.[fieldType as keyof Components]}
                   />
