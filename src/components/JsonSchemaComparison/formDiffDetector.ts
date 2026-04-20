@@ -267,12 +267,8 @@ export const compareFormFields = (
   const validFields1 = fields1.filter(validateField);
   const validFields2 = fields2.filter(validateField);
 
-  const fieldMap1 = new Map(
-    validFields1.map((f, i) => [f.name, { field: f, index: i }]),
-  );
-  const fieldMap2 = new Map(
-    validFields2.map((f, i) => [f.name, { field: f, index: i }]),
-  );
+  const fieldMap1 = new Map(validFields1.map((f) => [f.name, { field: f }]));
+  const fieldMap2 = new Map(validFields2.map((f) => [f.name, { field: f }]));
 
   const added: string[] = [];
   const removed: string[] = [];
