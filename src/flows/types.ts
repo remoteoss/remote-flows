@@ -1,7 +1,8 @@
 import { JSFFieldset } from '@/src/types/remoteFlows';
 import type {
   ModifyConfig,
-  FormResult,
+  FormResult as FormResultNext,
+  FormResultLegacy,
 } from '@remoteoss/remote-json-schema-form-kit';
 
 type Success<T> = {
@@ -100,6 +101,8 @@ export type FlowOptions = {
     employment_basic_information?: number | 'latest';
   };
 };
+
+type FormResult = FormResultNext | FormResultLegacy;
 
 export type JSONSchemaFormResultWithFieldsets = FormResult & {
   meta: {
