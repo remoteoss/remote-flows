@@ -1,5 +1,20 @@
 # @remoteoss/remote-flows
 
+## 1.27.0
+
+### Minor Changes
+
+- update dependency @tanstack/react-query to ^5.99.0 (#939) [#939](https://github.com/remoteoss/remote-flows/pull/939)
+- update dependency oxfmt to ^0.45.0 (#948) [#948](https://github.com/remoteoss/remote-flows/pull/948)
+- update opeanpi types (#942) [#942](https://github.com/remoteoss/remote-flows/pull/942)
+- use useJSONSchemaForm abstraction (#943) [#943](https://github.com/remoteoss/remote-flows/pull/943)
+- upgrade to npm release (#918) [#918](https://github.com/remoteoss/remote-flows/pull/918)
+- update dependency msw to ^2.13.3 (#949) [#949](https://github.com/remoteoss/remote-flows/pull/949)
+- update dependency oxlint to ^1.60.0 (#947) [#947](https://github.com/remoteoss/remote-flows/pull/947)
+- remove carets (#936) [#936](https://github.com/remoteoss/remote-flows/pull/936)
+- update dependency dotenv to v17.4.2 (#950) [#950](https://github.com/remoteoss/remote-flows/pull/950)
+- make some improvements (#941) [#941](https://github.com/remoteoss/remote-flows/pull/941)
+
 ## 1.26.0
 
 ### Minor Changes
