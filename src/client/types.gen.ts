@@ -85,7 +85,7 @@ export type ContractorInvoiceItemType = 'manual' | 'time_tracking' | 'expense';
 /**
  * TimesheetResponse
  *
- * Timesheet response
+ * Response containing a full timesheet with all hour breakdowns and time tracking entries.
  */
 export type TimesheetResponse = {
   data?: {
@@ -120,16 +120,42 @@ export type CountryCode = string;
 
 /**
  * TerminationOffboarding
+ *
+ * An offboarding request initiated by the employer to terminate an employment. Includes termination details, risk assessment, and status tracking through Remote's review process.
  */
 export type TerminationOffboarding = {
+  /**
+   * Additional comments or context about the termination provided by the employer.
+   */
   additional_comments: string | null;
+  /**
+   * Whether the employer agreed with the employee's PTO balance at the time of the termination request.
+   */
   agrees_to_pto_amount?: boolean;
+  /**
+   * Whether this offboarding request is confidential. Confidential requests are only visible to the user who authorized the token or integration; non-confidential requests are visible to all company admins.
+   */
   confidential: boolean;
+  /**
+   * Details about whether and when the employee was informed about their termination. Only present if the employee was informed before the offboarding request was submitted.
+   */
   employee_awareness?: {
+    /**
+     * The date when the employee was told about the termination.
+     */
     date?: string | null;
+    /**
+     * Notes about how the termination was communicated to the employee.
+     */
     note?: string | null;
   };
+  /**
+   * The unique identifier (UUID) of the employment being terminated.
+   */
   employment_id: string;
+  /**
+   * The unique identifier (UUID) of the offboarding request.
+   */
   id: string;
   /**
    * Remote will use this email address for post-termination communication.
@@ -137,9 +163,21 @@ export type TerminationOffboarding = {
    *
    */
   personal_email?: string;
+  /**
+   * The employer's proposed termination date. The actual termination date may differ based on local labor laws and notice period requirements.
+   */
   proposed_termination_date: string;
+  /**
+   * A detailed description of the circumstances leading to the termination.
+   */
   reason_description: string;
+  /**
+   * The unique identifier (UUID) of the company admin who submitted the termination request.
+   */
   requested_by: string;
+  /**
+   * Reasons that may increase the legal risk of this termination (e.g., the employee is pregnant, on family leave, etc.).
+   */
   risk_assessment_reasons: Array<
     | 'caring_responsibilities'
     | 'disabled_or_health_condition'
@@ -151,12 +189,27 @@ export type TerminationOffboarding = {
     | 'requested_medical_or_family_leave'
     | 'sick_leave'
   >;
+  /**
+   * The current status of the offboarding request.
+   *
+   * - `submitted`: The request has been submitted and is awaiting review by Remote.
+   * - `in_review`: Remote is reviewing the request for legal compliance and risks.
+   * - `done`: The offboarding has been completed and the employment is terminated.
+   * - `canceled`: The offboarding request was canceled before completion.
+   *
+   */
   status: 'submitted' | 'in_review' | 'done' | 'canceled';
+  /**
+   * The timestamp when the offboarding request was submitted.
+   */
   submitted_at: string;
   /**
    * Most updated termination date for the offboarding. This date is subject to change through the offboarding process even after it is finalized.
    */
   termination_date: string | null;
+  /**
+   * The reason for the termination, as submitted by the employer.
+   */
   termination_reason:
     | 'cancellation_before_start_date'
     | 'compliance_issue'
@@ -179,16 +232,33 @@ export type TerminationOffboarding = {
     | 'performance'
     | 'values'
     | 'workforce_reduction';
+  /**
+   * The type of offboarding. Always `"termination"` for employer-initiated terminations.
+   */
   type: 'termination';
+  /**
+   * Whether the employer believes the employee is likely to challenge their termination.
+   */
   will_challenge_termination: boolean;
+  /**
+   * Additional details about why the employee may challenge the termination, if applicable.
+   */
   will_challenge_termination_description?: string;
 };
 
 /**
  * BenefitProvider
+ *
+ * The insurance carrier or provider that underwrites a benefit tier. May be null if the benefit tier does not have a specific external provider assigned.
  */
 export type BenefitProvider = {
+  /**
+   * The unique identifier (UUID) of the benefit provider.
+   */
   id: string;
+  /**
+   * The name of the insurance carrier or benefit provider (e.g., "Allianz", "Bupa").
+   */
   name: string;
 } | null;
 
@@ -206,7 +276,7 @@ export type UnifiedEmploymentUpsertBenefitOffersRequest = {
 /**
  * EmploymentCustomFieldValueResponse
  *
- * EmploymentCustomFieldValueResponse
+ * Response containing a single custom field value for an employment.
  */
 export type EmploymentCustomFieldValueResponse = {
   data: {
@@ -227,11 +297,13 @@ export type PeriodProperties = {
 
 /**
  * EmployeeDetailsResponse
+ *
+ * Paginated response containing per-employee payroll cost breakdowns for a specific payroll run.
  */
 export type EmployeeDetailsResponse = {
   data: {
     /**
-     * The employee details for the payroll run
+     * List of per-employee cost breakdowns for the payroll run.
      */
     employee_details: Array<EmployeeDetails>;
   };
@@ -355,6 +427,8 @@ export type CreateSsoConfigurationResponse = {
 
 /**
  * OfferedBenefitTier
+ *
+ * A benefit tier that has been offered to employees, combined with enrollment statistics for that tier.
  */
 export type OfferedBenefitTier = {
   benefit_tier: BenefitTier;
@@ -399,15 +473,27 @@ export type SignatoryStatus = 'pending' | 'signed' | 'unassigned';
 /**
  * EmploymentCustomField
  *
- * EmploymentCustomField
+ * A custom field definition that can be applied to employments within a company. Custom fields allow you to store additional structured data on employments beyond the standard fields.
  */
 export type EmploymentCustomField = {
   data_entry_access: CustomFieldDataEntryAccess;
+  /**
+   * The unique identifier (UUID) of the custom field definition.
+   */
   id: string;
+  /**
+   * Additional configuration for the field. For `single_select` fields, contains the list of selectable options. For `currency` fields, contains the currency code. Null for simple field types.
+   */
   metadata: {
     [key: string]: unknown;
   } | null;
+  /**
+   * The display name of the custom field (e.g., "Internal ID", "T-Shirt Size").
+   */
   name: string;
+  /**
+   * Whether this custom field is required for all employments in the company.
+   */
   required: boolean;
   type: CustomFieldDataType;
   visibility_scope: CustomFieldVisibilityScope;
@@ -456,11 +542,29 @@ export type ListDocumentsResponse = {
  * WebhookEvent
  */
 export type WebhookEvent = {
+  /**
+   * The unique identifier (UUID) of the company this event belongs to.
+   */
   company_id: string;
+  /**
+   * The type of event that was triggered (e.g., "timesheet.created", "employment.activated").
+   */
   event_type: string;
+  /**
+   * The timestamp when this event was first triggered.
+   */
   first_triggered_at: string;
+  /**
+   * The unique identifier (UUID) of the webhook event.
+   */
   id: string;
+  /**
+   * The timestamp of the most recent delivery attempt for this event.
+   */
   last_triggered_at: string;
+  /**
+   * Whether the webhook event was successfully delivered to the callback URL (received a 2XX response).
+   */
   successfully_delivered: boolean;
 };
 
@@ -525,9 +629,15 @@ export type EmploymentContract = {
   contract_details: {
     [key: string]: unknown;
   };
+  /**
+   * The unique identifier (UUID) of this contract.
+   */
   contract_id: string;
   country: Country;
   effective_at: DateTimeIso8601;
+  /**
+   * The job title as specified in this contract.
+   */
   job_title: string;
   status: EmploymentContractStatus;
 };
@@ -566,10 +676,16 @@ export type UnifiedEmploymentBenefitGroup = {
 /**
  * EmploymentCustomFieldValueJsonValue
  *
- * EmploymentCustomFieldValueJsonValue
+ * The value for a single-select custom field, containing both the option ID and its human-readable label.
  */
 export type EmploymentCustomFieldValueJsonValue = {
+  /**
+   * The unique identifier of the selected option.
+   */
   selected_option: string;
+  /**
+   * The human-readable label of the selected option (e.g., "XL").
+   */
   selected_option_label: string;
 };
 
@@ -587,22 +703,40 @@ export type CycleFrequency = 'monthly' | 'bi_monthly' | 'bi_weekly' | 'weekly';
  */
 export type BillingDocumentBreakdownItem = {
   country_code: CountryCode;
+  /**
+   * A human-readable description of this cost item.
+   */
   description: string;
   employment_id: UuidSlug;
+  /**
+   * The foreign exchange rate applied to convert from the source currency to the invoice currency.
+   */
   fx_rate: string;
   /**
    * Invoice amount in cents
    */
   invoice_amount: number;
   invoice_currency: CurrencyCode;
+  /**
+   * The invoice number associated with this breakdown item.
+   */
   invoice_number: string;
+  /**
+   * The invoice period in YYYY-MM format.
+   */
   invoice_period: string;
   /**
    * Source amount in cents
    */
   source_amount: number;
   source_currency: CurrencyCode;
+  /**
+   * The cost category (e.g., "Base Salary", "Employer Contributions", "Benefits").
+   */
   type: string;
+  /**
+   * A human-readable note about any variance between the breakdown amount and the invoiced amount, typically due to FX rounding.
+   */
   variance_from_invoice: string | null;
   /**
    * Variance from invoice amount in cents
@@ -623,19 +757,36 @@ export type BillingDocumentBreakdownResponse = {
 
 /**
  * MinimalCountry
+ *
+ * A lightweight country representation with basic identification fields.
  */
 export type MinimalCountry = {
+  /**
+   * The ISO 3166-1 alpha-2 country code (e.g., "PT", "US", "GB").
+   */
   alpha_2_code: string;
+  /**
+   * The ISO 3166-1 alpha-3 country code (e.g., "PRT", "USA", "GBR"). This is the primary code used across the Remote API.
+   */
   code: string;
+  /**
+   * Feature flags indicating which Remote services are available in this country.
+   */
   features?: Array<string>;
+  /**
+   * The country's full English name.
+   */
   name: string;
+  /**
+   * A unique URL-friendly identifier for the country.
+   */
   slug: string;
 };
 
 /**
  * Employment
  *
- * Complete information of an employment
+ * Complete information of an employment, including all onboarding task statuses, country-specific form data (address, contract, administrative, etc.), and contractor-specific settings where applicable.
  */
 export type Employment = {
   /**
@@ -649,6 +800,9 @@ export type Employment = {
    * Name of related department, if any. Otherwise, null.
    */
   department?: string | null;
+  /**
+   * The email address of the employee's manager. Null if no manager is assigned.
+   */
   manager_email: string | null;
   provisional_start_date?: ProvisionalStartDate;
   /**
@@ -658,6 +812,9 @@ export type Employment = {
     [key: string]: unknown;
   };
   pricing_plan_details: PricingPlanDetails;
+  /**
+   * The employee's full name.
+   */
   full_name: string;
   /**
    * For the employment types `contractor`, `global_payroll_employee` and `direct_employee`, only [List employments](#operation/get_index_employment) and
@@ -718,6 +875,9 @@ export type Employment = {
      */
     type?: 'hourly' | 'daily' | 'weekly' | 'monthly' | 'one_off';
   } | null;
+  /**
+   * The unique identifier (UUID) of the company this employment belongs to.
+   */
   company_id: string;
   /**
    * Work address information. Its properties may vary depending on the country.
@@ -725,8 +885,14 @@ export type Employment = {
   work_address_details: {
     [key: string]: unknown;
   };
+  /**
+   * The employee's work email address, typically provided by the employer.
+   */
   work_email: string;
   status: EmploymentStatus;
+  /**
+   * The timestamp when this employment record was last updated.
+   */
   updated_at: string;
   /**
    * Employment basic information. Its properties may vary depending on the country.
@@ -735,8 +901,17 @@ export type Employment = {
   basic_information?: {
     [key: string]: unknown;
   };
+  /**
+   * The employee's job title. May be null if not yet set.
+   */
   job_title: string | null;
+  /**
+   * The unique identifier (UUID) of the employment.
+   */
   id: string;
+  /**
+   * The date when the employee's probation period ends, if applicable.
+   */
   probation_period_end_date?: string;
   /**
    * DepartmentID
@@ -744,7 +919,13 @@ export type Employment = {
    * Unique ID of related department, if any. Otherwise, null.
    */
   department_id?: string | null;
+  /**
+   * The full name of the employee's manager.
+   */
   manager?: string;
+  /**
+   * The email address the employee uses to log in to the Remote platform.
+   */
   login_email: string;
   /**
    * A unique reference code for the employment record in a non-Remote system. While uniqueness is recommended, it is not strictly enforced within Remote's system.
@@ -756,6 +937,9 @@ export type Employment = {
    *
    */
   employment_model: 'global_payroll' | 'peo' | 'eor';
+  /**
+   * The employee's personal email address, used for account-related communications.
+   */
   personal_email: string;
   country: NullableCountry;
   user_status?: UserStatus;
@@ -763,7 +947,13 @@ export type Employment = {
   bank_account_details: Array<{
     [key: string]: unknown;
   }>;
+  /**
+   * Documents associated with this employment (e.g., contracts, tax forms, identity documents).
+   */
   files: Array<File>;
+  /**
+   * The unique identifier (UUID) of the currently active contract for this employment.
+   */
   active_contract_id?: string;
   /**
    * Billing address information. Its properties may vary depending on the country.
@@ -784,8 +974,17 @@ export type Employment = {
   emergency_contact_details: {
     [key: string]: unknown;
   };
+  /**
+   * Whether this employment can still be cancelled during the onboarding process. Once the employment is active, this will be false.
+   */
   eligible_for_onboarding_cancellation: boolean;
+  /**
+   * The employment ID of the employee's manager on Remote, if the manager is also managed through Remote. Null otherwise.
+   */
   manager_employment_id: string | null;
+  /**
+   * The timestamp when this employment record was created.
+   */
   created_at: string;
 };
 
@@ -802,8 +1001,13 @@ export type ContractorInvoiceResponse = {
 
 /**
  * CreateRiskReserveParams
+ *
+ * Parameters for creating a risk reserve deposit for an employment. A risk reserve is a refundable deposit held by Remote to cover potential liabilities during the onboarding period, such as severance obligations or statutory entitlements. The reserve amount is calculated automatically based on the employment's country, contract terms, and applicable labor laws.
  */
 export type CreateRiskReserveParams = {
+  /**
+   * The unique identifier (UUID) of the employment to create a risk reserve for. The employment must exist and be in a state that allows risk reserve creation.
+   */
   employment_slug: string;
 };
 
@@ -818,12 +1022,26 @@ export type HolidaysResponse = {
 
 /**
  * BenefitOffersEmployment
+ *
+ * A lightweight employment representation used in benefit offer listings.
  */
 export type BenefitOffersEmployment = {
   country: Country;
+  /**
+   * The employee's given (first) name. Null if not available.
+   */
   given_name: string | null;
+  /**
+   * The unique identifier (UUID) of the employment.
+   */
   id: string;
+  /**
+   * The employee's full name.
+   */
   name: string;
+  /**
+   * The employee's surname (last name). Null if not available.
+   */
   surname: string | null;
 };
 
@@ -885,7 +1103,7 @@ export type TotalPay = {
 /**
  * IncentiveResponse
  *
- * Incentive response
+ * Response containing a single incentive record.
  */
 export type IncentiveResponse = {
   data?: {
@@ -896,7 +1114,7 @@ export type IncentiveResponse = {
 /**
  * ExpenseResponse
  *
- * Expense response
+ * Response containing a single expense record.
  */
 export type ExpenseResponse = {
   data: {
@@ -977,6 +1195,9 @@ export type ActionError = {
 export type BenefitOfferByEmploymentResponse = {
   data: {
     benefit_offers_by_employment: Array<BenefitOffersByEmployment>;
+    /**
+     * The unique identifier (UUID) of the company.
+     */
     company_id: string;
     currency: Currency;
   };
@@ -985,7 +1206,7 @@ export type BenefitOfferByEmploymentResponse = {
 /**
  * EmploymentShowResponse
  *
- * Complete information of an employment
+ * Response containing the full employment record, including the termination date if the employment has an active offboarding.
  */
 export type EmploymentShowResponse = {
   data: {
@@ -1010,7 +1231,7 @@ export type OAuth2TokenParams =
 /**
  * SentBackTimesheetResponse
  *
- * Sent back timesheet response
+ * Response returned after a timesheet has been sent back to the employee for revision.
  */
 export type SentBackTimesheetResponse = {
   data?: {
@@ -1052,7 +1273,7 @@ export type CompanyCurrenciesResponse = {
 /**
  * DownloadFileResponse
  *
- * A supported file
+ * Response containing the file's metadata and its base64-encoded content for download.
  */
 export type DownloadFileResponse = {
   data: {
@@ -1070,17 +1291,26 @@ export type DownloadFileResponse = {
 /**
  * MinimalTimesheet
  *
- * Minimal Timesheet
+ * A lightweight timesheet representation returned after create and approve operations. Contains basic identification and status fields but not the detailed hours breakdown or time tracking entries.
  */
 export type MinimalTimesheet = {
+  /**
+   * Whether this timesheet requires explicit approval before processing.
+   */
   approval_required: boolean;
   country_code: CountryCode;
   employment_id: UuidSlug;
   end_date: Date;
   id: UuidSlug;
+  /**
+   * Optional notes added by the employee.
+   */
   notes: string | null;
   start_date: Date;
   status: TimesheetStatus;
+  /**
+   * The timestamp when the employee submitted this timesheet. Null if not yet submitted.
+   */
   submitted_at: string | null;
 };
 
@@ -1091,6 +1321,12 @@ export type ConflictErrorResponse = ValidationError | MessageResponse;
 
 /**
  * IdentityCurrentResponse
+ *
+ * The response from `GET /v1/identity/current`. Returns information about the entities associated with the current authentication token. The shape of the response depends on the type of token used:
+ *
+ * - **Client Credentials Token**: Returns the integration's `client_id` and details. No company or user context.
+ * - **Company Access Token** (Authorization Code flow): Returns full context — integration credentials, the company being accessed, and the authorizing user.
+ * - **Customer API Token**: Returns only the company and user. No integration credentials since the company is accessing its own data directly.
  */
 export type IdentityCurrentResponse =
   | IdentityClientCredentialsResponse
@@ -1099,52 +1335,150 @@ export type IdentityCurrentResponse =
 
 /**
  * EmployeeDetails
+ *
+ * Payroll cost breakdown for a single employee within a payroll run. All monetary amounts are represented as an object with `amount` (integer, in cents) and `currency` (ISO 4217 code).
  */
 export type EmployeeDetails = {
   /**
-   * When payroll run is in `processing` or `preparing` status, the estimated salary may change after final payroll calculations.
+   * The employee's base salary component for this payroll period. When the payroll run is in `preparing` or `processing` status, this is an estimate that may change after final payroll calculations. Amount in cents.
    */
   base_salary: {
+    /**
+     * Amount in cents.
+     */
     amount?: number;
+    /**
+     * ISO 4217 currency code.
+     */
     currency?: string;
   };
+  /**
+   * Total cost of employee benefits (health insurance, pension, etc.) for this payroll run. Amount in cents.
+   */
   benefits: {
+    /**
+     * Amount in cents.
+     */
     amount?: number;
+    /**
+     * ISO 4217 currency code.
+     */
     currency?: string;
   };
+  /**
+   * Total deductions from the employee's gross pay, including taxes and social contributions. Amount in cents.
+   */
   deductions: {
+    /**
+     * Amount in cents.
+     */
     amount?: number;
+    /**
+     * ISO 4217 currency code.
+     */
     currency?: string;
   };
+  /**
+   * Total employer-side contributions and costs (employer social contributions, taxes, etc.) beyond the employee's gross pay. Amount in cents.
+   */
   employer_costs: {
+    /**
+     * Amount in cents.
+     */
     amount?: number;
+    /**
+     * ISO 4217 currency code.
+     */
     currency?: string;
   };
+  /**
+   * The unique identifier of the employment record for this employee.
+   */
   employment_id?: string;
+  /**
+   * Total approved expenses reimbursed to the employee in this payroll run. Amount in cents.
+   */
   expenses: {
+    /**
+     * Amount in cents.
+     */
     amount?: number;
+    /**
+     * ISO 4217 currency code.
+     */
     currency?: string;
   };
+  /**
+   * The full name of the employee. May be null if the employee's profile is incomplete.
+   */
   full_name: string | null;
+  /**
+   * The employee's gross pay before any deductions. Amount in cents.
+   */
   gross_pay: {
+    /**
+     * Amount in cents.
+     */
     amount?: number;
+    /**
+     * ISO 4217 currency code.
+     */
     currency?: string;
   };
+  /**
+   * Total incentives (bonuses, commissions, etc.) paid to the employee in this payroll run. Amount in cents.
+   */
   incentives: {
+    /**
+     * Amount in cents.
+     */
     amount?: number;
+    /**
+     * ISO 4217 currency code.
+     */
     currency?: string;
   };
+  /**
+   * The net amount paid to the employee after all deductions (taxes, social contributions, etc.). Amount in cents.
+   */
   net_pay: {
+    /**
+     * Amount in cents.
+     */
     amount?: number;
+    /**
+     * ISO 4217 currency code.
+     */
     currency?: string;
   };
+  /**
+   * Any other payroll components not categorized as salary, benefits, expenses, or incentives. Amount in cents.
+   */
   other: {
+    /**
+     * Amount in cents.
+     */
     amount?: number;
+    /**
+     * ISO 4217 currency code.
+     */
     currency?: string;
   };
+  /**
+   * The unique identifier of the employee's payslip for this payroll run. Null when the payroll run is still in `preparing` or `processing` status and payslips have not yet been generated.
+   */
   payslip_id: string | null;
+  /**
+   * The total cost to the employer for this employee in this payroll run, including salary, benefits, employer contributions, expenses, and incentives. Amount in cents.
+   */
   total_cost: {
+    /**
+     * Amount in cents.
+     */
     amount?: number;
+    /**
+     * ISO 4217 currency code.
+     */
     currency?: string;
   };
 };
@@ -1161,27 +1495,56 @@ export type Variance = {
 
 /**
  * CostCalculatorDiscountResponse
+ *
+ * The discount applied to a cost estimate, showing the annual and monthly savings.
  */
 export type CostCalculatorDiscountResponse = {
+  /**
+   * The annual discount amount in cents.
+   */
   annual_amount: number;
+  /**
+   * The monthly discount amount in cents.
+   */
   monthly_amount: number;
+  /**
+   * The number of months the discount applies to.
+   */
   months: number;
+  /**
+   * A human-readable label for the discount.
+   */
   text: string;
 };
 
 /**
  * DownloadDocumentResponse
  *
- * Download a supported document
+ * Response containing a document's metadata and its base64-encoded content for download.
  */
 export type DownloadDocumentResponse = {
   data: {
     document?: {
+      /**
+       * The document content, base64-encoded.
+       */
       content?: Blob | File;
+      /**
+       * The unique identifier (UUID) of the document.
+       */
       id?: string;
       inserted_at?: DateTimeIso8601;
+      /**
+       * The file name including extension.
+       */
       name?: string;
+      /**
+       * A more specific classification of the document. Null if no sub-type applies.
+       */
       sub_type?: string | null;
+      /**
+       * The broad category of the document.
+       */
       type?: string;
     };
   };
@@ -1225,7 +1588,7 @@ export type ApproveExpenseParams = {
 /**
  * TypeOfDayBreakdown
  *
- * Type of day breakdown for the respective time of day
+ * Hours breakdown by type of day (regular working day, weekend, or public holiday) for a specific time of day (day or night).
  */
 export type TypeOfDayBreakdown = {
   holiday: HoursAndMinutes;
@@ -1238,7 +1601,7 @@ export type MaybeBenefitTier = BenefitTier | null;
 /**
  * EmploymentBasicResponse
  *
- * Complete information of an employment
+ * A lightweight employment representation returned after creation. Contains basic identification, country, and status fields but not the full onboarding details or country-specific form data.
  */
 export type EmploymentBasicResponse = {
   /**
@@ -1249,20 +1612,47 @@ export type EmploymentBasicResponse = {
   basic_information?: {
     [key: string]: unknown;
   };
+  /**
+   * The unique identifier (UUID) of the company.
+   */
   company_id?: string;
+  /**
+   * The ISO 3166-1 3-letter country code for this employment.
+   */
   country_code?: string;
+  /**
+   * When this employment was created.
+   */
   created_at?: string;
   employment_lifecycle_stage?: EmploymentLifecycleStage;
+  /**
+   * The employee's full name.
+   */
   full_name?: string;
   id?: UuidSlug;
+  /**
+   * The employee's job title. May be null if not yet set.
+   */
   job_title?: string | null;
+  /**
+   * The email the employee uses to log in to Remote.
+   */
   login_email?: string;
+  /**
+   * The employee's personal email address.
+   */
   personal_email?: string;
   /**
    * Required for employees, optional for contractors
    */
   provisional_start_date?: string;
+  /**
+   * The type of employment.
+   */
   type?: 'employee' | 'contractor';
+  /**
+   * When this employment was last updated.
+   */
   updated_at?: string;
 };
 
@@ -1298,9 +1688,18 @@ export type BenefitRenewalRequestsBenefitRenewalRequest = {
   coverage_end_date: Date;
   coverage_start_date: Date;
   current_benefit_tier?: NullableMinimalBenefitTier;
+  /**
+   * The unique identifier (UUID) of the benefit renewal request.
+   */
   id: string;
+  /**
+   * The number of employees who will be affected by this benefit renewal.
+   */
   number_of_affected_employees: number;
   renewal_selection_end_date: Date;
+  /**
+   * Instructions for the employer about the renewal process, available plans, and deadlines.
+   */
   renewal_selection_instructions: string;
   renewal_selection_start_date: Date;
 };
@@ -1369,10 +1768,16 @@ export type BenefitRenewalRequestsUpdateBenefitRenewalRequest = {
  */
 export type CompanyDepartment = {
   /**
-   * Company ID
+   * The unique identifier (UUID) of the company this department belongs to.
    */
   company_id: string;
+  /**
+   * The unique identifier (UUID) of the department.
+   */
   id: string;
+  /**
+   * The name of the department (e.g., "Marketing", "Engineering").
+   */
   name: string;
 };
 
@@ -1448,8 +1853,17 @@ export type ContractorInvoiceStatus =
  * Compensation
  */
 export type Compensation = {
+  /**
+   * The compensation amount in cents. Null if compensation is not yet set.
+   */
   amount: number | null;
+  /**
+   * The ISO 4217 currency code for the compensation. Null if not yet set.
+   */
   currency_code: string | null;
+  /**
+   * Whether the employee is paid hourly or on a salary basis. Null if not yet set.
+   */
   wage_type: 'hourly' | 'salary';
 };
 
@@ -1511,18 +1925,47 @@ export type ListContractorInvoicesResponse = {
 
 /**
  * CostCalculatorEmploymentParam
+ *
+ * Parameters for a single employment to include in the cost estimate. Provide the region and salary (or total cost) — the calculator will compute all employer costs, contributions, and benefits.
  */
 export type CostCalculatorEmploymentParam = {
+  /**
+   * The employee's age. Used in some countries to calculate age-dependent benefits or contributions.
+   */
   age?: number;
+  /**
+   * The annual gross salary in the region's local currency, in cents. Provide this OR `annual_total_cost`, not both.
+   */
   annual_gross_salary?: number;
+  /**
+   * The annual gross salary in the employer's preferred currency, in cents. Used when you want to specify salary in a different currency than the region's.
+   */
   annual_gross_salary_in_employer_currency?: number;
+  /**
+   * The target total annual cost (salary + all employer costs) in the region's local currency, in cents. The calculator will derive the gross salary. Provide this OR `annual_gross_salary`, not both.
+   */
   annual_total_cost?: number;
+  /**
+   * The target total annual cost in the employer's preferred currency, in cents.
+   */
   annual_total_cost_in_employer_currency?: number;
+  /**
+   * Specific benefit selections to include in the estimate.
+   */
   benefits?: Array<CostCalculatorBenefitParam>;
   discount?: CostCalculatorDiscount;
   employment_term?: EmploymentTermType;
+  /**
+   * The unique identifier (slug) of the region/country for this employment. Required.
+   */
   region_slug: string;
+  /**
+   * A custom exchange rate from the regional currency to the employer currency. If not provided, the current market rate is used.
+   */
   regional_to_employer_exchange_rate?: string;
+  /**
+   * An optional label for this employment in the estimate (e.g., the job title or role name).
+   */
   title?: string;
 };
 
@@ -1556,6 +1999,16 @@ export type UnlimitedDaysandHoursResponse = {
  */
 export type ImportDataRow = {
   [key: string]: unknown;
+};
+
+/**
+ * CreateRiskReserveProofOfPaymentParams
+ */
+export type CreateRiskReserveProofOfPaymentParams = {
+  /**
+   * The proof of payment file (PDF)
+   */
+  file: Blob | File;
 };
 
 /**
@@ -1601,9 +2054,21 @@ export type AccountsLoginSyncedWith = 'none' | 'personal' | 'work';
  * NullableMinimalBenefitTier
  */
 export type NullableMinimalBenefitTier = {
+  /**
+   * A description of what this tier includes.
+   */
   description: string;
+  /**
+   * A human-readable cost estimate for this tier (e.g., "~$100"). Null if cost is not available.
+   */
   display_cost?: string | null;
+  /**
+   * The unique identifier (UUID) of the benefit tier.
+   */
   id: string;
+  /**
+   * The name of the benefit tier (e.g., "Premium", "Standard").
+   */
   name: string;
 } | null;
 
@@ -1625,9 +2090,17 @@ export type CreateTimeoffParams = {
 
 /**
  * JobAssociation
+ *
+ * A reference to a related job classification entity (job family, sub-family, career track, or job level). Null if not assigned.
  */
 export type JobAssociation = {
+  /**
+   * The unique identifier (UUID) of the associated entity.
+   */
   id?: string;
+  /**
+   * The human-readable name of the associated entity.
+   */
   label?: string;
 } | null;
 
@@ -1672,18 +2145,45 @@ export type IntegrationsScimGroupListResponse = {
  * A supported country on Remote
  */
 export type Country = {
+  /**
+   * The ISO 3166-1 alpha-2 country code (e.g., "PT").
+   */
   alpha_2_code: string;
+  /**
+   * The ISO 3166-1 alpha-3 country code (e.g., "PRT"). This is the primary code used across the Remote API.
+   */
   code: string;
   /**
    * Contractor product names available for this country
    */
   contractor_products_available?: Array<'standard' | 'plus' | 'cor'>;
+  /**
+   * Administrative subdivisions of the country (e.g., states, provinces, districts). Null if the country has no subdivisions relevant to Remote's services.
+   */
   country_subdivisions?: Array<CountrySubdivision> | null;
+  /**
+   * Whether EOR (Employer of Record) onboarding is available in this country.
+   */
   eor_onboarding?: boolean;
+  /**
+   * When benefit plan selections become locked for this country (e.g., "after_first_hire" means benefits cannot be changed after the first employee is hired).
+   */
   locked_benefits?: string;
+  /**
+   * The country's full English name.
+   */
   name: string;
+  /**
+   * The geographic region the country belongs to (e.g., "Europe", "Asia", "Americas").
+   */
   region?: string;
+  /**
+   * The geographic subregion (e.g., "Southern Europe", "Southeast Asia"). Null for some countries.
+   */
   subregion?: string | null;
+  /**
+   * The list of JSON schema form names available for this country (e.g., "address_details", "contract_details"). Use these with the Show form schema endpoint to get country-specific field requirements.
+   */
   supported_json_schemas?: Array<string>;
 };
 
@@ -1703,6 +2203,9 @@ export type BulkContractorInvoiceScheduleCreateParams = {
  * CreateOffboardingParams
  */
 export type CreateOffboardingParams = {
+  /**
+   * The unique identifier (UUID) of the employment to be terminated.
+   */
   employment_id: string;
   termination_details: TerminationDetailsParams;
   /**
@@ -1723,7 +2226,15 @@ export type CreatePricingPlanParams =
 /**
  * UserStatus
  *
- * The status of the user
+ * The status of the user account associated with this employment.
+ *
+ * - `active`: The user account is active and the user can log in.
+ * - `created`: The user account has been created but not yet activated.
+ * - `initiated`: The user has been invited but has not completed registration.
+ * - `cancelled`: The user account was cancelled before activation.
+ * - `inactive`: The user account has been deactivated (e.g., after offboarding).
+ * - `deleted`: The user account has been deleted.
+ *
  */
 export type UserStatus =
   | 'active'
@@ -1810,7 +2321,12 @@ export type CompanyCreationResponse = {
 /**
  * ContractorContractDocumentStatus
  *
- * Contract document status.
+ * The signing status of a contract document.
+ *
+ * - `draft`: The document is being prepared and has not been sent for signing.
+ * - `awaiting_signatures`: The document has been sent and is waiting for one or more parties to sign.
+ * - `finished`: All required signatures have been collected and the contract is fully executed.
+ *
  */
 export type ContractorContractDocumentStatus =
   | 'draft'
@@ -1871,18 +2387,32 @@ export type MaybeCurrencyDefinition = CurrencyDefinition | null;
 
 /**
  * BenefitGroup
+ *
+ * A category of benefits (e.g., "Health", "Dental", "Life Insurance") with a defined policy period. Each group contains one or more tiers representing different coverage levels.
  */
 export type BenefitGroup = {
+  /**
+   * The unique identifier (UUID) of the benefit group.
+   */
   id: string;
+  /**
+   * The name of the benefit category (e.g., "Health", "Dental", "Life Insurance").
+   */
   name: string;
+  /**
+   * The date when the policy period ends for this benefit group (ISO 8601 format). Benefits may need to be renewed after this date.
+   */
   policy_end_date: string;
+  /**
+   * The date when the policy period begins for this benefit group (ISO 8601 format).
+   */
   policy_start_date: string;
 };
 
 /**
  * MinimalTimesheetResponse
  *
- * Timesheet response
+ * Response containing a minimal timesheet representation, returned after create and approve operations.
  */
 export type MinimalTimesheetResponse = {
   data?: {
@@ -1923,21 +2453,38 @@ export type InternalServerErrorResponse = ValidationError | MessageResponse;
 
 /**
  * CostCalculatorEstimateParams
+ *
+ * Parameters for generating a cost estimate for one or more employments across different countries/regions.
  */
 export type CostCalculatorEstimateParams = {
   /**
-   * Company name
+   * The company name, used for labeling in PDF/CSV exports.
    */
   company_name?: string;
   /**
-   * Currency Slug
+   * The ISO 4217 currency code for the employer's preferred currency (e.g., "USD"). All costs will be converted to this currency.
    */
   employer_currency_slug: string;
+  /**
+   * One or more employments to estimate costs for.
+   */
   employments: Array<CostCalculatorEmploymentParam>;
   global_discount?: CostCalculatorDiscount;
+  /**
+   * Whether to include benefit costs in the estimate. Defaults to false if not provided.
+   */
   include_benefits?: boolean;
+  /**
+   * Whether to include detailed cost breakdowns (individual contributions, benefits, etc.) in the response.
+   */
   include_cost_breakdowns?: boolean;
+  /**
+   * Whether to include Remote's management fee in the total cost calculation.
+   */
   include_management_fee?: boolean;
+  /**
+   * Whether to include premium benefit options in the estimate.
+   */
   include_premium_benefits?: boolean;
 };
 
@@ -2007,7 +2554,7 @@ export type CustomFieldSimpleDataType =
 /**
  * Offboarding
  *
- * Offboarding
+ * A wrapper containing an offboarding record, which can be either a termination (employer-initiated) or a resignation (employee-initiated).
  */
 export type Offboarding = {
   offboarding?: ResignationOrTerminationOffboarding;
@@ -2076,8 +2623,13 @@ export type CorTerminationRequestCreatedResponse = {
 
 /**
  * NotFoundResponse
+ *
+ * Returned when the requested resource does not exist or is not accessible with the current authentication credentials.
  */
 export type NotFoundResponse = {
+  /**
+   * A message indicating which resource was not found.
+   */
   message?: string;
 };
 
@@ -2140,25 +2692,59 @@ export type Timezone = string;
 
 /**
  * CountrySummary
+ *
+ * A per-country summary of benefit offerings, including aggregate enrollment statistics and a breakdown of all offered benefit groups and their tiers for that country.
  */
 export type CountrySummary = {
   country: Country;
   employee_stats: EmployeeStats;
+  /**
+   * All benefit groups that have been offered to employees in this country.
+   */
   offered_benefit_groups: Array<OfferedBenefitGroup>;
 };
 
 /**
  * ResignationOffboarding
+ *
+ * An offboarding request initiated by the employee (a resignation). Includes the employee's proposed last working day, reason, and status tracking through Remote's process.
  */
 export type ResignationOffboarding = {
+  /**
+   * Additional comments or context about the resignation.
+   */
   additional_comments?: string | null;
+  /**
+   * Whether the employer agrees with the employee's PTO balance.
+   */
   agrees_to_pto_amount?: boolean;
+  /**
+   * A description of how and when the employer was made aware of the resignation.
+   */
   employer_awareness?: string;
+  /**
+   * The unique identifier (UUID) of the employment being resigned from.
+   */
   employment_id: string;
+  /**
+   * The unique identifier (UUID) of the offboarding request.
+   */
   id: string;
+  /**
+   * The employee's proposed last working day. The actual last day may differ based on notice period requirements.
+   */
   proposed_last_working_day: string;
+  /**
+   * A detailed description of the employee's reason for resigning.
+   */
   reason_description?: string;
+  /**
+   * The unique identifier (UUID) of the employee who submitted the resignation.
+   */
   requested_by: string;
+  /**
+   * The reason the employee gave for their resignation.
+   */
   resignation_reason:
     | 'cancellation_before_start_date'
     | 'company_culture_or_values'
@@ -2184,12 +2770,27 @@ export type ResignationOffboarding = {
     | 'transfer_between_remote_customer'
     | 'transfer_from_remote_to_customer'
     | 'transfer_from_remote_to_other_eor';
+  /**
+   * The current status of the offboarding request.
+   *
+   * - `submitted`: The resignation has been submitted and is awaiting review.
+   * - `in_review`: Remote is processing the resignation.
+   * - `done`: The offboarding has been completed.
+   * - `canceled`: The resignation was withdrawn or canceled.
+   *
+   */
   status: 'submitted' | 'in_review' | 'done' | 'canceled';
+  /**
+   * The timestamp when the resignation was submitted.
+   */
   submitted_at: string;
   /**
    * Most updated termination date for the offboarding. This date is subject to change through the offboarding process even after it is finalized.
    */
   termination_date: string | null;
+  /**
+   * The type of offboarding. Always `"resignation"` for employee-initiated resignations.
+   */
   type: 'resignation';
 };
 
@@ -2271,13 +2872,25 @@ export type CustomFieldDataType =
 /**
  * File
  *
- * A supported file
+ * A file associated with an employment, such as a contract, tax form, or identity document.
  */
 export type File = {
+  /**
+   * The unique identifier (UUID) of the file.
+   */
   id: string;
   inserted_at: DateTimeIso8601;
+  /**
+   * The file name including extension (e.g., "id.pdf", "contract.pdf").
+   */
   name: string;
+  /**
+   * A more specific classification of the file within its type (e.g., "personal_id" within type "id", or "ir_35" within type "contract"). Null if no sub-type applies.
+   */
   sub_type?: string | null;
+  /**
+   * The broad category of the file (e.g., "id", "contract", "tax_form").
+   */
   type: string;
 };
 
@@ -2308,7 +2921,7 @@ export type Stage = {
 /**
  * OffboardingResponse
  *
- * Offboarding response
+ * Response containing a single offboarding record with full details.
  */
 export type OffboardingResponse = {
   data?: Offboarding;
@@ -2320,10 +2933,22 @@ export type OffboardingResponse = {
  * Employment document file
  */
 export type EmploymentDocument = {
+  /**
+   * The unique identifier (UUID) of the file.
+   */
   id: string;
   inserted_at: DateTimeIso8601;
+  /**
+   * The file name including extension (e.g., "id.pdf", "contract.pdf").
+   */
   name: string;
+  /**
+   * A more specific classification of the file within its type (e.g., "personal_id" within type "id", or "ir_35" within type "contract"). Null if no sub-type applies.
+   */
   sub_type?: string | null;
+  /**
+   * The broad category of the file (e.g., "id", "contract", "tax_form").
+   */
   type: string;
 } | null;
 
@@ -2446,6 +3071,9 @@ export type EmploymentFullParams = {
   billing_address_details?: {
     [key: string]: unknown;
   };
+  /**
+   * The unique identifier (UUID) of the company. Optional when updating.
+   */
   company_id?: string;
   /**
    * Contract information. As its properties may vary depending on the country,
@@ -2456,6 +3084,9 @@ export type EmploymentFullParams = {
     [key: string]: unknown;
   };
   country?: Country;
+  /**
+   * The ISO 3166-1 3-letter country code for this employment.
+   */
   country_code?: string;
   /**
    * The department of the employment. The department must belong to the same company as the employment.
@@ -2510,6 +3141,8 @@ export type EmploymentFullParams = {
 
 /**
  * PayrollRunResponse
+ *
+ * Response containing a single payroll run with full details including cost totals and employee breakdowns.
  */
 export type PayrollRunResponse = {
   payroll_run?: PayrollRun;
@@ -2597,7 +3230,10 @@ export type CreateWebhookCallbackParams = {
     | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
+    | 'employment.cor_hiring.invoice_created'
     | 'employment.eor_hiring.invoice_created'
+    | 'employment.cor_hiring.proof_of_payment_accepted'
+    | 'employment.cor_hiring.proof_of_payment_submitted'
     | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.eor_hiring.proof_of_payment_submitted'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
@@ -2675,10 +3311,22 @@ export type CreateWebhookCallbackParams = {
  * Employment image file
  */
 export type EmploymentImage = {
+  /**
+   * The unique identifier (UUID) of the file.
+   */
   id: string;
   inserted_at: DateTimeIso8601;
+  /**
+   * The file name including extension (e.g., "id.pdf", "contract.pdf").
+   */
   name: string;
+  /**
+   * A more specific classification of the file within its type (e.g., "personal_id" within type "id", or "ir_35" within type "contract"). Null if no sub-type applies.
+   */
   sub_type?: string | null;
+  /**
+   * The broad category of the file (e.g., "id", "contract", "tax_form").
+   */
   type: string;
 } | null;
 
@@ -2758,9 +3406,14 @@ export type CountriesResponse = {
 
 /**
  * DataSyncEvent
+ *
+ * A record of a data synchronization event, showing when it ran, what data type it covered, and whether it succeeded.
  */
 export type DataSyncEvent = {
   data_type: 'benefits' | 'kdb' | 'countries' | 'help-center-articles';
+  /**
+   * The timestamp when the sync event occurred.
+   */
   inserted_at: string;
   status: 'pass' | 'fail';
 };
@@ -2802,11 +3455,17 @@ export type AssertionTokenParams = {
 /**
  * SentBackTimesheet
  *
- * Sent back timesheet
+ * A timesheet that has been sent back to the employee for revision. The status will be `in_calibration` and includes the reason provided by the reviewer.
  */
 export type SentBackTimesheet = {
   id: UuidSlug;
+  /**
+   * Always `true` for sent-back timesheets, indicating the timesheet was returned for revision.
+   */
   sent_back: boolean;
+  /**
+   * The reason provided by the reviewer for why the timesheet needs to be revised.
+   */
   sent_back_reason: string;
   status: TimesheetStatus;
 };
@@ -2891,10 +3550,21 @@ export type Payment = {
 
 /**
  * BenefitRenewalRequests.MinimalBenefitGroup
+ *
+ * A lightweight benefit group reference used in renewal requests.
  */
 export type BenefitRenewalRequestsMinimalBenefitGroup = {
+  /**
+   * The ISO 3166-1 3-letter country code for this benefit group.
+   */
   country_code: string;
+  /**
+   * The unique identifier (UUID) of the benefit group.
+   */
   id: string;
+  /**
+   * The name of the benefit group (e.g., "Health", "Life Insurance").
+   */
   name: string;
 };
 
@@ -2917,8 +3587,13 @@ export type OptionValue = string;
 
 /**
  * ListPayrollRunResponse
+ *
+ * Response containing a list of payroll runs for the company. Each payroll run includes summary information but not per-employee breakdowns.
  */
 export type ListPayrollRunResponse = {
+  /**
+   * List of payroll runs matching the query filters.
+   */
   payroll_runs?: Array<MinimalPayrollRun>;
 };
 
@@ -3080,7 +3755,7 @@ export type JsonSchema = {
 /**
  * PricingPlan
  *
- * Pricing plan
+ * A pricing plan assigned to a company, defining the product, billing frequency, and cost.
  */
 export type PricingPlan = {
   base_price: Price;
@@ -3088,6 +3763,9 @@ export type PricingPlan = {
    * End date of the pricing plan this will be nil if the pricing plan is unlimited otherwise it will be the last day of the month
    */
   end_date: string | null;
+  /**
+   * The unique identifier (UUID) of the pricing plan.
+   */
   id: string;
   price: Price;
   product: Product;
@@ -3095,6 +3773,9 @@ export type PricingPlan = {
    * Start date of the pricing plan this will always be the first of the month, for example 2025-01-01 will be used if the user provided 2025-01-02
    */
   start_date: string;
+  /**
+   * The pricing plan type (e.g., "termed" for fixed-term, "evergreen" for ongoing).
+   */
   type: string;
 };
 
@@ -3179,17 +3860,36 @@ export type MinimalUser = {
 
 /**
  * CostCalculatorCost
+ *
+ * A single cost line item within a cost breakdown (e.g., a specific employer contribution, benefit, or statutory payment).
  */
 export type CostCalculatorCost = {
+  /**
+   * The cost amount in cents.
+   */
   amount: number;
+  /**
+   * A human-readable explanation of how this cost is calculated or what it covers.
+   */
   description: string | null;
+  /**
+   * The name of this cost item (e.g., "Health Insurance", "Social Security").
+   */
   name: string;
+  /**
+   * The ID of the related help article, if available.
+   */
   zendesk_article_id: string | null;
+  /**
+   * A link to a help article with more information about this cost, if available.
+   */
   zendesk_article_url: string | null;
 };
 
 /**
  * MinimalPayrollRun
+ *
+ * A lightweight representation of a payroll run used in list responses. Contains summary information and the total cost, but not the per-employee breakdown or cost category totals.
  */
 export type MinimalPayrollRun = {
   approval_date: NullableDate;
@@ -3197,9 +3897,23 @@ export type MinimalPayrollRun = {
   currency_code: CurrencyCode;
   cutoff_date?: NullableDate;
   expected_payout_date: Date;
+  /**
+   * The unique identifier of the payroll run.
+   */
   id: string;
   period_end: Date;
   period_start: Date;
+  /**
+   * The current status of the payroll run.
+   *
+   * - `preparing`: The payroll run is being assembled. Costs are estimates.
+   * - `processing`: Submitted for processing. Costs are still estimates.
+   * - `completed`: Processing is complete. Costs are final.
+   * - `finalized`: Payments have been or will be disbursed.
+   * - `waiting_for_customer_approval`: Requires company approval before proceeding.
+   * - `rejected`: Rejected during approval and needs revision.
+   *
+   */
   status:
     | 'preparing'
     | 'processing'
@@ -3207,7 +3921,21 @@ export type MinimalPayrollRun = {
     | 'finalized'
     | 'waiting_for_customer_approval'
     | 'rejected';
+  /**
+   * The total cost of this payroll run across all employees. Amount in cents.
+   */
   total_payroll_cost: number;
+  /**
+   * The type of payroll run.
+   *
+   * - `main`: Regular recurring payroll.
+   * - `one_off`: Ad-hoc off-cycle payment.
+   * - `pro_forma`: Simulated run for cost estimation.
+   * - `tax_documents`: Tax document generation only.
+   * - `expenses`: Dedicated expense reimbursement run.
+   * - `parallel`: Supplementary run alongside the main payroll.
+   *
+   */
   type:
     | 'main'
     | 'one_off'
@@ -3218,6 +3946,32 @@ export type MinimalPayrollRun = {
 };
 
 export type MaybeUnifiedMinimalBenefitGroup = UnifiedMinimalBenefitGroup | null;
+
+/**
+ * ListPayItemsResponse
+ */
+export type ListPayItemsResponse = {
+  data: {
+    /**
+     * Current page number
+     */
+    current_page: number;
+    /**
+     * List of pay elements
+     */
+    data: Array<{
+      [key: string]: unknown;
+    }>;
+    /**
+     * Total number of pay items
+     */
+    total_count: number;
+    /**
+     * Total number of pages
+     */
+    total_pages: number;
+  };
+};
 
 /**
  * OAuth2Tokens
@@ -3235,6 +3989,45 @@ export type OAuth2Tokens =
 export type ApprovedWorkAuthozation = {
   employer_special_instructions?: string | null;
   status: 'approved_by_manager';
+};
+
+/**
+ * EngagementAgreementDetailsParamsDEU
+ */
+export type EngagementAgreementDetailsParamsDeu = {
+  allowances_details?: Array<string> | null;
+  available_pto?: number | null;
+  break_time_per_day?: number | null;
+  business_expenses?: string | null;
+  cba?: string | null;
+  cba_document?: {
+    [key: string]: unknown;
+  } | null;
+  covenants?: Array<string> | null;
+  has_allowances?: string | null;
+  has_bonus?: string | null;
+  has_business_expenses?: string | null;
+  has_business_presence?: string;
+  has_cba?: string | null;
+  has_commissions?: string | null;
+  has_covenants?: string | null;
+  has_illness_remuneration?: string | null;
+  has_overtime_compensation?: string | null;
+  has_pension_scheme?: string | null;
+  has_signing_bonus?: string | null;
+  has_similar_roles?: string;
+  has_similar_work_conditions?: string | null;
+  illness_remuneration_details?: string | null;
+  max_annual_gross_salary?: number | null;
+  min_annual_gross_salary?: number | null;
+  overtime_compensation_begins?: number | null;
+  overtime_compensation_type?: string | null;
+  overtime_pay_percentage?: number | null;
+  pension_scheme?: string | null;
+  similar_roles?: string | null;
+  similar_work_conditions_details?: string | null;
+  work_hours_per_week?: number | null;
+  working_days?: Array<string> | null;
 };
 
 /**
@@ -3279,7 +4072,10 @@ export type WebhookTriggerEmploymentParams = {
     | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
+    | 'employment.cor_hiring.invoice_created'
     | 'employment.eor_hiring.invoice_created'
+    | 'employment.cor_hiring.proof_of_payment_accepted'
+    | 'employment.cor_hiring.proof_of_payment_submitted'
     | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.eor_hiring.proof_of_payment_submitted'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
@@ -3417,11 +4213,25 @@ export type TimeoffDaysParams = {
 
 /**
  * IdentityUser
+ *
+ * The user (company manager) associated with the current authentication token. Represents the person who authorized access to the company's data.
  */
 export type IdentityUser = {
+  /**
+   * The email address of the user who authorized the token.
+   */
   email: string;
+  /**
+   * The unique identifier (UUID) of the user.
+   */
   id: string;
+  /**
+   * The full name of the user who authorized the token.
+   */
   name: string;
+  /**
+   * The current account status of the user on the Remote platform.
+   */
   status: string;
 };
 
@@ -3596,15 +4406,36 @@ export type ContractorCurrencyResponse = {
 /**
  * Product
  *
- * Product
+ * A Remote product offering (e.g., EOR, Contractor Management) with its tier and billing frequency.
  */
 export type Product = {
+  /**
+   * A description of the product.
+   */
   description?: string;
+  /**
+   * Features included in this product tier.
+   */
   features?: Array<string>;
+  /**
+   * The billing frequency (e.g., "monthly", "annually").
+   */
   frequency: string;
+  /**
+   * A unique machine-readable identifier for this product.
+   */
   identifier?: string;
+  /**
+   * The full product name (e.g., "EOR Monthly").
+   */
   name: string;
+  /**
+   * A short display name for the product (e.g., "EOR").
+   */
   short_name?: string;
+  /**
+   * The product tier (e.g., "standard", "premium").
+   */
   tier: string;
 };
 
@@ -3612,7 +4443,13 @@ export type Product = {
  * TimeoffDaysAndHours
  */
 export type TimeoffDaysAndHours = {
+  /**
+   * The number of whole days.
+   */
   days?: number;
+  /**
+   * The number of additional hours beyond whole days.
+   */
   hours?: number;
 };
 
@@ -3868,39 +4705,98 @@ export type ImportJobColumnMapping = {
 } | null;
 
 /**
+ * RiskReserveProofOfPaymentResponse
+ */
+export type RiskReserveProofOfPaymentResponse = {
+  data?: {
+    /**
+     * Proof of payment ID
+     */
+    slug?: string;
+    /**
+     * Current status of the proof of payment
+     */
+    status?:
+      | 'pending'
+      | 'auto_approve'
+      | 'manual_review'
+      | 'approved'
+      | 'rejected';
+  };
+};
+
+/**
  * OfferedBenefitGroup
+ *
+ * A benefit group that has been offered to employees, including enrollment statistics aggregated across all tiers and the individual offered tiers with their own statistics.
  */
 export type OfferedBenefitGroup = {
   benefit_group: BenefitGroup;
   employee_stats: EmployeeStats;
+  /**
+   * The individual tiers within this group that have been offered, each with their own enrollment statistics.
+   */
   offered_benefit_tiers: Array<OfferedBenefitTier>;
 };
 
 /**
  * PayrollRun
+ *
+ * A payroll run represents a single payroll processing cycle for a company in a specific country and period. It progresses through statuses from preparation to finalization, and contains cost totals aggregated across all employees included in the run.
  */
 export type PayrollRun = {
   approval_date: NullableDate;
+  /**
+   * The total benefits cost across all employees in this payroll run. Amount in cents.
+   */
   benefits_total: number;
   country: Country;
   currency_code: CurrencyCode;
   cutoff_date?: NullableDate;
   /**
+   * Per-employee cost breakdown for this payroll run. Deprecated — use the dedicated `GET /v1/payroll-runs/{payroll_run_id}/employee-details` endpoint instead, which supports pagination.
+   *
    * @deprecated
    */
   employee_details: Array<EmployeeDetails>;
+  /**
+   * The total employer-side contributions (social contributions, employer taxes, etc.) across all employees. Amount in cents.
+   */
   employer_contributions_total: number;
   expected_payout_date: Date;
+  /**
+   * The total reimbursed expenses across all employees in this payroll run. Amount in cents.
+   */
   expenses_total: number;
   /**
-   * The ID of the payroll run
+   * The unique identifier of the payroll run.
    */
   id: string;
+  /**
+   * The total incentives (bonuses, commissions, etc.) across all employees in this payroll run. Amount in cents.
+   */
   incentives_total: number;
+  /**
+   * The total of other payroll components not categorized elsewhere. Amount in cents.
+   */
   other_total: number;
   period_end: Date;
   period_start: Date;
+  /**
+   * The total base salary amount across all employees in this payroll run. Amount in cents.
+   */
   salary_total: number;
+  /**
+   * The current status of the payroll run.
+   *
+   * - `preparing`: The payroll run is being assembled. Employee details and costs are estimates and may change.
+   * - `processing`: The payroll run has been submitted for processing by the local payroll provider. Costs are still estimates.
+   * - `completed`: Payroll processing is complete. Costs are final and payslips are available.
+   * - `finalized`: The payroll run has been finalized and payments have been or will be disbursed.
+   * - `waiting_for_customer_approval`: The payroll run requires approval from the company before it can proceed.
+   * - `rejected`: The payroll run was rejected during the approval process and needs to be revised.
+   *
+   */
   status:
     | 'preparing'
     | 'processing'
@@ -3908,7 +4804,21 @@ export type PayrollRun = {
     | 'finalized'
     | 'waiting_for_customer_approval'
     | 'rejected';
+  /**
+   * The total cost of this payroll run across all employees, including salaries, benefits, employer contributions, expenses, and incentives. Amount in cents.
+   */
   total_payroll_cost: number;
+  /**
+   * The type of payroll run.
+   *
+   * - `main`: The regular recurring payroll for the period.
+   * - `one_off`: An ad-hoc payroll run outside the regular cycle, typically for off-cycle payments.
+   * - `pro_forma`: A simulated payroll run used for cost estimation purposes. Not actually processed.
+   * - `tax_documents`: A payroll run for generating tax-related documents only.
+   * - `expenses`: A payroll run dedicated to reimbursing approved expenses.
+   * - `parallel`: A supplementary payroll run that runs alongside the main payroll for the same period.
+   *
+   */
   type?:
     | 'main'
     | 'one_off'
@@ -3939,13 +4849,22 @@ export type ReferencedItem = {
 export type BillingDocumentsResponse = {
   data: {
     billing_documents: Array<{
+      /**
+       * The entity issuing the billing document. Null if not applicable.
+       */
       bill_from?: string | null;
+      /**
+       * The billing period in YYYY-MM format.
+       */
       billing_document_period?: string;
       billing_document_type?:
         | 'reconciliation_invoice'
         | 'prefunding_invoice'
         | 'supplemental_service_invoice'
         | 'reconciliation_credit_note';
+      /**
+       * The unique identifier (UUID) of the billing document.
+       */
       id?: string;
     }>;
     /**
@@ -4128,17 +5047,50 @@ export type BackgroundChecksBackgroundCheckRequestItem = {
 /**
  * BillingDocument
  *
- * Information of a billing document
+ * A billing document (invoice or credit note) issued to a company by Remote for employment management services.
  */
 export type BillingDocument = {
+  /**
+   * The ISO 4217 currency code of the billing document.
+   */
   billing_document_currency: string;
+  /**
+   * The human-readable document number (e.g., invoice number).
+   */
   billing_document_number: string;
+  /**
+   * The billing period this document covers, in YYYY-MM format.
+   */
   billing_document_period: string;
+  /**
+   * The type of billing document.
+   *
+   * - `reconciliation_invoice`: A regular invoice reconciling payroll costs for the period.
+   * - `prefunding_invoice`: An invoice for advance funding of payroll before it is processed.
+   * - `supplemental_service_invoice`: An invoice for additional services beyond standard payroll.
+   * - `reconciliation_credit_note`: A credit note adjusting a previous reconciliation invoice.
+   *
+   */
   billing_document_type: string;
+  /**
+   * The unique identifier (UUID) of the company this billing document belongs to.
+   */
   company_id: string;
+  /**
+   * The unique identifier (UUID) of the billing document.
+   */
   id: string;
+  /**
+   * The date the billing document was issued (ISO 8601 date format).
+   */
   issued_date: string;
+  /**
+   * The line items that make up this billing document.
+   */
   items: Array<BillingDocumentAmountItem>;
+  /**
+   * The total amount of the billing document, in cents.
+   */
   total: number;
 };
 
@@ -4178,13 +5130,19 @@ export type TravelLetterResponse = {
 /**
  * TimeTrackingParams
  *
- * Params to create a time tracking
+ * Parameters for creating a time tracking entry within a timesheet. Provide the time range and type of work; hour breakdowns are calculated automatically from the clock-in/out times.
  */
 export type TimeTrackingParams = {
   clock_in: DateTimeIso8601;
   clock_out: DateTimeIso8601;
+  /**
+   * Optional free-text notes about this time entry, such as project or task details.
+   */
   notes?: string | null;
   timezone: Timezone;
+  /**
+   * The category of time being tracked (e.g., regular hours, overtime, on-call).
+   */
   type: 'regular_hours' | 'overtime' | 'on_call' | 'break' | 'unpaid_break';
 };
 
@@ -4198,18 +5156,29 @@ export type UnifiedMinimalBenefitGroup = {
 
 /**
  * Payslip
+ *
+ * A payslip issued to an employee for a specific payroll period.
  */
 export type Payslip = {
+  /**
+   * The unique identifier (UUID) of the employment this payslip belongs to.
+   */
   employment_id: string;
   expected_payout_date?: Date;
+  /**
+   * The unique identifier (UUID) of the payslip.
+   */
   id: string;
+  /**
+   * The date the payslip was issued.
+   */
   issued_at: string;
   /**
-   * This field is only shown if available
+   * The net pay amount converted to the company's billing currency, in cents. Only shown if available.
    */
   net_pay_converted_amount?: number;
   /**
-   * This field is only shown if available
+   * The net pay amount in the source (local) currency, in cents. Only shown if available.
    */
   net_pay_source_amount?: number;
 };
@@ -4267,7 +5236,7 @@ export type ListPricingPlanPartnerTemplatesResponse = {
 /**
  * MinimalEmployment
  *
- * Minimal information of an employment.
+ * A lightweight employment representation used in list responses. Contains key identification, status, and type fields but not the full onboarding details or country-specific form data.
  */
 export type MinimalEmployment = {
   country: NullableCountry;
@@ -4282,18 +5251,39 @@ export type MinimalEmployment = {
    */
   department_id?: string | null;
   employment_lifecycle_stage: EmploymentLifecycleStage;
+  /**
+   * The employment model. `eor` (Employer of Record), `peo` (Professional Employer Organization), or `global_payroll`.
+   */
   employment_model: 'eor' | 'peo' | 'global_payroll';
   /**
    * A unique reference code for the employment record in a non-Remote system. While uniqueness is recommended, it is not strictly enforced within Remote's system.
    */
   external_id: string | null;
+  /**
+   * The employee's full name.
+   */
   full_name: string;
+  /**
+   * The unique identifier (UUID) of the employment.
+   */
   id: string;
+  /**
+   * The employee's job title.
+   */
   job_title: string;
+  /**
+   * The email the employee uses to log in to Remote.
+   */
   login_email: string;
+  /**
+   * The employee's personal email address.
+   */
   personal_email: string;
   short_id: ShortId;
   status: EmploymentStatus;
+  /**
+   * The type of employment.
+   */
   type:
     | 'employee'
     | 'contractor'
@@ -4305,6 +5295,9 @@ export type MinimalEmployment = {
   work_address_details: {
     [key: string]: unknown;
   };
+  /**
+   * The employee's work email address. Null if not set.
+   */
   work_email: string | null;
 };
 
@@ -4324,24 +5317,44 @@ export type ProvisionalStartDate = string;
  * BeforeAfterRequiredParams
  */
 export type BeforeAfterRequiredParams = {
+  /**
+   * Only replay events triggered after this timestamp (ISO 8601).
+   */
   after: string;
+  /**
+   * Only replay events triggered before this timestamp (ISO 8601).
+   */
   before: string;
+  /**
+   * Optional filter to only replay events for a specific company.
+   */
   company_id?: string;
+  /**
+   * Optional filter to only replay events of this type.
+   */
   event_type?: string;
+  /**
+   * Optional filter by delivery status. Set to false to replay only failed deliveries.
+   */
   successfully_delivered?: boolean;
 };
 
 /**
  * ResourceErrorResponse
+ *
+ * Returned when an operation fails due to a resource-level conflict or constraint. Includes a structured error with a machine-readable code, a human-readable message, and the type and ID of the affected resource.
  */
 export type ResourceErrorResponse = {
   message: {
+    /**
+     * A machine-readable error code identifying the specific type of resource error.
+     */
     code?:
+      | 'parameter_invalid_date'
       | 'resource_not_eligible'
       | 'resource_already_exists'
       | 'action_unrecognized'
       | 'action_invalid'
-      | 'parameter_invalid_date'
       | 'resource_invalid_state'
       | 'parameter_value_invalid'
       | 'parameter_value_unknown'
@@ -4353,8 +5366,17 @@ export type ResourceErrorResponse = {
       | 'parameter_unknown'
       | 'parameter_map_empty'
       | 'resource_not_supported_for_country';
+    /**
+     * A human-readable message explaining the error and how to resolve it.
+     */
     message?: string;
+    /**
+     * The unique identifier of the specific resource that caused the error. May be null if the resource has not been created yet.
+     */
     resource_id?: string | null;
+    /**
+     * The type of resource that caused the error (e.g., "termination_request", "employment").
+     */
     resource_type?: string;
   };
 };
@@ -4419,6 +5441,9 @@ export type TimeoffBalance = {
    *
    */
   upcoming_requested: TimeoffDaysAndHours | null;
+  /**
+   * The number of working hours per day as defined in the employment's contract. Used to convert between days and hours.
+   */
   working_hours_per_day: number;
 };
 
@@ -4470,9 +5495,12 @@ export type PricingPlanPartnerTemplate = {
 /**
  * ContractAmendment
  *
- * Contract Amendment
+ * A full contract amendment record, including the requested changes with their previous and current values.
  */
 export type ContractAmendment = {
+  /**
+   * The unique identifier of the contract being amended. Null if no specific contract was targeted.
+   */
   amendment_contract_id: string | null;
   /**
    * Describes all the changes requested for the contract and contract details with all their previous and current values.
@@ -4480,12 +5508,27 @@ export type ContractAmendment = {
   changes: {
     [key: string]: unknown;
   };
+  /**
+   * The unique identifier (UUID) of the employment.
+   */
   employment_id: string;
+  /**
+   * The unique identifier (UUID) of the contract amendment.
+   */
   id: string;
   request_details: RequestDetails;
+  /**
+   * The unique identifier (UUID) of the user who submitted the amendment.
+   */
   requested_by: string;
   status: ContractAmendmentStatus;
+  /**
+   * The timestamp when the amendment was submitted.
+   */
   submitted_at: string;
+  /**
+   * A link to the support ticket associated with this amendment, if one was created. Null otherwise.
+   */
   zendesk_ticket_url: string | null;
 };
 
@@ -4595,6 +5638,9 @@ export type ContractDocumentItem = {
  * Description and status of an onboarding task.
  */
 export type TaskDescription = {
+  /**
+   * A human-readable description of what this onboarding task requires.
+   */
   description?: string;
   /**
    * TaskStatus
@@ -4659,11 +5705,20 @@ export type OnboardingReservesStatus = {
 /**
  * CompanyTokenResponse
  *
- * CompanyTokenResponse
+ * OAuth2 tokens returned after a company authorizes access. Use the access token in the Authorization header for subsequent API calls. Use the refresh token to obtain a new access token when the current one expires.
  */
 export type CompanyTokenResponse = {
+  /**
+   * The OAuth2 access token (JWT). Include this in the `Authorization: Bearer <token>` header for API requests.
+   */
   access_token: string;
+  /**
+   * The number of seconds until the access token expires.
+   */
   expires_in: number;
+  /**
+   * The refresh token used to obtain a new access token when the current one expires.
+   */
   refresh_token: string;
 };
 
@@ -4708,9 +5763,17 @@ export type TimeoffDocumentParams = {
 
 /**
  * Costs
+ *
+ * The cost breakdown between employee and employer for a benefit. Amounts are in the company's billing currency, in cents.
  */
 export type Costs = {
+  /**
+   * The employee's portion of the benefit cost, in cents.
+   */
   employee_cost: number;
+  /**
+   * The employer's portion of the benefit cost, in cents.
+   */
   employer_cost: number;
 } | null;
 
@@ -4723,8 +5786,17 @@ export type MaybeUnifiedEmploymentBenefitTier =
  * A subdivision of a supported country on Remote
  */
 export type CountrySubdivision = {
+  /**
+   * The ISO 3166-2 subdivision code (e.g., "PT-11" for Lisboa).
+   */
   code?: string;
+  /**
+   * The subdivision's name (e.g., "Lisboa", "California").
+   */
   name: string;
+  /**
+   * The type of subdivision (e.g., "District", "State", "Province").
+   */
   subdivision_type?: string;
 };
 
@@ -4732,27 +5804,45 @@ export type CountrySubdivision = {
  * ResignationAfterStartDateRequestParams
  */
 export type ResignationAfterStartDateRequestParams = {
+  /**
+   * Whether the employer accepts the proposed notice period and last working day. If false, provide an alternative `proposed_last_date`.
+   */
   accepts_proposed_notice: boolean;
+  /**
+   * Whether the employer agrees with the employee's current PTO balance. If false, provide notes explaining the discrepancy.
+   */
   agrees_to_pto_amount: boolean;
   /**
    * Required if `agrees_to_pto_amount` is set to false.
    */
   agrees_to_pto_amount_notes?: string;
+  /**
+   * Whether the employer agrees with the resignation reason stated by the employee. If false, provide notes with the employer's perspective.
+   */
   agrees_to_resignation_reason: boolean;
   /**
    * required if `agrees_to_resignation_reason` is set to false.
    */
   agrees_to_resignation_reason_notes?: string;
+  /**
+   * Whether the employer has additional information to share about the resignation. If true, provide notes.
+   */
   has_additional_information: boolean;
   /**
    * required if `has_additional_information` is set to true.
    */
   has_additional_information_notes?: string;
+  /**
+   * Whether there are salary adjustments or additional salary information to communicate. If true, provide notes.
+   */
   has_more_salary_info: boolean;
   /**
    * required if `has_more_salary_info` is set to true.
    */
   has_more_salary_info_notes?: string;
+  /**
+   * Whether the employee is owed any outstanding expense reimbursements. If true, provide the amount and notes.
+   */
   is_owed_outstanding_reimbursements: boolean;
   /**
    * required if `is_owed_outstanding_reimbursements` is set to true.
@@ -4793,6 +5883,9 @@ export type ResignationAfterStartDateRequestParams = {
    *
    */
   timesheet_file?: ResignationFile;
+  /**
+   * Whether the employee intends to take more PTO before their last working day. If true, provide notes with details.
+   */
   will_take_more_pto: boolean;
   /**
    * required if `will_take_more_pto` is set to true.
@@ -4938,16 +6031,42 @@ export type EmploymentLifecycleStage =
 
 /**
  * RecurringIncentive
+ *
+ * A recurring incentive (e.g., monthly meal allowance, housing stipend) that automatically generates individual incentive payments on a monthly schedule.
  */
 export type RecurringIncentive = {
+  /**
+   * The recurring payment amount in the employment's currency, in cents.
+   */
   amount: number;
   amount_tax_type: AmountTaxType;
+  /**
+   * The unique identifier (UUID) of the employment.
+   */
   employment_id: string;
+  /**
+   * The date the recurring incentive stops generating payments. Null for open-ended recurring incentives.
+   */
   end_date?: string | null;
+  /**
+   * The unique identifier (UUID) of the recurring incentive.
+   */
   id: string;
+  /**
+   * An optional note describing the purpose of this recurring incentive.
+   */
   note?: string | null;
+  /**
+   * The date the recurring incentive starts generating payments.
+   */
   start_date: string;
+  /**
+   * Whether this recurring incentive is currently active and generating payments, or inactive (paused/ended).
+   */
   status: 'active' | 'inactive';
+  /**
+   * The type of recurring incentive (e.g., "meal_allowance", "housing_allowance").
+   */
   type:
     | 'acting_up_allowance'
     | 'allowance'
@@ -4973,6 +6092,8 @@ export type RecurringIncentive = {
 
 /**
  * IdentityCustomerAccessTokenResponse
+ *
+ * Returned when the current token is a Customer API Token. These tokens are used by companies accessing their own data directly (not through an integration partner), so only company and user information is included — there are no integration credentials.
  */
 export type IdentityCustomerAccessTokenResponse = {
   data: {
@@ -5011,6 +6132,15 @@ export type ValidationError = {
 
 /**
  * ProbationExtensionStatus
+ *
+ * The current status of a probation extension request.
+ *
+ * - `submitted`: The request has been submitted and is awaiting review.
+ * - `in_review`: Remote is reviewing the request for compliance.
+ * - `done`: The probation extension has been approved and applied.
+ * - `canceled`: The request was canceled.
+ * - `deleted`: The request was deleted.
+ *
  */
 export type ProbationExtensionStatus =
   | 'submitted'
@@ -5093,19 +6223,54 @@ export type BenefitOffer = {
 
 /**
  * Incentive
+ *
+ * An incentive (bonus, commission, or other additional payment) for an employee. Incentives are paid out through payroll on the next applicable cycle after the effective date.
  */
 export type Incentive = {
+  /**
+   * The incentive amount in the employment's currency, in cents. For example, EUR 500.25 would be represented as 50025.
+   */
   amount: number;
   amount_tax_type: AmountTaxType;
+  /**
+   * The date the incentive takes effect. Determines which payroll cycle the incentive will be paid in.
+   */
   effective_date: string | null;
+  /**
+   * The unique identifier (UUID) of the employment this incentive belongs to.
+   */
   employment_id: string;
+  /**
+   * The expected date when this incentive will be paid to the employee. Null if not yet determined.
+   */
   expected_payout_date?: string | null;
+  /**
+   * The unique identifier (UUID) of the incentive.
+   */
   id: string;
+  /**
+   * An optional note describing the reason or context for this incentive.
+   */
   note?: string | null;
+  /**
+   * The end date of the period this incentive covers. Null for non-periodic incentives.
+   */
   period_end?: string | null;
+  /**
+   * The start date of the period this incentive covers (e.g., for quarterly bonuses). Null for non-periodic incentives.
+   */
   period_start?: string | null;
+  /**
+   * If this incentive was generated from a recurring incentive schedule, this is the ID of the parent recurring incentive. Null for one-time incentives.
+   */
   recurring_incentive_id?: string | null;
+  /**
+   * The current status of the incentive (e.g., "pending", "scheduled", "paid", "cancelled").
+   */
   status: string;
+  /**
+   * The type of incentive (e.g., "signing_bonus", "performance_bonus", "commission", "referral_bonus").
+   */
   type: string;
 };
 
@@ -5145,18 +6310,45 @@ export type Signatory = {
  * A supported country on Remote
  */
 export type NullableCountry = {
+  /**
+   * The ISO 3166-1 alpha-2 country code (e.g., "PT").
+   */
   alpha_2_code: string;
+  /**
+   * The ISO 3166-1 alpha-3 country code (e.g., "PRT"). This is the primary code used across the Remote API.
+   */
   code: string;
   /**
    * Contractor product names available for this country
    */
   contractor_products_available?: Array<'standard' | 'plus' | 'cor'>;
+  /**
+   * Administrative subdivisions of the country (e.g., states, provinces, districts). Null if the country has no subdivisions relevant to Remote's services.
+   */
   country_subdivisions?: Array<CountrySubdivision> | null;
+  /**
+   * Whether EOR (Employer of Record) onboarding is available in this country.
+   */
   eor_onboarding?: boolean;
+  /**
+   * When benefit plan selections become locked for this country (e.g., "after_first_hire" means benefits cannot be changed after the first employee is hired).
+   */
   locked_benefits?: string;
+  /**
+   * The country's full English name.
+   */
   name: string;
+  /**
+   * The geographic region the country belongs to (e.g., "Europe", "Asia", "Americas").
+   */
   region?: string;
+  /**
+   * The geographic subregion (e.g., "Southern Europe", "Southeast Asia"). Null for some countries.
+   */
   subregion?: string | null;
+  /**
+   * The list of JSON schema form names available for this country (e.g., "address_details", "contract_details"). Use these with the Show form schema endpoint to get country-specific field requirements.
+   */
   supported_json_schemas?: Array<string>;
 } | null;
 
@@ -5221,9 +6413,17 @@ export type UpdateEmployeeTimeoffParams = {
 
 /**
  * HoursAndMinutes
+ *
+ * A duration expressed as hours and minutes.
  */
 export type HoursAndMinutes = {
+  /**
+   * The number of whole hours.
+   */
   hours?: number;
+  /**
+   * The number of remaining minutes (0-59).
+   */
   minutes?: number;
 };
 
@@ -5240,11 +6440,25 @@ export type DeclinedTravelLetter = {
 
 /**
  * SSOConfiguration
+ *
+ * A complete SSO configuration for a company, including both Remote-generated values (sso_url, audience_uri) and company-provided values (domain, identity_provider_url).
  */
 export type SsoConfiguration = {
+  /**
+   * The audience URI (Entity ID) for SAML assertions.
+   */
   audience_uri: string;
+  /**
+   * The email domain(s) that should be routed through SSO. Multiple domains can be comma-separated (e.g., "company.com,company.co.uk").
+   */
   domain: string;
+  /**
+   * The URL of the company's SAML identity provider (IdP) login endpoint.
+   */
   identity_provider_url: string;
+  /**
+   * The SSO login callback URL (Assertion Consumer Service URL).
+   */
   sso_url: string;
 };
 
@@ -5279,7 +6493,7 @@ export type OnboardingTasks = {
 /**
  * CustomFieldDataEntryAccess
  *
- * The data entry access of the custom field
+ * Who can enter or edit values for this custom field. Controls which users see the field as editable vs read-only.
  */
 export type CustomFieldDataEntryAccess =
   | 'company_admin_only'
@@ -5321,9 +6535,21 @@ export type UpdateIncentiveParams = CommonIncentiveParams & {
  * Parameters to upload a file
  */
 export type FileParams = {
+  /**
+   * The unique identifier (UUID) of the employment to attach this file to.
+   */
   employment_id: string;
+  /**
+   * The file content, base64-encoded.
+   */
   file: Blob | File;
+  /**
+   * A more specific classification within the type (e.g., "ir_35" for a UK contractor tax determination).
+   */
   sub_type?: string;
+  /**
+   * The broad category of the file (e.g., "contract", "id", "tax_form").
+   */
   type?: string;
 };
 
@@ -5436,13 +6662,29 @@ export type EmploymentCreationResponse = {
  * Parameters to complete onboarding
  */
 export type CompleteOnboarding = {
+  /**
+   * The unique identifier (UUID) of the employment to complete onboarding for.
+   */
   employment_id?: string;
 };
 
 /**
  * EmploymentStatus
  *
- * The status of employment
+ * The current status of the employment record.
+ *
+ * - `active`: The employee is fully onboarded and actively working.
+ * - `created`: The employment has been created but onboarding has not started.
+ * - `pre_hire`: A pre-hire employment record, created before formal onboarding begins.
+ * - `created_awaiting_reserve`: The employment is created but waiting for a risk reserve deposit to be paid.
+ * - `created_reserve_paid`: The risk reserve has been paid and the employment can proceed with onboarding.
+ * - `initiated`: Onboarding has been started by the employer.
+ * - `invited`: The employee has been invited to complete their self-enrollment on Remote.
+ * - `pending`: The employment is pending review or further action before it can become active.
+ * - `review`: The employment is under review by Remote (e.g., contract or compliance review).
+ * - `archived`: The employment has been terminated or offboarded.
+ * - `deleted`: The employment record has been deleted.
+ *
  */
 export type EmploymentStatus =
   | 'active'
@@ -5459,13 +6701,27 @@ export type EmploymentStatus =
 
 /**
  * CostCalculatorEmployment
+ *
+ * A cost estimate for a single employment, including costs in both the regional (local) currency and the employer's preferred currency.
  */
 export type CostCalculatorEmployment = {
   country: MinimalCountry;
+  /**
+   * A link to Remote's guide on benefits available in this country. Null if not available.
+   */
   country_benefits_details_url: string | null;
+  /**
+   * A link to Remote's country hiring guide. Null if not available.
+   */
   country_guide_url: string | null;
   employer_currency_costs: CostCalculatorCosts;
+  /**
+   * Whether this country has extra statutory payments (e.g., 13th month salary in the Philippines).
+   */
   has_extra_statutory_payment: boolean;
+  /**
+   * The minimum number of business days required to onboard an employee in this country. Null if not determined.
+   */
   minimum_onboarding_time: number | null;
   region: MinimalRegion;
   regional_currency_costs: CostCalculatorCosts;
@@ -5651,6 +6907,53 @@ export type CreatePricingPlanWithoutPartnerTemplateParams = {
 export type Slug = string;
 
 /**
+ * EmploymentEngagementAgreementDetailsResponse
+ */
+export type EmploymentEngagementAgreementDetailsResponse = {
+  data: {
+    /**
+     * EngagementAgreementDetailsParamsDEU
+     */
+    details: {
+      allowances_details?: Array<string> | null;
+      available_pto?: number | null;
+      break_time_per_day?: number | null;
+      business_expenses?: string | null;
+      cba?: string | null;
+      cba_document?: {
+        [key: string]: unknown;
+      } | null;
+      covenants?: Array<string> | null;
+      has_allowances?: string | null;
+      has_bonus?: string | null;
+      has_business_expenses?: string | null;
+      has_business_presence?: string;
+      has_cba?: string | null;
+      has_commissions?: string | null;
+      has_covenants?: string | null;
+      has_illness_remuneration?: string | null;
+      has_overtime_compensation?: string | null;
+      has_pension_scheme?: string | null;
+      has_signing_bonus?: string | null;
+      has_similar_roles?: string;
+      has_similar_work_conditions?: string | null;
+      illness_remuneration_details?: string | null;
+      max_annual_gross_salary?: number | null;
+      min_annual_gross_salary?: number | null;
+      overtime_compensation_begins?: number | null;
+      overtime_compensation_type?: string | null;
+      overtime_pay_percentage?: number | null;
+      pension_scheme?: string | null;
+      similar_roles?: string | null;
+      similar_work_conditions_details?: string | null;
+      work_hours_per_week?: number | null;
+      working_days?: Array<string> | null;
+    };
+    slug: string;
+  };
+};
+
+/**
  * BulkEmploymentImportJobResponse
  */
 export type BulkEmploymentImportJobResponse = {
@@ -5723,12 +7026,15 @@ export type UuidSlug = string;
 /**
  * CreateTimesheetParams
  *
- * Params to create a timesheet
+ * Parameters for creating a new timesheet for an employee. The timesheet will be created in `open` status. Include one or more time tracking entries with clock-in/out times.
  */
 export type CreateTimesheetParams = {
   employment_id: UuidSlug;
   end_date: Date;
   start_date: Date;
+  /**
+   * One or more time tracking entries to include in the timesheet.
+   */
   time_trackings: Array<TimeTrackingParams>;
 };
 
@@ -5750,9 +7056,17 @@ export type ImportJobRowError = {
 
 /**
  * EmployeeStats
+ *
+ * Enrollment statistics for a benefit at a given level (country, group, or tier). Shows how many employees have been offered the benefit versus how many are actively enrolled.
  */
 export type EmployeeStats = {
+  /**
+   * The number of employees currently enrolled in this benefit. An enrolled employee has an active benefit record.
+   */
   number_of_employees_enrolled: number;
+  /**
+   * The total number of employees who have been offered this benefit. An employee is counted as offered once a benefit offer record exists, regardless of whether they have enrolled.
+   */
   number_of_employees_offered: number;
 };
 
@@ -5772,15 +7086,23 @@ export type PayItemParams = {
    * Working day date (YYYY-MM-DD)
    */
   effective_date: string;
+  /**
+   * Employment UUID. Only Global Payroll employments are supported.
+   */
   employment_id: UuidSlug;
   provider_data?: PayItemProviderData;
 };
 
 /**
  * Job
+ *
+ * A job assigned to an employment, including its classification within the company's job architecture (family, sub-family, career track, level) and any custom field values.
  */
 export type Job = {
   career_track?: JobAssociation;
+  /**
+   * An optional company-defined code for this job (e.g., "JOB-0"). Null if not set.
+   */
   code?: string | null;
   custom_field_values?: Array<{
     definition?: {
@@ -5790,12 +7112,24 @@ export type Job = {
     };
     value?: string | number | boolean;
   }>;
+  /**
+   * A description of the job's responsibilities and scope. Null if not set.
+   */
   description?: string | null;
+  /**
+   * The unique identifier (UUID) of the job.
+   */
   id: string;
+  /**
+   * A company-defined identifier for this job (e.g., "eng-001").
+   */
   identifier: string;
   job_family?: JobAssociation;
   job_level?: JobAssociation;
   job_sub_family?: JobAssociation;
+  /**
+   * The display name of the job (e.g., "Senior Backend Engineer").
+   */
   label: string;
 };
 
@@ -5811,9 +7145,12 @@ export type CustomNumberLinkable = {
 /**
  * Timesheet
  *
- * Timesheet
+ * A timesheet represents an employee's recorded working hours for a specific date range. It contains aggregated hour totals and individual time tracking entries. Timesheets progress through a lifecycle: open (draft) -> submitted -> approved -> processed, or they may be sent back for revision.
  */
 export type Timesheet = {
+  /**
+   * Whether this timesheet requires explicit approval before it can be processed. When false, the timesheet may be auto-approved based on the company's configuration.
+   */
   approval_required: boolean;
   break_hours: HoursAndMinutes;
   country_code: CountryCode;
@@ -5822,13 +7159,22 @@ export type Timesheet = {
   holiday_hours: HoursAndMinutes;
   id: UuidSlug;
   night_hours: HoursAndMinutes;
+  /**
+   * Optional notes added by the employee when submitting the timesheet.
+   */
   notes: string | null;
   on_call_hours: HoursAndMinutes;
   overtime_hours: HoursAndMinutes;
   regular_hours: HoursAndMinutes;
   start_date: Date;
   status: TimesheetStatus;
+  /**
+   * The timestamp when the employee submitted this timesheet for approval. Null if the timesheet has not been submitted yet (status is `open`).
+   */
   submitted_at: string | null;
+  /**
+   * The individual time tracking entries that make up this timesheet.
+   */
   time_trackings: Array<TimeTracking>;
   timeoff_hours?: HoursAndMinutes;
   total_hours: HoursAndMinutes;
@@ -5846,13 +7192,36 @@ export type Timesheet = {
  */
 export type Benefit = {
   costs: Costs;
+  /**
+   * The date when benefit coverage ends (ISO 8601).
+   */
   coverage_end_date: string;
+  /**
+   * The date when benefit coverage begins (ISO 8601).
+   */
   coverage_start_date: string;
+  /**
+   * The unique identifier (UUID) of the benefit.
+   */
   id: string;
+  /**
+   * The name of the benefit (e.g., "Health Insurance", "Dental Plan").
+   */
   name: string;
   projected_costs: Costs;
   provider: BenefitProvider;
+  /**
+   * The enrollment status of this benefit for the employee.
+   *
+   * - `offered`: The benefit has been offered but the employee has not yet enrolled.
+   * - `enrolled`: The employee is actively enrolled in this benefit.
+   * - `waived`: The employee declined or opted out of this benefit.
+   *
+   */
   status: 'offered' | 'enrolled' | 'waived';
+  /**
+   * The type/category of the benefit.
+   */
   type: string;
 };
 
@@ -6007,6 +7376,9 @@ export type ListEmploymentCustomFieldValuePaginatedResponse = {
  * ResignationBeforeStartDateRequestParams
  */
 export type ResignationBeforeStartDateRequestParams = {
+  /**
+   * Whether the employer accepts the employee's resignation. If false, notes are required explaining why.
+   */
   proposed_resignation_accepted: boolean;
   /**
    * Required if `proposed_resignation_accepted` is set to false.
@@ -6016,17 +7388,30 @@ export type ResignationBeforeStartDateRequestParams = {
 
 /**
  * SSOConfigurationDetails
+ *
+ * The SSO configuration details needed to set up your identity provider (IdP) to connect with Remote.
  */
 export type SsoConfigurationDetails = {
+  /**
+   * The audience URI (Entity ID) for the SAML assertion. Configure this in your identity provider's SAML settings.
+   */
   audience_uri: string;
+  /**
+   * The SSO login callback URL. Configure this as the Assertion Consumer Service (ACS) URL in your identity provider.
+   */
   sso_url: string;
 };
 
 /**
  * SuccessResponse
+ *
+ * A generic success response returned by operations that don't produce a specific resource (e.g., updates, deletes).
  */
 export type SuccessResponse = {
   data: {
+    /**
+     * The result status. Always `"ok"` for successful operations.
+     */
     status?: string;
   };
 };
@@ -6043,14 +7428,14 @@ export type ManageContractorPlusSubscriptionOperationsParams = {
 /**
  * CustomFieldVisibilityScope
  *
- * The visibility scope of the custom field
+ * Who can see this custom field and its values. Controls visibility across different user roles.
  */
 export type CustomFieldVisibilityScope = 'company_admin_only' | 'everyone';
 
 /**
  * TimeBreakdown
  *
- * Time breakdown for a TimeTracking
+ * Detailed hours breakdown for a time tracking entry, split by time of day (day vs night) and then by type of day (regular, weekend, holiday). Useful for calculating overtime, night shift premiums, and holiday pay.
  */
 export type TimeBreakdown = {
   day: TypeOfDayBreakdown;
@@ -6086,20 +7471,58 @@ export type UpdateTravelLetterRequestParams =
 /**
  * TravelLetterRequest
  *
- * Travel Letter Request
+ * A travel letter request submitted by an employee who needs a formal letter from their employer to support a visa or travel application. The request goes through a two-stage approval: first by the employer manager, then by Remote.
  */
 export type TravelLetterRequest = {
+  /**
+   * Additional information provided by the employee about their travel plans.
+   */
   additional_information: string;
   destination_country: Country;
+  /**
+   * The address of the embassy or consulate where the travel letter will be submitted.
+   */
   embassy_address: string;
   employer_approver: TravelLetterUser;
+  /**
+   * Special instructions from the employer to include in the travel letter. Null if none provided.
+   */
   employer_special_instructions: string | null;
+  /**
+   * The unique identifier (UUID) of the travel letter request.
+   */
   id: string;
+  /**
+   * The purpose of the travel (e.g., business meeting, conference, client visit).
+   */
   reason: string;
+  /**
+   * Whether the employee needs to provide a specific travel address (accommodation address at the destination).
+   */
   requires_travel_address: boolean;
+  /**
+   * Who is responsible for accommodation costs during the trip. Set by the employer during approval. Null if not yet approved.
+   */
   responsible_for_accommodation_cost: 'employee' | 'employer';
+  /**
+   * Who is responsible for meal costs during the trip. Set by the employer during approval. Null if not yet approved.
+   */
   responsible_for_meal_cost: 'employee' | 'employer';
+  /**
+   * Who is responsible for transportation costs. Set by the employer during approval. Null if not yet approved.
+   */
   responsible_for_travel_cost: 'employee' | 'employer';
+  /**
+   * The current status of the travel letter request.
+   *
+   * - `pending`: Submitted by the employee and awaiting manager review.
+   * - `cancelled`: Cancelled by the employee before approval.
+   * - `declined_by_manager`: The employer manager declined the request.
+   * - `declined_by_remote`: Remote declined the request after manager approval (e.g., compliance reasons).
+   * - `approved_by_manager`: Approved by the employer manager, awaiting Remote's review.
+   * - `approved_by_remote`: Fully approved by both the manager and Remote. The travel letter will be generated.
+   *
+   */
   status:
     | 'pending'
     | 'cancelled'
@@ -6108,11 +7531,23 @@ export type TravelLetterRequest = {
     | 'approved_by_manager'
     | 'approved_by_remote';
   submitted_at: DateTimeIso8601;
+  /**
+   * The employee's accommodation address at the destination. Null if `requires_travel_address` is false or not yet provided.
+   */
   travel_address: string | null;
   travel_date_end: Date;
   travel_date_start: Date;
+  /**
+   * The employee's travel document (passport) number.
+   */
   travel_document_number: string;
+  /**
+   * The category of travel reason selected by the employee.
+   */
   travel_reason: string;
+  /**
+   * Detailed explanation of the travel reason provided by the employee.
+   */
   travel_reason_details: string;
   user: TravelLetterUser;
 };
@@ -6120,7 +7555,7 @@ export type TravelLetterRequest = {
 /**
  * Resignation
  *
- * Resignation
+ * Resignation details for an offboarding request. The shape depends on whether the employee resigned before or after their employment start date.
  */
 export type Resignation = {
   resignation?: ResignationBeforeStartDate | ResignationAfterStartDate;
@@ -6140,10 +7575,21 @@ export type EmployeeLeavePolicy = {
 
 /**
  * CreateSSOConfigurationParams
+ *
+ * Parameters for setting up SAML SSO for a company. Requires the email domain, identity provider URL, and the IdP's SAML signing certificate.
  */
 export type CreateSsoConfigurationParams = {
+  /**
+   * The SAML signing certificate from your identity provider, base64-encoded.
+   */
   certificate: Blob | File;
+  /**
+   * The email domain(s) to route through SSO (e.g., "example.com").
+   */
   domain: string;
+  /**
+   * The URL of the SAML identity provider login endpoint.
+   */
   identity_provider_url: string;
 };
 
@@ -6293,20 +7739,35 @@ export type ImportJobRowsResponse = {
 /**
  * CostCalculatorDiscount
  *
- * Allows to apply discounts to estimates
+ * Configuration for applying a discount to a cost estimate. Provide either an `amount` or `percent` — not both.
  */
 export type CostCalculatorDiscount = {
+  /**
+   * The fixed discount amount in cents. Mutually exclusive with `percent`.
+   */
   amount?: number;
+  /**
+   * The number of months the discount applies to (1-12). Defaults to 12.
+   */
   months?: number;
+  /**
+   * The discount as a decimal fraction (e.g., 0.1 for 10%). Mutually exclusive with `amount`.
+   */
   percent?: number;
+  /**
+   * The originally quoted amount before discount, in cents.
+   */
   quoted_amount?: number;
+  /**
+   * A human-readable label for the discount (e.g., "10% Discount").
+   */
   text: string;
 };
 
 /**
  * CreateEmploymentCustomFieldResponse
  *
- * CreateEmploymentCustomFieldResponse
+ * Response returned after successfully creating a new custom field definition.
  */
 export type CreateEmploymentCustomFieldResponse = {
   data: {
@@ -6324,10 +7785,18 @@ export type Status = {
 
 /**
  * LeavePolicy
+ *
+ * The leave policy associated with a time off request. Policies define the rules and entitlements for specific types of leave.
  */
 export type LeavePolicy = {
+  /**
+   * The unique identifier (slug) of the specific policy variant.
+   */
   leave_policy_variant_slug: string;
   leave_type: TimeoffType;
+  /**
+   * The display name of the leave policy (e.g., "Self-Care", "Annual Leave").
+   */
   name: string;
 };
 
@@ -6339,6 +7808,9 @@ export type CompanyLegalEntity = {
    * ISO 3166-1 alpha-3 country code (e.g., 'USA', 'GBR', 'DEU')
    */
   country_code?: string | null;
+  /**
+   * Whether Global Payroll services are enabled for this legal entity.
+   */
   global_payroll_enabled: boolean;
   /**
    * Company slug
@@ -6348,6 +7820,9 @@ export type CompanyLegalEntity = {
    * Indicates if this is the default legal entity for the company
    */
   is_default?: boolean;
+  /**
+   * The registered name of the legal entity.
+   */
   name: string;
 };
 
@@ -6406,10 +7881,25 @@ export type Company = {
   bank_account_details?: {
     [key: string]: unknown;
   };
+  /**
+   * The email address of the company owner who administers the Remote account.
+   */
   company_owner_email: string;
+  /**
+   * The full name of the company owner. Cannot be changed after company creation.
+   */
   company_owner_name?: string;
+  /**
+   * The unique identifier (UUID) of the company owner's user account on Remote.
+   */
   company_owner_user_id: string;
+  /**
+   * The ISO 3166-1 3-letter country code where the company is registered.
+   */
   country_code: string;
+  /**
+   * The timestamp when the company was created on Remote.
+   */
   created_at: string;
   /**
    * The credit risk status of the company default legal entity.
@@ -6430,11 +7920,29 @@ export type Company = {
     | 'fail'
     | 'deposit_required'
     | 'no_deposit_required';
+  /**
+   * The ISO 4217 currency code the company prefers for billing and invoicing (e.g., "USD", "EUR").
+   */
   desired_currency: string;
+  /**
+   * A unique reference code for this company in a non-Remote system. Null if not set.
+   */
   external_id?: string | null;
+  /**
+   * The unique identifier (UUID) of the company.
+   */
   id: string;
+  /**
+   * The company's registered name. Can only be changed while the company is in `pending` status.
+   */
   name: string;
+  /**
+   * The company's contact phone number.
+   */
   phone_number?: string;
+  /**
+   * The company's business registration number. Null if not provided. Can only be set while the company is in `pending` status.
+   */
   registration_number?: string | null;
   /**
    * The company status determines what a company is allowed to do:
@@ -6447,8 +7955,17 @@ export type Company = {
    *
    */
   status: 'pending' | 'review' | 'active' | 'archived';
+  /**
+   * The company's tax identification number. Null if not provided. Can only be set while the company is in `pending` status.
+   */
   tax_number?: string | null;
+  /**
+   * The timestamp when the company owner accepted Remote's Terms of Service.
+   */
   terms_of_service_accepted_at: string;
+  /**
+   * The timestamp when the company record was last updated.
+   */
   updated_at: string;
 };
 
@@ -6477,9 +7994,14 @@ export type EmployeesProcessed = {
 
 /**
  * IdentityCompanyAccessTokenResponse
+ *
+ * Returned when the current token was obtained via the OAuth2 Authorization Code flow and is scoped to a specific company managed by an integration partner. Contains the full context: the integration's credentials, the company being accessed, and the user who authorized access.
  */
 export type IdentityCompanyAccessTokenResponse = {
   data: {
+    /**
+     * The OAuth2 client ID of the integration partner that obtained this token.
+     */
     client_id: string;
     company: IdentityCompany;
     integration: IdentityIntegration;
@@ -6499,11 +8021,20 @@ export type PayValue = {
 /**
  * TravelLetterUser
  *
- * Travel Letter User
+ * A user associated with a travel letter request (either the employee or the employer approver).
  */
 export type TravelLetterUser = {
+  /**
+   * The user's email address.
+   */
   email: string;
+  /**
+   * The unique identifier (UUID) of the user.
+   */
   id: string;
+  /**
+   * The user's full name.
+   */
   name: string;
 } | null;
 
@@ -6524,6 +8055,15 @@ export type UnifiedEmploymentBenefitOffer = {
 
 /**
  * TimesheetStatus
+ *
+ * The current status of a timesheet in its lifecycle.
+ *
+ * - `open`: The timesheet is a draft and only visible to the employee. It has not been submitted yet.
+ * - `submitted`: The employee has submitted the timesheet for review. It is awaiting approval.
+ * - `approved`: The timesheet has been approved and will be included in the next payroll run.
+ * - `in_calibration`: The timesheet was sent back to the employee for revision. The employee needs to correct and resubmit it.
+ * - `processed`: The timesheet has been processed as part of a payroll run. This is a terminal state.
+ *
  */
 export type TimesheetStatus =
   | 'open'
@@ -6548,6 +8088,9 @@ export type AccountsMinimalCompanyAdmin = {
  * PayItemBulkCreateFailures
  */
 export type PayItemBulkCreateFailures = {
+  /**
+   * Failure reason. Includes `employment_not_global_payroll` when the provided employment is not Global Payroll.
+   */
   error?: string | UnprocessableEntityResponse;
   row_number?: number;
 };
@@ -6610,6 +8153,9 @@ export type TimeoffEntitlement = {
    *
    */
   expiry_date: string | null;
+  /**
+   * A human-readable name for this entitlement (e.g., "Annual paid time off", "Extra days for good performance"). Null for the default contractual entitlement.
+   */
   name: string | null;
   /**
    * Indicates how much time off the employment has remaining in this entitlement.
@@ -6638,6 +8184,8 @@ export type TimeoffEntitlement = {
 
 /**
  * TooManyRequestsResponse
+ *
+ * Returned when the API rate limit has been exceeded (HTTP 429). Wait before retrying. Check the `Retry-After` response header for the recommended wait time.
  */
 export type TooManyRequestsResponse = {
   message?: string;
@@ -6748,7 +8296,7 @@ export type CreateRecurringIncentiveParams = CommonIncentiveParams & {
 /**
  * UploadFileResponse
  *
- * A supported file
+ * Response returned after successfully uploading a file.
  */
 export type UploadFileResponse = {
   data?: {
@@ -6758,9 +8306,17 @@ export type UploadFileResponse = {
 
 /**
  * IdentityCompany
+ *
+ * The company that the current authentication token is scoped to. Only present when using a company-scoped access token or customer API token.
  */
 export type IdentityCompany = {
+  /**
+   * The unique identifier (UUID) of the company. Use this ID when making subsequent API calls that require a company reference.
+   */
   id: string;
+  /**
+   * The registered name of the company on the Remote platform.
+   */
   name: string;
 };
 
@@ -6779,8 +8335,13 @@ export type CreateGeneralCustomFieldDefinitionParams = {
 
 /**
  * ConflictResponse
+ *
+ * Returned when the request conflicts with the current state of a resource (HTTP 409). For example, trying to create a resource that already exists or performing an action that requires the resource to be in a different state.
  */
 export type ConflictResponse = {
+  /**
+   * A human-readable message describing the conflict and the expected state.
+   */
   message?: string;
 };
 
@@ -6806,10 +8367,18 @@ export type ContractorEligibilityResponse = {
 
 /**
  * CountrySummariesResponse
+ *
+ * Response containing a company's benefit offering summaries broken down by country. Each country includes aggregate enrollment statistics and details of all offered benefit groups and tiers.
  */
 export type CountrySummariesResponse = {
   data: {
+    /**
+     * The unique identifier (UUID) of the company these benefit summaries belong to.
+     */
     company_id: string;
+    /**
+     * Benefit offering summaries for each country where the company has employees.
+     */
     country_summaries: Array<CountrySummary>;
   };
 };
@@ -6853,8 +8422,13 @@ export type ListSignatory = {
 
 /**
  * WebhookCallback
+ *
+ * A registered webhook callback endpoint. Remote sends HTTP POST requests to the configured URL when subscribed events occur.
  */
 export type WebhookCallback = {
+  /**
+   * The unique identifier (UUID) of the webhook callback.
+   */
   id: string;
   /**
    * This key will be used to sign the signature provided with webhook requests we
@@ -6903,7 +8477,10 @@ export type WebhookCallback = {
     | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
+    | 'employment.cor_hiring.invoice_created'
     | 'employment.eor_hiring.invoice_created'
+    | 'employment.cor_hiring.proof_of_payment_accepted'
+    | 'employment.cor_hiring.proof_of_payment_submitted'
     | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.eor_hiring.proof_of_payment_submitted'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
@@ -6972,6 +8549,9 @@ export type WebhookCallback = {
     | 'work_authorization.declined_by_remote'
     | 'work_authorization.requested'
   >;
+  /**
+   * The HTTPS URL where Remote will send webhook event payloads.
+   */
   url: string;
 };
 
@@ -6980,18 +8560,26 @@ export type MaybeAccountsAccount = AccountsAccount | null;
 /**
  * TimeoffDay
  *
- * TimeoffDay schema
+ * A single day within a time off request, specifying the date and the number of hours taken off that day.
  */
 export type TimeoffDay = {
   day: Date;
+  /**
+   * The number of hours taken off on this day (e.g., 8 for a full day, 4 for a half day).
+   */
   hours: number;
 };
 
 /**
  * BadRequestResponse
+ *
+ * Returned when the request is malformed or contains invalid parameters. The message may be a simple string or a structured object with a code and detailed message.
  */
 export type BadRequestResponse =
   | {
+      /**
+       * A human-readable error message describing what was wrong with the request.
+       */
       message: string;
     }
   | {
@@ -7050,9 +8638,12 @@ export type ListPayslipsResponse = {
 /**
  * SendBackTimesheetParams
  *
- * Params to send a timesheet back to the employee for review or modification
+ * Parameters for sending a submitted timesheet back to the employee for revision. The timesheet status will change to `in_calibration` and the employee will be notified.
  */
 export type SendBackTimesheetParams = {
+  /**
+   * A required explanation of why the timesheet is being sent back. This will be visible to the employee.
+   */
   sent_back_reason: string;
 };
 
@@ -7096,10 +8687,16 @@ export type AccountsUser =
 /**
  * CompanyCurrency
  *
- * Company currency
+ * A currency available for use by a company on the Remote platform.
  */
 export type CompanyCurrency = {
+  /**
+   * The ISO 4217 currency code (e.g., "USD", "EUR").
+   */
   code: string;
+  /**
+   * A URL-friendly identifier for the currency (e.g., "usd", "eur").
+   */
   slug: string;
 };
 
@@ -7139,6 +8736,8 @@ export type ContractorCurrencyItem = {
 
 /**
  * UnauthorizedResponse
+ *
+ * Returned when the request does not include valid authentication credentials. Ensure you are passing a valid OAuth2 access token or API token in the Authorization header.
  */
 export type UnauthorizedResponse = {
   message: string;
@@ -7150,6 +8749,9 @@ export type UnauthorizedResponse = {
  * Selected type of payment.
  */
 export type PricingPlanDetails = {
+  /**
+   * How often Remote bills the employer for management fees. Annual billing typically offers a discount.
+   */
   frequency: 'annually' | 'monthly';
 };
 
@@ -7225,23 +8827,37 @@ export type UpdateCompanyParams = {
 
 /**
  * ResignationBeforeStartDate
+ *
+ * Resignation details for an employee who resigned before their employment start date. Contains basic contract and resignation information only.
  */
 export type ResignationBeforeStartDate = {
+  /**
+   * The job title from the employee's contract.
+   */
   contract_job_title: string;
+  /**
+   * The original start date from the employee's contract.
+   */
   contract_start_date: string;
   /**
-   * UTC date
+   * The date the employee submitted their resignation (UTC).
    */
   resignation_date: string;
+  /**
+   * A human-readable label describing the reason for resignation (e.g., "Decided not to join before starting").
+   */
   resignation_reason_label: string;
 };
 
 /**
  * DraftExpense
  *
- * Draft expense
+ * A draft expense that the employee has saved but not yet submitted for approval. Draft expenses may have incomplete (null) data since the employee hasn't finalized them yet. All monetary amounts are integers in the currency's minor unit (cents) when present.
  */
 export type DraftExpense = {
+  /**
+   * The expense amount in the original currency, in cents. Null if not yet entered.
+   */
   amount: number | null;
   /**
    * Categories allowed for an expense (legacy, deprecated)
@@ -7275,10 +8891,19 @@ export type DraftExpense = {
     | 'home_office'
     | 'phone_utilities'
     | 'travel';
+  /**
+   * The converted expense amount in the company's billing currency, in cents. Null if not yet calculated.
+   */
   converted_amount: number | null;
   converted_currency: CurrencyDefinition | null;
+  /**
+   * The converted tax portion, in cents. Null if not yet calculated.
+   */
   converted_tax_amount: number | null;
   currency: CurrencyDefinition | null;
+  /**
+   * The unique identifier (UUID) of the employment this expense belongs to.
+   */
   employment_id: string;
   /**
    * New hierarchical expense category (recommended)
@@ -7297,23 +8922,66 @@ export type DraftExpense = {
      */
     title?: string;
   } | null;
+  /**
+   * The date the expense was incurred. May be null in drafts.
+   */
   expense_date: string | null;
+  /**
+   * The unique identifier (UUID) of the draft expense.
+   */
   id: string;
+  /**
+   * Not applicable for draft expenses. Always null.
+   */
   invoice_period?: string | null;
+  /**
+   * Optional additional notes about the expense.
+   */
   notes?: string | null;
+  /**
+   * Not applicable for draft expenses. Always null.
+   */
   reason?: string | null;
+  /**
+   * Uploaded receipt files. May be empty for drafts. Maximum 5 receipts.
+   */
   receipts?: Array<File>;
+  /**
+   * Not applicable for draft expenses. Always null.
+   */
   reviewed_at?: string | null;
+  /**
+   * Not applicable for draft expenses. Always null.
+   */
   reviewer?: {
+    /**
+     * The reviewer's email address.
+     */
     user_email?: string;
+    /**
+     * The unique identifier of the reviewer.
+     */
     user_id?: string;
+    /**
+     * The reviewer's full name.
+     */
     user_name?: string;
   } | null;
   /**
-   * Draft status
+   * The draft status.
+   *
+   * - `draft`: The expense is saved as a draft by the employee and not submitted for approval.
+   * - `archived`: The draft was soft-deleted by the employee.
+   *
    */
   status?: 'draft' | 'archived';
+  /**
+   * The tax portion in the original currency, in cents. Null if not yet entered.
+   */
   tax_amount: number | null;
+  /**
+   * A short description of the expense. May be null in drafts.
+   */
   title: string | null;
 };
 
@@ -7347,10 +9015,21 @@ export type BulkImportImportJobStage =
 
 /**
  * IdentityIntegration
+ *
+ * Details about the integration partner associated with the current authentication token.
  */
 export type IdentityIntegration = {
+  /**
+   * The primary contact email address registered for this integration partner.
+   */
   contact_email: string;
+  /**
+   * The human-readable display name of the integration partner, as shown to users.
+   */
   display_name: string;
+  /**
+   * The unique machine-readable identifier for the integration partner. Used internally to reference this integration.
+   */
   name: string;
 };
 
@@ -7431,6 +9110,9 @@ export type ContractorInvoiceScheduleCreateResponseFailure = {
  * IdsRequiredParams
  */
 export type IdsRequiredParams = {
+  /**
+   * A list of webhook event IDs to replay.
+   */
   ids: Array<string>;
 };
 
@@ -7524,11 +9206,20 @@ export type TimeoffTypesEmploymentType = 'contractor' | 'full_time';
 /**
  * WorkAuthorizationUser
  *
- * Work Authorization User
+ * A user associated with a work authorization request (either the employee or the employer approver).
  */
 export type WorkAuthorizationUser = {
+  /**
+   * The user's email address.
+   */
   email: string;
+  /**
+   * The unique identifier (UUID) of the user.
+   */
   id: string;
+  /**
+   * The user's full name.
+   */
   name: string;
 } | null;
 
@@ -7538,11 +9229,23 @@ export type WorkAuthorizationUser = {
  * SignContractDocument schema
  */
 export type SignContractDocument = {
+  /**
+   * The signer's full legal name as their electronic signature.
+   */
   signature: string;
 };
 
 /**
  * ContractAmendmentStatus
+ *
+ * The current status of a contract amendment request.
+ *
+ * - `submitted`: The amendment has been submitted and is awaiting Remote's review.
+ * - `in_review`: Remote is reviewing the amendment for compliance and feasibility.
+ * - `done`: The amendment has been approved and applied to the contract.
+ * - `canceled`: The amendment request was canceled before completion.
+ * - `deleted`: The amendment request was deleted.
+ *
  */
 export type ContractAmendmentStatus =
   | 'submitted'
@@ -7580,11 +9283,20 @@ export type ErrorResponse = {
 /**
  * ListEmploymentCustomFieldValueResponse
  *
- * ListEmploymentCustomFieldValueResponse
+ * A custom field value as returned in list responses, including the field definition details alongside the value.
  */
 export type ListEmploymentCustomFieldValueResponse = {
+  /**
+   * The unique identifier (UUID) of the custom field definition.
+   */
   custom_field_id: string;
+  /**
+   * The display name of the custom field.
+   */
   name: string;
+  /**
+   * The data type of the custom field (e.g., "string", "integer", "single_select").
+   */
   type: string;
   value:
     | string
@@ -7610,6 +9322,9 @@ export type ListEmploymentCustomFieldValueResponse = {
  *
  */
 export type ParamsToCreateExpense = {
+  /**
+   * The expense amount in the specified currency, in cents.
+   */
   amount: number;
   /**
    * Categories allowed for an expense (legacy, deprecated).<br/>
@@ -7671,8 +9386,14 @@ export type ParamsToCreateExpense = {
    * If the person reviewing the expense is a user in Remote, you can provide its user id for this field. If a value is not provided, defaults to the user that generated the API token.
    */
   reviewer_id?: string;
+  /**
+   * The tax portion of the expense amount, in cents. Use 0 if no tax applies.
+   */
   tax_amount?: number;
   timezone?: Timezone;
+  /**
+   * A short description of the expense (e.g., "New keyboard", "Team dinner").
+   */
   title: string;
 };
 
@@ -7733,15 +9454,38 @@ export type ActionErrors = Array<ActionError>;
 /**
  * WorkAuthorizationRequest
  *
- * Schema for work authorization request
+ * A work authorization request submitted by an employee who needs authorization to work in a different country. Similar to a travel letter request but specifically for work authorization purposes.
  */
 export type WorkAuthorizationRequest = {
+  /**
+   * Additional information provided by the employee about their work authorization needs.
+   */
   additional_information: string;
   destination_country: Country;
   employer_approver: WorkAuthorizationUser;
+  /**
+   * Special instructions from the employer. Null if none provided.
+   */
   employer_special_instructions: string | null;
+  /**
+   * The unique identifier (UUID) of the work authorization request.
+   */
   id: string;
+  /**
+   * The reason for the work authorization request.
+   */
   reason: string;
+  /**
+   * The current status of the work authorization request.
+   *
+   * - `pending`: Submitted and awaiting manager review.
+   * - `cancelled`: Cancelled by the employee.
+   * - `declined_by_manager`: Declined by the employer manager.
+   * - `declined_by_remote`: Declined by Remote after manager approval.
+   * - `approved_by_manager`: Approved by the manager, awaiting Remote's review.
+   * - `approved_by_remote`: Fully approved by both manager and Remote.
+   *
+   */
   status:
     | 'pending'
     | 'cancelled'
@@ -7752,9 +9496,18 @@ export type WorkAuthorizationRequest = {
   submitted_at: DateTimeIso8601;
   travel_date_end: Date;
   travel_date_start: Date;
+  /**
+   * The employee's travel document (passport) number.
+   */
   travel_document_number: string;
   user: WorkAuthorizationUser;
+  /**
+   * Whether the employee will negotiate or sign contracts on behalf of the company in the destination country. This may affect the type of work authorization required.
+   */
   will_negotiate_or_sign_contracts: boolean | null;
+  /**
+   * The specific work location or address in the destination country. Null if not specified.
+   */
   work_location: string | null;
 };
 
@@ -7840,11 +9593,11 @@ export type CreateCustomFieldDefinitionParams =
  */
 export type CostCalculatorBenefitParam = {
   /**
-   * Benefit Group Slug
+   * The unique identifier (slug) of the benefit group to include in the estimate.
    */
   benefit_group_slug: string;
   /**
-   * Benefit Tier Slug
+   * The unique identifier (slug) of the benefit tier within the group. Determines the level of coverage and cost.
    */
   benefit_tier_slug: string;
 };
@@ -7868,11 +9621,25 @@ export type EmploymentFederalTaxesParams = {
 
 /**
  * BenefitTier
+ *
+ * A specific coverage level within a benefit group. For example, a "Health" benefit group might have tiers like "Basic", "Standard", and "Premium", each with different coverage and providers.
  */
 export type BenefitTier = {
+  /**
+   * A detailed description of what this tier covers, including the types of benefits included.
+   */
   description: string;
+  /**
+   * The unique identifier (UUID) of the benefit tier.
+   */
   id: string;
+  /**
+   * The name of this tier (e.g., "Premium 2024 (Medical, Dental and Vision)").
+   */
   name: string;
+  /**
+   * The insurance carriers or providers associated with this tier.
+   */
   providers: Array<BenefitProvider>;
 };
 
@@ -7887,17 +9654,29 @@ export type ScheduleId = string;
  * TerminationDetailsParams
  */
 export type TerminationDetailsParams = {
+  /**
+   * Whether the employer acknowledges and agrees to follow Remote's termination procedure for this jurisdiction.
+   */
   acknowledge_termination_procedure?: boolean | null;
   /**
    * Additional details regarding the termination process.
    */
   additional_comments?: string | null;
+  /**
+   * Whether the employer agrees with the employee's current paid time off balance. If false, you may provide a timesheet file documenting any discrepancies.
+   */
   agrees_to_pto_amount?: boolean | null;
+  /**
+   * Additional notes about the PTO balance, especially if there are discrepancies.
+   */
   agrees_to_pto_amount_notes?: string | null;
   /**
    * Confidential requests are visible for who authorized the token or integration. Non-confidential requests are visible to all admins in the company.
    */
   confidential: boolean;
+  /**
+   * Whether the employer has already informed the employee about the termination. Remote advises not informing the employee until the request has been reviewed for legal risks.
+   */
   customer_informed_employee?: boolean | null;
   /**
    * Remote advises not to inform the employee of their termination until we review your request for legal risks. When we approve your request, you can inform the employee and we’ll take it from there. This field is only required if employee was informed before creating the offboarding request.
@@ -8190,6 +9969,9 @@ export type CreateSsoConfigurationResult = {
  * Benefit Renewal Request Form
  */
 export type BenefitRenewalRequestsCreateBenefitRenewalRequest = {
+  /**
+   * The unique identifier (UUID) of the benefit group to create a renewal request for.
+   */
   benefit_group_id: string;
 };
 
@@ -8258,15 +10040,29 @@ export type ListIncentivesResponse = {
  * Probation completion letter file
  */
 export type ProbationCompletionLetterFile = {
+  /**
+   * The unique identifier (UUID) of the file.
+   */
   id: string;
   inserted_at: DateTimeIso8601;
+  /**
+   * The file name including extension (e.g., "id.pdf", "contract.pdf").
+   */
   name: string;
+  /**
+   * A more specific classification of the file within its type (e.g., "personal_id" within type "id", or "ir_35" within type "contract"). Null if no sub-type applies.
+   */
   sub_type?: string | null;
+  /**
+   * The broad category of the file (e.g., "id", "contract", "tax_form").
+   */
   type: string;
 } | null;
 
 /**
  * GenericFile
+ *
+ * A file represented as a base64-encoded string.
  */
 export type GenericFile = Blob | File;
 
@@ -8330,7 +10126,10 @@ export type UpdateWebhookCallbackParams = {
     | 'employment.contractor_of_record_termination.initiated'
     | 'employment.details.updated'
     | 'employment.employment_agreement.available'
+    | 'employment.cor_hiring.invoice_created'
     | 'employment.eor_hiring.invoice_created'
+    | 'employment.cor_hiring.proof_of_payment_accepted'
+    | 'employment.cor_hiring.proof_of_payment_submitted'
     | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.eor_hiring.proof_of_payment_submitted'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
@@ -8400,6 +10199,29 @@ export type UpdateWebhookCallbackParams = {
     | 'work_authorization.requested'
   >;
   url?: string;
+};
+
+/**
+ * EngagementAgreementDetailsResponse
+ *
+ * Response for engagement agreement details
+ */
+export type EngagementAgreementDetailsResponse = {
+  /**
+   * Engagement agreement details response data
+   */
+  data?: {
+    /**
+     * Engagement agreement details schema object with variable fields based on country
+     */
+    schema: {
+      [key: string]: unknown;
+    };
+    /**
+     * JSON schema version number
+     */
+    version: number;
+  };
 };
 
 /**
@@ -8485,6 +10307,8 @@ export type ProbationExtensionResponse = {
 
 /**
  * Decimal
+ *
+ * A decimal number represented as a string to preserve precision. Supports negative values and fractional digits.
  */
 export type Decimal = string;
 
@@ -8509,7 +10333,7 @@ export type ListExpenseCategoriesResponse = {
 /**
  * Price
  *
- * Price
+ * A monetary amount with its currency, used for pricing plan costs.
  */
 export type Price = {
   /**
@@ -8557,9 +10381,14 @@ export type MessageResponse = {
 
 /**
  * IdentityClientCredentialsResponse
+ *
+ * Returned when the current token was obtained via the OAuth2 Client Credentials flow. Contains the integration's client ID and details, but no company or user information since client credentials tokens are not scoped to a specific company.
  */
 export type IdentityClientCredentialsResponse = {
   data: {
+    /**
+     * The OAuth2 client ID used to obtain this token.
+     */
     client_id: string;
     integration: IdentityIntegration;
   };
@@ -8590,14 +10419,29 @@ export type CreateContractAmendmentParams = {
 /**
  * ProbationExtension
  *
- * Probation Extension
+ * A request to extend an employee's probation period. Requires Remote's review for compliance with local labor laws.
  */
 export type ProbationExtension = {
+  /**
+   * The unique identifier (UUID) of the employment.
+   */
   employment_id: string;
+  /**
+   * The unique identifier (UUID) of the probation extension request.
+   */
   id: string;
+  /**
+   * The unique identifier (UUID) of the user who submitted the request.
+   */
   requested_by: string;
   status: ProbationExtensionStatus;
+  /**
+   * The timestamp when the extension request was submitted.
+   */
   submitted_at: string;
+  /**
+   * A link to the support ticket for this extension, if one was created. Null otherwise.
+   */
   zendesk_ticket_url: string | null;
 };
 
@@ -8616,11 +10460,20 @@ export type CompanyNotEligibleForCreationErrorResponse = {
 /**
  * MinimalContractAmendment
  *
- * Minimal Contract Amendment
+ * A lightweight contract amendment representation used in list responses.
  */
 export type MinimalContractAmendment = {
+  /**
+   * The unique identifier (UUID) of the employment.
+   */
   employment_id: string;
+  /**
+   * The unique identifier (UUID) of the contract amendment.
+   */
   id: string;
+  /**
+   * The current job title from the employment's contract.
+   */
   job_title?: string;
   reason_for_change:
     | 'annual_pay_adjustment'
@@ -8629,9 +10482,18 @@ export type MinimalContractAmendment = {
     | 'job_change_reevaluation'
     | 'promotion'
     | 'other';
+  /**
+   * The unique identifier (UUID) of the user who submitted the amendment request.
+   */
   requested_by: string;
+  /**
+   * The date when the amendment changes should take effect.
+   */
   requested_effective_date: string;
   status: ContractAmendmentStatus;
+  /**
+   * The timestamp when the amendment was submitted.
+   */
   submitted_at: string;
 };
 
@@ -8725,9 +10587,12 @@ export type DeclineExpenseParams = {
 /**
  * EmploymentCustomFieldValue
  *
- * EmploymentCustomFieldValue
+ * The value of a custom field for a specific employment. The type of `value` depends on the custom field's data type.
  */
 export type EmploymentCustomFieldValue = {
+  /**
+   * The unique identifier (UUID) of the custom field definition this value belongs to.
+   */
   custom_field_id: string;
   value:
     | string
@@ -8756,20 +10621,57 @@ export type RequestError = {
 
 /**
  * Timeoff
+ *
+ * A time off record for an employee, representing a period of leave (e.g., vacation, sick leave, parental leave).
  */
 export type Timeoff = {
+  /**
+   * The timestamp when the time off was approved. Null if not yet approved.
+   */
   approved_at?: string | null;
   approver_id?: NullableApproverId;
+  /**
+   * Whether this time off was automatically created by the system (e.g., public holidays) rather than requested by the employee.
+   */
   automatic?: boolean;
+  /**
+   * The reason provided when the time off was cancelled. Null if not cancelled.
+   */
   cancel_reason?: string | null;
   cancelled_at?: NullableDateTime;
   document?: File;
+  /**
+   * The unique identifier (UUID) of the employment this time off belongs to.
+   */
   employment_id: string;
+  /**
+   * The last day of the time off period (ISO 8601 date).
+   */
   end_date: string;
+  /**
+   * The unique identifier (UUID) of the time off record.
+   */
   id: string;
   leave_policy: LeavePolicy;
+  /**
+   * Optional notes provided by the employee when requesting the time off.
+   */
   notes?: string | null;
+  /**
+   * The first day of the time off period (ISO 8601 date).
+   */
   start_date: string;
+  /**
+   * The current status of a time off request.
+   *
+   * - `requested`: The employee has submitted a time off request and it is awaiting approval.
+   * - `approved`: The time off request has been approved by a manager.
+   * - `cancelled`: The time off request was cancelled by the employee or an admin.
+   * - `declined`: The time off request was declined by a manager.
+   * - `taken`: The approved time off has been taken (the dates have passed).
+   * - `cancel_requested`: The employee has requested cancellation of a previously approved time off, pending manager approval.
+   *
+   */
   status:
     | 'requested'
     | 'approved'
@@ -8777,6 +10679,9 @@ export type Timeoff = {
     | 'declined'
     | 'taken'
     | 'cancel_requested';
+  /**
+   * The individual days and hours within this time off period.
+   */
   timeoff_days: Array<TimeoffDay>;
   timeoff_type: TimeoffType;
   timezone: Timezone;
@@ -8849,6 +10754,9 @@ export type EmploymentCreateParams = {
    * This optional field is deprecated.
    */
   company_id?: string;
+  /**
+   * The ISO 3166-1 3-letter country code where the employee will be based (e.g., `AUS`, `GBR`, `USA`).
+   */
   country_code: string;
   /**
    * This field is required to create a global payroll employee.
@@ -8865,22 +10773,89 @@ export type EmploymentCreateParams = {
 };
 
 /**
+ * EmploymentEngagementAgreementDetailsParams
+ *
+ * Engagement agreement details schema compatible params.
+ *
+ */
+export type EmploymentEngagementAgreementDetailsParams = {
+  /**
+   * EngagementAgreementDetailsParamsDEU
+   *
+   * Engagement agreement details params. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_engagement_agreement_details_country) endpoint
+   * passing the country code.
+   *
+   */
+  engagement_agreement_details: {
+    allowances_details?: Array<string> | null;
+    available_pto?: number | null;
+    break_time_per_day?: number | null;
+    business_expenses?: string | null;
+    cba?: string | null;
+    cba_document?: {
+      [key: string]: unknown;
+    } | null;
+    covenants?: Array<string> | null;
+    has_allowances?: string | null;
+    has_bonus?: string | null;
+    has_business_expenses?: string | null;
+    has_business_presence?: string;
+    has_cba?: string | null;
+    has_commissions?: string | null;
+    has_covenants?: string | null;
+    has_illness_remuneration?: string | null;
+    has_overtime_compensation?: string | null;
+    has_pension_scheme?: string | null;
+    has_signing_bonus?: string | null;
+    has_similar_roles?: string;
+    has_similar_work_conditions?: string | null;
+    illness_remuneration_details?: string | null;
+    max_annual_gross_salary?: number | null;
+    min_annual_gross_salary?: number | null;
+    overtime_compensation_begins?: number | null;
+    overtime_compensation_type?: string | null;
+    overtime_pay_percentage?: number | null;
+    pension_scheme?: string | null;
+    similar_roles?: string | null;
+    similar_work_conditions_details?: string | null;
+    work_hours_per_week?: number | null;
+    working_days?: Array<string> | null;
+  };
+};
+
+/**
  * TimeTracking
  *
- * Time tracking schema
+ * A single time tracking entry within a timesheet, representing a block of work with clock-in/out times. Includes detailed breakdowns of hours by type (regular, overtime, night, weekend, holiday).
  */
 export type TimeTracking = {
   clock_in: DateTimeIso8601;
   clock_out: DateTimeIso8601;
+  /**
+   * Whether this time tracking entry includes any hours worked on public holidays.
+   */
   has_holiday_hours: boolean;
+  /**
+   * Whether this time tracking entry includes any hours worked during night hours.
+   */
   has_night_hours: boolean;
+  /**
+   * Whether this time tracking entry includes any hours worked on weekends.
+   */
   has_weekend_hours: boolean;
   holiday_hours: HoursAndMinutes;
   night_hours: HoursAndMinutes;
+  /**
+   * Optional free-text notes about this time tracking entry, such as project or task details.
+   */
   notes: string | null;
   time_breakdown: TimeBreakdown;
   timezone: Timezone;
   total_hours: HoursAndMinutes;
+  /**
+   * The category of time being tracked (e.g., regular hours, overtime, on-call, break time).
+   */
   type:
     | 'regular_hours'
     | 'overtime'
@@ -8904,6 +10879,16 @@ export type CustomDate = {
 
 /**
  * TimeoffStatus
+ *
+ * The current status of a time off request.
+ *
+ * - `requested`: The employee has submitted a time off request and it is awaiting approval.
+ * - `approved`: The time off request has been approved by a manager.
+ * - `cancelled`: The time off request was cancelled by the employee or an admin.
+ * - `declined`: The time off request was declined by a manager.
+ * - `taken`: The approved time off has been taken (the dates have passed).
+ * - `cancel_requested`: The employee has requested cancellation of a previously approved time off, pending manager approval.
+ *
  */
 export type TimeoffStatus =
   | 'approved'
@@ -8951,6 +10936,8 @@ export type ContractorInvoiceScheduleItem = {
 
 /**
  * ForbiddenResponse
+ *
+ * Returned when the authenticated user or token does not have permission to perform the requested action. Check that the token has the required OAuth2 scopes and that the user has the necessary role.
  */
 export type ForbiddenResponse = {
   message: string;
@@ -8958,20 +10945,49 @@ export type ForbiddenResponse = {
 
 /**
  * ResignationAfterStartDate
+ *
+ * Resignation details for an employee who resigned after their employment start date. Includes contract terms, notice period calculations, and PTO breakdown needed for the employer to validate the resignation.
  */
 export type ResignationAfterStartDate = {
+  /**
+   * The ISO 4217 currency code of the employee's contract (used for any reimbursement calculations).
+   */
   contract_currency_code: string;
+  /**
+   * The job title from the employee's contract.
+   */
   contract_job_title: string;
+  /**
+   * Whether the employee's probation period has passed. Affects notice period requirements in many jurisdictions.
+   */
   contract_proabtion_period_passed: boolean;
+  /**
+   * The end date of the employee's probation period. Null if the contract has no probation period.
+   */
   contract_probation_period_end_date: string | null;
+  /**
+   * The original start date from the employee's contract.
+   */
   contract_start_date: string;
+  /**
+   * The number of calendar days of notice required based on the contract terms and local labor laws.
+   */
   days_of_notice: number;
+  /**
+   * Human-readable breakdown of the employee's paid time off usage and balance (e.g., "Used until today: 60 days", "Waiting for approval: 0 days").
+   */
   paid_timeoffs_breakdown_labels: Array<string>;
+  /**
+   * The employee's proposed last working day, calculated based on the notice period and local labor laws.
+   */
   proposed_last_day: string;
   /**
-   * UTC date
+   * The date the employee submitted their resignation (UTC).
    */
   resignation_date: string;
+  /**
+   * A human-readable label describing the reason for resignation (e.g., "Retirement", "Other job opportunity").
+   */
   resignation_reason_label: string;
 };
 
@@ -9040,7 +11056,7 @@ export type WebhookCallbackResponse = {
 /**
  * EmploymentResponse
  *
- * Complete information of an employment
+ * Response containing the full employment record after an update operation.
  */
 export type EmploymentResponse = {
   data: {
@@ -9051,9 +11067,12 @@ export type EmploymentResponse = {
 /**
  * Expense
  *
- * Expense
+ * A submitted expense record with complete data. All monetary amounts are integers in the currency's minor unit (cents).
  */
 export type Expense = {
+  /**
+   * The expense amount in the original currency, in cents.
+   */
   amount: number;
   /**
    * Categories allowed for an expense (legacy, deprecated)
@@ -9087,10 +11106,19 @@ export type Expense = {
     | 'home_office'
     | 'phone_utilities'
     | 'travel';
+  /**
+   * The expense amount converted to the company's billing currency, in cents.
+   */
   converted_amount: number;
   converted_currency: CurrencyDefinition;
+  /**
+   * The tax portion converted to the company's billing currency, in cents.
+   */
   converted_tax_amount: number;
   currency: CurrencyDefinition;
+  /**
+   * The unique identifier (UUID) of the employment this expense belongs to.
+   */
   employment_id: string;
   /**
    * New hierarchical expense category (recommended)
@@ -9109,20 +11137,61 @@ export type Expense = {
      */
     title?: string;
   } | null;
+  /**
+   * The date the expense was incurred (ISO 8601 format). Must be in the past.
+   */
   expense_date: string;
+  /**
+   * The unique identifier (UUID) of the expense.
+   */
   id: string;
+  /**
+   * The payroll invoice period this expense is associated with, in YYYY-MM format. Null if not yet assigned to a payroll period.
+   */
   invoice_period?: string | null;
+  /**
+   * Optional additional notes or context about the expense.
+   */
   notes?: string | null;
+  /**
+   * The reason provided when the expense was declined. Null for non-declined expenses.
+   */
   reason?: string | null;
+  /**
+   * Uploaded receipt files for this expense. Maximum 5 receipts.
+   */
   receipts?: Array<File>;
+  /**
+   * The date the expense was reviewed. Null if not yet reviewed.
+   */
   reviewed_at?: string | null;
+  /**
+   * The person who reviewed (approved or declined) this expense. Null if not yet reviewed.
+   */
   reviewer?: {
+    /**
+     * The reviewer's email address.
+     */
     user_email?: string;
+    /**
+     * The unique identifier of the reviewer.
+     */
     user_id?: string;
+    /**
+     * The reviewer's full name.
+     */
     user_name?: string;
   } | null;
   /**
-   * Expense status
+   * The current status of the expense.
+   *
+   * - `pending`: Submitted and awaiting approval.
+   * - `approved`: Approved by a reviewer and queued for reimbursement.
+   * - `declined`: Declined by a reviewer. See `reason` for details.
+   * - `canceled`: Canceled by the employee before approval.
+   * - `processing`: Being processed as part of a payroll run.
+   * - `reimbursed`: Successfully reimbursed to the employee.
+   *
    */
   status?:
     | 'canceled'
@@ -9131,7 +11200,13 @@ export type Expense = {
     | 'approved'
     | 'processing'
     | 'reimbursed';
+  /**
+   * The tax portion of the expense amount in the original currency, in cents.
+   */
   tax_amount: number;
+  /**
+   * A short description of the expense (e.g., "New keyboard", "Team dinner").
+   */
   title: string;
 };
 
@@ -9188,9 +11263,12 @@ export type CorTerminationRequestResponse = {
 /**
  * ContractDocument
  *
- * ContractDocument schema
+ * A contract document for a contractor employment, tracking its signing status.
  */
 export type ContractDocument = {
+  /**
+   * The unique identifier (UUID) of the contract document.
+   */
   id: string;
   status: ContractorContractDocumentStatus;
 };
@@ -9301,13 +11379,33 @@ export type ContractorInvoice = {
 
 /**
  * BillingDocumentAmountItem
+ *
+ * A line item on a billing document, representing a specific cost category (e.g., base salary, allowances, taxes) for an employment.
  */
 export type BillingDocumentAmountItem = {
+  /**
+   * The amount for this line item in the billing document currency, in cents.
+   */
   billing_document_amount: number;
+  /**
+   * The ISO 4217 currency code of the billing document.
+   */
   billing_document_currency: string | null;
+  /**
+   * The unique identifier (UUID) of the employment this line item relates to. Null for company-level charges.
+   */
   employment_id?: string | null;
+  /**
+   * The original amount in the source (local) currency, in cents. May differ from billing_document_amount due to currency conversion.
+   */
   source_amount?: number;
+  /**
+   * The ISO 4217 currency code of the source (local) currency. Null if same as billing document currency.
+   */
   source_currency?: string | null;
+  /**
+   * The cost category for this line item (e.g., "base_salary", "allowances", "bonuses", "deductions", "taxes").
+   */
   type: string;
 };
 
@@ -10899,6 +12997,54 @@ export type PostBypassEligibilityChecksCompanyResponses = {
 
 export type PostBypassEligibilityChecksCompanyResponse =
   PostBypassEligibilityChecksCompanyResponses[keyof PostBypassEligibilityChecksCompanyResponses];
+
+export type PostApproveRiskReserveProofOfPaymentData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/employments/{employment_id}/risk-reserve-proof-of-payments/approve';
+};
+
+export type PostApproveRiskReserveProofOfPaymentErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostApproveRiskReserveProofOfPaymentError =
+  PostApproveRiskReserveProofOfPaymentErrors[keyof PostApproveRiskReserveProofOfPaymentErrors];
+
+export type PostApproveRiskReserveProofOfPaymentResponses = {
+  /**
+   * Success
+   */
+  200: RiskReserveProofOfPaymentResponse;
+};
+
+export type PostApproveRiskReserveProofOfPaymentResponse =
+  PostApproveRiskReserveProofOfPaymentResponses[keyof PostApproveRiskReserveProofOfPaymentResponses];
 
 export type GetShowTestSchemaData = {
   body?: never;
@@ -12728,6 +14874,49 @@ export type PostCreateRiskReserveResponses = {
 export type PostCreateRiskReserveResponse =
   PostCreateRiskReserveResponses[keyof PostCreateRiskReserveResponses];
 
+export type PostSubmitRiskReserveProofOfPaymentData = {
+  /**
+   * Proof of Payment
+   */
+  body: CreateRiskReserveProofOfPaymentParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/risk-reserve-proof-of-payments';
+};
+
+export type PostSubmitRiskReserveProofOfPaymentErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostSubmitRiskReserveProofOfPaymentError =
+  PostSubmitRiskReserveProofOfPaymentErrors[keyof PostSubmitRiskReserveProofOfPaymentErrors];
+
+export type PostSubmitRiskReserveProofOfPaymentResponses = {
+  /**
+   * Success
+   */
+  200: RiskReserveProofOfPaymentResponse;
+};
+
+export type PostSubmitRiskReserveProofOfPaymentResponse =
+  PostSubmitRiskReserveProofOfPaymentResponses[keyof PostSubmitRiskReserveProofOfPaymentResponses];
+
 export type GetShowCompanyComplianceProfileData = {
   body?: never;
   path: {
@@ -14013,6 +16202,54 @@ export type PostDeclineIdentityVerificationResponses = {
 
 export type PostDeclineIdentityVerificationResponse =
   PostDeclineIdentityVerificationResponses[keyof PostDeclineIdentityVerificationResponses];
+
+export type GetShowEngagementAgreementDetailsCountryData = {
+  body?: never;
+  path: {
+    /**
+     * Country code according to ISO 3-digit alphabetic codes
+     */
+    country_code: string;
+  };
+  query?: never;
+  url: '/v1/countries/{country_code}/engagement-agreement-details';
+};
+
+export type GetShowEngagementAgreementDetailsCountryErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetShowEngagementAgreementDetailsCountryError =
+  GetShowEngagementAgreementDetailsCountryErrors[keyof GetShowEngagementAgreementDetailsCountryErrors];
+
+export type GetShowEngagementAgreementDetailsCountryResponses = {
+  /**
+   * Success
+   */
+  200: EngagementAgreementDetailsResponse;
+};
+
+export type GetShowEngagementAgreementDetailsCountryResponse =
+  GetShowEngagementAgreementDetailsCountryResponses[keyof GetShowEngagementAgreementDetailsCountryResponses];
 
 export type GetIndexBillingDocumentData = {
   body?: never;
@@ -18340,6 +20577,66 @@ export type GetShowBulkEmploymentResponses = {
 export type GetShowBulkEmploymentResponse =
   GetShowBulkEmploymentResponses[keyof GetShowBulkEmploymentResponses];
 
+export type GetIndexPayItemsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Filter by employment slug
+     */
+    employment_slug?: UuidSlug;
+    /**
+     * Filter pay items with effective_date >= given date (YYYY-MM-DD)
+     */
+    effective_from?: Date;
+    /**
+     * Filter pay items with effective_date <= given date (YYYY-MM-DD)
+     */
+    effective_to?: Date;
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/pay-items';
+};
+
+export type GetIndexPayItemsErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetIndexPayItemsError =
+  GetIndexPayItemsErrors[keyof GetIndexPayItemsErrors];
+
+export type GetIndexPayItemsResponses = {
+  /**
+   * Success
+   */
+  200: ListPayItemsResponse;
+};
+
+export type GetIndexPayItemsResponse =
+  GetIndexPayItemsResponses[keyof GetIndexPayItemsResponses];
+
 export type GetIndexBenefitOffersCountrySummaryData = {
   body?: never;
   headers: {
@@ -19706,6 +22003,109 @@ export type PostBulkCreateScheduledContractorInvoiceResponses = {
 
 export type PostBulkCreateScheduledContractorInvoiceResponse =
   PostBulkCreateScheduledContractorInvoiceResponses[keyof PostBulkCreateScheduledContractorInvoiceResponses];
+
+export type GetShowEmploymentEngagementAgreementDetailsData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/engagement-agreement-details';
+};
+
+export type GetShowEmploymentEngagementAgreementDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetShowEmploymentEngagementAgreementDetailsError =
+  GetShowEmploymentEngagementAgreementDetailsErrors[keyof GetShowEmploymentEngagementAgreementDetailsErrors];
+
+export type GetShowEmploymentEngagementAgreementDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentEngagementAgreementDetailsResponse;
+};
+
+export type GetShowEmploymentEngagementAgreementDetailsResponse =
+  GetShowEmploymentEngagementAgreementDetailsResponses[keyof GetShowEmploymentEngagementAgreementDetailsResponses];
+
+export type PostUpdateEmploymentEngagementAgreementDetailsData = {
+  /**
+   * Employment engagement agreement details params
+   */
+  body?: EmploymentEngagementAgreementDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/engagement-agreement-details';
+};
+
+export type PostUpdateEmploymentEngagementAgreementDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostUpdateEmploymentEngagementAgreementDetailsError =
+  PostUpdateEmploymentEngagementAgreementDetailsErrors[keyof PostUpdateEmploymentEngagementAgreementDetailsErrors];
+
+export type PostUpdateEmploymentEngagementAgreementDetailsResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostUpdateEmploymentEngagementAgreementDetailsResponse =
+  PostUpdateEmploymentEngagementAgreementDetailsResponses[keyof PostUpdateEmploymentEngagementAgreementDetailsResponses];
 
 export type GetGetBreakdownBillingDocumentData = {
   body?: never;
