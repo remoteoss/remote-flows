@@ -298,33 +298,6 @@ jobs:
           name: remote-flows-url
           path: remote-flows-url.txt
 
-  deploy-example-app:
-    name: Deploy Example App Preview
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Deploy remote-flows-example-app to vercel
-        id: vercel-example-app
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_EXAMPLE_APP_PROJECT_ID }}
-          scope: ${{ secrets.VERCEL_ORG_ID }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          github-comment: true
-
-      - name: Save deployment URL
-        run: |
-          echo "${{ steps.vercel-example-app.outputs.preview-url }}" > example-app-url.txt
-
-      - name: Upload deployment URL
-        uses: actions/upload-artifact@v7
-        with:
-          name: example-app-url
-          path: example-app-url.txt
-
   e2e-tests:
     name: E2E Tests
     runs-on: ubuntu-latest
@@ -335,7 +308,6 @@ jobs:
         tests,
         example-checks,
         deploy-remote-flows,
-        deploy-example-app,
       ]
     steps:
       - uses: actions/checkout@v6
@@ -361,16 +333,10 @@ jobs:
         with:
           name: remote-flows-url
 
-      - name: Download example-app URL
-        uses: actions/download-artifact@v8
-        with:
-          name: example-app-url
-
       - name: Set deployment URLs
         id: set-urls
         run: |
           echo "REMOTE_FLOWS_URL=$(cat remote-flows-url.txt)" >> $GITHUB_ENV
-          echo "EXAMPLE_APP_URL=$(cat example-app-url.txt)" >> $GITHUB_ENV
 
       - name: Run Playwright tests
         env:
