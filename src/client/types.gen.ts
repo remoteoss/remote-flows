@@ -5350,11 +5350,11 @@ export type ResourceErrorResponse = {
      * A machine-readable error code identifying the specific type of resource error.
      */
     code?:
+      | 'parameter_invalid_date'
       | 'resource_not_eligible'
       | 'resource_already_exists'
       | 'action_unrecognized'
       | 'action_invalid'
-      | 'parameter_invalid_date'
       | 'resource_invalid_state'
       | 'parameter_value_invalid'
       | 'parameter_value_unknown'

@@ -11,7 +11,7 @@
 - add help center article in textarea (#921) [#921](https://github.com/remoteoss/remote-flows/pull/921)
 - fix submission contract-details in contractor-onboarding as switcher component wasn't working correctly (#932) [#932](https://github.com/remoteoss/remote-flows/pull/932)
 
-#### Fixes
+#### Fixes
 
 - nested fields are parsed in the error messages (#930) [#930](https://github.com/remoteoss/remote-flows/pull/930)
 
