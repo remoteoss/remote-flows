@@ -1,20 +1,15 @@
-we have different snapshots from contract details
-
-like @priv/json_schemas/contract_details/snapshots/PRT/1.json 
-
-I need for every country to have all the versions for example latest is this file @priv/json_schemas/contract_details/PRT.json 
-
-I want the output like this
-
-COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
-  DEU: [
+Generate a TypeScript constant called COUNTRY_CONTRACT_VERSIONS that maps country codes to their available contract detail versions.
+For each country in apps/tiger/priv/json_schemas/contract_details/ (excluding base.json):
+1. Count the number of snapshot files in snapshots/{COUNTRY}/ (these are historical versions)
+2. Add 1 for the current version in the root directory ({COUNTRY}.json)
+3. Create an array of version objects from 1 to the total count
+Output format:
+```typescript
+const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
+  COUNTRY_CODE: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
-    { value: 'latest', label: 'Latest' },
+    // ... up to the total version count
   ],
-  USA: [
-    { value: 1, label: 'v1' },
-    { value: 'latest', label: 'Latest' },
-  ],
-  // ... other countries
+  // ... all countries sorted alphabetically
 };
