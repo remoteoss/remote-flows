@@ -11,7 +11,6 @@
 - upgrade to npm release remote-json-schema-form-kit (#918) [#918](https://github.com/remoteoss/remote-flows/pull/918)
 - remove package.json carets (#936) [#936](https://github.com/remoteoss/remote-flows/pull/936)
 
-
 #### Chores
 
 - update dependency @tanstack/react-query to ^5.99.0 (#939) [#939](https://github.com/remoteoss/remote-flows/pull/939)
@@ -20,7 +19,6 @@
 - update dependency msw to ^2.13.3 (#949) [#949](https://github.com/remoteoss/remote-flows/pull/949)
 - update dependency oxlint to ^1.60.0 (#947) [#947](https://github.com/remoteoss/remote-flows/pull/947)
 - update dependency dotenv to v17.4.2 (#950) [#950](https://github.com/remoteoss/remote-flows/pull/950)
-
 
 ## 1.26.0
 
