@@ -24,13 +24,11 @@ interface SchemaFormComparisonProps {
 const FieldWrapper = ({
   children,
   diffType,
-  orderChanged,
   changes,
 }: {
   children: React.ReactNode;
   diffType: 'added' | 'removed' | 'modified' | 'unchanged';
   fieldName: string;
-  orderChanged?: { oldIndex: number; newIndex: number };
   changes?: {
     label?: { old: string; new: string };
     required?: { old: boolean; new: boolean };
@@ -54,9 +52,9 @@ const FieldWrapper = ({
     nestedFields?: unknown[];
   };
 }) => {
-  const styles = getDiffStyles(diffType, !!orderChanged);
+  const styles = getDiffStyles(diffType);
 
-  if (diffType === 'unchanged' && !orderChanged) {
+  if (diffType === 'unchanged') {
     return <div>{children}</div>;
   }
 
@@ -78,14 +76,7 @@ const FieldWrapper = ({
     ),
   };
 
-  const reorderedBadge = orderChanged && diffType === 'unchanged' && (
-    <span className='text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded'>
-      MOVED
-    </span>
-  );
-
-  const badge =
-    reorderedBadge || (diffType !== 'unchanged' && badges[diffType]);
+  const badge = badges[diffType];
 
   const renderChanges = () => {
     if (!changes || diffType !== 'modified') return null;
@@ -221,12 +212,7 @@ const FieldWrapper = ({
 
   return (
     <div className={`p-3 mb-2 rounded ${styles} relative`}>
-      <div className='absolute top-2 right-2'>
-        {badge}
-        {orderChanged && diffType !== 'unchanged' && (
-          <span className='ml-2 text-xs text-gray-600'>(position changed)</span>
-        )}
-      </div>
+      <div className='absolute top-2 right-2'>{badge}</div>
       {children}
       {renderChanges()}
     </div>
@@ -248,7 +234,6 @@ const FormPanel = ({
     string,
     {
       diffType: 'added' | 'removed' | 'modified' | 'unchanged';
-      orderChanged?: { oldIndex: number; newIndex: number };
       changes?: unknown;
     }
   >;
@@ -260,26 +245,83 @@ const FormPanel = ({
   });
 
   const fieldsWithWrappers = useMemo(() => {
-    return fields.map((field) => {
-      const diff = diffMap.get(field.name);
-      const diffType = diff?.diffType || 'unchanged';
-      const orderChanged = diff?.orderChanged;
-      const changes = diff?.changes;
+    // Recursive function to apply wrappers to fields and their nested fields
+    const applyWrappers = (
+      fields: JSFField[],
+      diffMap: Map<
+        string,
+        {
+          diffType: 'added' | 'removed' | 'modified' | 'unchanged';
+          changes?: unknown;
+        }
+      >,
+    ): JSFField[] => {
+      return fields.map((field) => {
+        const diff = diffMap.get(field.name);
+        const diffType = diff?.diffType || 'unchanged';
+        const changes = diff?.changes;
 
-      return {
-        ...field,
-        WrapperComponent: ({ children }: { children: React.ReactNode }) => (
-          <FieldWrapper
-            diffType={diffType}
-            fieldName={field.name}
-            orderChanged={orderChanged}
-            changes={changes as never}
-          >
-            {children}
-          </FieldWrapper>
-        ),
-      };
-    });
+        // If this field has nested fields (e.g., fieldset), recursively apply wrappers
+        const nestedFields = (field as never as { fields?: JSFField[] }).fields;
+        let processedField = field;
+
+        if (nestedFields && Array.isArray(nestedFields)) {
+          // Build a nested diff map from the changes.nestedFields
+          const nestedDiffMap = new Map<
+            string,
+            {
+              diffType: 'added' | 'removed' | 'modified' | 'unchanged';
+              changes?: unknown;
+            }
+          >();
+
+          if (
+            changes &&
+            typeof changes === 'object' &&
+            'nestedFields' in changes &&
+            Array.isArray(changes.nestedFields)
+          ) {
+            (
+              changes.nestedFields as Array<{
+                fieldName: string;
+                diffType: 'added' | 'removed' | 'modified' | 'unchanged';
+                changes?: unknown;
+              }>
+            ).forEach((nestedDiff) => {
+              nestedDiffMap.set(nestedDiff.fieldName, {
+                diffType: nestedDiff.diffType,
+                changes: nestedDiff.changes,
+              });
+            });
+          }
+
+          // Recursively apply wrappers to nested fields
+          const wrappedNestedFields = applyWrappers(
+            nestedFields,
+            nestedDiffMap,
+          );
+          processedField = {
+            ...field,
+            fields: wrappedNestedFields,
+          } as JSFField;
+        }
+
+        return {
+          ...processedField,
+          WrapperComponent: ({ children }: { children: React.ReactNode }) => (
+            <FieldWrapper
+              diffType={diffType}
+              fieldName={field.name}
+              changes={changes as never}
+            >
+              {children}
+            </FieldWrapper>
+          ),
+        };
+      });
+    };
+
+    return applyWrappers(fields, diffMap);
   }, [fields, diffMap]);
 
   return (
@@ -369,8 +411,7 @@ export const SchemaFormComparison = ({
   const hasNoDifferences =
     diff.added.length === 0 &&
     diff.removed.length === 0 &&
-    diff.modified.length === 0 &&
-    diff.reordered.length === 0;
+    diff.modified.length === 0;
 
   return (
     <div className='space-y-6'>
@@ -406,15 +447,6 @@ export const SchemaFormComparison = ({
                   <span className='text-sm'>
                     {diff.modified.length} field
                     {diff.modified.length > 1 ? 's' : ''} modified
-                  </span>
-                </div>
-              )}
-              {diff.reordered.length > 0 && (
-                <div className='flex items-center gap-2'>
-                  <span className='w-4 h-4 bg-blue-500 rounded'></span>
-                  <span className='text-sm'>
-                    {diff.reordered.length} field
-                    {diff.reordered.length > 1 ? 's' : ''} reordered
                   </span>
                 </div>
               )}
