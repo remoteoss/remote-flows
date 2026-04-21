@@ -166,6 +166,9 @@ import type {
   GetIndexOffboardingData,
   GetIndexOffboardingErrors,
   GetIndexOffboardingResponses,
+  GetIndexPayItemsData,
+  GetIndexPayItemsErrors,
+  GetIndexPayItemsResponses,
   GetIndexPayrollCalendarData,
   GetIndexPayrollCalendarErrors,
   GetIndexPayrollCalendarResponses,
@@ -275,11 +278,17 @@ import type {
   GetShowEmploymentCustomFieldValueErrors,
   GetShowEmploymentCustomFieldValueResponses,
   GetShowEmploymentData,
+  GetShowEmploymentEngagementAgreementDetailsData,
+  GetShowEmploymentEngagementAgreementDetailsErrors,
+  GetShowEmploymentEngagementAgreementDetailsResponses,
   GetShowEmploymentErrors,
   GetShowEmploymentOnboardingStepsData,
   GetShowEmploymentOnboardingStepsErrors,
   GetShowEmploymentOnboardingStepsResponses,
   GetShowEmploymentResponses,
+  GetShowEngagementAgreementDetailsCountryData,
+  GetShowEngagementAgreementDetailsCountryErrors,
+  GetShowEngagementAgreementDetailsCountryResponses,
   GetShowExpenseData,
   GetShowExpenseErrors,
   GetShowExpenseResponses,
@@ -423,6 +432,9 @@ import type {
   PostApproveCancellationRequestData,
   PostApproveCancellationRequestErrors,
   PostApproveCancellationRequestResponses,
+  PostApproveRiskReserveProofOfPaymentData,
+  PostApproveRiskReserveProofOfPaymentErrors,
+  PostApproveRiskReserveProofOfPaymentResponses,
   PostApproveTimesheetData,
   PostApproveTimesheetErrors,
   PostApproveTimesheetResponses,
@@ -585,6 +597,9 @@ import type {
   PostSignContractDocumentData,
   PostSignContractDocumentErrors,
   PostSignContractDocumentResponses,
+  PostSubmitRiskReserveProofOfPaymentData,
+  PostSubmitRiskReserveProofOfPaymentErrors,
+  PostSubmitRiskReserveProofOfPaymentResponses,
   PostTerminateContractorOfRecordEmploymentSubscriptionData,
   PostTerminateContractorOfRecordEmploymentSubscriptionErrors,
   PostTerminateContractorOfRecordEmploymentSubscriptionResponses,
@@ -600,6 +615,9 @@ import type {
   PostUpdateCancelOnboardingData,
   PostUpdateCancelOnboardingErrors,
   PostUpdateCancelOnboardingResponses,
+  PostUpdateEmploymentEngagementAgreementDetailsData,
+  PostUpdateEmploymentEngagementAgreementDetailsErrors,
+  PostUpdateEmploymentEngagementAgreementDetailsResponses,
   PostUploadEmployeeFileFileData,
   PostUploadEmployeeFileFileErrors,
   PostUploadEmployeeFileFileResponses,
@@ -816,6 +834,7 @@ export const getShowContractAmendmentSchema = <
  *
  * Bulk creates pay items for employments. Supports up to 500 items per request.
  * Integration-specific fields (shift code, currency, pay amount, etc.) go in the `meta` object.
+ * Only Global Payroll employments are supported. Non-GP employments are returned as `employment_not_global_payroll`.
  *
  *
  * ## Scopes
@@ -1582,6 +1601,34 @@ export const postBypassEligibilityChecksCompany = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/sandbox/companies/{company_id}/bypass-eligibility-checks',
+    ...options,
+  });
+
+/**
+ * Approve risk reserve proof of payment
+ *
+ * Approves a risk reserve proof of payment without the intervention of a Remote admin.
+ *
+ * Triggers an `employment.cor_hiring.proof_of_payment_accepted` webhook event.
+ *
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ */
+export const postApproveRiskReserveProofOfPayment = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostApproveRiskReserveProofOfPaymentData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostApproveRiskReserveProofOfPaymentResponses,
+    PostApproveRiskReserveProofOfPaymentErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/sandbox/employments/{employment_id}/risk-reserve-proof-of-payments/approve',
     ...options,
   });
 
@@ -2759,6 +2806,44 @@ export const postCreateRiskReserve = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Submit risk reserve proof of payment
+ *
+ * Submits a proof of payment document for a risk reserve associated with an employment.
+ *
+ * Triggers an `employment.cor_hiring.proof_of_payment_submitted` webhook event.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage risk reserves (`risk_reserve:write`) |
+ *
+ */
+export const postSubmitRiskReserveProofOfPayment = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostSubmitRiskReserveProofOfPaymentData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostSubmitRiskReserveProofOfPaymentResponses,
+    PostSubmitRiskReserveProofOfPaymentErrors,
+    ThrowOnError
+  >({
+    ...formDataBodySerializer,
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/{employment_id}/risk-reserve-proof-of-payments',
+    ...options,
+    headers: {
+      'Content-Type': null,
+      ...options.headers,
+    },
+  });
+
+/**
  * Get Company Compliance Profile
  *
  * Returns the KYB and credit risk status for the company's default legal entity.
@@ -3638,6 +3723,37 @@ export const postDeclineIdentityVerification = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/identity-verification/{employment_id}/decline',
+    ...options,
+  });
+
+/**
+ * Show engagement agreement details
+ *
+ * Returns the engagement agreement details JSON Schema for a country. Only DEU country is supported for now.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View forms (`form:read`) | - |
+ *
+ */
+export const getShowEngagementAgreementDetailsCountry = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetShowEngagementAgreementDetailsCountryData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetShowEngagementAgreementDetailsCountryResponses,
+    GetShowEngagementAgreementDetailsCountryErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/countries/{country_code}/engagement-agreement-details',
     ...options,
   });
 
@@ -6397,6 +6513,34 @@ export const getShowBulkEmployment = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * List Pay Items
+ *
+ * Lists pay items for a company with optional filtering by employment, date range, and pagination.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | View pay items (`pay_item:read`) | Manage pay items (`pay_item:write`) |
+ *
+ */
+export const getIndexPayItems = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIndexPayItemsData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetIndexPayItemsResponses,
+    GetIndexPayItemsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/pay-items',
+    ...options,
+  });
+
+/**
  * List Benefit Offers
  *
  * List benefit offers for each country.
@@ -7213,6 +7357,86 @@ export const postBulkCreateScheduledContractorInvoice = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/contractor-invoice-schedules',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Get engagement agreement details
+ *
+ * Returns the engagement agreement details for an employment.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getShowEmploymentEngagementAgreementDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetShowEmploymentEngagementAgreementDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetShowEmploymentEngagementAgreementDetailsResponses,
+    GetShowEmploymentEngagementAgreementDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/{employment_id}/engagement-agreement-details',
+    ...options,
+  });
+
+/**
+ * Upsert engagement agreement details
+ *
+ * Creates or updates the engagement agreement details for an employment.
+ *
+ * This endpoint requires country-specific data. The exact required fields will vary depending on
+ * which country the employment is in. To see the list of parameters for each country, see the
+ * **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that compliance requirements for each country are subject to change according to local laws.
+ * Using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) is recommended
+ * to avoid compliance issues and to have the latest version of a country's requirements.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const postUpdateEmploymentEngagementAgreementDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostUpdateEmploymentEngagementAgreementDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostUpdateEmploymentEngagementAgreementDetailsResponses,
+    PostUpdateEmploymentEngagementAgreementDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/{employment_id}/engagement-agreement-details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
