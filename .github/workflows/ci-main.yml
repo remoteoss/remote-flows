@@ -122,33 +122,6 @@ jobs:
           name: remote-flows-url
           path: remote-flows-url.txt
 
-  deploy-example-app:
-    name: Deploy Example App Preview
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Deploy remote-flows-example-app to vercel
-        id: vercel-example-app
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_EXAMPLE_APP_PROJECT_ID }}
-          scope: ${{ secrets.VERCEL_ORG_ID }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          github-comment: true
-
-      - name: Save deployment URL
-        run: |
-          echo "${{ steps.vercel-example-app.outputs.preview-url }}" > example-app-url.txt
-
-      - name: Upload deployment URL
-        uses: actions/upload-artifact@v7
-        with:
-          name: example-app-url
-          path: example-app-url.txt
-
   e2e-tests:
     name: E2E Tests
     runs-on: ubuntu-latest
@@ -218,32 +191,6 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_REMOTE_FLOWS_PROJECT_ID }}
-          scope: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-args: '--prod'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          github-comment: true
-
-  deploy-example-app-production:
-    name: Deploy Example App to Production
-    needs:
-      [
-        lint-and-format,
-        build-and-exports,
-        tests,
-        example-checks,
-        deploy-example-app,
-        e2e-tests,
-      ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Promote example app to production
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_EXAMPLE_APP_PROJECT_ID }}
           scope: ${{ secrets.VERCEL_ORG_ID }}
           vercel-args: '--prod'
           github-token: ${{ secrets.GITHUB_TOKEN }}
