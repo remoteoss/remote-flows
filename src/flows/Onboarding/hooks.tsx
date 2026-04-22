@@ -197,14 +197,24 @@ export const useOnboarding = ({
     setStepValues,
   } = useStepState(steps, onStepChange);
 
+  const {
+    data: employmentEngagementAgreementDetails,
+    isLoading: isLoadingEmploymentEngagementAgreementDetails,
+  } = useEmploymentEngagementAgreementDetails(internalEmploymentId, {
+    enabled: Boolean(
+      !!internalEmploymentId && options?.features?.includes('dynamic_steps'),
+    ),
+  });
+
   const engagementAgreementDetailsFieldValues = useMemo(() => {
     return {
-      // TODO: missing here data from the server if there's ANY
       ...onboardingInitialValues,
+      ...employmentEngagementAgreementDetails,
       ...stepState.values?.engagement_agreement_details,
       ...fieldValues,
     };
   }, [
+    employmentEngagementAgreementDetails,
     onboardingInitialValues,
     stepState.values?.engagement_agreement_details,
     fieldValues,
@@ -219,8 +229,9 @@ export const useOnboarding = ({
     {
       jsfModify: options?.jsfModify,
       queryOptions: {
-        enabled:
+        enabled: Boolean(
           !!internalCountryCode && options?.features?.includes('dynamic_steps'),
+        ),
       },
     },
   );
@@ -270,14 +281,6 @@ export const useOnboarding = ({
 
   const { data: benefitOffers, isLoading: isLoadingBenefitOffers } =
     useBenefitOffers(internalEmploymentId);
-
-  const {
-    data: employmentEngagementAgreementDetails,
-    isLoading: isLoadingEmploymentEngagementAgreementDetails,
-  } = useEmploymentEngagementAgreementDetails(internalEmploymentId, {
-    enabled:
-      !!internalEmploymentId && options?.features?.includes('dynamic_steps'),
-  });
 
   const {
     data: company,
