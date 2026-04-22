@@ -38,29 +38,5 @@ export function useJSONSchemaForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Fix for conditional fields: Fields inside JSON Schema if/then/else start with
-  // empty values ('') before their condition is met. Once active, their real defaults
-  // (e.g., working_days: ['monday', ...]) need to be applied without resetting the form.
-  useEffect(() => {
-    const currentValues = form.getValues();
-
-    Object.keys(defaultValues).forEach((fieldName) => {
-      const currentValue = currentValues[fieldName];
-      const defaultValue = defaultValues[fieldName];
-      const isEmpty =
-        currentValue === undefined ||
-        currentValue === null ||
-        currentValue === '';
-      const hasDefault =
-        defaultValue !== undefined &&
-        defaultValue !== null &&
-        defaultValue !== '';
-
-      if (isEmpty && hasDefault && !form.formState.dirtyFields[fieldName]) {
-        form.setValue(fieldName, defaultValue, { shouldValidate: false });
-      }
-    });
-  }, [defaultValues, form]);
-
   return form;
 }
