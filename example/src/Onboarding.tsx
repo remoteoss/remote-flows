@@ -11,6 +11,8 @@ import {
   SelectCountryFormPayload,
   NormalizedFieldError,
   EngagementAgreementDetailsFormPayload,
+  ZendeskTriggerButton,
+  zendeskArticles,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
 import { ReviewOnboardingStep } from './ReviewOnboardingStep';
@@ -253,6 +255,28 @@ const getStepTitle = (
   return step.label;
 };
 
+const getStepDescription = (
+  step: OnboardingRenderProps['onboardingBag']['steps'][number],
+  selectedCountryCode: string | null,
+) => {
+  if (
+    selectedCountryCode === 'DEU' &&
+    step.name === 'engagement_agreement_details'
+  ) {
+    return (
+      <>
+        Provide some details about your <strong>current workforce</strong> to
+        make sure this employee is hired compliantly according to Germany’s AÜG
+        labor leasing model.
+        <ZendeskTriggerButton zendeskId={zendeskArticles.germanyLaborLeasing}>
+          Learn more
+        </ZendeskTriggerButton>
+      </>
+    );
+  }
+  return '';
+};
+
 const OnBoardingRender = ({
   onboardingBag,
   components,
@@ -270,6 +294,11 @@ const OnBoardingRender = ({
   if (onboardingBag.isLoading) {
     return <p>Loading...</p>;
   }
+
+  const stepDescription = getStepDescription(
+    onboardingBag.steps[currentStepIndex],
+    onboardingBag.selectedCountry?.code ?? null,
+  );
 
   return (
     <>
@@ -302,6 +331,10 @@ const OnBoardingRender = ({
 
       <div className='card' style={{ marginBottom: '20px' }}>
         <h1 className='heading'>{stepTitle}</h1>
+
+        {stepDescription && (
+          <p className='text-sm text-[#71717A]'>{stepDescription}</p>
+        )}
         <MultiStepForm onboardingBag={onboardingBag} components={components} />
       </div>
     </>

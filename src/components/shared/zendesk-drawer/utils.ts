@@ -24,6 +24,12 @@ export const zendeskArticles = {
    */
   extraPayments: 4466822781709,
   /**
+   * Germany Labor Leasing
+   * Access: Private (Need Remote account to access)
+   * https://support.remote.com/hc/en-us/articles/43002165606541
+   */
+  germanyLaborLeasing: 43002165606541,
+  /**
    * International Pricing
    * Access: Public (Everyone can access)
    * https://support.remote.com/hc/en-us/articles/4410698586893
