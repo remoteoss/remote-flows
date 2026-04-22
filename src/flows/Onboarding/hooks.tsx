@@ -219,7 +219,8 @@ export const useOnboarding = ({
     {
       jsfModify: options?.jsfModify,
       queryOptions: {
-        enabled: !!internalCountryCode,
+        enabled:
+          !!internalCountryCode && options?.features?.includes('dynamic_steps'),
       },
     },
   );
@@ -273,7 +274,10 @@ export const useOnboarding = ({
   const {
     data: employmentEngagementAgreementDetails,
     isLoading: isLoadingEmploymentEngagementAgreementDetails,
-  } = useEmploymentEngagementAgreementDetails(internalEmploymentId);
+  } = useEmploymentEngagementAgreementDetails(internalEmploymentId, {
+    enabled:
+      !!internalEmploymentId && options?.features?.includes('dynamic_steps'),
+  });
 
   const {
     data: company,

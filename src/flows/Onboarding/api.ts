@@ -116,12 +116,13 @@ export const useBenefitOffers = (employmentId: string | undefined) => {
 
 export const useEmploymentEngagementAgreementDetails = (
   employmentId: string | undefined,
+  queryOptions?: { enabled?: boolean },
 ) => {
   const { client } = useClient();
   return useQuery({
     queryKey: ['employment-engagement-agreement-details', employmentId],
     retry: false,
-    enabled: !!employmentId,
+    enabled: queryOptions?.enabled ?? !!employmentId,
     queryFn: async () => {
       return getShowEmploymentEngagementAgreementDetails({
         client: client as Client,
