@@ -1010,7 +1010,6 @@ export const useOnboarding = ({
         return basicInformationForm?.handleValidation(parsedValues);
       }
 
-      // TODO: Check this later...
       if (
         engagementAgreementDetailsSchema &&
         stepState.currentStep.name === 'engagement_agreement_details'
