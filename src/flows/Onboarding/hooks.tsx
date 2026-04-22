@@ -219,10 +219,7 @@ export const useOnboarding = ({
     {
       jsfModify: options?.jsfModify,
       queryOptions: {
-        enabled:
-          !!internalCountryCode &&
-          (stepState.currentStep.name === 'engagement_agreement_details' ||
-            Boolean(employmentId)),
+        enabled: !!internalCountryCode,
       },
     },
   );
