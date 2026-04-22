@@ -12,5 +12,11 @@ export const countriesMock = {
       eor_onboarding: true,
       contractor_products_available: ['standard', 'plus', 'cor'],
     },
+    {
+      code: 'DEU',
+      name: 'Germany',
+      eor_onboarding: true,
+      contractor_products_available: ['standard', 'plus', 'cor'],
+    },
   ],
 };
