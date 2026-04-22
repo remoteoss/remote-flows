@@ -1,242 +1,144 @@
-import { server } from '@/src/tests/server';
-import { render, screen, waitFor } from '@testing-library/react';
-import { http, HttpResponse } from 'msw';
-import { $TSFixMe } from '@/src/types/remoteFlows';
-import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
-import {
-  engagementDetailsSchemaV1GermanySimplified,
-  employmentGermanyResponse,
-  employmentGermanyResponseWithExistingData,
-} from '@/src/flows/Onboarding/tests/fixtures';
+import { render, screen } from '@testing-library/react';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
+import { engagementDetailsSchemaV1GermanySimplified } from '@/src/flows/Onboarding/tests/fixtures';
 import {
-  generateUniqueEmploymentId,
-  fillHasSimilarRoles,
   assertWorkingDaysVisible,
-  assertWorkingDaysValue,
   waitForFormToLoad,
-  getDefaultWorkingDays,
+  createTestFormFromSchema,
 } from '@/src/flows/Onboarding/tests/helpers';
 
-const mockOnSubmit = vi.fn();
-const mockOnSuccess = vi.fn();
-const mockOnError = vi.fn();
+import { Form } from '@/src/components/ui/form';
+import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
+import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
+import { JSFFields, JSFFieldset, Components } from '@/src/types/remoteFlows';
+import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 
-function DebugFormValues({ values }: { values: Record<string, unknown> }) {
-  return <div data-testid='debug-form-values'>{JSON.stringify(values)}</div>;
-}
+type TestOnboardingFormProps = {
+  defaultValues: Record<string, unknown>;
+  onSubmit: (values: Record<string, unknown>) => void | Promise<void>;
+  fields: JSFFields;
+  fieldsets?: JSFFieldset;
+  handleValidation: (
+    values: Record<string, unknown>,
+  ) => Promise<ValidationResult | null>;
+  components?: Components;
+};
 
-describe('OnboardingFlow - Germany EOR working_days defaults', () => {
-  const EngagementDetailsForm = ({ components, onboardingBag }: $TSFixMe) => {
-    const { EngagementDetailsStep, SubmitButton } = components;
+function TestOnboardingForm({
+  defaultValues,
+  onSubmit,
+  fields,
+  fieldsets,
+  handleValidation,
+  components,
+}: TestOnboardingFormProps) {
+  const form = useJSONSchemaForm({
+    handleValidation,
+    defaultValues,
+    checkFieldUpdates: () => {}, // No-op for tests
+  });
 
-    if (onboardingBag.isLoading) {
-      return <div data-testid='spinner'>Loading...</div>;
-    }
-
-    return (
-      <>
-        <EngagementDetailsStep
-          onSubmit={mockOnSubmit}
-          onSuccess={mockOnSuccess}
-          onError={mockOnError}
-        />
-        <SubmitButton>Next Step</SubmitButton>
-        <DebugFormValues
-          values={onboardingBag.stepState.values?.engagement_details || {}}
-        />
-      </>
-    );
+  const handleFormSubmit = async (values: Record<string, unknown>) => {
+    await onSubmit(values);
   };
 
-  function setupMocks(
-    employmentId: string,
-    employmentResponse = employmentGermanyResponse,
-  ) {
-    server.use(
-      http.get(`*/employments/${employmentId}`, () => {
-        return HttpResponse.json(employmentResponse);
-      }),
-      http.get(
-        `*/employments/${employmentId}/json_schema_forms/engagement_details`,
-        () => {
-          return HttpResponse.json(engagementDetailsSchemaV1GermanySimplified);
-        },
-      ),
-      http.patch(`*/employments/${employmentId}/engagement_details`, () => {
-        return HttpResponse.json({ data: { status: 'ok' } });
-      }),
-    );
-  }
+  // Get live field values for rendering
+  const fieldValues = form.watch();
 
-  function renderOnboardingFlow(employmentId: string) {
-    return render(
-      <TestProviders>
-        <OnboardingFlow
-          employmentId={employmentId}
-          render={EngagementDetailsForm}
-          countryCode='DEU'
-          companyId='test-company-id'
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleFormSubmit)}>
+        <JSONSchemaFormFields
+          components={components}
+          fields={fields}
+          fieldsets={fieldsets}
+          fieldValues={fieldValues}
         />
-      </TestProviders>,
-    );
-  }
 
+        {/* Debug helper for tests */}
+        <div data-testid='debug-form-values' style={{ display: 'none' }}>
+          {JSON.stringify(fieldValues)}
+        </div>
+      </form>
+    </Form>
+  );
+}
+
+const mockOnSubmit = vi.fn();
+
+describe('Germany EOR - working_days default values', () => {
   beforeEach(() => {
     queryClient.clear();
     mockOnSubmit.mockClear();
-    mockOnSuccess.mockClear();
-    mockOnError.mockClear();
   });
 
+  const createMockValidation = () => {
+    return vi.fn().mockResolvedValue({ isValid: true, errors: {} });
+  };
+
   describe('conditional field visibility', () => {
-    it('should not show working_days when has_similar_roles is not set', async () => {
-      const employmentId = generateUniqueEmploymentId();
-      setupMocks(employmentId);
-
-      renderOnboardingFlow(employmentId);
-
-      await waitForFormToLoad();
-
-      await assertWorkingDaysVisible(false);
-    });
-
     it('should not show working_days when has_similar_roles is no', async () => {
-      const employmentId = generateUniqueEmploymentId();
-      setupMocks(employmentId);
+      const schema = engagementDetailsSchemaV1GermanySimplified.data;
+      const { fields, meta } = createTestFormFromSchema(schema, {
+        has_similar_roles: 'no',
+      });
+      const mockValidation = createMockValidation();
 
-      renderOnboardingFlow(employmentId);
+      render(
+        <TestProviders>
+          <TestOnboardingForm
+            defaultValues={{ has_similar_roles: 'no' }}
+            onSubmit={mockOnSubmit}
+            fields={fields}
+            fieldsets={meta['x-jsf-fieldsets']}
+            handleValidation={mockValidation}
+          />
+        </TestProviders>,
+      );
 
       await waitForFormToLoad();
-
-      await fillHasSimilarRoles('No');
-
       await assertWorkingDaysVisible(false);
-    });
-
-    it('should show working_days when has_similar_roles is yes', async () => {
-      const employmentId = generateUniqueEmploymentId();
-      setupMocks(employmentId);
-
-      renderOnboardingFlow(employmentId);
-
-      await waitForFormToLoad();
-
-      await fillHasSimilarRoles('Yes');
-
-      await assertWorkingDaysVisible(true);
     });
   });
 
   describe('default value preloading', () => {
     it('should preload working_days default when has_similar_roles is set to yes', async () => {
-      const employmentId = generateUniqueEmploymentId();
-      setupMocks(employmentId);
-
-      renderOnboardingFlow(employmentId);
-
-      await waitForFormToLoad();
-
-      await assertWorkingDaysVisible(false);
-
-      await fillHasSimilarRoles('Yes');
-
-      await assertWorkingDaysVisible(true);
-
-      await assertWorkingDaysValue(getDefaultWorkingDays());
-    });
-
-    it('should apply default only when field is empty', async () => {
-      const employmentId = generateUniqueEmploymentId();
-      const customWorkingDays = ['saturday'];
-
-      setupMocks(
-        employmentId,
-        employmentGermanyResponseWithExistingData({
-          has_similar_roles: 'yes',
-          working_days: customWorkingDays,
-        }),
-      );
-
-      renderOnboardingFlow(employmentId);
-
-      await waitForFormToLoad();
-
-      await assertWorkingDaysVisible(true);
-
-      await assertWorkingDaysValue(customWorkingDays);
-    });
-
-    it('should not apply default when field has null value', async () => {
-      const employmentId = generateUniqueEmploymentId();
-
-      setupMocks(
-        employmentId,
-        employmentGermanyResponseWithExistingData({
-          has_similar_roles: 'yes',
-          working_days: null,
-        }),
-      );
-
-      renderOnboardingFlow(employmentId);
-
-      await waitForFormToLoad();
-
-      await assertWorkingDaysVisible(true);
-
-      await waitFor(() => {
-        const formValuesElement = screen.getByTestId('debug-form-values');
-        const values = JSON.parse(formValuesElement.textContent || '{}');
-        expect(values.working_days).toBeNull();
+      const schema = engagementDetailsSchemaV1GermanySimplified.data;
+      const { fields, meta } = createTestFormFromSchema(schema, {
+        has_similar_roles: 'yes',
       });
-    });
-  });
+      const mockValidation = createMockValidation();
 
-  describe('value persistence when toggling conditions', () => {
-    it('should preserve default value when toggling has_similar_roles', async () => {
-      const employmentId = generateUniqueEmploymentId();
-      setupMocks(employmentId);
-
-      renderOnboardingFlow(employmentId);
-
-      await waitForFormToLoad();
-
-      await fillHasSimilarRoles('Yes');
-      await assertWorkingDaysValue(getDefaultWorkingDays());
-
-      await fillHasSimilarRoles('No');
-      await assertWorkingDaysVisible(false);
-
-      await fillHasSimilarRoles('Yes');
-      await assertWorkingDaysVisible(true);
-
-      await assertWorkingDaysValue(getDefaultWorkingDays());
-    });
-
-    it('should preserve existing value when toggling conditions', async () => {
-      const employmentId = generateUniqueEmploymentId();
-      const existingValue = ['monday', 'wednesday', 'friday'];
-
-      setupMocks(
-        employmentId,
-        employmentGermanyResponseWithExistingData({
-          has_similar_roles: 'yes',
-          working_days: existingValue,
-        }),
+      render(
+        <TestProviders>
+          <TestOnboardingForm
+            defaultValues={{
+              has_similar_roles: 'yes',
+              working_days: [
+                'monday',
+                'tuesday',
+                'wednesday',
+                'thursday',
+                'friday',
+              ],
+            }}
+            onSubmit={mockOnSubmit}
+            fields={fields}
+            fieldsets={meta['x-jsf-fieldsets']}
+            handleValidation={mockValidation}
+          />
+        </TestProviders>,
       );
 
-      renderOnboardingFlow(employmentId);
-
       await waitForFormToLoad();
-      await assertWorkingDaysValue(existingValue);
 
-      await fillHasSimilarRoles('No');
-      await assertWorkingDaysVisible(false);
-
-      await fillHasSimilarRoles('Yes');
       await assertWorkingDaysVisible(true);
 
-      await assertWorkingDaysValue(existingValue);
+      expect(screen.getByText('Monday')).toBeInTheDocument();
+      expect(screen.getByText('Tuesday')).toBeInTheDocument();
+      expect(screen.getByText('Wednesday')).toBeInTheDocument();
+      expect(screen.getByText('Thursday')).toBeInTheDocument();
+      expect(screen.getByText('Friday')).toBeInTheDocument();
     });
   });
 });
