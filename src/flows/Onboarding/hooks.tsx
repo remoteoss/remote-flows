@@ -1113,5 +1113,15 @@ export const useOnboarding = ({
      * @returns {Array<{name: string, visible: boolean, index: number, label: string}>}
      */
     steps: stepsArray,
+    /**
+     * Selected country for the onboarding
+     * @returns {name: string, code: string} | null
+     */
+    selectedCountry: internalCountryCode
+      ? {
+          code: internalCountryCode,
+          name: country?.name,
+        }
+      : null,
   };
 };

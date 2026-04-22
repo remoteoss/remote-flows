@@ -239,6 +239,20 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
   'Review & Invite',
 ];
  */
+
+const getStepTitle = (
+  step: OnboardingRenderProps['onboardingBag']['steps'][number],
+  selectedCountryCode: string | null,
+) => {
+  if (
+    selectedCountryCode === 'DEU' &&
+    step.name === 'engagement_agreement_details'
+  ) {
+    return 'Labor leasing in Germany';
+  }
+  return step.label;
+};
+
 const OnBoardingRender = ({
   onboardingBag,
   components,
@@ -248,7 +262,10 @@ const OnBoardingRender = ({
   // When using dynamic_steps feature, you need to filter and use step.index for comparison
   // Otherwise, you can use the steps array directly with sequential indices
   //const stepTitle = STEPS[currentStepIndex];
-  const stepTitle = onboardingBag.steps[currentStepIndex].label;
+  const stepTitle = getStepTitle(
+    onboardingBag.steps[currentStepIndex],
+    onboardingBag.selectedCountry?.code ?? null,
+  );
 
   if (onboardingBag.isLoading) {
     return <p>Loading...</p>;
@@ -273,7 +290,11 @@ const OnBoardingRender = ({
                 key={step.name}
                 className={`step-item ${step.index === currentStepIndex ? 'active' : ''}`}
               >
-                {index + 1}. {step.label}
+                {index + 1}.{' '}
+                {getStepTitle(
+                  step,
+                  onboardingBag.selectedCountry?.code ?? null,
+                )}
               </li>
             ))}
         </ul>
