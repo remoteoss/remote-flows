@@ -25,7 +25,7 @@
     "size": "tsx scripts/analyze-bundle-size.ts",
     "size:check": "tsx scripts/check-size-limits.ts",
     "size:badge": "tsx scripts/update-size-badge.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsgo --noEmit"
   },
   "sideEffects": [
     "**/*.css"
@@ -149,6 +149,7 @@
     "oxlint": "1.60.0",
     "tsup": "8.5.1",
     "tsx": "4.21.0",
+    "@typescript/native-preview": "^7.0.0-dev.20260421.2",
     "vitest": "4.1.4"
   }
 }

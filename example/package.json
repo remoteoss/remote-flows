@@ -6,13 +6,13 @@
   "scripts": {
     "audit": "npm audit --audit-level=high",
     "dev": "nodemon ./dev_server.js",
-    "build": "tsc -b && vite build",
+    "build": "tsgo -b && vite build",
     "lint": "oxlint .",
     "preview": "vite preview",
     "postinstall": "react-flagpack",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "type-check": "tsc -b --noEmit"
+    "type-check": "tsgo -b --noEmit"
   },
   "dependencies": {
     "@remoteoss/remote-flows": "file://..",
@@ -24,7 +24,8 @@
     "react-dom": "18.3.1",
     "react-flagpack": "2.0.6",
     "react-syntax-highlighter": "16.1.1",
-    "typescript": "6.0.2"
+    "typescript": "6.0.2",
+    "@typescript/native-preview": "^7.0.0-dev.20260421.2"
   },
   "devDependencies": {
     "@playwright/test": "1.59.1",
