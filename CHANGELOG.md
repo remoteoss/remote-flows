@@ -8,13 +8,11 @@
 
 - add engagement step for Germany (#946) [#946](https://github.com/remoteoss/remote-flows/pull/946)
 
-
 #### Chores
 
 - remove vercel deployment (#952) [#952](https://github.com/remoteoss/remote-flows/pull/952)
 - update amondnet/vercel-action action to v42 (#940) [#940](https://github.com/remoteoss/remote-flows/pull/940)
 - update dependency postcss to v8.5.10 (#954) [#954](https://github.com/remoteoss/remote-flows/pull/954)
-
 
 ## 1.27.0
 
