@@ -5,10 +5,13 @@ import {
   ConvertCurrencyParams,
   CreateContractEligibilityParams,
   EmploymentCreateParams,
+  EmploymentEngagementAgreementDetailsParams,
   EmploymentFullParams,
   getIndexBenefitOffer,
   getShowCompany,
   getShowCompanyEmploymentOnboardingReservesStatus,
+  getShowEmploymentEngagementAgreementDetails,
+  getShowEngagementAgreementDetailsCountry,
   getShowFormCountry,
   getShowSchema,
   patchUpdateEmployment2,
@@ -19,13 +22,17 @@ import {
   postCreateRiskReserve,
   postInviteEmploymentInvitation,
   PostInviteEmploymentInvitationData,
+  postUpdateEmploymentEngagementAgreementDetails,
   putUpdateBenefitOffer,
   UnifiedEmploymentUpsertBenefitOffersRequest,
 } from '@/src/client';
 
 import { useClient } from '@/src/context';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
-import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
+import {
+  OnboardingFlowProps,
+  OnboardingJsfModify,
+} from '@/src/flows/Onboarding/types';
 import {
   JSONSchemaFormResultWithFieldsets,
   JSONSchemaFormType,
@@ -106,6 +113,36 @@ export const useBenefitOffers = (employmentId: string | undefined) => {
       ),
   });
 };
+
+export const useEmploymentEngagementAgreementDetails = (
+  employmentId: string | undefined,
+  queryOptions?: { enabled?: boolean },
+) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['employment-engagement-agreement-details', employmentId],
+    retry: false,
+    enabled: queryOptions?.enabled ?? !!employmentId,
+    queryFn: async () => {
+      return getShowEmploymentEngagementAgreementDetails({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          employment_id: employmentId as string,
+        },
+      }).then((response) => {
+        if (response.error || !response.data) {
+          throw new Error('Failed to fetch engagement agreement details');
+        }
+        return response;
+      });
+    },
+    select: ({ data }) => data?.data?.details,
+  });
+};
+
 /**
  * Use this hook to invite an employee to the onboarding flow
  * @returns
@@ -306,6 +343,30 @@ export const useUpdateEmployment = (
   });
 };
 
+export const useUpdateEmploymentEngagementAgreementDetails = () => {
+  const { client } = useClient();
+
+  return useMutation({
+    mutationFn: ({
+      employmentId,
+      ...payload
+    }: EmploymentEngagementAgreementDetailsParams & {
+      employmentId: string;
+    }) => {
+      return postUpdateEmploymentEngagementAgreementDetails({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body: payload,
+        path: {
+          employment_id: employmentId,
+        },
+      });
+    },
+  });
+};
+
 export const useUpdateBenefitsOffers = (
   options?: OnboardingFlowProps['options'],
 ) => {
@@ -457,5 +518,42 @@ export const useEmploymentOnboardingReservesStatus = (
       return response;
     },
     select: ({ data }) => data?.data?.status,
+  });
+};
+
+export const useEngagementAgreementDetailsSchema = (
+  countryCode: string,
+  fieldValues: FieldValues,
+  options?: {
+    jsfModify?: OnboardingJsfModify;
+    queryOptions?: { enabled?: boolean };
+  },
+) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['engagement-agreement-details', countryCode],
+    retry: false,
+    enabled: options?.queryOptions?.enabled ?? !!countryCode,
+    queryFn: async () => {
+      const response = await getShowEngagementAgreementDetailsCountry({
+        client: client as Client,
+        path: {
+          country_code: countryCode,
+        },
+      });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch engagement agreement details');
+      }
+
+      return response;
+    },
+    select: ({ data }) => {
+      const jsfSchema = data?.data?.schema || {};
+
+      return createHeadlessForm(jsfSchema, fieldValues, {
+        jsfModify: options?.jsfModify?.engagement_agreement_details,
+      });
+    },
   });
 };

@@ -52,6 +52,7 @@ export type {
   OnboardingInviteProps,
   BenefitsFormPayload,
   BasicInformationFormPayload,
+  EngagementAgreementDetailsFormPayload,
   ContractDetailsFormPayload,
   SelectCountryFormPayload,
   SelectCountrySuccess,

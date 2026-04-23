@@ -3,6 +3,7 @@ export type { OnboardingInviteProps } from './components/OnboardingInvite';
 export type {
   BenefitsFormPayload,
   BasicInformationFormPayload,
+  EngagementAgreementDetailsFormPayload,
   ContractDetailsFormPayload,
   SelectCountryFormPayload,
   SelectCountrySuccess,

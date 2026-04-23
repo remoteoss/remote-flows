@@ -1,5 +1,6 @@
 import {
   EmploymentCreateParams,
+  EmploymentEngagementAgreementDetailsParams,
   Employment as EmploymentResponse,
 } from '@/src/client';
 import { BasicInformationStep } from '@/src/flows/Onboarding/components/BasicInformationStep';
@@ -13,6 +14,7 @@ import { FlowOptions, JSFModify } from '@/src/flows/types';
 import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCountryStep';
 import { ReviewStep } from '@/src/flows/Onboarding/components/ReviewStep';
 import { SaveDraftButton } from '@/src/flows/Onboarding/components/SaveDraftButton';
+import { EngagementAgreementDetailsStep } from '@/src/flows/Onboarding/components/EngagementAgreementDetailsStep';
 
 export type OnboardingRenderProps = {
   /**
@@ -25,6 +27,7 @@ export type OnboardingRenderProps = {
    * The components used in the onboarding flow.
    * This includes different steps, submit button, back button.
    * @see {@link BasicInformationStep}
+   * @see {@link EngagementAgreementDetailsStep}
    * @see {@link ContractDetailsStep}
    * @see {@link OnboardingSubmit}
    * @see {@link OnboardingBack}
@@ -40,6 +43,7 @@ export type OnboardingRenderProps = {
     SubmitButton: typeof OnboardingSubmit;
     BackButton: typeof OnboardingBack;
     BasicInformationStep: typeof BasicInformationStep;
+    EngagementAgreementDetailsStep: typeof EngagementAgreementDetailsStep;
     OnboardingInvite: typeof OnboardingInvite;
     ContractDetailsStep: typeof ContractDetailsStep;
     BenefitsStep: typeof BenefitsStep;
@@ -69,6 +73,14 @@ type CountryJsonSchemaVersion = {
    * The default value is 1.
    */
   contract_details?: number | 'latest';
+};
+
+export type OnboardingJsfModify = {
+  select_country?: JSFModify;
+  basic_information?: JSFModify;
+  engagement_agreement_details?: JSFModify;
+  contract_details?: JSFModify;
+  benefits?: JSFModify;
 };
 
 export type OnboardingFlowProps = {
@@ -107,12 +119,7 @@ export type OnboardingFlowProps = {
    * The options to use for the onboarding.
    */
   options?: Omit<FlowOptions, 'jsfModify' | 'jsonSchemaVersion'> & {
-    jsfModify?: {
-      select_country?: JSFModify;
-      basic_information?: JSFModify;
-      contract_details?: JSFModify;
-      benefits?: JSFModify;
-    };
+    jsfModify?: OnboardingJsfModify;
     /**
      * The json schema version to use for the onboarding.
      * These versions apply globally to all countries.
@@ -191,6 +198,9 @@ export type BenefitsFormPayload = Record<
 >;
 
 export type ContractDetailsFormPayload = Record<string, unknown>;
+
+export type EngagementAgreementDetailsFormPayload =
+  EmploymentEngagementAgreementDetailsParams;
 
 export type CreditRiskStatus =
   | 'not_started'
