@@ -9,18 +9,17 @@ import { EngagementAgreementDetailsFormPayload } from '@/src/flows/Onboarding/ty
 import { SuccessResponse } from '@/src/client';
 
 type EngagementAgreementDetailsStepProps = {
-  /*
+  /**
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
-
   onSubmit?: (
     payload: EngagementAgreementDetailsFormPayload,
   ) => void | Promise<void>;
-  /*
+  /**
    * The function is called when the form submission is successful.
    */
   onSuccess?: (data: SuccessResponse) => void | Promise<void>;
-  /*
+  /**
    * The function is called when an error occurs during form submission.
    */
   onError?: ({
@@ -51,7 +50,7 @@ export function EngagementAgreementDetailsStep({
         onboardingBag?.next();
         return;
       }
-      // TODO: enable later...
+
       if (response?.error) {
         const normalizedFieldErrors = normalizeFieldErrors(
           response?.fieldErrors || [],
