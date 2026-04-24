@@ -1,17 +1,26 @@
 ---
-description: Automatically format and lint code after agentic changes
+description: Automatically format, lint, and type-check code after agentic changes
 globs: src/**/*.{ts,tsx,js,jsx}
-alwaysApply: false
+alwaysApply: true
 ---
 
-# 🚨 CRITICAL: Auto-Format After Agentic Coding
+# 🚨 CRITICAL: Validation After Agentic Coding
 
 **Always run these commands after making code changes:**
 
-1. Format all modified files:
+1. **Lint check** (automatically done via ReadLints tool):
+   ```bash
+   npm run lint
+   ```
 
-```bash
+2. **Type check** - Run to catch TypeScript errors:
+   ```bash
+   npm run type-check
+   ```
+
+3. **Format** - Run to ensure consistent formatting:
+   ```bash
    npm run format
-```
+   ```
 
-**Never complete a task without running formatting first.**
+**Never complete a task without running all validation checks.**
