@@ -39,7 +39,10 @@ export function SelectCountryStep({
   onError,
 }: SelectCountryStepProps) {
   const { contractorOnboardingBag } = useContractorOnboardingContext();
-  const handleSubmit = async (payload: $TSFixMe, form: UseFormReturn<$TSFixMe>) => {
+  const handleSubmit = async (
+    payload: $TSFixMe,
+    form: UseFormReturn<$TSFixMe>,
+  ) => {
     try {
       await onSubmit?.({ countryCode: payload.country });
       const response = await contractorOnboardingBag.onSubmit(payload);

@@ -41,7 +41,10 @@ export function EligibilityQuestionnaireStep({
 }: EligibilityQuestionnaireStepProps) {
   const { contractorOnboardingBag } = useContractorOnboardingContext();
 
-  const handleSubmit = async (payload: $TSFixMe, form: UseFormReturn<$TSFixMe>) => {
+  const handleSubmit = async (
+    payload: $TSFixMe,
+    form: UseFormReturn<$TSFixMe>,
+  ) => {
     try {
       const parsedValues =
         await contractorOnboardingBag.parseFormValues(payload);

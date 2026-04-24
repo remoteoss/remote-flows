@@ -294,7 +294,9 @@ export function isStructuredError(err: unknown): err is {
 export function handleStepError(
   err: unknown,
   fieldsMeta?: NestedMeta,
-  form?: { setError: (name: string, error: { type: string; message: string }) => void },
+  form?: {
+    setError: (name: string, error: { type: string; message: string }) => void;
+  },
 ): {
   error: Error;
   rawError: Record<string, unknown>;
@@ -306,12 +308,12 @@ export function handleStepError(
       err.fieldErrors || [],
       fieldsMeta,
     );
-    
+
     // Automatically set form field errors if form is provided
     if (form) {
       setFormFieldErrors(form, normalizedFieldErrors);
     }
-    
+
     return {
       error: err.error,
       rawError: err.rawError,
@@ -363,17 +365,19 @@ export function getNestedValue<T = unknown>(
 /**
  * Sets backend validation errors into react-hook-form state
  * Converts backend field paths to react-hook-form paths and sets errors
- * 
+ *
  * @example
  * Backend: "provisional_start_date" → Form: "provisional_start_date"
  * Backend: "service_duration/expiration_date" → Form: "service_duration.expiration_date"
  * Backend: "benefits[0]/value" → Form: "benefits.0.value"
- * 
+ *
  * @param form - The react-hook-form instance
  * @param fieldErrors - Array of normalized field errors from the backend
  */
 export function setFormFieldErrors(
-  form: { setError: (name: string, error: { type: string; message: string }) => void },
+  form: {
+    setError: (name: string, error: { type: string; message: string }) => void;
+  },
   fieldErrors: NormalizedFieldError[],
 ): void {
   fieldErrors.forEach(({ field, messages }) => {
@@ -384,7 +388,7 @@ export function setFormFieldErrors(
       const formFieldPath = field
         .replace(/\//g, '.')
         .replace(/\[(\d+)\]/g, '.$1');
-      
+
       form.setError(formFieldPath, {
         type: 'server',
         message: messages.join('. '),
