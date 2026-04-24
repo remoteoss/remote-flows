@@ -9,6 +9,7 @@ import {
 import { StatementOfWorkDisclaimer } from '@/src/flows/ContractorOnboarding/components/StatementOfWorkDisclaimer';
 import { isCMOrCMPlus } from '@/src/flows/ContractorOnboarding/utils';
 import { handleStepError } from '@/src/lib/utils';
+import { UseFormReturn } from 'react-hook-form';
 
 type ContractDetailsStepProps = {
   /*
@@ -44,7 +45,10 @@ export function ContractDetailsStep({
 }: ContractDetailsStepProps) {
   const { contractorOnboardingBag } = useContractorOnboardingContext();
 
-  const handleSubmit = async (payload: $TSFixMe) => {
+  const handleSubmit = async (
+    payload: $TSFixMe,
+    form: UseFormReturn<$TSFixMe>,
+  ) => {
     try {
       const parsedValues =
         await contractorOnboardingBag.parseFormValues(payload);
@@ -59,6 +63,7 @@ export function ContractDetailsStep({
       const structuredError = handleStepError(
         error,
         contractorOnboardingBag.meta?.fields?.contract_details,
+        form,
       );
       onError?.(structuredError);
     }

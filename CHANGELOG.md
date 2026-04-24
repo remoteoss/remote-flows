@@ -1,5 +1,38 @@
 # @remoteoss/remote-flows
 
+## 1.29.0
+
+### Minor Changes
+
+#### Features
+
+- highlight errors on fields in contractor onboarding (#961) [#961](https://github.com/remoteoss/remote-flows/pull/961)
+
+#### Fixes
+
+- avoid signing the document if it was already signed (#960) [#960](https://github.com/remoteoss/remote-flows/pull/960)
+
+#### Chores
+
+- update dependency node to v24.15.0 (#957) [#957](https://github.com/remoteoss/remote-flows/pull/957)
+- update dependency msw to v2.13.4 (#958) [#958](https://github.com/remoteoss/remote-flows/pull/958)
+- update dependency typescript to v6.0.3 (#959) [#959](https://github.com/remoteoss/remote-flows/pull/959)
+- make cursor run tasks (#962) [#962](https://github.com/remoteoss/remote-flows/pull/962)
+
+## 1.28.0
+
+### Minor Changes
+
+#### Features
+
+- add engagement step for Germany (#946) [#946](https://github.com/remoteoss/remote-flows/pull/946)
+
+#### Chores
+
+- remove vercel deployment (#952) [#952](https://github.com/remoteoss/remote-flows/pull/952)
+- update amondnet/vercel-action action to v42 (#940) [#940](https://github.com/remoteoss/remote-flows/pull/940)
+- update dependency postcss to v8.5.10 (#954) [#954](https://github.com/remoteoss/remote-flows/pull/954)
+
 ## 1.27.0
 
 ### Minor Changes

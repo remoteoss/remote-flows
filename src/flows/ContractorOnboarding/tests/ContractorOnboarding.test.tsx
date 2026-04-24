@@ -2634,6 +2634,84 @@ describe('ContractorOnboardingFlow', () => {
     });
   });
 
+  describe('Contract Details 422 Errors', () => {
+    it('should highlight fields and show error message when contract details submission fails with 422', async () => {
+      const employmentId = generateUniqueEmploymentId();
+
+      // Mock the contract document creation to fail with 422
+      server.use(
+        http.post('*/v1/contractors/employments/*/contract-documents', () => {
+          return HttpResponse.json(
+            {
+              errors: {
+                'service_duration.expiration_date': [
+                  'date must be after start date',
+                ],
+              },
+            },
+            { status: 422 },
+          );
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      // Navigate to contract details step
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      await fillContractorSubscription();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Contract Details/i);
+
+      // Fill contract details
+      await fillContractDetails();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      // Wait for the error callback
+      await waitFor(() => {
+        expect(mockOnError).toHaveBeenCalled();
+      });
+
+      // Verify we stay on the contract details step
+      await screen.findByText(/Step: Contract Details/i);
+
+      // Assert the field is highlighted (has aria-invalid attribute)
+      const serviceEndDateField = screen.getByTestId(
+        'service_duration.expiration_date',
+      );
+      expect(serviceEndDateField).toBeInTheDocument();
+      expect(serviceEndDateField).toHaveAttribute('aria-invalid', 'true');
+      expect(
+        screen.getByText(/date must be after start date/i),
+      ).toBeInTheDocument();
+    });
+  });
+
   describe('AI Validation Errors', () => {
     it('should display AI validation warning statement when contract document creation fails with non-skippable error for COR', async () => {
       const employmentId = generateUniqueEmploymentId();
@@ -2992,6 +3070,121 @@ describe('ContractorOnboardingFlow', () => {
       // Final check - field is still visible and has the full value
       expect(screen.getByLabelText(/Enter full name/i)).toBeInTheDocument();
       expect(signatureField).toHaveValue('John Doe');
+    });
+
+    it('should refetch contract document after signing and allow navigation back without errors', async () => {
+      const employmentId = generateUniqueEmploymentId();
+      const contractDocumentId = 'f4f32dbf-4d15-42ef-a960-fea60ab3b68c';
+      let getContractDocumentCallCount = 0;
+      const signContractSpy = vi.fn();
+
+      server.use(
+        http.post(
+          '*/v1/contractors/employments/*/contract-documents',
+          async () => {
+            return HttpResponse.json({
+              data: {
+                contract_document: {
+                  id: contractDocumentId,
+                },
+              },
+            });
+          },
+        ),
+        http.get(
+          '*/v1/contractors/employments/*/contract-documents/*',
+          async () => {
+            getContractDocumentCallCount++;
+            return HttpResponse.json({
+              data: {
+                contract_document: {
+                  name: '2025-10-23_TestContract.pdf',
+                  content: 'data:application/pdf;base64,JVBERi0xLjQ=',
+                  signatories: [
+                    {
+                      type: 'company',
+                      status:
+                        getContractDocumentCallCount > 2 ? 'signed' : 'pending',
+                    },
+                  ],
+                },
+              },
+            });
+          },
+        ),
+        http.post(
+          '*/v1/contractors/employments/*/contract-documents/*/sign',
+          async ({ request }) => {
+            const requestBody = await request.json();
+            signContractSpy(requestBody);
+            return HttpResponse.json(mockContractDocumentSignedResponse);
+          },
+        ),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      await fillContractorSubscription();
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Contract Details/i);
+      await fillContractDetails();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Contract Preview/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      const countBeforeSigning = getContractDocumentCallCount;
+
+      await fillSignature();
+
+      nextButton = screen.getByText(/Continue/i);
+      nextButton.click();
+
+      // Wait for navigation to review step, which means signing AND refetching completed
+      await screen.findByText(/Step: Review/i);
+
+      // Verify signing happened
+      expect(signContractSpy).toHaveBeenCalledTimes(1);
+
+      // After signing, the refetch should have happened
+      expect(getContractDocumentCallCount).toBe(countBeforeSigning + 1);
+
+      // Now navigate back to contract preview
+      const backButton = screen.getByText(/Back/i);
+      backButton.click();
+
+      await screen.findByText(/Step: Contract Preview/i);
+
+      // Verify no errors occurred during navigation back
+      expect(mockOnError).not.toHaveBeenCalled();
+
+      // Count might be 3 now if going back triggers another fetch,
+      // or still 2 if it uses cached data
+      expect(getContractDocumentCallCount).toBeGreaterThanOrEqual(2);
     });
   });
 });
