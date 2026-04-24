@@ -192,6 +192,31 @@ describe('ForcedValueField Component', () => {
 
       expect(mockSetValue).toHaveBeenCalledWith('testField', 'forced-value');
     });
+
+    it('still sets form value even when field is hidden (no description and no title)', () => {
+      const mockSetValue = vi.fn();
+
+      const TestComponent = () => {
+        const methods = {
+          ...useForm(),
+          setValue: mockSetValue,
+        };
+        return (
+          <FormProvider {...methods}>
+            <ForcedValueField
+              name='testField'
+              value='forced-value'
+              description=''
+              label='Test Label'
+            />
+          </FormProvider>
+        );
+      };
+
+      render(<TestComponent />);
+
+      expect(mockSetValue).toHaveBeenCalledWith('testField', 'forced-value');
+    });
   });
 
   describe('edge cases for statement title fallback', () => {
@@ -223,6 +248,34 @@ describe('ForcedValueField Component', () => {
 
       expect(screen.getByText('Should Appear')).toBeInTheDocument();
       expect(screen.queryByText('Should Not Appear')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('when component returns null (no rendering)', () => {
+    it('returns null when description is empty and no statement provided', () => {
+      const props: ForcedValueFieldProps = {
+        ...defaultProps,
+        description: '',
+      };
+
+      const { container } = renderWithFormContext(props);
+
+      expect(container.firstChild).toBeNull();
+    });
+
+    it('returns null when both descriptions are empty and statement.title is empty', () => {
+      const props: ForcedValueFieldProps = {
+        ...defaultProps,
+        description: '',
+        statement: {
+          title: '',
+          description: '',
+        },
+      };
+
+      const { container } = renderWithFormContext(props);
+
+      expect(container.firstChild).toBeNull();
     });
   });
 });
