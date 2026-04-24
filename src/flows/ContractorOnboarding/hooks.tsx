@@ -29,6 +29,7 @@ import {
   useCountriesSchemaField,
   useContractorOnboardingDetailsSchemaWithCurrencies,
   CONTRACT_PRODUCT_TITLES,
+  useHasCompanySignedContract,
 } from '@/src/flows/ContractorOnboarding/api';
 import {
   ContractorOnboardingFlowProps,
@@ -581,16 +582,29 @@ export const useContractorOnboarding = ({
     },
   });
 
-  const { data: documentPreviewPdf, isLoading: isLoadingDocumentPreviewForm } =
-    useGetShowContractDocument({
-      employmentId: internalEmploymentId as string,
-      contractDocumentId: internalContractDocumentId as string,
-      options: {
-        queryOptions: {
-          enabled: Boolean(internalContractDocumentId),
-        },
+  const {
+    data: documentPreviewPdf,
+    isLoading: isLoadingDocumentPreviewForm,
+    refetch: refetchDocumentPreviewForm,
+  } = useGetShowContractDocument({
+    employmentId: internalEmploymentId as string,
+    contractDocumentId: internalContractDocumentId as string,
+    options: {
+      queryOptions: {
+        enabled: Boolean(internalContractDocumentId),
       },
-    });
+    },
+  });
+
+  const { hasCompanySignedContract } = useHasCompanySignedContract({
+    employmentId: internalEmploymentId as string,
+    contractDocumentId: internalContractDocumentId as string,
+    options: {
+      queryOptions: {
+        enabled: Boolean(internalContractDocumentId),
+      },
+    },
+  });
 
   const stepFields: Record<StepKeys, JSFFields> = useMemo(
     () => ({
@@ -1046,6 +1060,15 @@ export const useContractorOnboarding = ({
       }
 
       case 'contract_preview': {
+        if (hasCompanySignedContract) {
+          return Promise.resolve({
+            data: {
+              contract_document: {
+                id: internalContractDocumentId,
+              },
+            },
+          });
+        }
         const response = await signContractDocumentMutationAsync({
           employmentId: internalEmploymentId as string,
           contractDocumentId: internalContractDocumentId as string,
@@ -1053,6 +1076,7 @@ export const useContractorOnboarding = ({
             signature: parsedValues.signature,
           },
         });
+        await refetchDocumentPreviewForm();
         return response;
       }
       case 'pricing_plan': {
