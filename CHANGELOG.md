@@ -1,5 +1,16 @@
 # @remoteoss/remote-flows
 
+## 1.29.0
+
+### Minor Changes
+
+- update dependency node to v24.15.0 (#957) [#957](https://github.com/remoteoss/remote-flows/pull/957)
+- update dependency msw to v2.13.4 (#958) [#958](https://github.com/remoteoss/remote-flows/pull/958)
+- update dependency typescript to v6.0.3 (#959) [#959](https://github.com/remoteoss/remote-flows/pull/959)
+- make cursor run tasks (#962) [#962](https://github.com/remoteoss/remote-flows/pull/962)
+- highlight errors (#961) [#961](https://github.com/remoteoss/remote-flows/pull/961)
+- avoid signing the document if it was already signed (#960) [#960](https://github.com/remoteoss/remote-flows/pull/960)
+
 ## 1.28.0
 
 ### Minor Changes
