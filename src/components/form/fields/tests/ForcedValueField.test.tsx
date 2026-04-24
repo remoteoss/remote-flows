@@ -225,4 +225,58 @@ describe('ForcedValueField Component', () => {
       expect(screen.queryByText('Should Not Appear')).not.toBeInTheDocument();
     });
   });
+
+  describe('when component returns null (no rendering)', () => {
+    it('returns null when description is empty and no statement provided', () => {
+      const props: ForcedValueFieldProps = {
+        ...defaultProps,
+        description: '',
+      };
+
+      const { container } = renderWithFormContext(props);
+
+      expect(container.firstChild).toBeNull();
+    });
+
+    it('returns null when both descriptions are empty and statement.title is empty', () => {
+      const props: ForcedValueFieldProps = {
+        ...defaultProps,
+        description: '',
+        statement: {
+          title: '',
+          description: '',
+        },
+      };
+
+      const { container } = renderWithFormContext(props);
+
+      expect(container.firstChild).toBeNull();
+    });
+
+    it('does not set form value when returning null', () => {
+      const mockSetValue = vi.fn();
+
+      const TestComponent = () => {
+        const methods = {
+          ...useForm(),
+          setValue: mockSetValue,
+        };
+        return (
+          <FormProvider {...methods}>
+            <ForcedValueField
+              name="testField"
+              value="forced-value"
+              description=""
+              label="Test Label"
+            />
+          </FormProvider>
+        );
+      };
+
+      const { container } = render(<TestComponent />);
+
+      expect(mockSetValue).not.toHaveBeenCalled();
+      expect(container.firstChild).toBeNull();
+    });
+  });
 });

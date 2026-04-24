@@ -64,14 +64,22 @@ export function ForcedValueField({
   const descriptionSanitized = sanitizeHtml(
     statement?.description || description,
   );
-  useEffect(() => {
-    setValue(name, value);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const titleSanitized = statement?.title
     ? sanitizeHtml(statement?.title)
     : sanitizeHtml(label);
+
+  const isHiddenValue = !descriptionSanitized && !statement?.title;
+
+  useEffect(() => {
+    if (!isHiddenValue) {
+      setValue(name, value);
+    }
+  }, [isHiddenValue, name, value, setValue]);
+
+  if (isHiddenValue) {
+    return null;
+  }
 
   return (
     <div>
