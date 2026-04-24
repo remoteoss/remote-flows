@@ -173,7 +173,7 @@ describe('ForcedValueField Component', () => {
   });
 
   describe('form integration', () => {
-    it('sets the form value using setValue from useFormContext', () => {
+    it('sets the form value using setValue from useFormContext when field is visible', () => {
       const mockSetValue = vi.fn();
 
       const TestComponent = () => {
@@ -184,6 +184,31 @@ describe('ForcedValueField Component', () => {
         return (
           <FormProvider {...methods}>
             <ForcedValueField {...defaultProps} />
+          </FormProvider>
+        );
+      };
+
+      render(<TestComponent />);
+
+      expect(mockSetValue).toHaveBeenCalledWith('testField', 'forced-value');
+    });
+
+    it('still sets form value even when field is hidden (no description and no title)', () => {
+      const mockSetValue = vi.fn();
+
+      const TestComponent = () => {
+        const methods = {
+          ...useForm(),
+          setValue: mockSetValue,
+        };
+        return (
+          <FormProvider {...methods}>
+            <ForcedValueField
+              name='testField'
+              value='forced-value'
+              description=''
+              label='Test Label'
+            />
           </FormProvider>
         );
       };
@@ -250,32 +275,6 @@ describe('ForcedValueField Component', () => {
 
       const { container } = renderWithFormContext(props);
 
-      expect(container.firstChild).toBeNull();
-    });
-
-    it('does not set form value when returning null', () => {
-      const mockSetValue = vi.fn();
-
-      const TestComponent = () => {
-        const methods = {
-          ...useForm(),
-          setValue: mockSetValue,
-        };
-        return (
-          <FormProvider {...methods}>
-            <ForcedValueField
-              name='testField'
-              value='forced-value'
-              description=''
-              label='Test Label'
-            />
-          </FormProvider>
-        );
-      };
-
-      const { container } = render(<TestComponent />);
-
-      expect(mockSetValue).not.toHaveBeenCalled();
       expect(container.firstChild).toBeNull();
     });
   });
