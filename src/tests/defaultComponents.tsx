@@ -11,6 +11,7 @@ export const defaultComponents = {
           type='date'
           id={field.name}
           data-testid={field.name}
+          aria-invalid={!!fieldState.error}
           value={field.value}
           onChange={(e) => {
             field?.onChange?.(e.target.value);

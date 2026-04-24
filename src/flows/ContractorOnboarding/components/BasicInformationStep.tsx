@@ -5,6 +5,7 @@ import { NormalizedFieldError } from '@/src/lib/mutations';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 import { handleStepError } from '@/src/lib/utils';
+import { UseFormReturn } from 'react-hook-form';
 
 type BasicInformationStepProps = {
   /*
@@ -36,7 +37,10 @@ export function BasicInformationStep({
 }: BasicInformationStepProps) {
   const { contractorOnboardingBag } = useContractorOnboardingContext();
 
-  const handleSubmit = async (payload: $TSFixMe) => {
+  const handleSubmit = async (
+    payload: $TSFixMe,
+    form: UseFormReturn<$TSFixMe>,
+  ) => {
     try {
       const parsedValues =
         await contractorOnboardingBag.parseFormValues(payload);
@@ -51,6 +55,7 @@ export function BasicInformationStep({
       const structuredError = handleStepError(
         error,
         contractorOnboardingBag.meta?.fields?.basic_information,
+        form,
       );
       onError?.(structuredError);
     }

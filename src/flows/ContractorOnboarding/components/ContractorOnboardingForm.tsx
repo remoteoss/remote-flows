@@ -12,6 +12,7 @@ import {
 } from '@/src/flows/ContractorOnboarding/types';
 import { normalizeFieldErrors } from '@/src/lib/mutations';
 import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
+import { UseFormReturn } from 'react-hook-form';
 
 type ContractorOnboardingFormProps = {
   onSubmit: (
@@ -20,6 +21,7 @@ type ContractorOnboardingFormProps = {
       | PricingPlanFormPayload
       | ContractorOnboardingContractDetailsFormPayload
       | EligibilityQuestionnaireFormPayload,
+    form: UseFormReturn<$TSFixMe>,
   ) => Promise<void>;
   components?: Components;
   fields?: JSFFields;
@@ -87,7 +89,7 @@ export function ContractorOnboardingForm({
         });
       }
     } else {
-      await onSubmit(values as $TSFixMe);
+      await onSubmit(values as $TSFixMe, form);
     }
   };
 

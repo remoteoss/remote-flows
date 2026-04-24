@@ -7,6 +7,7 @@ import {
   ContractPreviewResponse,
 } from '@/src/flows/ContractorOnboarding/types';
 import { handleStepError } from '@/src/lib/utils';
+import { UseFormReturn } from 'react-hook-form';
 
 type ContractPreviewStepProps = {
   /*
@@ -38,7 +39,10 @@ export function ContractPreviewStep({
 }: ContractPreviewStepProps) {
   const { contractorOnboardingBag } = useContractorOnboardingContext();
 
-  const handleSubmit = async (payload: $TSFixMe) => {
+  const handleSubmit = async (
+    payload: $TSFixMe,
+    form: UseFormReturn<$TSFixMe>,
+  ) => {
     try {
       const parsedValues =
         await contractorOnboardingBag.parseFormValues(payload);
@@ -53,6 +57,7 @@ export function ContractPreviewStep({
       const structuredError = handleStepError(
         error,
         contractorOnboardingBag.meta?.fields?.contract_preview,
+        form,
       );
       onError?.(structuredError);
     }
