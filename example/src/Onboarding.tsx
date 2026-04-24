@@ -374,7 +374,7 @@ const OnboardingWithProps = ({
           },
           DEU: {
             // Germany
-            contract_details: 1,
+            contract_details: 3,
           },
           BLR: {
             // Belarus
