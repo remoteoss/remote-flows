@@ -7,6 +7,7 @@ import {
   EligibilityQuestionnaireFormPayload,
   EligibilityQuestionnaireResponse,
 } from '@/src/flows/ContractorOnboarding/types';
+import { UseFormReturn } from 'react-hook-form';
 
 type EligibilityQuestionnaireStepProps = {
   /*
@@ -40,7 +41,7 @@ export function EligibilityQuestionnaireStep({
 }: EligibilityQuestionnaireStepProps) {
   const { contractorOnboardingBag } = useContractorOnboardingContext();
 
-  const handleSubmit = async (payload: $TSFixMe) => {
+  const handleSubmit = async (payload: $TSFixMe, form: UseFormReturn<$TSFixMe>) => {
     try {
       const parsedValues =
         await contractorOnboardingBag.parseFormValues(payload);
@@ -58,6 +59,7 @@ export function EligibilityQuestionnaireStep({
       const structuredError = handleStepError(
         error,
         contractorOnboardingBag.meta?.fields?.eligibility_questionnaire,
+        form,
       );
       onError?.(structuredError);
     }

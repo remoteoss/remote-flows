@@ -8,6 +8,7 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 import { handleStepError } from '@/src/lib/utils';
+import { UseFormReturn } from 'react-hook-form';
 
 type SelectCountryStepProps = {
   /*
@@ -38,7 +39,7 @@ export function SelectCountryStep({
   onError,
 }: SelectCountryStepProps) {
   const { contractorOnboardingBag } = useContractorOnboardingContext();
-  const handleSubmit = async (payload: $TSFixMe) => {
+  const handleSubmit = async (payload: $TSFixMe, form: UseFormReturn<$TSFixMe>) => {
     try {
       await onSubmit?.({ countryCode: payload.country });
       const response = await contractorOnboardingBag.onSubmit(payload);
@@ -51,8 +52,8 @@ export function SelectCountryStep({
       const structuredError = handleStepError(
         error,
         contractorOnboardingBag.meta?.fields?.select_country,
+        form,
       );
-
       onError?.(structuredError);
     }
   };

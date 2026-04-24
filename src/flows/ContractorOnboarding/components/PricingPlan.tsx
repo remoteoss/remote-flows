@@ -7,6 +7,7 @@ import {
   PricingPlanResponse,
 } from '@/src/flows/ContractorOnboarding/types';
 import { handleStepError } from '@/src/lib/utils';
+import { UseFormReturn } from 'react-hook-form';
 
 type PricingPlanStepProps = {
   /**
@@ -43,7 +44,7 @@ export function PricingPlanStep({
 }: PricingPlanStepProps) {
   const { contractorOnboardingBag } = useContractorOnboardingContext();
 
-  const handleSubmit = async (payload: $TSFixMe) => {
+  const handleSubmit = async (payload: $TSFixMe, form: UseFormReturn<$TSFixMe>) => {
     try {
       const parsedValues =
         await contractorOnboardingBag.parseFormValues(payload);
@@ -58,6 +59,7 @@ export function PricingPlanStep({
       const structuredError = handleStepError(
         error,
         contractorOnboardingBag.meta?.fields?.pricing_plan,
+        form,
       );
       onError?.(structuredError);
     }
