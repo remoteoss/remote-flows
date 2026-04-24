@@ -264,10 +264,10 @@ describe('ForcedValueField Component', () => {
         return (
           <FormProvider {...methods}>
             <ForcedValueField
-              name="testField"
-              value="forced-value"
-              description=""
-              label="Test Label"
+              name='testField'
+              value='forced-value'
+              description=''
+              label='Test Label'
             />
           </FormProvider>
         );
