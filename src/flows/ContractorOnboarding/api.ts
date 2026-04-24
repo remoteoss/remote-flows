@@ -177,6 +177,35 @@ export const useGetShowContractDocument = ({
   });
 };
 
+export const useHasCompanySignedContract = ({
+  employmentId,
+  contractDocumentId,
+  options,
+}: {
+  employmentId: string;
+  contractDocumentId: string;
+  options?: { queryOptions?: { enabled?: boolean } };
+}) => {
+  const { data: documentPreviewPdf } = useGetShowContractDocument({
+    employmentId,
+    contractDocumentId,
+    options: {
+      queryOptions: {
+        enabled: options?.queryOptions?.enabled,
+      },
+    },
+  });
+
+  const hasCompanySignedContract =
+    documentPreviewPdf?.contract_document?.signatories?.some(
+      (signatory) =>
+        signatory.type === 'company' && signatory.status === 'signed',
+    );
+
+  return {
+    hasCompanySignedContract,
+  };
+};
 /**
  * Get the contractor subscriptions for the given employment id
  * @param employmentId - The employment ID
