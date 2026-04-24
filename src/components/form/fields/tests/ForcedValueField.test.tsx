@@ -173,7 +173,7 @@ describe('ForcedValueField Component', () => {
   });
 
   describe('form integration', () => {
-    it('sets the form value using setValue from useFormContext when field is visible', () => {
+    it('sets the form value using setValue from useFormContext', () => {
       const mockSetValue = vi.fn();
 
       const TestComponent = () => {
