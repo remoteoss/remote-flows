@@ -8,7 +8,7 @@
 
 - highlight errors on fields in contractor onboarding (#961) [#961](https://github.com/remoteoss/remote-flows/pull/961)
 
-#### Fixes
+#### Fixes
 
 - avoid signing the document if it was already signed (#960) [#960](https://github.com/remoteoss/remote-flows/pull/960)
 
