@@ -1,5 +1,13 @@
 # @remoteoss/remote-flows
 
+## 1.29.1
+
+### Patch Changes
+
+#### Fixes
+
+- revert date-fns and react-day-picker to previous version (#965) [#965](https://github.com/remoteoss/remote-flows/pull/965)
+
 ## 1.29.0
 
 ### Minor Changes
