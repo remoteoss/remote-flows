@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 1.29.1
+
+### Patch Changes
+
+- revert to previous version (#965) [#965](https://github.com/remoteoss/remote-flows/pull/965)
+
 ## 1.29.0
 
 ### Minor Changes
