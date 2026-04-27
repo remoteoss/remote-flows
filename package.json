@@ -140,7 +140,7 @@
     "@types/react": "19.2.14",
     "@vitest/coverage-istanbul": "4.1.4",
     "chalk": "5.6.2",
-    "filesize": "11.0.15",
+    "filesize": "11.0.16",
     "glob": "13.0.6",
     "gzip-size": "7.0.0",
     "jsdom": "29.0.2",
