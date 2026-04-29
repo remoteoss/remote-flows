@@ -273,7 +273,7 @@ export function TelFieldRenderer({
 
 export type TelFieldProps = TelFieldDataProps & {
   name: string;
-  component: Components['tel'];
+  component?: Components['tel'];
 };
 
 export function TelField({
