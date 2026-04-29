@@ -150,7 +150,55 @@ npm run dev
 
 ---
 
-### 2. Documentation (Optional but Recommended)
+### 2. Add Integration Tests for Custom Components with Transformer
+
+**Priority: MEDIUM**  
+**Estimated effort: 30-45 minutes**
+
+Add tests to verify that custom field components receive and can use `fieldData.transformHtml`.
+
+#### Location:
+
+`src/components/ui/tests/form.test.tsx` - Add new describe block after existing transformer tests
+
+#### Test cases to add:
+
+```typescript
+describe('Custom field components with transformer', () => {
+  it('should pass transformHtml to custom field component via fieldData', () => {
+    // Test that custom TextField receives transformHtml function
+    // Verify it can call it and render transformed HTML
+  });
+
+  it('should work when no transformer is provided (fallback)', () => {
+    // Custom component should handle undefined transformHtml gracefully
+  });
+
+  it('should transform HTML descriptions in custom field components', () => {
+    // Full integration: TextField with description containing Accordion HTML
+    // Custom component uses transformHtml
+    // Verify Accordion renders correctly
+  });
+});
+```
+
+#### What this tests:
+
+- ✅ Custom field components receive `transformHtml` in `fieldData`
+- ✅ Custom components can call transformer and render result
+- ✅ Fallback behavior when transformer is undefined
+- ✅ Full integration: HTML description → transformer → custom component → rendered output
+
+#### Benefits:
+
+- Complements existing `FormDescription` transformer tests
+- Uses existing `createWrapperWithTransformer` helper
+- Verifies the feature works end-to-end with custom components
+- Minimal duplication, clear test organization
+
+---
+
+### 3. Documentation (Optional but Recommended)
 
 **Priority: MEDIUM**  
 **Estimated effort: 1-2 hours**
@@ -234,7 +282,70 @@ const CustomInput = ({ fieldData }: FieldComponentProps) => {
 
 ---
 
-### 3. Future Enhancements (Not Required Now)
+### 4. Slice Work into Reviewable PRs
+
+**Priority: HIGH (Once all work is complete and tested)**  
+**Estimated effort: 1-2 hours**
+
+After completing the example, tests, and documentation, split the work into small, reviewable PRs.
+
+#### Recommended PR structure:
+
+**PR 1: Core Infrastructure** (smallest, safest)
+- `src/types/remoteFlows.ts` - Added `transformHtmlToComponents` prop
+- `src/context.ts` - Added `useTransformer` hook
+- `src/RemoteFlowsProvider.tsx` - Wired up transformer to context
+- `src/lib/transformDescription.tsx` - Internal helper
+- `src/components/ui/form.tsx` - Updated `FormDescription` to use transformer
+- `src/components/ui/tests/form.test.tsx` - Tests for `FormDescription` transformer
+- Test mocks updated with `useTransformer`
+
+**Why first**: Establishes the foundation, smallest surface area, easiest to review
+
+**PR 2: Field Components Integration**
+- `src/types/fields.ts` - Added `transformHtml` to `FieldDataProps`
+- All 13 field components updated to inject `transformHtml` into `fieldData`:
+  - TextField, TextAreaField, SelectField, RadioGroupField, CheckBoxField
+  - NumberField, EmailField, MultiSelectField, DatePickerField
+  - CountryField, FileUploadField, TelField, WorkScheduleField
+- `src/components/form/fields/FieldSetField.tsx` - Updated to use transformer
+- `src/components/ui/tests/form.test.tsx` - Add custom component integration tests
+
+**Why second**: Builds on PR 1, enables the feature for all field types
+
+**PR 3: Example Implementation**
+- `example/src/components/Accordion.tsx` - New component
+- `example/src/utils/transformHtml.tsx` - Transformer function
+- `example/src/Onboarding.tsx` - Wire up transformer
+- `package.json` - Add `html-react-parser` and `dompurify` dependencies (example only)
+
+**Why third**: Shows the feature in action, doesn't affect library code
+
+**PR 4: Documentation**
+- `README.md` - HTML transformation section
+- `CHANGELOG.md` - Feature announcement
+- `src/index.tsx` - Export `TelFieldComponentProps` (if not already done)
+
+**Why last**: Documents everything that's already merged
+
+#### Benefits of this approach:
+
+- ✅ Each PR has a clear purpose and scope
+- ✅ Core infrastructure can be reviewed and merged first
+- ✅ Easier to spot issues in smaller diffs
+- ✅ Can merge incrementally (feature is backward compatible)
+- ✅ Reduces risk of "everything slips" in one huge PR
+- ✅ Reviewers can focus on one aspect at a time
+
+#### Alternative (if PRs are too large):
+
+Could split PR 2 into:
+- **PR 2a**: Update first 6 field components
+- **PR 2b**: Update remaining 7 field components + tests
+
+---
+
+### 5. Future Enhancements (Not Required Now)
 
 **Priority: LOW**
 
