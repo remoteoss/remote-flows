@@ -228,4 +228,20 @@ describe('RadioGroupField Component', () => {
     fireEvent.click(enabledRadio);
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
+
+  it('displays recommended badge when option.recommended is true', () => {
+    const propsWithRecommendedOption: RadioGroupFieldProps = {
+      ...defaultProps,
+      options: [
+        { value: 'option1', label: 'Option 1', recommended: true },
+        { value: 'option2', label: 'Option 2', recommended: false },
+        { value: 'option3', label: 'Option 3' }, // no recommended property
+      ],
+    };
+    renderWithFormContext(propsWithRecommendedOption);
+    expect(screen.getByText('Recommended')).toBeInTheDocument();
+    expect(screen.getByText('Option 1')).toBeInTheDocument();
+    expect(screen.getByText('Option 2')).toBeInTheDocument();
+    expect(screen.getByText('Option 3')).toBeInTheDocument();
+  });
 });
