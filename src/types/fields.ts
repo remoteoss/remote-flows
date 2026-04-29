@@ -1,5 +1,4 @@
 import { FieldFileDataProps } from '@/src/components/form/fields/FileUploadField';
-import { TelFieldDataProps } from '@/src/components/form/fields/TelField';
 import { DailySchedule } from '@/src/components/form/fields/workScheduleUtils';
 import { JSFField } from '@/src/types/remoteFlows';
 import {
@@ -61,6 +60,28 @@ export type FieldDataProps = Partial<JSFField> & {
   meta?: {
     helpCenter?: HelpCenterDataProps;
   };
+  /**
+   * Optional HTML transformer function passed from RemoteFlows context.
+   * Use this in custom field components to transform HTML descriptions into React components.
+   * @example
+   * ```tsx
+   * const CustomInput = ({ fieldData }: FieldComponentProps) => {
+   *   const renderDescription = (desc: string) => {
+   *     if (fieldData.transformHtml) {
+   *       return fieldData.transformHtml(desc);
+   *     }
+   *     return <div>{desc}</div>;
+   *   };
+   *   return (
+   *     <div>
+   *       <input />
+   *       {fieldData.description && renderDescription(fieldData.description)}
+   *     </div>
+   *   );
+   * };
+   * ```
+   */
+  transformHtml?: (html: string) => React.ReactNode;
 };
 
 export type FileComponentProps = FieldComponentProps & {
@@ -142,6 +163,31 @@ export type PricingPlanComponentProps = Omit<
   'fieldData'
 > & {
   fieldData: PricingPlanDataProps;
+};
+
+export type TelFieldDataProps = Omit<FieldDataProps, 'options'> & {
+  options: {
+    value: string;
+    label: string;
+    meta: {
+      countryCode: string;
+    };
+    pattern: string;
+  }[];
+  currentCountry?: {
+    name: string;
+    dialCode: string;
+    pattern: string;
+    areaCodes?: string[];
+  };
+  nationalPhoneNumber?: string;
+  onChangeCountryCode?: (newCountry: {
+    name: string;
+    dialCode: string;
+    pattern: string;
+    areaCodes?: string[];
+  }) => void;
+  onChangePhoneNumber?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export type TelFieldComponentProps = Omit<FieldComponentProps, 'fieldData'> & {

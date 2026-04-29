@@ -11,6 +11,7 @@ import {
 
 import { cn, sanitizeHtml } from '@/src/lib/utils';
 import { Label } from '@/src/components/ui/label';
+import { useTransformer } from '@/src/context';
 
 const Form = FormProvider;
 
@@ -144,8 +145,26 @@ function FormDescription<T extends React.ElementType = 'p'>({
 } & Omit<React.ComponentPropsWithoutRef<T>, 'children' | 'className'>) {
   const { formDescriptionId } = useFormField();
   const Component = as || 'p';
+  const transformHtmlToComponents = useTransformer();
 
   if (typeof children === 'string') {
+    // If custom transformer provided, use it (transformer receives raw unsanitized HTML)
+    if (transformHtmlToComponents) {
+      const transformed = transformHtmlToComponents(children);
+      return (
+        <Component
+          data-slot='form-description'
+          id={formDescriptionId}
+          className={cn('text-base-color text-xs', className)}
+          data-sanitized='false'
+          {...props}
+        >
+          {transformed} {helpCenter && helpCenter}
+        </Component>
+      );
+    }
+
+    // Fallback to existing sanitization (when no transformer provided)
     return (
       <>
         <Component

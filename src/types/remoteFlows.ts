@@ -216,6 +216,32 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
    * @default undefined (credentials not included)
    */
   credentials?: RequestCredentials;
+  /**
+   * Optional function to transform HTML strings into React components.
+   * Allows partners to replace specific HTML patterns (e.g., <details data-component="Accordion">)
+   * with custom React components.
+   *
+   * @param htmlContent - The raw HTML string to transform (unsanitized)
+   * @returns React elements or the original HTML
+   *
+   * @remarks
+   * Security: This function receives UNSANITIZED HTML. If you're using html-react-parser,
+   * note that it does NOT sanitize HTML by default. You are responsible for sanitizing
+   * untrusted HTML before parsing. Consider using DOMPurify or sanitize-html.
+   *
+   * @example
+   * ```tsx
+   * import parse, { domToReact } from 'html-react-parser';
+   * import DOMPurify from 'dompurify';
+   *
+   * function transformHtmlToComponents(htmlContent: string) {
+   *   // Sanitize first (recommended)
+   *   const clean = DOMPurify.sanitize(htmlContent);
+   *   return parse(clean, parseOptions);
+   * }
+   * ```
+   */
+  transformHtmlToComponents?: (htmlContent: string) => ReactNode;
 };
 
 // oxlint-disable-next-line typescript/no-explicit-any

@@ -1,4 +1,4 @@
-import { useFormFields } from '@/src/context';
+import { useFormFields, useTransformer } from '@/src/context';
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '../../ui/form';
 import { TextFieldProps } from './TextField';
@@ -10,6 +10,7 @@ type EmailFieldProps = TextFieldProps & {
 
 export function EmailField(props: EmailFieldProps) {
   const { components } = useFormFields();
+  const transformHtml = useTransformer();
   const { control } = useFormContext();
 
   const Component = props.component || components.email;
@@ -23,6 +24,7 @@ export function EmailField(props: EmailFieldProps) {
       control={control}
       name={props.name}
       render={({ field, fieldState }) => {
+        const customEmailFieldProps = { ...props, transformHtml };
         return (
           <Component
             field={{
@@ -33,7 +35,7 @@ export function EmailField(props: EmailFieldProps) {
               },
             }}
             fieldState={fieldState}
-            fieldData={props}
+            fieldData={customEmailFieldProps}
           />
         );
       }}

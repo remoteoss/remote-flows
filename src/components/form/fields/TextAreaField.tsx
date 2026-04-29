@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useFormFields } from '@/src/context';
+import { useFormFields, useTransformer } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '@/src/components/ui/form';
@@ -20,6 +20,7 @@ export function TextAreaField({
   ...rest
 }: TextAreaFieldProps) {
   const { components } = useFormFields();
+  const transformHtml = useTransformer();
   const { control } = useFormContext();
   return (
     <FormField
@@ -35,6 +36,7 @@ export function TextAreaField({
           description,
           label,
           maxLength,
+          transformHtml,
           ...rest,
         };
         return (

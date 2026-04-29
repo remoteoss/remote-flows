@@ -1,9 +1,11 @@
 import { FormDescription } from '@/src/components/ui/form';
 import { screen, render } from '@testing-library/react';
 import { TestProviders } from '@/src/tests/testHelpers';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, ReactNode } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import { FormFieldsContext } from '@/src/context';
+import { lazyDefaultComponents } from '@/src/lazy-default-components';
 
 const wrapper = ({ children }: PropsWithChildren) => {
   const TestComponent = () => {
@@ -15,6 +17,26 @@ const wrapper = ({ children }: PropsWithChildren) => {
       <TestComponent />
     </TestProviders>
   );
+};
+
+const createWrapperWithTransformer = (
+  transformHtml?: (html: string) => ReactNode,
+) => {
+  return ({ children }: PropsWithChildren) => {
+    const methods = useForm();
+    return (
+      <TestProviders>
+        <FormFieldsContext.Provider
+          value={{
+            components: lazyDefaultComponents,
+            transformHtmlToComponents: transformHtml,
+          }}
+        >
+          <FormProvider {...methods}>{children}</FormProvider>
+        </FormFieldsContext.Provider>
+      </TestProviders>
+    );
+  };
 };
 
 describe('Form', () => {
@@ -98,6 +120,110 @@ describe('Form', () => {
       const linkWithRel = screen.getByText('link with rel');
       expect(linkWithRel.getAttribute('target')).toBe('_blank');
       expect(linkWithRel.getAttribute('rel')).toBe('noreferrer noopener');
+    });
+  });
+
+  describe('FormDescription with HTML transformer', () => {
+    it('should use the custom transformer when provided', () => {
+      const customTransformer = (html: string) => {
+        if (html.includes('<strong>')) {
+          return <b data-testid='custom-bold'>Important text</b>;
+        }
+        return <span>{html}</span>;
+      };
+
+      render(
+        <FormDescription>{'<strong>Important text</strong>'}</FormDescription>,
+        {
+          wrapper: createWrapperWithTransformer(customTransformer),
+        },
+      );
+
+      expect(screen.getByTestId('custom-bold')).toBeInTheDocument();
+      expect(screen.getByTestId('custom-bold').textContent).toBe(
+        'Important text',
+      );
+    });
+
+    it('should transform complex HTML with details element (Accordion pattern)', () => {
+      const accordionTransformer = (html: string) => {
+        if (html.includes('data-component="Accordion"')) {
+          return (
+            <div data-testid='custom-accordion'>
+              <div data-testid='accordion-summary'>Accordion Title</div>
+              <div data-testid='accordion-content'>Accordion Content</div>
+            </div>
+          );
+        }
+        return <span dangerouslySetInnerHTML={{ __html: html }} />;
+      };
+
+      render(
+        <FormDescription>
+          {
+            '<details data-component="Accordion"><summary>Title</summary><p>Content</p></details>'
+          }
+        </FormDescription>,
+        {
+          wrapper: createWrapperWithTransformer(accordionTransformer),
+        },
+      );
+
+      expect(screen.getByTestId('custom-accordion')).toBeInTheDocument();
+      expect(screen.getByTestId('accordion-summary')).toBeInTheDocument();
+      expect(screen.getByTestId('accordion-content')).toBeInTheDocument();
+    });
+
+    it('should not invoke transformer for non-string children', () => {
+      const transformerSpy = vi.fn((html: string) => html);
+
+      const CustomComponent = () => (
+        <span data-testid='custom-component'>Custom React Component</span>
+      );
+
+      render(
+        <FormDescription>
+          <CustomComponent />
+        </FormDescription>,
+        {
+          wrapper: createWrapperWithTransformer(transformerSpy),
+        },
+      );
+
+      expect(transformerSpy).not.toHaveBeenCalled();
+      expect(screen.getByTestId('custom-component')).toBeInTheDocument();
+    });
+
+    it('should pass raw unsanitized HTML to transformer', () => {
+      let receivedHtml = '';
+      const capturingTransformer = (html: string) => {
+        receivedHtml = html;
+        return <div data-testid='captured'>{html}</div>;
+      };
+
+      const rawHtml = '<script>alert("test")</script><p>Content</p>';
+      render(<FormDescription>{rawHtml}</FormDescription>, {
+        wrapper: createWrapperWithTransformer(capturingTransformer),
+      });
+
+      expect(receivedHtml).toBe(rawHtml);
+      expect(screen.getByTestId('captured')).toBeInTheDocument();
+    });
+
+    it('should sanitize dangerous HTML when no transformer is provided', () => {
+      render(
+        <FormDescription>
+          {
+            '<script>alert("xss")</script><p data-testid="safe">Safe content</p>'
+          }
+        </FormDescription>,
+        {
+          wrapper: createWrapperWithTransformer(undefined),
+        },
+      );
+
+      expect(screen.queryByText('alert("xss")')).not.toBeInTheDocument();
+      expect(screen.getByTestId('safe')).toBeInTheDocument();
     });
   });
 });

@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { useFormFields } from '@/src/context';
+import { useFormFields, useTransformer } from '@/src/context';
 import { FormField } from '@/src/components/ui/form';
 import { Components } from '@/src/types/remoteFlows';
 import { TextFieldProps } from './TextField';
@@ -11,6 +11,7 @@ export type NumberFieldProps = TextFieldProps & {
 
 export function NumberField(props: NumberFieldProps) {
   const { components } = useFormFields();
+  const transformHtml = useTransformer();
   const { control } = useFormContext();
 
   const Component = props.component || components.number;
@@ -22,6 +23,7 @@ export function NumberField(props: NumberFieldProps) {
       control={control}
       name={props.name}
       render={({ field, fieldState }) => {
+        const customNumberFieldProps = { ...props, transformHtml };
         return (
           <Component
             field={{
@@ -32,7 +34,7 @@ export function NumberField(props: NumberFieldProps) {
               },
             }}
             fieldState={fieldState}
-            fieldData={props}
+            fieldData={customNumberFieldProps}
           />
         );
       }}

@@ -1,4 +1,4 @@
-import { useFormFields } from '@/src/context';
+import { useFormFields, useTransformer } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import {
   ControllerRenderProps,
@@ -47,6 +47,7 @@ export function FileUploadField({
   ...rest
 }: FileUploadFieldProps) {
   const { components } = useFormFields();
+  const transformHtml = useTransformer();
   const { control, setError, clearErrors } = useFormContext();
 
   const handleOnChange = async (
@@ -81,6 +82,7 @@ export function FileUploadField({
           multiple,
           accept,
           maxFileSize: maxSize,
+          transformHtml,
           ...rest,
         };
 

@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 import { object, string } from 'yup';
-import { TelField, TelFieldDataProps } from '../TelField';
+import { TelField, TelFieldProps } from '../TelField';
 import { TelFieldDefault } from '../default/TelFieldDefault';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -39,7 +39,7 @@ async function fillPhoneInput(phoneNumber: string) {
   await user.type(phoneInput, phoneNumber);
 }
 
-const mockOptions: TelFieldDataProps['options'] = [
+const mockOptions: TelFieldProps['options'] = [
   {
     value: 'US',
     label: 'United States',
@@ -66,7 +66,7 @@ const mockOptions: TelFieldDataProps['options'] = [
   },
 ];
 
-const createTelSchema = (options: TelFieldDataProps['options']) => {
+const createTelSchema = (options: TelFieldProps['options']) => {
   return string()
     .required('Phone number is required')
     .max(30, 'Must be at most 30 characters')
@@ -96,7 +96,7 @@ const createTelSchema = (options: TelFieldDataProps['options']) => {
 };
 
 describe('TelField Component - Split UI', () => {
-  const defaultProps: TelFieldDataProps = {
+  const defaultProps: TelFieldProps = {
     name: 'phoneNumber',
     label: 'Phone Number',
     description: 'Enter your phone number',
@@ -113,7 +113,7 @@ describe('TelField Component - Split UI', () => {
   };
 
   const renderWithFormContext = (
-    props: TelFieldDataProps,
+    props: TelFieldProps,
     defaultValues?: $TSFixMe,
   ) => {
     const TestComponent = () => {
