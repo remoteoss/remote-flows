@@ -147,3 +147,22 @@ export type PricingPlanComponentProps = Omit<
 export type TelFieldComponentProps = Omit<FieldComponentProps, 'fieldData'> & {
   fieldData: TelFieldDataProps;
 };
+
+type RadioGroupDataProps = Omit<FieldDataProps, 'options'> & {
+  options?: Array<{
+    value: string;
+    label: string;
+    description?: string;
+    disabled?: boolean;
+    recommended?: boolean;
+    nested_field?: string;
+    meta?: Record<string, unknown>;
+  }>;
+};
+
+export type RadioGroupComponentProps = Omit<
+  FieldComponentProps,
+  'fieldData'
+> & {
+  fieldData: RadioGroupDataProps;
+};
