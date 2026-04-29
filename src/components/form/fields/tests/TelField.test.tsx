@@ -121,11 +121,13 @@ describe('TelField Component - Split UI', () => {
       const methods = useForm({
         mode: 'onBlur',
         defaultValues: defaultValues || {},
-        resolver: yupResolver(
-          object().shape({
-            phoneNumber: props.schema,
-          }),
-        ),
+        resolver: props.schema
+          ? yupResolver(
+              object().shape({
+                phoneNumber: props.schema,
+              }),
+            )
+          : undefined,
       });
       return (
         <FormProvider {...methods}>

@@ -1,6 +1,6 @@
 import { FormField } from '@/src/components/ui/form';
 import { useFormFields, useTransformer } from '@/src/context';
-import { Components, JSFField } from '@/src/types/remoteFlows';
+import { Components } from '@/src/types/remoteFlows';
 import { TelFieldDataProps, TelFieldComponentProps } from '@/src/types/fields';
 import {
   useFormContext,
@@ -271,20 +271,9 @@ export function TelFieldRenderer({
   );
 }
 
-export type TelFieldProps = Omit<JSFField, 'options'> & {
-  onChangeCountryCode?: (newCountry: Country) => void;
-  onChangePhoneNumber?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+export type TelFieldProps = TelFieldDataProps & {
+  name: string;
   component?: Components['tel'];
-  options: {
-    value: string;
-    label: string;
-    meta: {
-      countryCode: string;
-    };
-    pattern: string;
-  }[];
-  currentCountry?: Country;
-  nationalPhoneNumber?: string;
 };
 
 export function TelField({
