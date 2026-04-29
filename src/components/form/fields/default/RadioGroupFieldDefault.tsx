@@ -39,18 +39,21 @@ export const RadioGroupFieldDefault = ({
               field.onChange(value);
             }}
             value={field.value}
-            className='flex flex-col space-y-3'
+            className='flex flex-col'
           >
             {options?.map((option) => (
               <Fragment key={option.value}>
                 <FormItem
                   data-field={name}
-                  className='flex items-center space-x-3 space-y-0 gap-0 RemoteFlows__RadioField__Item'
+                  className='flex items-start space-x-3 space-y-0 gap-0 min-h-[24px] RemoteFlows__RadioField__Item'
                 >
                   <FormControl>
                     <RadioGroupItem
                       value={option.value}
-                      className='RemoteFlows__RadioField__Input'
+                      className={cn(
+                        'RemoteFlows__RadioField__Input',
+                        option.recommended && 'mt-1',
+                      )}
                       disabled={option.disabled}
                     />
                   </FormControl>
