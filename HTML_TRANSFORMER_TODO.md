@@ -292,6 +292,7 @@ After completing the example, tests, and documentation, split the work into smal
 #### Recommended PR structure:
 
 **PR 1: Core Infrastructure** (smallest, safest)
+
 - `src/types/remoteFlows.ts` - Added `transformHtmlToComponents` prop
 - `src/context.ts` - Added `useTransformer` hook
 - `src/RemoteFlowsProvider.tsx` - Wired up transformer to context
@@ -303,6 +304,7 @@ After completing the example, tests, and documentation, split the work into smal
 **Why first**: Establishes the foundation, smallest surface area, easiest to review
 
 **PR 2: Field Components Integration**
+
 - `src/types/fields.ts` - Added `transformHtml` to `FieldDataProps`
 - All 13 field components updated to inject `transformHtml` into `fieldData`:
   - TextField, TextAreaField, SelectField, RadioGroupField, CheckBoxField
@@ -314,6 +316,7 @@ After completing the example, tests, and documentation, split the work into smal
 **Why second**: Builds on PR 1, enables the feature for all field types
 
 **PR 3: Example Implementation**
+
 - `example/src/components/Accordion.tsx` - New component
 - `example/src/utils/transformHtml.tsx` - Transformer function
 - `example/src/Onboarding.tsx` - Wire up transformer
@@ -322,6 +325,7 @@ After completing the example, tests, and documentation, split the work into smal
 **Why third**: Shows the feature in action, doesn't affect library code
 
 **PR 4: Documentation**
+
 - `README.md` - HTML transformation section
 - `CHANGELOG.md` - Feature announcement
 - `src/index.tsx` - Export `TelFieldComponentProps` (if not already done)
@@ -340,6 +344,7 @@ After completing the example, tests, and documentation, split the work into smal
 #### Alternative (if PRs are too large):
 
 Could split PR 2 into:
+
 - **PR 2a**: Update first 6 field components
 - **PR 2b**: Update remaining 7 field components + tests
 
