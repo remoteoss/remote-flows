@@ -10,6 +10,7 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 // Mock dependencies
 vi.mock('@/src/context', () => ({
   useFormFields: vi.fn(),
+  useTransformer: vi.fn(),
 }));
 
 describe('TextField Component', () => {

@@ -18,6 +18,7 @@ vi.mock('@/src/context', () => ({
       statement: MockStatement,
     },
   })),
+  useTransformer: vi.fn(),
 }));
 
 const CustomToggle = ({

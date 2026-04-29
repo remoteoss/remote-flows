@@ -21,6 +21,7 @@ type RadioGroupFieldProps = JSFField & {
 // Mock dependencies
 vi.mock('@/src/context', () => ({
   useFormFields: vi.fn(),
+  useTransformer: vi.fn(),
 }));
 
 describe('RadioGroupField Component', () => {

@@ -12,6 +12,7 @@ type SelectFieldProps = React.ComponentProps<typeof SelectField>;
 // Mock dependencies
 vi.mock('@/src/context', () => ({
   useFormFields: vi.fn(),
+  useTransformer: vi.fn(),
 }));
 
 describe('SelectField Component', () => {

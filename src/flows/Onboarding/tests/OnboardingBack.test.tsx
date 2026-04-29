@@ -8,6 +8,7 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 // Mock dependencies
 vi.mock('@/src/context', () => ({
   useFormFields: vi.fn(),
+  useTransformer: vi.fn(),
 }));
 
 vi.mock('@/src/flows/Onboarding/context', () => ({
