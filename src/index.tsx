@@ -138,6 +138,8 @@ export type {
   WorkScheduleComponentProps,
   PricingPlanComponentProps,
   PricingPlanDataProps,
+  RadioGroupComponentProps,
+  TelFieldComponentProps,
 } from '@/src/types/fields';
 
 export type {
