@@ -1,6 +1,6 @@
 import { FieldFileDataProps } from '@/src/components/form/fields/FileUploadField';
 import { DailySchedule } from '@/src/components/form/fields/workScheduleUtils';
-import { Components, JSFField } from '@/src/types/remoteFlows';
+import { JSFField } from '@/src/types/remoteFlows';
 import {
   ControllerFieldState,
   ControllerRenderProps,
