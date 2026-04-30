@@ -1,7 +1,9 @@
 import { useFormContext } from 'react-hook-form';
 import { sanitizeHtml } from '@/src/lib/utils';
 import { useEffect } from 'react';
-import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
+import { FormDescription } from '@/src/components/ui/form';
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
+import { HelpCenterDataProps } from '@/src/types/fields';
 
 const Description = ({
   name,
@@ -10,27 +12,22 @@ const Description = ({
 }: {
   name: string;
   description: string;
-  helpCenter?: {
-    callToAction: string;
-    id: number;
-    url: string;
-    label: string;
-  };
+  helpCenter?: HelpCenterDataProps;
 }) => {
   return (
     <span>
-      <span
+      <FormDescription
+        as='span'
         className={`text-xs RemoteFlows__ForcedValue__Description__${name}`}
-        dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
-      />
-      {helpCenter?.callToAction && helpCenter?.id && (
-        <ZendeskTriggerButton
-          className='RemoteFlows__ForcedValue__HelpCenterLink'
-          zendeskId={helpCenter.id}
-        >
-          {helpCenter.callToAction}
-        </ZendeskTriggerButton>
-      )}
+        helpCenter={
+          <HelpCenter
+            className='RemoteFlows__ForcedValue__HelpCenterLink'
+            helpCenter={helpCenter}
+          />
+        }
+      >
+        {description}
+      </FormDescription>
     </span>
   );
 };
@@ -44,12 +41,7 @@ export type ForcedValueFieldProps = {
     description?: string;
   };
   label: string;
-  helpCenter?: {
-    callToAction: string;
-    id: number;
-    url: string;
-    label: string;
-  };
+  helpCenter?: HelpCenterDataProps;
 };
 
 export function ForcedValueField({
