@@ -1,9 +1,10 @@
 import { Client } from '@/src/client/client';
-import { createContext, useContext } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { Components } from './types/remoteFlows';
 
 export const FormFieldsContext = createContext<{
   components: Components;
+  transformHtmlToComponents?: (htmlContent: string) => ReactNode;
 } | null>(null);
 
 export const useFormFields = () => {
@@ -15,6 +16,12 @@ export const useFormFields = () => {
   return {
     components: context.components,
   };
+};
+
+// Internal hook for accessing transformer (used during field processing and in FormDescription/FieldSetField)
+export const useTransformer = () => {
+  const context = useContext(FormFieldsContext);
+  return context?.transformHtmlToComponents;
 };
 
 export const RemoteFlowContext = createContext<{ client: Client | null }>({

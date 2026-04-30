@@ -14,6 +14,7 @@ import { TextFieldDefault } from '@/src/components/form/fields/default/TextField
 // Mock dependencies
 vi.mock('@/src/context', () => ({
   useFormFields: vi.fn(),
+  useTransformer: vi.fn(),
 }));
 
 type WorkScheduleFieldProps = JSFField & {

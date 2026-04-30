@@ -2,16 +2,17 @@ import { useFormContext } from 'react-hook-form';
 import { Fragment, useEffect, useRef } from 'react';
 import omit from 'lodash.omit';
 import { baseFields } from '@/src/components/form/fields/baseFields';
-import { cn, sanitizeHtml } from '@/src/lib/utils';
+import { cn } from '@/src/lib/utils';
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { Statement } from '@/src/components/form/Statement';
-import { useFormFields } from '@/src/context';
+import { useFormFields, useTransformer } from '@/src/context';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
 import { BaseTypes, SupportedTypes } from './types';
 import { StatementComponentProps } from '@/src/types/fields';
 import { checkFieldHasForcedValue } from '@/src/components/form/utils';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
+import { transformDescription } from '@/src/lib/transformDescription';
 
 type FieldBase = {
   label: string;
@@ -84,6 +85,7 @@ export function FieldSetField({
   const { helpCenter } = meta || {};
   const { watch, setValue, trigger, formState } = useFormContext();
   const { components: formComponents } = useFormFields();
+  const transformHtml = useTransformer();
 
   // Get expanded state from form state if stateField is provided
   const stateField = features?.toggle?.stateField;
@@ -210,10 +212,9 @@ export function FieldSetField({
       {isExpanded && (
         <div id={contentId} aria-labelledby={headerId} role='region'>
           {description ? (
-            <div
-              className='mb-5 RemoteFlows__FieldSetField__Description'
-              dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
-            />
+            <div className='mb-5 RemoteFlows__FieldSetField__Description'>
+              {transformDescription(description, transformHtml)}
+            </div>
           ) : null}
           <div className='grid gap-4'>
             {fields.map((field: $TSFixMe) => {

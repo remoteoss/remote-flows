@@ -16,6 +16,7 @@ vi.mock('@/src/context', () => ({
       select: SelectFieldDefault,
     },
   })),
+  useTransformer: vi.fn(),
 }));
 
 describe('JSONSchemaForm - Conditional inputType Changes', () => {

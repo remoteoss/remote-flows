@@ -1,4 +1,4 @@
-import { useFormFields } from '@/src/context';
+import { useFormFields, useTransformer } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '@/src/components/ui/form';
@@ -23,6 +23,7 @@ export function SelectField({
 }: SelectFieldProps) {
   const { control } = useFormContext();
   const { components } = useFormFields();
+  const transformHtml = useTransformer();
 
   return (
     <FormField
@@ -43,6 +44,7 @@ export function SelectField({
           defaultValue,
           description,
           onChange,
+          transformHtml,
           ...rest,
         };
         return (

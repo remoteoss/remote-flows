@@ -1,13 +1,13 @@
 import { FormField } from '@/src/components/ui/form';
-import { useFormFields } from '@/src/context';
+import { useFormFields, useTransformer } from '@/src/context';
 import { Components } from '@/src/types/remoteFlows';
+import { TelFieldDataProps, TelFieldComponentProps } from '@/src/types/fields';
 import {
   useFormContext,
   ControllerFieldState,
   ControllerRenderProps,
   FieldValues,
 } from 'react-hook-form';
-import { TelFieldComponentProps, TelFieldDataProps } from '@/src/types/fields';
 import { useMemo, useCallback, useState, useEffect, useRef } from 'react';
 
 export type Country = {
@@ -286,6 +286,7 @@ export function TelField({
   ...rest
 }: TelFieldProps) {
   const { components } = useFormFields();
+  const transformHtml = useTransformer();
   const { control } = useFormContext();
 
   return (
@@ -302,6 +303,7 @@ export function TelField({
           name,
           description,
           label,
+          transformHtml,
           ...rest,
         };
 

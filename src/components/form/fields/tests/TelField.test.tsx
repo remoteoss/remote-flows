@@ -10,6 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 vi.mock('@/src/context', () => ({
   useFormFields: vi.fn(),
+  useTransformer: vi.fn(),
 }));
 
 // Helper function to interact with Radix UI Select

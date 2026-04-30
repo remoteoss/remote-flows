@@ -1,9 +1,12 @@
 import { FormDescription } from '@/src/components/ui/form';
 import { screen, render } from '@testing-library/react';
 import { TestProviders } from '@/src/tests/testHelpers';
-import { PropsWithChildren } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { PropsWithChildren, ReactNode } from 'react';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import { FormFieldsContext } from '@/src/context';
+import { lazyDefaultComponents } from '@/src/lazy-default-components';
+import { FieldComponentProps, FieldDataProps } from '@/src/types/fields';
 
 const wrapper = ({ children }: PropsWithChildren) => {
   const TestComponent = () => {
@@ -15,6 +18,26 @@ const wrapper = ({ children }: PropsWithChildren) => {
       <TestComponent />
     </TestProviders>
   );
+};
+
+const createWrapperWithTransformer = (
+  transformHtml?: (html: string) => ReactNode,
+) => {
+  return ({ children }: PropsWithChildren) => {
+    const methods = useForm();
+    return (
+      <TestProviders>
+        <FormFieldsContext.Provider
+          value={{
+            components: lazyDefaultComponents,
+            transformHtmlToComponents: transformHtml,
+          }}
+        >
+          <FormProvider {...methods}>{children}</FormProvider>
+        </FormFieldsContext.Provider>
+      </TestProviders>
+    );
+  };
 };
 
 describe('Form', () => {
@@ -98,6 +121,244 @@ describe('Form', () => {
       const linkWithRel = screen.getByText('link with rel');
       expect(linkWithRel.getAttribute('target')).toBe('_blank');
       expect(linkWithRel.getAttribute('rel')).toBe('noreferrer noopener');
+    });
+  });
+
+  describe('FormDescription with HTML transformer', () => {
+    it('should use the custom transformer when provided', () => {
+      const customTransformer = (html: string) => {
+        if (html.includes('<strong>')) {
+          return <b data-testid='custom-bold'>Important text</b>;
+        }
+        return <span>{html}</span>;
+      };
+
+      render(
+        <FormDescription>{'<strong>Important text</strong>'}</FormDescription>,
+        {
+          wrapper: createWrapperWithTransformer(customTransformer),
+        },
+      );
+
+      expect(screen.getByTestId('custom-bold')).toBeInTheDocument();
+      expect(screen.getByTestId('custom-bold').textContent).toBe(
+        'Important text',
+      );
+    });
+
+    it('should transform complex HTML with details element (Accordion pattern)', () => {
+      const accordionTransformer = (html: string) => {
+        if (html.includes('data-component="Accordion"')) {
+          return (
+            <div data-testid='custom-accordion'>
+              <div data-testid='accordion-summary'>Accordion Title</div>
+              <div data-testid='accordion-content'>Accordion Content</div>
+            </div>
+          );
+        }
+        return <span dangerouslySetInnerHTML={{ __html: html }} />;
+      };
+
+      render(
+        <FormDescription>
+          {
+            '<details data-component="Accordion"><summary>Title</summary><p>Content</p></details>'
+          }
+        </FormDescription>,
+        {
+          wrapper: createWrapperWithTransformer(accordionTransformer),
+        },
+      );
+
+      expect(screen.getByTestId('custom-accordion')).toBeInTheDocument();
+      expect(screen.getByTestId('accordion-summary')).toBeInTheDocument();
+      expect(screen.getByTestId('accordion-content')).toBeInTheDocument();
+    });
+
+    it('should not invoke transformer for non-string children', () => {
+      const transformerSpy = vi.fn((html: string) => html);
+
+      const CustomComponent = () => (
+        <span data-testid='custom-component'>Custom React Component</span>
+      );
+
+      render(
+        <FormDescription>
+          <CustomComponent />
+        </FormDescription>,
+        {
+          wrapper: createWrapperWithTransformer(transformerSpy),
+        },
+      );
+
+      expect(transformerSpy).not.toHaveBeenCalled();
+      expect(screen.getByTestId('custom-component')).toBeInTheDocument();
+    });
+
+    it('should pass raw unsanitized HTML to transformer', () => {
+      let receivedHtml = '';
+      const capturingTransformer = (html: string) => {
+        receivedHtml = html;
+        return <div data-testid='captured'>{html}</div>;
+      };
+
+      const rawHtml = '<script>alert("test")</script><p>Content</p>';
+      render(<FormDescription>{rawHtml}</FormDescription>, {
+        wrapper: createWrapperWithTransformer(capturingTransformer),
+      });
+
+      expect(receivedHtml).toBe(rawHtml);
+      expect(screen.getByTestId('captured')).toBeInTheDocument();
+    });
+
+    it('should sanitize dangerous HTML when no transformer is provided', () => {
+      render(
+        <FormDescription>
+          {
+            '<script>alert("xss")</script><p data-testid="safe">Safe content</p>'
+          }
+        </FormDescription>,
+        {
+          wrapper: createWrapperWithTransformer(undefined),
+        },
+      );
+
+      expect(screen.queryByText('alert("xss")')).not.toBeInTheDocument();
+      expect(screen.getByTestId('safe')).toBeInTheDocument();
+    });
+  });
+
+  describe('Custom field components with transformer', () => {
+    const createCustomTextField = (
+      renderLogic?: (fieldData: FieldDataProps) => React.ReactNode,
+    ) => {
+      return ({ field, fieldData }: FieldComponentProps) => {
+        const renderDescription = () => {
+          if (renderLogic) {
+            return renderLogic(fieldData);
+          }
+
+          if (
+            fieldData.transformHtml &&
+            typeof fieldData.description === 'string'
+          ) {
+            return fieldData.transformHtml(fieldData.description);
+          }
+          return (
+            <span data-testid='fallback-description'>
+              {fieldData.description}
+            </span>
+          );
+        };
+
+        return (
+          <div>
+            <input {...field} data-testid='custom-input' />
+            {fieldData.description && (
+              <div data-testid='description-container'>
+                {renderDescription()}
+              </div>
+            )}
+          </div>
+        );
+      };
+    };
+
+    const renderFieldWithTransformer = (
+      description: string,
+      transformer?: (html: string) => React.ReactNode,
+      customComponent?: React.ComponentType<FieldComponentProps>,
+    ) => {
+      const CustomField = customComponent || createCustomTextField();
+      const transformerFn = transformer;
+
+      const Wrapper = ({ children }: PropsWithChildren) => {
+        const methods = useForm({ defaultValues: { testField: '' } });
+        return (
+          <TestProviders>
+            <FormFieldsContext.Provider
+              value={{
+                components: {
+                  ...lazyDefaultComponents,
+                  text: CustomField as $TSFixMe,
+                },
+                transformHtmlToComponents: transformerFn,
+              }}
+            >
+              <FormProvider {...methods}>{children}</FormProvider>
+            </FormFieldsContext.Provider>
+          </TestProviders>
+        );
+      };
+
+      const TestFormField = () => {
+        const { control } = useForm({ defaultValues: { testField: '' } });
+        return (
+          <Controller
+            name='testField'
+            control={control}
+            render={({ field, fieldState }) => (
+              <CustomField
+                field={field as $TSFixMe}
+                fieldState={fieldState}
+                fieldData={{
+                  label: 'Test Field',
+                  description,
+                  transformHtml: transformerFn,
+                }}
+              />
+            )}
+          />
+        );
+      };
+
+      return render(<TestFormField />, { wrapper: Wrapper });
+    };
+
+    it('should pass transformHtml to custom field component via fieldData', () => {
+      const customTransformer = (html: string) => (
+        <span data-testid='transformed-text'>{html}</span>
+      );
+
+      renderFieldWithTransformer(
+        '<strong>Test description</strong>',
+        customTransformer,
+      );
+
+      expect(screen.getByTestId('transformed-text')).toBeInTheDocument();
+      expect(screen.getByTestId('description-container')).toBeInTheDocument();
+    });
+
+    it('should work when no transformer is provided (fallback)', () => {
+      renderFieldWithTransformer('Simple description text', undefined);
+
+      expect(screen.getByTestId('fallback-description')).toBeInTheDocument();
+      expect(screen.getByTestId('fallback-description').textContent).toBe(
+        'Simple description text',
+      );
+    });
+
+    it('should transform HTML descriptions in custom field components', () => {
+      const accordionTransformer = (html: string) => {
+        if (html.includes('data-component="Accordion"')) {
+          return (
+            <div data-testid='accordion-component'>
+              <button data-testid='accordion-toggle'>Click to expand</button>
+              <div data-testid='accordion-body'>Accordion content</div>
+            </div>
+          );
+        }
+        return <span dangerouslySetInnerHTML={{ __html: html }} />;
+      };
+
+      renderFieldWithTransformer(
+        '<details data-component="Accordion"><summary>Title</summary><p>Content</p></details>',
+        accordionTransformer,
+      );
+
+      expect(screen.getByTestId('accordion-component')).toBeInTheDocument();
+      expect(screen.getByTestId('accordion-toggle')).toBeInTheDocument();
+      expect(screen.getByTestId('accordion-body')).toBeInTheDocument();
     });
   });
 });

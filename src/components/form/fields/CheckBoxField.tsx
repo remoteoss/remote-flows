@@ -1,5 +1,5 @@
 import { FormField } from '@/src/components/ui/form';
-import { useFormFields } from '@/src/context';
+import { useFormFields, useTransformer } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import {
   ControllerRenderProps,
@@ -28,6 +28,7 @@ export function CheckBoxField({
   ...rest
 }: CheckBoxFieldProps) {
   const { components } = useFormFields();
+  const transformHtml = useTransformer();
   const { control } = useFormContext();
 
   const handleCheckboxChange = (
@@ -70,6 +71,7 @@ export function CheckBoxField({
           defaultValue,
           multiple,
           options,
+          transformHtml,
           ...rest,
         };
         return (
