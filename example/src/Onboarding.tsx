@@ -21,6 +21,7 @@ import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
 import './css/main.css';
 import { transformHtmlToComponents } from './utils/transformHtml';
+import { components } from './Components';
 
 export const InviteSection = ({
   title,
@@ -359,6 +360,7 @@ const OnboardingWithProps = ({
   <RemoteFlows
     proxy={{ url: window.location.origin }}
     transformHtmlToComponents={transformHtmlToComponents}
+    components={components}
   >
     <OnboardingFlow
       companyId={companyId}
