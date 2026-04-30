@@ -14,53 +14,6 @@
 
 ## 📝 What's Left
 
-### 2. Add Integration Tests for Custom Components with Transformer
-
-**Priority: MEDIUM**  
-**Estimated effort: 30-45 minutes**
-
-Add tests to verify that custom field components receive and can use `fieldData.transformHtml`.
-
-#### Location:
-
-`src/components/ui/tests/form.test.tsx` - Add new describe block after existing transformer tests
-
-#### Test cases to add:
-
-```typescript
-describe('Custom field components with transformer', () => {
-  it('should pass transformHtml to custom field component via fieldData', () => {
-    // Test that custom TextField receives transformHtml function
-    // Verify it can call it and render transformed HTML
-  });
-
-  it('should work when no transformer is provided (fallback)', () => {
-    // Custom component should handle undefined transformHtml gracefully
-  });
-
-  it('should transform HTML descriptions in custom field components', () => {
-    // Full integration: TextField with description containing Accordion HTML
-    // Custom component uses transformHtml
-    // Verify Accordion renders correctly
-  });
-});
-```
-
-#### What this tests:
-
-- ✅ Custom field components receive `transformHtml` in `fieldData`
-- ✅ Custom components can call transformer and render result
-- ✅ Fallback behavior when transformer is undefined
-- ✅ Full integration: HTML description → transformer → custom component → rendered output
-
-#### Benefits:
-
-- Complements existing `FormDescription` transformer tests
-- Uses existing `createWrapperWithTransformer` helper
-- Verifies the feature works end-to-end with custom components
-- Minimal duplication, clear test organization
-
----
 
 ### 3. Documentation (Optional but Recommended)
 
@@ -102,7 +55,7 @@ const transformHtmlToComponents = (htmlContent: string) => {
 ```
 ````
 
-### Security Note
+### Security Noteº
 
 ⚠️ **The transformer receives RAW UNSANITIZED HTML**. You are responsible for sanitizing untrusted HTML before parsing. We recommend using [DOMPurify](https://www.npmjs.com/package/dompurify).
 
