@@ -14,7 +14,6 @@
 
 ## 📝 What's Left
 
-
 ### 3. Documentation (Optional but Recommended)
 
 **Priority: MEDIUM**  
