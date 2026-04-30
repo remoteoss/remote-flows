@@ -14,7 +14,6 @@
 
 ## 📝 What's Left
 
-
 ### 2. Add Integration Tests for Custom Components with Transformer
 
 **Priority: MEDIUM**  
