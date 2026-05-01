@@ -131,26 +131,26 @@ const FormControl = React.forwardRef<
 
 FormControl.displayName = 'FormControl';
 
-function FormDescription<T extends React.ElementType = 'p'>({
+export function BaseFormDescription<T extends React.ElementType = 'p'>({
   helpCenter,
   className,
   children,
   as,
+  id,
   ...props
 }: React.ComponentProps<'p'> & {
   helpCenter?: React.ReactNode;
   children?: React.ReactNode | (() => React.ReactNode);
   as?: T;
-} & Omit<React.ComponentPropsWithoutRef<T>, 'children' | 'className'>) {
-  const { formDescriptionId } = useFormField();
+  id?: string;
+} & Omit<React.ComponentPropsWithoutRef<T>, 'children' | 'className' | 'id'>) {
   const Component = as || 'p';
-
   if (typeof children === 'string') {
     return (
       <>
         <Component
           data-slot='form-description'
-          id={formDescriptionId}
+          id={id}
           className={cn('text-base-color text-xs', className)}
           data-sanitized='true'
           {...props}
@@ -161,19 +161,29 @@ function FormDescription<T extends React.ElementType = 'p'>({
       </>
     );
   }
-
   return (
     <Component
       data-slot='form-description'
-      id={formDescriptionId}
-      data-sanitized='false'
+      id={id}
       className={cn('text-base-color text-xs', className)}
+      data-sanitized='false'
       {...props}
     >
       {typeof children === 'function' ? children() : children}
       {helpCenter && helpCenter}
     </Component>
   );
+}
+
+function FormDescription<T extends React.ElementType = 'p'>({
+  ...props
+}: React.ComponentProps<'p'> & {
+  helpCenter?: React.ReactNode;
+  children?: React.ReactNode | (() => React.ReactNode);
+  as?: T;
+} & Omit<React.ComponentPropsWithoutRef<T>, 'children' | 'className' | 'id'>) {
+  const { formDescriptionId } = useFormField();
+  return <BaseFormDescription id={formDescriptionId} {...props} />;
 }
 
 function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
