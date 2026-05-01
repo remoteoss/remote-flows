@@ -5,13 +5,17 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 import { TableFieldDefault } from '@/src/components/shared/table/TableFieldDefault';
 
 // Mock the context
-vi.mock('@/src/context', () => ({
-  useFormFields: vi.fn(() => ({
-    components: {
-      table: TableFieldDefault,
-    },
-  })),
-}));
+vi.mock('@/src/context', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/src/context')>();
+  return {
+    ...actual,
+    useFormFields: vi.fn(() => ({
+      components: {
+        table: TableFieldDefault,
+      },
+    })),
+  };
+});
 
 describe('Table Component', () => {
   it('should render table with headers and data', () => {

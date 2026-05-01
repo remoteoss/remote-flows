@@ -8,9 +8,13 @@ import { TelFieldDefault } from '../default/TelFieldDefault';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-vi.mock('@/src/context', () => ({
-  useFormFields: vi.fn(),
-}));
+vi.mock('@/src/context', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/src/context')>();
+  return {
+    ...actual,
+    useFormFields: vi.fn(),
+  };
+});
 
 // Helper function to interact with Radix UI Select
 async function fillRadixSelect(labelText: string, countryName: string) {

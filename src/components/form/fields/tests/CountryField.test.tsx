@@ -13,7 +13,13 @@ import { JSFField, $TSFixMe } from '@/src/types/remoteFlows';
 import { CountryFieldDefault } from '@/src/components/form/fields/default/CountryFieldDefault';
 
 // Mock dependencies
-vi.mock('@/src/context');
+vi.mock('@/src/context', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/src/context')>();
+  return {
+    ...actual,
+    useFormFields: vi.fn(),
+  };
+});
 
 type CountryFieldProps = JSFField & {
   placeholder?: string;

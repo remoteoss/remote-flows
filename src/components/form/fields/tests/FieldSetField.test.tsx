@@ -6,9 +6,13 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
 import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 
-vi.mock('@/src/context', () => ({
-  useFormFields: vi.fn(),
-}));
+vi.mock('@/src/context', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/src/context')>();
+  return {
+    ...actual,
+    useFormFields: vi.fn(),
+  };
+});
 
 vi.mock('@/src/components/shared/zendesk-drawer/ZendeskTriggerButton', () => ({
   ZendeskTriggerButton: ({ zendeskId, children, className }: $TSFixMe) => (

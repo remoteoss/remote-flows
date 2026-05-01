@@ -6,9 +6,13 @@ import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefaul
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
 // Mock dependencies
-vi.mock('@/src/context', () => ({
-  useFormFields: vi.fn(),
-}));
+vi.mock('@/src/context', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/src/context')>();
+  return {
+    ...actual,
+    useFormFields: vi.fn(),
+  };
+});
 
 vi.mock('@/src/flows/Onboarding/context', () => ({
   useOnboardingContext: vi.fn(),

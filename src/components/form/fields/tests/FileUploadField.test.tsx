@@ -8,9 +8,13 @@ import { FileUploadFieldDefault } from '@/src/components/form/fields/default/Fil
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
 // Mock dependencies
-vi.mock('@/src/context', () => ({
-  useFormFields: vi.fn(),
-}));
+vi.mock('@/src/context', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/src/context')>();
+  return {
+    ...actual,
+    useFormFields: vi.fn(),
+  };
+});
 
 describe('FileUploadField Component', () => {
   const mockOnChange = vi.fn();
