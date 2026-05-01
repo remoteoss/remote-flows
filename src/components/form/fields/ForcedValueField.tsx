@@ -1,39 +1,9 @@
 import { useFormContext } from 'react-hook-form';
 import { sanitizeHtml } from '@/src/lib/utils';
 import { useEffect } from 'react';
-import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
-
-const Description = ({
-  name,
-  description,
-  helpCenter,
-}: {
-  name: string;
-  description: string;
-  helpCenter?: {
-    callToAction: string;
-    id: number;
-    url: string;
-    label: string;
-  };
-}) => {
-  return (
-    <span>
-      <span
-        className={`text-xs RemoteFlows__ForcedValue__Description__${name}`}
-        dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
-      />
-      {helpCenter?.callToAction && helpCenter?.id && (
-        <ZendeskTriggerButton
-          className='RemoteFlows__ForcedValue__HelpCenterLink'
-          zendeskId={helpCenter.id}
-        >
-          {helpCenter.callToAction}
-        </ZendeskTriggerButton>
-      )}
-    </span>
-  );
-};
+import { HelpCenterDataProps } from '@/src/types/fields';
+import { FormDescription } from '@/src/components/ui/form';
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 
 export type ForcedValueFieldProps = {
   name: string;
@@ -44,12 +14,7 @@ export type ForcedValueFieldProps = {
     description?: string;
   };
   label: string;
-  helpCenter?: {
-    callToAction: string;
-    id: number;
-    url: string;
-    label: string;
-  };
+  helpCenter?: HelpCenterDataProps;
 };
 
 export function ForcedValueField({
@@ -61,11 +26,9 @@ export function ForcedValueField({
   helpCenter,
 }: ForcedValueFieldProps) {
   const { setValue } = useFormContext();
-  const descriptionSanitized = sanitizeHtml(
-    statement?.description || description,
-  );
+  const forcedValueDescription = statement?.description || description;
 
-  const titleSanitized = statement?.title
+  const forcedValueTitle = statement?.title
     ? sanitizeHtml(statement?.title)
     : sanitizeHtml(label);
 
@@ -74,7 +37,7 @@ export function ForcedValueField({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const isHiddenValue = !descriptionSanitized && !statement?.title;
+  const isHiddenValue = !forcedValueDescription && !statement?.title;
 
   if (isHiddenValue) {
     return null;
@@ -82,19 +45,26 @@ export function ForcedValueField({
 
   return (
     <div>
-      {titleSanitized && (
+      {forcedValueTitle && (
         <p
           className={`text-sm RemoteFlows__ForcedValue__Title__${name}`}
           dangerouslySetInnerHTML={{
-            __html: titleSanitized,
+            __html: forcedValueTitle,
           }}
         />
       )}
-      <Description
-        name={name}
-        description={descriptionSanitized}
-        helpCenter={helpCenter}
-      />
+      <FormDescription
+        as='span'
+        className={`text-xs RemoteFlows__ForcedValue__Description__${name}`}
+        helpCenter={
+          <HelpCenter
+            className='RemoteFlows__ForcedValue__HelpCenterLink'
+            helpCenter={helpCenter}
+          />
+        }
+      >
+        {forcedValueDescription}
+      </FormDescription>
     </div>
   );
 }
