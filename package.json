@@ -112,7 +112,7 @@
     "lodash.mergewith": "4.6.2",
     "lodash.omit": "4.18.0",
     "lodash.omitby": "4.6.0",
-    "lucide-react": "1.8.0",
+    "lucide-react": "1.11.0",
     "postcss": "8.5.10",
     "react-day-picker": "8.10.1",
     "react-flagpack": "2.0.6",
