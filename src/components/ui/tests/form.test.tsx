@@ -194,7 +194,7 @@ describe('Form', () => {
       expect(screen.getByTestId('custom-component')).toBeInTheDocument();
     });
 
-    it('should pass raw unsanitized HTML to transformer', () => {
+    it('should pass sanitized HTML to transformer', () => {
       let receivedHtml = '';
       const capturingTransformer = (html: string) => {
         receivedHtml = html;
@@ -206,7 +206,7 @@ describe('Form', () => {
         wrapper: createWrapperWithTransformer(capturingTransformer),
       });
 
-      expect(receivedHtml).toBe(rawHtml);
+      expect(receivedHtml).toBe('<p>Content</p>');
       expect(screen.getByTestId('captured')).toBeInTheDocument();
     });
 
