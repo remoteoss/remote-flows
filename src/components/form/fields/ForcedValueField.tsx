@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form';
 import { sanitizeHtml } from '@/src/lib/utils';
 import { useEffect } from 'react';
 import { HelpCenterDataProps } from '@/src/types/fields';
-import { FormDescription } from '@/src/components/ui/form';
+import { BaseFormDescription as Description } from '@/src/components/ui/form';
 import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 
 export type ForcedValueFieldProps = {
@@ -53,7 +53,7 @@ export function ForcedValueField({
           }}
         />
       )}
-      <FormDescription
+      <Description
         as='span'
         className={`text-xs RemoteFlows__ForcedValue__Description__${name}`}
         helpCenter={
@@ -64,7 +64,7 @@ export function ForcedValueField({
         }
       >
         {forcedValueDescription}
-      </FormDescription>
+      </Description>
     </div>
   );
 }
