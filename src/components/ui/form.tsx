@@ -149,15 +149,17 @@ export function BaseFormDescription<T extends React.ElementType = 'p'>({
   const transformHtmlToComponents = useTransformer();
   // we check if children is a string, happens in 95% of the cases I believe
   if (typeof children === 'string') {
+    const sanitized = sanitizeHtml(children);
     // if we have a transformer, we use it to transform the children
     if (transformHtmlToComponents) {
-      const transformed = transformHtmlToComponents(children);
+      const transformed = transformHtmlToComponents(sanitized);
       return (
         <Component
           data-slot='form-description'
           id={id}
           className={cn('text-base-color text-xs', className)}
           data-transformed='true'
+          data-sanitized='true'
           {...props}
         >
           {transformed} {helpCenter && helpCenter}
@@ -174,7 +176,7 @@ export function BaseFormDescription<T extends React.ElementType = 'p'>({
         data-children-type='string'
         {...props}
       >
-        <span dangerouslySetInnerHTML={{ __html: sanitizeHtml(children) }} />{' '}
+        <span dangerouslySetInnerHTML={{ __html: sanitized }} />{' '}
         {helpCenter && helpCenter}
       </Component>
     );
