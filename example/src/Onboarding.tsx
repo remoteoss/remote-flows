@@ -436,6 +436,10 @@ const OnboardingWithProps = ({
             // Nigeria
             contract_details: 2,
           },
+          NLD: {
+            // Netherlands
+            contract_details: 2,
+          },
           NOR: {
             // Norway
             contract_details: 2,
