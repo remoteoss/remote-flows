@@ -188,7 +188,7 @@ export function BaseFormDescription<T extends React.ElementType = 'p'>({
       id={id}
       className={cn('text-base-color text-xs', className)}
       data-sanitized='false'
-      data-children-type='not-string'
+      data-children-type='other'
       {...props}
     >
       {typeof children === 'function' ? children() : children}
