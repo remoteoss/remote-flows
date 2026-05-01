@@ -32,6 +32,9 @@ export function ForcedValueField({
     ? sanitizeHtml(statement?.title)
     : sanitizeHtml(label);
 
+  const titleId = `forced-value-${name}-title`;
+  const descriptionId = `forced-value-${name}-description`;
+
   useEffect(() => {
     setValue(name, value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -44,9 +47,14 @@ export function ForcedValueField({
   }
 
   return (
-    <div>
+    <div
+      role='group'
+      aria-labelledby={forcedValueTitle ? titleId : undefined} // ✅ Safe
+      aria-describedby={forcedValueDescription ? descriptionId : undefined}
+    >
       {forcedValueTitle && (
         <p
+          id={titleId}
           className={`text-sm RemoteFlows__ForcedValue__Title__${name}`}
           dangerouslySetInnerHTML={{
             __html: forcedValueTitle,
@@ -55,6 +63,7 @@ export function ForcedValueField({
       )}
       <Description
         as='span'
+        id={descriptionId}
         className={`text-xs RemoteFlows__ForcedValue__Description__${name}`}
         helpCenter={
           <HelpCenter
