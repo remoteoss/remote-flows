@@ -49,7 +49,7 @@ export function ForcedValueField({
   return (
     <div
       role='group'
-      aria-labelledby={forcedValueTitle ? titleId : undefined} // ✅ Safe
+      aria-labelledby={forcedValueTitle ? titleId : undefined}
       aria-describedby={forcedValueDescription ? descriptionId : undefined}
     >
       {forcedValueTitle && (
