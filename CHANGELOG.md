@@ -18,7 +18,6 @@
 - fix tel field props (#980) [#980](https://github.com/remoteoss/remote-flows/pull/980)
 - improve force fields to use shared form description component (#984) [#984](https://github.com/remoteoss/remote-flows/pull/984)
 
-
 #### Chores
 
 - update dependency vite to v8.0.9 (#970) [#970](https://github.com/remoteoss/remote-flows/pull/970)
