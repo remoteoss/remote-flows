@@ -8,9 +8,13 @@ import { TextFieldDefault } from '@/src/components/form/fields/default/TextField
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
 // Mock dependencies
-vi.mock('@/src/context', () => ({
-  useFormFields: vi.fn(),
-}));
+vi.mock('@/src/context', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/src/context')>();
+  return {
+    ...actual,
+    useFormFields: vi.fn(),
+  };
+});
 
 describe('TextField Component', () => {
   const mockOnChange = vi.fn();

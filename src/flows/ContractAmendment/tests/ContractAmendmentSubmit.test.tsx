@@ -6,7 +6,13 @@ import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefaul
 
 // Mock the hooks
 vi.mock('../context');
-vi.mock('@/src/context');
+vi.mock('@/src/context', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/src/context')>();
+  return {
+    ...actual,
+    useFormFields: vi.fn(),
+  };
+});
 
 const mockUseContractAmendmentContext = vi.mocked(useContractAmendmentContext);
 const mockUseFormFields = vi.mocked(useFormFields);

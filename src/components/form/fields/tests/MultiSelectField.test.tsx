@@ -10,9 +10,13 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 type MultiSelectFieldProps = React.ComponentProps<typeof MultiSelectField>;
 
 // Mock dependencies
-vi.mock('@/src/context', () => ({
-  useFormFields: vi.fn(),
-}));
+vi.mock('@/src/context', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/src/context')>();
+  return {
+    ...actual,
+    useFormFields: vi.fn(),
+  };
+});
 
 describe('MultiSelectField Component', () => {
   const mockOnChange = vi.fn();

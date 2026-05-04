@@ -12,13 +12,17 @@ const MockStatement = ({ data }: StatementComponentProps) => (
   </div>
 );
 
-vi.mock('@/src/context', () => ({
-  useFormFields: vi.fn(() => ({
-    components: {
-      statement: MockStatement,
-    },
-  })),
-}));
+vi.mock('@/src/context', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/src/context')>();
+  return {
+    ...actual,
+    useFormFields: vi.fn(() => ({
+      components: {
+        statement: MockStatement,
+      },
+    })),
+  };
+});
 
 const CustomToggle = ({
   setValue,

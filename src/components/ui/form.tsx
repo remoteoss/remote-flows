@@ -11,6 +11,7 @@ import {
 
 import { cn, sanitizeHtml } from '@/src/lib/utils';
 import { Label } from '@/src/components/ui/label';
+import { useTransformer } from '@/src/context';
 
 const Form = FormProvider;
 
@@ -145,28 +146,51 @@ export function BaseFormDescription<T extends React.ElementType = 'p'>({
   id?: string;
 } & Omit<React.ComponentPropsWithoutRef<T>, 'children' | 'className' | 'id'>) {
   const Component = as || 'p';
+  const transformHtmlToComponents = useTransformer();
+  // we check if children is a string, happens in 95% of the cases I believe
   if (typeof children === 'string') {
-    return (
-      <>
+    const sanitized = sanitizeHtml(children);
+    // if we have a transformer, we use it to transform the children
+    if (transformHtmlToComponents) {
+      const transformed = transformHtmlToComponents(sanitized);
+      return (
         <Component
           data-slot='form-description'
           id={id}
           className={cn('text-base-color text-xs', className)}
+          data-transformed='true'
           data-sanitized='true'
           {...props}
         >
-          <span dangerouslySetInnerHTML={{ __html: sanitizeHtml(children) }} />{' '}
-          {helpCenter && helpCenter}
+          {transformed} {helpCenter && helpCenter}
         </Component>
-      </>
+      );
+    }
+    // if we don't have a transformer, we sanitize the children and render it as a string
+    return (
+      <Component
+        data-slot='form-description'
+        id={id}
+        className={cn('text-base-color text-xs', className)}
+        data-sanitized='true'
+        data-children-type='string'
+        {...props}
+      >
+        <span dangerouslySetInnerHTML={{ __html: sanitized }} />{' '}
+        {helpCenter && helpCenter}
+      </Component>
     );
   }
+
+  // this happens when in theory we pass a ReactNode, I don't really know if this case works in the real world
+  // I believe we added when we started but scared to remove it
   return (
     <Component
       data-slot='form-description'
       id={id}
       className={cn('text-base-color text-xs', className)}
       data-sanitized='false'
+      data-children-type='other'
       {...props}
     >
       {typeof children === 'function' ? children() : children}

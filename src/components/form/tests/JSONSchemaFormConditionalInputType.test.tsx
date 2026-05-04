@@ -7,16 +7,20 @@ import { NumberFieldDefault } from '@/src/components/form/fields/default/NumberF
 import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 import { SelectFieldDefault } from '@/src/components/form/fields/default/SelectFieldDefault';
 
-vi.mock('@/src/context', () => ({
-  useFormFields: vi.fn(() => ({
-    components: {
-      radio: RadioGroupFieldDefault,
-      number: NumberFieldDefault,
-      text: TextFieldDefault,
-      select: SelectFieldDefault,
-    },
-  })),
-}));
+vi.mock('@/src/context', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/src/context')>();
+  return {
+    ...actual,
+    useFormFields: vi.fn(() => ({
+      components: {
+        radio: RadioGroupFieldDefault,
+        number: NumberFieldDefault,
+        text: TextFieldDefault,
+        select: SelectFieldDefault,
+      },
+    })),
+  };
+});
 
 describe('JSONSchemaForm - Conditional inputType Changes', () => {
   it('should render NumberField when field.type changes from hidden to number', async () => {
