@@ -1,4 +1,4 @@
-import { useFormFields } from '@/src/context';
+import { useFormFields, useTransformer } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import {
   ControllerRenderProps,
@@ -48,6 +48,7 @@ export function FileUploadField({
 }: FileUploadFieldProps) {
   const { components } = useFormFields();
   const { control, setError, clearErrors } = useFormContext();
+  const transformHtml = useTransformer();
 
   const handleOnChange = async (
     files: File[],
@@ -74,13 +75,14 @@ export function FileUploadField({
           throw new Error(`File upload component not found for field ${name}`);
         }
 
-        const fieldData: FieldFileDataProps = {
+        const customFileUploadFieldProps: FieldFileDataProps = {
           name,
           description,
           label,
           multiple,
           accept,
           maxFileSize: maxSize,
+          transformHtml,
           ...rest,
         };
 
@@ -92,7 +94,7 @@ export function FileUploadField({
               onChange: async (value: File[]) => handleOnChange(value, field),
             }}
             fieldState={fieldState}
-            fieldData={fieldData}
+            fieldData={customFileUploadFieldProps}
           />
         );
       }}

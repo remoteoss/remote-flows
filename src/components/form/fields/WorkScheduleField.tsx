@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { JSFField, $TSFixMe } from '@/src/types/remoteFlows';
-import { useFormFields } from '@/src/context';
+import { useFormFields, useTransformer } from '@/src/context';
 import { FormField } from '@/src/components/ui/form';
 import { Components } from '@/src/types/remoteFlows';
 
@@ -26,6 +26,7 @@ type WorkScheduleFormData = {
 export function WorkScheduleField(props: WorkScheduleFieldProps) {
   const { components } = useFormFields();
   const { setValue, control, watch } = useFormContext();
+  const transformHtml = useTransformer();
   const watchedSchedule = watch(props.name);
   const [currentSchedule, setCurrentSchedule] =
     useState<DailySchedule[]>(watchedSchedule);
@@ -53,6 +54,7 @@ export function WorkScheduleField(props: WorkScheduleFieldProps) {
     ...props,
     onSubmit,
     currentSchedule,
+    transformHtml,
     defaultFormattedValue: {
       workHoursSummary,
       breakSummary,
