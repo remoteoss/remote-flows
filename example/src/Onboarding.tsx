@@ -19,6 +19,8 @@ import { ReviewOnboardingStep } from './ReviewOnboardingStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
+import { transformHtmlToComponents } from './utils/transformHtml';
+import { components } from './Components';
 import './css/main.css';
 
 export const InviteSection = ({
@@ -355,7 +357,11 @@ const OnboardingWithProps = ({
   employmentId,
   externalId,
 }: OnboardingFormData) => (
-  <RemoteFlows proxy={{ url: window.location.origin }}>
+  <RemoteFlows
+    proxy={{ url: window.location.origin }}
+    transformHtmlToComponents={transformHtmlToComponents}
+    components={components}
+  >
     <OnboardingFlow
       companyId={companyId}
       type={type}

@@ -9,6 +9,21 @@ import type {
 import { FileUploader } from '@remoteoss/remote-flows/internals';
 //import { ZendeskDialog } from './ZendeskDialog';
 
+const renderDescription = (
+  desc?: React.ReactNode | string,
+  transformHtml?: (html: string) => React.ReactNode,
+) => {
+  if (!desc) {
+    return null;
+  }
+
+  if (typeof desc === 'string' && transformHtml) {
+    return transformHtml(desc);
+  }
+
+  return <p className='input-description'>{desc}</p>;
+};
+
 // you can define HTML button attributes or event props that exist in your Button like variant, size, etc.
 const Button = ({
   children,
@@ -57,9 +72,7 @@ const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
         />
       )}
 
-      {fieldData.description && (
-        <p className='input-description'>{fieldData.description}</p>
-      )}
+      {renderDescription(fieldData.description, fieldData.transformHtml)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}
@@ -111,9 +124,7 @@ const Select = ({ field, fieldData, fieldState }: FieldComponentProps) => {
         </div>
       </div>
 
-      {fieldData.description && (
-        <p className='input-description'>{fieldData.description}</p>
-      )}
+      {renderDescription(fieldData.description, fieldData.transformHtml)}
 
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
