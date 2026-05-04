@@ -63,18 +63,17 @@ function App() {
 
 The `RemoteFlows` component serves as a provider for authentication and theming.
 
-| Prop                         | Type                                                                                          | Required | Deprecated | Description                                                                                                    |
-| ---------------------------- | --------------------------------------------------------------------------------------------- | -------- | ---------- | -------------------------------------------------------------------------------------------------------------- |
-| `auth`                       | `() => Promise<{ accessToken: string, expiresIn: number }>`                                   | No       | -          | Function to fetch authentication token. Optional when using cookie-based authentication via `credentials` prop |
-| `environment`                | `'partners' \| 'production' \| 'sandbox' \| 'staging'`                                        | No       | -          | Environment to use for API calls (defaults to production)                                                      |
-| `theme`                      | `ThemeOptions`                                                                                | No       | -          | Custom theme configuration                                                                                     |
-| `components`                 | `Components`                                                                                  | No       | -          | Custom field components for form rendering                                                                     |
-| `proxy`                      | `{ url: string, headers?: Record<string, string> }`                                           | No       | -          | Configuration for API request proxy with optional headers                                                      |
-| `errorBoundary`              | `{ useParentErrorBoundary?: boolean, fallback?: ReactNode \| ((error: Error) => ReactNode) }` | No       | -          | Error boundary configuration to prevent crashes and show custom fallback UI                                    |
-| `debug`                      | boolean                                                                                       | No       | -          | useful to see telemetry debugging in console                                                                   |
-| `credentials`                | `'include' \| 'same-origin'`                                                                  | No       | -          | Credentials mode for fetch requests. Use `'include'` for cookie-based authentication without bearer tokens     |
-| `transformHtmlToComponents`  | `(htmlContent: string) => ReactNode`                                                          | No       | -          | Optional function to transform HTML strings into React components. Useful for customizing HTML content rendering |
-
+| Prop                        | Type                                                                                          | Required | Deprecated | Description                                                                                                      |
+| --------------------------- | --------------------------------------------------------------------------------------------- | -------- | ---------- | ---------------------------------------------------------------------------------------------------------------- |
+| `auth`                      | `() => Promise<{ accessToken: string, expiresIn: number }>`                                   | No       | -          | Function to fetch authentication token. Optional when using cookie-based authentication via `credentials` prop   |
+| `environment`               | `'partners' \| 'production' \| 'sandbox' \| 'staging'`                                        | No       | -          | Environment to use for API calls (defaults to production)                                                        |
+| `theme`                     | `ThemeOptions`                                                                                | No       | -          | Custom theme configuration                                                                                       |
+| `components`                | `Components`                                                                                  | No       | -          | Custom field components for form rendering                                                                       |
+| `proxy`                     | `{ url: string, headers?: Record<string, string> }`                                           | No       | -          | Configuration for API request proxy with optional headers                                                        |
+| `errorBoundary`             | `{ useParentErrorBoundary?: boolean, fallback?: ReactNode \| ((error: Error) => ReactNode) }` | No       | -          | Error boundary configuration to prevent crashes and show custom fallback UI                                      |
+| `debug`                     | boolean                                                                                       | No       | -          | useful to see telemetry debugging in console                                                                     |
+| `credentials`               | `'include' \| 'same-origin'`                                                                  | No       | -          | Credentials mode for fetch requests. Use `'include'` for cookie-based authentication without bearer tokens       |
+| `transformHtmlToComponents` | `(htmlContent: string) => ReactNode`                                                          | No       | -          | Optional function to transform HTML strings into React components. Useful for customizing HTML content rendering |
 
 #### Error Boundary
 
@@ -115,7 +114,11 @@ The `errorBoundary` prop controls how the SDK handles runtime errors to prevent 
 The `transformHtmlToComponents` prop allows you to transform HTML strings from API responses into custom React components. This is useful for replacing generic HTML patterns with your own component library.
 
 ```tsx
-import parse, { domToReact, HTMLReactParserOptions, Element } from 'html-react-parser';
+import parse, {
+  domToReact,
+  HTMLReactParserOptions,
+  Element,
+} from 'html-react-parser';
 import DOMPurify from 'dompurify';
 
 function transformHtmlToComponents(htmlContent: string) {
@@ -131,15 +134,15 @@ function transformHtmlToComponents(htmlContent: string) {
         if (element.attribs?.['data-component'] === 'Accordion') {
           // Find the summary tag
           const summaryNode = element.children?.find(
-            (child) => child.type === 'tag' && child.name === 'summary'
+            (child) => child.type === 'tag' && child.name === 'summary',
           );
-          
+
           // Extract content
           const summary = summaryNode
             ? domToReact(summaryNode.children, options)
             : 'Details';
           const content = element.children?.filter(
-            (child) => !(child.type === 'tag' && child.name === 'summary')
+            (child) => !(child.type === 'tag' && child.name === 'summary'),
           );
 
           return (
@@ -149,7 +152,7 @@ function transformHtmlToComponents(htmlContent: string) {
           );
         }
       }
-    }
+    },
   };
 
   // 3. Parse and transform
@@ -162,14 +165,16 @@ function transformHtmlToComponents(htmlContent: string) {
   transformHtmlToComponents={transformHtmlToComponents}
 >
   {/* Your flows */}
-</RemoteFlows>
+</RemoteFlows>;
 ```
 
 **Security Notice:** The function receives **unsanitized HTML**. You are responsible for sanitizing untrusted content before rendering. Consider using:
+
 - [`DOMPurify`](https://github.com/cure53/DOMPurify) - Client-side HTML sanitization
 - [`sanitize-html`](https://github.com/apostrophecms/sanitize-html) - Server-side HTML sanitization
 
 **Common Use Cases:**
+
 - Replace `<details>` elements with custom accordion components
 - Transform links with custom styling or tracking
 - Inject custom components for specific HTML patterns marked with `data-component` attributes
