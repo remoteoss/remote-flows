@@ -1,5 +1,5 @@
 import { FormField } from '@/src/components/ui/form';
-import { useFormFields } from '@/src/context';
+import { useFormFields, useTransformer } from '@/src/context';
 import { Components } from '@/src/types/remoteFlows';
 import {
   useFormContext,
@@ -287,6 +287,7 @@ export function TelField({
 }: TelFieldProps) {
   const { components } = useFormFields();
   const { control } = useFormContext();
+  const transformHtml = useTransformer();
 
   return (
     <FormField
@@ -302,6 +303,7 @@ export function TelField({
           name,
           description,
           label,
+          transformHtml,
           ...rest,
         };
 
