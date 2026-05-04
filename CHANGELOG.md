@@ -9,12 +9,12 @@
 - update dependency react-hook-form to v7.73.1 (#974) [#974](https://github.com/remoteoss/remote-flows/pull/974)
 - update dependency dompurify to v3.4.1 (#977) [#977](https://github.com/remoteoss/remote-flows/pull/977)
 - update tailwindcss monorepo to v4.2.4 (#976) [#976](https://github.com/remoteoss/remote-flows/pull/976)
-
+- implement recommended badge (#978) [#978](https://github.com/remoteoss/remote-flows/pull/978)
 
 #### Fixes
 
 - avoid rendering statements without a description (#964) [#964](https://github.com/remoteoss/remote-flows/pull/964)
-- implement recommended badge (#978) [#978](https://github.com/remoteoss/remote-flows/pull/978)
+
 - fix tel field props (#980) [#980](https://github.com/remoteoss/remote-flows/pull/980)
 - improve force fields to use shared form description component (#984) [#984](https://github.com/remoteoss/remote-flows/pull/984)
 
