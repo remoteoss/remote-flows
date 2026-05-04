@@ -59,6 +59,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Mauritius            | MUS  | v2               | March 2026   |
 | Malaysia             | MYS  | v2               | March 2026   |
 | Mexico               | MEX  | v2               | March 2026   |
+| Netherlands          | NLD  | v2               | May 2026     |
 | Nigeria              | NGA  | v2               | March 2026   |
 | Norway               | NOR  | v2               | March 2026   |
 | New Zealand          | NZL  | v2               | March 2026   |
