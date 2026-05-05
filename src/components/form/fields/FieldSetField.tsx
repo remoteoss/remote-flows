@@ -211,7 +211,10 @@ export function FieldSetField({
       {isExpanded && (
         <div id={contentId} aria-labelledby={headerId} role='region'>
           {description ? (
-            <BaseFormDescription className='mb-5 RemoteFlows__FieldSetField__Description'>
+            <BaseFormDescription
+              as='div'
+              className='mb-5 RemoteFlows__FieldSetField__Description'
+            >
               {description}
             </BaseFormDescription>
           ) : null}
