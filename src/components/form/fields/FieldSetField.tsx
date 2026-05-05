@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form';
 import { Fragment, useEffect, useRef } from 'react';
 import omit from 'lodash.omit';
 import { baseFields } from '@/src/components/form/fields/baseFields';
-import { cn, sanitizeHtml } from '@/src/lib/utils';
+import { cn } from '@/src/lib/utils';
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { Statement } from '@/src/components/form/Statement';
 import { useFormFields } from '@/src/context';
@@ -12,6 +12,7 @@ import { BaseTypes, SupportedTypes } from './types';
 import { StatementComponentProps } from '@/src/types/fields';
 import { checkFieldHasForcedValue } from '@/src/components/form/utils';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
+import { BaseFormDescription } from '@/src/components/ui/form';
 
 type FieldBase = {
   label: string;
@@ -210,10 +211,12 @@ export function FieldSetField({
       {isExpanded && (
         <div id={contentId} aria-labelledby={headerId} role='region'>
           {description ? (
-            <div
+            <BaseFormDescription
+              as='div'
               className='mb-5 RemoteFlows__FieldSetField__Description'
-              dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
-            />
+            >
+              {description}
+            </BaseFormDescription>
           ) : null}
           <div className='grid gap-4'>
             {fields.map((field: $TSFixMe) => {
