@@ -15,12 +15,39 @@ import {
   zendeskArticles,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
+import { Card } from '@remoteoss/remote-flows/internals';
 import { ReviewOnboardingStep } from './ReviewOnboardingStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
 import './css/main.css';
 
+const BenefitsAboutSection = ({
+  title,
+  description,
+  finePrint,
+  url,
+}: {
+  title: string;
+  description: string;
+  finePrint: string;
+  url: string;
+}) => {
+  console.log('title', title);
+  console.log('description', description);
+  console.log('finePrint', finePrint);
+  console.log('url', url);
+  return (
+    <Card className='benefits-about-section'>
+      <h2 className='benefits-about-title'>About</h2>
+      <p className='benefits-about-description'>{description}</p>
+      <p className='benefits-about-fine-print'>{finePrint}</p>
+      <a href={url} className='benefits-about-url'>
+        {url}
+      </a>
+    </Card>
+  );
+};
 export const InviteSection = ({
   title,
   description,
@@ -188,9 +215,19 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
         </>
       );
 
-    case 'benefits':
+    case 'benefits': {
+      // Example: Access schema-level presentation metadata
+      const benefitsPresentation = onboardingBag.meta.presentation;
+
       return (
         <div className='benefits-container'>
+          <BenefitsAboutSection
+            title={benefitsPresentation?.title as string}
+            description={benefitsPresentation?.description as string}
+            finePrint={benefitsPresentation?.fine_print as string}
+            url={benefitsPresentation?.url as string}
+          />
+
           <BenefitsStep
             onSubmit={(payload: BenefitsFormPayload) =>
               console.log('payload', payload)
@@ -204,6 +241,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             }) => setErrors({ apiError: error.message, fieldErrors })}
             onSuccess={(data: SuccessResponse) => console.log('data', data)}
           />
+
           <AlertError errors={errors} />
           <div className='buttons-container'>
             <BackButton
@@ -221,6 +259,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           </div>
         </div>
       );
+    }
     case 'review':
       return (
         <ReviewOnboardingStep
