@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { useFormFields } from '@/src/context';
+import { useFormFields, useTransformer } from '@/src/context';
 import { FormField } from '@/src/components/ui/form';
 import { Components } from '@/src/types/remoteFlows';
 import { TextFieldProps } from './TextField';
@@ -9,30 +9,42 @@ export type NumberFieldProps = TextFieldProps & {
   onChange?: (value: number) => void;
 };
 
-export function NumberField(props: NumberFieldProps) {
+export function NumberField({
+  component,
+  onChange,
+  ...props
+}: NumberFieldProps) {
   const { components } = useFormFields();
   const { control } = useFormContext();
+  const transformHtml = useTransformer();
 
-  const Component = props.component || components.number;
-  if (!Component) {
-    throw new Error(`Number component not found for field ${props.name}`);
-  }
   return (
     <FormField
       control={control}
       name={props.name}
       render={({ field, fieldState }) => {
+        const Component = component || components.number;
+
+        if (!Component) {
+          throw new Error(`Number component not found for field ${props.name}`);
+        }
+
+        const customNumberFieldProps = {
+          onChange,
+          transformHtml,
+          ...props,
+        };
         return (
           <Component
             field={{
               ...field,
               onChange: (value: number) => {
                 field.onChange(value);
-                props.onChange?.(value);
+                onChange?.(value);
               },
             }}
             fieldState={fieldState}
-            fieldData={props}
+            fieldData={customNumberFieldProps}
           />
         );
       }}

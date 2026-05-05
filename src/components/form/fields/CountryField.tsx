@@ -1,4 +1,4 @@
-import { useFormFields } from '@/src/context';
+import { useFormFields, useTransformer } from '@/src/context';
 import { Components, JSFField, $TSFixMe } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '../../ui/form';
@@ -26,6 +26,7 @@ export function CountryField({
 }: CountryFieldProps) {
   const { control } = useFormContext();
   const { components } = useFormFields();
+  const transformHtml = useTransformer();
 
   return (
     <FormField
@@ -46,6 +47,7 @@ export function CountryField({
           description,
           onChange,
           $meta,
+          transformHtml,
           ...rest,
         };
         return (

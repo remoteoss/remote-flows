@@ -60,6 +60,11 @@ export type FieldDataProps = Partial<JSFField> & {
   meta?: {
     helpCenter?: HelpCenterDataProps;
   };
+  /**
+   * Optional HTML transformer function passed from RemoteFlows context.
+   * Use this in custom field components to transform HTML descriptions into React components.
+   */
+  transformHtml?: (html: string) => React.ReactNode;
 };
 
 export type FileComponentProps = FieldComponentProps & {

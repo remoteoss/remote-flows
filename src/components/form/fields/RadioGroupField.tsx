@@ -1,5 +1,5 @@
 import { FormField } from '@/src/components/ui/form';
-import { useFormFields } from '@/src/context';
+import { useFormFields, useTransformer } from '@/src/context';
 import { Components, JSFField } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 
@@ -20,6 +20,8 @@ export function RadioGroupField({
 }: RadioGroupFieldProps) {
   const { components } = useFormFields();
   const { control } = useFormContext();
+  const transformHtml = useTransformer();
+
   return (
     <FormField
       control={control}
@@ -36,6 +38,7 @@ export function RadioGroupField({
           description,
           label,
           options,
+          transformHtml,
           ...rest,
         };
         return (
