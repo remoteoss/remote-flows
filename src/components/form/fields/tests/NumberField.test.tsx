@@ -10,9 +10,13 @@ import { NumberFieldDefault } from '@/src/components/form/fields/default/NumberF
 import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 
 // Mock dependencies
-vi.mock('@/src/context', () => ({
-  useFormFields: vi.fn(),
-}));
+vi.mock('@/src/context', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/src/context')>();
+  return {
+    ...actual,
+    useFormFields: vi.fn(),
+  };
+});
 
 describe('NumberField Component', () => {
   const mockOnChange = vi.fn();
