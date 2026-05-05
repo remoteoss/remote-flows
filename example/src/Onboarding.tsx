@@ -20,31 +20,37 @@ import { ReviewOnboardingStep } from './ReviewOnboardingStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
+import { sanitizeHtml } from '@remoteoss/remote-flows/internals';
 import './css/main.css';
 
 const BenefitsAboutSection = ({
-  title,
   description,
-  finePrint,
   url,
 }: {
-  title: string;
   description: string;
-  finePrint: string;
   url: string;
 }) => {
-  console.log('title', title);
-  console.log('description', description);
-  console.log('finePrint', finePrint);
-  console.log('url', url);
+  if (!description || !url) {
+    return null;
+  }
   return (
-    <Card className='benefits-about-section'>
-      <h2 className='benefits-about-title'>About</h2>
-      <p className='benefits-about-description'>{description}</p>
-      <p className='benefits-about-fine-print'>{finePrint}</p>
-      <a href={url} className='benefits-about-url'>
-        {url}
-      </a>
+    <Card className='space-y-4 p-6'>
+      <h2 className='text-xl font-semibold text-gray-900'>About</h2>
+      <div
+        className='prose prose-sm max-w-none text-xs text-gray-700 leading-relaxed space-y-4'
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
+      />
+      <p className='text-xs text-gray-700 leading-relaxed space-y-4'>
+        Want more details on benefits?{' '}
+        <a
+          href={url}
+          className='inline-block text-blue-600 hover:text-blue-700 hover:underline text-xs mt-2'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          Check our guide
+        </a>
+      </p>
     </Card>
   );
 };
@@ -222,9 +228,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
       return (
         <div className='benefits-container'>
           <BenefitsAboutSection
-            title={benefitsPresentation?.title as string}
             description={benefitsPresentation?.description as string}
-            finePrint={benefitsPresentation?.fine_print as string}
             url={benefitsPresentation?.url as string}
           />
 
