@@ -34,7 +34,7 @@ const BenefitsAboutSection = ({
     return null;
   }
   return (
-    <Card className='space-y-4 p-6'>
+    <Card className='space-y-4 p-6 mb-4'>
       <h2 className='text-xl font-semibold text-gray-900'>About</h2>
       <div
         className='prose prose-sm max-w-none text-xs text-gray-700 leading-relaxed space-y-4'
