@@ -156,6 +156,7 @@ export const clearBase64Data = (base64Data: string) => {
 export function prettifyFormValues(
   values: Record<string, unknown>,
   fields: JSFFields | undefined,
+  options?: { skipMoneyConversion?: boolean },
 ) {
   if (!fields) {
     return {};
@@ -237,9 +238,10 @@ export function prettifyFormValues(
             key,
             {
               prettyValue:
-                typeof value === 'string' || typeof value === 'number'
+                !options?.skipMoneyConversion &&
+                (typeof value === 'string' || typeof value === 'number')
                   ? convertFromCents(value)
-                  : '',
+                  : value,
               label: field.label,
               inputType: field?.type,
               currency: field?.currency,
