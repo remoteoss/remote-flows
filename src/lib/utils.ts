@@ -176,6 +176,11 @@ export function prettifyFormValues(
         }
 
         if (field?.type === 'radio' || field?.type === 'select') {
+          console.log('field', {
+            name: field?.name,
+            value,
+            options: field?.options,
+          });
           const option = (
             field.options as Array<{ value: string; label: string }>
           ).find((option) => option.value === value);
