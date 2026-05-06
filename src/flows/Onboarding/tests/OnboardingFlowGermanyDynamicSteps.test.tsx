@@ -136,13 +136,12 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
           <div className='onboarding-review'>
             <h2 className='title'>Basic Information</h2>
             <Review
-              values={onboardingBag.stepState.values?.basic_information || {}}
+              values={onboardingBag.meta.fields?.basic_information || {}}
             />
             <h2 className='title'>Engagement Agreement Details</h2>
             <Review
               values={
-                onboardingBag.stepState.values?.engagement_agreement_details ||
-                {}
+                onboardingBag.meta.fields?.engagement_agreement_details || {}
               }
             />
             <BackButton>Back</BackButton>
