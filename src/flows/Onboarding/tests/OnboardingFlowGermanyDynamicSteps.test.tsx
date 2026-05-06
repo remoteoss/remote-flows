@@ -22,42 +22,11 @@ import { fillRadio, queryClient, TestProviders } from '@/src/tests/testHelpers';
 import { generateUniqueEmploymentId } from '@/src/flows/Onboarding/tests/helpers';
 import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
 import { mockBaseResponse } from '@/src/common/api/fixtures/base';
+import { PrettifiedValuesRenderer } from '@/src/tests/components/PrettifiedValuesRenderer';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
-
-function Review({ values }: { values: Record<string, unknown> }) {
-  return (
-    <div className='onboarding-values'>
-      {Object.entries(values).map(([key, value]) => {
-        if (Array.isArray(value)) {
-          return (
-            <pre key={key}>
-              {key}: {value.join(', ')}
-            </pre>
-          );
-        }
-        if (typeof value === 'object') {
-          return (
-            <pre key={key}>
-              {key}: {JSON.stringify(value)}
-            </pre>
-          );
-        }
-        if (typeof value === 'string' || typeof value === 'number') {
-          return (
-            <pre key={key}>
-              {key}: {value}
-            </pre>
-          );
-        }
-
-        return null;
-      })}
-    </div>
-  );
-}
 
 const phoneNumberMock = '1701234567';
 describe('OnboardingFlow - Germany with dynamic_steps', () => {
@@ -135,11 +104,11 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
         return (
           <div className='onboarding-review'>
             <h2 className='title'>Basic Information</h2>
-            <Review
+            <PrettifiedValuesRenderer
               values={onboardingBag.meta.fields?.basic_information || {}}
             />
             <h2 className='title'>Engagement Agreement Details</h2>
-            <Review
+            <PrettifiedValuesRenderer
               values={
                 onboardingBag.meta.fields?.engagement_agreement_details || {}
               }
