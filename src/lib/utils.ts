@@ -7,6 +7,7 @@ import {
   NormalizedFieldError,
   normalizeFieldErrors,
 } from '@/src/lib/mutations';
+import { convertFromCents } from '@/src/components/form/utils';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -230,10 +231,15 @@ export function prettifyFormValues(
         }
 
         if (field?.type === 'money') {
+          // value can be a string | number | null the values should come in cents
+          // we convert to normal format and not use formatCurrency as consumers are expecting normal number
           return [
             key,
             {
-              prettyValue: value,
+              prettyValue:
+                typeof value === 'string' || typeof value === 'number'
+                  ? convertFromCents(value)
+                  : '',
               label: field.label,
               inputType: field?.type,
               currency: field?.currency,

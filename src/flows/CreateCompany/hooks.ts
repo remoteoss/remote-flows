@@ -173,12 +173,13 @@ export const useCreateCompany = ({
 
   async function onSubmit(values: FieldValues) {
     const currentStepName = stepState.currentStep.name;
+    const parsedValues = await parseFormValues(values);
     if (currentStepName in fieldsMetaRef.current) {
       fieldsMetaRef.current[
         currentStepName as keyof typeof fieldsMetaRef.current
-      ] = prettifyFormValues(values, stepFields[currentStepName]);
+      ] = prettifyFormValues(parsedValues, stepFields[currentStepName]);
     }
-    const parsedValues = await parseFormValues(values);
+
     switch (stepState.currentStep.name) {
       case 'company_basic_information': {
         setInternalCountryCode(parsedValues.country_code);

@@ -817,13 +817,13 @@ export const useOnboarding = ({
   async function onSubmit(values: FieldValues) {
     // Prettify values for the current step
     const currentStepName = stepState.currentStep.name;
+    const parsedValues = await parseFormValues(values);
     if (currentStepName in fieldsMetaRef.current) {
       fieldsMetaRef.current[
         currentStepName as keyof typeof fieldsMetaRef.current
-      ] = prettifyFormValues(values, stepFields[currentStepName]);
+      ] = prettifyFormValues(parsedValues, stepFields[currentStepName]);
     }
 
-    const parsedValues = await parseFormValues(values);
     refetchCompany();
     switch (stepState.currentStep.name) {
       case 'select_country': {

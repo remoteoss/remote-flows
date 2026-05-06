@@ -190,7 +190,8 @@ describe('utils lib', () => {
     });
 
     it('handles money field', () => {
-      const values = { salary: 100000 };
+      // value must be in cents
+      const values = { salary: 100_000_00 };
       const fields: JSFFields = [
         {
           name: 'salary',
