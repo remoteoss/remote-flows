@@ -210,6 +210,43 @@ describe('utils lib', () => {
       });
     });
 
+    it('should not convert money field to cents if skipMoneyConversion is true', () => {
+      const values = { salary: 100000 };
+      const fields: JSFFields = [
+        { name: 'salary', type: 'money', label: 'Salary', currency: 'USD' },
+      ];
+      expect(
+        prettifyFormValues(values, fields, { skipMoneyConversion: true }),
+      ).toEqual({
+        salary: {
+          prettyValue: 100000,
+          label: 'Salary',
+          inputType: 'money',
+          currency: 'USD',
+        },
+      });
+    });
+
+    it('handles money field with null value', () => {
+      const values = { salary: null };
+      const fields: JSFFields = [
+        {
+          name: 'salary',
+          type: 'money',
+          label: 'Salary',
+          currency: 'USD',
+        },
+      ];
+      expect(prettifyFormValues(values, fields)).toEqual({
+        salary: {
+          prettyValue: null,
+          label: 'Salary',
+          inputType: 'money',
+          currency: 'USD',
+        },
+      });
+    });
+
     it('handles fieldset field', () => {
       const values = {
         address: {
