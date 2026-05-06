@@ -216,6 +216,7 @@ export function prettifyFormValues(
           const prettiedFieldset = prettifyFormValues(
             value as Record<string, unknown>,
             field.fields as JSFFields,
+            options,
           );
 
           // Handles benefits fieldset in specific
