@@ -213,21 +213,19 @@ describe('ContractorOnboardingFlow', () => {
             <h2 className='title'>Basic Information</h2>
             <Review
               values={
-                contractorOnboardingBag.stepState.values?.basic_information ||
-                {}
+                contractorOnboardingBag.meta.fields?.basic_information || {}
               }
             />
             <h2 className='title'>Pricing Plan</h2>
             <Review
               values={
-                contractorOnboardingBag.stepState.values
-                  ?.pricing_plan_details || {}
+                contractorOnboardingBag.meta.fields?.pricing_plan_details || {}
               }
             />
             <h2 className='title'>Contract Details</h2>
             <Review
               values={
-                contractorOnboardingBag.stepState.values?.contract_details || {}
+                contractorOnboardingBag.meta.fields?.contract_details || {}
               }
             />
             <BackButton>Back</BackButton>
