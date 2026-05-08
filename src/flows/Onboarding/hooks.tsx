@@ -724,22 +724,27 @@ export const useOnboarding = ({
         select_country: prettifyFormValues(
           selectCountryInitialValues,
           stepFields.select_country,
+          { skipMoneyConversion: true },
         ),
         basic_information: prettifyFormValues(
           basicInformationInitialValues,
           stepFields.basic_information,
+          { skipMoneyConversion: true },
         ),
         engagement_agreement_details: prettifyFormValues(
           engagementAgreementDetailsInitialValues,
           stepFields.engagement_agreement_details,
+          { skipMoneyConversion: true },
         ),
         contract_details: prettifyFormValues(
           contractDetailsInitialValues,
           stepFields.contract_details,
+          { skipMoneyConversion: true },
         ),
         benefits: prettifyFormValues(
           benefitsInitialValues,
           stepFields.benefits,
+          { skipMoneyConversion: true },
         ),
       };
 
@@ -817,13 +822,13 @@ export const useOnboarding = ({
   async function onSubmit(values: FieldValues) {
     // Prettify values for the current step
     const currentStepName = stepState.currentStep.name;
+    const parsedValues = await parseFormValues(values);
     if (currentStepName in fieldsMetaRef.current) {
       fieldsMetaRef.current[
         currentStepName as keyof typeof fieldsMetaRef.current
-      ] = prettifyFormValues(values, stepFields[currentStepName]);
+      ] = prettifyFormValues(parsedValues, stepFields[currentStepName]);
     }
 
-    const parsedValues = await parseFormValues(values);
     refetchCompany();
     switch (stepState.currentStep.name) {
       case 'select_country': {

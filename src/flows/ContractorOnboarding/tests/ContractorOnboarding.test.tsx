@@ -48,43 +48,11 @@ import {
 } from '@/src/common/api/fixtures/contractors-subscriptions';
 import { mockBlockedEligibilityQuestionnaireResponse } from '@/src/common/api/fixtures/eligibility-questionnaire';
 import { mockContractorBasicInformationSchema } from '@/src/common/api/fixtures/contractors';
+import { PrettifiedValuesRenderer } from '@/src/tests/components/PrettifiedValuesRenderer';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
-
-// Helper component to display employment data in tests
-function Review({ values }: { values: Record<string, unknown> }) {
-  return (
-    <div className='onboarding-values'>
-      {Object.entries(values).map(([key, value]) => {
-        if (Array.isArray(value)) {
-          return (
-            <pre key={key}>
-              {key}: {value.join(', ')}
-            </pre>
-          );
-        }
-        if (typeof value === 'object') {
-          return (
-            <pre key={key}>
-              {key}: {JSON.stringify(value)}
-            </pre>
-          );
-        }
-        if (typeof value === 'string' || typeof value === 'number') {
-          return (
-            <pre key={key}>
-              {key}: {value}
-            </pre>
-          );
-        }
-
-        return null;
-      })}
-    </div>
-  );
-}
 
 const CONTRACTOR_ONBOARDING_STEPS: Record<number, string> = {
   [0]: 'Select Country',
@@ -211,23 +179,21 @@ describe('ContractorOnboardingFlow', () => {
           <div className='contractor-onboarding-review'>
             <h2 className='title'>Review</h2>
             <h2 className='title'>Basic Information</h2>
-            <Review
+            <PrettifiedValuesRenderer
               values={
-                contractorOnboardingBag.stepState.values?.basic_information ||
-                {}
+                contractorOnboardingBag.meta.fields?.basic_information || {}
               }
             />
             <h2 className='title'>Pricing Plan</h2>
-            <Review
+            <PrettifiedValuesRenderer
               values={
-                contractorOnboardingBag.stepState.values
-                  ?.pricing_plan_details || {}
+                contractorOnboardingBag.meta.fields?.pricing_plan_details || {}
               }
             />
             <h2 className='title'>Contract Details</h2>
-            <Review
+            <PrettifiedValuesRenderer
               values={
-                contractorOnboardingBag.stepState.values?.contract_details || {}
+                contractorOnboardingBag.meta.fields?.contract_details || {}
               }
             />
             <BackButton>Back</BackButton>
@@ -344,21 +310,21 @@ describe('ContractorOnboardingFlow', () => {
           <div className='contractor-onboarding-review'>
             <h2 className='title'>Review</h2>
             <h2 className='title'>Basic Information</h2>
-            <Review
+            <PrettifiedValuesRenderer
               values={
                 contractorOnboardingBag.stepState.values?.basic_information ||
                 {}
               }
             />
             <h2 className='title'>Pricing Plan</h2>
-            <Review
+            <PrettifiedValuesRenderer
               values={
                 contractorOnboardingBag.stepState.values
                   ?.pricing_plan_details || {}
               }
             />
             <h2 className='title'>Contract Details</h2>
-            <Review
+            <PrettifiedValuesRenderer
               values={
                 contractorOnboardingBag.stepState.values?.contract_details || {}
               }

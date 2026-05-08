@@ -811,26 +811,32 @@ export const useContractorOnboarding = ({
         select_country: prettifyFormValues(
           selectCountryInitialValues,
           stepFields.select_country,
+          { skipMoneyConversion: true },
         ),
         basic_information: prettifyFormValues(
           basicInformationInitialValues,
           stepFields.basic_information,
+          { skipMoneyConversion: true },
         ),
         contract_details: prettifyFormValues(
           contractDetailsInitialValues,
           stepFields.contract_details,
+          { skipMoneyConversion: true },
         ),
         contract_preview: prettifyFormValues(
           contractPreviewInitialValues,
           stepFields.contract_preview,
+          { skipMoneyConversion: true },
         ),
         pricing_plan: prettifyFormValues(
           pricingPlanInitialValues,
           stepFields.pricing_plan,
+          { skipMoneyConversion: true },
         ),
         eligibility_questionnaire: prettifyFormValues(
           eligibilityQuestionnaireInitialValues,
           stepFields.eligibility_questionnaire,
+          { skipMoneyConversion: true },
         ),
       };
 
@@ -953,12 +959,13 @@ export const useContractorOnboarding = ({
 
   async function onSubmit(values: FieldValues) {
     const currentStepName = stepState.currentStep.name;
+    const parsedValues = await parseFormValues(values);
+
     if (currentStepName in fieldsMetaRef.current) {
       fieldsMetaRef.current[
         currentStepName as keyof typeof fieldsMetaRef.current
-      ] = prettifyFormValues(values, stepFields[currentStepName]);
+      ] = prettifyFormValues(parsedValues, stepFields[currentStepName]);
     }
-    const parsedValues = await parseFormValues(values);
     switch (stepState.currentStep.name) {
       case 'select_country': {
         setInternalCountryCode(parsedValues.country);
