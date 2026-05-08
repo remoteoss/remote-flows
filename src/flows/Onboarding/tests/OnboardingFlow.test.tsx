@@ -2611,7 +2611,6 @@ describe('OnboardingFlow', () => {
 
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    // Navigate to benefits step
     let nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
     await screen.findByText(/Step: Contract Details/i);
@@ -2620,7 +2619,6 @@ describe('OnboardingFlow', () => {
     nextButton.click();
     await screen.findByText(/Step: Benefits/i);
 
-    // Verify presentation metadata structure
     expect(capturedPresentation).toEqual({
       benefits_service_fee: {
         amount: 15.0,
@@ -2682,10 +2680,6 @@ describe('OnboardingFlow', () => {
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
     await screen.findByText(/Step: Basic Information/i);
 
-    // Verify basic_information step has no presentation
-    expect(
-      capturedBasicInfoPresentation === null ||
-        capturedBasicInfoPresentation === undefined,
-    ).toBe(true);
+    expect(capturedBasicInfoPresentation).toBeUndefined();
   });
 });
