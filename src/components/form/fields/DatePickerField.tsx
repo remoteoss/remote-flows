@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '@/src/components/ui/form';
 
-import { useFormFields } from '@/src/context';
+import { useFormFields, useTransformer } from '@/src/context';
 import { Components, JSFField, $TSFixMe } from '@/src/types/remoteFlows';
 import { getMinStartDate } from '@/src/components/form/utils';
 
@@ -22,6 +22,7 @@ export function DatePickerField({
 }: DatePickerFieldProps) {
   const { components } = useFormFields();
   const { control } = useFormContext();
+  const transformHtml = useTransformer();
 
   let minDateValue: Date;
   if (rest.meta?.mot && typeof rest.meta.mot === 'number') {
@@ -51,6 +52,7 @@ export function DatePickerField({
           label,
           name,
           onChange,
+          transformHtml,
           ...(minDateValue && { minDate: minDateValue.toISOString() }),
           ...(maxDateValue && { maxDate: maxDateValue.toISOString() }),
           ...rest,
