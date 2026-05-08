@@ -4,11 +4,21 @@
 
 ### Minor Changes
 
-- use base description (#995) [#995](https://github.com/remoteoss/remote-flows/pull/995)
-- add netherlands changelog (#990) [#990](https://github.com/remoteoss/remote-flows/pull/990)
+#### Features
 - Add transformer hook (#986) [#986](https://github.com/remoteoss/remote-flows/pull/986)
 - add transformHtml prop to let custom components transform html to components (#992) [#992](https://github.com/remoteoss/remote-flows/pull/992)
-- parse values before prettifying (#1001) [#1001](https://github.com/remoteoss/remote-flows/pull/1001)
+
+#### Chores
+- use shared description component for fieldsets (#995) [#995](https://github.com/remoteoss/remote-flows/pull/995)
+
+#### Docs
+- add netherlands changelog (#990) [#990](https://github.com/remoteoss/remote-flows/pull/990)
+
+#### Fixes
+- parse values before prettifying for the review step (#1001) [#1001](https://github.com/remoteoss/remote-flows/pull/1001)
+
+
+
 
 ## 1.30.0
 
