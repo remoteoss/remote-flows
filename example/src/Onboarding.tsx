@@ -27,12 +27,13 @@ const BenefitsAboutSection = ({
   description,
   url,
 }: {
-  description: string;
-  url: string;
+  description?: string;
+  url?: string;
 }) => {
-  if (!description || !url) {
+  if (!description) {
     return null;
   }
+
   return (
     <Card className='space-y-4 p-6 mb-4'>
       <h2 className='text-xl font-semibold text-gray-900'>About</h2>
@@ -40,17 +41,19 @@ const BenefitsAboutSection = ({
         className='prose prose-sm max-w-none text-xs text-gray-700 leading-relaxed space-y-4'
         dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
       />
-      <p className='text-xs text-gray-700 leading-relaxed space-y-4'>
-        Want more details on benefits?{' '}
-        <a
-          href={url}
-          className='inline-block text-blue-600 hover:text-blue-700 hover:underline text-xs mt-2'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          Check our guide
-        </a>
-      </p>
+      {url && (
+        <p className='text-xs text-gray-700 leading-relaxed space-y-4'>
+          Want more details on benefits?{' '}
+          <a
+            href={url}
+            className='inline-block text-blue-600 hover:text-blue-700 hover:underline text-xs mt-2'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            Check our guide
+          </a>
+        </p>
+      )}
     </Card>
   );
 };
