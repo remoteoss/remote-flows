@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 1.32.0
+
+### Minor Changes
+
+- surface benefits x-jsf-presentation (#1000) [#1000](https://github.com/remoteoss/remote-flows/pull/1000)
+
 ## 1.31.0
 
 ### Minor Changes
