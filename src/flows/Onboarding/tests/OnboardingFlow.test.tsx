@@ -2566,4 +2566,120 @@ describe('OnboardingFlow', () => {
       ).toBeInTheDocument();
     });
   });
+
+  it('should include description, fine_print, and benefits_service_fee in benefits presentation', async () => {
+    let capturedPresentation: Record<string, unknown> | null | undefined = null;
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        if (onboardingBag.stepState.currentStep.name === 'benefits') {
+          capturedPresentation = onboardingBag.meta.presentation;
+        }
+
+        if (onboardingBag.isLoading) {
+          return <div data-testid='spinner'>Loading...</div>;
+        }
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+    await screen.findByText(/Step: Contract Details/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+    await screen.findByText(/Step: Benefits/i);
+
+    expect(capturedPresentation).toEqual({
+      benefits_service_fee: {
+        amount: 15.0,
+        currency: 'USD',
+      },
+      description:
+        'We offer our employees supplemental benefits - Meal and Health Insurance (In partnership with Advance Care/Tranquilidade and Coverflex)',
+      fine_print:
+        'New: Health Insurance is now optional for new hires in Portugal.\r\nPlease note that all local payroll deductions for required coverages are included in the TCE.\r\nAny pricing changes will be communicated in advance of updated billing.',
+      url: 'https://remote.com/benefits-guide/portugal',
+    });
+  });
+
+  it('should have null or undefined presentation for basic_information step', async () => {
+    let capturedBasicInfoPresentation:
+      | Record<string, unknown>
+      | null
+      | undefined = undefined;
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        if (onboardingBag.stepState.currentStep.name === 'basic_information') {
+          capturedBasicInfoPresentation = onboardingBag.meta.presentation;
+        }
+
+        if (onboardingBag.isLoading) {
+          return <div data-testid='spinner'>Loading...</div>;
+        }
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    expect(capturedBasicInfoPresentation).toBeUndefined();
+  });
 });
