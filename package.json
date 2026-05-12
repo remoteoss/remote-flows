@@ -1,6 +1,6 @@
 {
   "name": "@remoteoss/remote-flows",
-  "version": "1.30.0",
+  "version": "1.32.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/remoteoss/remote-flows.git"
@@ -14,6 +14,8 @@
     "dev": "NODE_OPTIONS='--max-old-space-size=8192' NODE_ENV=development tsup --watch",
     "build:reset": "postcss src/styles/reset.css -o ./example/src/css/reset.css",
     "lint": "oxlint .",
+    "lint:workflows": "zizmor .github/workflows/",
+    "lint:workflows:fix": "zizmor --fix .github/workflows/",
     "format": "oxfmt",
     "openapi-ts": "openapi-ts && npm run format",
     "test": "vitest",
