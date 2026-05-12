@@ -20,11 +20,8 @@ import { ReviewOnboardingStep } from './ReviewOnboardingStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
-<<<<<<< HEAD
 import { transformHtmlToComponents } from './utils/transformHtml';
-=======
 import { sanitizeHtml } from '@remoteoss/remote-flows/internals';
->>>>>>> main
 import './css/main.css';
 
 const BenefitsAboutSection = ({
