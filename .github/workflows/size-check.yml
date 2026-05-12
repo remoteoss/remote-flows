@@ -22,10 +22,12 @@ jobs:
 
     steps:
       - name: Checkout PR code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: '24.15.0'
           cache: 'npm'
@@ -40,10 +42,11 @@ jobs:
         run: npm run size -- --output out/current-bundle.json
 
       - name: Checkout base branch
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           ref: ${{ github.base_ref }}
           path: base
+          persist-credentials: false
 
       - name: Check if comparison script exists on base
         id: check_script
@@ -74,7 +77,7 @@ jobs:
         id: compare
         run: |
           # Check if we have comparison data
-          if [ "${{ steps.check_script.outputs.exists }}" != "true" ]; then
+          if [ "${STEPS_CHECK_SCRIPT_OUTPUTS_EXISTS}" != "true" ]; then
             echo "⚠️ Comparison script not found in base branch. Showing current bundle size only."
             npm exec tsx scripts/format-current-size.ts out/current-bundle.json > out/size-report.md
           else
@@ -89,9 +92,11 @@ jobs:
           echo "report<<EOF" >> $GITHUB_OUTPUT
           echo "$REPORT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+        env:
+          STEPS_CHECK_SCRIPT_OUTPUTS_EXISTS: ${{ steps.check_script.outputs.exists }}
 
       - name: Post PR comment
-        uses: actions/github-script@v9
+        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553 # v9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -135,7 +140,7 @@ jobs:
         run: npm run size:check
 
       - name: Upload bundle analysis
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: always()
         with:
           name: bundle-size-analysis

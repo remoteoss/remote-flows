@@ -11,10 +11,12 @@ jobs:
     name: Lint and Format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
       - name: Use Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: '24.15.0'
 
@@ -34,10 +36,12 @@ jobs:
     name: Build and Check Exports
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
       - name: Use Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: '24.15.0'
 
@@ -54,10 +58,12 @@ jobs:
     name: Tests with Coverage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
       - name: Use Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: '24.15.0'
 
@@ -74,7 +80,7 @@ jobs:
         run: npm run coverage:extract -- --output out/current-coverage.json
 
       - name: Upload current coverage
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: current-coverage
           path: out/current-coverage.json
@@ -84,7 +90,9 @@ jobs:
     name: Generate Base Coverage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
       - name: Check if coverage scripts exist
         id: check-scripts
@@ -98,7 +106,7 @@ jobs:
       - name: Check cache for base coverage
         if: steps.check-scripts.outputs.exists == 'true'
         id: cache-base
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         with:
           path: base-coverage.json
           key: coverage-${{ github.base_ref }}-${{ github.event.pull_request.base.sha }}
@@ -106,8 +114,8 @@ jobs:
       - name: Checkout base branch
         if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true'
         run: |
-          git fetch origin ${{ github.base_ref }}
-          git checkout origin/${{ github.base_ref }}
+          git fetch origin ${GITHUB_BASE_REF}
+          git checkout origin/${GITHUB_BASE_REF}
 
       - name: Check if coverage scripts exist in base branch
         if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true'
@@ -121,7 +129,7 @@ jobs:
 
       - name: Use Node.js
         if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: '24.15.0'
 
@@ -139,7 +147,7 @@ jobs:
 
       - name: Upload base coverage
         if: steps.check-scripts.outputs.exists == 'true'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: base-coverage
           path: base-coverage.json
@@ -149,10 +157,12 @@ jobs:
     name: Example App Checks
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
       - name: Use Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: '24.15.0'
 
@@ -182,10 +192,12 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
       - name: Use Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: '24.15.0'
 
@@ -196,13 +208,13 @@ jobs:
         run: mkdir -p out
 
       - name: Download current coverage
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           name: current-coverage
           path: out
 
       - name: Download base coverage
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           name: base-coverage
           path: out
@@ -220,7 +232,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Post PR comment
-        uses: actions/github-script@v9
+        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553 # v9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -261,7 +273,7 @@ jobs:
           COVERAGE_REPORT: ${{ steps.compare.outputs.report }}
 
       - name: Upload coverage analysis
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: always()
         with:
           name: coverage-analysis
@@ -275,11 +287,13 @@ jobs:
     name: Deploy Remote Flows Preview
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
       - name: Deploy remote-flows to vercel
         id: vercel-remote-flows
-        uses: amondnet/vercel-action@v42.2.0
+        uses: amondnet/vercel-action@4b810e26f7bb2a331c698af186f890cbf20d5f72 # v42.2.0
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
@@ -290,10 +304,12 @@ jobs:
 
       - name: Save deployment URL
         run: |
-          echo "${{ steps.vercel-remote-flows.outputs.preview-url }}" > remote-flows-url.txt
+          echo "${STEPS_VERCEL_REMOTE_FLOWS_OUTPUTS_PREVIEW_URL}" > remote-flows-url.txt
+        env:
+          STEPS_VERCEL_REMOTE_FLOWS_OUTPUTS_PREVIEW_URL: ${{ steps.vercel-remote-flows.outputs.preview-url }}
 
       - name: Upload deployment URL
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: remote-flows-url
           path: remote-flows-url.txt
@@ -310,10 +326,12 @@ jobs:
         deploy-remote-flows,
       ]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
       - name: Use Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: '24.15.0'
 
@@ -329,7 +347,7 @@ jobs:
         run: npx playwright install chromium --with-deps
 
       - name: Download remote-flows URL
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           name: remote-flows-url
 
@@ -346,7 +364,7 @@ jobs:
         working-directory: ./example
         run: npx playwright test --project=chromium
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
