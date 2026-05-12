@@ -4,9 +4,13 @@
 
 ### Minor Changes
 
+#### Features
+
+- add `transformHTMLToComponents` to RemoteFlows (#993) [#993](https://github.com/remoteoss/remote-flows/pull/993)
+
+#### Chores
+
 - static analyze github actions (#1005) [#1005](https://github.com/remoteoss/remote-flows/pull/1005)
-- add example and expose props (#993) [#993](https://github.com/remoteoss/remote-flows/pull/993)
-- Add some docs (#994) [#994](https://github.com/remoteoss/remote-flows/pull/994)
 
 ## 1.32.0
 
