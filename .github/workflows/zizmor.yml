@@ -24,50 +24,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install zizmor
-        run: |
-          curl -L https://github.com/woodruffw/zizmor/releases/latest/download/zizmor-x86_64-unknown-linux-gnu.tar.gz -o zizmor.tar.gz
-          tar -xzf zizmor.tar.gz
-          chmod +x zizmor
-          sudo mv zizmor /usr/local/bin/
-          zizmor --version
-
-      - name: Run zizmor audit (console output)
-        run: zizmor .github/workflows/
-        continue-on-error: true
-
-      - name: Generate SARIF report
-        id: sarif
-        run: |
-          # Run zizmor with SARIF output (stderr goes to console, stdout goes to file)
-          set +e
-          zizmor --format sarif .github/workflows/ > zizmor-results.sarif
-          EXIT_CODE=$?
-          set -e
-
-          echo "Zizmor exit code: $EXIT_CODE"
-
-          # Check if SARIF file was created and contains valid JSON start
-          if [ ! -s zizmor-results.sarif ] || ! grep -q '^\s*{' zizmor-results.sarif; then
-            echo "Error: SARIF file is empty or invalid"
-            echo "has_results=false" >> $GITHUB_OUTPUT
-          else
-            echo "SARIF file generated successfully"
-            # Check if SARIF has any results
-            if grep -q '"results":\s*\[\s*\]' zizmor-results.sarif || [ $(wc -c < zizmor-results.sarif) -lt 300 ]; then
-              echo "SARIF file has no findings"
-              echo "has_results=false" >> $GITHUB_OUTPUT
-            else
-              echo "SARIF file has findings"
-              echo "has_results=true" >> $GITHUB_OUTPUT
-            fi
-          fi
-
-          echo "SARIF file size: $(wc -c < zizmor-results.sarif) bytes"
-
-      - name: Upload SARIF results to GitHub Security
-        uses: github/codeql-action/upload-sarif@68bde559dea0fdcac2102bfdf6230c5f70eb485e # v4
-        if: always() && steps.sarif.outputs.has_results == 'true'
+      - name: Run zizmor security audit
+        uses: zizmorcore/zizmor-action@b1d7e1fb5de872772f31590499237e7cce841e8e
         with:
-          sarif_file: zizmor-results.sarif
-          category: zizmor
+          sarif-file: zizmor-results.sarif

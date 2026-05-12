@@ -118,7 +118,8 @@ jobs:
 
           gh release create v${STEPS_VERSION_CHECK_OUTPUTS_VERSION} \
             --title "v${STEPS_VERSION_CHECK_OUTPUTS_VERSION}" \
-            --notes "$CHANGELOG_CONTENT"
+            --notes "$CHANGELOG_CONTENT" \
+            --target "$(git rev-parse HEAD)"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STEPS_VERSION_CHECK_OUTPUTS_VERSION: ${{ steps.version-check.outputs.version }}
