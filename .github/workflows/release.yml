@@ -110,14 +110,6 @@ jobs:
         env:
           STEPS_NPM_TAG_OUTPUTS_TAG: ${{ steps.npm-tag.outputs.tag }}
 
-      - name: Create git tag
-        if: steps.version-check.outputs.changed == 'true'
-        run: |
-          git tag v${STEPS_VERSION_CHECK_OUTPUTS_VERSION}
-          git push origin v${STEPS_VERSION_CHECK_OUTPUTS_VERSION}
-        env:
-          STEPS_VERSION_CHECK_OUTPUTS_VERSION: ${{ steps.version-check.outputs.version }}
-
       - name: Create GitHub release
         if: steps.version-check.outputs.changed == 'true'
         run: |
