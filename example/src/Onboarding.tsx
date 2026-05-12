@@ -377,7 +377,7 @@ const OnBoardingRender = ({
       </div>
 
       <div className='card' style={{ marginBottom: '20px' }}>
-        <h1 className='heading'>{stepTitle}</h1>
+        <h1 className='heading' data-testid='onboarding-step-title'>{stepTitle}</h1>
 
         {stepDescription && (
           <p className='text-sm text-[#71717A]'>{stepDescription}</p>
