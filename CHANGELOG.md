@@ -1,5 +1,61 @@
 # @remoteoss/remote-flows
 
+## 1.32.0
+
+### Minor Changes
+
+- surface benefits x-jsf-presentation (#1000) [#1000](https://github.com/remoteoss/remote-flows/pull/1000)
+
+## 1.31.0
+
+### Minor Changes
+
+#### Features
+
+- Add transformer hook (#986) [#986](https://github.com/remoteoss/remote-flows/pull/986)
+- add transformHtml prop to let custom components transform html to components (#992) [#992](https://github.com/remoteoss/remote-flows/pull/992)
+
+#### Chores
+
+- use shared description component for fieldsets (#995) [#995](https://github.com/remoteoss/remote-flows/pull/995)
+
+#### Docs
+
+- add netherlands changelog (#990) [#990](https://github.com/remoteoss/remote-flows/pull/990)
+
+#### Fixes
+
+- parse values before prettifying for the review step (#1001) [#1001](https://github.com/remoteoss/remote-flows/pull/1001)
+
+## 1.30.0
+
+### Minor Changes
+
+#### Features
+
+- update dependency react-hook-form to v7.73.1 (#974) [#974](https://github.com/remoteoss/remote-flows/pull/974)
+- update dependency dompurify to v3.4.1 (#977) [#977](https://github.com/remoteoss/remote-flows/pull/977)
+- update tailwindcss monorepo to v4.2.4 (#976) [#976](https://github.com/remoteoss/remote-flows/pull/976)
+- implement recommended badge (#978) [#978](https://github.com/remoteoss/remote-flows/pull/978)
+
+#### Fixes
+
+- avoid rendering statements without a description (#964) [#964](https://github.com/remoteoss/remote-flows/pull/964)
+
+- fix tel field props (#980) [#980](https://github.com/remoteoss/remote-flows/pull/980)
+- improve force fields to use shared form description component (#984) [#984](https://github.com/remoteoss/remote-flows/pull/984)
+
+#### Chores
+
+- update dependency vite to v8.0.9 (#970) [#970](https://github.com/remoteoss/remote-flows/pull/970)
+- update dependency filesize to v11.0.16 (#969) [#969](https://github.com/remoteoss/remote-flows/pull/969)
+- update dependency oxfmt to v0.46.0 (#972) [#972](https://github.com/remoteoss/remote-flows/pull/972)
+- update dependency oxlint to v1.61.0 (#973) [#973](https://github.com/remoteoss/remote-flows/pull/973)
+- update vitest monorepo to v4.1.5 (#975) [#975](https://github.com/remoteoss/remote-flows/pull/975)
+- update dependency axios to v1.15.2 (#968) [#968](https://github.com/remoteoss/remote-flows/pull/968)
+- update dependency vite to v8.0.10 (#982) [#982](https://github.com/remoteoss/remote-flows/pull/982)
+- update dependency msw to v2.13.5 (#981) [#981](https://github.com/remoteoss/remote-flows/pull/981)
+
 ## 1.29.1
 
 ### Patch Changes

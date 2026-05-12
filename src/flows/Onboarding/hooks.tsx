@@ -570,6 +570,19 @@ export const useOnboarding = ({
     review: null,
   };
 
+  const stepPresentation: Record<
+    StepKeys,
+    Record<string, unknown> | null | undefined
+  > = {
+    select_country: selectCountryForm?.meta?.['x-jsf-presentation'],
+    basic_information: basicInformationForm?.meta?.['x-jsf-presentation'],
+    engagement_agreement_details:
+      engagementAgreementDetailsSchema?.meta?.['x-jsf-presentation'],
+    contract_details: contractDetailsForm?.meta?.['x-jsf-presentation'],
+    benefits: benefitOffersSchema?.meta?.['x-jsf-presentation'],
+    review: null,
+  };
+
   const {
     country,
     basic_information: employmentBasicInformation = {},
@@ -724,22 +737,27 @@ export const useOnboarding = ({
         select_country: prettifyFormValues(
           selectCountryInitialValues,
           stepFields.select_country,
+          { skipMoneyConversion: true },
         ),
         basic_information: prettifyFormValues(
           basicInformationInitialValues,
           stepFields.basic_information,
+          { skipMoneyConversion: true },
         ),
         engagement_agreement_details: prettifyFormValues(
           engagementAgreementDetailsInitialValues,
           stepFields.engagement_agreement_details,
+          { skipMoneyConversion: true },
         ),
         contract_details: prettifyFormValues(
           contractDetailsInitialValues,
           stepFields.contract_details,
+          { skipMoneyConversion: true },
         ),
         benefits: prettifyFormValues(
           benefitsInitialValues,
           stepFields.benefits,
+          { skipMoneyConversion: true },
         ),
       };
 
@@ -817,13 +835,13 @@ export const useOnboarding = ({
   async function onSubmit(values: FieldValues) {
     // Prettify values for the current step
     const currentStepName = stepState.currentStep.name;
+    const parsedValues = await parseFormValues(values);
     if (currentStepName in fieldsMetaRef.current) {
       fieldsMetaRef.current[
         currentStepName as keyof typeof fieldsMetaRef.current
-      ] = prettifyFormValues(values, stepFields[currentStepName]);
+      ] = prettifyFormValues(parsedValues, stepFields[currentStepName]);
     }
 
-    const parsedValues = await parseFormValues(values);
     refetchCompany();
     switch (stepState.currentStep.name) {
       case 'select_country': {
@@ -1081,6 +1099,7 @@ export const useOnboarding = ({
     meta: {
       fields: fieldsMetaRef.current,
       fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
+      presentation: stepPresentation[stepState.currentStep.name],
     },
 
     /**

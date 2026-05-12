@@ -37,42 +37,11 @@ import {
 import userEvent from '@testing-library/user-event';
 import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
 import { getYearMonthDate } from '@/src/common/dates';
+import { PrettifiedValuesRenderer } from '@/src/tests/components/PrettifiedValuesRenderer';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
-
-function Review({ values }: { values: Record<string, unknown> }) {
-  return (
-    <div className='onboarding-values'>
-      {Object.entries(values).map(([key, value]) => {
-        if (Array.isArray(value)) {
-          return (
-            <pre>
-              {key}: {value.join(', ')}
-            </pre>
-          );
-        }
-        if (typeof value === 'object') {
-          return (
-            <pre>
-              {key}: {JSON.stringify(value)}
-            </pre>
-          );
-        }
-        if (typeof value === 'string' || typeof value === 'number') {
-          return (
-            <pre>
-              {key}: {value}
-            </pre>
-          );
-        }
-
-        return null;
-      })}
-    </div>
-  );
-}
 
 describe('OnboardingFlow', () => {
   const MultiStepFormWithCountry = ({
@@ -153,15 +122,17 @@ describe('OnboardingFlow', () => {
         return (
           <div className='onboarding-review'>
             <h2 className='title'>Basic Information</h2>
-            <Review
-              values={onboardingBag.stepState.values?.basic_information || {}}
+            <PrettifiedValuesRenderer
+              values={onboardingBag.meta.fields.basic_information || {}}
             />
             <h2 className='title'>Contract Details</h2>
-            <Review
-              values={onboardingBag.stepState.values?.contract_details || {}}
+            <PrettifiedValuesRenderer
+              values={onboardingBag.meta.fields.contract_details || {}}
             />
             <h2 className='title'>Benefits</h2>
-            <Review values={onboardingBag.stepState.values?.benefits || {}} />
+            <PrettifiedValuesRenderer
+              values={onboardingBag.meta.fields.benefits || {}}
+            />
             <BackButton>Back</BackButton>
             <OnboardingInvite
               render={({
@@ -241,15 +212,17 @@ describe('OnboardingFlow', () => {
         return (
           <div className='onboarding-review'>
             <h2 className='title'>Basic Information</h2>
-            <Review
-              values={onboardingBag.stepState.values?.basic_information || {}}
+            <PrettifiedValuesRenderer
+              values={onboardingBag.meta.fields?.basic_information || {}}
             />
             <h2 className='title'>Contract Details</h2>
-            <Review
-              values={onboardingBag.stepState.values?.contract_details || {}}
+            <PrettifiedValuesRenderer
+              values={onboardingBag.meta.fields?.contract_details || {}}
             />
             <h2 className='title'>Benefits</h2>
-            <Review values={onboardingBag.stepState.values?.benefits || {}} />
+            <PrettifiedValuesRenderer
+              values={onboardingBag.meta.fields?.benefits || {}}
+            />
             <BackButton>Back</BackButton>
             <OnboardingInvite
               render={() => 'Invite Employee'}
@@ -2447,5 +2420,266 @@ describe('OnboardingFlow', () => {
         '0',
       );
     });
+  });
+
+  it('should correctly prettify money fields in review step after submitting contract details', async () => {
+    const uniqueEmploymentId = generateUniqueEmploymentId();
+
+    // Mock with Portugal since it has money fields (annual_gross_salary)
+    server.use(
+      http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
+        return HttpResponse.json({
+          ...employmentDefaultResponse,
+          data: {
+            ...employmentDefaultResponse.data,
+            employment: {
+              ...employmentDefaultResponse.data.employment,
+              id: uniqueEmploymentId,
+              status: 'created',
+            },
+          },
+        });
+      }),
+    );
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+        if (onboardingBag.isLoading) {
+          return <div data-testid='spinner'>Loading...</div>;
+        }
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        employmentId={uniqueEmploymentId}
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+    await screen.findByText(/Step: Contract Details/i);
+
+    await waitFor(() => {
+      const salaryInput = screen.getByRole('textbox', {
+        name: /Annual gross salary/i,
+      });
+      expect(salaryInput).toHaveValue('20000');
+    });
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+    await screen.findByText(/Step: Benefits/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Review/i);
+    await waitFor(() => {
+      expect(
+        screen.getByText('annual_gross_salary: 20000'),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it('should correctly prettify money fields when employment is invited and navigates directly to review', async () => {
+    const uniqueEmploymentId = generateUniqueEmploymentId();
+
+    // Mock with invited status so it auto-navigates to review
+    server.use(
+      http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
+        return HttpResponse.json({
+          ...employmentDefaultResponse,
+          data: {
+            ...employmentDefaultResponse.data,
+            employment: {
+              ...employmentDefaultResponse.data.employment,
+              id: uniqueEmploymentId,
+              status: 'invited', // Auto-navigate to review
+              contract_details: {
+                ...employmentDefaultResponse.data.employment.contract_details,
+                annual_gross_salary: 2000000, // 20000 in normal units
+              },
+            },
+          },
+        });
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+        if (onboardingBag.isLoading) {
+          return <div data-testid='spinner'>Loading...</div>;
+        }
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        employmentId={uniqueEmploymentId}
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Review/i);
+    await waitFor(() => {
+      expect(
+        screen.getByText('annual_gross_salary: 20000'),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it('should include description, fine_print, and benefits_service_fee in benefits presentation', async () => {
+    let capturedPresentation: Record<string, unknown> | null | undefined = null;
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        if (onboardingBag.stepState.currentStep.name === 'benefits') {
+          capturedPresentation = onboardingBag.meta.presentation;
+        }
+
+        if (onboardingBag.isLoading) {
+          return <div data-testid='spinner'>Loading...</div>;
+        }
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+    await screen.findByText(/Step: Contract Details/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+    await screen.findByText(/Step: Benefits/i);
+
+    expect(capturedPresentation).toEqual({
+      benefits_service_fee: {
+        amount: 15.0,
+        currency: 'USD',
+      },
+      description:
+        'We offer our employees supplemental benefits - Meal and Health Insurance (In partnership with Advance Care/Tranquilidade and Coverflex)',
+      fine_print:
+        'New: Health Insurance is now optional for new hires in Portugal.\r\nPlease note that all local payroll deductions for required coverages are included in the TCE.\r\nAny pricing changes will be communicated in advance of updated billing.',
+      url: 'https://remote.com/benefits-guide/portugal',
+    });
+  });
+
+  it('should have null or undefined presentation for basic_information step', async () => {
+    let capturedBasicInfoPresentation:
+      | Record<string, unknown>
+      | null
+      | undefined = undefined;
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        if (onboardingBag.stepState.currentStep.name === 'basic_information') {
+          capturedBasicInfoPresentation = onboardingBag.meta.presentation;
+        }
+
+        if (onboardingBag.isLoading) {
+          return <div data-testid='spinner'>Loading...</div>;
+        }
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        employmentId={generateUniqueEmploymentId()}
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    expect(capturedBasicInfoPresentation).toBeUndefined();
   });
 });

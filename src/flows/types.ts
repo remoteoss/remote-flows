@@ -107,5 +107,6 @@ type FormResult = FormResultNext | FormResultLegacy;
 export type JSONSchemaFormResultWithFieldsets = FormResult & {
   meta: {
     'x-jsf-fieldsets': JSFFieldset;
+    'x-jsf-presentation'?: Record<string, unknown>;
   };
 };

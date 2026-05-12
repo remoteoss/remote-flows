@@ -70,6 +70,9 @@ export const createHeadlessForm = (
   return {
     meta: {
       'x-jsf-fieldsets': jsfSchema['x-jsf-fieldsets'] as JSFFieldset,
+      'x-jsf-presentation': jsfSchema['x-jsf-presentation'] as
+        | Record<string, unknown>
+        | undefined,
     },
     ...baseCreateHeadlessForm(jsfSchema, {
       initialValues,

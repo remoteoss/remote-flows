@@ -107,7 +107,7 @@ export function CostCalculatorForm({
 
       if (costCalculatorBag?.meta?.fields) {
         costCalculatorBag.meta.fields = prettifyFormValues(
-          values,
+          parsedValues,
           costCalculatorBag.fields,
         );
         costCalculatorBag.meta.fields['employer_currency_slug'] =

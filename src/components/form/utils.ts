@@ -248,14 +248,6 @@ export const fieldTypesTransformations: Record<string, $TSFixMe> = {
       convertFromCents(value) ?? '',
     transformValueToAPI: () => convertToCents,
   },
-  [supportedTypes.RADIO]: {
-    transformValueToAPI: (field: $TSFixMe) => (value: string) => {
-      if (field.transformToBool) {
-        return value === 'yes';
-      }
-      return value;
-    },
-  },
   [supportedTypes.CHECKBOX]: {
     transformValueToAPI: (field: $TSFixMe) => (value: string | boolean) => {
       if (value === undefined) {
