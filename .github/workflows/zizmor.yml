@@ -17,25 +17,25 @@ jobs:
     permissions:
       contents: read
       security-events: write
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           persist-credentials: false
-      
+
       - name: Install zizmor
         run: |
           curl -L https://github.com/woodruffw/zizmor/releases/latest/download/zizmor-x86_64-unknown-linux-musl -o zizmor
           chmod +x zizmor
           sudo mv zizmor /usr/local/bin/
-      
+
       - name: Run zizmor audit
         run: |
           zizmor --format sarif .github/workflows/ > zizmor-results.sarif
           zizmor .github/workflows/
         continue-on-error: true
-      
+
       - name: Upload SARIF results to GitHub Security
         uses: github/codeql-action/upload-sarif@c36f22e9e0e85e0993fb1124f11a8a1c290b5d42 # v3
         if: always()
