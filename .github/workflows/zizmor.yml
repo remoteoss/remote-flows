@@ -26,9 +26,11 @@ jobs:
 
       - name: Install zizmor
         run: |
-          curl -L https://github.com/woodruffw/zizmor/releases/latest/download/zizmor-x86_64-unknown-linux-musl -o zizmor
+          curl -L https://github.com/woodruffw/zizmor/releases/latest/download/zizmor-x86_64-unknown-linux-gnu.tar.gz -o zizmor.tar.gz
+          tar -xzf zizmor.tar.gz
           chmod +x zizmor
           sudo mv zizmor /usr/local/bin/
+          zizmor --version
 
       - name: Run zizmor audit (console output)
         run: zizmor .github/workflows/
