@@ -167,7 +167,6 @@ export const MyOnboardingInviteButton = ({
   creditRiskStatus,
   Component,
   setErrors,
-  canInvite,
 }: {
   creditRiskStatus?: CreditRiskStatus;
   Component: React.ComponentType<OnboardingInviteProps>;
@@ -175,12 +174,10 @@ export const MyOnboardingInviteButton = ({
     apiError: string;
     fieldErrors: NormalizedFieldError[];
   }) => void;
-  canInvite?: boolean;
 }) => {
   if (creditRiskStatus !== 'referred') {
     return (
       <Component
-        disabled={!canInvite}
         className='submit-button'
         onSuccess={() => {
           console.log(
@@ -306,7 +303,6 @@ export const ReviewOnboardingStep = ({
                   creditRiskStatus={creditRiskStatus}
                   Component={OnboardingInvite}
                   setErrors={setErrors}
-                  canInvite={onboardingBag.canInvite}
                 />
               </div>
               <AlertError errors={errors} />
