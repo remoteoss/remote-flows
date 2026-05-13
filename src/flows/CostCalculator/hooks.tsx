@@ -504,7 +504,7 @@ export const useCostCalculator = (
   }
 
   // WE NEED TO FIX: react-hooks/refs - Cannot access ref value during render
-  // eslint-disable-next-line react-hooks/refs
+  // oxlint-disable-next-line react-hooks/refs
   return {
     /**
      * Current step state containing the current step and total number of steps
@@ -613,10 +613,10 @@ export const useCostCalculator = (
      * Fields metadata
      */
     // WE NEED TO FIX: react-hooks/refs - Cannot access ref value during render
-    // eslint-disable-next-line react-hooks/refs
+    // oxlint-disable-next-line react-hooks/refs
     meta: {
       // WE NEED TO FIX: react-hooks/refs - Cannot access ref value during render
-      // eslint-disable-next-line react-hooks/refs
+      // oxlint-disable-next-line react-hooks/refs
       fields: fieldsMetaRef.current?.fields,
     },
   };

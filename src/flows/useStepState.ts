@@ -46,7 +46,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   // when onStepChange/steps references change
   useEffect(() => {
     onStepChange?.(initialStep);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function nextStep() {

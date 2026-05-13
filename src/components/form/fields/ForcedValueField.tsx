@@ -37,7 +37,7 @@ export function ForcedValueField({
 
   useEffect(() => {
     setValue(name, value);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const isHiddenValue = !forcedValueDescription && !statement?.title;

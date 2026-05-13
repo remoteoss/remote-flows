@@ -92,7 +92,7 @@ export function ContractAmendmentForm({
       }
     });
     return () => subscription?.unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = async (values: FieldValues) => {

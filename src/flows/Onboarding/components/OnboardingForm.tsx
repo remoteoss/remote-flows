@@ -45,7 +45,7 @@ export function OnboardingForm({
     if (onboardingBag.employmentId) {
       onboardingBag?.checkFieldUpdates(form.getValues());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = async (
