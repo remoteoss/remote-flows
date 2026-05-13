@@ -50,7 +50,11 @@ import {
 import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
-import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
+import {
+  createStructuredError,
+  prettifyFormValues,
+  safeGetErrorPath,
+} from '@/src/lib/utils';
 import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import {
   contractorStandardProductIdentifier,
@@ -962,7 +966,17 @@ export const useContractorOnboarding = ({
   const extractAiValidationError = (
     error: $TSFixMe,
   ): AiValidationError | null => {
-    const errorData = error?.rawError?.error?.errors?.services_and_deliverables;
+    // Handle inconsistent error structures between environments
+    // Test this with sandbox | local | partners environments
+    const errorData = safeGetErrorPath<{
+      error: string[];
+      source: string;
+      skippable: boolean;
+    }>(error, [
+      'rawError.error.errors.services_and_deliverables', // Dev format
+      'rawError.errors.services_and_deliverables', // Production format
+    ]);
+
     if (errorData?.source === REMOTE_AI_ERROR_SOURCE) {
       return {
         error: errorData.error,

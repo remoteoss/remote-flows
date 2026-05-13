@@ -3,6 +3,7 @@ import {
   formatCurrency,
   getNestedValue,
   prettifyFormValues,
+  safeGetErrorPath,
   sanitizeHtml,
   sanitizeHtmlWithImageErrorHandling,
 } from '../utils';
@@ -465,6 +466,88 @@ describe('utils lib', () => {
         { name: 'John' },
         { name: 'Jane' },
       ]);
+    });
+  });
+
+  describe('safeGetErrorPath', () => {
+    it('should handle production format (without intermediate error)', () => {
+      const error = {
+        rawError: {
+          errors: {
+            services_and_deliverables: {
+              error: ['validation failed'],
+              source: 'REMOTE_AI',
+              skippable: true,
+            },
+          },
+        },
+      };
+
+      const result = safeGetErrorPath(error, [
+        'rawError.error.errors.services_and_deliverables',
+        'rawError.errors.services_and_deliverables',
+      ]);
+
+      expect(result).toEqual({
+        error: ['validation failed'],
+        source: 'REMOTE_AI',
+        skippable: true,
+      });
+    });
+
+    it('should handle local format (with intermediate error)', () => {
+      const error = {
+        rawError: {
+          error: {
+            errors: {
+              services_and_deliverables: {
+                error: ['validation failed'],
+                source: 'REMOTE_AI',
+                skippable: true,
+              },
+            },
+          },
+        },
+      };
+
+      const result = safeGetErrorPath(error, [
+        'rawError.error.errors.services_and_deliverables',
+        'rawError.errors.services_and_deliverables',
+      ]);
+
+      expect(result).toEqual({
+        error: ['validation failed'],
+        source: 'REMOTE_AI',
+        skippable: true,
+      });
+    });
+
+    it('should return null when path does not exist', () => {
+      const error = { rawError: { something: 'else' } };
+
+      const result = safeGetErrorPath(error, [
+        'rawError.error.errors.field',
+        'rawError.errors.field',
+      ]);
+
+      expect(result).toBeNull();
+    });
+
+    it('should return null for invalid error object', () => {
+      expect(safeGetErrorPath(null, ['path'])).toBeNull();
+      expect(safeGetErrorPath(undefined, ['path'])).toBeNull();
+      expect(safeGetErrorPath('not an object', ['path'])).toBeNull();
+    });
+
+    it('should try paths in order and return first match', () => {
+      const error = {
+        path1: { data: 'first' },
+        path2: { data: 'second' },
+      };
+
+      const result = safeGetErrorPath(error, ['path1.data', 'path2.data']);
+
+      expect(result).toBe('first');
     });
   });
 });

@@ -372,6 +372,40 @@ export function getNestedValue<T = unknown>(
 }
 
 /**
+ * Safely extracts nested error data from API responses that may have inconsistent structure.
+ * Tries multiple common error response patterns used across different environments.
+ *
+ * @param error - The error object (usually from catch block)
+ * @param paths - Array of possible paths to try, in order of preference
+ * @returns The extracted error data or null if not found
+ *
+ * @example
+ * // Handles both: { rawError: { error: { errors: {...} } } }
+ * // and: { rawError: { errors: {...} } }
+ * const errorData = safeGetErrorPath(error, [
+ *   'rawError.error.errors.field_name',
+ *   'rawError.errors.field_name'
+ * ]);
+ */
+export function safeGetErrorPath<T = unknown>(
+  error: unknown,
+  paths: string[],
+): T | null {
+  if (!error || typeof error !== 'object') {
+    return null;
+  }
+
+  for (const path of paths) {
+    const result = getNestedValue<T>(error, path);
+    if (result !== undefined && result !== null) {
+      return result;
+    }
+  }
+
+  return null;
+}
+
+/**
  * Sets backend validation errors into react-hook-form state
  * Converts backend field paths to react-hook-form paths and sets errors
  *
