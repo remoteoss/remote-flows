@@ -809,7 +809,7 @@ The `onboardingBag` object returned by the `useOnboarding` hook contains the fol
 | `meta`                 | `{ fields: Record<string, any> }`                                                                                               | Fields metadata for each step with prettified values                                                                                                |
 | `refetchEmployment`    | `() => void`                                                                                                                    | Function to refetch the employment data                                                                                                             |
 | `employment`           | `Employment \| undefined`                                                                                                       | Employment data object                                                                                                                              |
-| `isEmploymentReadOnly` | `boolean`                                                                                                                       | Indicates that the employment cannot be edited (happens when employment.status is `invited`, `created_awaiting_reserve`, or `created_reserve_paid`) |
+| `isEmploymentReadOnly` | `boolean`                                                                                                                       | Indicates that the employment cannot be edited (happens when employment.status is `invited`, `created_awaiting_reserve`, `initiated` and `created_reserve_paid`) |
 
 ### Credit Risk Status Values
 
