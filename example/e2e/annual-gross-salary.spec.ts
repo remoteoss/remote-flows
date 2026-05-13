@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test';
 import { setupVercelBypass } from './helpers/general';
 import { fillEstimationForm } from './helpers/estimation';
 
-
 test.describe('annual gross salary', () => {
   test.beforeEach(async ({ page }) => {
     await setupVercelBypass(page);
