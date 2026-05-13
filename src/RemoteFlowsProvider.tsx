@@ -35,8 +35,10 @@ function RemoteFlowContextWrapper({
 export function FormFieldsProvider({
   children,
   components: userComponents = {},
+  transformHtmlToComponents,
 }: PropsWithChildren<{
   components?: Components;
+  transformHtmlToComponents?: RemoteFlowsSDKProps['transformHtmlToComponents'];
 }>) {
   // Merge user components with lazy defaults
   // User-provided components take precedence, lazy defaults are only used as fallback
@@ -48,8 +50,17 @@ export function FormFieldsProvider({
     } as Components;
   }, [userComponents]);
 
+  // Memoize the context value to avoid unnecessary re-renders
+  const contextValue = useMemo(
+    () => ({
+      components: resolvedComponents,
+      transformHtmlToComponents,
+    }),
+    [resolvedComponents, transformHtmlToComponents],
+  );
+
   return (
-    <FormFieldsContext.Provider value={{ components: resolvedComponents }}>
+    <FormFieldsContext.Provider value={contextValue}>
       <Suspense
         fallback={
           <DelayedFallback fallback={<FormLoadingFallback />} delay={200} />
@@ -73,6 +84,7 @@ export function RemoteFlows({
   errorBoundary = { useParentErrorBoundary: true },
   debug = false,
   credentials,
+  transformHtmlToComponents,
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   // WE NEED TO FIX: react-hooks/refs - Cannot access refs during render
   // eslint-disable-next-line react-hooks/refs
@@ -89,7 +101,10 @@ export function RemoteFlows({
         client={remoteApiClient}
       >
         <QueryClientProvider client={queryClient}>
-          <FormFieldsProvider components={components}>
+          <FormFieldsProvider
+            components={components}
+            transformHtmlToComponents={transformHtmlToComponents}
+          >
             <RemoteFlowContextWrapper
               environment={environment}
               debug={debug}

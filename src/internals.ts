@@ -8,7 +8,7 @@
  */
 
 // Internal utilities
-export { cn } from './lib/utils';
+export { cn, sanitizeHtml } from './lib/utils';
 
 // UI Components for internal use
 export { Button, buttonVariants } from './components/ui/button';

@@ -15,12 +15,49 @@ import {
   zendeskArticles,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
+import { Card } from '@remoteoss/remote-flows/internals';
 import { ReviewOnboardingStep } from './ReviewOnboardingStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
+import { transformHtmlToComponents } from './utils/transformHtml';
+import { sanitizeHtml } from '@remoteoss/remote-flows/internals';
 import './css/main.css';
 
+const BenefitsAboutSection = ({
+  description,
+  url,
+}: {
+  description?: string;
+  url?: string;
+}) => {
+  if (!description) {
+    return null;
+  }
+
+  return (
+    <Card className='space-y-4 p-6 mb-4'>
+      <h2 className='text-xl font-semibold text-gray-900'>About</h2>
+      <div
+        className='prose prose-sm max-w-none text-xs text-gray-700 leading-relaxed space-y-4'
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
+      />
+      {url && (
+        <p className='text-xs text-gray-700 leading-relaxed space-y-4'>
+          Want more details on benefits?{' '}
+          <a
+            href={url}
+            className='inline-block text-blue-600 hover:text-blue-700 hover:underline text-xs mt-2'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            Check our guide
+          </a>
+        </p>
+      )}
+    </Card>
+  );
+};
 export const InviteSection = ({
   title,
   description,
@@ -188,9 +225,17 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
         </>
       );
 
-    case 'benefits':
+    case 'benefits': {
+      // Example: Access schema-level presentation metadata
+      const benefitsPresentation = onboardingBag.meta.presentation;
+
       return (
         <div className='benefits-container'>
+          <BenefitsAboutSection
+            description={benefitsPresentation?.description as string}
+            url={benefitsPresentation?.url as string}
+          />
+
           <BenefitsStep
             onSubmit={(payload: BenefitsFormPayload) =>
               console.log('payload', payload)
@@ -204,6 +249,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             }) => setErrors({ apiError: error.message, fieldErrors })}
             onSuccess={(data: SuccessResponse) => console.log('data', data)}
           />
+
           <AlertError errors={errors} />
           <div className='buttons-container'>
             <BackButton
@@ -221,6 +267,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           </div>
         </div>
       );
+    }
     case 'review':
       return (
         <ReviewOnboardingStep
@@ -355,7 +402,10 @@ const OnboardingWithProps = ({
   employmentId,
   externalId,
 }: OnboardingFormData) => (
-  <RemoteFlows proxy={{ url: window.location.origin }}>
+  <RemoteFlows
+    proxy={{ url: window.location.origin }}
+    transformHtmlToComponents={transformHtmlToComponents}
+  >
     <OnboardingFlow
       companyId={companyId}
       type={type}
@@ -374,7 +424,7 @@ const OnboardingWithProps = ({
           },
           DEU: {
             // Germany
-            contract_details: 1,
+            contract_details: 4,
           },
           BLR: {
             // Belarus

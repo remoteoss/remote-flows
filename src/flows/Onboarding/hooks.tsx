@@ -570,6 +570,19 @@ export const useOnboarding = ({
     review: null,
   };
 
+  const stepPresentation: Record<
+    StepKeys,
+    Record<string, unknown> | null | undefined
+  > = {
+    select_country: selectCountryForm?.meta?.['x-jsf-presentation'],
+    basic_information: basicInformationForm?.meta?.['x-jsf-presentation'],
+    engagement_agreement_details:
+      engagementAgreementDetailsSchema?.meta?.['x-jsf-presentation'],
+    contract_details: contractDetailsForm?.meta?.['x-jsf-presentation'],
+    benefits: benefitOffersSchema?.meta?.['x-jsf-presentation'],
+    review: null,
+  };
+
   const {
     country,
     basic_information: employmentBasicInformation = {},
@@ -1086,6 +1099,7 @@ export const useOnboarding = ({
     meta: {
       fields: fieldsMetaRef.current,
       fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
+      presentation: stepPresentation[stepState.currentStep.name],
     },
 
     /**

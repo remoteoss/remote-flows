@@ -9,6 +9,21 @@ import type {
 import { FileUploader } from '@remoteoss/remote-flows/internals';
 //import { ZendeskDialog } from './ZendeskDialog';
 
+const renderDescription = (
+  desc?: React.ReactNode | string,
+  transformHtml?: (html: string) => React.ReactNode,
+) => {
+  if (!desc) {
+    return null;
+  }
+
+  if (typeof desc === 'string' && transformHtml) {
+    return transformHtml(desc);
+  }
+
+  return <p className='input-description'>{desc}</p>;
+};
+
 // you can define HTML button attributes or event props that exist in your Button like variant, size, etc.
 const Button = ({
   children,
@@ -57,9 +72,7 @@ const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
         />
       )}
 
-      {fieldData.description && (
-        <p className='input-description'>{fieldData.description}</p>
-      )}
+      {renderDescription(fieldData.description, fieldData.transformHtml)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}
@@ -111,9 +124,7 @@ const Select = ({ field, fieldData, fieldState }: FieldComponentProps) => {
         </div>
       </div>
 
-      {fieldData.description && (
-        <p className='input-description'>{fieldData.description}</p>
-      )}
+      {renderDescription(fieldData.description, fieldData.transformHtml)}
 
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
@@ -134,9 +145,7 @@ const Textarea = ({ field, fieldData, fieldState }: FieldComponentProps) => {
         maxLength={fieldData.maxLength}
         {...field}
       />
-      {fieldData.description && (
-        <p className='input-description'>{fieldData.description}</p>
-      )}
+      {renderDescription(fieldData.description, fieldData.transformHtml)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}
@@ -166,9 +175,7 @@ const Radio = ({ field, fieldData, fieldState }: FieldComponentProps) => {
           );
         })}
       </div>
-      {fieldData.description && (
-        <p className='input-description'>{fieldData.description}</p>
-      )}
+      {renderDescription(fieldData.description, fieldData.transformHtml)}
       {hasError && <p className='error-message'>{fieldState.error?.message}</p>}
     </div>
   );
@@ -183,9 +190,7 @@ const Checkbox = ({ field, fieldData, fieldState }: FieldComponentProps) => {
         <input type='checkbox' id={field.name} {...field} />
         <label htmlFor={field.name}>{fieldData.label}</label>
       </div>
-      {fieldData.description && (
-        <p className='input-description'>{fieldData.description}</p>
-      )}
+      {renderDescription(fieldData.description, fieldData.transformHtml)}
       {hasError && <p className='error-message'>{fieldState.error?.message}</p>}
     </div>
   );
@@ -236,9 +241,7 @@ export const Countries = ({
         </div>
       </div>
 
-      {fieldData.description && (
-        <p className='input-description'>{fieldData.description}</p>
-      )}
+      {renderDescription(fieldData.description, fieldData.transformHtml)}
 
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
@@ -283,9 +286,7 @@ const FileUploadField = ({
         accept={fieldData.accept}
         multiple={fieldData.multiple}
       />
-      {fieldData.description && (
-        <p className='input-description'>{fieldData.description}</p>
-      )}
+      {renderDescription(fieldData.description, fieldData.transformHtml)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}
@@ -309,9 +310,7 @@ const DatePickerInput = ({
           field?.onChange?.(e.target.value);
         }}
       />
-      {fieldData.description && (
-        <p className='input-description'>{fieldData.description}</p>
-      )}
+      {renderDescription(fieldData.description, fieldData.transformHtml)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}

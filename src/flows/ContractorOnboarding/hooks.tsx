@@ -639,6 +639,22 @@ export const useContractorOnboarding = ({
     review: null,
   };
 
+  const stepPresentation: Record<
+    StepKeys,
+    Record<string, unknown> | null | undefined
+  > = {
+    select_country: selectCountryForm?.meta?.['x-jsf-presentation'],
+    basic_information: basicInformationForm?.meta?.['x-jsf-presentation'],
+    pricing_plan:
+      selectContractorSubscriptionForm?.meta?.['x-jsf-presentation'],
+    eligibility_questionnaire:
+      eligibilityQuestionnaireForm?.meta?.['x-jsf-presentation'],
+    contract_details:
+      contractorOnboardingDetailsForm?.meta?.['x-jsf-presentation'],
+    contract_preview: signatureSchemaForm?.meta?.['x-jsf-presentation'],
+    review: null,
+  };
+
   const {
     country,
     basic_information: employmentBasicInformation = {},
@@ -1276,6 +1292,7 @@ export const useContractorOnboarding = ({
     meta: {
       fields: fieldsMetaRef.current,
       fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
+      presentation: stepPresentation[stepState.currentStep.name],
     },
 
     /**
