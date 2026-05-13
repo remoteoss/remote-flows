@@ -40,7 +40,6 @@ This project is a React component library (`@remoteoss/remote-flows`) that provi
 **Enforced by oxlint (Rust-based linter):**
 
 - React Hooks rules (exhaustive dependencies)
-- Only export components in flow files (react-refresh)
 - `no-console`: warn (only `console.warn` and `console.error` allowed)
 
 **Naming Conventions:**
