@@ -38,7 +38,7 @@ export function FileUploader({
     if (externalFiles && externalFiles !== syncedRef.current) {
       syncedRef.current = externalFiles;
       // effect is okay here, we just track with a ref to avoid unnecessary re-renders
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      // oxlint-disable-next-line react-hooks/set-state-in-effect
       setFiles(externalFiles);
     }
   }, [externalFiles]);
