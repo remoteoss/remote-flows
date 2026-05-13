@@ -10,3 +10,8 @@ dist
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# TypeScript build artifacts
+
+*.tsbuildinfo
+e2e/**/*.js
