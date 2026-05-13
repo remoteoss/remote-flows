@@ -10,7 +10,7 @@ export function useErrorReporting(initialContext: ErrorContextData) {
     if (initialContext) {
       errorContextRef.current = initialContext;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Clear context on unmount
@@ -31,7 +31,7 @@ export function useErrorReporting(initialContext: ErrorContextData) {
         errorContextRef.current = {};
       },
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 

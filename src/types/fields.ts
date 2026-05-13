@@ -63,6 +63,23 @@ export type FieldDataProps = Partial<JSFField> & {
   /**
    * Optional HTML transformer function passed from RemoteFlows context.
    * Use this in custom field components to transform HTML descriptions into React components.
+   * @example
+   * ```tsx
+   * const CustomInput = ({ fieldData }: FieldComponentProps) => {
+   *   const renderDescription = (desc: string) => {
+   *     if (fieldData.transformHtml) {
+   *       return fieldData.transformHtml(desc);
+   *     }
+   *     return <div>{desc}</div>;
+   *   };
+   *   return (
+   *     <div>
+   *       <input />
+   *       {fieldData.description && renderDescription(fieldData.description)}
+   *     </div>
+   *   );
+   * };
+   * ```
    */
   transformHtml?: (html: string) => React.ReactNode;
 };

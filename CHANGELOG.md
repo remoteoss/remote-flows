@@ -1,5 +1,23 @@
 # @remoteoss/remote-flows
 
+## 1.33.0
+
+### Minor Changes
+
+#### Features
+
+- add `transformHTMLToComponents` to RemoteFlows (#993) [#993](https://github.com/remoteoss/remote-flows/pull/993)
+
+#### Chores
+
+- static analyze github actions (#1005) [#1005](https://github.com/remoteoss/remote-flows/pull/1005)
+
+## 1.32.0
+
+### Minor Changes
+
+- surface benefits x-jsf-presentation (#1000) [#1000](https://github.com/remoteoss/remote-flows/pull/1000)
+
 ## 1.31.0
 
 ### Minor Changes

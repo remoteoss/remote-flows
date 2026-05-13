@@ -44,7 +44,7 @@ export function CreateCompanyForm({
       }
     });
     return () => subscription?.unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = async (values: Record<string, unknown>) => {
