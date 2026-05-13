@@ -9,7 +9,7 @@ The `safeGetErrorPath` utility was introduced to handle inconsistent API error r
 ### How safeGetErrorPath Works
 
 ```typescript
-safeGetErrorPath(error, ['path1.nested', 'path2', 'path3'])
+safeGetErrorPath(error, ['path1.nested', 'path2', 'path3']);
 ```
 
 - Tries each path in order: `error.path1.nested`, then `error.path2`, then `error.path3`
