@@ -1061,6 +1061,15 @@ describe('OnboardingInvite', () => {
       });
 
       fireEvent.click(customButton);
+
+      await waitFor(() => {
+        expect(MockCustomButton).toHaveBeenCalledWith(
+          expect.objectContaining({
+            disabled: true,
+          }),
+          {},
+        );
+      });
     });
 
     it('should work with reserve flow using custom button', async () => {
