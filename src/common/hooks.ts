@@ -13,7 +13,7 @@ export function useDebounce(
 
   const debouncedFn = useRef(
     // WE NEED TO FIX: react-hooks/refs - Passing a ref to a function may read its value during render
-    // eslint-disable-next-line react-hooks/refs
+    // oxlint-disable-next-line react-hooks/refs
     debounce((value: string) => {
       callbackRef.current(value);
     }, delay),

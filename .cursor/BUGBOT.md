@@ -16,7 +16,7 @@ This project is a React component library (`@remoteoss/remote-flows`) that provi
 ### TypeScript
 
 - **Strict mode enabled** - all strict TypeScript checks are enforced via `tsconfig.json`
-- **No `any` types** - except where explicitly needed with `/* eslint-disable @typescript-eslint/no-explicit-any */`
+- **No `any` types** - except where explicitly needed with `/* oxlint-disable @typescript-eslint/no-explicit-any */`
 - **Use `$TSFixMe` type** - for temporary type workarounds (defined in `src/types/remoteFlows.ts`)
 - **Export types** - all public types must be exported for consumer TypeScript support
 - **Type imports** - use `import type` for type-only imports where possible
@@ -29,7 +29,7 @@ This project is a React component library (`@remoteoss/remote-flows`) that provi
 
 ### Code Style
 
-**Enforced by Prettier:**
+**Enforced by oxfmt (Rust-based formatter):**
 
 - Single quotes (including JSX: `jsxSingleQuote: true`)
 - Semicolons required
@@ -37,10 +37,9 @@ This project is a React component library (`@remoteoss/remote-flows`) that provi
 - 80 character line width
 - 2 space indentation
 
-**Enforced by ESLint:**
+**Enforced by oxlint (Rust-based linter):**
 
 - React Hooks rules (exhaustive dependencies)
-- Only export components in flow files (react-refresh)
 - `no-console`: warn (only `console.warn` and `console.error` allowed)
 
 **Naming Conventions:**
@@ -382,12 +381,12 @@ flows/[FlowName]/
 ### 2. React Hook Dependencies
 
 - Missing dependencies in `useEffect`, `useCallback`, `useMemo`
-- ESLint warnings for `react-hooks/exhaustive-deps` must be fixed
+- Oxlint warnings for `react-hooks/exhaustive-deps` must be fixed
 - Avoid disabling the rule - fix the dependency array instead
 
 ### 3. Type Safety Issues
 
-- Using `any` without `eslint-disable` comment
+- Using `any` without `oxlint-disable` comment
 - Type assertions (`as`) without clear justification
 - Missing null/undefined checks for optional values
 - Incorrect generic type parameters
