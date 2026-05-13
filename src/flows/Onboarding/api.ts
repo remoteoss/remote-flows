@@ -557,3 +557,82 @@ export const useEngagementAgreementDetailsSchema = (
     },
   });
 };
+
+/**
+ * Get pre-onboarding requirements for an employment
+ */
+export const useGetPreOnboardingRequirements = (
+  employmentId: string,
+  options?: { queryOptions?: { enabled?: boolean } },
+) => {
+  return useQuery({
+    queryKey: ['pre-onboarding-requirements', employmentId],
+    queryFn: async () => {
+      const { mockPreOnboardingRequirements } =
+        await import('@/src/common/api/fixtures/pre-onboarding');
+      // Simulated delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      return mockPreOnboardingRequirements;
+    },
+    enabled: options?.queryOptions?.enabled ?? true,
+    select: (data) => data.data,
+  });
+};
+
+/**
+ * Create a pre-onboarding document
+ */
+export const useCreatePreOnboardingDocument = () => {
+  return useMutation({
+    mutationFn: async ({
+      employmentId: _employmentId,
+    }: {
+      employmentId: string;
+    }) => {
+      const { mockCreatedDocument } =
+        await import('@/src/common/api/fixtures/pre-onboarding');
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      return mockCreatedDocument;
+    },
+  });
+};
+
+/**
+ * Get pre-onboarding document preview
+ */
+export const useGetPreOnboardingDocument = (
+  documentId: string | undefined,
+  options?: { queryOptions?: { enabled?: boolean } },
+) => {
+  return useQuery({
+    queryKey: ['pre-onboarding-document', documentId],
+    queryFn: async () => {
+      const { mockCreatedDocument } =
+        await import('@/src/common/api/fixtures/pre-onboarding');
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      return mockCreatedDocument;
+    },
+    enabled: options?.queryOptions?.enabled && !!documentId,
+    select: (data) => data.data,
+  });
+};
+
+/**
+ * Sign a pre-onboarding document
+ */
+export const useSignPreOnboardingDocument = () => {
+  return useMutation({
+    mutationFn: async ({
+      documentId: _documentId,
+      signature: _signature,
+    }: {
+      documentId: string;
+      signature: string;
+    }) => {
+      const { mockSignedDocument } =
+        await import('@/src/common/api/fixtures/pre-onboarding');
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return mockSignedDocument;
+    },
+  });
+};

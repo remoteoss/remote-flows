@@ -230,6 +230,7 @@ export const ReviewOnboardingStep = ({
     OnboardingInvite,
     BackButton,
     ReviewStep: ReviewStepCreditRisk,
+    PreOnboardingRequirements,
   } = components;
 
   return (
@@ -279,6 +280,138 @@ export const ReviewOnboardingStep = ({
       >
         Edit Benefits
       </button>
+
+      <h2 className='title'>Pre-Onboarding Requirements</h2>
+      {PreOnboardingRequirements && (
+        <PreOnboardingRequirements
+          render={({
+            requirements,
+            isLoadingRequirements,
+            documentPreview,
+            onCreateDocument,
+            onSignDocument,
+            isCreatingDocument,
+            isSigning,
+          }: {
+            requirements:
+              | Array<{
+                  id: string;
+                  title: string;
+                  description: string;
+                  status: string;
+                  required: boolean;
+                }>
+              | undefined;
+            isLoadingRequirements: boolean;
+            documentPreview:
+              | {
+                  id: string;
+                  employment_id: string;
+                  document_type: string;
+                  status: string;
+                  pdf_url?: string;
+                  created_at: string;
+                }
+              | undefined;
+            onCreateDocument: () => Promise<unknown>;
+            onSignDocument: (signature: string) => Promise<unknown>;
+            isCreatingDocument: boolean;
+            isSigning: boolean;
+          }) => (
+            <div
+              style={{
+                padding: '20px',
+                background: '#f5f5f5',
+                borderRadius: '8px',
+                marginBottom: '20px',
+              }}
+            >
+              {isLoadingRequirements ? (
+                <p>Loading requirements...</p>
+              ) : (
+                <>
+                  <h3>Requirements List</h3>
+                  {requirements?.map(
+                    (req: {
+                      id: string;
+                      title: string;
+                      description: string;
+                      status: string;
+                    }) => (
+                      <div
+                        key={req.id}
+                        style={{
+                          marginBottom: '10px',
+                          padding: '10px',
+                          background: 'white',
+                          borderRadius: '4px',
+                        }}
+                      >
+                        <strong>{req.title}</strong>
+                        <p>{req.description}</p>
+                        <span
+                          style={{
+                            color:
+                              req.status === 'pending' ? 'orange' : 'green',
+                          }}
+                        >
+                          Status: {req.status}
+                        </span>
+                      </div>
+                    ),
+                  )}
+
+                  {!documentPreview && (
+                    <button
+                      onClick={onCreateDocument}
+                      disabled={isCreatingDocument}
+                      style={{
+                        marginTop: '10px',
+                        padding: '10px 20px',
+                        cursor: isCreatingDocument ? 'not-allowed' : 'pointer',
+                      }}
+                    >
+                      {isCreatingDocument ? 'Creating...' : 'Create Document'}
+                    </button>
+                  )}
+
+                  {documentPreview && (
+                    <div style={{ marginTop: '20px' }}>
+                      <h4>Document Preview</h4>
+                      <p>Document ID: {documentPreview.id}</p>
+                      <p>Status: {documentPreview.status}</p>
+                      {documentPreview.pdf_url && (
+                        <p>
+                          PDF URL:{' '}
+                          <a
+                            href={documentPreview.pdf_url}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                          >
+                            {documentPreview.pdf_url}
+                          </a>
+                        </p>
+                      )}
+                      <button
+                        onClick={() => onSignDocument('John Doe Signature')}
+                        disabled={isSigning}
+                        style={{
+                          marginTop: '10px',
+                          padding: '10px 20px',
+                          cursor: isSigning ? 'not-allowed' : 'pointer',
+                        }}
+                      >
+                        {isSigning ? 'Signing...' : 'Sign Document'}
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+        />
+      )}
+
       <h2 className='title'>Review</h2>
       <ReviewStepCreditRisk
         render={({
