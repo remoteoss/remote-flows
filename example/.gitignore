@@ -14,4 +14,3 @@ dist
 # TypeScript build artifacts
 
 *.tsbuildinfo
-e2e/**/*.js
