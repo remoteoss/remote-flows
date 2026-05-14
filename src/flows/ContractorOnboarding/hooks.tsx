@@ -476,6 +476,13 @@ export const useContractorOnboarding = ({
       return contractorStandardProductIdentifier;
     }
 
+    const hasAvailableSubscriptions =
+      contractorSubscriptions && contractorSubscriptions.length > 0;
+
+    if (!hasAvailableSubscriptions) {
+      return undefined; // Don't preselect anything
+    }
+
     // FALLBACK: Employment contractor_type or default
     return (
       subscriptions[
@@ -1118,6 +1125,7 @@ export const useContractorOnboarding = ({
         if (!values.subscription) {
           throw createStructuredError('Please select a subscription plan.');
         }
+
         const blockedProductsEligibility = [
           corProductIdentifier,
           contractorPlusProductIdentifier,
