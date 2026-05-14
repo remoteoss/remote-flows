@@ -156,6 +156,12 @@ const SHORT_NAME_TO_IDENTIFIER_MAP: Record<string, string> = {
   cor: corProductIdentifier,
 };
 
+/**
+ * Checks if a product should be included based on the short name
+ * @param shortName - The short name of the product that comes from the v1/countries endpoint
+ * @param excludeProducts - Array of products to exclude
+ * @returns true if the product should be included, false otherwise
+ */
 export const shouldIncludeProductByShortName = (
   shortName: string,
   excludeProducts?: ProductType[],
