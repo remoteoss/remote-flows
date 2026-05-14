@@ -408,7 +408,7 @@ export const useContractorSubscriptionSchemaField = (
 ) => {
   const {
     data: contractorSubscriptions,
-    isLoading: isLoading,
+    isLoading,
     refetch,
   } = useGetContractorSubscriptions({
     employmentId: employmentId,
@@ -418,8 +418,12 @@ export const useContractorSubscriptionSchemaField = (
   });
 
   const isEmptyContractorSubscriptions = contractorSubscriptions?.length === 0;
+  // maximum number of subscriptions
+  const MAXIMUM_CONTRACTOR_SUBSCRIPTIONS_COUNT = 3;
 
-  const isSingleSubscription = contractorSubscriptions?.length === 1;
+  const isSingleSubscription = contractorSubscriptions
+    ? contractorSubscriptions?.length < MAXIMUM_CONTRACTOR_SUBSCRIPTIONS_COUNT
+    : false;
 
   const corSubscription = contractorSubscriptions?.find(
     (subscription) => subscription.product.short_name === 'COR',
