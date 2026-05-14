@@ -417,13 +417,16 @@ export const useContractorSubscriptionSchemaField = (
     },
   });
 
-  const filteredContractorSubscriptions =
-    contractorSubscriptions?.filter((subscription) =>
-      shouldIncludeProduct(
-        subscription.product.identifier ?? '',
-        options?.excludeProducts,
-      ),
-    ) ?? [];
+  const filteredContractorSubscriptions = useMemo(
+    () =>
+      contractorSubscriptions?.filter((subscription) =>
+        shouldIncludeProduct(
+          subscription.product.identifier ?? '',
+          options?.excludeProducts,
+        ),
+      ) ?? [],
+    [contractorSubscriptions, options?.excludeProducts],
+  );
 
   // maximum number of subscriptions
   const MAXIMUM_CONTRACTOR_SUBSCRIPTIONS_COUNT = 3;
