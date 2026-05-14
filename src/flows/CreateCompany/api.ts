@@ -6,13 +6,13 @@ import { FlowOptions } from '@/src/flows/types';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { companyBasicInformationStepSchema } from '@/src/flows/CreateCompany/json-schemas/companyBasicInformationStep';
 import { useQuery } from '@tanstack/react-query';
-import { getIndexCompanyCurrency } from '@/src/client';
+import { getV1CompanyCurrencies } from '@/src/client';
 import { countriesOptions } from '@/src/common/api/countries';
 import {
   CreateCompanyParams,
-  getShowFormCountry,
-  postCreateCompany,
-  patchUpdateCompany2,
+  getV1CountriesCountryCodeForm,
+  postV1Companies,
+  patchV1CompaniesCompanyId2,
   UpdateCompanyParams,
 } from '@/src/client';
 
@@ -28,7 +28,7 @@ const useCompanyCurrencies = (queryOptions?: { enabled?: boolean }) => {
     queryKey: ['company-currencies'],
     retry: false,
     queryFn: async () => {
-      const response = await getIndexCompanyCurrency({
+      const response = await getV1CompanyCurrencies({
         client: client as Client,
       });
 
@@ -57,7 +57,7 @@ export const useCreateCompanyRequest = () => {
   const { client } = useClient();
   return useMutation({
     mutationFn: (payload: CreateCompanyParams) => {
-      return postCreateCompany({
+      return postV1Companies({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -87,7 +87,7 @@ export const useUpdateCompanyRequest = () => {
       payload: UpdateCompanyParams;
       jsonSchemaVersion?: number | 'latest';
     }) => {
-      return patchUpdateCompany2({
+      return patchV1CompaniesCompanyId2({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -186,7 +186,7 @@ export const useAddressDetailsSchema = ({
       if (!countryCode) {
         throw new Error('Country code is required');
       }
-      const response = await getShowFormCountry({
+      const response = await getV1CountriesCountryCodeForm({
         client: client as Client,
         headers: {
           Authorization: ``,

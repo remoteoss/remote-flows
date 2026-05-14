@@ -1,7 +1,7 @@
 import {
-  getShowEmployment,
-  GetShowEmploymentResponse,
-  postUpdateCancelOnboarding,
+  getV1EmploymentsEmploymentId,
+  GetV1EmploymentsEmploymentIdResponse,
+  postV1CancelOnboardingEmploymentId,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { $TSFixMe } from '@/src/types/remoteFlows';
@@ -22,7 +22,7 @@ export const useEmploymentQuery = ({
   employmentId: string;
   queryParams?: $TSFixMe; // TODO: we need to generate openapi-ts types but it's broken at the moment
 }): UseQueryResult<
-  GetShowEmploymentResponse['data']['employment'],
+  GetV1EmploymentsEmploymentIdResponse['data']['employment'],
   unknown
 > => {
   const { client } = useClient();
@@ -30,7 +30,7 @@ export const useEmploymentQuery = ({
     queryKey: ['employment', employmentId],
     retry: false,
     queryFn: () => {
-      return getShowEmployment({
+      return getV1EmploymentsEmploymentId({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -53,7 +53,7 @@ export const useDiscardEmploymentMutation = () => {
   const { client } = useClient();
   return useMutation({
     mutationFn: ({ employmentId }: { employmentId: string }) => {
-      return postUpdateCancelOnboarding({
+      return postV1CancelOnboardingEmploymentId({
         client: client as Client,
         headers: {
           Authorization: ``,

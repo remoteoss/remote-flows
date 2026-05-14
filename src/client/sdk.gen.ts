@@ -8,649 +8,721 @@ import {
 } from './client';
 import { client } from './client.gen';
 import type {
-  DeleteDeleteCompanyManagerData,
-  DeleteDeleteCompanyManagerErrors,
-  DeleteDeleteCompanyManagerResponses,
-  DeleteDeleteContractorCorSubscriptionSubscriptionData,
-  DeleteDeleteContractorCorSubscriptionSubscriptionErrors,
-  DeleteDeleteContractorCorSubscriptionSubscriptionResponses,
-  DeleteDeleteIncentiveData,
-  DeleteDeleteIncentiveErrors,
-  DeleteDeleteIncentiveResponses,
-  DeleteDeleteRecurringIncentiveData,
-  DeleteDeleteRecurringIncentiveErrors,
-  DeleteDeleteRecurringIncentiveResponses,
-  DeleteDeleteWebhookCallbackData,
-  DeleteDeleteWebhookCallbackErrors,
-  DeleteDeleteWebhookCallbackResponses,
-  GetCategoriesExpenseData,
-  GetCategoriesExpenseErrors,
-  GetCategoriesExpenseResponses,
-  GetContractorEligibilityCompanyLegalEntitiesData,
-  GetContractorEligibilityCompanyLegalEntitiesErrors,
-  GetContractorEligibilityCompanyLegalEntitiesResponses,
-  GetCurrentIdentityData,
-  GetCurrentIdentityErrors,
-  GetCurrentIdentityResponses,
-  GetDetailsSsoConfigurationData,
-  GetDetailsSsoConfigurationErrors,
-  GetDetailsSsoConfigurationResponses,
-  GetDownloadByIdExpenseReceiptData,
-  GetDownloadByIdExpenseReceiptErrors,
-  GetDownloadByIdExpenseReceiptResponses,
-  GetDownloadExpenseReceiptData,
-  GetDownloadExpenseReceiptErrors,
-  GetDownloadExpenseReceiptResponses,
-  GetDownloadPayslipPayslipData,
-  GetDownloadPayslipPayslipErrors,
-  GetDownloadPayslipPayslipResponses,
-  GetDownloadPdfBillingDocumentData,
-  GetDownloadPdfBillingDocumentErrors,
-  GetDownloadPdfBillingDocumentResponses,
-  GetDownloadResignationLetterData,
-  GetDownloadResignationLetterErrors,
-  GetDownloadResignationLetterResponses,
-  GetEmployeeDetailsPayrollRunData,
-  GetEmployeeDetailsPayrollRunErrors,
-  GetEmployeeDetailsPayrollRunResponses,
-  GetGetBreakdownBillingDocumentData,
-  GetGetBreakdownBillingDocumentErrors,
-  GetGetBreakdownBillingDocumentResponses,
-  GetGetGroupScimData,
-  GetGetGroupScimErrors,
-  GetGetGroupScimResponses,
-  GetGetIdentityVerificationDataIdentityVerificationData,
-  GetGetIdentityVerificationDataIdentityVerificationErrors,
-  GetGetIdentityVerificationDataIdentityVerificationResponses,
-  GetGetUserScimData,
-  GetGetUserScimErrors,
-  GetGetUserScimResponses,
-  GetIndexBenefitOfferData,
-  GetIndexBenefitOfferErrors,
-  GetIndexBenefitOfferResponses,
-  GetIndexBenefitOffersByEmploymentData,
-  GetIndexBenefitOffersByEmploymentErrors,
-  GetIndexBenefitOffersByEmploymentResponses,
-  GetIndexBenefitOffersCountrySummaryData,
-  GetIndexBenefitOffersCountrySummaryErrors,
-  GetIndexBenefitOffersCountrySummaryResponses,
-  GetIndexBenefitRenewalRequestData,
-  GetIndexBenefitRenewalRequestErrors,
-  GetIndexBenefitRenewalRequestResponses,
-  GetIndexBillingDocumentData,
-  GetIndexBillingDocumentErrors,
-  GetIndexBillingDocumentResponses,
-  GetIndexBulkEmploymentRowData,
-  GetIndexBulkEmploymentRowErrors,
-  GetIndexBulkEmploymentRowResponses,
-  GetIndexCompanyCurrencyData,
-  GetIndexCompanyCurrencyErrors,
-  GetIndexCompanyCurrencyResponses,
-  GetIndexCompanyData,
-  GetIndexCompanyDepartmentData,
-  GetIndexCompanyDepartmentErrors,
-  GetIndexCompanyDepartmentResponses,
-  GetIndexCompanyErrors,
-  GetIndexCompanyLegalEntitiesData,
-  GetIndexCompanyLegalEntitiesErrors,
-  GetIndexCompanyLegalEntitiesResponses,
-  GetIndexCompanyManagerData,
-  GetIndexCompanyManagerErrors,
-  GetIndexCompanyManagerResponses,
-  GetIndexCompanyPricingPlanData,
-  GetIndexCompanyPricingPlanErrors,
-  GetIndexCompanyPricingPlanResponses,
-  GetIndexCompanyProductPriceData,
-  GetIndexCompanyProductPriceErrors,
-  GetIndexCompanyProductPriceResponses,
-  GetIndexCompanyResponses,
-  GetIndexContractAmendmentData,
-  GetIndexContractAmendmentErrors,
-  GetIndexContractAmendmentResponses,
-  GetIndexContractorCurrencyData,
-  GetIndexContractorCurrencyErrors,
-  GetIndexContractorCurrencyResponses,
-  GetIndexContractorInvoiceData,
-  GetIndexContractorInvoiceErrors,
-  GetIndexContractorInvoiceResponses,
-  GetIndexCountryData,
-  GetIndexCountryResponses,
-  GetIndexDataSyncData,
-  GetIndexDataSyncErrors,
-  GetIndexDataSyncResponses,
-  GetIndexEmployeeDocumentData,
-  GetIndexEmployeeDocumentErrors,
-  GetIndexEmployeeDocumentResponses,
-  GetIndexEmploymentCompanyStructureNodeData,
-  GetIndexEmploymentCompanyStructureNodeErrors,
-  GetIndexEmploymentCompanyStructureNodeResponses,
-  GetIndexEmploymentContractData,
-  GetIndexEmploymentContractDocumentData,
-  GetIndexEmploymentContractDocumentErrors,
-  GetIndexEmploymentContractDocumentResponses,
-  GetIndexEmploymentContractErrors,
-  GetIndexEmploymentContractResponses,
-  GetIndexEmploymentCustomFieldData,
-  GetIndexEmploymentCustomFieldErrors,
-  GetIndexEmploymentCustomFieldResponses,
-  GetIndexEmploymentCustomFieldValueData,
-  GetIndexEmploymentCustomFieldValueErrors,
-  GetIndexEmploymentCustomFieldValueResponses,
-  GetIndexEmploymentData,
-  GetIndexEmploymentErrors,
-  GetIndexEmploymentFileData,
-  GetIndexEmploymentFileErrors,
-  GetIndexEmploymentFileResponses,
-  GetIndexEmploymentJobData,
-  GetIndexEmploymentJobErrors,
-  GetIndexEmploymentJobResponses,
-  GetIndexEmploymentResponses,
-  GetIndexEorPayrollCalendarData,
-  GetIndexEorPayrollCalendarErrors,
-  GetIndexEorPayrollCalendarResponses,
-  GetIndexExpenseData,
-  GetIndexExpenseErrors,
-  GetIndexExpenseResponses,
-  GetIndexHolidayData,
-  GetIndexHolidayErrors,
-  GetIndexHolidayResponses,
-  GetIndexIncentiveData,
-  GetIndexIncentiveErrors,
-  GetIndexIncentiveResponses,
-  GetIndexLeavePoliciesDetailsData,
-  GetIndexLeavePoliciesDetailsErrors,
-  GetIndexLeavePoliciesDetailsResponses,
-  GetIndexLeavePoliciesSummaryData,
-  GetIndexLeavePoliciesSummaryErrors,
-  GetIndexLeavePoliciesSummaryResponses,
-  GetIndexOffboardingData,
-  GetIndexOffboardingErrors,
-  GetIndexOffboardingResponses,
-  GetIndexPayItemsData,
-  GetIndexPayItemsErrors,
-  GetIndexPayItemsResponses,
-  GetIndexPayrollCalendarData,
-  GetIndexPayrollCalendarErrors,
-  GetIndexPayrollCalendarResponses,
-  GetIndexPayrollRunData,
-  GetIndexPayrollRunErrors,
-  GetIndexPayrollRunResponses,
-  GetIndexPayslipData,
-  GetIndexPayslipErrors,
-  GetIndexPayslipResponses,
-  GetIndexPricingPlanPartnerTemplateData,
-  GetIndexPricingPlanPartnerTemplateErrors,
-  GetIndexPricingPlanPartnerTemplateResponses,
-  GetIndexRecurringIncentiveData,
-  GetIndexRecurringIncentiveErrors,
-  GetIndexRecurringIncentiveResponses,
-  GetIndexScheduledContractorInvoiceData,
-  GetIndexScheduledContractorInvoiceErrors,
-  GetIndexScheduledContractorInvoiceResponses,
-  GetIndexSubscriptionData,
-  GetIndexSubscriptionErrors,
-  GetIndexSubscriptionResponses,
-  GetIndexTimeoffData,
-  GetIndexTimeoffErrors,
-  GetIndexTimeoffResponses,
-  GetIndexTimesheetData,
-  GetIndexTimesheetErrors,
-  GetIndexTimesheetResponses,
-  GetIndexTravelLetterRequestData,
-  GetIndexTravelLetterRequestErrors,
-  GetIndexTravelLetterRequestResponses,
-  GetIndexWebhookCallbackData,
-  GetIndexWebhookCallbackErrors,
-  GetIndexWebhookCallbackResponses,
-  GetIndexWebhookEventData,
-  GetIndexWebhookEventErrors,
-  GetIndexWebhookEventResponses,
-  GetIndexWorkAuthorizationRequestData,
-  GetIndexWorkAuthorizationRequestErrors,
-  GetIndexWorkAuthorizationRequestResponses,
-  GetListGroupsScimData,
-  GetListGroupsScimErrors,
-  GetListGroupsScimResponses,
-  GetListUsersScimData,
-  GetListUsersScimErrors,
-  GetListUsersScimResponses,
-  GetPendingChangesEmploymentContractData,
-  GetPendingChangesEmploymentContractErrors,
-  GetPendingChangesEmploymentContractResponses,
-  GetSchemaBenefitRenewalRequestData,
-  GetSchemaBenefitRenewalRequestErrors,
-  GetSchemaBenefitRenewalRequestResponses,
-  GetShowAdministrativeDetailsData,
-  GetShowAdministrativeDetailsErrors,
-  GetShowAdministrativeDetailsResponses,
-  GetShowBackgroundCheckData,
-  GetShowBackgroundCheckErrors,
-  GetShowBackgroundCheckResponses,
-  GetShowBenefitRenewalRequestData,
-  GetShowBenefitRenewalRequestErrors,
-  GetShowBenefitRenewalRequestResponses,
-  GetShowBillingDocumentData,
-  GetShowBillingDocumentErrors,
-  GetShowBillingDocumentResponses,
-  GetShowBulkEmploymentData,
-  GetShowBulkEmploymentErrors,
-  GetShowBulkEmploymentResponses,
-  GetShowCompanyComplianceProfileData,
-  GetShowCompanyComplianceProfileErrors,
-  GetShowCompanyComplianceProfileResponses,
-  GetShowCompanyData,
-  GetShowCompanyEmploymentOnboardingReservesStatusData,
-  GetShowCompanyEmploymentOnboardingReservesStatusErrors,
-  GetShowCompanyEmploymentOnboardingReservesStatusResponses,
-  GetShowCompanyErrors,
-  GetShowCompanyManagerData,
-  GetShowCompanyManagerErrors,
-  GetShowCompanyManagerResponses,
-  GetShowCompanyResponses,
-  GetShowCompanySchemaData,
-  GetShowCompanySchemaErrors,
-  GetShowCompanySchemaResponses,
-  GetShowContractAmendmentData,
-  GetShowContractAmendmentErrors,
-  GetShowContractAmendmentResponses,
-  GetShowContractAmendmentSchemaData,
-  GetShowContractAmendmentSchemaErrors,
-  GetShowContractAmendmentSchemaResponses,
-  GetShowContractDocumentData,
-  GetShowContractDocumentErrors,
-  GetShowContractDocumentResponses,
-  GetShowContractorContractDetailsCountryData,
-  GetShowContractorContractDetailsCountryErrors,
-  GetShowContractorContractDetailsCountryResponses,
-  GetShowContractorInvoiceData,
-  GetShowContractorInvoiceErrors,
-  GetShowContractorInvoiceResponses,
-  GetShowCorTerminationRequestSubscriptionData,
-  GetShowCorTerminationRequestSubscriptionErrors,
-  GetShowCorTerminationRequestSubscriptionResponses,
-  GetShowEligibilityQuestionnaireData,
-  GetShowEligibilityQuestionnaireErrors,
-  GetShowEligibilityQuestionnaireResponses,
-  GetShowEmployeeDocumentData,
-  GetShowEmployeeDocumentErrors,
-  GetShowEmployeeDocumentResponses,
-  GetShowEmploymentCustomFieldValueData,
-  GetShowEmploymentCustomFieldValueErrors,
-  GetShowEmploymentCustomFieldValueResponses,
-  GetShowEmploymentData,
-  GetShowEmploymentEngagementAgreementDetailsData,
-  GetShowEmploymentEngagementAgreementDetailsErrors,
-  GetShowEmploymentEngagementAgreementDetailsResponses,
-  GetShowEmploymentErrors,
-  GetShowEmploymentOnboardingStepsData,
-  GetShowEmploymentOnboardingStepsErrors,
-  GetShowEmploymentOnboardingStepsResponses,
-  GetShowEmploymentResponses,
-  GetShowEngagementAgreementDetailsCountryData,
-  GetShowEngagementAgreementDetailsCountryErrors,
-  GetShowEngagementAgreementDetailsCountryResponses,
-  GetShowExpenseData,
-  GetShowExpenseErrors,
-  GetShowExpenseResponses,
-  GetShowFileData,
-  GetShowFileErrors,
-  GetShowFileResponses,
-  GetShowFormCountryData,
-  GetShowFormCountryErrors,
-  GetShowFormCountryResponses,
-  GetShowHelpCenterArticleData,
-  GetShowHelpCenterArticleErrors,
-  GetShowHelpCenterArticleResponses,
-  GetShowIncentiveData,
-  GetShowIncentiveErrors,
-  GetShowIncentiveResponses,
-  GetShowLegalEntityFormCountryData,
-  GetShowLegalEntityFormCountryErrors,
-  GetShowLegalEntityFormCountryResponses,
-  GetShowOffboardingData,
-  GetShowOffboardingErrors,
-  GetShowOffboardingResponses,
-  GetShowPayrollRunData,
-  GetShowPayrollRunErrors,
-  GetShowPayrollRunResponses,
-  GetShowPayslipData,
-  GetShowPayslipErrors,
-  GetShowPayslipResponses,
-  GetShowProbationCompletionLetterData,
-  GetShowProbationCompletionLetterErrors,
-  GetShowProbationCompletionLetterResponses,
-  GetShowProbationExtensionData,
-  GetShowProbationExtensionErrors,
-  GetShowProbationExtensionResponses,
-  GetShowRegionFieldData,
-  GetShowRegionFieldErrors,
-  GetShowRegionFieldResponses,
-  GetShowResignationData,
-  GetShowResignationErrors,
-  GetShowResignationResponses,
-  GetShowScheduledContractorInvoiceData,
-  GetShowScheduledContractorInvoiceErrors,
-  GetShowScheduledContractorInvoiceResponses,
-  GetShowSchemaData,
-  GetShowSchemaErrors,
-  GetShowSchemaResponses,
-  GetShowSsoConfigurationData,
-  GetShowSsoConfigurationErrors,
-  GetShowSsoConfigurationResponses,
-  GetShowTestSchemaData,
-  GetShowTestSchemaResponses,
-  GetShowTimeoffBalanceData,
-  GetShowTimeoffBalanceErrors,
-  GetShowTimeoffBalanceResponses,
-  GetShowTimeoffData,
-  GetShowTimeoffErrors,
-  GetShowTimeoffResponses,
-  GetShowTimesheetData,
-  GetShowTimesheetErrors,
-  GetShowTimesheetResponses,
-  GetShowTravelLetterRequestData,
-  GetShowTravelLetterRequestErrors,
-  GetShowTravelLetterRequestResponses,
-  GetShowWorkAuthorizationRequestData,
-  GetShowWorkAuthorizationRequestErrors,
-  GetShowWorkAuthorizationRequestResponses,
-  GetSupportedCountryData,
-  GetSupportedCountryErrors,
-  GetSupportedCountryResponses,
-  GetTimeoffTypesTimeoffData,
-  GetTimeoffTypesTimeoffErrors,
-  GetTimeoffTypesTimeoffResponses,
-  PatchUpdateCompany2Data,
-  PatchUpdateCompany2Errors,
-  PatchUpdateCompany2Responses,
-  PatchUpdateCompanyData,
-  PatchUpdateCompanyErrors,
-  PatchUpdateCompanyResponses,
-  PatchUpdateEmployeeTimeoff2Data,
-  PatchUpdateEmployeeTimeoff2Errors,
-  PatchUpdateEmployeeTimeoff2Responses,
-  PatchUpdateEmployeeTimeoffData,
-  PatchUpdateEmployeeTimeoffErrors,
-  PatchUpdateEmployeeTimeoffResponses,
-  PatchUpdateEmployment2Data,
-  PatchUpdateEmployment2Errors,
-  PatchUpdateEmployment2Responses,
-  PatchUpdateEmployment3Data,
-  PatchUpdateEmployment3Errors,
-  PatchUpdateEmployment3Responses,
-  PatchUpdateEmployment4Data,
-  PatchUpdateEmployment4Errors,
-  PatchUpdateEmployment4Responses,
-  PatchUpdateEmploymentCustomFieldValue2Data,
-  PatchUpdateEmploymentCustomFieldValue2Errors,
-  PatchUpdateEmploymentCustomFieldValue2Responses,
-  PatchUpdateEmploymentCustomFieldValueData,
-  PatchUpdateEmploymentCustomFieldValueErrors,
-  PatchUpdateEmploymentCustomFieldValueResponses,
-  PatchUpdateEmploymentData,
-  PatchUpdateEmploymentErrors,
-  PatchUpdateEmploymentResponses,
-  PatchUpdateExpense2Data,
-  PatchUpdateExpense2Errors,
-  PatchUpdateExpense2Responses,
-  PatchUpdateExpenseData,
-  PatchUpdateExpenseErrors,
-  PatchUpdateExpenseResponses,
-  PatchUpdateIncentive2Data,
-  PatchUpdateIncentive2Errors,
-  PatchUpdateIncentive2Responses,
-  PatchUpdateIncentiveData,
-  PatchUpdateIncentiveErrors,
-  PatchUpdateIncentiveResponses,
-  PatchUpdateScheduledContractorInvoice2Data,
-  PatchUpdateScheduledContractorInvoice2Errors,
-  PatchUpdateScheduledContractorInvoice2Responses,
-  PatchUpdateScheduledContractorInvoiceData,
-  PatchUpdateScheduledContractorInvoiceErrors,
-  PatchUpdateScheduledContractorInvoiceResponses,
-  PatchUpdateTimeoff2Data,
-  PatchUpdateTimeoff2Errors,
-  PatchUpdateTimeoff2Responses,
-  PatchUpdateTimeoffData,
-  PatchUpdateTimeoffErrors,
-  PatchUpdateTimeoffResponses,
-  PatchUpdateTravelLetterRequest2Data,
-  PatchUpdateTravelLetterRequest2Errors,
-  PatchUpdateTravelLetterRequest2Responses,
-  PatchUpdateTravelLetterRequestData,
-  PatchUpdateTravelLetterRequestErrors,
-  PatchUpdateTravelLetterRequestResponses,
-  PatchUpdateWebhookCallbackData,
-  PatchUpdateWebhookCallbackErrors,
-  PatchUpdateWebhookCallbackResponses,
-  PatchUpdateWorkAuthorizationRequest2Data,
-  PatchUpdateWorkAuthorizationRequest2Errors,
-  PatchUpdateWorkAuthorizationRequest2Responses,
-  PatchUpdateWorkAuthorizationRequestData,
-  PatchUpdateWorkAuthorizationRequestErrors,
-  PatchUpdateWorkAuthorizationRequestResponses,
-  PostApproveCancellationRequestData,
-  PostApproveCancellationRequestErrors,
-  PostApproveCancellationRequestResponses,
-  PostApproveRiskReserveProofOfPaymentData,
-  PostApproveRiskReserveProofOfPaymentErrors,
-  PostApproveRiskReserveProofOfPaymentResponses,
-  PostApproveTimesheetData,
-  PostApproveTimesheetErrors,
-  PostApproveTimesheetResponses,
-  PostAutomatableContractAmendmentData,
-  PostAutomatableContractAmendmentErrors,
-  PostAutomatableContractAmendmentResponses,
-  PostBulkCreatePayItemsData,
-  PostBulkCreatePayItemsErrors,
-  PostBulkCreatePayItemsResponses,
-  PostBulkCreateScheduledContractorInvoiceData,
-  PostBulkCreateScheduledContractorInvoiceErrors,
-  PostBulkCreateScheduledContractorInvoiceResponses,
-  PostBypassEligibilityChecksCompanyData,
-  PostBypassEligibilityChecksCompanyErrors,
-  PostBypassEligibilityChecksCompanyResponses,
-  PostCancelEmployeeTimeoffData,
-  PostCancelEmployeeTimeoffErrors,
-  PostCancelEmployeeTimeoffResponses,
-  PostCompleteOnboardingEmploymentData,
-  PostCompleteOnboardingEmploymentErrors,
-  PostCompleteOnboardingEmploymentResponses,
-  PostConvertRawCurrencyConverterData,
-  PostConvertRawCurrencyConverterErrors,
-  PostConvertRawCurrencyConverterResponses,
-  PostConvertWithSpreadCurrencyConverter2Data,
-  PostConvertWithSpreadCurrencyConverter2Errors,
-  PostConvertWithSpreadCurrencyConverter2Responses,
-  PostConvertWithSpreadCurrencyConverterData,
-  PostConvertWithSpreadCurrencyConverterErrors,
-  PostConvertWithSpreadCurrencyConverterResponses,
-  PostCreateApprovalData,
-  PostCreateApprovalErrors,
-  PostCreateApprovalResponses,
-  PostCreateBenefitRenewalRequestData,
-  PostCreateBenefitRenewalRequestErrors,
-  PostCreateBenefitRenewalRequestResponses,
-  PostCreateBulkEmploymentData,
-  PostCreateBulkEmploymentErrors,
-  PostCreateBulkEmploymentResponses,
-  PostCreateCancellationData,
-  PostCreateCancellationErrors,
-  PostCreateCancellationResponses,
-  PostCreateCompanyData,
-  PostCreateCompanyDepartmentData,
-  PostCreateCompanyDepartmentErrors,
-  PostCreateCompanyDepartmentResponses,
-  PostCreateCompanyErrors,
-  PostCreateCompanyManagerData,
-  PostCreateCompanyManagerErrors,
-  PostCreateCompanyManagerResponses,
-  PostCreateCompanyPricingPlanData,
-  PostCreateCompanyPricingPlanErrors,
-  PostCreateCompanyPricingPlanResponses,
-  PostCreateCompanyResponses,
-  PostCreateContractAmendmentData,
-  PostCreateContractAmendmentErrors,
-  PostCreateContractAmendmentResponses,
-  PostCreateContractDocumentData,
-  PostCreateContractDocumentErrors,
-  PostCreateContractDocumentResponses,
-  PostCreateContractEligibilityData,
-  PostCreateContractEligibilityErrors,
-  PostCreateContractEligibilityResponses,
-  PostCreateCorTerminationRequestSubscriptionData,
-  PostCreateCorTerminationRequestSubscriptionErrors,
-  PostCreateCorTerminationRequestSubscriptionResponses,
-  PostCreateDataSyncData,
-  PostCreateDataSyncErrors,
-  PostCreateDataSyncResponses,
-  PostCreateDeclineData,
-  PostCreateDeclineErrors,
-  PostCreateDeclineResponses,
-  PostCreateEligibilityQuestionnaireData,
-  PostCreateEligibilityQuestionnaireErrors,
-  PostCreateEligibilityQuestionnaireResponses,
-  PostCreateEmployeeTimeoffData,
-  PostCreateEmployeeTimeoffErrors,
-  PostCreateEmployeeTimeoffResponses,
-  PostCreateEmployment2Data,
-  PostCreateEmployment2Errors,
-  PostCreateEmployment2Responses,
-  PostCreateEmploymentCustomFieldData,
-  PostCreateEmploymentCustomFieldErrors,
-  PostCreateEmploymentCustomFieldResponses,
-  PostCreateEmploymentData,
-  PostCreateEmploymentErrors,
-  PostCreateEmploymentResponses,
-  PostCreateEstimationCsvData,
-  PostCreateEstimationCsvErrors,
-  PostCreateEstimationCsvResponses,
-  PostCreateEstimationData,
-  PostCreateEstimationErrors,
-  PostCreateEstimationPdfData,
-  PostCreateEstimationPdfErrors,
-  PostCreateEstimationPdfResponses,
-  PostCreateEstimationResponses,
-  PostCreateExpenseData,
-  PostCreateExpenseErrors,
-  PostCreateExpenseResponses,
-  PostCreateIncentiveData,
-  PostCreateIncentiveErrors,
-  PostCreateIncentiveResponses,
-  PostCreateLegalEntityCompanyData,
-  PostCreateLegalEntityCompanyErrors,
-  PostCreateLegalEntityCompanyResponses,
-  PostCreateOffboardingData,
-  PostCreateOffboardingErrors,
-  PostCreateOffboardingResponses,
-  PostCreateProbationCompletionLetterData,
-  PostCreateProbationCompletionLetterErrors,
-  PostCreateProbationCompletionLetterResponses,
-  PostCreateProbationExtensionData,
-  PostCreateProbationExtensionErrors,
-  PostCreateProbationExtensionResponses,
-  PostCreateRecurringIncentiveData,
-  PostCreateRecurringIncentiveErrors,
-  PostCreateRecurringIncentiveResponses,
-  PostCreateRiskReserveData,
-  PostCreateRiskReserveErrors,
-  PostCreateRiskReserveResponses,
-  PostCreateSsoConfigurationData,
-  PostCreateSsoConfigurationErrors,
-  PostCreateSsoConfigurationResponses,
-  PostCreateTimeoffData,
-  PostCreateTimeoffErrors,
-  PostCreateTimeoffResponses,
-  PostCreateTokenCompanyTokenData,
-  PostCreateTokenCompanyTokenErrors,
-  PostCreateTokenCompanyTokenResponses,
-  PostCreateWebhookCallbackData,
-  PostCreateWebhookCallbackErrors,
-  PostCreateWebhookCallbackResponses,
-  PostDeclineCancellationRequestData,
-  PostDeclineCancellationRequestErrors,
-  PostDeclineCancellationRequestResponses,
-  PostDeclineIdentityVerificationData,
-  PostDeclineIdentityVerificationErrors,
-  PostDeclineIdentityVerificationResponses,
-  PostGenerateMagicLinkData,
-  PostGenerateMagicLinkErrors,
-  PostGenerateMagicLinkResponses,
-  PostInviteEmploymentInvitationData,
-  PostInviteEmploymentInvitationErrors,
-  PostInviteEmploymentInvitationResponses,
-  PostManageContractorCorSubscriptionSubscriptionData,
-  PostManageContractorCorSubscriptionSubscriptionErrors,
-  PostManageContractorCorSubscriptionSubscriptionResponses,
-  PostManageContractorPlusSubscriptionSubscriptionData,
-  PostManageContractorPlusSubscriptionSubscriptionErrors,
-  PostManageContractorPlusSubscriptionSubscriptionResponses,
-  PostReplayWebhookEventData,
-  PostReplayWebhookEventErrors,
-  PostReplayWebhookEventResponses,
-  PostReportErrorsTelemetryData,
-  PostReportErrorsTelemetryErrors,
-  PostReportErrorsTelemetryResponses,
-  PostSendBackTimesheetData,
-  PostSendBackTimesheetErrors,
-  PostSendBackTimesheetResponses,
-  PostSignContractDocumentData,
-  PostSignContractDocumentErrors,
-  PostSignContractDocumentResponses,
-  PostSubmitRiskReserveProofOfPaymentData,
-  PostSubmitRiskReserveProofOfPaymentErrors,
-  PostSubmitRiskReserveProofOfPaymentResponses,
-  PostTerminateContractorOfRecordEmploymentSubscriptionData,
-  PostTerminateContractorOfRecordEmploymentSubscriptionErrors,
-  PostTerminateContractorOfRecordEmploymentSubscriptionResponses,
-  PostTokenOAuth2TokenData,
-  PostTokenOAuth2TokenErrors,
-  PostTokenOAuth2TokenResponses,
-  PostTriggerWebhookCallbackData,
-  PostTriggerWebhookCallbackErrors,
-  PostTriggerWebhookCallbackResponses,
-  PostUpdateBenefitRenewalRequestData,
-  PostUpdateBenefitRenewalRequestErrors,
-  PostUpdateBenefitRenewalRequestResponses,
-  PostUpdateCancelOnboardingData,
-  PostUpdateCancelOnboardingErrors,
-  PostUpdateCancelOnboardingResponses,
-  PostUpdateEmploymentEngagementAgreementDetailsData,
-  PostUpdateEmploymentEngagementAgreementDetailsErrors,
-  PostUpdateEmploymentEngagementAgreementDetailsResponses,
-  PostUploadEmployeeFileFileData,
-  PostUploadEmployeeFileFileErrors,
-  PostUploadEmployeeFileFileResponses,
-  PostVerifyIdentityVerificationData,
-  PostVerifyIdentityVerificationErrors,
-  PostVerifyIdentityVerificationResponses,
-  PutApproveContractAmendmentData,
-  PutApproveContractAmendmentErrors,
-  PutApproveContractAmendmentResponses,
-  PutCancelContractAmendmentData,
-  PutCancelContractAmendmentErrors,
-  PutCancelContractAmendmentResponses,
-  PutReassignDefaultEntityCompanyData,
-  PutReassignDefaultEntityCompanyErrors,
-  PutReassignDefaultEntityCompanyResponses,
-  PutUpdateAdministrativeDetailsData,
-  PutUpdateAdministrativeDetailsErrors,
-  PutUpdateAdministrativeDetailsResponses,
-  PutUpdateBenefitOfferData,
-  PutUpdateBenefitOfferErrors,
-  PutUpdateBenefitOfferResponses,
-  PutUpdateEmploymentBasicInformationData,
-  PutUpdateEmploymentBasicInformationErrors,
-  PutUpdateEmploymentBasicInformationResponses,
-  PutUpdateEmploymentFederalTaxesData,
-  PutUpdateEmploymentFederalTaxesErrors,
-  PutUpdateEmploymentFederalTaxesResponses,
-  PutUpdateEmploymentPersonalDetailsData,
-  PutUpdateEmploymentPersonalDetailsErrors,
-  PutUpdateEmploymentPersonalDetailsResponses,
-  PutValidateResignationData,
-  PutValidateResignationErrors,
-  PutValidateResignationResponses,
+  DeleteV1CompanyManagersUserIdData,
+  DeleteV1CompanyManagersUserIdErrors,
+  DeleteV1CompanyManagersUserIdResponses,
+  DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionData,
+  DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors,
+  DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses,
+  DeleteV1IncentivesIdData,
+  DeleteV1IncentivesIdErrors,
+  DeleteV1IncentivesIdResponses,
+  DeleteV1IncentivesRecurringIdData,
+  DeleteV1IncentivesRecurringIdErrors,
+  DeleteV1IncentivesRecurringIdResponses,
+  DeleteV1WebhookCallbacksIdData,
+  DeleteV1WebhookCallbacksIdErrors,
+  DeleteV1WebhookCallbacksIdResponses,
+  GetV1BenefitOffersCountrySummariesData,
+  GetV1BenefitOffersCountrySummariesErrors,
+  GetV1BenefitOffersCountrySummariesResponses,
+  GetV1BenefitOffersData,
+  GetV1BenefitOffersErrors,
+  GetV1BenefitOffersResponses,
+  GetV1BenefitRenewalRequestsBenefitRenewalRequestIdData,
+  GetV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors,
+  GetV1BenefitRenewalRequestsBenefitRenewalRequestIdResponses,
+  GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaData,
+  GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaErrors,
+  GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaResponses,
+  GetV1BenefitRenewalRequestsData,
+  GetV1BenefitRenewalRequestsErrors,
+  GetV1BenefitRenewalRequestsResponses,
+  GetV1BillingDocumentsBillingDocumentIdBreakdownData,
+  GetV1BillingDocumentsBillingDocumentIdBreakdownErrors,
+  GetV1BillingDocumentsBillingDocumentIdBreakdownResponses,
+  GetV1BillingDocumentsBillingDocumentIdData,
+  GetV1BillingDocumentsBillingDocumentIdErrors,
+  GetV1BillingDocumentsBillingDocumentIdPdfData,
+  GetV1BillingDocumentsBillingDocumentIdPdfErrors,
+  GetV1BillingDocumentsBillingDocumentIdPdfResponses,
+  GetV1BillingDocumentsBillingDocumentIdResponses,
+  GetV1BillingDocumentsData,
+  GetV1BillingDocumentsErrors,
+  GetV1BillingDocumentsResponses,
+  GetV1BulkEmploymentJobsJobIdData,
+  GetV1BulkEmploymentJobsJobIdErrors,
+  GetV1BulkEmploymentJobsJobIdResponses,
+  GetV1BulkEmploymentJobsJobIdRowsData,
+  GetV1BulkEmploymentJobsJobIdRowsErrors,
+  GetV1BulkEmploymentJobsJobIdRowsResponses,
+  GetV1CompaniesCompanyIdComplianceProfileData,
+  GetV1CompaniesCompanyIdComplianceProfileErrors,
+  GetV1CompaniesCompanyIdComplianceProfileResponses,
+  GetV1CompaniesCompanyIdData,
+  GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusData,
+  GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusErrors,
+  GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusResponses,
+  GetV1CompaniesCompanyIdErrors,
+  GetV1CompaniesCompanyIdLegalEntitiesData,
+  GetV1CompaniesCompanyIdLegalEntitiesErrors,
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsData,
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors,
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses,
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityData,
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityErrors,
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityResponses,
+  GetV1CompaniesCompanyIdLegalEntitiesResponses,
+  GetV1CompaniesCompanyIdPricingPlansData,
+  GetV1CompaniesCompanyIdPricingPlansErrors,
+  GetV1CompaniesCompanyIdPricingPlansResponses,
+  GetV1CompaniesCompanyIdProductPricesData,
+  GetV1CompaniesCompanyIdProductPricesErrors,
+  GetV1CompaniesCompanyIdProductPricesResponses,
+  GetV1CompaniesCompanyIdResponses,
+  GetV1CompaniesCompanyIdWebhookCallbacksData,
+  GetV1CompaniesCompanyIdWebhookCallbacksErrors,
+  GetV1CompaniesCompanyIdWebhookCallbacksResponses,
+  GetV1CompaniesData,
+  GetV1CompaniesErrors,
+  GetV1CompaniesResponses,
+  GetV1CompaniesSchemaData,
+  GetV1CompaniesSchemaErrors,
+  GetV1CompaniesSchemaResponses,
+  GetV1CompanyCurrenciesData,
+  GetV1CompanyCurrenciesErrors,
+  GetV1CompanyCurrenciesResponses,
+  GetV1CompanyDepartmentsData,
+  GetV1CompanyDepartmentsErrors,
+  GetV1CompanyDepartmentsResponses,
+  GetV1CompanyManagersData,
+  GetV1CompanyManagersErrors,
+  GetV1CompanyManagersResponses,
+  GetV1CompanyManagersUserIdData,
+  GetV1CompanyManagersUserIdErrors,
+  GetV1CompanyManagersUserIdResponses,
+  GetV1ContractAmendmentsData,
+  GetV1ContractAmendmentsErrors,
+  GetV1ContractAmendmentsIdData,
+  GetV1ContractAmendmentsIdErrors,
+  GetV1ContractAmendmentsIdResponses,
+  GetV1ContractAmendmentsResponses,
+  GetV1ContractAmendmentsSchemaData,
+  GetV1ContractAmendmentsSchemaErrors,
+  GetV1ContractAmendmentsSchemaResponses,
+  GetV1ContractorInvoiceSchedulesData,
+  GetV1ContractorInvoiceSchedulesErrors,
+  GetV1ContractorInvoiceSchedulesIdData,
+  GetV1ContractorInvoiceSchedulesIdErrors,
+  GetV1ContractorInvoiceSchedulesIdResponses,
+  GetV1ContractorInvoiceSchedulesResponses,
+  GetV1ContractorInvoicesData,
+  GetV1ContractorInvoicesErrors,
+  GetV1ContractorInvoicesIdData,
+  GetV1ContractorInvoicesIdErrors,
+  GetV1ContractorInvoicesIdResponses,
+  GetV1ContractorInvoicesResponses,
+  GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdData,
+  GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdErrors,
+  GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdResponses,
+  GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesData,
+  GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesErrors,
+  GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesResponses,
+  GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsData,
+  GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsErrors,
+  GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsResponses,
+  GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdData,
+  GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdErrors,
+  GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdResponses,
+  GetV1ContractorsSchemasEligibilityQuestionnaireData,
+  GetV1ContractorsSchemasEligibilityQuestionnaireErrors,
+  GetV1ContractorsSchemasEligibilityQuestionnaireResponses,
+  GetV1CostCalculatorCountriesData,
+  GetV1CostCalculatorCountriesResponses,
+  GetV1CostCalculatorRegionsSlugFieldsData,
+  GetV1CostCalculatorRegionsSlugFieldsErrors,
+  GetV1CostCalculatorRegionsSlugFieldsResponses,
+  GetV1CountriesCountryCodeContractorContractDetailsData,
+  GetV1CountriesCountryCodeContractorContractDetailsErrors,
+  GetV1CountriesCountryCodeContractorContractDetailsResponses,
+  GetV1CountriesCountryCodeEngagementAgreementDetailsData,
+  GetV1CountriesCountryCodeEngagementAgreementDetailsErrors,
+  GetV1CountriesCountryCodeEngagementAgreementDetailsResponses,
+  GetV1CountriesCountryCodeFormData,
+  GetV1CountriesCountryCodeFormErrors,
+  GetV1CountriesCountryCodeFormResponses,
+  GetV1CountriesCountryCodeHolidaysYearData,
+  GetV1CountriesCountryCodeHolidaysYearErrors,
+  GetV1CountriesCountryCodeHolidaysYearResponses,
+  GetV1CountriesCountryCodeLegalEntityFormsFormData,
+  GetV1CountriesCountryCodeLegalEntityFormsFormErrors,
+  GetV1CountriesCountryCodeLegalEntityFormsFormResponses,
+  GetV1CountriesData,
+  GetV1CountriesErrors,
+  GetV1CountriesResponses,
+  GetV1CustomFieldsCustomFieldIdValuesEmploymentIdData,
+  GetV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors,
+  GetV1CustomFieldsCustomFieldIdValuesEmploymentIdResponses,
+  GetV1CustomFieldsData,
+  GetV1CustomFieldsErrors,
+  GetV1CustomFieldsResponses,
+  GetV1DataSyncData,
+  GetV1DataSyncErrors,
+  GetV1DataSyncResponses,
+  GetV1EmployeeDocumentsData,
+  GetV1EmployeeDocumentsErrors,
+  GetV1EmployeeDocumentsIdData,
+  GetV1EmployeeDocumentsIdErrors,
+  GetV1EmployeeDocumentsIdResponses,
+  GetV1EmployeeDocumentsResponses,
+  GetV1EmployeeExpenseCategoriesData,
+  GetV1EmployeeExpenseCategoriesErrors,
+  GetV1EmployeeExpenseCategoriesResponses,
+  GetV1EmployeeExpensesData,
+  GetV1EmployeeExpensesErrors,
+  GetV1EmployeeExpensesResponses,
+  GetV1EmployeeIncentivesData,
+  GetV1EmployeeIncentivesErrors,
+  GetV1EmployeeIncentivesResponses,
+  GetV1EmployeeLeavePoliciesData,
+  GetV1EmployeeLeavePoliciesErrors,
+  GetV1EmployeeLeavePoliciesResponses,
+  GetV1EmployeePayslipFilesData,
+  GetV1EmployeePayslipFilesErrors,
+  GetV1EmployeePayslipFilesResponses,
+  GetV1EmployeePayslipsData,
+  GetV1EmployeePayslipsErrors,
+  GetV1EmployeePayslipsResponses,
+  GetV1EmployeePersonalInformationData,
+  GetV1EmployeePersonalInformationErrors,
+  GetV1EmployeePersonalInformationResponses,
+  GetV1EmployeeTimeoffData,
+  GetV1EmployeeTimeoffErrors,
+  GetV1EmployeeTimeoffResponses,
+  GetV1EmployeeTimesheetsData,
+  GetV1EmployeeTimesheetsErrors,
+  GetV1EmployeeTimesheetsResponses,
+  GetV1EmploymentContractsData,
+  GetV1EmploymentContractsEmploymentIdPendingChangesData,
+  GetV1EmploymentContractsEmploymentIdPendingChangesErrors,
+  GetV1EmploymentContractsEmploymentIdPendingChangesResponses,
+  GetV1EmploymentContractsErrors,
+  GetV1EmploymentContractsResponses,
+  GetV1EmploymentsData,
+  GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdData,
+  GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdErrors,
+  GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdResponses,
+  GetV1EmploymentsEmploymentIdBenefitOffersData,
+  GetV1EmploymentsEmploymentIdBenefitOffersErrors,
+  GetV1EmploymentsEmploymentIdBenefitOffersResponses,
+  GetV1EmploymentsEmploymentIdBenefitOffersSchemaData,
+  GetV1EmploymentsEmploymentIdBenefitOffersSchemaErrors,
+  GetV1EmploymentsEmploymentIdBenefitOffersSchemaResponses,
+  GetV1EmploymentsEmploymentIdCompanyStructureNodesData,
+  GetV1EmploymentsEmploymentIdCompanyStructureNodesErrors,
+  GetV1EmploymentsEmploymentIdCompanyStructureNodesResponses,
+  GetV1EmploymentsEmploymentIdContractDocumentsData,
+  GetV1EmploymentsEmploymentIdContractDocumentsErrors,
+  GetV1EmploymentsEmploymentIdContractDocumentsResponses,
+  GetV1EmploymentsEmploymentIdCustomFieldsData,
+  GetV1EmploymentsEmploymentIdCustomFieldsErrors,
+  GetV1EmploymentsEmploymentIdCustomFieldsResponses,
+  GetV1EmploymentsEmploymentIdData,
+  GetV1EmploymentsEmploymentIdEngagementAgreementDetailsData,
+  GetV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
+  GetV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
+  GetV1EmploymentsEmploymentIdErrors,
+  GetV1EmploymentsEmploymentIdFilesData,
+  GetV1EmploymentsEmploymentIdFilesErrors,
+  GetV1EmploymentsEmploymentIdFilesResponses,
+  GetV1EmploymentsEmploymentIdJobData,
+  GetV1EmploymentsEmploymentIdJobErrors,
+  GetV1EmploymentsEmploymentIdJobResponses,
+  GetV1EmploymentsEmploymentIdOnboardingStepsData,
+  GetV1EmploymentsEmploymentIdOnboardingStepsErrors,
+  GetV1EmploymentsEmploymentIdOnboardingStepsResponses,
+  GetV1EmploymentsEmploymentIdResponses,
+  GetV1EmploymentsErrors,
+  GetV1EmploymentsResponses,
+  GetV1ExpensesCategoriesData,
+  GetV1ExpensesCategoriesErrors,
+  GetV1ExpensesCategoriesResponses,
+  GetV1ExpensesData,
+  GetV1ExpensesErrors,
+  GetV1ExpensesExpenseIdReceiptData,
+  GetV1ExpensesExpenseIdReceiptErrors,
+  GetV1ExpensesExpenseIdReceiptResponses,
+  GetV1ExpensesExpenseIdReceiptsReceiptIdData,
+  GetV1ExpensesExpenseIdReceiptsReceiptIdErrors,
+  GetV1ExpensesExpenseIdReceiptsReceiptIdResponses,
+  GetV1ExpensesIdData,
+  GetV1ExpensesIdErrors,
+  GetV1ExpensesIdResponses,
+  GetV1ExpensesResponses,
+  GetV1FilesIdData,
+  GetV1FilesIdErrors,
+  GetV1FilesIdResponses,
+  GetV1HelpCenterArticlesIdData,
+  GetV1HelpCenterArticlesIdErrors,
+  GetV1HelpCenterArticlesIdResponses,
+  GetV1IdentityCurrentData,
+  GetV1IdentityCurrentErrors,
+  GetV1IdentityCurrentResponses,
+  GetV1IdentityVerificationEmploymentIdData,
+  GetV1IdentityVerificationEmploymentIdErrors,
+  GetV1IdentityVerificationEmploymentIdResponses,
+  GetV1IncentivesData,
+  GetV1IncentivesErrors,
+  GetV1IncentivesIdData,
+  GetV1IncentivesIdErrors,
+  GetV1IncentivesIdResponses,
+  GetV1IncentivesRecurringData,
+  GetV1IncentivesRecurringErrors,
+  GetV1IncentivesRecurringResponses,
+  GetV1IncentivesResponses,
+  GetV1LeavePoliciesDetailsEmploymentIdData,
+  GetV1LeavePoliciesDetailsEmploymentIdErrors,
+  GetV1LeavePoliciesDetailsEmploymentIdResponses,
+  GetV1LeavePoliciesSummaryEmploymentIdData,
+  GetV1LeavePoliciesSummaryEmploymentIdErrors,
+  GetV1LeavePoliciesSummaryEmploymentIdResponses,
+  GetV1OffboardingsData,
+  GetV1OffboardingsErrors,
+  GetV1OffboardingsIdData,
+  GetV1OffboardingsIdErrors,
+  GetV1OffboardingsIdResponses,
+  GetV1OffboardingsResponses,
+  GetV1PayItemsData,
+  GetV1PayItemsErrors,
+  GetV1PayItemsResponses,
+  GetV1PayrollCalendarsCycleData,
+  GetV1PayrollCalendarsCycleErrors,
+  GetV1PayrollCalendarsCycleResponses,
+  GetV1PayrollCalendarsData,
+  GetV1PayrollCalendarsErrors,
+  GetV1PayrollCalendarsResponses,
+  GetV1PayrollRunsData,
+  GetV1PayrollRunsErrors,
+  GetV1PayrollRunsPayrollRunIdData,
+  GetV1PayrollRunsPayrollRunIdEmployeeDetailsData,
+  GetV1PayrollRunsPayrollRunIdEmployeeDetailsErrors,
+  GetV1PayrollRunsPayrollRunIdEmployeeDetailsResponses,
+  GetV1PayrollRunsPayrollRunIdErrors,
+  GetV1PayrollRunsPayrollRunIdResponses,
+  GetV1PayrollRunsResponses,
+  GetV1PayslipsData,
+  GetV1PayslipsErrors,
+  GetV1PayslipsIdData,
+  GetV1PayslipsIdErrors,
+  GetV1PayslipsIdResponses,
+  GetV1PayslipsPayslipIdPdfData,
+  GetV1PayslipsPayslipIdPdfErrors,
+  GetV1PayslipsPayslipIdPdfResponses,
+  GetV1PayslipsResponses,
+  GetV1PricingPlanPartnerTemplatesData,
+  GetV1PricingPlanPartnerTemplatesErrors,
+  GetV1PricingPlanPartnerTemplatesResponses,
+  GetV1ProbationCompletionLetterIdData,
+  GetV1ProbationCompletionLetterIdErrors,
+  GetV1ProbationCompletionLetterIdResponses,
+  GetV1ProbationExtensionsIdData,
+  GetV1ProbationExtensionsIdErrors,
+  GetV1ProbationExtensionsIdResponses,
+  GetV1ResignationsOffboardingRequestIdData,
+  GetV1ResignationsOffboardingRequestIdErrors,
+  GetV1ResignationsOffboardingRequestIdResignationLetterData,
+  GetV1ResignationsOffboardingRequestIdResignationLetterErrors,
+  GetV1ResignationsOffboardingRequestIdResignationLetterResponses,
+  GetV1ResignationsOffboardingRequestIdResponses,
+  GetV1ScimV2GroupsData,
+  GetV1ScimV2GroupsErrors,
+  GetV1ScimV2GroupsIdData,
+  GetV1ScimV2GroupsIdErrors,
+  GetV1ScimV2GroupsIdResponses,
+  GetV1ScimV2GroupsResponses,
+  GetV1ScimV2UsersData,
+  GetV1ScimV2UsersErrors,
+  GetV1ScimV2UsersIdData,
+  GetV1ScimV2UsersIdErrors,
+  GetV1ScimV2UsersIdResponses,
+  GetV1ScimV2UsersResponses,
+  GetV1SsoConfigurationData,
+  GetV1SsoConfigurationDetailsData,
+  GetV1SsoConfigurationDetailsErrors,
+  GetV1SsoConfigurationDetailsResponses,
+  GetV1SsoConfigurationErrors,
+  GetV1SsoConfigurationResponses,
+  GetV1TestSchemaData,
+  GetV1TestSchemaResponses,
+  GetV1TimeoffBalancesEmploymentIdData,
+  GetV1TimeoffBalancesEmploymentIdErrors,
+  GetV1TimeoffBalancesEmploymentIdResponses,
+  GetV1TimeoffData,
+  GetV1TimeoffErrors,
+  GetV1TimeoffIdData,
+  GetV1TimeoffIdErrors,
+  GetV1TimeoffIdResponses,
+  GetV1TimeoffResponses,
+  GetV1TimeoffTypesData,
+  GetV1TimeoffTypesErrors,
+  GetV1TimeoffTypesResponses,
+  GetV1TimesheetsData,
+  GetV1TimesheetsErrors,
+  GetV1TimesheetsIdData,
+  GetV1TimesheetsIdErrors,
+  GetV1TimesheetsIdResponses,
+  GetV1TimesheetsResponses,
+  GetV1TravelLetterRequestsData,
+  GetV1TravelLetterRequestsErrors,
+  GetV1TravelLetterRequestsIdData,
+  GetV1TravelLetterRequestsIdErrors,
+  GetV1TravelLetterRequestsIdResponses,
+  GetV1TravelLetterRequestsResponses,
+  GetV1WebhookEventsData,
+  GetV1WebhookEventsErrors,
+  GetV1WebhookEventsResponses,
+  GetV1WorkAuthorizationRequestsData,
+  GetV1WorkAuthorizationRequestsErrors,
+  GetV1WorkAuthorizationRequestsIdData,
+  GetV1WorkAuthorizationRequestsIdErrors,
+  GetV1WorkAuthorizationRequestsIdResponses,
+  GetV1WorkAuthorizationRequestsResponses,
+  GetV2EmploymentsEmploymentIdEngagementAgreementDetailsData,
+  GetV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
+  GetV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
+  PatchV1CompaniesCompanyId2Data,
+  PatchV1CompaniesCompanyId2Errors,
+  PatchV1CompaniesCompanyId2Responses,
+  PatchV1CompaniesCompanyIdData,
+  PatchV1CompaniesCompanyIdErrors,
+  PatchV1CompaniesCompanyIdResponses,
+  PatchV1ContractorInvoiceSchedulesId2Data,
+  PatchV1ContractorInvoiceSchedulesId2Errors,
+  PatchV1ContractorInvoiceSchedulesId2Responses,
+  PatchV1ContractorInvoiceSchedulesIdData,
+  PatchV1ContractorInvoiceSchedulesIdErrors,
+  PatchV1ContractorInvoiceSchedulesIdResponses,
+  PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Data,
+  PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Errors,
+  PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Responses,
+  PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdData,
+  PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors,
+  PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdResponses,
+  PatchV1EmployeeTimeoffId2Data,
+  PatchV1EmployeeTimeoffId2Errors,
+  PatchV1EmployeeTimeoffId2Responses,
+  PatchV1EmployeeTimeoffIdData,
+  PatchV1EmployeeTimeoffIdErrors,
+  PatchV1EmployeeTimeoffIdResponses,
+  PatchV1EmploymentsEmploymentId2Data,
+  PatchV1EmploymentsEmploymentId2Errors,
+  PatchV1EmploymentsEmploymentId2Responses,
+  PatchV1EmploymentsEmploymentIdData,
+  PatchV1EmploymentsEmploymentIdErrors,
+  PatchV1EmploymentsEmploymentIdResponses,
+  PatchV1ExpensesId2Data,
+  PatchV1ExpensesId2Errors,
+  PatchV1ExpensesId2Responses,
+  PatchV1ExpensesIdData,
+  PatchV1ExpensesIdErrors,
+  PatchV1ExpensesIdResponses,
+  PatchV1IncentivesId2Data,
+  PatchV1IncentivesId2Errors,
+  PatchV1IncentivesId2Responses,
+  PatchV1IncentivesIdData,
+  PatchV1IncentivesIdErrors,
+  PatchV1IncentivesIdResponses,
+  PatchV1SandboxEmploymentsEmploymentId2Data,
+  PatchV1SandboxEmploymentsEmploymentId2Errors,
+  PatchV1SandboxEmploymentsEmploymentId2Responses,
+  PatchV1SandboxEmploymentsEmploymentIdData,
+  PatchV1SandboxEmploymentsEmploymentIdErrors,
+  PatchV1SandboxEmploymentsEmploymentIdResponses,
+  PatchV1TimeoffId2Data,
+  PatchV1TimeoffId2Errors,
+  PatchV1TimeoffId2Responses,
+  PatchV1TimeoffIdData,
+  PatchV1TimeoffIdErrors,
+  PatchV1TimeoffIdResponses,
+  PatchV1TravelLetterRequestsId2Data,
+  PatchV1TravelLetterRequestsId2Errors,
+  PatchV1TravelLetterRequestsId2Responses,
+  PatchV1TravelLetterRequestsIdData,
+  PatchV1TravelLetterRequestsIdErrors,
+  PatchV1TravelLetterRequestsIdResponses,
+  PatchV1WebhookCallbacksIdData,
+  PatchV1WebhookCallbacksIdErrors,
+  PatchV1WebhookCallbacksIdResponses,
+  PatchV1WorkAuthorizationRequestsId2Data,
+  PatchV1WorkAuthorizationRequestsId2Errors,
+  PatchV1WorkAuthorizationRequestsId2Responses,
+  PatchV1WorkAuthorizationRequestsIdData,
+  PatchV1WorkAuthorizationRequestsIdErrors,
+  PatchV1WorkAuthorizationRequestsIdResponses,
+  PatchV2EmploymentsEmploymentId2Data,
+  PatchV2EmploymentsEmploymentId2Errors,
+  PatchV2EmploymentsEmploymentId2Responses,
+  PatchV2EmploymentsEmploymentIdData,
+  PatchV2EmploymentsEmploymentIdErrors,
+  PatchV2EmploymentsEmploymentIdResponses,
+  PostAuthOauth2TokenData,
+  PostAuthOauth2TokenErrors,
+  PostAuthOauth2TokenResponses,
+  PostV1BenefitRenewalRequestsBenefitRenewalRequestIdData,
+  PostV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors,
+  PostV1BenefitRenewalRequestsBenefitRenewalRequestIdResponses,
+  PostV1BulkEmploymentJobsData,
+  PostV1BulkEmploymentJobsErrors,
+  PostV1BulkEmploymentJobsResponses,
+  PostV1CancelOnboardingEmploymentIdData,
+  PostV1CancelOnboardingEmploymentIdErrors,
+  PostV1CancelOnboardingEmploymentIdResponses,
+  PostV1CompaniesCompanyIdCreateTokenData,
+  PostV1CompaniesCompanyIdCreateTokenErrors,
+  PostV1CompaniesCompanyIdCreateTokenResponses,
+  PostV1CompaniesCompanyIdPricingPlansData,
+  PostV1CompaniesCompanyIdPricingPlansErrors,
+  PostV1CompaniesCompanyIdPricingPlansResponses,
+  PostV1CompaniesData,
+  PostV1CompaniesErrors,
+  PostV1CompaniesResponses,
+  PostV1CompanyDepartmentsData,
+  PostV1CompanyDepartmentsErrors,
+  PostV1CompanyDepartmentsResponses,
+  PostV1CompanyManagersData,
+  PostV1CompanyManagersErrors,
+  PostV1CompanyManagersResponses,
+  PostV1ContractAmendmentsAutomatableData,
+  PostV1ContractAmendmentsAutomatableErrors,
+  PostV1ContractAmendmentsAutomatableResponses,
+  PostV1ContractAmendmentsData,
+  PostV1ContractAmendmentsErrors,
+  PostV1ContractAmendmentsResponses,
+  PostV1ContractorInvoiceSchedulesData,
+  PostV1ContractorInvoiceSchedulesErrors,
+  PostV1ContractorInvoiceSchedulesResponses,
+  PostV1ContractorsEligibilityQuestionnaireData,
+  PostV1ContractorsEligibilityQuestionnaireErrors,
+  PostV1ContractorsEligibilityQuestionnaireResponses,
+  PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignData,
+  PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignErrors,
+  PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignResponses,
+  PostV1ContractorsEmploymentsEmploymentIdContractDocumentsData,
+  PostV1ContractorsEmploymentsEmploymentIdContractDocumentsErrors,
+  PostV1ContractorsEmploymentsEmploymentIdContractDocumentsResponses,
+  PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionData,
+  PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors,
+  PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses,
+  PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionData,
+  PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionErrors,
+  PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionResponses,
+  PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsData,
+  PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsErrors,
+  PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsResponses,
+  PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentData,
+  PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentErrors,
+  PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentResponses,
+  PostV1CostCalculatorEstimationCsvData,
+  PostV1CostCalculatorEstimationCsvErrors,
+  PostV1CostCalculatorEstimationCsvResponses,
+  PostV1CostCalculatorEstimationData,
+  PostV1CostCalculatorEstimationErrors,
+  PostV1CostCalculatorEstimationPdfData,
+  PostV1CostCalculatorEstimationPdfErrors,
+  PostV1CostCalculatorEstimationPdfResponses,
+  PostV1CostCalculatorEstimationResponses,
+  PostV1CurrencyConverterEffective2Data,
+  PostV1CurrencyConverterEffective2Errors,
+  PostV1CurrencyConverterEffective2Responses,
+  PostV1CurrencyConverterEffectiveData,
+  PostV1CurrencyConverterEffectiveErrors,
+  PostV1CurrencyConverterEffectiveResponses,
+  PostV1CurrencyConverterRawData,
+  PostV1CurrencyConverterRawErrors,
+  PostV1CurrencyConverterRawResponses,
+  PostV1CustomFieldsData,
+  PostV1CustomFieldsErrors,
+  PostV1CustomFieldsResponses,
+  PostV1DataSyncData,
+  PostV1DataSyncErrors,
+  PostV1DataSyncResponses,
+  PostV1DocumentsData,
+  PostV1DocumentsErrors,
+  PostV1DocumentsResponses,
+  PostV1EmployeeExpensesData,
+  PostV1EmployeeExpensesErrors,
+  PostV1EmployeeExpensesResponses,
+  PostV1EmployeeTimeoffData,
+  PostV1EmployeeTimeoffErrors,
+  PostV1EmployeeTimeoffIdCancelData,
+  PostV1EmployeeTimeoffIdCancelErrors,
+  PostV1EmployeeTimeoffIdCancelResponses,
+  PostV1EmployeeTimeoffResponses,
+  PostV1EmploymentsData,
+  PostV1EmploymentsEmploymentIdContractEligibilityData,
+  PostV1EmploymentsEmploymentIdContractEligibilityErrors,
+  PostV1EmploymentsEmploymentIdContractEligibilityResponses,
+  PostV1EmploymentsEmploymentIdEngagementAgreementDetailsData,
+  PostV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
+  PostV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
+  PostV1EmploymentsEmploymentIdInviteData,
+  PostV1EmploymentsEmploymentIdInviteErrors,
+  PostV1EmploymentsEmploymentIdInviteResponses,
+  PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsData,
+  PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsErrors,
+  PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsResponses,
+  PostV1EmploymentsErrors,
+  PostV1EmploymentsResponses,
+  PostV1ExpensesData,
+  PostV1ExpensesErrors,
+  PostV1ExpensesResponses,
+  PostV1IdentityVerificationEmploymentIdDeclineData,
+  PostV1IdentityVerificationEmploymentIdDeclineErrors,
+  PostV1IdentityVerificationEmploymentIdDeclineResponses,
+  PostV1IdentityVerificationEmploymentIdVerifyData,
+  PostV1IdentityVerificationEmploymentIdVerifyErrors,
+  PostV1IdentityVerificationEmploymentIdVerifyResponses,
+  PostV1IncentivesData,
+  PostV1IncentivesErrors,
+  PostV1IncentivesRecurringData,
+  PostV1IncentivesRecurringErrors,
+  PostV1IncentivesRecurringResponses,
+  PostV1IncentivesResponses,
+  PostV1MagicLinkData,
+  PostV1MagicLinkErrors,
+  PostV1MagicLinkResponses,
+  PostV1OffboardingsData,
+  PostV1OffboardingsErrors,
+  PostV1OffboardingsResponses,
+  PostV1PayItemsBulkData,
+  PostV1PayItemsBulkErrors,
+  PostV1PayItemsBulkResponses,
+  PostV1ProbationCompletionLetterData,
+  PostV1ProbationCompletionLetterErrors,
+  PostV1ProbationCompletionLetterResponses,
+  PostV1ProbationExtensionsData,
+  PostV1ProbationExtensionsErrors,
+  PostV1ProbationExtensionsResponses,
+  PostV1ReadyData,
+  PostV1ReadyErrors,
+  PostV1ReadyResponses,
+  PostV1RiskReserveData,
+  PostV1RiskReserveErrors,
+  PostV1RiskReserveResponses,
+  PostV1SandboxBenefitRenewalRequestsData,
+  PostV1SandboxBenefitRenewalRequestsErrors,
+  PostV1SandboxBenefitRenewalRequestsResponses,
+  PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksData,
+  PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksErrors,
+  PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksResponses,
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesData,
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesErrors,
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesResponses,
+  PostV1SandboxEmploymentsData,
+  PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveData,
+  PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveErrors,
+  PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveResponses,
+  PostV1SandboxEmploymentsErrors,
+  PostV1SandboxEmploymentsResponses,
+  PostV1SandboxWebhookCallbacksTriggerData,
+  PostV1SandboxWebhookCallbacksTriggerErrors,
+  PostV1SandboxWebhookCallbacksTriggerResponses,
+  PostV1SdkTelemetryErrorsData,
+  PostV1SdkTelemetryErrorsErrors,
+  PostV1SdkTelemetryErrorsResponses,
+  PostV1SsoConfigurationData,
+  PostV1SsoConfigurationErrors,
+  PostV1SsoConfigurationResponses,
+  PostV1TimeoffData,
+  PostV1TimeoffErrors,
+  PostV1TimeoffResponses,
+  PostV1TimeoffTimeoffIdApproveData,
+  PostV1TimeoffTimeoffIdApproveErrors,
+  PostV1TimeoffTimeoffIdApproveResponses,
+  PostV1TimeoffTimeoffIdCancelData,
+  PostV1TimeoffTimeoffIdCancelErrors,
+  PostV1TimeoffTimeoffIdCancelRequestApproveData,
+  PostV1TimeoffTimeoffIdCancelRequestApproveErrors,
+  PostV1TimeoffTimeoffIdCancelRequestApproveResponses,
+  PostV1TimeoffTimeoffIdCancelRequestDeclineData,
+  PostV1TimeoffTimeoffIdCancelRequestDeclineErrors,
+  PostV1TimeoffTimeoffIdCancelRequestDeclineResponses,
+  PostV1TimeoffTimeoffIdCancelResponses,
+  PostV1TimeoffTimeoffIdDeclineData,
+  PostV1TimeoffTimeoffIdDeclineErrors,
+  PostV1TimeoffTimeoffIdDeclineResponses,
+  PostV1TimesheetsTimesheetIdApproveData,
+  PostV1TimesheetsTimesheetIdApproveErrors,
+  PostV1TimesheetsTimesheetIdApproveResponses,
+  PostV1TimesheetsTimesheetIdSendBackData,
+  PostV1TimesheetsTimesheetIdSendBackErrors,
+  PostV1TimesheetsTimesheetIdSendBackResponses,
+  PostV1WebhookCallbacksData,
+  PostV1WebhookCallbacksErrors,
+  PostV1WebhookCallbacksResponses,
+  PostV1WebhookEventsReplayData,
+  PostV1WebhookEventsReplayErrors,
+  PostV1WebhookEventsReplayResponses,
+  PostV2EmploymentsEmploymentIdEngagementAgreementDetailsData,
+  PostV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
+  PostV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
+  PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsData,
+  PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors,
+  PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses,
+  PutV1EmploymentsEmploymentIdBasicInformationData,
+  PutV1EmploymentsEmploymentIdBasicInformationErrors,
+  PutV1EmploymentsEmploymentIdBasicInformationResponses,
+  PutV1EmploymentsEmploymentIdBenefitOffersData,
+  PutV1EmploymentsEmploymentIdBenefitOffersErrors,
+  PutV1EmploymentsEmploymentIdBenefitOffersResponses,
+  PutV1EmploymentsEmploymentIdFederalTaxesData,
+  PutV1EmploymentsEmploymentIdFederalTaxesErrors,
+  PutV1EmploymentsEmploymentIdFederalTaxesResponses,
+  PutV1EmploymentsEmploymentIdPersonalDetailsData,
+  PutV1EmploymentsEmploymentIdPersonalDetailsErrors,
+  PutV1EmploymentsEmploymentIdPersonalDetailsResponses,
+  PutV1ResignationsOffboardingRequestIdValidateData,
+  PutV1ResignationsOffboardingRequestIdValidateErrors,
+  PutV1ResignationsOffboardingRequestIdValidateResponses,
+  PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdData,
+  PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdErrors,
+  PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdResponses,
+  PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveData,
+  PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveErrors,
+  PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveResponses,
+  PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelData,
+  PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelErrors,
+  PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelResponses,
+  PutV2EmploymentsEmploymentIdAddressDetailsData,
+  PutV2EmploymentsEmploymentIdAddressDetailsErrors,
+  PutV2EmploymentsEmploymentIdAddressDetailsResponses,
+  PutV2EmploymentsEmploymentIdAdministrativeDetailsData,
+  PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors,
+  PutV2EmploymentsEmploymentIdAdministrativeDetailsResponses,
+  PutV2EmploymentsEmploymentIdBankAccountDetailsData,
+  PutV2EmploymentsEmploymentIdBankAccountDetailsErrors,
+  PutV2EmploymentsEmploymentIdBankAccountDetailsResponses,
+  PutV2EmploymentsEmploymentIdBasicInformationData,
+  PutV2EmploymentsEmploymentIdBasicInformationErrors,
+  PutV2EmploymentsEmploymentIdBasicInformationResponses,
+  PutV2EmploymentsEmploymentIdBillingAddressDetailsData,
+  PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors,
+  PutV2EmploymentsEmploymentIdBillingAddressDetailsResponses,
+  PutV2EmploymentsEmploymentIdContractDetailsData,
+  PutV2EmploymentsEmploymentIdContractDetailsErrors,
+  PutV2EmploymentsEmploymentIdContractDetailsResponses,
+  PutV2EmploymentsEmploymentIdEmergencyContactData,
+  PutV2EmploymentsEmploymentIdEmergencyContactErrors,
+  PutV2EmploymentsEmploymentIdEmergencyContactResponses,
+  PutV2EmploymentsEmploymentIdFederalTaxesData,
+  PutV2EmploymentsEmploymentIdFederalTaxesErrors,
+  PutV2EmploymentsEmploymentIdFederalTaxesResponses,
+  PutV2EmploymentsEmploymentIdPersonalDetailsData,
+  PutV2EmploymentsEmploymentIdPersonalDetailsErrors,
+  PutV2EmploymentsEmploymentIdPersonalDetailsResponses,
+  PutV2EmploymentsEmploymentIdPricingPlanDetailsData,
+  PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors,
+  PutV2EmploymentsEmploymentIdPricingPlanDetailsResponses,
 } from './types.gen';
 
 export type Options<
@@ -683,12 +755,12 @@ export type Options<
  * | Manage employments (`employments`) | View offboarding requests (`offboarding:read`) | Manage offboarding (`offboarding:write`) |
  *
  */
-export const getIndexOffboarding = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexOffboardingData, ThrowOnError>,
+export const getV1Offboardings = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1OffboardingsData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexOffboardingResponses,
-    GetIndexOffboardingErrors,
+    GetV1OffboardingsResponses,
+    GetV1OffboardingsErrors,
     ThrowOnError
   >({
     security: [
@@ -712,12 +784,12 @@ export const getIndexOffboarding = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | - | Manage offboarding (`offboarding:write`) |
  *
  */
-export const postCreateOffboarding = <ThrowOnError extends boolean = false>(
-  options?: Options<PostCreateOffboardingData, ThrowOnError>,
+export const postV1Offboardings = <ThrowOnError extends boolean = false>(
+  options?: Options<PostV1OffboardingsData, ThrowOnError>,
 ) =>
   (options?.client ?? client).post<
-    PostCreateOffboardingResponses,
-    PostCreateOffboardingErrors,
+    PostV1OffboardingsResponses,
+    PostV1OffboardingsErrors,
     ThrowOnError
   >({
     security: [
@@ -744,12 +816,12 @@ export const postCreateOffboarding = <ThrowOnError extends boolean = false>(
  * | Manage timeoffs (`time_and_attendance`) | View timesheets (`timesheet:read`) | Manage timesheets (`timesheet:write`) |
  *
  */
-export const getShowTimesheet = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowTimesheetData, ThrowOnError>,
+export const getV1TimesheetsId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1TimesheetsIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowTimesheetResponses,
-    GetShowTimesheetErrors,
+    GetV1TimesheetsIdResponses,
+    GetV1TimesheetsIdErrors,
     ThrowOnError
   >({
     security: [
@@ -778,14 +850,14 @@ export const getShowTimesheet = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | - | Manage onboarding (`onboarding:write`) |
  *
  */
-export const postUpdateCancelOnboarding = <
+export const postV1CancelOnboardingEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostUpdateCancelOnboardingData, ThrowOnError>,
+  options: Options<PostV1CancelOnboardingEmploymentIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostUpdateCancelOnboardingResponses,
-    PostUpdateCancelOnboardingErrors,
+    PostV1CancelOnboardingEmploymentIdResponses,
+    PostV1CancelOnboardingEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
@@ -811,14 +883,14 @@ export const postUpdateCancelOnboarding = <
  * | Manage employments (`employments`) | View contract amendments (`contract_amendment:read`) | Manage contract amendments (`contract_amendment:write`) |
  *
  */
-export const getShowContractAmendmentSchema = <
+export const getV1ContractAmendmentsSchema = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetShowContractAmendmentSchemaData, ThrowOnError>,
+  options: Options<GetV1ContractAmendmentsSchemaData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowContractAmendmentSchemaResponses,
-    GetShowContractAmendmentSchemaErrors,
+    GetV1ContractAmendmentsSchemaResponses,
+    GetV1ContractAmendmentsSchemaErrors,
     ThrowOnError
   >({
     security: [
@@ -841,15 +913,15 @@ export const getShowContractAmendmentSchema = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | - | - | Manage pay items (`pay_item:write`) |
+ * | Manage payroll runs (`payroll`) | - | Manage pay items (`pay_item:write`) |
  *
  */
-export const postBulkCreatePayItems = <ThrowOnError extends boolean = false>(
-  options: Options<PostBulkCreatePayItemsData, ThrowOnError>,
+export const postV1PayItemsBulk = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1PayItemsBulkData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostBulkCreatePayItemsResponses,
-    PostBulkCreatePayItemsErrors,
+    PostV1PayItemsBulkResponses,
+    PostV1PayItemsBulkErrors,
     ThrowOnError
   >({
     security: [
@@ -872,12 +944,12 @@ export const postBulkCreatePayItems = <ThrowOnError extends boolean = false>(
  *
  * @deprecated
  */
-export const getIndexDataSync = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexDataSyncData, ThrowOnError>,
+export const getV1DataSync = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1DataSyncData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexDataSyncResponses,
-    GetIndexDataSyncErrors,
+    GetV1DataSyncResponses,
+    GetV1DataSyncErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -897,12 +969,12 @@ export const getIndexDataSync = <ThrowOnError extends boolean = false>(
  *
  * @deprecated
  */
-export const postCreateDataSync = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateDataSyncData, ThrowOnError>,
+export const postV1DataSync = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1DataSyncData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateDataSyncResponses,
-    PostCreateDataSyncErrors,
+    PostV1DataSyncResponses,
+    PostV1DataSyncErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -928,14 +1000,14 @@ export const postCreateDataSync = <ThrowOnError extends boolean = false>(
  * | Manage companies (`company_management`) | View pricing plans (`pricing_plan:read`) | Manage pricing plans (`pricing_plan:write`) |
  *
  */
-export const getIndexCompanyPricingPlan = <
+export const getV1CompaniesCompanyIdPricingPlans = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetIndexCompanyPricingPlanData, ThrowOnError>,
+  options: Options<GetV1CompaniesCompanyIdPricingPlansData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexCompanyPricingPlanResponses,
-    GetIndexCompanyPricingPlanErrors,
+    GetV1CompaniesCompanyIdPricingPlansResponses,
+    GetV1CompaniesCompanyIdPricingPlansErrors,
     ThrowOnError
   >({
     security: [
@@ -964,14 +1036,14 @@ export const getIndexCompanyPricingPlan = <
  * | Manage companies (`company_management`) | - | Manage pricing plans (`pricing_plan:write`) |
  *
  */
-export const postCreateCompanyPricingPlan = <
+export const postV1CompaniesCompanyIdPricingPlans = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostCreateCompanyPricingPlanData, ThrowOnError>,
+  options: Options<PostV1CompaniesCompanyIdPricingPlansData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateCompanyPricingPlanResponses,
-    PostCreateCompanyPricingPlanErrors,
+    PostV1CompaniesCompanyIdPricingPlansResponses,
+    PostV1CompaniesCompanyIdPricingPlansErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -995,14 +1067,14 @@ export const postCreateCompanyPricingPlan = <
  * | Manage employment documents (`employment_documents`) | View probation documents (`probation_document:read`) | Manage probation documents (`probation_document:write`) |
  *
  */
-export const getShowProbationCompletionLetter = <
+export const getV1ProbationCompletionLetterId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetShowProbationCompletionLetterData, ThrowOnError>,
+  options: Options<GetV1ProbationCompletionLetterIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowProbationCompletionLetterResponses,
-    GetShowProbationCompletionLetterErrors,
+    GetV1ProbationCompletionLetterIdResponses,
+    GetV1ProbationCompletionLetterIdErrors,
     ThrowOnError
   >({
     security: [
@@ -1025,12 +1097,12 @@ export const getShowProbationCompletionLetter = <
  * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
  *
  */
-export const getShowContractorInvoice = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowContractorInvoiceData, ThrowOnError>,
+export const getV1ContractorInvoicesId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1ContractorInvoicesIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowContractorInvoiceResponses,
-    GetShowContractorInvoiceErrors,
+    GetV1ContractorInvoicesIdResponses,
+    GetV1ContractorInvoicesIdErrors,
     ThrowOnError
   >({
     security: [
@@ -1054,14 +1126,14 @@ export const getShowContractorInvoice = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | Convert currencies (`convert_currency:read`) | - |
  *
  */
-export const postConvertRawCurrencyConverter = <
+export const postV1CurrencyConverterRaw = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostConvertRawCurrencyConverterData, ThrowOnError>,
+  options: Options<PostV1CurrencyConverterRawData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostConvertRawCurrencyConverterResponses,
-    PostConvertRawCurrencyConverterErrors,
+    PostV1CurrencyConverterRawResponses,
+    PostV1CurrencyConverterRawErrors,
     ThrowOnError
   >({
     security: [
@@ -1089,14 +1161,17 @@ export const postConvertRawCurrencyConverter = <
  * | Manage company resources (`company_admin`) | View forms (`form:read`) | - |
  *
  */
-export const getShowContractorContractDetailsCountry = <
+export const getV1CountriesCountryCodeContractorContractDetails = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetShowContractorContractDetailsCountryData, ThrowOnError>,
+  options: Options<
+    GetV1CountriesCountryCodeContractorContractDetailsData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetShowContractorContractDetailsCountryResponses,
-    GetShowContractorContractDetailsCountryErrors,
+    GetV1CountriesCountryCodeContractorContractDetailsResponses,
+    GetV1CountriesCountryCodeContractorContractDetailsErrors,
     ThrowOnError
   >({
     security: [
@@ -1104,6 +1179,31 @@ export const getShowContractorContractDetailsCountry = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/countries/{country_code}/contractor-contract-details',
+    ...options,
+  });
+
+/**
+ * List incentives for the authenticated employee
+ *
+ * Returns all incentives for the authenticated employee.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | View incentives (`incentive:read`) | Manage incentives (`incentive:write`) |
+ *
+ */
+export const getV1EmployeeIncentives = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1EmployeeIncentivesData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1EmployeeIncentivesResponses,
+    GetV1EmployeeIncentivesErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/incentives',
     ...options,
   });
 
@@ -1130,12 +1230,12 @@ export const getShowContractorContractDetailsCountry = <
  *
  *
  */
-export const getIndexEmployment = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexEmploymentData, ThrowOnError>,
+export const getV1Employments = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1EmploymentsData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexEmploymentResponses,
-    GetIndexEmploymentErrors,
+    GetV1EmploymentsResponses,
+    GetV1EmploymentsErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1182,12 +1282,12 @@ export const getIndexEmployment = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const postCreateEmployment2 = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateEmployment2Data, ThrowOnError>,
+export const postV1Employments = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1EmploymentsData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateEmployment2Responses,
-    PostCreateEmployment2Errors,
+    PostV1EmploymentsResponses,
+    PostV1EmploymentsErrors,
     ThrowOnError
   >({
     security: [
@@ -1217,26 +1317,25 @@ export const postCreateEmployment2 = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
  *
  */
-export const getShowCompanyEmploymentOnboardingReservesStatus = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    GetShowCompanyEmploymentOnboardingReservesStatusData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).get<
-    GetShowCompanyEmploymentOnboardingReservesStatusResponses,
-    GetShowCompanyEmploymentOnboardingReservesStatusErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/companies/{company_id}/employments/{employment_id}/onboarding-reserves-status',
-    ...options,
-  });
+export const getV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatus =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).get<
+      GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusResponses,
+      GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/companies/{company_id}/employments/{employment_id}/onboarding-reserves-status',
+      ...options,
+    });
 
 /**
  * Get Help Center Article
@@ -1250,12 +1349,12 @@ export const getShowCompanyEmploymentOnboardingReservesStatus = <
  * | Manage company resources (`company_admin`) | View help articles (`help_center_article:read`) | - |
  *
  */
-export const getShowHelpCenterArticle = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowHelpCenterArticleData, ThrowOnError>,
+export const getV1HelpCenterArticlesId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1HelpCenterArticlesIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowHelpCenterArticleResponses,
-    GetShowHelpCenterArticleErrors,
+    GetV1HelpCenterArticlesIdResponses,
+    GetV1HelpCenterArticlesIdErrors,
     ThrowOnError
   >({
     security: [
@@ -1271,17 +1370,97 @@ export const getShowHelpCenterArticle = <ThrowOnError extends boolean = false>(
  *
  * Retrieves a single user for the authenticated company by user ID
  */
-export const getGetUserScim = <ThrowOnError extends boolean = false>(
-  options: Options<GetGetUserScimData, ThrowOnError>,
+export const getV1ScimV2UsersId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1ScimV2UsersIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetGetUserScimResponses,
-    GetGetUserScimErrors,
+    GetV1ScimV2UsersIdResponses,
+    GetV1ScimV2UsersIdErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/v1/scim/v2/Users/{id}',
     ...options,
+  });
+
+/**
+ * Get engagement agreement details
+ *
+ * Returns the engagement agreement details for an employment.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getV2EmploymentsEmploymentIdEngagementAgreementDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV2EmploymentsEmploymentIdEngagementAgreementDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
+    GetV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/engagement-agreement-details',
+    ...options,
+  });
+
+/**
+ * Upsert engagement agreement details
+ *
+ * Creates or updates the engagement agreement details for an employment.
+ *
+ * This endpoint requires country-specific data. The exact required fields will vary depending on
+ * which country the employment is in. To see the list of parameters for each country, see the
+ * **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that compliance requirements for each country are subject to change according to local laws.
+ * Using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) is recommended
+ * to avoid compliance issues and to have the latest version of a country's requirements.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const postV2EmploymentsEmploymentIdEngagementAgreementDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostV2EmploymentsEmploymentIdEngagementAgreementDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
+    PostV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/engagement-agreement-details',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 
 /**
@@ -1294,12 +1473,12 @@ export const getGetUserScim = <ThrowOnError extends boolean = false>(
  * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
  *
  */
-export const getShowEmployeeDocument = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowEmployeeDocumentData, ThrowOnError>,
+export const getV1EmployeeDocumentsId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1EmployeeDocumentsIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowEmployeeDocumentResponses,
-    GetShowEmployeeDocumentErrors,
+    GetV1EmployeeDocumentsIdResponses,
+    GetV1EmployeeDocumentsIdErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1319,12 +1498,12 @@ export const getShowEmployeeDocument = <ThrowOnError extends boolean = false>(
  * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
  *
  */
-export const getIndexContractorInvoice = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexContractorInvoiceData, ThrowOnError>,
+export const getV1ContractorInvoices = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1ContractorInvoicesData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexContractorInvoiceResponses,
-    GetIndexContractorInvoiceErrors,
+    GetV1ContractorInvoicesResponses,
+    GetV1ContractorInvoicesErrors,
     ThrowOnError
   >({
     security: [
@@ -1342,12 +1521,12 @@ export const getIndexContractorInvoice = <ThrowOnError extends boolean = false>(
  * Errors are logged to observability backend for monitoring and debugging.
  *
  */
-export const postReportErrorsTelemetry = <ThrowOnError extends boolean = false>(
-  options: Options<PostReportErrorsTelemetryData, ThrowOnError>,
+export const postV1SdkTelemetryErrors = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1SdkTelemetryErrorsData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostReportErrorsTelemetryResponses,
-    PostReportErrorsTelemetryErrors,
+    PostV1SdkTelemetryErrorsResponses,
+    PostV1SdkTelemetryErrorsErrors,
     ThrowOnError
   >({
     security: [
@@ -1374,14 +1553,14 @@ export const postReportErrorsTelemetry = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | - | Manage SSO (`sso_configuration:write`) |
  *
  */
-export const getDetailsSsoConfiguration = <
+export const getV1SsoConfigurationDetails = <
   ThrowOnError extends boolean = false,
 >(
-  options?: Options<GetDetailsSsoConfigurationData, ThrowOnError>,
+  options?: Options<GetV1SsoConfigurationDetailsData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetDetailsSsoConfigurationResponses,
-    GetDetailsSsoConfigurationErrors,
+    GetV1SsoConfigurationDetailsResponses,
+    GetV1SsoConfigurationDetailsErrors,
     ThrowOnError
   >({
     security: [
@@ -1395,12 +1574,14 @@ export const getDetailsSsoConfiguration = <
 /**
  * Creates a cost estimation of employments
  */
-export const postCreateEstimation = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateEstimationData, ThrowOnError>,
+export const postV1CostCalculatorEstimation = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostV1CostCalculatorEstimationData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateEstimationResponses,
-    PostCreateEstimationErrors,
+    PostV1CostCalculatorEstimationResponses,
+    PostV1CostCalculatorEstimationErrors,
     ThrowOnError
   >({
     security: [
@@ -1431,12 +1612,12 @@ export const postCreateEstimation = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
  *
  */
-export const getShowCompanySchema = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowCompanySchemaData, ThrowOnError>,
+export const getV1CompaniesSchema = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1CompaniesSchemaData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowCompanySchemaResponses,
-    GetShowCompanySchemaErrors,
+    GetV1CompaniesSchemaResponses,
+    GetV1CompaniesSchemaErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1454,12 +1635,14 @@ export const getShowCompanySchema = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
  *
  */
-export const getIndexBenefitOffer = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexBenefitOfferData, ThrowOnError>,
+export const getV1EmploymentsEmploymentIdBenefitOffers = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1EmploymentsEmploymentIdBenefitOffersData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexBenefitOfferResponses,
-    GetIndexBenefitOfferErrors,
+    GetV1EmploymentsEmploymentIdBenefitOffersResponses,
+    GetV1EmploymentsEmploymentIdBenefitOffersErrors,
     ThrowOnError
   >({
     security: [
@@ -1473,12 +1656,14 @@ export const getIndexBenefitOffer = <ThrowOnError extends boolean = false>(
 /**
  * Upserts employment benefit offers
  */
-export const putUpdateBenefitOffer = <ThrowOnError extends boolean = false>(
-  options: Options<PutUpdateBenefitOfferData, ThrowOnError>,
+export const putV1EmploymentsEmploymentIdBenefitOffers = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PutV1EmploymentsEmploymentIdBenefitOffersData, ThrowOnError>,
 ) =>
   (options.client ?? client).put<
-    PutUpdateBenefitOfferResponses,
-    PutUpdateBenefitOfferErrors,
+    PutV1EmploymentsEmploymentIdBenefitOffersResponses,
+    PutV1EmploymentsEmploymentIdBenefitOffersErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1503,17 +1688,14 @@ export const putUpdateBenefitOffer = <ThrowOnError extends boolean = false>(
  * | Manage employment documents (`employment_documents`) | View identity verification (`identity_verification:read`) | Manage identity verification (`identity_verification:write`) |
  *
  */
-export const getGetIdentityVerificationDataIdentityVerification = <
+export const getV1IdentityVerificationEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<
-    GetGetIdentityVerificationDataIdentityVerificationData,
-    ThrowOnError
-  >,
+  options: Options<GetV1IdentityVerificationEmploymentIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetGetIdentityVerificationDataIdentityVerificationResponses,
-    GetGetIdentityVerificationDataIdentityVerificationErrors,
+    GetV1IdentityVerificationEmploymentIdResponses,
+    GetV1IdentityVerificationEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
@@ -1537,12 +1719,17 @@ export const getGetIdentityVerificationDataIdentityVerification = <
  * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
  *
  */
-export const getIndexSubscription = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexSubscriptionData, ThrowOnError>,
+export const getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetIndexSubscriptionResponses,
-    GetIndexSubscriptionErrors,
+    GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsResponses,
+    GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsErrors,
     ThrowOnError
   >({
     security: [
@@ -1550,6 +1737,31 @@ export const getIndexSubscription = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/contractors/employments/{employment_id}/contractor-subscriptions',
+    ...options,
+  });
+
+/**
+ * List approved payslip files for the authenticated employee
+ *
+ * Returns a paginated list of payslip files belonging to the current employee.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
+ *
+ */
+export const getV1EmployeePayslips = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1EmployeePayslipsData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1EmployeePayslipsResponses,
+    GetV1EmployeePayslipsErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/payslips',
     ...options,
   });
 
@@ -1565,12 +1777,12 @@ export const getIndexSubscription = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | View webhooks (`webhook:read`) | Manage webhooks (`webhook:write`) |
  *
  */
-export const getIndexWebhookEvent = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexWebhookEventData, ThrowOnError>,
+export const getV1WebhookEvents = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1WebhookEventsData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexWebhookEventResponses,
-    GetIndexWebhookEventErrors,
+    GetV1WebhookEventsResponses,
+    GetV1WebhookEventsErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1586,14 +1798,17 @@ export const getIndexWebhookEvent = <ThrowOnError extends boolean = false>(
  * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
  *
  */
-export const postBypassEligibilityChecksCompany = <
+export const postV1SandboxCompaniesCompanyIdBypassEligibilityChecks = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostBypassEligibilityChecksCompanyData, ThrowOnError>,
+  options: Options<
+    PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).post<
-    PostBypassEligibilityChecksCompanyResponses,
-    PostBypassEligibilityChecksCompanyErrors,
+    PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksResponses,
+    PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksErrors,
     ThrowOnError
   >({
     security: [
@@ -1614,34 +1829,36 @@ export const postBypassEligibilityChecksCompany = <
  * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
  *
  */
-export const postApproveRiskReserveProofOfPayment = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostApproveRiskReserveProofOfPaymentData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostApproveRiskReserveProofOfPaymentResponses,
-    PostApproveRiskReserveProofOfPaymentErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/sandbox/employments/{employment_id}/risk-reserve-proof-of-payments/approve',
-    ...options,
-  });
+export const postV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApprove =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).post<
+      PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveResponses,
+      PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/sandbox/employments/{employment_id}/risk-reserve-proof-of-payments/approve',
+      ...options,
+    });
 
 /**
  * Get a mock JSON Schema
  *
  * Get a mock JSON Schema for testing purposes
  */
-export const getShowTestSchema = <ThrowOnError extends boolean = false>(
-  options?: Options<GetShowTestSchemaData, ThrowOnError>,
+export const getV1TestSchema = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1TestSchemaData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetShowTestSchemaResponses,
+    GetV1TestSchemaResponses,
     unknown,
     ThrowOnError
   >({
@@ -1662,12 +1879,14 @@ export const getShowTestSchema = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | View countries (`country:read`) | - |
  *
  */
-export const getIndexHoliday = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexHolidayData, ThrowOnError>,
+export const getV1CountriesCountryCodeHolidaysYear = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1CountriesCountryCodeHolidaysYearData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexHolidayResponses,
-    GetIndexHolidayErrors,
+    GetV1CountriesCountryCodeHolidaysYearResponses,
+    GetV1CountriesCountryCodeHolidaysYearErrors,
     ThrowOnError
   >({
     security: [
@@ -1691,12 +1910,14 @@ export const getIndexHoliday = <ThrowOnError extends boolean = false>(
  * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const postCreateCancellation = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateCancellationData, ThrowOnError>,
+export const postV1TimeoffTimeoffIdCancel = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostV1TimeoffTimeoffIdCancelData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateCancellationResponses,
-    PostCreateCancellationErrors,
+    PostV1TimeoffTimeoffIdCancelResponses,
+    PostV1TimeoffTimeoffIdCancelErrors,
     ThrowOnError
   >({
     security: [
@@ -1724,12 +1945,14 @@ export const postCreateCancellation = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
  *
  */
-export const getIndexEmploymentJob = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexEmploymentJobData, ThrowOnError>,
+export const getV1EmploymentsEmploymentIdJob = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1EmploymentsEmploymentIdJobData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexEmploymentJobResponses,
-    GetIndexEmploymentJobErrors,
+    GetV1EmploymentsEmploymentIdJobResponses,
+    GetV1EmploymentsEmploymentIdJobErrors,
     ThrowOnError
   >({
     security: [
@@ -1753,14 +1976,14 @@ export const getIndexEmploymentJob = <ThrowOnError extends boolean = false>(
  * | Manage companies (`company_management`) | View pricing plans (`pricing_plan:read`) | Manage pricing plans (`pricing_plan:write`) |
  *
  */
-export const getIndexPricingPlanPartnerTemplate = <
+export const getV1PricingPlanPartnerTemplates = <
   ThrowOnError extends boolean = false,
 >(
-  options?: Options<GetIndexPricingPlanPartnerTemplateData, ThrowOnError>,
+  options?: Options<GetV1PricingPlanPartnerTemplatesData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexPricingPlanPartnerTemplateResponses,
-    GetIndexPricingPlanPartnerTemplateErrors,
+    GetV1PricingPlanPartnerTemplatesResponses,
+    GetV1PricingPlanPartnerTemplatesErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1780,14 +2003,12 @@ export const getIndexPricingPlanPartnerTemplate = <
  * | Manage payroll runs (`payroll`) | View payroll calendars (`payroll_calendar:read`) | - |
  *
  */
-export const getIndexEorPayrollCalendar = <
-  ThrowOnError extends boolean = false,
->(
-  options?: Options<GetIndexEorPayrollCalendarData, ThrowOnError>,
+export const getV1PayrollCalendars = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1PayrollCalendarsData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexEorPayrollCalendarResponses,
-    GetIndexEorPayrollCalendarErrors,
+    GetV1PayrollCalendarsResponses,
+    GetV1PayrollCalendarsErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1807,14 +2028,12 @@ export const getIndexEorPayrollCalendar = <
  * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const patchUpdateEmployeeTimeoff2 = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PatchUpdateEmployeeTimeoff2Data, ThrowOnError>,
+export const patchV1EmployeeTimeoffId2 = <ThrowOnError extends boolean = false>(
+  options: Options<PatchV1EmployeeTimeoffId2Data, ThrowOnError>,
 ) =>
   (options.client ?? client).patch<
-    PatchUpdateEmployeeTimeoff2Responses,
-    PatchUpdateEmployeeTimeoff2Errors,
+    PatchV1EmployeeTimeoffId2Responses,
+    PatchV1EmployeeTimeoffId2Errors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1838,14 +2057,12 @@ export const patchUpdateEmployeeTimeoff2 = <
  * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const patchUpdateEmployeeTimeoff = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PatchUpdateEmployeeTimeoffData, ThrowOnError>,
+export const patchV1EmployeeTimeoffId = <ThrowOnError extends boolean = false>(
+  options: Options<PatchV1EmployeeTimeoffIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).put<
-    PatchUpdateEmployeeTimeoffResponses,
-    PatchUpdateEmployeeTimeoffErrors,
+    PatchV1EmployeeTimeoffIdResponses,
+    PatchV1EmployeeTimeoffIdErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -1870,14 +2087,12 @@ export const patchUpdateEmployeeTimeoff = <
  * | Manage expenses (`employment_payments`) | View incentives (`incentive:read`) | Manage incentives (`incentive:write`) |
  *
  */
-export const getIndexRecurringIncentive = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexRecurringIncentiveData, ThrowOnError>,
+export const getV1IncentivesRecurring = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1IncentivesRecurringData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexRecurringIncentiveResponses,
-    GetIndexRecurringIncentiveErrors,
+    GetV1IncentivesRecurringResponses,
+    GetV1IncentivesRecurringErrors,
     ThrowOnError
   >({
     security: [
@@ -1903,14 +2118,12 @@ export const getIndexRecurringIncentive = <
  * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
  *
  */
-export const postCreateRecurringIncentive = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateRecurringIncentiveData, ThrowOnError>,
+export const postV1IncentivesRecurring = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1IncentivesRecurringData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateRecurringIncentiveResponses,
-    PostCreateRecurringIncentiveErrors,
+    PostV1IncentivesRecurringResponses,
+    PostV1IncentivesRecurringErrors,
     ThrowOnError
   >({
     security: [
@@ -1932,14 +2145,14 @@ export const postCreateRecurringIncentive = <
  * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
  *
  */
-export const postCreateBenefitRenewalRequest = <
+export const postV1SandboxBenefitRenewalRequests = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostCreateBenefitRenewalRequestData, ThrowOnError>,
+  options: Options<PostV1SandboxBenefitRenewalRequestsData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateBenefitRenewalRequestResponses,
-    PostCreateBenefitRenewalRequestErrors,
+    PostV1SandboxBenefitRenewalRequestsResponses,
+    PostV1SandboxBenefitRenewalRequestsErrors,
     ThrowOnError
   >({
     security: [
@@ -1964,12 +2177,17 @@ export const postCreateBenefitRenewalRequest = <
  * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
  *
  */
-export const getShowContractDocument = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowContractDocumentData, ThrowOnError>,
+export const getV1ContractorsEmploymentsEmploymentIdContractDocumentsId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetShowContractDocumentResponses,
-    GetShowContractDocumentErrors,
+    GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdResponses,
+    GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdErrors,
     ThrowOnError
   >({
     security: [
@@ -1992,14 +2210,17 @@ export const getShowContractDocument = <ThrowOnError extends boolean = false>(
  * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
  *
  */
-export const getIndexEmploymentContractDocument = <
+export const getV1EmploymentsEmploymentIdContractDocuments = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetIndexEmploymentContractDocumentData, ThrowOnError>,
+  options: Options<
+    GetV1EmploymentsEmploymentIdContractDocumentsData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetIndexEmploymentContractDocumentResponses,
-    GetIndexEmploymentContractDocumentErrors,
+    GetV1EmploymentsEmploymentIdContractDocumentsResponses,
+    GetV1EmploymentsEmploymentIdContractDocumentsErrors,
     ThrowOnError
   >({
     security: [
@@ -2022,12 +2243,12 @@ export const getIndexEmploymentContractDocument = <
  * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
  *
  */
-export const getIndexExpense = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexExpenseData, ThrowOnError>,
+export const getV1Expenses = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1ExpensesData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexExpenseResponses,
-    GetIndexExpenseErrors,
+    GetV1ExpensesResponses,
+    GetV1ExpensesErrors,
     ThrowOnError
   >({
     security: [
@@ -2050,12 +2271,12 @@ export const getIndexExpense = <ThrowOnError extends boolean = false>(
  * | Manage expenses (`employment_payments`) | - | Manage expenses (`expense:write`) |
  *
  */
-export const postCreateExpense = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateExpenseData, ThrowOnError>,
+export const postV1Expenses = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1ExpensesData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateExpenseResponses,
-    PostCreateExpenseErrors,
+    PostV1ExpensesResponses,
+    PostV1ExpensesErrors,
     ThrowOnError
   >({
     security: [
@@ -2082,12 +2303,12 @@ export const postCreateExpense = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | View SSO configuration (`sso_configuration:read`) | Manage SSO (`sso_configuration:write`) |
  *
  */
-export const getShowSsoConfiguration = <ThrowOnError extends boolean = false>(
-  options?: Options<GetShowSsoConfigurationData, ThrowOnError>,
+export const getV1SsoConfiguration = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1SsoConfigurationData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetShowSsoConfigurationResponses,
-    GetShowSsoConfigurationErrors,
+    GetV1SsoConfigurationResponses,
+    GetV1SsoConfigurationErrors,
     ThrowOnError
   >({
     security: [
@@ -2110,14 +2331,12 @@ export const getShowSsoConfiguration = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | - | Manage SSO (`sso_configuration:write`) |
  *
  */
-export const postCreateSsoConfiguration = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateSsoConfigurationData, ThrowOnError>,
+export const postV1SsoConfiguration = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1SsoConfigurationData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateSsoConfigurationResponses,
-    PostCreateSsoConfigurationErrors,
+    PostV1SsoConfigurationResponses,
+    PostV1SsoConfigurationErrors,
     ThrowOnError
   >({
     security: [
@@ -2142,14 +2361,17 @@ export const postCreateSsoConfiguration = <
  * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
  *
  */
-export const putApproveContractAmendment = <
+export const putV1SandboxContractAmendmentsContractAmendmentRequestIdApprove = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PutApproveContractAmendmentData, ThrowOnError>,
+  options: Options<
+    PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).put<
-    PutApproveContractAmendmentResponses,
-    PutApproveContractAmendmentErrors,
+    PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveResponses,
+    PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveErrors,
     ThrowOnError
   >({
     security: [
@@ -2157,6 +2379,33 @@ export const putApproveContractAmendment = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/approve',
+    ...options,
+  });
+
+/**
+ * List Employee Leave Policies
+ *
+ * List the leave policies for the current employee
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const getV1EmployeeLeavePolicies = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetV1EmployeeLeavePoliciesData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1EmployeeLeavePoliciesResponses,
+    GetV1EmployeeLeavePoliciesErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/leave-policies',
     ...options,
   });
 
@@ -2177,14 +2426,17 @@ export const putApproveContractAmendment = <
  * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
  *
  */
-export const getIndexContractorCurrency = <
+export const getV1ContractorsEmploymentsEmploymentIdContractorCurrencies = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetIndexContractorCurrencyData, ThrowOnError>,
+  options: Options<
+    GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetIndexContractorCurrencyResponses,
-    GetIndexContractorCurrencyErrors,
+    GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesResponses,
+    GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesErrors,
     ThrowOnError
   >({
     security: [
@@ -2207,12 +2459,12 @@ export const getIndexContractorCurrency = <
  * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
  *
  */
-export const postReplayWebhookEvent = <ThrowOnError extends boolean = false>(
-  options: Options<PostReplayWebhookEventData, ThrowOnError>,
+export const postV1WebhookEventsReplay = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1WebhookEventsReplayData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostReplayWebhookEventResponses,
-    PostReplayWebhookEventErrors,
+    PostV1WebhookEventsReplayResponses,
+    PostV1WebhookEventsReplayErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -2239,17 +2491,17 @@ export const postReplayWebhookEvent = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const postCreateCorTerminationRequestSubscription = <
+export const postV1ContractorsEmploymentsEmploymentIdCorTerminationRequests = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<
-    PostCreateCorTerminationRequestSubscriptionData,
+    PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsData,
     ThrowOnError
   >,
 ) =>
   (options.client ?? client).post<
-    PostCreateCorTerminationRequestSubscriptionResponses,
-    PostCreateCorTerminationRequestSubscriptionErrors,
+    PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsResponses,
+    PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsErrors,
     ThrowOnError
   >({
     security: [
@@ -2272,12 +2524,17 @@ export const postCreateCorTerminationRequestSubscription = <
  * | Manage employments (`employments`) | View background checks (`background_check:read`) | - |
  *
  */
-export const getShowBackgroundCheck = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowBackgroundCheckData, ThrowOnError>,
+export const getV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetShowBackgroundCheckResponses,
-    GetShowBackgroundCheckErrors,
+    GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdResponses,
+    GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -2300,14 +2557,17 @@ export const getShowBackgroundCheck = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | View benefit renewals (`benefit_renewal:read`) | Manage benefit renewals (`benefit_renewal:write`) |
  *
  */
-export const getSchemaBenefitRenewalRequest = <
+export const getV1BenefitRenewalRequestsBenefitRenewalRequestIdSchema = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetSchemaBenefitRenewalRequestData, ThrowOnError>,
+  options: Options<
+    GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetSchemaBenefitRenewalRequestResponses,
-    GetSchemaBenefitRenewalRequestErrors,
+    GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaResponses,
+    GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaErrors,
     ThrowOnError
   >({
     security: [
@@ -2333,16 +2593,73 @@ export const getSchemaBenefitRenewalRequest = <
  * | Manage company resources (`company_admin`) | - | Create magic links (`magic_link:write`) |
  *
  */
-export const postGenerateMagicLink = <ThrowOnError extends boolean = false>(
-  options: Options<PostGenerateMagicLinkData, ThrowOnError>,
+export const postV1MagicLink = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1MagicLinkData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostGenerateMagicLinkResponses,
-    PostGenerateMagicLinkErrors,
+    PostV1MagicLinkResponses,
+    PostV1MagicLinkErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/v1/magic-link',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update basic information
+ *
+ * Updates employment's basic information.
+ *
+ * Supported employment statuses: `created`, `job_title_review`, `created_reserve_paid`, `created_awaiting_reserve`.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdBasicInformation = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdBasicInformationData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdBasicInformationResponses,
+    PutV2EmploymentsEmploymentIdBasicInformationErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/basic_information',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2370,14 +2687,14 @@ export const postGenerateMagicLink = <ThrowOnError extends boolean = false>(
  * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
  *
  */
-export const deleteDeleteRecurringIncentive = <
+export const deleteV1IncentivesRecurringId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<DeleteDeleteRecurringIncentiveData, ThrowOnError>,
+  options: Options<DeleteV1IncentivesRecurringIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).delete<
-    DeleteDeleteRecurringIncentiveResponses,
-    DeleteDeleteRecurringIncentiveErrors,
+    DeleteV1IncentivesRecurringIdResponses,
+    DeleteV1IncentivesRecurringIdErrors,
     ThrowOnError
   >({
     security: [
@@ -2400,12 +2717,12 @@ export const deleteDeleteRecurringIncentive = <
  * | Manage expenses (`employment_payments`) | View incentives (`incentive:read`) | Manage incentives (`incentive:write`) |
  *
  */
-export const getIndexIncentive = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexIncentiveData, ThrowOnError>,
+export const getV1Incentives = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1IncentivesData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexIncentiveResponses,
-    GetIndexIncentiveErrors,
+    GetV1IncentivesResponses,
+    GetV1IncentivesErrors,
     ThrowOnError
   >({
     security: [
@@ -2431,12 +2748,12 @@ export const getIndexIncentive = <ThrowOnError extends boolean = false>(
  * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
  *
  */
-export const postCreateIncentive = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateIncentiveData, ThrowOnError>,
+export const postV1Incentives = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1IncentivesData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateIncentiveResponses,
-    PostCreateIncentiveErrors,
+    PostV1IncentivesResponses,
+    PostV1IncentivesErrors,
     ThrowOnError
   >({
     security: [
@@ -2463,14 +2780,14 @@ export const postCreateIncentive = <ThrowOnError extends boolean = false>(
  * | Manage employment documents (`employment_documents`) | - | Manage probation documents (`probation_document:write`) |
  *
  */
-export const postCreateProbationCompletionLetter = <
+export const postV1ProbationCompletionLetter = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostCreateProbationCompletionLetterData, ThrowOnError>,
+  options: Options<PostV1ProbationCompletionLetterData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateProbationCompletionLetterResponses,
-    PostCreateProbationCompletionLetterErrors,
+    PostV1ProbationCompletionLetterResponses,
+    PostV1ProbationCompletionLetterErrors,
     ThrowOnError
   >({
     security: [
@@ -2497,14 +2814,14 @@ export const postCreateProbationCompletionLetter = <
  * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
  *
  */
-export const getShowScheduledContractorInvoice = <
+export const getV1ContractorInvoiceSchedulesId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetShowScheduledContractorInvoiceData, ThrowOnError>,
+  options: Options<GetV1ContractorInvoiceSchedulesIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowScheduledContractorInvoiceResponses,
-    GetShowScheduledContractorInvoiceErrors,
+    GetV1ContractorInvoiceSchedulesIdResponses,
+    GetV1ContractorInvoiceSchedulesIdErrors,
     ThrowOnError
   >({
     security: [
@@ -2527,14 +2844,14 @@ export const getShowScheduledContractorInvoice = <
  * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
  *
  */
-export const patchUpdateScheduledContractorInvoice2 = <
+export const patchV1ContractorInvoiceSchedulesId2 = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PatchUpdateScheduledContractorInvoice2Data, ThrowOnError>,
+  options: Options<PatchV1ContractorInvoiceSchedulesId2Data, ThrowOnError>,
 ) =>
   (options.client ?? client).patch<
-    PatchUpdateScheduledContractorInvoice2Responses,
-    PatchUpdateScheduledContractorInvoice2Errors,
+    PatchV1ContractorInvoiceSchedulesId2Responses,
+    PatchV1ContractorInvoiceSchedulesId2Errors,
     ThrowOnError
   >({
     security: [
@@ -2561,14 +2878,14 @@ export const patchUpdateScheduledContractorInvoice2 = <
  * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
  *
  */
-export const patchUpdateScheduledContractorInvoice = <
+export const patchV1ContractorInvoiceSchedulesId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PatchUpdateScheduledContractorInvoiceData, ThrowOnError>,
+  options: Options<PatchV1ContractorInvoiceSchedulesIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).put<
-    PatchUpdateScheduledContractorInvoiceResponses,
-    PatchUpdateScheduledContractorInvoiceErrors,
+    PatchV1ContractorInvoiceSchedulesIdResponses,
+    PatchV1ContractorInvoiceSchedulesIdErrors,
     ThrowOnError
   >({
     security: [
@@ -2598,12 +2915,14 @@ export const patchUpdateScheduledContractorInvoice = <
  * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
  *
  */
-export const getShowBillingDocument = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowBillingDocumentData, ThrowOnError>,
+export const getV1BillingDocumentsBillingDocumentId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1BillingDocumentsBillingDocumentIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowBillingDocumentResponses,
-    GetShowBillingDocumentErrors,
+    GetV1BillingDocumentsBillingDocumentIdResponses,
+    GetV1BillingDocumentsBillingDocumentIdErrors,
     ThrowOnError
   >({
     security: [
@@ -2619,12 +2938,14 @@ export const getShowBillingDocument = <ThrowOnError extends boolean = false>(
  *
  * Creates a PDF cost estimation of employments based on the provided parameters.
  */
-export const postCreateEstimationPdf = <ThrowOnError extends boolean = false>(
-  options?: Options<PostCreateEstimationPdfData, ThrowOnError>,
+export const postV1CostCalculatorEstimationPdf = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<PostV1CostCalculatorEstimationPdfData, ThrowOnError>,
 ) =>
   (options?.client ?? client).post<
-    PostCreateEstimationPdfResponses,
-    PostCreateEstimationPdfErrors,
+    PostV1CostCalculatorEstimationPdfResponses,
+    PostV1CostCalculatorEstimationPdfErrors,
     ThrowOnError
   >({
     security: [
@@ -2653,14 +2974,14 @@ export const postCreateEstimationPdf = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | View work authorizations (`work_authorization:read`) | Manage work authorizations (`work_authorization:write`) |
  *
  */
-export const getShowWorkAuthorizationRequest = <
+export const getV1WorkAuthorizationRequestsId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetShowWorkAuthorizationRequestData, ThrowOnError>,
+  options: Options<GetV1WorkAuthorizationRequestsIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowWorkAuthorizationRequestResponses,
-    GetShowWorkAuthorizationRequestErrors,
+    GetV1WorkAuthorizationRequestsIdResponses,
+    GetV1WorkAuthorizationRequestsIdErrors,
     ThrowOnError
   >({
     security: [
@@ -2683,14 +3004,14 @@ export const getShowWorkAuthorizationRequest = <
  * | Manage employments (`employments`) | - | Manage work authorizations (`work_authorization:write`) |
  *
  */
-export const patchUpdateWorkAuthorizationRequest2 = <
+export const patchV1WorkAuthorizationRequestsId2 = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PatchUpdateWorkAuthorizationRequest2Data, ThrowOnError>,
+  options: Options<PatchV1WorkAuthorizationRequestsId2Data, ThrowOnError>,
 ) =>
   (options.client ?? client).patch<
-    PatchUpdateWorkAuthorizationRequest2Responses,
-    PatchUpdateWorkAuthorizationRequest2Errors,
+    PatchV1WorkAuthorizationRequestsId2Responses,
+    PatchV1WorkAuthorizationRequestsId2Errors,
     ThrowOnError
   >({
     security: [
@@ -2717,14 +3038,14 @@ export const patchUpdateWorkAuthorizationRequest2 = <
  * | Manage employments (`employments`) | - | Manage work authorizations (`work_authorization:write`) |
  *
  */
-export const patchUpdateWorkAuthorizationRequest = <
+export const patchV1WorkAuthorizationRequestsId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PatchUpdateWorkAuthorizationRequestData, ThrowOnError>,
+  options: Options<PatchV1WorkAuthorizationRequestsIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).put<
-    PatchUpdateWorkAuthorizationRequestResponses,
-    PatchUpdateWorkAuthorizationRequestErrors,
+    PatchV1WorkAuthorizationRequestsIdResponses,
+    PatchV1WorkAuthorizationRequestsIdErrors,
     ThrowOnError
   >({
     security: [
@@ -2732,6 +3053,63 @@ export const patchUpdateWorkAuthorizationRequest = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/work-authorization-requests/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update federal taxes
+ *
+ * Updates employment's federal taxes.
+ *
+ * Requirements to update federal taxes successfully:
+ * * Employment should be Global Payroll
+ * * Employment should be in the post-enrollment state
+ * * Employment should belong to USA
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdFederalTaxes = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PutV2EmploymentsEmploymentIdFederalTaxesData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdFederalTaxesResponses,
+    PutV2EmploymentsEmploymentIdFederalTaxesErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/federal-taxes',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2751,14 +3129,12 @@ export const patchUpdateWorkAuthorizationRequest = <
  * | Manage employment documents (`employment_documents`) | - | Manage probation documents (`probation_document:write`) |
  *
  */
-export const postCreateProbationExtension = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateProbationExtensionData, ThrowOnError>,
+export const postV1ProbationExtensions = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1ProbationExtensionsData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateProbationExtensionResponses,
-    PostCreateProbationExtensionErrors,
+    PostV1ProbationExtensionsResponses,
+    PostV1ProbationExtensionsErrors,
     ThrowOnError
   >({
     security: [
@@ -2766,6 +3142,116 @@ export const postCreateProbationExtension = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/probation-extensions',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update billing address details
+ *
+ * Updates employment's billing address details.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdBillingAddressDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdBillingAddressDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdBillingAddressDetailsResponses,
+    PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/billing_address_details',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update address details
+ *
+ * Updates employment's address details.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdAddressDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdAddressDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdAddressDetailsResponses,
+    PutV2EmploymentsEmploymentIdAddressDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/address_details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2785,12 +3271,12 @@ export const postCreateProbationExtension = <
  * | Manage company resources (`company_admin`) | - | Manage risk reserves (`risk_reserve:write`) |
  *
  */
-export const postCreateRiskReserve = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateRiskReserveData, ThrowOnError>,
+export const postV1RiskReserve = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1RiskReserveData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateRiskReserveResponses,
-    PostCreateRiskReserveErrors,
+    PostV1RiskReserveResponses,
+    PostV1RiskReserveErrors,
     ThrowOnError
   >({
     security: [
@@ -2820,14 +3306,17 @@ export const postCreateRiskReserve = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | - | Manage risk reserves (`risk_reserve:write`) |
  *
  */
-export const postSubmitRiskReserveProofOfPayment = <
+export const postV1EmploymentsEmploymentIdRiskReserveProofOfPayments = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostSubmitRiskReserveProofOfPaymentData, ThrowOnError>,
+  options: Options<
+    PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).post<
-    PostSubmitRiskReserveProofOfPaymentResponses,
-    PostSubmitRiskReserveProofOfPaymentErrors,
+    PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsResponses,
+    PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsErrors,
     ThrowOnError
   >({
     ...formDataBodySerializer,
@@ -2856,14 +3345,14 @@ export const postSubmitRiskReserveProofOfPayment = <
  * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
  *
  */
-export const getShowCompanyComplianceProfile = <
+export const getV1CompaniesCompanyIdComplianceProfile = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetShowCompanyComplianceProfileData, ThrowOnError>,
+  options: Options<GetV1CompaniesCompanyIdComplianceProfileData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowCompanyComplianceProfileResponses,
-    GetShowCompanyComplianceProfileErrors,
+    GetV1CompaniesCompanyIdComplianceProfileResponses,
+    GetV1CompaniesCompanyIdComplianceProfileErrors,
     ThrowOnError
   >({
     security: [
@@ -2889,14 +3378,14 @@ export const getShowCompanyComplianceProfile = <
  * | Manage companies (`company_management`) | View pricing plans (`pricing_plan:read`) | Manage pricing plans (`pricing_plan:write`) |
  *
  */
-export const getIndexCompanyProductPrice = <
+export const getV1CompaniesCompanyIdProductPrices = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetIndexCompanyProductPriceData, ThrowOnError>,
+  options: Options<GetV1CompaniesCompanyIdProductPricesData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexCompanyProductPriceResponses,
-    GetIndexCompanyProductPriceErrors,
+    GetV1CompaniesCompanyIdProductPricesResponses,
+    GetV1CompaniesCompanyIdProductPricesErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -2920,12 +3409,12 @@ export const getIndexCompanyProductPrice = <
  * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
  *
  */
-export const getShowCompany = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowCompanyData, ThrowOnError>,
+export const getV1CompaniesCompanyId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1CompaniesCompanyIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowCompanyResponses,
-    GetShowCompanyErrors,
+    GetV1CompaniesCompanyIdResponses,
+    GetV1CompaniesCompanyIdErrors,
     ThrowOnError
   >({
     security: [
@@ -2965,12 +3454,14 @@ export const getShowCompany = <ThrowOnError extends boolean = false>(
  * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
  *
  */
-export const patchUpdateCompany2 = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateCompany2Data, ThrowOnError>,
+export const patchV1CompaniesCompanyId2 = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchV1CompaniesCompanyId2Data, ThrowOnError>,
 ) =>
   (options.client ?? client).patch<
-    PatchUpdateCompany2Responses,
-    PatchUpdateCompany2Errors,
+    PatchV1CompaniesCompanyId2Responses,
+    PatchV1CompaniesCompanyId2Errors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -3011,12 +3502,12 @@ export const patchUpdateCompany2 = <ThrowOnError extends boolean = false>(
  * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
  *
  */
-export const patchUpdateCompany = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateCompanyData, ThrowOnError>,
+export const patchV1CompaniesCompanyId = <ThrowOnError extends boolean = false>(
+  options: Options<PatchV1CompaniesCompanyIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).put<
-    PatchUpdateCompanyResponses,
-    PatchUpdateCompanyErrors,
+    PatchV1CompaniesCompanyIdResponses,
+    PatchV1CompaniesCompanyIdErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -3040,14 +3531,17 @@ export const patchUpdateCompany = <ThrowOnError extends boolean = false>(
  * | Manage employment documents (`employment_documents`) | View resignation letters (`resignation_letter:read`) | - |
  *
  */
-export const getDownloadResignationLetter = <
+export const getV1ResignationsOffboardingRequestIdResignationLetter = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetDownloadResignationLetterData, ThrowOnError>,
+  options: Options<
+    GetV1ResignationsOffboardingRequestIdResignationLetterData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetDownloadResignationLetterResponses,
-    GetDownloadResignationLetterErrors,
+    GetV1ResignationsOffboardingRequestIdResignationLetterResponses,
+    GetV1ResignationsOffboardingRequestIdResignationLetterErrors,
     ThrowOnError
   >({
     security: [
@@ -3093,14 +3587,14 @@ export const getDownloadResignationLetter = <
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const putUpdateEmploymentFederalTaxes = <
+export const putV1EmploymentsEmploymentIdFederalTaxes = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PutUpdateEmploymentFederalTaxesData, ThrowOnError>,
+  options: Options<PutV1EmploymentsEmploymentIdFederalTaxesData, ThrowOnError>,
 ) =>
   (options.client ?? client).put<
-    PutUpdateEmploymentFederalTaxesResponses,
-    PutUpdateEmploymentFederalTaxesErrors,
+    PutV1EmploymentsEmploymentIdFederalTaxesResponses,
+    PutV1EmploymentsEmploymentIdFederalTaxesErrors,
     ThrowOnError
   >({
     security: [
@@ -3127,12 +3621,12 @@ export const putUpdateEmploymentFederalTaxes = <
  * | Manage employments (`employments`) | View contract amendments (`contract_amendment:read`) | Manage contract amendments (`contract_amendment:write`) |
  *
  */
-export const getIndexContractAmendment = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexContractAmendmentData, ThrowOnError>,
+export const getV1ContractAmendments = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1ContractAmendmentsData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexContractAmendmentResponses,
-    GetIndexContractAmendmentErrors,
+    GetV1ContractAmendmentsResponses,
+    GetV1ContractAmendmentsErrors,
     ThrowOnError
   >({
     security: [
@@ -3173,14 +3667,12 @@ export const getIndexContractAmendment = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | - | Manage contract amendments (`contract_amendment:write`) |
  *
  */
-export const postCreateContractAmendment = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateContractAmendmentData, ThrowOnError>,
+export const postV1ContractAmendments = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1ContractAmendmentsData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateContractAmendmentResponses,
-    PostCreateContractAmendmentErrors,
+    PostV1ContractAmendmentsResponses,
+    PostV1ContractAmendmentsErrors,
     ThrowOnError
   >({
     security: [
@@ -3209,12 +3701,14 @@ export const postCreateContractAmendment = <
  * | Manage payroll runs (`payroll`) | View payroll runs (`payroll_run:read`) | - |
  *
  */
-export const getShowPayrollRun = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowPayrollRunData, ThrowOnError>,
+export const getV1PayrollRunsPayrollRunId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1PayrollRunsPayrollRunIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowPayrollRunResponses,
-    GetShowPayrollRunErrors,
+    GetV1PayrollRunsPayrollRunIdResponses,
+    GetV1PayrollRunsPayrollRunIdErrors,
     ThrowOnError
   >({
     security: [
@@ -3242,12 +3736,14 @@ export const getShowPayrollRun = <ThrowOnError extends boolean = false>(
  *
  * @deprecated
  */
-export const getDownloadExpenseReceipt = <ThrowOnError extends boolean = false>(
-  options: Options<GetDownloadExpenseReceiptData, ThrowOnError>,
+export const getV1ExpensesExpenseIdReceipt = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1ExpensesExpenseIdReceiptData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetDownloadExpenseReceiptResponses,
-    GetDownloadExpenseReceiptErrors,
+    GetV1ExpensesExpenseIdReceiptResponses,
+    GetV1ExpensesExpenseIdReceiptErrors,
     ThrowOnError
   >({
     security: [
@@ -3270,14 +3766,14 @@ export const getDownloadExpenseReceipt = <ThrowOnError extends boolean = false>(
  * | - | View travel letters (`travel_letter:read`) | - |
  *
  */
-export const getShowTravelLetterRequest = <
+export const getV1TravelLetterRequestsId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetShowTravelLetterRequestData, ThrowOnError>,
+  options: Options<GetV1TravelLetterRequestsIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowTravelLetterRequestResponses,
-    GetShowTravelLetterRequestErrors,
+    GetV1TravelLetterRequestsIdResponses,
+    GetV1TravelLetterRequestsIdErrors,
     ThrowOnError
   >({
     security: [
@@ -3300,14 +3796,14 @@ export const getShowTravelLetterRequest = <
  * | - | - | Manage travel letters (`travel_letter:write`) |
  *
  */
-export const patchUpdateTravelLetterRequest2 = <
+export const patchV1TravelLetterRequestsId2 = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PatchUpdateTravelLetterRequest2Data, ThrowOnError>,
+  options: Options<PatchV1TravelLetterRequestsId2Data, ThrowOnError>,
 ) =>
   (options.client ?? client).patch<
-    PatchUpdateTravelLetterRequest2Responses,
-    PatchUpdateTravelLetterRequest2Errors,
+    PatchV1TravelLetterRequestsId2Responses,
+    PatchV1TravelLetterRequestsId2Errors,
     ThrowOnError
   >({
     security: [
@@ -3334,14 +3830,14 @@ export const patchUpdateTravelLetterRequest2 = <
  * | - | - | Manage travel letters (`travel_letter:write`) |
  *
  */
-export const patchUpdateTravelLetterRequest = <
+export const patchV1TravelLetterRequestsId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PatchUpdateTravelLetterRequestData, ThrowOnError>,
+  options: Options<PatchV1TravelLetterRequestsIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).put<
-    PatchUpdateTravelLetterRequestResponses,
-    PatchUpdateTravelLetterRequestErrors,
+    PatchV1TravelLetterRequestsIdResponses,
+    PatchV1TravelLetterRequestsIdErrors,
     ThrowOnError
   >({
     security: [
@@ -3373,12 +3869,14 @@ export const patchUpdateTravelLetterRequest = <
  *
  * @deprecated
  */
-export const getShowTimeoffBalance = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowTimeoffBalanceData, ThrowOnError>,
+export const getV1TimeoffBalancesEmploymentId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1TimeoffBalancesEmploymentIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowTimeoffBalanceResponses,
-    GetShowTimeoffBalanceErrors,
+    GetV1TimeoffBalancesEmploymentIdResponses,
+    GetV1TimeoffBalancesEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
@@ -3421,14 +3919,17 @@ export const getShowTimeoffBalance = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const putUpdateEmploymentBasicInformation = <
+export const putV1EmploymentsEmploymentIdBasicInformation = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PutUpdateEmploymentBasicInformationData, ThrowOnError>,
+  options: Options<
+    PutV1EmploymentsEmploymentIdBasicInformationData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).put<
-    PutUpdateEmploymentBasicInformationResponses,
-    PutUpdateEmploymentBasicInformationErrors,
+    PutV1EmploymentsEmploymentIdBasicInformationResponses,
+    PutV1EmploymentsEmploymentIdBasicInformationErrors,
     ThrowOnError
   >({
     security: [
@@ -3446,14 +3947,14 @@ export const putUpdateEmploymentBasicInformation = <
 /**
  * List expense categories
  *
- * Lists the effective hierarchy of expense categories. Either employment_id or expense_id (or both) must be provided.
+ * Lists the effective hierarchy of expense categories. At least one of employment_id, expense_id, or country_code must be provided.
  */
-export const getCategoriesExpense = <ThrowOnError extends boolean = false>(
-  options?: Options<GetCategoriesExpenseData, ThrowOnError>,
+export const getV1ExpensesCategories = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1ExpensesCategoriesData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetCategoriesExpenseResponses,
-    GetCategoriesExpenseErrors,
+    GetV1ExpensesCategoriesResponses,
+    GetV1ExpensesCategoriesErrors,
     ThrowOnError
   >({
     security: [
@@ -3476,12 +3977,14 @@ export const getCategoriesExpense = <ThrowOnError extends boolean = false>(
  * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const postCancelEmployeeTimeoff = <ThrowOnError extends boolean = false>(
-  options: Options<PostCancelEmployeeTimeoffData, ThrowOnError>,
+export const postV1EmployeeTimeoffIdCancel = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostV1EmployeeTimeoffIdCancelData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCancelEmployeeTimeoffResponses,
-    PostCancelEmployeeTimeoffErrors,
+    PostV1EmployeeTimeoffIdCancelResponses,
+    PostV1EmployeeTimeoffIdCancelErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -3536,12 +4039,14 @@ export const postCancelEmployeeTimeoff = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | View forms (`form:read`) | - |
  *
  */
-export const getShowFormCountry = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowFormCountryData, ThrowOnError>,
+export const getV1CountriesCountryCodeForm = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1CountriesCountryCodeFormData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowFormCountryResponses,
-    GetShowFormCountryErrors,
+    GetV1CountriesCountryCodeFormResponses,
+    GetV1CountriesCountryCodeFormErrors,
     ThrowOnError
   >({
     security: [
@@ -3566,12 +4071,12 @@ export const getShowFormCountry = <ThrowOnError extends boolean = false>(
  * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
  *
  */
-export const getShowFile = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowFileData, ThrowOnError>,
+export const getV1FilesId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1FilesIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowFileResponses,
-    GetShowFileErrors,
+    GetV1FilesIdResponses,
+    GetV1FilesIdErrors,
     ThrowOnError
   >({
     security: [
@@ -3594,12 +4099,12 @@ export const getShowFile = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | View contract amendments (`contract_amendment:read`) | Manage contract amendments (`contract_amendment:write`) |
  *
  */
-export const getShowContractAmendment = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowContractAmendmentData, ThrowOnError>,
+export const getV1ContractAmendmentsId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1ContractAmendmentsIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowContractAmendmentResponses,
-    GetShowContractAmendmentErrors,
+    GetV1ContractAmendmentsIdResponses,
+    GetV1ContractAmendmentsIdErrors,
     ThrowOnError
   >({
     security: [
@@ -3608,6 +4113,61 @@ export const getShowContractAmendment = <ThrowOnError extends boolean = false>(
     ],
     url: '/v1/contract-amendments/{id}',
     ...options,
+  });
+
+/**
+ * Update bank account details
+ *
+ * Updates employment's bank account details.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdBankAccountDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdBankAccountDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdBankAccountDetailsResponses,
+    PutV2EmploymentsEmploymentIdBankAccountDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/bank_account_details',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 
 /**
@@ -3624,12 +4184,12 @@ export const getShowContractAmendment = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | View managers (`company_manager:read`) | Manage managers (`company_manager:write`) |
  *
  */
-export const getIndexCompanyManager = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexCompanyManagerData, ThrowOnError>,
+export const getV1CompanyManagers = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1CompanyManagersData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexCompanyManagerResponses,
-    GetIndexCompanyManagerErrors,
+    GetV1CompanyManagersResponses,
+    GetV1CompanyManagersErrors,
     ThrowOnError
   >({
     security: [
@@ -3652,12 +4212,12 @@ export const getIndexCompanyManager = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | - | Manage managers (`company_manager:write`) |
  *
  */
-export const postCreateCompanyManager = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateCompanyManagerData, ThrowOnError>,
+export const postV1CompanyManagers = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1CompanyManagersData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateCompanyManagerResponses,
-    PostCreateCompanyManagerErrors,
+    PostV1CompanyManagersResponses,
+    PostV1CompanyManagersErrors,
     ThrowOnError
   >({
     security: [
@@ -3677,11 +4237,13 @@ export const postCreateCompanyManager = <ThrowOnError extends boolean = false>(
  *
  * Lists active and processing countries
  */
-export const getIndexCountry = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexCountryData, ThrowOnError>,
+export const getV1CostCalculatorCountries = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetV1CostCalculatorCountriesData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexCountryResponses,
+    GetV1CostCalculatorCountriesResponses,
     unknown,
     ThrowOnError
   >({
@@ -3708,14 +4270,17 @@ export const getIndexCountry = <ThrowOnError extends boolean = false>(
  * | Manage employment documents (`employment_documents`) | - | Manage identity verification (`identity_verification:write`) |
  *
  */
-export const postDeclineIdentityVerification = <
+export const postV1IdentityVerificationEmploymentIdDecline = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostDeclineIdentityVerificationData, ThrowOnError>,
+  options: Options<
+    PostV1IdentityVerificationEmploymentIdDeclineData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).post<
-    PostDeclineIdentityVerificationResponses,
-    PostDeclineIdentityVerificationErrors,
+    PostV1IdentityVerificationEmploymentIdDeclineResponses,
+    PostV1IdentityVerificationEmploymentIdDeclineErrors,
     ThrowOnError
   >({
     security: [
@@ -3739,14 +4304,17 @@ export const postDeclineIdentityVerification = <
  * | Manage company resources (`company_admin`) | View forms (`form:read`) | - |
  *
  */
-export const getShowEngagementAgreementDetailsCountry = <
+export const getV1CountriesCountryCodeEngagementAgreementDetails = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetShowEngagementAgreementDetailsCountryData, ThrowOnError>,
+  options: Options<
+    GetV1CountriesCountryCodeEngagementAgreementDetailsData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetShowEngagementAgreementDetailsCountryResponses,
-    GetShowEngagementAgreementDetailsCountryErrors,
+    GetV1CountriesCountryCodeEngagementAgreementDetailsResponses,
+    GetV1CountriesCountryCodeEngagementAgreementDetailsErrors,
     ThrowOnError
   >({
     security: [
@@ -3769,12 +4337,12 @@ export const getShowEngagementAgreementDetailsCountry = <
  * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
  *
  */
-export const getIndexBillingDocument = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexBillingDocumentData, ThrowOnError>,
+export const getV1BillingDocuments = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1BillingDocumentsData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexBillingDocumentResponses,
-    GetIndexBillingDocumentErrors,
+    GetV1BillingDocumentsResponses,
+    GetV1BillingDocumentsErrors,
     ThrowOnError
   >({
     security: [
@@ -3797,14 +4365,14 @@ export const getIndexBillingDocument = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
  *
  */
-export const deleteDeleteWebhookCallback = <
+export const deleteV1WebhookCallbacksId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<DeleteDeleteWebhookCallbackData, ThrowOnError>,
+  options: Options<DeleteV1WebhookCallbacksIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).delete<
-    DeleteDeleteWebhookCallbackResponses,
-    DeleteDeleteWebhookCallbackErrors,
+    DeleteV1WebhookCallbacksIdResponses,
+    DeleteV1WebhookCallbacksIdErrors,
     ThrowOnError
   >({
     security: [
@@ -3827,14 +4395,12 @@ export const deleteDeleteWebhookCallback = <
  * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
  *
  */
-export const patchUpdateWebhookCallback = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PatchUpdateWebhookCallbackData, ThrowOnError>,
+export const patchV1WebhookCallbacksId = <ThrowOnError extends boolean = false>(
+  options: Options<PatchV1WebhookCallbacksIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).patch<
-    PatchUpdateWebhookCallbackResponses,
-    PatchUpdateWebhookCallbackErrors,
+    PatchV1WebhookCallbacksIdResponses,
+    PatchV1WebhookCallbacksIdErrors,
     ThrowOnError
   >({
     security: [
@@ -3847,6 +4413,31 @@ export const patchUpdateWebhookCallback = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * List timesheets for the authenticated employee
+ *
+ * Returns a paginated list of timesheets for the authenticated employee.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timesheets (`timesheet:read`) | Manage timesheets (`timesheet:write`) |
+ *
+ */
+export const getV1EmployeeTimesheets = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1EmployeeTimesheetsData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1EmployeeTimesheetsResponses,
+    GetV1EmployeeTimesheetsErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/timesheets',
+    ...options,
   });
 
 /**
@@ -3868,7 +4459,7 @@ export const patchUpdateWebhookCallback = <
  * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
  *
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
  *
  *
  *
@@ -3879,14 +4470,17 @@ export const patchUpdateWebhookCallback = <
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const putUpdateEmploymentPersonalDetails = <
+export const putV1EmploymentsEmploymentIdPersonalDetails = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PutUpdateEmploymentPersonalDetailsData, ThrowOnError>,
+  options: Options<
+    PutV1EmploymentsEmploymentIdPersonalDetailsData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).put<
-    PutUpdateEmploymentPersonalDetailsResponses,
-    PutUpdateEmploymentPersonalDetailsErrors,
+    PutV1EmploymentsEmploymentIdPersonalDetailsResponses,
+    PutV1EmploymentsEmploymentIdPersonalDetailsErrors,
     ThrowOnError
   >({
     security: [
@@ -3913,14 +4507,12 @@ export const putUpdateEmploymentPersonalDetails = <
  * | - | View travel letters (`travel_letter:read`) | - |
  *
  */
-export const getIndexTravelLetterRequest = <
-  ThrowOnError extends boolean = false,
->(
-  options?: Options<GetIndexTravelLetterRequestData, ThrowOnError>,
+export const getV1TravelLetterRequests = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1TravelLetterRequestsData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexTravelLetterRequestResponses,
-    GetIndexTravelLetterRequestErrors,
+    GetV1TravelLetterRequestsResponses,
+    GetV1TravelLetterRequestsErrors,
     ThrowOnError
   >({
     security: [
@@ -3943,14 +4535,14 @@ export const getIndexTravelLetterRequest = <
  * | Manage company resources (`company_admin`) | View benefit renewals (`benefit_renewal:read`) | Manage benefit renewals (`benefit_renewal:write`) |
  *
  */
-export const getIndexBenefitRenewalRequest = <
+export const getV1BenefitRenewalRequests = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetIndexBenefitRenewalRequestData, ThrowOnError>,
+  options: Options<GetV1BenefitRenewalRequestsData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexBenefitRenewalRequestResponses,
-    GetIndexBenefitRenewalRequestErrors,
+    GetV1BenefitRenewalRequestsResponses,
+    GetV1BenefitRenewalRequestsErrors,
     ThrowOnError
   >({
     security: [
@@ -3973,12 +4565,12 @@ export const getIndexBenefitRenewalRequest = <
  * | Manage company resources (`company_admin`) | - | Manage webhooks (`webhook:write`) |
  *
  */
-export const postCreateWebhookCallback = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateWebhookCallbackData, ThrowOnError>,
+export const postV1WebhookCallbacks = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1WebhookCallbacksData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateWebhookCallbackResponses,
-    PostCreateWebhookCallbackErrors,
+    PostV1WebhookCallbacksResponses,
+    PostV1WebhookCallbacksErrors,
     ThrowOnError
   >({
     security: [
@@ -4005,12 +4597,14 @@ export const postCreateWebhookCallback = <ThrowOnError extends boolean = false>(
  * | Manage timeoffs (`time_and_attendance`) | - | Manage timesheets (`timesheet:write`) |
  *
  */
-export const postApproveTimesheet = <ThrowOnError extends boolean = false>(
-  options: Options<PostApproveTimesheetData, ThrowOnError>,
+export const postV1TimesheetsTimesheetIdApprove = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostV1TimesheetsTimesheetIdApproveData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostApproveTimesheetResponses,
-    PostApproveTimesheetErrors,
+    PostV1TimesheetsTimesheetIdApproveResponses,
+    PostV1TimesheetsTimesheetIdApproveErrors,
     ThrowOnError
   >({
     security: [
@@ -4036,12 +4630,12 @@ export const postApproveTimesheet = <ThrowOnError extends boolean = false>(
  * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
  *
  */
-export const getShowPayslip = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowPayslipData, ThrowOnError>,
+export const getV1PayslipsId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1PayslipsIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowPayslipResponses,
-    GetShowPayslipErrors,
+    GetV1PayslipsIdResponses,
+    GetV1PayslipsIdErrors,
     ThrowOnError
   >({
     security: [
@@ -4064,14 +4658,14 @@ export const getShowPayslip = <ThrowOnError extends boolean = false>(
  * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const getIndexLeavePoliciesSummary = <
+export const getV1LeavePoliciesSummaryEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetIndexLeavePoliciesSummaryData, ThrowOnError>,
+  options: Options<GetV1LeavePoliciesSummaryEmploymentIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexLeavePoliciesSummaryResponses,
-    GetIndexLeavePoliciesSummaryErrors,
+    GetV1LeavePoliciesSummaryEmploymentIdResponses,
+    GetV1LeavePoliciesSummaryEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
@@ -4079,6 +4673,33 @@ export const getIndexLeavePoliciesSummary = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/leave-policies/summary/{employment_id}',
+    ...options,
+  });
+
+/**
+ * List expense categories for the authenticated employee
+ *
+ * Returns the flat list of expense categories applicable to the current employee. Only active categories are returned, filtered by the employee's country / legal-entity visibility rules. Leaf nodes have `is_selectable: true`; parent nodes are excluded unless `include_parents=true`.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
+ *
+ */
+export const getV1EmployeeExpenseCategories = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetV1EmployeeExpenseCategoriesData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1EmployeeExpenseCategoriesResponses,
+    GetV1EmployeeExpenseCategoriesErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/expense-categories',
     ...options,
   });
 
@@ -4095,12 +4716,12 @@ export const getIndexLeavePoliciesSummary = <
  * | Manage company resources (`company_admin`) | View departments (`company_department:read`) | Manage departments (`company_department:write`) |
  *
  */
-export const getIndexCompanyDepartment = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexCompanyDepartmentData, ThrowOnError>,
+export const getV1CompanyDepartments = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1CompanyDepartmentsData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexCompanyDepartmentResponses,
-    GetIndexCompanyDepartmentErrors,
+    GetV1CompanyDepartmentsResponses,
+    GetV1CompanyDepartmentsErrors,
     ThrowOnError
   >({
     security: [
@@ -4123,14 +4744,12 @@ export const getIndexCompanyDepartment = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | - | Manage departments (`company_department:write`) |
  *
  */
-export const postCreateCompanyDepartment = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateCompanyDepartmentData, ThrowOnError>,
+export const postV1CompanyDepartments = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1CompanyDepartmentsData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateCompanyDepartmentResponses,
-    PostCreateCompanyDepartmentErrors,
+    PostV1CompanyDepartmentsResponses,
+    PostV1CompanyDepartmentsErrors,
     ThrowOnError
   >({
     security: [
@@ -4158,14 +4777,17 @@ export const postCreateCompanyDepartment = <
  * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const postDeclineCancellationRequest = <
+export const postV1TimeoffTimeoffIdCancelRequestDecline = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostDeclineCancellationRequestData, ThrowOnError>,
+  options: Options<
+    PostV1TimeoffTimeoffIdCancelRequestDeclineData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).post<
-    PostDeclineCancellationRequestResponses,
-    PostDeclineCancellationRequestErrors,
+    PostV1TimeoffTimeoffIdCancelRequestDeclineResponses,
+    PostV1TimeoffTimeoffIdCancelRequestDeclineErrors,
     ThrowOnError
   >({
     security: [
@@ -4173,6 +4795,61 @@ export const postDeclineCancellationRequest = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/timeoff/{timeoff_id}/cancel-request/decline',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update administrative details
+ *
+ * Updates employment's administrative details.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdAdministrativeDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdAdministrativeDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdAdministrativeDetailsResponses,
+    PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/administrative_details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4190,12 +4867,17 @@ export const postDeclineCancellationRequest = <
  * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
  *
  */
-export const getShowSchema = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowSchemaData, ThrowOnError>,
+export const getV1EmploymentsEmploymentIdBenefitOffersSchema = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV1EmploymentsEmploymentIdBenefitOffersSchemaData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetShowSchemaResponses,
-    GetShowSchemaErrors,
+    GetV1EmploymentsEmploymentIdBenefitOffersSchemaResponses,
+    GetV1EmploymentsEmploymentIdBenefitOffersSchemaErrors,
     ThrowOnError
   >({
     security: [
@@ -4227,14 +4909,14 @@ export const getShowSchema = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const postCreateEligibilityQuestionnaire = <
+export const postV1ContractorsEligibilityQuestionnaire = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostCreateEligibilityQuestionnaireData, ThrowOnError>,
+  options: Options<PostV1ContractorsEligibilityQuestionnaireData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateEligibilityQuestionnaireResponses,
-    PostCreateEligibilityQuestionnaireErrors,
+    PostV1ContractorsEligibilityQuestionnaireResponses,
+    PostV1ContractorsEligibilityQuestionnaireErrors,
     ThrowOnError
   >({
     security: [
@@ -4250,6 +4932,33 @@ export const postCreateEligibilityQuestionnaire = <
   });
 
 /**
+ * Show personal information for the authenticated employee
+ *
+ * Returns personal information for the authenticated employee.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View personal details (`personal_detail:read`) | - |
+ *
+ */
+export const getV1EmployeePersonalInformation = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetV1EmployeePersonalInformationData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1EmployeePersonalInformationResponses,
+    GetV1EmployeePersonalInformationErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/personal-information',
+    ...options,
+  });
+
+/**
  * List timesheets
  *
  * Lists all timesheets.
@@ -4261,12 +4970,12 @@ export const postCreateEligibilityQuestionnaire = <
  * | Manage timeoffs (`time_and_attendance`) | View timesheets (`timesheet:read`) | Manage timesheets (`timesheet:write`) |
  *
  */
-export const getIndexTimesheet = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexTimesheetData, ThrowOnError>,
+export const getV1Timesheets = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1TimesheetsData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexTimesheetResponses,
-    GetIndexTimesheetErrors,
+    GetV1TimesheetsResponses,
+    GetV1TimesheetsErrors,
     ThrowOnError
   >({
     security: [
@@ -4287,14 +4996,17 @@ export const getIndexTimesheet = <ThrowOnError extends boolean = false>(
  * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
  *
  */
-export const postCreateLegalEntityCompany = <
+export const postV1SandboxCompaniesCompanyIdLegalEntities = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostCreateLegalEntityCompanyData, ThrowOnError>,
+  options: Options<
+    PostV1SandboxCompaniesCompanyIdLegalEntitiesData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).post<
-    PostCreateLegalEntityCompanyResponses,
-    PostCreateLegalEntityCompanyErrors,
+    PostV1SandboxCompaniesCompanyIdLegalEntitiesResponses,
+    PostV1SandboxCompaniesCompanyIdLegalEntitiesErrors,
     ThrowOnError
   >({
     security: [
@@ -4339,12 +5051,14 @@ export const postCreateLegalEntityCompany = <
  * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
  *
  */
-export const getShowEmployment = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowEmploymentData, ThrowOnError>,
+export const getV1EmploymentsEmploymentId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1EmploymentsEmploymentIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowEmploymentResponses,
-    GetShowEmploymentErrors,
+    GetV1EmploymentsEmploymentIdResponses,
+    GetV1EmploymentsEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
@@ -4410,12 +5124,14 @@ export const getShowEmployment = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const patchUpdateEmployment2 = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateEmployment2Data, ThrowOnError>,
+export const patchV1EmploymentsEmploymentId2 = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchV1EmploymentsEmploymentId2Data, ThrowOnError>,
 ) =>
   (options.client ?? client).patch<
-    PatchUpdateEmployment2Responses,
-    PatchUpdateEmployment2Errors,
+    PatchV1EmploymentsEmploymentId2Responses,
+    PatchV1EmploymentsEmploymentId2Errors,
     ThrowOnError
   >({
     security: [
@@ -4485,12 +5201,14 @@ export const patchUpdateEmployment2 = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const patchUpdateEmployment = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateEmploymentData, ThrowOnError>,
+export const patchV1EmploymentsEmploymentId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchV1EmploymentsEmploymentIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).put<
-    PatchUpdateEmploymentResponses,
-    PatchUpdateEmploymentErrors,
+    PatchV1EmploymentsEmploymentIdResponses,
+    PatchV1EmploymentsEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
@@ -4510,12 +5228,12 @@ export const patchUpdateEmployment = <ThrowOnError extends boolean = false>(
  *
  * Retrieves a list of users for the authenticated company following SCIM 2.0 standard
  */
-export const getListUsersScim = <ThrowOnError extends boolean = false>(
-  options?: Options<GetListUsersScimData, ThrowOnError>,
+export const getV1ScimV2Users = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1ScimV2UsersData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetListUsersScimResponses,
-    GetListUsersScimErrors,
+    GetV1ScimV2UsersResponses,
+    GetV1ScimV2UsersErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -4535,12 +5253,14 @@ export const getListUsersScim = <ThrowOnError extends boolean = false>(
  * | Manage payroll runs (`payroll`) | View payroll calendars (`payroll_calendar:read`) | - |
  *
  */
-export const getIndexPayrollCalendar = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexPayrollCalendarData, ThrowOnError>,
+export const getV1PayrollCalendarsCycle = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1PayrollCalendarsCycleData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexPayrollCalendarResponses,
-    GetIndexPayrollCalendarErrors,
+    GetV1PayrollCalendarsCycleResponses,
+    GetV1PayrollCalendarsCycleErrors,
     ThrowOnError
   >({
     security: [
@@ -4564,23 +5284,25 @@ export const getIndexPayrollCalendar = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
  *
  */
-export const getShowAdministrativeDetails = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetShowAdministrativeDetailsData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowAdministrativeDetailsResponses,
-    GetShowAdministrativeDetailsErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
-    ...options,
-  });
+export const getV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetails =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).get<
+      GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses,
+      GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
+      ...options,
+    });
 
 /**
  * Update Legal Entity Administrative details
@@ -4595,21 +5317,78 @@ export const getShowAdministrativeDetails = <
  * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
  *
  */
-export const putUpdateAdministrativeDetails = <
+export const putV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetails =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).put<
+      PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses,
+      PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    });
+
+/**
+ * Update contract details
+ *
+ * Updates employment's contract details.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdContractDetails = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PutUpdateAdministrativeDetailsData, ThrowOnError>,
+  options: Options<
+    PutV2EmploymentsEmploymentIdContractDetailsData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).put<
-    PutUpdateAdministrativeDetailsResponses,
-    PutUpdateAdministrativeDetailsErrors,
+    PutV2EmploymentsEmploymentIdContractDetailsResponses,
+    PutV2EmploymentsEmploymentIdContractDetailsErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
+    url: '/v2/employments/{employment_id}/contract_details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4624,12 +5403,14 @@ export const putUpdateAdministrativeDetails = <
  * the cost of employment for the region. These fields are based on employer contributions that are associated
  * with the region or any of it's parent regions.
  */
-export const getShowRegionField = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowRegionFieldData, ThrowOnError>,
+export const getV1CostCalculatorRegionsSlugFields = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1CostCalculatorRegionsSlugFieldsData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowRegionFieldResponses,
-    GetShowRegionFieldErrors,
+    GetV1CostCalculatorRegionsSlugFieldsResponses,
+    GetV1CostCalculatorRegionsSlugFieldsErrors,
     ThrowOnError
   >({
     security: [
@@ -4654,12 +5435,12 @@ export const getShowRegionField = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | View offboarding requests (`offboarding:read`) | Manage offboarding (`offboarding:write`) |
  *
  */
-export const getShowOffboarding = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowOffboardingData, ThrowOnError>,
+export const getV1OffboardingsId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1OffboardingsIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowOffboardingResponses,
-    GetShowOffboardingErrors,
+    GetV1OffboardingsIdResponses,
+    GetV1OffboardingsIdErrors,
     ThrowOnError
   >({
     security: [
@@ -4682,14 +5463,17 @@ export const getShowOffboarding = <ThrowOnError extends boolean = false>(
  * | Manage payroll runs (`payroll`) | View payroll runs (`payroll_run:read`) | - |
  *
  */
-export const getEmployeeDetailsPayrollRun = <
+export const getV1PayrollRunsPayrollRunIdEmployeeDetails = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetEmployeeDetailsPayrollRunData, ThrowOnError>,
+  options: Options<
+    GetV1PayrollRunsPayrollRunIdEmployeeDetailsData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetEmployeeDetailsPayrollRunResponses,
-    GetEmployeeDetailsPayrollRunErrors,
+    GetV1PayrollRunsPayrollRunIdEmployeeDetailsResponses,
+    GetV1PayrollRunsPayrollRunIdEmployeeDetailsErrors,
     ThrowOnError
   >({
     security: [
@@ -4712,12 +5496,14 @@ export const getEmployeeDetailsPayrollRun = <
  * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
  *
  */
-export const getIndexBulkEmploymentRow = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexBulkEmploymentRowData, ThrowOnError>,
+export const getV1BulkEmploymentJobsJobIdRows = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1BulkEmploymentJobsJobIdRowsData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexBulkEmploymentRowResponses,
-    GetIndexBulkEmploymentRowErrors,
+    GetV1BulkEmploymentJobsJobIdRowsResponses,
+    GetV1BulkEmploymentJobsJobIdRowsErrors,
     ThrowOnError
   >({
     security: [
@@ -4745,12 +5531,12 @@ export const getIndexBulkEmploymentRow = <ThrowOnError extends boolean = false>(
  * Employment create endpoint](#operation/post_create_employment)
  *
  */
-export const postCreateEmployment = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateEmploymentData, ThrowOnError>,
+export const postV1SandboxEmployments = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1SandboxEmploymentsData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateEmploymentResponses,
-    PostCreateEmploymentErrors,
+    PostV1SandboxEmploymentsResponses,
+    PostV1SandboxEmploymentsErrors,
     ThrowOnError
   >({
     security: [
@@ -4780,14 +5566,17 @@ export const postCreateEmployment = <ThrowOnError extends boolean = false>(
  * | Manage employment documents (`employment_documents`) | - | Manage contract eligibility (`contract_eligibility:write`) |
  *
  */
-export const postCreateContractEligibility = <
+export const postV1EmploymentsEmploymentIdContractEligibility = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostCreateContractEligibilityData, ThrowOnError>,
+  options: Options<
+    PostV1EmploymentsEmploymentIdContractEligibilityData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).post<
-    PostCreateContractEligibilityResponses,
-    PostCreateContractEligibilityErrors,
+    PostV1EmploymentsEmploymentIdContractEligibilityResponses,
+    PostV1EmploymentsEmploymentIdContractEligibilityErrors,
     ThrowOnError
   >({
     security: [
@@ -4817,12 +5606,12 @@ export const postCreateContractEligibility = <
  * | Manage company resources (`company_admin`) | View countries (`country:read`) | - |
  *
  */
-export const getSupportedCountry = <ThrowOnError extends boolean = false>(
-  options: Options<GetSupportedCountryData, ThrowOnError>,
+export const getV1Countries = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1CountriesData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetSupportedCountryResponses,
-    GetSupportedCountryErrors,
+    GetV1CountriesResponses,
+    GetV1CountriesErrors,
     ThrowOnError
   >({
     security: [
@@ -4835,18 +5624,43 @@ export const getSupportedCountry = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * List payslip files for the authenticated employee
+ *
+ * Returns a paginated list of payslip files belonging to the current employee.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
+ *
+ */
+export const getV1EmployeePayslipFiles = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1EmployeePayslipFilesData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1EmployeePayslipFilesResponses,
+    GetV1EmployeePayslipFilesErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/payslip-files',
+    ...options,
+  });
+
+/**
  * Create a new token for a company
  *
  * Creates new tokens for a given company
  */
-export const postCreateTokenCompanyToken = <
+export const postV1CompaniesCompanyIdCreateToken = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostCreateTokenCompanyTokenData, ThrowOnError>,
+  options: Options<PostV1CompaniesCompanyIdCreateTokenData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateTokenCompanyTokenResponses,
-    PostCreateTokenCompanyTokenErrors,
+    PostV1CompaniesCompanyIdCreateTokenResponses,
+    PostV1CompaniesCompanyIdCreateTokenErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -4867,14 +5681,14 @@ export const postCreateTokenCompanyToken = <
  * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
  *
  */
-export const getIndexCompanyLegalEntities = <
+export const getV1CompaniesCompanyIdLegalEntities = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetIndexCompanyLegalEntitiesData, ThrowOnError>,
+  options: Options<GetV1CompaniesCompanyIdLegalEntitiesData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexCompanyLegalEntitiesResponses,
-    GetIndexCompanyLegalEntitiesErrors,
+    GetV1CompaniesCompanyIdLegalEntitiesResponses,
+    GetV1CompaniesCompanyIdLegalEntitiesErrors,
     ThrowOnError
   >({
     security: [
@@ -4886,20 +5700,73 @@ export const getIndexCompanyLegalEntities = <
   });
 
 /**
+ * Update personal details
+ *
+ * Updates employment's personal details.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdPersonalDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdPersonalDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdPersonalDetailsResponses,
+    PutV2EmploymentsEmploymentIdPersonalDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/personal_details',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * Complete onboarding
  *
  * Completes the employee onboarding. When all tasks are completed, the employee is marked as in `review` status
  *
  * @deprecated
  */
-export const postCompleteOnboardingEmployment = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCompleteOnboardingEmploymentData, ThrowOnError>,
+export const postV1Ready = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1ReadyData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCompleteOnboardingEmploymentResponses,
-    PostCompleteOnboardingEmploymentErrors,
+    PostV1ReadyResponses,
+    PostV1ReadyErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -4923,14 +5790,14 @@ export const postCompleteOnboardingEmployment = <
  * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const getIndexLeavePoliciesDetails = <
+export const getV1LeavePoliciesDetailsEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetIndexLeavePoliciesDetailsData, ThrowOnError>,
+  options: Options<GetV1LeavePoliciesDetailsEmploymentIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexLeavePoliciesDetailsResponses,
-    GetIndexLeavePoliciesDetailsErrors,
+    GetV1LeavePoliciesDetailsEmploymentIdResponses,
+    GetV1LeavePoliciesDetailsEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
@@ -4958,12 +5825,12 @@ export const getIndexLeavePoliciesDetails = <
  * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const getTimeoffTypesTimeoff = <ThrowOnError extends boolean = false>(
-  options: Options<GetTimeoffTypesTimeoffData, ThrowOnError>,
+export const getV1TimeoffTypes = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1TimeoffTypesData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetTimeoffTypesTimeoffResponses,
-    GetTimeoffTypesTimeoffErrors,
+    GetV1TimeoffTypesResponses,
+    GetV1TimeoffTypesErrors,
     ThrowOnError
   >({
     security: [
@@ -4979,12 +5846,14 @@ export const getTimeoffTypesTimeoff = <ThrowOnError extends boolean = false>(
  *
  * Creates CSV cost estimation of employments
  */
-export const postCreateEstimationCsv = <ThrowOnError extends boolean = false>(
-  options?: Options<PostCreateEstimationCsvData, ThrowOnError>,
+export const postV1CostCalculatorEstimationCsv = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<PostV1CostCalculatorEstimationCsvData, ThrowOnError>,
 ) =>
   (options?.client ?? client).post<
-    PostCreateEstimationCsvResponses,
-    PostCreateEstimationCsvErrors,
+    PostV1CostCalculatorEstimationCsvResponses,
+    PostV1CostCalculatorEstimationCsvErrors,
     ThrowOnError
   >({
     security: [
@@ -5006,12 +5875,12 @@ export const postCreateEstimationCsv = <ThrowOnError extends boolean = false>(
  *
  * Retrieves a list of groups (departments) for the authenticated company following SCIM 2.0 standard
  */
-export const getListGroupsScim = <ThrowOnError extends boolean = false>(
-  options?: Options<GetListGroupsScimData, ThrowOnError>,
+export const getV1ScimV2Groups = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1ScimV2GroupsData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetListGroupsScimResponses,
-    GetListGroupsScimErrors,
+    GetV1ScimV2GroupsResponses,
+    GetV1ScimV2GroupsErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -5032,14 +5901,17 @@ export const getListGroupsScim = <ThrowOnError extends boolean = false>(
  * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
  *
  */
-export const postCreateContractDocument = <
+export const postV1ContractorsEmploymentsEmploymentIdContractDocuments = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostCreateContractDocumentData, ThrowOnError>,
+  options: Options<
+    PostV1ContractorsEmploymentsEmploymentIdContractDocumentsData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).post<
-    PostCreateContractDocumentResponses,
-    PostCreateContractDocumentErrors,
+    PostV1ContractorsEmploymentsEmploymentIdContractDocumentsResponses,
+    PostV1ContractorsEmploymentsEmploymentIdContractDocumentsErrors,
     ThrowOnError
   >({
     security: [
@@ -5062,14 +5934,14 @@ export const postCreateContractDocument = <
  * respond with a 404 outside of the Sandbox environment.
  *
  */
-export const postTriggerWebhookCallback = <
+export const postV1SandboxWebhookCallbacksTrigger = <
   ThrowOnError extends boolean = false,
 >(
-  options?: Options<PostTriggerWebhookCallbackData, ThrowOnError>,
+  options?: Options<PostV1SandboxWebhookCallbacksTriggerData, ThrowOnError>,
 ) =>
   (options?.client ?? client).post<
-    PostTriggerWebhookCallbackResponses,
-    PostTriggerWebhookCallbackErrors,
+    PostV1SandboxWebhookCallbacksTriggerResponses,
+    PostV1SandboxWebhookCallbacksTriggerErrors,
     ThrowOnError
   >({
     security: [
@@ -5098,12 +5970,12 @@ export const postTriggerWebhookCallback = <
  * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
  *
  */
-export const getDownloadPayslipPayslip = <ThrowOnError extends boolean = false>(
-  options: Options<GetDownloadPayslipPayslipData, ThrowOnError>,
+export const getV1PayslipsPayslipIdPdf = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1PayslipsPayslipIdPdfData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetDownloadPayslipPayslipResponses,
-    GetDownloadPayslipPayslipErrors,
+    GetV1PayslipsPayslipIdPdfResponses,
+    GetV1PayslipsPayslipIdPdfErrors,
     ThrowOnError
   >({
     security: [
@@ -5126,14 +5998,14 @@ export const getDownloadPayslipPayslip = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | Convert currencies (`convert_currency:read`) | - |
  *
  */
-export const postConvertWithSpreadCurrencyConverter = <
+export const postV1CurrencyConverterEffective = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostConvertWithSpreadCurrencyConverterData, ThrowOnError>,
+  options: Options<PostV1CurrencyConverterEffectiveData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostConvertWithSpreadCurrencyConverterResponses,
-    PostConvertWithSpreadCurrencyConverterErrors,
+    PostV1CurrencyConverterEffectiveResponses,
+    PostV1CurrencyConverterEffectiveErrors,
     ThrowOnError
   >({
     security: [
@@ -5161,12 +6033,12 @@ export const postConvertWithSpreadCurrencyConverter = <
  * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const getShowTimeoff = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowTimeoffData, ThrowOnError>,
+export const getV1TimeoffId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1TimeoffIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowTimeoffResponses,
-    GetShowTimeoffErrors,
+    GetV1TimeoffIdResponses,
+    GetV1TimeoffIdErrors,
     ThrowOnError
   >({
     security: [
@@ -5192,12 +6064,12 @@ export const getShowTimeoff = <ThrowOnError extends boolean = false>(
  * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const patchUpdateTimeoff2 = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateTimeoff2Data, ThrowOnError>,
+export const patchV1TimeoffId2 = <ThrowOnError extends boolean = false>(
+  options: Options<PatchV1TimeoffId2Data, ThrowOnError>,
 ) =>
   (options.client ?? client).patch<
-    PatchUpdateTimeoff2Responses,
-    PatchUpdateTimeoff2Errors,
+    PatchV1TimeoffId2Responses,
+    PatchV1TimeoffId2Errors,
     ThrowOnError
   >({
     security: [
@@ -5227,12 +6099,12 @@ export const patchUpdateTimeoff2 = <ThrowOnError extends boolean = false>(
  * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const patchUpdateTimeoff = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateTimeoffData, ThrowOnError>,
+export const patchV1TimeoffId = <ThrowOnError extends boolean = false>(
+  options: Options<PatchV1TimeoffIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).put<
-    PatchUpdateTimeoffResponses,
-    PatchUpdateTimeoffErrors,
+    PatchV1TimeoffIdResponses,
+    PatchV1TimeoffIdErrors,
     ThrowOnError
   >({
     security: [
@@ -5259,12 +6131,14 @@ export const patchUpdateTimeoff = <ThrowOnError extends boolean = false>(
  * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const postCreateDecline = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateDeclineData, ThrowOnError>,
+export const postV1TimeoffTimeoffIdDecline = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostV1TimeoffTimeoffIdDeclineData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateDeclineResponses,
-    PostCreateDeclineErrors,
+    PostV1TimeoffTimeoffIdDeclineResponses,
+    PostV1TimeoffTimeoffIdDeclineErrors,
     ThrowOnError
   >({
     security: [
@@ -5311,14 +6185,14 @@ export const postCreateDecline = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | - | Manage contract amendments (`contract_amendment:write`) |
  *
  */
-export const postAutomatableContractAmendment = <
+export const postV1ContractAmendmentsAutomatable = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostAutomatableContractAmendmentData, ThrowOnError>,
+  options: Options<PostV1ContractAmendmentsAutomatableData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostAutomatableContractAmendmentResponses,
-    PostAutomatableContractAmendmentErrors,
+    PostV1ContractAmendmentsAutomatableResponses,
+    PostV1ContractAmendmentsAutomatableErrors,
     ThrowOnError
   >({
     security: [
@@ -5345,12 +6219,14 @@ export const postAutomatableContractAmendment = <
  * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const postCreateApproval = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateApprovalData, ThrowOnError>,
+export const postV1TimeoffTimeoffIdApprove = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostV1TimeoffTimeoffIdApproveData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateApprovalResponses,
-    PostCreateApprovalErrors,
+    PostV1TimeoffTimeoffIdApproveResponses,
+    PostV1TimeoffTimeoffIdApproveErrors,
     ThrowOnError
   >({
     security: [
@@ -5380,12 +6256,14 @@ export const postCreateApproval = <ThrowOnError extends boolean = false>(
  * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
  *
  */
-export const getIndexEmploymentFile = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexEmploymentFileData, ThrowOnError>,
+export const getV1EmploymentsEmploymentIdFiles = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1EmploymentsEmploymentIdFilesData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexEmploymentFileResponses,
-    GetIndexEmploymentFileErrors,
+    GetV1EmploymentsEmploymentIdFilesResponses,
+    GetV1EmploymentsEmploymentIdFilesErrors,
     ThrowOnError
   >({
     security: [
@@ -5408,14 +6286,12 @@ export const getIndexEmploymentFile = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | - | Manage custom fields (`custom_field:write`) |
  *
  */
-export const getIndexEmploymentCustomField = <
-  ThrowOnError extends boolean = false,
->(
-  options?: Options<GetIndexEmploymentCustomFieldData, ThrowOnError>,
+export const getV1CustomFields = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1CustomFieldsData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexEmploymentCustomFieldResponses,
-    GetIndexEmploymentCustomFieldErrors,
+    GetV1CustomFieldsResponses,
+    GetV1CustomFieldsErrors,
     ThrowOnError
   >({
     security: [
@@ -5438,14 +6314,12 @@ export const getIndexEmploymentCustomField = <
  * | Manage employments (`employments`) | View custom fields (`custom_field:read`) | Manage custom fields (`custom_field:write`) |
  *
  */
-export const postCreateEmploymentCustomField = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostCreateEmploymentCustomFieldData, ThrowOnError>,
+export const postV1CustomFields = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1CustomFieldsData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateEmploymentCustomFieldResponses,
-    PostCreateEmploymentCustomFieldErrors,
+    PostV1CustomFieldsResponses,
+    PostV1CustomFieldsErrors,
     ThrowOnError
   >({
     security: [
@@ -5472,12 +6346,12 @@ export const postCreateEmploymentCustomField = <
  * | Manage company resources (`company_admin`) | View company currencies (`company_currencies:read`) | - |
  *
  */
-export const getIndexCompanyCurrency = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexCompanyCurrencyData, ThrowOnError>,
+export const getV1CompanyCurrencies = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1CompanyCurrenciesData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexCompanyCurrencyResponses,
-    GetIndexCompanyCurrencyErrors,
+    GetV1CompanyCurrenciesResponses,
+    GetV1CompanyCurrenciesErrors,
     ThrowOnError
   >({
     security: [
@@ -5501,12 +6375,14 @@ export const getIndexCompanyCurrency = <ThrowOnError extends boolean = false>(
  * For updating an employment's parameters outside of testing purposes, use [this Employment update endpoint](#operation/patch_update_employment).
  *
  */
-export const patchUpdateEmployment4 = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateEmployment4Data, ThrowOnError>,
+export const patchV1SandboxEmploymentsEmploymentId2 = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchV1SandboxEmploymentsEmploymentId2Data, ThrowOnError>,
 ) =>
   (options.client ?? client).patch<
-    PatchUpdateEmployment4Responses,
-    PatchUpdateEmployment4Errors,
+    PatchV1SandboxEmploymentsEmploymentId2Responses,
+    PatchV1SandboxEmploymentsEmploymentId2Errors,
     ThrowOnError
   >({
     security: [
@@ -5533,12 +6409,14 @@ export const patchUpdateEmployment4 = <ThrowOnError extends boolean = false>(
  * For updating an employment's parameters outside of testing purposes, use [this Employment update endpoint](#operation/patch_update_employment).
  *
  */
-export const patchUpdateEmployment3 = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateEmployment3Data, ThrowOnError>,
+export const patchV1SandboxEmploymentsEmploymentId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchV1SandboxEmploymentsEmploymentIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).put<
-    PatchUpdateEmployment3Responses,
-    PatchUpdateEmployment3Errors,
+    PatchV1SandboxEmploymentsEmploymentIdResponses,
+    PatchV1SandboxEmploymentsEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
@@ -5565,14 +6443,17 @@ export const patchUpdateEmployment3 = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | View contracts (`contract:read`) | - |
  *
  */
-export const getPendingChangesEmploymentContract = <
+export const getV1EmploymentContractsEmploymentIdPendingChanges = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetPendingChangesEmploymentContractData, ThrowOnError>,
+  options: Options<
+    GetV1EmploymentContractsEmploymentIdPendingChangesData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetPendingChangesEmploymentContractResponses,
-    GetPendingChangesEmploymentContractErrors,
+    GetV1EmploymentContractsEmploymentIdPendingChangesResponses,
+    GetV1EmploymentContractsEmploymentIdPendingChangesErrors,
     ThrowOnError
   >({
     security: [
@@ -5595,12 +6476,14 @@ export const getPendingChangesEmploymentContract = <
  * | Manage employments (`employments`) | View resignations (`resignation:read`) | Manage resignations (`resignation:write`) |
  *
  */
-export const getShowResignation = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowResignationData, ThrowOnError>,
+export const getV1ResignationsOffboardingRequestId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1ResignationsOffboardingRequestIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowResignationResponses,
-    GetShowResignationErrors,
+    GetV1ResignationsOffboardingRequestIdResponses,
+    GetV1ResignationsOffboardingRequestIdErrors,
     ThrowOnError
   >({
     security: [
@@ -5626,14 +6509,12 @@ export const getShowResignation = <ThrowOnError extends boolean = false>(
  * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
  *
  */
-export const postUploadEmployeeFileFile = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<PostUploadEmployeeFileFileData, ThrowOnError>,
+export const postV1Documents = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1DocumentsData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostUploadEmployeeFileFileResponses,
-    PostUploadEmployeeFileFileErrors,
+    PostV1DocumentsResponses,
+    PostV1DocumentsErrors,
     ThrowOnError
   >({
     ...formDataBodySerializer,
@@ -5676,14 +6557,14 @@ export const postUploadEmployeeFileFile = <
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const postInviteEmploymentInvitation = <
+export const postV1EmploymentsEmploymentIdInvite = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostInviteEmploymentInvitationData, ThrowOnError>,
+  options: Options<PostV1EmploymentsEmploymentIdInviteData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostInviteEmploymentInvitationResponses,
-    PostInviteEmploymentInvitationErrors,
+    PostV1EmploymentsEmploymentIdInviteResponses,
+    PostV1EmploymentsEmploymentIdInviteErrors,
     ThrowOnError
   >({
     security: [
@@ -5706,12 +6587,12 @@ export const postInviteEmploymentInvitation = <
  * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
  *
  */
-export const getShowExpense = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowExpenseData, ThrowOnError>,
+export const getV1ExpensesId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1ExpensesIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowExpenseResponses,
-    GetShowExpenseErrors,
+    GetV1ExpensesIdResponses,
+    GetV1ExpensesIdErrors,
     ThrowOnError
   >({
     security: [
@@ -5734,12 +6615,12 @@ export const getShowExpense = <ThrowOnError extends boolean = false>(
  * | Manage expenses (`employment_payments`) | - | Manage expenses (`expense:write`) |
  *
  */
-export const patchUpdateExpense2 = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateExpense2Data, ThrowOnError>,
+export const patchV1ExpensesId2 = <ThrowOnError extends boolean = false>(
+  options: Options<PatchV1ExpensesId2Data, ThrowOnError>,
 ) =>
   (options.client ?? client).patch<
-    PatchUpdateExpense2Responses,
-    PatchUpdateExpense2Errors,
+    PatchV1ExpensesId2Responses,
+    PatchV1ExpensesId2Errors,
     ThrowOnError
   >({
     security: [
@@ -5766,12 +6647,12 @@ export const patchUpdateExpense2 = <ThrowOnError extends boolean = false>(
  * | Manage expenses (`employment_payments`) | - | Manage expenses (`expense:write`) |
  *
  */
-export const patchUpdateExpense = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateExpenseData, ThrowOnError>,
+export const patchV1ExpensesId = <ThrowOnError extends boolean = false>(
+  options: Options<PatchV1ExpensesIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).put<
-    PatchUpdateExpenseResponses,
-    PatchUpdateExpenseErrors,
+    PatchV1ExpensesIdResponses,
+    PatchV1ExpensesIdErrors,
     ThrowOnError
   >({
     security: [
@@ -5798,14 +6679,17 @@ export const patchUpdateExpense = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | View benefit renewals (`benefit_renewal:read`) | Manage benefit renewals (`benefit_renewal:write`) |
  *
  */
-export const getShowBenefitRenewalRequest = <
+export const getV1BenefitRenewalRequestsBenefitRenewalRequestId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetShowBenefitRenewalRequestData, ThrowOnError>,
+  options: Options<
+    GetV1BenefitRenewalRequestsBenefitRenewalRequestIdData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetShowBenefitRenewalRequestResponses,
-    GetShowBenefitRenewalRequestErrors,
+    GetV1BenefitRenewalRequestsBenefitRenewalRequestIdResponses,
+    GetV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors,
     ThrowOnError
   >({
     security: [
@@ -5828,14 +6712,17 @@ export const getShowBenefitRenewalRequest = <
  * | Manage company resources (`company_admin`) | - | Manage benefit renewals (`benefit_renewal:write`) |
  *
  */
-export const postUpdateBenefitRenewalRequest = <
+export const postV1BenefitRenewalRequestsBenefitRenewalRequestId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostUpdateBenefitRenewalRequestData, ThrowOnError>,
+  options: Options<
+    PostV1BenefitRenewalRequestsBenefitRenewalRequestIdData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).post<
-    PostUpdateBenefitRenewalRequestResponses,
-    PostUpdateBenefitRenewalRequestErrors,
+    PostV1BenefitRenewalRequestsBenefitRenewalRequestIdResponses,
+    PostV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors,
     ThrowOnError
   >({
     security: [
@@ -5862,14 +6749,17 @@ export const postUpdateBenefitRenewalRequest = <
  * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
  *
  */
-export const getShowEmploymentOnboardingSteps = <
+export const getV1EmploymentsEmploymentIdOnboardingSteps = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetShowEmploymentOnboardingStepsData, ThrowOnError>,
+  options: Options<
+    GetV1EmploymentsEmploymentIdOnboardingStepsData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetShowEmploymentOnboardingStepsResponses,
-    GetShowEmploymentOnboardingStepsErrors,
+    GetV1EmploymentsEmploymentIdOnboardingStepsResponses,
+    GetV1EmploymentsEmploymentIdOnboardingStepsErrors,
     ThrowOnError
   >({
     security: [
@@ -5893,14 +6783,17 @@ export const getShowEmploymentOnboardingSteps = <
  * | Manage company resources (`company_admin`) | View company structure (`company_structure:read`) | - |
  *
  */
-export const getIndexEmploymentCompanyStructureNode = <
+export const getV1EmploymentsEmploymentIdCompanyStructureNodes = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetIndexEmploymentCompanyStructureNodeData, ThrowOnError>,
+  options: Options<
+    GetV1EmploymentsEmploymentIdCompanyStructureNodesData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetIndexEmploymentCompanyStructureNodeResponses,
-    GetIndexEmploymentCompanyStructureNodeErrors,
+    GetV1EmploymentsEmploymentIdCompanyStructureNodesResponses,
+    GetV1EmploymentsEmploymentIdCompanyStructureNodesErrors,
     ThrowOnError
   >({
     security: [
@@ -5923,14 +6816,14 @@ export const getIndexEmploymentCompanyStructureNode = <
  * | Manage employments (`employments`) | View custom field values (`custom_field_value:read`) | Manage custom field values (`custom_field_value:write`) |
  *
  */
-export const getIndexEmploymentCustomFieldValue = <
+export const getV1EmploymentsEmploymentIdCustomFields = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetIndexEmploymentCustomFieldValueData, ThrowOnError>,
+  options: Options<GetV1EmploymentsEmploymentIdCustomFieldsData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexEmploymentCustomFieldValueResponses,
-    GetIndexEmploymentCustomFieldValueErrors,
+    GetV1EmploymentsEmploymentIdCustomFieldsResponses,
+    GetV1EmploymentsEmploymentIdCustomFieldsErrors,
     ThrowOnError
   >({
     security: [
@@ -5953,12 +6846,17 @@ export const getIndexEmploymentCustomFieldValue = <
  * | Manage employments (`employments`) | - | Manage resignations (`resignation:write`) |
  *
  */
-export const putValidateResignation = <ThrowOnError extends boolean = false>(
-  options: Options<PutValidateResignationData, ThrowOnError>,
+export const putV1ResignationsOffboardingRequestIdValidate = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV1ResignationsOffboardingRequestIdValidateData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).put<
-    PutValidateResignationResponses,
-    PutValidateResignationErrors,
+    PutV1ResignationsOffboardingRequestIdValidateResponses,
+    PutV1ResignationsOffboardingRequestIdValidateErrors,
     ThrowOnError
   >({
     security: [
@@ -5982,14 +6880,17 @@ export const putValidateResignation = <ThrowOnError extends boolean = false>(
  * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
  *
  */
-export const putReassignDefaultEntityCompany = <
+export const putV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PutReassignDefaultEntityCompanyData, ThrowOnError>,
+  options: Options<
+    PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).put<
-    PutReassignDefaultEntityCompanyResponses,
-    PutReassignDefaultEntityCompanyErrors,
+    PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdResponses,
+    PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdErrors,
     ThrowOnError
   >({
     security: [
@@ -6012,12 +6913,14 @@ export const putReassignDefaultEntityCompany = <
  * | Manage company resources (`company_admin`) | View webhooks (`webhook:read`) | Manage webhooks (`webhook:write`) |
  *
  */
-export const getIndexWebhookCallback = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexWebhookCallbackData, ThrowOnError>,
+export const getV1CompaniesCompanyIdWebhookCallbacks = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1CompaniesCompanyIdWebhookCallbacksData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexWebhookCallbackResponses,
-    GetIndexWebhookCallbackErrors,
+    GetV1CompaniesCompanyIdWebhookCallbacksResponses,
+    GetV1CompaniesCompanyIdWebhookCallbacksErrors,
     ThrowOnError
   >({
     security: [
@@ -6044,26 +6947,25 @@ export const getIndexWebhookCallback = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
  *
  */
-export const getContractorEligibilityCompanyLegalEntities = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    GetContractorEligibilityCompanyLegalEntitiesData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).get<
-    GetContractorEligibilityCompanyLegalEntitiesResponses,
-    GetContractorEligibilityCompanyLegalEntitiesErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/contractor-eligibility',
-    ...options,
-  });
+export const getV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibility =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).get<
+      GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityResponses,
+      GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/contractor-eligibility',
+      ...options,
+    });
 
 /**
  * Show a custom field value
@@ -6077,14 +6979,17 @@ export const getContractorEligibilityCompanyLegalEntities = <
  * | Manage employments (`employments`) | View custom field values (`custom_field_value:read`) | Manage custom field values (`custom_field_value:write`) |
  *
  */
-export const getShowEmploymentCustomFieldValue = <
+export const getV1CustomFieldsCustomFieldIdValuesEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetShowEmploymentCustomFieldValueData, ThrowOnError>,
+  options: Options<
+    GetV1CustomFieldsCustomFieldIdValuesEmploymentIdData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetShowEmploymentCustomFieldValueResponses,
-    GetShowEmploymentCustomFieldValueErrors,
+    GetV1CustomFieldsCustomFieldIdValuesEmploymentIdResponses,
+    GetV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
@@ -6107,14 +7012,17 @@ export const getShowEmploymentCustomFieldValue = <
  * | Manage employments (`employments`) | - | Manage custom field values (`custom_field_value:write`) |
  *
  */
-export const patchUpdateEmploymentCustomFieldValue2 = <
+export const patchV1CustomFieldsCustomFieldIdValuesEmploymentId2 = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PatchUpdateEmploymentCustomFieldValue2Data, ThrowOnError>,
+  options: Options<
+    PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Data,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).patch<
-    PatchUpdateEmploymentCustomFieldValue2Responses,
-    PatchUpdateEmploymentCustomFieldValue2Errors,
+    PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Responses,
+    PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Errors,
     ThrowOnError
   >({
     security: [
@@ -6141,14 +7049,17 @@ export const patchUpdateEmploymentCustomFieldValue2 = <
  * | Manage employments (`employments`) | - | Manage custom field values (`custom_field_value:write`) |
  *
  */
-export const patchUpdateEmploymentCustomFieldValue = <
+export const patchV1CustomFieldsCustomFieldIdValuesEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PatchUpdateEmploymentCustomFieldValueData, ThrowOnError>,
+  options: Options<
+    PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).put<
-    PatchUpdateEmploymentCustomFieldValueResponses,
-    PatchUpdateEmploymentCustomFieldValueErrors,
+    PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdResponses,
+    PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
@@ -6176,23 +7087,25 @@ export const patchUpdateEmploymentCustomFieldValue = <
  * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
  *
  */
-export const getShowCorTerminationRequestSubscription = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetShowCorTerminationRequestSubscriptionData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetShowCorTerminationRequestSubscriptionResponses,
-    GetShowCorTerminationRequestSubscriptionErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/employments/{employment_id}/cor-termination-requests/{termination_request_id}',
-    ...options,
-  });
+export const getV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestId =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).get<
+      GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdResponses,
+      GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/contractors/employments/{employment_id}/cor-termination-requests/{termination_request_id}',
+      ...options,
+    });
 
 /**
  * Terminate contractor of record employment
@@ -6213,17 +7126,17 @@ export const getShowCorTerminationRequestSubscription = <
  *
  * @deprecated
  */
-export const postTerminateContractorOfRecordEmploymentSubscription = <
+export const postV1ContractorsEmploymentsEmploymentIdTerminateCorEmployment = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<
-    PostTerminateContractorOfRecordEmploymentSubscriptionData,
+    PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentData,
     ThrowOnError
   >,
 ) =>
   (options.client ?? client).post<
-    PostTerminateContractorOfRecordEmploymentSubscriptionResponses,
-    PostTerminateContractorOfRecordEmploymentSubscriptionErrors,
+    PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentResponses,
+    PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentErrors,
     ThrowOnError
   >({
     security: [
@@ -6244,25 +7157,29 @@ export const postTerminateContractorOfRecordEmploymentSubscription = <
  * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
  *
  */
-export const postSignContractDocument = <ThrowOnError extends boolean = false>(
-  options: Options<PostSignContractDocumentData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostSignContractDocumentResponses,
-    PostSignContractDocumentErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/employments/{employment_id}/contract-documents/{contract_document_id}/sign',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
+export const postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).post<
+      PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignResponses,
+      PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/contractors/employments/{employment_id}/contract-documents/{contract_document_id}/sign',
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    });
 
 /**
  * Get token identity
@@ -6270,12 +7187,12 @@ export const postSignContractDocument = <ThrowOnError extends boolean = false>(
  * Shows information about the entities that can be controlled by the current auth token.
  *
  */
-export const getCurrentIdentity = <ThrowOnError extends boolean = false>(
-  options: Options<GetCurrentIdentityData, ThrowOnError>,
+export const getV1IdentityCurrent = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1IdentityCurrentData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetCurrentIdentityResponses,
-    GetCurrentIdentityErrors,
+    GetV1IdentityCurrentResponses,
+    GetV1IdentityCurrentErrors,
     ThrowOnError
   >({
     security: [
@@ -6304,12 +7221,12 @@ export const getCurrentIdentity = <ThrowOnError extends boolean = false>(
  * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
  *
  */
-export const deleteDeleteIncentive = <ThrowOnError extends boolean = false>(
-  options: Options<DeleteDeleteIncentiveData, ThrowOnError>,
+export const deleteV1IncentivesId = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteV1IncentivesIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).delete<
-    DeleteDeleteIncentiveResponses,
-    DeleteDeleteIncentiveErrors,
+    DeleteV1IncentivesIdResponses,
+    DeleteV1IncentivesIdErrors,
     ThrowOnError
   >({
     security: [
@@ -6332,12 +7249,12 @@ export const deleteDeleteIncentive = <ThrowOnError extends boolean = false>(
  * | Manage expenses (`employment_payments`) | View incentives (`incentive:read`) | Manage incentives (`incentive:write`) |
  *
  */
-export const getShowIncentive = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowIncentiveData, ThrowOnError>,
+export const getV1IncentivesId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1IncentivesIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowIncentiveResponses,
-    GetShowIncentiveErrors,
+    GetV1IncentivesIdResponses,
+    GetV1IncentivesIdErrors,
     ThrowOnError
   >({
     security: [
@@ -6365,12 +7282,12 @@ export const getShowIncentive = <ThrowOnError extends boolean = false>(
  * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
  *
  */
-export const patchUpdateIncentive2 = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateIncentive2Data, ThrowOnError>,
+export const patchV1IncentivesId2 = <ThrowOnError extends boolean = false>(
+  options: Options<PatchV1IncentivesId2Data, ThrowOnError>,
 ) =>
   (options.client ?? client).patch<
-    PatchUpdateIncentive2Responses,
-    PatchUpdateIncentive2Errors,
+    PatchV1IncentivesId2Responses,
+    PatchV1IncentivesId2Errors,
     ThrowOnError
   >({
     security: [
@@ -6402,12 +7319,12 @@ export const patchUpdateIncentive2 = <ThrowOnError extends boolean = false>(
  * | Manage expenses (`employment_payments`) | - | Manage incentives (`incentive:write`) |
  *
  */
-export const patchUpdateIncentive = <ThrowOnError extends boolean = false>(
-  options: Options<PatchUpdateIncentiveData, ThrowOnError>,
+export const patchV1IncentivesId = <ThrowOnError extends boolean = false>(
+  options: Options<PatchV1IncentivesIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).put<
-    PatchUpdateIncentiveResponses,
-    PatchUpdateIncentiveErrors,
+    PatchV1IncentivesIdResponses,
+    PatchV1IncentivesIdErrors,
     ThrowOnError
   >({
     security: [
@@ -6438,14 +7355,17 @@ export const patchUpdateIncentive = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
  *
  */
-export const getShowEligibilityQuestionnaire = <
+export const getV1ContractorsSchemasEligibilityQuestionnaire = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetShowEligibilityQuestionnaireData, ThrowOnError>,
+  options: Options<
+    GetV1ContractorsSchemasEligibilityQuestionnaireData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetShowEligibilityQuestionnaireResponses,
-    GetShowEligibilityQuestionnaireErrors,
+    GetV1ContractorsSchemasEligibilityQuestionnaireResponses,
+    GetV1ContractorsSchemasEligibilityQuestionnaireErrors,
     ThrowOnError
   >({
     security: [
@@ -6468,14 +7388,14 @@ export const getShowEligibilityQuestionnaire = <
  * | Manage employments (`employments`) | View work authorizations (`work_authorization:read`) | Manage work authorizations (`work_authorization:write`) |
  *
  */
-export const getIndexWorkAuthorizationRequest = <
+export const getV1WorkAuthorizationRequests = <
   ThrowOnError extends boolean = false,
 >(
-  options?: Options<GetIndexWorkAuthorizationRequestData, ThrowOnError>,
+  options?: Options<GetV1WorkAuthorizationRequestsData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexWorkAuthorizationRequestResponses,
-    GetIndexWorkAuthorizationRequestErrors,
+    GetV1WorkAuthorizationRequestsResponses,
+    GetV1WorkAuthorizationRequestsErrors,
     ThrowOnError
   >({
     security: [
@@ -6496,12 +7416,14 @@ export const getIndexWorkAuthorizationRequest = <
  * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
  *
  */
-export const getShowBulkEmployment = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowBulkEmploymentData, ThrowOnError>,
+export const getV1BulkEmploymentJobsJobId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1BulkEmploymentJobsJobIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowBulkEmploymentResponses,
-    GetShowBulkEmploymentErrors,
+    GetV1BulkEmploymentJobsJobIdResponses,
+    GetV1BulkEmploymentJobsJobIdErrors,
     ThrowOnError
   >({
     security: [
@@ -6524,12 +7446,12 @@ export const getShowBulkEmployment = <ThrowOnError extends boolean = false>(
  * | Manage payroll runs (`payroll`) | View pay items (`pay_item:read`) | Manage pay items (`pay_item:write`) |
  *
  */
-export const getIndexPayItems = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexPayItemsData, ThrowOnError>,
+export const getV1PayItems = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1PayItemsData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexPayItemsResponses,
-    GetIndexPayItemsErrors,
+    GetV1PayItemsResponses,
+    GetV1PayItemsErrors,
     ThrowOnError
   >({
     security: [
@@ -6553,14 +7475,14 @@ export const getIndexPayItems = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
  *
  */
-export const getIndexBenefitOffersCountrySummary = <
+export const getV1BenefitOffersCountrySummaries = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetIndexBenefitOffersCountrySummaryData, ThrowOnError>,
+  options: Options<GetV1BenefitOffersCountrySummariesData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexBenefitOffersCountrySummaryResponses,
-    GetIndexBenefitOffersCountrySummaryErrors,
+    GetV1BenefitOffersCountrySummariesResponses,
+    GetV1BenefitOffersCountrySummariesErrors,
     ThrowOnError
   >({
     security: [
@@ -6584,14 +7506,12 @@ export const getIndexBenefitOffersCountrySummary = <
  * | Manage company resources (`company_admin`) | View benefit offers (`benefit_offer:read`) | Manage benefit offers (`benefit_offer:write`) |
  *
  */
-export const getIndexBenefitOffersByEmployment = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexBenefitOffersByEmploymentData, ThrowOnError>,
+export const getV1BenefitOffers = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1BenefitOffersData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexBenefitOffersByEmploymentResponses,
-    GetIndexBenefitOffersByEmploymentErrors,
+    GetV1BenefitOffersResponses,
+    GetV1BenefitOffersErrors,
     ThrowOnError
   >({
     security: [
@@ -6610,14 +7530,17 @@ export const getIndexBenefitOffersByEmployment = <
  * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
  *
  */
-export const putCancelContractAmendment = <
+export const putV1SandboxContractAmendmentsContractAmendmentRequestIdCancel = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PutCancelContractAmendmentData, ThrowOnError>,
+  options: Options<
+    PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).put<
-    PutCancelContractAmendmentResponses,
-    PutCancelContractAmendmentErrors,
+    PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelResponses,
+    PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelErrors,
     ThrowOnError
   >({
     security: [
@@ -6625,6 +7548,31 @@ export const putCancelContractAmendment = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/cancel',
+    ...options,
+  });
+
+/**
+ * List employee time offs
+ *
+ * Lists the current employee's time off records
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const getV1EmployeeTimeoff = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1EmployeeTimeoffData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1EmployeeTimeoffResponses,
+    GetV1EmployeeTimeoffErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/timeoff',
     ...options,
   });
 
@@ -6640,16 +7588,60 @@ export const putCancelContractAmendment = <
  * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const postCreateEmployeeTimeoff = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateEmployeeTimeoffData, ThrowOnError>,
+export const postV1EmployeeTimeoff = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1EmployeeTimeoffData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateEmployeeTimeoffResponses,
-    PostCreateEmployeeTimeoffErrors,
+    PostV1EmployeeTimeoffResponses,
+    PostV1EmployeeTimeoffErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/v1/employee/timeoff',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update employment
+ */
+export const patchV2EmploymentsEmploymentId2 = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchV2EmploymentsEmploymentId2Data, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchV2EmploymentsEmploymentId2Responses,
+    PatchV2EmploymentsEmploymentId2Errors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v2/employments/{employment_id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update employment
+ */
+export const patchV2EmploymentsEmploymentId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchV2EmploymentsEmploymentIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PatchV2EmploymentsEmploymentIdResponses,
+    PatchV2EmploymentsEmploymentIdErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v2/employments/{employment_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -6670,12 +7662,14 @@ export const postCreateEmployeeTimeoff = <ThrowOnError extends boolean = false>(
  * | Manage employment documents (`employment_documents`) | View probation documents (`probation_document:read`) | Manage probation documents (`probation_document:write`) |
  *
  */
-export const getShowProbationExtension = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowProbationExtensionData, ThrowOnError>,
+export const getV1ProbationExtensionsId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1ProbationExtensionsIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowProbationExtensionResponses,
-    GetShowProbationExtensionErrors,
+    GetV1ProbationExtensionsIdResponses,
+    GetV1ProbationExtensionsIdErrors,
     ThrowOnError
   >({
     security: [
@@ -6700,12 +7694,12 @@ export const getShowProbationExtension = <ThrowOnError extends boolean = false>(
  * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
  *
  */
-export const getIndexPayslip = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexPayslipData, ThrowOnError>,
+export const getV1Payslips = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1PayslipsData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexPayslipResponses,
-    GetIndexPayslipErrors,
+    GetV1PayslipsResponses,
+    GetV1PayslipsErrors,
     ThrowOnError
   >({
     security: [
@@ -6728,14 +7722,14 @@ export const getIndexPayslip = <ThrowOnError extends boolean = false>(
  * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
  *
  */
-export const getDownloadByIdExpenseReceipt = <
+export const getV1ExpensesExpenseIdReceiptsReceiptId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetDownloadByIdExpenseReceiptData, ThrowOnError>,
+  options: Options<GetV1ExpensesExpenseIdReceiptsReceiptIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetDownloadByIdExpenseReceiptResponses,
-    GetDownloadByIdExpenseReceiptErrors,
+    GetV1ExpensesExpenseIdReceiptsReceiptIdResponses,
+    GetV1ExpensesExpenseIdReceiptsReceiptIdErrors,
     ThrowOnError
   >({
     security: [
@@ -6751,12 +7745,12 @@ export const getDownloadByIdExpenseReceipt = <
  *
  * Endpoint to exchange tokens in the Authorization Code, Assertion Flow, Client Credentials and Refresh Token flows
  */
-export const postTokenOAuth2Token = <ThrowOnError extends boolean = false>(
-  options?: Options<PostTokenOAuth2TokenData, ThrowOnError>,
+export const postAuthOauth2Token = <ThrowOnError extends boolean = false>(
+  options?: Options<PostAuthOauth2TokenData, ThrowOnError>,
 ) =>
   (options?.client ?? client).post<
-    PostTokenOAuth2TokenResponses,
-    PostTokenOAuth2TokenErrors,
+    PostAuthOauth2TokenResponses,
+    PostAuthOauth2TokenErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'basic', type: 'http' }],
@@ -6765,6 +7759,45 @@ export const postTokenOAuth2Token = <ThrowOnError extends boolean = false>(
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,
+    },
+  });
+
+/**
+ * Update pricing plan details
+ *
+ * Updates the pricing plan for an employment. The frequency determines how often Remote bills the
+ * employer for management fees. Annual billing typically offers a discount.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdPricingPlanDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdPricingPlanDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdPricingPlanDetailsResponses,
+    PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/pricing_plan_details',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
     },
   });
 
@@ -6788,14 +7821,17 @@ export const postTokenOAuth2Token = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | View forms (`form:read`) | - |
  *
  */
-export const getShowLegalEntityFormCountry = <
+export const getV1CountriesCountryCodeLegalEntityFormsForm = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetShowLegalEntityFormCountryData, ThrowOnError>,
+  options: Options<
+    GetV1CountriesCountryCodeLegalEntityFormsFormData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetShowLegalEntityFormCountryResponses,
-    GetShowLegalEntityFormCountryErrors,
+    GetV1CountriesCountryCodeLegalEntityFormsFormResponses,
+    GetV1CountriesCountryCodeLegalEntityFormsFormErrors,
     ThrowOnError
   >({
     security: [
@@ -6822,30 +7858,29 @@ export const getShowLegalEntityFormCountry = <
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const postManageContractorPlusSubscriptionSubscription = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    PostManageContractorPlusSubscriptionSubscriptionData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).post<
-    PostManageContractorPlusSubscriptionSubscriptionResponses,
-    PostManageContractorPlusSubscriptionSubscriptionErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/employments/{employment_id}/contractor-plus-subscription',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
+export const postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).post<
+      PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionResponses,
+      PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/contractors/employments/{employment_id}/contractor-plus-subscription',
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    });
 
 /**
  * List Time Off
@@ -6859,12 +7894,12 @@ export const postManageContractorPlusSubscriptionSubscription = <
  * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const getIndexTimeoff = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexTimeoffData, ThrowOnError>,
+export const getV1Timeoff = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1TimeoffData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexTimeoffResponses,
-    GetIndexTimeoffErrors,
+    GetV1TimeoffResponses,
+    GetV1TimeoffErrors,
     ThrowOnError
   >({
     security: [
@@ -6887,12 +7922,12 @@ export const getIndexTimeoff = <ThrowOnError extends boolean = false>(
  * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const postCreateTimeoff = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateTimeoffData, ThrowOnError>,
+export const postV1Timeoff = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1TimeoffData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateTimeoffResponses,
-    PostCreateTimeoffErrors,
+    PostV1TimeoffResponses,
+    PostV1TimeoffErrors,
     ThrowOnError
   >({
     security: [
@@ -6919,12 +7954,12 @@ export const postCreateTimeoff = <ThrowOnError extends boolean = false>(
  * | Manage payroll runs (`payroll`) | View payroll runs (`payroll_run:read`) | - |
  *
  */
-export const getIndexPayrollRun = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexPayrollRunData, ThrowOnError>,
+export const getV1PayrollRuns = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1PayrollRunsData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexPayrollRunResponses,
-    GetIndexPayrollRunErrors,
+    GetV1PayrollRunsResponses,
+    GetV1PayrollRunsErrors,
     ThrowOnError
   >({
     security: [
@@ -6940,12 +7975,12 @@ export const getIndexPayrollRun = <ThrowOnError extends boolean = false>(
  *
  * Retrieves a single group (department) for the authenticated company by group ID
  */
-export const getGetGroupScim = <ThrowOnError extends boolean = false>(
-  options: Options<GetGetGroupScimData, ThrowOnError>,
+export const getV1ScimV2GroupsId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1ScimV2GroupsIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetGetGroupScimResponses,
-    GetGetGroupScimErrors,
+    GetV1ScimV2GroupsIdResponses,
+    GetV1ScimV2GroupsIdErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -6965,14 +8000,12 @@ export const getGetGroupScim = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | View contracts (`contract:read`) | - |
  *
  */
-export const getIndexEmploymentContract = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<GetIndexEmploymentContractData, ThrowOnError>,
+export const getV1EmploymentContracts = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1EmploymentContractsData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexEmploymentContractResponses,
-    GetIndexEmploymentContractErrors,
+    GetV1EmploymentContractsResponses,
+    GetV1EmploymentContractsErrors,
     ThrowOnError
   >({
     security: [
@@ -6995,14 +8028,14 @@ export const getIndexEmploymentContract = <
  * | Manage company resources (`company_admin`) | Convert currencies (`convert_currency:read`) | - |
  *
  */
-export const postConvertWithSpreadCurrencyConverter2 = <
+export const postV1CurrencyConverterEffective2 = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostConvertWithSpreadCurrencyConverter2Data, ThrowOnError>,
+  options: Options<PostV1CurrencyConverterEffective2Data, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostConvertWithSpreadCurrencyConverter2Responses,
-    PostConvertWithSpreadCurrencyConverter2Errors,
+    PostV1CurrencyConverterEffective2Responses,
+    PostV1CurrencyConverterEffective2Errors,
     ThrowOnError
   >({
     security: [
@@ -7030,12 +8063,12 @@ export const postConvertWithSpreadCurrencyConverter2 = <
  * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
  *
  */
-export const getIndexCompany = <ThrowOnError extends boolean = false>(
-  options: Options<GetIndexCompanyData, ThrowOnError>,
+export const getV1Companies = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1CompaniesData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetIndexCompanyResponses,
-    GetIndexCompanyErrors,
+    GetV1CompaniesResponses,
+    GetV1CompaniesErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -7087,12 +8120,12 @@ export const getIndexCompany = <ThrowOnError extends boolean = false>(
  * | Manage companies (`company_management`) | - | Manage companies (`company:write`) |
  *
  */
-export const postCreateCompany = <ThrowOnError extends boolean = false>(
-  options: Options<PostCreateCompanyData, ThrowOnError>,
+export const postV1Companies = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1CompaniesData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostCreateCompanyResponses,
-    PostCreateCompanyErrors,
+    PostV1CompaniesResponses,
+    PostV1CompaniesErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -7116,12 +8149,12 @@ export const postCreateCompany = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const postCreateBulkEmployment = <ThrowOnError extends boolean = false>(
-  options?: Options<PostCreateBulkEmploymentData, ThrowOnError>,
+export const postV1BulkEmploymentJobs = <ThrowOnError extends boolean = false>(
+  options?: Options<PostV1BulkEmploymentJobsData, ThrowOnError>,
 ) =>
   (options?.client ?? client).post<
-    PostCreateBulkEmploymentResponses,
-    PostCreateBulkEmploymentErrors,
+    PostV1BulkEmploymentJobsResponses,
+    PostV1BulkEmploymentJobsErrors,
     ThrowOnError
   >({
     security: [
@@ -7148,12 +8181,14 @@ export const postCreateBulkEmployment = <ThrowOnError extends boolean = false>(
  * | Manage timeoffs (`time_and_attendance`) | - | Manage timesheets (`timesheet:write`) |
  *
  */
-export const postSendBackTimesheet = <ThrowOnError extends boolean = false>(
-  options: Options<PostSendBackTimesheetData, ThrowOnError>,
+export const postV1TimesheetsTimesheetIdSendBack = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostV1TimesheetsTimesheetIdSendBackData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostSendBackTimesheetResponses,
-    PostSendBackTimesheetErrors,
+    PostV1TimesheetsTimesheetIdSendBackResponses,
+    PostV1TimesheetsTimesheetIdSendBackErrors,
     ThrowOnError
   >({
     security: [
@@ -7180,14 +8215,14 @@ export const postSendBackTimesheet = <ThrowOnError extends boolean = false>(
  * | Manage company resources (`company_admin`) | - | Manage managers (`company_manager:write`) |
  *
  */
-export const deleteDeleteCompanyManager = <
+export const deleteV1CompanyManagersUserId = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<DeleteDeleteCompanyManagerData, ThrowOnError>,
+  options: Options<DeleteV1CompanyManagersUserIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).delete<
-    DeleteDeleteCompanyManagerResponses,
-    DeleteDeleteCompanyManagerErrors,
+    DeleteV1CompanyManagersUserIdResponses,
+    DeleteV1CompanyManagersUserIdErrors,
     ThrowOnError
   >({
     security: [
@@ -7210,12 +8245,14 @@ export const deleteDeleteCompanyManager = <
  * | Manage company resources (`company_admin`) | View managers (`company_manager:read`) | Manage managers (`company_manager:write`) |
  *
  */
-export const getShowCompanyManager = <ThrowOnError extends boolean = false>(
-  options: Options<GetShowCompanyManagerData, ThrowOnError>,
+export const getV1CompanyManagersUserId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1CompanyManagersUserIdData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetShowCompanyManagerResponses,
-    GetShowCompanyManagerErrors,
+    GetV1CompanyManagersUserIdResponses,
+    GetV1CompanyManagersUserIdErrors,
     ThrowOnError
   >({
     security: [
@@ -7224,6 +8261,102 @@ export const getShowCompanyManager = <ThrowOnError extends boolean = false>(
     ],
     url: '/v1/company-managers/{user_id}',
     ...options,
+  });
+
+/**
+ * Update emergency contact
+ *
+ * Updates the employment's emergency contact details.
+ *
+ * This endpoint requires country-specific data. Query the **Show form schema** endpoint
+ * passing the country code and `emergency_contact_details` as path parameters to see
+ * the required fields for a given country.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdEmergencyContact = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdEmergencyContactData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdEmergencyContactResponses,
+    PutV2EmploymentsEmploymentIdEmergencyContactErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/emergency_contact',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List expenses for the authenticated employee
+ *
+ * Returns a paginated list of expenses belonging to the current employee.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | View expenses (`expense:read`) | Manage expenses (`expense:write`) |
+ *
+ */
+export const getV1EmployeeExpenses = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1EmployeeExpensesData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1EmployeeExpensesResponses,
+    GetV1EmployeeExpensesErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/expenses',
+    ...options,
+  });
+
+/**
+ * Create an expense for the authenticated employee
+ *
+ * Creates a new expense record for the current employee.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage expenses (`employment_payments`) | - | Manage expenses (`expense:write`) |
+ *
+ */
+export const postV1EmployeeExpenses = <ThrowOnError extends boolean = false>(
+  options?: Options<PostV1EmployeeExpensesData, ThrowOnError>,
+) =>
+  (options?.client ?? client).post<
+    PostV1EmployeeExpensesResponses,
+    PostV1EmployeeExpensesErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/expenses',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
   });
 
 /**
@@ -7239,26 +8372,25 @@ export const getShowCompanyManager = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const deleteDeleteContractorCorSubscriptionSubscription = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    DeleteDeleteContractorCorSubscriptionSubscriptionData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).delete<
-    DeleteDeleteContractorCorSubscriptionSubscriptionResponses,
-    DeleteDeleteContractorCorSubscriptionSubscriptionErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription',
-    ...options,
-  });
+export const deleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscription =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).delete<
+      DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses,
+      DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription',
+      ...options,
+    });
 
 /**
  * Create contractor of record subscription intent
@@ -7277,26 +8409,25 @@ export const deleteDeleteContractorCorSubscriptionSubscription = <
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const postManageContractorCorSubscriptionSubscription = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    PostManageContractorCorSubscriptionSubscriptionData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).post<
-    PostManageContractorCorSubscriptionSubscriptionResponses,
-    PostManageContractorCorSubscriptionSubscriptionErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription',
-    ...options,
-  });
+export const postV1ContractorsEmploymentsEmploymentIdContractorCorSubscription =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).post<
+      PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses,
+      PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription',
+      ...options,
+    });
 
 /**
  * List Contractor Invoice Schedules
@@ -7310,14 +8441,14 @@ export const postManageContractorCorSubscriptionSubscription = <
  * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
  *
  */
-export const getIndexScheduledContractorInvoice = <
+export const getV1ContractorInvoiceSchedules = <
   ThrowOnError extends boolean = false,
 >(
-  options?: Options<GetIndexScheduledContractorInvoiceData, ThrowOnError>,
+  options?: Options<GetV1ContractorInvoiceSchedulesData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexScheduledContractorInvoiceResponses,
-    GetIndexScheduledContractorInvoiceErrors,
+    GetV1ContractorInvoiceSchedulesResponses,
+    GetV1ContractorInvoiceSchedulesErrors,
     ThrowOnError
   >({
     security: [
@@ -7342,14 +8473,14 @@ export const getIndexScheduledContractorInvoice = <
  * | Manage invoices (`invoices`) | - | Manage invoices (`invoices:write`) |
  *
  */
-export const postBulkCreateScheduledContractorInvoice = <
+export const postV1ContractorInvoiceSchedules = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostBulkCreateScheduledContractorInvoiceData, ThrowOnError>,
+  options: Options<PostV1ContractorInvoiceSchedulesData, ThrowOnError>,
 ) =>
   (options.client ?? client).post<
-    PostBulkCreateScheduledContractorInvoiceResponses,
-    PostBulkCreateScheduledContractorInvoiceErrors,
+    PostV1ContractorInvoiceSchedulesResponses,
+    PostV1ContractorInvoiceSchedulesErrors,
     ThrowOnError
   >({
     security: [
@@ -7376,17 +8507,17 @@ export const postBulkCreateScheduledContractorInvoice = <
  * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
  *
  */
-export const getShowEmploymentEngagementAgreementDetails = <
+export const getV1EmploymentsEmploymentIdEngagementAgreementDetails = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<
-    GetShowEmploymentEngagementAgreementDetailsData,
+    GetV1EmploymentsEmploymentIdEngagementAgreementDetailsData,
     ThrowOnError
   >,
 ) =>
   (options.client ?? client).get<
-    GetShowEmploymentEngagementAgreementDetailsResponses,
-    GetShowEmploymentEngagementAgreementDetailsErrors,
+    GetV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
+    GetV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
     ThrowOnError
   >({
     security: [
@@ -7419,17 +8550,17 @@ export const getShowEmploymentEngagementAgreementDetails = <
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const postUpdateEmploymentEngagementAgreementDetails = <
+export const postV1EmploymentsEmploymentIdEngagementAgreementDetails = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<
-    PostUpdateEmploymentEngagementAgreementDetailsData,
+    PostV1EmploymentsEmploymentIdEngagementAgreementDetailsData,
     ThrowOnError
   >,
 ) =>
   (options.client ?? client).post<
-    PostUpdateEmploymentEngagementAgreementDetailsResponses,
-    PostUpdateEmploymentEngagementAgreementDetailsErrors,
+    PostV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
+    PostV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
     ThrowOnError
   >({
     security: [
@@ -7456,14 +8587,17 @@ export const postUpdateEmploymentEngagementAgreementDetails = <
  * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
  *
  */
-export const getGetBreakdownBillingDocument = <
+export const getV1BillingDocumentsBillingDocumentIdBreakdown = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetGetBreakdownBillingDocumentData, ThrowOnError>,
+  options: Options<
+    GetV1BillingDocumentsBillingDocumentIdBreakdownData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).get<
-    GetGetBreakdownBillingDocumentResponses,
-    GetGetBreakdownBillingDocumentErrors,
+    GetV1BillingDocumentsBillingDocumentIdBreakdownResponses,
+    GetV1BillingDocumentsBillingDocumentIdBreakdownErrors,
     ThrowOnError
   >({
     security: [
@@ -7484,12 +8618,12 @@ export const getGetBreakdownBillingDocument = <
  * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
  *
  */
-export const getIndexEmployeeDocument = <ThrowOnError extends boolean = false>(
-  options?: Options<GetIndexEmployeeDocumentData, ThrowOnError>,
+export const getV1EmployeeDocuments = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1EmployeeDocumentsData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<
-    GetIndexEmployeeDocumentResponses,
-    GetIndexEmployeeDocumentErrors,
+    GetV1EmployeeDocumentsResponses,
+    GetV1EmployeeDocumentsErrors,
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -7511,14 +8645,17 @@ export const getIndexEmployeeDocument = <ThrowOnError extends boolean = false>(
  * | Manage timeoffs (`time_and_attendance`) | - | Manage timeoffs (`timeoff:write`) |
  *
  */
-export const postApproveCancellationRequest = <
+export const postV1TimeoffTimeoffIdCancelRequestApprove = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostApproveCancellationRequestData, ThrowOnError>,
+  options: Options<
+    PostV1TimeoffTimeoffIdCancelRequestApproveData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).post<
-    PostApproveCancellationRequestResponses,
-    PostApproveCancellationRequestErrors,
+    PostV1TimeoffTimeoffIdCancelRequestApproveResponses,
+    PostV1TimeoffTimeoffIdCancelRequestApproveErrors,
     ThrowOnError
   >({
     security: [
@@ -7542,14 +8679,17 @@ export const postApproveCancellationRequest = <
  * | Manage employment documents (`employment_documents`) | - | Manage identity verification (`identity_verification:write`) |
  *
  */
-export const postVerifyIdentityVerification = <
+export const postV1IdentityVerificationEmploymentIdVerify = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<PostVerifyIdentityVerificationData, ThrowOnError>,
+  options: Options<
+    PostV1IdentityVerificationEmploymentIdVerifyData,
+    ThrowOnError
+  >,
 ) =>
   (options.client ?? client).post<
-    PostVerifyIdentityVerificationResponses,
-    PostVerifyIdentityVerificationErrors,
+    PostV1IdentityVerificationEmploymentIdVerifyResponses,
+    PostV1IdentityVerificationEmploymentIdVerifyErrors,
     ThrowOnError
   >({
     security: [
@@ -7572,14 +8712,14 @@ export const postVerifyIdentityVerification = <
  * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
  *
  */
-export const getDownloadPdfBillingDocument = <
+export const getV1BillingDocumentsBillingDocumentIdPdf = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<GetDownloadPdfBillingDocumentData, ThrowOnError>,
+  options: Options<GetV1BillingDocumentsBillingDocumentIdPdfData, ThrowOnError>,
 ) =>
   (options.client ?? client).get<
-    GetDownloadPdfBillingDocumentResponses,
-    GetDownloadPdfBillingDocumentErrors,
+    GetV1BillingDocumentsBillingDocumentIdPdfResponses,
+    GetV1BillingDocumentsBillingDocumentIdPdfErrors,
     ThrowOnError
   >({
     security: [

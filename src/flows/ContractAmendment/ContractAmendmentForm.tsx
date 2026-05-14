@@ -1,6 +1,6 @@
 import {
   ContractAmendmentAutomatableResponse,
-  PostAutomatableContractAmendmentError,
+  PostV1ContractAmendmentsAutomatableError,
 } from '@/src/client';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { parseJSFToValidate } from '@/src/components/form/utils';
@@ -27,7 +27,7 @@ type ContractAmendmentFormProps = {
    */
   onError?: (
     error:
-      | PostAutomatableContractAmendmentError
+      | PostV1ContractAmendmentsAutomatableError
       | { message: 'no_changes_detected_contract_details' },
   ) => void;
   /**
