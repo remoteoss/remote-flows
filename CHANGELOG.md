@@ -15,7 +15,6 @@
 - migrate to oxlint comments (#1008) [#1008](https://github.com/remoteoss/remote-flows/pull/1008)
 - remove stale prettier files (#1007) [#1007](https://github.com/remoteoss/remote-flows/pull/1007)
 
-
 ## 1.33.0
 
 ### Minor Changes
