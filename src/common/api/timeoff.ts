@@ -1,6 +1,6 @@
 import {
-  getIndexLeavePoliciesSummary,
-  getIndexTimeoff,
+  getV1LeavePoliciesSummaryEmploymentId,
+  getV1Timeoff,
   ListTimeoffResponse,
   TimeoffStatus,
   TimeoffType,
@@ -38,7 +38,7 @@ export const useTimeOffQuery = <TData = ListTimeoffResponse>({
     queryKey: ['timeoff', employmentId, status],
     retry: false,
     queryFn: () => {
-      return getIndexTimeoff({
+      return getV1Timeoff({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -153,7 +153,7 @@ export const useTimeOffLeavePoliciesSummaryQuery = ({
     queryKey: ['timeoff-balance', employmentId],
     retry: false,
     queryFn: () => {
-      return getIndexLeavePoliciesSummary({
+      return getV1LeavePoliciesSummaryEmploymentId({
         client: client as Client,
         headers: {
           Authorization: ``,

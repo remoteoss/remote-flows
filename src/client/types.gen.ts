@@ -426,6 +426,41 @@ export type CreateSsoConfigurationResponse = {
 };
 
 /**
+ * EmploymentAddressDetailsParams
+ *
+ * Employment address details params.
+ *
+ */
+export type EmploymentAddressDetailsParams = {
+  /**
+   * Home address information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `address_details` as path parameters.
+   *
+   */
+  address_details: {
+    [key: string]: unknown;
+  };
+};
+
+/**
+ * PayslipFile
+ *
+ * A single payslip file with its associated payroll run metadata.
+ */
+export type PayslipFile = {
+  currency?: PayslipFileCurrency;
+  id: UuidSlug;
+  /**
+   * Original filename of the payslip
+   */
+  name: string;
+  net_salary?: PayslipFileNetSalary;
+  period_end?: string | null;
+  period_start?: string | null;
+};
+
+/**
  * OfferedBenefitTier
  *
  * A benefit tier that has been offered to employees, combined with enrollment statistics for that tier.
@@ -1051,6 +1086,29 @@ export type BenefitOffersEmployment = {
  * Currency code of the SWIFT fee. Only present when processing_fee is set.
  */
 export type CurrencyCode = string | null;
+
+/**
+ * ListEmployeePayslipsResponse
+ *
+ * Response schema listing many payslips
+ */
+export type ListEmployeePayslipsResponse = {
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    payslips?: Array<PayslipItem>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
+};
 
 /**
  * CompanyComplianceProfileResponse
@@ -2334,6 +2392,34 @@ export type ContractorContractDocumentStatus =
   | 'finished';
 
 /**
+ * EmploymentV2UpdateParams
+ *
+ * Parameters for updating employment-level fields such as department, manager, work email, and external ID.
+ */
+export type EmploymentV2UpdateParams = {
+  /**
+   * The department of the employment. The department must belong to the same company as the employment.
+   * When set to `null`, the employment will be unassigned from a department.
+   *
+   */
+  department_id?: string | null;
+  /**
+   * A unique reference code for the employment record in a non-Remote system. This optional field links to external data sources. If not provided, it defaults to `null`. While uniqueness is recommended, it is not strictly enforced within Remote's system.
+   */
+  external_id?: string;
+  /**
+   * The user id of the manager, who should have an `admin`, `owner` or `people_manager` role.
+   * You can find these users by querying the [Company Managers endpoint](#operation/get_index_company_manager).
+   *
+   */
+  manager_id?: string;
+  /**
+   * The work email of the employment.
+   */
+  work_email?: string;
+};
+
+/**
  * ContractDocumentResponse
  *
  * Return a base64 encoded contract document
@@ -2366,6 +2452,15 @@ export type ImportJobRow = {
   };
   metadata?: {
     [key: string]: unknown;
+  };
+  row_error_details?: {
+    ambiguous?: Array<{
+      amount: number | null;
+      effective_date: string | null;
+      end_date: string | null;
+      occurrence: string | null;
+      slug: string;
+    }>;
   };
   row_errors?: {
     [key: string]: unknown;
@@ -3396,6 +3491,24 @@ export type UnprocessableEntityResponse =
     };
 
 /**
+ * EmploymentBillingAddressDetailsParams
+ *
+ * Employment billing address details params.
+ *
+ */
+export type EmploymentBillingAddressDetailsParams = {
+  /**
+   * Billing address information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `billing_address_details` as path parameters.
+   *
+   */
+  billing_address_details: {
+    [key: string]: unknown;
+  };
+};
+
+/**
  * CountriesResponse
  *
  * List of countries supported by Remote API
@@ -3696,6 +3809,10 @@ export type BulkEmploymentImportJob = {
           | 'candidate';
         signup_source?: string | null;
       };
+  legal_entity?: {
+    name?: string;
+    slug?: UuidSlug;
+  } | null;
   /**
    * The metadata for the import job
    */
@@ -4660,6 +4777,20 @@ export type ListLeavePoliciesSummaryResponse = {
 };
 
 /**
+ * PayslipFileNetSalary
+ *
+ * Net salary amount including source/converted amounts, currencies and conversion rate. Shape produced by `Tiger.Billing.Value.Amount.build/1`.
+ */
+export type PayslipFileNetSalary = {
+  converted_amount?: number | null;
+  converter?: string | null;
+  fee?: Decimal;
+  rate?: Decimal;
+  source_amount?: number | null;
+  [key: string]: unknown;
+} | null;
+
+/**
  * ImportJobColumnMapping
  *
  * The column mapping for the import job. For times when imported data columns do not match the schema fields and
@@ -5350,18 +5481,18 @@ export type ResourceErrorResponse = {
      * A machine-readable error code identifying the specific type of resource error.
      */
     code?:
-      | 'parameter_invalid_date'
       | 'resource_not_eligible'
       | 'resource_already_exists'
       | 'action_unrecognized'
       | 'action_invalid'
+      | 'parameter_invalid_date'
       | 'resource_invalid_state'
       | 'parameter_value_invalid'
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_required_missing'
       | 'parameter_one_of_required_missing'
+      | 'parameter_required_missing'
       | 'parameter_too_many'
       | 'parameter_unknown'
       | 'parameter_map_empty'
@@ -6293,6 +6424,14 @@ export type Signatory = {
    */
   signature?: string | null;
   /**
+   * Signing method used by this signatory
+   */
+  signature_method?: 'in_platform' | 'docusign';
+  /**
+   * Legal signature level applied when signing
+   */
+  signature_type?: 'standard' | 'qes' | 'aes' | 'ses';
+  /**
    * Timestamp when the signatory signed the document, null if not yet signed
    */
   signed_at?: string | null;
@@ -6471,6 +6610,82 @@ export type ContractAmendmentFormResponse = {
   data?: {
     [key: string]: unknown;
   };
+};
+
+/**
+ * ParamsToCreateEmployeeExpense
+ *
+ *   Params for creating an expense as the authenticated employee.
+ *
+ * The employment is implied by the access token, so `employment_id` is not accepted.
+ * `reviewer_id` and `reviewed_at` are also omitted — they only apply to manager-created expenses.
+ *
+ * Category selection mirrors the company endpoint: use either `category` (legacy enum, deprecated but supported)
+ * or `expense_category_slug` (recommended). When both are provided, `expense_category_slug` wins.
+ *
+ */
+export type ParamsToCreateEmployeeExpense = {
+  /**
+   * The expense amount in the specified currency, in cents.
+   */
+  amount: number;
+  /**
+   * Categories allowed for an expense (legacy, deprecated).<br/>
+   * Note: `coworking`, `home_office`, `phone_utilities`, `travel` are deprecated and will be removed in the future.
+   *
+   *
+   * @deprecated
+   */
+  category?:
+    | 'car_rental'
+    | 'coworking_office'
+    | 'education_training'
+    | 'entertainment'
+    | 'flight'
+    | 'fuel'
+    | 'gifts'
+    | 'insurance'
+    | 'lodging'
+    | 'meals'
+    | 'other'
+    | 'parking_toll'
+    | 'subscription'
+    | 'tech_equipment'
+    | 'telecommunication'
+    | 'transport'
+    | 'utilities'
+    | 'vaccination_testing'
+    | 'visa'
+    | 'wellness'
+    | 'coworking'
+    | 'home_office'
+    | 'phone_utilities'
+    | 'travel';
+  /**
+   *   The three-letter code for the expense currency.<br/>
+   * Examples: `"USD"`, `"EUR"`, `"CAD"`
+   *
+   */
+  currency: string;
+  /**
+   * Slug of the expense category from the hierarchical categories system (recommended). Takes precedence over legacy category field.
+   */
+  expense_category_slug?: string | null;
+  /**
+   * Date of the purchase, which must be in the past
+   */
+  expense_date: string;
+  receipt?: Base64File;
+  receipts?: Array<Base64File>;
+  /**
+   * The tax portion of the expense amount, in cents. Use 0 if no tax applies.
+   */
+  tax_amount?: number;
+  timezone?: Timezone;
+  /**
+   * A short description of the expense (e.g., "New keyboard", "Team dinner").
+   */
+  title: string;
 };
 
 /**
@@ -8409,6 +8624,14 @@ export type ListSignatory = {
    */
   name?: string | null;
   /**
+   * Signing method used by this signatory
+   */
+  signature_method?: 'in_platform' | 'docusign';
+  /**
+   * Legal signature level applied when signing
+   */
+  signature_type?: 'standard' | 'qes' | 'aes' | 'ses';
+  /**
    * Timestamp when the signatory signed the document, null if not yet signed
    */
   signed_at?: string | null;
@@ -8590,6 +8813,29 @@ export type BadRequestResponse =
     };
 
 /**
+ * ListPayslipFilesResponse
+ *
+ * Response schema listing many payslip_files
+ */
+export type ListPayslipFilesResponse = {
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    payslip_files?: Array<PayslipFile>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
+};
+
+/**
  * ListEmploymentsResponse
  *
  * Response schema listing many employments
@@ -8753,6 +8999,22 @@ export type PricingPlanDetails = {
    * How often Remote bills the employer for management fees. Annual billing typically offers a discount.
    */
   frequency: 'annually' | 'monthly';
+};
+
+/**
+ * EmploymentPricingPlanDetailsParams
+ *
+ * Employment pricing plan details params.
+ */
+export type EmploymentPricingPlanDetailsParams = {
+  /**
+   * Pricing plan details information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `pricing_plan_details` as path parameters.
+   */
+  pricing_plan_details: {
+    [key: string]: unknown;
+  };
 };
 
 /**
@@ -9796,6 +10058,24 @@ export type ProbationExtensionFile = {
 };
 
 /**
+ * EmploymentAdministrativeDetailsParams
+ *
+ * Employment administrative details params.
+ *
+ */
+export type EmploymentAdministrativeDetailsParams = {
+  /**
+   * Administrative information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `administrative_details` as path parameters.
+   *
+   */
+  administrative_details: {
+    [key: string]: unknown;
+  };
+};
+
+/**
  * EmploymentBasicInformationParams
  *
  * Employment basic information params.
@@ -10202,6 +10482,24 @@ export type UpdateWebhookCallbackParams = {
 };
 
 /**
+ * EmploymentBankAccountDetailsParams
+ *
+ * Employment bank account details params.
+ *
+ */
+export type EmploymentBankAccountDetailsParams = {
+  /**
+   * Bank account information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `bank_account_details` as path parameters.
+   *
+   */
+  bank_account_details: {
+    [key: string]: unknown;
+  };
+};
+
+/**
  * EngagementAgreementDetailsResponse
  *
  * Response for engagement agreement details
@@ -10221,6 +10519,57 @@ export type EngagementAgreementDetailsResponse = {
      * JSON schema version number
      */
     version: number;
+  };
+};
+
+/**
+ * PayslipItem
+ *
+ * A payslip with file, payslip, payroll run, and payroll output metadata.
+ */
+export type PayslipItem = {
+  /**
+   * File metadata
+   */
+  file: {
+    inserted_at?: string;
+    name?: string;
+    slug?: UuidSlug;
+  };
+  has_employee_payroll_overviews: boolean;
+  /**
+   * Payroll output breakdown
+   */
+  payroll_output?: {
+    [key: string]: unknown;
+  } | null;
+  /**
+   * Payroll run metadata
+   */
+  payroll_run?: {
+    expected_payout_date?: string | null;
+    period_end?: string;
+    period_start?: string;
+    type?: string;
+  } | null;
+  /**
+   * Payslip data
+   */
+  payslip: {
+    /**
+     * Active compensation at the time of the payslip
+     */
+    active_compensation?: {
+      [key: string]: unknown;
+    } | null;
+    has_content_layout?: boolean;
+    /**
+     * Net salary amount
+     */
+    net_salary?: {
+      [key: string]: unknown;
+    } | null;
+    slug?: UuidSlug;
   };
 };
 
@@ -10311,6 +10660,17 @@ export type ProbationExtensionResponse = {
  * A decimal number represented as a string to preserve precision. Supports negative values and fractional digits.
  */
 export type Decimal = string;
+
+/**
+ * PayslipFileCurrency
+ */
+export type PayslipFileCurrency = {
+  code: CurrencyCode;
+  /**
+   * The currency symbol
+   */
+  symbol: string;
+} | null;
 
 /**
  * ListEmploymentContractResponse
@@ -10513,6 +10873,24 @@ export type SalaryDecreaseDetails = {
   salary_decrease_reason_description?: string | null;
   was_employee_informed?: string;
 } | null;
+
+/**
+ * EmploymentContractDetailsParams
+ *
+ * Employment contract details params.
+ *
+ */
+export type EmploymentContractDetailsParams = {
+  /**
+   * Contract information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `contract_details` as path parameters.
+   *
+   */
+  contract_details: {
+    [key: string]: unknown;
+  };
+};
 
 /**
  * JSONSchemaResponse
@@ -10915,6 +11293,23 @@ export type ContractorSubscriptionSummariesResponse = {
 export type BenefitRenewalRequestsCreateBenefitRenewalRequestResponse = {
   data: {
     benefit_renewal_request: BenefitRenewalRequestsBenefitRenewalRequest;
+  };
+};
+
+/**
+ * EmploymentEmergencyContactParams
+ *
+ * Employment emergency contact params.
+ */
+export type EmploymentEmergencyContactParams = {
+  /**
+   * Emergency contact information. As its properties may vary depending on the country,
+   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   * passing the country code and `emergency_contact_details` as path parameters.
+   *
+   */
+  emergency_contact_details: {
+    [key: string]: unknown;
   };
 };
 
@@ -11473,7 +11868,7 @@ export type ContractorInvoiceScheduleCreateResponseSuccess = {
   start_date: string;
 };
 
-export type GetIndexOffboardingData = {
+export type GetV1OffboardingsData = {
   body?: never;
   path?: never;
   query?: {
@@ -11503,7 +11898,7 @@ export type GetIndexOffboardingData = {
   url: '/v1/offboardings';
 };
 
-export type GetIndexOffboardingErrors = {
+export type GetV1OffboardingsErrors = {
   /**
    * Bad Request
    */
@@ -11526,20 +11921,20 @@ export type GetIndexOffboardingErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetIndexOffboardingError =
-  GetIndexOffboardingErrors[keyof GetIndexOffboardingErrors];
+export type GetV1OffboardingsError =
+  GetV1OffboardingsErrors[keyof GetV1OffboardingsErrors];
 
-export type GetIndexOffboardingResponses = {
+export type GetV1OffboardingsResponses = {
   /**
    * Success
    */
   200: ListOffboardingResponse;
 };
 
-export type GetIndexOffboardingResponse =
-  GetIndexOffboardingResponses[keyof GetIndexOffboardingResponses];
+export type GetV1OffboardingsResponse =
+  GetV1OffboardingsResponses[keyof GetV1OffboardingsResponses];
 
-export type PostCreateOffboardingData = {
+export type PostV1OffboardingsData = {
   /**
    * Offboarding
    */
@@ -11549,7 +11944,7 @@ export type PostCreateOffboardingData = {
   url: '/v1/offboardings';
 };
 
-export type PostCreateOffboardingErrors = {
+export type PostV1OffboardingsErrors = {
   /**
    * Bad Request
    */
@@ -11576,20 +11971,20 @@ export type PostCreateOffboardingErrors = {
   500: RequestError;
 };
 
-export type PostCreateOffboardingError =
-  PostCreateOffboardingErrors[keyof PostCreateOffboardingErrors];
+export type PostV1OffboardingsError =
+  PostV1OffboardingsErrors[keyof PostV1OffboardingsErrors];
 
-export type PostCreateOffboardingResponses = {
+export type PostV1OffboardingsResponses = {
   /**
    * Success
    */
   201: OffboardingResponse;
 };
 
-export type PostCreateOffboardingResponse =
-  PostCreateOffboardingResponses[keyof PostCreateOffboardingResponses];
+export type PostV1OffboardingsResponse =
+  PostV1OffboardingsResponses[keyof PostV1OffboardingsResponses];
 
-export type GetShowTimesheetData = {
+export type GetV1TimesheetsIdData = {
   body?: never;
   path: {
     /**
@@ -11601,7 +11996,7 @@ export type GetShowTimesheetData = {
   url: '/v1/timesheets/{id}';
 };
 
-export type GetShowTimesheetErrors = {
+export type GetV1TimesheetsIdErrors = {
   /**
    * Unauthorized
    */
@@ -11616,20 +12011,20 @@ export type GetShowTimesheetErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowTimesheetError =
-  GetShowTimesheetErrors[keyof GetShowTimesheetErrors];
+export type GetV1TimesheetsIdError =
+  GetV1TimesheetsIdErrors[keyof GetV1TimesheetsIdErrors];
 
-export type GetShowTimesheetResponses = {
+export type GetV1TimesheetsIdResponses = {
   /**
    * Success
    */
   200: TimesheetResponse;
 };
 
-export type GetShowTimesheetResponse =
-  GetShowTimesheetResponses[keyof GetShowTimesheetResponses];
+export type GetV1TimesheetsIdResponse =
+  GetV1TimesheetsIdResponses[keyof GetV1TimesheetsIdResponses];
 
-export type PostUpdateCancelOnboardingData = {
+export type PostV1CancelOnboardingEmploymentIdData = {
   body?: never;
   path: {
     /**
@@ -11647,7 +12042,7 @@ export type PostUpdateCancelOnboardingData = {
   url: '/v1/cancel-onboarding/{employment_id}';
 };
 
-export type PostUpdateCancelOnboardingErrors = {
+export type PostV1CancelOnboardingEmploymentIdErrors = {
   /**
    * Bad Request
    */
@@ -11662,20 +12057,20 @@ export type PostUpdateCancelOnboardingErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostUpdateCancelOnboardingError =
-  PostUpdateCancelOnboardingErrors[keyof PostUpdateCancelOnboardingErrors];
+export type PostV1CancelOnboardingEmploymentIdError =
+  PostV1CancelOnboardingEmploymentIdErrors[keyof PostV1CancelOnboardingEmploymentIdErrors];
 
-export type PostUpdateCancelOnboardingResponses = {
+export type PostV1CancelOnboardingEmploymentIdResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PostUpdateCancelOnboardingResponse =
-  PostUpdateCancelOnboardingResponses[keyof PostUpdateCancelOnboardingResponses];
+export type PostV1CancelOnboardingEmploymentIdResponse =
+  PostV1CancelOnboardingEmploymentIdResponses[keyof PostV1CancelOnboardingEmploymentIdResponses];
 
-export type GetShowContractAmendmentSchemaData = {
+export type GetV1ContractAmendmentsSchemaData = {
   body?: never;
   headers: {
     /**
@@ -11708,7 +12103,7 @@ export type GetShowContractAmendmentSchemaData = {
   url: '/v1/contract-amendments/schema';
 };
 
-export type GetShowContractAmendmentSchemaErrors = {
+export type GetV1ContractAmendmentsSchemaErrors = {
   /**
    * Unauthorized
    */
@@ -11723,20 +12118,20 @@ export type GetShowContractAmendmentSchemaErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowContractAmendmentSchemaError =
-  GetShowContractAmendmentSchemaErrors[keyof GetShowContractAmendmentSchemaErrors];
+export type GetV1ContractAmendmentsSchemaError =
+  GetV1ContractAmendmentsSchemaErrors[keyof GetV1ContractAmendmentsSchemaErrors];
 
-export type GetShowContractAmendmentSchemaResponses = {
+export type GetV1ContractAmendmentsSchemaResponses = {
   /**
    * Success
    */
   200: ContractAmendmentFormResponse;
 };
 
-export type GetShowContractAmendmentSchemaResponse =
-  GetShowContractAmendmentSchemaResponses[keyof GetShowContractAmendmentSchemaResponses];
+export type GetV1ContractAmendmentsSchemaResponse =
+  GetV1ContractAmendmentsSchemaResponses[keyof GetV1ContractAmendmentsSchemaResponses];
 
-export type PostBulkCreatePayItemsData = {
+export type PostV1PayItemsBulkData = {
   /**
    * Pay Items
    */
@@ -11746,7 +12141,7 @@ export type PostBulkCreatePayItemsData = {
   url: '/v1/pay-items/bulk';
 };
 
-export type PostBulkCreatePayItemsErrors = {
+export type PostV1PayItemsBulkErrors = {
   /**
    * Bad Request
    */
@@ -11769,27 +12164,27 @@ export type PostBulkCreatePayItemsErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostBulkCreatePayItemsError =
-  PostBulkCreatePayItemsErrors[keyof PostBulkCreatePayItemsErrors];
+export type PostV1PayItemsBulkError =
+  PostV1PayItemsBulkErrors[keyof PostV1PayItemsBulkErrors];
 
-export type PostBulkCreatePayItemsResponses = {
+export type PostV1PayItemsBulkResponses = {
   /**
    * Success
    */
   200: BulkCreatePayItemsResponse;
 };
 
-export type PostBulkCreatePayItemsResponse =
-  PostBulkCreatePayItemsResponses[keyof PostBulkCreatePayItemsResponses];
+export type PostV1PayItemsBulkResponse =
+  PostV1PayItemsBulkResponses[keyof PostV1PayItemsBulkResponses];
 
-export type GetIndexDataSyncData = {
+export type GetV1DataSyncData = {
   body?: never;
   path?: never;
   query?: never;
   url: '/v1/data-sync';
 };
 
-export type GetIndexDataSyncErrors = {
+export type GetV1DataSyncErrors = {
   /**
    * Bad Request
    */
@@ -11816,20 +12211,19 @@ export type GetIndexDataSyncErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetIndexDataSyncError =
-  GetIndexDataSyncErrors[keyof GetIndexDataSyncErrors];
+export type GetV1DataSyncError = GetV1DataSyncErrors[keyof GetV1DataSyncErrors];
 
-export type GetIndexDataSyncResponses = {
+export type GetV1DataSyncResponses = {
   /**
    * Success
    */
   200: ListDataSyncEventsResponse;
 };
 
-export type GetIndexDataSyncResponse =
-  GetIndexDataSyncResponses[keyof GetIndexDataSyncResponses];
+export type GetV1DataSyncResponse =
+  GetV1DataSyncResponses[keyof GetV1DataSyncResponses];
 
-export type PostCreateDataSyncData = {
+export type PostV1DataSyncData = {
   /**
    * DataSync
    */
@@ -11839,7 +12233,7 @@ export type PostCreateDataSyncData = {
   url: '/v1/data-sync';
 };
 
-export type PostCreateDataSyncErrors = {
+export type PostV1DataSyncErrors = {
   /**
    * Bad Request
    */
@@ -11862,17 +12256,17 @@ export type PostCreateDataSyncErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateDataSyncError =
-  PostCreateDataSyncErrors[keyof PostCreateDataSyncErrors];
+export type PostV1DataSyncError =
+  PostV1DataSyncErrors[keyof PostV1DataSyncErrors];
 
-export type PostCreateDataSyncResponses = {
+export type PostV1DataSyncResponses = {
   /**
    * Accepted
    */
   202: unknown;
 };
 
-export type GetIndexCompanyPricingPlanData = {
+export type GetV1CompaniesCompanyIdPricingPlansData = {
   body?: never;
   path: {
     /**
@@ -11884,7 +12278,7 @@ export type GetIndexCompanyPricingPlanData = {
   url: '/v1/companies/{company_id}/pricing-plans';
 };
 
-export type GetIndexCompanyPricingPlanErrors = {
+export type GetV1CompaniesCompanyIdPricingPlansErrors = {
   /**
    * Unauthorized
    */
@@ -11899,20 +12293,20 @@ export type GetIndexCompanyPricingPlanErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexCompanyPricingPlanError =
-  GetIndexCompanyPricingPlanErrors[keyof GetIndexCompanyPricingPlanErrors];
+export type GetV1CompaniesCompanyIdPricingPlansError =
+  GetV1CompaniesCompanyIdPricingPlansErrors[keyof GetV1CompaniesCompanyIdPricingPlansErrors];
 
-export type GetIndexCompanyPricingPlanResponses = {
+export type GetV1CompaniesCompanyIdPricingPlansResponses = {
   /**
    * Success
    */
   200: ListCompanyPricingPlansResponse;
 };
 
-export type GetIndexCompanyPricingPlanResponse =
-  GetIndexCompanyPricingPlanResponses[keyof GetIndexCompanyPricingPlanResponses];
+export type GetV1CompaniesCompanyIdPricingPlansResponse =
+  GetV1CompaniesCompanyIdPricingPlansResponses[keyof GetV1CompaniesCompanyIdPricingPlansResponses];
 
-export type PostCreateCompanyPricingPlanData = {
+export type PostV1CompaniesCompanyIdPricingPlansData = {
   /**
    * Create Pricing Plan parameters
    */
@@ -11927,7 +12321,7 @@ export type PostCreateCompanyPricingPlanData = {
   url: '/v1/companies/{company_id}/pricing-plans';
 };
 
-export type PostCreateCompanyPricingPlanErrors = {
+export type PostV1CompaniesCompanyIdPricingPlansErrors = {
   /**
    * Unauthorized
    */
@@ -11942,20 +12336,20 @@ export type PostCreateCompanyPricingPlanErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostCreateCompanyPricingPlanError =
-  PostCreateCompanyPricingPlanErrors[keyof PostCreateCompanyPricingPlanErrors];
+export type PostV1CompaniesCompanyIdPricingPlansError =
+  PostV1CompaniesCompanyIdPricingPlansErrors[keyof PostV1CompaniesCompanyIdPricingPlansErrors];
 
-export type PostCreateCompanyPricingPlanResponses = {
+export type PostV1CompaniesCompanyIdPricingPlansResponses = {
   /**
    * Success
    */
   200: CreatePricingPlanResponse;
 };
 
-export type PostCreateCompanyPricingPlanResponse =
-  PostCreateCompanyPricingPlanResponses[keyof PostCreateCompanyPricingPlanResponses];
+export type PostV1CompaniesCompanyIdPricingPlansResponse =
+  PostV1CompaniesCompanyIdPricingPlansResponses[keyof PostV1CompaniesCompanyIdPricingPlansResponses];
 
-export type GetShowProbationCompletionLetterData = {
+export type GetV1ProbationCompletionLetterIdData = {
   body?: never;
   path: {
     /**
@@ -11967,7 +12361,7 @@ export type GetShowProbationCompletionLetterData = {
   url: '/v1/probation-completion-letter/{id}';
 };
 
-export type GetShowProbationCompletionLetterErrors = {
+export type GetV1ProbationCompletionLetterIdErrors = {
   /**
    * Unauthorized
    */
@@ -11982,20 +12376,20 @@ export type GetShowProbationCompletionLetterErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowProbationCompletionLetterError =
-  GetShowProbationCompletionLetterErrors[keyof GetShowProbationCompletionLetterErrors];
+export type GetV1ProbationCompletionLetterIdError =
+  GetV1ProbationCompletionLetterIdErrors[keyof GetV1ProbationCompletionLetterIdErrors];
 
-export type GetShowProbationCompletionLetterResponses = {
+export type GetV1ProbationCompletionLetterIdResponses = {
   /**
    * Success
    */
   200: ProbationCompletionLetterResponse;
 };
 
-export type GetShowProbationCompletionLetterResponse =
-  GetShowProbationCompletionLetterResponses[keyof GetShowProbationCompletionLetterResponses];
+export type GetV1ProbationCompletionLetterIdResponse =
+  GetV1ProbationCompletionLetterIdResponses[keyof GetV1ProbationCompletionLetterIdResponses];
 
-export type GetShowContractorInvoiceData = {
+export type GetV1ContractorInvoicesIdData = {
   body?: never;
   path: {
     /**
@@ -12007,7 +12401,7 @@ export type GetShowContractorInvoiceData = {
   url: '/v1/contractor-invoices/{id}';
 };
 
-export type GetShowContractorInvoiceErrors = {
+export type GetV1ContractorInvoicesIdErrors = {
   /**
    * Unauthorized
    */
@@ -12026,20 +12420,20 @@ export type GetShowContractorInvoiceErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowContractorInvoiceError =
-  GetShowContractorInvoiceErrors[keyof GetShowContractorInvoiceErrors];
+export type GetV1ContractorInvoicesIdError =
+  GetV1ContractorInvoicesIdErrors[keyof GetV1ContractorInvoicesIdErrors];
 
-export type GetShowContractorInvoiceResponses = {
+export type GetV1ContractorInvoicesIdResponses = {
   /**
    * Success
    */
   200: ContractorInvoiceResponse;
 };
 
-export type GetShowContractorInvoiceResponse =
-  GetShowContractorInvoiceResponses[keyof GetShowContractorInvoiceResponses];
+export type GetV1ContractorInvoicesIdResponse =
+  GetV1ContractorInvoicesIdResponses[keyof GetV1ContractorInvoicesIdResponses];
 
-export type PostConvertRawCurrencyConverterData = {
+export type PostV1CurrencyConverterRawData = {
   /**
    * Convert currency parameters
    */
@@ -12049,7 +12443,7 @@ export type PostConvertRawCurrencyConverterData = {
   url: '/v1/currency-converter/raw';
 };
 
-export type PostConvertRawCurrencyConverterErrors = {
+export type PostV1CurrencyConverterRawErrors = {
   /**
    * Unauthorized
    */
@@ -12064,20 +12458,20 @@ export type PostConvertRawCurrencyConverterErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostConvertRawCurrencyConverterError =
-  PostConvertRawCurrencyConverterErrors[keyof PostConvertRawCurrencyConverterErrors];
+export type PostV1CurrencyConverterRawError =
+  PostV1CurrencyConverterRawErrors[keyof PostV1CurrencyConverterRawErrors];
 
-export type PostConvertRawCurrencyConverterResponses = {
+export type PostV1CurrencyConverterRawResponses = {
   /**
    * Success
    */
   200: ConvertCurrencyResponse;
 };
 
-export type PostConvertRawCurrencyConverterResponse =
-  PostConvertRawCurrencyConverterResponses[keyof PostConvertRawCurrencyConverterResponses];
+export type PostV1CurrencyConverterRawResponse =
+  PostV1CurrencyConverterRawResponses[keyof PostV1CurrencyConverterRawResponses];
 
-export type GetShowContractorContractDetailsCountryData = {
+export type GetV1CountriesCountryCodeContractorContractDetailsData = {
   body?: never;
   path: {
     /**
@@ -12098,7 +12492,7 @@ export type GetShowContractorContractDetailsCountryData = {
   url: '/v1/countries/{country_code}/contractor-contract-details';
 };
 
-export type GetShowContractorContractDetailsCountryErrors = {
+export type GetV1CountriesCountryCodeContractorContractDetailsErrors = {
   /**
    * Bad Request
    */
@@ -12121,20 +12515,55 @@ export type GetShowContractorContractDetailsCountryErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowContractorContractDetailsCountryError =
-  GetShowContractorContractDetailsCountryErrors[keyof GetShowContractorContractDetailsCountryErrors];
+export type GetV1CountriesCountryCodeContractorContractDetailsError =
+  GetV1CountriesCountryCodeContractorContractDetailsErrors[keyof GetV1CountriesCountryCodeContractorContractDetailsErrors];
 
-export type GetShowContractorContractDetailsCountryResponses = {
+export type GetV1CountriesCountryCodeContractorContractDetailsResponses = {
   /**
    * Success
    */
   200: ContractorContractDetailsResponse;
 };
 
-export type GetShowContractorContractDetailsCountryResponse =
-  GetShowContractorContractDetailsCountryResponses[keyof GetShowContractorContractDetailsCountryResponses];
+export type GetV1CountriesCountryCodeContractorContractDetailsResponse =
+  GetV1CountriesCountryCodeContractorContractDetailsResponses[keyof GetV1CountriesCountryCodeContractorContractDetailsResponses];
 
-export type GetIndexEmploymentData = {
+export type GetV1EmployeeIncentivesData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/v1/employee/incentives';
+};
+
+export type GetV1EmployeeIncentivesErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetV1EmployeeIncentivesError =
+  GetV1EmployeeIncentivesErrors[keyof GetV1EmployeeIncentivesErrors];
+
+export type GetV1EmployeeIncentivesResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type GetV1EmployeeIncentivesResponse =
+  GetV1EmployeeIncentivesResponses[keyof GetV1EmployeeIncentivesResponses];
+
+export type GetV1EmploymentsData = {
   body?: never;
   headers: {
     /**
@@ -12173,6 +12602,10 @@ export type GetIndexEmploymentData = {
      */
     employment_model?: 'global_payroll' | 'peo' | 'eor';
     /**
+     * Filters the results by the employment's short ID. Returns at most one result.
+     */
+    short_id?: string;
+    /**
      * Starts fetching records after the given page
      */
     page?: number;
@@ -12184,7 +12617,7 @@ export type GetIndexEmploymentData = {
   url: '/v1/employments';
 };
 
-export type GetIndexEmploymentErrors = {
+export type GetV1EmploymentsErrors = {
   /**
    * Bad Request
    */
@@ -12207,20 +12640,20 @@ export type GetIndexEmploymentErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetIndexEmploymentError =
-  GetIndexEmploymentErrors[keyof GetIndexEmploymentErrors];
+export type GetV1EmploymentsError =
+  GetV1EmploymentsErrors[keyof GetV1EmploymentsErrors];
 
-export type GetIndexEmploymentResponses = {
+export type GetV1EmploymentsResponses = {
   /**
    * Success
    */
   200: ListEmploymentsResponse;
 };
 
-export type GetIndexEmploymentResponse =
-  GetIndexEmploymentResponses[keyof GetIndexEmploymentResponses];
+export type GetV1EmploymentsResponse =
+  GetV1EmploymentsResponses[keyof GetV1EmploymentsResponses];
 
-export type PostCreateEmployment2Data = {
+export type PostV1EmploymentsData = {
   /**
    * Employment params
    */
@@ -12244,7 +12677,7 @@ export type PostCreateEmployment2Data = {
   url: '/v1/employments';
 };
 
-export type PostCreateEmployment2Errors = {
+export type PostV1EmploymentsErrors = {
   /**
    * Bad Request
    */
@@ -12267,64 +12700,67 @@ export type PostCreateEmployment2Errors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateEmployment2Error =
-  PostCreateEmployment2Errors[keyof PostCreateEmployment2Errors];
+export type PostV1EmploymentsError =
+  PostV1EmploymentsErrors[keyof PostV1EmploymentsErrors];
 
-export type PostCreateEmployment2Responses = {
+export type PostV1EmploymentsResponses = {
   /**
    * Success
    */
   200: EmploymentCreationResponse;
 };
 
-export type PostCreateEmployment2Response =
-  PostCreateEmployment2Responses[keyof PostCreateEmployment2Responses];
+export type PostV1EmploymentsResponse =
+  PostV1EmploymentsResponses[keyof PostV1EmploymentsResponses];
 
-export type GetShowCompanyEmploymentOnboardingReservesStatusData = {
-  body?: never;
-  path: {
-    /**
-     * Company ID
-     */
-    company_id: UuidSlug;
-    /**
-     * Employment ID
-     */
-    employment_id: UuidSlug;
+export type GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Company ID
+       */
+      company_id: UuidSlug;
+      /**
+       * Employment ID
+       */
+      employment_id: UuidSlug;
+    };
+    query?: never;
+    url: '/v1/companies/{company_id}/employments/{employment_id}/onboarding-reserves-status';
   };
-  query?: never;
-  url: '/v1/companies/{company_id}/employments/{employment_id}/onboarding-reserves-status';
-};
 
-export type GetShowCompanyEmploymentOnboardingReservesStatusErrors = {
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-};
+export type GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusErrors =
+  {
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Forbidden
+     */
+    403: ForbiddenResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+  };
 
-export type GetShowCompanyEmploymentOnboardingReservesStatusError =
-  GetShowCompanyEmploymentOnboardingReservesStatusErrors[keyof GetShowCompanyEmploymentOnboardingReservesStatusErrors];
+export type GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusError =
+  GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusErrors[keyof GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusErrors];
 
-export type GetShowCompanyEmploymentOnboardingReservesStatusResponses = {
-  /**
-   * Success
-   */
-  200: OnboardingReservesStatusResponse;
-};
+export type GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusResponses =
+  {
+    /**
+     * Success
+     */
+    200: OnboardingReservesStatusResponse;
+  };
 
-export type GetShowCompanyEmploymentOnboardingReservesStatusResponse =
-  GetShowCompanyEmploymentOnboardingReservesStatusResponses[keyof GetShowCompanyEmploymentOnboardingReservesStatusResponses];
+export type GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusResponse =
+  GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusResponses[keyof GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusResponses];
 
-export type GetShowHelpCenterArticleData = {
+export type GetV1HelpCenterArticlesIdData = {
   body?: never;
   path: {
     /**
@@ -12336,27 +12772,27 @@ export type GetShowHelpCenterArticleData = {
   url: '/v1/help-center-articles/{id}';
 };
 
-export type GetShowHelpCenterArticleErrors = {
+export type GetV1HelpCenterArticlesIdErrors = {
   /**
    * Not Found
    */
   404: NotFoundResponse;
 };
 
-export type GetShowHelpCenterArticleError =
-  GetShowHelpCenterArticleErrors[keyof GetShowHelpCenterArticleErrors];
+export type GetV1HelpCenterArticlesIdError =
+  GetV1HelpCenterArticlesIdErrors[keyof GetV1HelpCenterArticlesIdErrors];
 
-export type GetShowHelpCenterArticleResponses = {
+export type GetV1HelpCenterArticlesIdResponses = {
   /**
    * Success
    */
   200: HelpCenterArticleResponse;
 };
 
-export type GetShowHelpCenterArticleResponse =
-  GetShowHelpCenterArticleResponses[keyof GetShowHelpCenterArticleResponses];
+export type GetV1HelpCenterArticlesIdResponse =
+  GetV1HelpCenterArticlesIdResponses[keyof GetV1HelpCenterArticlesIdResponses];
 
-export type GetGetUserScimData = {
+export type GetV1ScimV2UsersIdData = {
   body?: never;
   path: {
     /**
@@ -12368,7 +12804,7 @@ export type GetGetUserScimData = {
   url: '/v1/scim/v2/Users/{id}';
 };
 
-export type GetGetUserScimErrors = {
+export type GetV1ScimV2UsersIdErrors = {
   /**
    * Unauthorized
    */
@@ -12383,20 +12819,123 @@ export type GetGetUserScimErrors = {
   404: IntegrationsScimErrorResponse;
 };
 
-export type GetGetUserScimError =
-  GetGetUserScimErrors[keyof GetGetUserScimErrors];
+export type GetV1ScimV2UsersIdError =
+  GetV1ScimV2UsersIdErrors[keyof GetV1ScimV2UsersIdErrors];
 
-export type GetGetUserScimResponses = {
+export type GetV1ScimV2UsersIdResponses = {
   /**
    * Success
    */
   200: IntegrationsScimUser;
 };
 
-export type GetGetUserScimResponse =
-  GetGetUserScimResponses[keyof GetGetUserScimResponses];
+export type GetV1ScimV2UsersIdResponse =
+  GetV1ScimV2UsersIdResponses[keyof GetV1ScimV2UsersIdResponses];
 
-export type GetShowEmployeeDocumentData = {
+export type GetV2EmploymentsEmploymentIdEngagementAgreementDetailsData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v2/employments/{employment_id}/engagement-agreement-details';
+};
+
+export type GetV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV2EmploymentsEmploymentIdEngagementAgreementDetailsError =
+  GetV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors[keyof GetV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors];
+
+export type GetV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentEngagementAgreementDetailsResponse;
+};
+
+export type GetV2EmploymentsEmploymentIdEngagementAgreementDetailsResponse =
+  GetV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses[keyof GetV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses];
+
+export type PostV2EmploymentsEmploymentIdEngagementAgreementDetailsData = {
+  /**
+   * Employment engagement agreement details params
+   */
+  body?: EmploymentEngagementAgreementDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v2/employments/{employment_id}/engagement-agreement-details';
+};
+
+export type PostV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostV2EmploymentsEmploymentIdEngagementAgreementDetailsError =
+  PostV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors[keyof PostV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors];
+
+export type PostV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostV2EmploymentsEmploymentIdEngagementAgreementDetailsResponse =
+  PostV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses[keyof PostV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses];
+
+export type GetV1EmployeeDocumentsIdData = {
   body?: never;
   path: {
     /**
@@ -12408,7 +12947,7 @@ export type GetShowEmployeeDocumentData = {
   url: '/v1/employee/documents/{id}';
 };
 
-export type GetShowEmployeeDocumentErrors = {
+export type GetV1EmployeeDocumentsIdErrors = {
   /**
    * Unauthorized
    */
@@ -12423,20 +12962,20 @@ export type GetShowEmployeeDocumentErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowEmployeeDocumentError =
-  GetShowEmployeeDocumentErrors[keyof GetShowEmployeeDocumentErrors];
+export type GetV1EmployeeDocumentsIdError =
+  GetV1EmployeeDocumentsIdErrors[keyof GetV1EmployeeDocumentsIdErrors];
 
-export type GetShowEmployeeDocumentResponses = {
+export type GetV1EmployeeDocumentsIdResponses = {
   /**
    * Success
    */
   200: DownloadDocumentResponse;
 };
 
-export type GetShowEmployeeDocumentResponse =
-  GetShowEmployeeDocumentResponses[keyof GetShowEmployeeDocumentResponses];
+export type GetV1EmployeeDocumentsIdResponse =
+  GetV1EmployeeDocumentsIdResponses[keyof GetV1EmployeeDocumentsIdResponses];
 
-export type GetIndexContractorInvoiceData = {
+export type GetV1ContractorInvoicesData = {
   body?: never;
   path?: never;
   query?: {
@@ -12500,7 +13039,7 @@ export type GetIndexContractorInvoiceData = {
   url: '/v1/contractor-invoices';
 };
 
-export type GetIndexContractorInvoiceErrors = {
+export type GetV1ContractorInvoicesErrors = {
   /**
    * Unauthorized
    */
@@ -12519,20 +13058,20 @@ export type GetIndexContractorInvoiceErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexContractorInvoiceError =
-  GetIndexContractorInvoiceErrors[keyof GetIndexContractorInvoiceErrors];
+export type GetV1ContractorInvoicesError =
+  GetV1ContractorInvoicesErrors[keyof GetV1ContractorInvoicesErrors];
 
-export type GetIndexContractorInvoiceResponses = {
+export type GetV1ContractorInvoicesResponses = {
   /**
    * Success
    */
   200: ListContractorInvoicesResponse;
 };
 
-export type GetIndexContractorInvoiceResponse =
-  GetIndexContractorInvoiceResponses[keyof GetIndexContractorInvoiceResponses];
+export type GetV1ContractorInvoicesResponse =
+  GetV1ContractorInvoicesResponses[keyof GetV1ContractorInvoicesResponses];
 
-export type PostReportErrorsTelemetryData = {
+export type PostV1SdkTelemetryErrorsData = {
   /**
    * SDK Error Report
    */
@@ -12542,7 +13081,7 @@ export type PostReportErrorsTelemetryData = {
   url: '/v1/sdk/telemetry-errors';
 };
 
-export type PostReportErrorsTelemetryErrors = {
+export type PostV1SdkTelemetryErrorsErrors = {
   /**
    * Bad Request
    */
@@ -12553,24 +13092,24 @@ export type PostReportErrorsTelemetryErrors = {
   429: RateLimitResponse;
 };
 
-export type PostReportErrorsTelemetryError =
-  PostReportErrorsTelemetryErrors[keyof PostReportErrorsTelemetryErrors];
+export type PostV1SdkTelemetryErrorsError =
+  PostV1SdkTelemetryErrorsErrors[keyof PostV1SdkTelemetryErrorsErrors];
 
-export type PostReportErrorsTelemetryResponses = {
+export type PostV1SdkTelemetryErrorsResponses = {
   /**
    * No Content
    */
   204: unknown;
 };
 
-export type GetDetailsSsoConfigurationData = {
+export type GetV1SsoConfigurationDetailsData = {
   body?: never;
   path?: never;
   query?: never;
   url: '/v1/sso-configuration/details';
 };
 
-export type GetDetailsSsoConfigurationErrors = {
+export type GetV1SsoConfigurationDetailsErrors = {
   /**
    * Bad Request
    */
@@ -12589,20 +13128,20 @@ export type GetDetailsSsoConfigurationErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetDetailsSsoConfigurationError =
-  GetDetailsSsoConfigurationErrors[keyof GetDetailsSsoConfigurationErrors];
+export type GetV1SsoConfigurationDetailsError =
+  GetV1SsoConfigurationDetailsErrors[keyof GetV1SsoConfigurationDetailsErrors];
 
-export type GetDetailsSsoConfigurationResponses = {
+export type GetV1SsoConfigurationDetailsResponses = {
   /**
    * Success
    */
   200: SsoConfigurationDetailsResponse;
 };
 
-export type GetDetailsSsoConfigurationResponse =
-  GetDetailsSsoConfigurationResponses[keyof GetDetailsSsoConfigurationResponses];
+export type GetV1SsoConfigurationDetailsResponse =
+  GetV1SsoConfigurationDetailsResponses[keyof GetV1SsoConfigurationDetailsResponses];
 
-export type PostCreateEstimationData = {
+export type PostV1CostCalculatorEstimationData = {
   /**
    * Estimate params
    */
@@ -12612,7 +13151,7 @@ export type PostCreateEstimationData = {
   url: '/v1/cost-calculator/estimation';
 };
 
-export type PostCreateEstimationErrors = {
+export type PostV1CostCalculatorEstimationErrors = {
   /**
    * Not Found
    */
@@ -12623,20 +13162,20 @@ export type PostCreateEstimationErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostCreateEstimationError =
-  PostCreateEstimationErrors[keyof PostCreateEstimationErrors];
+export type PostV1CostCalculatorEstimationError =
+  PostV1CostCalculatorEstimationErrors[keyof PostV1CostCalculatorEstimationErrors];
 
-export type PostCreateEstimationResponses = {
+export type PostV1CostCalculatorEstimationResponses = {
   /**
    * Success
    */
   200: CostCalculatorEstimateResponse;
 };
 
-export type PostCreateEstimationResponse =
-  PostCreateEstimationResponses[keyof PostCreateEstimationResponses];
+export type PostV1CostCalculatorEstimationResponse =
+  PostV1CostCalculatorEstimationResponses[keyof PostV1CostCalculatorEstimationResponses];
 
-export type GetShowCompanySchemaData = {
+export type GetV1CompaniesSchemaData = {
   body?: never;
   path?: never;
   query: {
@@ -12656,7 +13195,7 @@ export type GetShowCompanySchemaData = {
   url: '/v1/companies/schema';
 };
 
-export type GetShowCompanySchemaErrors = {
+export type GetV1CompaniesSchemaErrors = {
   /**
    * Unauthorized
    */
@@ -12671,20 +13210,20 @@ export type GetShowCompanySchemaErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowCompanySchemaError =
-  GetShowCompanySchemaErrors[keyof GetShowCompanySchemaErrors];
+export type GetV1CompaniesSchemaError =
+  GetV1CompaniesSchemaErrors[keyof GetV1CompaniesSchemaErrors];
 
-export type GetShowCompanySchemaResponses = {
+export type GetV1CompaniesSchemaResponses = {
   /**
    * Success
    */
   200: CompanyFormResponse;
 };
 
-export type GetShowCompanySchemaResponse =
-  GetShowCompanySchemaResponses[keyof GetShowCompanySchemaResponses];
+export type GetV1CompaniesSchemaResponse =
+  GetV1CompaniesSchemaResponses[keyof GetV1CompaniesSchemaResponses];
 
-export type GetIndexBenefitOfferData = {
+export type GetV1EmploymentsEmploymentIdBenefitOffersData = {
   body?: never;
   path: {
     /**
@@ -12705,7 +13244,7 @@ export type GetIndexBenefitOfferData = {
   url: '/v1/employments/{employment_id}/benefit-offers';
 };
 
-export type GetIndexBenefitOfferErrors = {
+export type GetV1EmploymentsEmploymentIdBenefitOffersErrors = {
   /**
    * Unauthorized
    */
@@ -12724,20 +13263,20 @@ export type GetIndexBenefitOfferErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexBenefitOfferError =
-  GetIndexBenefitOfferErrors[keyof GetIndexBenefitOfferErrors];
+export type GetV1EmploymentsEmploymentIdBenefitOffersError =
+  GetV1EmploymentsEmploymentIdBenefitOffersErrors[keyof GetV1EmploymentsEmploymentIdBenefitOffersErrors];
 
-export type GetIndexBenefitOfferResponses = {
+export type GetV1EmploymentsEmploymentIdBenefitOffersResponses = {
   /**
    * Success
    */
   200: EmploymentsBenefitOffersListBenefitOffers;
 };
 
-export type GetIndexBenefitOfferResponse =
-  GetIndexBenefitOfferResponses[keyof GetIndexBenefitOfferResponses];
+export type GetV1EmploymentsEmploymentIdBenefitOffersResponse =
+  GetV1EmploymentsEmploymentIdBenefitOffersResponses[keyof GetV1EmploymentsEmploymentIdBenefitOffersResponses];
 
-export type PutUpdateBenefitOfferData = {
+export type PutV1EmploymentsEmploymentIdBenefitOffersData = {
   /**
    * Upsert employment benefit offers request
    */
@@ -12757,7 +13296,7 @@ export type PutUpdateBenefitOfferData = {
   url: '/v1/employments/{employment_id}/benefit-offers';
 };
 
-export type PutUpdateBenefitOfferErrors = {
+export type PutV1EmploymentsEmploymentIdBenefitOffersErrors = {
   /**
    * Unauthorized
    */
@@ -12776,20 +13315,20 @@ export type PutUpdateBenefitOfferErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PutUpdateBenefitOfferError =
-  PutUpdateBenefitOfferErrors[keyof PutUpdateBenefitOfferErrors];
+export type PutV1EmploymentsEmploymentIdBenefitOffersError =
+  PutV1EmploymentsEmploymentIdBenefitOffersErrors[keyof PutV1EmploymentsEmploymentIdBenefitOffersErrors];
 
-export type PutUpdateBenefitOfferResponses = {
+export type PutV1EmploymentsEmploymentIdBenefitOffersResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PutUpdateBenefitOfferResponse =
-  PutUpdateBenefitOfferResponses[keyof PutUpdateBenefitOfferResponses];
+export type PutV1EmploymentsEmploymentIdBenefitOffersResponse =
+  PutV1EmploymentsEmploymentIdBenefitOffersResponses[keyof PutV1EmploymentsEmploymentIdBenefitOffersResponses];
 
-export type GetGetIdentityVerificationDataIdentityVerificationData = {
+export type GetV1IdentityVerificationEmploymentIdData = {
   body?: never;
   path: {
     /**
@@ -12801,7 +13340,7 @@ export type GetGetIdentityVerificationDataIdentityVerificationData = {
   url: '/v1/identity-verification/{employment_id}';
 };
 
-export type GetGetIdentityVerificationDataIdentityVerificationErrors = {
+export type GetV1IdentityVerificationEmploymentIdErrors = {
   /**
    * Unauthorized
    */
@@ -12816,32 +13355,79 @@ export type GetGetIdentityVerificationDataIdentityVerificationErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetGetIdentityVerificationDataIdentityVerificationError =
-  GetGetIdentityVerificationDataIdentityVerificationErrors[keyof GetGetIdentityVerificationDataIdentityVerificationErrors];
+export type GetV1IdentityVerificationEmploymentIdError =
+  GetV1IdentityVerificationEmploymentIdErrors[keyof GetV1IdentityVerificationEmploymentIdErrors];
 
-export type GetGetIdentityVerificationDataIdentityVerificationResponses = {
+export type GetV1IdentityVerificationEmploymentIdResponses = {
   /**
    * Success
    */
   200: IdentityVerificationResponse;
 };
 
-export type GetGetIdentityVerificationDataIdentityVerificationResponse =
-  GetGetIdentityVerificationDataIdentityVerificationResponses[keyof GetGetIdentityVerificationDataIdentityVerificationResponses];
+export type GetV1IdentityVerificationEmploymentIdResponse =
+  GetV1IdentityVerificationEmploymentIdResponses[keyof GetV1IdentityVerificationEmploymentIdResponses];
 
-export type GetIndexSubscriptionData = {
-  body?: never;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
+export type GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Employment ID
+       */
+      employment_id: string;
+    };
+    query?: never;
+    url: '/v1/contractors/employments/{employment_id}/contractor-subscriptions';
   };
-  query?: never;
-  url: '/v1/contractors/employments/{employment_id}/contractor-subscriptions';
+
+export type GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsErrors =
+  {
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Forbidden
+     */
+    403: ForbiddenResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+  };
+
+export type GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsError =
+  GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsErrors[keyof GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsErrors];
+
+export type GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsResponses =
+  {
+    /**
+     * Success
+     */
+    200: ContractorSubscriptionSummariesResponse;
+  };
+
+export type GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsResponse =
+  GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsResponses[keyof GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsResponses];
+
+export type GetV1EmployeePayslipsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/employee/payslips';
 };
 
-export type GetIndexSubscriptionErrors = {
+export type GetV1EmployeePayslipsErrors = {
   /**
    * Unauthorized
    */
@@ -12856,20 +13442,20 @@ export type GetIndexSubscriptionErrors = {
   404: NotFoundResponse;
 };
 
-export type GetIndexSubscriptionError =
-  GetIndexSubscriptionErrors[keyof GetIndexSubscriptionErrors];
+export type GetV1EmployeePayslipsError =
+  GetV1EmployeePayslipsErrors[keyof GetV1EmployeePayslipsErrors];
 
-export type GetIndexSubscriptionResponses = {
+export type GetV1EmployeePayslipsResponses = {
   /**
    * Success
    */
-  200: ContractorSubscriptionSummariesResponse;
+  200: ListEmployeePayslipsResponse;
 };
 
-export type GetIndexSubscriptionResponse =
-  GetIndexSubscriptionResponses[keyof GetIndexSubscriptionResponses];
+export type GetV1EmployeePayslipsResponse =
+  GetV1EmployeePayslipsResponses[keyof GetV1EmployeePayslipsResponses];
 
-export type GetIndexWebhookEventData = {
+export type GetV1WebhookEventsData = {
   body?: never;
   path?: never;
   query?: {
@@ -12913,7 +13499,7 @@ export type GetIndexWebhookEventData = {
   url: '/v1/webhook-events';
 };
 
-export type GetIndexWebhookEventErrors = {
+export type GetV1WebhookEventsErrors = {
   /**
    * Unauthorized
    */
@@ -12928,20 +13514,20 @@ export type GetIndexWebhookEventErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexWebhookEventError =
-  GetIndexWebhookEventErrors[keyof GetIndexWebhookEventErrors];
+export type GetV1WebhookEventsError =
+  GetV1WebhookEventsErrors[keyof GetV1WebhookEventsErrors];
 
-export type GetIndexWebhookEventResponses = {
+export type GetV1WebhookEventsResponses = {
   /**
    * Success
    */
   200: ListWebhookEventsResponse;
 };
 
-export type GetIndexWebhookEventResponse =
-  GetIndexWebhookEventResponses[keyof GetIndexWebhookEventResponses];
+export type GetV1WebhookEventsResponse =
+  GetV1WebhookEventsResponses[keyof GetV1WebhookEventsResponses];
 
-export type PostBypassEligibilityChecksCompanyData = {
+export type PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksData = {
   body?: never;
   headers: {
     /**
@@ -12962,7 +13548,7 @@ export type PostBypassEligibilityChecksCompanyData = {
   url: '/v1/sandbox/companies/{company_id}/bypass-eligibility-checks';
 };
 
-export type PostBypassEligibilityChecksCompanyErrors = {
+export type PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksErrors = {
   /**
    * Bad Request
    */
@@ -12985,68 +13571,71 @@ export type PostBypassEligibilityChecksCompanyErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostBypassEligibilityChecksCompanyError =
-  PostBypassEligibilityChecksCompanyErrors[keyof PostBypassEligibilityChecksCompanyErrors];
+export type PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksError =
+  PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksErrors[keyof PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksErrors];
 
-export type PostBypassEligibilityChecksCompanyResponses = {
+export type PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PostBypassEligibilityChecksCompanyResponse =
-  PostBypassEligibilityChecksCompanyResponses[keyof PostBypassEligibilityChecksCompanyResponses];
+export type PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksResponse =
+  PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksResponses[keyof PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksResponses];
 
-export type PostApproveRiskReserveProofOfPaymentData = {
-  body?: never;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
+export type PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Employment ID
+       */
+      employment_id: string;
+    };
+    query?: never;
+    url: '/v1/sandbox/employments/{employment_id}/risk-reserve-proof-of-payments/approve';
   };
-  query?: never;
-  url: '/v1/sandbox/employments/{employment_id}/risk-reserve-proof-of-payments/approve';
-};
 
-export type PostApproveRiskReserveProofOfPaymentErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Too many requests
-   */
-  429: TooManyRequestsResponse;
-};
+export type PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveErrors =
+  {
+    /**
+     * Bad Request
+     */
+    400: BadRequestResponse;
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+    /**
+     * Too many requests
+     */
+    429: TooManyRequestsResponse;
+  };
 
-export type PostApproveRiskReserveProofOfPaymentError =
-  PostApproveRiskReserveProofOfPaymentErrors[keyof PostApproveRiskReserveProofOfPaymentErrors];
+export type PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveError =
+  PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveErrors[keyof PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveErrors];
 
-export type PostApproveRiskReserveProofOfPaymentResponses = {
-  /**
-   * Success
-   */
-  200: RiskReserveProofOfPaymentResponse;
-};
+export type PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveResponses =
+  {
+    /**
+     * Success
+     */
+    200: RiskReserveProofOfPaymentResponse;
+  };
 
-export type PostApproveRiskReserveProofOfPaymentResponse =
-  PostApproveRiskReserveProofOfPaymentResponses[keyof PostApproveRiskReserveProofOfPaymentResponses];
+export type PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveResponse =
+  PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveResponses[keyof PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveResponses];
 
-export type GetShowTestSchemaData = {
+export type GetV1TestSchemaData = {
   body?: never;
   path?: never;
   query?: {
@@ -13058,17 +13647,17 @@ export type GetShowTestSchemaData = {
   url: '/v1/test-schema';
 };
 
-export type GetShowTestSchemaResponses = {
+export type GetV1TestSchemaResponses = {
   /**
    * Success
    */
   200: CompanyFormResponse;
 };
 
-export type GetShowTestSchemaResponse =
-  GetShowTestSchemaResponses[keyof GetShowTestSchemaResponses];
+export type GetV1TestSchemaResponse =
+  GetV1TestSchemaResponses[keyof GetV1TestSchemaResponses];
 
-export type GetIndexHolidayData = {
+export type GetV1CountriesCountryCodeHolidaysYearData = {
   body?: never;
   headers: {
     /**
@@ -13098,7 +13687,7 @@ export type GetIndexHolidayData = {
   url: '/v1/countries/{country_code}/holidays/{year}';
 };
 
-export type GetIndexHolidayErrors = {
+export type GetV1CountriesCountryCodeHolidaysYearErrors = {
   /**
    * Unauthorized
    */
@@ -13113,20 +13702,20 @@ export type GetIndexHolidayErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexHolidayError =
-  GetIndexHolidayErrors[keyof GetIndexHolidayErrors];
+export type GetV1CountriesCountryCodeHolidaysYearError =
+  GetV1CountriesCountryCodeHolidaysYearErrors[keyof GetV1CountriesCountryCodeHolidaysYearErrors];
 
-export type GetIndexHolidayResponses = {
+export type GetV1CountriesCountryCodeHolidaysYearResponses = {
   /**
    * Success
    */
   200: HolidaysResponse;
 };
 
-export type GetIndexHolidayResponse =
-  GetIndexHolidayResponses[keyof GetIndexHolidayResponses];
+export type GetV1CountriesCountryCodeHolidaysYearResponse =
+  GetV1CountriesCountryCodeHolidaysYearResponses[keyof GetV1CountriesCountryCodeHolidaysYearResponses];
 
-export type PostCreateCancellationData = {
+export type PostV1TimeoffTimeoffIdCancelData = {
   /**
    * CancelTimeoff
    */
@@ -13141,7 +13730,7 @@ export type PostCreateCancellationData = {
   url: '/v1/timeoff/{timeoff_id}/cancel';
 };
 
-export type PostCreateCancellationErrors = {
+export type PostV1TimeoffTimeoffIdCancelErrors = {
   /**
    * Bad Request
    */
@@ -13164,20 +13753,20 @@ export type PostCreateCancellationErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateCancellationError =
-  PostCreateCancellationErrors[keyof PostCreateCancellationErrors];
+export type PostV1TimeoffTimeoffIdCancelError =
+  PostV1TimeoffTimeoffIdCancelErrors[keyof PostV1TimeoffTimeoffIdCancelErrors];
 
-export type PostCreateCancellationResponses = {
+export type PostV1TimeoffTimeoffIdCancelResponses = {
   /**
    * Success
    */
   200: TimeoffResponse;
 };
 
-export type PostCreateCancellationResponse =
-  PostCreateCancellationResponses[keyof PostCreateCancellationResponses];
+export type PostV1TimeoffTimeoffIdCancelResponse =
+  PostV1TimeoffTimeoffIdCancelResponses[keyof PostV1TimeoffTimeoffIdCancelResponses];
 
-export type GetIndexEmploymentJobData = {
+export type GetV1EmploymentsEmploymentIdJobData = {
   body?: never;
   path: {
     /**
@@ -13189,7 +13778,7 @@ export type GetIndexEmploymentJobData = {
   url: '/v1/employments/{employment_id}/job';
 };
 
-export type GetIndexEmploymentJobErrors = {
+export type GetV1EmploymentsEmploymentIdJobErrors = {
   /**
    * Unauthorized
    */
@@ -13204,27 +13793,27 @@ export type GetIndexEmploymentJobErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexEmploymentJobError =
-  GetIndexEmploymentJobErrors[keyof GetIndexEmploymentJobErrors];
+export type GetV1EmploymentsEmploymentIdJobError =
+  GetV1EmploymentsEmploymentIdJobErrors[keyof GetV1EmploymentsEmploymentIdJobErrors];
 
-export type GetIndexEmploymentJobResponses = {
+export type GetV1EmploymentsEmploymentIdJobResponses = {
   /**
    * Success
    */
   200: EmploymentJobResponse;
 };
 
-export type GetIndexEmploymentJobResponse =
-  GetIndexEmploymentJobResponses[keyof GetIndexEmploymentJobResponses];
+export type GetV1EmploymentsEmploymentIdJobResponse =
+  GetV1EmploymentsEmploymentIdJobResponses[keyof GetV1EmploymentsEmploymentIdJobResponses];
 
-export type GetIndexPricingPlanPartnerTemplateData = {
+export type GetV1PricingPlanPartnerTemplatesData = {
   body?: never;
   path?: never;
   query?: never;
   url: '/v1/pricing-plan-partner-templates';
 };
 
-export type GetIndexPricingPlanPartnerTemplateErrors = {
+export type GetV1PricingPlanPartnerTemplatesErrors = {
   /**
    * Unauthorized
    */
@@ -13239,20 +13828,20 @@ export type GetIndexPricingPlanPartnerTemplateErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexPricingPlanPartnerTemplateError =
-  GetIndexPricingPlanPartnerTemplateErrors[keyof GetIndexPricingPlanPartnerTemplateErrors];
+export type GetV1PricingPlanPartnerTemplatesError =
+  GetV1PricingPlanPartnerTemplatesErrors[keyof GetV1PricingPlanPartnerTemplatesErrors];
 
-export type GetIndexPricingPlanPartnerTemplateResponses = {
+export type GetV1PricingPlanPartnerTemplatesResponses = {
   /**
    * Success
    */
   200: ListPricingPlanPartnerTemplatesResponse;
 };
 
-export type GetIndexPricingPlanPartnerTemplateResponse =
-  GetIndexPricingPlanPartnerTemplateResponses[keyof GetIndexPricingPlanPartnerTemplateResponses];
+export type GetV1PricingPlanPartnerTemplatesResponse =
+  GetV1PricingPlanPartnerTemplatesResponses[keyof GetV1PricingPlanPartnerTemplatesResponses];
 
-export type GetIndexEorPayrollCalendarData = {
+export type GetV1PayrollCalendarsData = {
   body?: never;
   path?: never;
   query?: {
@@ -13276,7 +13865,7 @@ export type GetIndexEorPayrollCalendarData = {
   url: '/v1/payroll-calendars';
 };
 
-export type GetIndexEorPayrollCalendarErrors = {
+export type GetV1PayrollCalendarsErrors = {
   /**
    * Unauthorized
    */
@@ -13291,20 +13880,20 @@ export type GetIndexEorPayrollCalendarErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexEorPayrollCalendarError =
-  GetIndexEorPayrollCalendarErrors[keyof GetIndexEorPayrollCalendarErrors];
+export type GetV1PayrollCalendarsError =
+  GetV1PayrollCalendarsErrors[keyof GetV1PayrollCalendarsErrors];
 
-export type GetIndexEorPayrollCalendarResponses = {
+export type GetV1PayrollCalendarsResponses = {
   /**
    * Success
    */
   200: PayrollCalendarsEorResponse;
 };
 
-export type GetIndexEorPayrollCalendarResponse =
-  GetIndexEorPayrollCalendarResponses[keyof GetIndexEorPayrollCalendarResponses];
+export type GetV1PayrollCalendarsResponse =
+  GetV1PayrollCalendarsResponses[keyof GetV1PayrollCalendarsResponses];
 
-export type PatchUpdateEmployeeTimeoff2Data = {
+export type PatchV1EmployeeTimeoffId2Data = {
   /**
    * UpdateTimeoff
    */
@@ -13319,7 +13908,7 @@ export type PatchUpdateEmployeeTimeoff2Data = {
   url: '/v1/employee/timeoff/{id}';
 };
 
-export type PatchUpdateEmployeeTimeoff2Errors = {
+export type PatchV1EmployeeTimeoffId2Errors = {
   /**
    * Bad Request
    */
@@ -13342,20 +13931,20 @@ export type PatchUpdateEmployeeTimeoff2Errors = {
   429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateEmployeeTimeoff2Error =
-  PatchUpdateEmployeeTimeoff2Errors[keyof PatchUpdateEmployeeTimeoff2Errors];
+export type PatchV1EmployeeTimeoffId2Error =
+  PatchV1EmployeeTimeoffId2Errors[keyof PatchV1EmployeeTimeoffId2Errors];
 
-export type PatchUpdateEmployeeTimeoff2Responses = {
+export type PatchV1EmployeeTimeoffId2Responses = {
   /**
    * Success
    */
   200: TimeoffResponse;
 };
 
-export type PatchUpdateEmployeeTimeoff2Response =
-  PatchUpdateEmployeeTimeoff2Responses[keyof PatchUpdateEmployeeTimeoff2Responses];
+export type PatchV1EmployeeTimeoffId2Response =
+  PatchV1EmployeeTimeoffId2Responses[keyof PatchV1EmployeeTimeoffId2Responses];
 
-export type PatchUpdateEmployeeTimeoffData = {
+export type PatchV1EmployeeTimeoffIdData = {
   /**
    * UpdateTimeoff
    */
@@ -13370,7 +13959,7 @@ export type PatchUpdateEmployeeTimeoffData = {
   url: '/v1/employee/timeoff/{id}';
 };
 
-export type PatchUpdateEmployeeTimeoffErrors = {
+export type PatchV1EmployeeTimeoffIdErrors = {
   /**
    * Bad Request
    */
@@ -13393,20 +13982,20 @@ export type PatchUpdateEmployeeTimeoffErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateEmployeeTimeoffError =
-  PatchUpdateEmployeeTimeoffErrors[keyof PatchUpdateEmployeeTimeoffErrors];
+export type PatchV1EmployeeTimeoffIdError =
+  PatchV1EmployeeTimeoffIdErrors[keyof PatchV1EmployeeTimeoffIdErrors];
 
-export type PatchUpdateEmployeeTimeoffResponses = {
+export type PatchV1EmployeeTimeoffIdResponses = {
   /**
    * Success
    */
   200: TimeoffResponse;
 };
 
-export type PatchUpdateEmployeeTimeoffResponse =
-  PatchUpdateEmployeeTimeoffResponses[keyof PatchUpdateEmployeeTimeoffResponses];
+export type PatchV1EmployeeTimeoffIdResponse =
+  PatchV1EmployeeTimeoffIdResponses[keyof PatchV1EmployeeTimeoffIdResponses];
 
-export type GetIndexRecurringIncentiveData = {
+export type GetV1IncentivesRecurringData = {
   body?: never;
   headers: {
     /**
@@ -13443,7 +14032,7 @@ export type GetIndexRecurringIncentiveData = {
   url: '/v1/incentives/recurring';
 };
 
-export type GetIndexRecurringIncentiveErrors = {
+export type GetV1IncentivesRecurringErrors = {
   /**
    * Bad Request
    */
@@ -13466,20 +14055,20 @@ export type GetIndexRecurringIncentiveErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetIndexRecurringIncentiveError =
-  GetIndexRecurringIncentiveErrors[keyof GetIndexRecurringIncentiveErrors];
+export type GetV1IncentivesRecurringError =
+  GetV1IncentivesRecurringErrors[keyof GetV1IncentivesRecurringErrors];
 
-export type GetIndexRecurringIncentiveResponses = {
+export type GetV1IncentivesRecurringResponses = {
   /**
    * Success
    */
   201: ListRecurringIncentivesResponse;
 };
 
-export type GetIndexRecurringIncentiveResponse =
-  GetIndexRecurringIncentiveResponses[keyof GetIndexRecurringIncentiveResponses];
+export type GetV1IncentivesRecurringResponse =
+  GetV1IncentivesRecurringResponses[keyof GetV1IncentivesRecurringResponses];
 
-export type PostCreateRecurringIncentiveData = {
+export type PostV1IncentivesRecurringData = {
   /**
    * RecurringIncentive
    */
@@ -13498,7 +14087,7 @@ export type PostCreateRecurringIncentiveData = {
   url: '/v1/incentives/recurring';
 };
 
-export type PostCreateRecurringIncentiveErrors = {
+export type PostV1IncentivesRecurringErrors = {
   /**
    * Bad Request
    */
@@ -13521,20 +14110,20 @@ export type PostCreateRecurringIncentiveErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateRecurringIncentiveError =
-  PostCreateRecurringIncentiveErrors[keyof PostCreateRecurringIncentiveErrors];
+export type PostV1IncentivesRecurringError =
+  PostV1IncentivesRecurringErrors[keyof PostV1IncentivesRecurringErrors];
 
-export type PostCreateRecurringIncentiveResponses = {
+export type PostV1IncentivesRecurringResponses = {
   /**
    * Success
    */
   201: RecurringIncentiveResponse;
 };
 
-export type PostCreateRecurringIncentiveResponse =
-  PostCreateRecurringIncentiveResponses[keyof PostCreateRecurringIncentiveResponses];
+export type PostV1IncentivesRecurringResponse =
+  PostV1IncentivesRecurringResponses[keyof PostV1IncentivesRecurringResponses];
 
-export type PostCreateBenefitRenewalRequestData = {
+export type PostV1SandboxBenefitRenewalRequestsData = {
   /**
    * Benefit Renewal Request
    */
@@ -13553,7 +14142,7 @@ export type PostCreateBenefitRenewalRequestData = {
   url: '/v1/sandbox/benefit-renewal-requests';
 };
 
-export type PostCreateBenefitRenewalRequestErrors = {
+export type PostV1SandboxBenefitRenewalRequestsErrors = {
   /**
    * Bad Request
    */
@@ -13572,20 +14161,20 @@ export type PostCreateBenefitRenewalRequestErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateBenefitRenewalRequestError =
-  PostCreateBenefitRenewalRequestErrors[keyof PostCreateBenefitRenewalRequestErrors];
+export type PostV1SandboxBenefitRenewalRequestsError =
+  PostV1SandboxBenefitRenewalRequestsErrors[keyof PostV1SandboxBenefitRenewalRequestsErrors];
 
-export type PostCreateBenefitRenewalRequestResponses = {
+export type PostV1SandboxBenefitRenewalRequestsResponses = {
   /**
    * Success
    */
   200: BenefitRenewalRequestsCreateBenefitRenewalRequestResponse;
 };
 
-export type PostCreateBenefitRenewalRequestResponse =
-  PostCreateBenefitRenewalRequestResponses[keyof PostCreateBenefitRenewalRequestResponses];
+export type PostV1SandboxBenefitRenewalRequestsResponse =
+  PostV1SandboxBenefitRenewalRequestsResponses[keyof PostV1SandboxBenefitRenewalRequestsResponses];
 
-export type GetShowContractDocumentData = {
+export type GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdData = {
   body?: never;
   path: {
     /**
@@ -13601,7 +14190,7 @@ export type GetShowContractDocumentData = {
   url: '/v1/contractors/employments/{employment_id}/contract-documents/{id}';
 };
 
-export type GetShowContractDocumentErrors = {
+export type GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdErrors = {
   /**
    * Unauthorized
    */
@@ -13616,20 +14205,21 @@ export type GetShowContractDocumentErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowContractDocumentError =
-  GetShowContractDocumentErrors[keyof GetShowContractDocumentErrors];
+export type GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdError =
+  GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdErrors[keyof GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdErrors];
 
-export type GetShowContractDocumentResponses = {
-  /**
-   * Success
-   */
-  200: ContractDocumentResponse;
-};
+export type GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdResponses =
+  {
+    /**
+     * Success
+     */
+    200: ContractDocumentResponse;
+  };
 
-export type GetShowContractDocumentResponse =
-  GetShowContractDocumentResponses[keyof GetShowContractDocumentResponses];
+export type GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdResponse =
+  GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdResponses[keyof GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdResponses];
 
-export type GetIndexEmploymentContractDocumentData = {
+export type GetV1EmploymentsEmploymentIdContractDocumentsData = {
   body?: never;
   path: {
     /**
@@ -13658,7 +14248,7 @@ export type GetIndexEmploymentContractDocumentData = {
   url: '/v1/employments/{employment_id}/contract-documents';
 };
 
-export type GetIndexEmploymentContractDocumentErrors = {
+export type GetV1EmploymentsEmploymentIdContractDocumentsErrors = {
   /**
    * Unauthorized
    */
@@ -13673,20 +14263,20 @@ export type GetIndexEmploymentContractDocumentErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexEmploymentContractDocumentError =
-  GetIndexEmploymentContractDocumentErrors[keyof GetIndexEmploymentContractDocumentErrors];
+export type GetV1EmploymentsEmploymentIdContractDocumentsError =
+  GetV1EmploymentsEmploymentIdContractDocumentsErrors[keyof GetV1EmploymentsEmploymentIdContractDocumentsErrors];
 
-export type GetIndexEmploymentContractDocumentResponses = {
+export type GetV1EmploymentsEmploymentIdContractDocumentsResponses = {
   /**
    * Success
    */
   200: IndexContractDocumentsResponse;
 };
 
-export type GetIndexEmploymentContractDocumentResponse =
-  GetIndexEmploymentContractDocumentResponses[keyof GetIndexEmploymentContractDocumentResponses];
+export type GetV1EmploymentsEmploymentIdContractDocumentsResponse =
+  GetV1EmploymentsEmploymentIdContractDocumentsResponses[keyof GetV1EmploymentsEmploymentIdContractDocumentsResponses];
 
-export type GetIndexExpenseData = {
+export type GetV1ExpensesData = {
   body?: never;
   headers: {
     /**
@@ -13711,7 +14301,7 @@ export type GetIndexExpenseData = {
   url: '/v1/expenses';
 };
 
-export type GetIndexExpenseErrors = {
+export type GetV1ExpensesErrors = {
   /**
    * Bad Request
    */
@@ -13734,20 +14324,19 @@ export type GetIndexExpenseErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetIndexExpenseError =
-  GetIndexExpenseErrors[keyof GetIndexExpenseErrors];
+export type GetV1ExpensesError = GetV1ExpensesErrors[keyof GetV1ExpensesErrors];
 
-export type GetIndexExpenseResponses = {
+export type GetV1ExpensesResponses = {
   /**
    * Success
    */
   201: ListExpenseResponse;
 };
 
-export type GetIndexExpenseResponse =
-  GetIndexExpenseResponses[keyof GetIndexExpenseResponses];
+export type GetV1ExpensesResponse =
+  GetV1ExpensesResponses[keyof GetV1ExpensesResponses];
 
-export type PostCreateExpenseData = {
+export type PostV1ExpensesData = {
   /**
    * Expenses
    */
@@ -13766,7 +14355,7 @@ export type PostCreateExpenseData = {
   url: '/v1/expenses';
 };
 
-export type PostCreateExpenseErrors = {
+export type PostV1ExpensesErrors = {
   /**
    * Bad Request
    */
@@ -13789,27 +14378,27 @@ export type PostCreateExpenseErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateExpenseError =
-  PostCreateExpenseErrors[keyof PostCreateExpenseErrors];
+export type PostV1ExpensesError =
+  PostV1ExpensesErrors[keyof PostV1ExpensesErrors];
 
-export type PostCreateExpenseResponses = {
+export type PostV1ExpensesResponses = {
   /**
    * Success
    */
   201: ExpenseResponse;
 };
 
-export type PostCreateExpenseResponse =
-  PostCreateExpenseResponses[keyof PostCreateExpenseResponses];
+export type PostV1ExpensesResponse =
+  PostV1ExpensesResponses[keyof PostV1ExpensesResponses];
 
-export type GetShowSsoConfigurationData = {
+export type GetV1SsoConfigurationData = {
   body?: never;
   path?: never;
   query?: never;
   url: '/v1/sso-configuration';
 };
 
-export type GetShowSsoConfigurationErrors = {
+export type GetV1SsoConfigurationErrors = {
   /**
    * Bad Request
    */
@@ -13828,20 +14417,20 @@ export type GetShowSsoConfigurationErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowSsoConfigurationError =
-  GetShowSsoConfigurationErrors[keyof GetShowSsoConfigurationErrors];
+export type GetV1SsoConfigurationError =
+  GetV1SsoConfigurationErrors[keyof GetV1SsoConfigurationErrors];
 
-export type GetShowSsoConfigurationResponses = {
+export type GetV1SsoConfigurationResponses = {
   /**
    * Success
    */
   200: SsoConfigurationResponse;
 };
 
-export type GetShowSsoConfigurationResponse =
-  GetShowSsoConfigurationResponses[keyof GetShowSsoConfigurationResponses];
+export type GetV1SsoConfigurationResponse =
+  GetV1SsoConfigurationResponses[keyof GetV1SsoConfigurationResponses];
 
-export type PostCreateSsoConfigurationData = {
+export type PostV1SsoConfigurationData = {
   /**
    * CreateSSOConfiguration
    */
@@ -13851,7 +14440,7 @@ export type PostCreateSsoConfigurationData = {
   url: '/v1/sso-configuration';
 };
 
-export type PostCreateSsoConfigurationErrors = {
+export type PostV1SsoConfigurationErrors = {
   /**
    * Bad Request
    */
@@ -13878,36 +14467,78 @@ export type PostCreateSsoConfigurationErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateSsoConfigurationError =
-  PostCreateSsoConfigurationErrors[keyof PostCreateSsoConfigurationErrors];
+export type PostV1SsoConfigurationError =
+  PostV1SsoConfigurationErrors[keyof PostV1SsoConfigurationErrors];
 
-export type PostCreateSsoConfigurationResponses = {
+export type PostV1SsoConfigurationResponses = {
   /**
    * Created
    */
   201: CreateSsoConfigurationResponse;
 };
 
-export type PostCreateSsoConfigurationResponse =
-  PostCreateSsoConfigurationResponses[keyof PostCreateSsoConfigurationResponses];
+export type PostV1SsoConfigurationResponse =
+  PostV1SsoConfigurationResponses[keyof PostV1SsoConfigurationResponses];
 
-export type PutApproveContractAmendmentData = {
-  body?: never;
-  path: {
-    /**
-     * Contract amendment request ID
-     */
-    contract_amendment_request_id: string;
+export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Contract amendment request ID
+       */
+      contract_amendment_request_id: string;
+    };
+    query?: never;
+    url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/approve';
   };
+
+export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveErrors =
+  {
+    /**
+     * Bad Request
+     */
+    400: BadRequestResponse;
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+    /**
+     * Too many requests
+     */
+    429: TooManyRequestsResponse;
+  };
+
+export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveError =
+  PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveErrors[keyof PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveErrors];
+
+export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveResponses =
+  {
+    /**
+     * Success
+     */
+    200: ContractAmendmentResponse;
+  };
+
+export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveResponse =
+  PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveResponses[keyof PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveResponses];
+
+export type GetV1EmployeeLeavePoliciesData = {
+  body?: never;
+  path?: never;
   query?: never;
-  url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/approve';
+  url: '/v1/employee/leave-policies';
 };
 
-export type PutApproveContractAmendmentErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
+export type GetV1EmployeeLeavePoliciesErrors = {
   /**
    * Unauthorized
    */
@@ -13916,30 +14547,22 @@ export type PutApproveContractAmendmentErrors = {
    * Not Found
    */
   404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Too many requests
-   */
-  429: TooManyRequestsResponse;
 };
 
-export type PutApproveContractAmendmentError =
-  PutApproveContractAmendmentErrors[keyof PutApproveContractAmendmentErrors];
+export type GetV1EmployeeLeavePoliciesError =
+  GetV1EmployeeLeavePoliciesErrors[keyof GetV1EmployeeLeavePoliciesErrors];
 
-export type PutApproveContractAmendmentResponses = {
+export type GetV1EmployeeLeavePoliciesResponses = {
   /**
    * Success
    */
-  200: ContractAmendmentResponse;
+  200: ListLeavePoliciesDetailsResponse;
 };
 
-export type PutApproveContractAmendmentResponse =
-  PutApproveContractAmendmentResponses[keyof PutApproveContractAmendmentResponses];
+export type GetV1EmployeeLeavePoliciesResponse =
+  GetV1EmployeeLeavePoliciesResponses[keyof GetV1EmployeeLeavePoliciesResponses];
 
-export type GetIndexContractorCurrencyData = {
+export type GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesData = {
   body?: never;
   path: {
     /**
@@ -13956,39 +14579,41 @@ export type GetIndexContractorCurrencyData = {
   url: '/v1/contractors/employments/{employment_id}/contractor-currencies';
 };
 
-export type GetIndexContractorCurrencyErrors = {
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Internal Server Error
-   */
-  500: InternalServerErrorResponse;
-};
+export type GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesErrors =
+  {
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Forbidden
+     */
+    403: ForbiddenResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Internal Server Error
+     */
+    500: InternalServerErrorResponse;
+  };
 
-export type GetIndexContractorCurrencyError =
-  GetIndexContractorCurrencyErrors[keyof GetIndexContractorCurrencyErrors];
+export type GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesError =
+  GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesErrors[keyof GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesErrors];
 
-export type GetIndexContractorCurrencyResponses = {
-  /**
-   * Success
-   */
-  200: ContractorCurrencyResponse;
-};
+export type GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesResponses =
+  {
+    /**
+     * Success
+     */
+    200: ContractorCurrencyResponse;
+  };
 
-export type GetIndexContractorCurrencyResponse =
-  GetIndexContractorCurrencyResponses[keyof GetIndexContractorCurrencyResponses];
+export type GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesResponse =
+  GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesResponses[keyof GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesResponses];
 
-export type PostReplayWebhookEventData = {
+export type PostV1WebhookEventsReplayData = {
   /**
    * WebhookEvent
    */
@@ -13998,7 +14623,7 @@ export type PostReplayWebhookEventData = {
   url: '/v1/webhook-events/replay';
 };
 
-export type PostReplayWebhookEventErrors = {
+export type PostV1WebhookEventsReplayErrors = {
   /**
    * Unauthorized
    */
@@ -14013,108 +14638,114 @@ export type PostReplayWebhookEventErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostReplayWebhookEventError =
-  PostReplayWebhookEventErrors[keyof PostReplayWebhookEventErrors];
+export type PostV1WebhookEventsReplayError =
+  PostV1WebhookEventsReplayErrors[keyof PostV1WebhookEventsReplayErrors];
 
-export type PostReplayWebhookEventResponses = {
+export type PostV1WebhookEventsReplayResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PostReplayWebhookEventResponse =
-  PostReplayWebhookEventResponses[keyof PostReplayWebhookEventResponses];
+export type PostV1WebhookEventsReplayResponse =
+  PostV1WebhookEventsReplayResponses[keyof PostV1WebhookEventsReplayResponses];
 
-export type PostCreateCorTerminationRequestSubscriptionData = {
-  body?: never;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
+export type PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Employment ID
+       */
+      employment_id: string;
+    };
+    query?: never;
+    url: '/v1/contractors/employments/{employment_id}/cor-termination-requests';
   };
-  query?: never;
-  url: '/v1/contractors/employments/{employment_id}/cor-termination-requests';
-};
 
-export type PostCreateCorTerminationRequestSubscriptionErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-};
-
-export type PostCreateCorTerminationRequestSubscriptionError =
-  PostCreateCorTerminationRequestSubscriptionErrors[keyof PostCreateCorTerminationRequestSubscriptionErrors];
-
-export type PostCreateCorTerminationRequestSubscriptionResponses = {
-  /**
-   * Created
-   */
-  201: CorTerminationRequestCreatedResponse;
-};
-
-export type PostCreateCorTerminationRequestSubscriptionResponse =
-  PostCreateCorTerminationRequestSubscriptionResponses[keyof PostCreateCorTerminationRequestSubscriptionResponses];
-
-export type GetShowBackgroundCheckData = {
-  body?: never;
-  path: {
+export type PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsErrors =
+  {
     /**
-     * Employment Id
+     * Bad Request
      */
-    employment_id: UuidSlug;
+    400: BadRequestResponse;
     /**
-     * Background Check Id
+     * Forbidden
      */
-    background_check_id: UuidSlug;
+    403: ForbiddenResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
   };
-  query?: never;
-  url: '/v1/employments/{employment_id}/background-checks/{background_check_id}';
-};
 
-export type GetShowBackgroundCheckErrors = {
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-};
+export type PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsError =
+  PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsErrors[keyof PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsErrors];
 
-export type GetShowBackgroundCheckError =
-  GetShowBackgroundCheckErrors[keyof GetShowBackgroundCheckErrors];
+export type PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsResponses =
+  {
+    /**
+     * Created
+     */
+    201: CorTerminationRequestCreatedResponse;
+  };
 
-export type GetShowBackgroundCheckResponses = {
-  /**
-   * Success
-   */
-  200: BackgroundChecksBackgroundCheckResponse;
-};
+export type PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsResponse =
+  PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsResponses[keyof PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsResponses];
 
-export type GetShowBackgroundCheckResponse =
-  GetShowBackgroundCheckResponses[keyof GetShowBackgroundCheckResponses];
+export type GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Employment Id
+       */
+      employment_id: UuidSlug;
+      /**
+       * Background Check Id
+       */
+      background_check_id: UuidSlug;
+    };
+    query?: never;
+    url: '/v1/employments/{employment_id}/background-checks/{background_check_id}';
+  };
 
-export type GetSchemaBenefitRenewalRequestData = {
+export type GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdErrors =
+  {
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+  };
+
+export type GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdError =
+  GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdErrors[keyof GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdErrors];
+
+export type GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdResponses =
+  {
+    /**
+     * Success
+     */
+    200: BackgroundChecksBackgroundCheckResponse;
+  };
+
+export type GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdResponse =
+  GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdResponses[keyof GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdResponses];
+
+export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaData = {
   body?: never;
   headers: {
     /**
@@ -14140,7 +14771,7 @@ export type GetSchemaBenefitRenewalRequestData = {
   url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}/schema';
 };
 
-export type GetSchemaBenefitRenewalRequestErrors = {
+export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaErrors = {
   /**
    * Unauthorized
    */
@@ -14155,20 +14786,21 @@ export type GetSchemaBenefitRenewalRequestErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetSchemaBenefitRenewalRequestError =
-  GetSchemaBenefitRenewalRequestErrors[keyof GetSchemaBenefitRenewalRequestErrors];
+export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaError =
+  GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaErrors[keyof GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaErrors];
 
-export type GetSchemaBenefitRenewalRequestResponses = {
-  /**
-   * Success
-   */
-  200: BenefitRenewalRequestsBenefitRenewalRequestFormResponse;
-};
+export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaResponses =
+  {
+    /**
+     * Success
+     */
+    200: BenefitRenewalRequestsBenefitRenewalRequestFormResponse;
+  };
 
-export type GetSchemaBenefitRenewalRequestResponse =
-  GetSchemaBenefitRenewalRequestResponses[keyof GetSchemaBenefitRenewalRequestResponses];
+export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaResponse =
+  GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaResponses[keyof GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaResponses];
 
-export type PostGenerateMagicLinkData = {
+export type PostV1MagicLinkData = {
   /**
    * Magic links generator body
    */
@@ -14187,27 +14819,78 @@ export type PostGenerateMagicLinkData = {
   url: '/v1/magic-link';
 };
 
-export type PostGenerateMagicLinkErrors = {
+export type PostV1MagicLinkErrors = {
   /**
    * Unprocessable Entity
    */
   422: UnprocessableEntityResponse;
 };
 
-export type PostGenerateMagicLinkError =
-  PostGenerateMagicLinkErrors[keyof PostGenerateMagicLinkErrors];
+export type PostV1MagicLinkError =
+  PostV1MagicLinkErrors[keyof PostV1MagicLinkErrors];
 
-export type PostGenerateMagicLinkResponses = {
+export type PostV1MagicLinkResponses = {
   /**
    * Success
    */
   200: MagicLinkResponse;
 };
 
-export type PostGenerateMagicLinkResponse =
-  PostGenerateMagicLinkResponses[keyof PostGenerateMagicLinkResponses];
+export type PostV1MagicLinkResponse =
+  PostV1MagicLinkResponses[keyof PostV1MagicLinkResponses];
 
-export type DeleteDeleteRecurringIncentiveData = {
+export type PutV2EmploymentsEmploymentIdBasicInformationData = {
+  /**
+   * Employment basic information params
+   */
+  body?: EmploymentBasicInformationParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v2/employments/{employment_id}/basic_information';
+};
+
+export type PutV2EmploymentsEmploymentIdBasicInformationErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdBasicInformationError =
+  PutV2EmploymentsEmploymentIdBasicInformationErrors[keyof PutV2EmploymentsEmploymentIdBasicInformationErrors];
+
+export type PutV2EmploymentsEmploymentIdBasicInformationResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdBasicInformationResponse =
+  PutV2EmploymentsEmploymentIdBasicInformationResponses[keyof PutV2EmploymentsEmploymentIdBasicInformationResponses];
+
+export type DeleteV1IncentivesRecurringIdData = {
   body?: never;
   headers: {
     /**
@@ -14228,7 +14911,7 @@ export type DeleteDeleteRecurringIncentiveData = {
   url: '/v1/incentives/recurring/{id}';
 };
 
-export type DeleteDeleteRecurringIncentiveErrors = {
+export type DeleteV1IncentivesRecurringIdErrors = {
   /**
    * Bad Request
    */
@@ -14251,20 +14934,20 @@ export type DeleteDeleteRecurringIncentiveErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type DeleteDeleteRecurringIncentiveError =
-  DeleteDeleteRecurringIncentiveErrors[keyof DeleteDeleteRecurringIncentiveErrors];
+export type DeleteV1IncentivesRecurringIdError =
+  DeleteV1IncentivesRecurringIdErrors[keyof DeleteV1IncentivesRecurringIdErrors];
 
-export type DeleteDeleteRecurringIncentiveResponses = {
+export type DeleteV1IncentivesRecurringIdResponses = {
   /**
    * Success
    */
   200: DeleteRecurringIncentiveResponse;
 };
 
-export type DeleteDeleteRecurringIncentiveResponse =
-  DeleteDeleteRecurringIncentiveResponses[keyof DeleteDeleteRecurringIncentiveResponses];
+export type DeleteV1IncentivesRecurringIdResponse =
+  DeleteV1IncentivesRecurringIdResponses[keyof DeleteV1IncentivesRecurringIdResponses];
 
-export type GetIndexIncentiveData = {
+export type GetV1IncentivesData = {
   body?: never;
   headers: {
     /**
@@ -14301,7 +14984,7 @@ export type GetIndexIncentiveData = {
   url: '/v1/incentives';
 };
 
-export type GetIndexIncentiveErrors = {
+export type GetV1IncentivesErrors = {
   /**
    * Bad Request
    */
@@ -14324,20 +15007,20 @@ export type GetIndexIncentiveErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetIndexIncentiveError =
-  GetIndexIncentiveErrors[keyof GetIndexIncentiveErrors];
+export type GetV1IncentivesError =
+  GetV1IncentivesErrors[keyof GetV1IncentivesErrors];
 
-export type GetIndexIncentiveResponses = {
+export type GetV1IncentivesResponses = {
   /**
    * Success
    */
   200: ListIncentivesResponse;
 };
 
-export type GetIndexIncentiveResponse =
-  GetIndexIncentiveResponses[keyof GetIndexIncentiveResponses];
+export type GetV1IncentivesResponse =
+  GetV1IncentivesResponses[keyof GetV1IncentivesResponses];
 
-export type PostCreateIncentiveData = {
+export type PostV1IncentivesData = {
   /**
    * Incentive
    */
@@ -14356,7 +15039,7 @@ export type PostCreateIncentiveData = {
   url: '/v1/incentives';
 };
 
-export type PostCreateIncentiveErrors = {
+export type PostV1IncentivesErrors = {
   /**
    * Bad Request
    */
@@ -14379,20 +15062,20 @@ export type PostCreateIncentiveErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateIncentiveError =
-  PostCreateIncentiveErrors[keyof PostCreateIncentiveErrors];
+export type PostV1IncentivesError =
+  PostV1IncentivesErrors[keyof PostV1IncentivesErrors];
 
-export type PostCreateIncentiveResponses = {
+export type PostV1IncentivesResponses = {
   /**
    * Success
    */
   201: IncentiveResponse;
 };
 
-export type PostCreateIncentiveResponse =
-  PostCreateIncentiveResponses[keyof PostCreateIncentiveResponses];
+export type PostV1IncentivesResponse =
+  PostV1IncentivesResponses[keyof PostV1IncentivesResponses];
 
-export type PostCreateProbationCompletionLetterData = {
+export type PostV1ProbationCompletionLetterData = {
   /**
    * Work Authorization Request
    */
@@ -14402,7 +15085,7 @@ export type PostCreateProbationCompletionLetterData = {
   url: '/v1/probation-completion-letter';
 };
 
-export type PostCreateProbationCompletionLetterErrors = {
+export type PostV1ProbationCompletionLetterErrors = {
   /**
    * Unauthorized
    */
@@ -14417,20 +15100,20 @@ export type PostCreateProbationCompletionLetterErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostCreateProbationCompletionLetterError =
-  PostCreateProbationCompletionLetterErrors[keyof PostCreateProbationCompletionLetterErrors];
+export type PostV1ProbationCompletionLetterError =
+  PostV1ProbationCompletionLetterErrors[keyof PostV1ProbationCompletionLetterErrors];
 
-export type PostCreateProbationCompletionLetterResponses = {
+export type PostV1ProbationCompletionLetterResponses = {
   /**
    * Success
    */
   200: ProbationCompletionLetterResponse;
 };
 
-export type PostCreateProbationCompletionLetterResponse =
-  PostCreateProbationCompletionLetterResponses[keyof PostCreateProbationCompletionLetterResponses];
+export type PostV1ProbationCompletionLetterResponse =
+  PostV1ProbationCompletionLetterResponses[keyof PostV1ProbationCompletionLetterResponses];
 
-export type GetShowScheduledContractorInvoiceData = {
+export type GetV1ContractorInvoiceSchedulesIdData = {
   body?: never;
   path: {
     /**
@@ -14442,7 +15125,7 @@ export type GetShowScheduledContractorInvoiceData = {
   url: '/v1/contractor-invoice-schedules/{id}';
 };
 
-export type GetShowScheduledContractorInvoiceErrors = {
+export type GetV1ContractorInvoiceSchedulesIdErrors = {
   /**
    * Bad Request
    */
@@ -14469,20 +15152,20 @@ export type GetShowScheduledContractorInvoiceErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowScheduledContractorInvoiceError =
-  GetShowScheduledContractorInvoiceErrors[keyof GetShowScheduledContractorInvoiceErrors];
+export type GetV1ContractorInvoiceSchedulesIdError =
+  GetV1ContractorInvoiceSchedulesIdErrors[keyof GetV1ContractorInvoiceSchedulesIdErrors];
 
-export type GetShowScheduledContractorInvoiceResponses = {
+export type GetV1ContractorInvoiceSchedulesIdResponses = {
   /**
    * Success
    */
   200: ContractorInvoiceScheduleResponse;
 };
 
-export type GetShowScheduledContractorInvoiceResponse =
-  GetShowScheduledContractorInvoiceResponses[keyof GetShowScheduledContractorInvoiceResponses];
+export type GetV1ContractorInvoiceSchedulesIdResponse =
+  GetV1ContractorInvoiceSchedulesIdResponses[keyof GetV1ContractorInvoiceSchedulesIdResponses];
 
-export type PatchUpdateScheduledContractorInvoice2Data = {
+export type PatchV1ContractorInvoiceSchedulesId2Data = {
   /**
    * Update parameters
    */
@@ -14497,7 +15180,7 @@ export type PatchUpdateScheduledContractorInvoice2Data = {
   url: '/v1/contractor-invoice-schedules/{id}';
 };
 
-export type PatchUpdateScheduledContractorInvoice2Errors = {
+export type PatchV1ContractorInvoiceSchedulesId2Errors = {
   /**
    * Unauthorized
    */
@@ -14516,20 +15199,20 @@ export type PatchUpdateScheduledContractorInvoice2Errors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateScheduledContractorInvoice2Error =
-  PatchUpdateScheduledContractorInvoice2Errors[keyof PatchUpdateScheduledContractorInvoice2Errors];
+export type PatchV1ContractorInvoiceSchedulesId2Error =
+  PatchV1ContractorInvoiceSchedulesId2Errors[keyof PatchV1ContractorInvoiceSchedulesId2Errors];
 
-export type PatchUpdateScheduledContractorInvoice2Responses = {
+export type PatchV1ContractorInvoiceSchedulesId2Responses = {
   /**
    * Success
    */
   200: ContractorInvoiceScheduleResponse;
 };
 
-export type PatchUpdateScheduledContractorInvoice2Response =
-  PatchUpdateScheduledContractorInvoice2Responses[keyof PatchUpdateScheduledContractorInvoice2Responses];
+export type PatchV1ContractorInvoiceSchedulesId2Response =
+  PatchV1ContractorInvoiceSchedulesId2Responses[keyof PatchV1ContractorInvoiceSchedulesId2Responses];
 
-export type PatchUpdateScheduledContractorInvoiceData = {
+export type PatchV1ContractorInvoiceSchedulesIdData = {
   /**
    * Update parameters
    */
@@ -14544,7 +15227,7 @@ export type PatchUpdateScheduledContractorInvoiceData = {
   url: '/v1/contractor-invoice-schedules/{id}';
 };
 
-export type PatchUpdateScheduledContractorInvoiceErrors = {
+export type PatchV1ContractorInvoiceSchedulesIdErrors = {
   /**
    * Unauthorized
    */
@@ -14563,20 +15246,20 @@ export type PatchUpdateScheduledContractorInvoiceErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateScheduledContractorInvoiceError =
-  PatchUpdateScheduledContractorInvoiceErrors[keyof PatchUpdateScheduledContractorInvoiceErrors];
+export type PatchV1ContractorInvoiceSchedulesIdError =
+  PatchV1ContractorInvoiceSchedulesIdErrors[keyof PatchV1ContractorInvoiceSchedulesIdErrors];
 
-export type PatchUpdateScheduledContractorInvoiceResponses = {
+export type PatchV1ContractorInvoiceSchedulesIdResponses = {
   /**
    * Success
    */
   200: ContractorInvoiceScheduleResponse;
 };
 
-export type PatchUpdateScheduledContractorInvoiceResponse =
-  PatchUpdateScheduledContractorInvoiceResponses[keyof PatchUpdateScheduledContractorInvoiceResponses];
+export type PatchV1ContractorInvoiceSchedulesIdResponse =
+  PatchV1ContractorInvoiceSchedulesIdResponses[keyof PatchV1ContractorInvoiceSchedulesIdResponses];
 
-export type GetShowBillingDocumentData = {
+export type GetV1BillingDocumentsBillingDocumentIdData = {
   body?: never;
   headers: {
     /**
@@ -14602,7 +15285,7 @@ export type GetShowBillingDocumentData = {
   url: '/v1/billing-documents/{billing_document_id}';
 };
 
-export type GetShowBillingDocumentErrors = {
+export type GetV1BillingDocumentsBillingDocumentIdErrors = {
   /**
    * Bad Request
    */
@@ -14625,20 +15308,20 @@ export type GetShowBillingDocumentErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowBillingDocumentError =
-  GetShowBillingDocumentErrors[keyof GetShowBillingDocumentErrors];
+export type GetV1BillingDocumentsBillingDocumentIdError =
+  GetV1BillingDocumentsBillingDocumentIdErrors[keyof GetV1BillingDocumentsBillingDocumentIdErrors];
 
-export type GetShowBillingDocumentResponses = {
+export type GetV1BillingDocumentsBillingDocumentIdResponses = {
   /**
    * Success
    */
   200: BillingDocumentResponse;
 };
 
-export type GetShowBillingDocumentResponse =
-  GetShowBillingDocumentResponses[keyof GetShowBillingDocumentResponses];
+export type GetV1BillingDocumentsBillingDocumentIdResponse =
+  GetV1BillingDocumentsBillingDocumentIdResponses[keyof GetV1BillingDocumentsBillingDocumentIdResponses];
 
-export type PostCreateEstimationPdfData = {
+export type PostV1CostCalculatorEstimationPdfData = {
   /**
    * Estimate params
    */
@@ -14648,7 +15331,7 @@ export type PostCreateEstimationPdfData = {
   url: '/v1/cost-calculator/estimation-pdf';
 };
 
-export type PostCreateEstimationPdfErrors = {
+export type PostV1CostCalculatorEstimationPdfErrors = {
   /**
    * Not Found
    */
@@ -14659,20 +15342,20 @@ export type PostCreateEstimationPdfErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostCreateEstimationPdfError =
-  PostCreateEstimationPdfErrors[keyof PostCreateEstimationPdfErrors];
+export type PostV1CostCalculatorEstimationPdfError =
+  PostV1CostCalculatorEstimationPdfErrors[keyof PostV1CostCalculatorEstimationPdfErrors];
 
-export type PostCreateEstimationPdfResponses = {
+export type PostV1CostCalculatorEstimationPdfResponses = {
   /**
    * Success
    */
   200: CostCalculatorEstimatePdfResponse;
 };
 
-export type PostCreateEstimationPdfResponse =
-  PostCreateEstimationPdfResponses[keyof PostCreateEstimationPdfResponses];
+export type PostV1CostCalculatorEstimationPdfResponse =
+  PostV1CostCalculatorEstimationPdfResponses[keyof PostV1CostCalculatorEstimationPdfResponses];
 
-export type GetShowWorkAuthorizationRequestData = {
+export type GetV1WorkAuthorizationRequestsIdData = {
   body?: never;
   path: {
     /**
@@ -14684,7 +15367,7 @@ export type GetShowWorkAuthorizationRequestData = {
   url: '/v1/work-authorization-requests/{id}';
 };
 
-export type GetShowWorkAuthorizationRequestErrors = {
+export type GetV1WorkAuthorizationRequestsIdErrors = {
   /**
    * Not Found
    */
@@ -14695,20 +15378,20 @@ export type GetShowWorkAuthorizationRequestErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowWorkAuthorizationRequestError =
-  GetShowWorkAuthorizationRequestErrors[keyof GetShowWorkAuthorizationRequestErrors];
+export type GetV1WorkAuthorizationRequestsIdError =
+  GetV1WorkAuthorizationRequestsIdErrors[keyof GetV1WorkAuthorizationRequestsIdErrors];
 
-export type GetShowWorkAuthorizationRequestResponses = {
+export type GetV1WorkAuthorizationRequestsIdResponses = {
   /**
    * Success
    */
   200: WorkAuthorizationRequestResponse;
 };
 
-export type GetShowWorkAuthorizationRequestResponse =
-  GetShowWorkAuthorizationRequestResponses[keyof GetShowWorkAuthorizationRequestResponses];
+export type GetV1WorkAuthorizationRequestsIdResponse =
+  GetV1WorkAuthorizationRequestsIdResponses[keyof GetV1WorkAuthorizationRequestsIdResponses];
 
-export type PatchUpdateWorkAuthorizationRequest2Data = {
+export type PatchV1WorkAuthorizationRequestsId2Data = {
   /**
    * Work Authorization Request
    */
@@ -14723,7 +15406,7 @@ export type PatchUpdateWorkAuthorizationRequest2Data = {
   url: '/v1/work-authorization-requests/{id}';
 };
 
-export type PatchUpdateWorkAuthorizationRequest2Errors = {
+export type PatchV1WorkAuthorizationRequestsId2Errors = {
   /**
    * Unauthorized
    */
@@ -14738,20 +15421,20 @@ export type PatchUpdateWorkAuthorizationRequest2Errors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateWorkAuthorizationRequest2Error =
-  PatchUpdateWorkAuthorizationRequest2Errors[keyof PatchUpdateWorkAuthorizationRequest2Errors];
+export type PatchV1WorkAuthorizationRequestsId2Error =
+  PatchV1WorkAuthorizationRequestsId2Errors[keyof PatchV1WorkAuthorizationRequestsId2Errors];
 
-export type PatchUpdateWorkAuthorizationRequest2Responses = {
+export type PatchV1WorkAuthorizationRequestsId2Responses = {
   /**
    * Success
    */
   200: WorkAuthorizationRequestResponse;
 };
 
-export type PatchUpdateWorkAuthorizationRequest2Response =
-  PatchUpdateWorkAuthorizationRequest2Responses[keyof PatchUpdateWorkAuthorizationRequest2Responses];
+export type PatchV1WorkAuthorizationRequestsId2Response =
+  PatchV1WorkAuthorizationRequestsId2Responses[keyof PatchV1WorkAuthorizationRequestsId2Responses];
 
-export type PatchUpdateWorkAuthorizationRequestData = {
+export type PatchV1WorkAuthorizationRequestsIdData = {
   /**
    * Work Authorization Request
    */
@@ -14766,7 +15449,7 @@ export type PatchUpdateWorkAuthorizationRequestData = {
   url: '/v1/work-authorization-requests/{id}';
 };
 
-export type PatchUpdateWorkAuthorizationRequestErrors = {
+export type PatchV1WorkAuthorizationRequestsIdErrors = {
   /**
    * Unauthorized
    */
@@ -14781,472 +15464,20 @@ export type PatchUpdateWorkAuthorizationRequestErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateWorkAuthorizationRequestError =
-  PatchUpdateWorkAuthorizationRequestErrors[keyof PatchUpdateWorkAuthorizationRequestErrors];
+export type PatchV1WorkAuthorizationRequestsIdError =
+  PatchV1WorkAuthorizationRequestsIdErrors[keyof PatchV1WorkAuthorizationRequestsIdErrors];
 
-export type PatchUpdateWorkAuthorizationRequestResponses = {
+export type PatchV1WorkAuthorizationRequestsIdResponses = {
   /**
    * Success
    */
   200: WorkAuthorizationRequestResponse;
 };
 
-export type PatchUpdateWorkAuthorizationRequestResponse =
-  PatchUpdateWorkAuthorizationRequestResponses[keyof PatchUpdateWorkAuthorizationRequestResponses];
+export type PatchV1WorkAuthorizationRequestsIdResponse =
+  PatchV1WorkAuthorizationRequestsIdResponses[keyof PatchV1WorkAuthorizationRequestsIdResponses];
 
-export type PostCreateProbationExtensionData = {
-  /**
-   * ProbationExtension
-   */
-  body: CreateProbationExtensionParams;
-  path?: never;
-  query?: never;
-  url: '/v1/probation-extensions';
-};
-
-export type PostCreateProbationExtensionErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-};
-
-export type PostCreateProbationExtensionError =
-  PostCreateProbationExtensionErrors[keyof PostCreateProbationExtensionErrors];
-
-export type PostCreateProbationExtensionResponses = {
-  /**
-   * Success
-   */
-  200: ProbationExtensionResponse;
-};
-
-export type PostCreateProbationExtensionResponse =
-  PostCreateProbationExtensionResponses[keyof PostCreateProbationExtensionResponses];
-
-export type PostCreateRiskReserveData = {
-  /**
-   * Risk Reserve
-   */
-  body: CreateRiskReserveParams;
-  path?: never;
-  query?: never;
-  url: '/v1/risk-reserve';
-};
-
-export type PostCreateRiskReserveErrors = {
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-};
-
-export type PostCreateRiskReserveError =
-  PostCreateRiskReserveErrors[keyof PostCreateRiskReserveErrors];
-
-export type PostCreateRiskReserveResponses = {
-  /**
-   * Success
-   */
-  200: SuccessResponse;
-};
-
-export type PostCreateRiskReserveResponse =
-  PostCreateRiskReserveResponses[keyof PostCreateRiskReserveResponses];
-
-export type PostSubmitRiskReserveProofOfPaymentData = {
-  /**
-   * Proof of Payment
-   */
-  body: CreateRiskReserveProofOfPaymentParams;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
-  };
-  query?: never;
-  url: '/v1/employments/{employment_id}/risk-reserve-proof-of-payments';
-};
-
-export type PostSubmitRiskReserveProofOfPaymentErrors = {
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-};
-
-export type PostSubmitRiskReserveProofOfPaymentError =
-  PostSubmitRiskReserveProofOfPaymentErrors[keyof PostSubmitRiskReserveProofOfPaymentErrors];
-
-export type PostSubmitRiskReserveProofOfPaymentResponses = {
-  /**
-   * Success
-   */
-  200: RiskReserveProofOfPaymentResponse;
-};
-
-export type PostSubmitRiskReserveProofOfPaymentResponse =
-  PostSubmitRiskReserveProofOfPaymentResponses[keyof PostSubmitRiskReserveProofOfPaymentResponses];
-
-export type GetShowCompanyComplianceProfileData = {
-  body?: never;
-  path: {
-    /**
-     * Company ID
-     */
-    company_id: UuidSlug;
-  };
-  query?: never;
-  url: '/v1/companies/{company_id}/compliance-profile';
-};
-
-export type GetShowCompanyComplianceProfileErrors = {
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-};
-
-export type GetShowCompanyComplianceProfileError =
-  GetShowCompanyComplianceProfileErrors[keyof GetShowCompanyComplianceProfileErrors];
-
-export type GetShowCompanyComplianceProfileResponses = {
-  /**
-   * Success
-   */
-  200: CompanyComplianceProfileResponse;
-};
-
-export type GetShowCompanyComplianceProfileResponse =
-  GetShowCompanyComplianceProfileResponses[keyof GetShowCompanyComplianceProfileResponses];
-
-export type GetIndexCompanyProductPriceData = {
-  body?: never;
-  path: {
-    /**
-     * Company ID
-     */
-    company_id: UuidSlug;
-  };
-  query?: never;
-  url: '/v1/companies/{company_id}/product-prices';
-};
-
-export type GetIndexCompanyProductPriceErrors = {
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-};
-
-export type GetIndexCompanyProductPriceError =
-  GetIndexCompanyProductPriceErrors[keyof GetIndexCompanyProductPriceErrors];
-
-export type GetIndexCompanyProductPriceResponses = {
-  /**
-   * Success
-   */
-  200: ListProductPricesResponse;
-};
-
-export type GetIndexCompanyProductPriceResponse =
-  GetIndexCompanyProductPriceResponses[keyof GetIndexCompanyProductPriceResponses];
-
-export type GetShowCompanyData = {
-  body?: never;
-  headers: {
-    /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-     *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
-     *
-     */
-    Authorization: string;
-  };
-  path: {
-    /**
-     * Company ID
-     */
-    company_id: string;
-  };
-  query?: never;
-  url: '/v1/companies/{company_id}';
-};
-
-export type GetShowCompanyErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Too many requests
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type GetShowCompanyError =
-  GetShowCompanyErrors[keyof GetShowCompanyErrors];
-
-export type GetShowCompanyResponses = {
-  /**
-   * Success
-   */
-  200: CompanyResponse;
-};
-
-export type GetShowCompanyResponse =
-  GetShowCompanyResponses[keyof GetShowCompanyResponses];
-
-export type PatchUpdateCompany2Data = {
-  /**
-   * Update Company params
-   */
-  body?: UpdateCompanyParams;
-  headers: {
-    /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-     *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
-     *
-     */
-    Authorization: string;
-  };
-  path: {
-    /**
-     * Company ID
-     *
-     */
-    company_id: string;
-  };
-  query?: {
-    /**
-     * Version of the address_details form schema
-     */
-    address_details_json_schema_version?: number | 'latest';
-    /**
-     * Version of the bank_account_details form schema
-     */
-    bank_account_details_json_schema_version?: number | 'latest';
-  };
-  url: '/v1/companies/{company_id}';
-};
-
-export type PatchUpdateCompany2Errors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Too many requests
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type PatchUpdateCompany2Error =
-  PatchUpdateCompany2Errors[keyof PatchUpdateCompany2Errors];
-
-export type PatchUpdateCompany2Responses = {
-  /**
-   * Success
-   */
-  200: CompanyResponse;
-};
-
-export type PatchUpdateCompany2Response =
-  PatchUpdateCompany2Responses[keyof PatchUpdateCompany2Responses];
-
-export type PatchUpdateCompanyData = {
-  /**
-   * Update Company params
-   */
-  body?: UpdateCompanyParams;
-  headers: {
-    /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-     *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
-     *
-     */
-    Authorization: string;
-  };
-  path: {
-    /**
-     * Company ID
-     *
-     */
-    company_id: string;
-  };
-  query?: {
-    /**
-     * Version of the address_details form schema
-     */
-    address_details_json_schema_version?: number | 'latest';
-    /**
-     * Version of the bank_account_details form schema
-     */
-    bank_account_details_json_schema_version?: number | 'latest';
-  };
-  url: '/v1/companies/{company_id}';
-};
-
-export type PatchUpdateCompanyErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Too many requests
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type PatchUpdateCompanyError =
-  PatchUpdateCompanyErrors[keyof PatchUpdateCompanyErrors];
-
-export type PatchUpdateCompanyResponses = {
-  /**
-   * Success
-   */
-  200: CompanyResponse;
-};
-
-export type PatchUpdateCompanyResponse =
-  PatchUpdateCompanyResponses[keyof PatchUpdateCompanyResponses];
-
-export type GetDownloadResignationLetterData = {
-  body?: never;
-  path: {
-    /**
-     * Offboarding request ID
-     */
-    offboarding_request_id: string;
-  };
-  query?: never;
-  url: '/v1/resignations/{offboarding_request_id}/resignation-letter';
-};
-
-export type GetDownloadResignationLetterErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Unprocessable Entity
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type GetDownloadResignationLetterError =
-  GetDownloadResignationLetterErrors[keyof GetDownloadResignationLetterErrors];
-
-export type GetDownloadResignationLetterResponses = {
-  /**
-   * Success
-   */
-  200: GenericFile;
-};
-
-export type GetDownloadResignationLetterResponse =
-  GetDownloadResignationLetterResponses[keyof GetDownloadResignationLetterResponses];
-
-export type PutUpdateEmploymentFederalTaxesData = {
+export type PutV2EmploymentsEmploymentIdFederalTaxesData = {
   /**
    * Employment federal taxes params
    */
@@ -15258,10 +15489,10 @@ export type PutUpdateEmploymentFederalTaxesData = {
     employment_id: string;
   };
   query?: never;
-  url: '/v1/employments/{employment_id}/federal-taxes';
+  url: '/v2/employments/{employment_id}/federal-taxes';
 };
 
-export type PutUpdateEmploymentFederalTaxesErrors = {
+export type PutV2EmploymentsEmploymentIdFederalTaxesErrors = {
   /**
    * Bad Request
    */
@@ -15288,20 +15519,655 @@ export type PutUpdateEmploymentFederalTaxesErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PutUpdateEmploymentFederalTaxesError =
-  PutUpdateEmploymentFederalTaxesErrors[keyof PutUpdateEmploymentFederalTaxesErrors];
+export type PutV2EmploymentsEmploymentIdFederalTaxesError =
+  PutV2EmploymentsEmploymentIdFederalTaxesErrors[keyof PutV2EmploymentsEmploymentIdFederalTaxesErrors];
 
-export type PutUpdateEmploymentFederalTaxesResponses = {
+export type PutV2EmploymentsEmploymentIdFederalTaxesResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PutUpdateEmploymentFederalTaxesResponse =
-  PutUpdateEmploymentFederalTaxesResponses[keyof PutUpdateEmploymentFederalTaxesResponses];
+export type PutV2EmploymentsEmploymentIdFederalTaxesResponse =
+  PutV2EmploymentsEmploymentIdFederalTaxesResponses[keyof PutV2EmploymentsEmploymentIdFederalTaxesResponses];
 
-export type GetIndexContractAmendmentData = {
+export type PostV1ProbationExtensionsData = {
+  /**
+   * ProbationExtension
+   */
+  body: CreateProbationExtensionParams;
+  path?: never;
+  query?: never;
+  url: '/v1/probation-extensions';
+};
+
+export type PostV1ProbationExtensionsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostV1ProbationExtensionsError =
+  PostV1ProbationExtensionsErrors[keyof PostV1ProbationExtensionsErrors];
+
+export type PostV1ProbationExtensionsResponses = {
+  /**
+   * Success
+   */
+  200: ProbationExtensionResponse;
+};
+
+export type PostV1ProbationExtensionsResponse =
+  PostV1ProbationExtensionsResponses[keyof PostV1ProbationExtensionsResponses];
+
+export type PutV2EmploymentsEmploymentIdBillingAddressDetailsData = {
+  /**
+   * Employment billing address details params
+   */
+  body?: EmploymentBillingAddressDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Version of the billing_address_details form schema
+     */
+    billing_address_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v2/employments/{employment_id}/billing_address_details';
+};
+
+export type PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdBillingAddressDetailsError =
+  PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors[keyof PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors];
+
+export type PutV2EmploymentsEmploymentIdBillingAddressDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdBillingAddressDetailsResponse =
+  PutV2EmploymentsEmploymentIdBillingAddressDetailsResponses[keyof PutV2EmploymentsEmploymentIdBillingAddressDetailsResponses];
+
+export type PutV2EmploymentsEmploymentIdAddressDetailsData = {
+  /**
+   * Employment address details params
+   */
+  body?: EmploymentAddressDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Version of the address_details form schema
+     */
+    address_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v2/employments/{employment_id}/address_details';
+};
+
+export type PutV2EmploymentsEmploymentIdAddressDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdAddressDetailsError =
+  PutV2EmploymentsEmploymentIdAddressDetailsErrors[keyof PutV2EmploymentsEmploymentIdAddressDetailsErrors];
+
+export type PutV2EmploymentsEmploymentIdAddressDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdAddressDetailsResponse =
+  PutV2EmploymentsEmploymentIdAddressDetailsResponses[keyof PutV2EmploymentsEmploymentIdAddressDetailsResponses];
+
+export type PostV1RiskReserveData = {
+  /**
+   * Risk Reserve
+   */
+  body: CreateRiskReserveParams;
+  path?: never;
+  query?: never;
+  url: '/v1/risk-reserve';
+};
+
+export type PostV1RiskReserveErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostV1RiskReserveError =
+  PostV1RiskReserveErrors[keyof PostV1RiskReserveErrors];
+
+export type PostV1RiskReserveResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostV1RiskReserveResponse =
+  PostV1RiskReserveResponses[keyof PostV1RiskReserveResponses];
+
+export type PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsData = {
+  /**
+   * Proof of Payment
+   */
+  body: CreateRiskReserveProofOfPaymentParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/risk-reserve-proof-of-payments';
+};
+
+export type PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsError =
+  PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsErrors[keyof PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsErrors];
+
+export type PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsResponses = {
+  /**
+   * Success
+   */
+  200: RiskReserveProofOfPaymentResponse;
+};
+
+export type PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsResponse =
+  PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsResponses[keyof PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsResponses];
+
+export type GetV1CompaniesCompanyIdComplianceProfileData = {
+  body?: never;
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}/compliance-profile';
+};
+
+export type GetV1CompaniesCompanyIdComplianceProfileErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetV1CompaniesCompanyIdComplianceProfileError =
+  GetV1CompaniesCompanyIdComplianceProfileErrors[keyof GetV1CompaniesCompanyIdComplianceProfileErrors];
+
+export type GetV1CompaniesCompanyIdComplianceProfileResponses = {
+  /**
+   * Success
+   */
+  200: CompanyComplianceProfileResponse;
+};
+
+export type GetV1CompaniesCompanyIdComplianceProfileResponse =
+  GetV1CompaniesCompanyIdComplianceProfileResponses[keyof GetV1CompaniesCompanyIdComplianceProfileResponses];
+
+export type GetV1CompaniesCompanyIdProductPricesData = {
+  body?: never;
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}/product-prices';
+};
+
+export type GetV1CompaniesCompanyIdProductPricesErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetV1CompaniesCompanyIdProductPricesError =
+  GetV1CompaniesCompanyIdProductPricesErrors[keyof GetV1CompaniesCompanyIdProductPricesErrors];
+
+export type GetV1CompaniesCompanyIdProductPricesResponses = {
+  /**
+   * Success
+   */
+  200: ListProductPricesResponse;
+};
+
+export type GetV1CompaniesCompanyIdProductPricesResponse =
+  GetV1CompaniesCompanyIdProductPricesResponses[keyof GetV1CompaniesCompanyIdProductPricesResponses];
+
+export type GetV1CompaniesCompanyIdData = {
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: string;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}';
+};
+
+export type GetV1CompaniesCompanyIdErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV1CompaniesCompanyIdError =
+  GetV1CompaniesCompanyIdErrors[keyof GetV1CompaniesCompanyIdErrors];
+
+export type GetV1CompaniesCompanyIdResponses = {
+  /**
+   * Success
+   */
+  200: CompanyResponse;
+};
+
+export type GetV1CompaniesCompanyIdResponse =
+  GetV1CompaniesCompanyIdResponses[keyof GetV1CompaniesCompanyIdResponses];
+
+export type PatchV1CompaniesCompanyId2Data = {
+  /**
+   * Update Company params
+   */
+  body?: UpdateCompanyParams;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Company ID
+     *
+     */
+    company_id: string;
+  };
+  query?: {
+    /**
+     * Version of the address_details form schema
+     */
+    address_details_json_schema_version?: number | 'latest';
+    /**
+     * Version of the bank_account_details form schema
+     */
+    bank_account_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v1/companies/{company_id}';
+};
+
+export type PatchV1CompaniesCompanyId2Errors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PatchV1CompaniesCompanyId2Error =
+  PatchV1CompaniesCompanyId2Errors[keyof PatchV1CompaniesCompanyId2Errors];
+
+export type PatchV1CompaniesCompanyId2Responses = {
+  /**
+   * Success
+   */
+  200: CompanyResponse;
+};
+
+export type PatchV1CompaniesCompanyId2Response =
+  PatchV1CompaniesCompanyId2Responses[keyof PatchV1CompaniesCompanyId2Responses];
+
+export type PatchV1CompaniesCompanyIdData = {
+  /**
+   * Update Company params
+   */
+  body?: UpdateCompanyParams;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Company ID
+     *
+     */
+    company_id: string;
+  };
+  query?: {
+    /**
+     * Version of the address_details form schema
+     */
+    address_details_json_schema_version?: number | 'latest';
+    /**
+     * Version of the bank_account_details form schema
+     */
+    bank_account_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v1/companies/{company_id}';
+};
+
+export type PatchV1CompaniesCompanyIdErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PatchV1CompaniesCompanyIdError =
+  PatchV1CompaniesCompanyIdErrors[keyof PatchV1CompaniesCompanyIdErrors];
+
+export type PatchV1CompaniesCompanyIdResponses = {
+  /**
+   * Success
+   */
+  200: CompanyResponse;
+};
+
+export type PatchV1CompaniesCompanyIdResponse =
+  PatchV1CompaniesCompanyIdResponses[keyof PatchV1CompaniesCompanyIdResponses];
+
+export type GetV1ResignationsOffboardingRequestIdResignationLetterData = {
+  body?: never;
+  path: {
+    /**
+     * Offboarding request ID
+     */
+    offboarding_request_id: string;
+  };
+  query?: never;
+  url: '/v1/resignations/{offboarding_request_id}/resignation-letter';
+};
+
+export type GetV1ResignationsOffboardingRequestIdResignationLetterErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV1ResignationsOffboardingRequestIdResignationLetterError =
+  GetV1ResignationsOffboardingRequestIdResignationLetterErrors[keyof GetV1ResignationsOffboardingRequestIdResignationLetterErrors];
+
+export type GetV1ResignationsOffboardingRequestIdResignationLetterResponses = {
+  /**
+   * Success
+   */
+  200: GenericFile;
+};
+
+export type GetV1ResignationsOffboardingRequestIdResignationLetterResponse =
+  GetV1ResignationsOffboardingRequestIdResignationLetterResponses[keyof GetV1ResignationsOffboardingRequestIdResignationLetterResponses];
+
+export type PutV1EmploymentsEmploymentIdFederalTaxesData = {
+  /**
+   * Employment federal taxes params
+   */
+  body?: EmploymentFederalTaxesParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/federal-taxes';
+};
+
+export type PutV1EmploymentsEmploymentIdFederalTaxesErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV1EmploymentsEmploymentIdFederalTaxesError =
+  PutV1EmploymentsEmploymentIdFederalTaxesErrors[keyof PutV1EmploymentsEmploymentIdFederalTaxesErrors];
+
+export type PutV1EmploymentsEmploymentIdFederalTaxesResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PutV1EmploymentsEmploymentIdFederalTaxesResponse =
+  PutV1EmploymentsEmploymentIdFederalTaxesResponses[keyof PutV1EmploymentsEmploymentIdFederalTaxesResponses];
+
+export type GetV1ContractAmendmentsData = {
   body?: never;
   headers: {
     /**
@@ -15334,7 +16200,7 @@ export type GetIndexContractAmendmentData = {
   url: '/v1/contract-amendments';
 };
 
-export type GetIndexContractAmendmentErrors = {
+export type GetV1ContractAmendmentsErrors = {
   /**
    * Unauthorized
    */
@@ -15349,20 +16215,20 @@ export type GetIndexContractAmendmentErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexContractAmendmentError =
-  GetIndexContractAmendmentErrors[keyof GetIndexContractAmendmentErrors];
+export type GetV1ContractAmendmentsError =
+  GetV1ContractAmendmentsErrors[keyof GetV1ContractAmendmentsErrors];
 
-export type GetIndexContractAmendmentResponses = {
+export type GetV1ContractAmendmentsResponses = {
   /**
    * Success
    */
   200: ListContractAmendmentResponse;
 };
 
-export type GetIndexContractAmendmentResponse =
-  GetIndexContractAmendmentResponses[keyof GetIndexContractAmendmentResponses];
+export type GetV1ContractAmendmentsResponse =
+  GetV1ContractAmendmentsResponses[keyof GetV1ContractAmendmentsResponses];
 
-export type PostCreateContractAmendmentData = {
+export type PostV1ContractAmendmentsData = {
   /**
    * Contract Amendment
    */
@@ -15386,7 +16252,7 @@ export type PostCreateContractAmendmentData = {
   url: '/v1/contract-amendments';
 };
 
-export type PostCreateContractAmendmentErrors = {
+export type PostV1ContractAmendmentsErrors = {
   /**
    * Unauthorized
    */
@@ -15401,20 +16267,20 @@ export type PostCreateContractAmendmentErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostCreateContractAmendmentError =
-  PostCreateContractAmendmentErrors[keyof PostCreateContractAmendmentErrors];
+export type PostV1ContractAmendmentsError =
+  PostV1ContractAmendmentsErrors[keyof PostV1ContractAmendmentsErrors];
 
-export type PostCreateContractAmendmentResponses = {
+export type PostV1ContractAmendmentsResponses = {
   /**
    * Success
    */
   200: ContractAmendmentResponse;
 };
 
-export type PostCreateContractAmendmentResponse =
-  PostCreateContractAmendmentResponses[keyof PostCreateContractAmendmentResponses];
+export type PostV1ContractAmendmentsResponse =
+  PostV1ContractAmendmentsResponses[keyof PostV1ContractAmendmentsResponses];
 
-export type GetShowPayrollRunData = {
+export type GetV1PayrollRunsPayrollRunIdData = {
   body?: never;
   path: {
     /**
@@ -15426,7 +16292,7 @@ export type GetShowPayrollRunData = {
   url: '/v1/payroll-runs/{payroll_run_id}';
 };
 
-export type GetShowPayrollRunErrors = {
+export type GetV1PayrollRunsPayrollRunIdErrors = {
   /**
    * Unauthorized
    */
@@ -15441,20 +16307,20 @@ export type GetShowPayrollRunErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowPayrollRunError =
-  GetShowPayrollRunErrors[keyof GetShowPayrollRunErrors];
+export type GetV1PayrollRunsPayrollRunIdError =
+  GetV1PayrollRunsPayrollRunIdErrors[keyof GetV1PayrollRunsPayrollRunIdErrors];
 
-export type GetShowPayrollRunResponses = {
+export type GetV1PayrollRunsPayrollRunIdResponses = {
   /**
    * Success
    */
   200: PayrollRunResponse;
 };
 
-export type GetShowPayrollRunResponse =
-  GetShowPayrollRunResponses[keyof GetShowPayrollRunResponses];
+export type GetV1PayrollRunsPayrollRunIdResponse =
+  GetV1PayrollRunsPayrollRunIdResponses[keyof GetV1PayrollRunsPayrollRunIdResponses];
 
-export type GetDownloadExpenseReceiptData = {
+export type GetV1ExpensesExpenseIdReceiptData = {
   body?: never;
   path: {
     /**
@@ -15466,7 +16332,7 @@ export type GetDownloadExpenseReceiptData = {
   url: '/v1/expenses/{expense_id}/receipt';
 };
 
-export type GetDownloadExpenseReceiptErrors = {
+export type GetV1ExpensesExpenseIdReceiptErrors = {
   /**
    * Bad Request
    */
@@ -15493,20 +16359,20 @@ export type GetDownloadExpenseReceiptErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetDownloadExpenseReceiptError =
-  GetDownloadExpenseReceiptErrors[keyof GetDownloadExpenseReceiptErrors];
+export type GetV1ExpensesExpenseIdReceiptError =
+  GetV1ExpensesExpenseIdReceiptErrors[keyof GetV1ExpensesExpenseIdReceiptErrors];
 
-export type GetDownloadExpenseReceiptResponses = {
+export type GetV1ExpensesExpenseIdReceiptResponses = {
   /**
    * Success
    */
   200: GenericFile;
 };
 
-export type GetDownloadExpenseReceiptResponse =
-  GetDownloadExpenseReceiptResponses[keyof GetDownloadExpenseReceiptResponses];
+export type GetV1ExpensesExpenseIdReceiptResponse =
+  GetV1ExpensesExpenseIdReceiptResponses[keyof GetV1ExpensesExpenseIdReceiptResponses];
 
-export type GetShowTravelLetterRequestData = {
+export type GetV1TravelLetterRequestsIdData = {
   body?: never;
   path: {
     /**
@@ -15518,7 +16384,7 @@ export type GetShowTravelLetterRequestData = {
   url: '/v1/travel-letter-requests/{id}';
 };
 
-export type GetShowTravelLetterRequestErrors = {
+export type GetV1TravelLetterRequestsIdErrors = {
   /**
    * Unauthorized
    */
@@ -15533,20 +16399,20 @@ export type GetShowTravelLetterRequestErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowTravelLetterRequestError =
-  GetShowTravelLetterRequestErrors[keyof GetShowTravelLetterRequestErrors];
+export type GetV1TravelLetterRequestsIdError =
+  GetV1TravelLetterRequestsIdErrors[keyof GetV1TravelLetterRequestsIdErrors];
 
-export type GetShowTravelLetterRequestResponses = {
+export type GetV1TravelLetterRequestsIdResponses = {
   /**
    * Success
    */
   200: TravelLetterResponse;
 };
 
-export type GetShowTravelLetterRequestResponse =
-  GetShowTravelLetterRequestResponses[keyof GetShowTravelLetterRequestResponses];
+export type GetV1TravelLetterRequestsIdResponse =
+  GetV1TravelLetterRequestsIdResponses[keyof GetV1TravelLetterRequestsIdResponses];
 
-export type PatchUpdateTravelLetterRequest2Data = {
+export type PatchV1TravelLetterRequestsId2Data = {
   /**
    * Travel letter Request
    */
@@ -15561,7 +16427,7 @@ export type PatchUpdateTravelLetterRequest2Data = {
   url: '/v1/travel-letter-requests/{id}';
 };
 
-export type PatchUpdateTravelLetterRequest2Errors = {
+export type PatchV1TravelLetterRequestsId2Errors = {
   /**
    * Unauthorized
    */
@@ -15576,20 +16442,20 @@ export type PatchUpdateTravelLetterRequest2Errors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateTravelLetterRequest2Error =
-  PatchUpdateTravelLetterRequest2Errors[keyof PatchUpdateTravelLetterRequest2Errors];
+export type PatchV1TravelLetterRequestsId2Error =
+  PatchV1TravelLetterRequestsId2Errors[keyof PatchV1TravelLetterRequestsId2Errors];
 
-export type PatchUpdateTravelLetterRequest2Responses = {
+export type PatchV1TravelLetterRequestsId2Responses = {
   /**
    * Success
    */
   200: TravelLetterResponse;
 };
 
-export type PatchUpdateTravelLetterRequest2Response =
-  PatchUpdateTravelLetterRequest2Responses[keyof PatchUpdateTravelLetterRequest2Responses];
+export type PatchV1TravelLetterRequestsId2Response =
+  PatchV1TravelLetterRequestsId2Responses[keyof PatchV1TravelLetterRequestsId2Responses];
 
-export type PatchUpdateTravelLetterRequestData = {
+export type PatchV1TravelLetterRequestsIdData = {
   /**
    * Travel letter Request
    */
@@ -15604,7 +16470,7 @@ export type PatchUpdateTravelLetterRequestData = {
   url: '/v1/travel-letter-requests/{id}';
 };
 
-export type PatchUpdateTravelLetterRequestErrors = {
+export type PatchV1TravelLetterRequestsIdErrors = {
   /**
    * Unauthorized
    */
@@ -15619,20 +16485,20 @@ export type PatchUpdateTravelLetterRequestErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateTravelLetterRequestError =
-  PatchUpdateTravelLetterRequestErrors[keyof PatchUpdateTravelLetterRequestErrors];
+export type PatchV1TravelLetterRequestsIdError =
+  PatchV1TravelLetterRequestsIdErrors[keyof PatchV1TravelLetterRequestsIdErrors];
 
-export type PatchUpdateTravelLetterRequestResponses = {
+export type PatchV1TravelLetterRequestsIdResponses = {
   /**
    * Success
    */
   200: TravelLetterResponse;
 };
 
-export type PatchUpdateTravelLetterRequestResponse =
-  PatchUpdateTravelLetterRequestResponses[keyof PatchUpdateTravelLetterRequestResponses];
+export type PatchV1TravelLetterRequestsIdResponse =
+  PatchV1TravelLetterRequestsIdResponses[keyof PatchV1TravelLetterRequestsIdResponses];
 
-export type GetShowTimeoffBalanceData = {
+export type GetV1TimeoffBalancesEmploymentIdData = {
   body?: never;
   headers: {
     /**
@@ -15653,7 +16519,7 @@ export type GetShowTimeoffBalanceData = {
   url: '/v1/timeoff-balances/{employment_id}';
 };
 
-export type GetShowTimeoffBalanceErrors = {
+export type GetV1TimeoffBalancesEmploymentIdErrors = {
   /**
    * Bad Request
    */
@@ -15676,20 +16542,20 @@ export type GetShowTimeoffBalanceErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowTimeoffBalanceError =
-  GetShowTimeoffBalanceErrors[keyof GetShowTimeoffBalanceErrors];
+export type GetV1TimeoffBalancesEmploymentIdError =
+  GetV1TimeoffBalancesEmploymentIdErrors[keyof GetV1TimeoffBalancesEmploymentIdErrors];
 
-export type GetShowTimeoffBalanceResponses = {
+export type GetV1TimeoffBalancesEmploymentIdResponses = {
   /**
    * Success
    */
   200: TimeoffBalanceResponse;
 };
 
-export type GetShowTimeoffBalanceResponse =
-  GetShowTimeoffBalanceResponses[keyof GetShowTimeoffBalanceResponses];
+export type GetV1TimeoffBalancesEmploymentIdResponse =
+  GetV1TimeoffBalancesEmploymentIdResponses[keyof GetV1TimeoffBalancesEmploymentIdResponses];
 
-export type PutUpdateEmploymentBasicInformationData = {
+export type PutV1EmploymentsEmploymentIdBasicInformationData = {
   /**
    * Employment basic information params
    */
@@ -15704,7 +16570,7 @@ export type PutUpdateEmploymentBasicInformationData = {
   url: '/v1/employments/{employment_id}/basic_information';
 };
 
-export type PutUpdateEmploymentBasicInformationErrors = {
+export type PutV1EmploymentsEmploymentIdBasicInformationErrors = {
   /**
    * Bad Request
    */
@@ -15727,25 +16593,25 @@ export type PutUpdateEmploymentBasicInformationErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PutUpdateEmploymentBasicInformationError =
-  PutUpdateEmploymentBasicInformationErrors[keyof PutUpdateEmploymentBasicInformationErrors];
+export type PutV1EmploymentsEmploymentIdBasicInformationError =
+  PutV1EmploymentsEmploymentIdBasicInformationErrors[keyof PutV1EmploymentsEmploymentIdBasicInformationErrors];
 
-export type PutUpdateEmploymentBasicInformationResponses = {
+export type PutV1EmploymentsEmploymentIdBasicInformationResponses = {
   /**
    * Success
    */
   200: EmploymentResponse;
 };
 
-export type PutUpdateEmploymentBasicInformationResponse =
-  PutUpdateEmploymentBasicInformationResponses[keyof PutUpdateEmploymentBasicInformationResponses];
+export type PutV1EmploymentsEmploymentIdBasicInformationResponse =
+  PutV1EmploymentsEmploymentIdBasicInformationResponses[keyof PutV1EmploymentsEmploymentIdBasicInformationResponses];
 
-export type GetCategoriesExpenseData = {
+export type GetV1ExpensesCategoriesData = {
   body?: never;
   path?: never;
   query?: {
     /**
-     * The employment ID for which to list categories. Required if expense_id is not provided.
+     * The employment ID for which to list categories. Required if neither expense_id nor country_code is provided.
      */
     employment_id?: string;
     /**
@@ -15756,11 +16622,15 @@ export type GetCategoriesExpenseData = {
      * Include un-selectable intermediate categories in the response
      */
     include_parents?: boolean;
+    /**
+     * Filter categories by country (ISO 3166-1 alpha-3 code, e.g. "GBR"). Only used when neither employment_id nor expense_id is provided.
+     */
+    country_code?: string;
   };
   url: '/v1/expenses/categories';
 };
 
-export type GetCategoriesExpenseErrors = {
+export type GetV1ExpensesCategoriesErrors = {
   /**
    * Bad Request
    */
@@ -15783,20 +16653,20 @@ export type GetCategoriesExpenseErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetCategoriesExpenseError =
-  GetCategoriesExpenseErrors[keyof GetCategoriesExpenseErrors];
+export type GetV1ExpensesCategoriesError =
+  GetV1ExpensesCategoriesErrors[keyof GetV1ExpensesCategoriesErrors];
 
-export type GetCategoriesExpenseResponses = {
+export type GetV1ExpensesCategoriesResponses = {
   /**
    * Success
    */
   200: ListExpenseCategoriesResponse;
 };
 
-export type GetCategoriesExpenseResponse =
-  GetCategoriesExpenseResponses[keyof GetCategoriesExpenseResponses];
+export type GetV1ExpensesCategoriesResponse =
+  GetV1ExpensesCategoriesResponses[keyof GetV1ExpensesCategoriesResponses];
 
-export type PostCancelEmployeeTimeoffData = {
+export type PostV1EmployeeTimeoffIdCancelData = {
   /**
    * CancelTimeoff
    */
@@ -15811,7 +16681,7 @@ export type PostCancelEmployeeTimeoffData = {
   url: '/v1/employee/timeoff/{id}/cancel';
 };
 
-export type PostCancelEmployeeTimeoffErrors = {
+export type PostV1EmployeeTimeoffIdCancelErrors = {
   /**
    * Bad Request
    */
@@ -15834,20 +16704,20 @@ export type PostCancelEmployeeTimeoffErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCancelEmployeeTimeoffError =
-  PostCancelEmployeeTimeoffErrors[keyof PostCancelEmployeeTimeoffErrors];
+export type PostV1EmployeeTimeoffIdCancelError =
+  PostV1EmployeeTimeoffIdCancelErrors[keyof PostV1EmployeeTimeoffIdCancelErrors];
 
-export type PostCancelEmployeeTimeoffResponses = {
+export type PostV1EmployeeTimeoffIdCancelResponses = {
   /**
    * Success
    */
   200: TimeoffResponse;
 };
 
-export type PostCancelEmployeeTimeoffResponse =
-  PostCancelEmployeeTimeoffResponses[keyof PostCancelEmployeeTimeoffResponses];
+export type PostV1EmployeeTimeoffIdCancelResponse =
+  PostV1EmployeeTimeoffIdCancelResponses[keyof PostV1EmployeeTimeoffIdCancelResponses];
 
-export type GetShowFormCountryData = {
+export type GetV1CountriesCountryCodeFormData = {
   body?: never;
   headers: {
     /**
@@ -15889,7 +16759,7 @@ export type GetShowFormCountryData = {
   url: '/v1/countries/{country_code}/{form}';
 };
 
-export type GetShowFormCountryErrors = {
+export type GetV1CountriesCountryCodeFormErrors = {
   /**
    * Bad Request
    */
@@ -15912,20 +16782,20 @@ export type GetShowFormCountryErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowFormCountryError =
-  GetShowFormCountryErrors[keyof GetShowFormCountryErrors];
+export type GetV1CountriesCountryCodeFormError =
+  GetV1CountriesCountryCodeFormErrors[keyof GetV1CountriesCountryCodeFormErrors];
 
-export type GetShowFormCountryResponses = {
+export type GetV1CountriesCountryCodeFormResponses = {
   /**
    * Success
    */
   200: CountryFormResponse;
 };
 
-export type GetShowFormCountryResponse =
-  GetShowFormCountryResponses[keyof GetShowFormCountryResponses];
+export type GetV1CountriesCountryCodeFormResponse =
+  GetV1CountriesCountryCodeFormResponses[keyof GetV1CountriesCountryCodeFormResponses];
 
-export type GetShowFileData = {
+export type GetV1FilesIdData = {
   body?: never;
   path: {
     /**
@@ -15937,7 +16807,7 @@ export type GetShowFileData = {
   url: '/v1/files/{id}';
 };
 
-export type GetShowFileErrors = {
+export type GetV1FilesIdErrors = {
   /**
    * Unauthorized
    */
@@ -15952,19 +16822,19 @@ export type GetShowFileErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowFileError = GetShowFileErrors[keyof GetShowFileErrors];
+export type GetV1FilesIdError = GetV1FilesIdErrors[keyof GetV1FilesIdErrors];
 
-export type GetShowFileResponses = {
+export type GetV1FilesIdResponses = {
   /**
    * Success
    */
   200: DownloadFileResponse;
 };
 
-export type GetShowFileResponse =
-  GetShowFileResponses[keyof GetShowFileResponses];
+export type GetV1FilesIdResponse =
+  GetV1FilesIdResponses[keyof GetV1FilesIdResponses];
 
-export type GetShowContractAmendmentData = {
+export type GetV1ContractAmendmentsIdData = {
   body?: never;
   headers: {
     /**
@@ -15985,7 +16855,7 @@ export type GetShowContractAmendmentData = {
   url: '/v1/contract-amendments/{id}';
 };
 
-export type GetShowContractAmendmentErrors = {
+export type GetV1ContractAmendmentsIdErrors = {
   /**
    * Unauthorized
    */
@@ -16000,20 +16870,84 @@ export type GetShowContractAmendmentErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowContractAmendmentError =
-  GetShowContractAmendmentErrors[keyof GetShowContractAmendmentErrors];
+export type GetV1ContractAmendmentsIdError =
+  GetV1ContractAmendmentsIdErrors[keyof GetV1ContractAmendmentsIdErrors];
 
-export type GetShowContractAmendmentResponses = {
+export type GetV1ContractAmendmentsIdResponses = {
   /**
    * Success
    */
   200: ContractAmendmentResponse;
 };
 
-export type GetShowContractAmendmentResponse =
-  GetShowContractAmendmentResponses[keyof GetShowContractAmendmentResponses];
+export type GetV1ContractAmendmentsIdResponse =
+  GetV1ContractAmendmentsIdResponses[keyof GetV1ContractAmendmentsIdResponses];
 
-export type GetIndexCompanyManagerData = {
+export type PutV2EmploymentsEmploymentIdBankAccountDetailsData = {
+  /**
+   * Employment bank account details params
+   */
+  body?: EmploymentBankAccountDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Version of the bank_account_details form schema
+     */
+    bank_account_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v2/employments/{employment_id}/bank_account_details';
+};
+
+export type PutV2EmploymentsEmploymentIdBankAccountDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdBankAccountDetailsError =
+  PutV2EmploymentsEmploymentIdBankAccountDetailsErrors[keyof PutV2EmploymentsEmploymentIdBankAccountDetailsErrors];
+
+export type PutV2EmploymentsEmploymentIdBankAccountDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdBankAccountDetailsResponse =
+  PutV2EmploymentsEmploymentIdBankAccountDetailsResponses[keyof PutV2EmploymentsEmploymentIdBankAccountDetailsResponses];
+
+export type GetV1CompanyManagersData = {
   body?: never;
   headers: {
     /**
@@ -16042,7 +16976,7 @@ export type GetIndexCompanyManagerData = {
   url: '/v1/company-managers';
 };
 
-export type GetIndexCompanyManagerErrors = {
+export type GetV1CompanyManagersErrors = {
   /**
    * Bad Request
    */
@@ -16065,20 +16999,20 @@ export type GetIndexCompanyManagerErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetIndexCompanyManagerError =
-  GetIndexCompanyManagerErrors[keyof GetIndexCompanyManagerErrors];
+export type GetV1CompanyManagersError =
+  GetV1CompanyManagersErrors[keyof GetV1CompanyManagersErrors];
 
-export type GetIndexCompanyManagerResponses = {
+export type GetV1CompanyManagersResponses = {
   /**
    * Success
    */
   200: CompanyManagersResponse;
 };
 
-export type GetIndexCompanyManagerResponse =
-  GetIndexCompanyManagerResponses[keyof GetIndexCompanyManagerResponses];
+export type GetV1CompanyManagersResponse =
+  GetV1CompanyManagersResponses[keyof GetV1CompanyManagersResponses];
 
-export type PostCreateCompanyManagerData = {
+export type PostV1CompanyManagersData = {
   /**
    * Company Manager params
    */
@@ -16105,7 +17039,7 @@ export type PostCreateCompanyManagerData = {
   url: '/v1/company-managers';
 };
 
-export type PostCreateCompanyManagerErrors = {
+export type PostV1CompanyManagersErrors = {
   /**
    * Bad Request
    */
@@ -16128,20 +17062,20 @@ export type PostCreateCompanyManagerErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateCompanyManagerError =
-  PostCreateCompanyManagerErrors[keyof PostCreateCompanyManagerErrors];
+export type PostV1CompanyManagersError =
+  PostV1CompanyManagersErrors[keyof PostV1CompanyManagersErrors];
 
-export type PostCreateCompanyManagerResponses = {
+export type PostV1CompanyManagersResponses = {
   /**
    * Success
    */
   201: CompanyManagerData;
 };
 
-export type PostCreateCompanyManagerResponse =
-  PostCreateCompanyManagerResponses[keyof PostCreateCompanyManagerResponses];
+export type PostV1CompanyManagersResponse =
+  PostV1CompanyManagersResponses[keyof PostV1CompanyManagersResponses];
 
-export type GetIndexCountryData = {
+export type GetV1CostCalculatorCountriesData = {
   body?: never;
   path?: never;
   query?: {
@@ -16153,17 +17087,17 @@ export type GetIndexCountryData = {
   url: '/v1/cost-calculator/countries';
 };
 
-export type GetIndexCountryResponses = {
+export type GetV1CostCalculatorCountriesResponses = {
   /**
    * Success
    */
   200: CostCalculatorListCountryResponse;
 };
 
-export type GetIndexCountryResponse =
-  GetIndexCountryResponses[keyof GetIndexCountryResponses];
+export type GetV1CostCalculatorCountriesResponse =
+  GetV1CostCalculatorCountriesResponses[keyof GetV1CostCalculatorCountriesResponses];
 
-export type PostDeclineIdentityVerificationData = {
+export type PostV1IdentityVerificationEmploymentIdDeclineData = {
   body?: never;
   path: {
     /**
@@ -16175,7 +17109,7 @@ export type PostDeclineIdentityVerificationData = {
   url: '/v1/identity-verification/{employment_id}/decline';
 };
 
-export type PostDeclineIdentityVerificationErrors = {
+export type PostV1IdentityVerificationEmploymentIdDeclineErrors = {
   /**
    * Unauthorized
    */
@@ -16190,20 +17124,20 @@ export type PostDeclineIdentityVerificationErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostDeclineIdentityVerificationError =
-  PostDeclineIdentityVerificationErrors[keyof PostDeclineIdentityVerificationErrors];
+export type PostV1IdentityVerificationEmploymentIdDeclineError =
+  PostV1IdentityVerificationEmploymentIdDeclineErrors[keyof PostV1IdentityVerificationEmploymentIdDeclineErrors];
 
-export type PostDeclineIdentityVerificationResponses = {
+export type PostV1IdentityVerificationEmploymentIdDeclineResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PostDeclineIdentityVerificationResponse =
-  PostDeclineIdentityVerificationResponses[keyof PostDeclineIdentityVerificationResponses];
+export type PostV1IdentityVerificationEmploymentIdDeclineResponse =
+  PostV1IdentityVerificationEmploymentIdDeclineResponses[keyof PostV1IdentityVerificationEmploymentIdDeclineResponses];
 
-export type GetShowEngagementAgreementDetailsCountryData = {
+export type GetV1CountriesCountryCodeEngagementAgreementDetailsData = {
   body?: never;
   path: {
     /**
@@ -16215,7 +17149,7 @@ export type GetShowEngagementAgreementDetailsCountryData = {
   url: '/v1/countries/{country_code}/engagement-agreement-details';
 };
 
-export type GetShowEngagementAgreementDetailsCountryErrors = {
+export type GetV1CountriesCountryCodeEngagementAgreementDetailsErrors = {
   /**
    * Bad Request
    */
@@ -16238,20 +17172,20 @@ export type GetShowEngagementAgreementDetailsCountryErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowEngagementAgreementDetailsCountryError =
-  GetShowEngagementAgreementDetailsCountryErrors[keyof GetShowEngagementAgreementDetailsCountryErrors];
+export type GetV1CountriesCountryCodeEngagementAgreementDetailsError =
+  GetV1CountriesCountryCodeEngagementAgreementDetailsErrors[keyof GetV1CountriesCountryCodeEngagementAgreementDetailsErrors];
 
-export type GetShowEngagementAgreementDetailsCountryResponses = {
+export type GetV1CountriesCountryCodeEngagementAgreementDetailsResponses = {
   /**
    * Success
    */
   200: EngagementAgreementDetailsResponse;
 };
 
-export type GetShowEngagementAgreementDetailsCountryResponse =
-  GetShowEngagementAgreementDetailsCountryResponses[keyof GetShowEngagementAgreementDetailsCountryResponses];
+export type GetV1CountriesCountryCodeEngagementAgreementDetailsResponse =
+  GetV1CountriesCountryCodeEngagementAgreementDetailsResponses[keyof GetV1CountriesCountryCodeEngagementAgreementDetailsResponses];
 
-export type GetIndexBillingDocumentData = {
+export type GetV1BillingDocumentsData = {
   body?: never;
   headers: {
     /**
@@ -16280,7 +17214,7 @@ export type GetIndexBillingDocumentData = {
   url: '/v1/billing-documents';
 };
 
-export type GetIndexBillingDocumentErrors = {
+export type GetV1BillingDocumentsErrors = {
   /**
    * Unauthorized
    */
@@ -16295,20 +17229,20 @@ export type GetIndexBillingDocumentErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexBillingDocumentError =
-  GetIndexBillingDocumentErrors[keyof GetIndexBillingDocumentErrors];
+export type GetV1BillingDocumentsError =
+  GetV1BillingDocumentsErrors[keyof GetV1BillingDocumentsErrors];
 
-export type GetIndexBillingDocumentResponses = {
+export type GetV1BillingDocumentsResponses = {
   /**
    * Success
    */
   200: BillingDocumentsResponse;
 };
 
-export type GetIndexBillingDocumentResponse =
-  GetIndexBillingDocumentResponses[keyof GetIndexBillingDocumentResponses];
+export type GetV1BillingDocumentsResponse =
+  GetV1BillingDocumentsResponses[keyof GetV1BillingDocumentsResponses];
 
-export type DeleteDeleteWebhookCallbackData = {
+export type DeleteV1WebhookCallbacksIdData = {
   body?: never;
   headers: {
     /**
@@ -16329,7 +17263,7 @@ export type DeleteDeleteWebhookCallbackData = {
   url: '/v1/webhook-callbacks/{id}';
 };
 
-export type DeleteDeleteWebhookCallbackErrors = {
+export type DeleteV1WebhookCallbacksIdErrors = {
   /**
    * Unauthorized
    */
@@ -16344,20 +17278,20 @@ export type DeleteDeleteWebhookCallbackErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type DeleteDeleteWebhookCallbackError =
-  DeleteDeleteWebhookCallbackErrors[keyof DeleteDeleteWebhookCallbackErrors];
+export type DeleteV1WebhookCallbacksIdError =
+  DeleteV1WebhookCallbacksIdErrors[keyof DeleteV1WebhookCallbacksIdErrors];
 
-export type DeleteDeleteWebhookCallbackResponses = {
+export type DeleteV1WebhookCallbacksIdResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type DeleteDeleteWebhookCallbackResponse =
-  DeleteDeleteWebhookCallbackResponses[keyof DeleteDeleteWebhookCallbackResponses];
+export type DeleteV1WebhookCallbacksIdResponse =
+  DeleteV1WebhookCallbacksIdResponses[keyof DeleteV1WebhookCallbacksIdResponses];
 
-export type PatchUpdateWebhookCallbackData = {
+export type PatchV1WebhookCallbacksIdData = {
   /**
    * WebhookCallback
    */
@@ -16372,7 +17306,7 @@ export type PatchUpdateWebhookCallbackData = {
   url: '/v1/webhook-callbacks/{id}';
 };
 
-export type PatchUpdateWebhookCallbackErrors = {
+export type PatchV1WebhookCallbacksIdErrors = {
   /**
    * Unauthorized
    */
@@ -16387,20 +17321,64 @@ export type PatchUpdateWebhookCallbackErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateWebhookCallbackError =
-  PatchUpdateWebhookCallbackErrors[keyof PatchUpdateWebhookCallbackErrors];
+export type PatchV1WebhookCallbacksIdError =
+  PatchV1WebhookCallbacksIdErrors[keyof PatchV1WebhookCallbacksIdErrors];
 
-export type PatchUpdateWebhookCallbackResponses = {
+export type PatchV1WebhookCallbacksIdResponses = {
   /**
    * Success
    */
   200: WebhookCallbackResponse;
 };
 
-export type PatchUpdateWebhookCallbackResponse =
-  PatchUpdateWebhookCallbackResponses[keyof PatchUpdateWebhookCallbackResponses];
+export type PatchV1WebhookCallbacksIdResponse =
+  PatchV1WebhookCallbacksIdResponses[keyof PatchV1WebhookCallbacksIdResponses];
 
-export type PutUpdateEmploymentPersonalDetailsData = {
+export type GetV1EmployeeTimesheetsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/employee/timesheets';
+};
+
+export type GetV1EmployeeTimesheetsErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetV1EmployeeTimesheetsError =
+  GetV1EmployeeTimesheetsErrors[keyof GetV1EmployeeTimesheetsErrors];
+
+export type GetV1EmployeeTimesheetsResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type GetV1EmployeeTimesheetsResponse =
+  GetV1EmployeeTimesheetsResponses[keyof GetV1EmployeeTimesheetsResponses];
+
+export type PutV1EmploymentsEmploymentIdPersonalDetailsData = {
   /**
    * Employment personal details params
    */
@@ -16415,7 +17393,7 @@ export type PutUpdateEmploymentPersonalDetailsData = {
   url: '/v1/employments/{employment_id}/personal_details';
 };
 
-export type PutUpdateEmploymentPersonalDetailsErrors = {
+export type PutV1EmploymentsEmploymentIdPersonalDetailsErrors = {
   /**
    * Bad Request
    */
@@ -16438,20 +17416,20 @@ export type PutUpdateEmploymentPersonalDetailsErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PutUpdateEmploymentPersonalDetailsError =
-  PutUpdateEmploymentPersonalDetailsErrors[keyof PutUpdateEmploymentPersonalDetailsErrors];
+export type PutV1EmploymentsEmploymentIdPersonalDetailsError =
+  PutV1EmploymentsEmploymentIdPersonalDetailsErrors[keyof PutV1EmploymentsEmploymentIdPersonalDetailsErrors];
 
-export type PutUpdateEmploymentPersonalDetailsResponses = {
+export type PutV1EmploymentsEmploymentIdPersonalDetailsResponses = {
   /**
    * Success
    */
   200: EmploymentResponse;
 };
 
-export type PutUpdateEmploymentPersonalDetailsResponse =
-  PutUpdateEmploymentPersonalDetailsResponses[keyof PutUpdateEmploymentPersonalDetailsResponses];
+export type PutV1EmploymentsEmploymentIdPersonalDetailsResponse =
+  PutV1EmploymentsEmploymentIdPersonalDetailsResponses[keyof PutV1EmploymentsEmploymentIdPersonalDetailsResponses];
 
-export type GetIndexTravelLetterRequestData = {
+export type GetV1TravelLetterRequestsData = {
   body?: never;
   path?: never;
   query?: {
@@ -16493,7 +17471,7 @@ export type GetIndexTravelLetterRequestData = {
   url: '/v1/travel-letter-requests';
 };
 
-export type GetIndexTravelLetterRequestErrors = {
+export type GetV1TravelLetterRequestsErrors = {
   /**
    * Not Found
    */
@@ -16504,20 +17482,20 @@ export type GetIndexTravelLetterRequestErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexTravelLetterRequestError =
-  GetIndexTravelLetterRequestErrors[keyof GetIndexTravelLetterRequestErrors];
+export type GetV1TravelLetterRequestsError =
+  GetV1TravelLetterRequestsErrors[keyof GetV1TravelLetterRequestsErrors];
 
-export type GetIndexTravelLetterRequestResponses = {
+export type GetV1TravelLetterRequestsResponses = {
   /**
    * Success
    */
   200: ListTravelLettersResponse;
 };
 
-export type GetIndexTravelLetterRequestResponse =
-  GetIndexTravelLetterRequestResponses[keyof GetIndexTravelLetterRequestResponses];
+export type GetV1TravelLetterRequestsResponse =
+  GetV1TravelLetterRequestsResponses[keyof GetV1TravelLetterRequestsResponses];
 
-export type GetIndexBenefitRenewalRequestData = {
+export type GetV1BenefitRenewalRequestsData = {
   body?: never;
   headers: {
     /**
@@ -16542,7 +17520,7 @@ export type GetIndexBenefitRenewalRequestData = {
   url: '/v1/benefit-renewal-requests';
 };
 
-export type GetIndexBenefitRenewalRequestErrors = {
+export type GetV1BenefitRenewalRequestsErrors = {
   /**
    * Bad Request
    */
@@ -16565,20 +17543,20 @@ export type GetIndexBenefitRenewalRequestErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetIndexBenefitRenewalRequestError =
-  GetIndexBenefitRenewalRequestErrors[keyof GetIndexBenefitRenewalRequestErrors];
+export type GetV1BenefitRenewalRequestsError =
+  GetV1BenefitRenewalRequestsErrors[keyof GetV1BenefitRenewalRequestsErrors];
 
-export type GetIndexBenefitRenewalRequestResponses = {
+export type GetV1BenefitRenewalRequestsResponses = {
   /**
    * Success
    */
   200: BenefitRenewalRequestsListBenefitRenewalRequestResponse;
 };
 
-export type GetIndexBenefitRenewalRequestResponse =
-  GetIndexBenefitRenewalRequestResponses[keyof GetIndexBenefitRenewalRequestResponses];
+export type GetV1BenefitRenewalRequestsResponse =
+  GetV1BenefitRenewalRequestsResponses[keyof GetV1BenefitRenewalRequestsResponses];
 
-export type PostCreateWebhookCallbackData = {
+export type PostV1WebhookCallbacksData = {
   /**
    * WebhookCallback
    */
@@ -16597,7 +17575,7 @@ export type PostCreateWebhookCallbackData = {
   url: '/v1/webhook-callbacks';
 };
 
-export type PostCreateWebhookCallbackErrors = {
+export type PostV1WebhookCallbacksErrors = {
   /**
    * Unauthorized
    */
@@ -16612,20 +17590,20 @@ export type PostCreateWebhookCallbackErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostCreateWebhookCallbackError =
-  PostCreateWebhookCallbackErrors[keyof PostCreateWebhookCallbackErrors];
+export type PostV1WebhookCallbacksError =
+  PostV1WebhookCallbacksErrors[keyof PostV1WebhookCallbacksErrors];
 
-export type PostCreateWebhookCallbackResponses = {
+export type PostV1WebhookCallbacksResponses = {
   /**
    * Success
    */
   200: WebhookCallbackResponse;
 };
 
-export type PostCreateWebhookCallbackResponse =
-  PostCreateWebhookCallbackResponses[keyof PostCreateWebhookCallbackResponses];
+export type PostV1WebhookCallbacksResponse =
+  PostV1WebhookCallbacksResponses[keyof PostV1WebhookCallbacksResponses];
 
-export type PostApproveTimesheetData = {
+export type PostV1TimesheetsTimesheetIdApproveData = {
   body?: never;
   path: {
     /**
@@ -16637,7 +17615,7 @@ export type PostApproveTimesheetData = {
   url: '/v1/timesheets/{timesheet_id}/approve';
 };
 
-export type PostApproveTimesheetErrors = {
+export type PostV1TimesheetsTimesheetIdApproveErrors = {
   /**
    * Unauthorized
    */
@@ -16652,20 +17630,20 @@ export type PostApproveTimesheetErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostApproveTimesheetError =
-  PostApproveTimesheetErrors[keyof PostApproveTimesheetErrors];
+export type PostV1TimesheetsTimesheetIdApproveError =
+  PostV1TimesheetsTimesheetIdApproveErrors[keyof PostV1TimesheetsTimesheetIdApproveErrors];
 
-export type PostApproveTimesheetResponses = {
+export type PostV1TimesheetsTimesheetIdApproveResponses = {
   /**
    * Success
    */
   200: MinimalTimesheetResponse;
 };
 
-export type PostApproveTimesheetResponse =
-  PostApproveTimesheetResponses[keyof PostApproveTimesheetResponses];
+export type PostV1TimesheetsTimesheetIdApproveResponse =
+  PostV1TimesheetsTimesheetIdApproveResponses[keyof PostV1TimesheetsTimesheetIdApproveResponses];
 
-export type GetShowPayslipData = {
+export type GetV1PayslipsIdData = {
   body?: never;
   headers: {
     /**
@@ -16686,7 +17664,7 @@ export type GetShowPayslipData = {
   url: '/v1/payslips/{id}';
 };
 
-export type GetShowPayslipErrors = {
+export type GetV1PayslipsIdErrors = {
   /**
    * Bad Request
    */
@@ -16709,20 +17687,20 @@ export type GetShowPayslipErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowPayslipError =
-  GetShowPayslipErrors[keyof GetShowPayslipErrors];
+export type GetV1PayslipsIdError =
+  GetV1PayslipsIdErrors[keyof GetV1PayslipsIdErrors];
 
-export type GetShowPayslipResponses = {
+export type GetV1PayslipsIdResponses = {
   /**
    * Success
    */
   200: PayslipResponse;
 };
 
-export type GetShowPayslipResponse =
-  GetShowPayslipResponses[keyof GetShowPayslipResponses];
+export type GetV1PayslipsIdResponse =
+  GetV1PayslipsIdResponses[keyof GetV1PayslipsIdResponses];
 
-export type GetIndexLeavePoliciesSummaryData = {
+export type GetV1LeavePoliciesSummaryEmploymentIdData = {
   body?: never;
   path: {
     /**
@@ -16734,7 +17712,7 @@ export type GetIndexLeavePoliciesSummaryData = {
   url: '/v1/leave-policies/summary/{employment_id}';
 };
 
-export type GetIndexLeavePoliciesSummaryErrors = {
+export type GetV1LeavePoliciesSummaryEmploymentIdErrors = {
   /**
    * Unauthorized
    */
@@ -16749,20 +17727,64 @@ export type GetIndexLeavePoliciesSummaryErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexLeavePoliciesSummaryError =
-  GetIndexLeavePoliciesSummaryErrors[keyof GetIndexLeavePoliciesSummaryErrors];
+export type GetV1LeavePoliciesSummaryEmploymentIdError =
+  GetV1LeavePoliciesSummaryEmploymentIdErrors[keyof GetV1LeavePoliciesSummaryEmploymentIdErrors];
 
-export type GetIndexLeavePoliciesSummaryResponses = {
+export type GetV1LeavePoliciesSummaryEmploymentIdResponses = {
   /**
    * Success
    */
   200: ListLeavePoliciesSummaryResponse;
 };
 
-export type GetIndexLeavePoliciesSummaryResponse =
-  GetIndexLeavePoliciesSummaryResponses[keyof GetIndexLeavePoliciesSummaryResponses];
+export type GetV1LeavePoliciesSummaryEmploymentIdResponse =
+  GetV1LeavePoliciesSummaryEmploymentIdResponses[keyof GetV1LeavePoliciesSummaryEmploymentIdResponses];
 
-export type GetIndexCompanyDepartmentData = {
+export type GetV1EmployeeExpenseCategoriesData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Include parent (non-selectable) categories in addition to selectable leaves
+     */
+    include_parents?: boolean;
+    /**
+     * Expense ID (slug) whose category should be included in the result, even if it is not selectable by default
+     */
+    expense_id?: string;
+  };
+  url: '/v1/employee/expense-categories';
+};
+
+export type GetV1EmployeeExpenseCategoriesErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetV1EmployeeExpenseCategoriesError =
+  GetV1EmployeeExpenseCategoriesErrors[keyof GetV1EmployeeExpenseCategoriesErrors];
+
+export type GetV1EmployeeExpenseCategoriesResponses = {
+  /**
+   * Success
+   */
+  200: ListExpenseCategoriesResponse;
+};
+
+export type GetV1EmployeeExpenseCategoriesResponse =
+  GetV1EmployeeExpenseCategoriesResponses[keyof GetV1EmployeeExpenseCategoriesResponses];
+
+export type GetV1CompanyDepartmentsData = {
   body?: never;
   path?: never;
   query: {
@@ -16786,7 +17808,7 @@ export type GetIndexCompanyDepartmentData = {
   url: '/v1/company-departments';
 };
 
-export type GetIndexCompanyDepartmentErrors = {
+export type GetV1CompanyDepartmentsErrors = {
   /**
    * Not Found
    */
@@ -16797,20 +17819,20 @@ export type GetIndexCompanyDepartmentErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexCompanyDepartmentError =
-  GetIndexCompanyDepartmentErrors[keyof GetIndexCompanyDepartmentErrors];
+export type GetV1CompanyDepartmentsError =
+  GetV1CompanyDepartmentsErrors[keyof GetV1CompanyDepartmentsErrors];
 
-export type GetIndexCompanyDepartmentResponses = {
+export type GetV1CompanyDepartmentsResponses = {
   /**
    * Success
    */
   200: ListCompanyDepartmentsPaginatedResponse;
 };
 
-export type GetIndexCompanyDepartmentResponse =
-  GetIndexCompanyDepartmentResponses[keyof GetIndexCompanyDepartmentResponses];
+export type GetV1CompanyDepartmentsResponse =
+  GetV1CompanyDepartmentsResponses[keyof GetV1CompanyDepartmentsResponses];
 
-export type PostCreateCompanyDepartmentData = {
+export type PostV1CompanyDepartmentsData = {
   /**
    * Create Company Department request params
    */
@@ -16820,7 +17842,7 @@ export type PostCreateCompanyDepartmentData = {
   url: '/v1/company-departments';
 };
 
-export type PostCreateCompanyDepartmentErrors = {
+export type PostV1CompanyDepartmentsErrors = {
   /**
    * Not Found
    */
@@ -16831,20 +17853,20 @@ export type PostCreateCompanyDepartmentErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostCreateCompanyDepartmentError =
-  PostCreateCompanyDepartmentErrors[keyof PostCreateCompanyDepartmentErrors];
+export type PostV1CompanyDepartmentsError =
+  PostV1CompanyDepartmentsErrors[keyof PostV1CompanyDepartmentsErrors];
 
-export type PostCreateCompanyDepartmentResponses = {
+export type PostV1CompanyDepartmentsResponses = {
   /**
    * Created
    */
   201: CompanyDepartmentCreatedResponse;
 };
 
-export type PostCreateCompanyDepartmentResponse =
-  PostCreateCompanyDepartmentResponses[keyof PostCreateCompanyDepartmentResponses];
+export type PostV1CompanyDepartmentsResponse =
+  PostV1CompanyDepartmentsResponses[keyof PostV1CompanyDepartmentsResponses];
 
-export type PostDeclineCancellationRequestData = {
+export type PostV1TimeoffTimeoffIdCancelRequestDeclineData = {
   /**
    * Timeoff
    */
@@ -16859,7 +17881,7 @@ export type PostDeclineCancellationRequestData = {
   url: '/v1/timeoff/{timeoff_id}/cancel-request/decline';
 };
 
-export type PostDeclineCancellationRequestErrors = {
+export type PostV1TimeoffTimeoffIdCancelRequestDeclineErrors = {
   /**
    * Unauthorized
    */
@@ -16878,20 +17900,79 @@ export type PostDeclineCancellationRequestErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostDeclineCancellationRequestError =
-  PostDeclineCancellationRequestErrors[keyof PostDeclineCancellationRequestErrors];
+export type PostV1TimeoffTimeoffIdCancelRequestDeclineError =
+  PostV1TimeoffTimeoffIdCancelRequestDeclineErrors[keyof PostV1TimeoffTimeoffIdCancelRequestDeclineErrors];
 
-export type PostDeclineCancellationRequestResponses = {
+export type PostV1TimeoffTimeoffIdCancelRequestDeclineResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PostDeclineCancellationRequestResponse =
-  PostDeclineCancellationRequestResponses[keyof PostDeclineCancellationRequestResponses];
+export type PostV1TimeoffTimeoffIdCancelRequestDeclineResponse =
+  PostV1TimeoffTimeoffIdCancelRequestDeclineResponses[keyof PostV1TimeoffTimeoffIdCancelRequestDeclineResponses];
 
-export type GetShowSchemaData = {
+export type PutV2EmploymentsEmploymentIdAdministrativeDetailsData = {
+  /**
+   * Employment administrative details params
+   */
+  body?: EmploymentAdministrativeDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v2/employments/{employment_id}/administrative_details';
+};
+
+export type PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdAdministrativeDetailsError =
+  PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors[keyof PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors];
+
+export type PutV2EmploymentsEmploymentIdAdministrativeDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdAdministrativeDetailsResponse =
+  PutV2EmploymentsEmploymentIdAdministrativeDetailsResponses[keyof PutV2EmploymentsEmploymentIdAdministrativeDetailsResponses];
+
+export type GetV1EmploymentsEmploymentIdBenefitOffersSchemaData = {
   body?: never;
   path: {
     /**
@@ -16908,7 +17989,7 @@ export type GetShowSchemaData = {
   url: '/v1/employments/{employment_id}/benefit-offers/schema';
 };
 
-export type GetShowSchemaErrors = {
+export type GetV1EmploymentsEmploymentIdBenefitOffersSchemaErrors = {
   /**
    * Forbidden
    */
@@ -16923,19 +18004,20 @@ export type GetShowSchemaErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowSchemaError = GetShowSchemaErrors[keyof GetShowSchemaErrors];
+export type GetV1EmploymentsEmploymentIdBenefitOffersSchemaError =
+  GetV1EmploymentsEmploymentIdBenefitOffersSchemaErrors[keyof GetV1EmploymentsEmploymentIdBenefitOffersSchemaErrors];
 
-export type GetShowSchemaResponses = {
+export type GetV1EmploymentsEmploymentIdBenefitOffersSchemaResponses = {
   /**
    * Success
    */
   200: UnifiedEmploymentsBenefitOffersJsonSchemaResponse;
 };
 
-export type GetShowSchemaResponse =
-  GetShowSchemaResponses[keyof GetShowSchemaResponses];
+export type GetV1EmploymentsEmploymentIdBenefitOffersSchemaResponse =
+  GetV1EmploymentsEmploymentIdBenefitOffersSchemaResponses[keyof GetV1EmploymentsEmploymentIdBenefitOffersSchemaResponses];
 
-export type PostCreateEligibilityQuestionnaireData = {
+export type PostV1ContractorsEligibilityQuestionnaireData = {
   /**
    * Eligibility questionnaire submission
    */
@@ -16950,7 +18032,7 @@ export type PostCreateEligibilityQuestionnaireData = {
   url: '/v1/contractors/eligibility-questionnaire';
 };
 
-export type PostCreateEligibilityQuestionnaireErrors = {
+export type PostV1ContractorsEligibilityQuestionnaireErrors = {
   /**
    * Unauthorized
    */
@@ -16969,20 +18051,55 @@ export type PostCreateEligibilityQuestionnaireErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostCreateEligibilityQuestionnaireError =
-  PostCreateEligibilityQuestionnaireErrors[keyof PostCreateEligibilityQuestionnaireErrors];
+export type PostV1ContractorsEligibilityQuestionnaireError =
+  PostV1ContractorsEligibilityQuestionnaireErrors[keyof PostV1ContractorsEligibilityQuestionnaireErrors];
 
-export type PostCreateEligibilityQuestionnaireResponses = {
+export type PostV1ContractorsEligibilityQuestionnaireResponses = {
   /**
    * Questionnaire submitted successfully
    */
   201: EligibilityQuestionnaireResponse;
 };
 
-export type PostCreateEligibilityQuestionnaireResponse =
-  PostCreateEligibilityQuestionnaireResponses[keyof PostCreateEligibilityQuestionnaireResponses];
+export type PostV1ContractorsEligibilityQuestionnaireResponse =
+  PostV1ContractorsEligibilityQuestionnaireResponses[keyof PostV1ContractorsEligibilityQuestionnaireResponses];
 
-export type GetIndexTimesheetData = {
+export type GetV1EmployeePersonalInformationData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/v1/employee/personal-information';
+};
+
+export type GetV1EmployeePersonalInformationErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetV1EmployeePersonalInformationError =
+  GetV1EmployeePersonalInformationErrors[keyof GetV1EmployeePersonalInformationErrors];
+
+export type GetV1EmployeePersonalInformationResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type GetV1EmployeePersonalInformationResponse =
+  GetV1EmployeePersonalInformationResponses[keyof GetV1EmployeePersonalInformationResponses];
+
+export type GetV1TimesheetsData = {
   body?: never;
   path?: never;
   query?: {
@@ -17010,7 +18127,7 @@ export type GetIndexTimesheetData = {
   url: '/v1/timesheets';
 };
 
-export type GetIndexTimesheetErrors = {
+export type GetV1TimesheetsErrors = {
   /**
    * Unauthorized
    */
@@ -17025,20 +18142,20 @@ export type GetIndexTimesheetErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexTimesheetError =
-  GetIndexTimesheetErrors[keyof GetIndexTimesheetErrors];
+export type GetV1TimesheetsError =
+  GetV1TimesheetsErrors[keyof GetV1TimesheetsErrors];
 
-export type GetIndexTimesheetResponses = {
+export type GetV1TimesheetsResponses = {
   /**
    * Success
    */
   200: ListTimesheetsResponse;
 };
 
-export type GetIndexTimesheetResponse =
-  GetIndexTimesheetResponses[keyof GetIndexTimesheetResponses];
+export type GetV1TimesheetsResponse =
+  GetV1TimesheetsResponses[keyof GetV1TimesheetsResponses];
 
-export type PostCreateLegalEntityCompanyData = {
+export type PostV1SandboxCompaniesCompanyIdLegalEntitiesData = {
   /**
    * Create legal entity params
    */
@@ -17067,7 +18184,7 @@ export type PostCreateLegalEntityCompanyData = {
   url: '/v1/sandbox/companies/{company_id}/legal-entities';
 };
 
-export type PostCreateLegalEntityCompanyErrors = {
+export type PostV1SandboxCompaniesCompanyIdLegalEntitiesErrors = {
   /**
    * Bad Request
    */
@@ -17090,10 +18207,10 @@ export type PostCreateLegalEntityCompanyErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateLegalEntityCompanyError =
-  PostCreateLegalEntityCompanyErrors[keyof PostCreateLegalEntityCompanyErrors];
+export type PostV1SandboxCompaniesCompanyIdLegalEntitiesError =
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesErrors[keyof PostV1SandboxCompaniesCompanyIdLegalEntitiesErrors];
 
-export type PostCreateLegalEntityCompanyResponses = {
+export type PostV1SandboxCompaniesCompanyIdLegalEntitiesResponses = {
   /**
    * Legal entity created
    */
@@ -17115,10 +18232,10 @@ export type PostCreateLegalEntityCompanyResponses = {
   };
 };
 
-export type PostCreateLegalEntityCompanyResponse =
-  PostCreateLegalEntityCompanyResponses[keyof PostCreateLegalEntityCompanyResponses];
+export type PostV1SandboxCompaniesCompanyIdLegalEntitiesResponse =
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesResponses[keyof PostV1SandboxCompaniesCompanyIdLegalEntitiesResponses];
 
-export type GetShowEmploymentData = {
+export type GetV1EmploymentsEmploymentIdData = {
   body?: never;
   headers: {
     /**
@@ -17144,7 +18261,7 @@ export type GetShowEmploymentData = {
   url: '/v1/employments/{employment_id}';
 };
 
-export type GetShowEmploymentErrors = {
+export type GetV1EmploymentsEmploymentIdErrors = {
   /**
    * Bad Request
    */
@@ -17167,20 +18284,20 @@ export type GetShowEmploymentErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowEmploymentError =
-  GetShowEmploymentErrors[keyof GetShowEmploymentErrors];
+export type GetV1EmploymentsEmploymentIdError =
+  GetV1EmploymentsEmploymentIdErrors[keyof GetV1EmploymentsEmploymentIdErrors];
 
-export type GetShowEmploymentResponses = {
+export type GetV1EmploymentsEmploymentIdResponses = {
   /**
    * Success
    */
   200: EmploymentShowResponse;
 };
 
-export type GetShowEmploymentResponse =
-  GetShowEmploymentResponses[keyof GetShowEmploymentResponses];
+export type GetV1EmploymentsEmploymentIdResponse =
+  GetV1EmploymentsEmploymentIdResponses[keyof GetV1EmploymentsEmploymentIdResponses];
 
-export type PatchUpdateEmployment2Data = {
+export type PatchV1EmploymentsEmploymentId2Data = {
   /**
    * Employment params
    */
@@ -17249,7 +18366,7 @@ export type PatchUpdateEmployment2Data = {
   url: '/v1/employments/{employment_id}';
 };
 
-export type PatchUpdateEmployment2Errors = {
+export type PatchV1EmploymentsEmploymentId2Errors = {
   /**
    * Bad Request
    */
@@ -17272,20 +18389,20 @@ export type PatchUpdateEmployment2Errors = {
   429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateEmployment2Error =
-  PatchUpdateEmployment2Errors[keyof PatchUpdateEmployment2Errors];
+export type PatchV1EmploymentsEmploymentId2Error =
+  PatchV1EmploymentsEmploymentId2Errors[keyof PatchV1EmploymentsEmploymentId2Errors];
 
-export type PatchUpdateEmployment2Responses = {
+export type PatchV1EmploymentsEmploymentId2Responses = {
   /**
    * Success
    */
   200: EmploymentResponse;
 };
 
-export type PatchUpdateEmployment2Response =
-  PatchUpdateEmployment2Responses[keyof PatchUpdateEmployment2Responses];
+export type PatchV1EmploymentsEmploymentId2Response =
+  PatchV1EmploymentsEmploymentId2Responses[keyof PatchV1EmploymentsEmploymentId2Responses];
 
-export type PatchUpdateEmploymentData = {
+export type PatchV1EmploymentsEmploymentIdData = {
   /**
    * Employment params
    */
@@ -17354,7 +18471,7 @@ export type PatchUpdateEmploymentData = {
   url: '/v1/employments/{employment_id}';
 };
 
-export type PatchUpdateEmploymentErrors = {
+export type PatchV1EmploymentsEmploymentIdErrors = {
   /**
    * Bad Request
    */
@@ -17377,20 +18494,20 @@ export type PatchUpdateEmploymentErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateEmploymentError =
-  PatchUpdateEmploymentErrors[keyof PatchUpdateEmploymentErrors];
+export type PatchV1EmploymentsEmploymentIdError =
+  PatchV1EmploymentsEmploymentIdErrors[keyof PatchV1EmploymentsEmploymentIdErrors];
 
-export type PatchUpdateEmploymentResponses = {
+export type PatchV1EmploymentsEmploymentIdResponses = {
   /**
    * Success
    */
   200: EmploymentResponse;
 };
 
-export type PatchUpdateEmploymentResponse =
-  PatchUpdateEmploymentResponses[keyof PatchUpdateEmploymentResponses];
+export type PatchV1EmploymentsEmploymentIdResponse =
+  PatchV1EmploymentsEmploymentIdResponses[keyof PatchV1EmploymentsEmploymentIdResponses];
 
-export type GetListUsersScimData = {
+export type GetV1ScimV2UsersData = {
   body?: never;
   path?: never;
   query?: {
@@ -17410,7 +18527,7 @@ export type GetListUsersScimData = {
   url: '/v1/scim/v2/Users';
 };
 
-export type GetListUsersScimErrors = {
+export type GetV1ScimV2UsersErrors = {
   /**
    * Bad Request
    */
@@ -17429,20 +18546,20 @@ export type GetListUsersScimErrors = {
   404: IntegrationsScimErrorResponse;
 };
 
-export type GetListUsersScimError =
-  GetListUsersScimErrors[keyof GetListUsersScimErrors];
+export type GetV1ScimV2UsersError =
+  GetV1ScimV2UsersErrors[keyof GetV1ScimV2UsersErrors];
 
-export type GetListUsersScimResponses = {
+export type GetV1ScimV2UsersResponses = {
   /**
    * Success
    */
   200: IntegrationsScimUserListResponse;
 };
 
-export type GetListUsersScimResponse =
-  GetListUsersScimResponses[keyof GetListUsersScimResponses];
+export type GetV1ScimV2UsersResponse =
+  GetV1ScimV2UsersResponses[keyof GetV1ScimV2UsersResponses];
 
-export type GetIndexPayrollCalendarData = {
+export type GetV1PayrollCalendarsCycleData = {
   body?: never;
   path: {
     /**
@@ -17463,7 +18580,7 @@ export type GetIndexPayrollCalendarData = {
   url: '/v1/payroll-calendars/{cycle}';
 };
 
-export type GetIndexPayrollCalendarErrors = {
+export type GetV1PayrollCalendarsCycleErrors = {
   /**
    * Unauthorized
    */
@@ -17478,89 +18595,169 @@ export type GetIndexPayrollCalendarErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexPayrollCalendarError =
-  GetIndexPayrollCalendarErrors[keyof GetIndexPayrollCalendarErrors];
+export type GetV1PayrollCalendarsCycleError =
+  GetV1PayrollCalendarsCycleErrors[keyof GetV1PayrollCalendarsCycleErrors];
 
-export type GetIndexPayrollCalendarResponses = {
+export type GetV1PayrollCalendarsCycleResponses = {
   /**
    * Success
    */
   200: PayrollCalendarsResponse;
 };
 
-export type GetIndexPayrollCalendarResponse =
-  GetIndexPayrollCalendarResponses[keyof GetIndexPayrollCalendarResponses];
+export type GetV1PayrollCalendarsCycleResponse =
+  GetV1PayrollCalendarsCycleResponses[keyof GetV1PayrollCalendarsCycleResponses];
 
-export type GetShowAdministrativeDetailsData = {
-  body?: never;
-  path: {
-    /**
-     * Company ID
-     */
-    company_id: UuidSlug;
-    /**
-     * Legal entity ID
-     */
-    legal_entity_id: UuidSlug;
+export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Company ID
+       */
+      company_id: UuidSlug;
+      /**
+       * Legal entity ID
+       */
+      legal_entity_id: UuidSlug;
+    };
+    query?: never;
+    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details';
   };
-  query?: never;
-  url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details';
-};
 
-export type GetShowAdministrativeDetailsErrors = {
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-};
+export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors =
+  {
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+  };
 
-export type GetShowAdministrativeDetailsError =
-  GetShowAdministrativeDetailsErrors[keyof GetShowAdministrativeDetailsErrors];
+export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsError =
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors[keyof GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors];
 
-export type GetShowAdministrativeDetailsResponses = {
-  /**
-   * ShowLegalEntityAdministrativeDetailsResponse
-   *
-   * Country specific json schema driven administrative details for legal entities
-   */
-  200: {
-    data: {
-      [key: string]: unknown;
+export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses =
+  {
+    /**
+     * ShowLegalEntityAdministrativeDetailsResponse
+     *
+     * Country specific json schema driven administrative details for legal entities
+     */
+    200: {
+      data: {
+        [key: string]: unknown;
+      };
     };
   };
-};
 
-export type GetShowAdministrativeDetailsResponse =
-  GetShowAdministrativeDetailsResponses[keyof GetShowAdministrativeDetailsResponses];
+export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponse =
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses[keyof GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses];
 
-export type PutUpdateAdministrativeDetailsData = {
+export type PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsData =
+  {
+    /**
+     * Legal entity administrative details params
+     */
+    body?: AdministrativeDetailsParams;
+    path: {
+      /**
+       * Company ID
+       */
+      company_id: UuidSlug;
+      /**
+       * Legal entity ID
+       */
+      legal_entity_id: UuidSlug;
+    };
+    query?: never;
+    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details';
+  };
+
+export type PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors =
+  {
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Conflict
+     */
+    409: ConflictResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+    /**
+     * Unprocessable Entity
+     */
+    429: TooManyRequestsResponse;
+  };
+
+export type PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsError =
+  PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors[keyof PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors];
+
+export type PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses =
+  {
+    /**
+     * ShowLegalEntityAdministrativeDetailsResponse
+     *
+     * Country specific json schema driven administrative details for legal entities
+     */
+    200: {
+      data: {
+        [key: string]: unknown;
+      };
+    };
+  };
+
+export type PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponse =
+  PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses[keyof PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses];
+
+export type PutV2EmploymentsEmploymentIdContractDetailsData = {
   /**
-   * Legal entity administrative details params
+   * Employment contract details params
    */
-  body?: AdministrativeDetailsParams;
+  body?: EmploymentContractDetailsParams;
   path: {
     /**
-     * Company ID
+     * Employment ID
      */
-    company_id: UuidSlug;
-    /**
-     * Legal entity ID
-     */
-    legal_entity_id: UuidSlug;
+    employment_id: string;
   };
-  query?: never;
-  url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details';
+  query?: {
+    /**
+     * Version of the contract_details form schema
+     */
+    contract_details_json_schema_version?: number | 'latest';
+    /**
+     * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
+     */
+    skip_benefits?: boolean;
+  };
+  url: '/v2/employments/{employment_id}/contract_details';
 };
 
-export type PutUpdateAdministrativeDetailsErrors = {
+export type PutV2EmploymentsEmploymentIdContractDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
   /**
    * Unauthorized
    */
   401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
   /**
    * Not Found
    */
@@ -17579,26 +18776,20 @@ export type PutUpdateAdministrativeDetailsErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PutUpdateAdministrativeDetailsError =
-  PutUpdateAdministrativeDetailsErrors[keyof PutUpdateAdministrativeDetailsErrors];
+export type PutV2EmploymentsEmploymentIdContractDetailsError =
+  PutV2EmploymentsEmploymentIdContractDetailsErrors[keyof PutV2EmploymentsEmploymentIdContractDetailsErrors];
 
-export type PutUpdateAdministrativeDetailsResponses = {
+export type PutV2EmploymentsEmploymentIdContractDetailsResponses = {
   /**
-   * ShowLegalEntityAdministrativeDetailsResponse
-   *
-   * Country specific json schema driven administrative details for legal entities
+   * Success
    */
-  200: {
-    data: {
-      [key: string]: unknown;
-    };
-  };
+  200: EmploymentResponse;
 };
 
-export type PutUpdateAdministrativeDetailsResponse =
-  PutUpdateAdministrativeDetailsResponses[keyof PutUpdateAdministrativeDetailsResponses];
+export type PutV2EmploymentsEmploymentIdContractDetailsResponse =
+  PutV2EmploymentsEmploymentIdContractDetailsResponses[keyof PutV2EmploymentsEmploymentIdContractDetailsResponses];
 
-export type GetShowRegionFieldData = {
+export type GetV1CostCalculatorRegionsSlugFieldsData = {
   body?: never;
   path: {
     /**
@@ -17615,7 +18806,7 @@ export type GetShowRegionFieldData = {
   url: '/v1/cost-calculator/regions/{slug}/fields';
 };
 
-export type GetShowRegionFieldErrors = {
+export type GetV1CostCalculatorRegionsSlugFieldsErrors = {
   /**
    * Unauthorized
    */
@@ -17626,20 +18817,20 @@ export type GetShowRegionFieldErrors = {
   500: InternalServerErrorResponse;
 };
 
-export type GetShowRegionFieldError =
-  GetShowRegionFieldErrors[keyof GetShowRegionFieldErrors];
+export type GetV1CostCalculatorRegionsSlugFieldsError =
+  GetV1CostCalculatorRegionsSlugFieldsErrors[keyof GetV1CostCalculatorRegionsSlugFieldsErrors];
 
-export type GetShowRegionFieldResponses = {
+export type GetV1CostCalculatorRegionsSlugFieldsResponses = {
   /**
    * Success
    */
   200: JsonSchemaResponse;
 };
 
-export type GetShowRegionFieldResponse =
-  GetShowRegionFieldResponses[keyof GetShowRegionFieldResponses];
+export type GetV1CostCalculatorRegionsSlugFieldsResponse =
+  GetV1CostCalculatorRegionsSlugFieldsResponses[keyof GetV1CostCalculatorRegionsSlugFieldsResponses];
 
-export type GetShowOffboardingData = {
+export type GetV1OffboardingsIdData = {
   body?: never;
   path: {
     /**
@@ -17651,7 +18842,7 @@ export type GetShowOffboardingData = {
   url: '/v1/offboardings/{id}';
 };
 
-export type GetShowOffboardingErrors = {
+export type GetV1OffboardingsIdErrors = {
   /**
    * Bad Request
    */
@@ -17674,20 +18865,20 @@ export type GetShowOffboardingErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowOffboardingError =
-  GetShowOffboardingErrors[keyof GetShowOffboardingErrors];
+export type GetV1OffboardingsIdError =
+  GetV1OffboardingsIdErrors[keyof GetV1OffboardingsIdErrors];
 
-export type GetShowOffboardingResponses = {
+export type GetV1OffboardingsIdResponses = {
   /**
    * Success
    */
   200: OffboardingResponse;
 };
 
-export type GetShowOffboardingResponse =
-  GetShowOffboardingResponses[keyof GetShowOffboardingResponses];
+export type GetV1OffboardingsIdResponse =
+  GetV1OffboardingsIdResponses[keyof GetV1OffboardingsIdResponses];
 
-export type GetEmployeeDetailsPayrollRunData = {
+export type GetV1PayrollRunsPayrollRunIdEmployeeDetailsData = {
   body?: never;
   path: {
     /**
@@ -17708,7 +18899,7 @@ export type GetEmployeeDetailsPayrollRunData = {
   url: '/v1/payroll-runs/{payroll_run_id}/employee-details';
 };
 
-export type GetEmployeeDetailsPayrollRunErrors = {
+export type GetV1PayrollRunsPayrollRunIdEmployeeDetailsErrors = {
   /**
    * Unauthorized
    */
@@ -17723,20 +18914,20 @@ export type GetEmployeeDetailsPayrollRunErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetEmployeeDetailsPayrollRunError =
-  GetEmployeeDetailsPayrollRunErrors[keyof GetEmployeeDetailsPayrollRunErrors];
+export type GetV1PayrollRunsPayrollRunIdEmployeeDetailsError =
+  GetV1PayrollRunsPayrollRunIdEmployeeDetailsErrors[keyof GetV1PayrollRunsPayrollRunIdEmployeeDetailsErrors];
 
-export type GetEmployeeDetailsPayrollRunResponses = {
+export type GetV1PayrollRunsPayrollRunIdEmployeeDetailsResponses = {
   /**
    * Success
    */
   200: EmployeeDetailsResponse;
 };
 
-export type GetEmployeeDetailsPayrollRunResponse =
-  GetEmployeeDetailsPayrollRunResponses[keyof GetEmployeeDetailsPayrollRunResponses];
+export type GetV1PayrollRunsPayrollRunIdEmployeeDetailsResponse =
+  GetV1PayrollRunsPayrollRunIdEmployeeDetailsResponses[keyof GetV1PayrollRunsPayrollRunIdEmployeeDetailsResponses];
 
-export type GetIndexBulkEmploymentRowData = {
+export type GetV1BulkEmploymentJobsJobIdRowsData = {
   body?: never;
   path: {
     /**
@@ -17757,7 +18948,7 @@ export type GetIndexBulkEmploymentRowData = {
   url: '/v1/bulk-employment-jobs/{job_id}/rows';
 };
 
-export type GetIndexBulkEmploymentRowErrors = {
+export type GetV1BulkEmploymentJobsJobIdRowsErrors = {
   /**
    * Bad Request
    */
@@ -17776,20 +18967,20 @@ export type GetIndexBulkEmploymentRowErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetIndexBulkEmploymentRowError =
-  GetIndexBulkEmploymentRowErrors[keyof GetIndexBulkEmploymentRowErrors];
+export type GetV1BulkEmploymentJobsJobIdRowsError =
+  GetV1BulkEmploymentJobsJobIdRowsErrors[keyof GetV1BulkEmploymentJobsJobIdRowsErrors];
 
-export type GetIndexBulkEmploymentRowResponses = {
+export type GetV1BulkEmploymentJobsJobIdRowsResponses = {
   /**
    * Success
    */
   200: ImportJobRowsResponse;
 };
 
-export type GetIndexBulkEmploymentRowResponse =
-  GetIndexBulkEmploymentRowResponses[keyof GetIndexBulkEmploymentRowResponses];
+export type GetV1BulkEmploymentJobsJobIdRowsResponse =
+  GetV1BulkEmploymentJobsJobIdRowsResponses[keyof GetV1BulkEmploymentJobsJobIdRowsResponses];
 
-export type PostCreateEmploymentData = {
+export type PostV1SandboxEmploymentsData = {
   /**
    * Employment params
    */
@@ -17808,7 +18999,7 @@ export type PostCreateEmploymentData = {
   url: '/v1/sandbox/employments';
 };
 
-export type PostCreateEmploymentErrors = {
+export type PostV1SandboxEmploymentsErrors = {
   /**
    * Bad Request
    */
@@ -17831,20 +19022,20 @@ export type PostCreateEmploymentErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateEmploymentError =
-  PostCreateEmploymentErrors[keyof PostCreateEmploymentErrors];
+export type PostV1SandboxEmploymentsError =
+  PostV1SandboxEmploymentsErrors[keyof PostV1SandboxEmploymentsErrors];
 
-export type PostCreateEmploymentResponses = {
+export type PostV1SandboxEmploymentsResponses = {
   /**
    * Success
    */
   201: EmploymentCreationResponse;
 };
 
-export type PostCreateEmploymentResponse =
-  PostCreateEmploymentResponses[keyof PostCreateEmploymentResponses];
+export type PostV1SandboxEmploymentsResponse =
+  PostV1SandboxEmploymentsResponses[keyof PostV1SandboxEmploymentsResponses];
 
-export type PostCreateContractEligibilityData = {
+export type PostV1EmploymentsEmploymentIdContractEligibilityData = {
   /**
    * Contract Eligibility Create Parameters
    */
@@ -17859,7 +19050,7 @@ export type PostCreateContractEligibilityData = {
   url: '/v1/employments/{employment_id}/contract-eligibility';
 };
 
-export type PostCreateContractEligibilityErrors = {
+export type PostV1EmploymentsEmploymentIdContractEligibilityErrors = {
   /**
    * Bad Request
    */
@@ -17874,20 +19065,20 @@ export type PostCreateContractEligibilityErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateContractEligibilityError =
-  PostCreateContractEligibilityErrors[keyof PostCreateContractEligibilityErrors];
+export type PostV1EmploymentsEmploymentIdContractEligibilityError =
+  PostV1EmploymentsEmploymentIdContractEligibilityErrors[keyof PostV1EmploymentsEmploymentIdContractEligibilityErrors];
 
-export type PostCreateContractEligibilityResponses = {
+export type PostV1EmploymentsEmploymentIdContractEligibilityResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PostCreateContractEligibilityResponse =
-  PostCreateContractEligibilityResponses[keyof PostCreateContractEligibilityResponses];
+export type PostV1EmploymentsEmploymentIdContractEligibilityResponse =
+  PostV1EmploymentsEmploymentIdContractEligibilityResponses[keyof PostV1EmploymentsEmploymentIdContractEligibilityResponses];
 
-export type GetSupportedCountryData = {
+export type GetV1CountriesData = {
   body?: never;
   headers: {
     /**
@@ -17902,7 +19093,7 @@ export type GetSupportedCountryData = {
   url: '/v1/countries';
 };
 
-export type GetSupportedCountryErrors = {
+export type GetV1CountriesErrors = {
   /**
    * Bad Request
    */
@@ -17925,20 +19116,64 @@ export type GetSupportedCountryErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetSupportedCountryError =
-  GetSupportedCountryErrors[keyof GetSupportedCountryErrors];
+export type GetV1CountriesError =
+  GetV1CountriesErrors[keyof GetV1CountriesErrors];
 
-export type GetSupportedCountryResponses = {
+export type GetV1CountriesResponses = {
   /**
    * Success
    */
   200: CountriesResponse;
 };
 
-export type GetSupportedCountryResponse =
-  GetSupportedCountryResponses[keyof GetSupportedCountryResponses];
+export type GetV1CountriesResponse =
+  GetV1CountriesResponses[keyof GetV1CountriesResponses];
 
-export type PostCreateTokenCompanyTokenData = {
+export type GetV1EmployeePayslipFilesData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/employee/payslip-files';
+};
+
+export type GetV1EmployeePayslipFilesErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetV1EmployeePayslipFilesError =
+  GetV1EmployeePayslipFilesErrors[keyof GetV1EmployeePayslipFilesErrors];
+
+export type GetV1EmployeePayslipFilesResponses = {
+  /**
+   * Success
+   */
+  200: ListPayslipFilesResponse;
+};
+
+export type GetV1EmployeePayslipFilesResponse =
+  GetV1EmployeePayslipFilesResponses[keyof GetV1EmployeePayslipFilesResponses];
+
+export type PostV1CompaniesCompanyIdCreateTokenData = {
   body?: never;
   path: {
     /**
@@ -17955,7 +19190,7 @@ export type PostCreateTokenCompanyTokenData = {
   url: '/v1/companies/{company_id}/create-token';
 };
 
-export type PostCreateTokenCompanyTokenErrors = {
+export type PostV1CompaniesCompanyIdCreateTokenErrors = {
   /**
    * Unauthorized
    */
@@ -17970,20 +19205,20 @@ export type PostCreateTokenCompanyTokenErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostCreateTokenCompanyTokenError =
-  PostCreateTokenCompanyTokenErrors[keyof PostCreateTokenCompanyTokenErrors];
+export type PostV1CompaniesCompanyIdCreateTokenError =
+  PostV1CompaniesCompanyIdCreateTokenErrors[keyof PostV1CompaniesCompanyIdCreateTokenErrors];
 
-export type PostCreateTokenCompanyTokenResponses = {
+export type PostV1CompaniesCompanyIdCreateTokenResponses = {
   /**
    * Success
    */
   200: CompanyTokenResponse;
 };
 
-export type PostCreateTokenCompanyTokenResponse =
-  PostCreateTokenCompanyTokenResponses[keyof PostCreateTokenCompanyTokenResponses];
+export type PostV1CompaniesCompanyIdCreateTokenResponse =
+  PostV1CompaniesCompanyIdCreateTokenResponses[keyof PostV1CompaniesCompanyIdCreateTokenResponses];
 
-export type GetIndexCompanyLegalEntitiesData = {
+export type GetV1CompaniesCompanyIdLegalEntitiesData = {
   body?: never;
   path: {
     /**
@@ -18004,7 +19239,7 @@ export type GetIndexCompanyLegalEntitiesData = {
   url: '/v1/companies/{company_id}/legal-entities';
 };
 
-export type GetIndexCompanyLegalEntitiesErrors = {
+export type GetV1CompaniesCompanyIdLegalEntitiesErrors = {
   /**
    * Unauthorized
    */
@@ -18015,20 +19250,79 @@ export type GetIndexCompanyLegalEntitiesErrors = {
   404: NotFoundResponse;
 };
 
-export type GetIndexCompanyLegalEntitiesError =
-  GetIndexCompanyLegalEntitiesErrors[keyof GetIndexCompanyLegalEntitiesErrors];
+export type GetV1CompaniesCompanyIdLegalEntitiesError =
+  GetV1CompaniesCompanyIdLegalEntitiesErrors[keyof GetV1CompaniesCompanyIdLegalEntitiesErrors];
 
-export type GetIndexCompanyLegalEntitiesResponses = {
+export type GetV1CompaniesCompanyIdLegalEntitiesResponses = {
   /**
    * Success
    */
   200: ListCompanyLegalEntitiesResponse;
 };
 
-export type GetIndexCompanyLegalEntitiesResponse =
-  GetIndexCompanyLegalEntitiesResponses[keyof GetIndexCompanyLegalEntitiesResponses];
+export type GetV1CompaniesCompanyIdLegalEntitiesResponse =
+  GetV1CompaniesCompanyIdLegalEntitiesResponses[keyof GetV1CompaniesCompanyIdLegalEntitiesResponses];
 
-export type PostCompleteOnboardingEmploymentData = {
+export type PutV2EmploymentsEmploymentIdPersonalDetailsData = {
+  /**
+   * Employment personal details params
+   */
+  body?: EmploymentPersonalDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v2/employments/{employment_id}/personal_details';
+};
+
+export type PutV2EmploymentsEmploymentIdPersonalDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdPersonalDetailsError =
+  PutV2EmploymentsEmploymentIdPersonalDetailsErrors[keyof PutV2EmploymentsEmploymentIdPersonalDetailsErrors];
+
+export type PutV2EmploymentsEmploymentIdPersonalDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdPersonalDetailsResponse =
+  PutV2EmploymentsEmploymentIdPersonalDetailsResponses[keyof PutV2EmploymentsEmploymentIdPersonalDetailsResponses];
+
+export type PostV1ReadyData = {
   /**
    * Employment slug
    */
@@ -18047,7 +19341,7 @@ export type PostCompleteOnboardingEmploymentData = {
   url: '/v1/ready';
 };
 
-export type PostCompleteOnboardingEmploymentErrors = {
+export type PostV1ReadyErrors = {
   /**
    * Bad Request
    */
@@ -18070,20 +19364,19 @@ export type PostCompleteOnboardingEmploymentErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCompleteOnboardingEmploymentError =
-  PostCompleteOnboardingEmploymentErrors[keyof PostCompleteOnboardingEmploymentErrors];
+export type PostV1ReadyError = PostV1ReadyErrors[keyof PostV1ReadyErrors];
 
-export type PostCompleteOnboardingEmploymentResponses = {
+export type PostV1ReadyResponses = {
   /**
    * Success
    */
   200: EmploymentResponse;
 };
 
-export type PostCompleteOnboardingEmploymentResponse =
-  PostCompleteOnboardingEmploymentResponses[keyof PostCompleteOnboardingEmploymentResponses];
+export type PostV1ReadyResponse =
+  PostV1ReadyResponses[keyof PostV1ReadyResponses];
 
-export type GetIndexLeavePoliciesDetailsData = {
+export type GetV1LeavePoliciesDetailsEmploymentIdData = {
   body?: never;
   path: {
     /**
@@ -18095,7 +19388,7 @@ export type GetIndexLeavePoliciesDetailsData = {
   url: '/v1/leave-policies/details/{employment_id}';
 };
 
-export type GetIndexLeavePoliciesDetailsErrors = {
+export type GetV1LeavePoliciesDetailsEmploymentIdErrors = {
   /**
    * Unauthorized
    */
@@ -18110,20 +19403,20 @@ export type GetIndexLeavePoliciesDetailsErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexLeavePoliciesDetailsError =
-  GetIndexLeavePoliciesDetailsErrors[keyof GetIndexLeavePoliciesDetailsErrors];
+export type GetV1LeavePoliciesDetailsEmploymentIdError =
+  GetV1LeavePoliciesDetailsEmploymentIdErrors[keyof GetV1LeavePoliciesDetailsEmploymentIdErrors];
 
-export type GetIndexLeavePoliciesDetailsResponses = {
+export type GetV1LeavePoliciesDetailsEmploymentIdResponses = {
   /**
    * Success
    */
   200: ListLeavePoliciesDetailsResponse;
 };
 
-export type GetIndexLeavePoliciesDetailsResponse =
-  GetIndexLeavePoliciesDetailsResponses[keyof GetIndexLeavePoliciesDetailsResponses];
+export type GetV1LeavePoliciesDetailsEmploymentIdResponse =
+  GetV1LeavePoliciesDetailsEmploymentIdResponses[keyof GetV1LeavePoliciesDetailsEmploymentIdResponses];
 
-export type GetTimeoffTypesTimeoffData = {
+export type GetV1TimeoffTypesData = {
   body?: never;
   headers: {
     /**
@@ -18144,7 +19437,7 @@ export type GetTimeoffTypesTimeoffData = {
   url: '/v1/timeoff/types';
 };
 
-export type GetTimeoffTypesTimeoffErrors = {
+export type GetV1TimeoffTypesErrors = {
   /**
    * Bad Request
    */
@@ -18167,20 +19460,20 @@ export type GetTimeoffTypesTimeoffErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetTimeoffTypesTimeoffError =
-  GetTimeoffTypesTimeoffErrors[keyof GetTimeoffTypesTimeoffErrors];
+export type GetV1TimeoffTypesError =
+  GetV1TimeoffTypesErrors[keyof GetV1TimeoffTypesErrors];
 
-export type GetTimeoffTypesTimeoffResponses = {
+export type GetV1TimeoffTypesResponses = {
   /**
    * Success
    */
   200: ListTimeoffTypesResponse;
 };
 
-export type GetTimeoffTypesTimeoffResponse =
-  GetTimeoffTypesTimeoffResponses[keyof GetTimeoffTypesTimeoffResponses];
+export type GetV1TimeoffTypesResponse =
+  GetV1TimeoffTypesResponses[keyof GetV1TimeoffTypesResponses];
 
-export type PostCreateEstimationCsvData = {
+export type PostV1CostCalculatorEstimationCsvData = {
   /**
    * Estimate params
    */
@@ -18190,7 +19483,7 @@ export type PostCreateEstimationCsvData = {
   url: '/v1/cost-calculator/estimation-csv';
 };
 
-export type PostCreateEstimationCsvErrors = {
+export type PostV1CostCalculatorEstimationCsvErrors = {
   /**
    * Not Found
    */
@@ -18201,20 +19494,20 @@ export type PostCreateEstimationCsvErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostCreateEstimationCsvError =
-  PostCreateEstimationCsvErrors[keyof PostCreateEstimationCsvErrors];
+export type PostV1CostCalculatorEstimationCsvError =
+  PostV1CostCalculatorEstimationCsvErrors[keyof PostV1CostCalculatorEstimationCsvErrors];
 
-export type PostCreateEstimationCsvResponses = {
+export type PostV1CostCalculatorEstimationCsvResponses = {
   /**
    * Success
    */
   200: CostCalculatorEstimateCsvResponse;
 };
 
-export type PostCreateEstimationCsvResponse =
-  PostCreateEstimationCsvResponses[keyof PostCreateEstimationCsvResponses];
+export type PostV1CostCalculatorEstimationCsvResponse =
+  PostV1CostCalculatorEstimationCsvResponses[keyof PostV1CostCalculatorEstimationCsvResponses];
 
-export type GetListGroupsScimData = {
+export type GetV1ScimV2GroupsData = {
   body?: never;
   path?: never;
   query?: {
@@ -18234,7 +19527,7 @@ export type GetListGroupsScimData = {
   url: '/v1/scim/v2/Groups';
 };
 
-export type GetListGroupsScimErrors = {
+export type GetV1ScimV2GroupsErrors = {
   /**
    * Bad Request
    */
@@ -18253,20 +19546,20 @@ export type GetListGroupsScimErrors = {
   404: IntegrationsScimErrorResponse;
 };
 
-export type GetListGroupsScimError =
-  GetListGroupsScimErrors[keyof GetListGroupsScimErrors];
+export type GetV1ScimV2GroupsError =
+  GetV1ScimV2GroupsErrors[keyof GetV1ScimV2GroupsErrors];
 
-export type GetListGroupsScimResponses = {
+export type GetV1ScimV2GroupsResponses = {
   /**
    * Success
    */
   200: IntegrationsScimGroupListResponse;
 };
 
-export type GetListGroupsScimResponse =
-  GetListGroupsScimResponses[keyof GetListGroupsScimResponses];
+export type GetV1ScimV2GroupsResponse =
+  GetV1ScimV2GroupsResponses[keyof GetV1ScimV2GroupsResponses];
 
-export type PostCreateContractDocumentData = {
+export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsData = {
   /**
    * CreateContractDocumentParams
    */
@@ -18281,7 +19574,7 @@ export type PostCreateContractDocumentData = {
   url: '/v1/contractors/employments/{employment_id}/contract-documents';
 };
 
-export type PostCreateContractDocumentErrors = {
+export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsErrors = {
   /**
    * Unauthorized
    */
@@ -18296,20 +19589,21 @@ export type PostCreateContractDocumentErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostCreateContractDocumentError =
-  PostCreateContractDocumentErrors[keyof PostCreateContractDocumentErrors];
+export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsError =
+  PostV1ContractorsEmploymentsEmploymentIdContractDocumentsErrors[keyof PostV1ContractorsEmploymentsEmploymentIdContractDocumentsErrors];
 
-export type PostCreateContractDocumentResponses = {
-  /**
-   * Success
-   */
-  200: CreateContractDocumentResponse;
-};
+export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsResponses =
+  {
+    /**
+     * Success
+     */
+    200: CreateContractDocumentResponse;
+  };
 
-export type PostCreateContractDocumentResponse =
-  PostCreateContractDocumentResponses[keyof PostCreateContractDocumentResponses];
+export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsResponse =
+  PostV1ContractorsEmploymentsEmploymentIdContractDocumentsResponses[keyof PostV1ContractorsEmploymentsEmploymentIdContractDocumentsResponses];
 
-export type PostTriggerWebhookCallbackData = {
+export type PostV1SandboxWebhookCallbacksTriggerData = {
   /**
    * Webhook Trigger Params
    */
@@ -18319,7 +19613,7 @@ export type PostTriggerWebhookCallbackData = {
   url: '/v1/sandbox/webhook-callbacks/trigger';
 };
 
-export type PostTriggerWebhookCallbackErrors = {
+export type PostV1SandboxWebhookCallbacksTriggerErrors = {
   /**
    * Unauthorized
    */
@@ -18334,20 +19628,20 @@ export type PostTriggerWebhookCallbackErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostTriggerWebhookCallbackError =
-  PostTriggerWebhookCallbackErrors[keyof PostTriggerWebhookCallbackErrors];
+export type PostV1SandboxWebhookCallbacksTriggerError =
+  PostV1SandboxWebhookCallbacksTriggerErrors[keyof PostV1SandboxWebhookCallbacksTriggerErrors];
 
-export type PostTriggerWebhookCallbackResponses = {
+export type PostV1SandboxWebhookCallbacksTriggerResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PostTriggerWebhookCallbackResponse =
-  PostTriggerWebhookCallbackResponses[keyof PostTriggerWebhookCallbackResponses];
+export type PostV1SandboxWebhookCallbacksTriggerResponse =
+  PostV1SandboxWebhookCallbacksTriggerResponses[keyof PostV1SandboxWebhookCallbacksTriggerResponses];
 
-export type GetDownloadPayslipPayslipData = {
+export type GetV1PayslipsPayslipIdPdfData = {
   body?: never;
   headers: {
     /**
@@ -18368,7 +19662,7 @@ export type GetDownloadPayslipPayslipData = {
   url: '/v1/payslips/{payslip_id}/pdf';
 };
 
-export type GetDownloadPayslipPayslipErrors = {
+export type GetV1PayslipsPayslipIdPdfErrors = {
   /**
    * Bad Request
    */
@@ -18391,20 +19685,20 @@ export type GetDownloadPayslipPayslipErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetDownloadPayslipPayslipError =
-  GetDownloadPayslipPayslipErrors[keyof GetDownloadPayslipPayslipErrors];
+export type GetV1PayslipsPayslipIdPdfError =
+  GetV1PayslipsPayslipIdPdfErrors[keyof GetV1PayslipsPayslipIdPdfErrors];
 
-export type GetDownloadPayslipPayslipResponses = {
+export type GetV1PayslipsPayslipIdPdfResponses = {
   /**
    * Success
    */
   200: PayslipDownloadResponse;
 };
 
-export type GetDownloadPayslipPayslipResponse =
-  GetDownloadPayslipPayslipResponses[keyof GetDownloadPayslipPayslipResponses];
+export type GetV1PayslipsPayslipIdPdfResponse =
+  GetV1PayslipsPayslipIdPdfResponses[keyof GetV1PayslipsPayslipIdPdfResponses];
 
-export type PostConvertWithSpreadCurrencyConverterData = {
+export type PostV1CurrencyConverterEffectiveData = {
   /**
    * Convert currency parameters
    */
@@ -18414,7 +19708,7 @@ export type PostConvertWithSpreadCurrencyConverterData = {
   url: '/v1/currency-converter/effective';
 };
 
-export type PostConvertWithSpreadCurrencyConverterErrors = {
+export type PostV1CurrencyConverterEffectiveErrors = {
   /**
    * Unauthorized
    */
@@ -18429,20 +19723,20 @@ export type PostConvertWithSpreadCurrencyConverterErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostConvertWithSpreadCurrencyConverterError =
-  PostConvertWithSpreadCurrencyConverterErrors[keyof PostConvertWithSpreadCurrencyConverterErrors];
+export type PostV1CurrencyConverterEffectiveError =
+  PostV1CurrencyConverterEffectiveErrors[keyof PostV1CurrencyConverterEffectiveErrors];
 
-export type PostConvertWithSpreadCurrencyConverterResponses = {
+export type PostV1CurrencyConverterEffectiveResponses = {
   /**
    * Success
    */
   200: ConvertCurrencyResponse;
 };
 
-export type PostConvertWithSpreadCurrencyConverterResponse =
-  PostConvertWithSpreadCurrencyConverterResponses[keyof PostConvertWithSpreadCurrencyConverterResponses];
+export type PostV1CurrencyConverterEffectiveResponse =
+  PostV1CurrencyConverterEffectiveResponses[keyof PostV1CurrencyConverterEffectiveResponses];
 
-export type GetShowTimeoffData = {
+export type GetV1TimeoffIdData = {
   body?: never;
   headers: {
     /**
@@ -18463,7 +19757,7 @@ export type GetShowTimeoffData = {
   url: '/v1/timeoff/{id}';
 };
 
-export type GetShowTimeoffErrors = {
+export type GetV1TimeoffIdErrors = {
   /**
    * Bad Request
    */
@@ -18486,20 +19780,20 @@ export type GetShowTimeoffErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowTimeoffError =
-  GetShowTimeoffErrors[keyof GetShowTimeoffErrors];
+export type GetV1TimeoffIdError =
+  GetV1TimeoffIdErrors[keyof GetV1TimeoffIdErrors];
 
-export type GetShowTimeoffResponses = {
+export type GetV1TimeoffIdResponses = {
   /**
    * Success
    */
   200: TimeoffResponse;
 };
 
-export type GetShowTimeoffResponse =
-  GetShowTimeoffResponses[keyof GetShowTimeoffResponses];
+export type GetV1TimeoffIdResponse =
+  GetV1TimeoffIdResponses[keyof GetV1TimeoffIdResponses];
 
-export type PatchUpdateTimeoff2Data = {
+export type PatchV1TimeoffId2Data = {
   /**
    * UpdateTimeoff
    */
@@ -18523,7 +19817,7 @@ export type PatchUpdateTimeoff2Data = {
   url: '/v1/timeoff/{id}';
 };
 
-export type PatchUpdateTimeoff2Errors = {
+export type PatchV1TimeoffId2Errors = {
   /**
    * Bad Request
    */
@@ -18546,20 +19840,20 @@ export type PatchUpdateTimeoff2Errors = {
   429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateTimeoff2Error =
-  PatchUpdateTimeoff2Errors[keyof PatchUpdateTimeoff2Errors];
+export type PatchV1TimeoffId2Error =
+  PatchV1TimeoffId2Errors[keyof PatchV1TimeoffId2Errors];
 
-export type PatchUpdateTimeoff2Responses = {
+export type PatchV1TimeoffId2Responses = {
   /**
    * Success
    */
   200: TimeoffResponse;
 };
 
-export type PatchUpdateTimeoff2Response =
-  PatchUpdateTimeoff2Responses[keyof PatchUpdateTimeoff2Responses];
+export type PatchV1TimeoffId2Response =
+  PatchV1TimeoffId2Responses[keyof PatchV1TimeoffId2Responses];
 
-export type PatchUpdateTimeoffData = {
+export type PatchV1TimeoffIdData = {
   /**
    * UpdateTimeoff
    */
@@ -18583,7 +19877,7 @@ export type PatchUpdateTimeoffData = {
   url: '/v1/timeoff/{id}';
 };
 
-export type PatchUpdateTimeoffErrors = {
+export type PatchV1TimeoffIdErrors = {
   /**
    * Bad Request
    */
@@ -18606,20 +19900,20 @@ export type PatchUpdateTimeoffErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateTimeoffError =
-  PatchUpdateTimeoffErrors[keyof PatchUpdateTimeoffErrors];
+export type PatchV1TimeoffIdError =
+  PatchV1TimeoffIdErrors[keyof PatchV1TimeoffIdErrors];
 
-export type PatchUpdateTimeoffResponses = {
+export type PatchV1TimeoffIdResponses = {
   /**
    * Success
    */
   200: TimeoffResponse;
 };
 
-export type PatchUpdateTimeoffResponse =
-  PatchUpdateTimeoffResponses[keyof PatchUpdateTimeoffResponses];
+export type PatchV1TimeoffIdResponse =
+  PatchV1TimeoffIdResponses[keyof PatchV1TimeoffIdResponses];
 
-export type PostCreateDeclineData = {
+export type PostV1TimeoffTimeoffIdDeclineData = {
   /**
    * DeclineTimeoff
    */
@@ -18634,7 +19928,7 @@ export type PostCreateDeclineData = {
   url: '/v1/timeoff/{timeoff_id}/decline';
 };
 
-export type PostCreateDeclineErrors = {
+export type PostV1TimeoffTimeoffIdDeclineErrors = {
   /**
    * Bad Request
    */
@@ -18657,20 +19951,20 @@ export type PostCreateDeclineErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateDeclineError =
-  PostCreateDeclineErrors[keyof PostCreateDeclineErrors];
+export type PostV1TimeoffTimeoffIdDeclineError =
+  PostV1TimeoffTimeoffIdDeclineErrors[keyof PostV1TimeoffTimeoffIdDeclineErrors];
 
-export type PostCreateDeclineResponses = {
+export type PostV1TimeoffTimeoffIdDeclineResponses = {
   /**
    * Success
    */
   200: TimeoffResponse;
 };
 
-export type PostCreateDeclineResponse =
-  PostCreateDeclineResponses[keyof PostCreateDeclineResponses];
+export type PostV1TimeoffTimeoffIdDeclineResponse =
+  PostV1TimeoffTimeoffIdDeclineResponses[keyof PostV1TimeoffTimeoffIdDeclineResponses];
 
-export type PostAutomatableContractAmendmentData = {
+export type PostV1ContractAmendmentsAutomatableData = {
   /**
    * Contract Amendment
    */
@@ -18694,7 +19988,7 @@ export type PostAutomatableContractAmendmentData = {
   url: '/v1/contract-amendments/automatable';
 };
 
-export type PostAutomatableContractAmendmentErrors = {
+export type PostV1ContractAmendmentsAutomatableErrors = {
   /**
    * Unauthorized
    */
@@ -18709,20 +20003,20 @@ export type PostAutomatableContractAmendmentErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostAutomatableContractAmendmentError =
-  PostAutomatableContractAmendmentErrors[keyof PostAutomatableContractAmendmentErrors];
+export type PostV1ContractAmendmentsAutomatableError =
+  PostV1ContractAmendmentsAutomatableErrors[keyof PostV1ContractAmendmentsAutomatableErrors];
 
-export type PostAutomatableContractAmendmentResponses = {
+export type PostV1ContractAmendmentsAutomatableResponses = {
   /**
    * Success
    */
   200: ContractAmendmentAutomatableResponse;
 };
 
-export type PostAutomatableContractAmendmentResponse =
-  PostAutomatableContractAmendmentResponses[keyof PostAutomatableContractAmendmentResponses];
+export type PostV1ContractAmendmentsAutomatableResponse =
+  PostV1ContractAmendmentsAutomatableResponses[keyof PostV1ContractAmendmentsAutomatableResponses];
 
-export type PostCreateApprovalData = {
+export type PostV1TimeoffTimeoffIdApproveData = {
   /**
    * ApproveTimeoff
    */
@@ -18737,7 +20031,7 @@ export type PostCreateApprovalData = {
   url: '/v1/timeoff/{timeoff_id}/approve';
 };
 
-export type PostCreateApprovalErrors = {
+export type PostV1TimeoffTimeoffIdApproveErrors = {
   /**
    * Bad Request
    */
@@ -18760,20 +20054,20 @@ export type PostCreateApprovalErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateApprovalError =
-  PostCreateApprovalErrors[keyof PostCreateApprovalErrors];
+export type PostV1TimeoffTimeoffIdApproveError =
+  PostV1TimeoffTimeoffIdApproveErrors[keyof PostV1TimeoffTimeoffIdApproveErrors];
 
-export type PostCreateApprovalResponses = {
+export type PostV1TimeoffTimeoffIdApproveResponses = {
   /**
    * Success
    */
   200: TimeoffResponse;
 };
 
-export type PostCreateApprovalResponse =
-  PostCreateApprovalResponses[keyof PostCreateApprovalResponses];
+export type PostV1TimeoffTimeoffIdApproveResponse =
+  PostV1TimeoffTimeoffIdApproveResponses[keyof PostV1TimeoffTimeoffIdApproveResponses];
 
-export type GetIndexEmploymentFileData = {
+export type GetV1EmploymentsEmploymentIdFilesData = {
   body?: never;
   path: {
     /**
@@ -18802,7 +20096,7 @@ export type GetIndexEmploymentFileData = {
   url: '/v1/employments/{employment_id}/files';
 };
 
-export type GetIndexEmploymentFileErrors = {
+export type GetV1EmploymentsEmploymentIdFilesErrors = {
   /**
    * Unauthorized
    */
@@ -18817,20 +20111,20 @@ export type GetIndexEmploymentFileErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexEmploymentFileError =
-  GetIndexEmploymentFileErrors[keyof GetIndexEmploymentFileErrors];
+export type GetV1EmploymentsEmploymentIdFilesError =
+  GetV1EmploymentsEmploymentIdFilesErrors[keyof GetV1EmploymentsEmploymentIdFilesErrors];
 
-export type GetIndexEmploymentFileResponses = {
+export type GetV1EmploymentsEmploymentIdFilesResponses = {
   /**
    * Success
    */
   200: ListFilesResponse;
 };
 
-export type GetIndexEmploymentFileResponse =
-  GetIndexEmploymentFileResponses[keyof GetIndexEmploymentFileResponses];
+export type GetV1EmploymentsEmploymentIdFilesResponse =
+  GetV1EmploymentsEmploymentIdFilesResponses[keyof GetV1EmploymentsEmploymentIdFilesResponses];
 
-export type GetIndexEmploymentCustomFieldData = {
+export type GetV1CustomFieldsData = {
   body?: never;
   path?: never;
   query?: {
@@ -18846,7 +20140,7 @@ export type GetIndexEmploymentCustomFieldData = {
   url: '/v1/custom-fields';
 };
 
-export type GetIndexEmploymentCustomFieldErrors = {
+export type GetV1CustomFieldsErrors = {
   /**
    * Unauthorized
    */
@@ -18861,20 +20155,20 @@ export type GetIndexEmploymentCustomFieldErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexEmploymentCustomFieldError =
-  GetIndexEmploymentCustomFieldErrors[keyof GetIndexEmploymentCustomFieldErrors];
+export type GetV1CustomFieldsError =
+  GetV1CustomFieldsErrors[keyof GetV1CustomFieldsErrors];
 
-export type GetIndexEmploymentCustomFieldResponses = {
+export type GetV1CustomFieldsResponses = {
   /**
    * Success
    */
   200: ListEmploymentCustomFieldsResponse;
 };
 
-export type GetIndexEmploymentCustomFieldResponse =
-  GetIndexEmploymentCustomFieldResponses[keyof GetIndexEmploymentCustomFieldResponses];
+export type GetV1CustomFieldsResponse =
+  GetV1CustomFieldsResponses[keyof GetV1CustomFieldsResponses];
 
-export type PostCreateEmploymentCustomFieldData = {
+export type PostV1CustomFieldsData = {
   /**
    * Custom Field Definition Create Parameters
    */
@@ -18884,7 +20178,7 @@ export type PostCreateEmploymentCustomFieldData = {
   url: '/v1/custom-fields';
 };
 
-export type PostCreateEmploymentCustomFieldErrors = {
+export type PostV1CustomFieldsErrors = {
   /**
    * Unauthorized
    */
@@ -18899,47 +20193,47 @@ export type PostCreateEmploymentCustomFieldErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostCreateEmploymentCustomFieldError =
-  PostCreateEmploymentCustomFieldErrors[keyof PostCreateEmploymentCustomFieldErrors];
+export type PostV1CustomFieldsError =
+  PostV1CustomFieldsErrors[keyof PostV1CustomFieldsErrors];
 
-export type PostCreateEmploymentCustomFieldResponses = {
+export type PostV1CustomFieldsResponses = {
   /**
    * Success
    */
   200: CreateEmploymentCustomFieldResponse;
 };
 
-export type PostCreateEmploymentCustomFieldResponse =
-  PostCreateEmploymentCustomFieldResponses[keyof PostCreateEmploymentCustomFieldResponses];
+export type PostV1CustomFieldsResponse =
+  PostV1CustomFieldsResponses[keyof PostV1CustomFieldsResponses];
 
-export type GetIndexCompanyCurrencyData = {
+export type GetV1CompanyCurrenciesData = {
   body?: never;
   path?: never;
   query?: never;
   url: '/v1/company-currencies';
 };
 
-export type GetIndexCompanyCurrencyErrors = {
+export type GetV1CompanyCurrenciesErrors = {
   /**
    * Not Found
    */
   404: NotFoundResponse;
 };
 
-export type GetIndexCompanyCurrencyError =
-  GetIndexCompanyCurrencyErrors[keyof GetIndexCompanyCurrencyErrors];
+export type GetV1CompanyCurrenciesError =
+  GetV1CompanyCurrenciesErrors[keyof GetV1CompanyCurrenciesErrors];
 
-export type GetIndexCompanyCurrencyResponses = {
+export type GetV1CompanyCurrenciesResponses = {
   /**
    * Success
    */
   200: CompanyCurrenciesResponse;
 };
 
-export type GetIndexCompanyCurrencyResponse =
-  GetIndexCompanyCurrencyResponses[keyof GetIndexCompanyCurrencyResponses];
+export type GetV1CompanyCurrenciesResponse =
+  GetV1CompanyCurrenciesResponses[keyof GetV1CompanyCurrenciesResponses];
 
-export type PatchUpdateEmployment4Data = {
+export type PatchV1SandboxEmploymentsEmploymentId2Data = {
   /**
    * Employment params
    */
@@ -18963,7 +20257,7 @@ export type PatchUpdateEmployment4Data = {
   url: '/v1/sandbox/employments/{employment_id}';
 };
 
-export type PatchUpdateEmployment4Errors = {
+export type PatchV1SandboxEmploymentsEmploymentId2Errors = {
   /**
    * Bad Request
    */
@@ -18990,20 +20284,20 @@ export type PatchUpdateEmployment4Errors = {
   429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateEmployment4Error =
-  PatchUpdateEmployment4Errors[keyof PatchUpdateEmployment4Errors];
+export type PatchV1SandboxEmploymentsEmploymentId2Error =
+  PatchV1SandboxEmploymentsEmploymentId2Errors[keyof PatchV1SandboxEmploymentsEmploymentId2Errors];
 
-export type PatchUpdateEmployment4Responses = {
+export type PatchV1SandboxEmploymentsEmploymentId2Responses = {
   /**
    * Success
    */
   200: EmploymentResponse;
 };
 
-export type PatchUpdateEmployment4Response =
-  PatchUpdateEmployment4Responses[keyof PatchUpdateEmployment4Responses];
+export type PatchV1SandboxEmploymentsEmploymentId2Response =
+  PatchV1SandboxEmploymentsEmploymentId2Responses[keyof PatchV1SandboxEmploymentsEmploymentId2Responses];
 
-export type PatchUpdateEmployment3Data = {
+export type PatchV1SandboxEmploymentsEmploymentIdData = {
   /**
    * Employment params
    */
@@ -19027,7 +20321,7 @@ export type PatchUpdateEmployment3Data = {
   url: '/v1/sandbox/employments/{employment_id}';
 };
 
-export type PatchUpdateEmployment3Errors = {
+export type PatchV1SandboxEmploymentsEmploymentIdErrors = {
   /**
    * Bad Request
    */
@@ -19054,20 +20348,20 @@ export type PatchUpdateEmployment3Errors = {
   429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateEmployment3Error =
-  PatchUpdateEmployment3Errors[keyof PatchUpdateEmployment3Errors];
+export type PatchV1SandboxEmploymentsEmploymentIdError =
+  PatchV1SandboxEmploymentsEmploymentIdErrors[keyof PatchV1SandboxEmploymentsEmploymentIdErrors];
 
-export type PatchUpdateEmployment3Responses = {
+export type PatchV1SandboxEmploymentsEmploymentIdResponses = {
   /**
    * Success
    */
   200: EmploymentResponse;
 };
 
-export type PatchUpdateEmployment3Response =
-  PatchUpdateEmployment3Responses[keyof PatchUpdateEmployment3Responses];
+export type PatchV1SandboxEmploymentsEmploymentIdResponse =
+  PatchV1SandboxEmploymentsEmploymentIdResponses[keyof PatchV1SandboxEmploymentsEmploymentIdResponses];
 
-export type GetPendingChangesEmploymentContractData = {
+export type GetV1EmploymentContractsEmploymentIdPendingChangesData = {
   body?: never;
   headers: {
     /**
@@ -19088,7 +20382,7 @@ export type GetPendingChangesEmploymentContractData = {
   url: '/v1/employment-contracts/{employment_id}/pending-changes';
 };
 
-export type GetPendingChangesEmploymentContractErrors = {
+export type GetV1EmploymentContractsEmploymentIdPendingChangesErrors = {
   /**
    * Unauthorized
    */
@@ -19107,20 +20401,20 @@ export type GetPendingChangesEmploymentContractErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetPendingChangesEmploymentContractError =
-  GetPendingChangesEmploymentContractErrors[keyof GetPendingChangesEmploymentContractErrors];
+export type GetV1EmploymentContractsEmploymentIdPendingChangesError =
+  GetV1EmploymentContractsEmploymentIdPendingChangesErrors[keyof GetV1EmploymentContractsEmploymentIdPendingChangesErrors];
 
-export type GetPendingChangesEmploymentContractResponses = {
+export type GetV1EmploymentContractsEmploymentIdPendingChangesResponses = {
   /**
    * Success
    */
   200: EmploymentContractPendingChangesResponse;
 };
 
-export type GetPendingChangesEmploymentContractResponse =
-  GetPendingChangesEmploymentContractResponses[keyof GetPendingChangesEmploymentContractResponses];
+export type GetV1EmploymentContractsEmploymentIdPendingChangesResponse =
+  GetV1EmploymentContractsEmploymentIdPendingChangesResponses[keyof GetV1EmploymentContractsEmploymentIdPendingChangesResponses];
 
-export type GetShowResignationData = {
+export type GetV1ResignationsOffboardingRequestIdData = {
   body?: never;
   path: {
     /**
@@ -19132,7 +20426,7 @@ export type GetShowResignationData = {
   url: '/v1/resignations/{offboarding_request_id}';
 };
 
-export type GetShowResignationErrors = {
+export type GetV1ResignationsOffboardingRequestIdErrors = {
   /**
    * Bad Request
    */
@@ -19155,20 +20449,20 @@ export type GetShowResignationErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowResignationError =
-  GetShowResignationErrors[keyof GetShowResignationErrors];
+export type GetV1ResignationsOffboardingRequestIdError =
+  GetV1ResignationsOffboardingRequestIdErrors[keyof GetV1ResignationsOffboardingRequestIdErrors];
 
-export type GetShowResignationResponses = {
+export type GetV1ResignationsOffboardingRequestIdResponses = {
   /**
    * Success
    */
   200: ResignationResponse;
 };
 
-export type GetShowResignationResponse =
-  GetShowResignationResponses[keyof GetShowResignationResponses];
+export type GetV1ResignationsOffboardingRequestIdResponse =
+  GetV1ResignationsOffboardingRequestIdResponses[keyof GetV1ResignationsOffboardingRequestIdResponses];
 
-export type PostUploadEmployeeFileFileData = {
+export type PostV1DocumentsData = {
   /**
    * File
    */
@@ -19186,7 +20480,7 @@ export type PostUploadEmployeeFileFileData = {
   url: '/v1/documents';
 };
 
-export type PostUploadEmployeeFileFileErrors = {
+export type PostV1DocumentsErrors = {
   /**
    * Unauthorized
    */
@@ -19201,20 +20495,20 @@ export type PostUploadEmployeeFileFileErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostUploadEmployeeFileFileError =
-  PostUploadEmployeeFileFileErrors[keyof PostUploadEmployeeFileFileErrors];
+export type PostV1DocumentsError =
+  PostV1DocumentsErrors[keyof PostV1DocumentsErrors];
 
-export type PostUploadEmployeeFileFileResponses = {
+export type PostV1DocumentsResponses = {
   /**
    * Success
    */
   200: UploadFileResponse;
 };
 
-export type PostUploadEmployeeFileFileResponse =
-  PostUploadEmployeeFileFileResponses[keyof PostUploadEmployeeFileFileResponses];
+export type PostV1DocumentsResponse =
+  PostV1DocumentsResponses[keyof PostV1DocumentsResponses];
 
-export type PostInviteEmploymentInvitationData = {
+export type PostV1EmploymentsEmploymentIdInviteData = {
   body?: never;
   headers: {
     /**
@@ -19235,7 +20529,7 @@ export type PostInviteEmploymentInvitationData = {
   url: '/v1/employments/{employment_id}/invite';
 };
 
-export type PostInviteEmploymentInvitationErrors = {
+export type PostV1EmploymentsEmploymentIdInviteErrors = {
   /**
    * Bad Request
    */
@@ -19254,20 +20548,20 @@ export type PostInviteEmploymentInvitationErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostInviteEmploymentInvitationError =
-  PostInviteEmploymentInvitationErrors[keyof PostInviteEmploymentInvitationErrors];
+export type PostV1EmploymentsEmploymentIdInviteError =
+  PostV1EmploymentsEmploymentIdInviteErrors[keyof PostV1EmploymentsEmploymentIdInviteErrors];
 
-export type PostInviteEmploymentInvitationResponses = {
+export type PostV1EmploymentsEmploymentIdInviteResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PostInviteEmploymentInvitationResponse =
-  PostInviteEmploymentInvitationResponses[keyof PostInviteEmploymentInvitationResponses];
+export type PostV1EmploymentsEmploymentIdInviteResponse =
+  PostV1EmploymentsEmploymentIdInviteResponses[keyof PostV1EmploymentsEmploymentIdInviteResponses];
 
-export type GetShowExpenseData = {
+export type GetV1ExpensesIdData = {
   body?: never;
   headers: {
     /**
@@ -19288,7 +20582,7 @@ export type GetShowExpenseData = {
   url: '/v1/expenses/{id}';
 };
 
-export type GetShowExpenseErrors = {
+export type GetV1ExpensesIdErrors = {
   /**
    * Bad Request
    */
@@ -19311,20 +20605,20 @@ export type GetShowExpenseErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowExpenseError =
-  GetShowExpenseErrors[keyof GetShowExpenseErrors];
+export type GetV1ExpensesIdError =
+  GetV1ExpensesIdErrors[keyof GetV1ExpensesIdErrors];
 
-export type GetShowExpenseResponses = {
+export type GetV1ExpensesIdResponses = {
   /**
    * Success
    */
   200: ExpenseResponse;
 };
 
-export type GetShowExpenseResponse =
-  GetShowExpenseResponses[keyof GetShowExpenseResponses];
+export type GetV1ExpensesIdResponse =
+  GetV1ExpensesIdResponses[keyof GetV1ExpensesIdResponses];
 
-export type PatchUpdateExpense2Data = {
+export type PatchV1ExpensesId2Data = {
   /**
    * Expenses
    */
@@ -19339,7 +20633,7 @@ export type PatchUpdateExpense2Data = {
   url: '/v1/expenses/{id}';
 };
 
-export type PatchUpdateExpense2Errors = {
+export type PatchV1ExpensesId2Errors = {
   /**
    * Bad Request
    */
@@ -19366,20 +20660,20 @@ export type PatchUpdateExpense2Errors = {
   429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateExpense2Error =
-  PatchUpdateExpense2Errors[keyof PatchUpdateExpense2Errors];
+export type PatchV1ExpensesId2Error =
+  PatchV1ExpensesId2Errors[keyof PatchV1ExpensesId2Errors];
 
-export type PatchUpdateExpense2Responses = {
+export type PatchV1ExpensesId2Responses = {
   /**
    * Success
    */
   200: ExpenseResponse;
 };
 
-export type PatchUpdateExpense2Response =
-  PatchUpdateExpense2Responses[keyof PatchUpdateExpense2Responses];
+export type PatchV1ExpensesId2Response =
+  PatchV1ExpensesId2Responses[keyof PatchV1ExpensesId2Responses];
 
-export type PatchUpdateExpenseData = {
+export type PatchV1ExpensesIdData = {
   /**
    * Expenses
    */
@@ -19394,7 +20688,7 @@ export type PatchUpdateExpenseData = {
   url: '/v1/expenses/{id}';
 };
 
-export type PatchUpdateExpenseErrors = {
+export type PatchV1ExpensesIdErrors = {
   /**
    * Bad Request
    */
@@ -19421,20 +20715,20 @@ export type PatchUpdateExpenseErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateExpenseError =
-  PatchUpdateExpenseErrors[keyof PatchUpdateExpenseErrors];
+export type PatchV1ExpensesIdError =
+  PatchV1ExpensesIdErrors[keyof PatchV1ExpensesIdErrors];
 
-export type PatchUpdateExpenseResponses = {
+export type PatchV1ExpensesIdResponses = {
   /**
    * Success
    */
   200: ExpenseResponse;
 };
 
-export type PatchUpdateExpenseResponse =
-  PatchUpdateExpenseResponses[keyof PatchUpdateExpenseResponses];
+export type PatchV1ExpensesIdResponse =
+  PatchV1ExpensesIdResponses[keyof PatchV1ExpensesIdResponses];
 
-export type GetShowBenefitRenewalRequestData = {
+export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdData = {
   body?: never;
   headers: {
     /**
@@ -19455,7 +20749,7 @@ export type GetShowBenefitRenewalRequestData = {
   url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}';
 };
 
-export type GetShowBenefitRenewalRequestErrors = {
+export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors = {
   /**
    * Unauthorized
    */
@@ -19470,20 +20764,20 @@ export type GetShowBenefitRenewalRequestErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowBenefitRenewalRequestError =
-  GetShowBenefitRenewalRequestErrors[keyof GetShowBenefitRenewalRequestErrors];
+export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdError =
+  GetV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors[keyof GetV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors];
 
-export type GetShowBenefitRenewalRequestResponses = {
+export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdResponses = {
   /**
    * Success
    */
   200: BenefitRenewalRequestsBenefitRenewalRequestResponse;
 };
 
-export type GetShowBenefitRenewalRequestResponse =
-  GetShowBenefitRenewalRequestResponses[keyof GetShowBenefitRenewalRequestResponses];
+export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdResponse =
+  GetV1BenefitRenewalRequestsBenefitRenewalRequestIdResponses[keyof GetV1BenefitRenewalRequestsBenefitRenewalRequestIdResponses];
 
-export type PostUpdateBenefitRenewalRequestData = {
+export type PostV1BenefitRenewalRequestsBenefitRenewalRequestIdData = {
   /**
    * Benefit Renewal Request Response
    */
@@ -19512,7 +20806,7 @@ export type PostUpdateBenefitRenewalRequestData = {
   url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}';
 };
 
-export type PostUpdateBenefitRenewalRequestErrors = {
+export type PostV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors = {
   /**
    * Unauthorized
    */
@@ -19527,20 +20821,20 @@ export type PostUpdateBenefitRenewalRequestErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostUpdateBenefitRenewalRequestError =
-  PostUpdateBenefitRenewalRequestErrors[keyof PostUpdateBenefitRenewalRequestErrors];
+export type PostV1BenefitRenewalRequestsBenefitRenewalRequestIdError =
+  PostV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors[keyof PostV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors];
 
-export type PostUpdateBenefitRenewalRequestResponses = {
+export type PostV1BenefitRenewalRequestsBenefitRenewalRequestIdResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PostUpdateBenefitRenewalRequestResponse =
-  PostUpdateBenefitRenewalRequestResponses[keyof PostUpdateBenefitRenewalRequestResponses];
+export type PostV1BenefitRenewalRequestsBenefitRenewalRequestIdResponse =
+  PostV1BenefitRenewalRequestsBenefitRenewalRequestIdResponses[keyof PostV1BenefitRenewalRequestsBenefitRenewalRequestIdResponses];
 
-export type GetShowEmploymentOnboardingStepsData = {
+export type GetV1EmploymentsEmploymentIdOnboardingStepsData = {
   body?: never;
   path: {
     /**
@@ -19552,7 +20846,7 @@ export type GetShowEmploymentOnboardingStepsData = {
   url: '/v1/employments/{employment_id}/onboarding-steps';
 };
 
-export type GetShowEmploymentOnboardingStepsErrors = {
+export type GetV1EmploymentsEmploymentIdOnboardingStepsErrors = {
   /**
    * Unauthorized
    */
@@ -19563,20 +20857,20 @@ export type GetShowEmploymentOnboardingStepsErrors = {
   404: NotFoundResponse;
 };
 
-export type GetShowEmploymentOnboardingStepsError =
-  GetShowEmploymentOnboardingStepsErrors[keyof GetShowEmploymentOnboardingStepsErrors];
+export type GetV1EmploymentsEmploymentIdOnboardingStepsError =
+  GetV1EmploymentsEmploymentIdOnboardingStepsErrors[keyof GetV1EmploymentsEmploymentIdOnboardingStepsErrors];
 
-export type GetShowEmploymentOnboardingStepsResponses = {
+export type GetV1EmploymentsEmploymentIdOnboardingStepsResponses = {
   /**
    * Success
    */
   200: EmploymentOnboardingStepsResponse;
 };
 
-export type GetShowEmploymentOnboardingStepsResponse =
-  GetShowEmploymentOnboardingStepsResponses[keyof GetShowEmploymentOnboardingStepsResponses];
+export type GetV1EmploymentsEmploymentIdOnboardingStepsResponse =
+  GetV1EmploymentsEmploymentIdOnboardingStepsResponses[keyof GetV1EmploymentsEmploymentIdOnboardingStepsResponses];
 
-export type GetIndexEmploymentCompanyStructureNodeData = {
+export type GetV1EmploymentsEmploymentIdCompanyStructureNodesData = {
   body?: never;
   path: {
     /**
@@ -19588,7 +20882,7 @@ export type GetIndexEmploymentCompanyStructureNodeData = {
   url: '/v1/employments/{employment_id}/company-structure-nodes';
 };
 
-export type GetIndexEmploymentCompanyStructureNodeErrors = {
+export type GetV1EmploymentsEmploymentIdCompanyStructureNodesErrors = {
   /**
    * Unauthorized
    */
@@ -19603,20 +20897,20 @@ export type GetIndexEmploymentCompanyStructureNodeErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexEmploymentCompanyStructureNodeError =
-  GetIndexEmploymentCompanyStructureNodeErrors[keyof GetIndexEmploymentCompanyStructureNodeErrors];
+export type GetV1EmploymentsEmploymentIdCompanyStructureNodesError =
+  GetV1EmploymentsEmploymentIdCompanyStructureNodesErrors[keyof GetV1EmploymentsEmploymentIdCompanyStructureNodesErrors];
 
-export type GetIndexEmploymentCompanyStructureNodeResponses = {
+export type GetV1EmploymentsEmploymentIdCompanyStructureNodesResponses = {
   /**
    * Success
    */
   200: CompanyStructureNodesResponse;
 };
 
-export type GetIndexEmploymentCompanyStructureNodeResponse =
-  GetIndexEmploymentCompanyStructureNodeResponses[keyof GetIndexEmploymentCompanyStructureNodeResponses];
+export type GetV1EmploymentsEmploymentIdCompanyStructureNodesResponse =
+  GetV1EmploymentsEmploymentIdCompanyStructureNodesResponses[keyof GetV1EmploymentsEmploymentIdCompanyStructureNodesResponses];
 
-export type GetIndexEmploymentCustomFieldValueData = {
+export type GetV1EmploymentsEmploymentIdCustomFieldsData = {
   body?: never;
   path: {
     /**
@@ -19637,7 +20931,7 @@ export type GetIndexEmploymentCustomFieldValueData = {
   url: '/v1/employments/{employment_id}/custom-fields';
 };
 
-export type GetIndexEmploymentCustomFieldValueErrors = {
+export type GetV1EmploymentsEmploymentIdCustomFieldsErrors = {
   /**
    * Unauthorized
    */
@@ -19652,20 +20946,20 @@ export type GetIndexEmploymentCustomFieldValueErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexEmploymentCustomFieldValueError =
-  GetIndexEmploymentCustomFieldValueErrors[keyof GetIndexEmploymentCustomFieldValueErrors];
+export type GetV1EmploymentsEmploymentIdCustomFieldsError =
+  GetV1EmploymentsEmploymentIdCustomFieldsErrors[keyof GetV1EmploymentsEmploymentIdCustomFieldsErrors];
 
-export type GetIndexEmploymentCustomFieldValueResponses = {
+export type GetV1EmploymentsEmploymentIdCustomFieldsResponses = {
   /**
    * Success
    */
   200: ListEmploymentCustomFieldValuePaginatedResponse;
 };
 
-export type GetIndexEmploymentCustomFieldValueResponse =
-  GetIndexEmploymentCustomFieldValueResponses[keyof GetIndexEmploymentCustomFieldValueResponses];
+export type GetV1EmploymentsEmploymentIdCustomFieldsResponse =
+  GetV1EmploymentsEmploymentIdCustomFieldsResponses[keyof GetV1EmploymentsEmploymentIdCustomFieldsResponses];
 
-export type PutValidateResignationData = {
+export type PutV1ResignationsOffboardingRequestIdValidateData = {
   /**
    * ValidateResignation
    */
@@ -19680,7 +20974,7 @@ export type PutValidateResignationData = {
   url: '/v1/resignations/{offboarding_request_id}/validate';
 };
 
-export type PutValidateResignationErrors = {
+export type PutV1ResignationsOffboardingRequestIdValidateErrors = {
   /**
    * Bad Request
    */
@@ -19703,81 +20997,84 @@ export type PutValidateResignationErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PutValidateResignationError =
-  PutValidateResignationErrors[keyof PutValidateResignationErrors];
+export type PutV1ResignationsOffboardingRequestIdValidateError =
+  PutV1ResignationsOffboardingRequestIdValidateErrors[keyof PutV1ResignationsOffboardingRequestIdValidateErrors];
 
-export type PutValidateResignationResponses = {
+export type PutV1ResignationsOffboardingRequestIdValidateResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PutValidateResignationResponse =
-  PutValidateResignationResponses[keyof PutValidateResignationResponses];
+export type PutV1ResignationsOffboardingRequestIdValidateResponse =
+  PutV1ResignationsOffboardingRequestIdValidateResponses[keyof PutV1ResignationsOffboardingRequestIdValidateResponses];
 
-export type PutReassignDefaultEntityCompanyData = {
-  body?: never;
-  headers: {
-    /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-     *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
-     *
-     */
-    Authorization: string;
+export type PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdData =
+  {
+    body?: never;
+    headers: {
+      /**
+       * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+       *
+       * The refresh token needs to have been obtained through the Authorization Code flow.
+       *
+       */
+      Authorization: string;
+    };
+    path: {
+      /**
+       * Company ID
+       */
+      company_id: string;
+      /**
+       * Legal Entity ID to set as the new default
+       */
+      legal_entity_id: string;
+    };
+    query?: never;
+    url: '/v1/sandbox/companies/{company_id}/default-legal-entity/{legal_entity_id}';
   };
-  path: {
+
+export type PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdErrors =
+  {
     /**
-     * Company ID
+     * Bad Request
      */
-    company_id: string;
+    400: BadRequestResponse;
     /**
-     * Legal Entity ID to set as the new default
+     * Unauthorized
      */
-    legal_entity_id: string;
+    401: UnauthorizedResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+    /**
+     * Too many requests
+     */
+    429: TooManyRequestsResponse;
   };
-  query?: never;
-  url: '/v1/sandbox/companies/{company_id}/default-legal-entity/{legal_entity_id}';
-};
 
-export type PutReassignDefaultEntityCompanyErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Too many requests
-   */
-  429: TooManyRequestsResponse;
-};
+export type PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdError =
+  PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdErrors[keyof PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdErrors];
 
-export type PutReassignDefaultEntityCompanyError =
-  PutReassignDefaultEntityCompanyErrors[keyof PutReassignDefaultEntityCompanyErrors];
+export type PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdResponses =
+  {
+    /**
+     * Success
+     */
+    200: SuccessResponse;
+  };
 
-export type PutReassignDefaultEntityCompanyResponses = {
-  /**
-   * Success
-   */
-  200: SuccessResponse;
-};
+export type PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdResponse =
+  PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdResponses[keyof PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdResponses];
 
-export type PutReassignDefaultEntityCompanyResponse =
-  PutReassignDefaultEntityCompanyResponses[keyof PutReassignDefaultEntityCompanyResponses];
-
-export type GetIndexWebhookCallbackData = {
+export type GetV1CompaniesCompanyIdWebhookCallbacksData = {
   body?: never;
   path: {
     /**
@@ -19789,7 +21086,7 @@ export type GetIndexWebhookCallbackData = {
   url: '/v1/companies/{company_id}/webhook-callbacks';
 };
 
-export type GetIndexWebhookCallbackErrors = {
+export type GetV1CompaniesCompanyIdWebhookCallbacksErrors = {
   /**
    * Unauthorized
    */
@@ -19800,60 +21097,63 @@ export type GetIndexWebhookCallbackErrors = {
   404: NotFoundResponse;
 };
 
-export type GetIndexWebhookCallbackError =
-  GetIndexWebhookCallbackErrors[keyof GetIndexWebhookCallbackErrors];
+export type GetV1CompaniesCompanyIdWebhookCallbacksError =
+  GetV1CompaniesCompanyIdWebhookCallbacksErrors[keyof GetV1CompaniesCompanyIdWebhookCallbacksErrors];
 
-export type GetIndexWebhookCallbackResponses = {
+export type GetV1CompaniesCompanyIdWebhookCallbacksResponses = {
   /**
    * Success
    */
   200: ListWebhookCallbacksResponse;
 };
 
-export type GetIndexWebhookCallbackResponse =
-  GetIndexWebhookCallbackResponses[keyof GetIndexWebhookCallbackResponses];
+export type GetV1CompaniesCompanyIdWebhookCallbacksResponse =
+  GetV1CompaniesCompanyIdWebhookCallbacksResponses[keyof GetV1CompaniesCompanyIdWebhookCallbacksResponses];
 
-export type GetContractorEligibilityCompanyLegalEntitiesData = {
-  body?: never;
-  path: {
-    /**
-     * Company ID
-     */
-    company_id: UuidSlug;
-    /**
-     * Legal entity ID
-     */
-    legal_entity_id: UuidSlug;
+export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Company ID
+       */
+      company_id: UuidSlug;
+      /**
+       * Legal entity ID
+       */
+      legal_entity_id: UuidSlug;
+    };
+    query?: never;
+    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/contractor-eligibility';
   };
-  query?: never;
-  url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/contractor-eligibility';
-};
 
-export type GetContractorEligibilityCompanyLegalEntitiesErrors = {
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-};
+export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityErrors =
+  {
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+  };
 
-export type GetContractorEligibilityCompanyLegalEntitiesError =
-  GetContractorEligibilityCompanyLegalEntitiesErrors[keyof GetContractorEligibilityCompanyLegalEntitiesErrors];
+export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityError =
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityErrors[keyof GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityErrors];
 
-export type GetContractorEligibilityCompanyLegalEntitiesResponses = {
-  /**
-   * Success
-   */
-  200: ContractorEligibilityResponse;
-};
+export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityResponses =
+  {
+    /**
+     * Success
+     */
+    200: ContractorEligibilityResponse;
+  };
 
-export type GetContractorEligibilityCompanyLegalEntitiesResponse =
-  GetContractorEligibilityCompanyLegalEntitiesResponses[keyof GetContractorEligibilityCompanyLegalEntitiesResponses];
+export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityResponse =
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityResponses[keyof GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityResponses];
 
-export type GetShowEmploymentCustomFieldValueData = {
+export type GetV1CustomFieldsCustomFieldIdValuesEmploymentIdData = {
   body?: never;
   path: {
     /**
@@ -19869,7 +21169,7 @@ export type GetShowEmploymentCustomFieldValueData = {
   url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}';
 };
 
-export type GetShowEmploymentCustomFieldValueErrors = {
+export type GetV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors = {
   /**
    * Unauthorized
    */
@@ -19884,20 +21184,20 @@ export type GetShowEmploymentCustomFieldValueErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowEmploymentCustomFieldValueError =
-  GetShowEmploymentCustomFieldValueErrors[keyof GetShowEmploymentCustomFieldValueErrors];
+export type GetV1CustomFieldsCustomFieldIdValuesEmploymentIdError =
+  GetV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors[keyof GetV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors];
 
-export type GetShowEmploymentCustomFieldValueResponses = {
+export type GetV1CustomFieldsCustomFieldIdValuesEmploymentIdResponses = {
   /**
    * Success
    */
   200: EmploymentCustomFieldValueResponse;
 };
 
-export type GetShowEmploymentCustomFieldValueResponse =
-  GetShowEmploymentCustomFieldValueResponses[keyof GetShowEmploymentCustomFieldValueResponses];
+export type GetV1CustomFieldsCustomFieldIdValuesEmploymentIdResponse =
+  GetV1CustomFieldsCustomFieldIdValuesEmploymentIdResponses[keyof GetV1CustomFieldsCustomFieldIdValuesEmploymentIdResponses];
 
-export type PatchUpdateEmploymentCustomFieldValue2Data = {
+export type PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Data = {
   /**
    * Custom Field Value Update Parameters
    */
@@ -19916,7 +21216,7 @@ export type PatchUpdateEmploymentCustomFieldValue2Data = {
   url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}';
 };
 
-export type PatchUpdateEmploymentCustomFieldValue2Errors = {
+export type PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Errors = {
   /**
    * Unauthorized
    */
@@ -19935,20 +21235,20 @@ export type PatchUpdateEmploymentCustomFieldValue2Errors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateEmploymentCustomFieldValue2Error =
-  PatchUpdateEmploymentCustomFieldValue2Errors[keyof PatchUpdateEmploymentCustomFieldValue2Errors];
+export type PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Error =
+  PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Errors[keyof PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Errors];
 
-export type PatchUpdateEmploymentCustomFieldValue2Responses = {
+export type PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Responses = {
   /**
    * Success
    */
   200: EmploymentCustomFieldValueResponse;
 };
 
-export type PatchUpdateEmploymentCustomFieldValue2Response =
-  PatchUpdateEmploymentCustomFieldValue2Responses[keyof PatchUpdateEmploymentCustomFieldValue2Responses];
+export type PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Response =
+  PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Responses[keyof PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Responses];
 
-export type PatchUpdateEmploymentCustomFieldValueData = {
+export type PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdData = {
   /**
    * Custom Field Value Update Parameters
    */
@@ -19967,7 +21267,7 @@ export type PatchUpdateEmploymentCustomFieldValueData = {
   url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}';
 };
 
-export type PatchUpdateEmploymentCustomFieldValueErrors = {
+export type PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors = {
   /**
    * Unauthorized
    */
@@ -19986,147 +21286,156 @@ export type PatchUpdateEmploymentCustomFieldValueErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PatchUpdateEmploymentCustomFieldValueError =
-  PatchUpdateEmploymentCustomFieldValueErrors[keyof PatchUpdateEmploymentCustomFieldValueErrors];
+export type PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdError =
+  PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors[keyof PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors];
 
-export type PatchUpdateEmploymentCustomFieldValueResponses = {
+export type PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdResponses = {
   /**
    * Success
    */
   200: EmploymentCustomFieldValueResponse;
 };
 
-export type PatchUpdateEmploymentCustomFieldValueResponse =
-  PatchUpdateEmploymentCustomFieldValueResponses[keyof PatchUpdateEmploymentCustomFieldValueResponses];
+export type PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdResponse =
+  PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdResponses[keyof PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdResponses];
 
-export type GetShowCorTerminationRequestSubscriptionData = {
-  body?: never;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
-    /**
-     * Termination Request ID
-     */
-    termination_request_id: string;
+export type GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Employment ID
+       */
+      employment_id: string;
+      /**
+       * Termination Request ID
+       */
+      termination_request_id: string;
+    };
+    query?: never;
+    url: '/v1/contractors/employments/{employment_id}/cor-termination-requests/{termination_request_id}';
   };
-  query?: never;
-  url: '/v1/contractors/employments/{employment_id}/cor-termination-requests/{termination_request_id}';
-};
 
-export type GetShowCorTerminationRequestSubscriptionErrors = {
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-};
-
-export type GetShowCorTerminationRequestSubscriptionError =
-  GetShowCorTerminationRequestSubscriptionErrors[keyof GetShowCorTerminationRequestSubscriptionErrors];
-
-export type GetShowCorTerminationRequestSubscriptionResponses = {
-  /**
-   * Success
-   */
-  200: CorTerminationRequestResponse;
-};
-
-export type GetShowCorTerminationRequestSubscriptionResponse =
-  GetShowCorTerminationRequestSubscriptionResponses[keyof GetShowCorTerminationRequestSubscriptionResponses];
-
-export type PostTerminateContractorOfRecordEmploymentSubscriptionData = {
-  body?: never;
-  path: {
+export type GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdErrors =
+  {
     /**
-     * Employment ID
+     * Forbidden
      */
-    employment_id: string;
+    403: ForbiddenResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
   };
-  query?: never;
-  url: '/v1/contractors/employments/{employment_id}/terminate-cor-employment';
-};
 
-export type PostTerminateContractorOfRecordEmploymentSubscriptionErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-};
+export type GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdError =
+  GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdErrors[keyof GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdErrors];
 
-export type PostTerminateContractorOfRecordEmploymentSubscriptionError =
-  PostTerminateContractorOfRecordEmploymentSubscriptionErrors[keyof PostTerminateContractorOfRecordEmploymentSubscriptionErrors];
-
-export type PostTerminateContractorOfRecordEmploymentSubscriptionResponses = {
-  /**
-   * Success
-   */
-  200: SuccessResponse;
-};
-
-export type PostTerminateContractorOfRecordEmploymentSubscriptionResponse =
-  PostTerminateContractorOfRecordEmploymentSubscriptionResponses[keyof PostTerminateContractorOfRecordEmploymentSubscriptionResponses];
-
-export type PostSignContractDocumentData = {
-  /**
-   * SignContractDocument
-   */
-  body: SignContractDocument;
-  path: {
+export type GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdResponses =
+  {
     /**
-     * Employment ID
+     * Success
      */
-    employment_id: string;
-    /**
-     * Document ID
-     */
-    contract_document_id: string;
+    200: CorTerminationRequestResponse;
   };
-  query?: never;
-  url: '/v1/contractors/employments/{employment_id}/contract-documents/{contract_document_id}/sign';
-};
 
-export type PostSignContractDocumentErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-};
+export type GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdResponse =
+  GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdResponses[keyof GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdResponses];
 
-export type PostSignContractDocumentError =
-  PostSignContractDocumentErrors[keyof PostSignContractDocumentErrors];
+export type PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Employment ID
+       */
+      employment_id: string;
+    };
+    query?: never;
+    url: '/v1/contractors/employments/{employment_id}/terminate-cor-employment';
+  };
 
-export type PostSignContractDocumentResponses = {
-  /**
-   * Success
-   */
-  200: SuccessResponse;
-};
+export type PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentErrors =
+  {
+    /**
+     * Bad Request
+     */
+    400: BadRequestResponse;
+    /**
+     * Forbidden
+     */
+    403: ForbiddenResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+  };
 
-export type PostSignContractDocumentResponse =
-  PostSignContractDocumentResponses[keyof PostSignContractDocumentResponses];
+export type PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentError =
+  PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentErrors[keyof PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentErrors];
 
-export type GetCurrentIdentityData = {
+export type PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentResponses =
+  {
+    /**
+     * Success
+     */
+    200: SuccessResponse;
+  };
+
+export type PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentResponse =
+  PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentResponses[keyof PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentResponses];
+
+export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignData =
+  {
+    /**
+     * SignContractDocument
+     */
+    body: SignContractDocument;
+    path: {
+      /**
+       * Employment ID
+       */
+      employment_id: string;
+      /**
+       * Document ID
+       */
+      contract_document_id: string;
+    };
+    query?: never;
+    url: '/v1/contractors/employments/{employment_id}/contract-documents/{contract_document_id}/sign';
+  };
+
+export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignErrors =
+  {
+    /**
+     * Bad Request
+     */
+    400: BadRequestResponse;
+    /**
+     * Forbidden
+     */
+    403: ForbiddenResponse;
+  };
+
+export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignError =
+  PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignErrors[keyof PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignErrors];
+
+export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignResponses =
+  {
+    /**
+     * Success
+     */
+    200: SuccessResponse;
+  };
+
+export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignResponse =
+  PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignResponses[keyof PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignResponses];
+
+export type GetV1IdentityCurrentData = {
   body?: never;
   headers: {
     /**
@@ -20141,7 +21450,7 @@ export type GetCurrentIdentityData = {
   url: '/v1/identity/current';
 };
 
-export type GetCurrentIdentityErrors = {
+export type GetV1IdentityCurrentErrors = {
   /**
    * Bad Request
    */
@@ -20164,20 +21473,20 @@ export type GetCurrentIdentityErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetCurrentIdentityError =
-  GetCurrentIdentityErrors[keyof GetCurrentIdentityErrors];
+export type GetV1IdentityCurrentError =
+  GetV1IdentityCurrentErrors[keyof GetV1IdentityCurrentErrors];
 
-export type GetCurrentIdentityResponses = {
+export type GetV1IdentityCurrentResponses = {
   /**
    * Success
    */
   201: IdentityCurrentResponse;
 };
 
-export type GetCurrentIdentityResponse =
-  GetCurrentIdentityResponses[keyof GetCurrentIdentityResponses];
+export type GetV1IdentityCurrentResponse =
+  GetV1IdentityCurrentResponses[keyof GetV1IdentityCurrentResponses];
 
-export type DeleteDeleteIncentiveData = {
+export type DeleteV1IncentivesIdData = {
   body?: never;
   headers: {
     /**
@@ -20198,7 +21507,7 @@ export type DeleteDeleteIncentiveData = {
   url: '/v1/incentives/{id}';
 };
 
-export type DeleteDeleteIncentiveErrors = {
+export type DeleteV1IncentivesIdErrors = {
   /**
    * Bad Request
    */
@@ -20225,20 +21534,20 @@ export type DeleteDeleteIncentiveErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type DeleteDeleteIncentiveError =
-  DeleteDeleteIncentiveErrors[keyof DeleteDeleteIncentiveErrors];
+export type DeleteV1IncentivesIdError =
+  DeleteV1IncentivesIdErrors[keyof DeleteV1IncentivesIdErrors];
 
-export type DeleteDeleteIncentiveResponses = {
+export type DeleteV1IncentivesIdResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type DeleteDeleteIncentiveResponse =
-  DeleteDeleteIncentiveResponses[keyof DeleteDeleteIncentiveResponses];
+export type DeleteV1IncentivesIdResponse =
+  DeleteV1IncentivesIdResponses[keyof DeleteV1IncentivesIdResponses];
 
-export type GetShowIncentiveData = {
+export type GetV1IncentivesIdData = {
   body?: never;
   headers: {
     /**
@@ -20259,7 +21568,7 @@ export type GetShowIncentiveData = {
   url: '/v1/incentives/{id}';
 };
 
-export type GetShowIncentiveErrors = {
+export type GetV1IncentivesIdErrors = {
   /**
    * Bad Request
    */
@@ -20282,20 +21591,20 @@ export type GetShowIncentiveErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowIncentiveError =
-  GetShowIncentiveErrors[keyof GetShowIncentiveErrors];
+export type GetV1IncentivesIdError =
+  GetV1IncentivesIdErrors[keyof GetV1IncentivesIdErrors];
 
-export type GetShowIncentiveResponses = {
+export type GetV1IncentivesIdResponses = {
   /**
    * Success
    */
   200: IncentiveResponse;
 };
 
-export type GetShowIncentiveResponse =
-  GetShowIncentiveResponses[keyof GetShowIncentiveResponses];
+export type GetV1IncentivesIdResponse =
+  GetV1IncentivesIdResponses[keyof GetV1IncentivesIdResponses];
 
-export type PatchUpdateIncentive2Data = {
+export type PatchV1IncentivesId2Data = {
   /**
    * Incentive
    */
@@ -20319,7 +21628,7 @@ export type PatchUpdateIncentive2Data = {
   url: '/v1/incentives/{id}';
 };
 
-export type PatchUpdateIncentive2Errors = {
+export type PatchV1IncentivesId2Errors = {
   /**
    * Bad Request
    */
@@ -20346,20 +21655,20 @@ export type PatchUpdateIncentive2Errors = {
   429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateIncentive2Error =
-  PatchUpdateIncentive2Errors[keyof PatchUpdateIncentive2Errors];
+export type PatchV1IncentivesId2Error =
+  PatchV1IncentivesId2Errors[keyof PatchV1IncentivesId2Errors];
 
-export type PatchUpdateIncentive2Responses = {
+export type PatchV1IncentivesId2Responses = {
   /**
    * Success
    */
   200: IncentiveResponse;
 };
 
-export type PatchUpdateIncentive2Response =
-  PatchUpdateIncentive2Responses[keyof PatchUpdateIncentive2Responses];
+export type PatchV1IncentivesId2Response =
+  PatchV1IncentivesId2Responses[keyof PatchV1IncentivesId2Responses];
 
-export type PatchUpdateIncentiveData = {
+export type PatchV1IncentivesIdData = {
   /**
    * Incentive
    */
@@ -20383,7 +21692,7 @@ export type PatchUpdateIncentiveData = {
   url: '/v1/incentives/{id}';
 };
 
-export type PatchUpdateIncentiveErrors = {
+export type PatchV1IncentivesIdErrors = {
   /**
    * Bad Request
    */
@@ -20410,20 +21719,20 @@ export type PatchUpdateIncentiveErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PatchUpdateIncentiveError =
-  PatchUpdateIncentiveErrors[keyof PatchUpdateIncentiveErrors];
+export type PatchV1IncentivesIdError =
+  PatchV1IncentivesIdErrors[keyof PatchV1IncentivesIdErrors];
 
-export type PatchUpdateIncentiveResponses = {
+export type PatchV1IncentivesIdResponses = {
   /**
    * Success
    */
   200: IncentiveResponse;
 };
 
-export type PatchUpdateIncentiveResponse =
-  PatchUpdateIncentiveResponses[keyof PatchUpdateIncentiveResponses];
+export type PatchV1IncentivesIdResponse =
+  PatchV1IncentivesIdResponses[keyof PatchV1IncentivesIdResponses];
 
-export type GetShowEligibilityQuestionnaireData = {
+export type GetV1ContractorsSchemasEligibilityQuestionnaireData = {
   body?: never;
   path?: never;
   query: {
@@ -20439,7 +21748,7 @@ export type GetShowEligibilityQuestionnaireData = {
   url: '/v1/contractors/schemas/eligibility-questionnaire';
 };
 
-export type GetShowEligibilityQuestionnaireErrors = {
+export type GetV1ContractorsSchemasEligibilityQuestionnaireErrors = {
   /**
    * Unauthorized
    */
@@ -20454,20 +21763,20 @@ export type GetShowEligibilityQuestionnaireErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowEligibilityQuestionnaireError =
-  GetShowEligibilityQuestionnaireErrors[keyof GetShowEligibilityQuestionnaireErrors];
+export type GetV1ContractorsSchemasEligibilityQuestionnaireError =
+  GetV1ContractorsSchemasEligibilityQuestionnaireErrors[keyof GetV1ContractorsSchemasEligibilityQuestionnaireErrors];
 
-export type GetShowEligibilityQuestionnaireResponses = {
+export type GetV1ContractorsSchemasEligibilityQuestionnaireResponses = {
   /**
    * Success
    */
   200: EligibilityQuestionnaireJsonSchemaResponse;
 };
 
-export type GetShowEligibilityQuestionnaireResponse =
-  GetShowEligibilityQuestionnaireResponses[keyof GetShowEligibilityQuestionnaireResponses];
+export type GetV1ContractorsSchemasEligibilityQuestionnaireResponse =
+  GetV1ContractorsSchemasEligibilityQuestionnaireResponses[keyof GetV1ContractorsSchemasEligibilityQuestionnaireResponses];
 
-export type GetIndexWorkAuthorizationRequestData = {
+export type GetV1WorkAuthorizationRequestsData = {
   body?: never;
   path?: never;
   query?: {
@@ -20509,7 +21818,7 @@ export type GetIndexWorkAuthorizationRequestData = {
   url: '/v1/work-authorization-requests';
 };
 
-export type GetIndexWorkAuthorizationRequestErrors = {
+export type GetV1WorkAuthorizationRequestsErrors = {
   /**
    * Not Found
    */
@@ -20520,20 +21829,20 @@ export type GetIndexWorkAuthorizationRequestErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexWorkAuthorizationRequestError =
-  GetIndexWorkAuthorizationRequestErrors[keyof GetIndexWorkAuthorizationRequestErrors];
+export type GetV1WorkAuthorizationRequestsError =
+  GetV1WorkAuthorizationRequestsErrors[keyof GetV1WorkAuthorizationRequestsErrors];
 
-export type GetIndexWorkAuthorizationRequestResponses = {
+export type GetV1WorkAuthorizationRequestsResponses = {
   /**
    * Success
    */
   200: ListWorkAuthorizationRequestsResponse;
 };
 
-export type GetIndexWorkAuthorizationRequestResponse =
-  GetIndexWorkAuthorizationRequestResponses[keyof GetIndexWorkAuthorizationRequestResponses];
+export type GetV1WorkAuthorizationRequestsResponse =
+  GetV1WorkAuthorizationRequestsResponses[keyof GetV1WorkAuthorizationRequestsResponses];
 
-export type GetShowBulkEmploymentData = {
+export type GetV1BulkEmploymentJobsJobIdData = {
   body?: never;
   path: {
     /**
@@ -20545,7 +21854,7 @@ export type GetShowBulkEmploymentData = {
   url: '/v1/bulk-employment-jobs/{job_id}';
 };
 
-export type GetShowBulkEmploymentErrors = {
+export type GetV1BulkEmploymentJobsJobIdErrors = {
   /**
    * Bad Request
    */
@@ -20564,20 +21873,20 @@ export type GetShowBulkEmploymentErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowBulkEmploymentError =
-  GetShowBulkEmploymentErrors[keyof GetShowBulkEmploymentErrors];
+export type GetV1BulkEmploymentJobsJobIdError =
+  GetV1BulkEmploymentJobsJobIdErrors[keyof GetV1BulkEmploymentJobsJobIdErrors];
 
-export type GetShowBulkEmploymentResponses = {
+export type GetV1BulkEmploymentJobsJobIdResponses = {
   /**
    * Success
    */
   200: BulkEmploymentImportJobResponse;
 };
 
-export type GetShowBulkEmploymentResponse =
-  GetShowBulkEmploymentResponses[keyof GetShowBulkEmploymentResponses];
+export type GetV1BulkEmploymentJobsJobIdResponse =
+  GetV1BulkEmploymentJobsJobIdResponses[keyof GetV1BulkEmploymentJobsJobIdResponses];
 
-export type GetIndexPayItemsData = {
+export type GetV1PayItemsData = {
   body?: never;
   path?: never;
   query?: {
@@ -20605,7 +21914,7 @@ export type GetIndexPayItemsData = {
   url: '/v1/pay-items';
 };
 
-export type GetIndexPayItemsErrors = {
+export type GetV1PayItemsErrors = {
   /**
    * Unauthorized
    */
@@ -20624,20 +21933,19 @@ export type GetIndexPayItemsErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexPayItemsError =
-  GetIndexPayItemsErrors[keyof GetIndexPayItemsErrors];
+export type GetV1PayItemsError = GetV1PayItemsErrors[keyof GetV1PayItemsErrors];
 
-export type GetIndexPayItemsResponses = {
+export type GetV1PayItemsResponses = {
   /**
    * Success
    */
   200: ListPayItemsResponse;
 };
 
-export type GetIndexPayItemsResponse =
-  GetIndexPayItemsResponses[keyof GetIndexPayItemsResponses];
+export type GetV1PayItemsResponse =
+  GetV1PayItemsResponses[keyof GetV1PayItemsResponses];
 
-export type GetIndexBenefitOffersCountrySummaryData = {
+export type GetV1BenefitOffersCountrySummariesData = {
   body?: never;
   headers: {
     /**
@@ -20653,7 +21961,7 @@ export type GetIndexBenefitOffersCountrySummaryData = {
   url: '/v1/benefit-offers/country-summaries';
 };
 
-export type GetIndexBenefitOffersCountrySummaryErrors = {
+export type GetV1BenefitOffersCountrySummariesErrors = {
   /**
    * Not Found
    */
@@ -20664,20 +21972,20 @@ export type GetIndexBenefitOffersCountrySummaryErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexBenefitOffersCountrySummaryError =
-  GetIndexBenefitOffersCountrySummaryErrors[keyof GetIndexBenefitOffersCountrySummaryErrors];
+export type GetV1BenefitOffersCountrySummariesError =
+  GetV1BenefitOffersCountrySummariesErrors[keyof GetV1BenefitOffersCountrySummariesErrors];
 
-export type GetIndexBenefitOffersCountrySummaryResponses = {
+export type GetV1BenefitOffersCountrySummariesResponses = {
   /**
    * Success
    */
   200: CountrySummariesResponse;
 };
 
-export type GetIndexBenefitOffersCountrySummaryResponse =
-  GetIndexBenefitOffersCountrySummaryResponses[keyof GetIndexBenefitOffersCountrySummaryResponses];
+export type GetV1BenefitOffersCountrySummariesResponse =
+  GetV1BenefitOffersCountrySummariesResponses[keyof GetV1BenefitOffersCountrySummariesResponses];
 
-export type GetIndexBenefitOffersByEmploymentData = {
+export type GetV1BenefitOffersData = {
   body?: never;
   headers: {
     /**
@@ -20693,39 +22001,94 @@ export type GetIndexBenefitOffersByEmploymentData = {
   url: '/v1/benefit-offers';
 };
 
-export type GetIndexBenefitOffersByEmploymentErrors = {
+export type GetV1BenefitOffersErrors = {
   /**
    * Not Found
    */
   404: NotFoundResponse;
 };
 
-export type GetIndexBenefitOffersByEmploymentError =
-  GetIndexBenefitOffersByEmploymentErrors[keyof GetIndexBenefitOffersByEmploymentErrors];
+export type GetV1BenefitOffersError =
+  GetV1BenefitOffersErrors[keyof GetV1BenefitOffersErrors];
 
-export type GetIndexBenefitOffersByEmploymentResponses = {
+export type GetV1BenefitOffersResponses = {
   /**
    * Success
    */
   200: BenefitOfferByEmploymentResponse;
 };
 
-export type GetIndexBenefitOffersByEmploymentResponse =
-  GetIndexBenefitOffersByEmploymentResponses[keyof GetIndexBenefitOffersByEmploymentResponses];
+export type GetV1BenefitOffersResponse =
+  GetV1BenefitOffersResponses[keyof GetV1BenefitOffersResponses];
 
-export type PutCancelContractAmendmentData = {
-  body?: never;
-  path: {
-    /**
-     * Contract amendment request ID
-     */
-    contract_amendment_request_id: string;
+export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Contract amendment request ID
+       */
+      contract_amendment_request_id: string;
+    };
+    query?: never;
+    url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/cancel';
   };
-  query?: never;
-  url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/cancel';
+
+export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelErrors =
+  {
+    /**
+     * Bad Request
+     */
+    400: BadRequestResponse;
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+    /**
+     * Too many requests
+     */
+    429: TooManyRequestsResponse;
+  };
+
+export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelError =
+  PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelErrors[keyof PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelErrors];
+
+export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelResponses =
+  {
+    /**
+     * Success
+     */
+    200: SuccessResponse;
+  };
+
+export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelResponse =
+  PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelResponses[keyof PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelResponses];
+
+export type GetV1EmployeeTimeoffData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/employee/timeoff';
 };
 
-export type PutCancelContractAmendmentErrors = {
+export type GetV1EmployeeTimeoffErrors = {
   /**
    * Bad Request
    */
@@ -20741,27 +22104,23 @@ export type PutCancelContractAmendmentErrors = {
   /**
    * Unprocessable Entity
    */
-  422: UnprocessableEntityResponse;
-  /**
-   * Too many requests
-   */
   429: TooManyRequestsResponse;
 };
 
-export type PutCancelContractAmendmentError =
-  PutCancelContractAmendmentErrors[keyof PutCancelContractAmendmentErrors];
+export type GetV1EmployeeTimeoffError =
+  GetV1EmployeeTimeoffErrors[keyof GetV1EmployeeTimeoffErrors];
 
-export type PutCancelContractAmendmentResponses = {
+export type GetV1EmployeeTimeoffResponses = {
   /**
    * Success
    */
-  200: SuccessResponse;
+  200: ListTimeoffResponse;
 };
 
-export type PutCancelContractAmendmentResponse =
-  PutCancelContractAmendmentResponses[keyof PutCancelContractAmendmentResponses];
+export type GetV1EmployeeTimeoffResponse =
+  GetV1EmployeeTimeoffResponses[keyof GetV1EmployeeTimeoffResponses];
 
-export type PostCreateEmployeeTimeoffData = {
+export type PostV1EmployeeTimeoffData = {
   /**
    * Timeoff
    */
@@ -20771,7 +22130,7 @@ export type PostCreateEmployeeTimeoffData = {
   url: '/v1/employee/timeoff';
 };
 
-export type PostCreateEmployeeTimeoffErrors = {
+export type PostV1EmployeeTimeoffErrors = {
   /**
    * Bad Request
    */
@@ -20794,20 +22153,122 @@ export type PostCreateEmployeeTimeoffErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateEmployeeTimeoffError =
-  PostCreateEmployeeTimeoffErrors[keyof PostCreateEmployeeTimeoffErrors];
+export type PostV1EmployeeTimeoffError =
+  PostV1EmployeeTimeoffErrors[keyof PostV1EmployeeTimeoffErrors];
 
-export type PostCreateEmployeeTimeoffResponses = {
+export type PostV1EmployeeTimeoffResponses = {
   /**
    * Created
    */
   201: TimeoffResponse;
 };
 
-export type PostCreateEmployeeTimeoffResponse =
-  PostCreateEmployeeTimeoffResponses[keyof PostCreateEmployeeTimeoffResponses];
+export type PostV1EmployeeTimeoffResponse =
+  PostV1EmployeeTimeoffResponses[keyof PostV1EmployeeTimeoffResponses];
 
-export type GetShowProbationExtensionData = {
+export type PatchV2EmploymentsEmploymentId2Data = {
+  /**
+   * Employment params
+   */
+  body?: EmploymentV2UpdateParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v2/employments/{employment_id}';
+};
+
+export type PatchV2EmploymentsEmploymentId2Errors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PatchV2EmploymentsEmploymentId2Error =
+  PatchV2EmploymentsEmploymentId2Errors[keyof PatchV2EmploymentsEmploymentId2Errors];
+
+export type PatchV2EmploymentsEmploymentId2Responses = {
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
+};
+
+export type PatchV2EmploymentsEmploymentId2Response =
+  PatchV2EmploymentsEmploymentId2Responses[keyof PatchV2EmploymentsEmploymentId2Responses];
+
+export type PatchV2EmploymentsEmploymentIdData = {
+  /**
+   * Employment params
+   */
+  body?: EmploymentV2UpdateParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v2/employments/{employment_id}';
+};
+
+export type PatchV2EmploymentsEmploymentIdErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PatchV2EmploymentsEmploymentIdError =
+  PatchV2EmploymentsEmploymentIdErrors[keyof PatchV2EmploymentsEmploymentIdErrors];
+
+export type PatchV2EmploymentsEmploymentIdResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
+};
+
+export type PatchV2EmploymentsEmploymentIdResponse =
+  PatchV2EmploymentsEmploymentIdResponses[keyof PatchV2EmploymentsEmploymentIdResponses];
+
+export type GetV1ProbationExtensionsIdData = {
   body?: never;
   path: {
     /**
@@ -20819,7 +22280,7 @@ export type GetShowProbationExtensionData = {
   url: '/v1/probation-extensions/{id}';
 };
 
-export type GetShowProbationExtensionErrors = {
+export type GetV1ProbationExtensionsIdErrors = {
   /**
    * Unauthorized
    */
@@ -20834,20 +22295,20 @@ export type GetShowProbationExtensionErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetShowProbationExtensionError =
-  GetShowProbationExtensionErrors[keyof GetShowProbationExtensionErrors];
+export type GetV1ProbationExtensionsIdError =
+  GetV1ProbationExtensionsIdErrors[keyof GetV1ProbationExtensionsIdErrors];
 
-export type GetShowProbationExtensionResponses = {
+export type GetV1ProbationExtensionsIdResponses = {
   /**
    * Success
    */
   200: ProbationExtensionResponse;
 };
 
-export type GetShowProbationExtensionResponse =
-  GetShowProbationExtensionResponses[keyof GetShowProbationExtensionResponses];
+export type GetV1ProbationExtensionsIdResponse =
+  GetV1ProbationExtensionsIdResponses[keyof GetV1ProbationExtensionsIdResponses];
 
-export type GetIndexPayslipData = {
+export type GetV1PayslipsData = {
   body?: never;
   path?: never;
   query?: {
@@ -20883,7 +22344,7 @@ export type GetIndexPayslipData = {
   url: '/v1/payslips';
 };
 
-export type GetIndexPayslipErrors = {
+export type GetV1PayslipsErrors = {
   /**
    * Bad Request
    */
@@ -20906,20 +22367,19 @@ export type GetIndexPayslipErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetIndexPayslipError =
-  GetIndexPayslipErrors[keyof GetIndexPayslipErrors];
+export type GetV1PayslipsError = GetV1PayslipsErrors[keyof GetV1PayslipsErrors];
 
-export type GetIndexPayslipResponses = {
+export type GetV1PayslipsResponses = {
   /**
    * Success
    */
   200: ListPayslipsResponse;
 };
 
-export type GetIndexPayslipResponse =
-  GetIndexPayslipResponses[keyof GetIndexPayslipResponses];
+export type GetV1PayslipsResponse =
+  GetV1PayslipsResponses[keyof GetV1PayslipsResponses];
 
-export type GetDownloadByIdExpenseReceiptData = {
+export type GetV1ExpensesExpenseIdReceiptsReceiptIdData = {
   body?: never;
   path: {
     /**
@@ -20935,7 +22395,7 @@ export type GetDownloadByIdExpenseReceiptData = {
   url: '/v1/expenses/{expense_id}/receipts/{receipt_id}';
 };
 
-export type GetDownloadByIdExpenseReceiptErrors = {
+export type GetV1ExpensesExpenseIdReceiptsReceiptIdErrors = {
   /**
    * Bad Request
    */
@@ -20962,20 +22422,20 @@ export type GetDownloadByIdExpenseReceiptErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetDownloadByIdExpenseReceiptError =
-  GetDownloadByIdExpenseReceiptErrors[keyof GetDownloadByIdExpenseReceiptErrors];
+export type GetV1ExpensesExpenseIdReceiptsReceiptIdError =
+  GetV1ExpensesExpenseIdReceiptsReceiptIdErrors[keyof GetV1ExpensesExpenseIdReceiptsReceiptIdErrors];
 
-export type GetDownloadByIdExpenseReceiptResponses = {
+export type GetV1ExpensesExpenseIdReceiptsReceiptIdResponses = {
   /**
    * Success
    */
   200: GenericFile;
 };
 
-export type GetDownloadByIdExpenseReceiptResponse =
-  GetDownloadByIdExpenseReceiptResponses[keyof GetDownloadByIdExpenseReceiptResponses];
+export type GetV1ExpensesExpenseIdReceiptsReceiptIdResponse =
+  GetV1ExpensesExpenseIdReceiptsReceiptIdResponses[keyof GetV1ExpensesExpenseIdReceiptsReceiptIdResponses];
 
-export type PostTokenOAuth2TokenData = {
+export type PostAuthOauth2TokenData = {
   /**
    * OAuth2Token
    */
@@ -20985,7 +22445,7 @@ export type PostTokenOAuth2TokenData = {
   url: '/auth/oauth2/token';
 };
 
-export type PostTokenOAuth2TokenErrors = {
+export type PostAuthOauth2TokenErrors = {
   /**
    * Bad Request
    */
@@ -21008,20 +22468,79 @@ export type PostTokenOAuth2TokenErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostTokenOAuth2TokenError =
-  PostTokenOAuth2TokenErrors[keyof PostTokenOAuth2TokenErrors];
+export type PostAuthOauth2TokenError =
+  PostAuthOauth2TokenErrors[keyof PostAuthOauth2TokenErrors];
 
-export type PostTokenOAuth2TokenResponses = {
+export type PostAuthOauth2TokenResponses = {
   /**
    * Success
    */
   200: OAuth2Tokens;
 };
 
-export type PostTokenOAuth2TokenResponse =
-  PostTokenOAuth2TokenResponses[keyof PostTokenOAuth2TokenResponses];
+export type PostAuthOauth2TokenResponse =
+  PostAuthOauth2TokenResponses[keyof PostAuthOauth2TokenResponses];
 
-export type GetShowLegalEntityFormCountryData = {
+export type PutV2EmploymentsEmploymentIdPricingPlanDetailsData = {
+  /**
+   * Employment pricing plan details params
+   */
+  body?: EmploymentPricingPlanDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v2/employments/{employment_id}/pricing_plan_details';
+};
+
+export type PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdPricingPlanDetailsError =
+  PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors[keyof PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors];
+
+export type PutV2EmploymentsEmploymentIdPricingPlanDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdPricingPlanDetailsResponse =
+  PutV2EmploymentsEmploymentIdPricingPlanDetailsResponses[keyof PutV2EmploymentsEmploymentIdPricingPlanDetailsResponses];
+
+export type GetV1CountriesCountryCodeLegalEntityFormsFormData = {
   body?: never;
   path: {
     /**
@@ -21050,7 +22569,7 @@ export type GetShowLegalEntityFormCountryData = {
   url: '/v1/countries/{country_code}/legal_entity_forms/{form}';
 };
 
-export type GetShowLegalEntityFormCountryErrors = {
+export type GetV1CountriesCountryCodeLegalEntityFormsFormErrors = {
   /**
    * Bad Request
    */
@@ -21073,59 +22592,62 @@ export type GetShowLegalEntityFormCountryErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowLegalEntityFormCountryError =
-  GetShowLegalEntityFormCountryErrors[keyof GetShowLegalEntityFormCountryErrors];
+export type GetV1CountriesCountryCodeLegalEntityFormsFormError =
+  GetV1CountriesCountryCodeLegalEntityFormsFormErrors[keyof GetV1CountriesCountryCodeLegalEntityFormsFormErrors];
 
-export type GetShowLegalEntityFormCountryResponses = {
+export type GetV1CountriesCountryCodeLegalEntityFormsFormResponses = {
   /**
    * Success
    */
   200: CountryFormResponse;
 };
 
-export type GetShowLegalEntityFormCountryResponse =
-  GetShowLegalEntityFormCountryResponses[keyof GetShowLegalEntityFormCountryResponses];
+export type GetV1CountriesCountryCodeLegalEntityFormsFormResponse =
+  GetV1CountriesCountryCodeLegalEntityFormsFormResponses[keyof GetV1CountriesCountryCodeLegalEntityFormsFormResponses];
 
-export type PostManageContractorPlusSubscriptionSubscriptionData = {
-  /**
-   * Manage Contractor Plus subscription params
-   */
-  body: ManageContractorPlusSubscriptionOperationsParams;
-  path: {
+export type PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionData =
+  {
     /**
-     * Employment ID
+     * Manage Contractor Plus subscription params
      */
-    employment_id: string;
+    body: ManageContractorPlusSubscriptionOperationsParams;
+    path: {
+      /**
+       * Employment ID
+       */
+      employment_id: string;
+    };
+    query?: never;
+    url: '/v1/contractors/employments/{employment_id}/contractor-plus-subscription';
   };
-  query?: never;
-  url: '/v1/contractors/employments/{employment_id}/contractor-plus-subscription';
-};
 
-export type PostManageContractorPlusSubscriptionSubscriptionErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-};
+export type PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionErrors =
+  {
+    /**
+     * Bad Request
+     */
+    400: BadRequestResponse;
+    /**
+     * Forbidden
+     */
+    403: ForbiddenResponse;
+  };
 
-export type PostManageContractorPlusSubscriptionSubscriptionError =
-  PostManageContractorPlusSubscriptionSubscriptionErrors[keyof PostManageContractorPlusSubscriptionSubscriptionErrors];
+export type PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionError =
+  PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionErrors[keyof PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionErrors];
 
-export type PostManageContractorPlusSubscriptionSubscriptionResponses = {
-  /**
-   * Success
-   */
-  200: SuccessResponse;
-};
+export type PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionResponses =
+  {
+    /**
+     * Success
+     */
+    200: SuccessResponse;
+  };
 
-export type PostManageContractorPlusSubscriptionSubscriptionResponse =
-  PostManageContractorPlusSubscriptionSubscriptionResponses[keyof PostManageContractorPlusSubscriptionSubscriptionResponses];
+export type PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionResponse =
+  PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionResponses[keyof PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionResponses];
 
-export type GetIndexTimeoffData = {
+export type GetV1TimeoffData = {
   body?: never;
   headers: {
     /**
@@ -21170,7 +22692,7 @@ export type GetIndexTimeoffData = {
   url: '/v1/timeoff';
 };
 
-export type GetIndexTimeoffErrors = {
+export type GetV1TimeoffErrors = {
   /**
    * Bad Request
    */
@@ -21193,20 +22715,19 @@ export type GetIndexTimeoffErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetIndexTimeoffError =
-  GetIndexTimeoffErrors[keyof GetIndexTimeoffErrors];
+export type GetV1TimeoffError = GetV1TimeoffErrors[keyof GetV1TimeoffErrors];
 
-export type GetIndexTimeoffResponses = {
+export type GetV1TimeoffResponses = {
   /**
    * Success
    */
   200: ListTimeoffResponse;
 };
 
-export type GetIndexTimeoffResponse =
-  GetIndexTimeoffResponses[keyof GetIndexTimeoffResponses];
+export type GetV1TimeoffResponse =
+  GetV1TimeoffResponses[keyof GetV1TimeoffResponses];
 
-export type PostCreateTimeoffData = {
+export type PostV1TimeoffData = {
   /**
    * Timeoff
    */
@@ -21225,7 +22746,7 @@ export type PostCreateTimeoffData = {
   url: '/v1/timeoff';
 };
 
-export type PostCreateTimeoffErrors = {
+export type PostV1TimeoffErrors = {
   /**
    * Bad Request
    */
@@ -21248,20 +22769,19 @@ export type PostCreateTimeoffErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateTimeoffError =
-  PostCreateTimeoffErrors[keyof PostCreateTimeoffErrors];
+export type PostV1TimeoffError = PostV1TimeoffErrors[keyof PostV1TimeoffErrors];
 
-export type PostCreateTimeoffResponses = {
+export type PostV1TimeoffResponses = {
   /**
    * Created
    */
   201: TimeoffResponse;
 };
 
-export type PostCreateTimeoffResponse =
-  PostCreateTimeoffResponses[keyof PostCreateTimeoffResponses];
+export type PostV1TimeoffResponse =
+  PostV1TimeoffResponses[keyof PostV1TimeoffResponses];
 
-export type GetIndexPayrollRunData = {
+export type GetV1PayrollRunsData = {
   body?: never;
   path?: never;
   query?: {
@@ -21281,7 +22801,7 @@ export type GetIndexPayrollRunData = {
   url: '/v1/payroll-runs';
 };
 
-export type GetIndexPayrollRunErrors = {
+export type GetV1PayrollRunsErrors = {
   /**
    * Unauthorized
    */
@@ -21296,20 +22816,20 @@ export type GetIndexPayrollRunErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexPayrollRunError =
-  GetIndexPayrollRunErrors[keyof GetIndexPayrollRunErrors];
+export type GetV1PayrollRunsError =
+  GetV1PayrollRunsErrors[keyof GetV1PayrollRunsErrors];
 
-export type GetIndexPayrollRunResponses = {
+export type GetV1PayrollRunsResponses = {
   /**
    * Success
    */
   200: ListPayrollRunResponse;
 };
 
-export type GetIndexPayrollRunResponse =
-  GetIndexPayrollRunResponses[keyof GetIndexPayrollRunResponses];
+export type GetV1PayrollRunsResponse =
+  GetV1PayrollRunsResponses[keyof GetV1PayrollRunsResponses];
 
-export type GetGetGroupScimData = {
+export type GetV1ScimV2GroupsIdData = {
   body?: never;
   path: {
     /**
@@ -21321,7 +22841,7 @@ export type GetGetGroupScimData = {
   url: '/v1/scim/v2/Groups/{id}';
 };
 
-export type GetGetGroupScimErrors = {
+export type GetV1ScimV2GroupsIdErrors = {
   /**
    * Unauthorized
    */
@@ -21336,20 +22856,20 @@ export type GetGetGroupScimErrors = {
   404: IntegrationsScimErrorResponse;
 };
 
-export type GetGetGroupScimError =
-  GetGetGroupScimErrors[keyof GetGetGroupScimErrors];
+export type GetV1ScimV2GroupsIdError =
+  GetV1ScimV2GroupsIdErrors[keyof GetV1ScimV2GroupsIdErrors];
 
-export type GetGetGroupScimResponses = {
+export type GetV1ScimV2GroupsIdResponses = {
   /**
    * Success
    */
   200: IntegrationsScimGroup;
 };
 
-export type GetGetGroupScimResponse =
-  GetGetGroupScimResponses[keyof GetGetGroupScimResponses];
+export type GetV1ScimV2GroupsIdResponse =
+  GetV1ScimV2GroupsIdResponses[keyof GetV1ScimV2GroupsIdResponses];
 
-export type GetIndexEmploymentContractData = {
+export type GetV1EmploymentContractsData = {
   body?: never;
   headers: {
     /**
@@ -21374,7 +22894,7 @@ export type GetIndexEmploymentContractData = {
   url: '/v1/employment-contracts';
 };
 
-export type GetIndexEmploymentContractErrors = {
+export type GetV1EmploymentContractsErrors = {
   /**
    * Unauthorized
    */
@@ -21393,20 +22913,20 @@ export type GetIndexEmploymentContractErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexEmploymentContractError =
-  GetIndexEmploymentContractErrors[keyof GetIndexEmploymentContractErrors];
+export type GetV1EmploymentContractsError =
+  GetV1EmploymentContractsErrors[keyof GetV1EmploymentContractsErrors];
 
-export type GetIndexEmploymentContractResponses = {
+export type GetV1EmploymentContractsResponses = {
   /**
    * Success
    */
   200: ListEmploymentContractResponse;
 };
 
-export type GetIndexEmploymentContractResponse =
-  GetIndexEmploymentContractResponses[keyof GetIndexEmploymentContractResponses];
+export type GetV1EmploymentContractsResponse =
+  GetV1EmploymentContractsResponses[keyof GetV1EmploymentContractsResponses];
 
-export type PostConvertWithSpreadCurrencyConverter2Data = {
+export type PostV1CurrencyConverterEffective2Data = {
   /**
    * Convert currency parameters
    */
@@ -21416,7 +22936,7 @@ export type PostConvertWithSpreadCurrencyConverter2Data = {
   url: '/v1/currency-converter';
 };
 
-export type PostConvertWithSpreadCurrencyConverter2Errors = {
+export type PostV1CurrencyConverterEffective2Errors = {
   /**
    * Unauthorized
    */
@@ -21431,20 +22951,20 @@ export type PostConvertWithSpreadCurrencyConverter2Errors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostConvertWithSpreadCurrencyConverter2Error =
-  PostConvertWithSpreadCurrencyConverter2Errors[keyof PostConvertWithSpreadCurrencyConverter2Errors];
+export type PostV1CurrencyConverterEffective2Error =
+  PostV1CurrencyConverterEffective2Errors[keyof PostV1CurrencyConverterEffective2Errors];
 
-export type PostConvertWithSpreadCurrencyConverter2Responses = {
+export type PostV1CurrencyConverterEffective2Responses = {
   /**
    * Success
    */
   200: ConvertCurrencyResponse;
 };
 
-export type PostConvertWithSpreadCurrencyConverter2Response =
-  PostConvertWithSpreadCurrencyConverter2Responses[keyof PostConvertWithSpreadCurrencyConverter2Responses];
+export type PostV1CurrencyConverterEffective2Response =
+  PostV1CurrencyConverterEffective2Responses[keyof PostV1CurrencyConverterEffective2Responses];
 
-export type GetIndexCompanyData = {
+export type GetV1CompaniesData = {
   body?: never;
   headers: {
     /**
@@ -21465,7 +22985,7 @@ export type GetIndexCompanyData = {
   url: '/v1/companies';
 };
 
-export type GetIndexCompanyErrors = {
+export type GetV1CompaniesErrors = {
   /**
    * Unauthorized
    */
@@ -21480,20 +23000,20 @@ export type GetIndexCompanyErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetIndexCompanyError =
-  GetIndexCompanyErrors[keyof GetIndexCompanyErrors];
+export type GetV1CompaniesError =
+  GetV1CompaniesErrors[keyof GetV1CompaniesErrors];
 
-export type GetIndexCompanyResponses = {
+export type GetV1CompaniesResponses = {
   /**
    * Success
    */
   200: CompaniesResponse;
 };
 
-export type GetIndexCompanyResponse =
-  GetIndexCompanyResponses[keyof GetIndexCompanyResponses];
+export type GetV1CompaniesResponse =
+  GetV1CompaniesResponses[keyof GetV1CompaniesResponses];
 
-export type PostCreateCompanyData = {
+export type PostV1CompaniesData = {
   /**
    * Create Company params
    */
@@ -21541,7 +23061,7 @@ export type PostCreateCompanyData = {
   url: '/v1/companies';
 };
 
-export type PostCreateCompanyErrors = {
+export type PostV1CompaniesErrors = {
   /**
    * Bad Request
    */
@@ -21564,20 +23084,20 @@ export type PostCreateCompanyErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateCompanyError =
-  PostCreateCompanyErrors[keyof PostCreateCompanyErrors];
+export type PostV1CompaniesError =
+  PostV1CompaniesErrors[keyof PostV1CompaniesErrors];
 
-export type PostCreateCompanyResponses = {
+export type PostV1CompaniesResponses = {
   /**
    * Created
    */
   201: CompanyCreationResponse;
 };
 
-export type PostCreateCompanyResponse =
-  PostCreateCompanyResponses[keyof PostCreateCompanyResponses];
+export type PostV1CompaniesResponse =
+  PostV1CompaniesResponses[keyof PostV1CompaniesResponses];
 
-export type PostCreateBulkEmploymentData = {
+export type PostV1BulkEmploymentJobsData = {
   /**
    * Bulk employment params
    */
@@ -21587,7 +23107,7 @@ export type PostCreateBulkEmploymentData = {
   url: '/v1/bulk-employment-jobs';
 };
 
-export type PostCreateBulkEmploymentErrors = {
+export type PostV1BulkEmploymentJobsErrors = {
   /**
    * Bad Request
    */
@@ -21606,20 +23126,20 @@ export type PostCreateBulkEmploymentErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostCreateBulkEmploymentError =
-  PostCreateBulkEmploymentErrors[keyof PostCreateBulkEmploymentErrors];
+export type PostV1BulkEmploymentJobsError =
+  PostV1BulkEmploymentJobsErrors[keyof PostV1BulkEmploymentJobsErrors];
 
-export type PostCreateBulkEmploymentResponses = {
+export type PostV1BulkEmploymentJobsResponses = {
   /**
    * Accepted
    */
   202: BulkEmploymentImportJobResponse;
 };
 
-export type PostCreateBulkEmploymentResponse =
-  PostCreateBulkEmploymentResponses[keyof PostCreateBulkEmploymentResponses];
+export type PostV1BulkEmploymentJobsResponse =
+  PostV1BulkEmploymentJobsResponses[keyof PostV1BulkEmploymentJobsResponses];
 
-export type PostSendBackTimesheetData = {
+export type PostV1TimesheetsTimesheetIdSendBackData = {
   /**
    * SendBackTimesheetParams
    */
@@ -21634,7 +23154,7 @@ export type PostSendBackTimesheetData = {
   url: '/v1/timesheets/{timesheet_id}/send-back';
 };
 
-export type PostSendBackTimesheetErrors = {
+export type PostV1TimesheetsTimesheetIdSendBackErrors = {
   /**
    * Unauthorized
    */
@@ -21649,20 +23169,20 @@ export type PostSendBackTimesheetErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostSendBackTimesheetError =
-  PostSendBackTimesheetErrors[keyof PostSendBackTimesheetErrors];
+export type PostV1TimesheetsTimesheetIdSendBackError =
+  PostV1TimesheetsTimesheetIdSendBackErrors[keyof PostV1TimesheetsTimesheetIdSendBackErrors];
 
-export type PostSendBackTimesheetResponses = {
+export type PostV1TimesheetsTimesheetIdSendBackResponses = {
   /**
    * Success
    */
   200: SentBackTimesheetResponse;
 };
 
-export type PostSendBackTimesheetResponse =
-  PostSendBackTimesheetResponses[keyof PostSendBackTimesheetResponses];
+export type PostV1TimesheetsTimesheetIdSendBackResponse =
+  PostV1TimesheetsTimesheetIdSendBackResponses[keyof PostV1TimesheetsTimesheetIdSendBackResponses];
 
-export type DeleteDeleteCompanyManagerData = {
+export type DeleteV1CompanyManagersUserIdData = {
   body?: never;
   headers: {
     /**
@@ -21683,7 +23203,7 @@ export type DeleteDeleteCompanyManagerData = {
   url: '/v1/company-managers/{user_id}';
 };
 
-export type DeleteDeleteCompanyManagerErrors = {
+export type DeleteV1CompanyManagersUserIdErrors = {
   /**
    * Bad Request
    */
@@ -21706,20 +23226,20 @@ export type DeleteDeleteCompanyManagerErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type DeleteDeleteCompanyManagerError =
-  DeleteDeleteCompanyManagerErrors[keyof DeleteDeleteCompanyManagerErrors];
+export type DeleteV1CompanyManagersUserIdError =
+  DeleteV1CompanyManagersUserIdErrors[keyof DeleteV1CompanyManagersUserIdErrors];
 
-export type DeleteDeleteCompanyManagerResponses = {
+export type DeleteV1CompanyManagersUserIdResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type DeleteDeleteCompanyManagerResponse =
-  DeleteDeleteCompanyManagerResponses[keyof DeleteDeleteCompanyManagerResponses];
+export type DeleteV1CompanyManagersUserIdResponse =
+  DeleteV1CompanyManagersUserIdResponses[keyof DeleteV1CompanyManagersUserIdResponses];
 
-export type GetShowCompanyManagerData = {
+export type GetV1CompanyManagersUserIdData = {
   body?: never;
   path: {
     /**
@@ -21731,7 +23251,7 @@ export type GetShowCompanyManagerData = {
   url: '/v1/company-managers/{user_id}';
 };
 
-export type GetShowCompanyManagerErrors = {
+export type GetV1CompanyManagersUserIdErrors = {
   /**
    * Bad Request
    */
@@ -21754,32 +23274,44 @@ export type GetShowCompanyManagerErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowCompanyManagerError =
-  GetShowCompanyManagerErrors[keyof GetShowCompanyManagerErrors];
+export type GetV1CompanyManagersUserIdError =
+  GetV1CompanyManagersUserIdErrors[keyof GetV1CompanyManagersUserIdErrors];
 
-export type GetShowCompanyManagerResponses = {
+export type GetV1CompanyManagersUserIdResponses = {
   /**
    * Success
    */
   200: CompanyManagerResponse;
 };
 
-export type GetShowCompanyManagerResponse =
-  GetShowCompanyManagerResponses[keyof GetShowCompanyManagerResponses];
+export type GetV1CompanyManagersUserIdResponse =
+  GetV1CompanyManagersUserIdResponses[keyof GetV1CompanyManagersUserIdResponses];
 
-export type DeleteDeleteContractorCorSubscriptionSubscriptionData = {
-  body?: never;
+export type PutV2EmploymentsEmploymentIdEmergencyContactData = {
+  /**
+   * Employment emergency contact params
+   */
+  body?: EmploymentEmergencyContactParams;
   path: {
     /**
      * Employment ID
      */
     employment_id: string;
   };
-  query?: never;
-  url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription';
+  query?: {
+    /**
+     * Version of the emergency_contact_details form schema
+     */
+    emergency_contact_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v2/employments/{employment_id}/emergency_contact';
 };
 
-export type DeleteDeleteContractorCorSubscriptionSubscriptionErrors = {
+export type PutV2EmploymentsEmploymentIdEmergencyContactErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
   /**
    * Unauthorized
    */
@@ -21793,38 +23325,44 @@ export type DeleteDeleteContractorCorSubscriptionSubscriptionErrors = {
    */
   404: NotFoundResponse;
   /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
    * Unprocessable Entity
    */
   422: UnprocessableEntityResponse;
-};
-
-export type DeleteDeleteContractorCorSubscriptionSubscriptionError =
-  DeleteDeleteContractorCorSubscriptionSubscriptionErrors[keyof DeleteDeleteContractorCorSubscriptionSubscriptionErrors];
-
-export type DeleteDeleteContractorCorSubscriptionSubscriptionResponses = {
   /**
-   * No Content
+   * Unprocessable Entity
    */
-  204: unknown;
+  429: TooManyRequestsResponse;
 };
 
-export type PostManageContractorCorSubscriptionSubscriptionData = {
+export type PutV2EmploymentsEmploymentIdEmergencyContactError =
+  PutV2EmploymentsEmploymentIdEmergencyContactErrors[keyof PutV2EmploymentsEmploymentIdEmergencyContactErrors];
+
+export type PutV2EmploymentsEmploymentIdEmergencyContactResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdEmergencyContactResponse =
+  PutV2EmploymentsEmploymentIdEmergencyContactResponses[keyof PutV2EmploymentsEmploymentIdEmergencyContactResponses];
+
+export type GetV1EmployeeExpensesData = {
   body?: never;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
-  };
+  path?: never;
   query?: never;
-  url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription';
+  url: '/v1/employee/expenses';
 };
 
-export type PostManageContractorCorSubscriptionSubscriptionErrors = {
+export type GetV1EmployeeExpensesErrors = {
   /**
-   * Bad Request
+   * Unauthorized
    */
-  400: BadRequestResponse;
+  401: UnauthorizedResponse;
   /**
    * Forbidden
    */
@@ -21833,26 +23371,155 @@ export type PostManageContractorCorSubscriptionSubscriptionErrors = {
    * Not Found
    */
   404: NotFoundResponse;
+};
+
+export type GetV1EmployeeExpensesError =
+  GetV1EmployeeExpensesErrors[keyof GetV1EmployeeExpensesErrors];
+
+export type GetV1EmployeeExpensesResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type GetV1EmployeeExpensesResponse =
+  GetV1EmployeeExpensesResponses[keyof GetV1EmployeeExpensesResponses];
+
+export type PostV1EmployeeExpensesData = {
+  /**
+   * Expense params
+   */
+  body?: ParamsToCreateEmployeeExpense;
+  path?: never;
+  query?: never;
+  url: '/v1/employee/expenses';
+};
+
+export type PostV1EmployeeExpensesErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
   /**
    * Unprocessable Entity
    */
   422: UnprocessableEntityResponse;
 };
 
-export type PostManageContractorCorSubscriptionSubscriptionError =
-  PostManageContractorCorSubscriptionSubscriptionErrors[keyof PostManageContractorCorSubscriptionSubscriptionErrors];
+export type PostV1EmployeeExpensesError =
+  PostV1EmployeeExpensesErrors[keyof PostV1EmployeeExpensesErrors];
 
-export type PostManageContractorCorSubscriptionSubscriptionResponses = {
+export type PostV1EmployeeExpensesResponses = {
   /**
    * Created
    */
   201: SuccessResponse;
 };
 
-export type PostManageContractorCorSubscriptionSubscriptionResponse =
-  PostManageContractorCorSubscriptionSubscriptionResponses[keyof PostManageContractorCorSubscriptionSubscriptionResponses];
+export type PostV1EmployeeExpensesResponse =
+  PostV1EmployeeExpensesResponses[keyof PostV1EmployeeExpensesResponses];
 
-export type GetIndexScheduledContractorInvoiceData = {
+export type DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Employment ID
+       */
+      employment_id: string;
+    };
+    query?: never;
+    url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription';
+  };
+
+export type DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors =
+  {
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Forbidden
+     */
+    403: ForbiddenResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+  };
+
+export type DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionError =
+  DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors[keyof DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors];
+
+export type DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses =
+  {
+    /**
+     * No Content
+     */
+    204: unknown;
+  };
+
+export type PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Employment ID
+       */
+      employment_id: string;
+    };
+    query?: never;
+    url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription';
+  };
+
+export type PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors =
+  {
+    /**
+     * Bad Request
+     */
+    400: BadRequestResponse;
+    /**
+     * Forbidden
+     */
+    403: ForbiddenResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+  };
+
+export type PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionError =
+  PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors[keyof PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors];
+
+export type PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses =
+  {
+    /**
+     * Created
+     */
+    201: SuccessResponse;
+  };
+
+export type PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponse =
+  PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses[keyof PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses];
+
+export type GetV1ContractorInvoiceSchedulesData = {
   body?: never;
   path?: never;
   query?: {
@@ -21913,7 +23580,7 @@ export type GetIndexScheduledContractorInvoiceData = {
   url: '/v1/contractor-invoice-schedules';
 };
 
-export type GetIndexScheduledContractorInvoiceErrors = {
+export type GetV1ContractorInvoiceSchedulesErrors = {
   /**
    * Unauthorized
    */
@@ -21928,20 +23595,20 @@ export type GetIndexScheduledContractorInvoiceErrors = {
   404: NotFoundResponse;
 };
 
-export type GetIndexScheduledContractorInvoiceError =
-  GetIndexScheduledContractorInvoiceErrors[keyof GetIndexScheduledContractorInvoiceErrors];
+export type GetV1ContractorInvoiceSchedulesError =
+  GetV1ContractorInvoiceSchedulesErrors[keyof GetV1ContractorInvoiceSchedulesErrors];
 
-export type GetIndexScheduledContractorInvoiceResponses = {
+export type GetV1ContractorInvoiceSchedulesResponses = {
   /**
    * Success
    */
   200: ListContractorInvoiceSchedulesResponse;
 };
 
-export type GetIndexScheduledContractorInvoiceResponse =
-  GetIndexScheduledContractorInvoiceResponses[keyof GetIndexScheduledContractorInvoiceResponses];
+export type GetV1ContractorInvoiceSchedulesResponse =
+  GetV1ContractorInvoiceSchedulesResponses[keyof GetV1ContractorInvoiceSchedulesResponses];
 
-export type PostBulkCreateScheduledContractorInvoiceData = {
+export type PostV1ContractorInvoiceSchedulesData = {
   /**
    * Bulk creation payload
    */
@@ -21951,7 +23618,7 @@ export type PostBulkCreateScheduledContractorInvoiceData = {
   url: '/v1/contractor-invoice-schedules';
 };
 
-export type PostBulkCreateScheduledContractorInvoiceErrors = {
+export type PostV1ContractorInvoiceSchedulesErrors = {
   /**
    * Forbidden
    */
@@ -21973,10 +23640,10 @@ export type PostBulkCreateScheduledContractorInvoiceErrors = {
   };
 };
 
-export type PostBulkCreateScheduledContractorInvoiceError =
-  PostBulkCreateScheduledContractorInvoiceErrors[keyof PostBulkCreateScheduledContractorInvoiceErrors];
+export type PostV1ContractorInvoiceSchedulesError =
+  PostV1ContractorInvoiceSchedulesErrors[keyof PostV1ContractorInvoiceSchedulesErrors];
 
-export type PostBulkCreateScheduledContractorInvoiceResponses = {
+export type PostV1ContractorInvoiceSchedulesResponses = {
   /**
    * BulkContractorInvoiceScheduleCreateResponse
    *
@@ -22001,10 +23668,10 @@ export type PostBulkCreateScheduledContractorInvoiceResponses = {
   };
 };
 
-export type PostBulkCreateScheduledContractorInvoiceResponse =
-  PostBulkCreateScheduledContractorInvoiceResponses[keyof PostBulkCreateScheduledContractorInvoiceResponses];
+export type PostV1ContractorInvoiceSchedulesResponse =
+  PostV1ContractorInvoiceSchedulesResponses[keyof PostV1ContractorInvoiceSchedulesResponses];
 
-export type GetShowEmploymentEngagementAgreementDetailsData = {
+export type GetV1EmploymentsEmploymentIdEngagementAgreementDetailsData = {
   body?: never;
   path: {
     /**
@@ -22016,7 +23683,7 @@ export type GetShowEmploymentEngagementAgreementDetailsData = {
   url: '/v1/employments/{employment_id}/engagement-agreement-details';
 };
 
-export type GetShowEmploymentEngagementAgreementDetailsErrors = {
+export type GetV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors = {
   /**
    * Bad Request
    */
@@ -22039,20 +23706,20 @@ export type GetShowEmploymentEngagementAgreementDetailsErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetShowEmploymentEngagementAgreementDetailsError =
-  GetShowEmploymentEngagementAgreementDetailsErrors[keyof GetShowEmploymentEngagementAgreementDetailsErrors];
+export type GetV1EmploymentsEmploymentIdEngagementAgreementDetailsError =
+  GetV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors[keyof GetV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors];
 
-export type GetShowEmploymentEngagementAgreementDetailsResponses = {
+export type GetV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses = {
   /**
    * Success
    */
   200: EmploymentEngagementAgreementDetailsResponse;
 };
 
-export type GetShowEmploymentEngagementAgreementDetailsResponse =
-  GetShowEmploymentEngagementAgreementDetailsResponses[keyof GetShowEmploymentEngagementAgreementDetailsResponses];
+export type GetV1EmploymentsEmploymentIdEngagementAgreementDetailsResponse =
+  GetV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses[keyof GetV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses];
 
-export type PostUpdateEmploymentEngagementAgreementDetailsData = {
+export type PostV1EmploymentsEmploymentIdEngagementAgreementDetailsData = {
   /**
    * Employment engagement agreement details params
    */
@@ -22067,7 +23734,7 @@ export type PostUpdateEmploymentEngagementAgreementDetailsData = {
   url: '/v1/employments/{employment_id}/engagement-agreement-details';
 };
 
-export type PostUpdateEmploymentEngagementAgreementDetailsErrors = {
+export type PostV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors = {
   /**
    * Bad Request
    */
@@ -22094,20 +23761,20 @@ export type PostUpdateEmploymentEngagementAgreementDetailsErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostUpdateEmploymentEngagementAgreementDetailsError =
-  PostUpdateEmploymentEngagementAgreementDetailsErrors[keyof PostUpdateEmploymentEngagementAgreementDetailsErrors];
+export type PostV1EmploymentsEmploymentIdEngagementAgreementDetailsError =
+  PostV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors[keyof PostV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors];
 
-export type PostUpdateEmploymentEngagementAgreementDetailsResponses = {
+export type PostV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PostUpdateEmploymentEngagementAgreementDetailsResponse =
-  PostUpdateEmploymentEngagementAgreementDetailsResponses[keyof PostUpdateEmploymentEngagementAgreementDetailsResponses];
+export type PostV1EmploymentsEmploymentIdEngagementAgreementDetailsResponse =
+  PostV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses[keyof PostV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses];
 
-export type GetGetBreakdownBillingDocumentData = {
+export type GetV1BillingDocumentsBillingDocumentIdBreakdownData = {
   body?: never;
   path: {
     /**
@@ -22124,7 +23791,7 @@ export type GetGetBreakdownBillingDocumentData = {
   url: '/v1/billing-documents/{billing_document_id}/breakdown';
 };
 
-export type GetGetBreakdownBillingDocumentErrors = {
+export type GetV1BillingDocumentsBillingDocumentIdBreakdownErrors = {
   /**
    * Bad Request
    */
@@ -22147,20 +23814,20 @@ export type GetGetBreakdownBillingDocumentErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type GetGetBreakdownBillingDocumentError =
-  GetGetBreakdownBillingDocumentErrors[keyof GetGetBreakdownBillingDocumentErrors];
+export type GetV1BillingDocumentsBillingDocumentIdBreakdownError =
+  GetV1BillingDocumentsBillingDocumentIdBreakdownErrors[keyof GetV1BillingDocumentsBillingDocumentIdBreakdownErrors];
 
-export type GetGetBreakdownBillingDocumentResponses = {
+export type GetV1BillingDocumentsBillingDocumentIdBreakdownResponses = {
   /**
    * Success
    */
   200: BillingDocumentBreakdownResponse;
 };
 
-export type GetGetBreakdownBillingDocumentResponse =
-  GetGetBreakdownBillingDocumentResponses[keyof GetGetBreakdownBillingDocumentResponses];
+export type GetV1BillingDocumentsBillingDocumentIdBreakdownResponse =
+  GetV1BillingDocumentsBillingDocumentIdBreakdownResponses[keyof GetV1BillingDocumentsBillingDocumentIdBreakdownResponses];
 
-export type GetIndexEmployeeDocumentData = {
+export type GetV1EmployeeDocumentsData = {
   body?: never;
   path?: never;
   query?: {
@@ -22205,7 +23872,7 @@ export type GetIndexEmployeeDocumentData = {
   url: '/v1/employee/documents';
 };
 
-export type GetIndexEmployeeDocumentErrors = {
+export type GetV1EmployeeDocumentsErrors = {
   /**
    * Forbidden
    */
@@ -22216,20 +23883,20 @@ export type GetIndexEmployeeDocumentErrors = {
   404: NotFoundResponse;
 };
 
-export type GetIndexEmployeeDocumentError =
-  GetIndexEmployeeDocumentErrors[keyof GetIndexEmployeeDocumentErrors];
+export type GetV1EmployeeDocumentsError =
+  GetV1EmployeeDocumentsErrors[keyof GetV1EmployeeDocumentsErrors];
 
-export type GetIndexEmployeeDocumentResponses = {
+export type GetV1EmployeeDocumentsResponses = {
   /**
    * Success
    */
   200: ListDocumentsResponse;
 };
 
-export type GetIndexEmployeeDocumentResponse =
-  GetIndexEmployeeDocumentResponses[keyof GetIndexEmployeeDocumentResponses];
+export type GetV1EmployeeDocumentsResponse =
+  GetV1EmployeeDocumentsResponses[keyof GetV1EmployeeDocumentsResponses];
 
-export type PostApproveCancellationRequestData = {
+export type PostV1TimeoffTimeoffIdCancelRequestApproveData = {
   body?: never;
   path: {
     /**
@@ -22241,7 +23908,7 @@ export type PostApproveCancellationRequestData = {
   url: '/v1/timeoff/{timeoff_id}/cancel-request/approve';
 };
 
-export type PostApproveCancellationRequestErrors = {
+export type PostV1TimeoffTimeoffIdCancelRequestApproveErrors = {
   /**
    * Unauthorized
    */
@@ -22256,20 +23923,20 @@ export type PostApproveCancellationRequestErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PostApproveCancellationRequestError =
-  PostApproveCancellationRequestErrors[keyof PostApproveCancellationRequestErrors];
+export type PostV1TimeoffTimeoffIdCancelRequestApproveError =
+  PostV1TimeoffTimeoffIdCancelRequestApproveErrors[keyof PostV1TimeoffTimeoffIdCancelRequestApproveErrors];
 
-export type PostApproveCancellationRequestResponses = {
+export type PostV1TimeoffTimeoffIdCancelRequestApproveResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PostApproveCancellationRequestResponse =
-  PostApproveCancellationRequestResponses[keyof PostApproveCancellationRequestResponses];
+export type PostV1TimeoffTimeoffIdCancelRequestApproveResponse =
+  PostV1TimeoffTimeoffIdCancelRequestApproveResponses[keyof PostV1TimeoffTimeoffIdCancelRequestApproveResponses];
 
-export type PostVerifyIdentityVerificationData = {
+export type PostV1IdentityVerificationEmploymentIdVerifyData = {
   body?: never;
   path: {
     /**
@@ -22281,7 +23948,7 @@ export type PostVerifyIdentityVerificationData = {
   url: '/v1/identity-verification/{employment_id}/verify';
 };
 
-export type PostVerifyIdentityVerificationErrors = {
+export type PostV1IdentityVerificationEmploymentIdVerifyErrors = {
   /**
    * Unauthorized
    */
@@ -22296,20 +23963,20 @@ export type PostVerifyIdentityVerificationErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type PostVerifyIdentityVerificationError =
-  PostVerifyIdentityVerificationErrors[keyof PostVerifyIdentityVerificationErrors];
+export type PostV1IdentityVerificationEmploymentIdVerifyError =
+  PostV1IdentityVerificationEmploymentIdVerifyErrors[keyof PostV1IdentityVerificationEmploymentIdVerifyErrors];
 
-export type PostVerifyIdentityVerificationResponses = {
+export type PostV1IdentityVerificationEmploymentIdVerifyResponses = {
   /**
    * Success
    */
   200: SuccessResponse;
 };
 
-export type PostVerifyIdentityVerificationResponse =
-  PostVerifyIdentityVerificationResponses[keyof PostVerifyIdentityVerificationResponses];
+export type PostV1IdentityVerificationEmploymentIdVerifyResponse =
+  PostV1IdentityVerificationEmploymentIdVerifyResponses[keyof PostV1IdentityVerificationEmploymentIdVerifyResponses];
 
-export type GetDownloadPdfBillingDocumentData = {
+export type GetV1BillingDocumentsBillingDocumentIdPdfData = {
   body?: never;
   headers: {
     /**
@@ -22330,7 +23997,7 @@ export type GetDownloadPdfBillingDocumentData = {
   url: '/v1/billing-documents/{billing_document_id}/pdf';
 };
 
-export type GetDownloadPdfBillingDocumentErrors = {
+export type GetV1BillingDocumentsBillingDocumentIdPdfErrors = {
   /**
    * Unauthorized
    */
@@ -22345,15 +24012,15 @@ export type GetDownloadPdfBillingDocumentErrors = {
   422: UnprocessableEntityResponse;
 };
 
-export type GetDownloadPdfBillingDocumentError =
-  GetDownloadPdfBillingDocumentErrors[keyof GetDownloadPdfBillingDocumentErrors];
+export type GetV1BillingDocumentsBillingDocumentIdPdfError =
+  GetV1BillingDocumentsBillingDocumentIdPdfErrors[keyof GetV1BillingDocumentsBillingDocumentIdPdfErrors];
 
-export type GetDownloadPdfBillingDocumentResponses = {
+export type GetV1BillingDocumentsBillingDocumentIdPdfResponses = {
   /**
    * Success
    */
   200: GenericFile;
 };
 
-export type GetDownloadPdfBillingDocumentResponse =
-  GetDownloadPdfBillingDocumentResponses[keyof GetDownloadPdfBillingDocumentResponses];
+export type GetV1BillingDocumentsBillingDocumentIdPdfResponse =
+  GetV1BillingDocumentsBillingDocumentIdPdfResponses[keyof GetV1BillingDocumentsBillingDocumentIdPdfResponses];

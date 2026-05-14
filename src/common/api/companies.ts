@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useClient } from '@/src/context';
 import {
-  getIndexCompanyPricingPlan,
+  getV1CompaniesCompanyIdPricingPlans,
   IdentityCurrentResponse,
 } from '@/src/client';
 import { Client } from '@/src/client/client';
@@ -25,7 +25,7 @@ export const useCompanyPricingPlans = (
   return useQuery({
     queryKey: ['pricing-plans', companyId],
     queryFn: () =>
-      getIndexCompanyPricingPlan({
+      getV1CompaniesCompanyIdPricingPlans({
         client: client as Client,
         path: { company_id: companyId },
       }),

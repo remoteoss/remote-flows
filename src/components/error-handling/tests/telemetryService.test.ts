@@ -3,7 +3,7 @@ import {
   reportTelemetryError,
 } from '@/src/components/error-handling/telemetryService';
 import * as utils from '@/src/components/error-handling/utils';
-import { postReportErrorsTelemetry } from '@/src/client/sdk.gen';
+import { postV1SdkTelemetryErrors } from '@/src/client/sdk.gen';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
 // Mock the utility functions
@@ -13,7 +13,7 @@ vi.mock('@/src/components/error-handling/utils', () => ({
 }));
 
 vi.mock('@/src/client/sdk.gen', () => ({
-  postReportErrorsTelemetry: vi.fn(() => Promise.resolve()),
+  postV1SdkTelemetryErrors: vi.fn(() => Promise.resolve()),
 }));
 
 describe('telemetryService', () => {
@@ -85,7 +85,7 @@ describe('telemetryService', () => {
       },
     );
 
-    expect(postReportErrorsTelemetry).toHaveBeenCalledTimes(1);
+    expect(postV1SdkTelemetryErrors).toHaveBeenCalledTimes(1);
   });
 
   it('should report again after deduplication window expires', () => {
@@ -108,7 +108,7 @@ describe('telemetryService', () => {
         debugMode: false,
       },
     );
-    expect(postReportErrorsTelemetry).toHaveBeenCalledTimes(1);
+    expect(postV1SdkTelemetryErrors).toHaveBeenCalledTimes(1);
 
     vi.advanceTimersByTime(150);
 
@@ -124,7 +124,7 @@ describe('telemetryService', () => {
         debugMode: false,
       },
     );
-    expect(postReportErrorsTelemetry).toHaveBeenCalledTimes(2);
+    expect(postV1SdkTelemetryErrors).toHaveBeenCalledTimes(2);
   });
 
   it('should skip telemetry if url is localhost and environment is not local', () => {
@@ -145,6 +145,6 @@ describe('telemetryService', () => {
     const payload = buildErrorPayload(error, sdkVersion, 'production', context);
 
     expect(payload.metadata.url).toBe('http://localhost:3000');
-    expect(postReportErrorsTelemetry).not.toHaveBeenCalled();
+    expect(postV1SdkTelemetryErrors).not.toHaveBeenCalled();
   });
 });
