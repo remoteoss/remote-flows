@@ -180,9 +180,9 @@ try {
 } catch (error) {
   if (isMutationError(error)) {
     // Type-safe access to error properties
-    console.log(error.normalizedErrors);  // Direct access to errors object
-    console.log(error.fieldErrors);       // Array of field errors
-    
+    console.log(error.normalizedErrors); // Direct access to errors object
+    console.log(error.fieldErrors); // Array of field errors
+
     // Example: Check for specific field errors
     const fieldError = error.normalizedErrors.field_name;
     if (fieldError) {
