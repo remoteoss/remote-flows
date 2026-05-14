@@ -418,13 +418,26 @@ export const useContractorSubscriptionSchemaField = (
   });
 
   const isEmptyContractorSubscriptions = contractorSubscriptions?.length === 0;
-  // Maximum subscriptions allowed is 3 (COR, Standard, Plus)
-  const EXPECTED_SUBSCRIPTION_COUNT = 3;
+  const actualSubscriptions =
+    contractorSubscriptions?.filter((sub) =>
+      shouldIncludeProduct(
+        sub.product.identifier ?? '',
+        options?.excludeProducts,
+      ),
+    ) ?? [];
+
+  const expectedSubscriptionsForCountry =
+    selectedCountry?.contractor_products_available?.filter((productId) =>
+      shouldIncludeProduct(productId, options?.excludeProducts),
+    ) ?? [];
+
+  // For each country, the number can vary
+  const MAXIMUM_SUBSCRIPTIONS_BY_COUNTRY =
+    expectedSubscriptionsForCountry.length;
 
   const isASubscriptionMissing =
-    contractorSubscriptions != null &&
-    contractorSubscriptions.length > 0 &&
-    contractorSubscriptions.length < EXPECTED_SUBSCRIPTION_COUNT;
+    actualSubscriptions.length > 0 &&
+    actualSubscriptions.length < MAXIMUM_SUBSCRIPTIONS_BY_COUNTRY;
 
   const corSubscription = contractorSubscriptions?.find(
     (subscription) => subscription.product.short_name === 'COR',
@@ -450,49 +463,42 @@ export const useContractorSubscriptionSchemaField = (
     options,
   );
 
-  if (contractorSubscriptions) {
+  if (actualSubscriptions) {
     const field: JSFField | undefined = form.fields.find(
       (field) => field.name === 'subscription',
     ) as JSFField | undefined;
 
     if (field) {
       // Start with contractor management options
-      const contractorOptions = contractorSubscriptions
-        .filter((opts) =>
-          shouldIncludeProduct(
-            opts.product.identifier ?? '',
-            options?.excludeProducts,
-          ),
-        )
-        .map((opts) => {
-          const product = opts.product;
-          const price = opts.price.amount;
-          const currencyCode = opts.currency.code;
-          const title =
-            CONTRACT_PRODUCT_TITLES[
-              product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
-            ] ?? '';
-          const label = title;
-          const value = product.identifier ?? '';
-          const description = product.description ?? '';
-          const features = product.features ?? [];
-          const meta = {
-            features,
-            price: {
-              amount: convertFromCents(price),
-              currencyCode: currencyCode,
-            },
-          };
-          return {
-            label,
-            value,
-            description,
-            meta,
-            disabled:
-              isEligibilityQuestionnaireBlocked &&
-              product.identifier !== contractorStandardProductIdentifier,
-          };
-        });
+      const contractorOptions = actualSubscriptions.map((opts) => {
+        const product = opts.product;
+        const price = opts.price.amount;
+        const currencyCode = opts.currency.code;
+        const title =
+          CONTRACT_PRODUCT_TITLES[
+            product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
+          ] ?? '';
+        const label = title;
+        const value = product.identifier ?? '';
+        const description = product.description ?? '';
+        const features = product.features ?? [];
+        const meta = {
+          features,
+          price: {
+            amount: convertFromCents(price),
+            currencyCode: currencyCode,
+          },
+        };
+        return {
+          label,
+          value,
+          description,
+          meta,
+          disabled:
+            isEligibilityQuestionnaireBlocked &&
+            product.identifier !== contractorStandardProductIdentifier,
+        };
+      });
 
       // Sort contractor options
       contractorOptions.sort((a, b) => a.label.localeCompare(b.label));

@@ -2426,6 +2426,7 @@ describe('ContractorOnboardingFlow', () => {
                 code: 'PRT',
                 name: 'Portugal',
                 eor_onboarding: true,
+                contractor_products_available: ['standard', 'plus', 'cor'],
               },
             ],
           });
