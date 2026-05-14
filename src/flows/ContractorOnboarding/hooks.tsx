@@ -322,10 +322,10 @@ export const useContractorOnboarding = ({
   }, [employment?.contractor_type]);
 
   const eligibilityAnswers = useMemo(() => {
-    return filteredContractorSubscriptions?.find(
+    return contractorSubscriptions?.find(
       (subscription) => subscription.product.short_name === 'COR',
     )?.eligibility_questionnaire?.responses;
-  }, [filteredContractorSubscriptions]);
+  }, [contractorSubscriptions]);
 
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
