@@ -4,11 +4,17 @@
 
 ### Patch Changes
 
-- migrate comments (#1008) [#1008](https://github.com/remoteoss/remote-flows/pull/1008)
-- remove stale files (#1007) [#1007](https://github.com/remoteoss/remote-flows/pull/1007)
+#### Fixes
+
 - handle not nested errors (#1012) [#1012](https://github.com/remoteoss/remote-flows/pull/1012)
-- fix submission (#1017) [#1017](https://github.com/remoteoss/remote-flows/pull/1017)
-- fix eor card appear when subscriptions returned by BE less than 3 (#1015) [#1015](https://github.com/remoteoss/remote-flows/pull/1015)
+- fix arabia saudi non-national submission (#1017) [#1017](https://github.com/remoteoss/remote-flows/pull/1017)
+- fix eor card appear when subscriptions returned by BE is less than 3 (#1015) [#1015](https://github.com/remoteoss/remote-flows/pull/1015)
+
+#### Chores
+
+- migrate to oxlint comments (#1008) [#1008](https://github.com/remoteoss/remote-flows/pull/1008)
+- remove stale prettier files (#1007) [#1007](https://github.com/remoteoss/remote-flows/pull/1007)
+
 
 ## 1.33.0
 
