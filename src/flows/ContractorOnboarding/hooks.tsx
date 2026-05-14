@@ -1115,6 +1115,9 @@ export const useContractorOnboarding = ({
         return response;
       }
       case 'pricing_plan': {
+        if (!values.subscription) {
+          throw createStructuredError('Please select a subscription plan.');
+        }
         const blockedProductsEligibility = [
           corProductIdentifier,
           contractorPlusProductIdentifier,
