@@ -966,7 +966,6 @@ export const useContractorOnboarding = ({
       return null;
     }
 
-    // Access the normalized errors object
     const servicesAndDeliverablesError = error.normalizedErrors
       .services_and_deliverables as
       | {
@@ -1079,7 +1078,6 @@ export const useContractorOnboarding = ({
 
           return response;
         } catch (error) {
-          // we're fixing the problem here but maybe the problem is in the backend + mutation helpers
           const aiError = extractAiValidationError(error);
           if (aiError) {
             const isContractorOfRecord =
