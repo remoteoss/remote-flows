@@ -437,9 +437,12 @@ export const useContractorSubscriptionSchemaField = (
       );
     }) ?? [];
 
+  const MAXIMUM_SUBSCRIPTIONS_COUNT = 3;
   // For each country, the number can vary
   const MAXIMUM_SUBSCRIPTIONS_BY_COUNTRY =
-    expectedSubscriptionsForCountry.length;
+    expectedSubscriptionsForCountry.length === 0
+      ? MAXIMUM_SUBSCRIPTIONS_COUNT
+      : expectedSubscriptionsForCountry.length;
 
   const isASubscriptionMissing =
     actualSubscriptions.length > 0 &&
