@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getIndexEorPayrollCalendar } from '@/src/client';
+import { getV1PayrollCalendars } from '@/src/client';
 import { useClient } from '@/src/context';
 import { Client } from '@/src/client/client';
 
@@ -19,7 +19,7 @@ export const usePayrollCalendars = ({
   return useQuery({
     queryKey: ['payroll-calendars'],
     queryFn: () =>
-      getIndexEorPayrollCalendar({
+      getV1PayrollCalendars({
         client: client as Client,
         query: {
           year: query?.year,

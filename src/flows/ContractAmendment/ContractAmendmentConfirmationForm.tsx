@@ -1,6 +1,6 @@
 import {
   ContractAmendmentResponse,
-  PostCreateContractAmendmentError,
+  PostV1ContractAmendmentsError,
 } from '@/src/client';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { Form } from '@/src/components/ui/form';
@@ -22,7 +22,7 @@ type ContractAmendmentConfirmationFormProps = {
    * @param error
    * @returns
    */
-  onError?: (error: PostCreateContractAmendmentError) => void;
+  onError?: (error: PostV1ContractAmendmentsError) => void;
   /**
    * Callback function to be called when the contract amendment is successfully submitted.
    * @param data
@@ -58,9 +58,7 @@ export function ContractAmendmentConfirmationForm({
     const contractAmendmentResult = await submitContractAmendment(values);
 
     if (contractAmendmentResult.error) {
-      onError?.(
-        contractAmendmentResult.error as PostCreateContractAmendmentError,
-      );
+      onError?.(contractAmendmentResult.error as PostV1ContractAmendmentsError);
     } else {
       await onSuccess?.(
         contractAmendmentResult.data as ContractAmendmentResponse,

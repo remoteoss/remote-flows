@@ -3,9 +3,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   CreateContractAmendmentParams,
   Employment,
-  getShowContractAmendmentSchema,
-  postAutomatableContractAmendment,
-  postCreateContractAmendment,
+  getV1ContractAmendmentsSchema,
+  postV1ContractAmendmentsAutomatable,
+  postV1ContractAmendments,
 } from '@/src/client';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
@@ -41,7 +41,7 @@ const useContractAmendmentSchemaQuery = ({
     queryKey: ['contract-amendment-schema'],
     retry: false,
     queryFn: async () => {
-      const response = await getShowContractAmendmentSchema({
+      const response = await getV1ContractAmendmentsSchema({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -78,7 +78,7 @@ const useCreateContractAmendmentMutation = (options?: FlowOptions) => {
     : {};
   return useMutation({
     mutationFn: (payload: CreateContractAmendmentParams) => {
-      return postCreateContractAmendment({
+      return postV1ContractAmendments({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -101,7 +101,7 @@ const useAutomatableContractAmendmentMutation = (options?: FlowOptions) => {
     : {};
   return useMutation({
     mutationFn: (payload: CreateContractAmendmentParams) => {
-      return postAutomatableContractAmendment({
+      return postV1ContractAmendmentsAutomatable({
         client: client as Client,
         headers: {
           Authorization: ``,

@@ -1,22 +1,22 @@
 import { useMemo } from 'react';
 import {
   CreateContractDocument,
-  getShowContractDocument,
-  getShowContractorContractDetailsCountry,
-  getIndexSubscription,
+  getV1ContractorsEmploymentsEmploymentIdContractDocumentsId,
+  getV1CountriesCountryCodeContractorContractDetails,
+  getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions,
   ManageContractorPlusSubscriptionOperationsParams,
-  postCreateContractDocument,
-  postManageContractorPlusSubscriptionSubscription,
-  postSignContractDocument,
+  postV1ContractorsEmploymentsEmploymentIdContractDocuments,
+  postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription,
+  postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign,
   SignContractDocument,
-  getIndexEmploymentContractDocument,
+  getV1EmploymentsEmploymentIdContractDocuments,
   EligibilityQuestionnaireJsonSchemaResponse,
-  getShowEligibilityQuestionnaire,
+  getV1ContractorsSchemasEligibilityQuestionnaire,
   SubmitEligibilityQuestionnaireRequest,
-  postCreateEligibilityQuestionnaire,
-  postManageContractorCorSubscriptionSubscription,
-  deleteDeleteContractorCorSubscriptionSubscription,
-  getIndexContractorCurrency,
+  postV1ContractorsEligibilityQuestionnaire,
+  postV1ContractorsEmploymentsEmploymentIdContractorCorSubscription,
+  deleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscription,
+  getV1ContractorsEmploymentsEmploymentIdContractorCurrencies,
   Country,
 } from '@/src/client';
 import { useClient } from '@/src/context';
@@ -64,7 +64,7 @@ const useContractorCurrencies = ({
   return useQuery({
     queryKey: ['contractor-currencies', employmentId],
     queryFn: async () => {
-      return getIndexContractorCurrency({
+      return getV1ContractorsEmploymentsEmploymentIdContractorCurrencies({
         client: client as Client,
         path: { employment_id: employmentId },
         query: {
@@ -126,14 +126,16 @@ export const useSignContractDocument = () => {
       contractDocumentId: string;
       payload: SignContractDocument;
     }) => {
-      return postSignContractDocument({
-        client: client as Client,
-        body: payload,
-        path: {
-          employment_id: employmentId,
-          contract_document_id: contractDocumentId,
+      return postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign(
+        {
+          client: client as Client,
+          body: payload,
+          path: {
+            employment_id: employmentId,
+            contract_document_id: contractDocumentId,
+          },
         },
-      });
+      );
     },
   });
 };
@@ -157,7 +159,7 @@ export const useGetShowContractDocument = ({
   return useQuery({
     queryKey: ['contract-document', employmentId, contractDocumentId],
     queryFn: async () => {
-      return getShowContractDocument({
+      return getV1ContractorsEmploymentsEmploymentIdContractDocumentsId({
         client: client as Client,
         path: { employment_id: employmentId, id: contractDocumentId },
       });
@@ -222,7 +224,7 @@ export const useGetContractorSubscriptions = ({
   return useQuery({
     queryKey: ['contractor-subscriptions', employmentId],
     queryFn: async () => {
-      return getIndexSubscription({
+      return getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions({
         client: client as Client,
         path: { employment_id: employmentId },
       });
@@ -247,13 +249,15 @@ export const usePostManageContractorSubscriptions = () => {
       employmentId: string;
       payload: ManageContractorPlusSubscriptionOperationsParams;
     }) => {
-      return postManageContractorPlusSubscriptionSubscription({
-        client: client as Client,
-        body: payload,
-        path: {
-          employment_id: employmentId,
+      return postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription(
+        {
+          client: client as Client,
+          body: payload,
+          path: {
+            employment_id: employmentId,
+          },
         },
-      });
+      );
     },
   });
 };
@@ -274,7 +278,7 @@ export const useCreateContractorContractDocument = () => {
       employmentId: string;
       payload: CreateContractDocument;
     }) => {
-      return postCreateContractDocument({
+      return postV1ContractorsEmploymentsEmploymentIdContractDocuments({
         client: client as Client,
         body: payload,
         path: {
@@ -313,7 +317,7 @@ const useContractorOnboardingDetailsSchema = ({
     ],
     retry: false,
     queryFn: async () => {
-      return getShowContractorContractDetailsCountry({
+      return getV1CountriesCountryCodeContractorContractDetails({
         client: client as Client,
         path: { country_code: countryCode },
         query: {
@@ -643,7 +647,7 @@ export const useGetContractDocuments = (
   return useQuery({
     queryKey: ['contract-documents', employmentId],
     queryFn: async () => {
-      return getIndexEmploymentContractDocument({
+      return getV1EmploymentsEmploymentIdContractDocuments({
         client: client as Client,
         path: { employment_id: employmentId },
       });
@@ -672,7 +676,7 @@ export const useGetEligibilityQuestionnaire = ({
     queryFn: async (): Promise<
       EligibilityQuestionnaireJsonSchemaResponse['data']
     > => {
-      const response = await getShowEligibilityQuestionnaire({
+      const response = await getV1ContractorsSchemasEligibilityQuestionnaire({
         client: client as Client,
         query: {
           type: 'contractor_of_record',
@@ -708,7 +712,7 @@ export const usePostCreateEligibilityQuestionnaire = () => {
       employmentId: string;
       payload: SubmitEligibilityQuestionnaireRequest['responses'];
     }) => {
-      return postCreateEligibilityQuestionnaire({
+      return postV1ContractorsEligibilityQuestionnaire({
         client: client as Client,
         body: {
           employment_slug: employmentId,
@@ -727,7 +731,7 @@ export const usePostManageContractorCorSubscription = () => {
   const { client } = useClient();
   return useMutation({
     mutationFn: async ({ employmentId }: { employmentId: string }) => {
-      return postManageContractorCorSubscriptionSubscription({
+      return postV1ContractorsEmploymentsEmploymentIdContractorCorSubscription({
         client: client as Client,
         path: {
           employment_id: employmentId,
@@ -741,10 +745,12 @@ export const useDeleteContractorCorSubscription = () => {
   const { client } = useClient();
   return useMutation({
     mutationFn: async ({ employmentId }: { employmentId: string }) => {
-      return deleteDeleteContractorCorSubscriptionSubscription({
-        client: client as Client,
-        path: { employment_id: employmentId },
-      });
+      return deleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscription(
+        {
+          client: client as Client,
+          path: { employment_id: employmentId },
+        },
+      );
     },
   });
 };

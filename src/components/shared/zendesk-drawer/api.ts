@@ -1,4 +1,4 @@
-import { getShowHelpCenterArticle } from '@/src/client';
+import { getV1HelpCenterArticlesId } from '@/src/client';
 import { useClient } from '@/src/context';
 import { sanitizeHtmlWithImageErrorHandling } from '@/src/lib/utils';
 import { Client } from '@/src/client/client';
@@ -12,7 +12,7 @@ export const useZendeskArticle = (
   return useQuery({
     queryKey: ['zendesk-article', zendeskId],
     queryFn: async () => {
-      const response = await getShowHelpCenterArticle({
+      const response = await getV1HelpCenterArticlesId({
         client: client as Client,
         path: {
           id: Number(zendeskId),

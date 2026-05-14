@@ -1,7 +1,7 @@
 import type {
   CostCalculatorEmployment,
   EmploymentTermType,
-  PostCreateEstimationError,
+  PostV1CostCalculatorEstimationError,
   ValidationError,
 } from '@/src/client';
 import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
@@ -84,7 +84,9 @@ export type CostCalculatorEstimationOptions = Partial<{
   showManagementFee: boolean;
 }>;
 
-export type EstimationError = PostCreateEstimationError | ValidationError;
+export type EstimationError =
+  | PostV1CostCalculatorEstimationError
+  | ValidationError;
 
 export type UseCostCalculatorOptions = {
   jsfModify?: JSFModify;

@@ -1,5 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { getIndexCompanyLegalEntities } from '@/src/client';
+import {
+  getV1CompaniesCompanyIdLegalEntities,
+  CompanyLegalEntity,
+} from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 import { useIdentity } from '@/src/common/api/identity';
@@ -18,7 +21,7 @@ export const useLegalEntities = () => {
   return useQuery({
     queryKey: ['legal-entities', companyId],
     queryFn: () =>
-      getIndexCompanyLegalEntities({
+      getV1CompaniesCompanyIdLegalEntities({
         client: client as Client,
         path: {
           company_id: companyId,
@@ -34,5 +37,7 @@ export const useLegalEntities = () => {
 
 export const useDefaultLegalEntity = () => {
   const { data: legalEntities } = useLegalEntities();
-  return legalEntities?.find((legalEntity) => legalEntity.is_default);
+  return legalEntities?.find(
+    (legalEntity: CompanyLegalEntity) => legalEntity.is_default,
+  );
 };

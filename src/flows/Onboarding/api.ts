@@ -7,23 +7,23 @@ import {
   EmploymentCreateParams,
   EmploymentEngagementAgreementDetailsParams,
   EmploymentFullParams,
-  getIndexBenefitOffer,
-  getShowCompany,
-  getShowCompanyEmploymentOnboardingReservesStatus,
-  getShowEmploymentEngagementAgreementDetails,
-  getShowEngagementAgreementDetailsCountry,
-  getShowFormCountry,
-  getShowSchema,
-  patchUpdateEmployment2,
-  postConvertRawCurrencyConverter,
-  postConvertWithSpreadCurrencyConverter,
-  postCreateContractEligibility,
-  postCreateEmployment2,
-  postCreateRiskReserve,
-  postInviteEmploymentInvitation,
-  PostInviteEmploymentInvitationData,
-  postUpdateEmploymentEngagementAgreementDetails,
-  putUpdateBenefitOffer,
+  getV1CompaniesCompanyId,
+  getV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatus,
+  getV1CountriesCountryCodeEngagementAgreementDetails,
+  getV1CountriesCountryCodeForm,
+  getV1EmploymentsEmploymentIdBenefitOffers,
+  getV1EmploymentsEmploymentIdBenefitOffersSchema,
+  getV1EmploymentsEmploymentIdEngagementAgreementDetails,
+  patchV1EmploymentsEmploymentId2,
+  postV1CurrencyConverterEffective,
+  postV1CurrencyConverterRaw,
+  postV1Employments,
+  postV1EmploymentsEmploymentIdContractEligibility,
+  postV1EmploymentsEmploymentIdEngagementAgreementDetails,
+  postV1EmploymentsEmploymentIdInvite,
+  PostV1EmploymentsEmploymentIdInviteData,
+  postV1RiskReserve,
+  putV1EmploymentsEmploymentIdBenefitOffers,
   UnifiedEmploymentUpsertBenefitOffersRequest,
 } from '@/src/client';
 
@@ -53,7 +53,7 @@ export const useCompany = (companyId: string) => {
     retry: false,
     enabled: !!companyId,
     queryFn: async () => {
-      const response = await getShowCompany({
+      const response = await getV1CompaniesCompanyId({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -82,7 +82,7 @@ export const useBenefitOffers = (employmentId: string | undefined) => {
     retry: false,
     enabled: !!employmentId,
     queryFn: async () => {
-      return getIndexBenefitOffer({
+      return getV1EmploymentsEmploymentIdBenefitOffers({
         client: client as Client,
         path: {
           employment_id: employmentId as string,
@@ -124,7 +124,7 @@ export const useEmploymentEngagementAgreementDetails = (
     retry: false,
     enabled: queryOptions?.enabled ?? !!employmentId,
     queryFn: async () => {
-      return getShowEmploymentEngagementAgreementDetails({
+      return getV1EmploymentsEmploymentIdEngagementAgreementDetails({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -151,8 +151,8 @@ export const useEmploymentInvite = () => {
   const { client } = useClient();
 
   return useMutation({
-    mutationFn: (payload: PostInviteEmploymentInvitationData['path']) => {
-      return postInviteEmploymentInvitation({
+    mutationFn: (payload: PostV1EmploymentsEmploymentIdInviteData['path']) => {
+      return postV1EmploymentsEmploymentIdInvite({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -167,7 +167,7 @@ export const useCreateReserveInvoice = () => {
   const { client } = useClient();
   return useMutation({
     mutationFn: (payload: { employment_slug: string }) => {
-      return postCreateRiskReserve({
+      return postV1RiskReserve({
         client: client as Client,
         body: payload,
       });
@@ -210,7 +210,7 @@ export const useJSONSchemaForm = ({
     ],
     retry: false,
     queryFn: async () => {
-      const response = await getShowFormCountry({
+      const response = await getV1CountriesCountryCodeForm({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -256,7 +256,7 @@ export const useBenefitOffersSchema = (
     retry: false,
     enabled: !!employmentId,
     queryFn: async () => {
-      const response = await getShowSchema({
+      const response = await getV1EmploymentsEmploymentIdBenefitOffersSchema({
         client: client as Client,
         path: {
           employment_id: employmentId,
@@ -294,7 +294,7 @@ export const useCreateEmployment = (
   };
   return useMutation({
     mutationFn: (payload: EmploymentCreateParams) => {
-      return postCreateEmployment2({
+      return postV1Employments({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -325,7 +325,7 @@ export const useUpdateEmployment = (
       employmentId,
       ...payload
     }: EmploymentFullParams & { employmentId: string }) => {
-      return patchUpdateEmployment2({
+      return patchV1EmploymentsEmploymentId2({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -353,7 +353,7 @@ export const useUpdateEmploymentEngagementAgreementDetails = () => {
     }: EmploymentEngagementAgreementDetailsParams & {
       employmentId: string;
     }) => {
-      return postUpdateEmploymentEngagementAgreementDetails({
+      return postV1EmploymentsEmploymentIdEngagementAgreementDetails({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -382,7 +382,7 @@ export const useUpdateBenefitsOffers = (
         json_schema_version: getBenefitOffersSchemaVersion(options),
       };
 
-      return putUpdateBenefitOffer({
+      return putV1EmploymentsEmploymentIdBenefitOffers({
         client: client as Client,
         body: payload,
         path: {
@@ -448,8 +448,8 @@ export const useConvertCurrency = ({
     mutationFn: (payload: ConvertCurrencyParams) => {
       const apiFn =
         type === 'no_spread'
-          ? postConvertRawCurrencyConverter
-          : postConvertWithSpreadCurrencyConverter;
+          ? postV1CurrencyConverterRaw
+          : postV1CurrencyConverterEffective;
       return apiFn({
         client: client as Client,
         body: payload,
@@ -465,7 +465,7 @@ export const useUpsertContractEligibility = () => {
       employmentId,
       ...payload
     }: { employmentId: string } & CreateContractEligibilityParams) => {
-      return postCreateContractEligibility({
+      return postV1EmploymentsEmploymentIdContractEligibility({
         client: client as Client,
         path: {
           employment_id: employmentId,
@@ -498,16 +498,19 @@ export const useEmploymentOnboardingReservesStatus = (
     retry: false,
     enabled: enabled && !!companyId && !!employmentId,
     queryFn: async () => {
-      const response = await getShowCompanyEmploymentOnboardingReservesStatus({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: {
-          company_id: companyId as string,
-          employment_id: employmentId as string,
-        },
-      });
+      const response =
+        await getV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatus(
+          {
+            client: client as Client,
+            headers: {
+              Authorization: ``,
+            },
+            path: {
+              company_id: companyId as string,
+              employment_id: employmentId as string,
+            },
+          },
+        );
 
       if (response.error || !response.data) {
         throw new Error(
@@ -535,12 +538,13 @@ export const useEngagementAgreementDetailsSchema = (
     retry: false,
     enabled: options?.queryOptions?.enabled ?? !!countryCode,
     queryFn: async () => {
-      const response = await getShowEngagementAgreementDetailsCountry({
-        client: client as Client,
-        path: {
-          country_code: countryCode,
-        },
-      });
+      const response =
+        await getV1CountriesCountryCodeEngagementAgreementDetails({
+          client: client as Client,
+          path: {
+            country_code: countryCode,
+          },
+        });
 
       if (response.error || !response.data) {
         throw new Error('Failed to fetch engagement agreement details');

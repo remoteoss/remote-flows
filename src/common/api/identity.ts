@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCurrentIdentity } from '@/src/client';
+import { getV1IdentityCurrent } from '@/src/client';
 import { useClient } from '@/src/context';
 import { Client } from '@/src/client/client';
 
@@ -8,7 +8,7 @@ export const useIdentity = () => {
   return useQuery({
     queryKey: ['identity'],
     queryFn: () =>
-      getCurrentIdentity({
+      getV1IdentityCurrent({
         client: client as Client,
         headers: { Authorization: `` },
       }),

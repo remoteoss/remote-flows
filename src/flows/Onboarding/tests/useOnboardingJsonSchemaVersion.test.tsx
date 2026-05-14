@@ -5,25 +5,26 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 import { TestProviders } from '@/src/tests/testHelpers';
 
 // Mock the API calls to track the query parameters
-const mockGetShowFormCountry = vi.fn();
-const mockGetShowSchema = vi.fn();
-const mockPostCreateEmployment2 = vi.fn();
-const mockPatchUpdateEmployment2 = vi.fn();
-const mockPutUpdateBenefitOffer = vi.fn();
-const mockPostCreateContractEligibility = vi.fn();
+const mockGetV1CountriesCountryCodeForm = vi.fn();
+const mockGetV1EmploymentsEmploymentIdBenefitOffersSchema = vi.fn();
+const mockPostV1Employments = vi.fn();
+const mockPatchV1EmploymentsEmploymentId2 = vi.fn();
+const mockPutV1EmploymentsEmploymentIdBenefitOffers = vi.fn();
+const mockPostV1EmploymentsEmploymentIdContractEligibility = vi.fn();
 
 // Mock the client functions
 vi.mock('@/src/client', () => ({
-  getShowFormCountry: (...args: $TSFixMe[]) => mockGetShowFormCountry(...args),
-  getShowSchema: (...args: $TSFixMe[]) => mockGetShowSchema(...args),
-  postCreateEmployment2: (...args: $TSFixMe[]) =>
-    mockPostCreateEmployment2(...args),
-  patchUpdateEmployment2: (...args: $TSFixMe[]) =>
-    mockPatchUpdateEmployment2(...args),
-  putUpdateBenefitOffer: (...args: $TSFixMe[]) =>
-    mockPutUpdateBenefitOffer(...args),
-  postCreateContractEligibility: (...args: $TSFixMe[]) =>
-    mockPostCreateContractEligibility(...args),
+  getV1CountriesCountryCodeForm: (...args: $TSFixMe[]) =>
+    mockGetV1CountriesCountryCodeForm(...args),
+  getV1EmploymentsEmploymentIdBenefitOffersSchema: (...args: $TSFixMe[]) =>
+    mockGetV1EmploymentsEmploymentIdBenefitOffersSchema(...args),
+  postV1Employments: (...args: $TSFixMe[]) => mockPostV1Employments(...args),
+  patchV1EmploymentsEmploymentId2: (...args: $TSFixMe[]) =>
+    mockPatchV1EmploymentsEmploymentId2(...args),
+  putV1EmploymentsEmploymentIdBenefitOffers: (...args: $TSFixMe[]) =>
+    mockPutV1EmploymentsEmploymentIdBenefitOffers(...args),
+  postV1EmploymentsEmploymentIdContractEligibility: (...args: $TSFixMe[]) =>
+    mockPostV1EmploymentsEmploymentIdContractEligibility(...args),
 }));
 
 const queryClient = new QueryClient({
@@ -39,7 +40,7 @@ describe('useOnboarding jsonSchemaVersion', () => {
     queryClient.clear();
 
     // Mock successful responses
-    mockGetShowFormCountry.mockResolvedValue({
+    mockGetV1CountriesCountryCodeForm.mockResolvedValue({
       data: {
         data: {
           properties: {
@@ -50,7 +51,7 @@ describe('useOnboarding jsonSchemaVersion', () => {
       },
     });
 
-    mockGetShowSchema.mockResolvedValue({
+    mockGetV1EmploymentsEmploymentIdBenefitOffersSchema.mockResolvedValue({
       data: {
         data: {
           schema: {
@@ -62,19 +63,19 @@ describe('useOnboarding jsonSchemaVersion', () => {
       },
     });
 
-    mockPostCreateEmployment2.mockResolvedValue({
+    mockPostV1Employments.mockResolvedValue({
       data: { data: { employment: { id: 'test-employment-id' } } },
     });
 
-    mockPatchUpdateEmployment2.mockResolvedValue({
+    mockPatchV1EmploymentsEmploymentId2.mockResolvedValue({
       data: { data: { employment: { id: 'test-employment-id' } } },
     });
 
-    mockPutUpdateBenefitOffer.mockResolvedValue({
+    mockPutV1EmploymentsEmploymentIdBenefitOffers.mockResolvedValue({
       data: { data: { success: true } },
     });
 
-    mockPostCreateContractEligibility.mockResolvedValue({
+    mockPostV1EmploymentsEmploymentIdContractEligibility.mockResolvedValue({
       data: { data: { status: 'ok' } },
     });
   });
@@ -97,10 +98,10 @@ describe('useOnboarding jsonSchemaVersion', () => {
       });
 
       await waitFor(() => {
-        expect(mockGetShowFormCountry).toHaveBeenCalled();
+        expect(mockGetV1CountriesCountryCodeForm).toHaveBeenCalled();
       });
 
-      const call = mockGetShowFormCountry.mock.calls[0][0];
+      const call = mockGetV1CountriesCountryCodeForm.mock.calls[0][0];
 
       expect(call.path).toEqual({
         country_code: 'PRT',
@@ -130,10 +131,10 @@ describe('useOnboarding jsonSchemaVersion', () => {
       });
 
       await waitFor(() => {
-        expect(mockGetShowFormCountry).toHaveBeenCalled();
+        expect(mockGetV1CountriesCountryCodeForm).toHaveBeenCalled();
       });
 
-      const call = mockGetShowFormCountry.mock.calls[1][0];
+      const call = mockGetV1CountriesCountryCodeForm.mock.calls[1][0];
 
       expect(call.path).toEqual({
         country_code: 'PRT',
@@ -175,7 +176,8 @@ describe('useOnboarding jsonSchemaVersion', () => {
       // Navigate to contract details step
       result.current.goTo('contract_details');
 
-      const contractDetailsCall = mockGetShowFormCountry.mock.calls[1][0];
+      const contractDetailsCall =
+        mockGetV1CountriesCountryCodeForm.mock.calls[1][0];
 
       await waitFor(() => {
         expect(contractDetailsCall).toEqual({
@@ -217,9 +219,9 @@ describe('useOnboarding jsonSchemaVersion', () => {
         expect(result.current.isLoading).toBe(false);
       });
       await waitFor(() => {
-        expect(mockGetShowFormCountry).toHaveBeenCalled();
+        expect(mockGetV1CountriesCountryCodeForm).toHaveBeenCalled();
       });
-      const call = mockGetShowFormCountry.mock.calls[0][0];
+      const call = mockGetV1CountriesCountryCodeForm.mock.calls[0][0];
       expect(call.path).toEqual({
         country_code: 'PRT',
         form: 'employment_basic_information',
@@ -255,9 +257,12 @@ describe('useOnboarding jsonSchemaVersion', () => {
         result.current.goTo('benefits');
       });
       await waitFor(() => {
-        expect(mockGetShowSchema).toHaveBeenCalled();
+        expect(
+          mockGetV1EmploymentsEmploymentIdBenefitOffersSchema,
+        ).toHaveBeenCalled();
       });
-      const call = mockGetShowSchema.mock.calls[0][0];
+      const call =
+        mockGetV1EmploymentsEmploymentIdBenefitOffersSchema.mock.calls[0][0];
       expect(call.query).toEqual({
         json_schema_version: 2,
       });
@@ -296,10 +301,10 @@ describe('useOnboarding jsonSchemaVersion', () => {
       });
 
       await waitFor(() => {
-        expect(mockPatchUpdateEmployment2).toHaveBeenCalled();
+        expect(mockPatchV1EmploymentsEmploymentId2).toHaveBeenCalled();
       });
 
-      const call = mockPatchUpdateEmployment2.mock.calls[0][0];
+      const call = mockPatchV1EmploymentsEmploymentId2.mock.calls[0][0];
 
       expect(call.query).toEqual({
         skip_benefits: true,
@@ -346,10 +351,10 @@ describe('useOnboarding jsonSchemaVersion', () => {
       });
 
       await waitFor(() => {
-        expect(mockPatchUpdateEmployment2).toHaveBeenCalled();
+        expect(mockPatchV1EmploymentsEmploymentId2).toHaveBeenCalled();
       });
 
-      const call = mockPatchUpdateEmployment2.mock.calls[0][0];
+      const call = mockPatchV1EmploymentsEmploymentId2.mock.calls[0][0];
 
       expect(call.query).toEqual({
         skip_benefits: true,
@@ -385,9 +390,9 @@ describe('useOnboarding jsonSchemaVersion', () => {
         });
       });
       await waitFor(() => {
-        expect(mockPatchUpdateEmployment2).toHaveBeenCalled();
+        expect(mockPatchV1EmploymentsEmploymentId2).toHaveBeenCalled();
       });
-      const call = mockPatchUpdateEmployment2.mock.calls[0][0];
+      const call = mockPatchV1EmploymentsEmploymentId2.mock.calls[0][0];
       expect(call.query).toEqual({
         skip_benefits: true,
         employment_basic_information_json_schema_version: 3, // ← Assert this
@@ -422,10 +427,10 @@ describe('useOnboarding jsonSchemaVersion', () => {
       });
 
       await waitFor(() => {
-        expect(mockPostCreateEmployment2).toHaveBeenCalled();
+        expect(mockPostV1Employments).toHaveBeenCalled();
       });
 
-      const call = mockPostCreateEmployment2.mock.calls[0][0];
+      const call = mockPostV1Employments.mock.calls[0][0];
 
       expect(call.query).toEqual({
         json_schema_version: 1,
@@ -460,10 +465,10 @@ describe('useOnboarding jsonSchemaVersion', () => {
       });
 
       await waitFor(() => {
-        expect(mockPostCreateEmployment2).toHaveBeenCalled();
+        expect(mockPostV1Employments).toHaveBeenCalled();
       });
 
-      const call = mockPostCreateEmployment2.mock.calls[0][0];
+      const call = mockPostV1Employments.mock.calls[0][0];
 
       expect(call.query).toEqual({
         json_schema_version: 3,
