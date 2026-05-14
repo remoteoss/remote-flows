@@ -418,7 +418,7 @@ export const useContractorSubscriptionSchemaField = (
   });
 
   const isEmptyContractorSubscriptions = contractorSubscriptions?.length === 0;
-
+  // Maximum subscriptions allowed is 3 (COR, Standard, Plus)
   const EXPECTED_SUBSCRIPTION_COUNT = 3;
 
   const isASubscriptionMissing =
