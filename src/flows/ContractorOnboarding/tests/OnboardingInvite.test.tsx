@@ -245,6 +245,7 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       rawError: {
         message: "Can't invite contractor missing contract details",
       },
+      normalizedErrors: {},
       fieldErrors: [],
     });
     expect(mockSuccess).not.toHaveBeenCalled();

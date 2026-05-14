@@ -49,7 +49,7 @@ import {
 } from '@/src/flows/Onboarding/api';
 import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { useStepState } from '@/src/flows/useStepState';
-import { mutationToPromise } from '@/src/lib/mutations';
+import { mutationToPromise, isMutationError } from '@/src/lib/mutations';
 import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
 import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import {
@@ -960,14 +960,26 @@ export const useContractorOnboarding = ({
    * @returns The AI validation error if found, null otherwise
    */
   const extractAiValidationError = (
-    error: $TSFixMe,
+    error: unknown,
   ): AiValidationError | null => {
-    const errorData = error?.rawError?.error?.errors?.services_and_deliverables;
-    if (errorData?.source === REMOTE_AI_ERROR_SOURCE) {
+    if (!isMutationError(error)) {
+      return null;
+    }
+
+    const servicesAndDeliverablesError = error.normalizedErrors
+      .services_and_deliverables as
+      | {
+          error: string[];
+          source: string;
+          skippable: boolean;
+        }
+      | undefined;
+
+    if (servicesAndDeliverablesError?.source === REMOTE_AI_ERROR_SOURCE) {
       return {
-        error: errorData.error,
-        source: errorData.source,
-        skippable: errorData.skippable,
+        error: servicesAndDeliverablesError.error,
+        source: servicesAndDeliverablesError.source,
+        skippable: servicesAndDeliverablesError.skippable,
       };
     }
     return null;

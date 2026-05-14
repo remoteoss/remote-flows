@@ -3,6 +3,7 @@ import {
   mutationToPromise,
   normalizeFieldErrors,
   FieldError,
+  isMutationError,
 } from '@/src/lib/mutations';
 import { $TSFixMe, Meta, NestedMeta } from '@/src/types/remoteFlows';
 
@@ -161,6 +162,7 @@ describe('mutationToPromise', () => {
             error: {
               error: { message: 'Nested error message' },
             },
+            response: undefined,
           });
         }),
       };
@@ -170,7 +172,9 @@ describe('mutationToPromise', () => {
       ).rejects.toEqual({
         error: new Error('Nested error message'),
         rawError: { error: { message: 'Nested error message' } },
+        normalizedErrors: {},
         fieldErrors: [],
+        response: undefined,
       });
     });
 
@@ -180,6 +184,7 @@ describe('mutationToPromise', () => {
           onSuccess({
             data: null,
             error: { message: 'Flat error message' },
+            response: undefined,
           });
         }),
       };
@@ -189,8 +194,127 @@ describe('mutationToPromise', () => {
       ).rejects.toEqual({
         error: new Error('Flat error message'),
         rawError: { message: 'Flat error message' },
+        normalizedErrors: {},
         fieldErrors: [],
+        response: undefined,
       });
+    });
+
+    it('should populate normalizedErrors from nested error.error.errors structure', async () => {
+      const mockMutation = {
+        mutate: vi.fn((_, { onSuccess }) => {
+          onSuccess({
+            data: null,
+            error: {
+              error: {
+                message: 'Validation error',
+                errors: {
+                  services_and_deliverables: {
+                    error: ['AI validation failed'],
+                    source: 'remote_ai',
+                    skippable: true,
+                  },
+                  email: ['Email is invalid'],
+                },
+              },
+            },
+            response: undefined,
+          });
+        }),
+      };
+
+      await expect(
+        mutationToPromise(mockMutation as $TSFixMe).mutateAsyncOrThrow({}),
+      ).rejects.toEqual({
+        error: new Error('Validation error'),
+        rawError: {
+          error: {
+            message: 'Validation error',
+            errors: {
+              services_and_deliverables: {
+                error: ['AI validation failed'],
+                source: 'remote_ai',
+                skippable: true,
+              },
+              email: ['Email is invalid'],
+            },
+          },
+        },
+        normalizedErrors: {
+          services_and_deliverables: {
+            error: ['AI validation failed'],
+            source: 'remote_ai',
+            skippable: true,
+          },
+          email: ['Email is invalid'],
+        },
+        fieldErrors: [
+          { field: 'error', messages: ['AI validation failed'] },
+          { field: 'email', messages: ['Email is invalid'] },
+        ],
+        response: undefined,
+      });
+    });
+
+    it('should populate normalizedErrors from flat error.errors structure', async () => {
+      const mockMutation = {
+        mutate: vi.fn((_, { onSuccess }) => {
+          onSuccess({
+            data: null,
+            error: {
+              message: 'Validation error',
+              errors: {
+                name: ['Name is required'],
+                age: ['Age must be positive'],
+              },
+            },
+            response: undefined,
+          });
+        }),
+      };
+
+      await expect(
+        mutationToPromise(mockMutation as $TSFixMe).mutateAsyncOrThrow({}),
+      ).rejects.toEqual({
+        error: new Error('Validation error'),
+        rawError: {
+          message: 'Validation error',
+          errors: {
+            name: ['Name is required'],
+            age: ['Age must be positive'],
+          },
+        },
+        normalizedErrors: {
+          name: ['Name is required'],
+          age: ['Age must be positive'],
+        },
+        fieldErrors: [
+          { field: 'name', messages: ['Name is required'] },
+          { field: 'age', messages: ['Age must be positive'] },
+        ],
+        response: undefined,
+      });
+    });
+  });
+
+  describe('isMutationError', () => {
+    it('should return true for valid MutationErrorStructure', () => {
+      const error = {
+        error: new Error('test'),
+        rawError: {},
+        normalizedErrors: {},
+        fieldErrors: [],
+      };
+
+      expect(isMutationError(error)).toBe(true);
+    });
+
+    it('should return false for non-mutation errors', () => {
+      expect(isMutationError(new Error('test'))).toBe(false);
+      expect(isMutationError(null)).toBe(false);
+      expect(isMutationError(undefined)).toBe(false);
+      expect(isMutationError('error string')).toBe(false);
+      expect(isMutationError({ message: 'error' })).toBe(false);
     });
   });
 });
