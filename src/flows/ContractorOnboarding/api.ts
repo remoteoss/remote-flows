@@ -419,7 +419,10 @@ export const useContractorSubscriptionSchemaField = (
 
   const isEmptyContractorSubscriptions = contractorSubscriptions?.length === 0;
 
-  const isASubscriptionMissing = (contractorSubscriptions?.length ?? 0) < 3;
+  const isASubscriptionMissing =
+    contractorSubscriptions != null &&
+    contractorSubscriptions.length > 0 &&
+    contractorSubscriptions.length < 3;
 
   const corSubscription = contractorSubscriptions?.find(
     (subscription) => subscription.product.short_name === 'COR',
