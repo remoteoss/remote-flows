@@ -417,11 +417,10 @@ export const useContractorSubscriptionSchemaField = (
     },
   });
 
-  const isEmptyContractorSubscriptions = contractorSubscriptions?.length === 0;
   // maximum number of subscriptions
   const MAXIMUM_CONTRACTOR_SUBSCRIPTIONS_COUNT = 3;
 
-  const isSingleSubscription = contractorSubscriptions
+  const isMissingSubscriptions = contractorSubscriptions
     ? contractorSubscriptions?.length < MAXIMUM_CONTRACTOR_SUBSCRIPTIONS_COUNT
     : false;
 
@@ -433,9 +432,7 @@ export const useContractorSubscriptionSchemaField = (
     corSubscription?.eligibility_questionnaire?.is_blocking;
 
   const showEorSubscription =
-    (isSingleSubscription ||
-      isEligibilityQuestionnaireBlocked === true ||
-      isEmptyContractorSubscriptions) &&
+    (isMissingSubscriptions || isEligibilityQuestionnaireBlocked) &&
     selectedCountry?.eor_onboarding;
 
   const { eorSubscription, isLoading: isLoadingEorSubscription } =
