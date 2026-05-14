@@ -64,7 +64,18 @@ const PricingPlanCards = ({
   const hasError = !!fieldState.error;
 
   // Group options by separator
-  const groups = groupOptionsBySeparator(fieldData.options);
+  const groups =
+    fieldData.options.length > 0
+      ? groupOptionsBySeparator(fieldData.options)
+      : [];
+
+  if (groups.length === 0) {
+    return (
+      <div className='flex flex-col gap-6 text-center'>
+        <p>No available subscriptions</p>
+      </div>
+    );
+  }
 
   return (
     <div className='flex flex-col gap-6'>
@@ -540,6 +551,7 @@ export const ContractorOnboardingWithProps = ({
               // excludeProducts: ['eor'] // Hide EOR option
               // excludeProducts: ['eor', 'cor'] // Hide both EOR and COR
               // excludeProducts: ['cm+'] // Hide Contractor Management Plus
+              //excludeProducts: ['eor', 'cor', 'cm+', 'cm'], // Hide all products
               jsfModify: {
                 contract_details: {
                   fields: {
