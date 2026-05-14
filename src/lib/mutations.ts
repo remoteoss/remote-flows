@@ -30,6 +30,36 @@ export interface FieldError {
   messages: string[];
 }
 
+/**
+ * Standard structure for mutation errors thrown by mutateAsyncOrThrow
+ */
+export interface MutationErrorStructure {
+  error: Error;
+  rawError: Record<string, unknown>;
+  normalizedErrors: Record<string, unknown>;
+  fieldErrors: FieldError[];
+  response?: Response;
+}
+
+/**
+ * Type guard to check if an error is a MutationErrorStructure
+ * @param error - The error to check
+ * @returns true if the error is a MutationErrorStructure
+ */
+export function isMutationError(
+  error: unknown,
+): error is MutationErrorStructure {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'error' in error &&
+    'rawError' in error &&
+    'normalizedErrors' in error &&
+    'fieldErrors' in error &&
+    Array.isArray((error as MutationErrorStructure).fieldErrors)
+  );
+}
+
 export interface ErrorResponse<E> {
   data: null;
   error: E;
@@ -109,19 +139,22 @@ export function mutationToPromise<
               reject({
                 error: new Error(errorMessage),
                 rawError: response.error,
+                normalizedErrors: errorData.errors || {},
                 fieldErrors,
                 response: httpResponse,
-              });
+              } as MutationErrorStructure);
             }
           },
           onError: (error) => {
             const fieldErrors = extractFieldErrors(error);
+            const errorData = error.error || error;
             reject({
               error: error as Error,
               rawError: error,
+              normalizedErrors: errorData.errors || {},
               fieldErrors,
               response: error?.response,
-            });
+            } as MutationErrorStructure);
           },
         });
       });

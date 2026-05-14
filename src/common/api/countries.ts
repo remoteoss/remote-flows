@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { getSupportedCountry } from '@/src/client';
+import { getV1Countries } from '@/src/client';
 import { Client } from '@/src/client/client';
 
 export const countriesOptions = (
@@ -10,7 +10,7 @@ export const countriesOptions = (
     queryKey: ['countries', queryKeySuffix] as const,
     retry: false,
     queryFn: async () => {
-      const response = await getSupportedCountry({
+      const response = await getV1Countries({
         client,
         headers: {
           Authorization: ``,

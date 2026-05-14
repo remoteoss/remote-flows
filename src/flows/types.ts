@@ -78,8 +78,10 @@ export type JSONSchemaFormType =
 export type JSFModify = ModifyConfig & {
   /**
    * allows to specify additional required fields for the form.
+   * Can be either an array of field names to add, or a function that receives
+   * the existing required fields and returns a new array.
    */
-  required?: string[];
+  required?: string[] | ((existingRequired: string[]) => string[]);
   /**
    * allows to specify additional allOf rules for the form.
    */

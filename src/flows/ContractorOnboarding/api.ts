@@ -1,22 +1,22 @@
 import { useMemo } from 'react';
 import {
   CreateContractDocument,
-  getShowContractDocument,
-  getShowContractorContractDetailsCountry,
-  getIndexSubscription,
+  getV1ContractorsEmploymentsEmploymentIdContractDocumentsId,
+  getV1CountriesCountryCodeContractorContractDetails,
+  getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions,
   ManageContractorPlusSubscriptionOperationsParams,
-  postCreateContractDocument,
-  postManageContractorPlusSubscriptionSubscription,
-  postSignContractDocument,
+  postV1ContractorsEmploymentsEmploymentIdContractDocuments,
+  postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription,
+  postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign,
   SignContractDocument,
-  getIndexEmploymentContractDocument,
+  getV1EmploymentsEmploymentIdContractDocuments,
   EligibilityQuestionnaireJsonSchemaResponse,
-  getShowEligibilityQuestionnaire,
+  getV1ContractorsSchemasEligibilityQuestionnaire,
   SubmitEligibilityQuestionnaireRequest,
-  postCreateEligibilityQuestionnaire,
-  postManageContractorCorSubscriptionSubscription,
-  deleteDeleteContractorCorSubscriptionSubscription,
-  getIndexContractorCurrency,
+  postV1ContractorsEligibilityQuestionnaire,
+  postV1ContractorsEmploymentsEmploymentIdContractorCorSubscription,
+  deleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscription,
+  getV1ContractorsEmploymentsEmploymentIdContractorCurrencies,
   Country,
 } from '@/src/client';
 import { useClient } from '@/src/context';
@@ -64,7 +64,7 @@ const useContractorCurrencies = ({
   return useQuery({
     queryKey: ['contractor-currencies', employmentId],
     queryFn: async () => {
-      return getIndexContractorCurrency({
+      return getV1ContractorsEmploymentsEmploymentIdContractorCurrencies({
         client: client as Client,
         path: { employment_id: employmentId },
         query: {
@@ -126,14 +126,16 @@ export const useSignContractDocument = () => {
       contractDocumentId: string;
       payload: SignContractDocument;
     }) => {
-      return postSignContractDocument({
-        client: client as Client,
-        body: payload,
-        path: {
-          employment_id: employmentId,
-          contract_document_id: contractDocumentId,
+      return postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign(
+        {
+          client: client as Client,
+          body: payload,
+          path: {
+            employment_id: employmentId,
+            contract_document_id: contractDocumentId,
+          },
         },
-      });
+      );
     },
   });
 };
@@ -157,7 +159,7 @@ export const useGetShowContractDocument = ({
   return useQuery({
     queryKey: ['contract-document', employmentId, contractDocumentId],
     queryFn: async () => {
-      return getShowContractDocument({
+      return getV1ContractorsEmploymentsEmploymentIdContractDocumentsId({
         client: client as Client,
         path: { employment_id: employmentId, id: contractDocumentId },
       });
@@ -222,7 +224,7 @@ export const useGetContractorSubscriptions = ({
   return useQuery({
     queryKey: ['contractor-subscriptions', employmentId],
     queryFn: async () => {
-      return getIndexSubscription({
+      return getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions({
         client: client as Client,
         path: { employment_id: employmentId },
       });
@@ -247,13 +249,15 @@ export const usePostManageContractorSubscriptions = () => {
       employmentId: string;
       payload: ManageContractorPlusSubscriptionOperationsParams;
     }) => {
-      return postManageContractorPlusSubscriptionSubscription({
-        client: client as Client,
-        body: payload,
-        path: {
-          employment_id: employmentId,
+      return postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription(
+        {
+          client: client as Client,
+          body: payload,
+          path: {
+            employment_id: employmentId,
+          },
         },
-      });
+      );
     },
   });
 };
@@ -274,7 +278,7 @@ export const useCreateContractorContractDocument = () => {
       employmentId: string;
       payload: CreateContractDocument;
     }) => {
-      return postCreateContractDocument({
+      return postV1ContractorsEmploymentsEmploymentIdContractDocuments({
         client: client as Client,
         body: payload,
         path: {
@@ -313,7 +317,7 @@ const useContractorOnboardingDetailsSchema = ({
     ],
     retry: false,
     queryFn: async () => {
-      return getShowContractorContractDetailsCountry({
+      return getV1CountriesCountryCodeContractorContractDetails({
         client: client as Client,
         path: { country_code: countryCode },
         query: {
@@ -408,7 +412,7 @@ export const useContractorSubscriptionSchemaField = (
 ) => {
   const {
     data: contractorSubscriptions,
-    isLoading: isLoading,
+    isLoading,
     refetch,
   } = useGetContractorSubscriptions({
     employmentId: employmentId,
@@ -417,9 +421,23 @@ export const useContractorSubscriptionSchemaField = (
     },
   });
 
-  const isEmptyContractorSubscriptions = contractorSubscriptions?.length === 0;
+  const filteredContractorSubscriptions = useMemo(
+    () =>
+      contractorSubscriptions?.filter((subscription) =>
+        shouldIncludeProduct(
+          subscription.product.identifier ?? '',
+          options?.excludeProducts,
+        ),
+      ) ?? [],
+    [contractorSubscriptions, options?.excludeProducts],
+  );
 
-  const isSingleSubscription = contractorSubscriptions?.length === 1;
+  // maximum number of subscriptions
+  const MAXIMUM_CONTRACTOR_SUBSCRIPTIONS_COUNT = 3;
+
+  const isMissingSubscriptions = contractorSubscriptions
+    ? contractorSubscriptions?.length < MAXIMUM_CONTRACTOR_SUBSCRIPTIONS_COUNT
+    : false;
 
   const corSubscription = contractorSubscriptions?.find(
     (subscription) => subscription.product.short_name === 'COR',
@@ -429,99 +447,105 @@ export const useContractorSubscriptionSchemaField = (
     corSubscription?.eligibility_questionnaire?.is_blocking;
 
   const showEorSubscription =
-    (isSingleSubscription ||
-      isEligibilityQuestionnaireBlocked === true ||
-      isEmptyContractorSubscriptions) &&
-    selectedCountry?.eor_onboarding;
+    (isMissingSubscriptions || isEligibilityQuestionnaireBlocked) &&
+    selectedCountry?.eor_onboarding &&
+    !options?.excludeProducts?.includes('eor');
 
   const { eorSubscription, isLoading: isLoadingEorSubscription } =
     useEorSubscription({
       enabled: showEorSubscription,
     });
 
+  const hasAvailableOptions =
+    filteredContractorSubscriptions.length > 0 || showEorSubscription;
+
   const form = createHeadlessForm(
     selectContractorSubscriptionStepSchema.data.schema,
     {},
-    options,
+    {
+      ...options,
+      jsfModify: {
+        ...options?.jsfModify,
+        // If no filtered subscriptions are available, make the subscription field optional
+        required: hasAvailableOptions
+          ? options?.jsfModify?.required
+          : (existingRequired: string[]) =>
+              existingRequired.filter(
+                (fieldName: string) => fieldName !== 'subscription',
+              ),
+      },
+    },
   );
 
-  if (contractorSubscriptions) {
-    const field: JSFField | undefined = form.fields.find(
-      (field) => field.name === 'subscription',
-    ) as JSFField | undefined;
+  const field: JSFField | undefined = form.fields.find(
+    (field) => field.name === 'subscription',
+  ) as JSFField | undefined;
 
-    if (field) {
-      // Start with contractor management options
-      const contractorOptions = contractorSubscriptions
-        .filter((opts) =>
-          shouldIncludeProduct(
-            opts.product.identifier ?? '',
-            options?.excludeProducts,
-          ),
-        )
-        .map((opts) => {
-          const product = opts.product;
-          const price = opts.price.amount;
-          const currencyCode = opts.currency.code;
-          const title =
-            CONTRACT_PRODUCT_TITLES[
-              product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
-            ] ?? '';
-          const label = title;
-          const value = product.identifier ?? '';
-          const description = product.description ?? '';
-          const features = product.features ?? [];
-          const meta = {
-            features,
-            price: {
-              amount: convertFromCents(price),
-              currencyCode: currencyCode,
-            },
-          };
-          return {
-            label,
-            value,
-            description,
-            meta,
-            disabled:
-              isEligibilityQuestionnaireBlocked &&
-              product.identifier !== contractorStandardProductIdentifier,
-          };
-        });
+  if (field) {
+    // Start with contractor management options
+    const contractorOptions = filteredContractorSubscriptions.map((opts) => {
+      const product = opts.product;
+      const price = opts.price.amount;
+      const currencyCode = opts.currency.code;
+      const title =
+        CONTRACT_PRODUCT_TITLES[
+          product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
+        ] ?? '';
+      const label = title;
+      const value = product.identifier ?? '';
+      const description = product.description ?? '';
+      const features = product.features ?? [];
+      const meta = {
+        features,
+        price: {
+          amount: convertFromCents(price),
+          currencyCode: currencyCode,
+        },
+      };
+      return {
+        label,
+        value,
+        description,
+        meta,
+        disabled:
+          isEligibilityQuestionnaireBlocked &&
+          product.identifier !== contractorStandardProductIdentifier,
+      };
+    });
 
-      // Sort contractor options
-      contractorOptions.sort((a, b) => a.label.localeCompare(b.label));
+    // Sort contractor options
+    contractorOptions.sort((a, b) => a.label.localeCompare(b.label));
 
-      // Build otherSubscriptions (EOR) with separator metadata
-      const otherOptions: $TSFixMe[] = [];
-      if (showEorSubscription) {
-        addEorToFieldOptions(
-          otherOptions as unknown as $TSFixMe[],
-          eorSubscription,
-          options?.excludeProducts,
-        );
+    // Build otherSubscriptions (EOR) with separator metadata
+    const otherOptions: $TSFixMe[] = [];
+    if (showEorSubscription) {
+      addEorToFieldOptions(
+        otherOptions as unknown as $TSFixMe[],
+        eorSubscription,
+        options?.excludeProducts,
+      );
 
-        // Add separator metadata to first "other" option
-        // only the first option to avoid problems when iterating over the options
-        if (otherOptions.length > 0) {
-          otherOptions[0].meta = {
-            ...otherOptions[0].meta,
-            groupSeparator: {
-              show: true,
-            },
-          };
-        }
+      // Add separator metadata to first "other" option
+      // only the first option to avoid problems when iterating over the options
+      if (otherOptions.length > 0) {
+        otherOptions[0].meta = {
+          ...otherOptions[0].meta,
+          groupSeparator: {
+            show: true,
+          },
+        };
       }
-
-      // Combine all options into the single field
-      field.options = [...contractorOptions, ...otherOptions];
     }
+
+    // Combine all options into the single field
+    field.options = [...contractorOptions, ...otherOptions];
   }
 
   return {
     isLoading: isLoading || isLoadingEorSubscription,
     form,
     contractorSubscriptions,
+    filteredContractorSubscriptions,
     refetch,
     isEligibilityQuestionnaireBlocked,
   };
@@ -623,7 +647,7 @@ export const useGetContractDocuments = (
   return useQuery({
     queryKey: ['contract-documents', employmentId],
     queryFn: async () => {
-      return getIndexEmploymentContractDocument({
+      return getV1EmploymentsEmploymentIdContractDocuments({
         client: client as Client,
         path: { employment_id: employmentId },
       });
@@ -652,7 +676,7 @@ export const useGetEligibilityQuestionnaire = ({
     queryFn: async (): Promise<
       EligibilityQuestionnaireJsonSchemaResponse['data']
     > => {
-      const response = await getShowEligibilityQuestionnaire({
+      const response = await getV1ContractorsSchemasEligibilityQuestionnaire({
         client: client as Client,
         query: {
           type: 'contractor_of_record',
@@ -688,7 +712,7 @@ export const usePostCreateEligibilityQuestionnaire = () => {
       employmentId: string;
       payload: SubmitEligibilityQuestionnaireRequest['responses'];
     }) => {
-      return postCreateEligibilityQuestionnaire({
+      return postV1ContractorsEligibilityQuestionnaire({
         client: client as Client,
         body: {
           employment_slug: employmentId,
@@ -707,7 +731,7 @@ export const usePostManageContractorCorSubscription = () => {
   const { client } = useClient();
   return useMutation({
     mutationFn: async ({ employmentId }: { employmentId: string }) => {
-      return postManageContractorCorSubscriptionSubscription({
+      return postV1ContractorsEmploymentsEmploymentIdContractorCorSubscription({
         client: client as Client,
         path: {
           employment_id: employmentId,
@@ -721,10 +745,12 @@ export const useDeleteContractorCorSubscription = () => {
   const { client } = useClient();
   return useMutation({
     mutationFn: async ({ employmentId }: { employmentId: string }) => {
-      return deleteDeleteContractorCorSubscriptionSubscription({
-        client: client as Client,
-        path: { employment_id: employmentId },
-      });
+      return deleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscription(
+        {
+          client: client as Client,
+          path: { employment_id: employmentId },
+        },
+      );
     },
   });
 };

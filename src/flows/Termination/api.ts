@@ -1,6 +1,6 @@
 import {
   CreateOffboardingParams,
-  postCreateOffboarding,
+  postV1Offboardings,
   Timeoff,
 } from '@/src/client';
 import {
@@ -286,7 +286,7 @@ export const useCreateTermination = () => {
   const { client } = useClient();
   return useMutation({
     mutationFn: (payload: CreateOffboardingParams) => {
-      return postCreateOffboarding({
+      return postV1Offboardings({
         client: client as Client,
         body: payload,
       });
