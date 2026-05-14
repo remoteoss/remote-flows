@@ -49,12 +49,8 @@ import {
 } from '@/src/flows/Onboarding/api';
 import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { useStepState } from '@/src/flows/useStepState';
-import { mutationToPromise } from '@/src/lib/mutations';
-import {
-  createStructuredError,
-  prettifyFormValues,
-  safeGetErrorPath,
-} from '@/src/lib/utils';
+import { mutationToPromise, isMutationError } from '@/src/lib/mutations';
+import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
 import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
 import {
   contractorStandardProductIdentifier,
@@ -964,24 +960,27 @@ export const useContractorOnboarding = ({
    * @returns The AI validation error if found, null otherwise
    */
   const extractAiValidationError = (
-    error: $TSFixMe,
+    error: unknown,
   ): AiValidationError | null => {
-    // Handle inconsistent error structures between environments
-    // Test this with sandbox | local | partners environments
-    const errorData = safeGetErrorPath<{
-      error: string[];
-      source: string;
-      skippable: boolean;
-    }>(error, [
-      'rawError.error.errors.services_and_deliverables', // Dev format
-      'rawError.errors.services_and_deliverables', // Production format
-    ]);
+    if (!isMutationError(error)) {
+      return null;
+    }
 
-    if (errorData?.source === REMOTE_AI_ERROR_SOURCE) {
+    // Access the normalized errors object
+    const servicesAndDeliverablesError = error.normalizedErrors
+      .services_and_deliverables as
+      | {
+          error: string[];
+          source: string;
+          skippable: boolean;
+        }
+      | undefined;
+
+    if (servicesAndDeliverablesError?.source === REMOTE_AI_ERROR_SOURCE) {
       return {
-        error: errorData.error,
-        source: errorData.source,
-        skippable: errorData.skippable,
+        error: servicesAndDeliverablesError.error,
+        source: servicesAndDeliverablesError.source,
+        skippable: servicesAndDeliverablesError.skippable,
       };
     }
     return null;
@@ -1080,6 +1079,7 @@ export const useContractorOnboarding = ({
 
           return response;
         } catch (error) {
+          // we're fixing the problem here but maybe the problem is in the backend + mutation helpers
           const aiError = extractAiValidationError(error);
           if (aiError) {
             const isContractorOfRecord =
