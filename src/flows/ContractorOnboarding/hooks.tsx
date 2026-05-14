@@ -281,6 +281,7 @@ export const useContractorOnboarding = ({
     form: selectContractorSubscriptionForm,
     isLoading: isLoadingContractorSubscriptions,
     contractorSubscriptions,
+    filteredContractorSubscriptions,
     refetch: refetchContractorSubscriptions,
     isEligibilityQuestionnaireBlocked,
   } = useContractorSubscriptionSchemaField(
@@ -476,6 +477,15 @@ export const useContractorOnboarding = ({
       return contractorStandardProductIdentifier;
     }
 
+    // Fifth: If there are no available subscriptions, return undefined
+    const hasAvailableSubscriptions =
+      filteredContractorSubscriptions &&
+      filteredContractorSubscriptions.length > 0;
+
+    if (!hasAvailableSubscriptions) {
+      return undefined;
+    }
+
     // FALLBACK: Employment contractor_type or default
     return (
       subscriptions[
@@ -488,6 +498,7 @@ export const useContractorOnboarding = ({
     hasEligibilityQuestionnaireSubmitted,
     employment?.contractor_type,
     isEligibilityQuestionnaireBlocked,
+    filteredContractorSubscriptions,
   ]);
 
   useEffect(() => {
@@ -1115,6 +1126,26 @@ export const useContractorOnboarding = ({
         return response;
       }
       case 'pricing_plan': {
+        if (values.subscription === eorProductIdentifier) {
+          // EOR selection - no API call needed at this step
+          return Promise.resolve({
+            data: {
+              subscription: values.subscription,
+            },
+          });
+        }
+        // If there are no available contractor subscriptions, throw an error
+        if (filteredContractorSubscriptions.length === 0) {
+          throw createStructuredError('No available subscriptions.');
+        }
+
+        if (
+          !values.subscription &&
+          filteredContractorSubscriptions.length > 0
+        ) {
+          throw createStructuredError('Please select a subscription plan.');
+        }
+
         const blockedProductsEligibility = [
           corProductIdentifier,
           contractorPlusProductIdentifier,
@@ -1131,15 +1162,6 @@ export const useContractorOnboarding = ({
               ]
             }.`,
           );
-        }
-        // Handle EOR selection (from merged options)
-        if (values.subscription === eorProductIdentifier) {
-          // EOR selection - no API call needed at this step
-          return Promise.resolve({
-            data: {
-              subscription: values.subscription,
-            },
-          });
         }
 
         if (

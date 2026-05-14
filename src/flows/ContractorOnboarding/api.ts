@@ -452,10 +452,25 @@ export const useContractorSubscriptionSchemaField = (
       enabled: showEorSubscription,
     });
 
+  const hasAvailableOptions =
+    filteredContractorSubscriptions.length > 0 || showEorSubscription;
+
   const form = createHeadlessForm(
     selectContractorSubscriptionStepSchema.data.schema,
     {},
-    options,
+    {
+      ...options,
+      jsfModify: {
+        ...options?.jsfModify,
+        // If no filtered subscriptions are available, make the subscription field optional
+        required: hasAvailableOptions
+          ? options?.jsfModify?.required
+          : (existingRequired: string[]) =>
+              existingRequired.filter(
+                (fieldName: string) => fieldName !== 'subscription',
+              ),
+      },
+    },
   );
 
   const field: JSFField | undefined = form.fields.find(
