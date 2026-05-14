@@ -431,8 +431,9 @@ export const useContractorSubscriptionSchemaField = (
   // maximum number of subscriptions
   const MAXIMUM_CONTRACTOR_SUBSCRIPTIONS_COUNT = 3;
 
-  const isMissingSubscriptions = contractorSubscriptions
-    ? contractorSubscriptions?.length < MAXIMUM_CONTRACTOR_SUBSCRIPTIONS_COUNT
+  const isMissingSubscriptions = filteredContractorSubscriptions
+    ? filteredContractorSubscriptions?.length <
+      MAXIMUM_CONTRACTOR_SUBSCRIPTIONS_COUNT
     : false;
 
   const corSubscription = contractorSubscriptions?.find(
