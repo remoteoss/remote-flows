@@ -417,6 +417,14 @@ export const useContractorSubscriptionSchemaField = (
     },
   });
 
+  const filteredContractorSubscriptions =
+    contractorSubscriptions?.filter((subscription) =>
+      shouldIncludeProduct(
+        subscription.product.identifier ?? '',
+        options?.excludeProducts,
+      ),
+    ) ?? [];
+
   // maximum number of subscriptions
   const MAXIMUM_CONTRACTOR_SUBSCRIPTIONS_COUNT = 3;
 
@@ -440,89 +448,96 @@ export const useContractorSubscriptionSchemaField = (
       enabled: showEorSubscription,
     });
 
+  const hasAvailableOptions =
+    filteredContractorSubscriptions.length > 0 || showEorSubscription;
+
   const form = createHeadlessForm(
     selectContractorSubscriptionStepSchema.data.schema,
     {},
-    options,
+    {
+      ...options,
+      jsfModify: {
+        ...options?.jsfModify,
+        // If no filtered subscriptions are available, make the subscription field optional
+        required: hasAvailableOptions
+          ? options?.jsfModify?.required
+          : (existingRequired: string[]) =>
+              existingRequired.filter(
+                (fieldName: string) => fieldName !== 'subscription',
+              ),
+      },
+    },
   );
 
-  if (contractorSubscriptions) {
-    const field: JSFField | undefined = form.fields.find(
-      (field) => field.name === 'subscription',
-    ) as JSFField | undefined;
+  const field: JSFField | undefined = form.fields.find(
+    (field) => field.name === 'subscription',
+  ) as JSFField | undefined;
 
-    if (field) {
-      // Start with contractor management options
-      const contractorOptions = contractorSubscriptions
-        .filter((opts) =>
-          shouldIncludeProduct(
-            opts.product.identifier ?? '',
-            options?.excludeProducts,
-          ),
-        )
-        .map((opts) => {
-          const product = opts.product;
-          const price = opts.price.amount;
-          const currencyCode = opts.currency.code;
-          const title =
-            CONTRACT_PRODUCT_TITLES[
-              product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
-            ] ?? '';
-          const label = title;
-          const value = product.identifier ?? '';
-          const description = product.description ?? '';
-          const features = product.features ?? [];
-          const meta = {
-            features,
-            price: {
-              amount: convertFromCents(price),
-              currencyCode: currencyCode,
-            },
-          };
-          return {
-            label,
-            value,
-            description,
-            meta,
-            disabled:
-              isEligibilityQuestionnaireBlocked &&
-              product.identifier !== contractorStandardProductIdentifier,
-          };
-        });
+  if (field) {
+    // Start with contractor management options
+    const contractorOptions = filteredContractorSubscriptions.map((opts) => {
+      const product = opts.product;
+      const price = opts.price.amount;
+      const currencyCode = opts.currency.code;
+      const title =
+        CONTRACT_PRODUCT_TITLES[
+          product.identifier as keyof typeof CONTRACT_PRODUCT_TITLES
+        ] ?? '';
+      const label = title;
+      const value = product.identifier ?? '';
+      const description = product.description ?? '';
+      const features = product.features ?? [];
+      const meta = {
+        features,
+        price: {
+          amount: convertFromCents(price),
+          currencyCode: currencyCode,
+        },
+      };
+      return {
+        label,
+        value,
+        description,
+        meta,
+        disabled:
+          isEligibilityQuestionnaireBlocked &&
+          product.identifier !== contractorStandardProductIdentifier,
+      };
+    });
 
-      // Sort contractor options
-      contractorOptions.sort((a, b) => a.label.localeCompare(b.label));
+    // Sort contractor options
+    contractorOptions.sort((a, b) => a.label.localeCompare(b.label));
 
-      // Build otherSubscriptions (EOR) with separator metadata
-      const otherOptions: $TSFixMe[] = [];
-      if (showEorSubscription) {
-        addEorToFieldOptions(
-          otherOptions as unknown as $TSFixMe[],
-          eorSubscription,
-          options?.excludeProducts,
-        );
+    // Build otherSubscriptions (EOR) with separator metadata
+    const otherOptions: $TSFixMe[] = [];
+    if (showEorSubscription) {
+      addEorToFieldOptions(
+        otherOptions as unknown as $TSFixMe[],
+        eorSubscription,
+        options?.excludeProducts,
+      );
 
-        // Add separator metadata to first "other" option
-        // only the first option to avoid problems when iterating over the options
-        if (otherOptions.length > 0) {
-          otherOptions[0].meta = {
-            ...otherOptions[0].meta,
-            groupSeparator: {
-              show: true,
-            },
-          };
-        }
+      // Add separator metadata to first "other" option
+      // only the first option to avoid problems when iterating over the options
+      if (otherOptions.length > 0) {
+        otherOptions[0].meta = {
+          ...otherOptions[0].meta,
+          groupSeparator: {
+            show: true,
+          },
+        };
       }
-
-      // Combine all options into the single field
-      field.options = [...contractorOptions, ...otherOptions];
     }
+
+    // Combine all options into the single field
+    field.options = [...contractorOptions, ...otherOptions];
   }
 
   return {
     isLoading: isLoading || isLoadingEorSubscription,
     form,
     contractorSubscriptions,
+    filteredContractorSubscriptions,
     refetch,
     isEligibilityQuestionnaireBlocked,
   };

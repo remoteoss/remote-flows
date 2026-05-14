@@ -280,9 +280,9 @@ export const useContractorOnboarding = ({
   const {
     form: selectContractorSubscriptionForm,
     isLoading: isLoadingContractorSubscriptions,
-    contractorSubscriptions,
     refetch: refetchContractorSubscriptions,
     isEligibilityQuestionnaireBlocked,
+    filteredContractorSubscriptions,
   } = useContractorSubscriptionSchemaField(
     internalEmploymentId as string,
     selectedCountry,
@@ -298,11 +298,11 @@ export const useContractorOnboarding = ({
 
   const hasEligibilityQuestionnaireSubmitted = useMemo(() => {
     return Boolean(
-      contractorSubscriptions?.find(
+      filteredContractorSubscriptions?.find(
         (subscription) => subscription.product.short_name === 'COR',
       )?.eligibility_questionnaire?.submitted_at,
     );
-  }, [contractorSubscriptions]);
+  }, [filteredContractorSubscriptions]);
 
   useEffect(() => {
     if (hasEligibilityQuestionnaireSubmitted) {
@@ -321,10 +321,10 @@ export const useContractorOnboarding = ({
   }, [employment?.contractor_type]);
 
   const eligibilityAnswers = useMemo(() => {
-    return contractorSubscriptions?.find(
+    return filteredContractorSubscriptions?.find(
       (subscription) => subscription.product.short_name === 'COR',
     )?.eligibility_questionnaire?.responses;
-  }, [contractorSubscriptions]);
+  }, [filteredContractorSubscriptions]);
 
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
@@ -476,13 +476,15 @@ export const useContractorOnboarding = ({
       return contractorStandardProductIdentifier;
     }
 
+    // Fifth: If there are no available subscriptions, return undefined
+
     const hasAvailableSubscriptions =
-      contractorSubscriptions && contractorSubscriptions.length > 0;
+      filteredContractorSubscriptions &&
+      filteredContractorSubscriptions.length > 0;
 
     if (!hasAvailableSubscriptions) {
       return undefined; // Don't preselect anything
     }
-
     // FALLBACK: Employment contractor_type or default
     return (
       subscriptions[
@@ -495,6 +497,7 @@ export const useContractorOnboarding = ({
     hasEligibilityQuestionnaireSubmitted,
     employment?.contractor_type,
     isEligibilityQuestionnaireBlocked,
+    filteredContractorSubscriptions,
   ]);
 
   useEffect(() => {
@@ -1122,7 +1125,14 @@ export const useContractorOnboarding = ({
         return response;
       }
       case 'pricing_plan': {
-        if (!values.subscription) {
+        if (filteredContractorSubscriptions.length === 0) {
+          throw createStructuredError('No available subscriptions.');
+        }
+
+        if (
+          !values.subscription &&
+          filteredContractorSubscriptions.length > 0
+        ) {
           throw createStructuredError('Please select a subscription plan.');
         }
 
