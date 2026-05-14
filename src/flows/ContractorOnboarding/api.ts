@@ -408,7 +408,7 @@ export const useContractorSubscriptionSchemaField = (
 ) => {
   const {
     data: contractorSubscriptions,
-    isLoading: isLoading,
+    isLoading,
     refetch,
   } = useGetContractorSubscriptions({
     employmentId: employmentId,
@@ -419,7 +419,8 @@ export const useContractorSubscriptionSchemaField = (
 
   const isEmptyContractorSubscriptions = contractorSubscriptions?.length === 0;
 
-  const isSingleSubscription = contractorSubscriptions?.length === 1;
+  const isASubscriptionMissing =
+    contractorSubscriptions?.length && contractorSubscriptions.length < 3;
 
   const corSubscription = contractorSubscriptions?.find(
     (subscription) => subscription.product.short_name === 'COR',
@@ -429,7 +430,7 @@ export const useContractorSubscriptionSchemaField = (
     corSubscription?.eligibility_questionnaire?.is_blocking;
 
   const showEorSubscription =
-    (isSingleSubscription ||
+    (isASubscriptionMissing ||
       isEligibilityQuestionnaireBlocked === true ||
       isEmptyContractorSubscriptions) &&
     selectedCountry?.eor_onboarding;
