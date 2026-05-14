@@ -1126,6 +1126,16 @@ export const useContractorOnboarding = ({
         return response;
       }
       case 'pricing_plan': {
+        // Handle EOR selection (from merged options)
+        if (values.subscription === eorProductIdentifier) {
+          // EOR selection - no API call needed at this step
+          return Promise.resolve({
+            data: {
+              subscription: values.subscription,
+            },
+          });
+        }
+        // If there are no available contractor subscriptions, throw an error
         if (filteredContractorSubscriptions.length === 0) {
           throw createStructuredError('No available subscriptions.');
         }
@@ -1153,15 +1163,6 @@ export const useContractorOnboarding = ({
               ]
             }.`,
           );
-        }
-        // Handle EOR selection (from merged options)
-        if (values.subscription === eorProductIdentifier) {
-          // EOR selection - no API call needed at this step
-          return Promise.resolve({
-            data: {
-              subscription: values.subscription,
-            },
-          });
         }
 
         if (
