@@ -161,22 +161,43 @@ Package is consumed by external applications - monitor bundle impact:
 
 Consistent error handling across all flows:
 
-- **Field-level errors** - Use `extractFieldErrors()` and `normalizeFieldErrors()` from `src/lib/mutations.ts`
+- **Type-safe error handling** - Always use `isMutationError()` type guard when catching mutation errors
+- **Use mutateAsyncOrThrow** - Prefer over deprecated `mutateAsync` method
 - **Mutation wrapper** - All mutations must use `mutationToPromise()` helper
-- **Error response format** - Return `{ data: null, error: Error, rawError: object, fieldErrors: FieldError[] }`
-- **User-friendly messages** - Extract field labels from metadata for error display
+- **Error structure** - Access `normalizedErrors`, `fieldErrors`, `rawError`, and `response` properties
+- **User-friendly messages** - Extract field labels from metadata for error display with `normalizeFieldErrors()`
 - **Try/catch blocks** - Async operations must have error handling
 - **Fallback UI** - Loading states, error states, empty states
 
-**Example:**
+**✅ CORRECT: Use isMutationError type guard**
 
 ```typescript
-const { mutateAsync } = mutationToPromise(useSomeMutation());
+import { isMutationError } from '@/src/lib/mutations';
 
-const result = await mutateAsync(values);
-if (result.error) {
-  const normalizedErrors = normalizeFieldErrors(result.fieldErrors, meta);
-  // Handle field errors with user-friendly labels
+try {
+  const result = await mutateAsyncOrThrow(payload);
+  // Handle success
+} catch (error) {
+  if (isMutationError(error)) {
+    // Type-safe access to error properties
+    console.log(error.normalizedErrors); // Direct access to errors object
+    console.log(error.fieldErrors); // Array of field errors
+
+    // Example: Check for specific field errors
+    const fieldError = error.normalizedErrors.field_name;
+    if (fieldError) {
+      // Handle specific error
+    }
+  }
+  throw error;
+}
+```
+
+**❌ INCORRECT: Don't access error properties without type guard**
+
+```typescript
+catch (error: any) {
+  const rawError = error.rawError; // No type safety!
 }
 ```
 

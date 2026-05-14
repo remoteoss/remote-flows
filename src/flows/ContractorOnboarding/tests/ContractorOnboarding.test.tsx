@@ -3152,5 +3152,86 @@ describe('ContractorOnboardingFlow', () => {
       // or still 2 if it uses cached data
       expect(getContractDocumentCallCount).toBeGreaterThanOrEqual(2);
     });
+
+    it('should handle production error format (without intermediate error wrapper) for AI validation', async () => {
+      const employmentId = generateUniqueEmploymentId();
+
+      // Mock the contract document creation to fail with production-format AI error
+      // Production format: { errors: { ... } } instead of { error: { errors: { ... } } }
+      server.use(
+        http.post('*/v1/contractors/employments/*/contract-documents', () => {
+          return HttpResponse.json(
+            {
+              errors: {
+                services_and_deliverables: {
+                  error: [
+                    "The text is non-compliant because it includes language that implies weekly progress reviews, which can be interpreted as a form of day-to-day supervision or control over the Contractor's work.",
+                  ],
+                  source: 'REMOTE_AI',
+                  skippable: true,
+                },
+              },
+            },
+            { status: 422 },
+          );
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      // Navigate through the flow
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+      await fillContractorSubscription();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Contract Details/i);
+      await fillContractDetails();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      // Should stay on contract details step
+      await screen.findByText(/Step: Contract Details/i);
+
+      // Assert canSkipAiValidation is true (production format should be handled correctly)
+      await waitFor(() => {
+        const container = screen.getByTestId('contract-details-container');
+        expect(container).toHaveAttribute(
+          'data-can-skip-ai-validation',
+          'true',
+        );
+      });
+
+      // Verify the AI warning message appears
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Possible misclassification risk/i),
+        ).toBeInTheDocument();
+      });
+
+      expect(mockOnError).toHaveBeenCalled();
+    });
   });
 });
