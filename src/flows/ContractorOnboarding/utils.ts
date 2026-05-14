@@ -6,6 +6,7 @@ import {
   PRODUCT_IDENTIFIER_MAP,
   REMOTE_AI_SERVICES_AND_DELIVERABLES_ERROR_MESSAGE,
   REMOTE_AI_SERVICES_AND_DELIVERABLES_COR_ERROR_MESSAGE,
+  corProductIdentifier,
 } from '@/src/flows/ContractorOnboarding/constants';
 import { Employment } from '@/src/flows/Onboarding/types';
 
@@ -147,6 +148,20 @@ export const shouldIncludeProduct = (
   return !excludeProducts.some(
     (excluded) => PRODUCT_IDENTIFIER_MAP[excluded] === productIdentifier,
   );
+};
+
+const SHORT_NAME_TO_IDENTIFIER_MAP: Record<string, string> = {
+  standard: contractorStandardProductIdentifier,
+  plus: contractorPlusProductIdentifier,
+  cor: corProductIdentifier,
+};
+
+export const shouldIncludeProductByShortName = (
+  shortName: string,
+  excludeProducts?: ProductType[],
+): boolean => {
+  const identifier = SHORT_NAME_TO_IDENTIFIER_MAP[shortName];
+  return shouldIncludeProduct(identifier, excludeProducts);
 };
 
 /**

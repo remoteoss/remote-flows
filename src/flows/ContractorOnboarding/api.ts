@@ -50,7 +50,10 @@ import {
 import { convertFromCents } from '@/src/components/form/utils';
 import { countriesOptions } from '@/src/common/api/countries';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
-import { shouldIncludeProduct } from '@/src/flows/ContractorOnboarding/utils';
+import {
+  shouldIncludeProduct,
+  shouldIncludeProductByShortName,
+} from '@/src/flows/ContractorOnboarding/utils';
 import { useCompanyPricingPlans } from '@/src/common/api/companies';
 
 const useContractorCurrencies = ({
@@ -427,9 +430,12 @@ export const useContractorSubscriptionSchemaField = (
     ) ?? [];
 
   const expectedSubscriptionsForCountry =
-    selectedCountry?.contractor_products_available?.filter((productId) =>
-      shouldIncludeProduct(productId, options?.excludeProducts),
-    ) ?? [];
+    selectedCountry?.contractor_products_available?.filter((productId) => {
+      return shouldIncludeProductByShortName(
+        productId,
+        options?.excludeProducts,
+      );
+    }) ?? [];
 
   // For each country, the number can vary
   const MAXIMUM_SUBSCRIPTIONS_BY_COUNTRY =
