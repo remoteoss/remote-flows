@@ -498,6 +498,7 @@ export const useContractorOnboarding = ({
     hasEligibilityQuestionnaireSubmitted,
     employment?.contractor_type,
     isEligibilityQuestionnaireBlocked,
+    filteredContractorSubscriptions,
   ]);
 
   useEffect(() => {
