@@ -281,6 +281,7 @@ export const useContractorOnboarding = ({
     form: selectContractorSubscriptionForm,
     isLoading: isLoadingContractorSubscriptions,
     refetch: refetchContractorSubscriptions,
+    contractorSubscriptions,
     isEligibilityQuestionnaireBlocked,
     filteredContractorSubscriptions,
   } = useContractorSubscriptionSchemaField(
@@ -298,11 +299,11 @@ export const useContractorOnboarding = ({
 
   const hasEligibilityQuestionnaireSubmitted = useMemo(() => {
     return Boolean(
-      filteredContractorSubscriptions?.find(
+      contractorSubscriptions?.find(
         (subscription) => subscription.product.short_name === 'COR',
       )?.eligibility_questionnaire?.submitted_at,
     );
-  }, [filteredContractorSubscriptions]);
+  }, [contractorSubscriptions]);
 
   useEffect(() => {
     if (hasEligibilityQuestionnaireSubmitted) {
