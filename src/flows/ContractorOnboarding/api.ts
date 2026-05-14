@@ -441,7 +441,8 @@ export const useContractorSubscriptionSchemaField = (
 
   const showEorSubscription =
     (isMissingSubscriptions || isEligibilityQuestionnaireBlocked) &&
-    selectedCountry?.eor_onboarding;
+    selectedCountry?.eor_onboarding &&
+    !options?.excludeProducts?.includes('eor');
 
   const { eorSubscription, isLoading: isLoadingEorSubscription } =
     useEorSubscription({
