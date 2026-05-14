@@ -553,7 +553,7 @@ export const ContractorOnboardingWithProps = ({
               // excludeProducts: ['eor'], // Hide EOR option
               // excludeProducts: ['eor', 'cor'] // Hide both EOR and COR
               // excludeProducts: ['cm+'] // Hide Contractor Management Plus
-              excludeProducts: ['eor', 'cor', 'cm+', 'cm'], // Hide all products
+              //excludeProducts: ['eor', 'cor', 'cm+', 'cm'], // Hide all products
               jsfModify: {
                 contract_details: {
                   fields: {
