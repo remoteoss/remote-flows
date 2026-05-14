@@ -2201,6 +2201,76 @@ describe('ContractorOnboardingFlow', () => {
       expect(cmOption).toBeInTheDocument();
     });
 
+    it('should prevent progression when all products are excluded', async () => {
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          options={{ excludeProducts: ['eor', 'cor', 'cm+', 'cm'] }}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
+
+      await fillBasicInformation();
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      // Verify no subscription radio options are visible
+      const cmOption = screen.queryByRole('radio', {
+        name: /^Contractor Management$/,
+      });
+      const cmPlusOption = screen.queryByRole('radio', {
+        name: /Contractor Management Plus/i,
+      });
+      const corOption = screen.queryByRole('radio', {
+        name: /^Contractor of Record$/,
+      });
+      const eorOption = screen.queryByRole('radio', {
+        name: /Employer of Record/i,
+      });
+
+      expect(cmOption).not.toBeInTheDocument();
+      expect(cmPlusOption).not.toBeInTheDocument();
+      expect(corOption).not.toBeInTheDocument();
+      expect(eorOption).not.toBeInTheDocument();
+
+      // Try to submit with no selection
+      const submitButton = screen.getByText(/Next Step/i);
+      submitButton.click();
+
+      // Verify error callback was called
+      await waitFor(() => {
+        expect(mockOnError).toHaveBeenCalled();
+      });
+
+      // Verify we stay on pricing plan step (cannot progress)
+      await waitFor(() => {
+        expect(screen.getByText(/Step: Pricing Plan/i)).toBeInTheDocument();
+      });
+
+      // Verify we did NOT advance to subsequent steps
+      expect(
+        screen.queryByText(/Step: Eligibility Questionnaire/i),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(/Step: Contract Details/i),
+      ).not.toBeInTheDocument();
+    });
+
     it('should show all products when excludeProducts is not provided', async () => {
       mockRender.mockImplementation(
         createMockRenderImplementation(MultiStepFormWithoutCountry),
