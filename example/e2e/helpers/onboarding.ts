@@ -46,8 +46,11 @@ export async function fillOnboardingStep1Form(
   options: Partial<fillOnboardingStep1FormOptions>,
 ) {
   if (options.country_id) {
-    await page.locator('[data-field="country"]').click();
-    await page.getByRole('option', { name: options.country_id }).click();
+    const dropdown = page.locator('[data-field="country"]');
+    await dropdown.click();
+    const option = page.getByRole('option', { name: options.country_id });
+    await option.waitFor({ state: 'visible' });
+    await option.dispatchEvent('click');
   }
 
   await page.click('.submit-button');
@@ -494,60 +497,64 @@ export async function fillOnboardingStep4SpainForm(
   page: Page,
   options: Partial<fillOnboardingStep4SpainFormOptions>,
 ) {
-  if (options.life_insurance_type) {
-    await page
-      .locator('[data-field="f90cb339-172d-4d24-9ee6-da2e2ccc954e.filter"]')
-      .getByRole('radio', { name: options.life_insurance_type })
-      .click();
-  }
+  const isLocked = await page.getByText('Locked Benefit').first().isVisible();
 
-  if (options.life_insurance) {
-    await page
-      .locator('[data-field="f90cb339-172d-4d24-9ee6-da2e2ccc954e.value"]')
-      .getByRole('radio', { name: options.life_insurance })
-      .click();
-  }
+  if (!isLocked) {
+    if (options.life_insurance_type) {
+      await page
+        .locator('[data-field="f90cb339-172d-4d24-9ee6-da2e2ccc954e.filter"]')
+        .getByRole('radio', { name: options.life_insurance_type })
+        .click();
+    }
 
-  if (options.health_insurance_coverage) {
-    await page
-      .locator('[data-field="88081a16-882a-42b8-8cd5-6abb30585e4e.filter"]')
-      .getByRole('radio', { name: options.health_insurance_coverage })
-      .click();
-  }
+    if (options.life_insurance) {
+      await page
+        .locator('[data-field="f90cb339-172d-4d24-9ee6-da2e2ccc954e.value"]')
+        .getByRole('radio', { name: options.life_insurance })
+        .click();
+    }
 
-  if (options.health_insurance) {
-    await page
-      .locator('[data-field="88081a16-882a-42b8-8cd5-6abb30585e4e.value"]')
-      .getByRole('radio', { name: options.health_insurance })
-      .click();
-  }
+    if (options.health_insurance_coverage) {
+      await page
+        .locator('[data-field="88081a16-882a-42b8-8cd5-6abb30585e4e.filter"]')
+        .getByRole('radio', { name: options.health_insurance_coverage })
+        .click();
+    }
 
-  if (options.retirement) {
-    await page
-      .locator('[data-field="57b4108b-74d4-4830-ad11-68a46679f88c.value"]')
-      .getByRole('radio', { name: options.retirement })
-      .click();
-  }
+    if (options.health_insurance) {
+      await page
+        .locator('[data-field="88081a16-882a-42b8-8cd5-6abb30585e4e.value"]')
+        .getByRole('radio', { name: options.health_insurance })
+        .click();
+    }
 
-  if (options.mental_health) {
-    await page
-      .locator('[data-field="4a2d0edb-ebd9-49af-ad79-7390deb7ee71.value"]')
-      .getByRole('radio', { name: options.mental_health })
-      .click();
-  }
+    if (options.retirement) {
+      await page
+        .locator('[data-field="57b4108b-74d4-4830-ad11-68a46679f88c.value"]')
+        .getByRole('radio', { name: options.retirement })
+        .click();
+    }
 
-  if (options.wellness) {
-    await page
-      .locator('[data-field="5ffc8e84-1304-4abb-91c2-4d43b1fece5d.value"]')
-      .getByRole('radio', { name: options.wellness })
-      .click();
-  }
+    if (options.mental_health) {
+      await page
+        .locator('[data-field="4a2d0edb-ebd9-49af-ad79-7390deb7ee71.value"]')
+        .getByRole('radio', { name: options.mental_health })
+        .click();
+    }
 
-  if (options.business_travel) {
-    await page
-      .locator('[data-field="91dd5796-5ed7-449e-9a75-15c07c288970.value"]')
-      .getByRole('radio', { name: options.business_travel })
-      .click();
+    if (options.wellness) {
+      await page
+        .locator('[data-field="5ffc8e84-1304-4abb-91c2-4d43b1fece5d.value"]')
+        .getByRole('radio', { name: options.wellness })
+        .click();
+    }
+
+    if (options.business_travel) {
+      await page
+        .locator('[data-field="91dd5796-5ed7-449e-9a75-15c07c288970.value"]')
+        .getByRole('radio', { name: options.business_travel })
+        .click();
+    }
   }
 
   await page.click('.submit-button');
