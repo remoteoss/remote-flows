@@ -20,7 +20,7 @@ test.describe('Onboard basic employee', () => {
     await expect(headerAmount).toBeVisible();
 
     await fillOnboardingIntroductionForm(page, {
-      company_id: '1551480a-b8d5-44a7-8ad1-0dee45dcc934',
+      company_id: '460201ed-a8c0-4e75-89dc-6d5eae35f65e',
       type: 'employee',
     });
 
@@ -35,9 +35,9 @@ test.describe('Onboard basic employee', () => {
     await expect(stepTitle).toHaveText('Basic Information');
 
     await fillOnboardingStep2Form(page, {
-      fullname: 'John Doe',
-      personal_email: 'john.doe2@example.com',
-      work_email: 'john.doe2@pro.com',
+      fullname: `John Doe${Date.now()}`,
+      personal_email: `john.doe${Date.now()}@example.com`,
+      work_email: `john.doe${Date.now()}@pro.com`,
       job_title: 'Software Engineer',
       country_id: 'Portugal',
       tax_job_category: 'Finance',
@@ -90,5 +90,6 @@ test.describe('Onboard basic employee', () => {
 
     stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Review');
+    await page.click('.submit-button');
   });
 });
