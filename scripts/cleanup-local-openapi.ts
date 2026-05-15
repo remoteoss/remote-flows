@@ -18,11 +18,8 @@ function cleanupApiEorPrefix() {
       let content = readFileSync(filePath, 'utf-8');
       const originalContent = content;
 
-      // Replace /api/eor/v1/ with /v1/
-      content = content.replace(/url: '\/api\/eor\/v1\//g, "url: '/v1/");
-
-      // Replace /api/eor/v2/ with /v2/
-      content = content.replace(/url: '\/api\/eor\/v2\//g, "url: '/v2/");
+      // Replace /api/eor/ prefix with / (handles v1/, v2/, auth/, and any other paths)
+      content = content.replace(/url: '\/api\/eor\//g, "url: '/");
 
       if (content !== originalContent) {
         writeFileSync(filePath, content, 'utf-8');
