@@ -293,7 +293,8 @@ export async function parseFormValuesToAPI(
 ) {
   const filteredFields = fields.filter(
     (field) =>
-      formValues[field.name!] ||
+      (formValues[field.name!] !== undefined &&
+        formValues[field.name!] !== null) ||
       (field.type === supportedTypes.FIELDSET && field.valueGroupingDisabled),
   );
 

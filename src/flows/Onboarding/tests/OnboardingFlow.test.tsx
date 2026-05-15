@@ -761,6 +761,7 @@ describe('OnboardingFlow', () => {
       has_bonus: 'no',
       has_commissions: 'no',
       has_signing_bonus: 'no',
+      probation_length: 0,
       probation_length_days: 40,
       role_description:
         employmentDefaultResponse.data.employment.contract_details
