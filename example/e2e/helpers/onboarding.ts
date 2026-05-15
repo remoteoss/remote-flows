@@ -34,6 +34,7 @@ export async function fillOnboardingIntroductionForm(
   }
 
   await page.click('.onboarding-form-button');
+  await page.getByText('Loading...').waitFor({ state: 'hidden' });
 }
 
 interface fillOnboardingStep1FormOptions {
@@ -50,6 +51,7 @@ export async function fillOnboardingStep1Form(
   }
 
   await page.click('.submit-button');
+  await page.getByText('Loading...').waitFor({ state: 'hidden' });
 }
 
 interface fillOnboardingStep2FormOptions {
@@ -139,6 +141,7 @@ export async function fillOnboardingStep2Form(
   }
 
   await page.click('.submit-button');
+  await page.getByText('Loading...').waitFor({ state: 'hidden' });
 }
 
 interface fillOnboardingStep3FranceFormOptions {
@@ -281,6 +284,7 @@ export async function fillOnboardingStep3FranceForm(
   }
 
   await page.click('.submit-button');
+  await page.getByText('Loading...').waitFor({ state: 'hidden' });
 }
 
 interface fillOnboardingStep3SpainFormOptions {
@@ -472,6 +476,7 @@ export async function fillOnboardingStep3SpainForm(
   }
 
   await page.click('.submit-button');
+  await page.getByText('Loading...').waitFor({ state: 'hidden' });
 }
 
 interface fillOnboardingStep4SpainFormOptions {
@@ -546,6 +551,7 @@ export async function fillOnboardingStep4SpainForm(
   }
 
   await page.click('.submit-button');
+  await page.getByText('Loading...').waitFor({ state: 'hidden' });
 }
 
 interface fillOnboardingStep4FranceFormOptions {
@@ -568,4 +574,5 @@ export async function fillOnboardingStep4FranceForm(
   }
 
   await page.click('.submit-button');
+  await page.getByText('Loading...').waitFor({ state: 'hidden' });
 }
