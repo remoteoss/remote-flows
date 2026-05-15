@@ -38,8 +38,8 @@ test.describe('Onboard basic employee', () => {
 
     await fillOnboardingStep2Form(page, {
       fullname: 'John Doe',
-      personal_email: 'john.doe@example.com',
-      work_email: 'john.doe@pro.com',
+      personal_email: 'john.doe2@example.com',
+      work_email: 'john.doe2@pro.com',
       job_title: 'Software Engineer',
       country_id: 'Portugal',
       tax_job_category: 'Finance',
