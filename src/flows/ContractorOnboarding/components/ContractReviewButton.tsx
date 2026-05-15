@@ -50,6 +50,8 @@ export function ContractReviewButton({
     }
   };
 
+  const disabled = props.disabled || contractorOnboardingBag.isSubmitting;
+
   return (
     <Drawer
       open={isOpen}
@@ -61,6 +63,7 @@ export function ContractReviewButton({
           type={reviewCompleted ? 'submit' : 'button'}
           form={formId}
           onClick={handleOpen}
+          disabled={disabled}
           {...props}
         >
           {render({ reviewCompleted })}
