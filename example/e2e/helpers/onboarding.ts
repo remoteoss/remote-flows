@@ -364,14 +364,6 @@ export async function fillOnboardingStep3SpainForm(
       .fill(options.role_description);
   }
 
-  if (options.overtime_compensation_method) {
-    await page
-      .locator(
-        `[data-field="overtime_compensation_method"] button[role="radio"][value="${options.overtime_compensation_method}"]`,
-      )
-      .click();
-  }
-
   if (options.experience_level) {
     await page
       .locator(
@@ -471,6 +463,14 @@ export async function fillOnboardingStep3SpainForm(
     await page
       .locator(
         `[data-field="compensation_expenses_ack"] button[role="checkbox"]`,
+      )
+      .click();
+  }
+
+  if (options.overtime_compensation_method) {
+    await page
+      .locator(
+        `[data-field="overtime_compensation_method"] button[role="radio"][value="${options.overtime_compensation_method}"]`,
       )
       .click();
   }
