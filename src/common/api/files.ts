@@ -1,16 +1,16 @@
 import { useMutation, useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { Client } from '@/src/client/client';
 import {
-  getIndexEmploymentFile,
-  getShowFile,
-  postUploadEmployeeFileFile,
+  getV1EmploymentsEmploymentIdFiles,
+  getV1FilesId,
+  postV1Documents,
 } from '@/src/client/sdk.gen';
 import {
-  GetIndexEmploymentFileData,
-  GetIndexEmploymentFileErrors,
+  GetV1EmploymentsEmploymentIdFilesData,
+  GetV1EmploymentsEmploymentIdFilesErrors,
   File as ApiFile,
   ListFilesResponse,
-  PostUploadEmployeeFileFileData,
+  PostV1DocumentsData,
 } from '@/src/client/types.gen';
 import { useClient } from '@/src/context';
 
@@ -21,8 +21,8 @@ import { useClient } from '@/src/context';
 export const useUploadFile = () => {
   const { client } = useClient();
   return useMutation({
-    mutationFn: (params: PostUploadEmployeeFileFileData['body']) => {
-      return postUploadEmployeeFileFile({
+    mutationFn: (params: PostV1DocumentsData['body']) => {
+      return postV1Documents({
         client: client as Client,
         body: params,
         headers: {
@@ -43,7 +43,7 @@ export const useDownloadFile = (id: string) => {
   return useQuery({
     queryKey: ['download-file', id],
     queryFn: async () => {
-      const result = await getShowFile({
+      const result = await getV1FilesId({
         client: client as Client,
         path: { id: id },
       });
@@ -68,11 +68,11 @@ export const useDownloadFile = (id: string) => {
  */
 export const useEmploymentFiles = (
   employmentId: string,
-  queryParams: GetIndexEmploymentFileData['query'],
+  queryParams: GetV1EmploymentsEmploymentIdFilesData['query'],
   queryOptions?: Omit<
     UseQueryOptions<
       ListFilesResponse,
-      GetIndexEmploymentFileErrors,
+      GetV1EmploymentsEmploymentIdFilesErrors,
       ApiFile[] | undefined,
       unknown[]
     >,
@@ -83,7 +83,7 @@ export const useEmploymentFiles = (
   return useQuery({
     queryKey: ['employment-files', employmentId],
     queryFn: async () => {
-      const result = await getIndexEmploymentFile({
+      const result = await getV1EmploymentsEmploymentIdFiles({
         client: client as Client,
         path: { employment_id: employmentId },
         query: queryParams,

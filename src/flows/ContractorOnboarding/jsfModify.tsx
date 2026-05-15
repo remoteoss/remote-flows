@@ -263,7 +263,7 @@ export const buildBasicInformationJsfModify = (
             title: 'Yes',
           },
           {
-            const: 'non-national',
+            const: 'non_national',
             description: descriptionNonNationalRadio,
             title: 'No',
           },

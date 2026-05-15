@@ -8,7 +8,7 @@ import {
   determineErrorSeverity,
 } from '@/src/components/error-handling/utils';
 import { defaultEnvironment, Environment } from '@/src/environments';
-import { postReportErrorsTelemetry } from '@/src/client/sdk.gen';
+import { postV1SdkTelemetryErrors } from '@/src/client/sdk.gen';
 
 const recentlyReported = new Map<string, number>();
 const DEDUPE_WINDOW_MS = 100; // 100ms should catch Strict Mode double-invokes
@@ -208,10 +208,10 @@ export function reportTelemetryError(
     return;
   }
 
-  postReportErrorsTelemetry({
+  postV1SdkTelemetryErrors({
     client,
     body: payload,
-  }).catch((err) => {
+  }).catch((err: unknown) => {
     // Silently fail - don't crash if telemetry reporting fails
     if (options.debugMode) {
       console.warn('[RemoteFlows] Failed to report error telemetry:', err);

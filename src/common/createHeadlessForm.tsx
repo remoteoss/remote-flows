@@ -29,10 +29,17 @@ export const createHeadlessForm = (
     jsfSchema = schema;
 
     if (required) {
-      jsfSchema.required = [
-        ...(Array.isArray(schema.required) ? schema.required : []),
-        ...required,
-      ];
+      const baseRequired = Array.isArray(schema.required)
+        ? schema.required
+        : [];
+
+      if (typeof required === 'function') {
+        // Function: allows full control over required fields
+        jsfSchema.required = required(baseRequired);
+      } else {
+        // Array: merge with existing required fields (backwards compatible)
+        jsfSchema.required = [...baseRequired, ...required];
+      }
     }
 
     if (allOf) {

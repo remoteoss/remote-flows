@@ -16,7 +16,7 @@ This project is a React component library (`@remoteoss/remote-flows`) that provi
 ### TypeScript
 
 - **Strict mode enabled** - all strict TypeScript checks are enforced via `tsconfig.json`
-- **No `any` types** - except where explicitly needed with `/* eslint-disable @typescript-eslint/no-explicit-any */`
+- **No `any` types** - except where explicitly needed with `/* oxlint-disable @typescript-eslint/no-explicit-any */`
 - **Use `$TSFixMe` type** - for temporary type workarounds (defined in `src/types/remoteFlows.ts`)
 - **Export types** - all public types must be exported for consumer TypeScript support
 - **Type imports** - use `import type` for type-only imports where possible
@@ -29,7 +29,7 @@ This project is a React component library (`@remoteoss/remote-flows`) that provi
 
 ### Code Style
 
-**Enforced by Prettier:**
+**Enforced by oxfmt (Rust-based formatter):**
 
 - Single quotes (including JSX: `jsxSingleQuote: true`)
 - Semicolons required
@@ -37,10 +37,9 @@ This project is a React component library (`@remoteoss/remote-flows`) that provi
 - 80 character line width
 - 2 space indentation
 
-**Enforced by ESLint:**
+**Enforced by oxlint (Rust-based linter):**
 
 - React Hooks rules (exhaustive dependencies)
-- Only export components in flow files (react-refresh)
 - `no-console`: warn (only `console.warn` and `console.error` allowed)
 
 **Naming Conventions:**
@@ -162,22 +161,43 @@ Package is consumed by external applications - monitor bundle impact:
 
 Consistent error handling across all flows:
 
-- **Field-level errors** - Use `extractFieldErrors()` and `normalizeFieldErrors()` from `src/lib/mutations.ts`
+- **Type-safe error handling** - Always use `isMutationError()` type guard when catching mutation errors
+- **Use mutateAsyncOrThrow** - Prefer over deprecated `mutateAsync` method
 - **Mutation wrapper** - All mutations must use `mutationToPromise()` helper
-- **Error response format** - Return `{ data: null, error: Error, rawError: object, fieldErrors: FieldError[] }`
-- **User-friendly messages** - Extract field labels from metadata for error display
+- **Error structure** - Access `normalizedErrors`, `fieldErrors`, `rawError`, and `response` properties
+- **User-friendly messages** - Extract field labels from metadata for error display with `normalizeFieldErrors()`
 - **Try/catch blocks** - Async operations must have error handling
 - **Fallback UI** - Loading states, error states, empty states
 
-**Example:**
+**✅ CORRECT: Use isMutationError type guard**
 
 ```typescript
-const { mutateAsync } = mutationToPromise(useSomeMutation());
+import { isMutationError } from '@/src/lib/mutations';
 
-const result = await mutateAsync(values);
-if (result.error) {
-  const normalizedErrors = normalizeFieldErrors(result.fieldErrors, meta);
-  // Handle field errors with user-friendly labels
+try {
+  const result = await mutateAsyncOrThrow(payload);
+  // Handle success
+} catch (error) {
+  if (isMutationError(error)) {
+    // Type-safe access to error properties
+    console.log(error.normalizedErrors); // Direct access to errors object
+    console.log(error.fieldErrors); // Array of field errors
+
+    // Example: Check for specific field errors
+    const fieldError = error.normalizedErrors.field_name;
+    if (fieldError) {
+      // Handle specific error
+    }
+  }
+  throw error;
+}
+```
+
+**❌ INCORRECT: Don't access error properties without type guard**
+
+```typescript
+catch (error: any) {
+  const rawError = error.rawError; // No type safety!
 }
 ```
 
@@ -382,12 +402,12 @@ flows/[FlowName]/
 ### 2. React Hook Dependencies
 
 - Missing dependencies in `useEffect`, `useCallback`, `useMemo`
-- ESLint warnings for `react-hooks/exhaustive-deps` must be fixed
+- Oxlint warnings for `react-hooks/exhaustive-deps` must be fixed
 - Avoid disabling the rule - fix the dependency array instead
 
 ### 3. Type Safety Issues
 
-- Using `any` without `eslint-disable` comment
+- Using `any` without `oxlint-disable` comment
 - Type assertions (`as`) without clear justification
 - Missing null/undefined checks for optional values
 - Incorrect generic type parameters

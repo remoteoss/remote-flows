@@ -1,12 +1,12 @@
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import {
   CostCalculatorEstimateParams,
-  getIndexCompanyCurrency,
-  getIndexCountry,
-  getShowRegionField,
-  postCreateEstimation,
-  postCreateEstimationCsv,
-  postCreateEstimationPdf,
+  getV1CompanyCurrencies,
+  getV1CostCalculatorCountries,
+  getV1CostCalculatorRegionsSlugFields,
+  postV1CostCalculatorEstimation,
+  postV1CostCalculatorEstimationCsv,
+  postV1CostCalculatorEstimationPdf,
 } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
@@ -27,7 +27,7 @@ export const useCostCalculatorCountries = ({
   return useQuery({
     queryKey: ['cost-calculator-countries', includePremiumBenefits],
     queryFn: () => {
-      return getIndexCountry({
+      return getV1CostCalculatorCountries({
         client: client as Client,
         query: {
           include_premium_benefits: includePremiumBenefits,
@@ -58,7 +58,7 @@ export const useCompanyCurrencies = () => {
   return useQuery({
     queryKey: ['company-currencies'],
     queryFn: () => {
-      return getIndexCompanyCurrency({
+      return getV1CompanyCurrencies({
         client: client as Client,
       });
     },
@@ -79,7 +79,7 @@ export const useCostCalculatorEstimation = () => {
 
   return useMutation({
     mutationFn: (payload: CostCalculatorEstimateParams) => {
-      return postCreateEstimation({
+      return postV1CostCalculatorEstimation({
         client: client as Client,
         body: payload,
       });
@@ -97,7 +97,7 @@ export const useCostCalculatorEstimationPdf = () => {
 
   return useMutation({
     mutationFn: (payload: CostCalculatorEstimateParams) => {
-      return postCreateEstimationPdf({
+      return postV1CostCalculatorEstimationPdf({
         client: client as Client,
         body: payload,
       });
@@ -114,7 +114,7 @@ export const useCostCalculatorEstimationCsv = () => {
   const { client } = useClient();
   return useMutation({
     mutationFn: (payload: CostCalculatorEstimateParams) => {
-      return postCreateEstimationCsv({
+      return postV1CostCalculatorEstimationCsv({
         client: client as Client,
         body: payload,
       });
@@ -144,7 +144,7 @@ export const useRegionFields = (
   return useQuery({
     queryKey: ['cost-calculator-region-fields', region, includePremiumBenefits],
     queryFn: () => {
-      return getShowRegionField({
+      return getV1CostCalculatorRegionsSlugFields({
         client: client as Client,
         path: { slug: region as string },
         query: {

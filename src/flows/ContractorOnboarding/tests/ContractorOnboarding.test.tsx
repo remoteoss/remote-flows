@@ -2206,6 +2206,76 @@ describe('ContractorOnboardingFlow', () => {
       expect(cmOption).toBeInTheDocument();
     });
 
+    it('should prevent progression when all products are excluded', async () => {
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          employmentId='test-employment-id'
+          options={{ excludeProducts: ['eor', 'cor', 'cm+', 'cm'] }}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+      });
+
+      await fillBasicInformation();
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+
+      // Verify no subscription radio options are visible
+      const cmOption = screen.queryByRole('radio', {
+        name: /^Contractor Management$/,
+      });
+      const cmPlusOption = screen.queryByRole('radio', {
+        name: /Contractor Management Plus/i,
+      });
+      const corOption = screen.queryByRole('radio', {
+        name: /^Contractor of Record$/,
+      });
+      const eorOption = screen.queryByRole('radio', {
+        name: /Employer of Record/i,
+      });
+
+      expect(cmOption).not.toBeInTheDocument();
+      expect(cmPlusOption).not.toBeInTheDocument();
+      expect(corOption).not.toBeInTheDocument();
+      expect(eorOption).not.toBeInTheDocument();
+
+      // Try to submit with no selection
+      const submitButton = screen.getByText(/Next Step/i);
+      submitButton.click();
+
+      // Verify error callback was called
+      await waitFor(() => {
+        expect(mockOnError).toHaveBeenCalled();
+      });
+
+      // Verify we stay on pricing plan step (cannot progress)
+      await waitFor(() => {
+        expect(screen.getByText(/Step: Pricing Plan/i)).toBeInTheDocument();
+      });
+
+      // Verify we did NOT advance to subsequent steps
+      expect(
+        screen.queryByText(/Step: Eligibility Questionnaire/i),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(/Step: Contract Details/i),
+      ).not.toBeInTheDocument();
+    });
+
     it('should show all products when excludeProducts is not provided', async () => {
       mockRender.mockImplementation(
         createMockRenderImplementation(MultiStepFormWithoutCountry),
@@ -3156,6 +3226,87 @@ describe('ContractorOnboardingFlow', () => {
       // Count might be 3 now if going back triggers another fetch,
       // or still 2 if it uses cached data
       expect(getContractDocumentCallCount).toBeGreaterThanOrEqual(2);
+    });
+
+    it('should handle production error format (without intermediate error wrapper) for AI validation', async () => {
+      const employmentId = generateUniqueEmploymentId();
+
+      // Mock the contract document creation to fail with production-format AI error
+      // Production format: { errors: { ... } } instead of { error: { errors: { ... } } }
+      server.use(
+        http.post('*/v1/contractors/employments/*/contract-documents', () => {
+          return HttpResponse.json(
+            {
+              errors: {
+                services_and_deliverables: {
+                  error: [
+                    "The text is non-compliant because it includes language that implies weekly progress reviews, which can be interpreted as a form of day-to-day supervision or control over the Contractor's work.",
+                  ],
+                  source: 'REMOTE_AI',
+                  skippable: true,
+                },
+              },
+            },
+            { status: 422 },
+          );
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      // Navigate through the flow
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+      await fillContractorSubscription();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Contract Details/i);
+      await fillContractDetails();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      // Should stay on contract details step
+      await screen.findByText(/Step: Contract Details/i);
+
+      // Assert canSkipAiValidation is true (production format should be handled correctly)
+      await waitFor(() => {
+        const container = screen.getByTestId('contract-details-container');
+        expect(container).toHaveAttribute(
+          'data-can-skip-ai-validation',
+          'true',
+        );
+      });
+
+      // Verify the AI warning message appears
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Possible misclassification risk/i),
+        ).toBeInTheDocument();
+      });
+
+      expect(mockOnError).toHaveBeenCalled();
     });
   });
 });

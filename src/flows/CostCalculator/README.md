@@ -337,7 +337,7 @@ function CostCalculatorFormDemo() {
         onSuccess: (response) => {
           if (response?.data?.data?.content !== undefined) {
             const a = document.createElement('a');
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // oxlint-disable-next-line @typescript-eslint/no-explicit-any
             a.href = response.data.data.content as any;
             a.download = 'estimation.pdf';
             document.body.appendChild(a);
@@ -445,7 +445,7 @@ function CostCalculatorFormDemo() {
         onSuccess: (response) => {
           if (response?.data?.data?.content !== undefined) {
             const a = document.createElement('a');
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // oxlint-disable-next-line @typescript-eslint/no-explicit-any
             a.href = response.data.data.content as any;
             a.download = 'estimation.pdf';
             document.body.appendChild(a);
