@@ -232,6 +232,12 @@ export const fieldTypesTransformations: Record<string, $TSFixMe> = {
   },
   [supportedTypes.NUMBER]: {
     transformValueToAPI: () => (value: string) => {
+      // Return empty string as-is so removeEmptyValues can filter it out
+      // This prevents empty optional number fields from being converted to 0
+      if (value === '') {
+        return value;
+      }
+
       // this prevents values with letters such as "2r" from being considered valid
       // if the input is invalid, number().cast will return NaN
       const castValue = Number(value);

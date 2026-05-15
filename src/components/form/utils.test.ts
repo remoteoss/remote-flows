@@ -51,7 +51,7 @@ describe('parseJSFToValidate', () => {
   });
 
   describe('empty value filtering', () => {
-    it('should remove empty strings (by removeEmptyValues)', async () => {
+    it('should remove empty strings from text fields', async () => {
       const formValues = {
         optional_note: '',
         name: 'test',
@@ -69,6 +69,26 @@ describe('parseJSFToValidate', () => {
       // removeEmptyValues filters out empty strings
       expect(result).not.toHaveProperty('optional_note');
       expect(result).toHaveProperty('name', 'test');
+    });
+
+    it('should NOT convert empty string number fields to zero', async () => {
+      const formValues = {
+        optional_years: '', // User left this blank
+        required_salary: 50000,
+      };
+
+      const fields = [
+        { name: 'optional_years', type: 'number' },
+        { name: 'required_salary', type: 'number' },
+      ];
+
+      const result = await parseJSFToValidate(formValues, fields, {
+        isPartialValidation: false,
+      });
+
+      // Empty string should be omitted, NOT converted to 0
+      expect(result).not.toHaveProperty('optional_years');
+      expect(result).toHaveProperty('required_salary', 50000);
     });
 
     it('should remove null and undefined values', async () => {
