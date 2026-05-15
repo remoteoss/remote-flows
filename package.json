@@ -18,6 +18,7 @@
     "lint:workflows:fix": "zizmor --fix .github/workflows/",
     "format": "oxfmt",
     "openapi-ts": "openapi-ts && npm run format",
+    "openapi-ts:local": "openapi-ts -f openapi-ts.config.local.ts && tsx scripts/cleanup-local-openapi.ts && npm run format",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "coverage:extract": "tsx scripts/extract-coverage.ts",
