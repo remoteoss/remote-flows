@@ -822,7 +822,7 @@ export const putV2EmploymentsEmploymentIdAdministrativeDetails = <
     PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v2/employments/{employment_id}/administrative_details',
+    url: '/v2/employments/{employment_id}/administrative_details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -855,7 +855,7 @@ export const getV1EmploymentsEmploymentIdEngagementAgreementDetails = <
     GetV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments/{employment_id}/engagement-agreement-details',
+    url: '/v1/employments/{employment_id}/engagement-agreement-details',
     ...options,
   });
 
@@ -894,7 +894,7 @@ export const postV1EmploymentsEmploymentIdEngagementAgreementDetails = <
     PostV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments/{employment_id}/engagement-agreement-details',
+    url: '/v1/employments/{employment_id}/engagement-agreement-details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -924,7 +924,7 @@ export const postV1CurrencyConverterEffective2 = <
     PostV1CurrencyConverterEffective2Errors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/currency-converter',
+    url: '/v1/currency-converter',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -958,7 +958,7 @@ export const getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions = <
     GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/contractors/employments/{employment_id}/contractor-subscriptions',
+    url: '/v1/contractors/employments/{employment_id}/contractor-subscriptions',
     ...options,
   });
 
@@ -985,7 +985,7 @@ export const postV1CurrencyConverterRaw = <
     PostV1CurrencyConverterRawErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/currency-converter/raw',
+    url: '/v1/currency-converter/raw',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1012,7 +1012,7 @@ export const getV1Incentives = <ThrowOnError extends boolean = false>(
     GetV1IncentivesResponses,
     GetV1IncentivesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/incentives', ...options });
+  >({ url: '/v1/incentives', ...options });
 
 /**
  * Create Incentive
@@ -1037,7 +1037,7 @@ export const postV1Incentives = <ThrowOnError extends boolean = false>(
     PostV1IncentivesErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/incentives',
+    url: '/v1/incentives',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1065,7 +1065,7 @@ export const getV1BenefitOffers = <ThrowOnError extends boolean = false>(
     GetV1BenefitOffersResponses,
     GetV1BenefitOffersErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/benefit-offers', ...options });
+  >({ url: '/v1/benefit-offers', ...options });
 
 /**
  * Complete onboarding
@@ -1083,7 +1083,7 @@ export const postV1Ready = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v1/ready',
+    url: '/v1/ready',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1104,7 +1104,7 @@ export const postV1CostCalculatorEstimation = <
     PostV1CostCalculatorEstimationErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/cost-calculator/estimation',
+    url: '/v1/cost-calculator/estimation',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1132,7 +1132,7 @@ export const getV1IncentivesRecurring = <ThrowOnError extends boolean = false>(
     GetV1IncentivesRecurringResponses,
     GetV1IncentivesRecurringErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/incentives/recurring', ...options });
+  >({ url: '/v1/incentives/recurring', ...options });
 
 /**
  * Create Recurring Incentive
@@ -1157,7 +1157,7 @@ export const postV1IncentivesRecurring = <ThrowOnError extends boolean = false>(
     PostV1IncentivesRecurringErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/incentives/recurring',
+    url: '/v1/incentives/recurring',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1184,7 +1184,7 @@ export const getV1Timesheets = <ThrowOnError extends boolean = false>(
     GetV1TimesheetsResponses,
     GetV1TimesheetsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/timesheets', ...options });
+  >({ url: '/v1/timesheets', ...options });
 
 /**
  * Create timesheet
@@ -1206,7 +1206,7 @@ export const postV1Timesheets = <ThrowOnError extends boolean = false>(
     PostV1TimesheetsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/timesheets',
+    url: '/v1/timesheets',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1235,7 +1235,7 @@ export const postV1TimesheetsTimesheetIdApprove = <
     PostV1TimesheetsTimesheetIdApproveResponses,
     PostV1TimesheetsTimesheetIdApproveErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/timesheets/{timesheet_id}/approve', ...options });
+  >({ url: '/v1/timesheets/{timesheet_id}/approve', ...options });
 
 /**
  * Get latest data sync events
@@ -1254,7 +1254,7 @@ export const getV1DataSync = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v1/data-sync',
+    url: '/v1/data-sync',
     ...options,
   });
 
@@ -1279,7 +1279,7 @@ export const postV1DataSync = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v1/data-sync',
+    url: '/v1/data-sync',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1308,7 +1308,7 @@ export const getV1ProbationCompletionLetterId = <
     GetV1ProbationCompletionLetterIdResponses,
     GetV1ProbationCompletionLetterIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/probation-completion-letter/{id}', ...options });
+  >({ url: '/v1/probation-completion-letter/{id}', ...options });
 
 /**
  * Show the current SSO Configuration
@@ -1329,7 +1329,7 @@ export const getV1SsoConfiguration = <ThrowOnError extends boolean = false>(
     GetV1SsoConfigurationResponses,
     GetV1SsoConfigurationErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/sso-configuration', ...options });
+  >({ url: '/v1/sso-configuration', ...options });
 
 /**
  * Create the SSO Configuration
@@ -1351,7 +1351,7 @@ export const postV1SsoConfiguration = <ThrowOnError extends boolean = false>(
     PostV1SsoConfigurationErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/sso-configuration',
+    url: '/v1/sso-configuration',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1378,7 +1378,7 @@ export const getV1Offboardings = <ThrowOnError extends boolean = false>(
     GetV1OffboardingsResponses,
     GetV1OffboardingsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/offboardings', ...options });
+  >({ url: '/v1/offboardings', ...options });
 
 /**
  * Create Offboarding
@@ -1401,7 +1401,7 @@ export const postV1Offboardings = <ThrowOnError extends boolean = false>(
     PostV1OffboardingsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/offboardings',
+    url: '/v1/offboardings',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1435,7 +1435,7 @@ export const postV1ContractorsEmploymentsEmploymentIdContractDocuments = <
     PostV1ContractorsEmploymentsEmploymentIdContractDocumentsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/contractors/employments/{employment_id}/contract-documents',
+    url: '/v1/contractors/employments/{employment_id}/contract-documents',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1488,7 +1488,7 @@ export const putV1EmploymentsEmploymentIdFederalTaxes = <
     PutV1EmploymentsEmploymentIdFederalTaxesErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments/{employment_id}/federal-taxes',
+    url: '/v1/employments/{employment_id}/federal-taxes',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1519,7 +1519,7 @@ export const getV1CompaniesCompanyIdPricingPlans = <
     GetV1CompaniesCompanyIdPricingPlansResponses,
     GetV1CompaniesCompanyIdPricingPlansErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/companies/{company_id}/pricing-plans', ...options });
+  >({ url: '/v1/companies/{company_id}/pricing-plans', ...options });
 
 /**
  * Create a pricing plan for a company
@@ -1549,7 +1549,7 @@ export const postV1CompaniesCompanyIdPricingPlans = <
     PostV1CompaniesCompanyIdPricingPlansErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/companies/{company_id}/pricing-plans',
+    url: '/v1/companies/{company_id}/pricing-plans',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1602,7 +1602,7 @@ export const putV2EmploymentsEmploymentIdFederalTaxes = <
     PutV2EmploymentsEmploymentIdFederalTaxesErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v2/employments/{employment_id}/federal-taxes',
+    url: '/v2/employments/{employment_id}/federal-taxes',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1629,7 +1629,7 @@ export const getV1TravelLetterRequests = <ThrowOnError extends boolean = false>(
     GetV1TravelLetterRequestsResponses,
     GetV1TravelLetterRequestsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/travel-letter-requests', ...options });
+  >({ url: '/v1/travel-letter-requests', ...options });
 
 /**
  * Get engagement agreement details
@@ -1656,7 +1656,7 @@ export const getV2EmploymentsEmploymentIdEngagementAgreementDetails = <
     GetV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v2/employments/{employment_id}/engagement-agreement-details',
+    url: '/v2/employments/{employment_id}/engagement-agreement-details',
     ...options,
   });
 
@@ -1695,7 +1695,7 @@ export const postV2EmploymentsEmploymentIdEngagementAgreementDetails = <
     PostV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v2/employments/{employment_id}/engagement-agreement-details',
+    url: '/v2/employments/{employment_id}/engagement-agreement-details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1717,7 +1717,7 @@ export const getV1WdGphPaySummary = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v1/wd/gph/paySummary',
+    url: '/v1/wd/gph/paySummary',
     ...options,
   });
 
@@ -1743,7 +1743,7 @@ export const getV1EmploymentsEmploymentIdJob = <
     GetV1EmploymentsEmploymentIdJobResponses,
     GetV1EmploymentsEmploymentIdJobErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employments/{employment_id}/job', ...options });
+  >({ url: '/v1/employments/{employment_id}/job', ...options });
 
 /**
  * Create bulk employment job
@@ -1765,7 +1765,7 @@ export const postV1BulkEmploymentJobs = <ThrowOnError extends boolean = false>(
     PostV1BulkEmploymentJobsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/bulk-employment-jobs',
+    url: '/v1/bulk-employment-jobs',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1792,7 +1792,7 @@ export const getV1ContractAmendments = <ThrowOnError extends boolean = false>(
     GetV1ContractAmendmentsResponses,
     GetV1ContractAmendmentsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/contract-amendments', ...options });
+  >({ url: '/v1/contract-amendments', ...options });
 
 /**
  * Create Contract Amendment
@@ -1832,7 +1832,7 @@ export const postV1ContractAmendments = <ThrowOnError extends boolean = false>(
     PostV1ContractAmendmentsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/contract-amendments',
+    url: '/v1/contract-amendments',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1869,7 +1869,7 @@ export const deleteV1IncentivesRecurringId = <
     DeleteV1IncentivesRecurringIdResponses,
     DeleteV1IncentivesRecurringIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/incentives/recurring/{id}', ...options });
+  >({ url: '/v1/incentives/recurring/{id}', ...options });
 
 /**
  * Show Benefit Renewal Request
@@ -1896,7 +1896,7 @@ export const getV1BenefitRenewalRequestsBenefitRenewalRequestId = <
     GetV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/benefit-renewal-requests/{benefit_renewal_request_id}',
+    url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}',
     ...options,
   });
 
@@ -1925,7 +1925,7 @@ export const postV1BenefitRenewalRequestsBenefitRenewalRequestId = <
     PostV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/benefit-renewal-requests/{benefit_renewal_request_id}',
+    url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1955,7 +1955,7 @@ export const getV1CountriesCountryCodeHolidaysYear = <
     GetV1CountriesCountryCodeHolidaysYearErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/countries/{country_code}/holidays/{year}',
+    url: '/v1/countries/{country_code}/holidays/{year}',
     ...options,
   });
 
@@ -1981,7 +1981,7 @@ export const getV1EmploymentsEmploymentIdCustomFields = <
     GetV1EmploymentsEmploymentIdCustomFieldsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments/{employment_id}/custom-fields',
+    url: '/v1/employments/{employment_id}/custom-fields',
     ...options,
   });
 
@@ -2004,7 +2004,7 @@ export const getV1TimesheetsId = <ThrowOnError extends boolean = false>(
     GetV1TimesheetsIdResponses,
     GetV1TimesheetsIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/timesheets/{id}', ...options });
+  >({ url: '/v1/timesheets/{id}', ...options });
 
 /**
  * List Company Managers
@@ -2027,7 +2027,7 @@ export const getV1CompanyManagers = <ThrowOnError extends boolean = false>(
     GetV1CompanyManagersResponses,
     GetV1CompanyManagersErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/company-managers', ...options });
+  >({ url: '/v1/company-managers', ...options });
 
 /**
  * Create and invite a Company Manager
@@ -2049,7 +2049,7 @@ export const postV1CompanyManagers = <ThrowOnError extends boolean = false>(
     PostV1CompanyManagersErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/company-managers',
+    url: '/v1/company-managers',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2080,7 +2080,7 @@ export const postV1PayItemsBulk = <ThrowOnError extends boolean = false>(
     PostV1PayItemsBulkErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/pay-items/bulk',
+    url: '/v1/pay-items/bulk',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2109,7 +2109,7 @@ export const getV1TravelLetterRequestsId = <
     GetV1TravelLetterRequestsIdResponses,
     GetV1TravelLetterRequestsIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/travel-letter-requests/{id}', ...options });
+  >({ url: '/v1/travel-letter-requests/{id}', ...options });
 
 /**
  * Updates a travel letter request
@@ -2133,7 +2133,7 @@ export const patchV1TravelLetterRequestsId2 = <
     PatchV1TravelLetterRequestsId2Errors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/travel-letter-requests/{id}',
+    url: '/v1/travel-letter-requests/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2163,7 +2163,7 @@ export const patchV1TravelLetterRequestsId = <
     PatchV1TravelLetterRequestsIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/travel-letter-requests/{id}',
+    url: '/v1/travel-letter-requests/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2192,7 +2192,7 @@ export const postV1SandboxCompaniesCompanyIdBypassEligibilityChecks = <
     PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/sandbox/companies/{company_id}/bypass-eligibility-checks',
+    url: '/v1/sandbox/companies/{company_id}/bypass-eligibility-checks',
     ...options,
   });
 
@@ -2217,7 +2217,7 @@ export const getV1EmployeeLeavePolicies = <
     GetV1EmployeeLeavePoliciesResponses,
     GetV1EmployeeLeavePoliciesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employee/leave-policies', ...options });
+  >({ url: '/v1/employee/leave-policies', ...options });
 
 /**
  * List Webhook Callbacks
@@ -2241,7 +2241,7 @@ export const getV1CompaniesCompanyIdWebhookCallbacks = <
     GetV1CompaniesCompanyIdWebhookCallbacksErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/companies/{company_id}/webhook-callbacks',
+    url: '/v1/companies/{company_id}/webhook-callbacks',
     ...options,
   });
 
@@ -2267,7 +2267,7 @@ export const getV1BillingDocumentsBillingDocumentIdPdf = <
     GetV1BillingDocumentsBillingDocumentIdPdfErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/billing-documents/{billing_document_id}/pdf',
+    url: '/v1/billing-documents/{billing_document_id}/pdf',
     ...options,
   });
 
@@ -2292,7 +2292,7 @@ export const deleteV1WebhookCallbacksId = <
     DeleteV1WebhookCallbacksIdResponses,
     DeleteV1WebhookCallbacksIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/webhook-callbacks/{id}', ...options });
+  >({ url: '/v1/webhook-callbacks/{id}', ...options });
 
 /**
  * Update a Webhook Callback
@@ -2314,7 +2314,7 @@ export const patchV1WebhookCallbacksId = <ThrowOnError extends boolean = false>(
     PatchV1WebhookCallbacksIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/webhook-callbacks/{id}',
+    url: '/v1/webhook-callbacks/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2344,7 +2344,7 @@ export const getV1Countries = <ThrowOnError extends boolean = false>(
     GetV1CountriesResponses,
     GetV1CountriesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/countries', ...options });
+  >({ url: '/v1/countries', ...options });
 
 /**
  * Show contractor eligibility and COR-supported countries for legal entity
@@ -2374,7 +2374,7 @@ export const getV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibil
       GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityErrors,
       ThrowOnError
     >({
-      url: '/api/eor/v1/companies/{company_id}/legal-entities/{legal_entity_id}/contractor-eligibility',
+      url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/contractor-eligibility',
       ...options,
     });
 
@@ -2400,7 +2400,7 @@ export const postV1CurrencyConverterEffective = <
     PostV1CurrencyConverterEffectiveErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/currency-converter/effective',
+    url: '/v1/currency-converter/effective',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2429,7 +2429,7 @@ export const getV1EmployeePersonalInformation = <
     GetV1EmployeePersonalInformationResponses,
     GetV1EmployeePersonalInformationErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employee/personal-information', ...options });
+  >({ url: '/v1/employee/personal-information', ...options });
 
 /**
  * Show form schema
@@ -2483,7 +2483,7 @@ export const getV1CountriesCountryCodeForm = <
     GetV1CountriesCountryCodeFormResponses,
     GetV1CountriesCountryCodeFormErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/countries/{country_code}/{form}', ...options });
+  >({ url: '/v1/countries/{country_code}/{form}', ...options });
 
 /**
  * List Time Off
@@ -2504,7 +2504,7 @@ export const getV1Timeoff = <ThrowOnError extends boolean = false>(
     GetV1TimeoffResponses,
     GetV1TimeoffErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/timeoff', ...options });
+  >({ url: '/v1/timeoff', ...options });
 
 /**
  * Create Time Off
@@ -2526,7 +2526,7 @@ export const postV1Timeoff = <ThrowOnError extends boolean = false>(
     PostV1TimeoffErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/timeoff',
+    url: '/v1/timeoff',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2548,7 +2548,7 @@ export const getV1CostCalculatorCountries = <
     GetV1CostCalculatorCountriesResponses,
     unknown,
     ThrowOnError
-  >({ url: '/api/eor/v1/cost-calculator/countries', ...options });
+  >({ url: '/v1/cost-calculator/countries', ...options });
 
 /**
  * Submit risk reserve proof of payment
@@ -2579,7 +2579,7 @@ export const postV1EmploymentsEmploymentIdRiskReserveProofOfPayments = <
     ThrowOnError
   >({
     ...formDataBodySerializer,
-    url: '/api/eor/v1/employments/{employment_id}/risk-reserve-proof-of-payments',
+    url: '/v1/employments/{employment_id}/risk-reserve-proof-of-payments',
     ...options,
     headers: {
       'Content-Type': null,
@@ -2612,7 +2612,7 @@ export const getV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckId = <
     GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments/{employment_id}/background-checks/{background_check_id}',
+    url: '/v1/employments/{employment_id}/background-checks/{background_check_id}',
     ...options,
   });
 
@@ -2642,7 +2642,7 @@ export const getV1TimeoffBalancesEmploymentId = <
     GetV1TimeoffBalancesEmploymentIdResponses,
     GetV1TimeoffBalancesEmploymentIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/timeoff-balances/{employment_id}', ...options });
+  >({ url: '/v1/timeoff-balances/{employment_id}', ...options });
 
 /**
  * List expenses for the authenticated employee
@@ -2663,7 +2663,7 @@ export const getV1EmployeeExpenses = <ThrowOnError extends boolean = false>(
     GetV1EmployeeExpensesResponses,
     GetV1EmployeeExpensesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employee/expenses', ...options });
+  >({ url: '/v1/employee/expenses', ...options });
 
 /**
  * Create an expense for the authenticated employee
@@ -2685,7 +2685,7 @@ export const postV1EmployeeExpenses = <ThrowOnError extends boolean = false>(
     PostV1EmployeeExpensesErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employee/expenses',
+    url: '/v1/employee/expenses',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2718,7 +2718,7 @@ export const getV1ResignationsOffboardingRequestIdResignationLetter = <
     GetV1ResignationsOffboardingRequestIdResignationLetterErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/resignations/{offboarding_request_id}/resignation-letter',
+    url: '/v1/resignations/{offboarding_request_id}/resignation-letter',
     ...options,
   });
 
@@ -2743,7 +2743,7 @@ export const deleteV1CompanyManagersUserId = <
     DeleteV1CompanyManagersUserIdResponses,
     DeleteV1CompanyManagersUserIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/company-managers/{user_id}', ...options });
+  >({ url: '/v1/company-managers/{user_id}', ...options });
 
 /**
  * Show company manager user
@@ -2766,7 +2766,7 @@ export const getV1CompanyManagersUserId = <
     GetV1CompanyManagersUserIdResponses,
     GetV1CompanyManagersUserIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/company-managers/{user_id}', ...options });
+  >({ url: '/v1/company-managers/{user_id}', ...options });
 
 /**
  * Show onboarding steps for an employment
@@ -2793,7 +2793,7 @@ export const getV1EmploymentsEmploymentIdOnboardingSteps = <
     GetV1EmploymentsEmploymentIdOnboardingStepsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments/{employment_id}/onboarding-steps',
+    url: '/v1/employments/{employment_id}/onboarding-steps',
     ...options,
   });
 
@@ -2839,7 +2839,7 @@ export const postV1ContractAmendmentsAutomatable = <
     PostV1ContractAmendmentsAutomatableErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/contract-amendments/automatable',
+    url: '/v1/contract-amendments/automatable',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2866,7 +2866,7 @@ export const getV1PayrollRuns = <ThrowOnError extends boolean = false>(
     GetV1PayrollRunsResponses,
     GetV1PayrollRunsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/payroll-runs', ...options });
+  >({ url: '/v1/payroll-runs', ...options });
 
 /**
  * List incentives for the authenticated employee
@@ -2887,7 +2887,7 @@ export const getV1EmployeeIncentives = <ThrowOnError extends boolean = false>(
     GetV1EmployeeIncentivesResponses,
     GetV1EmployeeIncentivesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employee/incentives', ...options });
+  >({ url: '/v1/employee/incentives', ...options });
 
 /**
  * Update employment
@@ -2911,7 +2911,7 @@ export const patchV1SandboxEmploymentsEmploymentId2 = <
     PatchV1SandboxEmploymentsEmploymentId2Errors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/sandbox/employments/{employment_id}',
+    url: '/v1/sandbox/employments/{employment_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2941,7 +2941,7 @@ export const patchV1SandboxEmploymentsEmploymentId = <
     PatchV1SandboxEmploymentsEmploymentIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/sandbox/employments/{employment_id}',
+    url: '/v1/sandbox/employments/{employment_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2977,7 +2977,7 @@ export const getV1BenefitRenewalRequestsBenefitRenewalRequestIdSchema = <
     GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/benefit-renewal-requests/{benefit_renewal_request_id}/schema',
+    url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}/schema',
     ...options,
   });
 
@@ -3024,7 +3024,7 @@ export const putV2EmploymentsEmploymentIdBillingAddressDetails = <
     PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v2/employments/{employment_id}/billing_address_details',
+    url: '/v2/employments/{employment_id}/billing_address_details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3056,7 +3056,7 @@ export const deleteV1IncentivesId = <ThrowOnError extends boolean = false>(
     DeleteV1IncentivesIdResponses,
     DeleteV1IncentivesIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/incentives/{id}', ...options });
+  >({ url: '/v1/incentives/{id}', ...options });
 
 /**
  * Show Incentive
@@ -3077,7 +3077,7 @@ export const getV1IncentivesId = <ThrowOnError extends boolean = false>(
     GetV1IncentivesIdResponses,
     GetV1IncentivesIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/incentives/{id}', ...options });
+  >({ url: '/v1/incentives/{id}', ...options });
 
 /**
  * Update Incentive
@@ -3104,7 +3104,7 @@ export const patchV1IncentivesId2 = <ThrowOnError extends boolean = false>(
     PatchV1IncentivesId2Errors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/incentives/{id}',
+    url: '/v1/incentives/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3137,7 +3137,7 @@ export const patchV1IncentivesId = <ThrowOnError extends boolean = false>(
     PatchV1IncentivesIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/incentives/{id}',
+    url: '/v1/incentives/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3170,7 +3170,7 @@ export const getV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDeta
       GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors,
       ThrowOnError
     >({
-      url: '/api/eor/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
+      url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
       ...options,
     });
 
@@ -3199,7 +3199,7 @@ export const putV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDeta
       PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors,
       ThrowOnError
     >({
-      url: '/api/eor/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
+      url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
       ...options,
       headers: {
         'Content-Type': 'application/json',
@@ -3250,7 +3250,7 @@ export const putV2EmploymentsEmploymentIdBankAccountDetails = <
     PutV2EmploymentsEmploymentIdBankAccountDetailsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v2/employments/{employment_id}/bank_account_details',
+    url: '/v2/employments/{employment_id}/bank_account_details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3277,7 +3277,7 @@ export const getV1ContractorInvoices = <ThrowOnError extends boolean = false>(
     GetV1ContractorInvoicesResponses,
     GetV1ContractorInvoicesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/contractor-invoices', ...options });
+  >({ url: '/v1/contractor-invoices', ...options });
 
 /**
  * List expense categories
@@ -3291,7 +3291,7 @@ export const getV1ExpensesCategories = <ThrowOnError extends boolean = false>(
     GetV1ExpensesCategoriesResponses,
     GetV1ExpensesCategoriesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/expenses/categories', ...options });
+  >({ url: '/v1/expenses/categories', ...options });
 
 /**
  * List contract documents for an employment
@@ -3318,7 +3318,7 @@ export const getV1EmploymentsEmploymentIdContractDocuments = <
     GetV1EmploymentsEmploymentIdContractDocumentsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments/{employment_id}/contract-documents',
+    url: '/v1/employments/{employment_id}/contract-documents',
     ...options,
   });
 
@@ -3347,7 +3347,7 @@ export const getV1CountriesCountryCodeContractorContractDetails = <
     GetV1CountriesCountryCodeContractorContractDetailsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/countries/{country_code}/contractor-contract-details',
+    url: '/v1/countries/{country_code}/contractor-contract-details',
     ...options,
   });
 
@@ -3365,7 +3365,7 @@ export const getV1ScimV2UsersId = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v1/scim/v2/Users/{id}',
+    url: '/v1/scim/v2/Users/{id}',
     ...options,
   });
 
@@ -3393,7 +3393,7 @@ export const getV1EmploymentsEmploymentIdFiles = <
     GetV1EmploymentsEmploymentIdFilesResponses,
     GetV1EmploymentsEmploymentIdFilesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employments/{employment_id}/files', ...options });
+  >({ url: '/v1/employments/{employment_id}/files', ...options });
 
 /**
  * Manage contractor plus subscription
@@ -3422,7 +3422,7 @@ export const postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription 
       PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionErrors,
       ThrowOnError
     >({
-      url: '/api/eor/v1/contractors/employments/{employment_id}/contractor-plus-subscription',
+      url: '/v1/contractors/employments/{employment_id}/contractor-plus-subscription',
       ...options,
       headers: {
         'Content-Type': 'application/json',
@@ -3461,7 +3461,7 @@ export const postV1ContractorsEligibilityQuestionnaire = <
     PostV1ContractorsEligibilityQuestionnaireErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/contractors/eligibility-questionnaire',
+    url: '/v1/contractors/eligibility-questionnaire',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3514,7 +3514,7 @@ export const putV1EmploymentsEmploymentIdBasicInformation = <
     PutV1EmploymentsEmploymentIdBasicInformationErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments/{employment_id}/basic_information',
+    url: '/v1/employments/{employment_id}/basic_information',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3547,7 +3547,7 @@ export const getV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTermin
       GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdErrors,
       ThrowOnError
     >({
-      url: '/api/eor/v1/contractors/employments/{employment_id}/cor-termination-requests/{termination_request_id}',
+      url: '/v1/contractors/employments/{employment_id}/cor-termination-requests/{termination_request_id}',
       ...options,
     });
 
@@ -3574,7 +3574,7 @@ export const postV1SandboxCompaniesCompanyIdLegalEntities = <
     PostV1SandboxCompaniesCompanyIdLegalEntitiesErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/sandbox/companies/{company_id}/legal-entities',
+    url: '/v1/sandbox/companies/{company_id}/legal-entities',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3596,7 +3596,7 @@ export const getV1WdGphPayDetailData = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v1/wd/gph/payDetailData',
+    url: '/v1/wd/gph/payDetailData',
     ...options,
   });
 
@@ -3616,7 +3616,7 @@ export const getV1CostCalculatorRegionsSlugFields = <
     GetV1CostCalculatorRegionsSlugFieldsResponses,
     GetV1CostCalculatorRegionsSlugFieldsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/cost-calculator/regions/{slug}/fields', ...options });
+  >({ url: '/v1/cost-calculator/regions/{slug}/fields', ...options });
 
 /**
  * Cancel onboarding
@@ -3645,7 +3645,7 @@ export const postV1CancelOnboardingEmploymentId = <
     PostV1CancelOnboardingEmploymentIdResponses,
     PostV1CancelOnboardingEmploymentIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/cancel-onboarding/{employment_id}', ...options });
+  >({ url: '/v1/cancel-onboarding/{employment_id}', ...options });
 
 /**
  * Cancel Time Off as Employee
@@ -3669,7 +3669,7 @@ export const postV1EmployeeTimeoffIdCancel = <
     PostV1EmployeeTimeoffIdCancelErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employee/timeoff/{id}/cancel',
+    url: '/v1/employee/timeoff/{id}/cancel',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3703,7 +3703,7 @@ export const getV1ExpensesExpenseIdReceipt = <
     GetV1ExpensesExpenseIdReceiptResponses,
     GetV1ExpensesExpenseIdReceiptErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/expenses/{expense_id}/receipt', ...options });
+  >({ url: '/v1/expenses/{expense_id}/receipt', ...options });
 
 /**
  * List Benefit Offers
@@ -3727,7 +3727,7 @@ export const getV1BenefitOffersCountrySummaries = <
     GetV1BenefitOffersCountrySummariesResponses,
     GetV1BenefitOffersCountrySummariesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/benefit-offers/country-summaries', ...options });
+  >({ url: '/v1/benefit-offers/country-summaries', ...options });
 
 /**
  * List Leave Policies Details
@@ -3750,7 +3750,7 @@ export const getV1LeavePoliciesDetailsEmploymentId = <
     GetV1LeavePoliciesDetailsEmploymentIdResponses,
     GetV1LeavePoliciesDetailsEmploymentIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/leave-policies/details/{employment_id}', ...options });
+  >({ url: '/v1/leave-policies/details/{employment_id}', ...options });
 
 /**
  * List work authorization requests
@@ -3773,7 +3773,7 @@ export const getV1WorkAuthorizationRequests = <
     GetV1WorkAuthorizationRequestsResponses,
     GetV1WorkAuthorizationRequestsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/work-authorization-requests', ...options });
+  >({ url: '/v1/work-authorization-requests', ...options });
 
 /**
  * Get employment benefit offers
@@ -3795,7 +3795,7 @@ export const getV1EmploymentsEmploymentIdBenefitOffers = <
     GetV1EmploymentsEmploymentIdBenefitOffersErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments/{employment_id}/benefit-offers',
+    url: '/v1/employments/{employment_id}/benefit-offers',
     ...options,
   });
 
@@ -3813,7 +3813,7 @@ export const putV1EmploymentsEmploymentIdBenefitOffers = <
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v1/employments/{employment_id}/benefit-offers',
+    url: '/v1/employments/{employment_id}/benefit-offers',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3853,7 +3853,7 @@ export const getV1Employments = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v1/employments',
+    url: '/v1/employments',
     ...options,
   });
 
@@ -3904,7 +3904,7 @@ export const postV1Employments = <ThrowOnError extends boolean = false>(
     PostV1EmploymentsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments',
+    url: '/v1/employments',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3931,7 +3931,7 @@ export const getV1TimeoffId = <ThrowOnError extends boolean = false>(
     GetV1TimeoffIdResponses,
     GetV1TimeoffIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/timeoff/{id}', ...options });
+  >({ url: '/v1/timeoff/{id}', ...options });
 
 /**
  * Update Time Off
@@ -3956,7 +3956,7 @@ export const patchV1TimeoffId2 = <ThrowOnError extends boolean = false>(
     PatchV1TimeoffId2Errors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/timeoff/{id}',
+    url: '/v1/timeoff/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3987,7 +3987,7 @@ export const patchV1TimeoffId = <ThrowOnError extends boolean = false>(
     PatchV1TimeoffIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/timeoff/{id}',
+    url: '/v1/timeoff/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4008,7 +4008,7 @@ export const getV1IdentityCurrent = <ThrowOnError extends boolean = false>(
     GetV1IdentityCurrentResponses,
     GetV1IdentityCurrentErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/identity/current', ...options });
+  >({ url: '/v1/identity/current', ...options });
 
 /**
  * Payroll Variance Analysis API resource
@@ -4024,7 +4024,7 @@ export const getV1WdGphPayVariance = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v1/wd/gph/payVariance',
+    url: '/v1/wd/gph/payVariance',
     ...options,
   });
 
@@ -4049,7 +4049,7 @@ export const getV1PayrollCalendarsCycle = <
     GetV1PayrollCalendarsCycleResponses,
     GetV1PayrollCalendarsCycleErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/payroll-calendars/{cycle}', ...options });
+  >({ url: '/v1/payroll-calendars/{cycle}', ...options });
 
 /**
  * Terminate contractor of record employment
@@ -4083,7 +4083,7 @@ export const postV1ContractorsEmploymentsEmploymentIdTerminateCorEmployment = <
     PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/contractors/employments/{employment_id}/terminate-cor-employment',
+    url: '/v1/contractors/employments/{employment_id}/terminate-cor-employment',
     ...options,
   });
 
@@ -4109,7 +4109,7 @@ export const postV1TimesheetsTimesheetIdSendBack = <
     PostV1TimesheetsTimesheetIdSendBackErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/timesheets/{timesheet_id}/send-back',
+    url: '/v1/timesheets/{timesheet_id}/send-back',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4143,7 +4143,7 @@ export const postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSign
       PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignErrors,
       ThrowOnError
     >({
-      url: '/api/eor/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/{id}/sign',
+      url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/{id}/sign',
       ...options,
       headers: {
         'Content-Type': 'application/json',
@@ -4172,7 +4172,7 @@ export const getV1BenefitRenewalRequests = <
     GetV1BenefitRenewalRequestsResponses,
     GetV1BenefitRenewalRequestsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/benefit-renewal-requests', ...options });
+  >({ url: '/v1/benefit-renewal-requests', ...options });
 
 /**
  * Reassign default legal entity
@@ -4196,7 +4196,7 @@ export const putV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityId = <
     PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/sandbox/companies/{company_id}/default-legal-entity/{legal_entity_id}',
+    url: '/v1/sandbox/companies/{company_id}/default-legal-entity/{legal_entity_id}',
     ...options,
   });
 
@@ -4219,7 +4219,7 @@ export const getV1EmploymentContracts = <ThrowOnError extends boolean = false>(
     GetV1EmploymentContractsResponses,
     GetV1EmploymentContractsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employment-contracts', ...options });
+  >({ url: '/v1/employment-contracts', ...options });
 
 /**
  * Cancel Contract Amendment
@@ -4242,7 +4242,7 @@ export const putV1SandboxContractAmendmentsContractAmendmentRequestIdCancel = <
     PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/sandbox/contract-amendments/{contract_amendment_request_id}/cancel',
+    url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/cancel',
     ...options,
   });
 
@@ -4267,7 +4267,7 @@ export const getV1PayslipsPayslipIdPdf = <ThrowOnError extends boolean = false>(
     GetV1PayslipsPayslipIdPdfResponses,
     GetV1PayslipsPayslipIdPdfErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/payslips/{payslip_id}/pdf', ...options });
+  >({ url: '/v1/payslips/{payslip_id}/pdf', ...options });
 
 /**
  * Approve Time Off
@@ -4291,7 +4291,7 @@ export const postV1TimeoffTimeoffIdApprove = <
     PostV1TimeoffTimeoffIdApproveErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/timeoff/{timeoff_id}/approve',
+    url: '/v1/timeoff/{timeoff_id}/approve',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4318,7 +4318,7 @@ export const getV1Companies = <ThrowOnError extends boolean = false>(
     GetV1CompaniesResponses,
     GetV1CompaniesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/companies', ...options });
+  >({ url: '/v1/companies', ...options });
 
 /**
  * Create a company
@@ -4372,7 +4372,7 @@ export const postV1Companies = <ThrowOnError extends boolean = false>(
     PostV1CompaniesErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/companies',
+    url: '/v1/companies',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4406,7 +4406,7 @@ export const getV1EmploymentsEmploymentIdCompanyStructureNodes = <
     GetV1EmploymentsEmploymentIdCompanyStructureNodesErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments/{employment_id}/company-structure-nodes',
+    url: '/v1/employments/{employment_id}/company-structure-nodes',
     ...options,
   });
 
@@ -4424,7 +4424,7 @@ export const patchV2EmploymentsEmploymentId2 = <
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v2/employments/{employment_id}',
+    url: '/v2/employments/{employment_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4446,7 +4446,7 @@ export const patchV2EmploymentsEmploymentId = <
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v2/employments/{employment_id}',
+    url: '/v2/employments/{employment_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4476,7 +4476,7 @@ export const postV1ProbationCompletionLetter = <
     PostV1ProbationCompletionLetterErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/probation-completion-letter',
+    url: '/v1/probation-completion-letter',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4499,7 +4499,7 @@ export const postV1CostCalculatorEstimationPdf = <
     PostV1CostCalculatorEstimationPdfErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/cost-calculator/estimation-pdf',
+    url: '/v1/cost-calculator/estimation-pdf',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4545,7 +4545,7 @@ export const getV1EmployeeDocumentsId = <ThrowOnError extends boolean = false>(
     GetV1EmployeeDocumentsIdResponses,
     GetV1EmployeeDocumentsIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employee/documents/{id}', ...options });
+  >({ url: '/v1/employee/documents/{id}', ...options });
 
 /**
  * Replay Webhook Events
@@ -4567,7 +4567,7 @@ export const postV1WebhookEventsReplay = <ThrowOnError extends boolean = false>(
     PostV1WebhookEventsReplayErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/webhook-events/replay',
+    url: '/v1/webhook-events/replay',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4593,7 +4593,7 @@ export const postV1SandboxWebhookCallbacksTrigger = <
     PostV1SandboxWebhookCallbacksTriggerErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/sandbox/webhook-callbacks/trigger',
+    url: '/v1/sandbox/webhook-callbacks/trigger',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4620,7 +4620,7 @@ export const getV1BulkEmploymentJobsJobId = <
     GetV1BulkEmploymentJobsJobIdResponses,
     GetV1BulkEmploymentJobsJobIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/bulk-employment-jobs/{job_id}', ...options });
+  >({ url: '/v1/bulk-employment-jobs/{job_id}', ...options });
 
 /**
  * List bulk employment rows
@@ -4643,7 +4643,7 @@ export const getV1BulkEmploymentJobsJobIdRows = <
     GetV1BulkEmploymentJobsJobIdRowsResponses,
     GetV1BulkEmploymentJobsJobIdRowsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/bulk-employment-jobs/{job_id}/rows', ...options });
+  >({ url: '/v1/bulk-employment-jobs/{job_id}/rows', ...options });
 
 /**
  * Magic links generator
@@ -4668,7 +4668,7 @@ export const postV1MagicLink = <ThrowOnError extends boolean = false>(
     PostV1MagicLinkErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/magic-link',
+    url: '/v1/magic-link',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4699,7 +4699,7 @@ export const getV1CompaniesCompanyId = <ThrowOnError extends boolean = false>(
     GetV1CompaniesCompanyIdResponses,
     GetV1CompaniesCompanyIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/companies/{company_id}', ...options });
+  >({ url: '/v1/companies/{company_id}', ...options });
 
 /**
  * Update a company
@@ -4740,7 +4740,7 @@ export const patchV1CompaniesCompanyId2 = <
     PatchV1CompaniesCompanyId2Errors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/companies/{company_id}',
+    url: '/v1/companies/{company_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4785,7 +4785,7 @@ export const patchV1CompaniesCompanyId = <ThrowOnError extends boolean = false>(
     PatchV1CompaniesCompanyIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/companies/{company_id}',
+    url: '/v1/companies/{company_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4814,7 +4814,7 @@ export const getV1CompaniesSchema = <ThrowOnError extends boolean = false>(
     GetV1CompaniesSchemaResponses,
     GetV1CompaniesSchemaErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/companies/schema', ...options });
+  >({ url: '/v1/companies/schema', ...options });
 
 /**
  * List pricing plan partner templates
@@ -4838,7 +4838,7 @@ export const getV1PricingPlanPartnerTemplates = <
     GetV1PricingPlanPartnerTemplatesResponses,
     GetV1PricingPlanPartnerTemplatesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/pricing-plan-partner-templates', ...options });
+  >({ url: '/v1/pricing-plan-partner-templates', ...options });
 
 /**
  * Show engagement agreement details
@@ -4866,7 +4866,7 @@ export const getV1CountriesCountryCodeEngagementAgreementDetails = <
     GetV1CountriesCountryCodeEngagementAgreementDetailsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/countries/{country_code}/engagement-agreement-details',
+    url: '/v1/countries/{country_code}/engagement-agreement-details',
     ...options,
   });
 
@@ -4913,7 +4913,7 @@ export const putV2EmploymentsEmploymentIdContractDetails = <
     PutV2EmploymentsEmploymentIdContractDetailsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v2/employments/{employment_id}/contract_details',
+    url: '/v2/employments/{employment_id}/contract_details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -4945,7 +4945,7 @@ export const getV1CompaniesCompanyIdProductPrices = <
     GetV1CompaniesCompanyIdProductPricesResponses,
     GetV1CompaniesCompanyIdProductPricesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/companies/{company_id}/product-prices', ...options });
+  >({ url: '/v1/companies/{company_id}/product-prices', ...options });
 
 /**
  * Create a new token for a company
@@ -4961,7 +4961,7 @@ export const postV1CompaniesCompanyIdCreateToken = <
     PostV1CompaniesCompanyIdCreateTokenResponses,
     PostV1CompaniesCompanyIdCreateTokenErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/companies/{company_id}/create-token', ...options });
+  >({ url: '/v1/companies/{company_id}/create-token', ...options });
 
 /**
  * Get Employment Profile
@@ -4985,7 +4985,7 @@ export const getV1IdentityVerificationEmploymentId = <
     GetV1IdentityVerificationEmploymentIdResponses,
     GetV1IdentityVerificationEmploymentIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/identity-verification/{employment_id}', ...options });
+  >({ url: '/v1/identity-verification/{employment_id}', ...options });
 
 /**
  * Download a receipt by id
@@ -5009,7 +5009,7 @@ export const getV1ExpensesExpenseIdReceiptsReceiptId = <
     GetV1ExpensesExpenseIdReceiptsReceiptIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/expenses/{expense_id}/receipts/{receipt_id}',
+    url: '/v1/expenses/{expense_id}/receipts/{receipt_id}',
     ...options,
   });
 
@@ -5027,7 +5027,7 @@ export const getV1ScimV2Groups = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v1/scim/v2/Groups',
+    url: '/v1/scim/v2/Groups',
     ...options,
   });
 
@@ -5050,7 +5050,7 @@ export const getV1ExpensesId = <ThrowOnError extends boolean = false>(
     GetV1ExpensesIdResponses,
     GetV1ExpensesIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/expenses/{id}', ...options });
+  >({ url: '/v1/expenses/{id}', ...options });
 
 /**
  * Update an expense
@@ -5072,7 +5072,7 @@ export const patchV1ExpensesId2 = <ThrowOnError extends boolean = false>(
     PatchV1ExpensesId2Errors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/expenses/{id}',
+    url: '/v1/expenses/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -5100,7 +5100,7 @@ export const patchV1ExpensesId = <ThrowOnError extends boolean = false>(
     PatchV1ExpensesIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/expenses/{id}',
+    url: '/v1/expenses/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -5138,7 +5138,7 @@ export const putV2EmploymentsEmploymentIdEmergencyContact = <
     PutV2EmploymentsEmploymentIdEmergencyContactErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v2/employments/{employment_id}/emergency_contact',
+    url: '/v2/employments/{employment_id}/emergency_contact',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -5163,7 +5163,7 @@ export const postV1SandboxBenefitRenewalRequests = <
     PostV1SandboxBenefitRenewalRequestsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/sandbox/benefit-renewal-requests',
+    url: '/v1/sandbox/benefit-renewal-requests',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -5216,7 +5216,7 @@ export const putV2EmploymentsEmploymentIdBasicInformation = <
     PutV2EmploymentsEmploymentIdBasicInformationErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v2/employments/{employment_id}/basic_information',
+    url: '/v2/employments/{employment_id}/basic_information',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -5245,7 +5245,7 @@ export const getV1LeavePoliciesSummaryEmploymentId = <
     GetV1LeavePoliciesSummaryEmploymentIdResponses,
     GetV1LeavePoliciesSummaryEmploymentIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/leave-policies/summary/{employment_id}', ...options });
+  >({ url: '/v1/leave-policies/summary/{employment_id}', ...options });
 
 /**
  * Cancel Time Off
@@ -5269,7 +5269,7 @@ export const postV1TimeoffTimeoffIdCancel = <
     PostV1TimeoffTimeoffIdCancelErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/timeoff/{timeoff_id}/cancel',
+    url: '/v1/timeoff/{timeoff_id}/cancel',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -5296,7 +5296,7 @@ export const getV1HelpCenterArticlesId = <ThrowOnError extends boolean = false>(
     GetV1HelpCenterArticlesIdResponses,
     GetV1HelpCenterArticlesIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/help-center-articles/{id}', ...options });
+  >({ url: '/v1/help-center-articles/{id}', ...options });
 
 /**
  * Upload file
@@ -5322,7 +5322,7 @@ export const postV1Documents = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     ...formDataBodySerializer,
-    url: '/api/eor/v1/documents',
+    url: '/v1/documents',
     ...options,
     headers: {
       'Content-Type': null,
@@ -5356,7 +5356,7 @@ export const postV1IdentityVerificationEmploymentIdVerify = <
     PostV1IdentityVerificationEmploymentIdVerifyErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/identity-verification/{employment_id}/verify',
+    url: '/v1/identity-verification/{employment_id}/verify',
     ...options,
   });
 
@@ -5379,7 +5379,7 @@ export const getV1CustomFields = <ThrowOnError extends boolean = false>(
     GetV1CustomFieldsResponses,
     GetV1CustomFieldsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/custom-fields', ...options });
+  >({ url: '/v1/custom-fields', ...options });
 
 /**
  * Create Custom Field Definition
@@ -5401,7 +5401,7 @@ export const postV1CustomFields = <ThrowOnError extends boolean = false>(
     PostV1CustomFieldsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/custom-fields',
+    url: '/v1/custom-fields',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -5431,7 +5431,7 @@ export const postV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsAppro
       PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveErrors,
       ThrowOnError
     >({
-      url: '/api/eor/v1/sandbox/employments/{employment_id}/risk-reserve-proof-of-payments/approve',
+      url: '/v1/sandbox/employments/{employment_id}/risk-reserve-proof-of-payments/approve',
       ...options,
     });
 
@@ -5455,7 +5455,7 @@ export const postV1WebhookCallbacks = <ThrowOnError extends boolean = false>(
     PostV1WebhookCallbacksErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/webhook-callbacks',
+    url: '/v1/webhook-callbacks',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -5484,7 +5484,7 @@ export const getV1SsoConfigurationDetails = <
     GetV1SsoConfigurationDetailsResponses,
     GetV1SsoConfigurationDetailsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/sso-configuration/details', ...options });
+  >({ url: '/v1/sso-configuration/details', ...options });
 
 /**
  * Sign a document for a contractor
@@ -5508,7 +5508,7 @@ export const postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDo
       PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignErrors,
       ThrowOnError
     >({
-      url: '/api/eor/v1/contractors/employments/{employment_id}/contract-documents/{contract_document_id}/sign',
+      url: '/v1/contractors/employments/{employment_id}/contract-documents/{contract_document_id}/sign',
       ...options,
       headers: {
         'Content-Type': 'application/json',
@@ -5535,7 +5535,7 @@ export const getV1PayItems = <ThrowOnError extends boolean = false>(
     GetV1PayItemsResponses,
     GetV1PayItemsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/pay-items', ...options });
+  >({ url: '/v1/pay-items', ...options });
 
 /**
  * List users via SCIM v2.0
@@ -5551,7 +5551,7 @@ export const getV1ScimV2Users = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v1/scim/v2/Users',
+    url: '/v1/scim/v2/Users',
     ...options,
   });
 
@@ -5576,7 +5576,7 @@ export const getV1ResignationsOffboardingRequestId = <
     GetV1ResignationsOffboardingRequestIdResponses,
     GetV1ResignationsOffboardingRequestIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/resignations/{offboarding_request_id}', ...options });
+  >({ url: '/v1/resignations/{offboarding_request_id}', ...options });
 
 /**
  * Get Billing Document Breakdown
@@ -5603,7 +5603,7 @@ export const getV1BillingDocumentsBillingDocumentIdBreakdown = <
     GetV1BillingDocumentsBillingDocumentIdBreakdownErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/billing-documents/{billing_document_id}/breakdown',
+    url: '/v1/billing-documents/{billing_document_id}/breakdown',
     ...options,
   });
 
@@ -5633,7 +5633,7 @@ export const postV1TimeoffTimeoffIdCancelRequestDecline = <
     PostV1TimeoffTimeoffIdCancelRequestDeclineErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/timeoff/{timeoff_id}/cancel-request/decline',
+    url: '/v1/timeoff/{timeoff_id}/cancel-request/decline',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -5660,7 +5660,7 @@ export const getV1PayrollCalendars = <ThrowOnError extends boolean = false>(
     GetV1PayrollCalendarsResponses,
     GetV1PayrollCalendarsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/payroll-calendars', ...options });
+  >({ url: '/v1/payroll-calendars', ...options });
 
 /**
  * Payroll processing details API resource
@@ -5676,7 +5676,7 @@ export const getV1WdGphPayDetail = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v1/wd/gph/payDetail',
+    url: '/v1/wd/gph/payDetail',
     ...options,
   });
 
@@ -5704,7 +5704,7 @@ export const getV1ContractAmendmentsSchema = <
     GetV1ContractAmendmentsSchemaResponses,
     GetV1ContractAmendmentsSchemaErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/contract-amendments/schema', ...options });
+  >({ url: '/v1/contract-amendments/schema', ...options });
 
 /**
  * Get a mock JSON Schema
@@ -5718,7 +5718,7 @@ export const getV1TestSchema = <ThrowOnError extends boolean = false>(
     GetV1TestSchemaResponses,
     unknown,
     ThrowOnError
-  >({ url: '/api/eor/v1/test-schema', ...options });
+  >({ url: '/v1/test-schema', ...options });
 
 /**
  * Update Time Off as Employee
@@ -5740,7 +5740,7 @@ export const patchV1EmployeeTimeoffId2 = <ThrowOnError extends boolean = false>(
     PatchV1EmployeeTimeoffId2Errors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employee/timeoff/{id}',
+    url: '/v1/employee/timeoff/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -5768,7 +5768,7 @@ export const patchV1EmployeeTimeoffId = <ThrowOnError extends boolean = false>(
     PatchV1EmployeeTimeoffIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employee/timeoff/{id}',
+    url: '/v1/employee/timeoff/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -5790,7 +5790,7 @@ export const getV1ScimV2GroupsId = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v1/scim/v2/Groups/{id}',
+    url: '/v1/scim/v2/Groups/{id}',
     ...options,
   });
 
@@ -5827,7 +5827,7 @@ export const getV1CountriesCountryCodeLegalEntityFormsForm = <
     GetV1CountriesCountryCodeLegalEntityFormsFormErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/countries/{country_code}/legal_entity_forms/{form}',
+    url: '/v1/countries/{country_code}/legal_entity_forms/{form}',
     ...options,
   });
 
@@ -5856,7 +5856,7 @@ export const getV1EmploymentContractsEmploymentIdPendingChanges = <
     GetV1EmploymentContractsEmploymentIdPendingChangesErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employment-contracts/{employment_id}/pending-changes',
+    url: '/v1/employment-contracts/{employment_id}/pending-changes',
     ...options,
   });
 
@@ -5875,7 +5875,7 @@ export const postV1SdkTelemetryErrors = <ThrowOnError extends boolean = false>(
     PostV1SdkTelemetryErrorsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/sdk/telemetry-errors',
+    url: '/v1/sdk/telemetry-errors',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -5906,7 +5906,7 @@ export const getV1CompaniesCompanyIdComplianceProfile = <
     GetV1CompaniesCompanyIdComplianceProfileErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/companies/{company_id}/compliance-profile',
+    url: '/v1/companies/{company_id}/compliance-profile',
     ...options,
   });
 
@@ -5932,7 +5932,7 @@ export const getV1PayslipsId = <ThrowOnError extends boolean = false>(
     GetV1PayslipsIdResponses,
     GetV1PayslipsIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/payslips/{id}', ...options });
+  >({ url: '/v1/payslips/{id}', ...options });
 
 /**
  * Approve a time off cancellation request
@@ -5961,7 +5961,7 @@ export const postV1TimeoffTimeoffIdCancelRequestApprove = <
     PostV1TimeoffTimeoffIdCancelRequestApproveErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/timeoff/{timeoff_id}/cancel-request/approve',
+    url: '/v1/timeoff/{timeoff_id}/cancel-request/approve',
     ...options,
   });
 
@@ -5984,7 +5984,7 @@ export const getV1WebhookEvents = <ThrowOnError extends boolean = false>(
     GetV1WebhookEventsResponses,
     GetV1WebhookEventsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/webhook-events', ...options });
+  >({ url: '/v1/webhook-events', ...options });
 
 /**
  * List Time Off Types
@@ -6010,7 +6010,7 @@ export const getV1TimeoffTypes = <ThrowOnError extends boolean = false>(
     GetV1TimeoffTypesResponses,
     GetV1TimeoffTypesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/timeoff/types', ...options });
+  >({ url: '/v1/timeoff/types', ...options });
 
 /**
  * List Company Legal Entities
@@ -6034,7 +6034,7 @@ export const getV1CompaniesCompanyIdLegalEntities = <
     GetV1CompaniesCompanyIdLegalEntitiesResponses,
     GetV1CompaniesCompanyIdLegalEntitiesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/companies/{company_id}/legal-entities', ...options });
+  >({ url: '/v1/companies/{company_id}/legal-entities', ...options });
 
 /**
  * Create contract eligibility
@@ -6064,7 +6064,7 @@ export const postV1EmploymentsEmploymentIdContractEligibility = <
     PostV1EmploymentsEmploymentIdContractEligibilityErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments/{employment_id}/contract-eligibility',
+    url: '/v1/employments/{employment_id}/contract-eligibility',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -6102,7 +6102,7 @@ export const getV1ContractorsEmploymentsEmploymentIdContractorCurrencies = <
     GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/contractors/employments/{employment_id}/contractor-currencies',
+    url: '/v1/contractors/employments/{employment_id}/contractor-currencies',
     ...options,
   });
 
@@ -6127,7 +6127,7 @@ export const getV1Payslips = <ThrowOnError extends boolean = false>(
     GetV1PayslipsResponses,
     GetV1PayslipsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/payslips', ...options });
+  >({ url: '/v1/payslips', ...options });
 
 /**
  * Create employment
@@ -6154,7 +6154,7 @@ export const postV1SandboxEmployments = <ThrowOnError extends boolean = false>(
     PostV1SandboxEmploymentsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/sandbox/employments',
+    url: '/v1/sandbox/employments',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -6185,7 +6185,7 @@ export const getV1PayrollRunsPayrollRunId = <
     GetV1PayrollRunsPayrollRunIdResponses,
     GetV1PayrollRunsPayrollRunIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/payroll-runs/{payroll_run_id}', ...options });
+  >({ url: '/v1/payroll-runs/{payroll_run_id}', ...options });
 
 /**
  * List pre-onboarding document requirements for an employment
@@ -6213,7 +6213,7 @@ export const getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsRequire
       GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsRequirementsErrors,
       ThrowOnError
     >({
-      url: '/api/eor/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/requirements',
+      url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/requirements',
       ...options,
     });
 
@@ -6236,7 +6236,7 @@ export const getV1OffboardingsId = <ThrowOnError extends boolean = false>(
     GetV1OffboardingsIdResponses,
     GetV1OffboardingsIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/offboardings/{id}', ...options });
+  >({ url: '/v1/offboardings/{id}', ...options });
 
 /**
  * List expenses
@@ -6257,7 +6257,7 @@ export const getV1Expenses = <ThrowOnError extends boolean = false>(
     GetV1ExpensesResponses,
     GetV1ExpensesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/expenses', ...options });
+  >({ url: '/v1/expenses', ...options });
 
 /**
  * Create expense
@@ -6279,7 +6279,7 @@ export const postV1Expenses = <ThrowOnError extends boolean = false>(
     PostV1ExpensesErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/expenses',
+    url: '/v1/expenses',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -6306,7 +6306,7 @@ export const getV1EmployeePayslipFiles = <ThrowOnError extends boolean = false>(
     GetV1EmployeePayslipFilesResponses,
     GetV1EmployeePayslipFilesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employee/payslip-files', ...options });
+  >({ url: '/v1/employee/payslip-files', ...options });
 
 /**
  * Invite employment
@@ -6344,7 +6344,7 @@ export const postV1EmploymentsEmploymentIdInvite = <
     PostV1EmploymentsEmploymentIdInviteResponses,
     PostV1EmploymentsEmploymentIdInviteErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employments/{employment_id}/invite', ...options });
+  >({ url: '/v1/employments/{employment_id}/invite', ...options });
 
 /**
  * Create Probation Extension
@@ -6366,7 +6366,7 @@ export const postV1ProbationExtensions = <ThrowOnError extends boolean = false>(
     PostV1ProbationExtensionsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/probation-extensions',
+    url: '/v1/probation-extensions',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -6397,7 +6397,7 @@ export const putV1SandboxContractAmendmentsContractAmendmentRequestIdApprove = <
     PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/sandbox/contract-amendments/{contract_amendment_request_id}/approve',
+    url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/approve',
     ...options,
   });
 
@@ -6428,7 +6428,7 @@ export const getV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesSta
       GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusErrors,
       ThrowOnError
     >({
-      url: '/api/eor/v1/companies/{company_id}/employments/{employment_id}/onboarding-reserves-status',
+      url: '/v1/companies/{company_id}/employments/{employment_id}/onboarding-reserves-status',
       ...options,
     });
 
@@ -6451,7 +6451,7 @@ export const getV1ContractorInvoicesId = <ThrowOnError extends boolean = false>(
     GetV1ContractorInvoicesIdResponses,
     GetV1ContractorInvoicesIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/contractor-invoices/{id}', ...options });
+  >({ url: '/v1/contractor-invoices/{id}', ...options });
 
 /**
  * Payroll Feature API resource
@@ -6469,7 +6469,7 @@ export const getV1WdGphPayProcessingFeature = <
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v1/wd/gph/payProcessingFeature',
+    url: '/v1/wd/gph/payProcessingFeature',
     ...options,
   });
 
@@ -6487,7 +6487,7 @@ export const getV1WdGphPayProgress = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/eor/v1/wd/gph/payProgress',
+    url: '/v1/wd/gph/payProgress',
     ...options,
   });
 
@@ -6510,7 +6510,7 @@ export const getV1CompanyCurrencies = <ThrowOnError extends boolean = false>(
     GetV1CompanyCurrenciesResponses,
     GetV1CompanyCurrenciesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/company-currencies', ...options });
+  >({ url: '/v1/company-currencies', ...options });
 
 /**
  * Get a employment benefit offers JSON schema
@@ -6535,7 +6535,7 @@ export const getV1EmploymentsEmploymentIdBenefitOffersSchema = <
     GetV1EmploymentsEmploymentIdBenefitOffersSchemaErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments/{employment_id}/benefit-offers/schema',
+    url: '/v1/employments/{employment_id}/benefit-offers/schema',
     ...options,
   });
 
@@ -6560,7 +6560,7 @@ export const getV1ContractorInvoiceSchedules = <
     GetV1ContractorInvoiceSchedulesResponses,
     GetV1ContractorInvoiceSchedulesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/contractor-invoice-schedules', ...options });
+  >({ url: '/v1/contractor-invoice-schedules', ...options });
 
 /**
  * Create Contractor Invoice Schedules
@@ -6586,7 +6586,7 @@ export const postV1ContractorInvoiceSchedules = <
     PostV1ContractorInvoiceSchedulesErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/contractor-invoice-schedules',
+    url: '/v1/contractor-invoice-schedules',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -6615,7 +6615,7 @@ export const getV1WorkAuthorizationRequestsId = <
     GetV1WorkAuthorizationRequestsIdResponses,
     GetV1WorkAuthorizationRequestsIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/work-authorization-requests/{id}', ...options });
+  >({ url: '/v1/work-authorization-requests/{id}', ...options });
 
 /**
  * Update work authorization request
@@ -6639,7 +6639,7 @@ export const patchV1WorkAuthorizationRequestsId2 = <
     PatchV1WorkAuthorizationRequestsId2Errors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/work-authorization-requests/{id}',
+    url: '/v1/work-authorization-requests/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -6669,7 +6669,7 @@ export const patchV1WorkAuthorizationRequestsId = <
     PatchV1WorkAuthorizationRequestsIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/work-authorization-requests/{id}',
+    url: '/v1/work-authorization-requests/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -6699,7 +6699,7 @@ export const postV1TimeoffTimeoffIdDecline = <
     PostV1TimeoffTimeoffIdDeclineErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/timeoff/{timeoff_id}/decline',
+    url: '/v1/timeoff/{timeoff_id}/decline',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -6736,7 +6736,7 @@ export const getV1ContractorsSchemasEligibilityQuestionnaire = <
     GetV1ContractorsSchemasEligibilityQuestionnaireErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/contractors/schemas/eligibility-questionnaire',
+    url: '/v1/contractors/schemas/eligibility-questionnaire',
     ...options,
   });
 
@@ -6786,7 +6786,7 @@ export const deleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscription
       DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors,
       ThrowOnError
     >({
-      url: '/api/eor/v1/contractors/employments/{employment_id}/contractor-cor-subscription',
+      url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription',
       ...options,
     });
 
@@ -6819,7 +6819,7 @@ export const postV1ContractorsEmploymentsEmploymentIdContractorCorSubscription =
       PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors,
       ThrowOnError
     >({
-      url: '/api/eor/v1/contractors/employments/{employment_id}/contractor-cor-subscription',
+      url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription',
       ...options,
     });
 
@@ -6866,7 +6866,7 @@ export const putV2EmploymentsEmploymentIdPersonalDetails = <
     PutV2EmploymentsEmploymentIdPersonalDetailsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v2/employments/{employment_id}/personal_details',
+    url: '/v2/employments/{employment_id}/personal_details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -6902,7 +6902,7 @@ export const postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments = <
     PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/onboarding/employments/{employment_id}/pre-onboarding-documents',
+    url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-documents',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -6929,7 +6929,7 @@ export const getV1ContractAmendmentsId = <ThrowOnError extends boolean = false>(
     GetV1ContractAmendmentsIdResponses,
     GetV1ContractAmendmentsIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/contract-amendments/{id}', ...options });
+  >({ url: '/v1/contract-amendments/{id}', ...options });
 
 /**
  * Decline Identity Verification
@@ -6957,7 +6957,7 @@ export const postV1IdentityVerificationEmploymentIdDecline = <
     PostV1IdentityVerificationEmploymentIdDeclineErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/identity-verification/{employment_id}/decline',
+    url: '/v1/identity-verification/{employment_id}/decline',
     ...options,
   });
 
@@ -6982,7 +6982,7 @@ export const getV1EmployeeExpenseCategories = <
     GetV1EmployeeExpenseCategoriesResponses,
     GetV1EmployeeExpenseCategoriesErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employee/expense-categories', ...options });
+  >({ url: '/v1/employee/expense-categories', ...options });
 
 /**
  * Creates a CSV cost estimation of employments
@@ -6999,7 +6999,7 @@ export const postV1CostCalculatorEstimationCsv = <
     PostV1CostCalculatorEstimationCsvErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/cost-calculator/estimation-csv',
+    url: '/v1/cost-calculator/estimation-csv',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -7035,7 +7035,7 @@ export const getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId = <
     GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/{id}',
+    url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/{id}',
     ...options,
   });
 
@@ -7058,7 +7058,7 @@ export const getV1BillingDocuments = <ThrowOnError extends boolean = false>(
     GetV1BillingDocumentsResponses,
     GetV1BillingDocumentsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/billing-documents', ...options });
+  >({ url: '/v1/billing-documents', ...options });
 
 /**
  * Show Billing Document
@@ -7084,7 +7084,7 @@ export const getV1BillingDocumentsBillingDocumentId = <
     GetV1BillingDocumentsBillingDocumentIdResponses,
     GetV1BillingDocumentsBillingDocumentIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/billing-documents/{billing_document_id}', ...options });
+  >({ url: '/v1/billing-documents/{billing_document_id}', ...options });
 
 /**
  * Indexes all the documents for the employee
@@ -7103,7 +7103,7 @@ export const getV1EmployeeDocuments = <ThrowOnError extends boolean = false>(
     GetV1EmployeeDocumentsResponses,
     GetV1EmployeeDocumentsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employee/documents', ...options });
+  >({ url: '/v1/employee/documents', ...options });
 
 /**
  * List employee time offs
@@ -7124,7 +7124,7 @@ export const getV1EmployeeTimeoff = <ThrowOnError extends boolean = false>(
     GetV1EmployeeTimeoffResponses,
     GetV1EmployeeTimeoffErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employee/timeoff', ...options });
+  >({ url: '/v1/employee/timeoff', ...options });
 
 /**
  * Create a Pending Time Off
@@ -7146,7 +7146,7 @@ export const postV1EmployeeTimeoff = <ThrowOnError extends boolean = false>(
     PostV1EmployeeTimeoffErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employee/timeoff',
+    url: '/v1/employee/timeoff',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -7197,7 +7197,7 @@ export const putV1EmploymentsEmploymentIdPersonalDetails = <
     PutV1EmploymentsEmploymentIdPersonalDetailsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments/{employment_id}/personal_details',
+    url: '/v1/employments/{employment_id}/personal_details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -7227,7 +7227,7 @@ export const getV1ProbationExtensionsId = <
     GetV1ProbationExtensionsIdResponses,
     GetV1ProbationExtensionsIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/probation-extensions/{id}', ...options });
+  >({ url: '/v1/probation-extensions/{id}', ...options });
 
 /**
  * Download file
@@ -7249,7 +7249,7 @@ export const getV1FilesId = <ThrowOnError extends boolean = false>(
     GetV1FilesIdResponses,
     GetV1FilesIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/files/{id}', ...options });
+  >({ url: '/v1/files/{id}', ...options });
 
 /**
  * List Company Departments
@@ -7271,7 +7271,7 @@ export const getV1CompanyDepartments = <ThrowOnError extends boolean = false>(
     GetV1CompanyDepartmentsResponses,
     GetV1CompanyDepartmentsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/company-departments', ...options });
+  >({ url: '/v1/company-departments', ...options });
 
 /**
  * Create New Department
@@ -7293,7 +7293,7 @@ export const postV1CompanyDepartments = <ThrowOnError extends boolean = false>(
     PostV1CompanyDepartmentsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/company-departments',
+    url: '/v1/company-departments',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -7326,7 +7326,7 @@ export const getV1PayrollRunsPayrollRunIdEmployeeDetails = <
     GetV1PayrollRunsPayrollRunIdEmployeeDetailsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/payroll-runs/{payroll_run_id}/employee-details',
+    url: '/v1/payroll-runs/{payroll_run_id}/employee-details',
     ...options,
   });
 
@@ -7369,7 +7369,7 @@ export const getV1EmploymentsEmploymentId = <
     GetV1EmploymentsEmploymentIdResponses,
     GetV1EmploymentsEmploymentIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employments/{employment_id}', ...options });
+  >({ url: '/v1/employments/{employment_id}', ...options });
 
 /**
  * Update employment
@@ -7436,7 +7436,7 @@ export const patchV1EmploymentsEmploymentId2 = <
     PatchV1EmploymentsEmploymentId2Errors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments/{employment_id}',
+    url: '/v1/employments/{employment_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -7509,7 +7509,7 @@ export const patchV1EmploymentsEmploymentId = <
     PatchV1EmploymentsEmploymentIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/employments/{employment_id}',
+    url: '/v1/employments/{employment_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -7536,7 +7536,7 @@ export const getV1EmployeeTimesheets = <ThrowOnError extends boolean = false>(
     GetV1EmployeeTimesheetsResponses,
     GetV1EmployeeTimesheetsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employee/timesheets', ...options });
+  >({ url: '/v1/employee/timesheets', ...options });
 
 /**
  * Show a custom field value
@@ -7563,7 +7563,7 @@ export const getV1CustomFieldsCustomFieldIdValuesEmploymentId = <
     GetV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/custom-fields/{custom_field_id}/values/{employment_id}',
+    url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}',
     ...options,
   });
 
@@ -7592,7 +7592,7 @@ export const patchV1CustomFieldsCustomFieldIdValuesEmploymentId2 = <
     PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Errors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/custom-fields/{custom_field_id}/values/{employment_id}',
+    url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -7625,7 +7625,7 @@ export const patchV1CustomFieldsCustomFieldIdValuesEmploymentId = <
     PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/custom-fields/{custom_field_id}/values/{employment_id}',
+    url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -7658,7 +7658,7 @@ export const putV1ResignationsOffboardingRequestIdValidate = <
     PutV1ResignationsOffboardingRequestIdValidateErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/resignations/{offboarding_request_id}/validate',
+    url: '/v1/resignations/{offboarding_request_id}/validate',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -7687,7 +7687,7 @@ export const getV1ContractorInvoiceSchedulesId = <
     GetV1ContractorInvoiceSchedulesIdResponses,
     GetV1ContractorInvoiceSchedulesIdErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/contractor-invoice-schedules/{id}', ...options });
+  >({ url: '/v1/contractor-invoice-schedules/{id}', ...options });
 
 /**
  * Updates Contractor Invoice Schedule
@@ -7711,7 +7711,7 @@ export const patchV1ContractorInvoiceSchedulesId2 = <
     PatchV1ContractorInvoiceSchedulesId2Errors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/contractor-invoice-schedules/{id}',
+    url: '/v1/contractor-invoice-schedules/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -7741,7 +7741,7 @@ export const patchV1ContractorInvoiceSchedulesId = <
     PatchV1ContractorInvoiceSchedulesIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/contractor-invoice-schedules/{id}',
+    url: '/v1/contractor-invoice-schedules/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -7776,7 +7776,7 @@ export const putV2EmploymentsEmploymentIdPricingPlanDetails = <
     PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v2/employments/{employment_id}/pricing_plan_details',
+    url: '/v2/employments/{employment_id}/pricing_plan_details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -7804,7 +7804,7 @@ export const postV1RiskReserve = <ThrowOnError extends boolean = false>(
     PostV1RiskReserveErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/risk-reserve',
+    url: '/v1/risk-reserve',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -7855,7 +7855,7 @@ export const putV2EmploymentsEmploymentIdAddressDetails = <
     PutV2EmploymentsEmploymentIdAddressDetailsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v2/employments/{employment_id}/address_details',
+    url: '/v2/employments/{employment_id}/address_details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -7886,7 +7886,7 @@ export const getV1ContractorsEmploymentsEmploymentIdContractDocumentsId = <
     GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/contractors/employments/{employment_id}/contract-documents/{id}',
+    url: '/v1/contractors/employments/{employment_id}/contract-documents/{id}',
     ...options,
   });
 
@@ -7918,7 +7918,7 @@ export const postV1ContractorsEmploymentsEmploymentIdCorTerminationRequests = <
     PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsErrors,
     ThrowOnError
   >({
-    url: '/api/eor/v1/contractors/employments/{employment_id}/cor-termination-requests',
+    url: '/v1/contractors/employments/{employment_id}/cor-termination-requests',
     ...options,
   });
 
@@ -7941,4 +7941,4 @@ export const getV1EmployeePayslips = <ThrowOnError extends boolean = false>(
     GetV1EmployeePayslipsResponses,
     GetV1EmployeePayslipsErrors,
     ThrowOnError
-  >({ url: '/api/eor/v1/employee/payslips', ...options });
+  >({ url: '/v1/employee/payslips', ...options });

@@ -11982,7 +11982,7 @@ export type PutV2EmploymentsEmploymentIdAdministrativeDetailsData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v2/employments/{employment_id}/administrative_details';
+  url: '/v2/employments/{employment_id}/administrative_details';
 };
 
 export type PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors = {
@@ -12038,7 +12038,7 @@ export type GetV1EmploymentsEmploymentIdEngagementAgreementDetailsData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/employments/{employment_id}/engagement-agreement-details';
+  url: '/v1/employments/{employment_id}/engagement-agreement-details';
 };
 
 export type GetV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors = {
@@ -12089,7 +12089,7 @@ export type PostV1EmploymentsEmploymentIdEngagementAgreementDetailsData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/employments/{employment_id}/engagement-agreement-details';
+  url: '/v1/employments/{employment_id}/engagement-agreement-details';
 };
 
 export type PostV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors = {
@@ -12139,7 +12139,7 @@ export type PostV1CurrencyConverterEffective2Data = {
   body: ConvertCurrencyParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/currency-converter';
+  url: '/v1/currency-converter';
 };
 
 export type PostV1CurrencyConverterEffective2Errors = {
@@ -12180,7 +12180,7 @@ export type GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsData =
       employment_id: string;
     };
     query?: never;
-    url: '/api/eor/v1/contractors/employments/{employment_id}/contractor-subscriptions';
+    url: '/v1/contractors/employments/{employment_id}/contractor-subscriptions';
   };
 
 export type GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsErrors =
@@ -12220,7 +12220,7 @@ export type PostV1CurrencyConverterRawData = {
   body: ConvertCurrencyParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/currency-converter/raw';
+  url: '/v1/currency-converter/raw';
 };
 
 export type PostV1CurrencyConverterRawErrors = {
@@ -12285,7 +12285,7 @@ export type GetV1IncentivesData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/incentives';
+  url: '/v1/incentives';
 };
 
 export type GetV1IncentivesErrors = {
@@ -12340,7 +12340,7 @@ export type PostV1IncentivesData = {
   };
   path?: never;
   query?: never;
-  url: '/api/eor/v1/incentives';
+  url: '/v1/incentives';
 };
 
 export type PostV1IncentivesErrors = {
@@ -12392,7 +12392,7 @@ export type GetV1BenefitOffersData = {
   };
   path?: never;
   query?: never;
-  url: '/api/eor/v1/benefit-offers';
+  url: '/v1/benefit-offers';
 };
 
 export type GetV1BenefitOffersErrors = {
@@ -12431,7 +12431,7 @@ export type PostV1ReadyData = {
   };
   path?: never;
   query?: never;
-  url: '/api/eor/v1/ready';
+  url: '/v1/ready';
 };
 
 export type PostV1ReadyErrors = {
@@ -12476,7 +12476,7 @@ export type PostV1CostCalculatorEstimationData = {
   body: CostCalculatorEstimateParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/cost-calculator/estimation';
+  url: '/v1/cost-calculator/estimation';
 };
 
 export type PostV1CostCalculatorEstimationErrors = {
@@ -12537,7 +12537,7 @@ export type GetV1IncentivesRecurringData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/incentives/recurring';
+  url: '/v1/incentives/recurring';
 };
 
 export type GetV1IncentivesRecurringErrors = {
@@ -12592,7 +12592,7 @@ export type PostV1IncentivesRecurringData = {
   };
   path?: never;
   query?: never;
-  url: '/api/eor/v1/incentives/recurring';
+  url: '/v1/incentives/recurring';
 };
 
 export type PostV1IncentivesRecurringErrors = {
@@ -12656,7 +12656,7 @@ export type GetV1TimesheetsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/timesheets';
+  url: '/v1/timesheets';
 };
 
 export type GetV1TimesheetsErrors = {
@@ -12694,7 +12694,7 @@ export type PostV1TimesheetsData = {
   body?: CreateTimesheetParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/timesheets';
+  url: '/v1/timesheets';
 };
 
 export type PostV1TimesheetsErrors = {
@@ -12738,7 +12738,7 @@ export type PostV1TimesheetsTimesheetIdApproveData = {
     timesheet_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/timesheets/{timesheet_id}/approve';
+  url: '/v1/timesheets/{timesheet_id}/approve';
 };
 
 export type PostV1TimesheetsTimesheetIdApproveErrors = {
@@ -12773,7 +12773,7 @@ export type GetV1DataSyncData = {
   body?: never;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/data-sync';
+  url: '/v1/data-sync';
 };
 
 export type GetV1DataSyncErrors = {
@@ -12822,7 +12822,7 @@ export type PostV1DataSyncData = {
   body: CreateDataSyncParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/data-sync';
+  url: '/v1/data-sync';
 };
 
 export type PostV1DataSyncErrors = {
@@ -12867,7 +12867,7 @@ export type GetV1ProbationCompletionLetterIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/probation-completion-letter/{id}';
+  url: '/v1/probation-completion-letter/{id}';
 };
 
 export type GetV1ProbationCompletionLetterIdErrors = {
@@ -12902,7 +12902,7 @@ export type GetV1SsoConfigurationData = {
   body?: never;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/sso-configuration';
+  url: '/v1/sso-configuration';
 };
 
 export type GetV1SsoConfigurationErrors = {
@@ -12944,7 +12944,7 @@ export type PostV1SsoConfigurationData = {
   body: CreateSsoConfigurationParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/sso-configuration';
+  url: '/v1/sso-configuration';
 };
 
 export type PostV1SsoConfigurationErrors = {
@@ -13014,7 +13014,7 @@ export type GetV1OffboardingsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/offboardings';
+  url: '/v1/offboardings';
 };
 
 export type GetV1OffboardingsErrors = {
@@ -13060,7 +13060,7 @@ export type PostV1OffboardingsData = {
   body?: CreateOffboardingParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/offboardings';
+  url: '/v1/offboardings';
 };
 
 export type PostV1OffboardingsErrors = {
@@ -13115,7 +13115,7 @@ export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/contractors/employments/{employment_id}/contract-documents';
+  url: '/v1/contractors/employments/{employment_id}/contract-documents';
 };
 
 export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsErrors = {
@@ -13159,7 +13159,7 @@ export type PutV1EmploymentsEmploymentIdFederalTaxesData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/employments/{employment_id}/federal-taxes';
+  url: '/v1/employments/{employment_id}/federal-taxes';
 };
 
 export type PutV1EmploymentsEmploymentIdFederalTaxesErrors = {
@@ -13211,7 +13211,7 @@ export type GetV1CompaniesCompanyIdPricingPlansData = {
     company_id: UuidSlug;
   };
   query?: never;
-  url: '/api/eor/v1/companies/{company_id}/pricing-plans';
+  url: '/v1/companies/{company_id}/pricing-plans';
 };
 
 export type GetV1CompaniesCompanyIdPricingPlansErrors = {
@@ -13254,7 +13254,7 @@ export type PostV1CompaniesCompanyIdPricingPlansData = {
     company_id: UuidSlug;
   };
   query?: never;
-  url: '/api/eor/v1/companies/{company_id}/pricing-plans';
+  url: '/v1/companies/{company_id}/pricing-plans';
 };
 
 export type PostV1CompaniesCompanyIdPricingPlansErrors = {
@@ -13297,7 +13297,7 @@ export type PutV2EmploymentsEmploymentIdFederalTaxesData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v2/employments/{employment_id}/federal-taxes';
+  url: '/v2/employments/{employment_id}/federal-taxes';
 };
 
 export type PutV2EmploymentsEmploymentIdFederalTaxesErrors = {
@@ -13379,7 +13379,7 @@ export type GetV1TravelLetterRequestsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/travel-letter-requests';
+  url: '/v1/travel-letter-requests';
 };
 
 export type GetV1TravelLetterRequestsErrors = {
@@ -13415,7 +13415,7 @@ export type GetV2EmploymentsEmploymentIdEngagementAgreementDetailsData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v2/employments/{employment_id}/engagement-agreement-details';
+  url: '/v2/employments/{employment_id}/engagement-agreement-details';
 };
 
 export type GetV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors = {
@@ -13466,7 +13466,7 @@ export type PostV2EmploymentsEmploymentIdEngagementAgreementDetailsData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v2/employments/{employment_id}/engagement-agreement-details';
+  url: '/v2/employments/{employment_id}/engagement-agreement-details';
 };
 
 export type PostV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors = {
@@ -13528,7 +13528,7 @@ export type GetV1WdGphPaySummaryData = {
      */
     countryCode?: string;
   };
-  url: '/api/eor/v1/wd/gph/paySummary';
+  url: '/v1/wd/gph/paySummary';
 };
 
 export type GetV1WdGphPaySummaryErrors = {
@@ -13568,7 +13568,7 @@ export type GetV1EmploymentsEmploymentIdJobData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/employments/{employment_id}/job';
+  url: '/v1/employments/{employment_id}/job';
 };
 
 export type GetV1EmploymentsEmploymentIdJobErrors = {
@@ -13606,7 +13606,7 @@ export type PostV1BulkEmploymentJobsData = {
   body?: BulkEmploymentCreateParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/bulk-employment-jobs';
+  url: '/v1/bulk-employment-jobs';
 };
 
 export type PostV1BulkEmploymentJobsErrors = {
@@ -13671,7 +13671,7 @@ export type GetV1ContractAmendmentsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/contract-amendments';
+  url: '/v1/contract-amendments';
 };
 
 export type GetV1ContractAmendmentsErrors = {
@@ -13723,7 +13723,7 @@ export type PostV1ContractAmendmentsData = {
      */
     json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/contract-amendments';
+  url: '/v1/contract-amendments';
 };
 
 export type PostV1ContractAmendmentsErrors = {
@@ -13772,7 +13772,7 @@ export type DeleteV1IncentivesRecurringIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/incentives/recurring/{id}';
+  url: '/v1/incentives/recurring/{id}';
 };
 
 export type DeleteV1IncentivesRecurringIdErrors = {
@@ -13829,7 +13829,7 @@ export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdData = {
     benefit_renewal_request_id: UuidSlug;
   };
   query?: never;
-  url: '/api/eor/v1/benefit-renewal-requests/{benefit_renewal_request_id}';
+  url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}';
 };
 
 export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors = {
@@ -13886,7 +13886,7 @@ export type PostV1BenefitRenewalRequestsBenefitRenewalRequestIdData = {
      */
     json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/benefit-renewal-requests/{benefit_renewal_request_id}';
+  url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}';
 };
 
 export type PostV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors = {
@@ -13944,7 +13944,7 @@ export type GetV1CountriesCountryCodeHolidaysYearData = {
      */
     country_subdivision_code?: string;
   };
-  url: '/api/eor/v1/countries/{country_code}/holidays/{year}';
+  url: '/v1/countries/{country_code}/holidays/{year}';
 };
 
 export type GetV1CountriesCountryCodeHolidaysYearErrors = {
@@ -13993,7 +13993,7 @@ export type GetV1EmploymentsEmploymentIdCustomFieldsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/employments/{employment_id}/custom-fields';
+  url: '/v1/employments/{employment_id}/custom-fields';
 };
 
 export type GetV1EmploymentsEmploymentIdCustomFieldsErrors = {
@@ -14033,7 +14033,7 @@ export type GetV1TimesheetsIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/timesheets/{id}';
+  url: '/v1/timesheets/{id}';
 };
 
 export type GetV1TimesheetsIdErrors = {
@@ -14090,7 +14090,7 @@ export type GetV1CompanyManagersData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/company-managers';
+  url: '/v1/company-managers';
 };
 
 export type GetV1CompanyManagersErrors = {
@@ -14153,7 +14153,7 @@ export type PostV1CompanyManagersData = {
      */
     actions?: string;
   };
-  url: '/api/eor/v1/company-managers';
+  url: '/v1/company-managers';
 };
 
 export type PostV1CompanyManagersErrors = {
@@ -14199,7 +14199,7 @@ export type PostV1PayItemsBulkData = {
   body: BulkCreatePayItemsParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/pay-items/bulk';
+  url: '/v1/pay-items/bulk';
 };
 
 export type PostV1PayItemsBulkErrors = {
@@ -14247,7 +14247,7 @@ export type GetV1TravelLetterRequestsIdData = {
     id: UuidSlug;
   };
   query?: never;
-  url: '/api/eor/v1/travel-letter-requests/{id}';
+  url: '/v1/travel-letter-requests/{id}';
 };
 
 export type GetV1TravelLetterRequestsIdErrors = {
@@ -14290,7 +14290,7 @@ export type PatchV1TravelLetterRequestsId2Data = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/travel-letter-requests/{id}';
+  url: '/v1/travel-letter-requests/{id}';
 };
 
 export type PatchV1TravelLetterRequestsId2Errors = {
@@ -14333,7 +14333,7 @@ export type PatchV1TravelLetterRequestsIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/travel-letter-requests/{id}';
+  url: '/v1/travel-letter-requests/{id}';
 };
 
 export type PatchV1TravelLetterRequestsIdErrors = {
@@ -14382,7 +14382,7 @@ export type PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksData = {
     company_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/sandbox/companies/{company_id}/bypass-eligibility-checks';
+  url: '/v1/sandbox/companies/{company_id}/bypass-eligibility-checks';
 };
 
 export type PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksErrors = {
@@ -14425,7 +14425,7 @@ export type GetV1EmployeeLeavePoliciesData = {
   body?: never;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/employee/leave-policies';
+  url: '/v1/employee/leave-policies';
 };
 
 export type GetV1EmployeeLeavePoliciesErrors = {
@@ -14461,7 +14461,7 @@ export type GetV1CompaniesCompanyIdWebhookCallbacksData = {
     company_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/companies/{company_id}/webhook-callbacks';
+  url: '/v1/companies/{company_id}/webhook-callbacks';
 };
 
 export type GetV1CompaniesCompanyIdWebhookCallbacksErrors = {
@@ -14506,7 +14506,7 @@ export type GetV1BillingDocumentsBillingDocumentIdPdfData = {
     billing_document_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/billing-documents/{billing_document_id}/pdf';
+  url: '/v1/billing-documents/{billing_document_id}/pdf';
 };
 
 export type GetV1BillingDocumentsBillingDocumentIdPdfErrors = {
@@ -14555,7 +14555,7 @@ export type DeleteV1WebhookCallbacksIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/webhook-callbacks/{id}';
+  url: '/v1/webhook-callbacks/{id}';
 };
 
 export type DeleteV1WebhookCallbacksIdErrors = {
@@ -14598,7 +14598,7 @@ export type PatchV1WebhookCallbacksIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/webhook-callbacks/{id}';
+  url: '/v1/webhook-callbacks/{id}';
 };
 
 export type PatchV1WebhookCallbacksIdErrors = {
@@ -14641,7 +14641,7 @@ export type GetV1CountriesData = {
   };
   path?: never;
   query?: never;
-  url: '/api/eor/v1/countries';
+  url: '/v1/countries';
 };
 
 export type GetV1CountriesErrors = {
@@ -14694,7 +14694,7 @@ export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibili
       legal_entity_id: UuidSlug;
     };
     query?: never;
-    url: '/api/eor/v1/companies/{company_id}/legal-entities/{legal_entity_id}/contractor-eligibility';
+    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/contractor-eligibility';
   };
 
 export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityErrors =
@@ -14730,7 +14730,7 @@ export type PostV1CurrencyConverterEffectiveData = {
   body: ConvertCurrencyParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/currency-converter/effective';
+  url: '/v1/currency-converter/effective';
 };
 
 export type PostV1CurrencyConverterEffectiveErrors = {
@@ -14765,7 +14765,7 @@ export type GetV1EmployeePersonalInformationData = {
   body?: never;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/employee/personal-information';
+  url: '/v1/employee/personal-information';
 };
 
 export type GetV1EmployeePersonalInformationErrors = {
@@ -14835,7 +14835,7 @@ export type GetV1CountriesCountryCodeFormData = {
      */
     json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/countries/{country_code}/{form}';
+  url: '/v1/countries/{country_code}/{form}';
 };
 
 export type GetV1CountriesCountryCodeFormErrors = {
@@ -14916,7 +14916,7 @@ export type GetV1TimeoffData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/timeoff';
+  url: '/v1/timeoff';
 };
 
 export type GetV1TimeoffErrors = {
@@ -14970,7 +14970,7 @@ export type PostV1TimeoffData = {
   };
   path?: never;
   query?: never;
-  url: '/api/eor/v1/timeoff';
+  url: '/v1/timeoff';
 };
 
 export type PostV1TimeoffErrors = {
@@ -15017,7 +15017,7 @@ export type GetV1CostCalculatorCountriesData = {
      */
     include_premium_benefits?: boolean;
   };
-  url: '/api/eor/v1/cost-calculator/countries';
+  url: '/v1/cost-calculator/countries';
 };
 
 export type GetV1CostCalculatorCountriesResponses = {
@@ -15042,7 +15042,7 @@ export type PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/employments/{employment_id}/risk-reserve-proof-of-payments';
+  url: '/v1/employments/{employment_id}/risk-reserve-proof-of-payments';
 };
 
 export type PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsErrors = {
@@ -15087,7 +15087,7 @@ export type GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdData =
       background_check_id: UuidSlug;
     };
     query?: never;
-    url: '/api/eor/v1/employments/{employment_id}/background-checks/{background_check_id}';
+    url: '/v1/employments/{employment_id}/background-checks/{background_check_id}';
   };
 
 export type GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdErrors =
@@ -15138,7 +15138,7 @@ export type GetV1TimeoffBalancesEmploymentIdData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/timeoff-balances/{employment_id}';
+  url: '/v1/timeoff-balances/{employment_id}';
 };
 
 export type GetV1TimeoffBalancesEmploymentIdErrors = {
@@ -15181,7 +15181,7 @@ export type GetV1EmployeeExpensesData = {
   body?: never;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/employee/expenses';
+  url: '/v1/employee/expenses';
 };
 
 export type GetV1EmployeeExpensesErrors = {
@@ -15219,7 +15219,7 @@ export type PostV1EmployeeExpensesData = {
   body?: ParamsToCreateEmployeeExpense;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/employee/expenses';
+  url: '/v1/employee/expenses';
 };
 
 export type PostV1EmployeeExpensesErrors = {
@@ -15263,7 +15263,7 @@ export type GetV1ResignationsOffboardingRequestIdResignationLetterData = {
     offboarding_request_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/resignations/{offboarding_request_id}/resignation-letter';
+  url: '/v1/resignations/{offboarding_request_id}/resignation-letter';
 };
 
 export type GetV1ResignationsOffboardingRequestIdResignationLetterErrors = {
@@ -15324,7 +15324,7 @@ export type DeleteV1CompanyManagersUserIdData = {
     user_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/company-managers/{user_id}';
+  url: '/v1/company-managers/{user_id}';
 };
 
 export type DeleteV1CompanyManagersUserIdErrors = {
@@ -15372,7 +15372,7 @@ export type GetV1CompanyManagersUserIdData = {
     user_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/company-managers/{user_id}';
+  url: '/v1/company-managers/{user_id}';
 };
 
 export type GetV1CompanyManagersUserIdErrors = {
@@ -15420,7 +15420,7 @@ export type GetV1EmploymentsEmploymentIdOnboardingStepsData = {
     employment_id: UuidSlug;
   };
   query?: never;
-  url: '/api/eor/v1/employments/{employment_id}/onboarding-steps';
+  url: '/v1/employments/{employment_id}/onboarding-steps';
 };
 
 export type GetV1EmploymentsEmploymentIdOnboardingStepsErrors = {
@@ -15468,7 +15468,7 @@ export type PostV1ContractAmendmentsAutomatableData = {
      */
     json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/contract-amendments/automatable';
+  url: '/v1/contract-amendments/automatable';
 };
 
 export type PostV1ContractAmendmentsAutomatableErrors = {
@@ -15516,7 +15516,7 @@ export type GetV1PayrollRunsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/payroll-runs';
+  url: '/v1/payroll-runs';
 };
 
 export type GetV1PayrollRunsErrors = {
@@ -15551,7 +15551,7 @@ export type GetV1EmployeeIncentivesData = {
   body?: never;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/employee/incentives';
+  url: '/v1/employee/incentives';
 };
 
 export type GetV1EmployeeIncentivesErrors = {
@@ -15603,7 +15603,7 @@ export type PatchV1SandboxEmploymentsEmploymentId2Data = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/sandbox/employments/{employment_id}';
+  url: '/v1/sandbox/employments/{employment_id}';
 };
 
 export type PatchV1SandboxEmploymentsEmploymentId2Errors = {
@@ -15667,7 +15667,7 @@ export type PatchV1SandboxEmploymentsEmploymentIdData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/sandbox/employments/{employment_id}';
+  url: '/v1/sandbox/employments/{employment_id}';
 };
 
 export type PatchV1SandboxEmploymentsEmploymentIdErrors = {
@@ -15733,7 +15733,7 @@ export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaData = {
      */
     json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/benefit-renewal-requests/{benefit_renewal_request_id}/schema';
+  url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}/schema';
 };
 
 export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaErrors = {
@@ -15782,7 +15782,7 @@ export type PutV2EmploymentsEmploymentIdBillingAddressDetailsData = {
      */
     billing_address_details_json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v2/employments/{employment_id}/billing_address_details';
+  url: '/v2/employments/{employment_id}/billing_address_details';
 };
 
 export type PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors = {
@@ -15847,7 +15847,7 @@ export type DeleteV1IncentivesIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/incentives/{id}';
+  url: '/v1/incentives/{id}';
 };
 
 export type DeleteV1IncentivesIdErrors = {
@@ -15908,7 +15908,7 @@ export type GetV1IncentivesIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/incentives/{id}';
+  url: '/v1/incentives/{id}';
 };
 
 export type GetV1IncentivesIdErrors = {
@@ -15968,7 +15968,7 @@ export type PatchV1IncentivesId2Data = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/incentives/{id}';
+  url: '/v1/incentives/{id}';
 };
 
 export type PatchV1IncentivesId2Errors = {
@@ -16032,7 +16032,7 @@ export type PatchV1IncentivesIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/incentives/{id}';
+  url: '/v1/incentives/{id}';
 };
 
 export type PatchV1IncentivesIdErrors = {
@@ -16089,7 +16089,7 @@ export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetai
       legal_entity_id: UuidSlug;
     };
     query?: never;
-    url: '/api/eor/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details';
+    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details';
   };
 
 export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors =
@@ -16141,7 +16141,7 @@ export type PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetai
       legal_entity_id: UuidSlug;
     };
     query?: never;
-    url: '/api/eor/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details';
+    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details';
   };
 
 export type PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors =
@@ -16205,7 +16205,7 @@ export type PutV2EmploymentsEmploymentIdBankAccountDetailsData = {
      */
     bank_account_details_json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v2/employments/{employment_id}/bank_account_details';
+  url: '/v2/employments/{employment_id}/bank_account_details';
 };
 
 export type PutV2EmploymentsEmploymentIdBankAccountDetailsErrors = {
@@ -16313,7 +16313,7 @@ export type GetV1ContractorInvoicesData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/contractor-invoices';
+  url: '/v1/contractor-invoices';
 };
 
 export type GetV1ContractorInvoicesErrors = {
@@ -16369,7 +16369,7 @@ export type GetV1ExpensesCategoriesData = {
      */
     country_code?: string;
   };
-  url: '/api/eor/v1/expenses/categories';
+  url: '/v1/expenses/categories';
 };
 
 export type GetV1ExpensesCategoriesErrors = {
@@ -16434,7 +16434,7 @@ export type GetV1EmploymentsEmploymentIdContractDocumentsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/employments/{employment_id}/contract-documents';
+  url: '/v1/employments/{employment_id}/contract-documents';
 };
 
 export type GetV1EmploymentsEmploymentIdContractDocumentsErrors = {
@@ -16483,7 +16483,7 @@ export type GetV1CountriesCountryCodeContractorContractDetailsData = {
      */
     json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/countries/{country_code}/contractor-contract-details';
+  url: '/v1/countries/{country_code}/contractor-contract-details';
 };
 
 export type GetV1CountriesCountryCodeContractorContractDetailsErrors = {
@@ -16531,7 +16531,7 @@ export type GetV1ScimV2UsersIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/scim/v2/Users/{id}';
+  url: '/v1/scim/v2/Users/{id}';
 };
 
 export type GetV1ScimV2UsersIdErrors = {
@@ -16588,7 +16588,7 @@ export type GetV1EmploymentsEmploymentIdFilesData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/employments/{employment_id}/files';
+  url: '/v1/employments/{employment_id}/files';
 };
 
 export type GetV1EmploymentsEmploymentIdFilesErrors = {
@@ -16632,7 +16632,7 @@ export type PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionDa
       employment_id: string;
     };
     query?: never;
-    url: '/api/eor/v1/contractors/employments/{employment_id}/contractor-plus-subscription';
+    url: '/v1/contractors/employments/{employment_id}/contractor-plus-subscription';
   };
 
 export type PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionErrors =
@@ -16673,7 +16673,7 @@ export type PostV1ContractorsEligibilityQuestionnaireData = {
      */
     json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/contractors/eligibility-questionnaire';
+  url: '/v1/contractors/eligibility-questionnaire';
 };
 
 export type PostV1ContractorsEligibilityQuestionnaireErrors = {
@@ -16720,7 +16720,7 @@ export type PutV1EmploymentsEmploymentIdBasicInformationData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/employments/{employment_id}/basic_information';
+  url: '/v1/employments/{employment_id}/basic_information';
 };
 
 export type PutV1EmploymentsEmploymentIdBasicInformationErrors = {
@@ -16773,7 +16773,7 @@ export type GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTermina
       termination_request_id: string;
     };
     query?: never;
-    url: '/api/eor/v1/contractors/employments/{employment_id}/cor-termination-requests/{termination_request_id}';
+    url: '/v1/contractors/employments/{employment_id}/cor-termination-requests/{termination_request_id}';
   };
 
 export type GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdErrors =
@@ -16828,7 +16828,7 @@ export type PostV1SandboxCompaniesCompanyIdLegalEntitiesData = {
     company_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/sandbox/companies/{company_id}/legal-entities';
+  url: '/v1/sandbox/companies/{company_id}/legal-entities';
 };
 
 export type PostV1SandboxCompaniesCompanyIdLegalEntitiesErrors = {
@@ -16909,7 +16909,7 @@ export type GetV1WdGphPayDetailDataData = {
      */
     periodEndDate?: Date;
   };
-  url: '/api/eor/v1/wd/gph/payDetailData';
+  url: '/v1/wd/gph/payDetailData';
 };
 
 export type GetV1WdGphPayDetailDataErrors = {
@@ -16954,7 +16954,7 @@ export type GetV1CostCalculatorRegionsSlugFieldsData = {
      */
     include_premium_benefits?: boolean;
   };
-  url: '/api/eor/v1/cost-calculator/regions/{slug}/fields';
+  url: '/v1/cost-calculator/regions/{slug}/fields';
 };
 
 export type GetV1CostCalculatorRegionsSlugFieldsErrors = {
@@ -16996,7 +16996,7 @@ export type PostV1CancelOnboardingEmploymentIdData = {
      */
     async?: boolean;
   };
-  url: '/api/eor/v1/cancel-onboarding/{employment_id}';
+  url: '/v1/cancel-onboarding/{employment_id}';
 };
 
 export type PostV1CancelOnboardingEmploymentIdErrors = {
@@ -17039,7 +17039,7 @@ export type PostV1EmployeeTimeoffIdCancelData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/employee/timeoff/{id}/cancel';
+  url: '/v1/employee/timeoff/{id}/cancel';
 };
 
 export type PostV1EmployeeTimeoffIdCancelErrors = {
@@ -17087,7 +17087,7 @@ export type GetV1ExpensesExpenseIdReceiptData = {
     expense_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/expenses/{expense_id}/receipt';
+  url: '/v1/expenses/{expense_id}/receipt';
 };
 
 export type GetV1ExpensesExpenseIdReceiptErrors = {
@@ -17143,7 +17143,7 @@ export type GetV1BenefitOffersCountrySummariesData = {
   };
   path?: never;
   query?: never;
-  url: '/api/eor/v1/benefit-offers/country-summaries';
+  url: '/v1/benefit-offers/country-summaries';
 };
 
 export type GetV1BenefitOffersCountrySummariesErrors = {
@@ -17179,7 +17179,7 @@ export type GetV1LeavePoliciesDetailsEmploymentIdData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/leave-policies/details/{employment_id}';
+  url: '/v1/leave-policies/details/{employment_id}';
 };
 
 export type GetV1LeavePoliciesDetailsEmploymentIdErrors = {
@@ -17249,7 +17249,7 @@ export type GetV1WorkAuthorizationRequestsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/work-authorization-requests';
+  url: '/v1/work-authorization-requests';
 };
 
 export type GetV1WorkAuthorizationRequestsErrors = {
@@ -17294,7 +17294,7 @@ export type GetV1EmploymentsEmploymentIdBenefitOffersData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/employments/{employment_id}/benefit-offers';
+  url: '/v1/employments/{employment_id}/benefit-offers';
 };
 
 export type GetV1EmploymentsEmploymentIdBenefitOffersErrors = {
@@ -17346,7 +17346,7 @@ export type PutV1EmploymentsEmploymentIdBenefitOffersData = {
      */
     json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/employments/{employment_id}/benefit-offers';
+  url: '/v1/employments/{employment_id}/benefit-offers';
 };
 
 export type PutV1EmploymentsEmploymentIdBenefitOffersErrors = {
@@ -17432,7 +17432,7 @@ export type GetV1EmploymentsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/employments';
+  url: '/v1/employments';
 };
 
 export type GetV1EmploymentsErrors = {
@@ -17492,7 +17492,7 @@ export type PostV1EmploymentsData = {
      */
     json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/employments';
+  url: '/v1/employments';
 };
 
 export type PostV1EmploymentsErrors = {
@@ -17549,7 +17549,7 @@ export type GetV1TimeoffIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/timeoff/{id}';
+  url: '/v1/timeoff/{id}';
 };
 
 export type GetV1TimeoffIdErrors = {
@@ -17609,7 +17609,7 @@ export type PatchV1TimeoffId2Data = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/timeoff/{id}';
+  url: '/v1/timeoff/{id}';
 };
 
 export type PatchV1TimeoffId2Errors = {
@@ -17669,7 +17669,7 @@ export type PatchV1TimeoffIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/timeoff/{id}';
+  url: '/v1/timeoff/{id}';
 };
 
 export type PatchV1TimeoffIdErrors = {
@@ -17720,7 +17720,7 @@ export type GetV1IdentityCurrentData = {
   };
   path?: never;
   query?: never;
-  url: '/api/eor/v1/identity/current';
+  url: '/v1/identity/current';
 };
 
 export type GetV1IdentityCurrentErrors = {
@@ -17786,7 +17786,7 @@ export type GetV1WdGphPayVarianceData = {
      */
     periodEndDate?: Date;
   };
-  url: '/api/eor/v1/wd/gph/payVariance';
+  url: '/v1/wd/gph/payVariance';
 };
 
 export type GetV1WdGphPayVarianceErrors = {
@@ -17835,7 +17835,7 @@ export type GetV1PayrollCalendarsCycleData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/payroll-calendars/{cycle}';
+  url: '/v1/payroll-calendars/{cycle}';
 };
 
 export type GetV1PayrollCalendarsCycleErrors = {
@@ -17876,7 +17876,7 @@ export type PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentData =
       employment_id: string;
     };
     query?: never;
-    url: '/api/eor/v1/contractors/employments/{employment_id}/terminate-cor-employment';
+    url: '/v1/contractors/employments/{employment_id}/terminate-cor-employment';
   };
 
 export type PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentErrors =
@@ -17925,7 +17925,7 @@ export type PostV1TimesheetsTimesheetIdSendBackData = {
     timesheet_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/timesheets/{timesheet_id}/send-back';
+  url: '/v1/timesheets/{timesheet_id}/send-back';
 };
 
 export type PostV1TimesheetsTimesheetIdSendBackErrors = {
@@ -17973,7 +17973,7 @@ export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignD
       id: string;
     };
     query?: never;
-    url: '/api/eor/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/{id}/sign';
+    url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/{id}/sign';
   };
 
 export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignErrors =
@@ -18036,7 +18036,7 @@ export type GetV1BenefitRenewalRequestsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/benefit-renewal-requests';
+  url: '/v1/benefit-renewal-requests';
 };
 
 export type GetV1BenefitRenewalRequestsErrors = {
@@ -18098,7 +18098,7 @@ export type PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdData =
       legal_entity_id: string;
     };
     query?: never;
-    url: '/api/eor/v1/sandbox/companies/{company_id}/default-legal-entity/{legal_entity_id}';
+    url: '/v1/sandbox/companies/{company_id}/default-legal-entity/{legal_entity_id}';
   };
 
 export type PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdErrors =
@@ -18161,7 +18161,7 @@ export type GetV1EmploymentContractsData = {
      */
     only_active?: boolean;
   };
-  url: '/api/eor/v1/employment-contracts';
+  url: '/v1/employment-contracts';
 };
 
 export type GetV1EmploymentContractsErrors = {
@@ -18206,7 +18206,7 @@ export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelData =
       contract_amendment_request_id: string;
     };
     query?: never;
-    url: '/api/eor/v1/sandbox/contract-amendments/{contract_amendment_request_id}/cancel';
+    url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/cancel';
   };
 
 export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelErrors =
@@ -18265,7 +18265,7 @@ export type GetV1PayslipsPayslipIdPdfData = {
     payslip_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/payslips/{payslip_id}/pdf';
+  url: '/v1/payslips/{payslip_id}/pdf';
 };
 
 export type GetV1PayslipsPayslipIdPdfErrors = {
@@ -18316,7 +18316,7 @@ export type PostV1TimeoffTimeoffIdApproveData = {
     timeoff_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/timeoff/{timeoff_id}/approve';
+  url: '/v1/timeoff/{timeoff_id}/approve';
 };
 
 export type PostV1TimeoffTimeoffIdApproveErrors = {
@@ -18373,7 +18373,7 @@ export type GetV1CompaniesData = {
      */
     external_id?: string;
   };
-  url: '/api/eor/v1/companies';
+  url: '/v1/companies';
 };
 
 export type GetV1CompaniesErrors = {
@@ -18449,7 +18449,7 @@ export type PostV1CompaniesData = {
      */
     scope?: string;
   };
-  url: '/api/eor/v1/companies';
+  url: '/v1/companies';
 };
 
 export type PostV1CompaniesErrors = {
@@ -18497,7 +18497,7 @@ export type GetV1EmploymentsEmploymentIdCompanyStructureNodesData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/employments/{employment_id}/company-structure-nodes';
+  url: '/v1/employments/{employment_id}/company-structure-nodes';
 };
 
 export type GetV1EmploymentsEmploymentIdCompanyStructureNodesErrors = {
@@ -18540,7 +18540,7 @@ export type PatchV2EmploymentsEmploymentId2Data = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v2/employments/{employment_id}';
+  url: '/v2/employments/{employment_id}';
 };
 
 export type PatchV2EmploymentsEmploymentId2Errors = {
@@ -18591,7 +18591,7 @@ export type PatchV2EmploymentsEmploymentIdData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v2/employments/{employment_id}';
+  url: '/v2/employments/{employment_id}';
 };
 
 export type PatchV2EmploymentsEmploymentIdErrors = {
@@ -18637,7 +18637,7 @@ export type PostV1ProbationCompletionLetterData = {
   body: CreateProbationCompletionLetterParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/probation-completion-letter';
+  url: '/v1/probation-completion-letter';
 };
 
 export type PostV1ProbationCompletionLetterErrors = {
@@ -18675,7 +18675,7 @@ export type PostV1CostCalculatorEstimationPdfData = {
   body?: CostCalculatorEstimateParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/cost-calculator/estimation-pdf';
+  url: '/v1/cost-calculator/estimation-pdf';
 };
 
 export type PostV1CostCalculatorEstimationPdfErrors = {
@@ -18757,7 +18757,7 @@ export type GetV1EmployeeDocumentsIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/employee/documents/{id}';
+  url: '/v1/employee/documents/{id}';
 };
 
 export type GetV1EmployeeDocumentsIdErrors = {
@@ -18795,7 +18795,7 @@ export type PostV1WebhookEventsReplayData = {
   body: ReplayWebhookEventsParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/webhook-events/replay';
+  url: '/v1/webhook-events/replay';
 };
 
 export type PostV1WebhookEventsReplayErrors = {
@@ -18833,7 +18833,7 @@ export type PostV1SandboxWebhookCallbacksTriggerData = {
   body?: WebhookTriggerParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/sandbox/webhook-callbacks/trigger';
+  url: '/v1/sandbox/webhook-callbacks/trigger';
 };
 
 export type PostV1SandboxWebhookCallbacksTriggerErrors = {
@@ -18873,7 +18873,7 @@ export type GetV1BulkEmploymentJobsJobIdData = {
     job_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/bulk-employment-jobs/{job_id}';
+  url: '/v1/bulk-employment-jobs/{job_id}';
 };
 
 export type GetV1BulkEmploymentJobsJobIdErrors = {
@@ -18926,7 +18926,7 @@ export type GetV1BulkEmploymentJobsJobIdRowsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/bulk-employment-jobs/{job_id}/rows';
+  url: '/v1/bulk-employment-jobs/{job_id}/rows';
 };
 
 export type GetV1BulkEmploymentJobsJobIdRowsErrors = {
@@ -18977,7 +18977,7 @@ export type PostV1MagicLinkData = {
   };
   path?: never;
   query?: never;
-  url: '/api/eor/v1/magic-link';
+  url: '/v1/magic-link';
 };
 
 export type PostV1MagicLinkErrors = {
@@ -19018,7 +19018,7 @@ export type GetV1CompaniesCompanyIdData = {
     company_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/companies/{company_id}';
+  url: '/v1/companies/{company_id}';
 };
 
 export type GetV1CompaniesCompanyIdErrors = {
@@ -19088,7 +19088,7 @@ export type PatchV1CompaniesCompanyId2Data = {
      */
     bank_account_details_json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/companies/{company_id}';
+  url: '/v1/companies/{company_id}';
 };
 
 export type PatchV1CompaniesCompanyId2Errors = {
@@ -19158,7 +19158,7 @@ export type PatchV1CompaniesCompanyIdData = {
      */
     bank_account_details_json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/companies/{company_id}';
+  url: '/v1/companies/{company_id}';
 };
 
 export type PatchV1CompaniesCompanyIdErrors = {
@@ -19214,7 +19214,7 @@ export type GetV1CompaniesSchemaData = {
      */
     json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/companies/schema';
+  url: '/v1/companies/schema';
 };
 
 export type GetV1CompaniesSchemaErrors = {
@@ -19249,7 +19249,7 @@ export type GetV1PricingPlanPartnerTemplatesData = {
   body?: never;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/pricing-plan-partner-templates';
+  url: '/v1/pricing-plan-partner-templates';
 };
 
 export type GetV1PricingPlanPartnerTemplatesErrors = {
@@ -19289,7 +19289,7 @@ export type GetV1CountriesCountryCodeEngagementAgreementDetailsData = {
     country_code: string;
   };
   query?: never;
-  url: '/api/eor/v1/countries/{country_code}/engagement-agreement-details';
+  url: '/v1/countries/{country_code}/engagement-agreement-details';
 };
 
 export type GetV1CountriesCountryCodeEngagementAgreementDetailsErrors = {
@@ -19349,7 +19349,7 @@ export type PutV2EmploymentsEmploymentIdContractDetailsData = {
      */
     skip_benefits?: boolean;
   };
-  url: '/api/eor/v2/employments/{employment_id}/contract_details';
+  url: '/v2/employments/{employment_id}/contract_details';
 };
 
 export type PutV2EmploymentsEmploymentIdContractDetailsErrors = {
@@ -19405,7 +19405,7 @@ export type GetV1CompaniesCompanyIdProductPricesData = {
     company_id: UuidSlug;
   };
   query?: never;
-  url: '/api/eor/v1/companies/{company_id}/product-prices';
+  url: '/v1/companies/{company_id}/product-prices';
 };
 
 export type GetV1CompaniesCompanyIdProductPricesErrors = {
@@ -19450,7 +19450,7 @@ export type PostV1CompaniesCompanyIdCreateTokenData = {
      */
     scope?: string;
   };
-  url: '/api/eor/v1/companies/{company_id}/create-token';
+  url: '/v1/companies/{company_id}/create-token';
 };
 
 export type PostV1CompaniesCompanyIdCreateTokenErrors = {
@@ -19490,7 +19490,7 @@ export type GetV1IdentityVerificationEmploymentIdData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/identity-verification/{employment_id}';
+  url: '/v1/identity-verification/{employment_id}';
 };
 
 export type GetV1IdentityVerificationEmploymentIdErrors = {
@@ -19534,7 +19534,7 @@ export type GetV1ExpensesExpenseIdReceiptsReceiptIdData = {
     receipt_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/expenses/{expense_id}/receipts/{receipt_id}';
+  url: '/v1/expenses/{expense_id}/receipts/{receipt_id}';
 };
 
 export type GetV1ExpensesExpenseIdReceiptsReceiptIdErrors = {
@@ -19594,7 +19594,7 @@ export type GetV1ScimV2GroupsData = {
      */
     filter?: string;
   };
-  url: '/api/eor/v1/scim/v2/Groups';
+  url: '/v1/scim/v2/Groups';
 };
 
 export type GetV1ScimV2GroupsErrors = {
@@ -19647,7 +19647,7 @@ export type GetV1ExpensesIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/expenses/{id}';
+  url: '/v1/expenses/{id}';
 };
 
 export type GetV1ExpensesIdErrors = {
@@ -19698,7 +19698,7 @@ export type PatchV1ExpensesId2Data = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/expenses/{id}';
+  url: '/v1/expenses/{id}';
 };
 
 export type PatchV1ExpensesId2Errors = {
@@ -19753,7 +19753,7 @@ export type PatchV1ExpensesIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/expenses/{id}';
+  url: '/v1/expenses/{id}';
 };
 
 export type PatchV1ExpensesIdErrors = {
@@ -19813,7 +19813,7 @@ export type PutV2EmploymentsEmploymentIdEmergencyContactData = {
      */
     emergency_contact_details_json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v2/employments/{employment_id}/emergency_contact';
+  url: '/v2/employments/{employment_id}/emergency_contact';
 };
 
 export type PutV2EmploymentsEmploymentIdEmergencyContactErrors = {
@@ -19876,7 +19876,7 @@ export type PostV1SandboxBenefitRenewalRequestsData = {
   };
   path?: never;
   query?: never;
-  url: '/api/eor/v1/sandbox/benefit-renewal-requests';
+  url: '/v1/sandbox/benefit-renewal-requests';
 };
 
 export type PostV1SandboxBenefitRenewalRequestsErrors = {
@@ -19923,7 +19923,7 @@ export type PutV2EmploymentsEmploymentIdBasicInformationData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v2/employments/{employment_id}/basic_information';
+  url: '/v2/employments/{employment_id}/basic_information';
 };
 
 export type PutV2EmploymentsEmploymentIdBasicInformationErrors = {
@@ -19971,7 +19971,7 @@ export type GetV1LeavePoliciesSummaryEmploymentIdData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/leave-policies/summary/{employment_id}';
+  url: '/v1/leave-policies/summary/{employment_id}';
 };
 
 export type GetV1LeavePoliciesSummaryEmploymentIdErrors = {
@@ -20014,7 +20014,7 @@ export type PostV1TimeoffTimeoffIdCancelData = {
     timeoff_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/timeoff/{timeoff_id}/cancel';
+  url: '/v1/timeoff/{timeoff_id}/cancel';
 };
 
 export type PostV1TimeoffTimeoffIdCancelErrors = {
@@ -20062,7 +20062,7 @@ export type GetV1HelpCenterArticlesIdData = {
     id: number;
   };
   query?: never;
-  url: '/api/eor/v1/help-center-articles/{id}';
+  url: '/v1/help-center-articles/{id}';
 };
 
 export type GetV1HelpCenterArticlesIdErrors = {
@@ -20100,7 +20100,7 @@ export type PostV1DocumentsData = {
   };
   path?: never;
   query?: never;
-  url: '/api/eor/v1/documents';
+  url: '/v1/documents';
 };
 
 export type PostV1DocumentsErrors = {
@@ -20140,7 +20140,7 @@ export type PostV1IdentityVerificationEmploymentIdVerifyData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/identity-verification/{employment_id}/verify';
+  url: '/v1/identity-verification/{employment_id}/verify';
 };
 
 export type PostV1IdentityVerificationEmploymentIdVerifyErrors = {
@@ -20184,7 +20184,7 @@ export type GetV1CustomFieldsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/custom-fields';
+  url: '/v1/custom-fields';
 };
 
 export type GetV1CustomFieldsErrors = {
@@ -20222,7 +20222,7 @@ export type PostV1CustomFieldsData = {
   body: CreateCustomFieldDefinitionParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/custom-fields';
+  url: '/v1/custom-fields';
 };
 
 export type PostV1CustomFieldsErrors = {
@@ -20263,7 +20263,7 @@ export type PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApprov
       employment_id: string;
     };
     query?: never;
-    url: '/api/eor/v1/sandbox/employments/{employment_id}/risk-reserve-proof-of-payments/approve';
+    url: '/v1/sandbox/employments/{employment_id}/risk-reserve-proof-of-payments/approve';
   };
 
 export type PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveErrors =
@@ -20320,7 +20320,7 @@ export type PostV1WebhookCallbacksData = {
   };
   path?: never;
   query?: never;
-  url: '/api/eor/v1/webhook-callbacks';
+  url: '/v1/webhook-callbacks';
 };
 
 export type PostV1WebhookCallbacksErrors = {
@@ -20355,7 +20355,7 @@ export type GetV1SsoConfigurationDetailsData = {
   body?: never;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/sso-configuration/details';
+  url: '/v1/sso-configuration/details';
 };
 
 export type GetV1SsoConfigurationDetailsErrors = {
@@ -20407,7 +20407,7 @@ export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDoc
       contract_document_id: string;
     };
     query?: never;
-    url: '/api/eor/v1/contractors/employments/{employment_id}/contract-documents/{contract_document_id}/sign';
+    url: '/v1/contractors/employments/{employment_id}/contract-documents/{contract_document_id}/sign';
   };
 
 export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignErrors =
@@ -20461,7 +20461,7 @@ export type GetV1PayItemsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/pay-items';
+  url: '/v1/pay-items';
 };
 
 export type GetV1PayItemsErrors = {
@@ -20512,7 +20512,7 @@ export type GetV1ScimV2UsersData = {
      */
     filter?: string;
   };
-  url: '/api/eor/v1/scim/v2/Users';
+  url: '/v1/scim/v2/Users';
 };
 
 export type GetV1ScimV2UsersErrors = {
@@ -20556,7 +20556,7 @@ export type GetV1ResignationsOffboardingRequestIdData = {
     offboarding_request_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/resignations/{offboarding_request_id}';
+  url: '/v1/resignations/{offboarding_request_id}';
 };
 
 export type GetV1ResignationsOffboardingRequestIdErrors = {
@@ -20609,7 +20609,7 @@ export type GetV1BillingDocumentsBillingDocumentIdBreakdownData = {
      */
     type?: string;
   };
-  url: '/api/eor/v1/billing-documents/{billing_document_id}/breakdown';
+  url: '/v1/billing-documents/{billing_document_id}/breakdown';
 };
 
 export type GetV1BillingDocumentsBillingDocumentIdBreakdownErrors = {
@@ -20660,7 +20660,7 @@ export type PostV1TimeoffTimeoffIdCancelRequestDeclineData = {
     timeoff_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/timeoff/{timeoff_id}/cancel-request/decline';
+  url: '/v1/timeoff/{timeoff_id}/cancel-request/decline';
 };
 
 export type PostV1TimeoffTimeoffIdCancelRequestDeclineErrors = {
@@ -20716,7 +20716,7 @@ export type GetV1PayrollCalendarsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/payroll-calendars';
+  url: '/v1/payroll-calendars';
 };
 
 export type GetV1PayrollCalendarsErrors = {
@@ -20774,7 +20774,7 @@ export type GetV1WdGphPayDetailData = {
      */
     periodEndDate?: Date;
   };
-  url: '/api/eor/v1/wd/gph/payDetail';
+  url: '/v1/wd/gph/payDetail';
 };
 
 export type GetV1WdGphPayDetailErrors = {
@@ -20835,7 +20835,7 @@ export type GetV1ContractAmendmentsSchemaData = {
      */
     json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/contract-amendments/schema';
+  url: '/v1/contract-amendments/schema';
 };
 
 export type GetV1ContractAmendmentsSchemaErrors = {
@@ -20875,7 +20875,7 @@ export type GetV1TestSchemaData = {
      */
     json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/test-schema';
+  url: '/v1/test-schema';
 };
 
 export type GetV1TestSchemaResponses = {
@@ -20900,7 +20900,7 @@ export type PatchV1EmployeeTimeoffId2Data = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/employee/timeoff/{id}';
+  url: '/v1/employee/timeoff/{id}';
 };
 
 export type PatchV1EmployeeTimeoffId2Errors = {
@@ -20951,7 +20951,7 @@ export type PatchV1EmployeeTimeoffIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/employee/timeoff/{id}';
+  url: '/v1/employee/timeoff/{id}';
 };
 
 export type PatchV1EmployeeTimeoffIdErrors = {
@@ -20999,7 +20999,7 @@ export type GetV1ScimV2GroupsIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/scim/v2/Groups/{id}';
+  url: '/v1/scim/v2/Groups/{id}';
 };
 
 export type GetV1ScimV2GroupsIdErrors = {
@@ -21056,7 +21056,7 @@ export type GetV1CountriesCountryCodeLegalEntityFormsFormData = {
      */
     json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/countries/{country_code}/legal_entity_forms/{form}';
+  url: '/v1/countries/{country_code}/legal_entity_forms/{form}';
 };
 
 export type GetV1CountriesCountryCodeLegalEntityFormsFormErrors = {
@@ -21113,7 +21113,7 @@ export type GetV1EmploymentContractsEmploymentIdPendingChangesData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/employment-contracts/{employment_id}/pending-changes';
+  url: '/v1/employment-contracts/{employment_id}/pending-changes';
 };
 
 export type GetV1EmploymentContractsEmploymentIdPendingChangesErrors = {
@@ -21155,7 +21155,7 @@ export type PostV1SdkTelemetryErrorsData = {
   body: SdkErrorPayload;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/sdk/telemetry-errors';
+  url: '/v1/sdk/telemetry-errors';
 };
 
 export type PostV1SdkTelemetryErrorsErrors = {
@@ -21188,7 +21188,7 @@ export type GetV1CompaniesCompanyIdComplianceProfileData = {
     company_id: UuidSlug;
   };
   query?: never;
-  url: '/api/eor/v1/companies/{company_id}/compliance-profile';
+  url: '/v1/companies/{company_id}/compliance-profile';
 };
 
 export type GetV1CompaniesCompanyIdComplianceProfileErrors = {
@@ -21237,7 +21237,7 @@ export type GetV1PayslipsIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/payslips/{id}';
+  url: '/v1/payslips/{id}';
 };
 
 export type GetV1PayslipsIdErrors = {
@@ -21285,7 +21285,7 @@ export type PostV1TimeoffTimeoffIdCancelRequestApproveData = {
     timeoff_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/timeoff/{timeoff_id}/cancel-request/approve';
+  url: '/v1/timeoff/{timeoff_id}/cancel-request/approve';
 };
 
 export type PostV1TimeoffTimeoffIdCancelRequestApproveErrors = {
@@ -21357,7 +21357,7 @@ export type GetV1WebhookEventsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/webhook-events';
+  url: '/v1/webhook-events';
 };
 
 export type GetV1WebhookEventsErrors = {
@@ -21406,7 +21406,7 @@ export type GetV1TimeoffTypesData = {
      */
     type?: TimeoffTypesEmploymentType;
   };
-  url: '/api/eor/v1/timeoff/types';
+  url: '/v1/timeoff/types';
 };
 
 export type GetV1TimeoffTypesErrors = {
@@ -21463,7 +21463,7 @@ export type GetV1CompaniesCompanyIdLegalEntitiesData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/companies/{company_id}/legal-entities';
+  url: '/v1/companies/{company_id}/legal-entities';
 };
 
 export type GetV1CompaniesCompanyIdLegalEntitiesErrors = {
@@ -21502,7 +21502,7 @@ export type PostV1EmploymentsEmploymentIdContractEligibilityData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/employments/{employment_id}/contract-eligibility';
+  url: '/v1/employments/{employment_id}/contract-eligibility';
 };
 
 export type PostV1EmploymentsEmploymentIdContractEligibilityErrors = {
@@ -21547,7 +21547,7 @@ export type GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesData = {
      */
     restrict_to_guaranteed_pay_out_currencies?: boolean;
   };
-  url: '/api/eor/v1/contractors/employments/{employment_id}/contractor-currencies';
+  url: '/v1/contractors/employments/{employment_id}/contractor-currencies';
 };
 
 export type GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesErrors =
@@ -21617,7 +21617,7 @@ export type GetV1PayslipsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/payslips';
+  url: '/v1/payslips';
 };
 
 export type GetV1PayslipsErrors = {
@@ -21671,7 +21671,7 @@ export type PostV1SandboxEmploymentsData = {
   };
   path?: never;
   query?: never;
-  url: '/api/eor/v1/sandbox/employments';
+  url: '/v1/sandbox/employments';
 };
 
 export type PostV1SandboxEmploymentsErrors = {
@@ -21719,7 +21719,7 @@ export type GetV1PayrollRunsPayrollRunIdData = {
     payroll_run_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/payroll-runs/{payroll_run_id}';
+  url: '/v1/payroll-runs/{payroll_run_id}';
 };
 
 export type GetV1PayrollRunsPayrollRunIdErrors = {
@@ -21760,7 +21760,7 @@ export type GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsRequirem
       employment_id: string;
     };
     query?: never;
-    url: '/api/eor/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/requirements';
+    url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/requirements';
   };
 
 export type GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsRequirementsErrors =
@@ -21802,7 +21802,7 @@ export type GetV1OffboardingsIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/offboardings/{id}';
+  url: '/v1/offboardings/{id}';
 };
 
 export type GetV1OffboardingsIdErrors = {
@@ -21863,7 +21863,7 @@ export type GetV1ExpensesData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/expenses';
+  url: '/v1/expenses';
 };
 
 export type GetV1ExpensesErrors = {
@@ -21917,7 +21917,7 @@ export type PostV1ExpensesData = {
   };
   path?: never;
   query?: never;
-  url: '/api/eor/v1/expenses';
+  url: '/v1/expenses';
 };
 
 export type PostV1ExpensesErrors = {
@@ -21969,7 +21969,7 @@ export type GetV1EmployeePayslipFilesData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/employee/payslip-files';
+  url: '/v1/employee/payslip-files';
 };
 
 export type GetV1EmployeePayslipFilesErrors = {
@@ -22018,7 +22018,7 @@ export type PostV1EmploymentsEmploymentIdInviteData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/employments/{employment_id}/invite';
+  url: '/v1/employments/{employment_id}/invite';
 };
 
 export type PostV1EmploymentsEmploymentIdInviteErrors = {
@@ -22060,7 +22060,7 @@ export type PostV1ProbationExtensionsData = {
   body: CreateProbationExtensionParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/probation-extensions';
+  url: '/v1/probation-extensions';
 };
 
 export type PostV1ProbationExtensionsErrors = {
@@ -22105,7 +22105,7 @@ export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveData 
       contract_amendment_request_id: string;
     };
     query?: never;
-    url: '/api/eor/v1/sandbox/contract-amendments/{contract_amendment_request_id}/approve';
+    url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/approve';
   };
 
 export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveErrors =
@@ -22160,7 +22160,7 @@ export type GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStat
       employment_id: UuidSlug;
     };
     query?: never;
-    url: '/api/eor/v1/companies/{company_id}/employments/{employment_id}/onboarding-reserves-status';
+    url: '/v1/companies/{company_id}/employments/{employment_id}/onboarding-reserves-status';
   };
 
 export type GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusErrors =
@@ -22202,7 +22202,7 @@ export type GetV1ContractorInvoicesIdData = {
     id: UuidSlug;
   };
   query?: never;
-  url: '/api/eor/v1/contractor-invoices/{id}';
+  url: '/v1/contractor-invoices/{id}';
 };
 
 export type GetV1ContractorInvoicesIdErrors = {
@@ -22241,7 +22241,7 @@ export type GetV1WdGphPayProcessingFeatureData = {
   body?: never;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/wd/gph/payProcessingFeature';
+  url: '/v1/wd/gph/payProcessingFeature';
 };
 
 export type GetV1WdGphPayProcessingFeatureErrors = {
@@ -22299,7 +22299,7 @@ export type GetV1WdGphPayProgressData = {
      */
     periodEndDate?: Date;
   };
-  url: '/api/eor/v1/wd/gph/payProgress';
+  url: '/v1/wd/gph/payProgress';
 };
 
 export type GetV1WdGphPayProgressErrors = {
@@ -22334,7 +22334,7 @@ export type GetV1CompanyCurrenciesData = {
   body?: never;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/company-currencies';
+  url: '/v1/company-currencies';
 };
 
 export type GetV1CompanyCurrenciesErrors = {
@@ -22371,7 +22371,7 @@ export type GetV1EmploymentsEmploymentIdBenefitOffersSchemaData = {
      */
     json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/employments/{employment_id}/benefit-offers/schema';
+  url: '/v1/employments/{employment_id}/benefit-offers/schema';
 };
 
 export type GetV1EmploymentsEmploymentIdBenefitOffersSchemaErrors = {
@@ -22460,7 +22460,7 @@ export type GetV1ContractorInvoiceSchedulesData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/contractor-invoice-schedules';
+  url: '/v1/contractor-invoice-schedules';
 };
 
 export type GetV1ContractorInvoiceSchedulesErrors = {
@@ -22498,7 +22498,7 @@ export type PostV1ContractorInvoiceSchedulesData = {
   body: BulkContractorInvoiceScheduleCreateParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/contractor-invoice-schedules';
+  url: '/v1/contractor-invoice-schedules';
 };
 
 export type PostV1ContractorInvoiceSchedulesErrors = {
@@ -22563,7 +22563,7 @@ export type GetV1WorkAuthorizationRequestsIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/work-authorization-requests/{id}';
+  url: '/v1/work-authorization-requests/{id}';
 };
 
 export type GetV1WorkAuthorizationRequestsIdErrors = {
@@ -22602,7 +22602,7 @@ export type PatchV1WorkAuthorizationRequestsId2Data = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/work-authorization-requests/{id}';
+  url: '/v1/work-authorization-requests/{id}';
 };
 
 export type PatchV1WorkAuthorizationRequestsId2Errors = {
@@ -22645,7 +22645,7 @@ export type PatchV1WorkAuthorizationRequestsIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/work-authorization-requests/{id}';
+  url: '/v1/work-authorization-requests/{id}';
 };
 
 export type PatchV1WorkAuthorizationRequestsIdErrors = {
@@ -22688,7 +22688,7 @@ export type PostV1TimeoffTimeoffIdDeclineData = {
     timeoff_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/timeoff/{timeoff_id}/decline';
+  url: '/v1/timeoff/{timeoff_id}/decline';
 };
 
 export type PostV1TimeoffTimeoffIdDeclineErrors = {
@@ -22740,7 +22740,7 @@ export type GetV1ContractorsSchemasEligibilityQuestionnaireData = {
      */
     json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v1/contractors/schemas/eligibility-questionnaire';
+  url: '/v1/contractors/schemas/eligibility-questionnaire';
 };
 
 export type GetV1ContractorsSchemasEligibilityQuestionnaireErrors = {
@@ -22827,7 +22827,7 @@ export type DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionD
       employment_id: string;
     };
     query?: never;
-    url: '/api/eor/v1/contractors/employments/{employment_id}/contractor-cor-subscription';
+    url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription';
   };
 
 export type DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors =
@@ -22871,7 +22871,7 @@ export type PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionDat
       employment_id: string;
     };
     query?: never;
-    url: '/api/eor/v1/contractors/employments/{employment_id}/contractor-cor-subscription';
+    url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription';
   };
 
 export type PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors =
@@ -22920,7 +22920,7 @@ export type PutV2EmploymentsEmploymentIdPersonalDetailsData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v2/employments/{employment_id}/personal_details';
+  url: '/v2/employments/{employment_id}/personal_details';
 };
 
 export type PutV2EmploymentsEmploymentIdPersonalDetailsErrors = {
@@ -22980,7 +22980,7 @@ export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsData =
       employment_id: string;
     };
     query?: never;
-    url: '/api/eor/v1/onboarding/employments/{employment_id}/pre-onboarding-documents';
+    url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-documents';
   };
 
 export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsErrors =
@@ -23035,7 +23035,7 @@ export type GetV1ContractAmendmentsIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/contract-amendments/{id}';
+  url: '/v1/contract-amendments/{id}';
 };
 
 export type GetV1ContractAmendmentsIdErrors = {
@@ -23075,7 +23075,7 @@ export type PostV1IdentityVerificationEmploymentIdDeclineData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/identity-verification/{employment_id}/decline';
+  url: '/v1/identity-verification/{employment_id}/decline';
 };
 
 export type PostV1IdentityVerificationEmploymentIdDeclineErrors = {
@@ -23119,7 +23119,7 @@ export type GetV1EmployeeExpenseCategoriesData = {
      */
     expense_id?: string;
   };
-  url: '/api/eor/v1/employee/expense-categories';
+  url: '/v1/employee/expense-categories';
 };
 
 export type GetV1EmployeeExpenseCategoriesErrors = {
@@ -23157,7 +23157,7 @@ export type PostV1CostCalculatorEstimationCsvData = {
   body?: CostCalculatorEstimateParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/cost-calculator/estimation-csv';
+  url: '/v1/cost-calculator/estimation-csv';
 };
 
 export type PostV1CostCalculatorEstimationCsvErrors = {
@@ -23198,7 +23198,7 @@ export type GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdData =
       id: string;
     };
     query?: never;
-    url: '/api/eor/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/{id}';
+    url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/{id}';
   };
 
 export type GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdErrors =
@@ -23257,7 +23257,7 @@ export type GetV1BillingDocumentsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/billing-documents';
+  url: '/v1/billing-documents';
 };
 
 export type GetV1BillingDocumentsErrors = {
@@ -23311,7 +23311,7 @@ export type GetV1BillingDocumentsBillingDocumentIdData = {
      */
     include_unrecognized_types?: boolean;
   };
-  url: '/api/eor/v1/billing-documents/{billing_document_id}';
+  url: '/v1/billing-documents/{billing_document_id}';
 };
 
 export type GetV1BillingDocumentsBillingDocumentIdErrors = {
@@ -23392,7 +23392,7 @@ export type GetV1EmployeeDocumentsData = {
      */
     order?: 'asc' | 'desc';
   };
-  url: '/api/eor/v1/employee/documents';
+  url: '/v1/employee/documents';
 };
 
 export type GetV1EmployeeDocumentsErrors = {
@@ -23432,7 +23432,7 @@ export type GetV1EmployeeTimeoffData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/employee/timeoff';
+  url: '/v1/employee/timeoff';
 };
 
 export type GetV1EmployeeTimeoffErrors = {
@@ -23474,7 +23474,7 @@ export type PostV1EmployeeTimeoffData = {
   body: CreateEmployeeTimeoffParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/employee/timeoff';
+  url: '/v1/employee/timeoff';
 };
 
 export type PostV1EmployeeTimeoffErrors = {
@@ -23525,7 +23525,7 @@ export type PutV1EmploymentsEmploymentIdPersonalDetailsData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/employments/{employment_id}/personal_details';
+  url: '/v1/employments/{employment_id}/personal_details';
 };
 
 export type PutV1EmploymentsEmploymentIdPersonalDetailsErrors = {
@@ -23573,7 +23573,7 @@ export type GetV1ProbationExtensionsIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/probation-extensions/{id}';
+  url: '/v1/probation-extensions/{id}';
 };
 
 export type GetV1ProbationExtensionsIdErrors = {
@@ -23613,7 +23613,7 @@ export type GetV1FilesIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/files/{id}';
+  url: '/v1/files/{id}';
 };
 
 export type GetV1FilesIdErrors = {
@@ -23664,7 +23664,7 @@ export type GetV1CompanyDepartmentsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/company-departments';
+  url: '/v1/company-departments';
 };
 
 export type GetV1CompanyDepartmentsErrors = {
@@ -23698,7 +23698,7 @@ export type PostV1CompanyDepartmentsData = {
   body: CreateCompanyDepartmentParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/company-departments';
+  url: '/v1/company-departments';
 };
 
 export type PostV1CompanyDepartmentsErrors = {
@@ -23743,7 +23743,7 @@ export type GetV1PayrollRunsPayrollRunIdEmployeeDetailsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/payroll-runs/{payroll_run_id}/employee-details';
+  url: '/v1/payroll-runs/{payroll_run_id}/employee-details';
 };
 
 export type GetV1PayrollRunsPayrollRunIdEmployeeDetailsErrors = {
@@ -23797,7 +23797,7 @@ export type GetV1EmploymentsEmploymentIdData = {
      */
     exclude_files?: boolean;
   };
-  url: '/api/eor/v1/employments/{employment_id}';
+  url: '/v1/employments/{employment_id}';
 };
 
 export type GetV1EmploymentsEmploymentIdErrors = {
@@ -23902,7 +23902,7 @@ export type PatchV1EmploymentsEmploymentId2Data = {
      */
     actions?: string;
   };
-  url: '/api/eor/v1/employments/{employment_id}';
+  url: '/v1/employments/{employment_id}';
 };
 
 export type PatchV1EmploymentsEmploymentId2Errors = {
@@ -24007,7 +24007,7 @@ export type PatchV1EmploymentsEmploymentIdData = {
      */
     actions?: string;
   };
-  url: '/api/eor/v1/employments/{employment_id}';
+  url: '/v1/employments/{employment_id}';
 };
 
 export type PatchV1EmploymentsEmploymentIdErrors = {
@@ -24059,7 +24059,7 @@ export type GetV1EmployeeTimesheetsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/employee/timesheets';
+  url: '/v1/employee/timesheets';
 };
 
 export type GetV1EmployeeTimesheetsErrors = {
@@ -24103,7 +24103,7 @@ export type GetV1CustomFieldsCustomFieldIdValuesEmploymentIdData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/custom-fields/{custom_field_id}/values/{employment_id}';
+  url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}';
 };
 
 export type GetV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors = {
@@ -24150,7 +24150,7 @@ export type PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Data = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/custom-fields/{custom_field_id}/values/{employment_id}';
+  url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}';
 };
 
 export type PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Errors = {
@@ -24201,7 +24201,7 @@ export type PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/custom-fields/{custom_field_id}/values/{employment_id}';
+  url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}';
 };
 
 export type PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors = {
@@ -24248,7 +24248,7 @@ export type PutV1ResignationsOffboardingRequestIdValidateData = {
     offboarding_request_id: string;
   };
   query?: never;
-  url: '/api/eor/v1/resignations/{offboarding_request_id}/validate';
+  url: '/v1/resignations/{offboarding_request_id}/validate';
 };
 
 export type PutV1ResignationsOffboardingRequestIdValidateErrors = {
@@ -24296,7 +24296,7 @@ export type GetV1ContractorInvoiceSchedulesIdData = {
     id: UuidSlug;
   };
   query?: never;
-  url: '/api/eor/v1/contractor-invoice-schedules/{id}';
+  url: '/v1/contractor-invoice-schedules/{id}';
 };
 
 export type GetV1ContractorInvoiceSchedulesIdErrors = {
@@ -24351,7 +24351,7 @@ export type PatchV1ContractorInvoiceSchedulesId2Data = {
     id: UuidSlug;
   };
   query?: never;
-  url: '/api/eor/v1/contractor-invoice-schedules/{id}';
+  url: '/v1/contractor-invoice-schedules/{id}';
 };
 
 export type PatchV1ContractorInvoiceSchedulesId2Errors = {
@@ -24398,7 +24398,7 @@ export type PatchV1ContractorInvoiceSchedulesIdData = {
     id: UuidSlug;
   };
   query?: never;
-  url: '/api/eor/v1/contractor-invoice-schedules/{id}';
+  url: '/v1/contractor-invoice-schedules/{id}';
 };
 
 export type PatchV1ContractorInvoiceSchedulesIdErrors = {
@@ -24445,7 +24445,7 @@ export type PutV2EmploymentsEmploymentIdPricingPlanDetailsData = {
     employment_id: string;
   };
   query?: never;
-  url: '/api/eor/v2/employments/{employment_id}/pricing_plan_details';
+  url: '/v2/employments/{employment_id}/pricing_plan_details';
 };
 
 export type PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors = {
@@ -24499,7 +24499,7 @@ export type PostV1RiskReserveData = {
   body: CreateRiskReserveParams;
   path?: never;
   query?: never;
-  url: '/api/eor/v1/risk-reserve';
+  url: '/v1/risk-reserve';
 };
 
 export type PostV1RiskReserveErrors = {
@@ -24547,7 +24547,7 @@ export type PutV2EmploymentsEmploymentIdAddressDetailsData = {
      */
     address_details_json_schema_version?: number | 'latest';
   };
-  url: '/api/eor/v2/employments/{employment_id}/address_details';
+  url: '/v2/employments/{employment_id}/address_details';
 };
 
 export type PutV2EmploymentsEmploymentIdAddressDetailsErrors = {
@@ -24607,7 +24607,7 @@ export type GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdData = {
     id: string;
   };
   query?: never;
-  url: '/api/eor/v1/contractors/employments/{employment_id}/contract-documents/{id}';
+  url: '/v1/contractors/employments/{employment_id}/contract-documents/{id}';
 };
 
 export type GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdErrors = {
@@ -24649,7 +24649,7 @@ export type PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsData =
       employment_id: string;
     };
     query?: never;
-    url: '/api/eor/v1/contractors/employments/{employment_id}/cor-termination-requests';
+    url: '/v1/contractors/employments/{employment_id}/cor-termination-requests';
   };
 
 export type PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsErrors =
@@ -24699,7 +24699,7 @@ export type GetV1EmployeePayslipsData = {
      */
     page_size?: number;
   };
-  url: '/api/eor/v1/employee/payslips';
+  url: '/v1/employee/payslips';
 };
 
 export type GetV1EmployeePayslipsErrors = {
