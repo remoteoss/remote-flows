@@ -24,7 +24,6 @@
 - regenerate openapi spec and fix imports (#1019) [#1019](https://github.com/remoteoss/remote-flows/pull/1019)
 - add openapi-ts:local script for local API development (#1025) [#1025](https://github.com/remoteoss/remote-flows/pull/1025)
 
-
 ## 1.33.1
 
 ### Patch Changes
