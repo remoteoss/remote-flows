@@ -1954,10 +1954,7 @@ export const getV1CountriesCountryCodeHolidaysYear = <
     GetV1CountriesCountryCodeHolidaysYearResponses,
     GetV1CountriesCountryCodeHolidaysYearErrors,
     ThrowOnError
-  >({
-    url: '/v1/countries/{country_code}/holidays/{year}',
-    ...options,
-  });
+  >({ url: '/v1/countries/{country_code}/holidays/{year}', ...options });
 
 /**
  * List custom field value for an employment
@@ -1980,10 +1977,7 @@ export const getV1EmploymentsEmploymentIdCustomFields = <
     GetV1EmploymentsEmploymentIdCustomFieldsResponses,
     GetV1EmploymentsEmploymentIdCustomFieldsErrors,
     ThrowOnError
-  >({
-    url: '/v1/employments/{employment_id}/custom-fields',
-    ...options,
-  });
+  >({ url: '/v1/employments/{employment_id}/custom-fields', ...options });
 
 /**
  * Show timesheet
@@ -2240,10 +2234,7 @@ export const getV1CompaniesCompanyIdWebhookCallbacks = <
     GetV1CompaniesCompanyIdWebhookCallbacksResponses,
     GetV1CompaniesCompanyIdWebhookCallbacksErrors,
     ThrowOnError
-  >({
-    url: '/v1/companies/{company_id}/webhook-callbacks',
-    ...options,
-  });
+  >({ url: '/v1/companies/{company_id}/webhook-callbacks', ...options });
 
 /**
  * Download a billing document PDF
@@ -2266,10 +2257,7 @@ export const getV1BillingDocumentsBillingDocumentIdPdf = <
     GetV1BillingDocumentsBillingDocumentIdPdfResponses,
     GetV1BillingDocumentsBillingDocumentIdPdfErrors,
     ThrowOnError
-  >({
-    url: '/v1/billing-documents/{billing_document_id}/pdf',
-    ...options,
-  });
+  >({ url: '/v1/billing-documents/{billing_document_id}/pdf', ...options });
 
 /**
  * Delete a Webhook Callback
@@ -2792,10 +2780,7 @@ export const getV1EmploymentsEmploymentIdOnboardingSteps = <
     GetV1EmploymentsEmploymentIdOnboardingStepsResponses,
     GetV1EmploymentsEmploymentIdOnboardingStepsErrors,
     ThrowOnError
-  >({
-    url: '/v1/employments/{employment_id}/onboarding-steps',
-    ...options,
-  });
+  >({ url: '/v1/employments/{employment_id}/onboarding-steps', ...options });
 
 /**
  * Automatable Contract Amendment
@@ -3317,10 +3302,7 @@ export const getV1EmploymentsEmploymentIdContractDocuments = <
     GetV1EmploymentsEmploymentIdContractDocumentsResponses,
     GetV1EmploymentsEmploymentIdContractDocumentsErrors,
     ThrowOnError
-  >({
-    url: '/v1/employments/{employment_id}/contract-documents',
-    ...options,
-  });
+  >({ url: '/v1/employments/{employment_id}/contract-documents', ...options });
 
 /**
  * Show contractor contract details
@@ -3794,10 +3776,7 @@ export const getV1EmploymentsEmploymentIdBenefitOffers = <
     GetV1EmploymentsEmploymentIdBenefitOffersResponses,
     GetV1EmploymentsEmploymentIdBenefitOffersErrors,
     ThrowOnError
-  >({
-    url: '/v1/employments/{employment_id}/benefit-offers',
-    ...options,
-  });
+  >({ url: '/v1/employments/{employment_id}/benefit-offers', ...options });
 
 /**
  * Upserts employment benefit offers
@@ -5008,10 +4987,7 @@ export const getV1ExpensesExpenseIdReceiptsReceiptId = <
     GetV1ExpensesExpenseIdReceiptsReceiptIdResponses,
     GetV1ExpensesExpenseIdReceiptsReceiptIdErrors,
     ThrowOnError
-  >({
-    url: '/v1/expenses/{expense_id}/receipts/{receipt_id}',
-    ...options,
-  });
+  >({ url: '/v1/expenses/{expense_id}/receipts/{receipt_id}', ...options });
 
 /**
  * List groups via SCIM v2.0
@@ -5355,10 +5331,7 @@ export const postV1IdentityVerificationEmploymentIdVerify = <
     PostV1IdentityVerificationEmploymentIdVerifyResponses,
     PostV1IdentityVerificationEmploymentIdVerifyErrors,
     ThrowOnError
-  >({
-    url: '/v1/identity-verification/{employment_id}/verify',
-    ...options,
-  });
+  >({ url: '/v1/identity-verification/{employment_id}/verify', ...options });
 
 /**
  * Lists custom fields definitions
@@ -5905,10 +5878,7 @@ export const getV1CompaniesCompanyIdComplianceProfile = <
     GetV1CompaniesCompanyIdComplianceProfileResponses,
     GetV1CompaniesCompanyIdComplianceProfileErrors,
     ThrowOnError
-  >({
-    url: '/v1/companies/{company_id}/compliance-profile',
-    ...options,
-  });
+  >({ url: '/v1/companies/{company_id}/compliance-profile', ...options });
 
 /**
  * Show payslip
@@ -5960,10 +5930,7 @@ export const postV1TimeoffTimeoffIdCancelRequestApprove = <
     PostV1TimeoffTimeoffIdCancelRequestApproveResponses,
     PostV1TimeoffTimeoffIdCancelRequestApproveErrors,
     ThrowOnError
-  >({
-    url: '/v1/timeoff/{timeoff_id}/cancel-request/approve',
-    ...options,
-  });
+  >({ url: '/v1/timeoff/{timeoff_id}/cancel-request/approve', ...options });
 
 /**
  * List Webhook Events
@@ -6735,10 +6702,7 @@ export const getV1ContractorsSchemasEligibilityQuestionnaire = <
     GetV1ContractorsSchemasEligibilityQuestionnaireResponses,
     GetV1ContractorsSchemasEligibilityQuestionnaireErrors,
     ThrowOnError
-  >({
-    url: '/v1/contractors/schemas/eligibility-questionnaire',
-    ...options,
-  });
+  >({ url: '/v1/contractors/schemas/eligibility-questionnaire', ...options });
 
 /**
  * Token
@@ -6956,10 +6920,7 @@ export const postV1IdentityVerificationEmploymentIdDecline = <
     PostV1IdentityVerificationEmploymentIdDeclineResponses,
     PostV1IdentityVerificationEmploymentIdDeclineErrors,
     ThrowOnError
-  >({
-    url: '/v1/identity-verification/{employment_id}/decline',
-    ...options,
-  });
+  >({ url: '/v1/identity-verification/{employment_id}/decline', ...options });
 
 /**
  * List expense categories for the authenticated employee
@@ -7325,10 +7286,7 @@ export const getV1PayrollRunsPayrollRunIdEmployeeDetails = <
     GetV1PayrollRunsPayrollRunIdEmployeeDetailsResponses,
     GetV1PayrollRunsPayrollRunIdEmployeeDetailsErrors,
     ThrowOnError
-  >({
-    url: '/v1/payroll-runs/{payroll_run_id}/employee-details',
-    ...options,
-  });
+  >({ url: '/v1/payroll-runs/{payroll_run_id}/employee-details', ...options });
 
 /**
  * Show employment
