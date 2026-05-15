@@ -46,7 +46,7 @@ export async function fillOnboardingStep1Form(
 ) {
   if (options.country_id) {
     await page.locator('[data-field="country"]').click();
-    await page.getByRole('option', { name: 'France' }).click();
+    await page.getByRole('option', { name: options.country_id }).click();
   }
 
   await page.click('.submit-button');
@@ -141,7 +141,7 @@ export async function fillOnboardingStep2Form(
   await page.click('.submit-button');
 }
 
-interface fillOnboardingStep3FormOptions {
+interface fillOnboardingStep3FranceFormOptions {
   contract_duration_type?: boolean;
   work_schedule?: string;
   work_hours_per_week?: string;
@@ -160,9 +160,9 @@ interface fillOnboardingStep3FormOptions {
   non_compete_clause_apply?: string;
 }
 
-export async function fillOnboardingStep3Form(
+export async function fillOnboardingStep3FranceForm(
   page: Page,
-  options: Partial<fillOnboardingStep3FormOptions>,
+  options: Partial<fillOnboardingStep3FranceFormOptions>,
 ) {
   if (options.contract_duration_type) {
     await page
@@ -283,14 +283,279 @@ export async function fillOnboardingStep3Form(
   await page.click('.submit-button');
 }
 
-interface fillOnboardingStep4FormOptions {
+interface fillOnboardingStep3SpainFormOptions {
+  contract_duration_type?: string;
+  work_schedule?: string;
+  probation_length?: string;
+  probation_length_ack?: boolean;
+  available_pto_type?: string;
+  available_pto?: string;
+  role_description?: string;
+  experience_level?: string;
+  work_address_is_home_address?: string;
+  annual_gross_salary?: string;
+  annual_bonus_ack?: boolean;
+  salary_installments?: boolean;
+  overtime_compensation_method?: string;
+  allowances?: string;
+  has_signing_bonus?: string;
+  has_bonus?: string;
+  has_commissions?: string;
+  equity_compensation?: string;
+  non_compete_clause_apply?: string;
+  has_social_security_number?: string;
+  work_equipment?: string;
+  compensation_expenses_ack?: boolean;
+}
+
+export async function fillOnboardingStep3SpainForm(
+  page: Page,
+  options: Partial<fillOnboardingStep3SpainFormOptions>,
+) {
+  if (options.contract_duration_type) {
+    await page
+      .locator(
+        `[data-field="contract_duration_type"] button[role="radio"][value="${options.contract_duration_type}"]`,
+      )
+      .click();
+  }
+
+  if (options.work_schedule) {
+    await page
+      .locator(
+        `[data-field="work_schedule"] button[role="radio"][value="${options.work_schedule}"]`,
+      )
+      .click();
+  }
+
+  if (options.probation_length) {
+    await page
+      .locator('[data-field="probation_length"] input')
+      .fill(options.probation_length);
+  }
+
+  if (options.probation_length_ack) {
+    await page
+      .locator(`[data-field="probation_length_ack"] button[role="checkbox"]`)
+      .click();
+  }
+
+  if (options.available_pto_type) {
+    await page
+      .locator(
+        `[data-field="available_pto_type"] button[role="radio"][value="${options.available_pto_type}"]`,
+      )
+      .click();
+  }
+
+  if (options.available_pto) {
+    await page
+      .locator('[data-field="available_pto"] input')
+      .fill(options.available_pto);
+  }
+
+  if (options.role_description) {
+    await page
+      .locator('[data-field="role_description"] textarea')
+      .fill(options.role_description);
+  }
+
+  if (options.experience_level) {
+    await page
+      .locator(
+        `[data-field="experience_level"] button[role="radio"][value^="${options.experience_level}"]`,
+      )
+      .click();
+  }
+
+  if (options.work_address_is_home_address) {
+    await page
+      .locator(
+        `[data-field="work_address_is_home_address"] button[role="radio"][value="${options.work_address_is_home_address}"]`,
+      )
+      .click();
+  }
+
+  if (options.annual_gross_salary) {
+    await page
+      .locator('[data-field="annual_gross_salary"] input')
+      .fill(options.annual_gross_salary);
+  }
+
+  if (options.overtime_compensation_method) {
+    await page
+      .locator(
+        `[data-field="overtime_compensation_method"] button[role="radio"][value="${options.overtime_compensation_method}"]`,
+      )
+      .click();
+  }
+
+  if (options.annual_bonus_ack) {
+    await page
+      .locator(`[data-field="annual_bonus_ack"] button[role="checkbox"]`)
+      .click();
+  }
+
+  if (options.salary_installments) {
+    await page
+      .locator(`[data-field="is_salary_prorated"] button[role="combobox"]`)
+      .click();
+    await page.getByRole('option').first().click();
+  }
+
+  if (options.allowances !== undefined) {
+    await page
+      .locator('[data-field="allowances"] textarea')
+      .fill(options.allowances);
+  }
+
+  if (options.has_signing_bonus) {
+    await page
+      .locator(
+        `[data-field="has_signing_bonus"] button[role="radio"][value="${options.has_signing_bonus}"]`,
+      )
+      .click();
+  }
+
+  if (options.has_bonus) {
+    await page
+      .locator(
+        `[data-field="has_bonus"] button[role="radio"][value="${options.has_bonus}"]`,
+      )
+      .click();
+  }
+
+  if (options.has_commissions) {
+    await page
+      .locator(
+        `[data-field="has_commissions"] button[role="radio"][value="${options.has_commissions}"]`,
+      )
+      .click();
+  }
+
+  if (options.equity_compensation) {
+    await page
+      .locator(
+        `[data-field="equity_compensation.offer_equity_compensation"] button[role="radio"][value="${options.equity_compensation}"]`,
+      )
+      .click();
+  }
+
+  if (options.non_compete_clause_apply) {
+    await page
+      .locator(
+        `[data-field="non_compete_clause_apply"] button[role="radio"][value="${options.non_compete_clause_apply}"]`,
+      )
+      .click();
+  }
+
+  if (options.has_social_security_number) {
+    await page
+      .locator(
+        `[data-field="has_social_security_number"] button[role="radio"][value="${options.has_social_security_number}"]`,
+      )
+      .click();
+  }
+
+  if (options.work_equipment) {
+    await page
+      .locator('[data-field="work_equipment"] input')
+      .fill(options.work_equipment);
+  }
+
+  if (options.compensation_expenses_ack) {
+    await page
+      .locator(
+        `[data-field="compensation_expenses_ack"] button[role="checkbox"]`,
+      )
+      .click();
+  }
+
+  await page.click('.submit-button');
+}
+
+interface fillOnboardingStep4SpainFormOptions {
+  life_insurance_type?: string;
+  life_insurance?: string;
+  health_insurance_coverage?: string;
+  health_insurance?: string;
+  retirement?: string;
+  mental_health?: string;
+  wellness?: string;
+  business_travel?: string;
+}
+
+export async function fillOnboardingStep4SpainForm(
+  page: Page,
+  options: Partial<fillOnboardingStep4SpainFormOptions>,
+) {
+  if (options.life_insurance_type) {
+    await page
+      .locator('[data-field="f90cb339-172d-4d24-9ee6-da2e2ccc954e.filter"]')
+      .getByRole('radio', { name: options.life_insurance_type })
+      .click();
+  }
+
+  if (options.life_insurance) {
+    await page
+      .locator('[data-field="f90cb339-172d-4d24-9ee6-da2e2ccc954e.value"]')
+      .getByRole('radio', { name: options.life_insurance })
+      .click();
+  }
+
+  if (options.health_insurance_coverage) {
+    await page
+      .locator('[data-field="88081a16-882a-42b8-8cd5-6abb30585e4e.filter"]')
+      .getByRole('radio', { name: options.health_insurance_coverage })
+      .click();
+  }
+
+  if (options.health_insurance) {
+    await page
+      .locator('[data-field="88081a16-882a-42b8-8cd5-6abb30585e4e.value"]')
+      .getByRole('radio', { name: options.health_insurance })
+      .click();
+  }
+
+  if (options.retirement) {
+    await page
+      .locator('[data-field="57b4108b-74d4-4830-ad11-68a46679f88c.value"]')
+      .getByRole('radio', { name: options.retirement })
+      .click();
+  }
+
+  if (options.mental_health) {
+    await page
+      .locator('[data-field="4a2d0edb-ebd9-49af-ad79-7390deb7ee71.value"]')
+      .getByRole('radio', { name: options.mental_health })
+      .click();
+  }
+
+  if (options.wellness) {
+    await page
+      .locator('[data-field="5ffc8e84-1304-4abb-91c2-4d43b1fece5d.value"]')
+      .getByRole('radio', { name: options.wellness })
+      .click();
+  }
+
+  if (options.business_travel) {
+    await page
+      .locator('[data-field="91dd5796-5ed7-449e-9a75-15c07c288970.value"]')
+      .getByRole('radio', { name: options.business_travel })
+      .click();
+  }
+
+  await page.click('.submit-button');
+}
+
+interface fillOnboardingStep4FranceFormOptions {
   mental_health?: string;
   business_travel_insurance?: string;
 }
 
-export async function fillOnboardingStep4Form(
+export async function fillOnboardingStep4FranceForm(
   page: Page,
-  options: Partial<fillOnboardingStep4FormOptions>,
+  options: Partial<fillOnboardingStep4FranceFormOptions>,
 ) {
   if (options.mental_health) {
     await page.getByRole('radio', { name: options.mental_health }).click();
