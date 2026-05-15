@@ -60,11 +60,11 @@ export function ContractReviewButton({
       className='max-h-[90vh] flex flex-col w-full'
       trigger={
         <CustomButton
+          {...props}
           type={reviewCompleted ? 'submit' : 'button'}
           form={formId}
           onClick={handleOpen}
           disabled={disabled}
-          {...props}
         >
           {render({ reviewCompleted })}
         </CustomButton>
