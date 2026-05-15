@@ -4,8 +4,13 @@
 
 ### Patch Changes
 
+#### Fixes
+
 - handle empty contractor subscriptions (#1016) [#1016](https://github.com/remoteoss/remote-flows/pull/1016)
-- regenerate openapi spec and fix imports (#1019) [#1019](https://github.com/remoteoss/remote-flows/pull/1019)
+- fix disabled button state in contract-preview (#1022) [#1022](https://github.com/remoteoss/remote-flows/pull/1022)
+
+#### Chores
+
 - update dependency oxlint to v1.63.0 (#999) [#999](https://github.com/remoteoss/remote-flows/pull/999)
 - update dependency filesize to v11.0.17 (#997) [#997](https://github.com/remoteoss/remote-flows/pull/997)
 - update dependency jsdom to v29.1.1 (#989) [#989](https://github.com/remoteoss/remote-flows/pull/989)
@@ -16,8 +21,9 @@
 - update dependency msw to v2.14.5 (#985) [#985](https://github.com/remoteoss/remote-flows/pull/985)
 - update dependency axios to v1.16.0 (#1027) [#1027](https://github.com/remoteoss/remote-flows/pull/1027)
 - update amondnet/vercel-action action to v42.3.0 (#1026) [#1026](https://github.com/remoteoss/remote-flows/pull/1026)
-- fix disabled button state (#1022) [#1022](https://github.com/remoteoss/remote-flows/pull/1022)
-- Add openapi-ts:local script for local API development (#1025) [#1025](https://github.com/remoteoss/remote-flows/pull/1025)
+- regenerate openapi spec and fix imports (#1019) [#1019](https://github.com/remoteoss/remote-flows/pull/1019)
+- add openapi-ts:local script for local API development (#1025) [#1025](https://github.com/remoteoss/remote-flows/pull/1025)
+
 
 ## 1.33.1
 
