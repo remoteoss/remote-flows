@@ -471,11 +471,12 @@ export async function fillOnboardingStep3SpainForm(
   }
 
   if (options.overtime_compensation_method) {
-    await page
-      .locator(
-        `[data-field="overtime_compensation_method"] button[role="radio"][value="${options.overtime_compensation_method}"]`,
-      )
-      .click();
+    const locator = page.locator(
+      `[data-field="overtime_compensation_method"] button[role="radio"][value="${options.overtime_compensation_method}"]`,
+    );
+
+    await locator.scrollIntoViewIfNeeded();
+    await locator.click();
   }
 
   await page.click('.submit-button');
