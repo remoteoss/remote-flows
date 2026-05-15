@@ -6,8 +6,6 @@ import {
   fillOnboardingStep2Form,
   fillOnboardingStep3SpainForm,
   fillOnboardingStep4SpainForm,
-  fillOnboardingStep3FranceForm,
-  fillOnboardingStep4FranceForm,
 } from './helpers/onboarding';
 
 test.describe('Onboard basic employee', () => {
