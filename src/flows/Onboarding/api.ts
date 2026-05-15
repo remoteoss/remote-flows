@@ -14,6 +14,7 @@ import {
   getV1EmploymentsEmploymentIdBenefitOffers,
   getV1EmploymentsEmploymentIdBenefitOffersSchema,
   getV1EmploymentsEmploymentIdEngagementAgreementDetails,
+  getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsRequirements,
   patchV1EmploymentsEmploymentId2,
   postV1CurrencyConverterEffective,
   postV1CurrencyConverterRaw,
@@ -569,17 +570,19 @@ export const useGetPreOnboardingRequirements = (
   employmentId: string,
   options?: { queryOptions?: { enabled?: boolean } },
 ) => {
+  const { client } = useClient();
+
   return useQuery({
     queryKey: ['pre-onboarding-requirements', employmentId],
-    queryFn: async () => {
-      const { mockPreOnboardingRequirements } =
-        await import('@/src/common/api/fixtures/pre-onboarding');
-      // Simulated delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      return mockPreOnboardingRequirements;
-    },
+    queryFn: () =>
+      getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsRequirements({
+        client: client as Client,
+        path: {
+          employment_id: employmentId,
+        },
+      }),
     enabled: options?.queryOptions?.enabled ?? true,
-    select: (data) => data.data,
+    select: (response) => response.data?.data,
   });
 };
 
