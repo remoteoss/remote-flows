@@ -1,13 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { parseJSFToValidate } from './utils';
 
-/**
- * Tests for parseJSFToValidate - the main entry point for form value parsing.
- * This function calls parseSubmitValues -> parseFormValuesToAPI internally.
- *
- * The key fix being tested: Fields with falsy-but-valid values (0, false, '')
- * should be preserved during parsing, while null/undefined should be filtered out.
- */
 describe('parseJSFToValidate', () => {
   describe('falsy values', () => {
     it('should preserve zero values', async () => {
@@ -25,7 +18,6 @@ describe('parseJSFToValidate', () => {
         isPartialValidation: false,
       });
 
-      // This is the core fix: 0 should not be filtered out
       expect(result).toHaveProperty('probation_length', 0);
       expect(result).toHaveProperty('salary', 5000);
     });
@@ -66,7 +58,6 @@ describe('parseJSFToValidate', () => {
         isPartialValidation: false,
       });
 
-      // removeEmptyValues filters out empty strings
       expect(result).not.toHaveProperty('optional_note');
       expect(result).toHaveProperty('name', 'test');
     });
@@ -86,7 +77,6 @@ describe('parseJSFToValidate', () => {
         isPartialValidation: false,
       });
 
-      // Empty string should be omitted, NOT converted to 0
       expect(result).not.toHaveProperty('optional_years');
       expect(result).toHaveProperty('required_salary', 50000);
     });
@@ -109,7 +99,6 @@ describe('parseJSFToValidate', () => {
       });
 
       expect(result).toHaveProperty('name', 'test');
-      // removeEmptyValues filters out null and undefined
       expect(result).not.toHaveProperty('nullable_field');
       expect(result).not.toHaveProperty('undefined_field');
     });
