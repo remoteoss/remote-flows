@@ -5571,8 +5571,8 @@ export type ResourceErrorResponse = {
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_required_missing'
       | 'parameter_one_of_required_missing'
+      | 'parameter_required_missing'
       | 'parameter_too_many'
       | 'parameter_unknown'
       | 'parameter_map_empty'
@@ -18709,7 +18709,7 @@ export type PostAuthOauth2Token2Data = {
   body?: OAuth2TokenParams;
   path?: never;
   query?: never;
-  url: '/api/eor/auth/oauth2/token';
+  url: '/auth/oauth2/token';
 };
 
 export type PostAuthOauth2Token2Errors = {
@@ -19922,7 +19922,12 @@ export type PutV2EmploymentsEmploymentIdBasicInformationData = {
      */
     employment_id: string;
   };
-  query?: never;
+  query?: {
+    /**
+     * Version of the employment_basic_information form schema
+     */
+    employment_basic_information_json_schema_version?: number | 'latest';
+  };
   url: '/v2/employments/{employment_id}/basic_information';
 };
 
@@ -22778,7 +22783,7 @@ export type PostAuthOauth2TokenData = {
   body?: OAuth2TokenParams;
   path?: never;
   query?: never;
-  url: '/api/eor/oauth2/token';
+  url: '/oauth2/token';
 };
 
 export type PostAuthOauth2TokenErrors = {
@@ -22919,7 +22924,12 @@ export type PutV2EmploymentsEmploymentIdPersonalDetailsData = {
      */
     employment_id: string;
   };
-  query?: never;
+  query?: {
+    /**
+     * Version of the personal_details form schema
+     */
+    personal_details_json_schema_version?: number | 'latest';
+  };
   url: '/v2/employments/{employment_id}/personal_details';
 };
 
@@ -24444,7 +24454,12 @@ export type PutV2EmploymentsEmploymentIdPricingPlanDetailsData = {
      */
     employment_id: string;
   };
-  query?: never;
+  query?: {
+    /**
+     * Version of the pricing_plan_details form schema
+     */
+    pricing_plan_details_json_schema_version?: number | 'latest';
+  };
   url: '/v2/employments/{employment_id}/pricing_plan_details';
 };
 

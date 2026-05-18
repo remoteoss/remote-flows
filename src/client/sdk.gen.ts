@@ -4499,7 +4499,7 @@ export const postAuthOauth2Token2 = <ThrowOnError extends boolean = false>(
     PostAuthOauth2Token2Errors,
     ThrowOnError
   >({
-    url: '/api/eor/auth/oauth2/token',
+    url: '/auth/oauth2/token',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -6717,7 +6717,7 @@ export const postAuthOauth2Token = <ThrowOnError extends boolean = false>(
     PostAuthOauth2TokenErrors,
     ThrowOnError
   >({
-    url: '/api/eor/oauth2/token',
+    url: '/oauth2/token',
     ...options,
     headers: {
       'Content-Type': 'application/json',
