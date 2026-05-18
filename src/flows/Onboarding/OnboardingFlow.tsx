@@ -12,6 +12,7 @@ import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCount
 import { ReviewStep } from '@/src/flows/Onboarding/components/ReviewStep';
 import { SaveDraftButton } from '@/src/flows/Onboarding/components/SaveDraftButton';
 import { EngagementAgreementDetailsStep } from '@/src/flows/Onboarding/components/EngagementAgreementDetailsStep';
+import { PreOnboardingRequirements } from '@/src/flows/Onboarding/components/PreOnboardingRequirements';
 
 export const OnboardingFlow = ({
   employmentId,
@@ -66,6 +67,7 @@ export const OnboardingFlow = ({
           OnboardingInvite: OnboardingInvite,
           SelectCountryStep: SelectCountryStep,
           ReviewStep: ReviewStep,
+          PreOnboardingRequirements: PreOnboardingRequirements,
         },
       })}
     </OnboardingContext.Provider>

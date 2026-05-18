@@ -227,6 +227,7 @@ export const ReviewOnboardingStep = ({
     OnboardingInvite,
     BackButton,
     ReviewStep: ReviewStepCreditRisk,
+    PreOnboardingRequirements,
   } = components;
 
   return (
@@ -276,6 +277,114 @@ export const ReviewOnboardingStep = ({
       >
         Edit Benefits
       </button>
+
+      <h2 className='title'>Pre-Onboarding Requirements</h2>
+      {PreOnboardingRequirements && (
+        <PreOnboardingRequirements
+          render={({
+            requirements,
+            isLoadingRequirements,
+            documentPreview,
+            onCreateDocument,
+            onSignDocument,
+            isCreatingDocument,
+            isSigning,
+          }) => (
+            <div
+              style={{
+                padding: '20px',
+                background: '#f5f5f5',
+                borderRadius: '8px',
+                marginBottom: '20px',
+              }}
+            >
+              {isLoadingRequirements ? (
+                <p>Loading requirements...</p>
+              ) : (
+                <>
+                  <h3>Requirements List</h3>
+                  {requirements?.map((req) => (
+                    <div
+                      key={req.slug}
+                      style={{
+                        marginBottom: '10px',
+                        padding: '10px',
+                        background: 'white',
+                        borderRadius: '4px',
+                      }}
+                    >
+                      <strong>{req.name}</strong>
+                      <p>{req.description}</p>
+                      <p>slug: {req.slug}</p>
+                      {req.needs_constraints_ack && (
+                        <p style={{ color: 'orange', fontSize: '0.9em' }}>
+                          Requires constraints acknowledgment
+                        </p>
+                      )}
+                      {!documentPreview && (
+                        <button
+                          onClick={() =>
+                            onCreateDocument(
+                              req.slug,
+                              req.needs_constraints_ack
+                                ? new Date().toISOString()
+                                : undefined,
+                            )
+                          }
+                          disabled={isCreatingDocument}
+                          style={{
+                            marginTop: '10px',
+                            padding: '8px 16px',
+                            cursor: isCreatingDocument
+                              ? 'not-allowed'
+                              : 'pointer',
+                          }}
+                        >
+                          {isCreatingDocument
+                            ? 'Creating...'
+                            : 'Create Document'}
+                        </button>
+                      )}
+                    </div>
+                  ))}
+
+                  {documentPreview && (
+                    <div style={{ marginTop: '20px' }}>
+                      <h4>Document Preview</h4>
+                      <p>Document ID: {documentPreview.id}</p>
+                      <p>Status: {documentPreview.status}</p>
+                      {documentPreview.pdf_url && (
+                        <p>
+                          PDF URL:{' '}
+                          <a
+                            href={documentPreview.pdf_url}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                          >
+                            {documentPreview.pdf_url}
+                          </a>
+                        </p>
+                      )}
+                      <button
+                        onClick={() => onSignDocument('John Doe Signature')}
+                        disabled={isSigning}
+                        style={{
+                          marginTop: '10px',
+                          padding: '10px 20px',
+                          cursor: isSigning ? 'not-allowed' : 'pointer',
+                        }}
+                      >
+                        {isSigning ? 'Signing...' : 'Sign Document'}
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+        />
+      )}
+
       <h2 className='title'>Review</h2>
       <ReviewStepCreditRisk
         render={({

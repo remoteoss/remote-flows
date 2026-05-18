@@ -15,6 +15,7 @@ import { SelectCountryStep } from '@/src/flows/Onboarding/components/SelectCount
 import { ReviewStep } from '@/src/flows/Onboarding/components/ReviewStep';
 import { SaveDraftButton } from '@/src/flows/Onboarding/components/SaveDraftButton';
 import { EngagementAgreementDetailsStep } from '@/src/flows/Onboarding/components/EngagementAgreementDetailsStep';
+import { PreOnboardingRequirements } from '@/src/flows/Onboarding/components/PreOnboardingRequirements';
 
 export type OnboardingRenderProps = {
   /**
@@ -38,6 +39,7 @@ export type OnboardingRenderProps = {
    * @see {@link SelectCountryStep}
    * @see {@link ReviewStep}
    * @see {@link SaveDraftButton}
+   * @see {@link PreOnboardingRequirements}
    */
   components: {
     SubmitButton: typeof OnboardingSubmit;
@@ -50,6 +52,7 @@ export type OnboardingRenderProps = {
     SelectCountryStep: typeof SelectCountryStep;
     ReviewStep: typeof ReviewStep;
     SaveDraftButton: typeof SaveDraftButton;
+    PreOnboardingRequirements: typeof PreOnboardingRequirements;
   };
 };
 
@@ -225,3 +228,26 @@ export type CreditRiskState =
   | 'invite_successful'
   | 'referred'
   | null;
+
+// TODO: Provisional, we'll modify later
+export type PreOnboardingRequirement = {
+  id: string;
+  title: string;
+  description: string;
+  status: 'pending' | 'completed';
+  required: boolean;
+};
+
+export type PreOnboardingDocument = {
+  id: string;
+  employment_id: string;
+  document_type: string;
+  status: 'draft' | 'pending_signature' | 'signed';
+  pdf_url?: string;
+  created_at: string;
+};
+
+export type SignDocumentPayload = {
+  signature: string;
+  signed_at?: string;
+};

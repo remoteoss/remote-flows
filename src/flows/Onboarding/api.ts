@@ -7,6 +7,7 @@ import {
   EmploymentCreateParams,
   EmploymentEngagementAgreementDetailsParams,
   EmploymentFullParams,
+  FindOrCreatePreOnboardingDocumentParams,
   getV1CompaniesCompanyId,
   getV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatus,
   getV1CountriesCountryCodeEngagementAgreementDetails,
@@ -14,6 +15,7 @@ import {
   getV1EmploymentsEmploymentIdBenefitOffers,
   getV1EmploymentsEmploymentIdBenefitOffersSchema,
   getV1EmploymentsEmploymentIdEngagementAgreementDetails,
+  getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsRequirements,
   patchV1EmploymentsEmploymentId2,
   postV1CurrencyConverterEffective,
   postV1CurrencyConverterRaw,
@@ -22,6 +24,7 @@ import {
   postV1EmploymentsEmploymentIdEngagementAgreementDetails,
   postV1EmploymentsEmploymentIdInvite,
   PostV1EmploymentsEmploymentIdInviteData,
+  postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments,
   postV1RiskReserve,
   putV1EmploymentsEmploymentIdBenefitOffers,
   UnifiedEmploymentUpsertBenefitOffersRequest,
@@ -558,6 +561,97 @@ export const useEngagementAgreementDetailsSchema = (
       return createHeadlessForm(jsfSchema, fieldValues, {
         jsfModify: options?.jsfModify?.engagement_agreement_details,
       });
+    },
+  });
+};
+
+/**
+ * Get pre-onboarding requirements for an employment
+ */
+export const useGetPreOnboardingRequirements = (
+  employmentId: string,
+  options?: { queryOptions?: { enabled?: boolean } },
+) => {
+  const { client } = useClient();
+
+  return useQuery({
+    queryKey: ['pre-onboarding-requirements', employmentId],
+    queryFn: () =>
+      getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsRequirements({
+        client: client as Client,
+        path: {
+          employment_id: employmentId,
+        },
+      }),
+    enabled: options?.queryOptions?.enabled ?? true,
+    select: (response) => response.data?.data,
+  });
+};
+
+/**
+ * Create a pre-onboarding document
+ */
+export const useCreatePreOnboardingDocument = () => {
+  const { client } = useClient();
+
+  return useMutation({
+    mutationFn: ({
+      employmentId,
+      body,
+    }: {
+      employmentId: string;
+      body: FindOrCreatePreOnboardingDocumentParams;
+    }) => {
+      return postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body,
+        path: {
+          employment_id: employmentId,
+        },
+      });
+    },
+  });
+};
+
+/**
+ * Get pre-onboarding document preview
+ */
+export const useGetPreOnboardingDocument = (
+  documentId: string | undefined,
+  options?: { queryOptions?: { enabled?: boolean } },
+) => {
+  return useQuery({
+    queryKey: ['pre-onboarding-document', documentId],
+    queryFn: async () => {
+      const { mockCreatedDocument } =
+        await import('@/src/common/api/fixtures/pre-onboarding');
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      return mockCreatedDocument;
+    },
+    enabled: options?.queryOptions?.enabled && !!documentId,
+    select: (data) => data.data,
+  });
+};
+
+/**
+ * Sign a pre-onboarding document
+ */
+export const useSignPreOnboardingDocument = () => {
+  return useMutation({
+    mutationFn: async ({
+      documentId: _documentId,
+      signature: _signature,
+    }: {
+      documentId: string;
+      signature: string;
+    }) => {
+      const { mockSignedDocument } =
+        await import('@/src/common/api/fixtures/pre-onboarding');
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return mockSignedDocument;
     },
   });
 };
