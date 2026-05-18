@@ -105,7 +105,9 @@ export async function fillOnboardingStep2Form(
       .locator('[data-field="tax_servicing_countries"]')
       .getByRole('combobox')
       .click();
-    const countryOption = page.getByRole('option', { name: options.country_id });
+    const countryOption = page.getByRole('option', {
+      name: options.country_id,
+    });
     await countryOption.waitFor({ state: 'visible' });
     await countryOption.click();
   }
@@ -115,7 +117,9 @@ export async function fillOnboardingStep2Form(
       .locator('[data-field="tax_job_category"]')
       .getByRole('combobox')
       .click();
-    const categoryOption = page.getByRole('option', { name: options.tax_job_category });
+    const categoryOption = page.getByRole('option', {
+      name: options.tax_job_category,
+    });
     await categoryOption.waitFor({ state: 'visible' });
     await categoryOption.click();
   }
