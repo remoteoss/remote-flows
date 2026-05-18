@@ -315,6 +315,7 @@ export const ReviewOnboardingStep = ({
                     >
                       <strong>{req.name}</strong>
                       <p>{req.description}</p>
+                      <p>slug: {req.slug}</p>
                       {req.needs_constraints_ack && (
                         <p style={{ color: 'orange', fontSize: '0.9em' }}>
                           Requires constraints acknowledgment
