@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { fillEstimationForm, setupVercelBypass } from './helpers';
+import { setupVercelBypass } from './helpers/general';
+import { fillEstimationForm } from './helpers/estimation';
 
 test.describe('edit estimation', () => {
   test.beforeEach(async ({ page }) => {
