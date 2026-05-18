@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 1.34.0
+
+### Minor Changes
+
+- if initiated move to review step (#1003) [#1003](https://github.com/remoteoss/remote-flows/pull/1003)
+- set force value field as many times json schema wants (#1032) [#1032](https://github.com/remoteoss/remote-flows/pull/1032)
+
 ## 1.33.2
 
 ### Patch Changes
