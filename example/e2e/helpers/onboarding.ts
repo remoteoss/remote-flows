@@ -344,12 +344,17 @@ export async function fillOnboardingStep3SpainForm(
   }
 
   if (options.overtime_compensation_method) {
-    const locator = page.locator(
-      `[data-field="overtime_compensation_method"] button[role="radio"][value="${options.overtime_compensation_method}"]`,
+    const container = page.locator(
+      '[data-field="overtime_compensation_method"]',
     );
-
-    await locator.scrollIntoViewIfNeeded();
-    await locator.click();
+    const isVisible = await container.isVisible();
+    if (isVisible) {
+      const locator = container.locator(
+        `button[role="radio"][value="${options.overtime_compensation_method}"]`,
+      );
+      await locator.scrollIntoViewIfNeeded();
+      await locator.click();
+    }
   }
 
   if (options.probation_length) {
