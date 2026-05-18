@@ -105,7 +105,9 @@ export async function fillOnboardingStep2Form(
       .locator('[data-field="tax_servicing_countries"]')
       .getByRole('combobox')
       .click();
-    await page.getByRole('option', { name: options.country_id }).click();
+    const countryOption = page.getByRole('option', { name: options.country_id });
+    await countryOption.waitFor({ state: 'visible' });
+    await countryOption.click();
   }
 
   if (options.tax_job_category) {
@@ -113,7 +115,9 @@ export async function fillOnboardingStep2Form(
       .locator('[data-field="tax_job_category"]')
       .getByRole('combobox')
       .click();
-    await page.getByRole('option', { name: options.tax_job_category }).click();
+    const categoryOption = page.getByRole('option', { name: options.tax_job_category });
+    await categoryOption.waitFor({ state: 'visible' });
+    await categoryOption.click();
   }
 
   if (options.provisional_start_date) {
@@ -335,6 +339,15 @@ export async function fillOnboardingStep3SpainForm(
       .click();
   }
 
+  if (options.overtime_compensation_method) {
+    const locator = page.locator(
+      `[data-field="overtime_compensation_method"] button[role="radio"][value="${options.overtime_compensation_method}"]`,
+    );
+
+    await locator.scrollIntoViewIfNeeded();
+    await locator.click();
+  }
+
   if (options.probation_length) {
     await page
       .locator('[data-field="probation_length"] input')
@@ -468,15 +481,6 @@ export async function fillOnboardingStep3SpainForm(
         `[data-field="compensation_expenses_ack"] button[role="checkbox"]`,
       )
       .click();
-  }
-
-  if (options.overtime_compensation_method) {
-    const locator = page.locator(
-      `[data-field="overtime_compensation_method"] button[role="radio"][value="${options.overtime_compensation_method}"]`,
-    );
-
-    await locator.scrollIntoViewIfNeeded();
-    await locator.click();
   }
 
   await page.click('.submit-button');
