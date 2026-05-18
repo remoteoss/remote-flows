@@ -198,7 +198,9 @@ export const useContractorOnboarding = ({
     !disabledInviteButtonEmploymentStatus.includes(employmentStatus);
 
   const invitedStatus: 'invited' | 'not_invited' = useMemo(() => {
-    const isInvited = employmentStatus === 'invited';
+    const invitedStatuses = ['invited', 'initiated'];
+    const isInvited =
+      employmentStatus && invitedStatuses.includes(employmentStatus);
 
     return isInvited ? 'invited' : 'not_invited';
   }, [employmentStatus]);

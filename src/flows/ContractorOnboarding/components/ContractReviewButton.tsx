@@ -50,6 +50,8 @@ export function ContractReviewButton({
     }
   };
 
+  const disabled = props.disabled || contractorOnboardingBag.isSubmitting;
+
   return (
     <Drawer
       open={isOpen}
@@ -58,10 +60,11 @@ export function ContractReviewButton({
       className='max-h-[90vh] flex flex-col w-full'
       trigger={
         <CustomButton
+          {...props}
           type={reviewCompleted ? 'submit' : 'button'}
           form={formId}
           onClick={handleOpen}
-          {...props}
+          disabled={disabled}
         >
           {render({ reviewCompleted })}
         </CustomButton>

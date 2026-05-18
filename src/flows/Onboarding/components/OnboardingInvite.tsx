@@ -131,14 +131,16 @@ export function OnboardingInvite({
     throw new Error(`Button component not found`);
   }
 
+  const disabled =
+    !onboardingBag.canInvite ||
+    employmentInviteMutation.isPending ||
+    useCreateReserveInvoiceMutation.isPending ||
+    props.disabled;
+
   return (
     <CustomButton
       {...props}
-      disabled={
-        employmentInviteMutation.isPending ||
-        useCreateReserveInvoiceMutation.isPending ||
-        props.disabled
-      }
+      disabled={disabled}
       onClick={(evt) => {
         handleSubmit();
         props.onClick?.(evt);
