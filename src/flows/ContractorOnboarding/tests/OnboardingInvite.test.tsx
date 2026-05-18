@@ -167,6 +167,30 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
     expect(button).toBeInTheDocument();
   });
 
+  it('should disable button when employment status is "initiated"', async () => {
+    server.use(
+      http.get('*/v1/employments/:id', ({ params }) => {
+        const employmentId = params?.id;
+        return HttpResponse.json({
+          ...mockContractorEmploymentResponse,
+          data: {
+            ...mockContractorEmploymentResponse.data,
+            employment: {
+              ...mockContractorEmploymentResponse.data.employment,
+              status: 'initiated',
+              id: employmentId,
+            },
+          },
+        });
+      }),
+    );
+    render(<ContractorOnboardingFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
+    const button = await screen.findByText(/Invite Contractor/i);
+    expect(button).toBeDisabled();
+  });
+
   it('should call onSubmit and onSuccess when invite is successful', async () => {
     render(<ContractorOnboardingFlow {...defaultProps} />, {
       wrapper: TestProviders,
