@@ -289,31 +289,6 @@ export const ReviewOnboardingStep = ({
             onSignDocument,
             isCreatingDocument,
             isSigning,
-          }: {
-            requirements:
-              | Array<{
-                  id: string;
-                  title: string;
-                  description: string;
-                  status: string;
-                  required: boolean;
-                }>
-              | undefined;
-            isLoadingRequirements: boolean;
-            documentPreview:
-              | {
-                  id: string;
-                  employment_id: string;
-                  document_type: string;
-                  status: string;
-                  pdf_url?: string;
-                  created_at: string;
-                }
-              | undefined;
-            onCreateDocument: () => Promise<unknown>;
-            onSignDocument: (signature: string) => Promise<unknown>;
-            isCreatingDocument: boolean;
-            isSigning: boolean;
           }) => (
             <div
               style={{
@@ -328,49 +303,49 @@ export const ReviewOnboardingStep = ({
               ) : (
                 <>
                   <h3>Requirements List</h3>
-                  {requirements?.map(
-                    (req: {
-                      id: string;
-                      title: string;
-                      description: string;
-                      status: string;
-                    }) => (
-                      <div
-                        key={req.id}
-                        style={{
-                          marginBottom: '10px',
-                          padding: '10px',
-                          background: 'white',
-                          borderRadius: '4px',
-                        }}
-                      >
-                        <strong>{req.title}</strong>
-                        <p>{req.description}</p>
-                        <span
-                          style={{
-                            color:
-                              req.status === 'pending' ? 'orange' : 'green',
-                          }}
-                        >
-                          Status: {req.status}
-                        </span>
-                      </div>
-                    ),
-                  )}
-
-                  {!documentPreview && (
-                    <button
-                      onClick={onCreateDocument}
-                      disabled={isCreatingDocument}
+                  {requirements?.map((req) => (
+                    <div
+                      key={req.slug}
                       style={{
-                        marginTop: '10px',
-                        padding: '10px 20px',
-                        cursor: isCreatingDocument ? 'not-allowed' : 'pointer',
+                        marginBottom: '10px',
+                        padding: '10px',
+                        background: 'white',
+                        borderRadius: '4px',
                       }}
                     >
-                      {isCreatingDocument ? 'Creating...' : 'Create Document'}
-                    </button>
-                  )}
+                      <strong>{req.name}</strong>
+                      <p>{req.description}</p>
+                      {req.needs_constraints_ack && (
+                        <p style={{ color: 'orange', fontSize: '0.9em' }}>
+                          Requires constraints acknowledgment
+                        </p>
+                      )}
+                      {!documentPreview && (
+                        <button
+                          onClick={() =>
+                            onCreateDocument(
+                              req.slug,
+                              req.needs_constraints_ack
+                                ? new Date().toISOString()
+                                : undefined,
+                            )
+                          }
+                          disabled={isCreatingDocument}
+                          style={{
+                            marginTop: '10px',
+                            padding: '8px 16px',
+                            cursor: isCreatingDocument
+                              ? 'not-allowed'
+                              : 'pointer',
+                          }}
+                        >
+                          {isCreatingDocument
+                            ? 'Creating...'
+                            : 'Create Document'}
+                        </button>
+                      )}
+                    </div>
+                  ))}
 
                   {documentPreview && (
                     <div style={{ marginTop: '20px' }}>

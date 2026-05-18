@@ -7,6 +7,7 @@ import {
   EmploymentCreateParams,
   EmploymentEngagementAgreementDetailsParams,
   EmploymentFullParams,
+  FindOrCreatePreOnboardingDocumentParams,
   getV1CompaniesCompanyId,
   getV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatus,
   getV1CountriesCountryCodeEngagementAgreementDetails,
@@ -23,6 +24,7 @@ import {
   postV1EmploymentsEmploymentIdEngagementAgreementDetails,
   postV1EmploymentsEmploymentIdInvite,
   PostV1EmploymentsEmploymentIdInviteData,
+  postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments,
   postV1RiskReserve,
   putV1EmploymentsEmploymentIdBenefitOffers,
   UnifiedEmploymentUpsertBenefitOffersRequest,
@@ -590,16 +592,26 @@ export const useGetPreOnboardingRequirements = (
  * Create a pre-onboarding document
  */
 export const useCreatePreOnboardingDocument = () => {
+  const { client } = useClient();
+
   return useMutation({
-    mutationFn: async ({
-      employmentId: _employmentId,
+    mutationFn: ({
+      employmentId,
+      body,
     }: {
       employmentId: string;
+      body: FindOrCreatePreOnboardingDocumentParams;
     }) => {
-      const { mockCreatedDocument } =
-        await import('@/src/common/api/fixtures/pre-onboarding');
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      return mockCreatedDocument;
+      return postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body,
+        path: {
+          employment_id: employmentId,
+        },
+      });
     },
   });
 };

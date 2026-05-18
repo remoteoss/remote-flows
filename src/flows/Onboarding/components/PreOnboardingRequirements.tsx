@@ -27,11 +27,18 @@ const usePreOnboardingRequirements = ({
   const createDocumentMutation = useCreatePreOnboardingDocument();
   const signDocumentMutation = useSignPreOnboardingDocument();
 
-  const onCreateDocument = async () => {
+  const onCreateDocument = async (
+    requirementSlug: string,
+    constraintsAckAt?: string,
+  ) => {
     const result = await createDocumentMutation.mutateAsync({
       employmentId,
+      body: {
+        pre_onboarding_document_requirement_slug: requirementSlug,
+        constraints_ack_at: constraintsAckAt || null,
+      },
     });
-    setDocumentId(result.data.id);
+    setDocumentId(result.data?.data?.pre_onboarding_document.id);
     return result;
   };
 
