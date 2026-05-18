@@ -1,5 +1,17 @@
 # @remoteoss/remote-flows
 
+## 1.34.0
+
+### Minor Changes
+
+#### Features
+
+- if status is initiated move the user to review step (#1003) [#1003](https://github.com/remoteoss/remote-flows/pull/1003)
+
+#### Fixes
+
+- fix computed values on Germany form (#1032) [#1032](https://github.com/remoteoss/remote-flows/pull/1032)
+
 ## 1.33.2
 
 ### Patch Changes
