@@ -8,7 +8,6 @@ import {
 } from '../PreOnboardingRequirements';
 import { OnboardingContext } from '@/src/flows/Onboarding/context';
 import {
-  preOnboardingRequirementsFixture,
   generatedDocumentFixture,
   documentDetailsFixture,
   signDocumentResponseFixture,
@@ -58,15 +57,6 @@ describe('PreOnboardingRequirements', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient.clear();
-
-    server.use(
-      http.get(
-        '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/requirements',
-        () => {
-          return HttpResponse.json(preOnboardingRequirementsFixture);
-        },
-      ),
-    );
   });
 
   it('should display requirements after loading', async () => {
@@ -186,21 +176,6 @@ describe('PreOnboardingRequirements', () => {
     });
 
     it('should set documentId after document generation', async () => {
-      server.use(
-        http.post(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents',
-          () => {
-            return HttpResponse.json(generatedDocumentFixture);
-          },
-        ),
-        http.get(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/:documentId',
-          () => {
-            return HttpResponse.json(documentDetailsFixture);
-          },
-        ),
-      );
-
       let renderBag: ReturnType<typeof usePreOnboardingRequirements>;
 
       render(
@@ -300,18 +275,6 @@ describe('PreOnboardingRequirements', () => {
       );
 
       server.use(
-        http.post(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents',
-          () => {
-            return HttpResponse.json(generatedDocumentFixture);
-          },
-        ),
-        http.get(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/:documentId',
-          () => {
-            return HttpResponse.json(documentDetailsFixture);
-          },
-        ),
         http.post(
           '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/:documentId/sign',
           signDocumentSpy,
@@ -465,18 +428,6 @@ describe('PreOnboardingRequirements', () => {
     it('should show isSigning during document signing', async () => {
       server.use(
         http.post(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents',
-          () => {
-            return HttpResponse.json(generatedDocumentFixture);
-          },
-        ),
-        http.get(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/:documentId',
-          () => {
-            return HttpResponse.json(documentDetailsFixture);
-          },
-        ),
-        http.post(
           '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/:documentId/sign',
           () => {
             return new Promise(() => {});
@@ -541,12 +492,6 @@ describe('PreOnboardingRequirements', () => {
       );
 
       server.use(
-        http.post(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents',
-          () => {
-            return HttpResponse.json(generatedDocumentFixture);
-          },
-        ),
         http.get(
           '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/:documentId',
           getDocumentSpy,

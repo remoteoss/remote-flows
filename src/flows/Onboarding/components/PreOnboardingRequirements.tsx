@@ -53,6 +53,11 @@ export const usePreOnboardingRequirements = ({
     if (!documentId) {
       throw new Error('No document to sign');
     }
+
+    if (!signature) {
+      throw new Error('Signature is required');
+    }
+
     return await signDocumentMutationAsync({
       employmentId,
       documentId,
