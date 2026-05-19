@@ -228,26 +228,3 @@ export type CreditRiskState =
   | 'invite_successful'
   | 'referred'
   | null;
-
-// TODO: Provisional, we'll modify later
-export type PreOnboardingRequirement = {
-  id: string;
-  title: string;
-  description: string;
-  status: 'pending' | 'completed';
-  required: boolean;
-};
-
-export type PreOnboardingDocument = {
-  id: string;
-  employment_id: string;
-  document_type: string;
-  status: 'draft' | 'pending_signature' | 'signed';
-  pdf_url?: string;
-  created_at: string;
-};
-
-export type SignDocumentPayload = {
-  signature: string;
-  signed_at?: string;
-};
