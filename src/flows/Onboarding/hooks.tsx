@@ -34,6 +34,7 @@ import {
   useEmploymentEngagementAgreementDetails,
   useEmploymentOnboardingReservesStatus,
   useEngagementAgreementDetailsSchema,
+  useGetPreOnboardingRequirements,
   useJSONSchemaForm,
   useUpdateBenefitsOffers,
   useUpdateEmployment,
@@ -80,6 +81,7 @@ const getLoadingStates = ({
   currentStepName,
   basicInformationFields,
   contractDetailsFields,
+  arePreOnboardingRequirementsFulfilled,
 }: {
   isLoadingBasicInformationForm: boolean;
   isLoadingContractDetailsForm: boolean;
@@ -95,6 +97,7 @@ const getLoadingStates = ({
   currentStepName: string;
   basicInformationFields: JSFFields;
   contractDetailsFields: JSFFields;
+  arePreOnboardingRequirementsFulfilled: boolean;
 }) => {
   const initialLoading =
     isLoadingBasicInformationForm ||
@@ -113,7 +116,8 @@ const getLoadingStates = ({
 
   const canInvite =
     employmentStatus &&
-    !disabledInviteButtonEmploymentStatus.includes(employmentStatus);
+    !disabledInviteButtonEmploymentStatus.includes(employmentStatus) &&
+    arePreOnboardingRequirementsFulfilled;
 
   const shouldHandleReadOnlyEmployment = Boolean(
     employmentId && isEmploymentReadOnly && currentStepName !== 'review',
@@ -299,6 +303,20 @@ export const useOnboarding = ({
       internalEmploymentId,
       isOnboardingReservesEnabled,
     );
+
+  const { data: requirements } = useGetPreOnboardingRequirements(
+    internalEmploymentId as string,
+    {
+      queryOptions: { enabled: !!internalEmploymentId },
+    },
+  );
+
+  const arePreOnboardingRequirementsFulfilled = useMemo(() => {
+    if (!requirements) return true;
+    return requirements.every(
+      (requirement) => requirement.status === 'finished',
+    );
+  }, [requirements]);
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
     useCountriesSchemaField({
@@ -712,6 +730,7 @@ export const useOnboarding = ({
           basicInformationFields: stepFields.basic_information,
           contractDetailsFields: stepFields.contract_details,
           currentStepName: currentStepName,
+          arePreOnboardingRequirementsFulfilled,
         }),
       [
         isLoadingBasicInformationForm,
@@ -728,6 +747,7 @@ export const useOnboarding = ({
         stepFields.basic_information,
         stepFields.contract_details,
         currentStepName,
+        arePreOnboardingRequirementsFulfilled,
       ],
     );
 
