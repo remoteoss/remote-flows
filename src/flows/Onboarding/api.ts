@@ -606,7 +606,6 @@ export const useCreatePreOnboardingDocument = () => {
     }) => {
       return postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments({
         client: client as Client,
-
         body,
         path: {
           employment_id: employmentId,

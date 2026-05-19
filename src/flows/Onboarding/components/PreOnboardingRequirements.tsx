@@ -6,6 +6,7 @@ import {
   useGetPreOnboardingDocument,
   useSignPreOnboardingDocument,
 } from '@/src/flows/Onboarding/api';
+import { mutationToPromise } from '@/src/lib/mutations';
 
 export const usePreOnboardingRequirements = ({
   employmentId,
@@ -27,18 +28,24 @@ export const usePreOnboardingRequirements = ({
   const createDocumentMutation = useCreatePreOnboardingDocument();
   const signDocumentMutation = useSignPreOnboardingDocument();
 
+  const { mutateAsyncOrThrow: createDocumentMutationAsync } = mutationToPromise(
+    createDocumentMutation,
+  );
+  const { mutateAsyncOrThrow: signDocumentMutationAsync } =
+    mutationToPromise(signDocumentMutation);
+
   const onCreateDocument = async (
     requirementSlug: string,
     constraintsAckAt?: string,
   ) => {
-    const result = await createDocumentMutation.mutateAsync({
+    const result = await createDocumentMutationAsync({
       employmentId,
       body: {
         pre_onboarding_document_requirement_slug: requirementSlug,
         constraints_ack_at: constraintsAckAt || null,
       },
     });
-    setDocumentId(result.data?.data?.pre_onboarding_document.id);
+    setDocumentId(result?.data.pre_onboarding_document.id);
     return result;
   };
 
@@ -46,7 +53,7 @@ export const usePreOnboardingRequirements = ({
     if (!documentId) {
       throw new Error('No document to sign');
     }
-    return await signDocumentMutation.mutateAsync({
+    return await signDocumentMutationAsync({
       employmentId,
       documentId,
       signature,
