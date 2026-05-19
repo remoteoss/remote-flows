@@ -11,6 +11,12 @@ import {
 test.describe('Onboard basic employee', () => {
   test.beforeEach(async ({ page }) => {
     await setupVercelBypass(page);
+    page.on('response', async (response) => {
+      if (response.url().includes('contract_details')) {
+        const body = await response.json();
+        console.log(JSON.stringify(body.data.allOf));
+      }
+    });
     await page.goto('?demo=onboarding-basic');
   });
 
