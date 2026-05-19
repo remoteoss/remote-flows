@@ -2,8 +2,7 @@ import { Page } from '@playwright/test';
 import { fillForm } from './general';
 
 interface fillOnboardingIntroductionFormOptions {
-  company_id?: string;
-  type?: string;
+  company_id: string;
   employment_id?: string;
   external_id?: string;
 }
@@ -14,7 +13,7 @@ export async function fillOnboardingIntroductionForm(
 ) {
   await fillForm(page, [
     { type: 'textField', value: options.company_id, cssId: '#companyId' },
-    { type: 'select', value: options.type, cssId: '#type' },
+    { type: 'select', value: 'employee', cssId: '#type' },
     { type: 'textField', value: options.employment_id, cssId: '#employmentId' },
     { type: 'textField', value: options.external_id, cssId: '#externalId' },
   ]);

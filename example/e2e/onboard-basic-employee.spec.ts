@@ -21,7 +21,6 @@ test.describe('Onboard basic employee', () => {
 
     await fillOnboardingIntroductionForm(page, {
       company_id: '460201ed-a8c0-4e75-89dc-6d5eae35f65e',
-      type: 'employee',
     });
 
     let stepTitle = page.getByTestId('onboarding-step-title');
