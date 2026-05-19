@@ -138,11 +138,11 @@ export async function fillRadio(
   value: string = '',
   dataField: string,
 ) {
-  await page
-    .locator(
-      `[data-field="${dataField}"] button[role="radio"][value^="${value}"]`,
-    )
-    .click();
+  const locator = page.locator(
+    `[data-field="${dataField}"] button[role="radio"][value^="${value}"]`,
+  );
+  await locator.waitFor({ state: 'visible' });
+  await locator.click();
 }
 
 export async function fillCheckbox(
@@ -150,9 +150,11 @@ export async function fillCheckbox(
   value: string = '',
   dataField: string,
 ) {
-  await page
-    .locator(`[data-field="${dataField}"] button[role="checkbox"]`)
-    .click();
+  const locator = page.locator(
+    `[data-field="${dataField}"] button[role="checkbox"]`,
+  );
+  await locator.waitFor({ state: 'visible' });
+  await locator.click();
 }
 
 export async function fillDatepicker(
