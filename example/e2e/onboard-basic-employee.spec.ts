@@ -14,7 +14,10 @@ test.describe('Onboard basic employee', () => {
     page.on('response', async (response) => {
       if (response.url().includes('contract_details')) {
         const body = await response.json();
-        console.log(JSON.stringify(body.data.allOf));
+        const count = (
+          JSON.stringify(body).match(/overtime_compensation_method/g) || []
+        ).length;
+        console.log(`overtime_compensation_method occurrences: ${count}`);
       }
     });
     await page.goto('?demo=onboarding-basic');
