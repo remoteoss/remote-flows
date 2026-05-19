@@ -15,6 +15,7 @@ import {
   getV1EmploymentsEmploymentIdBenefitOffers,
   getV1EmploymentsEmploymentIdBenefitOffersSchema,
   getV1EmploymentsEmploymentIdEngagementAgreementDetails,
+  getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId,
   getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsRequirements,
   patchV1EmploymentsEmploymentId2,
   postV1CurrencyConverterEffective,
@@ -25,6 +26,7 @@ import {
   postV1EmploymentsEmploymentIdInvite,
   PostV1EmploymentsEmploymentIdInviteData,
   postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments,
+  postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSign,
   postV1RiskReserve,
   putV1EmploymentsEmploymentIdBenefitOffers,
   UnifiedEmploymentUpsertBenefitOffersRequest,
@@ -620,19 +622,24 @@ export const useCreatePreOnboardingDocument = () => {
  * Get pre-onboarding document preview
  */
 export const useGetPreOnboardingDocument = (
+  employmentId: string,
   documentId: string | undefined,
   options?: { queryOptions?: { enabled?: boolean } },
 ) => {
+  const { client } = useClient();
+
   return useQuery({
-    queryKey: ['pre-onboarding-document', documentId],
-    queryFn: async () => {
-      const { mockCreatedDocument } =
-        await import('@/src/common/api/fixtures/pre-onboarding');
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      return mockCreatedDocument;
-    },
-    enabled: options?.queryOptions?.enabled && !!documentId,
-    select: (data) => data.data,
+    queryKey: ['pre-onboarding-document', employmentId, documentId],
+    queryFn: () =>
+      getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId({
+        client: client as Client,
+        path: {
+          employment_id: employmentId,
+          id: documentId!,
+        },
+      }),
+    enabled: (options?.queryOptions?.enabled ?? true) && !!documentId,
+    select: (response) => response.data?.data,
   });
 };
 
@@ -640,18 +647,27 @@ export const useGetPreOnboardingDocument = (
  * Sign a pre-onboarding document
  */
 export const useSignPreOnboardingDocument = () => {
+  const { client } = useClient();
+
   return useMutation({
-    mutationFn: async ({
-      documentId: _documentId,
-      signature: _signature,
+    mutationFn: ({
+      employmentId,
+      documentId,
+      signature,
     }: {
+      employmentId: string;
       documentId: string;
       signature: string;
-    }) => {
-      const { mockSignedDocument } =
-        await import('@/src/common/api/fixtures/pre-onboarding');
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return mockSignedDocument;
-    },
+    }) =>
+      postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSign({
+        client: client as Client,
+        path: {
+          employment_id: employmentId,
+          id: documentId,
+        },
+        body: {
+          signature,
+        },
+      }),
   });
 };

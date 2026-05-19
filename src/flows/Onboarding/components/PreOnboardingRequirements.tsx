@@ -20,7 +20,7 @@ const usePreOnboardingRequirements = ({
     });
 
   const { data: documentPreview, isLoading: isLoadingDocumentPreview } =
-    useGetPreOnboardingDocument(documentId, {
+    useGetPreOnboardingDocument(employmentId, documentId, {
       queryOptions: { enabled: !!documentId },
     });
 
@@ -47,6 +47,7 @@ const usePreOnboardingRequirements = ({
       throw new Error('No document to sign');
     }
     return await signDocumentMutation.mutateAsync({
+      employmentId,
       documentId,
       signature,
     });

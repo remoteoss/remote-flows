@@ -351,18 +351,24 @@ export const ReviewOnboardingStep = ({
                   {documentPreview && (
                     <div style={{ marginTop: '20px' }}>
                       <h4>Document Preview</h4>
-                      <p>Document ID: {documentPreview.id}</p>
-                      <p>Status: {documentPreview.status}</p>
-                      {documentPreview.pdf_url && (
+                      <p>
+                        Document ID:{' '}
+                        {documentPreview.pre_onboarding_document.name}
+                      </p>
+                      <p>
+                        Status: {documentPreview.pre_onboarding_document.status}
+                      </p>
+                      {documentPreview.pre_onboarding_document.content && (
                         <p>
                           PDF URL:{' '}
-                          <a
-                            href={documentPreview.pdf_url}
-                            target='_blank'
-                            rel='noopener noreferrer'
-                          >
-                            {documentPreview.pdf_url}
-                          </a>
+                          <iframe
+                            src={
+                              documentPreview.pre_onboarding_document
+                                .content as unknown as string
+                            }
+                            style={{ width: '100%', height: '400px' }}
+                            title='Document Preview'
+                          />
                         </p>
                       )}
                       <button
