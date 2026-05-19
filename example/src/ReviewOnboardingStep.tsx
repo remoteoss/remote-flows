@@ -279,117 +279,113 @@ export const ReviewOnboardingStep = ({
       </button>
 
       <h2 className='title'>Pre-Onboarding Requirements</h2>
-      {PreOnboardingRequirements && (
-        <PreOnboardingRequirements
-          render={({
-            requirements,
-            isLoadingRequirements,
-            documentPreview,
-            onCreateDocument,
-            onSignDocument,
-            isCreatingDocument,
-            isSigning,
-          }) => (
-            <div
-              style={{
-                padding: '20px',
-                background: '#f5f5f5',
-                borderRadius: '8px',
-                marginBottom: '20px',
-              }}
-            >
-              {isLoadingRequirements ? (
-                <p>Loading requirements...</p>
-              ) : (
-                <>
-                  <h3>Requirements List</h3>
-                  {requirements?.map((req) => (
-                    <div
-                      key={req.slug}
-                      style={{
-                        marginBottom: '10px',
-                        padding: '10px',
-                        background: 'white',
-                        borderRadius: '4px',
-                      }}
-                    >
-                      <strong>{req.name}</strong>
-                      <p>{req.description}</p>
-                      <p>slug: {req.slug}</p>
-                      {req.needs_constraints_ack && (
-                        <p style={{ color: 'orange', fontSize: '0.9em' }}>
-                          Requires constraints acknowledgment
-                        </p>
-                      )}
-                      {!documentPreview && (
-                        <button
-                          onClick={() =>
-                            onCreateDocument(
-                              req.slug,
-                              req.needs_constraints_ack
-                                ? new Date().toISOString()
-                                : undefined,
-                            )
-                          }
-                          disabled={isCreatingDocument}
-                          style={{
-                            marginTop: '10px',
-                            padding: '8px 16px',
-                            cursor: isCreatingDocument
-                              ? 'not-allowed'
-                              : 'pointer',
-                          }}
-                        >
-                          {isCreatingDocument
-                            ? 'Creating...'
-                            : 'Create Document'}
-                        </button>
-                      )}
-                    </div>
-                  ))}
-
-                  {documentPreview && (
-                    <div style={{ marginTop: '20px' }}>
-                      <h4>Document Preview</h4>
-                      <p>
-                        Document ID:{' '}
-                        {documentPreview.pre_onboarding_document.name}
+      <PreOnboardingRequirements
+        render={({
+          requirements,
+          isLoadingRequirements,
+          documentPreview,
+          onCreateDocument,
+          onSignDocument,
+          isCreatingDocument,
+          isSigning,
+        }) => (
+          <div
+            style={{
+              padding: '20px',
+              background: '#f5f5f5',
+              borderRadius: '8px',
+              marginBottom: '20px',
+            }}
+          >
+            {isLoadingRequirements ? (
+              <p>Loading requirements...</p>
+            ) : (
+              <>
+                <h3>Requirements List</h3>
+                {requirements?.map((req) => (
+                  <div
+                    key={req.slug}
+                    style={{
+                      marginBottom: '10px',
+                      padding: '10px',
+                      background: 'white',
+                      borderRadius: '4px',
+                    }}
+                  >
+                    <strong>{req.name}</strong>
+                    <p>{req.description}</p>
+                    <p>slug: {req.slug}</p>
+                    {req.needs_constraints_ack && (
+                      <p style={{ color: 'orange', fontSize: '0.9em' }}>
+                        Requires constraints acknowledgment
                       </p>
-                      <p>
-                        Status: {documentPreview.pre_onboarding_document.status}
-                      </p>
-                      {documentPreview.pre_onboarding_document.content && (
-                        <p>
-                          PDF URL:{' '}
-                          <iframe
-                            src={
-                              documentPreview.pre_onboarding_document
-                                .content as unknown as string
-                            }
-                            style={{ width: '100%', height: '400px' }}
-                            title='Document Preview'
-                          />
-                        </p>
-                      )}
+                    )}
+                    {!documentPreview && (
                       <button
-                        onClick={() => onSignDocument('John Doe Signature')}
-                        disabled={isSigning}
+                        onClick={() =>
+                          onCreateDocument(
+                            req.slug,
+                            req.needs_constraints_ack
+                              ? new Date().toISOString()
+                              : undefined,
+                          )
+                        }
+                        disabled={isCreatingDocument}
                         style={{
                           marginTop: '10px',
-                          padding: '10px 20px',
-                          cursor: isSigning ? 'not-allowed' : 'pointer',
+                          padding: '8px 16px',
+                          cursor: isCreatingDocument
+                            ? 'not-allowed'
+                            : 'pointer',
                         }}
                       >
-                        {isSigning ? 'Signing...' : 'Sign Document'}
+                        {isCreatingDocument ? 'Creating...' : 'Create Document'}
                       </button>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          )}
-        />
-      )}
+                    )}
+                  </div>
+                ))}
+
+                {documentPreview && (
+                  <div style={{ marginTop: '20px' }}>
+                    <h4>Document Preview</h4>
+                    <p>
+                      Document ID:{' '}
+                      {documentPreview.pre_onboarding_document.name}
+                    </p>
+                    <p>
+                      Status: {documentPreview.pre_onboarding_document.status}
+                    </p>
+                    {documentPreview.pre_onboarding_document.content && (
+                      <p>
+                        PDF URL:{' '}
+                        <iframe
+                          src={
+                            documentPreview.pre_onboarding_document
+                              .content as unknown as string
+                          }
+                          style={{ width: '100%', height: '400px' }}
+                          title='Document Preview'
+                        />
+                      </p>
+                    )}
+                    <button
+                      onClick={() => onSignDocument('John Doe Signature')}
+                      disabled={isSigning}
+                      style={{
+                        marginTop: '10px',
+                        padding: '10px 20px',
+                        cursor: isSigning ? 'not-allowed' : 'pointer',
+                      }}
+                    >
+                      {isSigning ? 'Signing...' : 'Sign Document'}
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+      />
 
       <h2 className='title'>Review</h2>
       <ReviewStepCreditRisk
