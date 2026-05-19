@@ -139,7 +139,7 @@ export async function fillRadio(
   dataField: string,
 ) {
   const locator = page.locator(
-    `[data-field="${dataField}"] button[role="radio"][value^="${value}"]`,
+    `[data-field="${dataField}"] button[role="radio"][value="${value}"]`,
   );
   await locator.waitFor({ state: 'visible' });
   await locator.click();

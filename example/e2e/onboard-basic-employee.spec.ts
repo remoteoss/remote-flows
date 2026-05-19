@@ -57,7 +57,8 @@ test.describe('Onboard basic employee', () => {
       overtime_compensation_method: 'payout',
       role_description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim.',
-      experience_level: 'Group Level A',
+      experience_level:
+        'Group Level A - Workers who thanks to their professional knowledge and experience, coordinate, plan and manage the resources available to them, ensuring the achievement of the objectives pursued. They carry out these activities with autonomy and supervision. (probation period - 6 months)',
       work_address_is_home_address: 'yes',
       annual_gross_salary: '50000',
       annual_bonus_ack: true,
