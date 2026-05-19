@@ -139,11 +139,12 @@ export async function fillOnboardingStep3SpainForm(
       value: options.available_pto_type,
       dataField: 'available_pto_type',
     },
-    {
-      type: 'radio',
-      value: options.overtime_compensation_method,
-      dataField: 'overtime_compensation_method',
-    },
+    // To add back when the field is available again on sandbox
+    // {
+    //   type: 'radio',
+    //   value: options.overtime_compensation_method,
+    //   dataField: 'overtime_compensation_method',
+    // },
     {
       type: 'textField',
       value: options.available_pto,
