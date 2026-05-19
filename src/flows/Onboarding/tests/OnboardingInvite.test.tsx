@@ -87,6 +87,13 @@ describe('OnboardingInvite', () => {
         return HttpResponse.json(employmentDefaultResponse);
       }),
 
+      http.get(
+        '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/requirements',
+        () => {
+          return HttpResponse.json({ data: [] });
+        },
+      ),
+
       http.post('*/v1/employments/:employmentId/invite', () => {
         return HttpResponse.json({
           data: { status: 'ok' },
