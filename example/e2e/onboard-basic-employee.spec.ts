@@ -55,12 +55,12 @@ test.describe('Onboard basic employee', () => {
       probation_length_ack: true,
       available_pto_type: 'fixed',
       available_pto: '25',
+      overtime_compensation_method: 'payout',
       role_description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim.',
       experience_level: 'Group Level A',
       work_address_is_home_address: 'yes',
       annual_gross_salary: '50000',
-      overtime_compensation_method: 'payout',
       annual_bonus_ack: true,
       salary_installments: '12 months',
       allowances: '',

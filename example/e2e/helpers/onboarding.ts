@@ -141,6 +141,11 @@ export async function fillOnboardingStep3SpainForm(
       dataField: 'available_pto_type',
     },
     {
+      type: 'radio',
+      value: options.overtime_compensation_method,
+      dataField: 'overtime_compensation_method',
+    },
+    {
       type: 'textField',
       value: options.available_pto,
       dataField: 'available_pto',
@@ -174,11 +179,6 @@ export async function fillOnboardingStep3SpainForm(
       type: 'comboBox',
       value: options.salary_installments,
       dataField: 'is_salary_prorated',
-    },
-    {
-      type: 'radio',
-      value: options.overtime_compensation_method,
-      dataField: 'overtime_compensation_method',
     },
     {
       type: 'textField',
