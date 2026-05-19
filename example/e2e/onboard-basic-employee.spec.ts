@@ -62,7 +62,7 @@ test.describe('Onboard basic employee', () => {
       annual_gross_salary: '50000',
       overtime_compensation_method: 'payout',
       annual_bonus_ack: true,
-      salary_installments: true,
+      salary_installments: '12 months',
       allowances: '',
       has_signing_bonus: 'no',
       has_bonus: 'no',
