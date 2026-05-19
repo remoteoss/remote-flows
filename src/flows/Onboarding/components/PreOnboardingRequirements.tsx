@@ -7,7 +7,7 @@ import {
   useSignPreOnboardingDocument,
 } from '@/src/flows/Onboarding/api';
 
-const usePreOnboardingRequirements = ({
+export const usePreOnboardingRequirements = ({
   employmentId,
 }: {
   employmentId: string;
