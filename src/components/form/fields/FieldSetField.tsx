@@ -33,15 +33,7 @@ type FieldWithoutOptions = FieldBase & {
   options?: never;
 };
 
-type FieldWithCalculateDynamicProperties = FieldBase & {
-  calculateDynamicProperties: (formValues: FieldValues) => {
-    [key: string]: unknown;
-  };
-};
-type Field =
-  | FieldWithOptions
-  | FieldWithoutOptions
-  | FieldWithCalculateDynamicProperties;
+type Field = FieldWithOptions | FieldWithoutOptions;
 
 type FieldSetFeatures = {
   toggle?: {
