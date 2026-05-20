@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { addMonths, format } from 'date-fns';
 import { FieldValues } from 'react-hook-form';
 import { ChangeEvent } from 'react';
 
@@ -124,6 +124,25 @@ export const buildContractDetailsJsfModify = (
               ? format(new Date(), 'yyyy-MM-dd')
               : undefined,
             ...statement,
+          },
+        },
+        'service_duration.expiration_date': {
+          'x-jsf-presentation': {
+            calculateDynamicProperties: (formValues: FieldValues) => {
+              const maxDate =
+                isContractorOfRecord &&
+                formValues.service_duration?.provisional_start_date
+                  ? addMonths(
+                      new Date(
+                        formValues.service_duration.provisional_start_date,
+                      ),
+                      12,
+                    )
+                  : undefined;
+              return {
+                maxDate: maxDate ? format(maxDate, 'yyyy-MM-dd') : undefined,
+              };
+            },
           },
         },
         services_and_deliverables: {
