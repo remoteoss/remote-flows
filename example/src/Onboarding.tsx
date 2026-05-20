@@ -551,7 +551,7 @@ export const OnboardingForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className='onboarding-form-container'>
-      <div className='onboarding-form-group'>
+      <div data-field='companyId' className='onboarding-form-group'>
         <label htmlFor='companyId' className='onboarding-form-label'>
           Company ID:
         </label>
@@ -567,7 +567,7 @@ export const OnboardingForm = () => {
           className='onboarding-form-input'
         />
       </div>
-      <div className='onboarding-form-group'>
+      <div data-field='type' className='onboarding-form-group'>
         <label htmlFor='type' className='onboarding-form-label'>
           Type:
         </label>
@@ -587,7 +587,7 @@ export const OnboardingForm = () => {
           <option value='contractor'>Contractor</option>
         </select>
       </div>
-      <div className='onboarding-form-group'>
+      <div data-field='employmentId' className='onboarding-form-group'>
         <label htmlFor='employmentId' className='onboarding-form-label'>
           Employment ID:
         </label>
@@ -602,7 +602,7 @@ export const OnboardingForm = () => {
           className='onboarding-form-input'
         />
       </div>
-      <div className='onboarding-form-group'>
+      <div data-field='externalId' className='onboarding-form-group'>
         <label htmlFor='externalId' className='onboarding-form-label'>
           External ID:
         </label>

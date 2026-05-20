@@ -32,36 +32,45 @@ export type FillFormOptions = {
   type: inputType;
   value?: string;
   cssId?: string;
-  dataField?: string;
+  name?: string;
   testId?: string;
+  options?: { nativeSelect?: boolean };
 };
 
 export async function fillForm(page: Page, values: FillFormOptions[]) {
   for (const option of values) {
     switch (option.type) {
       case 'textField':
-        await fillTextField(page, option.value, option.cssId, option.dataField);
+        if (option.name) {
+          await fillTextField(page, option.name, option.value);
+        } else {
+          throw new Error('textField need name to be located');
+        }
         break;
       case 'select':
-        await fillSelect(page, option.value, option.cssId, option.dataField);
+        if (option.name) {
+          await fillSelect(page, option.value, option.name, option.options);
+        } else {
+          throw new Error('select need name to be located');
+        }
         break;
       case 'comboBox':
-        if (option.dataField) {
-          await fillComboBox(page, option.value, option.dataField);
+        if (option.name) {
+          await fillComboBox(page, option.value, option.name);
         } else {
           throw new Error('comboBox need dataFieldId to be located');
         }
         break;
       case 'radio':
-        if (option.dataField) {
-          await fillRadio(page, option.value, option.dataField);
+        if (option.name) {
+          await fillRadio(page, option.value, option.name);
         } else {
           throw new Error('radio need dataFieldId to be located');
         }
         break;
       case 'checkbox':
-        if (option.dataField) {
-          await fillCheckbox(page, option.value, option.dataField);
+        if (option.name) {
+          await fillCheckbox(page, option.value, option.name);
         } else {
           throw new Error('checkbox need dataFieldId to be located');
         }
@@ -81,35 +90,24 @@ export async function fillForm(page: Page, values: FillFormOptions[]) {
 
 export async function fillTextField(
   page: Page,
+  name: string,
   value: string = '',
-  cssId?: string,
-  dataField?: string,
 ) {
-  if (cssId) {
-    if (value) {
-      await page.fill(cssId, value);
-    }
-  }
-
-  if (dataField) {
-    await page
-      .locator(`[data-field="${dataField}"] :is(input, textarea)`)
-      .fill(value);
-  }
+  await page.locator(`[data-field="${name}"] :is(input, textarea)`).fill(value);
 }
 
 export async function fillSelect(
   page: Page,
   value: string = '',
-  cssId?: string,
-  dataField?: string,
+  name: string,
+  options: { nativeSelect?: boolean } = { nativeSelect: false },
 ) {
-  if (cssId) {
-    await page.selectOption(cssId, value);
-  }
-
-  if (dataField) {
-    const dropdown = page.locator(`[data-field="${dataField}"]`);
+  if (options.nativeSelect) {
+    const dropdown = page.locator(`[data-field="${name}"] select`);
+    await dropdown.waitFor({ state: 'visible' });
+    await dropdown.selectOption(value);
+  } else {
+    const dropdown = page.locator(`[data-field="${name}"]`);
     await dropdown.click();
     const option = page.getByRole('option', { name: value });
     await option.waitFor({ state: 'visible' });
