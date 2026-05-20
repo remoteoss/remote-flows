@@ -5975,7 +5975,7 @@ export const basicInformationSchemaV3Germany = {
           blockedDates: [],
           inputType: 'date',
           meta: {
-            mot: 20,
+            mot: 0,
           },
           minDate: '2025-05-12',
           softBlockedDates: [],
