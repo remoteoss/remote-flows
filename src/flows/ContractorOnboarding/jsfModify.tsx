@@ -2,6 +2,7 @@ import { addMonths, format } from 'date-fns';
 import { FieldValues } from 'react-hook-form';
 import { ChangeEvent } from 'react';
 
+import { parseLocalDate } from '@/src/common/dates';
 import { createStatementProperty } from '@/src/components/form/jsf-utils/createFields';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
@@ -133,7 +134,7 @@ export const buildContractDetailsJsfModify = (
                 isContractorOfRecord &&
                 formValues.service_duration?.provisional_start_date
                   ? addMonths(
-                      new Date(
+                      parseLocalDate(
                         formValues.service_duration.provisional_start_date,
                       ),
                       12,
