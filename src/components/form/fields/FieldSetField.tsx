@@ -96,7 +96,7 @@ export function FieldSetField({
     ({ name: fieldName }) => `${name}.${fieldName}`,
   );
   const watchedValues = watch(fieldNames);
-  const allFormValues = watch(); // Watch entire form for calculateDynamicProperties
+  const allFormValues = watch();
   const prevValuesRef = useRef<string[]>(watchedValues);
   const triggerTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 

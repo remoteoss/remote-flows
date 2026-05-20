@@ -3309,4 +3309,149 @@ describe('ContractorOnboardingFlow', () => {
       expect(mockOnError).toHaveBeenCalled();
     });
   });
+
+  describe('COR Contract Duration MaxDate', () => {
+    it('should set maxDate to 12 months after provisional_start_date for COR', async () => {
+      const employmentId = generateUniqueEmploymentId();
+
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: employmentId,
+                contractor_type: 'cor',
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+      await fillContractorSubscription('Contractor of Record');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Eligibility Questionnaire/i);
+      await fillEligibilityQuestionnaire();
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Contract Details/i);
+
+      // Fill the provisional start date
+      const startDate = '2025-01-15';
+      await fillDatePickerByTestId(
+        startDate,
+        'service_duration.provisional_start_date',
+      );
+
+      // Get the expiration date field
+      const expirationDateField = screen.getByTestId(
+        'service_duration.expiration_date',
+      );
+      expect(expirationDateField).toBeInTheDocument();
+
+      // Verify maxDate is set (12 months after start date = 2026-01-15)
+      await waitFor(() => {
+        expect(expirationDateField).toHaveAttribute('max', '2026-01-15');
+      });
+    });
+
+    it('should not set maxDate for non-COR contractor types', async () => {
+      const employmentId = generateUniqueEmploymentId();
+
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: employmentId,
+                contractor_type: 'cm',
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          countryCode='PRT'
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      // Navigate to contract details step
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillBasicInformation();
+
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+      await fillContractorSubscription('Contractor Management Plus');
+
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Contract Details/i);
+
+      // Fill the provisional start date
+      const startDate = '2025-01-15';
+      await fillDatePickerByTestId(
+        startDate,
+        'service_duration.provisional_start_date',
+      );
+
+      // Get the expiration date field
+      const expirationDateField = screen.getByTestId(
+        'service_duration.expiration_date',
+      );
+      expect(expirationDateField).toBeInTheDocument();
+
+      // Verify maxDate is NOT set for non-COR types
+      await waitFor(() => {
+        expect(expirationDateField).not.toHaveAttribute('max');
+      });
+    });
+  });
 });
