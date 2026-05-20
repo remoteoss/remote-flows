@@ -31,7 +31,6 @@ export type inputType =
 export type FillFormOptions = {
   type: inputType;
   value?: string;
-  cssId?: string;
   name?: string;
   testId?: string;
   options?: { nativeSelect?: boolean };
@@ -58,21 +57,21 @@ export async function fillForm(page: Page, values: FillFormOptions[]) {
         if (option.name) {
           await fillComboBox(page, option.value, option.name);
         } else {
-          throw new Error('comboBox need dataFieldId to be located');
+          throw new Error('comboBox need name to be located');
         }
         break;
       case 'radio':
         if (option.name) {
           await fillRadio(page, option.value, option.name);
         } else {
-          throw new Error('radio need dataFieldId to be located');
+          throw new Error('radio need name to be located');
         }
         break;
       case 'checkbox':
         if (option.name) {
           await fillCheckbox(page, option.value, option.name);
         } else {
-          throw new Error('checkbox need dataFieldId to be located');
+          throw new Error('checkbox need name to be located');
         }
         break;
       case 'datepicker':
