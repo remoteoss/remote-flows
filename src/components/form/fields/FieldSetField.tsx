@@ -1,4 +1,4 @@
-import { useFormContext } from 'react-hook-form';
+import { FieldValues, useFormContext } from 'react-hook-form';
 import { Fragment, useEffect, useRef } from 'react';
 import omit from 'lodash.omit';
 import { baseFields } from '@/src/components/form/fields/baseFields';
@@ -33,7 +33,15 @@ type FieldWithoutOptions = FieldBase & {
   options?: never;
 };
 
-type Field = FieldWithOptions | FieldWithoutOptions;
+type FieldWithCalculateDynamicProperties = FieldBase & {
+  calculateDynamicProperties: (formValues: FieldValues) => {
+    [key: string]: unknown;
+  };
+};
+type Field =
+  | FieldWithOptions
+  | FieldWithoutOptions
+  | FieldWithCalculateDynamicProperties;
 
 type FieldSetFeatures = {
   toggle?: {
@@ -95,8 +103,11 @@ export function FieldSetField({
   const fieldNames = fields.map(
     ({ name: fieldName }) => `${name}.${fieldName}`,
   );
+  const fieldsetNeedsAllFormValues = fields.some(
+    (field: $TSFixMe) => field.calculateDynamicProperties,
+  );
   const watchedValues = watch(fieldNames);
-  const allFormValues = watch();
+  const allFormValues = fieldsetNeedsAllFormValues ? watch() : watchedValues;
   const prevValuesRef = useRef<string[]>(watchedValues);
   const triggerTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
