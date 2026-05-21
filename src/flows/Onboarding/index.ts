@@ -1,5 +1,6 @@
 export { OnboardingFlow } from './OnboardingFlow';
 export type { OnboardingInviteProps } from './components/OnboardingInvite';
+export type { PreOnboardingRequirementsBag } from './components/PreOnboardingRequirements';
 export type {
   BenefitsFormPayload,
   BasicInformationFormPayload,

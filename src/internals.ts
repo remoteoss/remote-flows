@@ -46,6 +46,16 @@ export {
   DialogFooter,
 } from './components/ui/dialog';
 
+export {
+  FullScreenDialog,
+  FullScreenDialogTrigger,
+  FullScreenDialogContent,
+  FullScreenDialogHeader,
+  FullScreenDialogTitle,
+  FullScreenDialogDescription,
+  FullScreenDialogFooter,
+} from './components/ui/full-screen-dialog';
+
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './components/ui/tabs';
 
 export { Alert, AlertDescription, AlertTitle } from './components/ui/alert';

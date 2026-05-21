@@ -15,10 +15,13 @@ export const usePreOnboardingRequirements = ({
 }) => {
   const [documentId, setDocumentId] = useState<string | undefined>();
 
-  const { data: requirements, isLoading: isLoadingRequirements } =
-    useGetPreOnboardingRequirements(employmentId, {
-      queryOptions: { enabled: !!employmentId },
-    });
+  const {
+    data: requirements,
+    isLoading: isLoadingRequirements,
+    refetch: refetchRequirements,
+  } = useGetPreOnboardingRequirements(employmentId, {
+    queryOptions: { enabled: !!employmentId },
+  });
 
   const { data: documentPreview, isLoading: isLoadingDocumentPreview } =
     useGetPreOnboardingDocument(employmentId, documentId, {
@@ -58,11 +61,13 @@ export const usePreOnboardingRequirements = ({
       throw new Error('Signature is required');
     }
 
-    return await signDocumentMutationAsync({
+    const responnse = await signDocumentMutationAsync({
       employmentId,
       documentId,
       signature,
     });
+    await refetchRequirements();
+    return responnse;
   };
 
   return {
@@ -77,12 +82,14 @@ export const usePreOnboardingRequirements = ({
   };
 };
 
+export type PreOnboardingRequirementsBag = ReturnType<
+  typeof usePreOnboardingRequirements
+>;
+
 export const PreOnboardingRequirements = ({
   render,
 }: {
-  render: (
-    bag: ReturnType<typeof usePreOnboardingRequirements>,
-  ) => React.ReactNode;
+  render: (bag: PreOnboardingRequirementsBag) => React.ReactNode;
 }) => {
   const { onboardingBag } = useOnboardingContext();
 

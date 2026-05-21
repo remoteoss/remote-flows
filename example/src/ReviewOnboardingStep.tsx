@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   CreditRiskStatus,
   OnboardingRenderProps,
@@ -7,7 +8,26 @@ import {
   NormalizedFieldError,
   MetaValues,
   NestedMeta,
+  PreOnboardingRequirementsBag,
 } from '@remoteoss/remote-flows';
+import {
+  FullScreenDialog,
+  FullScreenDialogContent,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  Button,
+  Checkbox,
+  Label,
+  Input,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDescription,
+} from '@remoteoss/remote-flows/internals';
 import { AlertError } from './AlertError';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 
@@ -206,6 +226,269 @@ export const MyOnboardingInviteButton = ({
   return null;
 };
 
+const SignatureDialog = ({
+  requirementName,
+  isOpen,
+  onClose,
+  onSign,
+  isSigning,
+}: {
+  requirementName: string;
+  isOpen: boolean;
+  onClose: () => void;
+  onSign: (signature: string) => Promise<void>;
+  isSigning: boolean;
+}) => {
+  const [signature, setSignature] = useState('');
+
+  const handleSign = async () => {
+    if (!signature.trim()) return;
+    await onSign(signature);
+    setSignature('');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && signature.trim() && !isSigning) {
+      e.preventDefault();
+      handleSign();
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Sign {requirementName}</DialogTitle>
+        </DialogHeader>
+
+        <div className='py-4'>
+          <p className='text-sm text-muted-foreground mb-4'>
+            By typing your full name below, you agree to the terms and
+            conditions outlined in this document.
+          </p>
+
+          <div className='flex flex-col gap-2'>
+            <Label htmlFor='signature'>Your full name (signature)</Label>
+            <Input
+              id='signature'
+              type='text'
+              placeholder='Type your full name'
+              value={signature}
+              onChange={(e) => setSignature(e.target.value)}
+              onKeyDown={handleKeyDown}
+              disabled={isSigning}
+              autoComplete='name'
+              autoFocus
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant='outline' onClick={onClose} disabled={isSigning}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSign}
+            disabled={!signature.trim() || isSigning}
+          >
+            {isSigning ? 'Signing...' : 'Sign Document'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const DocumentPreviewModal = ({
+  isOpen,
+  onClose,
+  documentPreview,
+  onSignDocument,
+  isSigning,
+  requirementName,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  documentPreview: PreOnboardingRequirementsBag['documentPreview'];
+  onSignDocument: PreOnboardingRequirementsBag['onSignDocument'];
+  isSigning: PreOnboardingRequirementsBag['isSigning'];
+  requirementName: string;
+}) => {
+  const [isPdfLoading, setIsPdfLoading] = useState(true);
+  const [showSignatureDialog, setShowSignatureDialog] = useState(false);
+
+  const handleSignClick = () => {
+    setShowSignatureDialog(true);
+  };
+
+  const handleSign = async (signature: string) => {
+    await onSignDocument(signature);
+    setShowSignatureDialog(false);
+    onClose();
+  };
+
+  const basePdfUrl = documentPreview?.pre_onboarding_document?.content;
+  const pdfUrl = basePdfUrl ? `${basePdfUrl}#view=FitV&toolbar=0` : undefined;
+
+  return (
+    <>
+      <FullScreenDialog open={isOpen} onOpenChange={onClose}>
+        <FullScreenDialogContent>
+          {/* Header with Sign button */}
+          <div className='flex items-center justify-between px-6 py-4 border-b bg-white'>
+            <div className='flex items-center gap-4'>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={onClose}
+                disabled={isSigning}
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  width='24'
+                  height='24'
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  stroke='currentColor'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                >
+                  <path d='M19 12H5M12 19l-7-7 7-7' />
+                </svg>
+              </Button>
+              <h2 className='text-lg font-semibold'>{requirementName}</h2>
+            </div>
+            <Button onClick={handleSignClick} disabled={isSigning}>
+              Sign Document
+            </Button>
+          </div>
+
+          {/* Full screen PDF viewer */}
+          <div className='flex-1 relative bg-gray-50 overflow-hidden'>
+            {isPdfLoading && (
+              <div className='absolute inset-0 flex items-center justify-center bg-white z-10'>
+                <div className='text-center'>
+                  <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-2'></div>
+                  <p className='text-sm text-gray-600'>Loading document...</p>
+                </div>
+              </div>
+            )}
+            {pdfUrl && (
+              <iframe
+                src={pdfUrl}
+                className='w-full h-full border-0'
+                title='Document Preview'
+                onLoad={() => setIsPdfLoading(false)}
+              />
+            )}
+          </div>
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+
+      <SignatureDialog
+        requirementName={requirementName}
+        isOpen={showSignatureDialog}
+        onClose={() => setShowSignatureDialog(false)}
+        onSign={handleSign}
+        isSigning={isSigning}
+      />
+    </>
+  );
+};
+
+const Requirement = ({
+  requirement,
+  onCreateDocument,
+  onSignDocument,
+  documentPreview,
+  isCreatingDocument,
+  isSigning,
+  employeeCountry,
+}: {
+  requirement: NonNullable<
+    PreOnboardingRequirementsBag['requirements']
+  >[number];
+  onCreateDocument: PreOnboardingRequirementsBag['onCreateDocument'];
+  onSignDocument: PreOnboardingRequirementsBag['onSignDocument'];
+  documentPreview: PreOnboardingRequirementsBag['documentPreview'];
+  isCreatingDocument: PreOnboardingRequirementsBag['isCreatingDocument'];
+  isSigning: PreOnboardingRequirementsBag['isSigning'];
+  employeeCountry?: string;
+}) => {
+  const [constraintsAckAt, setConstraintsAckAt] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const needsConstraintsAck =
+    requirement.needs_constraints_ack && !constraintsAckAt;
+
+  const handleReviewDocument = async () => {
+    if (!documentPreview) {
+      await onCreateDocument(requirement.slug, constraintsAckAt || undefined);
+    }
+    setIsModalOpen(true);
+  };
+
+  return (
+    <div className='flex flex-col gap-4'>
+      {requirement.needs_constraints_ack && (
+        <div className='flex items-start gap-2'>
+          <Checkbox
+            id={`ack-${requirement.slug}`}
+            disabled={requirement.status === 'finished'}
+            checked={!!constraintsAckAt || requirement.status === 'finished'}
+            onCheckedChange={(checked) =>
+              checked
+                ? setConstraintsAckAt(new Date().toISOString())
+                : setConstraintsAckAt(null)
+            }
+          />
+          <Label
+            htmlFor={`ack-${requirement.slug}`}
+            className='text-sm cursor-pointer'
+          >
+            I acknowledge that I've understood information about hiring in{' '}
+            {employeeCountry ?? 'this country'}, and that these new hire details
+            can't be changed once they're submitted.
+          </Label>
+        </div>
+      )}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{requirement.name}</CardTitle>
+          <CardDescription>{requirement.description}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button
+            onClick={handleReviewDocument}
+            disabled={
+              needsConstraintsAck ||
+              isCreatingDocument ||
+              requirement.status === 'finished'
+            }
+          >
+            {requirement.status === 'finished'
+              ? 'Signed'
+              : isCreatingDocument
+                ? 'Loading...'
+                : 'Review document'}
+          </Button>
+        </CardContent>
+      </Card>
+
+      <DocumentPreviewModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        documentPreview={documentPreview}
+        onSignDocument={onSignDocument}
+        isSigning={isSigning}
+        requirementName={requirement.name}
+      />
+    </div>
+  );
+};
+
 export const ReviewOnboardingStep = ({
   onboardingBag,
   components,
@@ -278,7 +561,6 @@ export const ReviewOnboardingStep = ({
         Edit Benefits
       </button>
 
-      <h2 className='title'>Pre-Onboarding Requirements</h2>
       <PreOnboardingRequirements
         render={({
           requirements,
@@ -289,101 +571,33 @@ export const ReviewOnboardingStep = ({
           isCreatingDocument,
           isSigning,
         }) => (
-          <div
-            style={{
-              padding: '20px',
-              background: '#f5f5f5',
-              borderRadius: '8px',
-              marginBottom: '20px',
-            }}
-          >
-            {isLoadingRequirements ? (
-              <p>Loading requirements...</p>
-            ) : (
-              <>
-                <h3>Requirements List</h3>
-                {requirements?.map((req) => (
-                  <div
-                    key={req.slug}
-                    style={{
-                      marginBottom: '10px',
-                      padding: '10px',
-                      background: 'white',
-                      borderRadius: '4px',
-                    }}
-                  >
-                    <strong>{req.name}</strong>
-                    <p>{req.description}</p>
-                    <p>slug: {req.slug}</p>
-                    {req.needs_constraints_ack && (
-                      <p style={{ color: 'orange', fontSize: '0.9em' }}>
-                        Requires constraints acknowledgment
-                      </p>
-                    )}
-                    {!documentPreview && (
-                      <button
-                        onClick={() =>
-                          onCreateDocument(
-                            req.slug,
-                            req.needs_constraints_ack
-                              ? new Date().toISOString()
-                              : undefined,
-                          )
-                        }
-                        disabled={isCreatingDocument}
-                        style={{
-                          marginTop: '10px',
-                          padding: '8px 16px',
-                          cursor: isCreatingDocument
-                            ? 'not-allowed'
-                            : 'pointer',
-                        }}
-                      >
-                        {isCreatingDocument ? 'Creating...' : 'Create Document'}
-                      </button>
-                    )}
-                  </div>
-                ))}
+          <>
+            <h2 className='title'>Pre-Onboarding Requirements</h2>
 
-                {documentPreview && (
-                  <div style={{ marginTop: '20px' }}>
-                    <h4>Document Preview</h4>
-                    <p>
-                      Document ID:{' '}
-                      {documentPreview.pre_onboarding_document.name}
-                    </p>
-                    <p>
-                      Status: {documentPreview.pre_onboarding_document.status}
-                    </p>
-                    {documentPreview.pre_onboarding_document.content && (
-                      <p>
-                        PDF URL:{' '}
-                        <iframe
-                          src={
-                            documentPreview.pre_onboarding_document
-                              .content as unknown as string
-                          }
-                          style={{ width: '100%', height: '400px' }}
-                          title='Document Preview'
-                        />
-                      </p>
-                    )}
-                    <button
-                      onClick={() => onSignDocument('John Doe Signature')}
-                      disabled={isSigning}
-                      style={{
-                        marginTop: '10px',
-                        padding: '10px 20px',
-                        cursor: isSigning ? 'not-allowed' : 'pointer',
-                      }}
-                    >
-                      {isSigning ? 'Signing...' : 'Sign Document'}
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+            <div className='flex flex-col gap-4'>
+              {isLoadingRequirements ? (
+                <p>Loading requirements...</p>
+              ) : (
+                requirements?.map((req) => (
+                  <Requirement
+                    key={req.slug}
+                    requirement={req}
+                    onCreateDocument={onCreateDocument}
+                    onSignDocument={onSignDocument}
+                    documentPreview={documentPreview}
+                    isCreatingDocument={isCreatingDocument}
+                    isSigning={isSigning}
+                    employeeCountry={
+                      (
+                        onboardingBag.employment?.basic_information
+                          ?.country as { name: string }
+                      )?.name ?? undefined
+                    }
+                  />
+                ))
+              )}
+            </div>
+          </>
         )}
       />
 
