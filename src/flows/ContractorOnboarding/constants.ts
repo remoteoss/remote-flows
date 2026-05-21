@@ -152,7 +152,6 @@ export const pricingPlanDetails = {
     title: 'Employer of Record',
     subtitle: 'Remote engages the employee on your behalf',
     listItems: [
-      'Contract between Remote and employee',
       'Remote manages onboarding, payroll, and compliance',
       'Manages taxes, benefits, and time-off tracking',
       'Handles contracts, transfers, and terminations',
