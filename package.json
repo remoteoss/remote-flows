@@ -1,6 +1,6 @@
 {
   "name": "@remoteoss/remote-flows",
-  "version": "1.33.2",
+  "version": "1.34.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/remoteoss/remote-flows.git"
@@ -99,7 +99,7 @@
     "@radix-ui/react-scroll-area": "1.2.10",
     "@radix-ui/react-select": "2.2.6",
     "@radix-ui/react-tabs": "1.1.13",
-    "@remoteoss/remote-json-schema-form-kit": "0.0.11",
+    "@remoteoss/remote-json-schema-form-kit": "0.0.12",
     "@tailwindcss/cli": "4.2.4",
     "@tailwindcss/postcss": "4.2.4",
     "@tanstack/react-query": "5.100.9",
