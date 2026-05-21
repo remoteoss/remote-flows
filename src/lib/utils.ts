@@ -130,7 +130,7 @@ export const sanitizeHtmlWithImageErrorHandling = (html: string) => {
  * @param html - The HTML string to strip
  * @returns Plain text without HTML tags or entities
  */
-export const stripHtml = (html: string | undefined | unknown): string => {
+export const stripHtml = (html: string | undefined): string => {
   if (!html || typeof html !== 'string') return '';
 
   const parser = new DOMParser();
@@ -199,7 +199,7 @@ export function prettifyFormValues(
               key,
               {
                 prettyValue: stripHtml(option?.label),
-                label: stripHtml(field?.label),
+                label: stripHtml(field?.label as string),
                 inputType: field?.type,
               },
             ];
@@ -212,7 +212,7 @@ export function prettifyFormValues(
             key,
             {
               prettyValue: true,
-              label: stripHtml(field.label),
+              label: stripHtml(field.label as string),
               inputType: field?.type,
             },
           ];
@@ -223,7 +223,7 @@ export function prettifyFormValues(
             key,
             {
               prettyValue: value.join(),
-              label: stripHtml(field.label),
+              label: stripHtml(field.label as string),
               inputType: field?.type,
             },
           ];
@@ -241,7 +241,7 @@ export function prettifyFormValues(
           if (!prettiedFieldset.label && prettiedFieldset.value) {
             const prettyValue: Record<string, unknown> = {
               ...prettiedFieldset.value,
-              label: stripHtml(field.label),
+              label: stripHtml(field.label as string),
               inputType: field?.type,
             };
             return [key, prettyValue];
@@ -261,7 +261,7 @@ export function prettifyFormValues(
                 (typeof value === 'string' || typeof value === 'number')
                   ? convertFromCents(value)
                   : value,
-              label: stripHtml(field.label),
+              label: stripHtml(field.label as string),
               inputType: field?.type,
               currency: field?.currency,
             },
@@ -273,7 +273,7 @@ export function prettifyFormValues(
             key,
             {
               prettyValue: value,
-              label: stripHtml(field.label),
+              label: stripHtml(field.label as string),
               inputType: field?.type,
             },
           ];
