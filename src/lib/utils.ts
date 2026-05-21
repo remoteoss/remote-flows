@@ -130,8 +130,16 @@ export const sanitizeHtmlWithImageErrorHandling = (html: string) => {
  * @param html - The HTML string to strip
  * @returns Plain text without HTML tags or entities
  */
-export const stripHtml = (html: string | undefined): string | undefined => {
-  if (html === undefined) return undefined;
+export const stripHtml = (
+  html: string | undefined | null,
+): string | undefined | null => {
+  if (html === null) {
+    return null;
+  }
+
+  if (html === undefined) {
+    return undefined;
+  }
 
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
