@@ -36,6 +36,7 @@ export function ForcedValueField({
   const descriptionId = `forced-value-${name}-description`;
 
   useEffect(() => {
+    console.log('setting value', name, value);
     setValue(name, value);
   }, [name, value, setValue]);
 
