@@ -126,6 +126,24 @@ export const sanitizeHtmlWithImageErrorHandling = (html: string) => {
 };
 
 /**
+ * Strips HTML tags and decodes HTML entities from a string
+ * @param html - The HTML string to strip
+ * @returns Plain text without HTML tags or entities
+ */
+export const stripHtml = (
+  html: string | undefined | null,
+): string | undefined | null => {
+  if (html === null || html === undefined) {
+    return html;
+  }
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+
+  return doc.body.textContent || '';
+};
+
+/**
  * Ensures base64 data has the correct data URI prefix for PDF content
  * @param base64Data - The base64 data string
  * @returns The base64 data with proper data URI prefix
@@ -184,8 +202,8 @@ export function prettifyFormValues(
             return [
               key,
               {
-                prettyValue: option?.label,
-                label: field?.label,
+                prettyValue: stripHtml(option?.label),
+                label: stripHtml(field?.label as string),
                 inputType: field?.type,
               },
             ];
@@ -196,7 +214,11 @@ export function prettifyFormValues(
         if (field?.type === 'checkbox' && field?.const) {
           return [
             key,
-            { prettyValue: true, label: field.label, inputType: field?.type },
+            {
+              prettyValue: true,
+              label: stripHtml(field.label as string),
+              inputType: field?.type,
+            },
           ];
         }
 
@@ -205,7 +227,7 @@ export function prettifyFormValues(
             key,
             {
               prettyValue: value.join(),
-              label: field.label,
+              label: stripHtml(field.label as string),
               inputType: field?.type,
             },
           ];
@@ -223,7 +245,7 @@ export function prettifyFormValues(
           if (!prettiedFieldset.label && prettiedFieldset.value) {
             const prettyValue: Record<string, unknown> = {
               ...prettiedFieldset.value,
-              label: field.label,
+              label: stripHtml(field.label as string),
               inputType: field?.type,
             };
             return [key, prettyValue];
@@ -243,7 +265,7 @@ export function prettifyFormValues(
                 (typeof value === 'string' || typeof value === 'number')
                   ? convertFromCents(value)
                   : value,
-              label: field.label,
+              label: stripHtml(field.label as string),
               inputType: field?.type,
               currency: field?.currency,
             },
@@ -253,7 +275,11 @@ export function prettifyFormValues(
         if (field) {
           return [
             key,
-            { prettyValue: value, label: field.label, inputType: field?.type },
+            {
+              prettyValue: value,
+              label: stripHtml(field.label as string),
+              inputType: field?.type,
+            },
           ];
         }
       })

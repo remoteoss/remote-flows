@@ -335,6 +335,48 @@ describe('utils lib', () => {
       });
     });
 
+    it('strips HTML from labels', () => {
+      const values = { phone: '1234567890', email: 'test@example.com' };
+      const fields: JSFFields = [
+        { name: 'phone', type: 'text', label: 'Employee&#39;s phone number' },
+        { name: 'email', type: 'text', label: '<strong>Work email</strong>' },
+      ];
+      expect(prettifyFormValues(values, fields)).toEqual({
+        phone: {
+          prettyValue: '1234567890',
+          label: "Employee's phone number",
+          inputType: 'text',
+        },
+        email: {
+          prettyValue: 'test@example.com',
+          label: 'Work email',
+          inputType: 'text',
+        },
+      });
+    });
+
+    it('strips HTML from prettyValue in radio/select fields', () => {
+      const values = { status: 'active' };
+      const fields: JSFFields = [
+        {
+          name: 'status',
+          type: 'select',
+          label: 'Status',
+          options: [
+            { value: 'active', label: '<strong>Active</strong>' },
+            { value: 'inactive', label: 'Employee&#39;s status' },
+          ],
+        },
+      ];
+      expect(prettifyFormValues(values, fields)).toEqual({
+        status: {
+          prettyValue: 'Active',
+          label: 'Status',
+          inputType: 'select',
+        },
+      });
+    });
+
     it('handles multiple fields of different types', () => {
       const values = {
         name: 'John',
