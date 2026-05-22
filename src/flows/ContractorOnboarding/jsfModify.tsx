@@ -1,7 +1,8 @@
-import { format } from 'date-fns';
+import { addYears, format } from 'date-fns';
 import { FieldValues } from 'react-hook-form';
 import { ChangeEvent } from 'react';
 
+import { parseLocalDate } from '@/src/common/dates';
 import { createStatementProperty } from '@/src/components/form/jsf-utils/createFields';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
@@ -124,6 +125,25 @@ export const buildContractDetailsJsfModify = (
               ? format(new Date(), 'yyyy-MM-dd')
               : undefined,
             ...statement,
+          },
+        },
+        'service_duration.expiration_date': {
+          'x-jsf-presentation': {
+            calculateDynamicProperties: (formValues: FieldValues) => {
+              const maxDate =
+                isContractorOfRecord &&
+                formValues.service_duration?.provisional_start_date
+                  ? addYears(
+                      parseLocalDate(
+                        formValues.service_duration.provisional_start_date,
+                      ),
+                      1,
+                    )
+                  : undefined;
+              return {
+                maxDate: maxDate ? format(maxDate, 'yyyy-MM-dd') : undefined,
+              };
+            },
           },
         },
         services_and_deliverables: {
