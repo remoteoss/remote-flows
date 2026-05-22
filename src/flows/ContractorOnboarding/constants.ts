@@ -148,4 +148,14 @@ export const pricingPlanDetails = {
     ],
     contractPillText: 'Contract between Remote and contractor',
   },
+  [eorProductIdentifier]: {
+    title: 'Employer of Record',
+    subtitle: 'Remote engages the employee on your behalf',
+    listItems: [
+      'Remote manages onboarding, payroll, and compliance',
+      'Manages taxes, benefits, and time-off tracking',
+      'Handles contracts, transfers, and terminations',
+    ],
+    contractPillText: 'Contract between Remote and employee',
+  },
 };
