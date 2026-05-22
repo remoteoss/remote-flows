@@ -1,4 +1,4 @@
-import { addMonths, format } from 'date-fns';
+import { addYears, format } from 'date-fns';
 import { FieldValues } from 'react-hook-form';
 import { ChangeEvent } from 'react';
 
@@ -133,11 +133,11 @@ export const buildContractDetailsJsfModify = (
               const maxDate =
                 isContractorOfRecord &&
                 formValues.service_duration?.provisional_start_date
-                  ? addMonths(
+                  ? addYears(
                       parseLocalDate(
                         formValues.service_duration.provisional_start_date,
                       ),
-                      12,
+                      1,
                     )
                   : undefined;
               return {
