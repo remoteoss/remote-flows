@@ -1,5 +1,14 @@
 # @remoteoss/remote-flows
 
+## 1.35.0
+
+### Minor Changes
+
+- update remote-json-schema-form-kit to v0.0.12
+- add employer of record information (#1043) [#1043](https://github.com/remoteoss/remote-flows/pull/1043)
+- strip html tags (#1044) [#1044](https://github.com/remoteoss/remote-flows/pull/1044)
+- fix maxDate for contractor of record (#1042) [#1042](https://github.com/remoteoss/remote-flows/pull/1042)
+
 ## 1.34.0
 
 ### Minor Changes
