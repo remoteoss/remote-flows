@@ -133,12 +133,8 @@ export const sanitizeHtmlWithImageErrorHandling = (html: string) => {
 export const stripHtml = (
   html: string | undefined | null,
 ): string | undefined | null => {
-  if (html === null) {
-    return null;
-  }
-
-  if (html === undefined) {
-    return undefined;
+  if (html === null || html === undefined) {
+    return html;
   }
 
   const parser = new DOMParser();
