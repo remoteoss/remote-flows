@@ -116,7 +116,7 @@
     "lodash.omit": "4.18.0",
     "lodash.omitby": "4.6.0",
     "lucide-react": "1.16.0",
-    "postcss": "8.5.10",
+    "postcss": "8.5.14",
     "react-day-picker": "8.10.2",
     "react-flagpack": "2.0.6",
     "react-hook-form": "7.73.1",
