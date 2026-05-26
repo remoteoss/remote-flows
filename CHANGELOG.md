@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-#### Features
+#### Features
 
 - add time field input (#1046) [#1046](https://github.com/remoteoss/remote-flows/pull/1046)
 
