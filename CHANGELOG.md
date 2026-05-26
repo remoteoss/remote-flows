@@ -63,7 +63,7 @@
 - handle empty contractor subscriptions (#1016) [#1016](https://github.com/remoteoss/remote-flows/pull/1016)
 - fix disabled button state in contract-preview (#1022) [#1022](https://github.com/remoteoss/remote-flows/pull/1022)
 
-#### Chores
+#### Chores
 
 - update dependency oxlint to v1.63.0 (#999) [#999](https://github.com/remoteoss/remote-flows/pull/999)
 - update dependency filesize to v11.0.17 (#997) [#997](https://github.com/remoteoss/remote-flows/pull/997)
@@ -316,11 +316,11 @@
 
 ### Minor Changes
 
-#### Features
+#### Features
 
 - let users load dynamic versions of basic_information or benefits (#800) [#800](https://github.com/remoteoss/remote-flows/pull/800)
 
-#### Fixes
+#### Fixes
 
 - fix force value fields and x-jsf-fieldsets (#801) [#801](https://github.com/remoteoss/remote-flows/pull/801)
 
@@ -328,11 +328,11 @@
 
 ### Minor Changes
 
-#### Features
+#### Features
 
 - create reserves when COR is selected (#760) [#760](https://github.com/remoteoss/remote-flows/pull/760)
 
-#### Fixes
+#### Fixes
 
 - fix mark review button making input to hide after first character (#796) [#796](https://github.com/remoteoss/remote-flows/pull/796)
 
@@ -399,7 +399,7 @@
 
 - onboarding handle onboarding status reserves (#767) [#767](https://github.com/remoteoss/remote-flows/pull/767)
 
-#### Chores
+#### Chores
 
 - drop unused radix packages (#771) [#771](https://github.com/remoteoss/remote-flows/pull/771)
 
@@ -425,7 +425,7 @@
 
 ### Minor Changes
 
-#### Features
+#### Features
 
 - retrieve correct price for eor (#750) [#750](https://github.com/remoteoss/remote-flows/pull/750)
 - add eor product card when COR is available (#752) [#752](https://github.com/remoteoss/remote-flows/pull/752)
