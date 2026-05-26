@@ -108,6 +108,8 @@ Available component types include:
 - `drawer` - Drawer components
 - `zendeskDrawer` - Zendesk drawer components
 - `pdfViewer` - PDF viewer component
+- `tel` - Tel field component
+- `time` - Time field component
 
 and their typescript definitions
 
@@ -121,6 +123,8 @@ and their typescript definitions
 - `DatePickerComponentProps`: for datepicker components
 - `WorkScheduleComponentProps`: for workschedule components
 - `PDFPreviewComponentProps`: for the pdf viewer component
+- `TelFieldComponentProps`: for the tel component
+- `TimeFieldComponentProps`: for the timefield component
 
 > **Tip:** Check [src/default-components.ts](../src/default-components.ts) to see the default implementations. You can use these as a starting point or reference when building your own custom components.
 

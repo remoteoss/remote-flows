@@ -13,6 +13,7 @@ export type BaseTypes =
   | 'countries'
   | 'hidden'
   | 'work-schedule'
-  | 'tel';
+  | 'tel'
+  | 'time';
 
 export type SupportedTypes = BaseTypes | 'fieldset' | 'fieldset-flat';

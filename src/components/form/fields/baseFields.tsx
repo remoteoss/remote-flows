@@ -13,6 +13,7 @@ import { WorkScheduleField } from './WorkScheduleField';
 import { MultiSelectField } from './MultiSelectField';
 import { MoneyField } from './MoneyField';
 import { TelField } from './TelField';
+import { TimeField } from './TimeField';
 import { SupportedTypes } from './types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
@@ -34,5 +35,6 @@ export const baseFields: Record<
   countries: CountryField,
   hidden: HiddenField,
   tel: TelField,
+  time: TimeField,
   'work-schedule': WorkScheduleField,
 };
