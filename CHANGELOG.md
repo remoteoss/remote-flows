@@ -25,7 +25,6 @@
 - update dependency @playwright/test to v1.60.0 (#1055) [#1055](https://github.com/remoteoss/remote-flows/pull/1055)
 - update dependency @remoteoss/remote-json-schema-form-kit to v0.14.0 (#1060) [#1060](https://github.com/remoteoss/remote-flows/pull/1060)
 
-
 ## 1.35.0
 
 ### Minor Changes
