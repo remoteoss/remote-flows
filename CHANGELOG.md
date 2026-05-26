@@ -1,5 +1,30 @@
 # @remoteoss/remote-flows
 
+## 1.36.0
+
+### Minor Changes
+
+#### Features
+
+- add time field input (#1046) [#1046](https://github.com/remoteoss/remote-flows/pull/1046)
+
+#### Chores
+
+- add e2e tests for onboarding (#1010) [#1010](https://github.com/remoteoss/remote-flows/pull/1010)
+- update dependency vite to v8.0.13 (#1036) [#1036](https://github.com/remoteoss/remote-flows/pull/1036)
+- update dependency lucide-react to v1.16.0 (#983) [#983](https://github.com/remoteoss/remote-flows/pull/983)
+- update dependency @types/jsdom to v28.0.3 (#1047) [#1047](https://github.com/remoteoss/remote-flows/pull/1047)
+- update dependency dompurify to v3.4.5 (#1023) [#1023](https://github.com/remoteoss/remote-flows/pull/1023)
+- update dependency html-react-parser to v6.1.1 (#1029) [#1029](https://github.com/remoteoss/remote-flows/pull/1029)
+- update dependency react-day-picker to v8.10.2 (#1024) [#1024](https://github.com/remoteoss/remote-flows/pull/1024)
+- update dependency @types/node to v24.12.4 (#1048) [#1048](https://github.com/remoteoss/remote-flows/pull/1048)
+- update dependency postcss to v8.5.14 (#988) [#988](https://github.com/remoteoss/remote-flows/pull/988)
+- update dependency axios to v1.16.1 (#1054) [#1054](https://github.com/remoteoss/remote-flows/pull/1054)
+- update dependency @vitejs/plugin-react to v6.0.2 (#1050) [#1050](https://github.com/remoteoss/remote-flows/pull/1050)
+- update dependency msw to v2.14.6 (#1051) [#1051](https://github.com/remoteoss/remote-flows/pull/1051)
+- update dependency @playwright/test to v1.60.0 (#1055) [#1055](https://github.com/remoteoss/remote-flows/pull/1055)
+- update dependency @remoteoss/remote-json-schema-form-kit to v0.14.0 (#1060) [#1060](https://github.com/remoteoss/remote-flows/pull/1060)
+
 ## 1.35.0
 
 ### Minor Changes
