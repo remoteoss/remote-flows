@@ -89,7 +89,7 @@ describe('OnboardingInvite', () => {
       }),
 
       http.get(
-        '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/requirements',
+        '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
         () => {
           return HttpResponse.json({ data: [] });
         },
@@ -1211,7 +1211,7 @@ describe('OnboardingInvite', () => {
     it('should disable button when pre-onboarding requirements are not finished', async () => {
       server.use(
         http.get(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/requirements',
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
           () => {
             return HttpResponse.json(preOnboardingRequirementsMock);
           },
@@ -1228,7 +1228,7 @@ describe('OnboardingInvite', () => {
     it('should enable button when all pre-onboarding requirements are finished', async () => {
       server.use(
         http.get(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/requirements',
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
           () => {
             return HttpResponse.json({
               data: [
@@ -1268,7 +1268,7 @@ describe('OnboardingInvite', () => {
     it('should disable button when at least one requirement is not finished', async () => {
       server.use(
         http.get(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/requirements',
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
           () => {
             return HttpResponse.json({
               data: [

@@ -131,7 +131,7 @@ const benefitOffersSchemaHandler = http.get(
 );
 
 const preOnboardingRequirementsHandler = http.get(
-  '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/requirements',
+  '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
   () => {
     return HttpResponse.json(preOnboardingRequirementsMock);
   },
