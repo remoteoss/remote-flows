@@ -1,5 +1,5 @@
 import { mockCompanyResponse } from '@/src/common/api/fixtures/companies';
-import { preOnboardingRequirementsFixture } from '@/src/common/api/fixtures/pre-onboarding-requirements';
+import { preOnboardingRequirementsMock } from '@/src/common/api/fixtures/pre-onboarding-requirements';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchemaV1Portugal,
@@ -1213,7 +1213,7 @@ describe('OnboardingInvite', () => {
         http.get(
           '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/requirements',
           () => {
-            return HttpResponse.json(preOnboardingRequirementsFixture);
+            return HttpResponse.json(preOnboardingRequirementsMock);
           },
         ),
       );
