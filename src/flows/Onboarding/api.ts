@@ -16,7 +16,7 @@ import {
   getV1EmploymentsEmploymentIdBenefitOffersSchema,
   getV1EmploymentsEmploymentIdEngagementAgreementDetails,
   getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId,
-  getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsRequirements,
+  getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirements,
   patchV1EmploymentsEmploymentId2,
   postV1CurrencyConverterEffective,
   postV1CurrencyConverterRaw,
@@ -579,7 +579,7 @@ export const useGetPreOnboardingRequirements = (
   return useQuery({
     queryKey: ['pre-onboarding-requirements', employmentId],
     queryFn: () =>
-      getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsRequirements({
+      getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirements({
         client: client as Client,
         path: {
           employment_id: employmentId,
