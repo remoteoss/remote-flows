@@ -304,19 +304,18 @@ export const useOnboarding = ({
       isOnboardingReservesEnabled,
     );
 
-  const { data: requirements } = useGetPreOnboardingRequirements(
-    internalEmploymentId as string,
-    {
+  const { data: requirements, isLoading: isLoadingPreOnboardingRequirements } =
+    useGetPreOnboardingRequirements(internalEmploymentId as string, {
       queryOptions: { enabled: !!internalEmploymentId },
-    },
-  );
+    });
 
   const arePreOnboardingRequirementsFulfilled = useMemo(() => {
+    if (isLoadingPreOnboardingRequirements) return false;
     if (!requirements) return true;
     return requirements.every(
       (requirement) => requirement.status === 'finished',
     );
-  }, [requirements]);
+  }, [requirements, isLoadingPreOnboardingRequirements]);
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
     useCountriesSchemaField({

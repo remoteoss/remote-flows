@@ -1308,5 +1308,51 @@ describe('OnboardingInvite', () => {
       const inviteButton = screen.getByTestId('onboarding-invite');
       expect(inviteButton).toBeDisabled();
     });
+
+    it('should keep button disabled during requirements loading to prevent race condition', async () => {
+      let resolveRequirements: (value: unknown) => void;
+      const requirementsPromise = new Promise((resolve) => {
+        resolveRequirements = resolve;
+      });
+
+      server.use(
+        http.get(
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+          async () => {
+            await requirementsPromise;
+            return HttpResponse.json({
+              data: [
+                {
+                  name: 'Master Service Agreement',
+                  status: 'finished',
+                  description: 'Master Service Agreement required',
+                  slug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
+                  depends_on_requirement: null,
+                  document_constraints_ack_at: '2026-05-18T12:23:24Z',
+                  freeze_employment_data: false,
+                  needs_constraints_ack: true,
+                  redlining_help_email: null,
+                  supports_redlining: false,
+                },
+              ],
+            });
+          },
+        ),
+      );
+
+      render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      const inviteButton = screen.getByTestId('onboarding-invite');
+      expect(inviteButton).toBeDisabled();
+
+      await act(async () => {
+        resolveRequirements!({});
+      });
+
+      await waitFor(() => {
+        expect(inviteButton).not.toBeDisabled();
+      });
+    });
   });
 });
