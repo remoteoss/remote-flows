@@ -405,6 +405,8 @@ const Requirement = ({
   documentPreview,
   isCreatingDocument,
   isSigning,
+  activeRequirementSlug,
+  isLoadingDocumentPreview,
   employeeCountry,
 }: {
   requirement: NonNullable<
@@ -415,6 +417,8 @@ const Requirement = ({
   documentPreview: PreOnboardingRequirementsBag['documentPreview'];
   isCreatingDocument: PreOnboardingRequirementsBag['isCreatingDocument'];
   isSigning: PreOnboardingRequirementsBag['isSigning'];
+  activeRequirementSlug: PreOnboardingRequirementsBag['activeRequirementSlug'];
+  isLoadingDocumentPreview: PreOnboardingRequirementsBag['isLoadingDocumentPreview'];
   employeeCountry?: string;
 }) => {
   const [constraintsAckAt, setConstraintsAckAt] = useState<string | null>(null);
@@ -422,6 +426,10 @@ const Requirement = ({
 
   const needsConstraintsAck =
     requirement.needs_constraints_ack && !constraintsAckAt;
+
+  const isRequirementLoading =
+    activeRequirementSlug === requirement.slug &&
+    (isCreatingDocument || isLoadingDocumentPreview);
 
   const handleReviewDocument = async () => {
     await onCreateDocument(requirement.slug, constraintsAckAt || undefined);
@@ -463,13 +471,13 @@ const Requirement = ({
             onClick={handleReviewDocument}
             disabled={
               needsConstraintsAck ||
-              isCreatingDocument ||
+              isRequirementLoading ||
               requirement.status === 'finished'
             }
           >
             {requirement.status === 'finished'
               ? 'Signed'
-              : isCreatingDocument
+              : isRequirementLoading
                 ? 'Loading...'
                 : 'Review document'}
           </Button>
@@ -568,6 +576,8 @@ export const ReviewOnboardingStep = ({
           onSignDocument,
           isCreatingDocument,
           isSigning,
+          activeRequirementSlug,
+          isLoadingDocumentPreview,
         }) => (
           <>
             {requirements && requirements?.length > 0 && (
@@ -583,6 +593,8 @@ export const ReviewOnboardingStep = ({
                       documentPreview={documentPreview}
                       isCreatingDocument={isCreatingDocument}
                       isSigning={isSigning}
+                      activeRequirementSlug={activeRequirementSlug}
+                      isLoadingDocumentPreview={isLoadingDocumentPreview}
                       employeeCountry={
                         (
                           onboardingBag.employment?.basic_information

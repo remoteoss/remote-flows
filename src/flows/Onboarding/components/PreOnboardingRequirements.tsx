@@ -54,6 +54,8 @@ export const usePreOnboardingRequirements = ({
       return null;
     }
 
+    setActiveRequirementSlug(requirementSlug);
+
     const result = await createDocumentMutationAsync({
       employmentId,
       body: {
@@ -64,7 +66,6 @@ export const usePreOnboardingRequirements = ({
     const newDocumentId = result?.data.pre_onboarding_document.id;
     if (newDocumentId) {
       setDocumentIds((prev) => ({ ...prev, [requirementSlug]: newDocumentId }));
-      setActiveRequirementSlug(requirementSlug);
     }
     return result;
   };
@@ -97,6 +98,7 @@ export const usePreOnboardingRequirements = ({
     isLoadingRequirements,
     documentPreview,
     isLoadingDocumentPreview,
+    activeRequirementSlug,
     isCreatingDocument: createDocumentMutation.isPending,
     isSigning: signDocumentMutation.isPending,
     onCreateDocument,
