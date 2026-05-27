@@ -1,4 +1,4 @@
-export const preOnboardingRequirementsFixture = {
+export const preOnboardingRequirementsMock = {
   data: [
     {
       name: 'Individual Labor Agreement',
@@ -29,7 +29,7 @@ export const preOnboardingRequirementsFixture = {
   ],
 };
 
-export const generatedDocumentFixture = {
+export const generatedDocumentMock = {
   data: {
     pre_onboarding_document: {
       id: 'bdbe050d-2628-4c45-8fd1-1259904294cb',
@@ -37,7 +37,7 @@ export const generatedDocumentFixture = {
   },
 };
 
-export const documentDetailsFixture = {
+export const documentDetailsMock = {
   data: {
     pre_onboarding_document: {
       name: '2026-05-19_GermanyMSAtemplate_MagicLinkTestCompanyUSA_Gabriel_Unsigned.pdf',
@@ -60,7 +60,7 @@ export const documentDetailsFixture = {
   },
 };
 
-export const signDocumentResponseFixture = {
+export const signDocumentResponseMock = {
   data: {
     status: 'ok',
   },

@@ -24,10 +24,10 @@ import {
   mockBenefitOffersSchema,
 } from '@/src/common/api/fixtures/employments';
 import {
-  preOnboardingRequirementsFixture,
-  generatedDocumentFixture,
-  documentDetailsFixture,
-  signDocumentResponseFixture,
+  preOnboardingRequirementsMock,
+  generatedDocumentMock,
+  documentDetailsMock,
+  signDocumentResponseMock,
 } from '@/src/common/api/fixtures/pre-onboarding-requirements';
 
 const identityHandler = http.get('*/v1/identity/current', () => {
@@ -133,28 +133,28 @@ const benefitOffersSchemaHandler = http.get(
 const preOnboardingRequirementsHandler = http.get(
   '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/requirements',
   () => {
-    return HttpResponse.json(preOnboardingRequirementsFixture);
+    return HttpResponse.json(preOnboardingRequirementsMock);
   },
 );
 
 const createPreOnboardingDocumentHandler = http.post(
   '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents',
   () => {
-    return HttpResponse.json(generatedDocumentFixture);
+    return HttpResponse.json(generatedDocumentMock);
   },
 );
 
 const getPreOnboardingDocumentHandler = http.get(
   '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/:documentId',
   () => {
-    return HttpResponse.json(documentDetailsFixture);
+    return HttpResponse.json(documentDetailsMock);
   },
 );
 
 const signPreOnboardingDocumentHandler = http.post(
   '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/:documentId/sign',
   () => {
-    return HttpResponse.json(signDocumentResponseFixture);
+    return HttpResponse.json(signDocumentResponseMock);
   },
 );
 

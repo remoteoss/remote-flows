@@ -8,9 +8,9 @@ import {
 } from '../PreOnboardingRequirements';
 import { OnboardingContext } from '@/src/flows/Onboarding/context';
 import {
-  generatedDocumentFixture,
-  documentDetailsFixture,
-  signDocumentResponseFixture,
+  generatedDocumentMock,
+  documentDetailsMock,
+  signDocumentResponseMock,
 } from '@/src/common/api/fixtures/pre-onboarding-requirements';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';
 
@@ -125,7 +125,7 @@ describe('PreOnboardingRequirements', () => {
   describe('document generation', () => {
     it('should generate document when onCreateDocument is called', async () => {
       const createDocumentSpy = vi.fn(() =>
-        HttpResponse.json(generatedDocumentFixture),
+        HttpResponse.json(generatedDocumentMock),
       );
 
       server.use(
@@ -221,7 +221,7 @@ describe('PreOnboardingRequirements', () => {
 
     it('should include constraints_ack_at when provided', async () => {
       const createDocumentSpy = vi.fn(() =>
-        HttpResponse.json(generatedDocumentFixture),
+        HttpResponse.json(generatedDocumentMock),
       );
 
       server.use(
@@ -271,7 +271,7 @@ describe('PreOnboardingRequirements', () => {
   describe('document signing', () => {
     it('should sign document when onSignDocument is called', async () => {
       const signDocumentSpy = vi.fn(() =>
-        HttpResponse.json(signDocumentResponseFixture),
+        HttpResponse.json(signDocumentResponseMock),
       );
 
       server.use(
@@ -488,7 +488,7 @@ describe('PreOnboardingRequirements', () => {
   describe('document preview', () => {
     it('should load document preview when documentId is set', async () => {
       const getDocumentSpy = vi.fn(() =>
-        HttpResponse.json(documentDetailsFixture),
+        HttpResponse.json(documentDetailsMock),
       );
 
       server.use(
