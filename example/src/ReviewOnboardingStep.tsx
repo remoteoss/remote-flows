@@ -564,7 +564,6 @@ export const ReviewOnboardingStep = ({
       <PreOnboardingRequirements
         render={({
           requirements,
-          isLoadingRequirements,
           documentPreview,
           onCreateDocument,
           onSignDocument,
@@ -572,31 +571,30 @@ export const ReviewOnboardingStep = ({
           isSigning,
         }) => (
           <>
-            <h2 className='title'>Pre-Onboarding Requirements</h2>
-
-            <div className='flex flex-col gap-4'>
-              {isLoadingRequirements ? (
-                <p>Loading requirements...</p>
-              ) : (
-                requirements?.map((req) => (
-                  <Requirement
-                    key={req.slug}
-                    requirement={req}
-                    onCreateDocument={onCreateDocument}
-                    onSignDocument={onSignDocument}
-                    documentPreview={documentPreview}
-                    isCreatingDocument={isCreatingDocument}
-                    isSigning={isSigning}
-                    employeeCountry={
-                      (
-                        onboardingBag.employment?.basic_information
-                          ?.country as { name: string }
-                      )?.name ?? undefined
-                    }
-                  />
-                ))
-              )}
-            </div>
+            {requirements && requirements?.length > 0 && (
+              <>
+                <h2 className='title'>Pre-Onboarding Requirements</h2>
+                <div className='flex flex-col gap-4'>
+                  {requirements?.map((req) => (
+                    <Requirement
+                      key={req.slug}
+                      requirement={req}
+                      onCreateDocument={onCreateDocument}
+                      onSignDocument={onSignDocument}
+                      documentPreview={documentPreview}
+                      isCreatingDocument={isCreatingDocument}
+                      isSigning={isSigning}
+                      employeeCountry={
+                        (
+                          onboardingBag.employment?.basic_information
+                            ?.country as { name: string }
+                        )?.name ?? undefined
+                      }
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </>
         )}
       />
