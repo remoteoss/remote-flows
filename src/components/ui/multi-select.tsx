@@ -125,10 +125,12 @@ export function MultiSelect({
                             let options = [option];
 
                             if (Array.isArray(option.value)) {
-                              options = option.value.map((country: string) => ({
-                                label: country,
-                                value: country,
-                              }));
+                              options = option.value.map(
+                                (itemValue: string) => ({
+                                  label: itemValue,
+                                  value: itemValue,
+                                }),
+                              );
                             }
 
                             onChange(
