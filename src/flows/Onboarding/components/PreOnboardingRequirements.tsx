@@ -48,13 +48,23 @@ export const usePreOnboardingRequirements = ({
     requirementSlug: string,
     constraintsAckAt?: string,
   ) => {
-    const existingDocumentId = documentIds[requirementSlug];
-    if (existingDocumentId) {
-      setActiveRequirementSlug(requirementSlug);
-      return null;
+    const requirement = requirements?.find(
+      (req) => req.slug === requirementSlug,
+    );
+
+    if (requirement?.status === 'blocked') {
+      const dependsOnName = requirement.depends_on_requirement?.name;
+      throw new Error(
+        `Cannot create document for blocked requirement. ${dependsOnName ? `${dependsOnName} must be completed first.` : 'A dependent requirement must be completed first.'}`,
+      );
     }
 
+    const existingDocumentId = documentIds[requirementSlug];
     setActiveRequirementSlug(requirementSlug);
+
+    if (existingDocumentId) {
+      return null;
+    }
 
     const result = await createDocumentMutationAsync({
       employmentId,

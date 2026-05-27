@@ -608,4 +608,146 @@ describe('PreOnboardingRequirements', () => {
       expect(createDocumentSpy).toHaveBeenCalledTimes(2);
     });
   });
+
+  describe('blocked requirements', () => {
+    it('should not call API when creating document for blocked requirement', async () => {
+      const createDocumentSpy = vi.fn(() =>
+        Promise.resolve(HttpResponse.json(generatedDocumentMock)),
+      );
+
+      server.use(
+        http.get(
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+          () => {
+            return HttpResponse.json({
+              data: [
+                {
+                  name: 'Individual Labor Agreement',
+                  status: 'blocked',
+                  description: 'Blocked until MSA is signed',
+                  slug: '5e39159e-96ef-40ea-82bc-b054917fc82f',
+                  depends_on_requirement: {
+                    name: 'Master Service Agreement',
+                    status: 'awaiting_signatures',
+                    description: 'Master Service Agreement',
+                    slug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
+                    depends_on_requirement: null,
+                    document_constraints_ack_at: null,
+                    freeze_employment_data: false,
+                    needs_constraints_ack: true,
+                    redlining_help_email: null,
+                    supports_redlining: false,
+                  },
+                  document_constraints_ack_at: null,
+                  freeze_employment_data: false,
+                  needs_constraints_ack: true,
+                  redlining_help_email: null,
+                  supports_redlining: false,
+                },
+              ],
+            });
+          },
+        ),
+        http.post(
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents',
+          createDocumentSpy,
+        ),
+      );
+
+      render(
+        <PreOnboardingRequirements
+          render={(bag) => (
+            <div>
+              {bag.requirements?.map((req) => (
+                <div key={req.slug}>
+                  <span>
+                    {req.name} - {req.status}
+                  </span>
+                  <button
+                    onClick={() => bag.onCreateDocument(req.slug)}
+                    disabled={req.status === 'blocked'}
+                  >
+                    Create Document
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        />,
+        { wrapper: TestWrapper },
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('Individual Labor Agreement - blocked'),
+        ).toBeInTheDocument();
+      });
+
+      const createButton = screen.getByText('Create Document');
+      fireEvent.click(createButton);
+
+      await waitFor(() => {
+        expect(createDocumentSpy).not.toHaveBeenCalled();
+      });
+    });
+
+    it('should throw error when attempting to create document for blocked requirement', async () => {
+      server.use(
+        http.get(
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+          () => {
+            return HttpResponse.json({
+              data: [
+                {
+                  name: 'Individual Labor Agreement',
+                  status: 'blocked',
+                  description: 'Blocked until MSA is signed',
+                  slug: '5e39159e-96ef-40ea-82bc-b054917fc82f',
+                  depends_on_requirement: {
+                    name: 'Master Service Agreement',
+                    status: 'awaiting_signatures',
+                    description: 'Master Service Agreement',
+                    slug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
+                    depends_on_requirement: null,
+                    document_constraints_ack_at: null,
+                    freeze_employment_data: false,
+                    needs_constraints_ack: true,
+                    redlining_help_email: null,
+                    supports_redlining: false,
+                  },
+                  document_constraints_ack_at: null,
+                  freeze_employment_data: false,
+                  needs_constraints_ack: true,
+                  redlining_help_email: null,
+                  supports_redlining: false,
+                },
+              ],
+            });
+          },
+        ),
+      );
+
+      let renderBag!: ReturnType<typeof usePreOnboardingRequirements>;
+
+      render(
+        <PreOnboardingRequirements
+          render={(bag) => {
+            renderBag = bag;
+            return <div>Test</div>;
+          }}
+        />,
+        { wrapper: TestWrapper },
+      );
+
+      await waitFor(() => {
+        expect(renderBag.requirements).toBeDefined();
+      });
+
+      await expect(
+        renderBag.onCreateDocument('5e39159e-96ef-40ea-82bc-b054917fc82f'),
+      ).rejects.toThrow(
+        'Cannot create document for blocked requirement. Master Service Agreement must be completed first.',
+      );
+    });
+  });
 });

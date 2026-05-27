@@ -27,6 +27,7 @@ import {
   CardTitle,
   CardContent,
   CardDescription,
+  BasicTooltip,
 } from '@remoteoss/remote-flows/internals';
 import { AlertError } from './AlertError';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
@@ -423,6 +424,7 @@ const Requirement = ({
 }) => {
   const [constraintsAckAt, setConstraintsAckAt] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const needsConstraintsAck =
     requirement.needs_constraints_ack && !constraintsAckAt;
@@ -432,8 +434,46 @@ const Requirement = ({
     (isCreatingDocument || isLoadingDocumentPreview);
 
   const handleReviewDocument = async () => {
-    await onCreateDocument(requirement.slug, constraintsAckAt || undefined);
-    setIsModalOpen(true);
+    try {
+      setError(null);
+      await onCreateDocument(requirement.slug, constraintsAckAt || undefined);
+      setIsModalOpen(true);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Failed to create document',
+      );
+    }
+  };
+
+  const renderButton = () => {
+    if (requirement.status === 'blocked') {
+      return (
+        <BasicTooltip
+          content={`${requirement.depends_on_requirement?.name} must be signed first.`}
+        >
+          <Button variant='outline' disabled>
+            Review document
+          </Button>
+        </BasicTooltip>
+      );
+    }
+
+    return (
+      <Button
+        onClick={handleReviewDocument}
+        disabled={
+          needsConstraintsAck ||
+          isRequirementLoading ||
+          requirement.status === 'finished'
+        }
+      >
+        {requirement.status === 'finished'
+          ? 'Signed'
+          : isRequirementLoading
+            ? 'Loading...'
+            : 'Review document'}
+      </Button>
+    );
   };
 
   return (
@@ -442,7 +482,10 @@ const Requirement = ({
         <div className='flex items-start gap-2'>
           <Checkbox
             id={`ack-${requirement.slug}`}
-            disabled={requirement.status === 'finished'}
+            disabled={
+              requirement.status === 'finished' ||
+              requirement.status === 'blocked'
+            }
             checked={!!constraintsAckAt || requirement.status === 'finished'}
             onCheckedChange={(checked: CheckedState) =>
               checked
@@ -467,20 +510,12 @@ const Requirement = ({
           <CardDescription>{requirement.description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button
-            onClick={handleReviewDocument}
-            disabled={
-              needsConstraintsAck ||
-              isRequirementLoading ||
-              requirement.status === 'finished'
-            }
-          >
-            {requirement.status === 'finished'
-              ? 'Signed'
-              : isRequirementLoading
-                ? 'Loading...'
-                : 'Review document'}
-          </Button>
+          {renderButton()}
+          {error && (
+            <p className='text-sm text-red-600 mt-2' role='alert'>
+              {error}
+            </p>
+          )}
         </CardContent>
       </Card>
 
