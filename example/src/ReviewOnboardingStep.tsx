@@ -30,6 +30,7 @@ import {
 } from '@remoteoss/remote-flows/internals';
 import { AlertError } from './AlertError';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
+import { CheckedState } from '@radix-ui/react-checkbox';
 
 export const InviteSection = ({
   title,
@@ -423,9 +424,7 @@ const Requirement = ({
     requirement.needs_constraints_ack && !constraintsAckAt;
 
   const handleReviewDocument = async () => {
-    if (!documentPreview) {
-      await onCreateDocument(requirement.slug, constraintsAckAt || undefined);
-    }
+    await onCreateDocument(requirement.slug, constraintsAckAt || undefined);
     setIsModalOpen(true);
   };
 
@@ -437,7 +436,7 @@ const Requirement = ({
             id={`ack-${requirement.slug}`}
             disabled={requirement.status === 'finished'}
             checked={!!constraintsAckAt || requirement.status === 'finished'}
-            onCheckedChange={(checked) =>
+            onCheckedChange={(checked: CheckedState) =>
               checked
                 ? setConstraintsAckAt(new Date().toISOString())
                 : setConstraintsAckAt(null)

@@ -338,9 +338,9 @@ describe('PreOnboardingRequirements', () => {
       );
     });
 
-    it('should throw error when signing without documentId', async () => {
+    it('should throw error when signing without active requirement', async () => {
       let renderBag: ReturnType<typeof usePreOnboardingRequirements>;
-      let error: Error | null = null;
+      let error: unknown = null;
 
       render(
         <PreOnboardingRequirements
@@ -352,7 +352,7 @@ describe('PreOnboardingRequirements', () => {
                   try {
                     await bag.onSignDocument('test-signature');
                   } catch (e) {
-                    error = e as Error;
+                    error = e;
                   }
                 }}
               >
@@ -376,6 +376,7 @@ describe('PreOnboardingRequirements', () => {
       });
 
       expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).toBe('No active requirement selected');
     });
   });
 
@@ -557,6 +558,54 @@ describe('PreOnboardingRequirements', () => {
         screen.getByText('Status: awaiting_signatures'),
       ).toBeInTheDocument();
       expect(screen.getByText('Signatories: 1')).toBeInTheDocument();
+    });
+
+    it('should show different previews for multiple requirements and not duplicate API calls', async () => {
+      const createDocumentSpy = vi.fn(() =>
+        HttpResponse.json(generatedDocumentMock),
+      );
+
+      server.use(
+        http.post(
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents',
+          createDocumentSpy,
+        ),
+      );
+
+      render(
+        <PreOnboardingRequirements
+          render={(bag) => (
+            <div>
+              <button
+                onClick={() => bag.onCreateDocument('req-1')}
+                disabled={bag.isCreatingDocument}
+              >
+                Open Req 1
+              </button>
+              <button
+                onClick={() => bag.onCreateDocument('req-2')}
+                disabled={bag.isCreatingDocument}
+              >
+                Open Req 2
+              </button>
+              {bag.documentPreview && <div>Preview loaded</div>}
+            </div>
+          )}
+        />,
+        { wrapper: TestWrapper },
+      );
+
+      fireEvent.click(screen.getByText('Open Req 1'));
+      await waitFor(() =>
+        expect(screen.getByText('Preview loaded')).toBeInTheDocument(),
+      );
+      expect(createDocumentSpy).toHaveBeenCalledTimes(1);
+
+      fireEvent.click(screen.getByText('Open Req 2'));
+      await waitFor(() => expect(createDocumentSpy).toHaveBeenCalledTimes(2));
+
+      fireEvent.click(screen.getByText('Open Req 1'));
+      expect(createDocumentSpy).toHaveBeenCalledTimes(2);
     });
   });
 });

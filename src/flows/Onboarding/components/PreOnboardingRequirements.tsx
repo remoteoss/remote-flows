@@ -13,7 +13,10 @@ export const usePreOnboardingRequirements = ({
 }: {
   employmentId: string;
 }) => {
-  const [documentId, setDocumentId] = useState<string | undefined>();
+  const [documentIds, setDocumentIds] = useState<Record<string, string>>({});
+  const [activeRequirementSlug, setActiveRequirementSlug] = useState<
+    string | undefined
+  >();
 
   const {
     data: requirements,
@@ -23,9 +26,13 @@ export const usePreOnboardingRequirements = ({
     queryOptions: { enabled: !!employmentId },
   });
 
+  const activeDocumentId = activeRequirementSlug
+    ? documentIds[activeRequirementSlug]
+    : undefined;
+
   const { data: documentPreview, isLoading: isLoadingDocumentPreview } =
-    useGetPreOnboardingDocument(employmentId, documentId, {
-      queryOptions: { enabled: !!documentId },
+    useGetPreOnboardingDocument(employmentId, activeDocumentId, {
+      queryOptions: { enabled: !!activeDocumentId },
     });
 
   const createDocumentMutation = useCreatePreOnboardingDocument();
@@ -41,6 +48,12 @@ export const usePreOnboardingRequirements = ({
     requirementSlug: string,
     constraintsAckAt?: string,
   ) => {
+    const existingDocumentId = documentIds[requirementSlug];
+    if (existingDocumentId) {
+      setActiveRequirementSlug(requirementSlug);
+      return null;
+    }
+
     const result = await createDocumentMutationAsync({
       employmentId,
       body: {
@@ -48,11 +61,20 @@ export const usePreOnboardingRequirements = ({
         constraints_ack_at: constraintsAckAt || null,
       },
     });
-    setDocumentId(result?.data.pre_onboarding_document.id);
+    const newDocumentId = result?.data.pre_onboarding_document.id;
+    if (newDocumentId) {
+      setDocumentIds((prev) => ({ ...prev, [requirementSlug]: newDocumentId }));
+      setActiveRequirementSlug(requirementSlug);
+    }
     return result;
   };
 
   const onSignDocument = async (signature: string) => {
+    if (!activeRequirementSlug) {
+      throw new Error('No active requirement selected');
+    }
+
+    const documentId = documentIds[activeRequirementSlug];
     if (!documentId) {
       throw new Error('No document to sign');
     }
