@@ -253,4 +253,96 @@ describe('CountryField Component', () => {
       screen.queryByTestId('context-country-field'),
     ).not.toBeInTheDocument();
   });
+
+  it('selecting a region group selects every country inside the group', async () => {
+    renderWithFormContext({
+      ...defaultProps,
+      onChange: mockOnChange,
+      options: [
+        { value: 'US', label: 'United States' },
+        { value: 'CA', label: 'Canada' },
+        { value: 'FR', label: 'France' },
+      ],
+      $meta: {
+        regions: {
+          'North America': ['US', 'CA'],
+        },
+        subregions: {},
+      },
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('combobox'));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole('listbox')).toBeInTheDocument();
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('option', { name: 'North America' }));
+    });
+
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenLastCalledWith(['US', 'CA']);
+    });
+
+    expect(
+      screen.getByRole('button', { name: /remove United States/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /remove Canada/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /remove France/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('clicking the same region group three times does not duplicate values', async () => {
+    renderWithFormContext({
+      ...defaultProps,
+      onChange: mockOnChange,
+      options: [
+        { value: 'US', label: 'United States' },
+        { value: 'CA', label: 'Canada' },
+      ],
+      $meta: {
+        regions: {
+          'North America': ['US', 'CA'],
+        },
+        subregions: {},
+      },
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('combobox'));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole('listbox')).toBeInTheDocument();
+    });
+
+    const groupOption = screen.getByRole('option', { name: 'North America' });
+
+    await act(async () => {
+      fireEvent.click(groupOption);
+    });
+    await act(async () => {
+      fireEvent.click(groupOption);
+    });
+    await act(async () => {
+      fireEvent.click(groupOption);
+    });
+
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenLastCalledWith(['US', 'CA']);
+    });
+
+    expect(
+      screen.getAllByRole('button', { name: /remove United States/i }),
+    ).toHaveLength(1);
+    expect(
+      screen.getAllByRole('button', { name: /remove Canada/i }),
+    ).toHaveLength(1);
+  });
 });
