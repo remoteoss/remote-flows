@@ -14,6 +14,7 @@ import {
   TextFieldComponentProps,
   WorkScheduleComponentProps,
   TelFieldComponentProps,
+  TimeFieldComponentProps,
   RadioGroupComponentProps,
 } from '@/src/types/fields';
 
@@ -138,6 +139,7 @@ type FieldComponentTypes = Exclude<
   | 'money'
   | 'date'
   | 'tel'
+  | 'time'
   | 'radio'
 >;
 
@@ -157,6 +159,7 @@ export type Components = {
   'work-schedule'?: React.ComponentType<WorkScheduleComponentProps>;
   pdfViewer?: React.ComponentType<PDFPreviewComponentProps>;
   tel?: React.ComponentType<TelFieldComponentProps>;
+  time?: React.ComponentType<TimeFieldComponentProps>;
   radio?: React.ComponentType<RadioGroupComponentProps>;
 };
 

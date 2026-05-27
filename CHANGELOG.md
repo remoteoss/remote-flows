@@ -1,5 +1,47 @@
 # @remoteoss/remote-flows
 
+## 1.36.0
+
+### Minor Changes
+
+#### Features
+
+- add time field input (#1046) [#1046](https://github.com/remoteoss/remote-flows/pull/1046)
+
+#### Chores
+
+- add e2e tests for onboarding (#1010) [#1010](https://github.com/remoteoss/remote-flows/pull/1010)
+- update dependency vite to v8.0.13 (#1036) [#1036](https://github.com/remoteoss/remote-flows/pull/1036)
+- update dependency lucide-react to v1.16.0 (#983) [#983](https://github.com/remoteoss/remote-flows/pull/983)
+- update dependency @types/jsdom to v28.0.3 (#1047) [#1047](https://github.com/remoteoss/remote-flows/pull/1047)
+- update dependency dompurify to v3.4.5 (#1023) [#1023](https://github.com/remoteoss/remote-flows/pull/1023)
+- update dependency html-react-parser to v6.1.1 (#1029) [#1029](https://github.com/remoteoss/remote-flows/pull/1029)
+- update dependency react-day-picker to v8.10.2 (#1024) [#1024](https://github.com/remoteoss/remote-flows/pull/1024)
+- update dependency @types/node to v24.12.4 (#1048) [#1048](https://github.com/remoteoss/remote-flows/pull/1048)
+- update dependency postcss to v8.5.14 (#988) [#988](https://github.com/remoteoss/remote-flows/pull/988)
+- update dependency axios to v1.16.1 (#1054) [#1054](https://github.com/remoteoss/remote-flows/pull/1054)
+- update dependency @vitejs/plugin-react to v6.0.2 (#1050) [#1050](https://github.com/remoteoss/remote-flows/pull/1050)
+- update dependency msw to v2.14.6 (#1051) [#1051](https://github.com/remoteoss/remote-flows/pull/1051)
+- update dependency @playwright/test to v1.60.0 (#1055) [#1055](https://github.com/remoteoss/remote-flows/pull/1055)
+- update dependency @remoteoss/remote-json-schema-form-kit to v0.14.0 (#1060) [#1060](https://github.com/remoteoss/remote-flows/pull/1060)
+
+## 1.35.0
+
+### Minor Changes
+
+#### Features
+
+- add employer of record information for pricingPlanDetails (#1043) [#1043](https://github.com/remoteoss/remote-flows/pull/1043)
+
+#### Fixes
+
+- strip html tags for meta.fields (#1044) [#1044](https://github.com/remoteoss/remote-flows/pull/1044)
+- fix maxDate for contractor of record (#1042) [#1042](https://github.com/remoteoss/remote-flows/pull/1042)
+
+#### Chores
+
+- update remote-json-schema-form-kit to v0.0.12
+
 ## 1.34.0
 
 ### Minor Changes
@@ -21,7 +63,7 @@
 - handle empty contractor subscriptions (#1016) [#1016](https://github.com/remoteoss/remote-flows/pull/1016)
 - fix disabled button state in contract-preview (#1022) [#1022](https://github.com/remoteoss/remote-flows/pull/1022)
 
-#### Chores
+#### Chores
 
 - update dependency oxlint to v1.63.0 (#999) [#999](https://github.com/remoteoss/remote-flows/pull/999)
 - update dependency filesize to v11.0.17 (#997) [#997](https://github.com/remoteoss/remote-flows/pull/997)
@@ -274,11 +316,11 @@
 
 ### Minor Changes
 
-#### Features
+#### Features
 
 - let users load dynamic versions of basic_information or benefits (#800) [#800](https://github.com/remoteoss/remote-flows/pull/800)
 
-#### Fixes
+#### Fixes
 
 - fix force value fields and x-jsf-fieldsets (#801) [#801](https://github.com/remoteoss/remote-flows/pull/801)
 
@@ -286,11 +328,11 @@
 
 ### Minor Changes
 
-#### Features
+#### Features
 
 - create reserves when COR is selected (#760) [#760](https://github.com/remoteoss/remote-flows/pull/760)
 
-#### Fixes
+#### Fixes
 
 - fix mark review button making input to hide after first character (#796) [#796](https://github.com/remoteoss/remote-flows/pull/796)
 
@@ -357,7 +399,7 @@
 
 - onboarding handle onboarding status reserves (#767) [#767](https://github.com/remoteoss/remote-flows/pull/767)
 
-#### Chores
+#### Chores
 
 - drop unused radix packages (#771) [#771](https://github.com/remoteoss/remote-flows/pull/771)
 
@@ -383,7 +425,7 @@
 
 ### Minor Changes
 
-#### Features
+#### Features
 
 - retrieve correct price for eor (#750) [#750](https://github.com/remoteoss/remote-flows/pull/750)
 - add eor product card when COR is available (#752) [#752](https://github.com/remoteoss/remote-flows/pull/752)

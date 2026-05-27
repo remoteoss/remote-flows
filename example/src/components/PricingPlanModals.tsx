@@ -14,6 +14,7 @@ import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
   pricingPlanDetails,
+  eorProductIdentifier,
 } from '@remoteoss/remote-flows';
 import { useState } from 'react';
 import { CheckIcon, ChevronRight } from 'lucide-react';
@@ -74,6 +75,7 @@ export const PricingPlanOptionsModal = () => {
     contractorStandardProductIdentifier,
     contractorPlusProductIdentifier,
     corProductIdentifier,
+    eorProductIdentifier,
   ];
 
   return (

@@ -72,6 +72,11 @@ export const lazyDefaultComponents: Components = {
       default: m.NumberFieldDefault,
     })),
   ),
+  pdfViewer: lazy(() =>
+    import('./components/shared/pdf-preview/PDFPreviewDefault').then((m) => ({
+      default: m.PDFPreviewDefault,
+    })),
+  ),
   radio: lazy(() =>
     import('./components/form/fields/default/RadioGroupFieldDefault').then(
       (m) => ({
@@ -87,6 +92,11 @@ export const lazyDefaultComponents: Components = {
   statement: lazy(() =>
     import('./components/form/fields/default/StatementDefault').then((m) => ({
       default: m.StatementDefault,
+    })),
+  ),
+  table: lazy(() =>
+    import('./components/shared/table/TableFieldDefault').then((m) => ({
+      default: m.TableFieldDefault,
     })),
   ),
   textarea: lazy(() =>
@@ -106,16 +116,9 @@ export const lazyDefaultComponents: Components = {
       default: m.TextFieldDefault,
     })),
   ),
-  zendeskDrawer: lazy(() =>
-    import('./components/shared/zendesk-drawer/ZendeskDrawerDefault').then(
-      (m) => ({
-        default: m.ZendeskDrawerDefault,
-      }),
-    ),
-  ),
-  table: lazy(() =>
-    import('./components/shared/table/TableFieldDefault').then((m) => ({
-      default: m.TableFieldDefault,
+  time: lazy(() =>
+    import('./components/form/fields/default/TimeFieldDefault').then((m) => ({
+      default: m.TimeFieldDefault,
     })),
   ),
   'work-schedule': lazy(() =>
@@ -125,9 +128,11 @@ export const lazyDefaultComponents: Components = {
       }),
     ),
   ),
-  pdfViewer: lazy(() =>
-    import('./components/shared/pdf-preview/PDFPreviewDefault').then((m) => ({
-      default: m.PDFPreviewDefault,
-    })),
+  zendeskDrawer: lazy(() =>
+    import('./components/shared/zendesk-drawer/ZendeskDrawerDefault').then(
+      (m) => ({
+        default: m.ZendeskDrawerDefault,
+      }),
+    ),
   ),
 };

@@ -139,6 +139,7 @@ export type {
   PricingPlanDataProps,
   RadioGroupComponentProps,
   TelFieldComponentProps,
+  TimeFieldComponentProps,
 } from '@/src/types/fields';
 
 export type {

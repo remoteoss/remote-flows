@@ -4,6 +4,12 @@ import { defaultComponents as defaultComponentsFromPackage } from '@/src/default
 export const defaultComponents = {
   ...defaultComponentsFromPackage,
   date: ({ field, fieldData, fieldState }: FieldComponentProps) => {
+    const maxDate = fieldData.maxDate
+      ? new Date(fieldData.maxDate).toISOString().split('T')[0]
+      : undefined;
+    const minDate = fieldData.minDate
+      ? new Date(fieldData.minDate).toISOString().split('T')[0]
+      : undefined;
     return (
       <div className='input-container'>
         <label htmlFor={field.name}>{fieldData.label}</label>
@@ -16,6 +22,8 @@ export const defaultComponents = {
           onChange={(e) => {
             field?.onChange?.(e.target.value);
           }}
+          {...(maxDate && { max: maxDate })}
+          {...(minDate && { min: minDate })}
         />
         {fieldData.description && (
           <p className='input-description'>{fieldData.description}</p>

@@ -95,7 +95,11 @@ export function FieldSetField({
   const fieldNames = fields.map(
     ({ name: fieldName }) => `${name}.${fieldName}`,
   );
+  const fieldsetNeedsAllFormValues = fields.some(
+    (field: $TSFixMe) => field.calculateDynamicProperties,
+  );
   const watchedValues = watch(fieldNames);
+  const allFormValues = fieldsetNeedsAllFormValues ? watch() : watchedValues;
   const prevValuesRef = useRef<string[]>(watchedValues);
   const triggerTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -223,7 +227,7 @@ export function FieldSetField({
               if (field.calculateDynamicProperties) {
                 field = {
                   ...field,
-                  ...(field.calculateDynamicProperties(watchedValues, field) ||
+                  ...(field.calculateDynamicProperties(allFormValues, field) ||
                     {}),
                 };
               }

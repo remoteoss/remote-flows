@@ -212,3 +212,11 @@ export type RadioGroupComponentProps = Omit<
 > & {
   fieldData: RadioGroupDataProps;
 };
+
+export type TimeFieldDataProps = FieldDataProps & {
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
+export type TimeFieldComponentProps = FieldComponentProps & {
+  fieldData: TimeFieldDataProps;
+};
