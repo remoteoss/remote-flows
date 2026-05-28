@@ -321,15 +321,10 @@ describe('CountryField Component', () => {
 
     const option = screen.getByRole('option', { name: 'North America' });
 
-    await act(async () => {
-      fireEvent.click(option);
-    });
-    await act(async () => {
-      fireEvent.click(option);
-    });
-    await act(async () => {
-      fireEvent.click(option);
-    });
+    fireEvent.click(option);
+    fireEvent.click(option);
+    fireEvent.click(option);
+    fireEvent.click(option);
 
     await waitFor(() => {
       expect(mockOnChange).toHaveBeenCalledWith(['US', 'CA']);
