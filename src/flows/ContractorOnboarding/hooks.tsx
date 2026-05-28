@@ -723,6 +723,7 @@ export const useContractorOnboarding = ({
       ...hardcodedValues,
       ...onboardingInitialValues,
       ...employmentContractDetails,
+      ...stepState.values?.contract_details,
     };
 
     return getInitialValues(stepFields.contract_details, initialValues);
@@ -731,6 +732,7 @@ export const useContractorOnboarding = ({
     employmentContractDetails,
     onboardingInitialValues,
     employmentBasicInformation,
+    stepState.values?.contract_details,
   ]);
 
   const contractPreviewInitialValues = useMemo(() => {
@@ -1071,10 +1073,18 @@ export const useContractorOnboarding = ({
         return;
       }
       case 'contract_details': {
+        const {
+          services_and_deliverables_ai_warning:
+            _servicesAndDeliverablesAiWarning,
+          services_and_deliverables_error_skippable:
+            _servicesAndDeliverablesErrorSkippable,
+          ...contractDetailsData
+        } = parsedValues;
+
         const shouldSkipAiChecks =
           fieldValues.services_and_deliverables_error_skippable === true;
         const payload: CreateContractDocument = {
-          contract_document: parsedValues,
+          contract_document: contractDetailsData,
           skip_ai_checks: shouldSkipAiChecks,
         };
 
