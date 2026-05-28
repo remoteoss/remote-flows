@@ -771,24 +771,23 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await waitFor(() => {
-      expect(postContractDocumentSpy).toHaveBeenCalledTimes(2);
+      expect(postContractDocumentSpy).toHaveBeenCalledTimes(3);
 
-      const secondPayload = postContractDocumentSpy.mock.calls[1][0];
+      const thirdPayload = postContractDocumentSpy.mock.calls[2][0];
 
-      expect(secondPayload.contract_document).not.toHaveProperty(
+      expect(thirdPayload.contract_document).not.toHaveProperty(
         'services_and_deliverables_ai_warning',
       );
-      expect(secondPayload.contract_document).not.toHaveProperty(
+      expect(thirdPayload.contract_document).not.toHaveProperty(
         'services_and_deliverables_error_skippable',
       );
 
-      // Real fields should still be there
-      expect(secondPayload.contract_document).toHaveProperty(
+      expect(thirdPayload.contract_document).toHaveProperty(
         'services_and_deliverables',
       );
 
-      // skip_ai_checks flag should work correctly
-      expect(secondPayload.skip_ai_checks).toBe(true);
+      // skip_ai_checks flag should work correctly (still true from previous error)
+      expect(thirdPayload.skip_ai_checks).toBe(true);
     });
   });
 
