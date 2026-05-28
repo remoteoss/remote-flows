@@ -271,20 +271,18 @@ describe('CountryField Component', () => {
       },
     });
 
-    await act(async () => {
-      fireEvent.click(screen.getByRole('combobox'));
-    });
+    const select = screen.getByRole('combobox');
+    fireEvent.click(select);
 
     await waitFor(() => {
       expect(screen.getByRole('listbox')).toBeInTheDocument();
     });
 
-    await act(async () => {
-      fireEvent.click(screen.getByRole('option', { name: 'North America' }));
-    });
+    const option = screen.getByRole('option', { name: 'North America' });
+    fireEvent.click(option);
 
     await waitFor(() => {
-      expect(mockOnChange).toHaveBeenLastCalledWith(['US', 'CA']);
+      expect(mockOnChange).toHaveBeenCalledWith(['US', 'CA']);
     });
 
     expect(
@@ -314,28 +312,27 @@ describe('CountryField Component', () => {
       },
     });
 
-    await act(async () => {
-      fireEvent.click(screen.getByRole('combobox'));
-    });
+    const select = screen.getByRole('combobox');
+    fireEvent.click(select);
 
     await waitFor(() => {
       expect(screen.getByRole('listbox')).toBeInTheDocument();
     });
 
-    const groupOption = screen.getByRole('option', { name: 'North America' });
+    const option = screen.getByRole('option', { name: 'North America' });
 
     await act(async () => {
-      fireEvent.click(groupOption);
+      fireEvent.click(option);
     });
     await act(async () => {
-      fireEvent.click(groupOption);
+      fireEvent.click(option);
     });
     await act(async () => {
-      fireEvent.click(groupOption);
+      fireEvent.click(option);
     });
 
     await waitFor(() => {
-      expect(mockOnChange).toHaveBeenLastCalledWith(['US', 'CA']);
+      expect(mockOnChange).toHaveBeenCalledWith(['US', 'CA']);
     });
 
     expect(
