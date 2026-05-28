@@ -1071,10 +1071,18 @@ export const useContractorOnboarding = ({
         return;
       }
       case 'contract_details': {
+        const {
+          services_and_deliverables_ai_warning:
+            _servicesAndDeliverablesAiWarning,
+          services_and_deliverables_error_skippable:
+            _servicesAndDeliverablesErrorSkippable,
+          ...contractDetailsData
+        } = parsedValues;
+
         const shouldSkipAiChecks =
           fieldValues.services_and_deliverables_error_skippable === true;
         const payload: CreateContractDocument = {
-          contract_document: parsedValues,
+          contract_document: contractDetailsData,
           skip_ai_checks: shouldSkipAiChecks,
         };
 

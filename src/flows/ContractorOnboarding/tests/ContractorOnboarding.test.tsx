@@ -686,6 +686,111 @@ describe('ContractorOnboardingFlow', () => {
     });
   });
 
+  it('should exclude AI warning fields from payload even after navigation', async () => {
+    const postContractDocumentSpy = vi.fn();
+
+    server.use(
+      http.post(
+        '*/v1/contractors/employments/*/contract-documents',
+        async ({ request }) => {
+          const requestBody = await request.json();
+          postContractDocumentSpy(requestBody);
+
+          if (postContractDocumentSpy.mock.calls.length === 1) {
+            return HttpResponse.json(
+              {
+                error: {
+                  errors: {
+                    services_and_deliverables: {
+                      error: ['Possible misclassification risk'],
+                      source: 'REMOTE_AI',
+                      skippable: true,
+                    },
+                  },
+                },
+              },
+              { status: 422 },
+            );
+          }
+
+          return HttpResponse.json(mockContractDocumentCreatedResponse);
+        },
+      ),
+    );
+
+    mockRender.mockImplementation(
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        {...defaultProps}
+        countryCode='PRT'
+        skipSteps={['select_country']}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await fillBasicInformation();
+
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await fillContractorSubscription();
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+    await fillContractDetails();
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Possible misclassification risk/i),
+      ).toBeInTheDocument();
+    });
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+    await screen.findByText(/Step: Contract Preview/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    const previousButton = screen.getByText(/Back/i);
+    previousButton.click();
+    await screen.findByText(/Step: Contract Details/i);
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(postContractDocumentSpy).toHaveBeenCalledTimes(3);
+
+      const thirdPayload = postContractDocumentSpy.mock.calls[2][0];
+
+      expect(thirdPayload.contract_document).not.toHaveProperty(
+        'services_and_deliverables_ai_warning',
+      );
+      expect(thirdPayload.contract_document).not.toHaveProperty(
+        'services_and_deliverables_error_skippable',
+      );
+
+      expect(thirdPayload.contract_document).toHaveProperty(
+        'services_and_deliverables',
+      );
+
+      // skip_ai_checks flag should work correctly (still true from previous error)
+      expect(thirdPayload.skip_ai_checks).toBe(true);
+    });
+  });
+
   it('should sign contract document when submitting contract preview', async () => {
     const signContractDocumentSpy = vi.fn();
 
