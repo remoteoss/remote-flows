@@ -723,7 +723,6 @@ export const useContractorOnboarding = ({
       ...hardcodedValues,
       ...onboardingInitialValues,
       ...employmentContractDetails,
-      ...stepState.values?.contract_details,
     };
 
     return getInitialValues(stepFields.contract_details, initialValues);
@@ -732,7 +731,6 @@ export const useContractorOnboarding = ({
     employmentContractDetails,
     onboardingInitialValues,
     employmentBasicInformation,
-    stepState.values?.contract_details,
   ]);
 
   const contractPreviewInitialValues = useMemo(() => {
