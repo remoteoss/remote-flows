@@ -98,6 +98,8 @@ interface fillOnboardingStep3SpainFormOptions {
   available_pto?: string;
   role_description?: string;
   experience_level?: string;
+  role_is_onsite?: string;
+  role_requires_license?: string;
   work_address_is_home_address?: string;
   annual_gross_salary?: string;
   annual_bonus_ack?: boolean;
@@ -163,6 +165,16 @@ export async function fillOnboardingStep3SpainForm(
       type: 'radio',
       value: options.experience_level,
       name: 'experience_level',
+    },
+    {
+      type: 'radio',
+      value: options.role_is_onsite,
+      name: 'role_is_onsite',
+    },
+    {
+      type: 'radio',
+      value: options.role_requires_license,
+      name: 'role_requires_license',
     },
     {
       type: 'radio',

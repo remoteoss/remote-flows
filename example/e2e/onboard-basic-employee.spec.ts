@@ -72,6 +72,8 @@ test.describe('Onboard basic employee', () => {
       has_social_security_number: 'yes',
       work_equipment: '200',
       compensation_expenses_ack: true,
+      role_is_onsite: 'yes',
+      role_requires_license: 'no',
     });
 
     stepTitle = page.getByTestId('onboarding-step-title');
