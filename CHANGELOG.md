@@ -1,5 +1,13 @@
 # @remoteoss/remote-flows
 
+## 1.36.1
+
+### Patch Changes
+
+- update CHANGELOG.md (#1063) [#1063](https://github.com/remoteoss/remote-flows/pull/1063)
+- fix state to avoid having the AI endpoint response getting resubmitted (#1066) [#1066](https://github.com/remoteoss/remote-flows/pull/1066)
+- fix state to avoid having the AI endpoint response getting resubmitted (#1066) [#1066](https://github.com/remoteoss/remote-flows/pull/1066)
+
 ## 1.36.0
 
 ### Minor Changes
