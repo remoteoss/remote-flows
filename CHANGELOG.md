@@ -4,9 +4,15 @@
 
 ### Patch Changes
 
+#### Fixes
+
+- fix state to avoid having the AI endpoint response getting resubmitted (#1066) [#1066](https://github.com/remoteoss/remote-flows/pull/1066)
+- fix error when selecting regions or sub-regions [#1065]https://github.com/remoteoss/remote-flows/pull/1065
+
+#### Chores
+
 - update CHANGELOG.md (#1063) [#1063](https://github.com/remoteoss/remote-flows/pull/1063)
-- fix state to avoid having the AI endpoint response getting resubmitted (#1066) [#1066](https://github.com/remoteoss/remote-flows/pull/1066)
-- fix state to avoid having the AI endpoint response getting resubmitted (#1066) [#1066](https://github.com/remoteoss/remote-flows/pull/1066)
+- fix onboarding e2e tests with new JSON schema [#1067]https://github.com/remoteoss/remote-flows/pull/1067
 
 ## 1.36.0
 
