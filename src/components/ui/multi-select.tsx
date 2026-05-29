@@ -122,12 +122,29 @@ export function MultiSelect({
                         <CommandItem
                           key={option.label}
                           onSelect={() => {
+                            let options = [option];
+
+                            if (Array.isArray(option.value)) {
+                              options = option.value.map(
+                                (itemValue: string) => ({
+                                  label: itemValue,
+                                  value: itemValue,
+                                }),
+                              );
+                            }
+
                             onChange(
                               isSelected
                                 ? selected.filter(
                                     (item) => item.value !== option.value,
                                   )
-                                : [...selected, option],
+                                : [...selected, ...options].filter(
+                                    (item, index, self) =>
+                                      index ===
+                                      self.findIndex(
+                                        (i) => i.value === item.value,
+                                      ),
+                                  ),
                             );
                           }}
                         >
