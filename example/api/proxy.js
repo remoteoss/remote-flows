@@ -8,7 +8,7 @@ const { buildGatewayURL } = require('./utils.js');
 /**
  * Determines which token type to use based on HTTP method and path
  * @param {string} method - HTTP method (GET, POST, PUT, PATCH, etc.)
- * @param {string} path - The API path (e.g., '/v1/countries' or '/v1/countries?foo=bar')
+ * @param {string} path - The API path (e.g., '/v1/countries' or '/v2/countries?foo=bar')
  * @returns {'client-credentials' | 'user-token'} The token type to use
  */
 function getTokenType(method, path) {
@@ -16,33 +16,36 @@ function getTokenType(method, path) {
   // Extract pathname without query parameters
   const pathname = path.split('?')[0].toLowerCase();
 
-  // GET /v1/countries
-  if (normalizedMethod === 'GET' && pathname === '/v1/countries') {
+  // GET /v1/countries or /v2/countries
+  if (normalizedMethod === 'GET' && /^\/v[12]\/countries$/.test(pathname)) {
     return 'client-credentials';
   }
 
-  // GET /v1/countries/{country_code}/address_details
+  // GET /v1/countries/{country_code}/address_details or /v2/countries/{country_code}/address_details
   if (
     normalizedMethod === 'GET' &&
-    /^\/v1\/countries\/[^/]+\/address_details$/.test(pathname)
+    /^\/v[12]\/countries\/[^/]+\/address_details$/.test(pathname)
   ) {
     return 'client-credentials';
   }
 
-  // GET /v1/company-currencies
-  if (normalizedMethod === 'GET' && pathname === '/v1/company-currencies') {
+  // GET /v1/company-currencies or /v2/company-currencies
+  if (
+    normalizedMethod === 'GET' &&
+    /^\/v[12]\/company-currencies$/.test(pathname)
+  ) {
     return 'client-credentials';
   }
 
-  // POST /v1/companies
-  if (normalizedMethod === 'POST' && pathname === '/v1/companies') {
+  // POST /v1/companies or /v2/companies
+  if (normalizedMethod === 'POST' && /^\/v[12]\/companies$/.test(pathname)) {
     return 'client-credentials';
   }
 
-  // PUT/PATCH /v1/companies/{company_id}
+  // PUT/PATCH /v1/companies/{company_id} or /v2/companies/{company_id}
   if (
     (normalizedMethod === 'PUT' || normalizedMethod === 'PATCH') &&
-    /^\/v1\/companies\/[^/]+$/.test(pathname)
+    /^\/v[12]\/companies\/[^/]+$/.test(pathname)
   ) {
     return 'client-credentials';
   }

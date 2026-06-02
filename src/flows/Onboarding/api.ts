@@ -13,13 +13,13 @@ import {
   getV1CountriesCountryCodeForm,
   getV1EmploymentsEmploymentIdBenefitOffers,
   getV1EmploymentsEmploymentIdBenefitOffersSchema,
-  getV1EmploymentsEmploymentIdEngagementAgreementDetails,
+  getV2EmploymentsEmploymentIdEngagementAgreementDetails,
   patchV1EmploymentsEmploymentId2,
   postV1CurrencyConverterEffective,
   postV1CurrencyConverterRaw,
   postV1Employments,
   postV1EmploymentsEmploymentIdContractEligibility,
-  postV1EmploymentsEmploymentIdEngagementAgreementDetails,
+  postV2EmploymentsEmploymentIdEngagementAgreementDetails,
   postV1EmploymentsEmploymentIdInvite,
   PostV1EmploymentsEmploymentIdInviteData,
   postV1RiskReserve,
@@ -124,7 +124,7 @@ export const useEmploymentEngagementAgreementDetails = (
     retry: false,
     enabled: queryOptions?.enabled ?? !!employmentId,
     queryFn: async () => {
-      return getV1EmploymentsEmploymentIdEngagementAgreementDetails({
+      return getV2EmploymentsEmploymentIdEngagementAgreementDetails({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -353,7 +353,7 @@ export const useUpdateEmploymentEngagementAgreementDetails = () => {
     }: EmploymentEngagementAgreementDetailsParams & {
       employmentId: string;
     }) => {
-      return postV1EmploymentsEmploymentIdEngagementAgreementDetails({
+      return postV2EmploymentsEmploymentIdEngagementAgreementDetails({
         client: client as Client,
         headers: {
           Authorization: ``,

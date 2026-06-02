@@ -166,15 +166,21 @@ import type {
   GetV1CustomFieldsData,
   GetV1CustomFieldsErrors,
   GetV1CustomFieldsResponses,
-  GetV1DataSyncData,
-  GetV1DataSyncErrors,
-  GetV1DataSyncResponses,
+  GetV1EmployeeAddressData,
+  GetV1EmployeeAddressErrors,
+  GetV1EmployeeAddressResponses,
+  GetV1EmployeeCurrentData,
+  GetV1EmployeeCurrentErrors,
+  GetV1EmployeeCurrentResponses,
   GetV1EmployeeDocumentsData,
   GetV1EmployeeDocumentsErrors,
   GetV1EmployeeDocumentsIdData,
   GetV1EmployeeDocumentsIdErrors,
   GetV1EmployeeDocumentsIdResponses,
   GetV1EmployeeDocumentsResponses,
+  GetV1EmployeeEmergencyContactData,
+  GetV1EmployeeEmergencyContactErrors,
+  GetV1EmployeeEmergencyContactResponses,
   GetV1EmployeeExpenseCategoriesData,
   GetV1EmployeeExpenseCategoriesErrors,
   GetV1EmployeeExpenseCategoriesResponses,
@@ -187,6 +193,9 @@ import type {
   GetV1EmployeeLeavePoliciesData,
   GetV1EmployeeLeavePoliciesErrors,
   GetV1EmployeeLeavePoliciesResponses,
+  GetV1EmployeeLeavePoliciesSummaryData,
+  GetV1EmployeeLeavePoliciesSummaryErrors,
+  GetV1EmployeeLeavePoliciesSummaryResponses,
   GetV1EmployeePayslipFilesData,
   GetV1EmployeePayslipFilesErrors,
   GetV1EmployeePayslipFilesResponses,
@@ -292,6 +301,12 @@ import type {
   GetV1OffboardingsIdErrors,
   GetV1OffboardingsIdResponses,
   GetV1OffboardingsResponses,
+  GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirementsData,
+  GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirementsErrors,
+  GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirementsResponses,
+  GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdData,
+  GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdErrors,
+  GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdResponses,
   GetV1PayItemsData,
   GetV1PayItemsErrors,
   GetV1PayItemsResponses,
@@ -390,6 +405,12 @@ import type {
   GetV2EmploymentsEmploymentIdEngagementAgreementDetailsData,
   GetV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
   GetV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
+  GetV2OffboardingsData,
+  GetV2OffboardingsErrors,
+  GetV2OffboardingsIdData,
+  GetV2OffboardingsIdErrors,
+  GetV2OffboardingsIdResponses,
+  GetV2OffboardingsResponses,
   PatchV1CompaniesCompanyId2Data,
   PatchV1CompaniesCompanyId2Errors,
   PatchV1CompaniesCompanyId2Responses,
@@ -522,6 +543,9 @@ import type {
   PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentData,
   PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentErrors,
   PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentResponses,
+  PostV1ContractorsEmploymentsEmploymentIdTimesheetsData,
+  PostV1ContractorsEmploymentsEmploymentIdTimesheetsErrors,
+  PostV1ContractorsEmploymentsEmploymentIdTimesheetsResponses,
   PostV1CostCalculatorEstimationCsvData,
   PostV1CostCalculatorEstimationCsvErrors,
   PostV1CostCalculatorEstimationCsvResponses,
@@ -543,9 +567,6 @@ import type {
   PostV1CustomFieldsData,
   PostV1CustomFieldsErrors,
   PostV1CustomFieldsResponses,
-  PostV1DataSyncData,
-  PostV1DataSyncErrors,
-  PostV1DataSyncResponses,
   PostV1DocumentsData,
   PostV1DocumentsErrors,
   PostV1DocumentsResponses,
@@ -594,6 +615,12 @@ import type {
   PostV1OffboardingsData,
   PostV1OffboardingsErrors,
   PostV1OffboardingsResponses,
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsData,
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsErrors,
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignData,
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignErrors,
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignResponses,
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsResponses,
   PostV1PayItemsBulkData,
   PostV1PayItemsBulkErrors,
   PostV1PayItemsBulkResponses,
@@ -669,6 +696,12 @@ import type {
   PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsData,
   PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors,
   PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses,
+  PutV1EmployeeAddressData,
+  PutV1EmployeeAddressErrors,
+  PutV1EmployeeAddressResponses,
+  PutV1EmployeeEmergencyContactData,
+  PutV1EmployeeEmergencyContactErrors,
+  PutV1EmployeeEmergencyContactResponses,
   PutV1EmploymentsEmploymentIdBasicInformationData,
   PutV1EmploymentsEmploymentIdBasicInformationErrors,
   PutV1EmploymentsEmploymentIdBasicInformationResponses,
@@ -805,6 +838,35 @@ export const postV1Offboardings = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * List Offboardings (v2)
+ *
+ * Lists offboardings for a company.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View offboarding requests (`offboarding:read`) | Manage offboarding (`offboarding:write`) |
+ *
+ */
+export const getV2Offboardings = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV2OffboardingsData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV2OffboardingsResponses,
+    GetV2OffboardingsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/offboardings',
+    ...options,
+  });
+
+/**
  * Show timesheet
  *
  * Shows a timesheet by its ID.
@@ -905,7 +967,7 @@ export const getV1ContractAmendmentsSchema = <
  * Bulk Create Pay Items
  *
  * Bulk creates pay items for employments. Supports up to 500 items per request.
- * Integration-specific fields (shift code, currency, pay amount, etc.) go in the `meta` object.
+ * Integration-specific fields (shift code, currency, pay amount, etc.) go in the `provider_data` object.
  * Only Global Payroll employments are supported. Non-GP employments are returned as `employment_not_global_payroll`.
  *
  *
@@ -937,53 +999,32 @@ export const postV1PayItemsBulk = <ThrowOnError extends boolean = false>(
   });
 
 /**
- * Get latest data sync events
+ * Show Offboarding (v2)
  *
- * Get the latest data sync events for each data type that have passed
+ * Returns a single offboarding by its ID.
  *
  *
- * @deprecated
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View offboarding requests (`offboarding:read`) | Manage offboarding (`offboarding:write`) |
+ *
  */
-export const getV1DataSync = <ThrowOnError extends boolean = false>(
-  options?: Options<GetV1DataSyncData, ThrowOnError>,
+export const getV2OffboardingsId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV2OffboardingsIdData, ThrowOnError>,
 ) =>
-  (options?.client ?? client).get<
-    GetV1DataSyncResponses,
-    GetV1DataSyncErrors,
+  (options.client ?? client).get<
+    GetV2OffboardingsIdResponses,
+    GetV2OffboardingsIdErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/data-sync',
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/offboardings/{id}',
     ...options,
-  });
-
-/**
- * Create test data sync job
- *
- * Create Test Data Synchronization job that will sync test data to the database from production
- * The job will be handled asynchronously and the response will be a 202 status code.
- *
- * **Heads up:** This endpoint is only available for specific usecases and should not be used for general data sync needs,
- * if you need to request access to this endpoint, please contact the api-support@remote.com.
- *
- *
- * @deprecated
- */
-export const postV1DataSync = <ThrowOnError extends boolean = false>(
-  options: Options<PostV1DataSyncData, ThrowOnError>,
-) =>
-  (options.client ?? client).post<
-    PostV1DataSyncResponses,
-    PostV1DataSyncErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/v1/data-sync',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
   });
 
 /**
@@ -2352,6 +2393,50 @@ export const postV1SsoConfiguration = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Create a contractor timesheet
+ *
+ * Creates a timesheet on behalf of a contractor employment.
+ *
+ * The submitted hours are immediately available to the contractor in the Remote UI for
+ * self-serve invoice creation (Invoices → Create invoice → "Use Time Tracking").
+ *
+ * This endpoint is restricted to contractor employments. Calls against EOR or Global Payroll
+ * employments are rejected with `422`.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | - | Manage timesheets (`timesheet:write`) |
+ *
+ */
+export const postV1ContractorsEmploymentsEmploymentIdTimesheets = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostV1ContractorsEmploymentsEmploymentIdTimesheetsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostV1ContractorsEmploymentsEmploymentIdTimesheetsResponses,
+    PostV1ContractorsEmploymentsEmploymentIdTimesheetsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/contractors/employments/{employment_id}/timesheets',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * Approve Contract Amendment
  *
  * Approves a contract amendment request without the intervention of a Remote admin.
@@ -2901,6 +2986,40 @@ export const patchV1ContractorInvoiceSchedulesId = <
   });
 
 /**
+ * List pre-onboarding document requirements for an employment
+ *
+ * Returns the list of pre-onboarding document requirements (e.g. master service agreements,
+ * individual labour agreements) that must be fulfilled before the given employment can be onboarded.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
+ *
+ */
+export const getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirements =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirementsData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).get<
+      GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirementsResponses,
+      GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirementsErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-document-requirements',
+      ...options,
+    });
+
+/**
  * Show Billing Document
  *
  * Shows a billing document details.
@@ -3058,6 +3177,33 @@ export const patchV1WorkAuthorizationRequestsId = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * List Employee Leave Policies Summary
+ *
+ * List the leave policies summary (balances and entitlements) for the current employee
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage timeoffs (`time_and_attendance`) | View timeoffs (`timeoff:read`) | Manage timeoffs (`timeoff:write`) |
+ *
+ */
+export const getV1EmployeeLeavePoliciesSummary = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetV1EmployeeLeavePoliciesSummaryData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1EmployeeLeavePoliciesSummaryResponses,
+    GetV1EmployeeLeavePoliciesSummaryErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/leave-policies/summary',
+    ...options,
   });
 
 /**
@@ -3520,6 +3666,82 @@ export const patchV1CompaniesCompanyId = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Show employee address
+ *
+ * Returns the authenticated employee's residential address.
+ *
+ * The employment is derived from the access token's subject — there is no
+ * employment id in the path.
+ *
+ * This endpoint requires country-specific data. The exact required fields vary depending on which
+ * country the authenticated employee's employment is in. Query the
+ * [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint with `address_details`
+ * as the form name to discover the schema for a given country.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View addresses (`address:read`) | Manage addresses (`address:write`) |
+ *
+ */
+export const getV1EmployeeAddress = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1EmployeeAddressData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1EmployeeAddressResponses,
+    GetV1EmployeeAddressErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/address',
+    ...options,
+  });
+
+/**
+ * Update employee address
+ *
+ * Updates the authenticated employee's residential address.
+ *
+ * The employment is derived from the access token's subject — there is no
+ * employment id in the path. The token must be an employee-role token
+ * (typically obtained via the OAuth2 assertion grant with subject
+ * `urn:remote-api:employee:employment:<employment_id>`).
+ *
+ * This endpoint requires country-specific data. The exact required fields vary depending on which
+ * country the authenticated employee's employment is in. Query the
+ * [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint with `address_details`
+ * as the form name to discover the schema for a given country.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage addresses (`address:write`) |
+ *
+ */
+export const putV1EmployeeAddress = <ThrowOnError extends boolean = false>(
+  options?: Options<PutV1EmployeeAddressData, ThrowOnError>,
+) =>
+  (options?.client ?? client).put<
+    PutV1EmployeeAddressResponses,
+    PutV1EmployeeAddressErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/address',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+
+/**
  * Download a resignation letter
  *
  * Downloads a resignation letter from an employment request.
@@ -3763,7 +3985,7 @@ export const getV1ExpensesExpenseIdReceipt = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | - | View travel letters (`travel_letter:read`) | - |
+ * | Manage employment documents (`employment_documents`) | View travel letters (`travel_letter:read`) | Manage travel letters (`travel_letter:write`) |
  *
  */
 export const getV1TravelLetterRequestsId = <
@@ -3793,7 +4015,7 @@ export const getV1TravelLetterRequestsId = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | - | - | Manage travel letters (`travel_letter:write`) |
+ * | Manage employment documents (`employment_documents`) | - | Manage travel letters (`travel_letter:write`) |
  *
  */
 export const patchV1TravelLetterRequestsId2 = <
@@ -3827,7 +4049,7 @@ export const patchV1TravelLetterRequestsId2 = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | - | - | Manage travel letters (`travel_letter:write`) |
+ * | Manage employment documents (`employment_documents`) | - | Manage travel letters (`travel_letter:write`) |
  *
  */
 export const patchV1TravelLetterRequestsId = <
@@ -4292,6 +4514,42 @@ export const postV1IdentityVerificationEmploymentIdDecline = <
   });
 
 /**
+ * Retrieve a pre-onboarding document with its rendered PDF content
+ *
+ * Returns the rendered contract PDF (base64-encoded) and the list of signatories for the given
+ * pre-onboarding document. The `content` field is prefixed with `data:application/pdf;base64,` so
+ * it can be embedded directly in a document viewer.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
+ *
+ */
+export const getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdResponses,
+    GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/{id}',
+    ...options,
+  });
+
+/**
  * Show engagement agreement details
  *
  * Returns the engagement agreement details JSON Schema for a country. Only DEU country is supported for now.
@@ -4504,7 +4762,7 @@ export const putV1EmploymentsEmploymentIdPersonalDetails = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | - | View travel letters (`travel_letter:read`) | - |
+ * | Manage employment documents (`employment_documents`) | View travel letters (`travel_letter:read`) | Manage travel letters (`travel_letter:write`) |
  *
  */
 export const getV1TravelLetterRequests = <ThrowOnError extends boolean = false>(
@@ -5512,6 +5770,86 @@ export const getV1BulkEmploymentJobsJobIdRows = <
     ],
     url: '/v1/bulk-employment-jobs/{job_id}/rows',
     ...options,
+  });
+
+/**
+ * Show employee emergency contact
+ *
+ * Returns the authenticated employee's emergency contact.
+ *
+ * The employment is derived from the access token's subject — there is no
+ * employment id in the path.
+ *
+ * This endpoint requires country-specific data. The exact required fields vary depending on which
+ * country the authenticated employee's employment is in. Query the
+ * [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint with `emergency_contact_details`
+ * as the form name to discover the schema for a given country.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View emergency contacts (`emergency_contact:read`) | Manage emergency contacts (`emergency_contact:write`) |
+ *
+ */
+export const getV1EmployeeEmergencyContact = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetV1EmployeeEmergencyContactData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1EmployeeEmergencyContactResponses,
+    GetV1EmployeeEmergencyContactErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/emergency-contact',
+    ...options,
+  });
+
+/**
+ * Update employee emergency contact
+ *
+ * Updates the authenticated employee's emergency contact.
+ *
+ * The employment is derived from the access token's subject — there is no
+ * employment id in the path. The token must be an employee-role token
+ * (typically obtained via the OAuth2 assertion grant with subject
+ * `urn:remote-api:employee:employment:<employment_id>`).
+ *
+ * This endpoint requires country-specific data. The exact required fields vary depending on which
+ * country the authenticated employee's employment is in. Query the
+ * [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint with `emergency_contact_details`
+ * as the form name to discover the schema for a given country.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage emergency contacts (`emergency_contact:write`) |
+ *
+ */
+export const putV1EmployeeEmergencyContact = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<PutV1EmployeeEmergencyContactData, ThrowOnError>,
+) =>
+  (options?.client ?? client).put<
+    PutV1EmployeeEmergencyContactResponses,
+    PutV1EmployeeEmergencyContactErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/emergency-contact',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
   });
 
 /**
@@ -6771,6 +7109,24 @@ export const getV1EmploymentsEmploymentIdOnboardingSteps = <
   });
 
 /**
+ * Get employee token identity
+ *
+ * Returns user and company information for the authenticated employee.
+ */
+export const getV1EmployeeCurrent = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1EmployeeCurrentData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1EmployeeCurrentResponses,
+    GetV1EmployeeCurrentErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/current',
+    ...options,
+  });
+
+/**
  * List company structure nodes
  *
  * Shows all the company structure nodes of an employment.
@@ -7971,6 +8327,46 @@ export const getV1PayrollRuns = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Find or create a pre-onboarding document for an employment
+ *
+ * Finds an existing unsigned pre-onboarding document for the given requirement, or creates a new one.
+ * Idempotent: repeated calls with the same `pre_onboarding_document_requirement_slug` return the same
+ * document until it is signed.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
+ *
+ */
+export const postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsResponses,
+    PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-documents',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * Get group by ID via SCIM v2.0
  *
  * Retrieves a single group (department) for the authenticated company by group ID
@@ -8427,6 +8823,44 @@ export const postV1ContractorsEmploymentsEmploymentIdContractorCorSubscription =
       ],
       url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription',
       ...options,
+    });
+
+/**
+ * Sign a pre-onboarding document
+ *
+ * Signs the latest contract document associated with the given pre-onboarding document on behalf
+ * of the company signatory.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
+ *
+ */
+export const postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSign =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).post<
+      PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignResponses,
+      PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/{id}/sign',
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
     });
 
 /**
