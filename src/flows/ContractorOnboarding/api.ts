@@ -350,25 +350,27 @@ const useEorSubscription = (options?: { enabled?: boolean }) => {
     (plan) => plan.product.name === 'EOR Monthly',
   );
 
-  const eorSubscription = {
-    product: {
-      identifier: eorProductIdentifier,
-      short_name: 'EOR',
-    },
-    currency: eorPricingPlan?.price.currency,
-    price: {
-      amount: convertFromCents(eorPricingPlan?.price.amount ?? 0),
-    },
-    features: [
-      'Contract between Remote and employee',
-      'Remote manages onboarding, payroll, and compliance',
-      'Manages taxes, benefits, and time-off tracking',
-      'Handles contracts, transfers, and terminations',
-    ],
-    description: 'Enables hiring in countries without a local entity',
-    label: 'Employer of Record',
-    value: eorProductIdentifier,
-  };
+  const eorSubscription = eorPricingPlan
+    ? {
+        product: {
+          identifier: eorProductIdentifier,
+          short_name: 'EOR',
+        },
+        currency: eorPricingPlan.price.currency,
+        price: {
+          amount: convertFromCents(eorPricingPlan.price.amount),
+        },
+        features: [
+          'Contract between Remote and employee',
+          'Remote manages onboarding, payroll, and compliance',
+          'Manages taxes, benefits, and time-off tracking',
+          'Handles contracts, transfers, and terminations',
+        ],
+        description: 'Enables hiring in countries without a local entity',
+        label: 'Employer of Record',
+        value: eorProductIdentifier,
+      }
+    : null;
 
   return { eorSubscription, isLoading: isLoadingPricingPlans };
 };
@@ -384,7 +386,10 @@ const addEorToFieldOptions = (
   eorSubscription: ReturnType<typeof useEorSubscription>['eorSubscription'],
   excludeProducts?: ProductType[],
 ) => {
-  if (shouldIncludeProduct(eorProductIdentifier, excludeProducts)) {
+  if (
+    eorSubscription &&
+    shouldIncludeProduct(eorProductIdentifier, excludeProducts)
+  ) {
     fieldOptions.push({
       label: eorSubscription.label,
       value: eorSubscription.value,
