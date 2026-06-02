@@ -6,7 +6,7 @@ function setupRoutes(app) {
   // API routes
   app.get('/api/fetch-refresh-token', getToken);
   app.get('/api/fetch-company-manager', getCompanyManagerToken);
-  
+
   // Proxy all versioned API routes (v1, v2, etc.)
   app.use(/^\/v\d+/, createProxyMiddleware());
 }
