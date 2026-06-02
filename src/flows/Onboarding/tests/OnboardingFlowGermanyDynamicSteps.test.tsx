@@ -215,7 +215,7 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
         return HttpResponse.json(engagementAgreementDetailsSchemaV1Germany);
       }),
       http.get(
-        '*/v1/employments/:id/engagement-agreement-details',
+        '*/v2/employments/:id/engagement-agreement-details',
         ({ params }) => {
           const employmentId = params?.id;
 
@@ -236,7 +236,7 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
       http.patch('*/v1/employments/*', async () => {
         return HttpResponse.json(employmentUpdatedResponse);
       }),
-      http.post('*/v1/employments/:id/engagement-agreement-details', () => {
+      http.post('*/v2/employments/:id/engagement-agreement-details', () => {
         return HttpResponse.json(mockBaseResponse);
       }),
       http.post('*/v1/employments/*/contract-eligibility', () => {
@@ -314,7 +314,7 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
     // Override the engagement-agreement-details GET to return 404
     // This simulates a fresh employment without saved engagement details
     server.use(
-      http.get('*/v1/employments/:id/engagement-agreement-details', () => {
+      http.get('*/v2/employments/:id/engagement-agreement-details', () => {
         return HttpResponse.json({ error: 'Not found' }, { status: 404 });
       }),
     );
