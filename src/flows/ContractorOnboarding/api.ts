@@ -462,7 +462,8 @@ export const useContractorSubscriptionSchemaField = (
     });
 
   const hasAvailableOptions =
-    filteredContractorSubscriptions.length > 0 || showEorSubscription;
+    filteredContractorSubscriptions.length > 0 ||
+    (showEorSubscription && eorSubscription !== null);
 
   const form = createHeadlessForm(
     selectContractorSubscriptionStepSchema.data.schema,
