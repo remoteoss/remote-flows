@@ -2656,6 +2656,62 @@ describe('ContractorOnboardingFlow', () => {
         expect(eorOption).toBeChecked();
       });
     });
+
+    it('should not show Employer of Record option when pricing plans is empty', async () => {
+      server.use(
+        http.get('*/v1/countries', () => {
+          return HttpResponse.json({
+            data: [
+              {
+                code: 'PRT',
+                name: 'Portugal',
+                eor_onboarding: true,
+              },
+            ],
+          });
+        }),
+        http.get(
+          '*/v1/contractors/employments/*/contractor-subscriptions',
+          () => {
+            return HttpResponse.json(mockCMOnlyResponse);
+          },
+        ),
+        http.get('*/v1/companies/*/pricing-plans', () => {
+          return HttpResponse.json({
+            data: {
+              pricing_plans: [],
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          {...defaultProps}
+          countryCode='PRT'
+          skipSteps={['select_country']}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await fillBasicInformation();
+
+      const nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText(/Step: Pricing Plan/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      const eorOption = screen.queryByRole('radio', {
+        name: /Employer of Record/i,
+      });
+      expect(eorOption).not.toBeInTheDocument();
+    });
   });
 
   describe('COR Contract Preview Skip', () => {
