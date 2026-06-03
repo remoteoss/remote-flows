@@ -14,15 +14,13 @@ import {
   getV1CountriesCountryCodeForm,
   getV1EmploymentsEmploymentIdBenefitOffers,
   getV1EmploymentsEmploymentIdBenefitOffersSchema,
-  getV1EmploymentsEmploymentIdEngagementAgreementDetails,
-  getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId,
-  getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirements,
+  getV2EmploymentsEmploymentIdEngagementAgreementDetails,
   patchV1EmploymentsEmploymentId2,
   postV1CurrencyConverterEffective,
   postV1CurrencyConverterRaw,
   postV1Employments,
   postV1EmploymentsEmploymentIdContractEligibility,
-  postV1EmploymentsEmploymentIdEngagementAgreementDetails,
+  postV2EmploymentsEmploymentIdEngagementAgreementDetails,
   postV1EmploymentsEmploymentIdInvite,
   PostV1EmploymentsEmploymentIdInviteData,
   postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments,
@@ -30,6 +28,8 @@ import {
   postV1RiskReserve,
   putV1EmploymentsEmploymentIdBenefitOffers,
   UnifiedEmploymentUpsertBenefitOffersRequest,
+  getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirements,
+  getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId,
 } from '@/src/client';
 
 import { useClient } from '@/src/context';
@@ -129,7 +129,7 @@ export const useEmploymentEngagementAgreementDetails = (
     retry: false,
     enabled: queryOptions?.enabled ?? !!employmentId,
     queryFn: async () => {
-      return getV1EmploymentsEmploymentIdEngagementAgreementDetails({
+      return getV2EmploymentsEmploymentIdEngagementAgreementDetails({
         client: client as Client,
         headers: {
           Authorization: ``,
@@ -358,7 +358,7 @@ export const useUpdateEmploymentEngagementAgreementDetails = () => {
     }: EmploymentEngagementAgreementDetailsParams & {
       employmentId: string;
     }) => {
-      return postV1EmploymentsEmploymentIdEngagementAgreementDetails({
+      return postV2EmploymentsEmploymentIdEngagementAgreementDetails({
         client: client as Client,
         headers: {
           Authorization: ``,

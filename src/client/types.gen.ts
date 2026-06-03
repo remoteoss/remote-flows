@@ -134,9 +134,9 @@ export type CountryCode = string;
 /**
  * V2OffboardingRequest
  *
- * The immutable submission inputs of the employment request that created this offboarding.
- * The exact shape depends on the offboarding `type`: `termination` offboardings carry a
- * `V2TerminationRequest`, `resignation` offboardings carry a `V2ResignationRequest`.
+ * The exact shape depends on the offboarding `type`:
+ * `termination` offboardings carry a `V2TerminationRequest`, `resignation` offboardings
+ * carry a `V2ResignationRequest`.
  *
  */
 export type V2OffboardingRequest =
@@ -183,6 +183,12 @@ export type TerminationOffboarding = {
    * The unique identifier (UUID) of the offboarding request.
    */
   id: string;
+  /**
+   * The unique identifier (UUID) of the offboarding record. When present, this can be used
+   * to query `GET /api/eor/v2/offboardings/{id}` for the v2 offboarding shape.
+   *
+   */
+  offboarding_id?: string | null;
   /**
    * Remote will use this email address for post-termination communication.
    * If it is not provided, this field will be derived from the employment record. Therefore, it is important to ensure that it is not a company email.
@@ -638,16 +644,6 @@ export type WebhookEvent = {
    * Whether the webhook event was successfully delivered to the callback URL (received a 2XX response).
    */
   successfully_delivered: boolean;
-};
-
-/**
- * CreateDataSyncParams
- */
-export type CreateDataSyncParams = {
-  /**
-   * The types of data to synchronize.
-   */
-  data_types: Array<'benefits' | 'kdb' | 'countries' | 'help-center-articles'>;
 };
 
 /**
@@ -1452,6 +1448,29 @@ export type DownloadFileResponse = {
 };
 
 /**
+ * PayItem
+ */
+export type PayItem = {
+  /**
+   * Value of the pay item (e.g. duration in seconds, amount in cents)
+   */
+  amount: number;
+  /**
+   * Pay item type code
+   */
+  code: string;
+  /**
+   * Working day date (YYYY-MM-DD)
+   */
+  effective_date: string;
+  /**
+   * Employment UUID.
+   */
+  employment_id: UuidSlug;
+  provider_data: PayItemProviderData;
+};
+
+/**
  * MinimalTimesheet
  *
  * A lightweight timesheet representation returned after create and approve operations. Contains basic identification and status fields but not the detailed hours breakdown or time tracking entries.
@@ -1760,6 +1779,26 @@ export type TypeOfDayBreakdown = {
 };
 
 export type MaybeBenefitTier = BenefitTier | null;
+
+/**
+ * EmployeeFileParams
+ *
+ * Parameters to upload a file from an employee-issued token. The employment is derived from the access token's subject, so no employment id is required in the body.
+ */
+export type EmployeeFileParams = {
+  /**
+   * The file content, base64-encoded.
+   */
+  file: Blob | File;
+  /**
+   * A more specific classification within the type.
+   */
+  sub_type?: string;
+  /**
+   * The broad category of the file (e.g., "id", "tax_form").
+   */
+  type?: string;
+};
 
 /**
  * EmploymentBasicResponse
@@ -2268,15 +2307,6 @@ export type JobAssociation = {
 } | null;
 
 /**
- * ListDataSyncEventsResponse
- */
-export type ListDataSyncEventsResponse = {
-  data: {
-    data_sync_events: Array<DataSyncEvent>;
-  };
-};
-
-/**
  * Integrations.Scim.GroupListResponse
  */
 export type IntegrationsScimGroupListResponse = {
@@ -2588,6 +2618,25 @@ export type ImportJobRow = {
     | 'skipped'
     | 'retryable';
   submission_errors?: Array<ImportJobRowError>;
+};
+
+/**
+ * ContractorTimeTrackingParams
+ *
+ * Parameters for a single time tracking entry on a contractor timesheet. Allowed `type` values are restricted to the contractor subset.
+ */
+export type ContractorTimeTrackingParams = {
+  clock_in: DateTimeIso8601;
+  clock_out: DateTimeIso8601;
+  /**
+   * Optional free-text notes about this time entry, such as project or task details.
+   */
+  notes?: string | null;
+  timezone: Timezone;
+  /**
+   * The category of time being tracked. Contractors are restricted to `regular_hours`, `on_call`, or `break`.
+   */
+  type: 'regular_hours' | 'on_call' | 'break';
 };
 
 export type MaybeCurrencyDefinition = CurrencyDefinition | null;
@@ -2937,6 +2986,12 @@ export type ResignationOffboarding = {
    * The unique identifier (UUID) of the offboarding request.
    */
   id: string;
+  /**
+   * The unique identifier (UUID) of the offboarding record. When present, this can be used
+   * to query `GET /api/eor/v2/offboardings/{id}` for the v2 offboarding shape.
+   *
+   */
+  offboarding_id?: string | null;
   /**
    * The employee's proposed last working day. The actual last day may differ based on notice period requirements.
    */
@@ -3423,6 +3478,10 @@ export type CreateWebhookCallbackParams = {
     | 'contract_amendment.submitted'
     | 'contract.termination_date_reached'
     | 'contract_document.status.changed'
+    | 'contractor_invoice.employer_paid'
+    | 'contractor_invoice.issued'
+    | 'contractor_invoice.paid_out'
+    | 'contractor_invoice.payment_initiated'
     | 'custom_field.value_updated'
     | 'employment.benefits.selected'
     | 'employment_company_structure_node.updated'
@@ -3630,40 +3689,35 @@ export type CountriesResponse = {
 };
 
 /**
- * DataSyncEvent
- *
- * A record of a data synchronization event, showing when it ran, what data type it covered, and whether it succeeded.
- */
-export type DataSyncEvent = {
-  data_type: 'benefits' | 'kdb' | 'countries' | 'help-center-articles';
-  /**
-   * The timestamp when the sync event occurred.
-   */
-  inserted_at: string;
-  status: 'pass' | 'fail';
-};
-
-/**
  * AssertionTokenParams
  *
- *   The assertion token is a JWT token that contains the following claims:
+ * The assertion token is a JWT token that contains the following claims:
  *
  * - `sub`: The subject of the token, in one of the following formats:
- *
- * - `urn:remote-api:employment:<employment_id>`
- * - `urn:remote-api:employee:employment:<employment_id>`
- * - `urn:remote-api:company-manager:user:<user_id>`
+ * - `urn:remote-api:employment:<employment_id>` — mints an **employee-role** access token whose `sub` is the employment owner's user slug. Scopes are restricted to those valid for the employee role (e.g. `personal_detail:read`, `timeoff:write`).
+ * - `urn:remote-api:employee:employment:<employment_id>` — same as above; the recommended format for new integrations. Use this when issuing a token on behalf of an employee so they can submit their own onboarding data (e.g. `PUT /v1/employee/address`).
+ * - `urn:remote-api:company-manager:user:<user_id>` — mints a **company_manager-role** access token. Scopes are restricted to those valid for the company-manager role.
  *
  * - `iss`: The issuer of the token, which is the client ID
  * - `aud`: The audience of the token, which is the OAuth audience
- * - `exp`: The expiration time of the token
+ * - `exp`: The expiration time of the token (max 10 minutes in the future)
  * - `iat`: The issued at time of the token
- * - `scope`: The scope of the token
+ * - `scope`: The scope of the token (space-separated). Optional. If omitted, the minted access token defaults to `all:write` for the subject's role. If provided, every scope must be valid for the subject's role or the assertion is rejected.
  *
- * the scope is optional and if not provided, the token will have all the scopes for the subject.
- * the scope must be valid for the subject, otherwise the token will be rejected.
+ * The assertion must be signed with the client secret (HS256).
  *
- * the assertion must be signed with the client secret.
+ * **Example — minting an employee token to submit a residential address:**
+ *
+ * ```
+ * sub:   urn:remote-api:employee:employment:emp_2t3h9
+ * iss:   <your client_id>
+ * aud:   <configured OAuth audience>
+ * exp:   <now + 300 seconds>
+ * iat:   <now>
+ * scope: address:write
+ * ```
+ *
+ * The resulting access token can be used at `PUT /v1/employee/address` to submit the address for that employment.
  *
  */
 export type AssertionTokenParams = {
@@ -3820,6 +3874,31 @@ export type ListPayrollRunResponse = {
    * List of payroll runs matching the query filters.
    */
   payroll_runs?: Array<MinimalPayrollRun>;
+};
+
+/**
+ * ContractorCreateTimesheetParams
+ *
+ * Parameters for creating a timesheet on behalf of a contractor employment. The target employment is taken from the URL path, not the request body. Allowed `time_trackings.type` values are restricted to the contractor subset: `regular_hours`, `on_call`, `break`.
+ */
+export type ContractorCreateTimesheetParams = {
+  end_date: Date;
+  start_date: Date;
+  /**
+   * One or more time tracking entries to include in the timesheet.
+   */
+  time_trackings: Array<ContractorTimeTrackingParams>;
+};
+
+/**
+ * ContractorTimesheetResponse
+ *
+ * Response returned after creating a contractor timesheet.
+ */
+export type ContractorTimesheetResponse = {
+  data?: {
+    timesheet: ContractorTimesheet;
+  };
 };
 
 /**
@@ -4211,11 +4290,9 @@ export type ListPayItemsResponse = {
      */
     current_page: number;
     /**
-     * List of pay elements
+     * List of pay items
      */
-    data: Array<{
-      [key: string]: unknown;
-    }>;
+    data: Array<PayItem>;
     /**
      * Total number of pay items
      */
@@ -4312,6 +4389,10 @@ export type WebhookTriggerEmploymentParams = {
     | 'contract_amendment.submitted'
     | 'contract.termination_date_reached'
     | 'contract_document.status.changed'
+    | 'contractor_invoice.employer_paid'
+    | 'contractor_invoice.issued'
+    | 'contractor_invoice.paid_out'
+    | 'contractor_invoice.payment_initiated'
     | 'custom_field.value_updated'
     | 'employment.benefits.selected'
     | 'employment_company_structure_node.updated'
@@ -4696,7 +4777,7 @@ export type Product = {
 /**
  * V2TerminationRequest
  *
- * Immutable snapshot of the inputs submitted when a `termination` offboarding was created.
+ * Snapshot of the inputs submitted when a `termination` offboarding was created.
  * These fields do not change as the offboarding progresses.
  *
  */
@@ -5053,6 +5134,26 @@ export type OfferedBenefitGroup = {
 };
 
 /**
+ * ContractorTimeTracking
+ *
+ * A single time tracking entry on a contractor timesheet.
+ */
+export type ContractorTimeTracking = {
+  clock_in: DateTimeIso8601;
+  clock_out: DateTimeIso8601;
+  /**
+   * Optional notes about this entry.
+   */
+  notes: string | null;
+  timezone: Timezone;
+  total_hours: HoursAndMinutes;
+  /**
+   * The category of time being tracked. One of `regular_hours`, `on_call`, `break`.
+   */
+  type: 'regular_hours' | 'on_call' | 'break';
+};
+
+/**
  * PayrollRun
  *
  * A payroll run represents a single payroll processing cycle for a company in a specific country and period. It progresses through statuses from preparation to finalization, and contains cost totals aggregated across all employees included in the run.
@@ -5405,6 +5506,35 @@ export type BillingDocument = {
    * The total amount of the billing document, in cents.
    */
   total: number;
+};
+
+/**
+ * ContractorTimesheet
+ *
+ * A contractor timesheet, returned by the contractor create endpoint. Only contains fields relevant to the contractor flow — EOR-only fields (overtime, night/weekend/holiday hours, approval flag) are not included.
+ */
+export type ContractorTimesheet = {
+  break_hours: HoursAndMinutes;
+  country_code: CountryCode;
+  employment_id: UuidSlug;
+  end_date: Date;
+  id: UuidSlug;
+  /**
+   * Optional notes attached to the timesheet.
+   */
+  notes: string | null;
+  on_call_hours: HoursAndMinutes;
+  regular_hours: HoursAndMinutes;
+  start_date: Date;
+  /**
+   * The timestamp the timesheet was submitted.
+   */
+  submitted_at: string | null;
+  /**
+   * The individual time tracking entries that make up this timesheet.
+   */
+  time_trackings: Array<ContractorTimeTracking>;
+  total_hours: HoursAndMinutes;
 };
 
 /**
@@ -5853,6 +5983,11 @@ export type PayItemProviderData = {
    * Correction date for a previously submitted day (YYYY-MM-DD)
    */
   adjustment_effective_date?: string;
+  /**
+   * Hourly rate in cents
+   */
+  hourly_rate?: number;
+  hourly_rate_currency_code?: CurrencyCode;
   /**
    * Whether payout_amount should be considered a deduction
    */
@@ -8816,6 +8951,14 @@ export type ContractorEligibilityResponse = {
      */
     contractor_eligibility: {
       cor: boolean;
+      /**
+       * Per-product lists of reasons why the legal entity is ineligible. Empty list means eligible.
+       */
+      ineligibility_reasons: {
+        cor: Array<string>;
+        plus: Array<string>;
+        standard: Array<string>;
+      };
       plus: boolean;
       standard: boolean;
     };
@@ -8932,6 +9075,10 @@ export type WebhookCallback = {
     | 'contract_amendment.submitted'
     | 'contract.termination_date_reached'
     | 'contract_document.status.changed'
+    | 'contractor_invoice.employer_paid'
+    | 'contractor_invoice.issued'
+    | 'contractor_invoice.paid_out'
+    | 'contractor_invoice.payment_initiated'
     | 'custom_field.value_updated'
     | 'employment.benefits.selected'
     | 'employment_company_structure_node.updated'
@@ -9617,7 +9764,7 @@ export type ContractorInvoiceScheduleCreateResponseFailure = {
 /**
  * V2ResignationRequest
  *
- * Immutable snapshot of the inputs submitted when a `resignation` offboarding was created.
+ * Snapshot of the inputs submitted when a `resignation` offboarding was created.
  * These fields do not change as the offboarding progresses.
  *
  */
@@ -10664,6 +10811,10 @@ export type UpdateWebhookCallbackParams = {
     | 'contract_amendment.submitted'
     | 'contract.termination_date_reached'
     | 'contract_document.status.changed'
+    | 'contractor_invoice.employer_paid'
+    | 'contractor_invoice.issued'
+    | 'contractor_invoice.paid_out'
+    | 'contractor_invoice.payment_initiated'
     | 'custom_field.value_updated'
     | 'employment.benefits.selected'
     | 'employment_company_structure_node.updated'
@@ -10909,9 +11060,7 @@ export type BenefitRenewalRequestsListBenefitRenewalRequestResponse = {
  * PayItemBulkCreateSuccesses
  */
 export type PayItemBulkCreateSuccesses = {
-  pay_element: {
-    [key: string]: unknown;
-  };
+  pay_item: PayItem;
   row_number: number;
 };
 
@@ -11729,11 +11878,11 @@ export type EmploymentDetailsOnlyResponse = {
   data: {
     employment?: {
       /**
-       * Home address information. Its properties may vary depending on the country.
+       * Home address information. Its properties may vary depending on the country. Null if the employee has not submitted their address yet.
        */
       address_details?: {
         [key: string]: unknown;
-      };
+      } | null;
       /**
        * Administrative information. Its properties may vary depending on the country.
        */
@@ -11762,21 +11911,21 @@ export type EmploymentDetailsOnlyResponse = {
         [key: string]: unknown;
       };
       /**
-       * Emergency contact information. Its properties may vary depending on the country.
+       * Emergency contact information. Its properties may vary depending on the country. Null if the employee has not submitted their emergency contact yet.
        */
       emergency_contact_details?: {
         [key: string]: unknown;
-      };
+      } | null;
       /**
        * The unique identifier (UUID) of the employment.
        */
       id: string;
       /**
-       * Personal details information. Its properties may vary depending on the country.
+       * Personal details information. Its properties may vary depending on the country. Null if the employee has not submitted their personal details yet.
        */
       personal_details?: {
         [key: string]: unknown;
-      };
+      } | null;
       /**
        * Pricing plan information.
        */
@@ -12608,95 +12757,6 @@ export type PostV1PayItemsBulkResponses = {
 
 export type PostV1PayItemsBulkResponse =
   PostV1PayItemsBulkResponses[keyof PostV1PayItemsBulkResponses];
-
-export type GetV1DataSyncData = {
-  body?: never;
-  path?: never;
-  query?: never;
-  url: '/v1/data-sync';
-};
-
-export type GetV1DataSyncErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Conflict
-   */
-  409: ConflictResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Unprocessable Entity
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type GetV1DataSyncError = GetV1DataSyncErrors[keyof GetV1DataSyncErrors];
-
-export type GetV1DataSyncResponses = {
-  /**
-   * Success
-   */
-  200: ListDataSyncEventsResponse;
-};
-
-export type GetV1DataSyncResponse =
-  GetV1DataSyncResponses[keyof GetV1DataSyncResponses];
-
-export type PostV1DataSyncData = {
-  /**
-   * DataSync
-   */
-  body: CreateDataSyncParams;
-  path?: never;
-  query?: never;
-  url: '/v1/data-sync';
-};
-
-export type PostV1DataSyncErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Conflict
-   */
-  409: ConflictErrorResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Unprocessable Entity
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type PostV1DataSyncError =
-  PostV1DataSyncErrors[keyof PostV1DataSyncErrors];
-
-export type PostV1DataSyncResponses = {
-  /**
-   * Accepted
-   */
-  202: unknown;
-};
 
 export type GetV2OffboardingsIdData = {
   body?: never;
@@ -14960,6 +15020,57 @@ export type PostV1SsoConfigurationResponses = {
 export type PostV1SsoConfigurationResponse =
   PostV1SsoConfigurationResponses[keyof PostV1SsoConfigurationResponses];
 
+export type PostV1ContractorsEmploymentsEmploymentIdTimesheetsData = {
+  /**
+   * ContractorCreateTimesheetParams
+   */
+  body: ContractorCreateTimesheetParams;
+  path: {
+    /**
+     * Contractor employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/contractors/employments/{employment_id}/timesheets';
+};
+
+export type PostV1ContractorsEmploymentsEmploymentIdTimesheetsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostV1ContractorsEmploymentsEmploymentIdTimesheetsError =
+  PostV1ContractorsEmploymentsEmploymentIdTimesheetsErrors[keyof PostV1ContractorsEmploymentsEmploymentIdTimesheetsErrors];
+
+export type PostV1ContractorsEmploymentsEmploymentIdTimesheetsResponses = {
+  /**
+   * Success
+   */
+  200: ContractorTimesheetResponse;
+};
+
+export type PostV1ContractorsEmploymentsEmploymentIdTimesheetsResponse =
+  PostV1ContractorsEmploymentsEmploymentIdTimesheetsResponses[keyof PostV1ContractorsEmploymentsEmploymentIdTimesheetsResponses];
+
 export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveData =
   {
     body?: never;
@@ -16619,6 +16730,109 @@ export type PatchV1CompaniesCompanyIdResponses = {
 export type PatchV1CompaniesCompanyIdResponse =
   PatchV1CompaniesCompanyIdResponses[keyof PatchV1CompaniesCompanyIdResponses];
 
+export type GetV1EmployeeAddressData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Version of the address_details form schema
+     */
+    address_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v1/employee/address';
+};
+
+export type GetV1EmployeeAddressErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV1EmployeeAddressError =
+  GetV1EmployeeAddressErrors[keyof GetV1EmployeeAddressErrors];
+
+export type GetV1EmployeeAddressResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type GetV1EmployeeAddressResponse =
+  GetV1EmployeeAddressResponses[keyof GetV1EmployeeAddressResponses];
+
+export type PutV1EmployeeAddressData = {
+  /**
+   * Employee address details params
+   */
+  body?: EmploymentAddressDetailsParams;
+  path?: never;
+  query?: {
+    /**
+     * Version of the address_details form schema
+     */
+    address_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v1/employee/address';
+};
+
+export type PutV1EmployeeAddressErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV1EmployeeAddressError =
+  PutV1EmployeeAddressErrors[keyof PutV1EmployeeAddressErrors];
+
+export type PutV1EmployeeAddressResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type PutV1EmployeeAddressResponse =
+  PutV1EmployeeAddressResponses[keyof PutV1EmployeeAddressResponses];
+
 export type GetV1ResignationsOffboardingRequestIdResignationLetterData = {
   body?: never;
   path: {
@@ -17939,6 +18153,56 @@ export type PatchV1WebhookCallbacksIdResponses = {
 
 export type PatchV1WebhookCallbacksIdResponse =
   PatchV1WebhookCallbacksIdResponses[keyof PatchV1WebhookCallbacksIdResponses];
+
+export type PutV1EmployeeFederalTaxesData = {
+  /**
+   * Employee federal taxes params
+   */
+  body?: EmploymentFederalTaxesParams;
+  path?: never;
+  query?: never;
+  url: '/v1/employee/federal-taxes';
+};
+
+export type PutV1EmployeeFederalTaxesErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV1EmployeeFederalTaxesError =
+  PutV1EmployeeFederalTaxesErrors[keyof PutV1EmployeeFederalTaxesErrors];
+
+export type PutV1EmployeeFederalTaxesResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PutV1EmployeeFederalTaxesResponse =
+  PutV1EmployeeFederalTaxesResponses[keyof PutV1EmployeeFederalTaxesResponses];
 
 export type GetV1EmployeeTimesheetsData = {
   body?: never;
@@ -19586,6 +19850,109 @@ export type GetV1BulkEmploymentJobsJobIdRowsResponses = {
 export type GetV1BulkEmploymentJobsJobIdRowsResponse =
   GetV1BulkEmploymentJobsJobIdRowsResponses[keyof GetV1BulkEmploymentJobsJobIdRowsResponses];
 
+export type GetV1EmployeeEmergencyContactData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Version of the emergency_contact_details form schema
+     */
+    emergency_contact_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v1/employee/emergency-contact';
+};
+
+export type GetV1EmployeeEmergencyContactErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV1EmployeeEmergencyContactError =
+  GetV1EmployeeEmergencyContactErrors[keyof GetV1EmployeeEmergencyContactErrors];
+
+export type GetV1EmployeeEmergencyContactResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type GetV1EmployeeEmergencyContactResponse =
+  GetV1EmployeeEmergencyContactResponses[keyof GetV1EmployeeEmergencyContactResponses];
+
+export type PutV1EmployeeEmergencyContactData = {
+  /**
+   * Employee emergency contact params
+   */
+  body?: EmploymentEmergencyContactParams;
+  path?: never;
+  query?: {
+    /**
+     * Version of the emergency_contact_details form schema
+     */
+    emergency_contact_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v1/employee/emergency-contact';
+};
+
+export type PutV1EmployeeEmergencyContactErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV1EmployeeEmergencyContactError =
+  PutV1EmployeeEmergencyContactErrors[keyof PutV1EmployeeEmergencyContactErrors];
+
+export type PutV1EmployeeEmergencyContactResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type PutV1EmployeeEmergencyContactResponse =
+  PutV1EmployeeEmergencyContactResponses[keyof PutV1EmployeeEmergencyContactResponses];
+
 export type PostV1SandboxEmploymentsData = {
   /**
    * Employment params
@@ -20117,6 +20484,109 @@ export type PostV1CostCalculatorEstimationCsvResponses = {
 
 export type PostV1CostCalculatorEstimationCsvResponse =
   PostV1CostCalculatorEstimationCsvResponses[keyof PostV1CostCalculatorEstimationCsvResponses];
+
+export type GetV1EmployeePersonalDetailsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Version of the personal_details form schema
+     */
+    personal_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v1/employee/personal-details';
+};
+
+export type GetV1EmployeePersonalDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV1EmployeePersonalDetailsError =
+  GetV1EmployeePersonalDetailsErrors[keyof GetV1EmployeePersonalDetailsErrors];
+
+export type GetV1EmployeePersonalDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type GetV1EmployeePersonalDetailsResponse =
+  GetV1EmployeePersonalDetailsResponses[keyof GetV1EmployeePersonalDetailsResponses];
+
+export type PutV1EmployeePersonalDetailsData = {
+  /**
+   * Employee personal details params
+   */
+  body?: EmploymentPersonalDetailsParams;
+  path?: never;
+  query?: {
+    /**
+     * Version of the personal_details form schema
+     */
+    personal_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v1/employee/personal-details';
+};
+
+export type PutV1EmployeePersonalDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV1EmployeePersonalDetailsError =
+  PutV1EmployeePersonalDetailsErrors[keyof PutV1EmployeePersonalDetailsErrors];
+
+export type PutV1EmployeePersonalDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type PutV1EmployeePersonalDetailsResponse =
+  PutV1EmployeePersonalDetailsResponses[keyof PutV1EmployeePersonalDetailsResponses];
 
 export type GetV1ScimV2GroupsData = {
   body?: never;
@@ -24650,6 +25120,52 @@ export type GetV1EmployeeDocumentsResponses = {
 
 export type GetV1EmployeeDocumentsResponse =
   GetV1EmployeeDocumentsResponses[keyof GetV1EmployeeDocumentsResponses];
+
+export type PostV1EmployeeDocumentsData = {
+  /**
+   * File
+   */
+  body: EmployeeFileParams;
+  path?: never;
+  query?: never;
+  url: '/v1/employee/documents';
+};
+
+export type PostV1EmployeeDocumentsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostV1EmployeeDocumentsError =
+  PostV1EmployeeDocumentsErrors[keyof PostV1EmployeeDocumentsErrors];
+
+export type PostV1EmployeeDocumentsResponses = {
+  /**
+   * Created
+   */
+  201: UploadFileResponse;
+};
+
+export type PostV1EmployeeDocumentsResponse =
+  PostV1EmployeeDocumentsResponses[keyof PostV1EmployeeDocumentsResponses];
 
 export type PostV1TimeoffTimeoffIdCancelRequestApproveData = {
   body?: never;
