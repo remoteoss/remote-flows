@@ -1,6 +1,13 @@
 import { $TSFixMe } from '@/src';
 import '@/src/tests/server';
 import '@testing-library/jest-dom/vitest';
+import { client } from '@/src/client/client.gen';
+
+// Configure the client baseUrl for tests
+// This is needed when using locally generated OpenAPI client
+client.setConfig({
+  baseUrl: 'http://localhost:3000',
+});
 
 // Mock PointerEvent to enable testing interactions with the select component
 class MockPointerEvent extends Event {

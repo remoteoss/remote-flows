@@ -1781,6 +1781,26 @@ export type TypeOfDayBreakdown = {
 export type MaybeBenefitTier = BenefitTier | null;
 
 /**
+ * EmployeeFileParams
+ *
+ * Parameters to upload a file from an employee-issued token. The employment is derived from the access token's subject, so no employment id is required in the body.
+ */
+export type EmployeeFileParams = {
+  /**
+   * The file content, base64-encoded.
+   */
+  file: Blob | File;
+  /**
+   * A more specific classification within the type.
+   */
+  sub_type?: string;
+  /**
+   * The broad category of the file (e.g., "id", "tax_form").
+   */
+  type?: string;
+};
+
+/**
  * EmploymentBasicResponse
  *
  * A lightweight employment representation returned after creation. Contains basic identification, country, and status fields but not the full onboarding details or country-specific form data.
@@ -11901,11 +11921,11 @@ export type EmploymentDetailsOnlyResponse = {
        */
       id: string;
       /**
-       * Personal details information. Its properties may vary depending on the country.
+       * Personal details information. Its properties may vary depending on the country. Null if the employee has not submitted their personal details yet.
        */
       personal_details?: {
         [key: string]: unknown;
-      };
+      } | null;
       /**
        * Pricing plan information.
        */
@@ -18134,6 +18154,56 @@ export type PatchV1WebhookCallbacksIdResponses = {
 export type PatchV1WebhookCallbacksIdResponse =
   PatchV1WebhookCallbacksIdResponses[keyof PatchV1WebhookCallbacksIdResponses];
 
+export type PutV1EmployeeFederalTaxesData = {
+  /**
+   * Employee federal taxes params
+   */
+  body?: EmploymentFederalTaxesParams;
+  path?: never;
+  query?: never;
+  url: '/v1/employee/federal-taxes';
+};
+
+export type PutV1EmployeeFederalTaxesErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV1EmployeeFederalTaxesError =
+  PutV1EmployeeFederalTaxesErrors[keyof PutV1EmployeeFederalTaxesErrors];
+
+export type PutV1EmployeeFederalTaxesResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PutV1EmployeeFederalTaxesResponse =
+  PutV1EmployeeFederalTaxesResponses[keyof PutV1EmployeeFederalTaxesResponses];
+
 export type GetV1EmployeeTimesheetsData = {
   body?: never;
   path?: never;
@@ -20414,6 +20484,109 @@ export type PostV1CostCalculatorEstimationCsvResponses = {
 
 export type PostV1CostCalculatorEstimationCsvResponse =
   PostV1CostCalculatorEstimationCsvResponses[keyof PostV1CostCalculatorEstimationCsvResponses];
+
+export type GetV1EmployeePersonalDetailsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Version of the personal_details form schema
+     */
+    personal_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v1/employee/personal-details';
+};
+
+export type GetV1EmployeePersonalDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV1EmployeePersonalDetailsError =
+  GetV1EmployeePersonalDetailsErrors[keyof GetV1EmployeePersonalDetailsErrors];
+
+export type GetV1EmployeePersonalDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type GetV1EmployeePersonalDetailsResponse =
+  GetV1EmployeePersonalDetailsResponses[keyof GetV1EmployeePersonalDetailsResponses];
+
+export type PutV1EmployeePersonalDetailsData = {
+  /**
+   * Employee personal details params
+   */
+  body?: EmploymentPersonalDetailsParams;
+  path?: never;
+  query?: {
+    /**
+     * Version of the personal_details form schema
+     */
+    personal_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v1/employee/personal-details';
+};
+
+export type PutV1EmployeePersonalDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV1EmployeePersonalDetailsError =
+  PutV1EmployeePersonalDetailsErrors[keyof PutV1EmployeePersonalDetailsErrors];
+
+export type PutV1EmployeePersonalDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type PutV1EmployeePersonalDetailsResponse =
+  PutV1EmployeePersonalDetailsResponses[keyof PutV1EmployeePersonalDetailsResponses];
 
 export type GetV1ScimV2GroupsData = {
   body?: never;
@@ -24947,6 +25120,52 @@ export type GetV1EmployeeDocumentsResponses = {
 
 export type GetV1EmployeeDocumentsResponse =
   GetV1EmployeeDocumentsResponses[keyof GetV1EmployeeDocumentsResponses];
+
+export type PostV1EmployeeDocumentsData = {
+  /**
+   * File
+   */
+  body: EmployeeFileParams;
+  path?: never;
+  query?: never;
+  url: '/v1/employee/documents';
+};
+
+export type PostV1EmployeeDocumentsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostV1EmployeeDocumentsError =
+  PostV1EmployeeDocumentsErrors[keyof PostV1EmployeeDocumentsErrors];
+
+export type PostV1EmployeeDocumentsResponses = {
+  /**
+   * Created
+   */
+  201: UploadFileResponse;
+};
+
+export type PostV1EmployeeDocumentsResponse =
+  PostV1EmployeeDocumentsResponses[keyof PostV1EmployeeDocumentsResponses];
 
 export type PostV1TimeoffTimeoffIdCancelRequestApproveData = {
   body?: never;

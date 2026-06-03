@@ -1,4 +1,5 @@
 import { mockCompanyResponse } from '@/src/common/api/fixtures/companies';
+import { preOnboardingRequirementsMock } from '@/src/common/api/fixtures/pre-onboarding-requirements';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   basicInformationSchemaV1Portugal,
@@ -86,6 +87,13 @@ describe('OnboardingInvite', () => {
       http.get('*/v1/employments/*', () => {
         return HttpResponse.json(employmentDefaultResponse);
       }),
+
+      http.get(
+        '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+        () => {
+          return HttpResponse.json({ data: [] });
+        },
+      ),
 
       http.post('*/v1/employments/:employmentId/invite', () => {
         return HttpResponse.json({
@@ -1196,6 +1204,155 @@ describe('OnboardingInvite', () => {
         }),
         {},
       );
+    });
+  });
+
+  describe('pre-onboarding requirements', () => {
+    it('should disable button when pre-onboarding requirements are not finished', async () => {
+      server.use(
+        http.get(
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+          () => {
+            return HttpResponse.json(preOnboardingRequirementsMock);
+          },
+        ),
+      );
+
+      render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      const inviteButton = screen.getByTestId('onboarding-invite');
+      expect(inviteButton).toBeDisabled();
+    });
+
+    it('should enable button when all pre-onboarding requirements are finished', async () => {
+      server.use(
+        http.get(
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+          () => {
+            return HttpResponse.json({
+              data: [
+                {
+                  name: 'Master Service Agreement',
+                  status: 'finished',
+                  description: 'Master Service Agreement required',
+                  slug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
+                  depends_on_requirement: null,
+                  document_constraints_ack_at: '2026-05-18T12:23:24Z',
+                  freeze_employment_data: false,
+                  needs_constraints_ack: true,
+                  redlining_help_email: null,
+                  supports_redlining: false,
+                },
+              ],
+            });
+          },
+        ),
+      );
+
+      render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      const inviteButton = screen.getByTestId('onboarding-invite');
+      expect(inviteButton).not.toBeDisabled();
+    });
+
+    it('should enable button when no pre-onboarding requirements exist', async () => {
+      render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      const inviteButton = screen.getByTestId('onboarding-invite');
+      expect(inviteButton).not.toBeDisabled();
+    });
+
+    it('should disable button when at least one requirement is not finished', async () => {
+      server.use(
+        http.get(
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+          () => {
+            return HttpResponse.json({
+              data: [
+                {
+                  name: 'Individual Labor Agreement',
+                  status: 'awaiting_signatures',
+                  description: 'Individual Labor Agreement required',
+                  slug: '5e39159e-96ef-40ea-82bc-b054917fc82f',
+                  depends_on_requirement: null,
+                  document_constraints_ack_at: null,
+                  freeze_employment_data: false,
+                  needs_constraints_ack: true,
+                  redlining_help_email: null,
+                  supports_redlining: false,
+                },
+                {
+                  name: 'Master Service Agreement',
+                  status: 'finished',
+                  description: 'Master Service Agreement required',
+                  slug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
+                  depends_on_requirement: null,
+                  document_constraints_ack_at: '2026-05-18T12:23:24Z',
+                  freeze_employment_data: false,
+                  needs_constraints_ack: true,
+                  redlining_help_email: null,
+                  supports_redlining: false,
+                },
+              ],
+            });
+          },
+        ),
+      );
+
+      render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      const inviteButton = screen.getByTestId('onboarding-invite');
+      expect(inviteButton).toBeDisabled();
+    });
+
+    it('should keep button disabled during requirements loading to prevent race condition', async () => {
+      let resolveRequirements: (value: unknown) => void;
+      const requirementsPromise = new Promise((resolve) => {
+        resolveRequirements = resolve;
+      });
+
+      server.use(
+        http.get(
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+          async () => {
+            await requirementsPromise;
+            return HttpResponse.json({
+              data: [
+                {
+                  name: 'Master Service Agreement',
+                  status: 'finished',
+                  description: 'Master Service Agreement required',
+                  slug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
+                  depends_on_requirement: null,
+                  document_constraints_ack_at: '2026-05-18T12:23:24Z',
+                  freeze_employment_data: false,
+                  needs_constraints_ack: true,
+                  redlining_help_email: null,
+                  supports_redlining: false,
+                },
+              ],
+            });
+          },
+        ),
+      );
+
+      render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      const inviteButton = screen.getByTestId('onboarding-invite');
+      expect(inviteButton).toBeDisabled();
+
+      await act(async () => {
+        resolveRequirements!({});
+      });
+
+      await waitFor(() => {
+        expect(inviteButton).not.toBeDisabled();
+      });
     });
   });
 });

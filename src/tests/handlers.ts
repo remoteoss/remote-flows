@@ -23,6 +23,12 @@ import {
   mockBenefitOffersResponse,
   mockBenefitOffersSchema,
 } from '@/src/common/api/fixtures/employments';
+import {
+  preOnboardingRequirementsMock,
+  generatedDocumentMock,
+  documentDetailsMock,
+  signDocumentResponseMock,
+} from '@/src/common/api/fixtures/pre-onboarding-requirements';
 
 const identityHandler = http.get('*/v1/identity/current', () => {
   return HttpResponse.json(identityMock);
@@ -124,6 +130,34 @@ const benefitOffersSchemaHandler = http.get(
   },
 );
 
+const preOnboardingRequirementsHandler = http.get(
+  '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+  () => {
+    return HttpResponse.json(preOnboardingRequirementsMock);
+  },
+);
+
+const createPreOnboardingDocumentHandler = http.post(
+  '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents',
+  () => {
+    return HttpResponse.json(generatedDocumentMock);
+  },
+);
+
+const getPreOnboardingDocumentHandler = http.get(
+  '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/:documentId',
+  () => {
+    return HttpResponse.json(documentDetailsMock);
+  },
+);
+
+const signPreOnboardingDocumentHandler = http.post(
+  '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/:documentId/sign',
+  () => {
+    return HttpResponse.json(signDocumentResponseMock);
+  },
+);
+
 export const defaultHandlers = [
   identityHandler,
   legalEntitiesHandler,
@@ -140,4 +174,8 @@ export const defaultHandlers = [
   companyHandler,
   benefitOffersHandler,
   benefitOffersSchemaHandler,
+  preOnboardingRequirementsHandler,
+  createPreOnboardingDocumentHandler,
+  getPreOnboardingDocumentHandler,
+  signPreOnboardingDocumentHandler,
 ];

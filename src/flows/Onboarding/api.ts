@@ -7,6 +7,7 @@ import {
   EmploymentCreateParams,
   EmploymentEngagementAgreementDetailsParams,
   EmploymentFullParams,
+  FindOrCreatePreOnboardingDocumentParams,
   getV1CompaniesCompanyId,
   getV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatus,
   getV1CountriesCountryCodeEngagementAgreementDetails,
@@ -22,9 +23,13 @@ import {
   postV2EmploymentsEmploymentIdEngagementAgreementDetails,
   postV1EmploymentsEmploymentIdInvite,
   PostV1EmploymentsEmploymentIdInviteData,
+  postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments,
+  postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSign,
   postV1RiskReserve,
   putV1EmploymentsEmploymentIdBenefitOffers,
   UnifiedEmploymentUpsertBenefitOffersRequest,
+  getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirements,
+  getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId,
 } from '@/src/client';
 
 import { useClient } from '@/src/context';
@@ -559,5 +564,125 @@ export const useEngagementAgreementDetailsSchema = (
         jsfModify: options?.jsfModify?.engagement_agreement_details,
       });
     },
+  });
+};
+
+/**
+ * Get pre-onboarding requirements for an employment
+ */
+export const useGetPreOnboardingRequirements = (
+  employmentId: string,
+  options?: { queryOptions?: { enabled?: boolean } },
+) => {
+  const { client } = useClient();
+
+  return useQuery({
+    queryKey: ['pre-onboarding-requirements', employmentId],
+    queryFn: async () => {
+      const response =
+        await getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirements(
+          {
+            client: client as Client,
+            path: {
+              employment_id: employmentId,
+            },
+          },
+        );
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch pre-onboarding requirements');
+      }
+
+      return response;
+    },
+    enabled: options?.queryOptions?.enabled ?? true,
+    select: (response) => response.data?.data,
+  });
+};
+
+/**
+ * Create a pre-onboarding document
+ */
+export const useCreatePreOnboardingDocument = () => {
+  const { client } = useClient();
+
+  return useMutation({
+    mutationFn: ({
+      employmentId,
+      body,
+    }: {
+      employmentId: string;
+      body: FindOrCreatePreOnboardingDocumentParams;
+    }) => {
+      return postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments({
+        client: client as Client,
+        body,
+        path: {
+          employment_id: employmentId,
+        },
+      });
+    },
+  });
+};
+
+/**
+ * Get pre-onboarding document preview
+ */
+export const useGetPreOnboardingDocument = (
+  employmentId: string,
+  documentId: string | undefined,
+  options?: { queryOptions?: { enabled?: boolean } },
+) => {
+  const { client } = useClient();
+
+  return useQuery({
+    queryKey: ['pre-onboarding-document', employmentId, documentId],
+    queryFn: async () => {
+      const response =
+        await getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId({
+          client: client as Client,
+          path: {
+            employment_id: employmentId,
+            id: documentId!,
+          },
+        });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch pre-onboarding document');
+      }
+
+      return response;
+    },
+    enabled: (options?.queryOptions?.enabled ?? true) && !!documentId,
+    select: (response) => response.data?.data,
+  });
+};
+
+/**
+ * Sign a pre-onboarding document
+ */
+export const useSignPreOnboardingDocument = () => {
+  const { client } = useClient();
+
+  return useMutation({
+    mutationFn: ({
+      employmentId,
+      documentId,
+      signature,
+    }: {
+      employmentId: string;
+      documentId: string;
+      signature: string;
+    }) =>
+      postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSign({
+        client: client as Client,
+        path: {
+          employment_id: employmentId,
+          id: documentId,
+        },
+        body: {
+          signature,
+        },
+      }),
   });
 };

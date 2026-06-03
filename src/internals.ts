@@ -46,6 +46,16 @@ export {
   DialogFooter,
 } from './components/ui/dialog';
 
+export {
+  FullScreenDialog,
+  FullScreenDialogTrigger,
+  FullScreenDialogContent,
+  FullScreenDialogHeader,
+  FullScreenDialogTitle,
+  FullScreenDialogDescription,
+  FullScreenDialogFooter,
+} from './components/ui/full-screen-dialog';
+
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './components/ui/tabs';
 
 export { Alert, AlertDescription, AlertTitle } from './components/ui/alert';
@@ -67,6 +77,7 @@ export {
   SelectValue,
 } from './components/ui/select';
 export { ScrollArea } from './components/ui/scroll-area';
+export { BasicTooltip } from './components/ui/basic-tooltip';
 
 // JSON Schema Comparison Tool
 export { JsonSchemaComparison } from './components/JsonSchemaComparison';
