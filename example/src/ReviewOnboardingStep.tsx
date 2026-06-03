@@ -425,6 +425,7 @@ const Requirement = ({
   const [constraintsAckAt, setConstraintsAckAt] = useState<string | null>(
     requirement.document_constraints_ack_at ?? null,
   );
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -440,10 +441,8 @@ const Requirement = ({
       setError(null);
       await onCreateDocument(requirement.slug, constraintsAckAt || undefined);
       setIsModalOpen(true);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to create document',
-      );
+    } catch {
+      setError('Failed to create document');
     }
   };
 
