@@ -578,13 +578,23 @@ export const useGetPreOnboardingRequirements = (
 
   return useQuery({
     queryKey: ['pre-onboarding-requirements', employmentId],
-    queryFn: () =>
-      getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirements({
-        client: client as Client,
-        path: {
-          employment_id: employmentId,
-        },
-      }),
+    queryFn: async () => {
+      const response =
+        await getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirements(
+          {
+            client: client as Client,
+            path: {
+              employment_id: employmentId,
+            },
+          },
+        );
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch pre-onboarding requirements');
+      }
+
+      return response;
+    },
     enabled: options?.queryOptions?.enabled ?? true,
     select: (response) => response.data?.data,
   });
@@ -627,14 +637,22 @@ export const useGetPreOnboardingDocument = (
 
   return useQuery({
     queryKey: ['pre-onboarding-document', employmentId, documentId],
-    queryFn: () =>
-      getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId({
-        client: client as Client,
-        path: {
-          employment_id: employmentId,
-          id: documentId!,
-        },
-      }),
+    queryFn: async () => {
+      const response =
+        await getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId({
+          client: client as Client,
+          path: {
+            employment_id: employmentId,
+            id: documentId!,
+          },
+        });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch pre-onboarding document');
+      }
+
+      return response;
+    },
     enabled: (options?.queryOptions?.enabled ?? true) && !!documentId,
     select: (response) => response.data?.data,
   });
