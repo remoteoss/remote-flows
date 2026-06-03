@@ -157,6 +157,7 @@ Markdownlint is configured in `.markdownlint.json`. We've disabled certain rules
 ### Editor Integration
 
 The `.vscode/settings.json` file configures auto-fix on save for markdown files. When you save a `.md` file:
+
 - Markdownlint automatically fixes whitespace issues
 - Trailing whitespace is trimmed
 - A final newline is added
