@@ -70,7 +70,8 @@ export const usePreOnboardingRequirements = ({
       employmentId,
       body: {
         pre_onboarding_document_requirement_slug: requirementSlug,
-        constraints_ack_at: constraintsAckAt || null,
+        constraints_ack_at:
+          constraintsAckAt || requirement?.document_constraints_ack_at || null,
       },
     });
     const newDocumentId = result?.data.pre_onboarding_document.id;

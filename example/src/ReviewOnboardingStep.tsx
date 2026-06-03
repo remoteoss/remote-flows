@@ -422,7 +422,9 @@ const Requirement = ({
   isLoadingDocumentPreview: PreOnboardingRequirementsBag['isLoadingDocumentPreview'];
   employeeCountry?: string;
 }) => {
-  const [constraintsAckAt, setConstraintsAckAt] = useState<string | null>(null);
+  const [constraintsAckAt, setConstraintsAckAt] = useState<string | null>(
+    requirement.document_constraints_ack_at ?? null,
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
