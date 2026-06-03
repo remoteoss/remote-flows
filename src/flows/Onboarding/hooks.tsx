@@ -304,18 +304,32 @@ export const useOnboarding = ({
       isOnboardingReservesEnabled,
     );
 
-  const { data: requirements, isLoading: isLoadingPreOnboardingRequirements } =
-    useGetPreOnboardingRequirements(internalEmploymentId as string, {
-      queryOptions: { enabled: !!internalEmploymentId },
-    });
+  const {
+    data: requirements,
+    isLoading: isLoadingPreOnboardingRequirements,
+    isError: isErrorPreOnboardingRequirements,
+  } = useGetPreOnboardingRequirements(internalEmploymentId as string, {
+    queryOptions: { enabled: !!internalEmploymentId },
+  });
 
   const arePreOnboardingRequirementsFulfilled = useMemo(() => {
-    if (isLoadingPreOnboardingRequirements) return false;
-    if (!requirements) return true;
-    return requirements.every(
-      (requirement) => requirement.status === 'finished',
+    if (
+      !requirements ||
+      isLoadingPreOnboardingRequirements ||
+      isErrorPreOnboardingRequirements
+    ) {
+      return false;
+    }
+    if (requirements?.length === 0) return true;
+    return (
+      requirements?.every((requirement) => requirement.status === 'finished') ??
+      false
     );
-  }, [requirements, isLoadingPreOnboardingRequirements]);
+  }, [
+    requirements,
+    isLoadingPreOnboardingRequirements,
+    isErrorPreOnboardingRequirements,
+  ]);
 
   const { selectCountryForm, isLoading: isLoadingCountries } =
     useCountriesSchemaField({
