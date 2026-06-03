@@ -1,0 +1,7 @@
+node_modules/
+dist/
+coverage/
+example/playwright-report/
+example/node_modules/
+.next/
+.turbo/

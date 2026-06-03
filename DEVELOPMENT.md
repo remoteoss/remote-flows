@@ -7,6 +7,7 @@ This guide is for internal developers working on the `@remoteoss/remote-flows` p
 - [Getting Started](#getting-started)
 - [Development Workflow](#development-workflow)
 - [Testing](#testing)
+- [Markdown Linting](#markdown-linting)
 - [Bundle Size Management](#bundle-size-management)
 - [CI/CD](#cicd)
 - [Release Process](#release-process)
@@ -106,6 +107,63 @@ Run type checking:
 ```bash
 npm run type-check
 ```
+
+## Markdown Linting
+
+We use [markdownlint](https://github.com/DavidAnson/markdownlint) to maintain consistent markdown formatting across documentation.
+
+### Commands
+
+```bash
+# Check markdown files for issues
+npm run lint:md
+
+# Auto-fix markdown issues
+npm run lint:md:fix
+```
+
+### Configuration
+
+Markdownlint is configured in `.markdownlint.json`. We've disabled certain rules to preserve intentional formatting:
+
+**Disabled Rules:**
+
+- **MD001** (heading-increment): Allow headings to skip levels (e.g., `# → ###`)
+- **MD013** (line-length): No maximum line length enforcement (allows long URLs)
+- **MD024** (no-duplicate-heading): Allow duplicate headings (needed for CHANGELOG with repeated "Features", "Fixes" per version)
+- **MD025** (single-title): Allow multiple H1 headings (READMEs have "Table of Contents" as second H1)
+- **MD026** (no-trailing-punctuation): Allow punctuation in headings (e.g., "What:")
+- **MD029** (ol-prefix): Allow any list numbering style (preserves 1/2/3 instead of changing to 1/1/1)
+- **MD033** (no-inline-html): Allow HTML in markdown (common in GitHub markdown)
+- **MD034** (no-bare-urls): Allow URLs without brackets
+- **MD036** (no-emphasis-as-heading): Allow bold/italic instead of headings
+- **MD040** (fenced-code-language): Don't require language on code blocks
+- **MD041** (first-line-heading): Don't require first line to be H1 (files may start with badges)
+- **MD051** (link-fragments): Don't validate link fragment targets
+- **MD052** (reference-links-images): Don't require reference-style link definitions
+- **MD056** (table-column-count): Don't enforce consistent column counts
+- **MD059** (descriptive-link-text): Allow "here", "click here" as link text
+- **MD060** (table-column-style): Don't enforce table pipe alignment
+
+**Enforced Rules (Important):**
+
+- **MD018** (no-missing-space-atx): Require space after hash (`##Heading` → `## Heading`)
+- **MD009**: No trailing spaces at end of lines
+- **MD012**: No multiple consecutive blank lines
+- **MD022**: Headers should be surrounded by blank lines
+- **MD031**: Fenced code blocks should be surrounded by blank lines
+- **MD047**: Files should end with a single newline
+
+### Editor Integration
+
+The `.vscode/settings.json` file configures auto-fix on save for markdown files. When you save a `.md` file:
+- Markdownlint automatically fixes whitespace issues
+- Trailing whitespace is trimmed
+- A final newline is added
+
+### CI Integration
+
+Markdown linting runs in CI pipelines (`.github/workflows/pr.yml` and `ci-main.yml`). PRs will fail if markdown files have formatting issues.
 
 ## Bundle Size Management
 
