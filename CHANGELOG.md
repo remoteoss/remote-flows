@@ -1,5 +1,21 @@
 # @remoteoss/remote-flows
 
+## 1.37.0
+
+### Minor Changes
+
+#### Features
+
+- add pre onboarding requirements block (#1064) [#1064](https://github.com/remoteoss/remote-flows/pull/1064)
+
+#### Fixes
+
+- handle empty pricing plans (#1069) [#1069](https://github.com/remoteoss/remote-flows/pull/1069)
+
+#### Refactors
+
+- migrate to v2 engagement agreement endpoints (#1070) [#1070](https://github.com/remoteoss/remote-flows/pull/1070)
+
 ## 1.36.1
 
 ### Patch Changes
