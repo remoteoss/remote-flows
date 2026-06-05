@@ -13,7 +13,6 @@ import {
   EngagementAgreementDetailsFormPayload,
   ZendeskTriggerButton,
   zendeskArticles,
-  $TSFixMe,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
 import { Card } from '@remoteoss/remote-flows/internals';
