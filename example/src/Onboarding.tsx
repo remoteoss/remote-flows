@@ -13,6 +13,7 @@ import {
   EngagementAgreementDetailsFormPayload,
   ZendeskTriggerButton,
   zendeskArticles,
+  $TSFixMe,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
 import { Card } from '@remoteoss/remote-flows/internals';
@@ -90,6 +91,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     BackButton,
     SelectCountryStep,
     EngagementAgreementDetailsStep,
+    PreviewEmploymentAgreementStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -268,6 +270,33 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
         </div>
       );
     }
+    case 'employment_agreement_preview': {
+      return (
+        <>
+          <PreviewEmploymentAgreementStep
+            onSubmit={(payload: $TSFixMe) => console.log('payload', payload)}
+            onSuccess={(data: $TSFixMe) => console.log('data', data)}
+            onError={({ error, fieldErrors }) =>
+              setErrors({ apiError: error.message, fieldErrors })
+            }
+          />
+          <div className='buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Previous Step
+            </BackButton>
+            <SubmitButton
+              className='submit-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Continue
+            </SubmitButton>
+          </div>
+        </>
+      );
+    }
     case 'review':
       return (
         <ReviewOnboardingStep
@@ -415,7 +444,7 @@ const OnboardingWithProps = ({
       employmentId={employmentId}
       externalId={externalId}
       options={{
-        features: ['onboarding_reserves', 'dynamic_steps'],
+        features: ['onboarding_reserves', 'dynamic_steps', 'ea_preview'],
         jsonSchemaVersion: {
           employment_basic_information: 3,
         },

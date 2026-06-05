@@ -16,6 +16,7 @@ import { ReviewStep } from '@/src/flows/Onboarding/components/ReviewStep';
 import { SaveDraftButton } from '@/src/flows/Onboarding/components/SaveDraftButton';
 import { EngagementAgreementDetailsStep } from '@/src/flows/Onboarding/components/EngagementAgreementDetailsStep';
 import { PreOnboardingRequirements } from '@/src/flows/Onboarding/components/PreOnboardingRequirements';
+import { PreviewEmploymentAgreementStep } from '@/src/flows/Onboarding/components/PreviewEmploymentAgreementStep';
 
 export type OnboardingRenderProps = {
   /**
@@ -40,6 +41,7 @@ export type OnboardingRenderProps = {
    * @see {@link ReviewStep}
    * @see {@link SaveDraftButton}
    * @see {@link PreOnboardingRequirements}
+   * @see {@link PreviewEmploymentAgreementStep}
    */
   components: {
     SubmitButton: typeof OnboardingSubmit;
@@ -53,10 +55,14 @@ export type OnboardingRenderProps = {
     ReviewStep: typeof ReviewStep;
     SaveDraftButton: typeof SaveDraftButton;
     PreOnboardingRequirements: typeof PreOnboardingRequirements;
+    PreviewEmploymentAgreementStep: typeof PreviewEmploymentAgreementStep;
   };
 };
 
-type OnboardingFeatures = 'onboarding_reserves' | 'dynamic_steps';
+type OnboardingFeatures =
+  | 'onboarding_reserves'
+  | 'dynamic_steps'
+  | 'ea_preview';
 
 /**
  * JSON schema version configuration for a specific country

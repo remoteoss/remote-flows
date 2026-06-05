@@ -3,6 +3,7 @@ import {
   Employment,
   EmploymentCreateParams,
   EmploymentFullParams,
+  SuccessResponse,
 } from '@/src/client';
 import { JSFFields, NestedMeta } from '@/src/types/remoteFlows';
 import { useStepState, Step } from '@/src/flows/useStepState';
@@ -63,6 +64,7 @@ const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
   engagement_agreement_details: null,
   contract_details: 'contract_details',
   benefits: null,
+  employment_agreement_preview: null,
   review: null,
 };
 
@@ -171,6 +173,7 @@ export const useOnboarding = ({
   ] = useState<boolean>(false);
 
   const useDynamicSteps = options?.features?.includes('dynamic_steps') ?? false;
+  const useEAPreview = options?.features?.includes('ea_preview') ?? false;
 
   const { steps, stepsArray } = useMemo(
     () =>
@@ -178,8 +181,14 @@ export const useOnboarding = ({
         includeSelectCountry: !skipSteps?.includes('select_country'),
         includeEngagementAgreementDetails,
         useDynamicSteps,
+        useEAPreview,
       }),
-    [includeEngagementAgreementDetails, skipSteps, useDynamicSteps],
+    [
+      includeEngagementAgreementDetails,
+      skipSteps,
+      useDynamicSteps,
+      useEAPreview,
+    ],
   );
 
   const onStepChange = useCallback(
@@ -260,12 +269,14 @@ export const useOnboarding = ({
     contract_details: NestedMeta;
     benefits: NestedMeta;
     engagement_agreement_details: NestedMeta;
+    employment_agreement_preview: NestedMeta;
   }>({
     select_country: {},
     basic_information: {},
     contract_details: {},
     benefits: {},
     engagement_agreement_details: {},
+    employment_agreement_preview: {},
   });
 
   const {
@@ -577,6 +588,7 @@ export const useOnboarding = ({
         engagementAgreementDetailsSchema?.fields || [],
       contract_details: contractDetailsForm?.fields || [],
       benefits: benefitOffersSchema?.fields || [],
+      employment_agreement_preview: [],
       review: [],
     }),
     [
@@ -598,6 +610,7 @@ export const useOnboarding = ({
       engagementAgreementDetailsSchema?.meta['x-jsf-fieldsets'],
     contract_details: contractDetailsForm?.meta['x-jsf-fieldsets'],
     benefits: null,
+    employment_agreement_preview: null,
     review: null,
   };
 
@@ -611,6 +624,7 @@ export const useOnboarding = ({
       engagementAgreementDetailsSchema?.meta?.['x-jsf-presentation'],
     contract_details: contractDetailsForm?.meta?.['x-jsf-presentation'],
     benefits: benefitOffersSchema?.meta?.['x-jsf-presentation'],
+    employment_agreement_preview: null,
     review: null,
   };
 
@@ -707,6 +721,7 @@ export const useOnboarding = ({
               )
             : contractDetailsInitialValues,
         benefits: benefitsInitialValues,
+        employment_agreement_preview: {},
       };
     }
     return {
@@ -714,6 +729,7 @@ export const useOnboarding = ({
       basic_information: basicInformationInitialValues,
       contract_details: contractDetailsInitialValues,
       benefits: benefitsInitialValues,
+      employment_agreement_preview: {},
     };
   }, [
     selectCountryInitialValues,
@@ -792,6 +808,7 @@ export const useOnboarding = ({
           stepFields.benefits,
           { skipMoneyConversion: true },
         ),
+        employment_agreement_preview: {},
       };
 
       setStepValues({
@@ -800,6 +817,7 @@ export const useOnboarding = ({
         contract_details: contractDetailsInitialValues,
         benefits: benefitsInitialValues,
         engagement_agreement_details: engagementAgreementDetailsInitialValues,
+        employment_agreement_preview: {},
         review: {},
       });
 
@@ -959,6 +977,10 @@ export const useOnboarding = ({
           employmentId: internalEmploymentId as string,
           ...parsedValues,
         });
+      }
+      case 'employment_agreement_preview': {
+        // in theory we shouldn't submit any info here...
+        return Promise.resolve({ data: { status: 'ok' } } as SuccessResponse);
       }
     }
     return;
