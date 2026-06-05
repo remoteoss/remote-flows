@@ -273,13 +273,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     case 'employment_agreement_preview': {
       return (
         <>
-          <PreviewEmploymentAgreementStep
-            onSubmit={(payload: $TSFixMe) => console.log('payload', payload)}
-            onSuccess={(data: $TSFixMe) => console.log('data', data)}
-            onError={({ error, fieldErrors }) =>
-              setErrors({ apiError: error.message, fieldErrors })
-            }
-          />
+          <PreviewEmploymentAgreementStep />
           <div className='buttons-container'>
             <BackButton
               className='back-button'
