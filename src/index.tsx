@@ -87,6 +87,20 @@ export type {
 
 export type { ContractPreviewStatementProps } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
 
+export { PayrollAdminOnboardingFlow, usePayrollAdminOnboarding } from '@/src/flows/PayrollAdminOnboarding';
+export type {
+  PayrollAdminOnboardingFlowProps,
+  PayrollAdminOnboardingRenderProps,
+} from '@/src/flows/PayrollAdminOnboarding';
+
+export { PayrollEmployeeOnboardingFlow, usePayrollEmployeeOnboarding } from '@/src/flows/PayrollEmployeeOnboarding';
+export type {
+  PayrollEmployeeOnboardingFlowProps,
+  PayrollEmployeeOnboardingRenderProps,
+} from '@/src/flows/PayrollEmployeeOnboarding';
+
+export { useGPLegalEntities } from '@/src/common/api/gpOnboarding';
+
 export { CreateCompanyFlow } from '@/src/flows/CreateCompany';
 export type {
   CreateCompanyFlowProps,
