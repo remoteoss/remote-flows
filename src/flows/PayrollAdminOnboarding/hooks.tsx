@@ -52,7 +52,9 @@ export const usePayrollAdminOnboarding = ({
   // Fix: memoize to avoid allocating a new object on every render
   const steps = useMemo(() => buildAdminSteps(skipCountry), [skipCountry]);
 
-  const { updateErrorContext } = useErrorReporting({ flow: 'payroll_admin_onboarding' });
+  const { updateErrorContext } = useErrorReporting({
+    flow: 'payroll_admin_onboarding',
+  });
 
   const onStepChange = useCallback(
     (step: Step<AdminStepKey>) => {

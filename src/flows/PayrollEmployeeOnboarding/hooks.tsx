@@ -24,7 +24,9 @@ export const usePayrollEmployeeOnboarding = ({
   initialValues,
   options,
 }: Omit<PayrollEmployeeOnboardingFlowProps, 'render'>) => {
-  const { updateErrorContext } = useErrorReporting({ flow: 'payroll_employee_onboarding' });
+  const { updateErrorContext } = useErrorReporting({
+    flow: 'payroll_employee_onboarding',
+  });
 
   const onStepChange = useCallback(
     (step: Step<EmployeeStepKey>) => {
@@ -36,8 +38,11 @@ export const usePayrollEmployeeOnboarding = ({
   const { stepState, nextStep, previousStep, goToStep, setStepValues } =
     useStepState<EmployeeStepKey>(EMPLOYEE_STEPS, onStepChange);
 
-  const { data: apiSteps, isLoading, refetch: refetchSteps } =
-    useGPOnboardingSteps(employmentId);
+  const {
+    data: apiSteps,
+    isLoading,
+    refetch: refetchSteps,
+  } = useGPOnboardingSteps(employmentId);
 
   const selfOnboardingSubsteps = useMemo(() => {
     const selfOnboarding = apiSteps?.find((s) => s.type === 'self_onboarding');
