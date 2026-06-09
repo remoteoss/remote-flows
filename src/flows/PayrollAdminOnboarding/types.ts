@@ -1,19 +1,38 @@
 import { FlowOptions } from '@/src/flows/types';
 import { usePayrollAdminOnboarding } from '@/src/flows/PayrollAdminOnboarding/hooks';
+import type { FieldError } from '@/src/lib/mutations';
 
-// Step component prop types are intentionally empty for this scaffold — PBYR-4044 will
-// replace these with typed props once each step component is implemented.
-type StepComponentType = React.ComponentType<Record<string, never>>;
+export type GPAdminStepCallbacks = {
+  onSubmit?: (payload: Record<string, unknown>) => void | Promise<void>;
+  onSuccess?: (data: unknown) => void | Promise<void>;
+  onError?: (args: {
+    error: Error;
+    rawError: Record<string, unknown>;
+    fieldErrors: FieldError[];
+  }) => void;
+};
 
 export type PayrollAdminOnboardingRenderProps = {
   adminBag: ReturnType<typeof usePayrollAdminOnboarding>;
   components: {
-    SelectCountryStep: StepComponentType;
-    ContractDetailsStep: StepComponentType;
-    AdministrativeDetailsStep: StepComponentType;
-    InvitationStep: StepComponentType;
-    SubmitButton: StepComponentType;
-    BackButton: StepComponentType;
+    SelectCountryStep: React.ComponentType<GPAdminStepCallbacks>;
+    ContractDetailsStep: React.ComponentType<GPAdminStepCallbacks>;
+    AdministrativeDetailsStep: React.ComponentType<GPAdminStepCallbacks>;
+    InvitationStep: React.ComponentType<
+      Pick<GPAdminStepCallbacks, 'onSuccess' | 'onError'> & {
+        children?: React.ReactNode;
+      }
+    >;
+    SubmitButton: React.ComponentType<
+      React.ButtonHTMLAttributes<HTMLButtonElement> & {
+        children?: React.ReactNode;
+      }
+    >;
+    BackButton: React.ComponentType<
+      React.ButtonHTMLAttributes<HTMLButtonElement> & {
+        children?: React.ReactNode;
+      }
+    >;
   };
 };
 
