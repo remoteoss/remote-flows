@@ -47,6 +47,7 @@ import { ContractorOnboardingForm } from './ContractorOnboarding';
 import { CreateCompanyForm } from './CreateCompany';
 import { MagicLinkTest } from './MagicLinkTest';
 import { JsonSchemaComparisonDemo } from './JsonSchemaComparisonDemo';
+import { PayrollAdminOnboardingForm } from './PayrollAdminOnboarding';
 import ContractorOnboardingCode from './ContractorOnboarding?raw';
 import CreateCompanyCode from './CreateCompany?raw';
 import MagicLinkTestCode from './MagicLinkTest?raw';
@@ -174,6 +175,13 @@ const additionalDemos = [
     description: 'Compare different JSON schema versions side-by-side',
     component: JsonSchemaComparisonDemo,
     sourceCode: JsonSchemaComparisonCode,
+  },
+  {
+    id: 'payroll-admin-onboarding',
+    title: 'GP Admin Onboarding',
+    description: 'Global Payroll admin onboarding flow (PBYR-4044)',
+    component: PayrollAdminOnboardingForm,
+    sourceCode: '',
   },
 ];
 

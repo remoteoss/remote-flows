@@ -2,15 +2,12 @@ import { useId } from 'react';
 import { usePayrollAdminOnboarding } from '@/src/flows/PayrollAdminOnboarding/hooks';
 import { PayrollAdminOnboardingContext } from '@/src/flows/PayrollAdminOnboarding/context';
 import type { PayrollAdminOnboardingFlowProps } from '@/src/flows/PayrollAdminOnboarding/types';
-
-// Stable module-level references — prevents consumer subtrees from unmounting on parent re-renders.
-// Each will be replaced with a real implementation in PBYR-4044.
-const SelectCountryStep = () => null;
-const ContractDetailsStep = () => null;
-const AdministrativeDetailsStep = () => null;
-const InvitationStep = () => null;
-const SubmitButton = () => null;
-const BackButton = () => null;
+import { SelectCountryStep } from '@/src/flows/PayrollAdminOnboarding/components/SelectCountryStep';
+import { ContractDetailsStep } from '@/src/flows/PayrollAdminOnboarding/components/ContractDetailsStep';
+import { AdministrativeDetailsStep } from '@/src/flows/PayrollAdminOnboarding/components/AdministrativeDetailsStep';
+import { InvitationStep } from '@/src/flows/PayrollAdminOnboarding/components/InvitationStep';
+import { SubmitButton } from '@/src/flows/PayrollAdminOnboarding/components/SubmitButton';
+import { BackButton } from '@/src/flows/PayrollAdminOnboarding/components/BackButton';
 
 export const PayrollAdminOnboardingFlow = ({
   companyId,
