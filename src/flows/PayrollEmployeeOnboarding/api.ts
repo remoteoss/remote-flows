@@ -9,7 +9,10 @@ import {
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
-import type { JSONSchemaFormResultWithFieldsets } from '@/src/flows/types';
+import type {
+  JSONSchemaFormResultWithFieldsets,
+  JSFModify,
+} from '@/src/flows/types';
 
 export type GPEmployeeSchemaType =
   | 'global_payroll_personal_details'
@@ -21,6 +24,7 @@ export const useGPEmployeeFormSchema = (
   schemaType: GPEmployeeSchemaType,
   fieldValues: FieldValues,
   queryOptions?: { enabled?: boolean },
+  jsfModify?: JSFModify,
 ): ReturnType<typeof useQuery<JSONSchemaFormResultWithFieldsets>> => {
   const { client } = useClient();
   return useQuery({
@@ -45,6 +49,7 @@ export const useGPEmployeeFormSchema = (
       createHeadlessForm(
         (data?.data as Record<string, unknown>) || {},
         fieldValues,
+        jsfModify ? { jsfModify } : undefined,
       ),
   });
 };
@@ -52,12 +57,16 @@ export const useGPEmployeeFormSchema = (
 export const useGPUpdatePersonalDetails = () => {
   const { client } = useClient();
   return useMutation({
-    mutationFn: (personalDetails: Record<string, unknown>) =>
-      putV1EmployeePersonalDetails({
+    mutationFn: (personalDetails: Record<string, unknown>) => {
+      // 'name' is a computed read-only display field in the schema (additionalProperties: false
+      // on the PUT endpoint rejects it). Strip it before sending.
+      const { name: _name, ...payload } = personalDetails;
+      return putV1EmployeePersonalDetails({
         client: client as Client,
         headers: { Authorization: `` },
-        body: { personal_details: personalDetails },
-      }),
+        body: { personal_details: payload },
+      });
+    },
   });
 };
 

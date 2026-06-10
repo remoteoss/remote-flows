@@ -13,12 +13,30 @@ import {
   useGPUpdateHomeAddress,
   useGPUpdateBankAccount,
 } from '@/src/flows/PayrollEmployeeOnboarding/api';
-import type { JSONSchemaFormResultWithFieldsets } from '@/src/flows/types';
+import type {
+  JSONSchemaFormResultWithFieldsets,
+  JSFModify,
+} from '@/src/flows/types';
 
 export type EmployeeStepKey =
   | 'personal_details'
   | 'home_address'
   | 'bank_account';
+
+// Stable module-level jsfModify for personal_details — avoids recreating createHeadlessForm
+// on every render (select closure captures fieldValues from outer scope per render, so the
+// schema data itself is always fresh; the jsfModify just needs to be reference-stable).
+const PERSONAL_DETAILS_JSF_MODIFY: JSFModify = {
+  fields: {
+    // 'name' is a computed read-only display field; hide it so it is never submitted
+    // (additionalProperties: false on the PUT endpoint rejects it).
+    name: { 'x-jsf-presentation': { inputType: 'hidden' } },
+    // Clarify that mobile_number expects digits only (no + or country code) for USA
+    mobile_number: {
+      description: 'Enter 10 digits, no country code (e.g. 5389274785)',
+    },
+  },
+};
 
 // Steps are stable — bank_account visibility is not derived from loaded API data.
 // Consumers check selfOnboardingSubsteps to decide whether to render BankAccountStep.
@@ -59,6 +77,7 @@ export const usePayrollEmployeeOnboarding = ({
     'global_payroll_personal_details',
     fieldValues,
     { enabled: currentStep === 'personal_details' },
+    PERSONAL_DETAILS_JSF_MODIFY,
   );
 
   const homeAddressSchema = useGPEmployeeFormSchema(

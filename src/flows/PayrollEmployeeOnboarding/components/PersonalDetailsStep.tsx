@@ -5,9 +5,11 @@ import type { GPStepCallbacks } from '@/src/flows/types';
 
 export function PersonalDetailsStep(props: GPStepCallbacks) {
   const { employeeBag } = usePayrollEmployeeOnboardingContext();
+  const handleSubmit = useEmployeeStepSubmitHandler(props);
+
   return (
     <PayrollEmployeeForm
-      onSubmit={useEmployeeStepSubmitHandler(props)}
+      onSubmit={handleSubmit}
       defaultValues={
         employeeBag.initialValues?.personal_details as Record<string, unknown>
       }
