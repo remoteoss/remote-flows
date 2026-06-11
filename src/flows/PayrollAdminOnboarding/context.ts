@@ -16,8 +16,8 @@ export const usePayrollAdminOnboardingContext = () => {
       'usePayrollAdminOnboardingContext must be used within a PayrollAdminOnboardingFlow',
     );
   }
-  return context as {
-    formId: string;
-    adminBag: ReturnType<typeof usePayrollAdminOnboarding>;
-  };
+  return {
+    formId: context.formId,
+    adminBag: context.adminBag,
+  } as const;
 };
