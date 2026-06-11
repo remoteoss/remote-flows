@@ -979,8 +979,13 @@ export const useContractorOnboarding = ({
       return null;
     }
 
-    const servicesAndDeliverablesError = error.normalizedErrors
-      .services_and_deliverables as
+    const rawError = error.normalizedErrors.services_and_deliverables;
+
+    // The backend's normalize_errors wraps non-list values in an array,
+    // so the AI validation error object arrives as a single-element array.
+    const servicesAndDeliverablesError = (
+      Array.isArray(rawError) ? rawError[0] : rawError
+    ) as
       | {
           error: string[];
           source: string;
