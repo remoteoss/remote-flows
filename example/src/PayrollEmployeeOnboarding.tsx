@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import {
   PayrollEmployeeOnboardingFlow,
   PayrollEmployeeOnboardingRenderProps,
+  TaxStepUnavailableReason,
 } from '@remoteoss/remote-flows';
 import { useGPOnboardingSteps } from '@remoteoss/remote-flows';
 import { RemoteFlows } from './RemoteFlows';
@@ -10,11 +11,17 @@ import './css/main.css';
 
 const COUNTRY_CODE = (import.meta.env.VITE_GP_COUNTRY_CODE as string) || 'AUS';
 const EMPLOYMENT_ID = (import.meta.env.VITE_EMPLOYMENT_ID as string) || '';
+// US state code used as the jurisdiction for the state_taxes step. Override per
+// employment via env, or extend this demo to pick from a dropdown.
+const JURISDICTION =
+  (import.meta.env.VITE_GP_STATE_JURISDICTION as string) || 'CA';
 
 const STEP_LABELS: Record<string, string> = {
   personal_details: 'Personal Details',
   home_address: 'Home Address',
   bank_account: 'Bank Account',
+  federal_taxes: 'Federal Taxes (W-4)',
+  state_taxes: 'State Taxes',
 };
 
 const STEP_DESCRIPTIONS: Record<string, string> = {
@@ -22,6 +29,10 @@ const STEP_DESCRIPTIONS: Record<string, string> = {
     'Provide your personal information for the employment record.',
   home_address: 'Enter your home address for payroll and compliance purposes.',
   bank_account: 'Add your bank account details to receive payroll payments.',
+  federal_taxes:
+    'Set your federal income tax withholding preferences (USA only). Becomes available after your employment is activated.',
+  state_taxes:
+    'Set your state tax withholding preferences for the selected jurisdiction (USA only). Becomes available after your employment is activated.',
 };
 
 type Errors = {
@@ -60,6 +71,36 @@ function useEmployeeStepInfo(employmentId: string) {
   return { substeps, hasBankAccount, isLoading };
 }
 
+function TaxStepNotAvailable({
+  reason,
+  jurisdiction,
+}: {
+  reason: TaxStepUnavailableReason;
+  jurisdiction?: string;
+}) {
+  let message: string;
+  if (reason === 'unsupported_country') {
+    message = 'Tax steps are only available for USA employments.';
+  } else if (reason === 'no_jurisdiction') {
+    message =
+      'A US state code is required to submit state taxes — pass a `jurisdiction` prop on the flow.';
+  } else {
+    message = jurisdiction
+      ? `Your employment isn't active yet, so the tax_task for jurisdiction "${jurisdiction}" hasn't been created. Come back after activation.`
+      : `Your employment isn't active yet, so the federal_taxes tax_task hasn't been created. Come back after activation.`;
+  }
+  return (
+    <div
+      className='alert'
+      style={{ background: '#fff8e1', borderColor: '#fbc02d' }}
+    >
+      <p style={{ margin: 0 }}>
+        <strong>Step unavailable.</strong> {message}
+      </p>
+    </div>
+  );
+}
+
 // ── Employee form (employee-scoped token, inner context) ────────────────────
 
 function EmployeeFlowInner({
@@ -76,10 +117,18 @@ function EmployeeFlowInner({
   const handleError = (error: Error, fieldErrors: Errors['fieldErrors']) =>
     setErrors({ apiError: error.message, fieldErrors });
 
+  const isUSA = COUNTRY_CODE === 'USA';
+
+  // Visible steps depend on country + bank substep + jurisdiction availability.
+  // Tax steps are surfaced for USA even if not yet active — the bag exposes a
+  // not-available reason so we can render a friendly state in-place.
   const allSteps = Object.entries(STEP_LABELS);
-  const visibleSteps = hasBankAccount
-    ? allSteps
-    : allSteps.filter(([key]) => key !== 'bank_account');
+  const visibleSteps = allSteps.filter(([key]) => {
+    if (key === 'bank_account') return hasBankAccount;
+    if (key === 'federal_taxes') return isUSA;
+    if (key === 'state_taxes') return isUSA && !!JURISDICTION;
+    return true;
+  });
   const lastStepKey = visibleSteps[visibleSteps.length - 1][0];
 
   if (done) {
@@ -109,6 +158,7 @@ function EmployeeFlowInner({
     <PayrollEmployeeOnboardingFlow
       employmentId={employmentId}
       countryCode={COUNTRY_CODE}
+      jurisdiction={isUSA ? JURISDICTION : undefined}
       render={({
         employeeBag,
         components,
@@ -117,6 +167,8 @@ function EmployeeFlowInner({
           PersonalDetailsStep,
           HomeAddressStep,
           BankAccountStep,
+          FederalTaxesStep,
+          StateTaxesStep,
           SubmitButton,
           BackButton,
         } = components;
@@ -128,6 +180,9 @@ function EmployeeFlowInner({
         }
 
         const isLastStep = currentStep === lastStepKey;
+
+        const federalAvail = employeeBag.taxStepsAvailability.federal_taxes;
+        const stateAvail = employeeBag.taxStepsAvailability.state_taxes;
 
         return (
           <>
@@ -225,7 +280,7 @@ function EmployeeFlowInner({
                     }
                     onSuccess={() => {
                       clearErrors();
-                      setDone(true);
+                      if (isLastStep) setDone(true);
                     }}
                   />
                   <AlertError errors={errors} />
@@ -237,8 +292,103 @@ function EmployeeFlowInner({
                       className='submit-button'
                       onClick={clearErrors}
                     >
-                      Submit
+                      {isLastStep ? 'Submit' : 'Save & Continue'}
                     </SubmitButton>
+                  </div>
+                </>
+              )}
+
+              {currentStep === 'federal_taxes' && (
+                <>
+                  {federalAvail.isAvailable ? (
+                    <FederalTaxesStep
+                      onError={(e) =>
+                        handleError(
+                          e.error,
+                          e.fieldErrors.map((fe) => ({
+                            ...fe,
+                            userFriendlyLabel: fe.field,
+                          })),
+                        )
+                      }
+                      onSuccess={() => {
+                        clearErrors();
+                        if (isLastStep) setDone(true);
+                      }}
+                    />
+                  ) : (
+                    <TaxStepNotAvailable
+                      reason={federalAvail.unavailableReason!}
+                    />
+                  )}
+                  <AlertError errors={errors} />
+                  <div className='buttons-container'>
+                    <BackButton className='back-button' onClick={clearErrors}>
+                      Previous Step
+                    </BackButton>
+                    {federalAvail.isAvailable ? (
+                      <SubmitButton
+                        className='submit-button'
+                        onClick={clearErrors}
+                      >
+                        {isLastStep ? 'Submit' : 'Save & Continue'}
+                      </SubmitButton>
+                    ) : (
+                      <button
+                        className='submit-button'
+                        onClick={() => employeeBag.goToNextStep()}
+                      >
+                        Skip
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {currentStep === 'state_taxes' && (
+                <>
+                  {stateAvail.isAvailable ? (
+                    <StateTaxesStep
+                      onError={(e) =>
+                        handleError(
+                          e.error,
+                          e.fieldErrors.map((fe) => ({
+                            ...fe,
+                            userFriendlyLabel: fe.field,
+                          })),
+                        )
+                      }
+                      onSuccess={() => {
+                        clearErrors();
+                        setDone(true);
+                      }}
+                    />
+                  ) : (
+                    <TaxStepNotAvailable
+                      reason={stateAvail.unavailableReason!}
+                      jurisdiction={employeeBag.jurisdiction}
+                    />
+                  )}
+                  <AlertError errors={errors} />
+                  <div className='buttons-container'>
+                    <BackButton className='back-button' onClick={clearErrors}>
+                      Previous Step
+                    </BackButton>
+                    {stateAvail.isAvailable ? (
+                      <SubmitButton
+                        className='submit-button'
+                        onClick={clearErrors}
+                      >
+                        Submit
+                      </SubmitButton>
+                    ) : (
+                      <button
+                        className='submit-button'
+                        onClick={() => setDone(true)}
+                      >
+                        Finish
+                      </button>
+                    )}
                   </div>
                 </>
               )}
@@ -290,7 +440,9 @@ function GPEmployeeOnboardingInner() {
           <p style={{ margin: 0 }}>
             <strong>Prerequisite:</strong> The admin must complete the GP Admin
             Onboarding flow and <strong>send the invitation</strong> first. The
-            employee endpoints only activate after the invitation is sent.
+            employee endpoints only activate after the invitation is sent. The
+            federal/state tax steps additionally require the employment to be{' '}
+            <strong>active</strong>.
           </p>
         </div>
         <div className='onboarding-form-group'>
