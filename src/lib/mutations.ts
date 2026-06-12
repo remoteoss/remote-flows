@@ -82,10 +82,18 @@ export function extractFieldErrors(error: $TSFixMe): FieldError[] {
 
   Object.entries(errors.errors).forEach(([key, value]) => {
     if (Array.isArray(value)) {
-      fieldErrors.push({
-        field: key,
-        messages: value.map((msg: $TSFixMe) => String(msg)),
-      });
+      // The backend's normalize_errors wraps non-list values in an array, so a
+      // field error can arrive as an array of structured objects (e.g. the
+      // REMOTE_AI validation error: [{ error, source, skippable }]). Those are
+      // surfaced to the user through the field's statement/skip flow, not as a
+      // plain inline message, so we skip object entries here to avoid rendering
+      // "[object Object]". Only primitive messages are kept.
+      const messages = value
+        .filter((msg: $TSFixMe) => msg === null || typeof msg !== 'object')
+        .map((msg: $TSFixMe) => String(msg));
+      if (messages.length > 0) {
+        fieldErrors.push({ field: key, messages });
+      }
       return;
     }
     if (value && typeof value === 'object') {
