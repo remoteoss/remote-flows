@@ -1012,6 +1012,7 @@ export const putV1EmployeeFederalTaxes = <ThrowOnError extends boolean = false>(
     PutV1EmployeeFederalTaxesErrors,
     ThrowOnError
   >({
+    security: [{ scheme: 'bearer', type: 'http' }],
     url: '/v1/employee/federal-taxes',
     ...options,
     headers: {

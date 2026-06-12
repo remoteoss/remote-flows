@@ -106,6 +106,17 @@ export type {
 } from '@/src/flows/PayrollEmployeeOnboarding';
 
 export {
+  PayrollEmployeeFederalTaxesFlow,
+  usePayrollEmployeeFederalTaxes,
+} from '@/src/flows/PayrollEmployeeFederalTaxes';
+export type {
+  PayrollEmployeeFederalTaxesFlowProps,
+  PayrollEmployeeFederalTaxesRenderProps,
+  PayrollEmployeeFederalTaxesStepCallbacks,
+  FederalTaxesUnavailableReason,
+} from '@/src/flows/PayrollEmployeeFederalTaxes';
+
+export {
   useGPLegalEntities,
   useGPOnboardingSteps,
 } from '@/src/common/api/gpOnboarding';

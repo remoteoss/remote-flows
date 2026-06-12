@@ -49,6 +49,7 @@ import { MagicLinkTest } from './MagicLinkTest';
 import { JsonSchemaComparisonDemo } from './JsonSchemaComparisonDemo';
 import { PayrollAdminOnboardingForm } from './PayrollAdminOnboarding';
 import { PayrollEmployeeOnboardingForm } from './PayrollEmployeeOnboarding';
+import { PayrollEmployeeFederalTaxesForm } from './PayrollEmployeeFederalTaxes';
 import ContractorOnboardingCode from './ContractorOnboarding?raw';
 import CreateCompanyCode from './CreateCompany?raw';
 import MagicLinkTestCode from './MagicLinkTest?raw';
@@ -189,6 +190,13 @@ const additionalDemos = [
     title: 'GP Employee Onboarding',
     description: 'Global Payroll employee self-onboarding flow (PBYR-4045)',
     component: PayrollEmployeeOnboardingForm,
+    sourceCode: '',
+  },
+  {
+    id: 'payroll-employee-federal-taxes',
+    title: 'GP Employee Federal Taxes',
+    description: 'W-4 federal tax preferences for USA GP employees (PBYR-4047)',
+    component: PayrollEmployeeFederalTaxesForm,
     sourceCode: '',
   },
 ];
