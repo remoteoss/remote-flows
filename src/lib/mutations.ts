@@ -84,7 +84,15 @@ export function extractFieldErrors(error: $TSFixMe): FieldError[] {
     if (Array.isArray(value)) {
       fieldErrors.push({
         field: key,
-        messages: value.map((msg: $TSFixMe) => String(msg)),
+        // The backend's normalize_errors wraps non-list values in an array, so
+        // a field error can arrive as an array of objects (e.g. AI validation:
+        // [{ error: string[], source, skippable }]) rather than plain strings.
+        // Extract the inner `error` messages instead of stringifying the object.
+        messages: value.flatMap((msg: $TSFixMe) =>
+          msg && typeof msg === 'object' && Array.isArray(msg.error)
+            ? msg.error.map((m: $TSFixMe) => String(m))
+            : [String(msg)],
+        ),
       });
       return;
     }

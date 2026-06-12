@@ -1,11 +1,94 @@
 import {
   ErrorResponse,
+  extractFieldErrors,
   mutationToPromise,
   normalizeFieldErrors,
   FieldError,
   isMutationError,
 } from '@/src/lib/mutations';
 import { $TSFixMe, Meta, NestedMeta } from '@/src/types/remoteFlows';
+
+describe('extractFieldErrors', () => {
+  it('should extract messages from a plain array of strings', () => {
+    expect(
+      extractFieldErrors({
+        errors: {
+          name: ['is required', 'is too short'],
+        },
+      }),
+    ).toEqual<FieldError[]>([
+      { field: 'name', messages: ['is required', 'is too short'] },
+    ]);
+  });
+
+  it('should extract messages from a nested object of arrays', () => {
+    expect(
+      extractFieldErrors({
+        errors: {
+          basic_information: {
+            name: ['is required'],
+          },
+        },
+      }),
+    ).toEqual<FieldError[]>([{ field: 'name', messages: ['is required'] }]);
+  });
+
+  it('should extract inner error messages when the value is an array-wrapped AI validation object', () => {
+    // The backend's normalize_errors wraps non-list values in an array, so the
+    // AI validation error arrives as a single-element array of objects.
+    expect(
+      extractFieldErrors({
+        errors: {
+          services_and_deliverables: [
+            {
+              error: ['Possible misclassification risk'],
+              source: 'REMOTE_AI',
+              skippable: true,
+            },
+          ],
+        },
+      }),
+    ).toEqual<FieldError[]>([
+      {
+        field: 'services_and_deliverables',
+        messages: ['Possible misclassification risk'],
+      },
+    ]);
+  });
+
+  it('should not produce "[object Object]" for array-wrapped object errors', () => {
+    const result = extractFieldErrors({
+      errors: {
+        services_and_deliverables: [
+          {
+            error: ['Possible misclassification risk'],
+            source: 'REMOTE_AI',
+            skippable: false,
+          },
+        ],
+      },
+    });
+
+    expect(result[0].messages).not.toContain('[object Object]');
+  });
+
+  it('should handle the nested error.error wrapper structure', () => {
+    expect(
+      extractFieldErrors({
+        error: {
+          errors: {
+            name: ['is required'],
+          },
+        },
+      }),
+    ).toEqual<FieldError[]>([{ field: 'name', messages: ['is required'] }]);
+  });
+
+  it('should return an empty array when there are no errors', () => {
+    expect(extractFieldErrors({})).toEqual([]);
+    expect(extractFieldErrors({ errors: null })).toEqual([]);
+  });
+});
 
 describe('normalizeFieldErrors', () => {
   it('should return empty array when no errors', () => {
