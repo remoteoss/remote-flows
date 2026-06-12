@@ -84,6 +84,10 @@ function TaxStepNotAvailable({
   } else if (reason === 'no_jurisdiction') {
     message =
       'A US state code is required to submit state taxes — pass a `jurisdiction` prop on the flow.';
+  } else if (reason === 'schema_unavailable') {
+    message = jurisdiction
+      ? `The backend didn't return a form schema for state_taxes (jurisdiction "${jurisdiction}"). Check that the gateway has the schema configured for this country/jurisdiction.`
+      : `The backend didn't return a form schema for federal_taxes. Check that the gateway has the schema configured for USA.`;
   } else {
     message = jurisdiction
       ? `Your employment isn't active yet, so the tax_task for jurisdiction "${jurisdiction}" hasn't been created. Come back after activation.`

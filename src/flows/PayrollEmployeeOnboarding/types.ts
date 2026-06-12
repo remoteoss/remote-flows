@@ -14,11 +14,15 @@ type StepComponentType = React.ComponentType<GPStepCallbacks>;
  *   with `Tax task not found...`).
  * - `no_jurisdiction`: a `jurisdiction` prop was not supplied to the flow,
  *   which is required for the state-taxes endpoint.
+ * - `schema_unavailable`: the backend doesn't expose the form schema for this
+ *   step (e.g. `GET /v1/countries/USA/global_payroll_state_taxes` returns 400
+ *   or 404). Common on local/staging backends where a schema isn't seeded yet.
  */
 export type TaxStepUnavailableReason =
   | 'unsupported_country'
   | 'pending_enrollment'
-  | 'no_jurisdiction';
+  | 'no_jurisdiction'
+  | 'schema_unavailable';
 
 export type PayrollEmployeeOnboardingRenderProps = {
   employeeBag: ReturnType<typeof usePayrollEmployeeOnboarding>;

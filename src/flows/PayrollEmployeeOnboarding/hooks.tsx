@@ -121,37 +121,6 @@ export const usePayrollEmployeeOnboarding = ({
   const isUSA = countryCode === 'USA';
   const isPostEnrollment = isComplete ?? false;
 
-  const taxStepsAvailability = useMemo(() => {
-    const federalReason: TaxStepUnavailableReason | null = !isUSA
-      ? 'unsupported_country'
-      : taxSubmitFailures.federal_taxes
-        ? taxSubmitFailures.federal_taxes
-        : !isPostEnrollment
-          ? 'pending_enrollment'
-          : null;
-
-    const stateReason: TaxStepUnavailableReason | null = !isUSA
-      ? 'unsupported_country'
-      : !jurisdiction
-        ? 'no_jurisdiction'
-        : taxSubmitFailures.state_taxes
-          ? taxSubmitFailures.state_taxes
-          : !isPostEnrollment
-            ? 'pending_enrollment'
-            : null;
-
-    return {
-      federal_taxes: {
-        isAvailable: federalReason === null,
-        unavailableReason: federalReason,
-      },
-      state_taxes: {
-        isAvailable: stateReason === null,
-        unavailableReason: stateReason,
-      },
-    };
-  }, [isUSA, isPostEnrollment, jurisdiction, taxSubmitFailures]);
-
   // ── Schema queries ──────────────────────────────────────────────────────────
 
   const personalDetailsSchema = useGPEmployeeFormSchema(
@@ -176,14 +145,18 @@ export const usePayrollEmployeeOnboarding = ({
     { enabled: currentStep === 'bank_account' },
   );
 
+  // The tax-step schema queries are gated only on country + active. We can't
+  // gate on `taxStepsAvailability` here because availability itself depends on
+  // the query outcome (schema_unavailable when 400/404), which would create a
+  // dependency cycle. The query just won't surface in the UI when the step
+  // isn't current — and a failed fetch flips availability to schema_unavailable
+  // via the dedicated effect below.
   const federalTaxesSchema = useGPEmployeeFormSchema(
     countryCode,
     'global_payroll_federal_taxes',
     fieldValues,
     {
-      enabled:
-        currentStep === 'federal_taxes' &&
-        taxStepsAvailability.federal_taxes.isAvailable,
+      enabled: isUSA && isPostEnrollment && currentStep === 'federal_taxes',
     },
   );
 
@@ -193,8 +166,10 @@ export const usePayrollEmployeeOnboarding = ({
     fieldValues,
     {
       enabled:
-        currentStep === 'state_taxes' &&
-        taxStepsAvailability.state_taxes.isAvailable,
+        isUSA &&
+        !!jurisdiction &&
+        isPostEnrollment &&
+        currentStep === 'state_taxes',
     },
   );
 
@@ -212,6 +187,52 @@ export const usePayrollEmployeeOnboarding = ({
     bankAccountSchema.data,
     federalTaxesSchema.data,
     stateTaxesSchema.data,
+  ]);
+
+  // Availability is computed AFTER schema queries so we can fold their error
+  // state (e.g. backend returns 400 for an unseeded schema) into a friendly
+  // `schema_unavailable` reason instead of letting the consumer render an
+  // empty form.
+  const taxStepsAvailability = useMemo(() => {
+    const federalReason: TaxStepUnavailableReason | null = !isUSA
+      ? 'unsupported_country'
+      : taxSubmitFailures.federal_taxes
+        ? taxSubmitFailures.federal_taxes
+        : !isPostEnrollment
+          ? 'pending_enrollment'
+          : federalTaxesSchema.isError
+            ? 'schema_unavailable'
+            : null;
+
+    const stateReason: TaxStepUnavailableReason | null = !isUSA
+      ? 'unsupported_country'
+      : !jurisdiction
+        ? 'no_jurisdiction'
+        : taxSubmitFailures.state_taxes
+          ? taxSubmitFailures.state_taxes
+          : !isPostEnrollment
+            ? 'pending_enrollment'
+            : stateTaxesSchema.isError
+              ? 'schema_unavailable'
+              : null;
+
+    return {
+      federal_taxes: {
+        isAvailable: federalReason === null,
+        unavailableReason: federalReason,
+      },
+      state_taxes: {
+        isAvailable: stateReason === null,
+        unavailableReason: stateReason,
+      },
+    };
+  }, [
+    isUSA,
+    isPostEnrollment,
+    jurisdiction,
+    taxSubmitFailures,
+    federalTaxesSchema.isError,
+    stateTaxesSchema.isError,
   ]);
 
   const isLoadingSchema =
