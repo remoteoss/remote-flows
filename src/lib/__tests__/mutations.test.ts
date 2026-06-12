@@ -33,9 +33,11 @@ describe('extractFieldErrors', () => {
     ).toEqual<FieldError[]>([{ field: 'name', messages: ['is required'] }]);
   });
 
-  it('should extract inner error messages when the value is an array-wrapped AI validation object', () => {
+  it('should skip array-wrapped structured objects (e.g. AI validation) instead of emitting inline field errors', () => {
     // The backend's normalize_errors wraps non-list values in an array, so the
-    // AI validation error arrives as a single-element array of objects.
+    // AI validation error arrives as a single-element array of objects. These
+    // are surfaced via the field statement/skip flow, not as inline errors, so
+    // extractFieldErrors should not produce a field error for them.
     expect(
       extractFieldErrors({
         errors: {
@@ -48,12 +50,7 @@ describe('extractFieldErrors', () => {
           ],
         },
       }),
-    ).toEqual<FieldError[]>([
-      {
-        field: 'services_and_deliverables',
-        messages: ['Possible misclassification risk'],
-      },
-    ]);
+    ).toEqual<FieldError[]>([]);
   });
 
   it('should not produce "[object Object]" for array-wrapped object errors', () => {
@@ -69,7 +66,18 @@ describe('extractFieldErrors', () => {
       },
     });
 
-    expect(result[0].messages).not.toContain('[object Object]');
+    const allMessages = result.flatMap((fieldError) => fieldError.messages);
+    expect(allMessages).not.toContain('[object Object]');
+  });
+
+  it('should keep primitive messages while skipping object entries in a mixed array', () => {
+    expect(
+      extractFieldErrors({
+        errors: {
+          name: ['is required', { source: 'REMOTE_AI', error: ['ignored'] }],
+        },
+      }),
+    ).toEqual<FieldError[]>([{ field: 'name', messages: ['is required'] }]);
   });
 
   it('should handle the nested error.error wrapper structure', () => {
