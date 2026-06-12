@@ -3,18 +3,14 @@ import {
   PayrollEmployeeOnboardingFlow,
   PayrollEmployeeOnboardingRenderProps,
   TaxStepUnavailableReason,
+  useEmploymentQuery,
+  useGPOnboardingSteps,
 } from '@remoteoss/remote-flows';
-import { useGPOnboardingSteps } from '@remoteoss/remote-flows';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
 import './css/main.css';
 
-const COUNTRY_CODE = (import.meta.env.VITE_GP_COUNTRY_CODE as string) || 'AUS';
 const EMPLOYMENT_ID = (import.meta.env.VITE_EMPLOYMENT_ID as string) || '';
-// US state code used as the jurisdiction for the state_taxes step. Override per
-// employment via env, or extend this demo to pick from a dropdown.
-const JURISDICTION =
-  (import.meta.env.VITE_GP_STATE_JURISDICTION as string) || 'CA';
 
 const STEP_LABELS: Record<string, string> = {
   personal_details: 'Personal Details',
@@ -57,10 +53,20 @@ function buildEmployeeAuth(employmentId: string) {
       }));
 }
 
-// ── Step status fetcher (company manager token, outer context) ──────────────
+// ── Outer-context loader (company manager token) ────────────────────────────
+//
+// The employee assertion token can't fetch /v1/employments/:id (returns
+// {message} only), so we read country + work jurisdiction from the employment
+// here, in the outer RemoteFlows context, and hand them down to the inner
+// (employee-token) context as props. This keeps consumers from having to
+// hardcode VITE_GP_COUNTRY_CODE / VITE_GP_STATE_JURISDICTION.
 
-function useEmployeeStepInfo(employmentId: string) {
-  const { data: apiSteps, isLoading } = useGPOnboardingSteps(employmentId);
+function useEmployeeFlowContext(employmentId: string) {
+  const { data: apiSteps, isLoading: isLoadingSteps } =
+    useGPOnboardingSteps(employmentId);
+  const { data: employment, isLoading: isLoadingEmployment } =
+    useEmploymentQuery({ employmentId });
+
   const selfOnboarding = apiSteps?.find(
     (s: { type: string }) => s.type === 'self_onboarding',
   );
@@ -68,7 +74,26 @@ function useEmployeeStepInfo(employmentId: string) {
   const hasBankAccount = substeps.some(
     (s: { type: string }) => s.type === 'employee_provides_bank_details',
   );
-  return { substeps, hasBankAccount, isLoading };
+
+  const countryCode = employment?.country?.code;
+  // Prefer the work address state when present; fall back to the home address
+  // state. State code is only meaningful for USA — the SDK ignores
+  // `jurisdiction` for non-USA employments.
+  const workState = (
+    employment?.work_address_details as { state?: string } | undefined
+  )?.state;
+  const homeState = (
+    employment?.address_details as { state?: string } | undefined
+  )?.state;
+  const jurisdiction = workState || homeState;
+
+  return {
+    substeps,
+    hasBankAccount,
+    countryCode,
+    jurisdiction,
+    isLoading: isLoadingSteps || isLoadingEmployment,
+  };
 }
 
 function TaxStepNotAvailable({
@@ -110,9 +135,13 @@ function TaxStepNotAvailable({
 function EmployeeFlowInner({
   employmentId,
   hasBankAccount,
+  countryCode,
+  jurisdiction,
 }: {
   employmentId: string;
   hasBankAccount: boolean;
+  countryCode: string;
+  jurisdiction: string | undefined;
 }) {
   const [errors, setErrors] = useState<Errors>(emptyErrors);
   const [done, setDone] = useState(false);
@@ -121,7 +150,7 @@ function EmployeeFlowInner({
   const handleError = (error: Error, fieldErrors: Errors['fieldErrors']) =>
     setErrors({ apiError: error.message, fieldErrors });
 
-  const isUSA = COUNTRY_CODE === 'USA';
+  const isUSA = countryCode === 'USA';
 
   // Visible steps depend on country + bank substep + jurisdiction availability.
   // Tax steps are surfaced for USA even if not yet active — the bag exposes a
@@ -130,7 +159,7 @@ function EmployeeFlowInner({
   const visibleSteps = allSteps.filter(([key]) => {
     if (key === 'bank_account') return hasBankAccount;
     if (key === 'federal_taxes') return isUSA;
-    if (key === 'state_taxes') return isUSA && !!JURISDICTION;
+    if (key === 'state_taxes') return isUSA && !!jurisdiction;
     return true;
   });
   const lastStepKey = visibleSteps[visibleSteps.length - 1][0];
@@ -161,8 +190,8 @@ function EmployeeFlowInner({
   return (
     <PayrollEmployeeOnboardingFlow
       employmentId={employmentId}
-      countryCode={COUNTRY_CODE}
-      jurisdiction={isUSA ? JURISDICTION : undefined}
+      countryCode={countryCode}
+      jurisdiction={isUSA ? jurisdiction : undefined}
       render={({
         employeeBag,
         components,
@@ -407,13 +436,28 @@ function EmployeeFlowInner({
 // ── Step info loader (company manager context) then hands off to employee ctx ─
 
 function EmployeeFlowForm({ employmentId }: { employmentId: string }) {
-  const { hasBankAccount, isLoading } = useEmployeeStepInfo(employmentId);
+  const { hasBankAccount, countryCode, jurisdiction, isLoading } =
+    useEmployeeFlowContext(employmentId);
   const employeeAuth = useMemo(
     () => buildEmployeeAuth(employmentId),
     [employmentId],
   );
 
   if (isLoading) return <p>Loading...</p>;
+  if (!countryCode) {
+    return (
+      <div
+        className='alert'
+        style={{ background: '#fee', borderColor: '#c33' }}
+      >
+        <p style={{ margin: 0 }}>
+          <strong>Could not determine country</strong> for employment{' '}
+          <code>{employmentId}</code>. Check that the employment exists and your
+          company-manager token has access.
+        </p>
+      </div>
+    );
+  }
 
   return (
     // Inner RemoteFlows uses the employee-scoped token for all mutations
@@ -421,6 +465,8 @@ function EmployeeFlowForm({ employmentId }: { employmentId: string }) {
       <EmployeeFlowInner
         employmentId={employmentId}
         hasBankAccount={hasBankAccount}
+        countryCode={countryCode}
+        jurisdiction={jurisdiction}
       />
     </RemoteFlows>
   );
