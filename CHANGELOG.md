@@ -4,12 +4,14 @@
 
 ### Minor Changes
 
-- add standalone cost calculator Vercel deployment
-- GP SDK foundation — shared hooks and flow scaffolding (PBYR-4043)
-- apply oxfmt formatting
-- handle array-wrapped AI validation error from backend
-- fix mismatched checkout SHA version comment in cost-calculator jobs
-- fix mismatched checkout SHA version comment in pr cost-calculator job
+#### Refactors
+- Change default title when using Cost Calculator stand alone https://github.com/remoteoss/remote-flows/pull/1081
+
+#### Fixes
+- handle array-wrapped AI validation error from backend https://github.com/remoteoss/remote-flows/pull/1079
+
+#### CI
+- add standalone cost calculator Vercel deployment (ADP) https://github.com/remoteoss/remote-flows/pull/1075
 
 ## 1.37.0
 
