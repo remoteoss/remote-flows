@@ -5,12 +5,15 @@ import type { PayrollEmployeeOnboardingFlowProps } from '@/src/flows/PayrollEmpl
 import { PersonalDetailsStep } from '@/src/flows/PayrollEmployeeOnboarding/components/PersonalDetailsStep';
 import { HomeAddressStep } from '@/src/flows/PayrollEmployeeOnboarding/components/HomeAddressStep';
 import { BankAccountStep } from '@/src/flows/PayrollEmployeeOnboarding/components/BankAccountStep';
+import { FederalTaxesStep } from '@/src/flows/PayrollEmployeeOnboarding/components/FederalTaxesStep';
+import { StateTaxesStep } from '@/src/flows/PayrollEmployeeOnboarding/components/StateTaxesStep';
 import { SubmitButton } from '@/src/flows/PayrollEmployeeOnboarding/components/SubmitButton';
 import { BackButton } from '@/src/flows/PayrollEmployeeOnboarding/components/BackButton';
 
 export const PayrollEmployeeOnboardingFlow = ({
   employmentId,
   countryCode,
+  jurisdiction,
   initialValues,
   options,
   render,
@@ -19,6 +22,7 @@ export const PayrollEmployeeOnboardingFlow = ({
   const employeeBag = usePayrollEmployeeOnboarding({
     employmentId,
     countryCode,
+    jurisdiction,
     initialValues,
     options,
   });
@@ -31,6 +35,8 @@ export const PayrollEmployeeOnboardingFlow = ({
           PersonalDetailsStep,
           HomeAddressStep,
           BankAccountStep,
+          FederalTaxesStep,
+          StateTaxesStep,
           SubmitButton,
           BackButton,
         },

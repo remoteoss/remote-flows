@@ -4,7 +4,9 @@ import {
   getV1CountriesCountryCodeForm,
   putV1EmployeeAddress,
   putV1EmployeeBankAccount,
+  putV1EmployeeFederalTaxes,
   putV1EmployeePersonalDetails,
+  putV1EmployeeStateTaxes,
 } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
@@ -17,7 +19,9 @@ import type {
 export type GPEmployeeSchemaType =
   | 'global_payroll_personal_details'
   | 'address_details'
-  | 'global_payroll_bank_account_details';
+  | 'global_payroll_bank_account_details'
+  | 'global_payroll_federal_taxes'
+  | 'global_payroll_state_taxes';
 
 export const useGPEmployeeFormSchema = (
   countryCode: string | undefined,
@@ -91,5 +95,36 @@ export const useGPUpdateBankAccount = () => {
         headers: { Authorization: `` },
         body: { bank_account_details: bankAccountDetails },
       }),
+  });
+};
+
+export const useGPUpdateFederalTaxes = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: (federalTaxes: Record<string, unknown>) =>
+      putV1EmployeeFederalTaxes({
+        client: client as Client,
+        headers: { Authorization: `` },
+        body: { federal_taxes: federalTaxes },
+      }),
+  });
+};
+
+export const useGPUpdateStateTaxes = (jurisdiction: string | undefined) => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: (stateTaxes: Record<string, unknown>) => {
+      if (!jurisdiction) {
+        throw new Error(
+          'A `jurisdiction` (US state code) is required to submit state taxes.',
+        );
+      }
+      return putV1EmployeeStateTaxes({
+        client: client as Client,
+        headers: { Authorization: `` },
+        path: { jurisdiction },
+        body: { state_taxes: stateTaxes },
+      });
+    },
   });
 };

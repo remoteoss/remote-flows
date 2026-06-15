@@ -753,6 +753,9 @@ import type {
   PutV1EmployeeFederalTaxesData,
   PutV1EmployeeFederalTaxesErrors,
   PutV1EmployeeFederalTaxesResponses,
+  PutV1EmployeeStateTaxesData,
+  PutV1EmployeeStateTaxesErrors,
+  PutV1EmployeeStateTaxesResponses,
   PutV1EmployeePersonalDetailsData,
   PutV1EmployeePersonalDetailsErrors,
   PutV1EmployeePersonalDetailsResponses,
@@ -1012,11 +1015,41 @@ export const putV1EmployeeFederalTaxes = <ThrowOnError extends boolean = false>(
     PutV1EmployeeFederalTaxesErrors,
     ThrowOnError
   >({
+    security: [{ scheme: 'bearer', type: 'http' }],
     url: '/v1/employee/federal-taxes',
     ...options,
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,
+    },
+  });
+
+/**
+ * Submit employee state taxes
+ *
+ * Submits the authenticated employee's US state tax details for a single
+ * jurisdiction (state). Available for US Global Payroll employees once they
+ * reach the post-enrollment state. Calls made before then return a 404.
+ *
+ * This endpoint requires country- and jurisdiction-specific data. Query the
+ * [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint with
+ * `global_payroll_state_taxes` as the form name to discover the schema for a given
+ * country and jurisdiction.
+ */
+export const putV1EmployeeStateTaxes = <ThrowOnError extends boolean = false>(
+  options: Options<PutV1EmployeeStateTaxesData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PutV1EmployeeStateTaxesResponses,
+    PutV1EmployeeStateTaxesErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/state-taxes/{jurisdiction}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
     },
   });
 

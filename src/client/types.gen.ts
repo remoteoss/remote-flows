@@ -10397,6 +10397,23 @@ export type EmploymentFederalTaxesParams = {
 };
 
 /**
+ * EmploymentStateTaxesParams
+ *
+ * State taxes schema compatible params, submitted one jurisdiction at a time.
+ */
+export type EmploymentStateTaxesParams = {
+  /**
+   * State taxes params for the jurisdiction in the path. As its properties vary depending
+   * on the country and jurisdiction, you must query the
+   * [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint passing the country code
+   * and `global_payroll_state_taxes` as path parameters.
+   */
+  state_taxes: {
+    [key: string]: unknown;
+  };
+};
+
+/**
  * BenefitTier
  *
  * A specific coverage level within a benefit group. For example, a "Health" benefit group might have tiers like "Basic", "Standard", and "Premium", each with different coverage and providers.
@@ -12708,6 +12725,61 @@ export type PutV1EmployeeFederalTaxesResponses = {
 
 export type PutV1EmployeeFederalTaxesResponse =
   PutV1EmployeeFederalTaxesResponses[keyof PutV1EmployeeFederalTaxesResponses];
+
+export type PutV1EmployeeStateTaxesData = {
+  /**
+   * Employee state taxes params for the given jurisdiction
+   */
+  body?: EmploymentStateTaxesParams;
+  path: {
+    /**
+     * Jurisdiction code (e.g. US state abbreviation like 'CA', 'NY').
+     */
+    jurisdiction: string;
+  };
+  query?: never;
+  url: '/v1/employee/state-taxes/{jurisdiction}';
+};
+
+export type PutV1EmployeeStateTaxesErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV1EmployeeStateTaxesError =
+  PutV1EmployeeStateTaxesErrors[keyof PutV1EmployeeStateTaxesErrors];
+
+export type PutV1EmployeeStateTaxesResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PutV1EmployeeStateTaxesResponse =
+  PutV1EmployeeStateTaxesResponses[keyof PutV1EmployeeStateTaxesResponses];
 
 export type GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsData =
   {
