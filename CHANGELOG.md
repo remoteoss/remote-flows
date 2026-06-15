@@ -1,5 +1,16 @@
 # @remoteoss/remote-flows
 
+## 1.38.0
+
+### Minor Changes
+
+- add standalone cost calculator Vercel deployment
+- GP SDK foundation — shared hooks and flow scaffolding (PBYR-4043)
+- apply oxfmt formatting
+- handle array-wrapped AI validation error from backend
+- fix mismatched checkout SHA version comment in cost-calculator jobs
+- fix mismatched checkout SHA version comment in pr cost-calculator job
+
 ## 1.37.0
 
 ### Minor Changes
