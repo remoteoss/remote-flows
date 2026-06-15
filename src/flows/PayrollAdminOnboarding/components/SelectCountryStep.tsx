@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { usePayrollAdminOnboardingContext } from '@/src/flows/PayrollAdminOnboarding/context';
 import { PayrollAdminForm } from '@/src/flows/PayrollAdminOnboarding/components/PayrollAdminForm';
-import type { GPAdminStepCallbacks } from '@/src/flows/PayrollAdminOnboarding/types';
+import type { GPStepCallbacks } from '@/src/flows/types';
 import { useClient } from '@/src/context';
 import { Client } from '@/src/client/client';
 import { countriesOptions } from '@/src/common/api/countries';
@@ -11,7 +11,7 @@ export function SelectCountryStep({
   onSubmit,
   onSuccess,
   onError,
-}: GPAdminStepCallbacks) {
+}: GPStepCallbacks) {
   const { adminBag } = usePayrollAdminOnboardingContext();
   const { client } = useClient();
 

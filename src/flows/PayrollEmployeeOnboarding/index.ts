@@ -3,4 +3,5 @@ export { usePayrollEmployeeOnboarding } from './hooks';
 export type {
   PayrollEmployeeOnboardingFlowProps,
   PayrollEmployeeOnboardingRenderProps,
+  GPEmployeeStepCallbacks,
 } from './types';

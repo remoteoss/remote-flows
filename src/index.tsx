@@ -108,7 +108,10 @@ export type {
   PayrollEmployeeOnboardingRenderProps,
 } from '@/src/flows/PayrollEmployeeOnboarding';
 
-export { useGPLegalEntities } from '@/src/common/api/gpOnboarding';
+export {
+  useGPLegalEntities,
+  useGPOnboardingSteps,
+} from '@/src/common/api/gpOnboarding';
 
 export { CreateCompanyFlow } from '@/src/flows/CreateCompany';
 export type {

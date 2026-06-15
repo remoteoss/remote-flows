@@ -1,13 +1,10 @@
 import { PropsWithChildren } from 'react';
 import { usePayrollAdminOnboardingContext } from '@/src/flows/PayrollAdminOnboarding/context';
 import { useFormFields } from '@/src/context';
-import type { GPAdminStepCallbacks } from '@/src/flows/PayrollAdminOnboarding/types';
+import type { GPStepCallbacks } from '@/src/flows/types';
 import { isMutationError } from '@/src/lib/mutations';
 
-type InvitationStepProps = Pick<
-  GPAdminStepCallbacks,
-  'onSuccess' | 'onError'
-> & {
+type InvitationStepProps = Pick<GPStepCallbacks, 'onSuccess' | 'onError'> & {
   children?: React.ReactNode;
 };
 

@@ -1,24 +1,20 @@
-import { usePayrollAdminOnboardingContext } from '@/src/flows/PayrollAdminOnboarding/context';
+import { usePayrollEmployeeOnboardingContext } from '@/src/flows/PayrollEmployeeOnboarding/context';
 import type { GPStepCallbacks } from '@/src/flows/types';
 import { isMutationError } from '@/src/lib/mutations';
 
-/**
- * Shared submit handler for form-based GP admin steps.
- * Calls adminBag.onSubmit, routes errors through isMutationError, then advances step.
- */
-export function useStepSubmitHandler({
+export function useEmployeeStepSubmitHandler({
   onSubmit,
   onSuccess,
   onError,
 }: GPStepCallbacks) {
-  const { adminBag } = usePayrollAdminOnboardingContext();
+  const { employeeBag } = usePayrollEmployeeOnboardingContext();
 
   return async (values: Record<string, unknown>) => {
     try {
       await onSubmit?.(values);
-      const data = await adminBag.onSubmit(values);
+      const data = await employeeBag.onSubmit(values);
       await onSuccess?.(data);
-      adminBag.goToNextStep();
+      employeeBag.goToNextStep();
     } catch (error: unknown) {
       if (isMutationError(error)) {
         onError?.({
