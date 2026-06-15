@@ -16,10 +16,21 @@ function getTokenType(method, path) {
   // Extract pathname without query parameters
   const pathname = path.split('?')[0].toLowerCase();
 
-  // GET /v1/countries or /v2/countries — user token works and is required when
-  // client_credentials isn't available (e.g. local dev without client secret)
-  if (normalizedMethod === 'GET' && /^\/v[12]\/countries/.test(pathname)) {
-    return 'user-token';
+  // GET /v1/countries or /v2/countries — these don't require a user identity;
+  // use client_credentials so the call works in CI where no user token is
+  // available. Local dev without a client secret can opt into a user token
+  // by setting VITE_REMOTE_GATEWAY=... and ensuring VITE_CLIENT_TOKEN works.
+  if (normalizedMethod === 'GET' && /^\/v[12]\/countries$/.test(pathname)) {
+    return 'client-credentials';
+  }
+
+  // GET /v[12]/countries/{country_code}/address_details — public reference
+  // data; also use client credentials.
+  if (
+    normalizedMethod === 'GET' &&
+    /^\/v[12]\/countries\/[^/]+\/address_details$/.test(pathname)
+  ) {
+    return 'client-credentials';
   }
 
   // GET /v1/company-currencies or /v2/company-currencies
