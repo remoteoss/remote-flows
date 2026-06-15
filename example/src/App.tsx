@@ -48,6 +48,7 @@ import { CreateCompanyForm } from './CreateCompany';
 import { MagicLinkTest } from './MagicLinkTest';
 import { JsonSchemaComparisonDemo } from './JsonSchemaComparisonDemo';
 import { PayrollAdminOnboardingForm } from './PayrollAdminOnboarding';
+import { PayrollEmployeeOnboardingForm } from './PayrollEmployeeOnboarding';
 import ContractorOnboardingCode from './ContractorOnboarding?raw';
 import CreateCompanyCode from './CreateCompany?raw';
 import MagicLinkTestCode from './MagicLinkTest?raw';
@@ -181,6 +182,13 @@ const additionalDemos = [
     title: 'GP Admin Onboarding',
     description: 'Global Payroll admin onboarding flow (PBYR-4044)',
     component: PayrollAdminOnboardingForm,
+    sourceCode: '',
+  },
+  {
+    id: 'payroll-employee-onboarding',
+    title: 'GP Employee Onboarding',
+    description: 'Global Payroll employee self-onboarding flow (PBYR-4045)',
+    component: PayrollEmployeeOnboardingForm,
     sourceCode: '',
   },
 ];

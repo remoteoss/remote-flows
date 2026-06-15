@@ -16,17 +16,10 @@ function getTokenType(method, path) {
   // Extract pathname without query parameters
   const pathname = path.split('?')[0].toLowerCase();
 
-  // GET /v1/countries or /v2/countries
-  if (normalizedMethod === 'GET' && /^\/v[12]\/countries$/.test(pathname)) {
-    return 'client-credentials';
-  }
-
-  // GET /v1/countries/{country_code}/address_details or /v2/countries/{country_code}/address_details
-  if (
-    normalizedMethod === 'GET' &&
-    /^\/v[12]\/countries\/[^/]+\/address_details$/.test(pathname)
-  ) {
-    return 'client-credentials';
+  // GET /v1/countries or /v2/countries — user token works and is required when
+  // client_credentials isn't available (e.g. local dev without client secret)
+  if (normalizedMethod === 'GET' && /^\/v[12]\/countries/.test(pathname)) {
+    return 'user-token';
   }
 
   // GET /v1/company-currencies or /v2/company-currencies
@@ -48,6 +41,12 @@ function getTokenType(method, path) {
     /^\/v[12]\/companies\/[^/]+$/.test(pathname)
   ) {
     return 'client-credentials';
+  }
+
+  // /v1/employee/* endpoints require an employee-scoped assertion token.
+  // The SDK already sends the correct Bearer token — pass it through unchanged.
+  if (/^\/v1\/employee\//.test(pathname)) {
+    return 'pass-through';
   }
 
   // All other requests use user token
@@ -94,11 +93,18 @@ async function createProxyRequest(path, method = 'GET', options = {}) {
   // Add authentication if required
   if (requiresAuth) {
     const tokenType = getTokenType(method, path);
-    const { accessToken } =
-      tokenType === 'client-credentials'
-        ? await fetchClientCredentialsAccessToken()
-        : await fetchAccessToken();
-    requestConfig.headers.Authorization = `Bearer ${accessToken}`;
+    if (tokenType === 'pass-through') {
+      // Employee endpoints: the SDK already set the correct Bearer token in the
+      // incoming request — forward it unchanged instead of overwriting with a
+      // company manager token.
+      // headers already contains the incoming Authorization from ...headers above.
+    } else {
+      const { accessToken } =
+        tokenType === 'client-credentials'
+          ? await fetchClientCredentialsAccessToken()
+          : await fetchAccessToken();
+      requestConfig.headers.Authorization = `Bearer ${accessToken}`;
+    }
   }
 
   return axios(requestConfig);
