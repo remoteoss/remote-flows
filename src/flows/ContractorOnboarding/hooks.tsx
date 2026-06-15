@@ -68,7 +68,10 @@ import { transformAiErrorResponse } from '@/src/flows/ContractorOnboarding/utils
 import { AiValidationError } from '@/src/flows/ContractorOnboarding/types';
 import { useUploadFile } from '@/src/common/api/files';
 import { dataURLtoFile } from '@/src/lib/files';
-import { useEmploymentQuery } from '@/src/common/api/employment';
+import {
+  useEmploymentQuery,
+  useEmploymentBasicInformationV2,
+} from '@/src/common/api/employment';
 import { useDefaultLegalEntity } from '@/src/common/api/legal-entities';
 
 type useContractorOnboardingProps = Omit<
@@ -184,6 +187,14 @@ export const useContractorOnboarding = ({
     employmentId: internalEmploymentId as string,
     queryParams: { exclude_files: true },
   });
+
+  const { data: employmentBasicInformationV2 } =
+    useEmploymentBasicInformationV2({
+      employmentId: internalEmploymentId as string,
+      options: { enabled: Boolean(internalEmploymentId) },
+    });
+
+  const contractOrigin = employmentBasicInformationV2?.contract_origin;
 
   const defaultLegalEntity = useDefaultLegalEntity();
 
@@ -1491,6 +1502,13 @@ export const useContractorOnboarding = ({
      * @returns {Employment}
      */
     employment,
+
+    /**
+     * Origin of the employment contract, read from the v2 basic information endpoint.
+     * Only available once an employment exists (i.e. `employmentId` is set).
+     * @returns {'remote_contract' | 'custom_remote_contract' | 'provided_by_customer' | undefined}
+     */
+    contractOrigin,
 
     /**
      * Default legal entity

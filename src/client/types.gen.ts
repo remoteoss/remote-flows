@@ -675,6 +675,48 @@ export type CompanyComplianceProfile = {
 };
 
 /**
+ * CorTerminationRequest
+ */
+export type CorTerminationRequest = {
+  /**
+   * Timestamp of when the termination was cancelled. Null if not cancelled.
+   */
+  cancelled_at: string | null;
+  /**
+   * The date on which the contractor employment will be deactivated.
+   */
+  employment_deactivation_date: string | null;
+  /**
+   * UuidSlug
+   *
+   * Identifier of the employment being terminated.
+   */
+  employment_id: string;
+  /**
+   * Timestamp of when the termination was executed. Null if not yet executed.
+   */
+  executed_at: string | null;
+  /**
+   * UuidSlug
+   *
+   * Unique identifier of the termination request.
+   */
+  id: string;
+  /**
+   * Timestamp of when the termination request was initiated.
+   */
+  initiated_at: string | null;
+  /**
+   * Current status of the termination request.
+   */
+  status: 'initiated' | 'executed' | 'cancelled';
+  /**
+   * The date when the termination was initiated.
+   */
+  termination_date: string | null;
+};
+
+/**
  * ResignationOrTerminationOffboarding
  */
 export type ResignationOrTerminationOffboarding =
@@ -2355,6 +2397,10 @@ export type Country = {
    */
   country_subdivisions?: Array<CountrySubdivision> | null;
   /**
+   * Whether an Employment Agreement preview is available for this country.
+   */
+  employment_agreement_preview_available?: boolean;
+  /**
    * Whether EOR (Employer of Record) onboarding is available in this country.
    */
   eor_onboarding?: boolean;
@@ -3452,9 +3498,13 @@ export type CostCalculatorCountryLevelRegion = {
 /**
  * CreateWebhookCallbackParams
  *
- * Webhook callback creation params
+ * Webhook callback creation params. Provide either `subscribed_events` or `subscribe_to_all_events: true` (they are mutually exclusive).
  */
 export type CreateWebhookCallbackParams = {
+  /**
+   * When true, subscribe this callback to all current and future event types. Cannot be combined with `subscribed_events`.
+   */
+  subscribe_to_all_events?: boolean;
   subscribed_events?: Array<
     | 'background_check.status.updated'
     | 'benefit_renewal_request.created'
@@ -5275,7 +5325,11 @@ export type BillingDocumentsResponse = {
         | 'reconciliation_invoice'
         | 'prefunding_invoice'
         | 'supplemental_service_invoice'
-        | 'reconciliation_credit_note';
+        | 'reconciliation_credit_note'
+        | 'peo_payroll_invoice'
+        | 'contractor_management_invoice'
+        | 'remote_plan_invoice'
+        | 'credit_note';
       /**
        * The unique identifier (UUID) of the billing document.
        */
@@ -6783,6 +6837,10 @@ export type NullableCountry = {
    */
   country_subdivisions?: Array<CountrySubdivision> | null;
   /**
+   * Whether an Employment Agreement preview is available for this country.
+   */
+  employment_agreement_preview_available?: boolean;
+  /**
    * Whether EOR (Employer of Record) onboarding is available in this country.
    */
   eor_onboarding?: boolean;
@@ -7554,7 +7612,7 @@ export type ListCompanyPricingPlansResponse = {
 /**
  * UuidSlug
  *
- * Unique identifier of the termination request.
+ * Identifier of the employment being terminated.
  */
 export type UuidSlug = string;
 
@@ -7715,6 +7773,20 @@ export type Timesheet = {
   total_hours: HoursAndMinutes;
   unpaid_break_hours: HoursAndMinutes;
   weekend_hours: HoursAndMinutes;
+};
+
+/**
+ * EmploymentAgreementPreviewResponse
+ *
+ * Return a base64 encoded Employment Agreement preview document
+ */
+export type EmploymentAgreementPreviewResponse = {
+  data: {
+    employment_agreement: {
+      content: Blob | File;
+      name: string;
+    };
+  };
 };
 
 /**
@@ -9052,6 +9124,10 @@ export type WebhookCallback = {
    *
    */
   signing_key?: string;
+  /**
+   * When true, this callback is subscribed to all current and future event types. `subscribed_events` then lists every currently supported event.
+   */
+  subscribe_to_all_events?: boolean;
   subscribed_events?: Array<
     | 'background_check.status.updated'
     | 'benefit_renewal_request.created'
@@ -9380,6 +9456,29 @@ export type ContractorCurrencyItem = {
  */
 export type UnauthorizedResponse = {
   message: string;
+};
+
+/**
+ * IndexCorTerminationRequestsResponse
+ *
+ * Response schema listing many termination_requests
+ */
+export type IndexCorTerminationRequestsResponse = {
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    termination_requests?: Array<CorTerminationRequest>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
 };
 
 /**
@@ -10785,10 +10884,14 @@ export type CreateContractEligibilityParams = {
 /**
  * UpdateWebhookCallbackParams
  *
- * Webhook callback update params
+ * Webhook callback update params. Provide either `subscribed_events` or `subscribe_to_all_events` (they are mutually exclusive). Omitting `subscribe_to_all_events` leaves the current subscription mode unchanged, so resending an event list does not disable all-events delivery. Setting `subscribe_to_all_events: false` requires a non-empty `subscribed_events`.
  */
 export type UpdateWebhookCallbackParams = {
-  subscribed_events: Array<
+  /**
+   * When true, subscribe this callback to all current and future event types. Cannot be combined with `subscribed_events`.
+   */
+  subscribe_to_all_events?: boolean;
+  subscribed_events?: Array<
     | 'background_check.status.updated'
     | 'benefit_renewal_request.created'
     | 'billing_document.issued'
@@ -11236,6 +11339,24 @@ export type CompanyNotEligibleForCreationErrorResponse = {
   message?: string;
   resource_id?: string;
   resource_type?: string;
+};
+
+/**
+ * EmploymentStateTaxesParams
+ *
+ * State taxes schema compatible params, submitted one jurisdiction at a time.
+ *
+ */
+export type EmploymentStateTaxesParams = {
+  /**
+   * State taxes params for the jurisdiction in the path. As its properties vary depending
+   * on the country and jurisdiction, you must query the
+   * [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint passing the country code
+   * and `global_payroll_state_taxes` as path parameters.
+   */
+  state_taxes: {
+    [key: string]: unknown;
+  };
 };
 
 /**
@@ -11911,6 +12032,13 @@ export type EmploymentDetailsOnlyResponse = {
         [key: string]: unknown;
       };
       /**
+       * Origin of the employment contract. Returned by the basic information endpoint.
+       */
+      contract_origin?:
+        | 'remote_contract'
+        | 'custom_remote_contract'
+        | 'provided_by_customer';
+      /**
        * Emergency contact information. Its properties may vary depending on the country. Null if the employee has not submitted their emergency contact yet.
        */
       emergency_contact_details?: {
@@ -12123,38 +12251,7 @@ export type PayDifference = {
  * CorTerminationRequestResponse
  */
 export type CorTerminationRequestResponse = {
-  data: {
-    /**
-     * Timestamp of when the termination was cancelled. Null if not cancelled.
-     */
-    cancelled_at: string | null;
-    /**
-     * The date on which the contractor employment will be deactivated.
-     */
-    employment_deactivation_date: string | null;
-    /**
-     * Timestamp of when the termination was executed. Null if not yet executed.
-     */
-    executed_at: string | null;
-    /**
-     * UuidSlug
-     *
-     * Unique identifier of the termination request.
-     */
-    id: string;
-    /**
-     * Timestamp of when the termination request was initiated.
-     */
-    initiated_at: string | null;
-    /**
-     * Current status of the termination request.
-     */
-    status: 'initiated' | 'executed' | 'cancelled';
-    /**
-     * The date when the termination was initiated.
-     */
-    termination_date: string | null;
-  };
+  data: CorTerminationRequest;
 };
 
 /**
@@ -13300,6 +13397,109 @@ export type GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStat
 export type GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusResponse =
   GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusResponses[keyof GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusResponses];
 
+export type GetV1EmployeeBankAccountData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Version of the bank_account_details form schema
+     */
+    bank_account_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v1/employee/bank-account';
+};
+
+export type GetV1EmployeeBankAccountErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV1EmployeeBankAccountError =
+  GetV1EmployeeBankAccountErrors[keyof GetV1EmployeeBankAccountErrors];
+
+export type GetV1EmployeeBankAccountResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type GetV1EmployeeBankAccountResponse =
+  GetV1EmployeeBankAccountResponses[keyof GetV1EmployeeBankAccountResponses];
+
+export type PutV1EmployeeBankAccountData = {
+  /**
+   * Employee bank account details params
+   */
+  body?: EmploymentBankAccountDetailsParams;
+  path?: never;
+  query?: {
+    /**
+     * Version of the bank_account_details form schema
+     */
+    bank_account_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v1/employee/bank-account';
+};
+
+export type PutV1EmployeeBankAccountErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV1EmployeeBankAccountError =
+  PutV1EmployeeBankAccountErrors[keyof PutV1EmployeeBankAccountErrors];
+
+export type PutV1EmployeeBankAccountResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type PutV1EmployeeBankAccountResponse =
+  PutV1EmployeeBankAccountResponses[keyof PutV1EmployeeBankAccountResponses];
+
 export type GetV1HelpCenterArticlesIdData = {
   body?: never;
   path: {
@@ -13994,6 +14194,54 @@ export type GetV1EmployeePayslipsResponses = {
 
 export type GetV1EmployeePayslipsResponse =
   GetV1EmployeePayslipsResponses[keyof GetV1EmployeePayslipsResponses];
+
+export type GetV1ContractorsCorTerminationRequestsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Filter termination requests by employment ID.
+     */
+    employment_id?: UuidSlug;
+    /**
+     * Filter termination requests by status.
+     */
+    status?: 'initiated' | 'executed' | 'cancelled';
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/contractors/cor-termination-requests';
+};
+
+export type GetV1ContractorsCorTerminationRequestsErrors = {
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetV1ContractorsCorTerminationRequestsError =
+  GetV1ContractorsCorTerminationRequestsErrors[keyof GetV1ContractorsCorTerminationRequestsErrors];
+
+export type GetV1ContractorsCorTerminationRequestsResponses = {
+  /**
+   * Success
+   */
+  200: IndexCorTerminationRequestsResponse;
+};
+
+export type GetV1ContractorsCorTerminationRequestsResponse =
+  GetV1ContractorsCorTerminationRequestsResponses[keyof GetV1ContractorsCorTerminationRequestsResponses];
 
 export type GetV1WebhookEventsData = {
   body?: never;
@@ -15429,6 +15677,59 @@ export type PostV1MagicLinkResponses = {
 
 export type PostV1MagicLinkResponse =
   PostV1MagicLinkResponses[keyof PostV1MagicLinkResponses];
+
+export type GetV2EmploymentsEmploymentIdBasicInformationData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Version of the employment_basic_information form schema
+     */
+    employment_basic_information_json_schema_version?: number | 'latest';
+  };
+  url: '/v2/employments/{employment_id}/basic_information';
+};
+
+export type GetV2EmploymentsEmploymentIdBasicInformationErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV2EmploymentsEmploymentIdBasicInformationError =
+  GetV2EmploymentsEmploymentIdBasicInformationErrors[keyof GetV2EmploymentsEmploymentIdBasicInformationErrors];
+
+export type GetV2EmploymentsEmploymentIdBasicInformationResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type GetV2EmploymentsEmploymentIdBasicInformationResponse =
+  GetV2EmploymentsEmploymentIdBasicInformationResponses[keyof GetV2EmploymentsEmploymentIdBasicInformationResponses];
 
 export type PutV2EmploymentsEmploymentIdBasicInformationData = {
   /**
@@ -17053,6 +17354,46 @@ export type PostV1ContractAmendmentsResponses = {
 export type PostV1ContractAmendmentsResponse =
   PostV1ContractAmendmentsResponses[keyof PostV1ContractAmendmentsResponses];
 
+export type GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/employment-agreement/download';
+};
+
+export type GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadError =
+  GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadErrors[keyof GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadErrors];
+
+export type GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadResponses = {
+  /**
+   * Success
+   */
+  200: GenericFile;
+};
+
+export type GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadResponse =
+  GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadResponses[keyof GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadResponses];
+
 export type GetV1PayrollRunsPayrollRunIdData = {
   body?: never;
   path: {
@@ -17513,9 +17854,13 @@ export type GetV1CountriesCountryCodeFormData = {
   };
   query?: {
     /**
-     * Required for `contract_amendment` form
+     * Required for `contract_amendment` and `global_payroll_state_taxes` forms
      */
     employment_id?: string;
+    /**
+     * Two-letter US state code. Required for `global_payroll_state_taxes` (e.g. `NY`).
+     */
+    jurisdiction?: string;
     /**
      * FOR TESTING PURPOSES ONLY: Include scheduled benefit groups.
      */
@@ -18735,6 +19080,63 @@ export type PostV1CompanyDepartmentsResponses = {
 
 export type PostV1CompanyDepartmentsResponse =
   PostV1CompanyDepartmentsResponses[keyof PostV1CompanyDepartmentsResponses];
+
+export type GetV1OffboardingsEmploymentsEmploymentIdData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Change the amount of records returned per page, defaults to 20, limited to 100
+     */
+    page_size?: number;
+  };
+  url: '/v1/offboardings/employments/{employment_id}';
+};
+
+export type GetV1OffboardingsEmploymentsEmploymentIdErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV1OffboardingsEmploymentsEmploymentIdError =
+  GetV1OffboardingsEmploymentsEmploymentIdErrors[keyof GetV1OffboardingsEmploymentsEmploymentIdErrors];
+
+export type GetV1OffboardingsEmploymentsEmploymentIdResponses = {
+  /**
+   * Success
+   */
+  200: ListOffboardingResponse;
+};
+
+export type GetV1OffboardingsEmploymentsEmploymentIdResponse =
+  GetV1OffboardingsEmploymentsEmploymentIdResponses[keyof GetV1OffboardingsEmploymentsEmploymentIdResponses];
 
 export type PostV1TimeoffTimeoffIdCancelRequestDeclineData = {
   /**
@@ -20484,6 +20886,61 @@ export type PostV1CostCalculatorEstimationCsvResponses = {
 
 export type PostV1CostCalculatorEstimationCsvResponse =
   PostV1CostCalculatorEstimationCsvResponses[keyof PostV1CostCalculatorEstimationCsvResponses];
+
+export type PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Company ID
+       */
+      company_id: string;
+      /**
+       * Legal Entity ID to activate Global Payroll on
+       */
+      legal_entity_id: string;
+    };
+    query?: never;
+    url: '/v1/sandbox/companies/{company_id}/legal-entities/{legal_entity_id}/activate-global-payroll';
+  };
+
+export type PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollErrors =
+  {
+    /**
+     * Bad Request
+     */
+    400: BadRequestResponse;
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+    /**
+     * Too many requests
+     */
+    429: TooManyRequestsResponse;
+  };
+
+export type PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollError =
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollErrors[keyof PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollErrors];
+
+export type PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollResponses =
+  {
+    /**
+     * Success
+     */
+    200: SuccessResponse;
+  };
+
+export type PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollResponse =
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollResponses[keyof PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollResponses];
 
 export type GetV1EmployeePersonalDetailsData = {
   body?: never;
@@ -24896,6 +25353,61 @@ export type PostV1ContractorInvoiceSchedulesResponses = {
 export type PostV1ContractorInvoiceSchedulesResponse =
   PostV1ContractorInvoiceSchedulesResponses[keyof PostV1ContractorInvoiceSchedulesResponses];
 
+export type PutV1EmployeeStateTaxesJurisdictionData = {
+  /**
+   * Employee state taxes params
+   */
+  body?: EmploymentStateTaxesParams;
+  path: {
+    /**
+     * Two-letter US state/jurisdiction code
+     */
+    jurisdiction: string;
+  };
+  query?: never;
+  url: '/v1/employee/state-taxes/{jurisdiction}';
+};
+
+export type PutV1EmployeeStateTaxesJurisdictionErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV1EmployeeStateTaxesJurisdictionError =
+  PutV1EmployeeStateTaxesJurisdictionErrors[keyof PutV1EmployeeStateTaxesJurisdictionErrors];
+
+export type PutV1EmployeeStateTaxesJurisdictionResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PutV1EmployeeStateTaxesJurisdictionResponse =
+  PutV1EmployeeStateTaxesJurisdictionResponses[keyof PutV1EmployeeStateTaxesJurisdictionResponses];
+
 export type GetV1EmploymentsEmploymentIdEngagementAgreementDetailsData = {
   body?: never;
   path: {
@@ -25051,6 +25563,46 @@ export type GetV1BillingDocumentsBillingDocumentIdBreakdownResponses = {
 
 export type GetV1BillingDocumentsBillingDocumentIdBreakdownResponse =
   GetV1BillingDocumentsBillingDocumentIdBreakdownResponses[keyof GetV1BillingDocumentsBillingDocumentIdBreakdownResponses];
+
+export type GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/employment-agreement/preview';
+};
+
+export type GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewError =
+  GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewErrors[keyof GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewErrors];
+
+export type GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentAgreementPreviewResponse;
+};
+
+export type GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewResponse =
+  GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewResponses[keyof GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewResponses];
 
 export type GetV1EmployeeDocumentsData = {
   body?: never;
