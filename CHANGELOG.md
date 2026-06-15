@@ -1,5 +1,21 @@
 # @remoteoss/remote-flows
 
+## 1.38.0
+
+### Minor Changes
+
+#### Refactors
+
+- Change default title when using Cost Calculator stand alone https://github.com/remoteoss/remote-flows/pull/1081
+
+#### Fixes
+
+- handle array-wrapped AI validation error from backend https://github.com/remoteoss/remote-flows/pull/1079
+
+#### CI
+
+- add standalone cost calculator Vercel deployment (ADP) https://github.com/remoteoss/remote-flows/pull/1075
+
 ## 1.37.0
 
 ### Minor Changes
