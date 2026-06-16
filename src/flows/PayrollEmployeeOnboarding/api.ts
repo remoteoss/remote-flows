@@ -6,7 +6,7 @@ import {
   putV1EmployeeBankAccount,
   putV1EmployeeFederalTaxes,
   putV1EmployeePersonalDetails,
-  putV1EmployeeStateTaxes,
+  putV1EmployeeStateTaxesJurisdiction,
 } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
@@ -119,7 +119,7 @@ export const useGPUpdateStateTaxes = (jurisdiction: string | undefined) => {
           'A `jurisdiction` (US state code) is required to submit state taxes.',
         );
       }
-      return putV1EmployeeStateTaxes({
+      return putV1EmployeeStateTaxesJurisdiction({
         client: client as Client,
         headers: { Authorization: `` },
         path: { jurisdiction },
