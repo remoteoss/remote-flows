@@ -367,12 +367,9 @@ export const useOnboarding = ({
     );
   }, [countries, internalCountryCode]);
 
-  if (
-    isEmploymentAgreementPreviewAvailable &&
-    !includeEmploymentAgreementPreview
-  ) {
-    setIncludeEmploymentAgreementPreview(true);
-  }
+  useEffect(() => {
+    setIncludeEmploymentAgreementPreview(isEmploymentAgreementPreviewAvailable);
+  }, [isEmploymentAgreementPreviewAvailable]);
 
   const createEmploymentMutation = useCreateEmployment(options);
   const updateEmploymentMutation = useUpdateEmployment(
