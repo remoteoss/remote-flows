@@ -17,7 +17,7 @@
   "dependencies": {
     "@remoteoss/remote-flows": "file://..",
     "axios": "1.16.1",
-    "dompurify": "3.4.5",
+    "dompurify": "3.4.9",
     "dotenv": "17.4.2",
     "express": "5.2.1",
     "html-react-parser": "6.1.1",
