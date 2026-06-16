@@ -167,13 +167,21 @@ export const useOnboarding = ({
   const [internalCountryCode, setInternalCountryCode] = useState<string | null>(
     countryCode || null,
   );
+
   const [
     includeEngagementAgreementDetails,
     setIncludeEngagementAgreementDetails,
   ] = useState<boolean>(false);
 
+  const [
+    includeEmploymentAgreementPreview,
+    setIncludeEmploymentAgreementPreview,
+  ] = useState<boolean>(false);
+
   const useDynamicSteps = options?.features?.includes('dynamic_steps') ?? false;
-  const useEAPreview = options?.features?.includes('ea_preview') ?? false;
+  const useEAPreview =
+    options?.features?.includes('ea_preview') &&
+    includeEmploymentAgreementPreview;
 
   const { steps, stepsArray } = useMemo(
     () =>
@@ -342,13 +350,30 @@ export const useOnboarding = ({
     isErrorPreOnboardingRequirements,
   ]);
 
-  const { selectCountryForm, isLoading: isLoadingCountries } =
-    useCountriesSchemaField({
-      jsfModify: options?.jsfModify?.select_country,
-      queryOptions: {
-        enabled: stepState.currentStep.name === 'select_country',
-      },
-    });
+  const {
+    selectCountryForm,
+    isLoading: isLoadingCountries,
+    countries,
+  } = useCountriesSchemaField({
+    jsfModify: options?.jsfModify?.select_country,
+    queryOptions: {
+      enabled: stepState.currentStep.name === 'select_country',
+    },
+  });
+
+  const isEmploymentAgreementPreviewAvailable = useMemo(() => {
+    return Boolean(
+      countries?.find((country) => country.value === internalCountryCode)
+        ?.employment_agreement_preview_available,
+    );
+  }, [countries, internalCountryCode]);
+
+  if (
+    isEmploymentAgreementPreviewAvailable &&
+    !includeEmploymentAgreementPreview
+  ) {
+    setIncludeEmploymentAgreementPreview(true);
+  }
 
   const createEmploymentMutation = useCreateEmployment(options);
   const updateEmploymentMutation = useUpdateEmployment(
