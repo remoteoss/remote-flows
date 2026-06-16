@@ -337,9 +337,9 @@ This script will:
 - Create a release branch (e.g., `release/1.2.3`)
 - Push the branch and create a PR
 
-#### Step 4: Review and Merge PR
+#### Step 4: Review PR (Don't Merge Yet)
 
-Review the automatically created PR
+Review the automatically created PR but **do not merge it yet**. The release workflow needs to run from the release branch before merging.
 
 #### Step 5: Trigger Release Workflow
 
@@ -355,11 +355,14 @@ The workflow will:
 - Create a git tag (e.g., `v1.2.3`)
 - Create a GitHub release with changelog content
 
-**Note**: The workflow now automatically detects when publishing an older version and applies the appropriate npm dist-tag, so hotfixes won't conflict with the `latest` tag.
+**Note**: The workflow automatically detects when publishing an older version and applies the appropriate npm dist-tag, so hotfixes won't conflict with the `latest` tag.
 
-#### Step 6: Backport to Main (if needed)
+#### Step 6: Merge to Main (if needed)
 
-If the fix should also be in main, make the necessary changes and do a normal release.
+After the release workflow completes successfully:
+
+- **If the fix should also be in main**: Merge the PR to include the fix in future releases
+- **If the fix is only needed for this specific version**: Close the PR without merging
 
 ### Version Numbering
 

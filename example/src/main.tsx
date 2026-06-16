@@ -6,6 +6,7 @@ import App from './App.tsx';
 
 const RenderApplication = () => {
   if (import.meta.env.VITE_NEW_PREMIUM_BENEFITS === 'true') {
+    document.title = 'Cost Calculator';
     return <CostCalculatorWithPremiumBenefits />;
   }
 
