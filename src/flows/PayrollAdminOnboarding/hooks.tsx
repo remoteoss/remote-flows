@@ -96,7 +96,10 @@ export const usePayrollAdminOnboarding = ({
     internalCountryCode,
     'global_payroll_contract_details',
     fieldValues,
-    { enabled: currentStep === 'contract_details' && !!internalCountryCode },
+    {
+      enabled: currentStep === 'contract_details' && !!internalCountryCode,
+      employmentId: internalEmploymentId,
+    },
   );
 
   const adminDetailsSchema = useGPFormSchema(
@@ -106,6 +109,7 @@ export const usePayrollAdminOnboarding = ({
     {
       enabled:
         currentStep === 'administrative_details' && !!internalCountryCode,
+      employmentId: internalEmploymentId,
     },
   );
 
