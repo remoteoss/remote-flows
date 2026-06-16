@@ -699,15 +699,16 @@ describe('ContractorOnboardingFlow', () => {
           if (postContractDocumentSpy.mock.calls.length === 1) {
             return HttpResponse.json(
               {
-                error: {
-                  errors: {
-                    services_and_deliverables: {
+                errors: {
+                  services_and_deliverables: [
+                    {
                       error: ['Possible misclassification risk'],
                       source: 'REMOTE_AI',
                       skippable: true,
                     },
-                  },
+                  ],
                 },
+                message: 'Unprocessable Entity',
               },
               { status: 422 },
             );
@@ -2923,17 +2924,18 @@ describe('ContractorOnboardingFlow', () => {
         http.post('*/v1/contractors/employments/*/contract-documents', () => {
           return HttpResponse.json(
             {
-              error: {
-                errors: {
-                  services_and_deliverables: {
+              errors: {
+                services_and_deliverables: [
+                  {
                     error: [
                       "The description of the services and deliverables is not clear or detailed enough to determine compliance with Remote's hiring criteria. It lacks any contextual clues or keywords related to the non-compliant categories.",
                     ],
                     source: 'REMOTE_AI',
                     skippable: false,
                   },
-                },
+                ],
               },
+              message: 'Unprocessable Entity',
             },
             { status: 422 },
           );
@@ -3022,17 +3024,18 @@ describe('ContractorOnboardingFlow', () => {
         http.post('*/v1/contractors/employments/*/contract-documents', () => {
           return HttpResponse.json(
             {
-              error: {
-                errors: {
-                  services_and_deliverables: {
+              errors: {
+                services_and_deliverables: [
+                  {
                     error: [
                       "The description of the services and deliverables is not clear or detailed enough to determine compliance with Remote's hiring criteria.",
                     ],
                     source: 'REMOTE_AI',
                     skippable: true,
                   },
-                },
+                ],
               },
+              message: 'Unprocessable Entity',
             },
             { status: 422 },
           );
@@ -3103,17 +3106,18 @@ describe('ContractorOnboardingFlow', () => {
         http.post('*/v1/contractors/employments/*/contract-documents', () => {
           return HttpResponse.json(
             {
-              error: {
-                errors: {
-                  services_and_deliverables: {
+              errors: {
+                services_and_deliverables: [
+                  {
                     error: [
                       "The description of the services and deliverables is not clear or detailed enough to determine compliance with Remote's hiring criteria.",
                     ],
                     source: 'REMOTE_AI',
                     skippable: true,
                   },
-                },
+                ],
               },
+              message: 'Unprocessable Entity',
             },
             { status: 422 },
           );
@@ -3393,20 +3397,23 @@ describe('ContractorOnboardingFlow', () => {
       const employmentId = generateUniqueEmploymentId();
 
       // Mock the contract document creation to fail with production-format AI error
-      // Production format: { errors: { ... } } instead of { error: { errors: { ... } } }
+      // Production format: errors.services_and_deliverables is an array (normalize_errors wraps non-list values)
       server.use(
         http.post('*/v1/contractors/employments/*/contract-documents', () => {
           return HttpResponse.json(
             {
               errors: {
-                services_and_deliverables: {
-                  error: [
-                    "The text is non-compliant because it includes language that implies weekly progress reviews, which can be interpreted as a form of day-to-day supervision or control over the Contractor's work.",
-                  ],
-                  source: 'REMOTE_AI',
-                  skippable: true,
-                },
+                services_and_deliverables: [
+                  {
+                    error: [
+                      "The text is non-compliant because it includes language that implies weekly progress reviews, which can be interpreted as a form of day-to-day supervision or control over the Contractor's work.",
+                    ],
+                    source: 'REMOTE_AI',
+                    skippable: true,
+                  },
+                ],
               },
+              message: 'Unprocessable Entity',
             },
             { status: 422 },
           );

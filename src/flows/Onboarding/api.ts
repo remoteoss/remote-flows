@@ -415,6 +415,8 @@ export const useCountriesSchemaField = (
             return {
               label: country.name,
               value: country.code,
+              employment_agreement_preview_available:
+                country.employment_agreement_preview_available,
             };
           }) || []
       );
@@ -440,6 +442,7 @@ export const useCountriesSchemaField = (
   return {
     isLoading,
     selectCountryForm,
+    countries,
   };
 };
 

@@ -1,11 +1,102 @@
 import {
   ErrorResponse,
+  extractFieldErrors,
   mutationToPromise,
   normalizeFieldErrors,
   FieldError,
   isMutationError,
 } from '@/src/lib/mutations';
 import { $TSFixMe, Meta, NestedMeta } from '@/src/types/remoteFlows';
+
+describe('extractFieldErrors', () => {
+  it('should extract messages from a plain array of strings', () => {
+    expect(
+      extractFieldErrors({
+        errors: {
+          name: ['is required', 'is too short'],
+        },
+      }),
+    ).toEqual<FieldError[]>([
+      { field: 'name', messages: ['is required', 'is too short'] },
+    ]);
+  });
+
+  it('should extract messages from a nested object of arrays', () => {
+    expect(
+      extractFieldErrors({
+        errors: {
+          basic_information: {
+            name: ['is required'],
+          },
+        },
+      }),
+    ).toEqual<FieldError[]>([{ field: 'name', messages: ['is required'] }]);
+  });
+
+  it('should skip array-wrapped structured objects (e.g. AI validation) instead of emitting inline field errors', () => {
+    // The backend's normalize_errors wraps non-list values in an array, so the
+    // AI validation error arrives as a single-element array of objects. These
+    // are surfaced via the field statement/skip flow, not as inline errors, so
+    // extractFieldErrors should not produce a field error for them.
+    expect(
+      extractFieldErrors({
+        errors: {
+          services_and_deliverables: [
+            {
+              error: ['Possible misclassification risk'],
+              source: 'REMOTE_AI',
+              skippable: true,
+            },
+          ],
+        },
+      }),
+    ).toEqual<FieldError[]>([]);
+  });
+
+  it('should not produce "[object Object]" for array-wrapped object errors', () => {
+    const result = extractFieldErrors({
+      errors: {
+        services_and_deliverables: [
+          {
+            error: ['Possible misclassification risk'],
+            source: 'REMOTE_AI',
+            skippable: false,
+          },
+        ],
+      },
+    });
+
+    const allMessages = result.flatMap((fieldError) => fieldError.messages);
+    expect(allMessages).not.toContain('[object Object]');
+  });
+
+  it('should keep primitive messages while skipping object entries in a mixed array', () => {
+    expect(
+      extractFieldErrors({
+        errors: {
+          name: ['is required', { source: 'REMOTE_AI', error: ['ignored'] }],
+        },
+      }),
+    ).toEqual<FieldError[]>([{ field: 'name', messages: ['is required'] }]);
+  });
+
+  it('should handle the nested error.error wrapper structure', () => {
+    expect(
+      extractFieldErrors({
+        error: {
+          errors: {
+            name: ['is required'],
+          },
+        },
+      }),
+    ).toEqual<FieldError[]>([{ field: 'name', messages: ['is required'] }]);
+  });
+
+  it('should return an empty array when there are no errors', () => {
+    expect(extractFieldErrors({})).toEqual([]);
+    expect(extractFieldErrors({ errors: null })).toEqual([]);
+  });
+});
 
 describe('normalizeFieldErrors', () => {
   it('should return empty array when no errors', () => {

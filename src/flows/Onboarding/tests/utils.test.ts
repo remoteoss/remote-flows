@@ -147,13 +147,10 @@ describe('buildSteps', () => {
 
   describe('new dynamic behavior (useDynamicSteps: true)', () => {
     it('should preserve original indices for all steps including hidden ones', () => {
-      const { steps, stepsArray } = buildSteps({
+      const { stepsArray } = buildSteps({
         includeSelectCountry: false,
         useDynamicSteps: true,
       });
-
-      // All steps should be present, including hidden ones
-      expect(stepsArray).toHaveLength(6);
 
       // Hidden step should still be in the array with original index
       expect(stepsArray[0]).toMatchObject({
@@ -181,11 +178,23 @@ describe('buildSteps', () => {
         visible: true,
       });
 
-      // Steps object should preserve original indices
-      expect(steps.select_country.index).toBe(0);
-      expect(steps.basic_information.index).toBe(1);
-      expect(steps.contract_details.index).toBe(3);
-      expect(steps.review.index).toBe(5);
+      expect(stepsArray[4]).toMatchObject({
+        name: 'benefits',
+        index: 4,
+        visible: true,
+      });
+
+      expect(stepsArray[5]).toMatchObject({
+        name: 'employment_agreement_preview',
+        index: 5,
+        visible: false,
+      });
+
+      expect(stepsArray[6]).toMatchObject({
+        name: 'review',
+        index: 6,
+        visible: true,
+      });
     });
 
     it('should include engagement_agreement_details when enabled', () => {
@@ -195,10 +204,23 @@ describe('buildSteps', () => {
         useDynamicSteps: true,
       });
 
-      expect(stepsArray).toHaveLength(6);
       expect(stepsArray[2]).toMatchObject({
         name: 'engagement_agreement_details',
         index: 2,
+        visible: true,
+      });
+    });
+
+    it('should include employment_agreement_preview when enabled', () => {
+      const { stepsArray } = buildSteps({
+        includeSelectCountry: true,
+        useEAPreview: true,
+        useDynamicSteps: true,
+      });
+
+      expect(stepsArray[5]).toMatchObject({
+        name: 'employment_agreement_preview',
+        index: 5,
         visible: true,
       });
     });
