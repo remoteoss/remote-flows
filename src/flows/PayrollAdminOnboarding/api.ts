@@ -21,11 +21,12 @@ export const useGPFormSchema = (
   countryCode: string | undefined,
   schemaType: GPAdminSchemaType,
   fieldValues: FieldValues,
-  queryOptions?: { enabled?: boolean },
+  queryOptions?: { enabled?: boolean; employmentId?: string },
 ): ReturnType<typeof useQuery<JSONSchemaFormResultWithFieldsets>> => {
   const { client } = useClient();
+  const employmentId = queryOptions?.employmentId;
   return useQuery({
-    queryKey: ['gp-form-schema', countryCode, schemaType],
+    queryKey: ['gp-form-schema', countryCode, schemaType, employmentId],
     enabled: !!countryCode && (queryOptions?.enabled ?? true),
     retry: false,
     queryFn: async () => {
@@ -36,6 +37,13 @@ export const useGPFormSchema = (
           country_code: countryCode as string,
           form: schemaType,
         },
+        // Passing employment_id lets the gateway resolve the company/employment
+        // context (and therefore the schema-engine user_role) for forms whose
+        // `restrict_fields` component branches on role — contract_details and
+        // administrative_details are the common cases. The OpenAPI spec marks
+        // this as required only for `contract_amendment` and
+        // `global_payroll_state_taxes`, but the gateway uses it more broadly.
+        ...(employmentId ? { query: { employment_id: employmentId } } : {}),
       });
       if (response.error || !response.data) {
         throw new Error(`Failed to fetch ${schemaType} schema`);
