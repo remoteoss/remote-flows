@@ -252,7 +252,8 @@ export const usePayrollEmployeeOnboarding = ({
   const taxStepsAvailability = useMemo(() => {
     const federalReason = ((): TaxStepUnavailableReason | null => {
       if (!isUSA) return 'unsupported_country';
-      if (taxSubmitFailures.federal_taxes) return taxSubmitFailures.federal_taxes;
+      if (taxSubmitFailures.federal_taxes)
+        return taxSubmitFailures.federal_taxes;
       if (!isPostEnrollment) return 'pending_enrollment';
       if (federalTaxesSchema.isError) return 'schema_unavailable';
       return null;
