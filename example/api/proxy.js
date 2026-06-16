@@ -114,7 +114,9 @@ async function createProxyRequest(path, method = 'GET', options = {}) {
       if (!employmentId) {
         throw Object.assign(
           new Error('Missing x-rf-employment-id header for employee request'),
-          { response: { status: 400, data: { error: 'employmentId required' } } },
+          {
+            response: { status: 400, data: { error: 'employmentId required' } },
+          },
         );
       }
       ({ accessToken } = await fetchEmployeeToken(employmentId));

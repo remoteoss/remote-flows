@@ -250,10 +250,7 @@ function GPAdminOnboardingInner() {
 
 export function PayrollAdminOnboardingForm() {
   return (
-    <RemoteFlows
-      proxy={{ url: window.location.origin }}
-      authType='none'
-    >
+    <RemoteFlows proxy={{ url: window.location.origin }} authType='none'>
       <GPAdminOnboardingInner />
     </RemoteFlows>
   );
