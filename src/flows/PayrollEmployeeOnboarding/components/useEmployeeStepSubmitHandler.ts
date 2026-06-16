@@ -14,7 +14,7 @@ export function useEmployeeStepSubmitHandler({
       await onSubmit?.(values);
       const data = await employeeBag.onSubmit(values);
       await onSuccess?.(data);
-      employeeBag.goToNextStep();
+      employeeBag.next();
     } catch (error: unknown) {
       if (isMutationError(error)) {
         onError?.({

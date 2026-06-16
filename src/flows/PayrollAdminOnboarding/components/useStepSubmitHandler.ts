@@ -18,7 +18,7 @@ export function useStepSubmitHandler({
       await onSubmit?.(values);
       const data = await adminBag.onSubmit(values);
       await onSuccess?.(data);
-      adminBag.goToNextStep();
+      adminBag.next();
     } catch (error: unknown) {
       if (isMutationError(error)) {
         onError?.({

@@ -369,7 +369,7 @@ function EmployeeFlowInner({
                     ) : (
                       <button
                         className='submit-button'
-                        onClick={() => employeeBag.goToNextStep()}
+                        onClick={() => employeeBag.next()}
                       >
                         Skip
                       </button>

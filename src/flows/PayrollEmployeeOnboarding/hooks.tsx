@@ -1,5 +1,5 @@
 import { useMemo, useCallback, useState } from 'react';
-import { FieldValues } from 'react-hook-form';
+import type { FieldValues } from 'react-hook-form';
 import { useGPOnboardingSteps } from '@/src/common/api/gpOnboarding';
 import { useStepState } from '@/src/flows/useStepState';
 import type { Step } from '@/src/flows/useStepState';
@@ -45,16 +45,25 @@ const PERSONAL_DETAILS_JSF_MODIFY: JSFModify = {
   },
 };
 
-// Steps are stable. bank_account / federal_taxes / state_taxes are conditionally
-// rendered by their components (BankAccountStep checks substeps; the tax steps check
-// taxStepsAvailability) — consumers should decide which to render in their flow UI.
-const EMPLOYEE_STEPS: Record<EmployeeStepKey, Step<EmployeeStepKey>> = {
+const buildEmployeeSteps = ({
+  hasBankSubstep,
+  federalTaxesVisible,
+  stateTaxesVisible,
+}: {
+  hasBankSubstep: boolean;
+  federalTaxesVisible: boolean;
+  stateTaxesVisible: boolean;
+}): Record<EmployeeStepKey, Step<EmployeeStepKey>> => ({
   personal_details: { index: 0, name: 'personal_details' },
   home_address: { index: 1, name: 'home_address' },
-  bank_account: { index: 2, name: 'bank_account' },
-  federal_taxes: { index: 3, name: 'federal_taxes' },
-  state_taxes: { index: 4, name: 'state_taxes' },
-};
+  bank_account: { index: 2, name: 'bank_account', visible: hasBankSubstep },
+  federal_taxes: {
+    index: 3,
+    name: 'federal_taxes',
+    visible: federalTaxesVisible,
+  },
+  state_taxes: { index: 4, name: 'state_taxes', visible: stateTaxesVisible },
+});
 
 const TAX_STEPS = ['federal_taxes', 'state_taxes'] as const;
 type TaxStepKey = (typeof TAX_STEPS)[number];
@@ -66,8 +75,6 @@ export const usePayrollEmployeeOnboarding = ({
   initialValues,
   options,
 }: Omit<PayrollEmployeeOnboardingFlowProps, 'render'>) => {
-  const [fieldValues, setFieldValues] = useState<FieldValues>({});
-
   // Per-step failures detected at submit time. Used to retroactively flip a
   // tax step to `pending_enrollment` after the backend returns 404 with
   // `Tax task not found...`.
@@ -86,11 +93,6 @@ export const usePayrollEmployeeOnboarding = ({
     [updateErrorContext],
   );
 
-  const { stepState, nextStep, previousStep, goToStep, setStepValues } =
-    useStepState<EmployeeStepKey>(EMPLOYEE_STEPS, onStepChange);
-
-  const currentStep = stepState.currentStep.name;
-
   // ── API steps ───────────────────────────────────────────────────────────────
 
   const {
@@ -108,6 +110,35 @@ export const usePayrollEmployeeOnboarding = ({
     apiSteps?.find((s) => s.type === 'completion')?.sub_steps?.[0]?.status ===
     'completed';
 
+  // ── Step visibility — drop steps the backend says are unneeded ──────────────
+  const isUSA = countryCode === 'USA';
+  const isPostEnrollment = isComplete ?? false;
+  const hasBankSubstep = selfOnboardingSubsteps.some(
+    (s) => s.type === 'employee_provides_bank_details',
+  );
+
+  const steps = useMemo(
+    () =>
+      buildEmployeeSteps({
+        hasBankSubstep,
+        federalTaxesVisible: isUSA && isPostEnrollment,
+        stateTaxesVisible: isUSA && !!jurisdiction && isPostEnrollment,
+      }),
+    [hasBankSubstep, isUSA, isPostEnrollment, jurisdiction],
+  );
+
+  const {
+    stepState,
+    nextStep,
+    previousStep,
+    goToStep,
+    setStepValues,
+    fieldValues,
+    setFieldValues,
+  } = useStepState<EmployeeStepKey>(steps, onStepChange);
+
+  const currentStep = stepState.currentStep.name;
+
   // ── Tax-step availability ───────────────────────────────────────────────────
   //
   // The federal_taxes and state_taxes endpoints only respond once Tiger creates
@@ -118,8 +149,6 @@ export const usePayrollEmployeeOnboarding = ({
   // that is insufficient (e.g. step status is completed but employment lifecycle
   // is `onboarded`), we fall back to retroactively flipping the step to
   // `pending_enrollment` after the PUT returns 404. See `taxSubmitFailures`.
-  const isUSA = countryCode === 'USA';
-  const isPostEnrollment = isComplete ?? false;
 
   // ── Schema queries ──────────────────────────────────────────────────────────
 
@@ -174,12 +203,16 @@ export const usePayrollEmployeeOnboarding = ({
   );
 
   const currentSchema = useMemo(() => {
-    if (currentStep === 'personal_details') return personalDetailsSchema.data;
-    if (currentStep === 'home_address') return homeAddressSchema.data;
-    if (currentStep === 'bank_account') return bankAccountSchema.data;
-    if (currentStep === 'federal_taxes') return federalTaxesSchema.data;
-    if (currentStep === 'state_taxes') return stateTaxesSchema.data;
-    return undefined;
+    const schemaByStep: Partial<
+      Record<EmployeeStepKey, typeof personalDetailsSchema.data>
+    > = {
+      personal_details: personalDetailsSchema.data,
+      home_address: homeAddressSchema.data,
+      bank_account: bankAccountSchema.data,
+      federal_taxes: federalTaxesSchema.data,
+      state_taxes: stateTaxesSchema.data,
+    };
+    return schemaByStep[currentStep];
   }, [
     currentStep,
     personalDetailsSchema.data,
@@ -194,27 +227,22 @@ export const usePayrollEmployeeOnboarding = ({
   // `schema_unavailable` reason instead of letting the consumer render an
   // empty form.
   const taxStepsAvailability = useMemo(() => {
-    const federalReason: TaxStepUnavailableReason | null = !isUSA
-      ? 'unsupported_country'
-      : taxSubmitFailures.federal_taxes
-        ? taxSubmitFailures.federal_taxes
-        : !isPostEnrollment
-          ? 'pending_enrollment'
-          : federalTaxesSchema.isError
-            ? 'schema_unavailable'
-            : null;
+    const federalReason = ((): TaxStepUnavailableReason | null => {
+      if (!isUSA) return 'unsupported_country';
+      if (taxSubmitFailures.federal_taxes) return taxSubmitFailures.federal_taxes;
+      if (!isPostEnrollment) return 'pending_enrollment';
+      if (federalTaxesSchema.isError) return 'schema_unavailable';
+      return null;
+    })();
 
-    const stateReason: TaxStepUnavailableReason | null = !isUSA
-      ? 'unsupported_country'
-      : !jurisdiction
-        ? 'no_jurisdiction'
-        : taxSubmitFailures.state_taxes
-          ? taxSubmitFailures.state_taxes
-          : !isPostEnrollment
-            ? 'pending_enrollment'
-            : stateTaxesSchema.isError
-              ? 'schema_unavailable'
-              : null;
+    const stateReason = ((): TaxStepUnavailableReason | null => {
+      if (!isUSA) return 'unsupported_country';
+      if (!jurisdiction) return 'no_jurisdiction';
+      if (taxSubmitFailures.state_taxes) return taxSubmitFailures.state_taxes;
+      if (!isPostEnrollment) return 'pending_enrollment';
+      if (stateTaxesSchema.isError) return 'schema_unavailable';
+      return null;
+    })();
 
     return {
       federal_taxes: {
@@ -403,8 +431,8 @@ export const usePayrollEmployeeOnboarding = ({
     handleValidation,
     parseFormValues,
     onSubmit,
-    goToNextStep: nextStep,
-    goToPreviousStep: previousStep,
+    next: nextStep,
+    back: previousStep,
     goToStep,
     setStepValues,
   };

@@ -92,9 +92,112 @@ function AdminFlowForm({ legalEntityId }: { legalEntityId: string }) {
           return <p>Loading...</p>;
         }
 
+        const onStepError = (e: {
+          error: Error;
+          fieldErrors: { field: string; messages: string[] }[];
+        }) =>
+          handleError(
+            e.error,
+            e.fieldErrors.map((fe) => ({
+              ...fe,
+              userFriendlyLabel: fe.field,
+            })),
+          );
+
+        const renderStep = () => {
+          switch (currentStep) {
+            case 'select_country': {
+              const isFormReady =
+                !!adminBag.countryCode && adminBag.fields.length > 0;
+              return (
+                <>
+                  <SelectCountryStep
+                    onError={onStepError}
+                    onSuccess={clearErrors}
+                  />
+                  <AlertError errors={errors} />
+                  {isFormReady && (
+                    <div className='buttons-container'>
+                      <SubmitButton
+                        className='submit-button'
+                        onClick={clearErrors}
+                      >
+                        Create Employment & Continue
+                      </SubmitButton>
+                    </div>
+                  )}
+                </>
+              );
+            }
+            case 'contract_details':
+              return (
+                <>
+                  <ContractDetailsStep
+                    onError={onStepError}
+                    onSuccess={clearErrors}
+                  />
+                  <AlertError errors={errors} />
+                  <div className='buttons-container'>
+                    <BackButton className='back-button' onClick={clearErrors}>
+                      Previous Step
+                    </BackButton>
+                    <SubmitButton
+                      className='submit-button'
+                      onClick={clearErrors}
+                    >
+                      Save & Continue
+                    </SubmitButton>
+                  </div>
+                </>
+              );
+            case 'administrative_details':
+              return (
+                <>
+                  <AdministrativeDetailsStep
+                    onError={onStepError}
+                    onSuccess={clearErrors}
+                  />
+                  <AlertError errors={errors} />
+                  <div className='buttons-container'>
+                    <BackButton className='back-button' onClick={clearErrors}>
+                      Previous Step
+                    </BackButton>
+                    <SubmitButton
+                      className='submit-button'
+                      onClick={clearErrors}
+                    >
+                      Save & Continue
+                    </SubmitButton>
+                  </div>
+                </>
+              );
+            case 'invite':
+              return (
+                <>
+                  <AlertError errors={errors} />
+                  <div className='buttons-container'>
+                    <BackButton className='back-button' onClick={clearErrors}>
+                      Previous Step
+                    </BackButton>
+                    <InvitationStep
+                      onSuccess={() => {
+                        clearErrors();
+                        setDone(true);
+                      }}
+                      onError={onStepError}
+                    >
+                      Send Invitation
+                    </InvitationStep>
+                  </div>
+                </>
+              );
+            default:
+              return null;
+          }
+        };
+
         return (
           <>
-            {/* Step navigation bar — same pattern as Onboarding */}
             <div className='steps-navigation'>
               <ul>
                 {allSteps.map(([key, label], index) => (
@@ -114,127 +217,7 @@ function AdminFlowForm({ legalEntityId }: { legalEntityId: string }) {
               <p style={{ fontSize: 14, color: '#71717A', marginBottom: 24 }}>
                 {STEP_DESCRIPTIONS[currentStep]}
               </p>
-
-              {currentStep === 'select_country' && (
-                <>
-                  <SelectCountryStep
-                    onError={(e) =>
-                      handleError(
-                        e.error,
-                        e.fieldErrors.map((fe) => ({
-                          ...fe,
-                          userFriendlyLabel: fe.field,
-                        })),
-                      )
-                    }
-                    onSuccess={clearErrors}
-                  />
-                  <AlertError errors={errors} />
-                  {adminBag.countryCode && adminBag.fields.length > 0 && (
-                    <div className='buttons-container'>
-                      <SubmitButton
-                        className='submit-button'
-                        onClick={clearErrors}
-                      >
-                        Create Employment &amp; Continue
-                      </SubmitButton>
-                    </div>
-                  )}
-                  {adminBag.isLoading && adminBag.countryCode && (
-                    <p
-                      style={{ fontSize: 13, color: '#94a3b8', marginTop: 12 }}
-                    >
-                      Loading form…
-                    </p>
-                  )}
-                </>
-              )}
-
-              {currentStep === 'contract_details' && (
-                <>
-                  <ContractDetailsStep
-                    onError={(e) =>
-                      handleError(
-                        e.error,
-                        e.fieldErrors.map((fe) => ({
-                          ...fe,
-                          userFriendlyLabel: fe.field,
-                        })),
-                      )
-                    }
-                    onSuccess={clearErrors}
-                  />
-                  <AlertError errors={errors} />
-                  <div className='buttons-container'>
-                    <BackButton className='back-button' onClick={clearErrors}>
-                      Previous Step
-                    </BackButton>
-                    <SubmitButton
-                      className='submit-button'
-                      onClick={clearErrors}
-                    >
-                      Save &amp; Continue
-                    </SubmitButton>
-                  </div>
-                </>
-              )}
-
-              {currentStep === 'administrative_details' && (
-                <>
-                  <AdministrativeDetailsStep
-                    onError={(e) =>
-                      handleError(
-                        e.error,
-                        e.fieldErrors.map((fe) => ({
-                          ...fe,
-                          userFriendlyLabel: fe.field,
-                        })),
-                      )
-                    }
-                    onSuccess={clearErrors}
-                  />
-                  <AlertError errors={errors} />
-                  <div className='buttons-container'>
-                    <BackButton className='back-button' onClick={clearErrors}>
-                      Previous Step
-                    </BackButton>
-                    <SubmitButton
-                      className='submit-button'
-                      onClick={clearErrors}
-                    >
-                      Save &amp; Continue
-                    </SubmitButton>
-                  </div>
-                </>
-              )}
-
-              {currentStep === 'invite' && (
-                <>
-                  <AlertError errors={errors} />
-                  <div className='buttons-container'>
-                    <BackButton className='back-button' onClick={clearErrors}>
-                      Previous Step
-                    </BackButton>
-                    <InvitationStep
-                      onSuccess={() => {
-                        clearErrors();
-                        setDone(true);
-                      }}
-                      onError={(e) =>
-                        handleError(
-                          e.error,
-                          e.fieldErrors.map((fe) => ({
-                            ...fe,
-                            userFriendlyLabel: fe.field,
-                          })),
-                        )
-                      }
-                    >
-                      Send Invitation
-                    </InvitationStep>
-                  </div>
-                </>
-              )}
+              {renderStep()}
             </div>
           </>
         );
