@@ -122,6 +122,9 @@ import type {
   GetV1ContractorInvoicesIdErrors,
   GetV1ContractorInvoicesIdResponses,
   GetV1ContractorInvoicesResponses,
+  GetV1ContractorsCorTerminationRequestsData,
+  GetV1ContractorsCorTerminationRequestsErrors,
+  GetV1ContractorsCorTerminationRequestsResponses,
   GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdData,
   GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdErrors,
   GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdResponses,
@@ -169,6 +172,9 @@ import type {
   GetV1EmployeeAddressData,
   GetV1EmployeeAddressErrors,
   GetV1EmployeeAddressResponses,
+  GetV1EmployeeBankAccountData,
+  GetV1EmployeeBankAccountErrors,
+  GetV1EmployeeBankAccountResponses,
   GetV1EmployeeCurrentData,
   GetV1EmployeeCurrentErrors,
   GetV1EmployeeCurrentResponses,
@@ -240,6 +246,12 @@ import type {
   GetV1EmploymentsEmploymentIdCustomFieldsErrors,
   GetV1EmploymentsEmploymentIdCustomFieldsResponses,
   GetV1EmploymentsEmploymentIdData,
+  GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadData,
+  GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadErrors,
+  GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadResponses,
+  GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewData,
+  GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewErrors,
+  GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewResponses,
   GetV1EmploymentsEmploymentIdEngagementAgreementDetailsData,
   GetV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
   GetV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
@@ -299,6 +311,9 @@ import type {
   GetV1LeavePoliciesSummaryEmploymentIdErrors,
   GetV1LeavePoliciesSummaryEmploymentIdResponses,
   GetV1OffboardingsData,
+  GetV1OffboardingsEmploymentsEmploymentIdData,
+  GetV1OffboardingsEmploymentsEmploymentIdErrors,
+  GetV1OffboardingsEmploymentsEmploymentIdResponses,
   GetV1OffboardingsErrors,
   GetV1OffboardingsIdData,
   GetV1OffboardingsIdErrors,
@@ -405,6 +420,9 @@ import type {
   GetV1WorkAuthorizationRequestsIdErrors,
   GetV1WorkAuthorizationRequestsIdResponses,
   GetV1WorkAuthorizationRequestsResponses,
+  GetV2EmploymentsEmploymentIdBasicInformationData,
+  GetV2EmploymentsEmploymentIdBasicInformationErrors,
+  GetV2EmploymentsEmploymentIdBasicInformationResponses,
   GetV2EmploymentsEmploymentIdEngagementAgreementDetailsData,
   GetV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
   GetV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
@@ -650,6 +668,9 @@ import type {
   PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksResponses,
   PostV1SandboxCompaniesCompanyIdLegalEntitiesData,
   PostV1SandboxCompaniesCompanyIdLegalEntitiesErrors,
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollData,
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollErrors,
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollResponses,
   PostV1SandboxCompaniesCompanyIdLegalEntitiesResponses,
   PostV1SandboxEmploymentsData,
   PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveData,
@@ -705,6 +726,9 @@ import type {
   PutV1EmployeeAddressData,
   PutV1EmployeeAddressErrors,
   PutV1EmployeeAddressResponses,
+  PutV1EmployeeBankAccountData,
+  PutV1EmployeeBankAccountErrors,
+  PutV1EmployeeBankAccountResponses,
   PutV1EmployeeEmergencyContactData,
   PutV1EmployeeEmergencyContactErrors,
   PutV1EmployeeEmergencyContactResponses,
@@ -714,6 +738,9 @@ import type {
   PutV1EmployeePersonalDetailsData,
   PutV1EmployeePersonalDetailsErrors,
   PutV1EmployeePersonalDetailsResponses,
+  PutV1EmployeeStateTaxesJurisdictionData,
+  PutV1EmployeeStateTaxesJurisdictionErrors,
+  PutV1EmployeeStateTaxesJurisdictionResponses,
   PutV1EmploymentsEmploymentIdBasicInformationData,
   PutV1EmploymentsEmploymentIdBasicInformationErrors,
   PutV1EmploymentsEmploymentIdBasicInformationResponses,
@@ -1391,6 +1418,74 @@ export const getV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesSta
     });
 
 /**
+ * Show employee bank account
+ *
+ * Returns the authenticated employee's bank account details.
+ *
+ * This endpoint requires and returns country-specific data. The exact fields vary depending on which
+ * country the authenticated employee's employment is in. Query the
+ * [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint with `bank_account_details`
+ * as the form name to discover the schema for a given country.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View bank accounts (`bank_account:read`) | Manage bank accounts (`bank_account:write`) |
+ *
+ */
+export const getV1EmployeeBankAccount = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1EmployeeBankAccountData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1EmployeeBankAccountResponses,
+    GetV1EmployeeBankAccountErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/bank-account',
+    ...options,
+  });
+
+/**
+ * Update employee bank account
+ *
+ * Upserts the authenticated employee's bank account details.
+ *
+ * This endpoint requires and returns country-specific data. The exact fields vary depending on which
+ * country the authenticated employee's employment is in. Query the
+ * [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint with `bank_account_details`
+ * as the form name to discover the schema for a given country.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage bank accounts (`bank_account:write`) |
+ *
+ */
+export const putV1EmployeeBankAccount = <ThrowOnError extends boolean = false>(
+  options?: Options<PutV1EmployeeBankAccountData, ThrowOnError>,
+) =>
+  (options?.client ?? client).put<
+    PutV1EmployeeBankAccountResponses,
+    PutV1EmployeeBankAccountErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/bank-account',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+
+/**
  * Get Help Center Article
  *
  * Get a help center article by its ID
@@ -1802,7 +1897,7 @@ export const getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage payroll runs (`payroll`) | View payslips (`payslip:read`) | - |
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
  *
  */
 export const getV1EmployeePayslips = <ThrowOnError extends boolean = false>(
@@ -1815,6 +1910,38 @@ export const getV1EmployeePayslips = <ThrowOnError extends boolean = false>(
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/v1/employee/payslips',
+    ...options,
+  });
+
+/**
+ * List contractor of record (COR) termination requests
+ *
+ * Lists Contractor of Record termination requests for your company,
+ * optionally filtered by employment and status.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getV1ContractorsCorTerminationRequests = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetV1ContractorsCorTerminationRequestsData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1ContractorsCorTerminationRequestsResponses,
+    GetV1ContractorsCorTerminationRequestsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/contractors/cor-termination-requests',
     ...options,
   });
 
@@ -2705,6 +2832,57 @@ export const postV1MagicLink = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * Get basic information
+ *
+ * Returns the employment's basic information.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getV2EmploymentsEmploymentIdBasicInformation = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV2EmploymentsEmploymentIdBasicInformationData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetV2EmploymentsEmploymentIdBasicInformationResponses,
+    GetV2EmploymentsEmploymentIdBasicInformationErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/basic_information',
+    ...options,
   });
 
 /**
@@ -3922,6 +4100,44 @@ export const postV1ContractAmendments = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Download the Employment Agreement for an employment
+ *
+ * Downloads a PDF of the auto-generated Employment Agreement for an employment.
+ *
+ * The document is rendered as a draft (no signatures) and is not persisted. EA preview is only
+ * available for countries that have a published Employment Agreement automation template — see the
+ * `employment_agreement_preview_available` flag on the [Countries](#tag/Countries) endpoint.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
+ *
+ */
+export const getV1EmploymentsEmploymentIdEmploymentAgreementDownload = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadResponses,
+    GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/{employment_id}/employment-agreement/download',
+    ...options,
+  });
+
+/**
  * Show Company Payroll Runs
  *
  * Given an ID, shows a payroll run.
@@ -4250,9 +4466,11 @@ export const postV1EmployeeTimeoffIdCancel = <
  * - pricing_plan_details
  * - company_basic_information
  * - global_payroll_administrative_details
+ * - global_payroll_bank_account_details
  * - global_payroll_basic_information
  * - global_payroll_contract_details
  * - global_payroll_federal_taxes
+ * - global_payroll_state_taxes
  * - global_payroll_personal_details
  * - benefit_renewal_request
  * - hris_personal_details
@@ -4935,7 +5153,7 @@ export const postV1TimesheetsTimesheetIdApprove = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage payroll runs (`payroll`) | View payslips (`payslip:read`) | - |
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
  *
  */
 export const getV1PayslipsId = <ThrowOnError extends boolean = false>(
@@ -5070,6 +5288,36 @@ export const postV1CompanyDepartments = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * List Offboardings for Employment
+ *
+ * Lists Offboarding requests for a specific employment.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View offboarding requests (`offboarding:read`) | Manage offboarding (`offboarding:write`) |
+ *
+ */
+export const getV1OffboardingsEmploymentsEmploymentId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1OffboardingsEmploymentsEmploymentIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetV1OffboardingsEmploymentsEmploymentIdResponses,
+    GetV1OffboardingsEmploymentsEmploymentIdErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/offboardings/employments/{employment_id}',
+    ...options,
   });
 
 /**
@@ -6020,7 +6268,7 @@ export const getV1Countries = <ThrowOnError extends boolean = false>(
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage payroll runs (`payroll`) | View payslips (`payslip:read`) | - |
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
  *
  */
 export const getV1EmployeePayslipFiles = <ThrowOnError extends boolean = false>(
@@ -6259,6 +6507,39 @@ export const postV1CostCalculatorEstimationCsv = <
   });
 
 /**
+ * Activate Global Payroll for a legal entity
+ *
+ * Enables the Global Payroll product on a legal entity so that GP employees can be created against it.
+ *
+ * Performs three idempotent steps:
+ * * Adds the Global Payroll product to the company.
+ * * Flips `global_payroll_enabled` on the legal entity's settings.
+ * * Ensures a Global Payroll pricing plan exists for the legal entity's country.
+ *
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ */
+export const postV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayroll =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).post<
+      PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollResponses,
+      PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/sandbox/companies/{company_id}/legal-entities/{legal_entity_id}/activate-global-payroll',
+      ...options,
+    });
+
+/**
  * Show employee personal details
  *
  * Returns the authenticated employee's personal details.
@@ -6426,7 +6707,7 @@ export const postV1SandboxWebhookCallbacksTrigger = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage payroll runs (`payroll`) | View payslips (`payslip:read`) | - |
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
  *
  */
 export const getV1PayslipsPayslipIdPdf = <ThrowOnError extends boolean = false>(
@@ -8168,7 +8449,7 @@ export const getV1ProbationExtensionsId = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage payroll runs (`payroll`) | View payslips (`payslip:read`) | - |
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
  *
  */
 export const getV1Payslips = <ThrowOnError extends boolean = false>(
@@ -9051,6 +9332,47 @@ export const postV1ContractorInvoiceSchedules = <
   });
 
 /**
+ * Submit employee state taxes
+ *
+ * Submits the authenticated employee's US state tax withholding answers for a
+ * single jurisdiction (e.g. `NY`).
+ *
+ * Available for US Global Payroll employees once they reach the post-enrollment
+ * state, at which point the per-jurisdiction state tax task exists.
+ *
+ * This endpoint requires country/jurisdiction-specific data. Query the
+ * [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint with `global_payroll_state_taxes`
+ * as the form name to discover the schema for a given country.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage personal details (`personal_detail:write`) |
+ *
+ */
+export const putV1EmployeeStateTaxesJurisdiction = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PutV1EmployeeStateTaxesJurisdictionData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PutV1EmployeeStateTaxesJurisdictionResponses,
+    PutV1EmployeeStateTaxesJurisdictionErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/employee/state-taxes/{jurisdiction}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * Get engagement agreement details
  *
  * Returns the engagement agreement details for an employment.
@@ -9160,6 +9482,44 @@ export const getV1BillingDocumentsBillingDocumentIdBreakdown = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/billing-documents/{billing_document_id}/breakdown',
+    ...options,
+  });
+
+/**
+ * Preview the Employment Agreement for an employment
+ *
+ * Returns a base64-encoded PDF preview of the auto-generated Employment Agreement for an employment.
+ *
+ * The document is rendered as a draft (no signatures) and is not persisted. EA preview is only
+ * available for countries that have a published Employment Agreement automation template — see the
+ * `employment_agreement_preview_available` flag on the [Countries](#tag/Countries) endpoint.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
+ *
+ */
+export const getV1EmploymentsEmploymentIdEmploymentAgreementPreview = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewResponses,
+    GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/{employment_id}/employment-agreement/preview',
     ...options,
   });
 

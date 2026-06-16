@@ -7,12 +7,14 @@ export type StepKeys =
   | 'engagement_agreement_details'
   | 'contract_details'
   | 'benefits'
+  | 'employment_agreement_preview'
   | 'review';
 
 type StepConfig = {
   includeSelectCountry?: boolean;
   includeEngagementAgreementDetails?: boolean;
   useDynamicSteps?: boolean;
+  useEAPreview?: boolean;
 };
 
 export function buildSteps(config: StepConfig = {}) {
@@ -45,6 +47,11 @@ export function buildSteps(config: StepConfig = {}) {
       name: 'benefits',
       label: 'Benefits',
       visible: true,
+    },
+    {
+      name: 'employment_agreement_preview',
+      label: 'Preview Employment Agreement',
+      visible: Boolean(config?.useEAPreview),
     },
     {
       name: 'review',

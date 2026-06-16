@@ -90,6 +90,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     BackButton,
     SelectCountryStep,
     EngagementAgreementDetailsStep,
+    PreviewEmploymentAgreementStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -266,6 +267,27 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             </SubmitButton>
           </div>
         </div>
+      );
+    }
+    case 'employment_agreement_preview': {
+      return (
+        <>
+          <PreviewEmploymentAgreementStep />
+          <div className='buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Previous Step
+            </BackButton>
+            <SubmitButton
+              className='submit-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Continue
+            </SubmitButton>
+          </div>
+        </>
       );
     }
     case 'review':

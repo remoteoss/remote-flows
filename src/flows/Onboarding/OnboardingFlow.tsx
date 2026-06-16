@@ -13,6 +13,7 @@ import { ReviewStep } from '@/src/flows/Onboarding/components/ReviewStep';
 import { SaveDraftButton } from '@/src/flows/Onboarding/components/SaveDraftButton';
 import { EngagementAgreementDetailsStep } from '@/src/flows/Onboarding/components/EngagementAgreementDetailsStep';
 import { PreOnboardingRequirements } from '@/src/flows/Onboarding/components/PreOnboardingRequirements';
+import { PreviewEmploymentAgreementStep } from '@/src/flows/Onboarding/components/PreviewEmploymentAgreementStep';
 
 export const OnboardingFlow = ({
   employmentId,
@@ -68,6 +69,7 @@ export const OnboardingFlow = ({
           SelectCountryStep: SelectCountryStep,
           ReviewStep: ReviewStep,
           PreOnboardingRequirements: PreOnboardingRequirements,
+          PreviewEmploymentAgreementStep: PreviewEmploymentAgreementStep,
         },
       })}
     </OnboardingContext.Provider>
