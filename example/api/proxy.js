@@ -3,13 +3,14 @@ const {
   fetchClientCredentialsAccessToken,
   fetchAccessToken,
 } = require('./get_token.js');
+const { fetchEmployeeToken } = require('./jwt_auth.js');
 const { buildGatewayURL } = require('./utils.js');
 
 /**
  * Determines which token type to use based on HTTP method and path
  * @param {string} method - HTTP method (GET, POST, PUT, PATCH, etc.)
  * @param {string} path - The API path (e.g., '/v1/countries' or '/v2/countries?foo=bar')
- * @returns {'client-credentials' | 'user-token'} The token type to use
+ * @returns {'client-credentials' | 'user-token' | 'employee-assertion'} The token type to use
  */
 function getTokenType(method, path) {
   const normalizedMethod = method.toUpperCase();
@@ -54,10 +55,11 @@ function getTokenType(method, path) {
     return 'client-credentials';
   }
 
-  // /v1/employee/* endpoints require an employee-scoped assertion token.
-  // The SDK already sends the correct Bearer token — pass it through unchanged.
+  // /v1/employee/* endpoints need an employment-scoped assertion. The FE
+  // identifies which employment via the x-rf-employment-id header; the proxy
+  // mints the JWT-bearer token server-side so the FE never sees it.
   if (/^\/v1\/employee\//.test(pathname)) {
-    return 'pass-through';
+    return 'employee-assertion';
   }
 
   // All other requests use user token
@@ -104,18 +106,23 @@ async function createProxyRequest(path, method = 'GET', options = {}) {
   // Add authentication if required
   if (requiresAuth) {
     const tokenType = getTokenType(method, path);
-    if (tokenType === 'pass-through') {
-      // Employee endpoints: the SDK already set the correct Bearer token in the
-      // incoming request — forward it unchanged instead of overwriting with a
-      // company manager token.
-      // headers already contains the incoming Authorization from ...headers above.
+    let accessToken;
+    if (tokenType === 'client-credentials') {
+      ({ accessToken } = await fetchClientCredentialsAccessToken());
+    } else if (tokenType === 'employee-assertion') {
+      const employmentId = headers['x-rf-employment-id'];
+      if (!employmentId) {
+        throw Object.assign(
+          new Error('Missing x-rf-employment-id header for employee request'),
+          { response: { status: 400, data: { error: 'employmentId required' } } },
+        );
+      }
+      ({ accessToken } = await fetchEmployeeToken(employmentId));
     } else {
-      const { accessToken } =
-        tokenType === 'client-credentials'
-          ? await fetchClientCredentialsAccessToken()
-          : await fetchAccessToken();
-      requestConfig.headers.Authorization = `Bearer ${accessToken}`;
+      ({ accessToken } = await fetchAccessToken());
     }
+    requestConfig.headers.Authorization = `Bearer ${accessToken}`;
+    delete requestConfig.headers['x-rf-employment-id'];
   }
 
   return axios(requestConfig);

@@ -86,6 +86,11 @@ async function fetchCompanyManagerToken() {
 
 // Express route handler
 async function getCompanyManagerToken(req, res) {
+  if (process.env.NODE_ENV === 'production') {
+    return res
+      .status(403)
+      .json({ error: 'This endpoint is not available in production mode' });
+  }
   try {
     const { accessToken, expiresIn } = await fetchCompanyManagerToken();
 
@@ -162,6 +167,11 @@ async function fetchEmployeeToken(employmentId) {
 }
 
 async function getEmployeeToken(req, res) {
+  if (process.env.NODE_ENV === 'production') {
+    return res
+      .status(403)
+      .json({ error: 'This endpoint is not available in production mode' });
+  }
   const { employmentId } = req.params;
   try {
     const { accessToken, expiresIn } = await fetchEmployeeToken(employmentId);
@@ -178,5 +188,6 @@ module.exports = {
   getCompanyManagerToken,
   generateJWTToken,
   fetchCompanyManagerToken,
+  fetchEmployeeToken,
   getEmployeeToken,
 };

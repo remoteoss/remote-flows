@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import {
   PayrollEmployeeOnboardingFlow,
   PayrollEmployeeOnboardingRenderProps,
@@ -41,17 +41,6 @@ type Errors = {
 };
 
 const emptyErrors: Errors = { apiError: '', fieldErrors: [] };
-
-// Fetches an employee-scoped token via the JWT assertion grant.
-function buildEmployeeAuth(employmentId: string) {
-  return () =>
-    fetch(`/api/fetch-employee-token/${employmentId}`)
-      .then((res) => res.json())
-      .then((data) => ({
-        accessToken: data.access_token as string,
-        expiresIn: (data.expires_in as number) ?? 300,
-      }));
-}
 
 // ── Outer-context loader (company manager token) ────────────────────────────
 //
@@ -438,10 +427,6 @@ function EmployeeFlowInner({
 function EmployeeFlowForm({ employmentId }: { employmentId: string }) {
   const { hasBankAccount, countryCode, jurisdiction, isLoading } =
     useEmployeeFlowContext(employmentId);
-  const employeeAuth = useMemo(
-    () => buildEmployeeAuth(employmentId),
-    [employmentId],
-  );
 
   if (isLoading) return <p>Loading...</p>;
   if (!countryCode) {
@@ -460,8 +445,16 @@ function EmployeeFlowForm({ employmentId }: { employmentId: string }) {
   }
 
   return (
-    // Inner RemoteFlows uses the employee-scoped token for all mutations
-    <RemoteFlows proxy={{ url: window.location.origin }} auth={employeeAuth}>
+    // Inner context: the proxy mints the employee-scoped JWT-bearer token
+    // server-side when it sees the x-rf-employment-id header on /v1/employee/*
+    // routes. The FE never holds the employee token.
+    <RemoteFlows
+      proxy={{
+        url: window.location.origin,
+        headers: { 'x-rf-employment-id': employmentId },
+      }}
+      authType='none'
+    >
       <EmployeeFlowInner
         employmentId={employmentId}
         hasBankAccount={hasBankAccount}
@@ -541,8 +534,9 @@ function GPEmployeeOnboardingInner() {
 
 export function PayrollEmployeeOnboardingForm() {
   return (
-    // Outer RemoteFlows uses company manager token to fetch step status
-    <RemoteFlows proxy={{ url: window.location.origin }}>
+    // Outer context: the proxy mints the company-manager token server-side
+    // for /v1/employments/* and /v1/companies/*, so the FE never sees one.
+    <RemoteFlows proxy={{ url: window.location.origin }} authType='none'>
       <GPEmployeeOnboardingInner />
     </RemoteFlows>
   );
