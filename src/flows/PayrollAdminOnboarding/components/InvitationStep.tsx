@@ -2,7 +2,8 @@ import { PropsWithChildren } from 'react';
 import { usePayrollAdminOnboardingContext } from '@/src/flows/PayrollAdminOnboarding/context';
 import { useFormFields } from '@/src/context';
 import type { GPStepCallbacks } from '@/src/flows/types';
-import { isMutationError } from '@/src/lib/mutations';
+import { isMutationError, mutationToPromise } from '@/src/lib/mutations';
+import { useGPInviteEmployee } from '@/src/flows/PayrollAdminOnboarding/api';
 
 type InvitationStepProps = Pick<GPStepCallbacks, 'onSuccess' | 'onError'> & {
   children?: React.ReactNode;
@@ -15,6 +16,8 @@ export function InvitationStep({
 }: PropsWithChildren<InvitationStepProps>) {
   const { adminBag } = usePayrollAdminOnboardingContext();
   const { components } = useFormFields();
+  const inviteMutation = useGPInviteEmployee();
+  const { mutateAsyncOrThrow: inviteAsync } = mutationToPromise(inviteMutation);
 
   const CustomButton = components?.button;
   if (!CustomButton) {
@@ -22,10 +25,12 @@ export function InvitationStep({
   }
 
   const handleInvite = async () => {
+    if (!adminBag.employmentId) return;
     try {
-      const data = await adminBag.sendInvite();
+      const data = await inviteAsync({ employmentId: adminBag.employmentId });
+      await adminBag.refetchSteps();
       await onSuccess?.(data);
-      adminBag.goToNextStep();
+      adminBag.next();
     } catch (error: unknown) {
       if (isMutationError(error)) {
         onError?.({
@@ -44,7 +49,10 @@ export function InvitationStep({
   };
 
   return (
-    <CustomButton onClick={handleInvite} disabled={adminBag.isSubmitting}>
+    <CustomButton
+      onClick={handleInvite}
+      disabled={inviteMutation.isPending || adminBag.isSubmitting}
+    >
       {children ?? 'Send invitation'}
     </CustomButton>
   );

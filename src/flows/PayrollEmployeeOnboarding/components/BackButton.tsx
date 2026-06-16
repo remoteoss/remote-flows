@@ -16,7 +16,7 @@ export function BackButton({
   }
 
   const handleBack = (evt: React.MouseEvent<HTMLButtonElement>) => {
-    employeeBag.goToPreviousStep();
+    employeeBag.back();
     onClick?.(evt);
   };
 

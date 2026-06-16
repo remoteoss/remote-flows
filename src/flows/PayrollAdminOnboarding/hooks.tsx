@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { FieldValues } from 'react-hook-form';
+import type { FieldValues } from 'react-hook-form';
 import { useGPOnboardingSteps } from '@/src/common/api/gpOnboarding';
 import { useStepState } from '@/src/flows/useStepState';
 import type { Step } from '@/src/flows/useStepState';
@@ -12,7 +12,6 @@ import {
   useGPCreateEmployment,
   useGPUpdateContractDetails,
   useGPUpdateAdministrativeDetails,
-  useGPInviteEmployee,
 } from '@/src/flows/PayrollAdminOnboarding/api';
 import type { JSONSchemaFormResultWithFieldsets } from '@/src/flows/types';
 
@@ -57,9 +56,7 @@ export const usePayrollAdminOnboarding = ({
     string | undefined
   >(initialCountryCode);
 
-  const [fieldValues, setFieldValues] = useState<FieldValues>({});
-
-  // Fix: derive from state so setInternalCountryCode is reflected in step visibility
+  // Derive from state so setInternalCountryCode is reflected in step visibility
   const skipCountry = !!internalCountryCode && !!initialCountryCode;
 
   const steps = useMemo(() => buildAdminSteps(skipCountry), [skipCountry]);
@@ -75,8 +72,15 @@ export const usePayrollAdminOnboarding = ({
     [updateErrorContext],
   );
 
-  const { stepState, nextStep, previousStep, goToStep, setStepValues } =
-    useStepState<AdminStepKey>(steps, onStepChange);
+  const {
+    stepState,
+    nextStep,
+    previousStep,
+    goToStep,
+    setStepValues,
+    fieldValues,
+    setFieldValues,
+  } = useStepState<AdminStepKey>(steps, onStepChange);
 
   const currentStep = stepState.currentStep.name;
 
@@ -105,13 +109,15 @@ export const usePayrollAdminOnboarding = ({
     },
   );
 
-  // Current step's schema form
   const currentSchema = useMemo(() => {
-    if (currentStep === 'select_country') return basicInfoSchema.data;
-    if (currentStep === 'contract_details') return contractDetailsSchema.data;
-    if (currentStep === 'administrative_details')
-      return adminDetailsSchema.data;
-    return undefined;
+    const schemaByStep: Partial<
+      Record<AdminStepKey, typeof basicInfoSchema.data>
+    > = {
+      select_country: basicInfoSchema.data,
+      contract_details: contractDetailsSchema.data,
+      administrative_details: adminDetailsSchema.data,
+    };
+    return schemaByStep[currentStep];
   }, [
     currentStep,
     basicInfoSchema.data,
@@ -124,11 +130,9 @@ export const usePayrollAdminOnboarding = ({
     contractDetailsSchema.isLoading ||
     adminDetailsSchema.isLoading;
 
-  // Mutations
   const createEmploymentMutation = useGPCreateEmployment();
   const updateContractDetailsMutation = useGPUpdateContractDetails();
   const updateAdminDetailsMutation = useGPUpdateAdministrativeDetails();
-  const inviteEmployeeMutation = useGPInviteEmployee();
 
   const { mutateAsyncOrThrow: createEmploymentAsync } = mutationToPromise(
     createEmploymentMutation,
@@ -139,15 +143,11 @@ export const usePayrollAdminOnboarding = ({
   const { mutateAsyncOrThrow: updateAdminDetailsAsync } = mutationToPromise(
     updateAdminDetailsMutation,
   );
-  const { mutateAsyncOrThrow: inviteEmployeeAsync } = mutationToPromise(
-    inviteEmployeeMutation,
-  );
 
   const isSubmitting =
     createEmploymentMutation.isPending ||
     updateContractDetailsMutation.isPending ||
-    updateAdminDetailsMutation.isPending ||
-    inviteEmployeeMutation.isPending;
+    updateAdminDetailsMutation.isPending;
 
   const {
     data: apiSteps,
@@ -240,49 +240,31 @@ export const usePayrollAdminOnboarding = ({
     ],
   );
 
-  // sendInvite does NOT call nextStep() — navigation is the caller's responsibility,
-  // consistent with onSubmit. InvitationStep calls goToNextStep() after onSuccess.
-  const sendInvite = useCallback(async () => {
-    if (!internalEmploymentId) return;
-    const data = await inviteEmployeeAsync({
-      employmentId: internalEmploymentId,
-    });
-    await refetchSteps();
-    return data;
-  }, [internalEmploymentId, inviteEmployeeAsync, refetchSteps]);
-
   return {
-    // Step state
     stepState,
     isLoading: isLoadingSteps || isLoadingSchema,
     isSubmitting,
     isComplete: isComplete ?? false,
-    // Identity
     companyId,
     legalEntityId,
     countryCode: internalCountryCode,
     employmentId: internalEmploymentId,
     initialValues,
     options,
-    // API steps
     apiSteps,
     refetchSteps,
-    // Current step schema
     fields: currentSchema?.fields ?? [],
     meta: (currentSchema?.meta ??
       {}) as JSONSchemaFormResultWithFieldsets['meta'],
     fieldValues,
     setFieldValues,
-    // Form helpers
     handleValidation,
     parseFormValues,
     onSubmit,
-    sendInvite,
-    // Navigation
     setInternalCountryCode,
     setInternalEmploymentId,
-    goToNextStep: nextStep,
-    goToPreviousStep: previousStep,
+    next: nextStep,
+    back: previousStep,
     goToStep,
     setStepValues,
   };

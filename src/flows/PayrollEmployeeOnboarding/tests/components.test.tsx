@@ -41,8 +41,8 @@ function buildBag(overrides: Partial<Bag> = {}): Bag {
     isSubmitting: false,
     selfOnboardingSubsteps: [],
     initialValues: undefined,
-    goToPreviousStep: vi.fn(),
-    goToNextStep: vi.fn(),
+    back: vi.fn(),
+    next: vi.fn(),
     onSubmit: vi.fn().mockResolvedValue({ data: 'ok' }),
     taxStepsAvailability: {
       federal_taxes: { isAvailable: true, unavailableReason: null },
@@ -91,22 +91,22 @@ describe('SubmitButton', () => {
 });
 
 describe('BackButton', () => {
-  it('calls goToPreviousStep then the consumer onClick on click', () => {
-    const goToPreviousStep = vi.fn();
+  it('calls back then the consumer onClick on click', () => {
+    const back = vi.fn();
     const onClick = vi.fn();
-    mockContext(buildBag({ goToPreviousStep }));
+    mockContext(buildBag({ back }));
     render(<BackButton onClick={onClick}>Back</BackButton>);
     fireEvent.click(screen.getByRole('button', { name: 'Back' }));
-    expect(goToPreviousStep).toHaveBeenCalledTimes(1);
+    expect(back).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  it('still calls goToPreviousStep when no onClick is supplied', () => {
-    const goToPreviousStep = vi.fn();
-    mockContext(buildBag({ goToPreviousStep }));
+  it('still calls back when no onClick is supplied', () => {
+    const back = vi.fn();
+    mockContext(buildBag({ back }));
     render(<BackButton>Back</BackButton>);
     fireEvent.click(screen.getByRole('button'));
-    expect(goToPreviousStep).toHaveBeenCalledTimes(1);
+    expect(back).toHaveBeenCalledTimes(1);
   });
 
   it('throws when no button component is configured', () => {
@@ -238,9 +238,9 @@ describe('FederalTaxesStep / StateTaxesStep', () => {
 
 describe('useEmployeeStepSubmitHandler', () => {
   it('calls onSubmit, bag.onSubmit, onSuccess, then advances', async () => {
-    const goToNextStep = vi.fn();
+    const next = vi.fn();
     const bagOnSubmit = vi.fn().mockResolvedValue({ id: '1' });
-    mockContext(buildBag({ onSubmit: bagOnSubmit, goToNextStep }));
+    mockContext(buildBag({ onSubmit: bagOnSubmit, next }));
 
     const onSubmit = vi.fn();
     const onSuccess = vi.fn();
@@ -252,12 +252,12 @@ describe('useEmployeeStepSubmitHandler', () => {
     expect(onSubmit).toHaveBeenCalledWith({ a: 1 });
     expect(bagOnSubmit).toHaveBeenCalledWith({ a: 1 });
     expect(onSuccess).toHaveBeenCalledWith({ id: '1' });
-    expect(goToNextStep).toHaveBeenCalledTimes(1);
+    expect(next).toHaveBeenCalledTimes(1);
     expect(onError).not.toHaveBeenCalled();
   });
 
   it('routes mutation-shaped errors through onError without advancing', async () => {
-    const goToNextStep = vi.fn();
+    const next = vi.fn();
     const mutationErr = {
       error: new Error('boom'),
       rawError: { message: 'boom' },
@@ -265,7 +265,7 @@ describe('useEmployeeStepSubmitHandler', () => {
       fieldErrors: [{ field: 'x', messages: ['bad'] }],
     };
     const bagOnSubmit = vi.fn().mockRejectedValue(mutationErr);
-    mockContext(buildBag({ onSubmit: bagOnSubmit, goToNextStep }));
+    mockContext(buildBag({ onSubmit: bagOnSubmit, next }));
 
     const onError = vi.fn();
     const { result } = renderHook(() =>
@@ -277,7 +277,7 @@ describe('useEmployeeStepSubmitHandler', () => {
       rawError: mutationErr.rawError,
       fieldErrors: mutationErr.fieldErrors,
     });
-    expect(goToNextStep).not.toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
   });
 
   it('falls back to plain-error shape when error is not a MutationError', async () => {

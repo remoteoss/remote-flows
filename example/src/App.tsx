@@ -180,14 +180,14 @@ const additionalDemos = [
   {
     id: 'payroll-admin-onboarding',
     title: 'GP Admin Onboarding',
-    description: 'Global Payroll admin onboarding flow (PBYR-4044)',
+    description: 'Global Payroll admin onboarding flow',
     component: PayrollAdminOnboardingForm,
     sourceCode: '',
   },
   {
     id: 'payroll-employee-onboarding',
     title: 'GP Employee Onboarding',
-    description: 'Global Payroll employee self-onboarding flow (PBYR-4045)',
+    description: 'Global Payroll employee self-onboarding flow',
     component: PayrollEmployeeOnboardingForm,
     sourceCode: '',
   },

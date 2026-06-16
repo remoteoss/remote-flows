@@ -116,10 +116,12 @@ export type JSONSchemaFormResultWithFieldsets = FormResult & {
 
 /**
  * Shared callback prop type for GP step components (admin and employee flows).
+ * `TSuccess` lets a step narrow the success payload to its own response type;
+ * defaults to `unknown` for compatibility.
  */
-export type GPStepCallbacks = {
+export type GPStepCallbacks<TSuccess = unknown> = {
   onSubmit?: (payload: Record<string, unknown>) => void | Promise<void>;
-  onSuccess?: (data: unknown) => void | Promise<void>;
+  onSuccess?: (data: TSuccess) => void | Promise<void>;
   onError?: (args: {
     error: Error;
     rawError: Record<string, unknown>;
