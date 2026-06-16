@@ -3,7 +3,6 @@ import {
   Employment,
   EmploymentCreateParams,
   EmploymentFullParams,
-  SuccessResponse,
 } from '@/src/client';
 import { JSFFields, NestedMeta } from '@/src/types/remoteFlows';
 import { useStepState, Step } from '@/src/flows/useStepState';
@@ -1002,10 +1001,6 @@ export const useOnboarding = ({
           employmentId: internalEmploymentId as string,
           ...parsedValues,
         });
-      }
-      case 'employment_agreement_preview': {
-        // in theory we shouldn't submit any info here...
-        return Promise.resolve({ data: { status: 'ok' } } as SuccessResponse);
       }
     }
     return;
