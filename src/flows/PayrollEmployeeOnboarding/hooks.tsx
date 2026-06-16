@@ -30,20 +30,43 @@ export type EmployeeStepKey =
   | 'federal_taxes'
   | 'state_taxes';
 
-// Stable module-level jsfModify for personal_details — avoids recreating createHeadlessForm
-// on every render (select closure captures fieldValues from outer scope per render, so the
-// schema data itself is always fresh; the jsfModify just needs to be reference-stable).
-const PERSONAL_DETAILS_JSF_MODIFY: JSFModify = {
+// Stable module-level jsfModify configs for personal_details. Two variants:
+// - USA: schema's mobile_number is a plain 10-digit string with `inputType: 'text'`.
+//   Add a description so users know what's expected.
+// - non-USA: schema's mobile_number is an `anyOf` of per-country dial-code
+//   patterns. Force `inputType: 'tel'` so TelField renders a country picker +
+//   national-number input. Without this it falls back to a plain text input
+//   that silently fails the anyOf validation.
+//
+// Both variants hide `name` (a computed display-only field that the PUT
+// endpoint rejects via `additionalProperties: false`).
+const PERSONAL_DETAILS_HIDE_NAME = {
+  name: { 'x-jsf-presentation': { inputType: 'hidden' } },
+};
+
+const PERSONAL_DETAILS_JSF_MODIFY_USA: JSFModify = {
   fields: {
-    // 'name' is a computed read-only display field; hide it so it is never submitted
-    // (additionalProperties: false on the PUT endpoint rejects it).
-    name: { 'x-jsf-presentation': { inputType: 'hidden' } },
-    // Clarify that mobile_number expects digits only (no + or country code) for USA
+    ...PERSONAL_DETAILS_HIDE_NAME,
     mobile_number: {
       description: 'Enter 10 digits, no country code (e.g. 5389274785)',
     },
   },
 };
+
+const PERSONAL_DETAILS_JSF_MODIFY_INTL: JSFModify = {
+  fields: {
+    ...PERSONAL_DETAILS_HIDE_NAME,
+    mobile_number: { 'x-jsf-presentation': { inputType: 'tel' } },
+  },
+};
+
+function getPersonalDetailsJsfModify(
+  countryCode: string | undefined,
+): JSFModify {
+  return countryCode === 'USA'
+    ? PERSONAL_DETAILS_JSF_MODIFY_USA
+    : PERSONAL_DETAILS_JSF_MODIFY_INTL;
+}
 
 const buildEmployeeSteps = ({
   hasBankSubstep,
@@ -157,7 +180,7 @@ export const usePayrollEmployeeOnboarding = ({
     'global_payroll_personal_details',
     fieldValues,
     { enabled: currentStep === 'personal_details' },
-    PERSONAL_DETAILS_JSF_MODIFY,
+    getPersonalDetailsJsfModify(countryCode),
   );
 
   const homeAddressSchema = useGPEmployeeFormSchema(
