@@ -560,7 +560,7 @@ const OnboardingWithProps = ({
       employmentId={employmentId}
       externalId={externalId}
       options={{
-        features: ['onboarding_reserves', 'dynamic_steps', 'ea_preview'],
+        features: ['onboarding_reserves', 'dynamic_steps' /* 'ea_preview' */],
         jsonSchemaVersion: {
           employment_basic_information: 3,
         },
