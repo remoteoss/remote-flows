@@ -31,6 +31,7 @@ import {
   useCompany,
   useCountriesSchemaField,
   useCreateEmployment,
+  useEmploymentAgreementPreview,
   useEmploymentEngagementAgreementDetails,
   useEmploymentOnboardingReservesStatus,
   useEngagementAgreementDetailsSchema,
@@ -71,6 +72,7 @@ const getLoadingStates = ({
   isLoadingBasicInformationForm,
   isLoadingContractDetailsForm,
   isLoadingEngagementAgreementDetails,
+  isLoadingEmploymentAgreementPreview,
   isLoadingEmploymentEngagementAgreementDetails,
   isLoadingEmployment,
   isLoadingBenefitsOffersSchema,
@@ -93,6 +95,7 @@ const getLoadingStates = ({
   isLoadingBenefitOffers: boolean;
   isLoadingCompany: boolean;
   isLoadingCountries: boolean;
+  isLoadingEmploymentAgreementPreview: boolean;
   employmentStatus?: Employment['status'];
   employmentId?: string;
   currentStepName: string;
@@ -109,7 +112,8 @@ const getLoadingStates = ({
     isLoadingBenefitsOffersSchema ||
     isLoadingBenefitOffers ||
     isLoadingCompany ||
-    isLoadingCountries;
+    isLoadingCountries ||
+    isLoadingEmploymentAgreementPreview;
 
   const isEmploymentReadOnly =
     employmentStatus &&
@@ -370,6 +374,20 @@ export const useOnboarding = ({
   useEffect(() => {
     setIncludeEmploymentAgreementPreview(isEmploymentAgreementPreviewAvailable);
   }, [isEmploymentAgreementPreviewAvailable]);
+
+  const isEmploymentEnabled =
+    Boolean(internalEmploymentId) &&
+    useEAPreview &&
+    stepState.currentStep.name === 'employment_agreement_preview';
+
+  const {
+    data: employmentAgreementPreview,
+    isLoading: isLoadingEmploymentAgreementPreview,
+  } = useEmploymentAgreementPreview(internalEmploymentId, {
+    queryOptions: {
+      enabled: isEmploymentEnabled,
+    },
+  });
 
   const createEmploymentMutation = useCreateEmployment(options);
   const updateEmploymentMutation = useUpdateEmployment(
@@ -775,6 +793,7 @@ export const useOnboarding = ({
           isLoadingBenefitOffers,
           isLoadingCompany,
           isLoadingCountries,
+          isLoadingEmploymentAgreementPreview,
           employmentId,
           employmentStatus: employmentStatus,
           basicInformationFields: stepFields.basic_information,
@@ -792,6 +811,7 @@ export const useOnboarding = ({
         isLoadingBenefitOffers,
         isLoadingCompany,
         isLoadingCountries,
+        isLoadingEmploymentAgreementPreview,
         employmentId,
         employmentStatus,
         stepFields.basic_information,
@@ -1217,5 +1237,10 @@ export const useOnboarding = ({
           name: country?.name,
         }
       : null,
+
+    /**
+     * Employment agreement preview
+     */
+    employmentAgreementPreview,
   };
 };
