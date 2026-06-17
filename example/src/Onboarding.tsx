@@ -27,6 +27,7 @@ import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
 import { transformHtmlToComponents } from './utils/transformHtml';
 import { sanitizeHtml } from '@remoteoss/remote-flows/internals';
+import { downloadFile } from './utils';
 import './css/main.css';
 
 const BenefitsAboutSection = ({
@@ -281,6 +282,15 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
         ? `${pdfContent as unknown as string}#view=FitV&toolbar=0`
         : undefined;
 
+      const handleDownload = () => {
+        if (pdfContent) {
+          downloadFile(
+            pdfContent as unknown as string,
+            'employment-agreement.pdf',
+          );
+        }
+      };
+
       return (
         <>
           <div className='space-y-4'>
@@ -293,7 +303,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               variant='outline'
               disabled={!pdfContent}
             >
-              Preview employment agreement'
+              Preview employment agreement
             </Button>
           </div>
 
@@ -332,6 +342,33 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
                   <h2 className='text-lg font-semibold'>
                     Employment Agreement Preview
                   </h2>
+                </div>
+
+                {/* Download Button */}
+                <div className='mr-4'>
+                  <Button
+                    onClick={handleDownload}
+                    disabled={!pdfContent}
+                    variant='outline'
+                  >
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      width='20'
+                      height='20'
+                      viewBox='0 0 24 24'
+                      fill='none'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      className='mr-2'
+                    >
+                      <path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' />
+                      <polyline points='7 10 12 15 17 10' />
+                      <line x1='12' y1='15' x2='12' y2='3' />
+                    </svg>
+                    Download
+                  </Button>
                 </div>
               </div>
 
