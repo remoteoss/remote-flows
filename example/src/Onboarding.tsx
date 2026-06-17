@@ -96,6 +96,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     BackButton,
     SelectCountryStep,
     EngagementAgreementDetailsStep,
+    PreviewEmploymentAgreementStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -293,6 +294,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
 
       return (
         <>
+          <PreviewEmploymentAgreementStep />
           <div className='space-y-4'>
             <Button
               onClick={() => {
@@ -306,7 +308,6 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               Preview employment agreement
             </Button>
           </div>
-
           <FullScreenDialog
             open={showPreviewModal}
             onOpenChange={(open: boolean) => {
@@ -395,7 +396,6 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               </div>
             </FullScreenDialogContent>
           </FullScreenDialog>
-
           <div className='buttons-container'>
             <BackButton
               className='back-button'
