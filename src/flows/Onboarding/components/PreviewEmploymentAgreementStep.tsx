@@ -8,7 +8,5 @@ export function PreviewEmploymentAgreementStep() {
     onboardingBag?.next();
   };
 
-  // this step in theory shouldn't be a form, not sure yet...
-
   return <OnboardingForm defaultValues={{}} onSubmit={handleSubmit} />;
 }

@@ -14,6 +14,7 @@ import {
   getV1CountriesCountryCodeForm,
   getV1EmploymentsEmploymentIdBenefitOffers,
   getV1EmploymentsEmploymentIdBenefitOffersSchema,
+  getV1EmploymentsEmploymentIdEmploymentAgreementPreview,
   getV2EmploymentsEmploymentIdEngagementAgreementDetails,
   patchV1EmploymentsEmploymentId2,
   postV1CurrencyConverterEffective,
@@ -687,5 +688,37 @@ export const useSignPreOnboardingDocument = () => {
           signature,
         },
       }),
+  });
+};
+
+/**
+ * Get employment agreement preview
+ */
+export const useEmploymentAgreementPreview = (
+  employmentId: string | undefined,
+  options?: { queryOptions?: { enabled?: boolean } },
+) => {
+  const { client } = useClient();
+
+  return useQuery({
+    queryKey: ['employment-agreement-preview', employmentId],
+    retry: false,
+    enabled: (options?.queryOptions?.enabled ?? true) && !!employmentId,
+    queryFn: async () => {
+      const response =
+        await getV1EmploymentsEmploymentIdEmploymentAgreementPreview({
+          client: client as Client,
+          path: {
+            employment_id: employmentId as string,
+          },
+        });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch employment agreement preview');
+      }
+
+      return response;
+    },
+    select: (response) => response.data?.data.employment_agreement,
   });
 };
