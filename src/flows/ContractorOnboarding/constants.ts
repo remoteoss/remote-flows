@@ -159,3 +159,27 @@ export const pricingPlanDetails = {
     contractPillText: 'Contract between Remote and employee',
   },
 };
+
+export const FEATURES_BY_IDENTIFIER: Record<string, string[]> = {
+  [contractorStandardProductIdentifier]: [
+    'Contract between you and contractor',
+    'Localized contract templates',
+    'AI-powered features to reduce misclassification risks',
+    'Experts on hand to identify misclassification risks',
+    'Only pay for active contractors',
+    'Work with contractors in 200+ countries and jurisdictions',
+  ],
+  [contractorPlusProductIdentifier]: [
+    'Contract between you and contractor',
+    'Access to all Contractor Management features',
+    '$100K indemnity coverage for penalties',
+    '4X monetary coverage than our competitors  in case of penalties',
+  ],
+  [corProductIdentifier]: [
+    'Contract between Remote and the contractor',
+    'Our most comprehensive option for compliance and flexibility',
+    'Locally compliant agreements',
+    'Localized contract templates',
+    'Indemnity coverage for losses related to Remote’s administration and contractor payments',
+  ],
+};

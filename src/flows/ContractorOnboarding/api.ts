@@ -37,6 +37,7 @@ import {
   contractorStandardProductIdentifier,
   corProductIdentifier,
   eorProductIdentifier,
+  FEATURES_BY_IDENTIFIER,
   IR35_FILE_SUBTYPE,
   ProductType,
 } from '@/src/flows/ContractorOnboarding/constants';
@@ -445,7 +446,7 @@ export const useContractorSubscriptionSchemaField = (
     : false;
 
   const corSubscription = contractorSubscriptions?.find(
-    (subscription) => subscription.product.short_name === 'COR',
+    (subscription) => subscription.product.identifier === corProductIdentifier,
   );
 
   const isEligibilityQuestionnaireBlocked =
@@ -500,7 +501,20 @@ export const useContractorSubscriptionSchemaField = (
       const label = title;
       const value = product.identifier ?? '';
       const description = product.description ?? '';
-      const features = product.features ?? [];
+
+      if (!product.description) {
+        console.error(
+          `[Data Integrity] Missing description for product: ${product.identifier}`,
+          { product },
+        );
+      }
+
+      const features =
+        product.features ??
+        FEATURES_BY_IDENTIFIER[
+          product.identifier as keyof typeof FEATURES_BY_IDENTIFIER
+        ] ??
+        [];
       const meta = {
         features,
         price: {

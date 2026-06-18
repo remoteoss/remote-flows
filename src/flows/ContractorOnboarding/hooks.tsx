@@ -302,7 +302,8 @@ export const useContractorOnboarding = ({
   const hasEligibilityQuestionnaireSubmitted = useMemo(() => {
     return Boolean(
       contractorSubscriptions?.find(
-        (subscription) => subscription.product.short_name === 'COR',
+        (subscription) =>
+          subscription.product.identifier === corProductIdentifier,
       )?.eligibility_questionnaire?.submitted_at,
     );
   }, [contractorSubscriptions]);
@@ -325,7 +326,8 @@ export const useContractorOnboarding = ({
 
   const eligibilityAnswers = useMemo(() => {
     return contractorSubscriptions?.find(
-      (subscription) => subscription.product.short_name === 'COR',
+      (subscription) =>
+        subscription.product.identifier === corProductIdentifier,
     )?.eligibility_questionnaire?.responses;
   }, [contractorSubscriptions]);
 
