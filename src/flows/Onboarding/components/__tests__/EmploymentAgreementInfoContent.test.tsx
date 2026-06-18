@@ -6,9 +6,7 @@ describe('EmploymentAgreementInfoContent', () => {
     render(<EmploymentAgreementInfoContent />);
 
     // Just check some key text is present
-    expect(
-      screen.getByText(/previewing a draft version/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/previewing a draft version/i)).toBeInTheDocument();
     expect(
       screen.getByText(/strongly discourage customizations/i),
     ).toBeInTheDocument();
