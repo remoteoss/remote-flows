@@ -4,11 +4,21 @@
 
 ### Minor Changes
 
-- update dependency vite to v8.0.16 [security] (#1083) [#1083](https://github.com/remoteoss/remote-flows/pull/1083)
-- update dependency dompurify to v3.4.9 [security] (#1084) [#1084](https://github.com/remoteoss/remote-flows/pull/1084)
+#### Features
+
 - add dummy logic to show the preview employment step (#1073) [#1073](https://github.com/remoteoss/remote-flows/pull/1073)
 - preview the pdf and download it (#1085) [#1085](https://github.com/remoteoss/remote-flows/pull/1085)
+
+
+#### Fixes
+
 - rely on secure properties && add fallbacks (#1086) [#1086](https://github.com/remoteoss/remote-flows/pull/1086)
+
+#### Chores
+
+- update dependency vite to v8.0.16 [security] (#1083) [#1083](https://github.com/remoteoss/remote-flows/pull/1083)
+- update dependency dompurify to v3.4.9 [security] (#1084) [#1084](https://github.com/remoteoss/remote-flows/pull/1084)
+
 
 ## 1.38.0
 
