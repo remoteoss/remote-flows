@@ -115,7 +115,7 @@ export const EmploymentAgreementInfoContent = () => {
           target='_blank'
           rel='noopener noreferrer'
         >
-          Employee Onboarding Timeline ↗
+          Agreement Engagement Guide ↗
         </a>{' '}
         to understand what can (and can't) be modified.
       </p>
