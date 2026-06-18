@@ -8,6 +8,8 @@ export const mockContractorSubscriptionResponse = {
         name: 'Monthly Contractor of Record Subscription',
         identifier: 'urn:remotecom:resource:product:contractor:aor:monthly',
         short_name: 'COR',
+        description:
+          'Remote reduces liability by directly engaging the contractor',
       },
       currency: {
         code: 'USD',
@@ -25,6 +27,7 @@ export const mockContractorSubscriptionResponse = {
         name: 'Monthly Contractor Plus Subscription',
         identifier: 'urn:remotecom:resource:product:contractor:plus:monthly',
         short_name: 'CM+',
+        description: 'Engage and pay contractors with indemnity coverage',
       },
       currency: {
         code: 'USD',
@@ -43,6 +46,7 @@ export const mockContractorSubscriptionResponse = {
         identifier:
           'urn:remotecom:resource:product:contractor:standard:monthly',
         short_name: 'CM',
+        description: 'Engage and pay contractors with indemnity coverage',
       },
       currency: {
         code: 'USD',
