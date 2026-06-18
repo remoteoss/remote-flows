@@ -1,5 +1,7 @@
-import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
-import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
+import {
+  buildZendeskURL,
+  zendeskArticles,
+} from '@/src/components/shared/zendesk-drawer/utils';
 import { cn } from '@/src/internals';
 
 export const EmploymentAgreementInfoContent = () => {
@@ -107,14 +109,14 @@ export const EmploymentAgreementInfoContent = () => {
         )}
       >
         For guidance, see our{' '}
-        <ZendeskTriggerButton
-          className={cn(
-            'RemoteFlows__EmploymentAgreementInfoContent__ZendeskTriggerButton',
-          )}
-          zendeskId={zendeskArticles.employmentAgreements}
+        <a
+          className={cn('RemoteFlows__EmploymentAgreementInfoContent__Link')}
+          href={buildZendeskURL(zendeskArticles.employmentAgreements)}
+          target='_blank'
+          rel='noopener noreferrer'
         >
           Employee Onboarding Timeline ↗
-        </ZendeskTriggerButton>{' '}
+        </a>{' '}
         to understand what can (and can't) be modified.
       </p>
     </>
