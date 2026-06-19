@@ -45,7 +45,10 @@ export type {
   AcknowledgeInformationProps,
 } from '@/src/flows/Termination';
 
-export { OnboardingFlow } from '@/src/flows/Onboarding';
+export {
+  OnboardingFlow,
+  EmploymentAgreementInfoContent,
+} from '@/src/flows/Onboarding';
 
 export type {
   OnboardingInviteProps,

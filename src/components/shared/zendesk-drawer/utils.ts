@@ -7,10 +7,16 @@ export const zendeskArticles = {
   disclaimerCostCalculator: 4668194326797,
   /**
    * Guide for engaging contractors
-   * Access: private (Need Remote account to access)
+   * Access: Private (Need Remote account to access)
    * https://support.remote.com/hc/en-us/articles/43161434169613
    */
   engagingContractors: 43161434169613,
+  /**
+   * Employment Agreements
+   * Access: Public (Need Remote account to access)
+   * https://support.remote.com/hc/en-us/articles/39266991211149
+   */
+  employmentAgreements: 39266991211149,
   /**
    * Employee Onboarding Timeline
    * Access: Private (Need Remote account to access)
