@@ -5,6 +5,7 @@ import type {
   FieldSetToggleComponentProps,
   FileComponentProps,
   PDFPreviewComponentProps,
+  TelFieldComponentProps,
 } from '@remoteoss/remote-flows';
 import { FileUploader } from '@remoteoss/remote-flows/internals';
 //import { ZendeskDialog } from './ZendeskDialog';
@@ -331,6 +332,78 @@ const PDFPreview = ({ base64Data }: PDFPreviewComponentProps) => {
   );
 };
 
+const TelField = ({ field, fieldData, fieldState }: TelFieldComponentProps) => {
+  const {
+    label,
+    description,
+    options,
+    onChangeCountryCode,
+    onChangePhoneNumber,
+    currentCountry,
+    nationalPhoneNumber,
+  } = fieldData;
+
+  const selectedCountryCode = currentCountry
+    ? `${currentCountry.name}-${currentCountry.dialCode}`
+    : '';
+
+  return (
+    <div className='input-container'>
+      {label && <label htmlFor={field.name}>{label}</label>}
+
+      <div className='flex gap-2'>
+        {/* Country Code Select */}
+        <div className='w-[180px]'>
+          <select
+            value={selectedCountryCode}
+            onChange={(e) => {
+              const country = options?.find(
+                (opt) =>
+                  `${opt.label}-${opt.meta?.countryCode}` === e.target.value,
+              );
+              if (country && onChangeCountryCode) {
+                onChangeCountryCode({
+                  name: country.label,
+                  dialCode: country.meta?.countryCode || '',
+                  pattern: country.pattern || '',
+                });
+              }
+            }}
+            className='w-full select'
+          >
+            <option value=''>Select country code</option>
+            {options?.map((option, index) => (
+              <option
+                key={`${option.label}-${option.meta?.countryCode}-${index}`}
+                value={`${option.label}-${option.meta?.countryCode}`}
+              >
+                {option.label} +{option.meta?.countryCode}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Phone Number Input */}
+        <div className='flex-1'>
+          <input
+            {...field}
+            type='tel'
+            className='input'
+            value={nationalPhoneNumber || ''}
+            onChange={onChangePhoneNumber}
+            placeholder="Employee's phone number"
+          />
+        </div>
+      </div>
+
+      {renderDescription(description, fieldData.transformHtml)}
+      {fieldState.error && (
+        <p className='error-message'>{fieldState.error.message}</p>
+      )}
+    </div>
+  );
+};
+
 export const components: Components = {
   button: Button,
   text: Input,
@@ -343,5 +416,6 @@ export const components: Components = {
   file: FileUploadField,
   date: DatePickerInput,
   pdfViewer: PDFPreview,
+  tel: TelField,
   //zendeskDrawer: ZendeskDialog,
 };
