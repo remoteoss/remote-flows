@@ -1,5 +1,12 @@
 # @remoteoss/remote-flows
 
+## 1.40.0
+
+### Minor Changes
+
+- add demo tel implementation (#1089) [#1089](https://github.com/remoteoss/remote-flows/pull/1089)
+- Add employment agreement content (#1088) [#1088](https://github.com/remoteoss/remote-flows/pull/1088)
+
 ## 1.39.0
 
 ### Minor Changes
