@@ -4,8 +4,13 @@
 
 ### Minor Changes
 
+#### Features
+
+- Add employment agreement content modal (#1088) [#1088](https://github.com/remoteoss/remote-flows/pull/1088)
+
+#### Chores
+
 - add demo tel implementation (#1089) [#1089](https://github.com/remoteoss/remote-flows/pull/1089)
-- Add employment agreement content (#1088) [#1088](https://github.com/remoteoss/remote-flows/pull/1088)
 
 ## 1.39.0
 
