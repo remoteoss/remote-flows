@@ -29,6 +29,7 @@ import { transformHtmlToComponents } from './utils/transformHtml';
 import { sanitizeHtml } from '@remoteoss/remote-flows/internals';
 import { downloadFile } from './utils';
 import './css/main.css';
+import { components } from './Components';
 
 const BenefitsAboutSection = ({
   description,
@@ -552,6 +553,7 @@ const OnboardingWithProps = ({
   <RemoteFlows
     proxy={{ url: window.location.origin }}
     transformHtmlToComponents={transformHtmlToComponents}
+    components={components}
   >
     <OnboardingFlow
       companyId={companyId}
