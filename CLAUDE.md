@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **See also:** [ARCHITECTURE.md](ARCHITECTURE.md) for architectural patterns, design philosophy, and decision-making framework.
+
 ## What this is
 
 `@remoteoss/remote-flows` is a React component library (npm package) that exposes embeddable HR/employment flows (Cost Calculator, Onboarding, Contractor Onboarding, Termination, Contract Amendment, Create Company) for Remote's platform. It is consumed by external partners, so the public API in [src/index.tsx](src/index.tsx) is contract-bound: prefer additive changes, and treat type/prop/hook signature changes as breaking.
@@ -37,7 +39,7 @@ The `example/` app is a separate workspace (its own `package.json`, Vite + Expre
 
 Each flow under [src/flows/](src/flows/) is self-contained and must not import from sibling flows. Standard layout:
 
-```
+```text
 flows/<FlowName>/
   index.ts                # public exports (re-exported from src/index.tsx)
   <FlowName>Flow.tsx      # render-prop container component

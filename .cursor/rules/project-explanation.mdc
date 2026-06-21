@@ -9,6 +9,8 @@ description: A brief explanation of what the project does for cursor
 
 This is a React library that provides embedded HR workflow components for Remote's platform. It includes flows for cost calculation, employee onboarding, termination, and contract amendments.
 
+> **For architectural patterns and design philosophy, see [ARCHITECTURE.md](../../ARCHITECTURE.md).**
+
 ## Core Architecture
 
 ### Main Entry Points
