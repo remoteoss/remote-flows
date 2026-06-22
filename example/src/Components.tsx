@@ -6,6 +6,7 @@ import type {
   FileComponentProps,
   PDFPreviewComponentProps,
   TelFieldComponentProps,
+  TimeFieldComponentProps,
 } from '@remoteoss/remote-flows';
 import { FileUploader } from '@remoteoss/remote-flows/internals';
 //import { ZendeskDialog } from './ZendeskDialog';
@@ -305,6 +306,7 @@ const DatePickerInput = ({
       <label htmlFor={field.name}>{fieldData.label}</label>
       <input
         type='date'
+        className='input'
         id={field.name}
         data-testid={`date-picker-input-${field.name}`}
         onChange={(e) => {
@@ -404,6 +406,34 @@ const TelField = ({ field, fieldData, fieldState }: TelFieldComponentProps) => {
   );
 };
 
+const TimeField = ({
+  field,
+  fieldData,
+  fieldState,
+}: TimeFieldComponentProps) => {
+  const hasError = !!fieldState.error;
+
+  return (
+    <div className='input-container'>
+      <label htmlFor={field.name}>{fieldData.label}</label>
+      <input
+        {...field}
+        type='time'
+        id={field.name}
+        className={`input ${hasError ? 'error' : ''}`}
+        value={field.value ?? ''}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+          field.onChange(event);
+        }}
+      />
+      {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {fieldState.error && (
+        <p className='error-message'>{fieldState.error.message}</p>
+      )}
+    </div>
+  );
+};
+
 export const components: Components = {
   button: Button,
   text: Input,
@@ -417,5 +447,6 @@ export const components: Components = {
   date: DatePickerInput,
   pdfViewer: PDFPreview,
   tel: TelField,
+  time: TimeField,
   //zendeskDrawer: ZendeskDialog,
 };
