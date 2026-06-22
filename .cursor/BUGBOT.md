@@ -467,15 +467,14 @@ flows/[FlowName]/
   - If some array items end with periods, ALL items should end with periods
   - Applies to: `listItems`, bullet points, feature descriptions, etc.
   - Example locations: constants files, pricing descriptions, feature lists
-  
 - **❌ INCORRECT: Inconsistent punctuation**
 
 ```typescript
 listItems: [
   'Remote manages onboarding, payroll, and compliance', // Missing period
-  'Manages taxes, benefits, and time-off tracking',     // Missing period
-  'Handles contracts, transfers, and terminations.',    // Has period
-]
+  'Manages taxes, benefits, and time-off tracking', // Missing period
+  'Handles contracts, transfers, and terminations.', // Has period
+];
 ```
 
 - **✅ CORRECT: Consistent punctuation**
@@ -485,7 +484,7 @@ listItems: [
   'Remote manages onboarding, payroll, and compliance.',
   'Manages taxes, benefits, and time-off tracking.',
   'Handles contracts, transfers, and terminations.',
-]
+];
 ```
 
 ## Review Checklist
