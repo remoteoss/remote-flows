@@ -465,7 +465,6 @@ flows/[FlowName]/
 
 - **Punctuation in string arrays** - Check consistency in user-facing content arrays:
   - If some array items end with periods, ALL items should end with periods
-  - If items are sentence fragments, none should have periods
   - Applies to: `listItems`, bullet points, feature descriptions, etc.
   - Example locations: constants files, pricing descriptions, feature lists
   
