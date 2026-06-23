@@ -1,5 +1,30 @@
 # @remoteoss/remote-flows
 
+## 1.40.1
+
+### Patch Changes
+
+- update dependency oxfmt to v0.54.0 (#1056) [#1056](https://github.com/remoteoss/remote-flows/pull/1056)
+- update dependency tsx to v4.22.4 (#1059) [#1059](https://github.com/remoteoss/remote-flows/pull/1059)
+- update dependency dompurify to v3.4.11 [security] (#1091) [#1091](https://github.com/remoteoss/remote-flows/pull/1091)
+- update oxlint monorepo to v1.69.0 (#1057) [#1057](https://github.com/remoteoss/remote-flows/pull/1057)
+- update react monorepo to v19.2.17 (#1093) [#1093](https://github.com/remoteoss/remote-flows/pull/1093)
+- update tanstack-query monorepo to v5.101.0 (#1053) [#1053](https://github.com/remoteoss/remote-flows/pull/1053)
+- update dependency @arethetypeswrong/cli to v0.18.3 (#1092) [#1092](https://github.com/remoteoss/remote-flows/pull/1092)
+- update vitest monorepo to v4.1.8 (#1052) [#1052](https://github.com/remoteoss/remote-flows/pull/1052)
+- update dependency @remoteoss/remote-json-schema-form-kit to v0.0.15 (#1094) [#1094](https://github.com/remoteoss/remote-flows/pull/1094)
+- update radix-ui-primitives monorepo (#1096) [#1096](https://github.com/remoteoss/remote-flows/pull/1096)
+- update dependency html-react-parser to v6.1.3 (#1095) [#1095](https://github.com/remoteoss/remote-flows/pull/1095)
+- update dependency @hookform/resolvers to v5.4.0 (#1097) [#1097](https://github.com/remoteoss/remote-flows/pull/1097)
+- update dependency axios to v1.17.0 (#1098) [#1098](https://github.com/remoteoss/remote-flows/pull/1098)
+- update dependency axios to v1.18.0 (#1102) [#1102](https://github.com/remoteoss/remote-flows/pull/1102)
+- add time demo (#1103) [#1103](https://github.com/remoteoss/remote-flows/pull/1103)
+- fix punctuation (#1104) [#1104](https://github.com/remoteoss/remote-flows/pull/1104)
+- update vitest monorepo to v4.1.9 (#1105) [#1105](https://github.com/remoteoss/remote-flows/pull/1105)
+- update dependency oxfmt to v0.55.0 (#1107) [#1107](https://github.com/remoteoss/remote-flows/pull/1107)
+- update playwright monorepo to v1.61.0 (#1106) [#1106](https://github.com/remoteoss/remote-flows/pull/1106)
+- update oxlint monorepo (#1109) [#1109](https://github.com/remoteoss/remote-flows/pull/1109)
+
 ## 1.40.0
 
 ### Minor Changes
