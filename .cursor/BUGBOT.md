@@ -461,6 +461,32 @@ flows/[FlowName]/
 - Changes break backward compatibility without major version bump
 - Adding dependencies that are already peer dependencies
 
+### 11. Content Consistency Issues
+
+- **Punctuation in string arrays** - Check consistency in user-facing content arrays:
+  - If some array items end with periods, ALL items should end with periods
+  - Applies to: `listItems`, bullet points, feature descriptions, etc.
+  - Example locations: constants files, pricing descriptions, feature lists
+- **❌ INCORRECT: Inconsistent punctuation**
+
+```typescript
+listItems: [
+  'Remote manages onboarding, payroll, and compliance', // Missing period
+  'Manages taxes, benefits, and time-off tracking', // Missing period
+  'Handles contracts, transfers, and terminations.', // Has period
+];
+```
+
+- **✅ CORRECT: Consistent punctuation**
+
+```typescript
+listItems: [
+  'Remote manages onboarding, payroll, and compliance.',
+  'Manages taxes, benefits, and time-off tracking.',
+  'Handles contracts, transfers, and terminations.',
+];
+```
+
 ## Review Checklist
 
 Before approving a PR, verify:
@@ -475,6 +501,7 @@ Before approving a PR, verify:
 - [ ] **README updated** - If new features or public API changes
 - [ ] **No console.log** - Only `console.warn` and `console.error` allowed
 - [ ] **Security reviewed** - No exposed secrets, proper input validation
+- [ ] **Content consistency** - String arrays have consistent punctuation
 
 ## Release Process
 
