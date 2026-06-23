@@ -26,6 +26,8 @@ A React library that provides components for Remote's embedded solution, enablin
 - [Contributing](#contributing)
 - [Internals](#internals)
 
+> **For maintainers and contributors:** See [ARCHITECTURE.md](ARCHITECTURE.md) for architectural patterns, design philosophy, and decision-making framework.
+
 ## Installation
 
 ```sh
