@@ -148,6 +148,9 @@ export const useContractorOnboarding = ({
   const [includeContractPreview, setIncludeContractPreview] =
     useState<boolean>(true);
 
+  const [includeContractDetails, setIncludeContractDetails] =
+    useState<boolean>(true);
+
   const [pendingNavigationStep, setPendingNavigationStep] =
     useState<StepKeys | null>(null);
 
@@ -157,8 +160,14 @@ export const useContractorOnboarding = ({
         includeSelectCountry: !skipSteps?.includes('select_country'),
         includeEligibilityQuestionnaire: includeEligibilityQuestionnaire,
         includeContractPreview: includeContractPreview,
+        includeContractDetails: includeContractDetails,
       }),
-    [includeEligibilityQuestionnaire, includeContractPreview, skipSteps],
+    [
+      includeEligibilityQuestionnaire,
+      includeContractPreview,
+      includeContractDetails,
+      skipSteps,
+    ],
   );
 
   const {
@@ -193,8 +202,6 @@ export const useContractorOnboarding = ({
       employmentId: internalEmploymentId as string,
       options: { enabled: Boolean(internalEmploymentId) },
     });
-
-  const contractOrigin = employmentBasicInformationV2?.contract_origin;
 
   const defaultLegalEntity = useDefaultLegalEntity();
 
@@ -332,6 +339,12 @@ export const useContractorOnboarding = ({
   useEffect(() => {
     const isCor = employment?.contractor_type === 'cor';
     setIncludeContractPreview(!isCor);
+  }, [employment?.contractor_type]);
+
+  useEffect(() => {
+    const displayContractDetails =
+      employmentBasicInformationV2?.contract_origin !== 'provided_by_customer';
+    setIncludeContractDetails(displayContractDetails);
   }, [employment?.contractor_type]);
 
   const eligibilityAnswers = useMemo(() => {
@@ -1502,13 +1515,6 @@ export const useContractorOnboarding = ({
      * @returns {Employment}
      */
     employment,
-
-    /**
-     * Origin of the employment contract, read from the v2 basic information endpoint.
-     * Only available once an employment exists (i.e. `employmentId` is set).
-     * @returns {'remote_contract' | 'custom_remote_contract' | 'provided_by_customer' | undefined}
-     */
-    contractOrigin,
 
     /**
      * Default legal entity

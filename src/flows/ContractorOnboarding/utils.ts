@@ -22,6 +22,7 @@ type StepConfig = {
   includeSelectCountry?: boolean;
   includeEligibilityQuestionnaire?: boolean;
   includeContractPreview?: boolean;
+  includeContractDetails?: boolean;
 };
 
 export function buildSteps(config: StepConfig = {}) {
@@ -53,7 +54,7 @@ export function buildSteps(config: StepConfig = {}) {
     {
       name: 'contract_details',
       label: 'Contract Details',
-      visible: true,
+      visible: Boolean(config?.includeContractDetails),
     },
     {
       name: 'contract_preview',

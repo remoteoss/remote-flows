@@ -80,7 +80,8 @@ export const useEmploymentBasicInformationV2 = ({
       });
     },
     enabled: (options?.enabled ?? true) && !!employmentId,
-    select: ({ data }) => data?.data?.employment as EmploymentBasicInformationV2,
+    select: ({ data }) =>
+      data?.data?.employment as EmploymentBasicInformationV2,
   });
 };
 
