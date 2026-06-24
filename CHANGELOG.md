@@ -4,7 +4,9 @@
 
 ### Minor Changes
 
-- expose company open tasks flags on contractor onboarding review step
+#### Features
+
+- Expose company open tasks flags on contractor onboarding review step [#1111](https://github.com/remoteoss/remote-flows/pull/1111)
 
 ## 1.40.1
 
