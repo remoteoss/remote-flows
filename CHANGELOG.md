@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 1.41.0
+
+### Minor Changes
+
+- expose company open tasks flags on contractor onboarding review step
+
 ## 1.40.1
 
 ### Patch Changes
