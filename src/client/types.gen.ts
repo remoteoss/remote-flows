@@ -1446,7 +1446,21 @@ export type SentBackTimesheetResponse = {
  * JSON schema response for benefit offers
  */
 export type UnifiedEmploymentsBenefitOffersJsonSchemaResponse = {
-  data?: JsonSchema;
+  /**
+   * JSONSchema
+   *
+   * JSON Schema
+   */
+  data?: {
+    schema?: {
+      properties: {
+        [key: string]: unknown;
+      };
+      required?: Array<string>;
+      'x-jsf-order'?: Array<string>;
+    };
+    version?: number;
+  };
 };
 
 /**
@@ -5853,8 +5867,8 @@ export type ResourceErrorResponse = {
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_one_of_required_missing'
       | 'parameter_required_missing'
+      | 'parameter_one_of_required_missing'
       | 'parameter_too_many'
       | 'parameter_unknown'
       | 'parameter_map_empty'
@@ -6499,6 +6513,10 @@ export type AccountUserIntegrationUser = {
   integration: {
     name: string;
   };
+  /**
+   * Whether this mapping represents a synced employee or a company admin
+   */
+  role: 'employee' | 'employer';
 };
 
 /**
@@ -8795,6 +8813,17 @@ export type TooManyRequestsResponse = {
 };
 
 /**
+ * CompanyActionsResponse
+ *
+ * Lists a company's pending actions
+ */
+export type CompanyActionsResponse = {
+  data: {
+    actions?: Array<CompanyAction>;
+  };
+};
+
+/**
  * BulkImport.ImportJobStatus
  *
  *   * `draft` - **Deprecated**, the import job data has been uploaded and the job created, but not yet started
@@ -9475,6 +9504,26 @@ export type IndexCorTerminationRequestsResponse = {
      */
     total_pages?: number;
   };
+};
+
+/**
+ * CompanyAction
+ *
+ * A pending company-level action (e.g. for Contractor Management Review-step banners).
+ */
+export type CompanyAction = {
+  /**
+   * The legal entity that needs Remote Payments setup. Present only for setup_remote_payments actions.
+   */
+  legal_entity_id?: string | null;
+  /**
+   * Whether the action must be completed.
+   */
+  required: boolean;
+  /**
+   * The action the company still needs to complete.
+   */
+  type: 'verify_company' | 'setup_remote_payments';
 };
 
 /**
@@ -11436,7 +11485,21 @@ export type EmploymentContractDetailsParams = {
  * JSON Schema Response
  */
 export type JsonSchemaResponse = {
-  data?: JsonSchema;
+  /**
+   * JSONSchema
+   *
+   * JSON Schema
+   */
+  data?: {
+    schema?: {
+      properties: {
+        [key: string]: unknown;
+      };
+      required?: Array<string>;
+      'x-jsf-order'?: Array<string>;
+    };
+    version?: number;
+  };
 };
 
 /**
@@ -12416,6 +12479,9 @@ export type FindOrCreatePreOnboardingDocumentParams = {
    * Timestamp when the customer acknowledged the hiring constraints. Required when the requirement has `needs_constraints_ack: true`.
    */
   constraints_ack_at?: string | null;
+  /**
+   * Slug of the pre-onboarding document requirement to fulfil. Obtain this from the `GET .../pre-onboarding-document-requirements` endpoint.
+   */
   pre_onboarding_document_requirement_slug: UuidSlug;
 };
 
@@ -24448,6 +24514,54 @@ export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsRespons
 
 export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsResponse =
   PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsResponses[keyof PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsResponses];
+
+export type GetV1CompaniesCompanyIdActionsData = {
+  body?: never;
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: string;
+  };
+  query?: never;
+  url: '/v1/companies/{company_id}/actions';
+};
+
+export type GetV1CompaniesCompanyIdActionsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV1CompaniesCompanyIdActionsError =
+  GetV1CompaniesCompanyIdActionsErrors[keyof GetV1CompaniesCompanyIdActionsErrors];
+
+export type GetV1CompaniesCompanyIdActionsResponses = {
+  /**
+   * Success
+   */
+  200: CompanyActionsResponse;
+};
+
+export type GetV1CompaniesCompanyIdActionsResponse =
+  GetV1CompaniesCompanyIdActionsResponses[keyof GetV1CompaniesCompanyIdActionsResponses];
 
 export type GetV1ScimV2GroupsIdData = {
   body?: never;

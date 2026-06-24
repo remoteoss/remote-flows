@@ -47,6 +47,44 @@ const RemotePaymentServicesSetUp = () => {
   );
 };
 
+const CompanyVerificationBanner = () => {
+  const magicLink = useMagicLink();
+
+  const handleVerify = async () => {
+    const response = await magicLink.mutateAsync({
+      path: `/dashboard`,
+      user_id: import.meta.env.VITE_USER_ID,
+    });
+
+    if (response.data) {
+      window.open(response.data.data.url, '_blank', 'noopener,noreferrer');
+    }
+  };
+
+  return (
+    <div className='flex items-center gap-4 rounded-lg border bg-card px-4 py-3'>
+      <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-full'>
+        <InfoIcon className='h-4 w-4' />
+      </div>
+      <div className='flex-1'>
+        <h3 className='font-medium text-card-foreground'>
+          Complete Company Verification
+        </h3>
+        <p className='text-sm text-muted-foreground'>
+          Your company needs to complete KYB verification before contractors can
+          be paid.
+        </p>
+      </div>
+      <Button
+        className='bg-[#000000] text-white hover:bg-[#000000]/80'
+        onClick={handleVerify}
+      >
+        Verify now
+      </Button>
+    </div>
+  );
+};
+
 // ... existing code ...
 
 export const ReviewContractorOnboardingStep = ({
@@ -133,17 +171,22 @@ export const ReviewContractorOnboardingStep = ({
 
       {invitedStatus === 'invited' && (
         <div className='invite-successful'>
-          <h2>You’re all set!</h2>
+          <h2>You're all set!</h2>
           <p>
             {onboardingBag.employment?.basic_information?.name as string} at{' '}
             {
               onboardingBag.employment?.basic_information
                 ?.personal_email as string
             }{' '}
-            has been invited to Remote. We’ll let you know once they complete
+            has been invited to Remote. We'll let you know once they complete
             their onboarding process
           </p>
-          <RemotePaymentServicesSetUp />
+          {onboardingBag.needsCompanyVerification && (
+            <CompanyVerificationBanner />
+          )}
+          {onboardingBag.needsRemotePaymentsSetup && (
+            <RemotePaymentServicesSetUp />
+          )}
         </div>
       )}
 

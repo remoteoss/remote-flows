@@ -3,8 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const { buildGatewayURL } = require('./utils.js');
 
-const DEFAULT_SCOPES =
-  'company_admin employments invoices time_and_attendance employment_documents employment_payments payroll';
+const DEFAULT_SCOPES = 'all:write';
 
 async function generateJWTToken() {
   const {

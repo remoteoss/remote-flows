@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import {
+  CompanyAction,
   CreateContractDocument,
+  getV1CompaniesCompanyIdActions,
   getV1ContractorsEmploymentsEmploymentIdContractDocumentsId,
   getV1CountriesCountryCodeContractorContractDetails,
   getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions,
@@ -52,7 +54,8 @@ import { convertFromCents } from '@/src/components/form/utils';
 import { countriesOptions } from '@/src/common/api/countries';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
 import { shouldIncludeProduct } from '@/src/flows/ContractorOnboarding/utils';
-import { useCompanyPricingPlans } from '@/src/common/api/companies';
+import { useCompanyPricingPlans, hasCompany } from '@/src/common/api/companies';
+import { useIdentity } from '@/src/common/api/identity';
 
 const useContractorCurrencies = ({
   employmentId,
@@ -892,4 +895,25 @@ export const useContractorOnboardingDetailsSchemaWithCurrencies = ({
     data: dataWithCurrencies as $TSFixMe,
     isLoading: schemaQuery.isLoading || isLoadingCurrencies,
   };
+};
+
+export const useCompanyOpenTasks = ({
+  options,
+}: {
+  options?: { queryOptions?: { enabled?: boolean } };
+} = {}) => {
+  const { data: identity } = useIdentity();
+  const companyId = hasCompany(identity) ? (identity?.company?.id ?? '') : '';
+  const { client } = useClient();
+
+  return useQuery({
+    queryKey: ['company-open-tasks', companyId],
+    queryFn: () =>
+      getV1CompaniesCompanyIdActions({
+        client: client as Client,
+        path: { company_id: companyId },
+      }),
+    select: ({ data }) => data?.data?.actions ?? ([] as CompanyAction[]),
+    enabled: (options?.queryOptions?.enabled ?? true) && !!companyId,
+  });
 };

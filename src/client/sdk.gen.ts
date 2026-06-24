@@ -56,6 +56,9 @@ import type {
   GetV1BulkEmploymentJobsJobIdRowsData,
   GetV1BulkEmploymentJobsJobIdRowsErrors,
   GetV1BulkEmploymentJobsJobIdRowsResponses,
+  GetV1CompaniesCompanyIdActionsData,
+  GetV1CompaniesCompanyIdActionsErrors,
+  GetV1CompaniesCompanyIdActionsResponses,
   GetV1CompaniesCompanyIdComplianceProfileData,
   GetV1CompaniesCompanyIdComplianceProfileErrors,
   GetV1CompaniesCompanyIdComplianceProfileResponses,
@@ -846,7 +849,7 @@ export const getV1Offboardings = <ThrowOnError extends boolean = false>(
 /**
  * Create Offboarding
  *
- * Creates an Offboarding request.
+ * Creates an Offboarding request
  *
  *
  * ## Scopes
@@ -8766,6 +8769,39 @@ export const postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * List a company's pending actions
+ *
+ * Given a company ID, returns the company-level actions still pending for the company — for
+ * example company verification and Remote Payments setup. The list can be empty or contain one
+ * or more actions; `setup_remote_payments` is returned once per legal entity that needs it.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | View companies (`company:read`) | Manage companies (`company:write`) |
+ *
+ */
+export const getV1CompaniesCompanyIdActions = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1CompaniesCompanyIdActionsData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetV1CompaniesCompanyIdActionsResponses,
+    GetV1CompaniesCompanyIdActionsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/companies/{company_id}/actions',
+    ...options,
   });
 
 /**
