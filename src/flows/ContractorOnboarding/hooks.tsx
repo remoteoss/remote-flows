@@ -30,6 +30,7 @@ import {
   useContractorOnboardingDetailsSchemaWithCurrencies,
   CONTRACT_PRODUCT_TITLES,
   useHasCompanySignedContract,
+  useCompanyOpenTasks,
 } from '@/src/flows/ContractorOnboarding/api';
 import {
   ContractorOnboardingFlowProps,
@@ -186,6 +187,14 @@ export const useContractorOnboarding = ({
   });
 
   const defaultLegalEntity = useDefaultLegalEntity();
+
+  const { data: openTasks } = useCompanyOpenTasks({
+    options: {
+      queryOptions: {
+        enabled: stepState.currentStep.name === 'review',
+      },
+    },
+  });
 
   const { status: employmentStatus } = employment || {};
 
@@ -1499,6 +1508,21 @@ export const useContractorOnboarding = ({
      * @returns {CompanyLegalEntity}
      */
     defaultLegalEntity,
+
+    /**
+     * Whether the company needs to complete KYB verification before contractors can be paid.
+     * Use this to show a company verification nudge banner on the review step.
+     */
+    needsCompanyVerification:
+      openTasks?.some((a) => a.type === 'verify_company') ?? false,
+
+    /**
+     * Whether the company needs to set up Remote Payments.
+     * Use this to show a Remote Payments setup nudge banner on the review step.
+     */
+    needsRemotePaymentsSetup:
+      openTasks?.some((a) => a.type === 'setup_remote_payments') ?? false,
+
     /**
      * Steps array
      * @returns {Array<{name: string, index: number, visible: boolean, label: string}>}

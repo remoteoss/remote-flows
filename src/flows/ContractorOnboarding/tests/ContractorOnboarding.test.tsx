@@ -3622,4 +3622,190 @@ describe('ContractorOnboardingFlow', () => {
       });
     });
   });
+
+  describe('company open tasks flags', () => {
+    const COMPANY_ID = '754a654a-a442-469a-a5ec-267c9db3b268';
+
+    function OpenTasksFlagsForm({
+      components,
+      contractorOnboardingBag,
+    }: $TSFixMe) {
+      const { OnboardingInvite, BackButton } = components;
+
+      if (contractorOnboardingBag.isLoading) {
+        return <div data-testid='spinner'>Loading...</div>;
+      }
+
+      switch (contractorOnboardingBag.stepState.currentStep.name) {
+        case 'basic_information':
+          return <h2>Step: Basic Information</h2>;
+        case 'review':
+          return (
+            <div data-testid='open-tasks-review'>
+              <span data-testid='needs-company-verification'>
+                {String(contractorOnboardingBag.needsCompanyVerification)}
+              </span>
+              <span data-testid='needs-remote-payments-setup'>
+                {String(contractorOnboardingBag.needsRemotePaymentsSetup)}
+              </span>
+              <BackButton>Back</BackButton>
+              <OnboardingInvite
+                render={() => 'Invite Contractor'}
+                onSuccess={mockOnSuccess}
+              />
+            </div>
+          );
+        default:
+          return null;
+      }
+    }
+
+    function renderWithInvitedEmployment(employmentId: string) {
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: employmentId,
+                status: 'invited',
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(OpenTasksFlagsForm),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+    }
+
+    it('should not call /actions on non-review steps', async () => {
+      const employmentId = generateUniqueEmploymentId();
+      const actionsSpy = vi.fn();
+
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: employmentId,
+                status: 'pending',
+              },
+            },
+          });
+        }),
+        http.get(`*/v1/companies/${COMPANY_ID}/actions`, () => {
+          actionsSpy();
+          return HttpResponse.json({ data: { actions: [] } });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(OpenTasksFlagsForm),
+      );
+
+      render(
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          skipSteps={['select_country']}
+          {...defaultProps}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      expect(actionsSpy).not.toHaveBeenCalled();
+    });
+
+    it('should call /actions once when the review step loads', async () => {
+      const employmentId = generateUniqueEmploymentId();
+      const actionsSpy = vi.fn();
+
+      server.use(
+        http.get(`*/v1/companies/${COMPANY_ID}/actions`, () => {
+          actionsSpy();
+          return HttpResponse.json({ data: { actions: [] } });
+        }),
+      );
+
+      renderWithInvitedEmployment(employmentId);
+
+      await screen.findByTestId('open-tasks-review');
+
+      await waitFor(() => {
+        expect(actionsSpy).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it.each([
+      {
+        label: 'verify_company only',
+        actions: [{ type: 'verify_company', required: true }],
+        expectVerification: true,
+        expectPayments: false,
+      },
+      {
+        label: 'setup_remote_payments only',
+        actions: [{ type: 'setup_remote_payments', required: true }],
+        expectVerification: false,
+        expectPayments: true,
+      },
+      {
+        label: 'both tasks',
+        actions: [
+          { type: 'verify_company', required: true },
+          { type: 'setup_remote_payments', required: true },
+        ],
+        expectVerification: true,
+        expectPayments: true,
+      },
+      {
+        label: 'no open tasks',
+        actions: [],
+        expectVerification: false,
+        expectPayments: false,
+      },
+    ])(
+      'should set flags correctly for $label',
+      async ({ actions, expectVerification, expectPayments }) => {
+        const employmentId = generateUniqueEmploymentId();
+
+        server.use(
+          http.get(`*/v1/companies/${COMPANY_ID}/actions`, () => {
+            return HttpResponse.json({ data: { actions } });
+          }),
+        );
+
+        renderWithInvitedEmployment(employmentId);
+
+        await screen.findByTestId('open-tasks-review');
+
+        await waitFor(() => {
+          expect(
+            screen.getByTestId('needs-company-verification').textContent,
+          ).toBe(String(expectVerification));
+          expect(
+            screen.getByTestId('needs-remote-payments-setup').textContent,
+          ).toBe(String(expectPayments));
+        });
+      },
+    );
+  });
 });
