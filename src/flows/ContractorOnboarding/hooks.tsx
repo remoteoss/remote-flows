@@ -369,10 +369,11 @@ export const useContractorOnboarding = ({
       selectedProduct && initialPlan && selectedProduct !== initialPlan,
     );
 
-    const shouldSkipContractDetails =
+    const shouldSkipContractDetailsAndPreview =
       isProvidedByCustomer && hasDefinedPricingPlan && !hasChangedPricingPlan;
 
-    setIncludeContractDetails(!shouldSkipContractDetails);
+    setIncludeContractDetails(!shouldSkipContractDetailsAndPreview);
+    setIncludeContractPreview(!shouldSkipContractDetailsAndPreview);
   }, [employmentBasicInformationV2?.contract_origin, selectedProduct]);
 
   const eligibilityAnswers = useMemo(() => {
