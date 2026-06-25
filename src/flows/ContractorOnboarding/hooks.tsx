@@ -97,6 +97,12 @@ const jsonSchemaToEmployment: Partial<
   employment_basic_information: 'basic_information',
 };
 
+const contractorTypeToProduct = {
+  standard: contractorStandardProductIdentifier,
+  plus: contractorPlusProductIdentifier,
+  cor: corProductIdentifier,
+};
+
 export const useContractorOnboarding = ({
   countryCode,
   externalId,
@@ -196,6 +202,14 @@ export const useContractorOnboarding = ({
     employmentId: internalEmploymentId as string,
     queryParams: { exclude_files: true },
   });
+
+  const initialContractorTypeRef = useRef<string | undefined>(undefined);
+  if (
+    employment?.contractor_type &&
+    initialContractorTypeRef.current === undefined
+  ) {
+    initialContractorTypeRef.current = employment.contractor_type;
+  }
 
   const { data: employmentBasicInformationV2 } =
     useEmploymentBasicInformationV2({
@@ -342,10 +356,24 @@ export const useContractorOnboarding = ({
   }, [employment?.contractor_type]);
 
   useEffect(() => {
-    const displayContractDetails =
-      employmentBasicInformationV2?.contract_origin !== 'provided_by_customer';
-    setIncludeContractDetails(displayContractDetails);
-  }, [employment?.contractor_type]);
+    const isProvidedByCustomer =
+      employmentBasicInformationV2?.contract_origin === 'provided_by_customer';
+
+    const initialPlan =
+      contractorTypeToProduct[
+        initialContractorTypeRef.current as keyof typeof contractorTypeToProduct
+      ];
+
+    const hasDefinedPricingPlan = Boolean(initialPlan);
+    const hasChangedPricingPlan = Boolean(
+      selectedProduct && initialPlan && selectedProduct !== initialPlan,
+    );
+
+    const shouldSkipContractDetails =
+      isProvidedByCustomer && hasDefinedPricingPlan && !hasChangedPricingPlan;
+
+    setIncludeContractDetails(!shouldSkipContractDetails);
+  }, [employmentBasicInformationV2?.contract_origin, selectedProduct]);
 
   const eligibilityAnswers = useMemo(() => {
     return contractorSubscriptions?.find(
