@@ -44,10 +44,7 @@ export const usePreOnboardingRequirements = ({
   const { mutateAsyncOrThrow: signDocumentMutationAsync } =
     mutationToPromise(signDocumentMutation);
 
-  const onCreateDocument = async (
-    requirementSlug: string,
-    constraintsAckAt?: string,
-  ) => {
+  const onCreateDocument = async (requirementSlug: string) => {
     const requirement = requirements?.find(
       (req) => req.slug === requirementSlug,
     );
@@ -69,9 +66,8 @@ export const usePreOnboardingRequirements = ({
     const result = await createDocumentMutationAsync({
       employmentId,
       body: {
-        pre_onboarding_document_requirement_slug: requirementSlug,
-        constraints_ack_at:
-          constraintsAckAt || requirement?.document_constraints_ack_at || null,
+        requirement_slug: requirementSlug,
+        employment_id: employmentId,
       },
     });
     const newDocumentId = result?.data.pre_onboarding_document.id;
