@@ -326,32 +326,33 @@ export const useOnboarding = ({
       isOnboardingReservesEnabled,
     );
 
-  const {
-    data: requirements,
-    isLoading: isLoadingPreOnboardingRequirements,
-    isError: isErrorPreOnboardingRequirements,
-  } = useGetPreOnboardingRequirements(internalEmploymentId as string, {
-    queryOptions: { enabled: !!internalEmploymentId },
-  });
+  const isPreOnboardingRequirementsEnabled = Boolean(
+    options?.features?.includes('pre_onboarding_requirements') &&
+    !!internalEmploymentId,
+  );
+
+  const { data: requirements, isLoading: isLoadingPreOnboardingRequirements } =
+    useGetPreOnboardingRequirements(internalEmploymentId as string, {
+      queryOptions: {
+        enabled: isPreOnboardingRequirementsEnabled,
+      },
+    });
 
   const arePreOnboardingRequirementsFulfilled = useMemo(() => {
-    if (
-      !requirements ||
-      isLoadingPreOnboardingRequirements ||
-      isErrorPreOnboardingRequirements
-    ) {
+    // While loading, block the invite
+    if (isLoadingPreOnboardingRequirements) {
       return false;
     }
-    if (requirements?.length === 0) return true;
-    return (
-      requirements?.every((requirement) => requirement.status === 'finished') ??
-      false
+    // If no requirements data at all, allow invite (don't block the flow)
+    if (!requirements || requirements.length === 0) {
+      return true;
+    }
+
+    // Check if all requirements are finished (even if there's an error, check cached data)
+    return requirements.every(
+      (requirement) => requirement.status === 'finished',
     );
-  }, [
-    requirements,
-    isLoadingPreOnboardingRequirements,
-    isErrorPreOnboardingRequirements,
-  ]);
+  }, [requirements, isLoadingPreOnboardingRequirements]);
 
   const {
     selectCountryForm,
@@ -1040,6 +1041,13 @@ export const useOnboarding = ({
      * Employment id passed useful to be used between components
      */
     employmentId: internalEmploymentId,
+
+    /**
+     * Onboarding flow options (feature flags)
+     */
+    options: {
+      features: options?.features,
+    },
 
     /**
      * Credit risk status of the company, useful to know what to to show in the review step
