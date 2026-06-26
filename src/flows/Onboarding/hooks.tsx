@@ -326,12 +326,15 @@ export const useOnboarding = ({
       isOnboardingReservesEnabled,
     );
 
+  const isPreOnboardingRequirementsEnabled = Boolean(
+    options?.features?.includes('pre_onboarding_requirements') &&
+    !!internalEmploymentId,
+  );
+
   const { data: requirements, isLoading: isLoadingPreOnboardingRequirements } =
     useGetPreOnboardingRequirements(internalEmploymentId as string, {
       queryOptions: {
-        enabled:
-          !!internalEmploymentId &&
-          options?.features?.includes('pre_onboarding_requirements'),
+        enabled: isPreOnboardingRequirementsEnabled,
       },
     });
 
@@ -1038,6 +1041,13 @@ export const useOnboarding = ({
      * Employment id passed useful to be used between components
      */
     employmentId: internalEmploymentId,
+
+    /**
+     * Onboarding flow options (feature flags)
+     */
+    options: {
+      features: options?.features,
+    },
 
     /**
      * Credit risk status of the company, useful to know what to to show in the review step
