@@ -137,6 +137,15 @@ export function OnboardingInvite({
     useCreateReserveInvoiceMutation.isPending ||
     props.disabled;
 
+  console.log({
+    disabled,
+    employmentInviteMutation: employmentInviteMutation.isPending,
+    useCreateReserveInvoiceMutation: useCreateReserveInvoiceMutation.isPending,
+    onboardingBag: onboardingBag.canInvite,
+    isReserveFlow,
+    propsDisabled: props.disabled,
+  });
+
   return (
     <CustomButton
       {...props}
