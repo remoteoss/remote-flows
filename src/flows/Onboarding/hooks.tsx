@@ -124,6 +124,12 @@ const getLoadingStates = ({
     !disabledInviteButtonEmploymentStatus.includes(employmentStatus) &&
     arePreOnboardingRequirementsFulfilled;
 
+  console.log({
+    canInvite,
+    employmentStatus,
+    arePreOnboardingRequirementsFulfilled,
+  });
+
   const shouldHandleReadOnlyEmployment = Boolean(
     employmentId && isEmploymentReadOnly && currentStepName !== 'review',
   );
