@@ -124,12 +124,6 @@ const getLoadingStates = ({
     !disabledInviteButtonEmploymentStatus.includes(employmentStatus) &&
     arePreOnboardingRequirementsFulfilled;
 
-  console.log({
-    canInvite,
-    employmentStatus,
-    arePreOnboardingRequirementsFulfilled,
-  });
-
   const shouldHandleReadOnlyEmployment = Boolean(
     employmentId && isEmploymentReadOnly && currentStepName !== 'review',
   );
@@ -341,14 +335,20 @@ export const useOnboarding = ({
   });
 
   const arePreOnboardingRequirementsFulfilled = useMemo(() => {
-    if (
-      !requirements ||
-      isLoadingPreOnboardingRequirements ||
-      isErrorPreOnboardingRequirements
-    ) {
+    // While loading, block the invite
+    if (isLoadingPreOnboardingRequirements) {
       return false;
     }
-    if (requirements?.length === 0) return true;
+    // If error or no requirements, allow invite (don't block the flow)
+    if (
+      isErrorPreOnboardingRequirements ||
+      !requirements ||
+      requirements.length === 0
+    ) {
+      return true;
+    }
+
+    // Check if all requirements are finished
     return (
       requirements?.every((requirement) => requirement.status === 'finished') ??
       false
