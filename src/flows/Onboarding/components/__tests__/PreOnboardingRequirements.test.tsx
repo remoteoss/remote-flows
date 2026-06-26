@@ -31,6 +31,9 @@ const mockOnboardingBag = {
       index: 4,
     },
   },
+  options: {
+    features: ['pre_onboarding_requirements'],
+  },
 };
 
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
