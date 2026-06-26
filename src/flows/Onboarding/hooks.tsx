@@ -326,38 +326,26 @@ export const useOnboarding = ({
       isOnboardingReservesEnabled,
     );
 
-  const {
-    data: requirements,
-    isLoading: isLoadingPreOnboardingRequirements,
-    isError: isErrorPreOnboardingRequirements,
-  } = useGetPreOnboardingRequirements(internalEmploymentId as string, {
-    queryOptions: { enabled: !!internalEmploymentId },
-  });
+  const { data: requirements, isLoading: isLoadingPreOnboardingRequirements } =
+    useGetPreOnboardingRequirements(internalEmploymentId as string, {
+      queryOptions: { enabled: !!internalEmploymentId },
+    });
 
   const arePreOnboardingRequirementsFulfilled = useMemo(() => {
     // While loading, block the invite
     if (isLoadingPreOnboardingRequirements) {
       return false;
     }
-    // If error or no requirements, allow invite (don't block the flow)
-    if (
-      isErrorPreOnboardingRequirements ||
-      !requirements ||
-      requirements.length === 0
-    ) {
+    // If no requirements data at all, allow invite (don't block the flow)
+    if (!requirements || requirements.length === 0) {
       return true;
     }
 
-    // Check if all requirements are finished
-    return (
-      requirements?.every((requirement) => requirement.status === 'finished') ??
-      false
+    // Check if all requirements are finished (even if there's an error, check cached data)
+    return requirements.every(
+      (requirement) => requirement.status === 'finished',
     );
-  }, [
-    requirements,
-    isLoadingPreOnboardingRequirements,
-    isErrorPreOnboardingRequirements,
-  ]);
+  }, [requirements, isLoadingPreOnboardingRequirements]);
 
   const {
     selectCountryForm,
