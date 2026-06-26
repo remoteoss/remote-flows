@@ -328,7 +328,11 @@ export const useOnboarding = ({
 
   const { data: requirements, isLoading: isLoadingPreOnboardingRequirements } =
     useGetPreOnboardingRequirements(internalEmploymentId as string, {
-      queryOptions: { enabled: !!internalEmploymentId },
+      queryOptions: {
+        enabled:
+          !!internalEmploymentId &&
+          options?.features?.includes('pre_onboarding_requirements'),
+      },
     });
 
   const arePreOnboardingRequirementsFulfilled = useMemo(() => {
