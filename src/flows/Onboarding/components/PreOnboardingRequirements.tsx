@@ -5,6 +5,8 @@ import {
   useCreatePreOnboardingDocument,
   useGetPreOnboardingDocument,
   useSignPreOnboardingDocument,
+  useAcknowledgePreOnboardingRequirement,
+  useRemoveAcknowledgePreOnboardingRequirement,
 } from '@/src/flows/Onboarding/api';
 import { mutationToPromise } from '@/src/lib/mutations';
 
@@ -37,12 +39,20 @@ export const usePreOnboardingRequirements = ({
 
   const createDocumentMutation = useCreatePreOnboardingDocument();
   const signDocumentMutation = useSignPreOnboardingDocument();
+  const acknowledgeRequirementMutation =
+    useAcknowledgePreOnboardingRequirement();
+  const deleteAcknowledgeRequirementMutation =
+    useRemoveAcknowledgePreOnboardingRequirement();
 
   const { mutateAsyncOrThrow: createDocumentMutationAsync } = mutationToPromise(
     createDocumentMutation,
   );
   const { mutateAsyncOrThrow: signDocumentMutationAsync } =
     mutationToPromise(signDocumentMutation);
+  const { mutateAsyncOrThrow: acknowledgeRequirementMutationAsync } =
+    mutationToPromise(acknowledgeRequirementMutation);
+  const { mutateAsyncOrThrow: deleteAcknowledgeRequirementMutationAsync } =
+    mutationToPromise(deleteAcknowledgeRequirementMutation);
 
   const onCreateDocument = async (requirementSlug: string) => {
     const requirement = requirements?.find(
@@ -75,6 +85,23 @@ export const usePreOnboardingRequirements = ({
       setDocumentIds((prev) => ({ ...prev, [requirementSlug]: newDocumentId }));
     }
     return result;
+  };
+
+  const onAcknowledgeRequirement = async (requirementSlug: string) => {
+    if (!activeRequirementSlug) {
+      throw new Error('No active requirement selected');
+    }
+
+    console.log('onAcknowledgeRequirement', requirementSlug);
+
+    // maybe we can check if the ack is check or not and do the deletion or creation of the ack
+
+    /* const response = await acknowledgeRequirementMutationAsync({
+      employmentId,
+      requirementSlug,
+    });
+    await refetchRequirements();
+    return response; */
   };
 
   const onSignDocument = async (signature: string) => {
@@ -110,6 +137,7 @@ export const usePreOnboardingRequirements = ({
     isSigning: signDocumentMutation.isPending,
     onCreateDocument,
     onSignDocument,
+    onAcknowledgeRequirement,
   };
 };
 
