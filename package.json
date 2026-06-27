@@ -119,7 +119,7 @@
     "postcss": "8.5.14",
     "react-day-picker": "8.10.2",
     "react-flagpack": "2.0.6",
-    "react-hook-form": "7.73.1",
+    "react-hook-form": "7.80.0",
     "tailwind-merge": "3.5.0",
     "tailwindcss": "4.2.4",
     "tailwindcss-animate": "1.0.7",
