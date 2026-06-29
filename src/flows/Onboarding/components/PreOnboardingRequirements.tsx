@@ -141,6 +141,10 @@ export const usePreOnboardingRequirements = ({
     return responnse;
   };
 
+  const isPendingAcknowledgement =
+    acknowledgeRequirementMutation.isPending ||
+    deleteAcknowledgeRequirementMutation.isPending;
+
   return {
     requirements,
     isLoadingRequirements,
@@ -152,6 +156,7 @@ export const usePreOnboardingRequirements = ({
     onCreateDocument,
     onSignDocument,
     onAcknowledgeRequirement,
+    isPendingAcknowledgement,
   };
 };
 
