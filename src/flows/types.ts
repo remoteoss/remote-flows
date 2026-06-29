@@ -4,6 +4,7 @@ import type {
   FormResult as FormResultNext,
   FormResultLegacy,
 } from '@remoteoss/remote-json-schema-form-kit';
+import type { FieldError } from '@/src/lib/mutations';
 
 type Success<T> = {
   data: T;
@@ -111,4 +112,19 @@ export type JSONSchemaFormResultWithFieldsets = FormResult & {
     'x-jsf-fieldsets': JSFFieldset;
     'x-jsf-presentation'?: Record<string, unknown>;
   };
+};
+
+/**
+ * Shared callback prop type for GP step components (admin and employee flows).
+ * `TSuccess` lets a step narrow the success payload to its own response type;
+ * defaults to `unknown` for compatibility.
+ */
+export type GPStepCallbacks<TSuccess = unknown> = {
+  onSubmit?: (payload: Record<string, unknown>) => void | Promise<void>;
+  onSuccess?: (data: TSuccess) => void | Promise<void>;
+  onError?: (args: {
+    error: Error;
+    rawError: Record<string, unknown>;
+    fieldErrors: FieldError[];
+  }) => void;
 };

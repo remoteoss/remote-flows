@@ -3,25 +3,30 @@ const {
   fetchClientCredentialsAccessToken,
   fetchAccessToken,
 } = require('./get_token.js');
+const { fetchEmployeeToken } = require('./jwt_auth.js');
 const { buildGatewayURL } = require('./utils.js');
 
 /**
  * Determines which token type to use based on HTTP method and path
  * @param {string} method - HTTP method (GET, POST, PUT, PATCH, etc.)
  * @param {string} path - The API path (e.g., '/v1/countries' or '/v2/countries?foo=bar')
- * @returns {'client-credentials' | 'user-token'} The token type to use
+ * @returns {'client-credentials' | 'user-token' | 'employee-assertion'} The token type to use
  */
 function getTokenType(method, path) {
   const normalizedMethod = method.toUpperCase();
   // Extract pathname without query parameters
   const pathname = path.split('?')[0].toLowerCase();
 
-  // GET /v1/countries or /v2/countries
+  // GET /v1/countries or /v2/countries — these don't require a user identity;
+  // use client_credentials so the call works in CI where no user token is
+  // available. Local dev without a client secret can opt into a user token
+  // by setting VITE_REMOTE_GATEWAY=... and ensuring VITE_CLIENT_TOKEN works.
   if (normalizedMethod === 'GET' && /^\/v[12]\/countries$/.test(pathname)) {
     return 'client-credentials';
   }
 
-  // GET /v1/countries/{country_code}/address_details or /v2/countries/{country_code}/address_details
+  // GET /v[12]/countries/{country_code}/address_details — public reference
+  // data; also use client credentials.
   if (
     normalizedMethod === 'GET' &&
     /^\/v[12]\/countries\/[^/]+\/address_details$/.test(pathname)
@@ -48,6 +53,13 @@ function getTokenType(method, path) {
     /^\/v[12]\/companies\/[^/]+$/.test(pathname)
   ) {
     return 'client-credentials';
+  }
+
+  // /v1/employee/* endpoints need an employment-scoped assertion. The FE
+  // identifies which employment via the x-rf-employment-id header; the proxy
+  // mints the JWT-bearer token server-side so the FE never sees it.
+  if (/^\/v1\/employee\//.test(pathname)) {
+    return 'employee-assertion';
   }
 
   // All other requests use user token
@@ -94,11 +106,25 @@ async function createProxyRequest(path, method = 'GET', options = {}) {
   // Add authentication if required
   if (requiresAuth) {
     const tokenType = getTokenType(method, path);
-    const { accessToken } =
-      tokenType === 'client-credentials'
-        ? await fetchClientCredentialsAccessToken()
-        : await fetchAccessToken();
+    let accessToken;
+    if (tokenType === 'client-credentials') {
+      ({ accessToken } = await fetchClientCredentialsAccessToken());
+    } else if (tokenType === 'employee-assertion') {
+      const employmentId = headers['x-rf-employment-id'];
+      if (!employmentId) {
+        throw Object.assign(
+          new Error('Missing x-rf-employment-id header for employee request'),
+          {
+            response: { status: 400, data: { error: 'employmentId required' } },
+          },
+        );
+      }
+      ({ accessToken } = await fetchEmployeeToken(employmentId));
+    } else {
+      ({ accessToken } = await fetchAccessToken());
+    }
     requestConfig.headers.Authorization = `Bearer ${accessToken}`;
+    delete requestConfig.headers['x-rf-employment-id'];
   }
 
   return axios(requestConfig);

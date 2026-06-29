@@ -46,7 +46,11 @@ type RemoteFlowsProps = Omit<RemoteFlowsSDKProps, 'auth'> & {
   children: ReactNode;
   auth?: RemoteFlowsSDKProps['auth'];
   isClientToken?: boolean;
-  authType?: 'refresh-token' | 'company-manager' | 'client';
+  /**
+   * `'none'` skips the FE-side auth callback entirely — use it when the proxy
+   * mints tokens server-side and the FE never needs to hold one.
+   */
+  authType?: 'refresh-token' | 'company-manager' | 'client' | 'none';
 };
 
 export const RemoteFlows = ({
@@ -56,6 +60,9 @@ export const RemoteFlows = ({
   ...props
 }: RemoteFlowsProps) => {
   const auth = useMemo(() => {
+    if (authType === 'none') {
+      return undefined;
+    }
     if (authType === 'company-manager') {
       return fetchCompanyManagerToken;
     }
