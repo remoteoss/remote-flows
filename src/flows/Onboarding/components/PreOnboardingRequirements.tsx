@@ -109,8 +109,25 @@ export const usePreOnboardingRequirements = ({
       (req) => req.slug === requirementSlug,
     );
 
-    if (requirement?.status === 'blocked') {
-      throw new Error('Cannot acknowledge blocked requirement');
+    const isBlocked = requirement?.status === 'blocked';
+    const isLocked = isAckLocked(requirementSlug);
+    if (isBlocked) {
+      const dependsOnName = requirement?.depends_on_requirement?.name;
+      throw new Error(
+        `Cannot acknowledge blocked requirement. ${dependsOnName ? `${dependsOnName} must be completed first.` : 'A dependent requirement must be completed first.'}`,
+      );
+    }
+
+    if (isLocked) {
+      throw new Error(
+        'Cannot uncheck this acknowledgement because other requirements depend on it and are already in progress or completed.',
+      );
+    }
+
+    if (isPendingAcknowledgement) {
+      throw new Error(
+        'Cannot acknowledge requirement while pending acknowledgement',
+      );
     }
 
     const isFinished = requirement?.status === 'finished';

@@ -433,8 +433,10 @@ const DocumentRequirement = ({
       setError(null);
       await onCreateDocument(requirement.slug);
       setIsModalOpen(true);
-    } catch {
-      setError('Failed to create document');
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Failed to create document',
+      );
     }
   };
 
@@ -525,8 +527,19 @@ const AckRequirement = ({
   onAcknowledgeRequirement: PreOnboardingRequirementsBag['onAcknowledgeRequirement'];
   isPendingAcknowledgement: PreOnboardingRequirementsBag['isPendingAcknowledgement'];
 }) => {
-  const handleChange = () => {
-    onAcknowledgeRequirement(requirement.slug);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleChange = async () => {
+    try {
+      setError(null);
+      await onAcknowledgeRequirement(requirement.slug);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Failed to acknowledge requirement',
+      );
+    }
   };
 
   const isChecked = requirement.status === 'finished';
@@ -545,25 +558,32 @@ const AckRequirement = ({
   );
 
   return (
-    <div className='flex items-start gap-2'>
-      {isBlocked ? (
-        <BlockedDependencyTooltip
-          dependsOnRequirement={requirement.depends_on_requirement!}
-        >
-          {checkbox}
-        </BlockedDependencyTooltip>
-      ) : (
-        checkbox
+    <div className='flex flex-col gap-2'>
+      <div className='flex items-start gap-2'>
+        {isBlocked ? (
+          <BlockedDependencyTooltip
+            dependsOnRequirement={requirement.depends_on_requirement!}
+          >
+            {checkbox}
+          </BlockedDependencyTooltip>
+        ) : (
+          checkbox
+        )}
+        <Label htmlFor={`acknowledgement-checkbox-${requirement.slug}`}>
+          {/** transformHtmlToComponents is a function that
+           * transforms the description to a React component
+           * but this makes partners able to implement this functionality...
+           * another problem is that the link is private and we need to make it public,
+           * if they don't let you a different approach must be taken...,
+           * ZendeskTriggerButton, ZendeskDialog approach but they cannot send you the link as an anchor the they need to be able to send you the link as a string...   */}
+          <span>{transformHtmlToComponents(requirement.description)}</span>
+        </Label>
+      </div>
+      {error && (
+        <p className='text-sm text-red-600' role='alert'>
+          {error}
+        </p>
       )}
-      <Label htmlFor={`acknowledgement-checkbox-${requirement.slug}`}>
-        {/** transformHtmlToComponents is a function that
-         * transforms the description to a React component
-         * but this makes partners able to implement this functionality...
-         * another problem is that the link is private and we need to make it public,
-         * if they don't let you a different approach must be taken...,
-         * ZendeskTriggerButton, ZendeskDialog approach but they cannot send you the link as an anchor the they need to be able to send you the link as a string...   */}
-        <span>{transformHtmlToComponents(requirement.description)}</span>
-      </Label>
     </div>
   );
 };
