@@ -556,11 +556,13 @@ function BlockedDependencyTooltip({
 const AckRequirement = ({
   requirement,
   isLocked,
+  onAcknowledgeRequirement,
 }: {
   requirement: NonNullable<
     PreOnboardingRequirementsBag['requirements']
   >[number];
   isLocked: boolean;
+  onAcknowledgeRequirement: PreOnboardingRequirementsBag['onAcknowledgeRequirement'];
 }) => {
   // for the isLocked we need to check the code in Dragon...
 
@@ -571,8 +573,8 @@ const AckRequirement = ({
     }
   } */
 
-  const handleChange = (checked: CheckedState) => {
-    console.log('handleChange', checked);
+  const handleChange = () => {
+    onAcknowledgeRequirement(requirement.slug);
   };
 
   const isChecked = requirement.status === 'finished';
@@ -701,6 +703,7 @@ export const ReviewOnboardingStep = ({
           isSigning,
           activeRequirementSlug,
           isLoadingDocumentPreview,
+          onAcknowledgeRequirement,
         }) => {
           return (
             <>
@@ -714,6 +717,7 @@ export const ReviewOnboardingStep = ({
                           key={req.slug}
                           requirement={req}
                           isLocked={false}
+                          onAcknowledgeRequirement={onAcknowledgeRequirement}
                         />
                       ) : (
                         <DocumentRequirement
