@@ -12,7 +12,7 @@ export const BASIC_INFO_VERSIONS: VersionOption[] = [
 
 // AI generated from tiger
 // Last updated: 2026-06-29
-const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
+export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   ALB: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
