@@ -9,8 +9,8 @@ import {
   MetaValues,
   NestedMeta,
   PreOnboardingRequirementsBag,
+  PreOnboardingRequirement,
 } from '@remoteoss/remote-flows';
-import { CheckedState } from '@radix-ui/react-checkbox';
 import {
   FullScreenDialog,
   FullScreenDialogContent,
@@ -409,7 +409,6 @@ const DocumentRequirement = ({
   isSigning,
   activeRequirementSlug,
   isLoadingDocumentPreview,
-  employeeCountry,
 }: {
   requirement: NonNullable<
     PreOnboardingRequirementsBag['requirements']
@@ -421,17 +420,9 @@ const DocumentRequirement = ({
   isSigning: PreOnboardingRequirementsBag['isSigning'];
   activeRequirementSlug: PreOnboardingRequirementsBag['activeRequirementSlug'];
   isLoadingDocumentPreview: PreOnboardingRequirementsBag['isLoadingDocumentPreview'];
-  employeeCountry?: string;
 }) => {
-  const [constraintsAckAt, setConstraintsAckAt] = useState<string | null>(
-    requirement.document_constraints_ack_at ?? null,
-  );
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const needsConstraintsAck =
-    requirement.needs_constraints_ack && !constraintsAckAt;
 
   const isRequirementLoading =
     activeRequirementSlug === requirement.slug &&
@@ -440,7 +431,7 @@ const DocumentRequirement = ({
   const handleReviewDocument = async () => {
     try {
       setError(null);
-      await onCreateDocument(requirement.slug, constraintsAckAt || undefined);
+      await onCreateDocument(requirement.slug);
       setIsModalOpen(true);
     } catch {
       setError('Failed to create document');
@@ -450,24 +441,20 @@ const DocumentRequirement = ({
   const renderButton = () => {
     if (requirement.status === 'blocked') {
       return (
-        <BasicTooltip
-          content={`${requirement.depends_on_requirement?.name} must be signed first.`}
+        <BlockedDependencyTooltip
+          dependsOnRequirement={requirement.depends_on_requirement!}
         >
           <Button variant='outline' disabled>
             Review document
           </Button>
-        </BasicTooltip>
+        </BlockedDependencyTooltip>
       );
     }
 
     return (
       <Button
         onClick={handleReviewDocument}
-        disabled={
-          needsConstraintsAck ||
-          isRequirementLoading ||
-          requirement.status === 'finished'
-        }
+        disabled={isRequirementLoading || requirement.status === 'finished'}
       >
         {requirement.status === 'finished'
           ? 'Signed'
@@ -480,35 +467,9 @@ const DocumentRequirement = ({
 
   return (
     <div className='flex flex-col gap-4'>
-      {requirement.needs_constraints_ack && (
-        <div className='flex items-start gap-2'>
-          <Checkbox
-            id={`ack-${requirement.slug}`}
-            disabled={
-              requirement.status === 'finished' ||
-              requirement.status === 'blocked'
-            }
-            checked={!!constraintsAckAt || requirement.status === 'finished'}
-            onCheckedChange={(checked: CheckedState) =>
-              checked
-                ? setConstraintsAckAt(new Date().toISOString())
-                : setConstraintsAckAt(null)
-            }
-          />
-          <Label
-            htmlFor={`ack-${requirement.slug}`}
-            className='text-sm cursor-pointer'
-          >
-            I acknowledge that I've understood information about hiring in{' '}
-            {employeeCountry ?? 'this country'}, and that these new hire details
-            can't be changed once they're submitted.
-          </Label>
-        </div>
-      )}
-
       <Card>
         <CardHeader>
-          <CardTitle>{requirement.name}</CardTitle>
+          <CardTitle> Review and sign {requirement.name}</CardTitle>
           <CardDescription>{requirement.description}</CardDescription>
         </CardHeader>
         <CardContent>
@@ -537,9 +498,7 @@ function BlockedDependencyTooltip({
   dependsOnRequirement,
   children,
 }: {
-  dependsOnRequirement: NonNullable<
-    PreOnboardingRequirementsBag['requirements']['depends_on_requirement']
-  >[number];
+  dependsOnRequirement: PreOnboardingRequirement;
   children: React.ReactElement;
 }) {
   const action =
@@ -556,6 +515,7 @@ function BlockedDependencyTooltip({
 const AckRequirement = ({
   requirement,
   isLocked,
+  isPendingAcknowledgement,
   onAcknowledgeRequirement,
 }: {
   requirement: NonNullable<
@@ -563,6 +523,7 @@ const AckRequirement = ({
   >[number];
   isLocked: boolean;
   onAcknowledgeRequirement: PreOnboardingRequirementsBag['onAcknowledgeRequirement'];
+  isPendingAcknowledgement: PreOnboardingRequirementsBag['isPendingAcknowledgement'];
 }) => {
   // for the isLocked we need to check the code in Dragon...
 
@@ -580,7 +541,7 @@ const AckRequirement = ({
   const isChecked = requirement.status === 'finished';
   const isBlocked = requirement.status === 'blocked';
 
-  const isDisabled = isBlocked || isLocked;
+  const isDisabled = isBlocked || isLocked || isPendingAcknowledgement;
 
   console.log('isDisabled', isDisabled);
   console.log('isChecked', isChecked);
@@ -601,7 +562,7 @@ const AckRequirement = ({
     <div className='flex items-start gap-2'>
       {isBlocked ? (
         <BlockedDependencyTooltip
-          dependsOnRequirement={requirement.depends_on_requirement}
+          dependsOnRequirement={requirement.depends_on_requirement!}
         >
           {checkbox}
         </BlockedDependencyTooltip>
@@ -704,6 +665,7 @@ export const ReviewOnboardingStep = ({
           activeRequirementSlug,
           isLoadingDocumentPreview,
           onAcknowledgeRequirement,
+          isPendingAcknowledgement,
         }) => {
           return (
             <>
@@ -718,6 +680,7 @@ export const ReviewOnboardingStep = ({
                           requirement={req}
                           isLocked={false}
                           onAcknowledgeRequirement={onAcknowledgeRequirement}
+                          isPendingAcknowledgement={isPendingAcknowledgement}
                         />
                       ) : (
                         <DocumentRequirement
@@ -730,12 +693,6 @@ export const ReviewOnboardingStep = ({
                           isSigning={isSigning}
                           activeRequirementSlug={activeRequirementSlug}
                           isLoadingDocumentPreview={isLoadingDocumentPreview}
-                          employeeCountry={
-                            (
-                              onboardingBag.employment?.basic_information
-                                ?.country as { name: string }
-                            )?.name ?? undefined
-                          }
                         />
                       ),
                     )}
