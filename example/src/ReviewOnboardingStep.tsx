@@ -525,15 +525,6 @@ const AckRequirement = ({
   onAcknowledgeRequirement: PreOnboardingRequirementsBag['onAcknowledgeRequirement'];
   isPendingAcknowledgement: PreOnboardingRequirementsBag['isPendingAcknowledgement'];
 }) => {
-  // for the isLocked we need to check the code in Dragon...
-
-  /*  const dependentBySlug = new Map<string, PreOnboardingRequirement>();
-  for (const req of preOnboardingRequirements) {
-    if (req.dependsOnRequirement) {
-      dependentBySlug.set(req.dependsOnRequirement.slug, req);
-    }
-  } */
-
   const handleChange = () => {
     onAcknowledgeRequirement(requirement.slug);
   };
@@ -542,11 +533,6 @@ const AckRequirement = ({
   const isBlocked = requirement.status === 'blocked';
 
   const isDisabled = isBlocked || isLocked || isPendingAcknowledgement;
-
-  console.log('isDisabled', isDisabled);
-  console.log('isChecked', isChecked);
-  console.log('isBlocked', isBlocked);
-  console.log('isLocked', isLocked);
 
   const checkbox = (
     <Checkbox
@@ -666,6 +652,7 @@ export const ReviewOnboardingStep = ({
           isLoadingDocumentPreview,
           onAcknowledgeRequirement,
           isPendingAcknowledgement,
+          isAckLocked,
         }) => {
           return (
             <>
@@ -678,7 +665,7 @@ export const ReviewOnboardingStep = ({
                         <AckRequirement
                           key={req.slug}
                           requirement={req}
-                          isLocked={false}
+                          isLocked={isAckLocked(req.slug)}
                           onAcknowledgeRequirement={onAcknowledgeRequirement}
                           isPendingAcknowledgement={isPendingAcknowledgement}
                         />

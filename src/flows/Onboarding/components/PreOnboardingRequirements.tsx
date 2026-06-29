@@ -9,6 +9,7 @@ import {
   useRemoveAcknowledgePreOnboardingRequirement,
 } from '@/src/flows/Onboarding/api';
 import { mutationToPromise } from '@/src/lib/mutations';
+import { PreOnboardingRequirement } from '@/src/client';
 
 export const usePreOnboardingRequirements = ({
   employmentId,
@@ -36,6 +37,13 @@ export const usePreOnboardingRequirements = ({
       enabled: isPreOnboardingRequirementsEnabled,
     },
   });
+
+  const dependentBySlug = new Map<string, PreOnboardingRequirement>();
+  for (const req of requirements ?? []) {
+    if (req.depends_on_requirement) {
+      dependentBySlug.set(req.depends_on_requirement.slug, req);
+    }
+  }
 
   const activeDocumentId = activeRequirementSlug
     ? documentIds[activeRequirementSlug]
@@ -141,6 +149,10 @@ export const usePreOnboardingRequirements = ({
     return responnse;
   };
 
+  const isAckLocked = (requirementSlug: string) => {
+    return dependentBySlug.get(requirementSlug)?.status === 'finished';
+  };
+
   const isPendingAcknowledgement =
     acknowledgeRequirementMutation.isPending ||
     deleteAcknowledgeRequirementMutation.isPending;
@@ -157,6 +169,7 @@ export const usePreOnboardingRequirements = ({
     onSignDocument,
     onAcknowledgeRequirement,
     isPendingAcknowledgement,
+    isAckLocked,
   };
 };
 
