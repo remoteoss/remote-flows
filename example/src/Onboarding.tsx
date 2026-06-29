@@ -627,7 +627,7 @@ const OnboardingWithProps = ({
           },
           GBR: {
             // United Kingdom
-            contract_details: 2,
+            contract_details: 3,
           },
           HKG: {
             // Hong Kong
