@@ -97,20 +97,25 @@ export const usePreOnboardingRequirements = ({
   };
 
   const onAcknowledgeRequirement = async (requirementSlug: string) => {
-    if (!activeRequirementSlug) {
-      throw new Error('No active requirement selected');
+    const requirement = requirements?.find(
+      (req) => req.slug === requirementSlug,
+    );
+
+    const isFinished = requirement?.status === 'finished';
+
+    if (!isFinished) {
+      await acknowledgeRequirementMutationAsync({
+        employmentId,
+        requirementSlug,
+      });
+    } else {
+      await deleteAcknowledgeRequirementMutationAsync({
+        employmentId,
+        requirementSlug,
+      });
     }
 
-    console.log('onAcknowledgeRequirement', requirementSlug);
-
-    // maybe we can check if the ack is check or not and do the deletion or creation of the ack
-
-    /* const response = await acknowledgeRequirementMutationAsync({
-      employmentId,
-      requirementSlug,
-    });
     await refetchRequirements();
-    return response; */
   };
 
   const onSignDocument = async (signature: string) => {
