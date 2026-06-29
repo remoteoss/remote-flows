@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      actions: write
     strategy:
       fail-fast: false
       matrix:
@@ -38,6 +39,7 @@ jobs:
         run: npx playwright install ${{ matrix.browser }} --with-deps
 
       - name: Run Playwright tests
+        id: playwright-tests
         env:
           BASE_URL: https://remote-flows.vercel.app
           VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
@@ -69,9 +71,8 @@ jobs:
             const issue = await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `Nightly E2E Tests Failed - ${new Date().toISOString().split('T')[0]}`,
-              body: `## Nightly E2E Test Failure\n\n**Workflow Run:** ${runUrl}\n\n**Date:** ${new Date().toISOString()}\n\nPlease review the Playwright reports in the workflow artifacts.`,
-              labels: ['e2e-failure', 'automated'],
+              title: `Nightly E2E Workflow Failed - ${new Date().toISOString().split('T')[0]}`,
+              body: `## Nightly E2E Workflow Failure\n\n**Workflow Run:** ${runUrl}\n\n**Date:** ${new Date().toISOString()}\n\n**Note:** This could be a test failure or an infrastructure issue (npm install, browser setup, etc.). Please review the workflow logs and Playwright reports in the artifacts.`,
               assignees: ['gabrielseco', 'jordividaller', 'cammellos']
             });
             console.log(`Created issue #${issue.data.number}`);
