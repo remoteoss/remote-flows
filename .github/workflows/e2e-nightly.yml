@@ -10,6 +10,8 @@ jobs:
   e2e-tests-production:
     name: E2E Tests (Production)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -60,7 +62,7 @@ jobs:
       issues: write
     steps:
       - name: Create Issue
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const runUrl = `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
@@ -70,6 +72,6 @@ jobs:
               title: `Nightly E2E Tests Failed - ${new Date().toISOString().split('T')[0]}`,
               body: `## Nightly E2E Test Failure\n\n**Workflow Run:** ${runUrl}\n\n**Date:** ${new Date().toISOString()}\n\nPlease review the Playwright reports in the workflow artifacts.`,
               labels: ['e2e-failure', 'automated'],
-              assignees: ['gabrielseco', 'jordividaller', 'cammellos'] 
+              assignees: ['gabrielseco', 'jordividaller', 'cammellos']
             });
             console.log(`Created issue #${issue.data.number}`);
