@@ -27,8 +27,10 @@ jobs:
           scope: ${{ secrets.VERCEL_ORG_ID }}
 
       - name: Save deployment URL
+        env:
+          PREVIEW_URL: ${{ steps.vercel-deploy.outputs.preview-url }}
         run: |
-          echo "${{ steps.vercel-deploy.outputs.preview-url }}" > remote-flows-url.txt
+          echo "$PREVIEW_URL" > remote-flows-url.txt
 
       - name: Upload deployment URL
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -98,7 +100,7 @@ jobs:
   create-issue-on-failure:
     name: Create Issue on Failure
     runs-on: ubuntu-latest
-    needs: e2e-tests-production
+    needs: [deploy-nightly, e2e-tests-production]
     if: failure()
     permissions:
       issues: write
@@ -112,7 +114,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Nightly E2E Workflow Failed - ${new Date().toISOString().split('T')[0]}`,
-              body: `## Nightly E2E Workflow Failure\n\n**Workflow Run:** ${runUrl}\n\n**Date:** ${new Date().toISOString()}\n\n**Note:** This could be a test failure or an infrastructure issue (npm install, browser setup, etc.). Please review the workflow logs and Playwright reports in the artifacts.`,
+              body: `## Nightly E2E Workflow Failure\n\n**Workflow Run:** ${runUrl}\n\n**Date:** ${new Date().toISOString()}\n\n**Note:** This could be a deployment failure, test failure, or an infrastructure issue (npm install, browser setup, etc.). Please review the workflow logs and Playwright reports in the artifacts.`,
               assignees: ['gabrielseco', 'jordividaller', 'cammellos']
             });
             console.log(`Created issue #${issue.data.number}`);
