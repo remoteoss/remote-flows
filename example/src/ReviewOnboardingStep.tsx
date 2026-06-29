@@ -10,6 +10,7 @@ import {
   NestedMeta,
   PreOnboardingRequirementsBag,
 } from '@remoteoss/remote-flows';
+import { CheckedState } from '@radix-ui/react-checkbox';
 import {
   FullScreenDialog,
   FullScreenDialogContent,
@@ -31,7 +32,7 @@ import {
 } from '@remoteoss/remote-flows/internals';
 import { AlertError } from './AlertError';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
-import { CheckedState } from '@radix-ui/react-checkbox';
+import { transformHtmlToComponents } from './utils/transformHtml';
 
 export const InviteSection = ({
   title,
@@ -399,7 +400,7 @@ const DocumentPreviewModal = ({
   );
 };
 
-const Requirement = ({
+const DocumentRequirement = ({
   requirement,
   onCreateDocument,
   onSignDocument,
@@ -532,6 +533,92 @@ const Requirement = ({
   );
 };
 
+function BlockedDependencyTooltip({
+  dependsOnRequirement,
+  children,
+}: {
+  dependsOnRequirement: NonNullable<
+    PreOnboardingRequirementsBag['requirements']['depends_on_requirement']
+  >[number];
+  children: React.ReactElement;
+}) {
+  const action =
+    dependsOnRequirement.type === 'document' ? 'signed' : 'completed';
+  return (
+    <BasicTooltip
+      content={`${dependsOnRequirement.name} must be ${action} first.`}
+    >
+      {children}
+    </BasicTooltip>
+  );
+}
+
+const AckRequirement = ({
+  requirement,
+  isLocked,
+}: {
+  requirement: NonNullable<
+    PreOnboardingRequirementsBag['requirements']
+  >[number];
+  isLocked: boolean;
+}) => {
+  // for the isLocked we need to check the code in Dragon...
+
+  /*  const dependentBySlug = new Map<string, PreOnboardingRequirement>();
+  for (const req of preOnboardingRequirements) {
+    if (req.dependsOnRequirement) {
+      dependentBySlug.set(req.dependsOnRequirement.slug, req);
+    }
+  } */
+
+  const handleChange = (checked: CheckedState) => {
+    console.log('handleChange', checked);
+  };
+
+  const isChecked = requirement.status === 'finished';
+  const isBlocked = requirement.status === 'blocked';
+
+  const isDisabled = isBlocked || isLocked;
+
+  console.log('isDisabled', isDisabled);
+  console.log('isChecked', isChecked);
+  console.log('isBlocked', isBlocked);
+  console.log('isLocked', isLocked);
+
+  const checkbox = (
+    <Checkbox
+      id={`acknowledgement-checkbox-${requirement.slug}`}
+      data-testid={`acknowledgement-checkbox-${requirement.slug}`}
+      checked={isChecked}
+      disabled={isDisabled}
+      onCheckedChange={handleChange}
+    />
+  );
+
+  return (
+    <div className='flex items-start gap-2'>
+      {isBlocked ? (
+        <BlockedDependencyTooltip
+          dependsOnRequirement={requirement.depends_on_requirement}
+        >
+          {checkbox}
+        </BlockedDependencyTooltip>
+      ) : (
+        checkbox
+      )}
+      <Label htmlFor={`acknowledgement-checkbox-${requirement.slug}`}>
+        {/** transformHtmlToComponents is a function that
+         * transforms the description to a React component
+         * but this makes partners able to implement this functionality...
+         * another problem is that the link is private and we need to make it public,
+         * if they don't let you a different approach must be taken...,
+         * ZendeskTriggerButton, ZendeskDialog approach but they cannot send you the link as an anchor the they need to be able to send you the link as a string...   */}
+        <span>{transformHtmlToComponents(requirement.description)}</span>
+      </Label>
+    </div>
+  );
+};
+
 export const ReviewOnboardingStep = ({
   onboardingBag,
   components,
@@ -614,36 +701,46 @@ export const ReviewOnboardingStep = ({
           isSigning,
           activeRequirementSlug,
           isLoadingDocumentPreview,
-        }) => (
-          <>
-            {requirements && requirements?.length > 0 && (
-              <>
-                <h2 className='title'>Pre-Onboarding Requirements</h2>
-                <div className='flex flex-col gap-4'>
-                  {requirements?.map((req) => (
-                    <Requirement
-                      key={req.slug}
-                      requirement={req}
-                      onCreateDocument={onCreateDocument}
-                      onSignDocument={onSignDocument}
-                      documentPreview={documentPreview}
-                      isCreatingDocument={isCreatingDocument}
-                      isSigning={isSigning}
-                      activeRequirementSlug={activeRequirementSlug}
-                      isLoadingDocumentPreview={isLoadingDocumentPreview}
-                      employeeCountry={
-                        (
-                          onboardingBag.employment?.basic_information
-                            ?.country as { name: string }
-                        )?.name ?? undefined
-                      }
-                    />
-                  ))}
-                </div>
-              </>
-            )}
-          </>
-        )}
+        }) => {
+          return (
+            <>
+              {requirements && requirements?.length > 0 && (
+                <>
+                  <h2 className='title'>Pre-Onboarding Requirements</h2>
+                  <div className='flex flex-col gap-4'>
+                    {requirements?.map((req) =>
+                      req.type === 'acknowledgement' ? (
+                        <AckRequirement
+                          key={req.slug}
+                          requirement={req}
+                          isLocked={false}
+                        />
+                      ) : (
+                        <DocumentRequirement
+                          key={req.slug}
+                          requirement={req}
+                          onCreateDocument={onCreateDocument}
+                          onSignDocument={onSignDocument}
+                          documentPreview={documentPreview}
+                          isCreatingDocument={isCreatingDocument}
+                          isSigning={isSigning}
+                          activeRequirementSlug={activeRequirementSlug}
+                          isLoadingDocumentPreview={isLoadingDocumentPreview}
+                          employeeCountry={
+                            (
+                              onboardingBag.employment?.basic_information
+                                ?.country as { name: string }
+                            )?.name ?? undefined
+                          }
+                        />
+                      ),
+                    )}
+                  </div>
+                </>
+              )}
+            </>
+          );
+        }}
       />
 
       <h2 className='title'>Review</h2>
