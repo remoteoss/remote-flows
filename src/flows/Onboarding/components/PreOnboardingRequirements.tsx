@@ -109,6 +109,10 @@ export const usePreOnboardingRequirements = ({
       (req) => req.slug === requirementSlug,
     );
 
+    if (requirement?.status === 'blocked') {
+      throw new Error('Cannot acknowledge blocked requirement');
+    }
+
     const isFinished = requirement?.status === 'finished';
 
     if (!isFinished) {
