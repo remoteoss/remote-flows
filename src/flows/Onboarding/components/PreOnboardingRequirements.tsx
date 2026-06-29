@@ -14,18 +14,27 @@ export const usePreOnboardingRequirements = ({
   employmentId,
 }: {
   employmentId: string;
+  options?: Parameters<typeof useGetPreOnboardingRequirements>[1];
 }) => {
+  const { onboardingBag } = useOnboardingContext();
   const [documentIds, setDocumentIds] = useState<Record<string, string>>({});
   const [activeRequirementSlug, setActiveRequirementSlug] = useState<
     string | undefined
   >();
+
+  const isPreOnboardingRequirementsEnabled = Boolean(
+    onboardingBag.options?.features?.includes('pre_onboarding_requirements') &&
+    !!employmentId,
+  );
 
   const {
     data: requirements,
     isLoading: isLoadingRequirements,
     refetch: refetchRequirements,
   } = useGetPreOnboardingRequirements(employmentId, {
-    queryOptions: { enabled: !!employmentId },
+    queryOptions: {
+      enabled: isPreOnboardingRequirementsEnabled,
+    },
   });
 
   const activeDocumentId = activeRequirementSlug

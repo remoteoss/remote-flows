@@ -1,5 +1,17 @@
 # @remoteoss/remote-flows
 
+## 1.41.1
+
+### Patch Changes
+
+#### Fixes
+
+- fix sandbox bug when request fails (#1117) [#1117](https://github.com/remoteoss/remote-flows/pull/1117)
+
+#### Chores
+
+- update actions/checkout action to v7 (#1113) [#1113](https://github.com/remoteoss/remote-flows/pull/1113)
+
 ## 1.41.0
 
 ### Minor Changes

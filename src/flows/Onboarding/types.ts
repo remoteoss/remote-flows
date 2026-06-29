@@ -62,7 +62,8 @@ export type OnboardingRenderProps = {
 type OnboardingFeatures =
   | 'onboarding_reserves'
   | 'dynamic_steps'
-  | 'ea_preview';
+  | 'ea_preview'
+  | 'pre_onboarding_requirements';
 
 /**
  * JSON schema version configuration for a specific country

@@ -1209,6 +1209,10 @@ describe('OnboardingInvite', () => {
 
   describe('pre-onboarding requirements', () => {
     it('should disable button when pre-onboarding requirements are not finished', async () => {
+      defaultProps.options = {
+        features: ['pre_onboarding_requirements'],
+      };
+
       server.use(
         http.get(
           '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
@@ -1226,6 +1230,10 @@ describe('OnboardingInvite', () => {
     });
 
     it('should enable button when all pre-onboarding requirements are finished', async () => {
+      defaultProps.options = {
+        features: ['pre_onboarding_requirements'],
+      };
+
       server.use(
         http.get(
           '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
@@ -1266,6 +1274,10 @@ describe('OnboardingInvite', () => {
     });
 
     it('should disable button when at least one requirement is not finished', async () => {
+      defaultProps.options = {
+        features: ['pre_onboarding_requirements'],
+      };
+
       server.use(
         http.get(
           '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
