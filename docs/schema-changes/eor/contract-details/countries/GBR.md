@@ -4,11 +4,11 @@ Schema versions for employee onboarding in United Kingdom.
 
 ## Current Version
 
-**Contract Details:** v3 (Since SDK TBD, enforced July 1, 2026)
+**Contract Details:** v3
 
 ## Contract Details
 
-### v3 - Current (Since SDK TBD, enforced July 1, 2026)
+### v3 - Current
 
 **What changed:**
 
@@ -30,7 +30,7 @@ Schema versions for employee onboarding in United Kingdom.
 
 ---
 
-### v2 (Since SDK 1.23.0, March 2026)
+### v2
 
 **What changed:**
 
@@ -50,6 +50,6 @@ Schema versions for employee onboarding in United Kingdom.
 
 ---
 
-### v1 (SDK 1.0.0)
+### v1
 
 Initial version with basic contract details fields.
