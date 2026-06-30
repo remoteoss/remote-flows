@@ -778,6 +778,34 @@ export const useDeleteContractorCorSubscription = () => {
   });
 };
 
+export const useSetContractOrigin = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: async ({
+      employmentId,
+      contractOrigin,
+      templateType,
+    }: {
+      employmentId: string;
+      contractOrigin: string;
+      templateType?: string;
+    }) => {
+      return (client as Client).post({
+        url: '/v1/employments/{employment_id}/contract-origin',
+        path: { employment_id: employmentId },
+        body: {
+          contract_origin: contractOrigin,
+          ...(templateType ? { template_type: templateType } : {}),
+        },
+        security: [
+          { scheme: 'bearer', type: 'http' },
+          { scheme: 'bearer', type: 'http' },
+        ],
+      });
+    },
+  });
+};
+
 export const useCountriesSchemaField = (
   options?: Omit<FlowOptions, 'jsonSchemaVersion'> & {
     queryOptions?: { enabled?: boolean };

@@ -31,6 +31,7 @@ import {
   CONTRACT_PRODUCT_TITLES,
   useHasCompanySignedContract,
   useCompanyOpenTasks,
+  useSetContractOrigin,
 } from '@/src/flows/ContractorOnboarding/api';
 import {
   ContractorOnboardingFlowProps,
@@ -82,6 +83,7 @@ type useContractorOnboardingProps = Omit<
 const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
   select_country: null,
   basic_information: 'employment_basic_information',
+  contract_origin: null,
   contract_details: null,
   eligibility_questionnaire: null,
   pricing_plan: null,
@@ -123,6 +125,7 @@ export const useContractorOnboarding = ({
   const fieldsMetaRef = useRef<{
     select_country: Meta;
     basic_information: Meta;
+    contract_origin: Meta;
     contract_details: Meta;
     contract_preview: Meta;
     pricing_plan: Meta;
@@ -130,6 +133,7 @@ export const useContractorOnboarding = ({
   }>({
     select_country: {},
     basic_information: {},
+    contract_origin: {},
     contract_details: {},
     contract_preview: {},
     pricing_plan: {},
@@ -146,6 +150,9 @@ export const useContractorOnboarding = ({
   const [includeContractPreview, setIncludeContractPreview] =
     useState<boolean>(true);
 
+  const [includeContractDetails, setIncludeContractDetails] =
+    useState<boolean>(true);
+
   const [pendingNavigationStep, setPendingNavigationStep] =
     useState<StepKeys | null>(null);
 
@@ -153,10 +160,12 @@ export const useContractorOnboarding = ({
     () =>
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
+        includeContractOrigin: !skipSteps?.includes('contract_origin'),
         includeEligibilityQuestionnaire: includeEligibilityQuestionnaire,
+        includeContractDetails: includeContractDetails,
         includeContractPreview: includeContractPreview,
       }),
-    [includeEligibilityQuestionnaire, includeContractPreview, skipSteps],
+    [includeEligibilityQuestionnaire, includeContractDetails, includeContractPreview, skipSteps],
   );
 
   const {
@@ -232,6 +241,7 @@ export const useContractorOnboarding = ({
     usePostCreateEligibilityQuestionnaire();
   const manageContractorCorSubscriptionMutation =
     usePostManageContractorCorSubscription();
+  const setContractOriginMutation = useSetContractOrigin();
 
   const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
     mutationToPromise(updateEmploymentMutation);
@@ -261,6 +271,9 @@ export const useContractorOnboarding = ({
 
   const { mutateAsyncOrThrow: deleteContractorCorSubscriptionMutationAsync } =
     mutationToPromise(deleteContractorCorSubscriptionMutation);
+
+  const { mutateAsyncOrThrow: setContractOriginMutationAsync } =
+    mutationToPromise(setContractOriginMutation);
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -634,6 +647,7 @@ export const useContractorOnboarding = ({
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
+      contract_origin: [],
       pricing_plan: selectContractorSubscriptionForm?.fields || [],
       eligibility_questionnaire: eligibilityQuestionnaireForm?.fields || [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
@@ -656,6 +670,7 @@ export const useContractorOnboarding = ({
   > = {
     select_country: null,
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
+    contract_origin: null,
     pricing_plan: null,
     contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
     eligibility_questionnaire: null,
@@ -669,6 +684,7 @@ export const useContractorOnboarding = ({
   > = {
     select_country: selectCountryForm?.meta?.['x-jsf-presentation'],
     basic_information: basicInformationForm?.meta?.['x-jsf-presentation'],
+    contract_origin: null,
     pricing_plan:
       selectContractorSubscriptionForm?.meta?.['x-jsf-presentation'],
     eligibility_questionnaire:
@@ -858,6 +874,7 @@ export const useContractorOnboarding = ({
           stepFields.basic_information,
           { skipMoneyConversion: true },
         ),
+        contract_origin: {},
         contract_details: prettifyFormValues(
           contractDetailsInitialValues,
           stepFields.contract_details,
@@ -883,6 +900,7 @@ export const useContractorOnboarding = ({
       setStepValues({
         select_country: selectCountryInitialValues,
         basic_information: basicInformationInitialValues,
+        contract_origin: {},
         contract_details: contractDetailsInitialValues,
         contract_preview: contractPreviewInitialValues,
         pricing_plan: pricingPlanInitialValues,
@@ -1240,6 +1258,22 @@ export const useContractorOnboarding = ({
         throw createStructuredError('invalid selection');
       }
 
+      case 'contract_origin': {
+        const contractOrigin = values.contract_origin as string;
+        const isProvidedByCustomer = contractOrigin === 'provided_by_customer';
+
+        await setContractOriginMutationAsync({
+          employmentId: internalEmploymentId as string,
+          contractOrigin,
+          templateType: isProvidedByCustomer ? undefined : 'contractor_agreement',
+        });
+
+        setIncludeContractDetails(!isProvidedByCustomer);
+        setIncludeContractPreview(!isProvidedByCustomer);
+
+        return { data: { contractOrigin } };
+      }
+
       case 'eligibility_questionnaire': {
         try {
           const response = await createEligibilityQuestionnaireMutationAsync({
@@ -1473,7 +1507,8 @@ export const useContractorOnboarding = ({
       uploadFileMutation.isPending ||
       createEligibilityQuestionnaireMutation.isPending ||
       manageContractorCorSubscriptionMutation.isPending ||
-      deleteContractorCorSubscriptionMutation.isPending,
+      deleteContractorCorSubscriptionMutation.isPending ||
+      setContractOriginMutation.isPending,
 
     /**
      * Document preview PDF data

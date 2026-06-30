@@ -160,6 +160,7 @@ const MultiStepForm = ({
     ContractPreviewStep,
     ContractReviewButton,
     SaveDraftButton,
+    ContractOriginStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -402,6 +403,33 @@ const MultiStepForm = ({
                 will not be treating them as an employee.
               </p>
             )}
+          <div className='contractor-onboarding-buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Back
+            </BackButton>
+            <SubmitButton
+              className='submit-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Continue
+            </SubmitButton>
+          </div>
+        </div>
+      );
+
+    case 'contract_origin':
+      return (
+        <div className='contractor-onboarding-form-layout'>
+          <ContractOriginStep
+            onSuccess={() => console.log('contract origin set')}
+            onError={({ error, fieldErrors }) =>
+              setErrors({ apiError: error.message, fieldErrors })
+            }
+          />
+          <AlertError errors={errors} />
           <div className='contractor-onboarding-buttons-container'>
             <BackButton
               className='back-button'

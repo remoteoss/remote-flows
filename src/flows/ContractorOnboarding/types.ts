@@ -15,6 +15,7 @@ import { ContractPreviewStep } from '@/src/flows/ContractorOnboarding/components
 import { OnboardingInvite } from '@/src/flows/ContractorOnboarding/components/OnboardingInvite';
 import { ContractReviewButton } from '@/src/flows/ContractorOnboarding/components/ContractReviewButton';
 import { EligibilityQuestionnaireStep } from '@/src/flows/ContractorOnboarding/components/EligibilityQuestionnaireStep';
+import { ContractOriginStep } from '@/src/flows/ContractorOnboarding/components/ContractOriginStep';
 import { ProductType } from '@/src/flows/ContractorOnboarding/constants';
 import { SaveDraftButton } from '@/src/flows/ContractorOnboarding/components/SaveDraftButton';
 
@@ -44,6 +45,7 @@ export type ContractorOnboardingRenderProps = {
     BackButton: typeof OnboardingBack;
     SubmitButton: typeof OnboardingSubmit;
     PricingPlanStep: typeof PricingPlanStep;
+    ContractOriginStep: typeof ContractOriginStep;
     ContractDetailsStep: typeof ContractDetailsStep;
     ContractPreviewStep: typeof ContractPreviewStep;
     OnboardingInvite: typeof OnboardingInvite;
@@ -94,9 +96,9 @@ export type ContractorOnboardingFlowProps = {
   externalId?: string;
 
   /**
-   * The steps to skip for the onboarding. We only support skipping the select_country step for now.
+   * The steps to skip for the onboarding.
    */
-  skipSteps?: ['select_country'];
+  skipSteps?: Array<'select_country' | 'contract_origin'>;
 
   /**
    * The render prop function with the params passed by the useContractorOnboarding hook and the components available to use for this flow
