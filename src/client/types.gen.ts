@@ -542,6 +542,13 @@ export type SignatoryType =
   | 'unknown';
 
 /**
+ * EngagedByLegalEntityID
+ *
+ * The unique identifier (UUID) of the legal entity that engaged this employment.
+ */
+export type EngagedByLegalEntityId = string | null;
+
+/**
  * SignatoryStatus
  *
  * Current signing status of this signatory
@@ -996,6 +1003,12 @@ export type Employment = {
     [key: string]: unknown;
   };
   /**
+   * BillToLegalEntityID
+   *
+   * The unique identifier (UUID) of the legal entity that is billed for this employment.
+   */
+  bill_to_legal_entity_id?: string | null;
+  /**
    * The employee's work email address, typically provided by the employer.
    */
   work_email: string;
@@ -1065,6 +1078,12 @@ export type Employment = {
    * The unique identifier (UUID) of the currently active contract for this employment.
    */
   active_contract_id?: string;
+  /**
+   * EngagedByLegalEntityID
+   *
+   * The unique identifier (UUID) of the legal entity that engaged this employment.
+   */
+  engaged_by_legal_entity_id?: string | null;
   /**
    * Billing address information. Its properties may vary depending on the country.
    */
@@ -2901,17 +2920,6 @@ export type ContractorInvoiceItem = {
 };
 
 /**
- * PayslipResponse
- *
- * A single payslip.
- */
-export type PayslipResponse = {
-  data: {
-    payslip: Payslip;
-  };
-};
-
-/**
  * CorTerminationRequestCreatedResponse
  */
 export type CorTerminationRequestCreatedResponse = {
@@ -3553,7 +3561,7 @@ export type CreateWebhookCallbackParams = {
     | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
-    | 'employment.basic_information.updated'
+    | 'employment_basic_information.updated'
     | 'employment.contractor_management_plan.updated'
     | 'employment.contractor_of_record_termination.cancelled'
     | 'employment.contractor_of_record_termination.executed'
@@ -3837,6 +3845,29 @@ export type BenefitRenewalRequestsBenefitRenewalRequestResponse = {
  * EmploymentTermType
  */
 export type EmploymentTermType = 'fixed' | 'indefinite';
+
+/**
+ * ListCompanyCostCenterAllocationsResponse
+ *
+ * Response schema listing many employments
+ */
+export type ListCompanyCostCenterAllocationsResponse = {
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    employments?: Array<EmploymentWithCostCenterAllocations>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
+};
 
 /**
  * ReplayWebhookEventsParams
@@ -4225,6 +4256,37 @@ export type TimeoffTypeResponse = {
   name: TimeoffType;
 };
 
+/**
+ * CostCenterAllocation
+ *
+ * A cost center allocation for an employment, including the allocated percentage and effective period.
+ */
+export type CostCenterAllocation = {
+  cost_center: CostCenter;
+  /**
+   * Date the allocation becomes effective.
+   */
+  effective_from: string | null;
+  /**
+   * Date the allocation stops being effective.
+   */
+  effective_to: string | null;
+  /**
+   * UuidSlug
+   *
+   * Unique identifier of the cost center allocation.
+   */
+  id: string;
+  /**
+   * Percentage of the employment's cost allocated to this cost center (0-100).
+   */
+  percentage: number;
+  /**
+   * Allocation status, derived from the effective period.
+   */
+  status: 'active' | 'scheduled' | 'expired';
+};
+
 export type MaybeAccountsLoginSyncedWith = AccountsLoginSyncedWith | null;
 
 /**
@@ -4464,7 +4526,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
-    | 'employment.basic_information.updated'
+    | 'employment_basic_information.updated'
     | 'employment.contractor_management_plan.updated'
     | 'employment.contractor_of_record_termination.cancelled'
     | 'employment.contractor_of_record_termination.executed'
@@ -9187,7 +9249,7 @@ export type WebhookCallback = {
     | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
-    | 'employment.basic_information.updated'
+    | 'employment_basic_information.updated'
     | 'employment.contractor_management_plan.updated'
     | 'employment.contractor_of_record_termination.cancelled'
     | 'employment.contractor_of_record_termination.executed'
@@ -10240,6 +10302,13 @@ export type CreateProbationCompletionLetterParams = {
 };
 
 /**
+ * BillToLegalEntityID
+ *
+ * The unique identifier (UUID) of the legal entity that is billed for this employment.
+ */
+export type BillToLegalEntityId = string | null;
+
+/**
  * CompanyFormResponse
  *
  * Object with required and optional fields, its descriptions and suggested presentation
@@ -10466,6 +10535,17 @@ export type BenefitTier = {
    * The insurance carriers or providers associated with this tier.
    */
   providers: Array<BenefitProvider>;
+};
+
+/**
+ * ListCostCenterAllocationsResponse
+ *
+ * Response listing the cost center allocations for an employment.
+ */
+export type ListCostCenterAllocationsResponse = {
+  data: {
+    cost_center_allocations: Array<CostCenterAllocation>;
+  };
 };
 
 /**
@@ -10855,6 +10935,30 @@ export type CreateProbationExtensionParams = {
 };
 
 /**
+ * EmploymentWithCostCenterAllocations
+ *
+ * An employment under the company with its cost center allocations.
+ */
+export type EmploymentWithCostCenterAllocations = {
+  /**
+   * Unique identifier of the legal entity this employment is billed to.
+   */
+  bill_to_legal_entity_id?: string | null;
+  /**
+   * The cost center allocations for this employment.
+   */
+  cost_center_allocations: Array<CostCenterAllocation>;
+  /**
+   * Unique identifier of the employment.
+   */
+  employment_id: string;
+  /**
+   * Unique identifier of the legal entity that employs this employment.
+   */
+  engaged_by_legal_entity_id?: string | null;
+};
+
+/**
  * ListIncentivesResponse
  *
  * Response schema listing many incentives
@@ -10970,7 +11074,7 @@ export type UpdateWebhookCallbackParams = {
     | 'employment_contract.adjusted_during_onboarding'
     | 'employment.account.updated'
     | 'employment.administrative_details.updated'
-    | 'employment.basic_information.updated'
+    | 'employment_basic_information.updated'
     | 'employment.contractor_management_plan.updated'
     | 'employment.contractor_of_record_termination.cancelled'
     | 'employment.contractor_of_record_termination.executed'
@@ -11445,6 +11549,26 @@ export type MinimalContractAmendment = {
 };
 
 /**
+ * CostCenter
+ *
+ * The cost center an employment is allocated to.
+ */
+export type CostCenter = {
+  /**
+   * Cost center code. Typically used as the join key to an external general ledger.
+   */
+  code: string | null;
+  /**
+   * Cost center name.
+   */
+  name: string;
+  /**
+   * Unique identifier of the cost center.
+   */
+  slug: string;
+};
+
+/**
  * SalaryDecreaseDetails
  *
  * The details of the salary decrease request if there is one
@@ -11730,6 +11854,10 @@ export type EmploymentCreateParams = {
     [key: string]: unknown;
   };
   /**
+   * Id of the legal entity that should be billed for the employment. If omitted, falls back to `engaged_by_legal_entity_id`. For EOR and Contractor employments this may differ from `engaged_by_legal_entity_id`. For Global Payroll and Direct (HRIS) employments it must match `engaged_by_legal_entity_id`.
+   */
+  bill_to_legal_entity_id?: string;
+  /**
    * This optional field is deprecated.
    */
   company_id?: string;
@@ -11738,9 +11866,15 @@ export type EmploymentCreateParams = {
    */
   country_code: string;
   /**
-   * This field is required to create a global payroll employee.
+   * Deprecated alias for `engaged_by_legal_entity_id`. Use `engaged_by_legal_entity_id` instead.
+   *
+   * @deprecated
    */
   engaged_by_entity_slug?: string;
+  /**
+   * Id of the legal entity that engages the employee or contractor. Required for Global Payroll employees. For EOR and Contractor employments this may differ from `bill_to_legal_entity_id`. For Global Payroll and Direct (HRIS) employments it must match `bill_to_legal_entity_id`.
+   */
+  engaged_by_legal_entity_id?: string;
   /**
    * A unique reference code for the employment record in a non-Remote system. This optional field links to external data sources. If not provided, it defaults to `null`. While uniqueness is recommended, it is not strictly enforced within Remote's system.
    */
@@ -12724,6 +12858,70 @@ export type GetV2OffboardingsResponses = {
 export type GetV2OffboardingsResponse =
   GetV2OffboardingsResponses[keyof GetV2OffboardingsResponses];
 
+export type PutV2EmploymentsEmploymentIdPricingPlanDetailsData = {
+  /**
+   * Employment pricing plan details params
+   */
+  body?: EmploymentPricingPlanDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Version of the pricing_plan_details form schema
+     */
+    pricing_plan_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v2/employments/{employment_id}/pricing-plan-details';
+};
+
+export type PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdPricingPlanDetailsError =
+  PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors[keyof PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors];
+
+export type PutV2EmploymentsEmploymentIdPricingPlanDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdPricingPlanDetailsResponse =
+  PutV2EmploymentsEmploymentIdPricingPlanDetailsResponses[keyof PutV2EmploymentsEmploymentIdPricingPlanDetailsResponses];
+
 export type GetV1TimesheetsIdData = {
   body?: never;
   path: {
@@ -12964,6 +13162,70 @@ export type GetV2OffboardingsIdResponses = {
 
 export type GetV2OffboardingsIdResponse =
   GetV2OffboardingsIdResponses[keyof GetV2OffboardingsIdResponses];
+
+export type PutV2EmploymentsEmploymentIdAddressDetailsData = {
+  /**
+   * Employment address details params
+   */
+  body?: EmploymentAddressDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Version of the address_details form schema
+     */
+    address_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v2/employments/{employment_id}/address-details';
+};
+
+export type PutV2EmploymentsEmploymentIdAddressDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdAddressDetailsError =
+  PutV2EmploymentsEmploymentIdAddressDetailsErrors[keyof PutV2EmploymentsEmploymentIdAddressDetailsErrors];
+
+export type PutV2EmploymentsEmploymentIdAddressDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdAddressDetailsResponse =
+  PutV2EmploymentsEmploymentIdAddressDetailsResponses[keyof PutV2EmploymentsEmploymentIdAddressDetailsResponses];
 
 export type GetV1CompaniesCompanyIdPricingPlansData = {
   body?: never;
@@ -15740,115 +16002,6 @@ export type PostV1MagicLinkResponses = {
 export type PostV1MagicLinkResponse =
   PostV1MagicLinkResponses[keyof PostV1MagicLinkResponses];
 
-export type GetV2EmploymentsEmploymentIdBasicInformationData = {
-  body?: never;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
-  };
-  query?: {
-    /**
-     * Version of the employment_basic_information form schema
-     */
-    employment_basic_information_json_schema_version?: number | 'latest';
-  };
-  url: '/v2/employments/{employment_id}/basic_information';
-};
-
-export type GetV2EmploymentsEmploymentIdBasicInformationErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Unprocessable Entity
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type GetV2EmploymentsEmploymentIdBasicInformationError =
-  GetV2EmploymentsEmploymentIdBasicInformationErrors[keyof GetV2EmploymentsEmploymentIdBasicInformationErrors];
-
-export type GetV2EmploymentsEmploymentIdBasicInformationResponses = {
-  /**
-   * Success
-   */
-  200: EmploymentDetailsOnlyResponse;
-};
-
-export type GetV2EmploymentsEmploymentIdBasicInformationResponse =
-  GetV2EmploymentsEmploymentIdBasicInformationResponses[keyof GetV2EmploymentsEmploymentIdBasicInformationResponses];
-
-export type PutV2EmploymentsEmploymentIdBasicInformationData = {
-  /**
-   * Employment basic information params
-   */
-  body?: EmploymentBasicInformationParams;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
-  };
-  query?: {
-    /**
-     * Version of the employment_basic_information form schema
-     */
-    employment_basic_information_json_schema_version?: number | 'latest';
-  };
-  url: '/v2/employments/{employment_id}/basic_information';
-};
-
-export type PutV2EmploymentsEmploymentIdBasicInformationErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Conflict
-   */
-  409: ConflictResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Unprocessable Entity
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type PutV2EmploymentsEmploymentIdBasicInformationError =
-  PutV2EmploymentsEmploymentIdBasicInformationErrors[keyof PutV2EmploymentsEmploymentIdBasicInformationErrors];
-
-export type PutV2EmploymentsEmploymentIdBasicInformationResponses = {
-  /**
-   * Success
-   */
-  200: EmploymentDetailsOnlyResponse;
-};
-
-export type PutV2EmploymentsEmploymentIdBasicInformationResponse =
-  PutV2EmploymentsEmploymentIdBasicInformationResponses[keyof PutV2EmploymentsEmploymentIdBasicInformationResponses];
-
 export type DeleteV1IncentivesRecurringIdData = {
   body?: never;
   headers: {
@@ -16357,6 +16510,59 @@ export type PostV1CostCalculatorEstimationPdfResponses = {
 export type PostV1CostCalculatorEstimationPdfResponse =
   PostV1CostCalculatorEstimationPdfResponses[keyof PostV1CostCalculatorEstimationPdfResponses];
 
+export type GetV1EmploymentsEmploymentIdCostCenterAllocationsData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Filters allocations by status. When omitted, allocations of every status are returned.
+     */
+    status?: 'active' | 'scheduled' | 'expired';
+  };
+  url: '/v1/employments/{employment_id}/cost-center-allocations';
+};
+
+export type GetV1EmploymentsEmploymentIdCostCenterAllocationsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV1EmploymentsEmploymentIdCostCenterAllocationsError =
+  GetV1EmploymentsEmploymentIdCostCenterAllocationsErrors[keyof GetV1EmploymentsEmploymentIdCostCenterAllocationsErrors];
+
+export type GetV1EmploymentsEmploymentIdCostCenterAllocationsResponses = {
+  /**
+   * Success
+   */
+  200: ListCostCenterAllocationsResponse;
+};
+
+export type GetV1EmploymentsEmploymentIdCostCenterAllocationsResponse =
+  GetV1EmploymentsEmploymentIdCostCenterAllocationsResponses[keyof GetV1EmploymentsEmploymentIdCostCenterAllocationsResponses];
+
 export type GetV1WorkAuthorizationRequestsIdData = {
   body?: never;
   path: {
@@ -16606,134 +16812,6 @@ export type PostV1ProbationExtensionsResponses = {
 
 export type PostV1ProbationExtensionsResponse =
   PostV1ProbationExtensionsResponses[keyof PostV1ProbationExtensionsResponses];
-
-export type PutV2EmploymentsEmploymentIdBillingAddressDetailsData = {
-  /**
-   * Employment billing address details params
-   */
-  body?: EmploymentBillingAddressDetailsParams;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
-  };
-  query?: {
-    /**
-     * Version of the billing_address_details form schema
-     */
-    billing_address_details_json_schema_version?: number | 'latest';
-  };
-  url: '/v2/employments/{employment_id}/billing_address_details';
-};
-
-export type PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Conflict
-   */
-  409: ConflictResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Unprocessable Entity
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type PutV2EmploymentsEmploymentIdBillingAddressDetailsError =
-  PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors[keyof PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors];
-
-export type PutV2EmploymentsEmploymentIdBillingAddressDetailsResponses = {
-  /**
-   * Success
-   */
-  200: EmploymentDetailsOnlyResponse;
-};
-
-export type PutV2EmploymentsEmploymentIdBillingAddressDetailsResponse =
-  PutV2EmploymentsEmploymentIdBillingAddressDetailsResponses[keyof PutV2EmploymentsEmploymentIdBillingAddressDetailsResponses];
-
-export type PutV2EmploymentsEmploymentIdAddressDetailsData = {
-  /**
-   * Employment address details params
-   */
-  body?: EmploymentAddressDetailsParams;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
-  };
-  query?: {
-    /**
-     * Version of the address_details form schema
-     */
-    address_details_json_schema_version?: number | 'latest';
-  };
-  url: '/v2/employments/{employment_id}/address_details';
-};
-
-export type PutV2EmploymentsEmploymentIdAddressDetailsErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Conflict
-   */
-  409: ConflictResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Unprocessable Entity
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type PutV2EmploymentsEmploymentIdAddressDetailsError =
-  PutV2EmploymentsEmploymentIdAddressDetailsErrors[keyof PutV2EmploymentsEmploymentIdAddressDetailsErrors];
-
-export type PutV2EmploymentsEmploymentIdAddressDetailsResponses = {
-  /**
-   * Success
-   */
-  200: EmploymentDetailsOnlyResponse;
-};
-
-export type PutV2EmploymentsEmploymentIdAddressDetailsResponse =
-  PutV2EmploymentsEmploymentIdAddressDetailsResponses[keyof PutV2EmploymentsEmploymentIdAddressDetailsResponses];
 
 export type PostV1RiskReserveData = {
   /**
@@ -17248,6 +17326,115 @@ export type GetV1ResignationsOffboardingRequestIdResignationLetterResponses = {
 export type GetV1ResignationsOffboardingRequestIdResignationLetterResponse =
   GetV1ResignationsOffboardingRequestIdResignationLetterResponses[keyof GetV1ResignationsOffboardingRequestIdResignationLetterResponses];
 
+export type GetV2EmploymentsEmploymentIdBasicInformationData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Version of the employment_basic_information form schema
+     */
+    employment_basic_information_json_schema_version?: number | 'latest';
+  };
+  url: '/v2/employments/{employment_id}/basic-information';
+};
+
+export type GetV2EmploymentsEmploymentIdBasicInformationErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV2EmploymentsEmploymentIdBasicInformationError =
+  GetV2EmploymentsEmploymentIdBasicInformationErrors[keyof GetV2EmploymentsEmploymentIdBasicInformationErrors];
+
+export type GetV2EmploymentsEmploymentIdBasicInformationResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type GetV2EmploymentsEmploymentIdBasicInformationResponse =
+  GetV2EmploymentsEmploymentIdBasicInformationResponses[keyof GetV2EmploymentsEmploymentIdBasicInformationResponses];
+
+export type PutV2EmploymentsEmploymentIdBasicInformationData = {
+  /**
+   * Employment basic information params
+   */
+  body?: EmploymentBasicInformationParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Version of the employment_basic_information form schema
+     */
+    employment_basic_information_json_schema_version?: number | 'latest';
+  };
+  url: '/v2/employments/{employment_id}/basic-information';
+};
+
+export type PutV2EmploymentsEmploymentIdBasicInformationErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdBasicInformationError =
+  PutV2EmploymentsEmploymentIdBasicInformationErrors[keyof PutV2EmploymentsEmploymentIdBasicInformationErrors];
+
+export type PutV2EmploymentsEmploymentIdBasicInformationResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdBasicInformationResponse =
+  PutV2EmploymentsEmploymentIdBasicInformationResponses[keyof PutV2EmploymentsEmploymentIdBasicInformationResponses];
+
 export type PutV1EmploymentsEmploymentIdFederalTaxesData = {
   /**
    * Employment federal taxes params
@@ -17731,57 +17918,6 @@ export type GetV1TimeoffBalancesEmploymentIdResponses = {
 export type GetV1TimeoffBalancesEmploymentIdResponse =
   GetV1TimeoffBalancesEmploymentIdResponses[keyof GetV1TimeoffBalancesEmploymentIdResponses];
 
-export type PutV1EmploymentsEmploymentIdBasicInformationData = {
-  /**
-   * Employment basic information params
-   */
-  body?: EmploymentBasicInformationParams;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
-  };
-  query?: never;
-  url: '/v1/employments/{employment_id}/basic_information';
-};
-
-export type PutV1EmploymentsEmploymentIdBasicInformationErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Conflict
-   */
-  409: ConflictResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Unprocessable Entity
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type PutV1EmploymentsEmploymentIdBasicInformationError =
-  PutV1EmploymentsEmploymentIdBasicInformationErrors[keyof PutV1EmploymentsEmploymentIdBasicInformationErrors];
-
-export type PutV1EmploymentsEmploymentIdBasicInformationResponses = {
-  /**
-   * Success
-   */
-  200: EmploymentResponse;
-};
-
-export type PutV1EmploymentsEmploymentIdBasicInformationResponse =
-  PutV1EmploymentsEmploymentIdBasicInformationResponses[keyof PutV1EmploymentsEmploymentIdBasicInformationResponses];
-
 export type GetV1ExpensesCategoriesData = {
   body?: never;
   path?: never;
@@ -18062,70 +18198,6 @@ export type GetV1ContractAmendmentsIdResponses = {
 
 export type GetV1ContractAmendmentsIdResponse =
   GetV1ContractAmendmentsIdResponses[keyof GetV1ContractAmendmentsIdResponses];
-
-export type PutV2EmploymentsEmploymentIdBankAccountDetailsData = {
-  /**
-   * Employment bank account details params
-   */
-  body?: EmploymentBankAccountDetailsParams;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
-  };
-  query?: {
-    /**
-     * Version of the bank_account_details form schema
-     */
-    bank_account_details_json_schema_version?: number | 'latest';
-  };
-  url: '/v2/employments/{employment_id}/bank_account_details';
-};
-
-export type PutV2EmploymentsEmploymentIdBankAccountDetailsErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Conflict
-   */
-  409: ConflictResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Unprocessable Entity
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type PutV2EmploymentsEmploymentIdBankAccountDetailsError =
-  PutV2EmploymentsEmploymentIdBankAccountDetailsErrors[keyof PutV2EmploymentsEmploymentIdBankAccountDetailsErrors];
-
-export type PutV2EmploymentsEmploymentIdBankAccountDetailsResponses = {
-  /**
-   * Success
-   */
-  200: EmploymentDetailsOnlyResponse;
-};
-
-export type PutV2EmploymentsEmploymentIdBankAccountDetailsResponse =
-  PutV2EmploymentsEmploymentIdBankAccountDetailsResponses[keyof PutV2EmploymentsEmploymentIdBankAccountDetailsResponses];
 
 export type GetV1CompanyManagersData = {
   body?: never;
@@ -18655,30 +18727,43 @@ export type GetV1EmployeeTimesheetsResponses = {
 export type GetV1EmployeeTimesheetsResponse =
   GetV1EmployeeTimesheetsResponses[keyof GetV1EmployeeTimesheetsResponses];
 
-export type PutV1EmploymentsEmploymentIdPersonalDetailsData = {
+export type PutV2EmploymentsEmploymentIdEmergencyContactData = {
   /**
-   * Employment personal details params
+   * Employment emergency contact params
    */
-  body?: EmploymentPersonalDetailsParams;
+  body?: EmploymentEmergencyContactParams;
   path: {
     /**
      * Employment ID
      */
     employment_id: string;
   };
-  query?: never;
-  url: '/v1/employments/{employment_id}/personal_details';
+  query?: {
+    /**
+     * Version of the emergency_contact_details form schema
+     */
+    emergency_contact_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v2/employments/{employment_id}/emergency-contact';
 };
 
-export type PutV1EmploymentsEmploymentIdPersonalDetailsErrors = {
+export type PutV2EmploymentsEmploymentIdEmergencyContactErrors = {
   /**
    * Bad Request
    */
   400: BadRequestResponse;
   /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
    * Forbidden
    */
   403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
   /**
    * Conflict
    */
@@ -18693,18 +18778,18 @@ export type PutV1EmploymentsEmploymentIdPersonalDetailsErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PutV1EmploymentsEmploymentIdPersonalDetailsError =
-  PutV1EmploymentsEmploymentIdPersonalDetailsErrors[keyof PutV1EmploymentsEmploymentIdPersonalDetailsErrors];
+export type PutV2EmploymentsEmploymentIdEmergencyContactError =
+  PutV2EmploymentsEmploymentIdEmergencyContactErrors[keyof PutV2EmploymentsEmploymentIdEmergencyContactErrors];
 
-export type PutV1EmploymentsEmploymentIdPersonalDetailsResponses = {
+export type PutV2EmploymentsEmploymentIdEmergencyContactResponses = {
   /**
    * Success
    */
-  200: EmploymentResponse;
+  200: EmploymentDetailsOnlyResponse;
 };
 
-export type PutV1EmploymentsEmploymentIdPersonalDetailsResponse =
-  PutV1EmploymentsEmploymentIdPersonalDetailsResponses[keyof PutV1EmploymentsEmploymentIdPersonalDetailsResponses];
+export type PutV2EmploymentsEmploymentIdEmergencyContactResponse =
+  PutV2EmploymentsEmploymentIdEmergencyContactResponses[keyof PutV2EmploymentsEmploymentIdEmergencyContactResponses];
 
 export type GetV1TravelLetterRequestsData = {
   body?: never;
@@ -18919,63 +19004,6 @@ export type PostV1TimesheetsTimesheetIdApproveResponses = {
 
 export type PostV1TimesheetsTimesheetIdApproveResponse =
   PostV1TimesheetsTimesheetIdApproveResponses[keyof PostV1TimesheetsTimesheetIdApproveResponses];
-
-export type GetV1PayslipsIdData = {
-  body?: never;
-  headers: {
-    /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-     *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
-     *
-     */
-    Authorization: string;
-  };
-  path: {
-    /**
-     * Payslip ID
-     */
-    id: string;
-  };
-  query?: never;
-  url: '/v1/payslips/{id}';
-};
-
-export type GetV1PayslipsIdErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Too many requests
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type GetV1PayslipsIdError =
-  GetV1PayslipsIdErrors[keyof GetV1PayslipsIdErrors];
-
-export type GetV1PayslipsIdResponses = {
-  /**
-   * Success
-   */
-  200: PayslipResponse;
-};
-
-export type GetV1PayslipsIdResponse =
-  GetV1PayslipsIdResponses[keyof GetV1PayslipsIdResponses];
 
 export type GetV1LeavePoliciesSummaryEmploymentIdData = {
   body?: never;
@@ -19247,11 +19275,11 @@ export type PostV1TimeoffTimeoffIdCancelRequestDeclineResponses = {
 export type PostV1TimeoffTimeoffIdCancelRequestDeclineResponse =
   PostV1TimeoffTimeoffIdCancelRequestDeclineResponses[keyof PostV1TimeoffTimeoffIdCancelRequestDeclineResponses];
 
-export type PutV2EmploymentsEmploymentIdAdministrativeDetailsData = {
+export type PutV1EmploymentsEmploymentIdBasicInformationData = {
   /**
-   * Employment administrative details params
+   * Employment basic information params
    */
-  body?: EmploymentAdministrativeDetailsParams;
+  body?: EmploymentBasicInformationParams;
   path: {
     /**
      * Employment ID
@@ -19259,26 +19287,18 @@ export type PutV2EmploymentsEmploymentIdAdministrativeDetailsData = {
     employment_id: string;
   };
   query?: never;
-  url: '/v2/employments/{employment_id}/administrative_details';
+  url: '/v1/employments/{employment_id}/basic-information';
 };
 
-export type PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors = {
+export type PutV1EmploymentsEmploymentIdBasicInformationErrors = {
   /**
    * Bad Request
    */
   400: BadRequestResponse;
   /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
    * Forbidden
    */
   403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
   /**
    * Conflict
    */
@@ -19293,18 +19313,18 @@ export type PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PutV2EmploymentsEmploymentIdAdministrativeDetailsError =
-  PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors[keyof PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors];
+export type PutV1EmploymentsEmploymentIdBasicInformationError =
+  PutV1EmploymentsEmploymentIdBasicInformationErrors[keyof PutV1EmploymentsEmploymentIdBasicInformationErrors];
 
-export type PutV2EmploymentsEmploymentIdAdministrativeDetailsResponses = {
+export type PutV1EmploymentsEmploymentIdBasicInformationResponses = {
   /**
    * Success
    */
-  200: EmploymentDetailsOnlyResponse;
+  200: EmploymentResponse;
 };
 
-export type PutV2EmploymentsEmploymentIdAdministrativeDetailsResponse =
-  PutV2EmploymentsEmploymentIdAdministrativeDetailsResponses[keyof PutV2EmploymentsEmploymentIdAdministrativeDetailsResponses];
+export type PutV1EmploymentsEmploymentIdBasicInformationResponse =
+  PutV1EmploymentsEmploymentIdBasicInformationResponses[keyof PutV1EmploymentsEmploymentIdBasicInformationResponses];
 
 export type GetV1EmploymentsEmploymentIdBenefitOffersSchemaData = {
   body?: never;
@@ -19942,6 +19962,63 @@ export type GetV1PayrollCalendarsCycleResponses = {
 export type GetV1PayrollCalendarsCycleResponse =
   GetV1PayrollCalendarsCycleResponses[keyof GetV1PayrollCalendarsCycleResponses];
 
+export type GetV1CompanyCompanyIdCostCenterAllocationsData = {
+  body?: never;
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: string;
+  };
+  query?: {
+    /**
+     * Filters allocations by status. When omitted, allocations of every status are returned.
+     */
+    status?: 'active' | 'scheduled' | 'expired';
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/company/{company_id}/cost-center-allocations';
+};
+
+export type GetV1CompanyCompanyIdCostCenterAllocationsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV1CompanyCompanyIdCostCenterAllocationsError =
+  GetV1CompanyCompanyIdCostCenterAllocationsErrors[keyof GetV1CompanyCompanyIdCostCenterAllocationsErrors];
+
+export type GetV1CompanyCompanyIdCostCenterAllocationsResponses = {
+  /**
+   * Success
+   */
+  200: ListCompanyCostCenterAllocationsResponse;
+};
+
+export type GetV1CompanyCompanyIdCostCenterAllocationsResponse =
+  GetV1CompanyCompanyIdCostCenterAllocationsResponses[keyof GetV1CompanyCompanyIdCostCenterAllocationsResponses];
+
 export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsData =
   {
     body?: never;
@@ -20054,74 +20131,6 @@ export type PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetai
 
 export type PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponse =
   PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses[keyof PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses];
-
-export type PutV2EmploymentsEmploymentIdContractDetailsData = {
-  /**
-   * Employment contract details params
-   */
-  body?: EmploymentContractDetailsParams;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
-  };
-  query?: {
-    /**
-     * Version of the contract_details form schema
-     */
-    contract_details_json_schema_version?: number | 'latest';
-    /**
-     * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
-     */
-    skip_benefits?: boolean;
-  };
-  url: '/v2/employments/{employment_id}/contract_details';
-};
-
-export type PutV2EmploymentsEmploymentIdContractDetailsErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Conflict
-   */
-  409: ConflictResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Unprocessable Entity
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type PutV2EmploymentsEmploymentIdContractDetailsError =
-  PutV2EmploymentsEmploymentIdContractDetailsErrors[keyof PutV2EmploymentsEmploymentIdContractDetailsErrors];
-
-export type PutV2EmploymentsEmploymentIdContractDetailsResponses = {
-  /**
-   * Success
-   */
-  200: EmploymentDetailsOnlyResponse;
-};
-
-export type PutV2EmploymentsEmploymentIdContractDetailsResponse =
-  PutV2EmploymentsEmploymentIdContractDetailsResponses[keyof PutV2EmploymentsEmploymentIdContractDetailsResponses];
 
 export type GetV1CostCalculatorRegionsSlugFieldsData = {
   body?: never;
@@ -20566,6 +20575,74 @@ export type GetV1CountriesResponses = {
 export type GetV1CountriesResponse =
   GetV1CountriesResponses[keyof GetV1CountriesResponses];
 
+export type PutV2EmploymentsEmploymentIdContractDetailsData = {
+  /**
+   * Employment contract details params
+   */
+  body?: EmploymentContractDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Version of the contract_details form schema
+     */
+    contract_details_json_schema_version?: number | 'latest';
+    /**
+     * Skips the dynamic benefits part of the schema if set. To be used when benefits are set via its own API.
+     */
+    skip_benefits?: boolean;
+  };
+  url: '/v2/employments/{employment_id}/contract-details';
+};
+
+export type PutV2EmploymentsEmploymentIdContractDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdContractDetailsError =
+  PutV2EmploymentsEmploymentIdContractDetailsErrors[keyof PutV2EmploymentsEmploymentIdContractDetailsErrors];
+
+export type PutV2EmploymentsEmploymentIdContractDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdContractDetailsResponse =
+  PutV2EmploymentsEmploymentIdContractDetailsResponses[keyof PutV2EmploymentsEmploymentIdContractDetailsResponses];
+
 export type GetV1EmployeePayslipFilesData = {
   body?: never;
   path?: never;
@@ -20699,70 +20776,6 @@ export type GetV1CompaniesCompanyIdLegalEntitiesResponses = {
 
 export type GetV1CompaniesCompanyIdLegalEntitiesResponse =
   GetV1CompaniesCompanyIdLegalEntitiesResponses[keyof GetV1CompaniesCompanyIdLegalEntitiesResponses];
-
-export type PutV2EmploymentsEmploymentIdPersonalDetailsData = {
-  /**
-   * Employment personal details params
-   */
-  body?: EmploymentPersonalDetailsParams;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
-  };
-  query?: {
-    /**
-     * Version of the personal_details form schema
-     */
-    personal_details_json_schema_version?: number | 'latest';
-  };
-  url: '/v2/employments/{employment_id}/personal_details';
-};
-
-export type PutV2EmploymentsEmploymentIdPersonalDetailsErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Conflict
-   */
-  409: ConflictResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Unprocessable Entity
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type PutV2EmploymentsEmploymentIdPersonalDetailsError =
-  PutV2EmploymentsEmploymentIdPersonalDetailsErrors[keyof PutV2EmploymentsEmploymentIdPersonalDetailsErrors];
-
-export type PutV2EmploymentsEmploymentIdPersonalDetailsResponses = {
-  /**
-   * Success
-   */
-  200: EmploymentDetailsOnlyResponse;
-};
-
-export type PutV2EmploymentsEmploymentIdPersonalDetailsResponse =
-  PutV2EmploymentsEmploymentIdPersonalDetailsResponses[keyof PutV2EmploymentsEmploymentIdPersonalDetailsResponses];
 
 export type PostV1ReadyData = {
   /**
@@ -22327,6 +22340,70 @@ export type PatchV1ExpensesIdResponses = {
 
 export type PatchV1ExpensesIdResponse =
   PatchV1ExpensesIdResponses[keyof PatchV1ExpensesIdResponses];
+
+export type PutV2EmploymentsEmploymentIdBankAccountDetailsData = {
+  /**
+   * Employment bank account details params
+   */
+  body?: EmploymentBankAccountDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Version of the bank_account_details form schema
+     */
+    bank_account_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v2/employments/{employment_id}/bank-account-details';
+};
+
+export type PutV2EmploymentsEmploymentIdBankAccountDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdBankAccountDetailsError =
+  PutV2EmploymentsEmploymentIdBankAccountDetailsErrors[keyof PutV2EmploymentsEmploymentIdBankAccountDetailsErrors];
+
+export type PutV2EmploymentsEmploymentIdBankAccountDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdBankAccountDetailsResponse =
+  PutV2EmploymentsEmploymentIdBankAccountDetailsResponses[keyof PutV2EmploymentsEmploymentIdBankAccountDetailsResponses];
 
 export type GetV1BenefitRenewalRequestsBenefitRenewalRequestIdData = {
   body?: never;
@@ -23899,6 +23976,70 @@ export type PatchV2EmploymentsEmploymentIdResponses = {
 export type PatchV2EmploymentsEmploymentIdResponse =
   PatchV2EmploymentsEmploymentIdResponses[keyof PatchV2EmploymentsEmploymentIdResponses];
 
+export type PutV2EmploymentsEmploymentIdPersonalDetailsData = {
+  /**
+   * Employment personal details params
+   */
+  body?: EmploymentPersonalDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Version of the personal_details form schema
+     */
+    personal_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v2/employments/{employment_id}/personal-details';
+};
+
+export type PutV2EmploymentsEmploymentIdPersonalDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdPersonalDetailsError =
+  PutV2EmploymentsEmploymentIdPersonalDetailsErrors[keyof PutV2EmploymentsEmploymentIdPersonalDetailsErrors];
+
+export type PutV2EmploymentsEmploymentIdPersonalDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdPersonalDetailsResponse =
+  PutV2EmploymentsEmploymentIdPersonalDetailsResponses[keyof PutV2EmploymentsEmploymentIdPersonalDetailsResponses];
+
 export type GetV1ProbationExtensionsIdData = {
   body?: never;
   path: {
@@ -24111,70 +24252,6 @@ export type PostAuthOauth2TokenResponses = {
 
 export type PostAuthOauth2TokenResponse =
   PostAuthOauth2TokenResponses[keyof PostAuthOauth2TokenResponses];
-
-export type PutV2EmploymentsEmploymentIdPricingPlanDetailsData = {
-  /**
-   * Employment pricing plan details params
-   */
-  body?: EmploymentPricingPlanDetailsParams;
-  path: {
-    /**
-     * Employment ID
-     */
-    employment_id: string;
-  };
-  query?: {
-    /**
-     * Version of the pricing_plan_details form schema
-     */
-    pricing_plan_details_json_schema_version?: number | 'latest';
-  };
-  url: '/v2/employments/{employment_id}/pricing_plan_details';
-};
-
-export type PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Conflict
-   */
-  409: ConflictResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Unprocessable Entity
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type PutV2EmploymentsEmploymentIdPricingPlanDetailsError =
-  PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors[keyof PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors];
-
-export type PutV2EmploymentsEmploymentIdPricingPlanDetailsResponses = {
-  /**
-   * Success
-   */
-  200: EmploymentDetailsOnlyResponse;
-};
-
-export type PutV2EmploymentsEmploymentIdPricingPlanDetailsResponse =
-  PutV2EmploymentsEmploymentIdPricingPlanDetailsResponses[keyof PutV2EmploymentsEmploymentIdPricingPlanDetailsResponses];
 
 export type GetV1CountriesCountryCodeLegalEntityFormsFormData = {
   body?: never;
@@ -24831,6 +24908,70 @@ export type PostV1CompaniesResponses = {
 export type PostV1CompaniesResponse =
   PostV1CompaniesResponses[keyof PostV1CompaniesResponses];
 
+export type PutV2EmploymentsEmploymentIdBillingAddressDetailsData = {
+  /**
+   * Employment billing address details params
+   */
+  body?: EmploymentBillingAddressDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: {
+    /**
+     * Version of the billing_address_details form schema
+     */
+    billing_address_details_json_schema_version?: number | 'latest';
+  };
+  url: '/v2/employments/{employment_id}/billing-address-details';
+};
+
+export type PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdBillingAddressDetailsError =
+  PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors[keyof PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors];
+
+export type PutV2EmploymentsEmploymentIdBillingAddressDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdBillingAddressDetailsResponse =
+  PutV2EmploymentsEmploymentIdBillingAddressDetailsResponses[keyof PutV2EmploymentsEmploymentIdBillingAddressDetailsResponses];
+
 export type PostV1BulkEmploymentJobsData = {
   /**
    * Bulk employment params
@@ -25021,43 +25162,30 @@ export type GetV1CompanyManagersUserIdResponses = {
 export type GetV1CompanyManagersUserIdResponse =
   GetV1CompanyManagersUserIdResponses[keyof GetV1CompanyManagersUserIdResponses];
 
-export type PutV2EmploymentsEmploymentIdEmergencyContactData = {
+export type PutV1EmploymentsEmploymentIdPersonalDetailsData = {
   /**
-   * Employment emergency contact params
+   * Employment personal details params
    */
-  body?: EmploymentEmergencyContactParams;
+  body?: EmploymentPersonalDetailsParams;
   path: {
     /**
      * Employment ID
      */
     employment_id: string;
   };
-  query?: {
-    /**
-     * Version of the emergency_contact_details form schema
-     */
-    emergency_contact_details_json_schema_version?: number | 'latest';
-  };
-  url: '/v2/employments/{employment_id}/emergency_contact';
+  query?: never;
+  url: '/v1/employments/{employment_id}/personal-details';
 };
 
-export type PutV2EmploymentsEmploymentIdEmergencyContactErrors = {
+export type PutV1EmploymentsEmploymentIdPersonalDetailsErrors = {
   /**
    * Bad Request
    */
   400: BadRequestResponse;
   /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
    * Forbidden
    */
   403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
   /**
    * Conflict
    */
@@ -25072,18 +25200,18 @@ export type PutV2EmploymentsEmploymentIdEmergencyContactErrors = {
   429: TooManyRequestsResponse;
 };
 
-export type PutV2EmploymentsEmploymentIdEmergencyContactError =
-  PutV2EmploymentsEmploymentIdEmergencyContactErrors[keyof PutV2EmploymentsEmploymentIdEmergencyContactErrors];
+export type PutV1EmploymentsEmploymentIdPersonalDetailsError =
+  PutV1EmploymentsEmploymentIdPersonalDetailsErrors[keyof PutV1EmploymentsEmploymentIdPersonalDetailsErrors];
 
-export type PutV2EmploymentsEmploymentIdEmergencyContactResponses = {
+export type PutV1EmploymentsEmploymentIdPersonalDetailsResponses = {
   /**
    * Success
    */
-  200: EmploymentDetailsOnlyResponse;
+  200: EmploymentResponse;
 };
 
-export type PutV2EmploymentsEmploymentIdEmergencyContactResponse =
-  PutV2EmploymentsEmploymentIdEmergencyContactResponses[keyof PutV2EmploymentsEmploymentIdEmergencyContactResponses];
+export type PutV1EmploymentsEmploymentIdPersonalDetailsResponse =
+  PutV1EmploymentsEmploymentIdPersonalDetailsResponses[keyof PutV1EmploymentsEmploymentIdPersonalDetailsResponses];
 
 export type GetV1EmployeeExpensesData = {
   body?: never;
@@ -25713,6 +25841,65 @@ export type GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewResponses = {
 
 export type GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewResponse =
   GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewResponses[keyof GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewResponses];
+
+export type PutV2EmploymentsEmploymentIdAdministrativeDetailsData = {
+  /**
+   * Employment administrative details params
+   */
+  body?: EmploymentAdministrativeDetailsParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v2/employments/{employment_id}/administrative-details';
+};
+
+export type PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdAdministrativeDetailsError =
+  PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors[keyof PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors];
+
+export type PutV2EmploymentsEmploymentIdAdministrativeDetailsResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentDetailsOnlyResponse;
+};
+
+export type PutV2EmploymentsEmploymentIdAdministrativeDetailsResponse =
+  PutV2EmploymentsEmploymentIdAdministrativeDetailsResponses[keyof PutV2EmploymentsEmploymentIdAdministrativeDetailsResponses];
 
 export type GetV1EmployeeDocumentsData = {
   body?: never;

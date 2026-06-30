@@ -92,6 +92,9 @@ import type {
   GetV1CompaniesSchemaData,
   GetV1CompaniesSchemaErrors,
   GetV1CompaniesSchemaResponses,
+  GetV1CompanyCompanyIdCostCenterAllocationsData,
+  GetV1CompanyCompanyIdCostCenterAllocationsErrors,
+  GetV1CompanyCompanyIdCostCenterAllocationsResponses,
   GetV1CompanyCurrenciesData,
   GetV1CompanyCurrenciesErrors,
   GetV1CompanyCurrenciesResponses,
@@ -245,6 +248,9 @@ import type {
   GetV1EmploymentsEmploymentIdContractDocumentsData,
   GetV1EmploymentsEmploymentIdContractDocumentsErrors,
   GetV1EmploymentsEmploymentIdContractDocumentsResponses,
+  GetV1EmploymentsEmploymentIdCostCenterAllocationsData,
+  GetV1EmploymentsEmploymentIdCostCenterAllocationsErrors,
+  GetV1EmploymentsEmploymentIdCostCenterAllocationsResponses,
   GetV1EmploymentsEmploymentIdCustomFieldsData,
   GetV1EmploymentsEmploymentIdCustomFieldsErrors,
   GetV1EmploymentsEmploymentIdCustomFieldsResponses,
@@ -348,9 +354,6 @@ import type {
   GetV1PayrollRunsResponses,
   GetV1PayslipsData,
   GetV1PayslipsErrors,
-  GetV1PayslipsIdData,
-  GetV1PayslipsIdErrors,
-  GetV1PayslipsIdResponses,
   GetV1PayslipsPayslipIdPdfData,
   GetV1PayslipsPayslipIdPdfErrors,
   GetV1PayslipsPayslipIdPdfResponses,
@@ -909,6 +912,45 @@ export const getV2Offboardings = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Update pricing plan details
+ *
+ * Updates the pricing plan for an employment. The frequency determines how often Remote bills the
+ * employer for management fees. Annual billing typically offers a discount.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdPricingPlanDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdPricingPlanDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdPricingPlanDetailsResponses,
+    PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/pricing-plan-details',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * Show timesheet
  *
  * Shows a timesheet by its ID.
@@ -1067,6 +1109,61 @@ export const getV2OffboardingsId = <ThrowOnError extends boolean = false>(
     ],
     url: '/v2/offboardings/{id}',
     ...options,
+  });
+
+/**
+ * Update address details
+ *
+ * Updates employment's address details.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdAddressDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdAddressDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdAddressDetailsResponses,
+    PutV2EmploymentsEmploymentIdAddressDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/address-details',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 
 /**
@@ -1334,7 +1431,7 @@ export const getV1Employments = <ThrowOnError extends boolean = false>(
  * ## Global Payroll Employees
  *
  * To create a Global Payroll employee, pass `global_payroll_employee` as the `type` parameter,
- * and provide the slug of the specific legal entity that the employee will be engaged by and billed to as the `engaged_by_entity_slug` parameter.
+ * and provide the id of the specific legal entity that the employee will be engaged by and billed to as the `engaged_by_legal_entity_id` parameter.
  *
  * ## HRIS Employees
  *
@@ -2838,114 +2935,6 @@ export const postV1MagicLink = <ThrowOnError extends boolean = false>(
   });
 
 /**
- * Get basic information
- *
- * Returns the employment's basic information.
- *
- * This endpoint requires and returns country-specific data. The exact required and returned fields will
- * vary depending on which country the employment is in. To see the list of parameters for each country,
- * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
- *
- * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
- * compliance issues and to have the latest version of a country requirements.
- *
- * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
- * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
- *
- * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
- *
- * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
- *
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
- *
- */
-export const getV2EmploymentsEmploymentIdBasicInformation = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    GetV2EmploymentsEmploymentIdBasicInformationData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).get<
-    GetV2EmploymentsEmploymentIdBasicInformationResponses,
-    GetV2EmploymentsEmploymentIdBasicInformationErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v2/employments/{employment_id}/basic_information',
-    ...options,
-  });
-
-/**
- * Update basic information
- *
- * Updates employment's basic information.
- *
- * Supported employment statuses: `created`, `job_title_review`, `created_reserve_paid`, `created_awaiting_reserve`.
- *
- * This endpoint requires and returns country-specific data. The exact required and returned fields will
- * vary depending on which country the employment is in. To see the list of parameters for each country,
- * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
- *
- * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
- * compliance issues and to have the latest version of a country requirements.
- *
- * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
- * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
- *
- * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
- *
- * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
- *
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
- *
- */
-export const putV2EmploymentsEmploymentIdBasicInformation = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    PutV2EmploymentsEmploymentIdBasicInformationData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).put<
-    PutV2EmploymentsEmploymentIdBasicInformationResponses,
-    PutV2EmploymentsEmploymentIdBasicInformationErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v2/employments/{employment_id}/basic_information',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
  * Delete a Recurring Incentive
  *
  * Delete a Recurring Incentive, that is, a monthly paid incentive.
@@ -3275,6 +3264,45 @@ export const postV1CostCalculatorEstimationPdf = <
   });
 
 /**
+ * List cost center allocations for an employment
+ *
+ * Lists the cost center allocations for an employment. Each allocation includes the cost center,
+ * the allocated percentage, and its effective period. An employment with no cost center assigned
+ * returns an empty list.
+ *
+ * Use the `status` query parameter to return only `active`, `scheduled`, or `expired` allocations.
+ * When omitted, all allocations are returned.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getV1EmploymentsEmploymentIdCostCenterAllocations = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV1EmploymentsEmploymentIdCostCenterAllocationsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetV1EmploymentsEmploymentIdCostCenterAllocationsResponses,
+    GetV1EmploymentsEmploymentIdCostCenterAllocationsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/{employment_id}/cost-center-allocations',
+    ...options,
+  });
+
+/**
  * Show work authorization request
  *
  * Show a single work authorization request.
@@ -3481,116 +3509,6 @@ export const postV1ProbationExtensions = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/probation-extensions',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Update billing address details
- *
- * Updates employment's billing address details.
- *
- * This endpoint requires and returns country-specific data. The exact required and returned fields will
- * vary depending on which country the employment is in. To see the list of parameters for each country,
- * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
- *
- * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
- * compliance issues and to have the latest version of a country requirements.
- *
- * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
- * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
- *
- * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
- *
- * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
- *
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
- *
- */
-export const putV2EmploymentsEmploymentIdBillingAddressDetails = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    PutV2EmploymentsEmploymentIdBillingAddressDetailsData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).put<
-    PutV2EmploymentsEmploymentIdBillingAddressDetailsResponses,
-    PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v2/employments/{employment_id}/billing_address_details',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
- * Update address details
- *
- * Updates employment's address details.
- *
- * This endpoint requires and returns country-specific data. The exact required and returned fields will
- * vary depending on which country the employment is in. To see the list of parameters for each country,
- * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
- *
- * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
- * compliance issues and to have the latest version of a country requirements.
- *
- * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
- * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
- *
- * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
- *
- * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
- *
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
- *
- */
-export const putV2EmploymentsEmploymentIdAddressDetails = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    PutV2EmploymentsEmploymentIdAddressDetailsData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).put<
-    PutV2EmploymentsEmploymentIdAddressDetailsResponses,
-    PutV2EmploymentsEmploymentIdAddressDetailsErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v2/employments/{employment_id}/address_details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3968,6 +3886,114 @@ export const getV1ResignationsOffboardingRequestIdResignationLetter = <
   });
 
 /**
+ * Get basic information
+ *
+ * Returns the employment's basic information.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getV2EmploymentsEmploymentIdBasicInformation = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV2EmploymentsEmploymentIdBasicInformationData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetV2EmploymentsEmploymentIdBasicInformationResponses,
+    GetV2EmploymentsEmploymentIdBasicInformationErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/basic-information',
+    ...options,
+  });
+
+/**
+ * Update basic information
+ *
+ * Updates employment's basic information.
+ *
+ * Supported employment statuses: `created`, `job_title_review`, `created_reserve_paid`, `created_awaiting_reserve`.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdBasicInformation = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdBasicInformationData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdBasicInformationResponses,
+    PutV2EmploymentsEmploymentIdBasicInformationErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/basic-information',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * Update federal taxes
  *
  * Updates employment's federal taxes.
@@ -4341,63 +4367,6 @@ export const getV1TimeoffBalancesEmploymentId = <
   });
 
 /**
- * Update basic information
- *
- * Updates employment's basic information.
- *
- * Supported employment statuses: `created`, `job_title_review`, `created_reserve_paid`, `created_awaiting_reserve`.
- *
- * This endpoint requires and returns country-specific data. The exact required and returned fields will
- * vary depending on which country the employment is in. To see the list of parameters for each country,
- * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
- *
- * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
- * compliance issues and to have the latest version of a country requirements.
- *
- * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
- * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
- *
- * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
- *
- * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
- *
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
- *
- */
-export const putV1EmploymentsEmploymentIdBasicInformation = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    PutV1EmploymentsEmploymentIdBasicInformationData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).put<
-    PutV1EmploymentsEmploymentIdBasicInformationResponses,
-    PutV1EmploymentsEmploymentIdBasicInformationErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/employments/{employment_id}/basic_information',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-/**
  * List expense categories
  *
  * Lists the effective hierarchy of expense categories. At least one of employment_id, expense_id, or country_code must be provided.
@@ -4568,61 +4537,6 @@ export const getV1ContractAmendmentsId = <ThrowOnError extends boolean = false>(
     ],
     url: '/v1/contract-amendments/{id}',
     ...options,
-  });
-
-/**
- * Update bank account details
- *
- * Updates employment's bank account details.
- *
- * This endpoint requires and returns country-specific data. The exact required and returned fields will
- * vary depending on which country the employment is in. To see the list of parameters for each country,
- * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
- *
- * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
- * compliance issues and to have the latest version of a country requirements.
- *
- * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
- * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
- *
- * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
- *
- * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
- *
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
- *
- */
-export const putV2EmploymentsEmploymentIdBankAccountDetails = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    PutV2EmploymentsEmploymentIdBankAccountDetailsData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).put<
-    PutV2EmploymentsEmploymentIdBankAccountDetailsResponses,
-    PutV2EmploymentsEmploymentIdBankAccountDetailsErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v2/employments/{employment_id}/bank_account_details',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
   });
 
 /**
@@ -4970,26 +4884,13 @@ export const getV1EmployeeTimesheets = <ThrowOnError extends boolean = false>(
   });
 
 /**
- * Update personal details
+ * Update emergency contact
  *
- * Updates employment's personal details.
+ * Updates the employment's emergency contact details.
  *
- * This endpoint requires and returns country-specific data. The exact required and returned fields will
- * vary depending on which country the employment is in. To see the list of parameters for each country,
- * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
- *
- * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
- * compliance issues and to have the latest version of a country requirements.
- *
- * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
- * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
- *
- * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
- *
- * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
- *
+ * This endpoint requires country-specific data. Query the **Show form schema** endpoint
+ * passing the country code and `emergency_contact_details` as path parameters to see
+ * the required fields for a given country.
  *
  *
  * ## Scopes
@@ -4999,24 +4900,24 @@ export const getV1EmployeeTimesheets = <ThrowOnError extends boolean = false>(
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const putV1EmploymentsEmploymentIdPersonalDetails = <
+export const putV2EmploymentsEmploymentIdEmergencyContact = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<
-    PutV1EmploymentsEmploymentIdPersonalDetailsData,
+    PutV2EmploymentsEmploymentIdEmergencyContactData,
     ThrowOnError
   >,
 ) =>
   (options.client ?? client).put<
-    PutV1EmploymentsEmploymentIdPersonalDetailsResponses,
-    PutV1EmploymentsEmploymentIdPersonalDetailsErrors,
+    PutV2EmploymentsEmploymentIdEmergencyContactResponses,
+    PutV2EmploymentsEmploymentIdEmergencyContactErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v1/employments/{employment_id}/personal_details',
+    url: '/v2/employments/{employment_id}/emergency-contact',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -5141,37 +5042,6 @@ export const postV1TimesheetsTimesheetIdApprove = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/timesheets/{timesheet_id}/approve',
-    ...options,
-  });
-
-/**
- * Show payslip
- *
- * Given an ID, shows a payslip.
- *
- * Please contact api-support@remote.com to request access to this endpoint.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
- *
- */
-export const getV1PayslipsId = <ThrowOnError extends boolean = false>(
-  options: Options<GetV1PayslipsIdData, ThrowOnError>,
-) =>
-  (options.client ?? client).get<
-    GetV1PayslipsIdResponses,
-    GetV1PayslipsIdErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/payslips/{id}',
     ...options,
   });
 
@@ -5362,9 +5232,11 @@ export const postV1TimeoffTimeoffIdCancelRequestDecline = <
   });
 
 /**
- * Update administrative details
+ * Update basic information
  *
- * Updates employment's administrative details.
+ * Updates employment's basic information.
+ *
+ * Supported employment statuses: `created`, `job_title_review`, `created_reserve_paid`, `created_awaiting_reserve`.
  *
  * This endpoint requires and returns country-specific data. The exact required and returned fields will
  * vary depending on which country the employment is in. To see the list of parameters for each country,
@@ -5380,7 +5252,7 @@ export const postV1TimeoffTimeoffIdCancelRequestDecline = <
  * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
  *
  * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) tool.
  *
  *
  *
@@ -5391,24 +5263,24 @@ export const postV1TimeoffTimeoffIdCancelRequestDecline = <
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const putV2EmploymentsEmploymentIdAdministrativeDetails = <
+export const putV1EmploymentsEmploymentIdBasicInformation = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<
-    PutV2EmploymentsEmploymentIdAdministrativeDetailsData,
+    PutV1EmploymentsEmploymentIdBasicInformationData,
     ThrowOnError
   >,
 ) =>
   (options.client ?? client).put<
-    PutV2EmploymentsEmploymentIdAdministrativeDetailsResponses,
-    PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors,
+    PutV1EmploymentsEmploymentIdBasicInformationResponses,
+    PutV1EmploymentsEmploymentIdBasicInformationErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v2/employments/{employment_id}/administrative_details',
+    url: '/v1/employments/{employment_id}/basic-information',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -5831,6 +5703,46 @@ export const getV1PayrollCalendarsCycle = <
   });
 
 /**
+ * List cost center allocations for a company
+ *
+ * Lists all employments under a company with their cost center allocations, grouped by employment.
+ * Each entry includes the employment's legal entity IDs and the list of cost center allocations
+ * assigned to it, with each allocation's cost center, allocated percentage, and effective period.
+ * Employments with no cost center allocations are included with an empty list.
+ *
+ * Use the `status` query parameter to return only `active`, `scheduled`, or `expired` allocations.
+ * When omitted, all allocations are returned.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getV1CompanyCompanyIdCostCenterAllocations = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV1CompanyCompanyIdCostCenterAllocationsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetV1CompanyCompanyIdCostCenterAllocationsResponses,
+    GetV1CompanyCompanyIdCostCenterAllocationsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/company/{company_id}/cost-center-allocations',
+    ...options,
+  });
+
+/**
  * Show Legal Entity Administrative details
  *
  * Show administrative details of legal entity for the authorized company specified in the request.
@@ -5899,61 +5811,6 @@ export const putV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDeta
         ...options.headers,
       },
     });
-
-/**
- * Update contract details
- *
- * Updates employment's contract details.
- *
- * This endpoint requires and returns country-specific data. The exact required and returned fields will
- * vary depending on which country the employment is in. To see the list of parameters for each country,
- * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
- *
- * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
- * compliance issues and to have the latest version of a country requirements.
- *
- * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
- * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
- *
- * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
- *
- * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
- *
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
- *
- */
-export const putV2EmploymentsEmploymentIdContractDetails = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    PutV2EmploymentsEmploymentIdContractDetailsData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).put<
-    PutV2EmploymentsEmploymentIdContractDetailsResponses,
-    PutV2EmploymentsEmploymentIdContractDetailsErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v2/employments/{employment_id}/contract_details',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
 
 /**
  * Show region fields
@@ -6263,6 +6120,61 @@ export const getV1Countries = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Update contract details
+ *
+ * Updates employment's contract details.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdContractDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdContractDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdContractDetailsResponses,
+    PutV2EmploymentsEmploymentIdContractDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/contract-details',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * List payslip files for the authenticated employee
  *
  * Returns a paginated list of payslip files belonging to the current employee.
@@ -6336,61 +6248,6 @@ export const getV1CompaniesCompanyIdLegalEntities = <
     ],
     url: '/v1/companies/{company_id}/legal-entities',
     ...options,
-  });
-
-/**
- * Update personal details
- *
- * Updates employment's personal details.
- *
- * This endpoint requires and returns country-specific data. The exact required and returned fields will
- * vary depending on which country the employment is in. To see the list of parameters for each country,
- * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
- *
- * Please note that the compliance requirements for each country are subject to change according to local
- * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
- * compliance issues and to have the latest version of a country requirements.
- *
- * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
- * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
- *
- * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
- *
- * To learn how you can dynamically generate forms to display in your UI, see the documentation for
- * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
- *
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
- *
- */
-export const putV2EmploymentsEmploymentIdPersonalDetails = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    PutV2EmploymentsEmploymentIdPersonalDetailsData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).put<
-    PutV2EmploymentsEmploymentIdPersonalDetailsResponses,
-    PutV2EmploymentsEmploymentIdPersonalDetailsErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v2/employments/{employment_id}/personal_details',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
   });
 
 /**
@@ -7411,6 +7268,61 @@ export const patchV1ExpensesId = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Update bank account details
+ *
+ * Updates employment's bank account details.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdBankAccountDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdBankAccountDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdBankAccountDetailsResponses,
+    PutV2EmploymentsEmploymentIdBankAccountDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/bank-account-details',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * Show Benefit Renewal Request
  *
  * Show Benefit Renewal Request details.
@@ -8411,6 +8323,61 @@ export const patchV2EmploymentsEmploymentId = <
   });
 
 /**
+ * Update personal details
+ *
+ * Updates employment's personal details.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdPersonalDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdPersonalDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdPersonalDetailsResponses,
+    PutV2EmploymentsEmploymentIdPersonalDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/personal-details',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * Show Probation Extension
  *
  * Shows a Probation Extension Request.
@@ -8520,45 +8487,6 @@ export const postAuthOauth2Token = <ThrowOnError extends boolean = false>(
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,
-    },
-  });
-
-/**
- * Update pricing plan details
- *
- * Updates the pricing plan for an employment. The frequency determines how often Remote bills the
- * employer for management fees. Annual billing typically offers a discount.
- *
- *
- * ## Scopes
- *
- * | Category | Read only Scope | Write only Scope (read access implicit) |
- * |---|---|---|
- * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
- *
- */
-export const putV2EmploymentsEmploymentIdPricingPlanDetails = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    PutV2EmploymentsEmploymentIdPricingPlanDetailsData,
-    ThrowOnError
-  >,
-) =>
-  (options.client ?? client).put<
-    PutV2EmploymentsEmploymentIdPricingPlanDetailsResponses,
-    PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors,
-    ThrowOnError
-  >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v2/employments/{employment_id}/pricing_plan_details',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
     },
   });
 
@@ -8972,6 +8900,61 @@ export const postV1Companies = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Update billing address details
+ *
+ * Updates employment's billing address details.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdBillingAddressDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdBillingAddressDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdBillingAddressDetailsResponses,
+    PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/billing-address-details',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * Create bulk employment job
  *
  * Creates a job to bulk-create employments for multiple employees at once. Each employee payload must match the employment schema for the selected country.
@@ -9098,13 +9081,26 @@ export const getV1CompanyManagersUserId = <
   });
 
 /**
- * Update emergency contact
+ * Update personal details
  *
- * Updates the employment's emergency contact details.
+ * Updates employment's personal details.
  *
- * This endpoint requires country-specific data. Query the **Show form schema** endpoint
- * passing the country code and `emergency_contact_details` as path parameters to see
- * the required fields for a given country.
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
+ *
  *
  *
  * ## Scopes
@@ -9114,24 +9110,24 @@ export const getV1CompanyManagersUserId = <
  * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
  *
  */
-export const putV2EmploymentsEmploymentIdEmergencyContact = <
+export const putV1EmploymentsEmploymentIdPersonalDetails = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<
-    PutV2EmploymentsEmploymentIdEmergencyContactData,
+    PutV1EmploymentsEmploymentIdPersonalDetailsData,
     ThrowOnError
   >,
 ) =>
   (options.client ?? client).put<
-    PutV2EmploymentsEmploymentIdEmergencyContactResponses,
-    PutV2EmploymentsEmploymentIdEmergencyContactErrors,
+    PutV1EmploymentsEmploymentIdPersonalDetailsResponses,
+    PutV1EmploymentsEmploymentIdPersonalDetailsErrors,
     ThrowOnError
   >({
     security: [
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
-    url: '/v2/employments/{employment_id}/emergency_contact',
+    url: '/v1/employments/{employment_id}/personal-details',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -9557,6 +9553,61 @@ export const getV1EmploymentsEmploymentIdEmploymentAgreementPreview = <
     ],
     url: '/v1/employments/{employment_id}/employment-agreement/preview',
     ...options,
+  });
+
+/**
+ * Update administrative details
+ *
+ * Updates employment's administrative details.
+ *
+ * This endpoint requires and returns country-specific data. The exact required and returned fields will
+ * vary depending on which country the employment is in. To see the list of parameters for each country,
+ * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
+ *
+ * Please note that the compliance requirements for each country are subject to change according to local
+ * laws. Given its continual updates, using Remote's [json-schema-form](https://developer.remote.com/docs/how-json-schemas-work) should be considered in order to avoid
+ * compliance issues and to have the latest version of a country requirements.
+ *
+ * If you are using this endpoint to build an integration, make sure you are dynamically collecting or
+ * displaying the latest parameters for each country by querying the _"Show form schema"_ endpoint.
+ *
+ * For more information on JSON Schemas, see the **How JSON Schemas work** documentation.
+ *
+ * To learn how you can dynamically generate forms to display in your UI, see the documentation for
+ * the [json-schema-form](https://developer.remote.com/docs/how-json-schemas-form) tool.
+ *
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const putV2EmploymentsEmploymentIdAdministrativeDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutV2EmploymentsEmploymentIdAdministrativeDetailsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutV2EmploymentsEmploymentIdAdministrativeDetailsResponses,
+    PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v2/employments/{employment_id}/administrative-details',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 
 /**
