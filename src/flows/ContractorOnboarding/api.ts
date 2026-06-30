@@ -23,6 +23,7 @@ import {
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
+import { contractOriginSchema } from '@/src/flows/ContractorOnboarding/json-schemas/contractOrigin';
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
 import {
   JSONSchemaFormResultWithFieldsets,
@@ -803,6 +804,24 @@ export const useSetContractOrigin = () => {
         ],
       });
     },
+  });
+};
+
+export const useGetContractOriginSchema = ({
+  fieldValues,
+  options,
+}: {
+  fieldValues: FieldValues;
+  options?: { queryOptions?: { enabled?: boolean }; jsfModify?: JSFModify };
+}) => {
+  return useQuery({
+    queryKey: ['contract-origin-schema', options?.jsfModify],
+    queryFn: async () => {
+      return createHeadlessForm(contractOriginSchema, fieldValues, {
+        jsfModify: options?.jsfModify,
+      });
+    },
+    enabled: options?.queryOptions?.enabled,
   });
 };
 
