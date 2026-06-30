@@ -7,9 +7,41 @@ on:
   workflow_dispatch: # Allow manual trigger
 
 jobs:
+  deploy-nightly:
+    name: Deploy Nightly Preview
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          persist-credentials: false
+
+      - name: Deploy to Vercel
+        id: vercel-deploy
+        uses: amondnet/vercel-action@de09aeac2ace6599ec9b11ef87558759a496bac4 # v42.3.0
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_REMOTE_FLOWS_PROJECT_ID }}
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+
+      - name: Save deployment URL
+        env:
+          PREVIEW_URL: ${{ steps.vercel-deploy.outputs.preview-url }}
+        run: |
+          echo "$PREVIEW_URL" > remote-flows-url.txt
+
+      - name: Upload deployment URL
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: remote-flows-url
+          path: remote-flows-url.txt
+
   e2e-tests-production:
     name: E2E Tests (Production)
     runs-on: ubuntu-latest
+    needs: deploy-nightly
     permissions:
       contents: read
       actions: write
@@ -38,10 +70,20 @@ jobs:
         working-directory: ./example
         run: npx playwright install ${{ matrix.browser }} --with-deps
 
+      - name: Download remote-flows URL
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: remote-flows-url
+
+      - name: Set deployment URL
+        id: set-url
+        run: |
+          echo "REMOTE_FLOWS_URL=$(cat remote-flows-url.txt)" >> $GITHUB_ENV
+
       - name: Run Playwright tests
         id: playwright-tests
         env:
-          BASE_URL: https://remote-flows.vercel.app
+          BASE_URL: ${{ env.REMOTE_FLOWS_URL }}
           VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
           DEBUG: pw:api
         working-directory: ./example
@@ -58,7 +100,7 @@ jobs:
   create-issue-on-failure:
     name: Create Issue on Failure
     runs-on: ubuntu-latest
-    needs: e2e-tests-production
+    needs: [deploy-nightly, e2e-tests-production]
     if: failure()
     permissions:
       issues: write
@@ -72,7 +114,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Nightly E2E Workflow Failed - ${new Date().toISOString().split('T')[0]}`,
-              body: `## Nightly E2E Workflow Failure\n\n**Workflow Run:** ${runUrl}\n\n**Date:** ${new Date().toISOString()}\n\n**Note:** This could be a test failure or an infrastructure issue (npm install, browser setup, etc.). Please review the workflow logs and Playwright reports in the artifacts.`,
+              body: `## Nightly E2E Workflow Failure\n\n**Workflow Run:** ${runUrl}\n\n**Date:** ${new Date().toISOString()}\n\n**Note:** This could be a deployment failure, test failure, or an infrastructure issue (npm install, browser setup, etc.). Please review the workflow logs and Playwright reports in the artifacts.`,
               assignees: ['gabrielseco', 'jordividaller', 'cammellos']
             });
             console.log(`Created issue #${issue.data.number}`);
