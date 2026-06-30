@@ -127,7 +127,7 @@
     "yup": "0.32.11"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "0.18.3",
+    "@arethetypeswrong/cli": "0.18.4",
     "@hey-api/openapi-ts": "0.95.0",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.2",
