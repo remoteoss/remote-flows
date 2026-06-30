@@ -24,6 +24,7 @@ The bundle size badge system:
 2. Create a **public** gist with:
    - **Filename**: `bundle-size.json`
    - **Content**: (Initial placeholder data)
+
    ```json
    {
      "schemaVersion": 1,
@@ -32,6 +33,7 @@ The bundle size badge system:
      "color": "lightgrey"
    }
    ```
+
 3. Click "Create public gist"
 4. Copy the Gist ID from the URL
    - Example URL: `https://gist.github.com/username/abc123def456`
@@ -65,9 +67,11 @@ The bundle size badge system:
 
 1. Open `README.md`
 2. Find the badge line:
+
    ```markdown
    [![Bundle Size](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/remoteoss/GIST_ID/raw/bundle-size.json)](https://github.com/remoteoss/remote-flows/actions/workflows/update-badge.yml)
    ```
+
 3. Replace `GIST_ID` with your actual Gist ID
 4. Replace `remoteoss` with your GitHub username or organization name
 
