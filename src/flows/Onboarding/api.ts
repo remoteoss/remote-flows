@@ -7,7 +7,6 @@ import {
   EmploymentCreateParams,
   EmploymentEngagementAgreementDetailsParams,
   EmploymentFullParams,
-  FindOrCreatePreOnboardingDocumentParams,
   getV1CompaniesCompanyId,
   getV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatus,
   getV1CountriesCountryCodeEngagementAgreementDetails,
@@ -24,13 +23,16 @@ import {
   postV2EmploymentsEmploymentIdEngagementAgreementDetails,
   postV1EmploymentsEmploymentIdInvite,
   PostV1EmploymentsEmploymentIdInviteData,
-  postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments,
+  postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocuments,
+  postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledge,
+  deleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledge,
   postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSign,
   postV1RiskReserve,
   putV1EmploymentsEmploymentIdBenefitOffers,
   UnifiedEmploymentUpsertBenefitOffersRequest,
-  getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirements,
+  getV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirements,
   getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId,
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsData,
 } from '@/src/client';
 
 import { useClient } from '@/src/context';
@@ -584,14 +586,12 @@ export const useGetPreOnboardingRequirements = (
     queryKey: ['pre-onboarding-requirements', employmentId],
     queryFn: async () => {
       const response =
-        await getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirements(
-          {
-            client: client as Client,
-            path: {
-              employment_id: employmentId,
-            },
+        await getV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirements({
+          client: client as Client,
+          path: {
+            employment_id: employmentId,
           },
-        );
+        });
 
       if (response.error || !response.data) {
         throw new Error('Failed to fetch pre-onboarding requirements');
@@ -616,15 +616,17 @@ export const useCreatePreOnboardingDocument = () => {
       body,
     }: {
       employmentId: string;
-      body: FindOrCreatePreOnboardingDocumentParams;
+      body: PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsData['path'];
     }) => {
-      return postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments({
-        client: client as Client,
-        body,
-        path: {
-          employment_id: employmentId,
+      return postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocuments(
+        {
+          client: client as Client,
+          path: {
+            employment_id: employmentId,
+            requirement_slug: body.requirement_slug,
+          },
         },
-      });
+      );
     },
   });
 };
@@ -688,6 +690,58 @@ export const useSignPreOnboardingDocument = () => {
           signature,
         },
       }),
+  });
+};
+
+/**
+ * Acknowledge a pre-onboarding requirement
+ */
+export const useAcknowledgePreOnboardingRequirement = () => {
+  const { client } = useClient();
+
+  return useMutation({
+    mutationFn: ({
+      employmentId,
+      requirementSlug,
+    }: {
+      employmentId: string;
+      requirementSlug: string;
+    }) =>
+      postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledge(
+        {
+          client: client as Client,
+          path: {
+            employment_id: employmentId,
+            requirement_slug: requirementSlug,
+          },
+        },
+      ),
+  });
+};
+
+/**
+ * Remove acknowledgement from a pre-onboarding requirement
+ */
+export const useRemoveAcknowledgePreOnboardingRequirement = () => {
+  const { client } = useClient();
+
+  return useMutation({
+    mutationFn: ({
+      employmentId,
+      requirementSlug,
+    }: {
+      employmentId: string;
+      requirementSlug: string;
+    }) =>
+      deleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledge(
+        {
+          client: client as Client,
+          path: {
+            employment_id: employmentId,
+            requirement_slug: requirementSlug,
+          },
+        },
+      ),
   });
 };
 

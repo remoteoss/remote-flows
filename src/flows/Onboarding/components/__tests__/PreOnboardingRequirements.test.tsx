@@ -235,7 +235,6 @@ describe('PreOnboardingRequirements', () => {
       );
 
       let renderBag: ReturnType<typeof usePreOnboardingRequirements>;
-      const ackTime = '2026-05-19T10:00:00Z';
 
       render(
         <PreOnboardingRequirements
@@ -244,10 +243,7 @@ describe('PreOnboardingRequirements', () => {
             return (
               <button
                 onClick={() =>
-                  bag.onCreateDocument(
-                    '5e39159e-96ef-40ea-82bc-b054917fc82f',
-                    ackTime,
-                  )
+                  bag.onCreateDocument('5e39159e-96ef-40ea-82bc-b054917fc82f')
                 }
               >
                 Generate with Ack

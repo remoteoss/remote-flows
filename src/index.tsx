@@ -63,6 +63,7 @@ export type {
   CreditRiskState,
   OnboardingRenderProps,
   PreOnboardingRequirementsBag,
+  PreOnboardingRequirement,
 } from '@/src/flows/Onboarding';
 
 export {
