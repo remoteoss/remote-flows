@@ -1270,6 +1270,10 @@ export const useContractorOnboarding = ({
 
         setIncludeContractDetails(!isProvidedByCustomer);
         setIncludeContractPreview(!isProvidedByCustomer);
+        if (isProvidedByCustomer) {
+          setIncludeEligibilityQuestionnaire(false);
+          setPendingNavigationStep('review');
+        }
 
         return { data: { contractOrigin } };
       }
