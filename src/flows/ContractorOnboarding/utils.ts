@@ -160,12 +160,14 @@ export const reviewStepAllowedEmploymentStatus: Employment['status'][] = [
   'invited',
   'created_awaiting_reserve',
   'created_reserve_paid',
+  'active',
 ];
 
 export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
   'initiated',
   'created_awaiting_reserve',
   'invited',
+  'active',
 ];
 
 /**
