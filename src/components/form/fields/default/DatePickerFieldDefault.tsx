@@ -29,6 +29,10 @@ export function DatePickerFieldDefault({
   const maxDateValue = maxDate ? new Date(maxDate) : undefined;
   const [open, setOpen] = useState(false);
 
+  const currentYear = new Date().getFullYear();
+  const fromYear = minDateValue ? minDateValue.getFullYear() : 1900;
+  const toYear = maxDateValue ? maxDateValue.getFullYear() : currentYear + 10;
+
   return (
     <FormItem
       data-field={name}
@@ -62,6 +66,9 @@ export function DatePickerFieldDefault({
         >
           <Calendar
             mode='single'
+            captionLayout='dropdown'
+            fromYear={fromYear}
+            toYear={toYear}
             className='RemoteFlows__DatepickerField__Calendar'
             selected={field.value ? new Date(field.value) : undefined}
             onDayClick={(day) => {
@@ -69,7 +76,11 @@ export function DatePickerFieldDefault({
               field.onChange(formattedDate);
               setOpen(false);
             }}
-            defaultMonth={minDateValue}
+            defaultMonth={
+              field.value
+                ? new Date(field.value)
+                : (maxDateValue ?? minDateValue)
+            }
             disabled={(date: Date) => {
               if (minDateValue && date < minDateValue) return true;
               if (maxDateValue && date > maxDateValue) return true;
