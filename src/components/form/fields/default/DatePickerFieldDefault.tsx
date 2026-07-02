@@ -31,7 +31,10 @@ export function DatePickerFieldDefault({
 
   const currentYear = new Date().getFullYear();
   const fromYear = minDateValue ? minDateValue.getFullYear() : 1900;
-  const toYear = maxDateValue ? maxDateValue.getFullYear() : currentYear + 10;
+  const toYear = Math.max(
+    fromYear,
+    maxDateValue ? maxDateValue.getFullYear() : currentYear + 10,
+  );
 
   return (
     <FormItem
