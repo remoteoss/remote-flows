@@ -1292,19 +1292,26 @@ export const useContractorOnboarding = ({
         const contractOrigin = values.contract_origin as string;
         const isProvidedByCustomer = contractOrigin === 'provided_by_customer';
 
-        await setContractOriginMutationAsync({
-          employmentId: internalEmploymentId as string,
-          contractOrigin,
-          templateType: isProvidedByCustomer
-            ? undefined
-            : 'contractor_agreement',
-        });
-
-        setIncludeContractDetails(!isProvidedByCustomer);
-        setIncludeContractPreview(!isProvidedByCustomer);
+        // Only "provided_by_customer" needs to hit the backend (it changes the
+        // flow by dropping the contract steps). The normal flow just proceeds
+        // to the next step, exactly like before.
         if (isProvidedByCustomer) {
+          await setContractOriginMutationAsync({
+            employmentId: internalEmploymentId as string,
+            contractOrigin,
+            // The gateway enforces template_type's enum + required on every
+            // request. It's ignored server-side for provided_by_customer, but
+            // must still be a valid enum value, so we always send one.
+            templateType: 'contractor_agreement',
+          });
+
+          setIncludeContractDetails(false);
+          setIncludeContractPreview(false);
           setIncludeEligibilityQuestionnaire(false);
           setPendingNavigationStep('review');
+        } else {
+          setIncludeContractDetails(true);
+          setIncludeContractPreview(true);
         }
 
         return { data: { contractOrigin } };

@@ -789,14 +789,14 @@ export const useSetContractOrigin = () => {
     }: {
       employmentId: string;
       contractOrigin: string;
-      templateType?: string;
+      templateType: string;
     }) => {
       return (client as Client).post({
         url: '/v1/employments/{employment_id}/contract-origin',
         path: { employment_id: employmentId },
         body: {
           contract_origin: contractOrigin,
-          ...(templateType ? { template_type: templateType } : {}),
+          template_type: templateType,
         },
         security: [
           { scheme: 'bearer', type: 'http' },
