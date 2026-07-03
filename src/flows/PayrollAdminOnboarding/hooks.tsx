@@ -196,7 +196,9 @@ export const usePayrollAdminOnboarding = ({
       switch (currentStep) {
         case 'select_country': {
           if (!internalCountryCode) {
-            throw new Error('Country code is required to create an employment.');
+            throw new Error(
+              'Country code is required to create an employment.',
+            );
           }
           const data = await createEmploymentAsync({
             countryCode: internalCountryCode,
