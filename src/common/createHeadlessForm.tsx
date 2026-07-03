@@ -25,7 +25,16 @@ export const createHeadlessForm = (
 ): JSONSchemaFormResultWithFieldsets => {
   if (options && options.jsfModify) {
     const { required, allOf, ...modifyConfig } = options.jsfModify;
-    const { schema } = modify(jsfSchema, modifyConfig);
+    // muteLogging: true suppresses the generic library log; we surface the
+    // actual warnings ourselves when present so they're actionable.
+    const { schema, warnings } = modify(jsfSchema, {
+      ...modifyConfig,
+      muteLogging: true,
+    } as Parameters<typeof modify>[1]);
+    if (warnings && warnings.length > 0) {
+      // eslint-disable-next-line no-console
+      console.warn('jsfModify warnings:', warnings);
+    }
     jsfSchema = schema;
 
     if (required) {
