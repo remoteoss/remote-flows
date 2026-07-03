@@ -773,7 +773,11 @@ export const useContractorOnboarding = ({
       contract_origin: employment?.contract_details?.contract_origin,
     };
     return getInitialValues(stepFields.contract_origin, initialValues);
-  }, [stepFields.contract_origin, onboardingInitialValues]);
+  }, [
+    stepFields.contract_origin,
+    onboardingInitialValues,
+    employment?.contract_details?.contract_origin,
+  ]);
 
   const contractDetailsInitialValues = useMemo(() => {
     const hardcodedValues = {
