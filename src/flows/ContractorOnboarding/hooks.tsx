@@ -336,21 +336,23 @@ export const useContractorOnboarding = ({
     );
   }, [contractorSubscriptions]);
 
-  useEffect(() => {
-    if (hasEligibilityQuestionnaireSubmitted) {
-      setIncludeEligibilityQuestionnaire(false);
-      return;
-    } else if (selectedProduct === corProductIdentifier) {
-      setIncludeEligibilityQuestionnaire(true);
-    } else {
-      setIncludeEligibilityQuestionnaire(false);
-    }
+  // Whether the eligibility questionnaire / contract preview steps belong in
+  // the flow. Both are also derived here so the contract_origin step can
+  // restore them when the user switches back to the normal flow.
+  const shouldIncludeEligibilityQuestionnaire = useMemo(() => {
+    if (hasEligibilityQuestionnaireSubmitted) return false;
+    return selectedProduct === corProductIdentifier;
   }, [hasEligibilityQuestionnaireSubmitted, selectedProduct]);
 
+  const shouldIncludeContractPreview = employment?.contractor_type !== 'cor';
+
   useEffect(() => {
-    const isCor = employment?.contractor_type === 'cor';
-    setIncludeContractPreview(!isCor);
-  }, [employment?.contractor_type]);
+    setIncludeEligibilityQuestionnaire(shouldIncludeEligibilityQuestionnaire);
+  }, [shouldIncludeEligibilityQuestionnaire]);
+
+  useEffect(() => {
+    setIncludeContractPreview(shouldIncludeContractPreview);
+  }, [shouldIncludeContractPreview]);
 
   const eligibilityAnswers = useMemo(() => {
     return contractorSubscriptions?.find(
@@ -1294,7 +1296,10 @@ export const useContractorOnboarding = ({
 
         // Only "provided_by_customer" needs to hit the backend (it changes the
         // flow by dropping the contract steps). The normal flow just proceeds
-        // to the next step, exactly like before.
+        // to the next step, exactly like before. In both cases we defer
+        // navigation via pendingNavigationStep (and skip the step's synchronous
+        // next()) so it runs against the rebuilt steps, not stale ones — this
+        // is what lets the user switch options back and forth reliably.
         if (isProvidedByCustomer) {
           await setContractOriginMutationAsync({
             employmentId: internalEmploymentId as string,
@@ -1310,11 +1315,20 @@ export const useContractorOnboarding = ({
           setIncludeEligibilityQuestionnaire(false);
           setPendingNavigationStep('review');
         } else {
+          // Restore the normal flow steps to their effect-derived state.
           setIncludeContractDetails(true);
-          setIncludeContractPreview(true);
+          setIncludeContractPreview(shouldIncludeContractPreview);
+          setIncludeEligibilityQuestionnaire(
+            shouldIncludeEligibilityQuestionnaire,
+          );
+          setPendingNavigationStep(
+            shouldIncludeEligibilityQuestionnaire
+              ? 'eligibility_questionnaire'
+              : 'contract_details',
+          );
         }
 
-        return { data: { contractOrigin } };
+        return { data: { contractOrigin }, _skipNextStep: true };
       }
 
       case 'eligibility_questionnaire': {
