@@ -336,9 +336,6 @@ export const useContractorOnboarding = ({
     );
   }, [contractorSubscriptions]);
 
-  // Whether the eligibility questionnaire / contract preview steps belong in
-  // the flow. Both are also derived here so the contract_origin step can
-  // restore them when the user switches back to the normal flow.
   const shouldIncludeEligibilityQuestionnaire = useMemo(() => {
     if (hasEligibilityQuestionnaireSubmitted) return false;
     return selectedProduct === corProductIdentifier;
@@ -1291,31 +1288,17 @@ export const useContractorOnboarding = ({
       }
 
       case 'contract_origin': {
-        const contractOrigin = values.contract_origin as string;
-        const isProvidedByCustomer = contractOrigin === 'provided_by_customer';
-
-        // Only "provided_by_customer" needs to hit the backend (it changes the
-        // flow by dropping the contract steps). The normal flow just proceeds
-        // to the next step, exactly like before. In both cases we defer
-        // navigation via pendingNavigationStep (and skip the step's synchronous
-        // next()) so it runs against the rebuilt steps, not stale ones — this
-        // is what lets the user switch options back and forth reliably.
-        if (isProvidedByCustomer) {
+        if (values.contract_origin === 'provided_by_customer') {
           await setContractOriginMutationAsync({
             employmentId: internalEmploymentId as string,
-            contractOrigin,
-            // The gateway enforces template_type's enum + required on every
-            // request. It's ignored server-side for provided_by_customer, but
-            // must still be a valid enum value, so we always send one.
+            contractOrigin: 'provided_by_customer',
             templateType: 'contractor_agreement',
           });
-
           setIncludeContractDetails(false);
           setIncludeContractPreview(false);
           setIncludeEligibilityQuestionnaire(false);
           setPendingNavigationStep('review');
         } else {
-          // Restore the normal flow steps to their effect-derived state.
           setIncludeContractDetails(true);
           setIncludeContractPreview(shouldIncludeContractPreview);
           setIncludeEligibilityQuestionnaire(
@@ -1328,7 +1311,10 @@ export const useContractorOnboarding = ({
           );
         }
 
-        return { data: { contractOrigin }, _skipNextStep: true };
+        return {
+          data: { contractOrigin: values.contract_origin },
+          _skipNextStep: true,
+        };
       }
 
       case 'eligibility_questionnaire': {
