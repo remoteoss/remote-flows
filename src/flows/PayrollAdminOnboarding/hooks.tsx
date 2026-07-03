@@ -56,8 +56,11 @@ export const usePayrollAdminOnboarding = ({
     string | undefined
   >(initialCountryCode);
 
-  // Derive from state so setInternalCountryCode is reflected in step visibility
-  const skipCountry = !!internalCountryCode && !!initialCountryCode;
+  // Only skip country selection when resuming an existing employment — both
+  // country and employmentId must be known upfront. Providing only countryCode
+  // would bypass the select_country branch (the only place createEmployment
+  // runs) and leave the flow with no employmentId for subsequent steps.
+  const skipCountry = !!initialCountryCode && !!initialEmploymentId;
 
   const steps = useMemo(() => buildAdminSteps(skipCountry), [skipCountry]);
 
@@ -192,7 +195,9 @@ export const usePayrollAdminOnboarding = ({
 
       switch (currentStep) {
         case 'select_country': {
-          if (!internalCountryCode) return;
+          if (!internalCountryCode) {
+            throw new Error('Country code is required to create an employment.');
+          }
           const data = await createEmploymentAsync({
             countryCode: internalCountryCode,
             legalEntityId,
@@ -200,15 +205,22 @@ export const usePayrollAdminOnboarding = ({
           });
           const empId = (data as { data?: { employment?: { id?: string } } })
             ?.data?.employment?.id;
-          if (empId) {
-            setInternalEmploymentId(empId);
-            await refetchSteps();
+          if (!empId) {
+            throw new Error(
+              'Employment was created but no ID was returned. Cannot proceed.',
+            );
           }
+          setInternalEmploymentId(empId);
+          await refetchSteps();
           return data;
         }
 
         case 'contract_details': {
-          if (!internalEmploymentId) return;
+          if (!internalEmploymentId) {
+            throw new Error(
+              'Employment ID is missing. Complete the previous step first.',
+            );
+          }
           const data = await updateContractDetailsAsync({
             employmentId: internalEmploymentId,
             contractDetails: parsedValues,
@@ -218,7 +230,11 @@ export const usePayrollAdminOnboarding = ({
         }
 
         case 'administrative_details': {
-          if (!internalEmploymentId) return;
+          if (!internalEmploymentId) {
+            throw new Error(
+              'Employment ID is missing. Complete the previous step first.',
+            );
+          }
           const data = await updateAdminDetailsAsync({
             employmentId: internalEmploymentId,
             administrativeDetails: parsedValues,
