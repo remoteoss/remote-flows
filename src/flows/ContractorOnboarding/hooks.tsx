@@ -31,6 +31,8 @@ import {
   CONTRACT_PRODUCT_TITLES,
   useHasCompanySignedContract,
   useCompanyOpenTasks,
+  useSetContractOrigin,
+  useGetContractOriginSchema,
 } from '@/src/flows/ContractorOnboarding/api';
 import {
   ContractorOnboardingFlowProps,
@@ -82,6 +84,7 @@ type useContractorOnboardingProps = Omit<
 const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
   select_country: null,
   basic_information: 'employment_basic_information',
+  contract_origin: null,
   contract_details: null,
   eligibility_questionnaire: null,
   pricing_plan: null,
@@ -123,6 +126,7 @@ export const useContractorOnboarding = ({
   const fieldsMetaRef = useRef<{
     select_country: Meta;
     basic_information: Meta;
+    contract_origin: Meta;
     contract_details: Meta;
     contract_preview: Meta;
     pricing_plan: Meta;
@@ -130,6 +134,7 @@ export const useContractorOnboarding = ({
   }>({
     select_country: {},
     basic_information: {},
+    contract_origin: {},
     contract_details: {},
     contract_preview: {},
     pricing_plan: {},
@@ -146,6 +151,9 @@ export const useContractorOnboarding = ({
   const [includeContractPreview, setIncludeContractPreview] =
     useState<boolean>(true);
 
+  const [includeContractDetails, setIncludeContractDetails] =
+    useState<boolean>(true);
+
   const [pendingNavigationStep, setPendingNavigationStep] =
     useState<StepKeys | null>(null);
 
@@ -153,10 +161,17 @@ export const useContractorOnboarding = ({
     () =>
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
+        includeContractOrigin: !skipSteps?.includes('contract_origin'),
         includeEligibilityQuestionnaire: includeEligibilityQuestionnaire,
+        includeContractDetails: includeContractDetails,
         includeContractPreview: includeContractPreview,
       }),
-    [includeEligibilityQuestionnaire, includeContractPreview, skipSteps],
+    [
+      includeEligibilityQuestionnaire,
+      includeContractDetails,
+      includeContractPreview,
+      skipSteps,
+    ],
   );
 
   const {
@@ -232,6 +247,7 @@ export const useContractorOnboarding = ({
     usePostCreateEligibilityQuestionnaire();
   const manageContractorCorSubscriptionMutation =
     usePostManageContractorCorSubscription();
+  const setContractOriginMutation = useSetContractOrigin();
 
   const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
     mutationToPromise(updateEmploymentMutation);
@@ -261,6 +277,9 @@ export const useContractorOnboarding = ({
 
   const { mutateAsyncOrThrow: deleteContractorCorSubscriptionMutationAsync } =
     mutationToPromise(deleteContractorCorSubscriptionMutation);
+
+  const { mutateAsyncOrThrow: setContractOriginMutationAsync } =
+    mutationToPromise(setContractOriginMutation);
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -317,21 +336,38 @@ export const useContractorOnboarding = ({
     );
   }, [contractorSubscriptions]);
 
-  useEffect(() => {
-    if (hasEligibilityQuestionnaireSubmitted) {
-      setIncludeEligibilityQuestionnaire(false);
-      return;
-    } else if (selectedProduct === corProductIdentifier) {
-      setIncludeEligibilityQuestionnaire(true);
-    } else {
-      setIncludeEligibilityQuestionnaire(false);
-    }
+  const shouldIncludeEligibilityQuestionnaire = useMemo(() => {
+    if (hasEligibilityQuestionnaireSubmitted) return false;
+    return selectedProduct === corProductIdentifier;
   }, [hasEligibilityQuestionnaireSubmitted, selectedProduct]);
 
+  const shouldIncludeContractPreview = employment?.contractor_type !== 'cor';
+
+  const selectedContractOrigin =
+    (fieldValues.contract_origin as string | undefined) ??
+    (stepState.values?.contract_origin?.contract_origin as
+      | string
+      | undefined) ??
+    employment?.contract_details?.contract_origin;
+
+  const isContractProvidedByCustomer =
+    selectedContractOrigin === 'provided_by_customer';
+
   useEffect(() => {
-    const isCor = employment?.contractor_type === 'cor';
-    setIncludeContractPreview(!isCor);
-  }, [employment?.contractor_type]);
+    setIncludeContractDetails(!isContractProvidedByCustomer);
+  }, [isContractProvidedByCustomer]);
+
+  useEffect(() => {
+    setIncludeEligibilityQuestionnaire(
+      !isContractProvidedByCustomer && shouldIncludeEligibilityQuestionnaire,
+    );
+  }, [isContractProvidedByCustomer, shouldIncludeEligibilityQuestionnaire]);
+
+  useEffect(() => {
+    setIncludeContractPreview(
+      !isContractProvidedByCustomer && shouldIncludeContractPreview,
+    );
+  }, [isContractProvidedByCustomer, shouldIncludeContractPreview]);
 
   const eligibilityAnswers = useMemo(() => {
     return contractorSubscriptions?.find(
@@ -606,6 +642,10 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const { data: contractOriginForm } = useGetContractOriginSchema({
+    fieldValues: fieldValues,
+  });
+
   const {
     data: documentPreviewPdf,
     isLoading: isLoadingDocumentPreviewForm,
@@ -634,6 +674,7 @@ export const useContractorOnboarding = ({
     () => ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
+      contract_origin: contractOriginForm?.fields || [],
       pricing_plan: selectContractorSubscriptionForm?.fields || [],
       eligibility_questionnaire: eligibilityQuestionnaireForm?.fields || [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
@@ -643,6 +684,7 @@ export const useContractorOnboarding = ({
     [
       selectCountryForm?.fields,
       basicInformationForm?.fields,
+      contractOriginForm?.fields,
       selectContractorSubscriptionForm?.fields,
       contractorOnboardingDetailsForm?.fields,
       signatureSchemaForm?.fields,
@@ -656,6 +698,7 @@ export const useContractorOnboarding = ({
   > = {
     select_country: null,
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
+    contract_origin: null,
     pricing_plan: null,
     contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
     eligibility_questionnaire: null,
@@ -669,6 +712,7 @@ export const useContractorOnboarding = ({
   > = {
     select_country: selectCountryForm?.meta?.['x-jsf-presentation'],
     basic_information: basicInformationForm?.meta?.['x-jsf-presentation'],
+    contract_origin: contractOriginForm?.meta?.['x-jsf-presentation'],
     pricing_plan:
       selectContractorSubscriptionForm?.meta?.['x-jsf-presentation'],
     eligibility_questionnaire:
@@ -721,6 +765,18 @@ export const useContractorOnboarding = ({
     employment?.contract_details?.nationality,
     convertedIr35File,
     stepFields.basic_information,
+  ]);
+
+  const contractOriginInitialValues = useMemo(() => {
+    const initialValues = {
+      ...onboardingInitialValues,
+      contract_origin: employment?.contract_details?.contract_origin,
+    };
+    return getInitialValues(stepFields.contract_origin, initialValues);
+  }, [
+    stepFields.contract_origin,
+    onboardingInitialValues,
+    employment?.contract_details?.contract_origin,
   ]);
 
   const contractDetailsInitialValues = useMemo(() => {
@@ -791,6 +847,7 @@ export const useContractorOnboarding = ({
     return {
       select_country: selectCountryInitialValues,
       basic_information: basicInformationInitialValues,
+      contract_origin: contractOriginInitialValues,
       contract_details: contractDetailsInitialValues,
       contract_preview: contractPreviewInitialValues,
       pricing_plan: pricingPlanInitialValues,
@@ -799,6 +856,7 @@ export const useContractorOnboarding = ({
   }, [
     selectCountryInitialValues,
     basicInformationInitialValues,
+    contractOriginInitialValues,
     contractDetailsInitialValues,
     contractPreviewInitialValues,
     pricingPlanInitialValues,
@@ -858,6 +916,7 @@ export const useContractorOnboarding = ({
           stepFields.basic_information,
           { skipMoneyConversion: true },
         ),
+        contract_origin: {},
         contract_details: prettifyFormValues(
           contractDetailsInitialValues,
           stepFields.contract_details,
@@ -883,6 +942,7 @@ export const useContractorOnboarding = ({
       setStepValues({
         select_country: selectCountryInitialValues,
         basic_information: basicInformationInitialValues,
+        contract_origin: {},
         contract_details: contractDetailsInitialValues,
         contract_preview: contractPreviewInitialValues,
         pricing_plan: pricingPlanInitialValues,
@@ -973,6 +1033,15 @@ export const useContractorOnboarding = ({
           isPartialValidation: false,
         },
       );
+    }
+
+    if (
+      contractOriginForm &&
+      stepState.currentStep.name === 'contract_origin'
+    ) {
+      return await parseJSFToValidate(values, contractOriginForm?.fields, {
+        isPartialValidation: false,
+      });
     }
 
     return {};
@@ -1240,6 +1309,24 @@ export const useContractorOnboarding = ({
         throw createStructuredError('invalid selection');
       }
 
+      case 'contract_origin': {
+        // Step visibility is already reconciled reactively from the selected
+        // value, so a plain next() lands on the right step (review when the
+        // customer provides their own contract, otherwise eligibility /
+        // contract_details). We only persist the choice server-side here.
+        if (values.contract_origin === 'provided_by_customer') {
+          await setContractOriginMutationAsync({
+            employmentId: internalEmploymentId as string,
+            contractOrigin: 'provided_by_customer',
+            templateType: 'contractor_agreement',
+          });
+        }
+
+        return {
+          data: { contractOrigin: values.contract_origin },
+        };
+      }
+
       case 'eligibility_questionnaire': {
         try {
           const response = await createEligibilityQuestionnaireMutationAsync({
@@ -1442,6 +1529,18 @@ export const useContractorOnboarding = ({
         return eligibilityQuestionnaireForm?.handleValidation(parsedValues);
       }
 
+      if (
+        contractOriginForm &&
+        stepState.currentStep.name === 'contract_origin'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          contractOriginForm?.fields,
+          { isPartialValidation: false },
+        );
+        return contractOriginForm?.handleValidation(parsedValues);
+      }
+
       return null;
     },
 
@@ -1473,7 +1572,8 @@ export const useContractorOnboarding = ({
       uploadFileMutation.isPending ||
       createEligibilityQuestionnaireMutation.isPending ||
       manageContractorCorSubscriptionMutation.isPending ||
-      deleteContractorCorSubscriptionMutation.isPending,
+      deleteContractorCorSubscriptionMutation.isPending ||
+      setContractOriginMutation.isPending,
 
     /**
      * Document preview PDF data

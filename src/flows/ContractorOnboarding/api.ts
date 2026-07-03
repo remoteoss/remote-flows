@@ -23,6 +23,7 @@ import {
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
+import { contractOriginSchema } from '@/src/flows/ContractorOnboarding/json-schemas/contractOrigin';
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
 import {
   JSONSchemaFormResultWithFieldsets,
@@ -775,6 +776,52 @@ export const useDeleteContractorCorSubscription = () => {
         },
       );
     },
+  });
+};
+
+export const useSetContractOrigin = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: async ({
+      employmentId,
+      contractOrigin,
+      templateType,
+    }: {
+      employmentId: string;
+      contractOrigin: string;
+      templateType: string;
+    }) => {
+      return (client as Client).post({
+        url: '/v1/employments/{employment_id}/contract-origin',
+        path: { employment_id: employmentId },
+        body: {
+          contract_origin: contractOrigin,
+          template_type: templateType,
+        },
+        security: [
+          { scheme: 'bearer', type: 'http' },
+          { scheme: 'bearer', type: 'http' },
+        ],
+      });
+    },
+  });
+};
+
+export const useGetContractOriginSchema = ({
+  fieldValues,
+  options,
+}: {
+  fieldValues: FieldValues;
+  options?: { queryOptions?: { enabled?: boolean }; jsfModify?: JSFModify };
+}) => {
+  return useQuery({
+    queryKey: ['contract-origin-schema', options?.jsfModify],
+    queryFn: async () => {
+      return createHeadlessForm(contractOriginSchema, fieldValues, {
+        jsfModify: options?.jsfModify,
+      });
+    },
+    enabled: options?.queryOptions?.enabled,
   });
 };
 

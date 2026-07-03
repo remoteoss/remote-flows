@@ -15,6 +15,7 @@ import {
   JSFCustomComponentProps,
   PricingPlanComponentProps,
   PricingPlanDataProps,
+  RadioGroupComponentProps,
   corProductIdentifier,
   eorProductIdentifier,
   $TSFixMe,
@@ -140,6 +141,67 @@ const Switcher = (props: JSFCustomComponentProps) => {
   );
 };
 
+// Consumer-side copy for each contract origin option. The SDK only ships the
+// option values; we decide here how each radio is labelled and described.
+const CONTRACT_ORIGIN_CONTENT: Record<
+  string,
+  { title: string; description: string }
+> = {
+  provided_by_remote: {
+    title: 'Contractor services agreement',
+    description:
+      'Create a new terms and conditions and statement of work. This should only be used if you do not have an agreement in place with a contractor or want to renegotiate an agreement.',
+  },
+  provided_by_customer: {
+    title: 'Continue without an agreement',
+    description: 'Use your own agreement outside Remote.',
+  },
+};
+
+const ContractOriginRadio = ({
+  field,
+  fieldData,
+  fieldState,
+}: RadioGroupComponentProps) => {
+  return (
+    <fieldset className='contract-origin-radio'>
+      {fieldData.options?.map((option) => {
+        const content = CONTRACT_ORIGIN_CONTENT[option.value] ?? {
+          title: option.label,
+          description: option.description ?? '',
+        };
+        const selected = field.value === option.value;
+
+        return (
+          <label
+            key={option.value}
+            className={`contract-origin-option${selected ? ' is-selected' : ''}`}
+          >
+            <input
+              type='radio'
+              name={field.name}
+              value={option.value}
+              checked={selected}
+              onChange={() => field.onChange(option.value)}
+            />
+            <span className='contract-origin-option-text'>
+              <span className='contract-origin-option-title'>
+                {content.title}
+              </span>
+              <span className='contract-origin-option-description'>
+                {content.description}
+              </span>
+            </span>
+          </label>
+        );
+      })}
+      {fieldState.error && (
+        <p className='error-message'>{fieldState.error.message}</p>
+      )}
+    </fieldset>
+  );
+};
+
 type MultiStepFormProps = {
   contractorOnboardingBag: ContractorOnboardingRenderProps['contractorOnboardingBag'];
   components: ContractorOnboardingRenderProps['components'];
@@ -160,6 +222,7 @@ const MultiStepForm = ({
     ContractPreviewStep,
     ContractReviewButton,
     SaveDraftButton,
+    ContractOriginStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -402,6 +465,47 @@ const MultiStepForm = ({
                 will not be treating them as an employee.
               </p>
             )}
+          <div className='contractor-onboarding-buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Back
+            </BackButton>
+            <SubmitButton
+              className='submit-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Continue
+            </SubmitButton>
+          </div>
+        </div>
+      );
+
+    case 'contract_origin':
+      return (
+        <div className='contractor-onboarding-form-layout'>
+          <div className='flex flex-col gap-2 text-center mb-6'>
+            <h1 className='text-2xl font-bold text-[#000000]'>
+              Contract options
+            </h1>
+            <p className='text-sm text-[#71717A]'>
+              Managing your relationship with contractors is easy: your contract
+              is fully editable in Remote with legally reviewed contract
+              templates specific to France. After all parties sign in Remote,
+              you're ready to go.
+            </p>
+          </div>
+          <ContractOriginStep
+            components={{
+              radio: (props) => <ContractOriginRadio {...props} />,
+            }}
+            onSuccess={() => console.log('contract origin set')}
+            onError={({ error, fieldErrors }) =>
+              setErrors({ apiError: error.message, fieldErrors })
+            }
+          />
+          <AlertError errors={errors} />
           <div className='contractor-onboarding-buttons-container'>
             <BackButton
               className='back-button'

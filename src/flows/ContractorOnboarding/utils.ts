@@ -12,6 +12,7 @@ import { Employment } from '@/src/flows/Onboarding/types';
 export type StepKeys =
   | 'select_country'
   | 'basic_information'
+  | 'contract_origin'
   | 'contract_details'
   | 'eligibility_questionnaire'
   | 'contract_preview'
@@ -20,7 +21,9 @@ export type StepKeys =
 
 type StepConfig = {
   includeSelectCountry?: boolean;
+  includeContractOrigin?: boolean;
   includeEligibilityQuestionnaire?: boolean;
+  includeContractDetails?: boolean;
   includeContractPreview?: boolean;
 };
 
@@ -46,6 +49,11 @@ export function buildSteps(config: StepConfig = {}) {
       visible: true,
     },
     {
+      name: 'contract_origin',
+      label: 'Contract Options',
+      visible: Boolean(config?.includeContractOrigin ?? true),
+    },
+    {
       name: 'eligibility_questionnaire',
       label: 'Eligibility Questionnaire',
       visible: Boolean(config?.includeEligibilityQuestionnaire),
@@ -53,7 +61,7 @@ export function buildSteps(config: StepConfig = {}) {
     {
       name: 'contract_details',
       label: 'Contract Details',
-      visible: true,
+      visible: Boolean(config?.includeContractDetails ?? true),
     },
     {
       name: 'contract_preview',
