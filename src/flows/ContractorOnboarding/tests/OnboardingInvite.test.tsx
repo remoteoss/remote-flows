@@ -30,10 +30,11 @@ const CONTRACTOR_ONBOARDING_STEPS: Record<number, string> = {
   [0]: 'Select Country',
   [1]: 'Basic Information',
   [2]: 'Pricing Plan',
-  [3]: 'Eligibility Questionnaire',
-  [4]: 'Contract Details',
-  [5]: 'Contract Preview',
-  [6]: 'Review',
+  [3]: 'Contract Origin',
+  [4]: 'Eligibility Questionnaire',
+  [5]: 'Contract Details',
+  [6]: 'Contract Preview',
+  [7]: 'Review',
 };
 
 const mockSuccess = vi.fn();

@@ -88,6 +88,17 @@ export async function fillContractorSubscription(plan?: string) {
   await fillRadio('Payment terms', plan || 'Contractor Management Plus');
 }
 
+export async function fillContractOrigin(
+  option: string = 'Contractor services agreement',
+) {
+  await waitFor(() => {
+    expect(
+      screen.getByRole('radio', { name: new RegExp(option, 'i') }),
+    ).toBeInTheDocument();
+  });
+  await fillRadio('Contract options', option);
+}
+
 export async function fillEligibilityQuestionnaire(
   values?: Partial<{
     controlTheWayContractorsWork: string;
