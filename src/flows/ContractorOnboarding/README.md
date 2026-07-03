@@ -14,12 +14,13 @@ The contractor onboarding process consists of the following steps in order:
 2. **Basic Information** - Collect contractor's personal and professional details
 3. **Contract Details** - Define contract terms including services, duration, compensation, and notice periods
 4. **Pricing Plan** - Select and configure subscription/pricing tier
-5. **Contract Preview** - Review and electronically sign the generated contract
-6. **Review** - Final review step (internal)
+5. **Contract Origin** - Choose where the contract comes from
+6. **Contract Preview** - Review and electronically sign the generated contract
+7. **Review** - Final review step (internal)
 
 ### Skipping Steps
 
-You can skip the `select_country` step by passing `skipSteps: ['select_country']` if the country is already known via the `countryCode` prop.
+You can skip the `select_country` step by passing `skipSteps: ['select_country']` if the country is already known via the `countryCode` prop. You can also skip the `contract_origin` step (e.g. `skipSteps: ['contract_origin']`) when the contract origin is not applicable.
 
 ## Usage
 
@@ -48,7 +49,7 @@ import { ContractorOnboardingFlow } from '@remoteoss/remote-flows';
 | `countryCode`   | `string`                                                      | No       | Pre-selected country code for the contractor                                                                                 |
 | `employmentId`  | `string`                                                      | No       | ID of existing employment to update. When provided, fetches existing data from the server                                    |
 | `externalId`    | `string`                                                      | No       | Unique reference code for the employment in external systems (non-Remote). Links to external data sources                    |
-| `skipSteps`     | `['select_country']`                                          | No       | Steps to skip. Currently only supports skipping the select_country step                                                      |
+| `skipSteps`     | `['select_country']`                                          | No       | Steps to skip. Also supports skipping the `contract_origin` step                                                             |
 | `initialValues` | `Record<string, unknown>`                                     | No       | Pre-populate form fields. Flat field values are automatically mapped to the correct step. Server data overrides these values |
 | `options`       | `FlowOptions`                                                 | No       | Configuration options for the flow, including `jsfModify` for customizing specific steps                                     |
 
@@ -70,6 +71,7 @@ The render function receives an object with:
   - `BasicInformationStep` - Contractor details form
   - `ContractDetailsStep` - Contract terms form
   - `PricingPlanStep` - Pricing tier selection
+  - `ContractOriginStep` - Contract origin selection form
   - `ContractPreviewStep` - Contract review and signature
   - `OnboardingInvite` - Invitation/status component
   - `SubmitButton` - Multi-purpose submit button
@@ -121,6 +123,21 @@ Allows selection and configuration of subscription or pricing tiers for the cont
 - `onSubmit?: (payload: PricingPlanFormPayload) => void` - Called before submission
 - `onSuccess?: (response: PricingPlanResponse) => void` - Called on successful submission
 - `onError?: (error: { error: Error; fieldErrors: NormalizedFieldError[] }) => void` - Called on error
+
+### ContractOriginStep
+
+Lets the customer choose where the contract comes from before generating it:
+
+- **Contractor services agreement** (`provided_by_remote`) - Create new terms and conditions and a statement of work. Use this when you don't have an agreement in place or want to renegotiate one.
+- **Without an agreement** (`provided_by_customer`) - Use your own agreement handled outside Remote.
+
+Rendered as a radio group.
+
+**Props:**
+
+- `onSubmit?: (payload: { contract_origin: string }) => void` - Called before submission
+- `onSuccess?: (data: { contractOrigin: string }) => void` - Called on successful submission
+- `onError?: (error: { error: Error; rawError: Record<string, unknown>; fieldErrors: NormalizedFieldError[] }) => void` - Called on error
 
 ### ContractPreviewStep
 

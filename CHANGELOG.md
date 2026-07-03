@@ -4,6 +4,16 @@
 
 ### Minor Changes
 
+#### Features
+
+- Onboarding contractor without contract [#1139] (https://github.com/remoteoss/remote-flows/pull/1139)
+
+#### Fixes
+
+- SDK can handle "active" status and redirect to Review step [#1135] (https://github.com/remoteoss/remote-flows/pull/1135)
+
+#### Chores
+
 - update lucide monorepo
 - update actions/cache digest to caa2961
 - setup nightly e2e (#1121) [#1121](https://github.com/remoteoss/remote-flows/pull/1121)
