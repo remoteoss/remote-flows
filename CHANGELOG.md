@@ -1,5 +1,18 @@
 # @remoteoss/remote-flows
 
+## 1.42.0
+
+### Minor Changes
+
+- update lucide monorepo
+- update actions/cache digest to caa2961
+- setup nightly e2e (#1121) [#1121](https://github.com/remoteoss/remote-flows/pull/1121)
+- upgrade v3 uk (#1116) [#1116](https://github.com/remoteoss/remote-flows/pull/1116)
+- update dependency oxfmt to v0.56.0
+- build the app and deploy it to vercel (#1123) [#1123](https://github.com/remoteoss/remote-flows/pull/1123)
+- add GBR contract details v3 schema upgrade docs
+- remove since/enforced metadata from GBR v3 docs
+
 ## 1.41.1
 
 ### Patch Changes
