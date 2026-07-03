@@ -52,9 +52,7 @@ export function ContractOriginStep({
 
       if (response?.data) {
         await onSuccess?.(response.data as { contractOrigin: string });
-        if (!(response as $TSFixMe)?._skipNextStep) {
-          contractorOnboardingBag?.next();
-        }
+        contractorOnboardingBag?.next();
         return;
       }
     } catch (error: unknown) {

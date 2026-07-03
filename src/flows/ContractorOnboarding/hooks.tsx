@@ -343,13 +343,31 @@ export const useContractorOnboarding = ({
 
   const shouldIncludeContractPreview = employment?.contractor_type !== 'cor';
 
-  useEffect(() => {
-    setIncludeEligibilityQuestionnaire(shouldIncludeEligibilityQuestionnaire);
-  }, [shouldIncludeEligibilityQuestionnaire]);
+  const selectedContractOrigin =
+    (fieldValues.contract_origin as string | undefined) ??
+    (stepState.values?.contract_origin?.contract_origin as
+      | string
+      | undefined) ??
+    employment?.contract_details?.contract_origin;
+
+  const isContractProvidedByCustomer =
+    selectedContractOrigin === 'provided_by_customer';
 
   useEffect(() => {
-    setIncludeContractPreview(shouldIncludeContractPreview);
-  }, [shouldIncludeContractPreview]);
+    setIncludeContractDetails(!isContractProvidedByCustomer);
+  }, [isContractProvidedByCustomer]);
+
+  useEffect(() => {
+    setIncludeEligibilityQuestionnaire(
+      !isContractProvidedByCustomer && shouldIncludeEligibilityQuestionnaire,
+    );
+  }, [isContractProvidedByCustomer, shouldIncludeEligibilityQuestionnaire]);
+
+  useEffect(() => {
+    setIncludeContractPreview(
+      !isContractProvidedByCustomer && shouldIncludeContractPreview,
+    );
+  }, [isContractProvidedByCustomer, shouldIncludeContractPreview]);
 
   const eligibilityAnswers = useMemo(() => {
     return contractorSubscriptions?.find(
@@ -1288,32 +1306,20 @@ export const useContractorOnboarding = ({
       }
 
       case 'contract_origin': {
+        // Step visibility is already reconciled reactively from the selected
+        // value, so a plain next() lands on the right step (review when the
+        // customer provides their own contract, otherwise eligibility /
+        // contract_details). We only persist the choice server-side here.
         if (values.contract_origin === 'provided_by_customer') {
           await setContractOriginMutationAsync({
             employmentId: internalEmploymentId as string,
             contractOrigin: 'provided_by_customer',
             templateType: 'contractor_agreement',
           });
-          setIncludeContractDetails(false);
-          setIncludeContractPreview(false);
-          setIncludeEligibilityQuestionnaire(false);
-          setPendingNavigationStep('review');
-        } else {
-          setIncludeContractDetails(true);
-          setIncludeContractPreview(shouldIncludeContractPreview);
-          setIncludeEligibilityQuestionnaire(
-            shouldIncludeEligibilityQuestionnaire,
-          );
-          setPendingNavigationStep(
-            shouldIncludeEligibilityQuestionnaire
-              ? 'eligibility_questionnaire'
-              : 'contract_details',
-          );
         }
 
         return {
           data: { contractOrigin: values.contract_origin },
-          _skipNextStep: true,
         };
       }
 
