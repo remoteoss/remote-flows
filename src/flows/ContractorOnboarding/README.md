@@ -70,6 +70,7 @@ The render function receives an object with:
   - `BasicInformationStep` - Contractor details form
   - `ContractDetailsStep` - Contract terms form
   - `PricingPlanStep` - Pricing tier selection
+  - `ContractOriginStep` - Contract origin selection form
   - `ContractPreviewStep` - Contract review and signature
   - `OnboardingInvite` - Invitation/status component
   - `SubmitButton` - Multi-purpose submit button
@@ -121,6 +122,21 @@ Allows selection and configuration of subscription or pricing tiers for the cont
 - `onSubmit?: (payload: PricingPlanFormPayload) => void` - Called before submission
 - `onSuccess?: (response: PricingPlanResponse) => void` - Called on successful submission
 - `onError?: (error: { error: Error; fieldErrors: NormalizedFieldError[] }) => void` - Called on error
+
+### ContractOriginStep
+
+Lets the customer choose where the contract comes from before generating it:
+
+- **Contractor services agreement** (`provided_by_remote`) - Create new terms and conditions and a statement of work. Use this when you don't have an agreement in place or want to renegotiate one.
+- **Without an agreement** (`provided_by_customer`) - Use your own agreement handled outside Remote.
+
+Rendered as a radio group.
+
+**Props:**
+
+- `onSubmit?: (payload: { contract_origin: string }) => void` - Called before submission
+- `onSuccess?: (data: { contractOrigin: string }) => void` - Called on successful submission
+- `onError?: (error: { error: Error; rawError: Record<string, unknown>; fieldErrors: NormalizedFieldError[] }) => void` - Called on error
 
 ### ContractPreviewStep
 
