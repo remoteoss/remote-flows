@@ -1,6 +1,6 @@
 import { usePayrollEmployeeOnboardingContext } from '@/src/flows/PayrollEmployeeOnboarding/context';
 import type { GPStepCallbacks } from '@/src/flows/types';
-import { isMutationError } from '@/src/lib/mutations';
+import { handleStepError } from '@/src/lib/utils';
 
 export function useEmployeeStepSubmitHandler({
   onSubmit,
@@ -16,19 +16,7 @@ export function useEmployeeStepSubmitHandler({
       await onSuccess?.(data);
       employeeBag.next();
     } catch (error: unknown) {
-      if (isMutationError(error)) {
-        onError?.({
-          error: error.error,
-          rawError: error.rawError,
-          fieldErrors: error.fieldErrors,
-        });
-      } else {
-        onError?.({
-          error: error as Error,
-          rawError: error as Record<string, unknown>,
-          fieldErrors: [],
-        });
-      }
+      onError?.(handleStepError(error));
     }
   };
 }

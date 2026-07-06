@@ -4,7 +4,7 @@ import type {
   FormResult as FormResultNext,
   FormResultLegacy,
 } from '@remoteoss/remote-json-schema-form-kit';
-import type { FieldError } from '@/src/lib/mutations';
+import type { NormalizedFieldError } from '@/src/lib/mutations';
 
 type Success<T> = {
   data: T;
@@ -125,6 +125,6 @@ export type GPStepCallbacks<TSuccess = unknown> = {
   onError?: (args: {
     error: Error;
     rawError: Record<string, unknown>;
-    fieldErrors: FieldError[];
+    fieldErrors: NormalizedFieldError[];
   }) => void;
 };

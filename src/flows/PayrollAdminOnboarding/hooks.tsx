@@ -56,8 +56,10 @@ export const usePayrollAdminOnboarding = ({
     string | undefined
   >(initialCountryCode);
 
-  // Derive from state so setInternalCountryCode is reflected in step visibility
-  const skipCountry = !!internalCountryCode && !!initialCountryCode;
+  // Skip country step only when both country and an employment ID were pre-provided,
+  // meaning the employment already exists. Without an employmentId the select_country
+  // step must still run so the user fills in basic information and creates the employment.
+  const skipCountry = !!initialCountryCode && !!initialEmploymentId;
 
   const steps = useMemo(() => buildAdminSteps(skipCountry), [skipCountry]);
 
@@ -192,7 +194,7 @@ export const usePayrollAdminOnboarding = ({
 
       switch (currentStep) {
         case 'select_country': {
-          if (!internalCountryCode) return;
+          if (!internalCountryCode) throw new Error('Country code is required');
           const data = await createEmploymentAsync({
             countryCode: internalCountryCode,
             legalEntityId,
@@ -200,15 +202,14 @@ export const usePayrollAdminOnboarding = ({
           });
           const empId = (data as { data?: { employment?: { id?: string } } })
             ?.data?.employment?.id;
-          if (empId) {
-            setInternalEmploymentId(empId);
-            await refetchSteps();
-          }
+          if (!empId) throw new Error('Employment creation did not return an ID');
+          setInternalEmploymentId(empId);
+          await refetchSteps();
           return data;
         }
 
         case 'contract_details': {
-          if (!internalEmploymentId) return;
+          if (!internalEmploymentId) throw new Error('Employment ID is required');
           const data = await updateContractDetailsAsync({
             employmentId: internalEmploymentId,
             contractDetails: parsedValues,
@@ -218,7 +219,7 @@ export const usePayrollAdminOnboarding = ({
         }
 
         case 'administrative_details': {
-          if (!internalEmploymentId) return;
+          if (!internalEmploymentId) throw new Error('Employment ID is required');
           const data = await updateAdminDetailsAsync({
             employmentId: internalEmploymentId,
             administrativeDetails: parsedValues,
