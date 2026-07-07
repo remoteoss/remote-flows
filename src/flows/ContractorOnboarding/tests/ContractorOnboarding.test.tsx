@@ -1540,6 +1540,58 @@ describe('ContractorOnboardingFlow', () => {
     });
   });
 
+  it('should drop the contract origin step when switching from Contractor Management to Contractor Management Plus mid-session', async () => {
+    mockRender.mockImplementation(
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        countryCode='PRT'
+        skipSteps={['select_country']}
+        employmentId='test-employment-id'
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+    });
+
+    await fillBasicInformation();
+
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    // Standard plan keeps the contract origin step visible
+    await fillContractorSubscription('Contractor Management');
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Origin/i);
+
+    // Go back and switch to Contractor Management Plus
+    screen.getByText('Back').click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    await fillContractorSubscription('Contractor Management Plus');
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    // Contract origin must be skipped for Plus: we land straight on contract details
+    await screen.findByText(/Step: Contract Details/i);
+    expect(
+      screen.queryByText(/Step: Contract Origin/i),
+    ).not.toBeInTheDocument();
+  });
+
   it('should skip the contract steps and go straight to review when choosing "Without an agreement"', async () => {
     const setContractOriginSpy = vi.fn();
 
