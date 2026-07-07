@@ -12,6 +12,7 @@ import {
   useGPCreateEmployment,
   useGPUpdateContractDetails,
   useGPUpdateAdministrativeDetails,
+  type GPAdminSchemaType,
 } from '@/src/flows/PayrollAdminOnboarding/api';
 import type { JSONSchemaFormResultWithFieldsets } from '@/src/flows/types';
 
@@ -87,55 +88,24 @@ export const usePayrollAdminOnboarding = ({
 
   const currentStep = stepState.currentStep.name;
 
-  // Schema queries — each enabled only on its own step (or when employment exists for resume)
-  const basicInfoSchema = useGPFormSchema(
-    internalCountryCode,
-    'global_payroll_basic_information',
-    fieldValues,
-    { enabled: currentStep === 'select_country' && !!internalCountryCode },
-  );
+  const schemaTypeByStep: Partial<Record<AdminStepKey, GPAdminSchemaType>> = {
+    select_country: 'global_payroll_basic_information',
+    contract_details: 'global_payroll_contract_details',
+    administrative_details: 'global_payroll_administrative_details',
+  };
 
-  const contractDetailsSchema = useGPFormSchema(
+  const currentSchemaQuery = useGPFormSchema(
     internalCountryCode,
-    'global_payroll_contract_details',
+    schemaTypeByStep[currentStep],
     fieldValues,
     {
-      enabled: currentStep === 'contract_details' && !!internalCountryCode,
-      employmentId: internalEmploymentId,
+      employmentId:
+        currentStep !== 'select_country' ? internalEmploymentId : undefined,
     },
   );
 
-  const adminDetailsSchema = useGPFormSchema(
-    internalCountryCode,
-    'global_payroll_administrative_details',
-    fieldValues,
-    {
-      enabled:
-        currentStep === 'administrative_details' && !!internalCountryCode,
-      employmentId: internalEmploymentId,
-    },
-  );
-
-  const currentSchema = useMemo(() => {
-    const schemaByStep: Partial<
-      Record<AdminStepKey, typeof basicInfoSchema.data>
-    > = {
-      select_country: basicInfoSchema.data,
-      contract_details: contractDetailsSchema.data,
-      administrative_details: adminDetailsSchema.data,
-    };
-    return schemaByStep[currentStep];
-  }, [
-    currentStep,
-    basicInfoSchema.data,
-    contractDetailsSchema.data,
-    adminDetailsSchema.data,
-  ]);
-
-  const isLoadingSchema =
-    basicInfoSchema.isLoading ||
-    contractDetailsSchema.isLoading ||
-    adminDetailsSchema.isLoading;
+  const currentSchema = currentSchemaQuery.data;
+  const isLoadingSchema = currentSchemaQuery.isLoading;
 
   const createEmploymentMutation = useGPCreateEmployment();
   const updateContractDetailsMutation = useGPUpdateContractDetails();

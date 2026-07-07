@@ -19,7 +19,7 @@ export type GPAdminSchemaType =
 
 export const useGPFormSchema = (
   countryCode: string | undefined,
-  schemaType: GPAdminSchemaType,
+  schemaType: GPAdminSchemaType | undefined,
   fieldValues: FieldValues,
   queryOptions?: { enabled?: boolean; employmentId?: string },
 ): ReturnType<typeof useQuery<JSONSchemaFormResultWithFieldsets>> => {
@@ -27,7 +27,7 @@ export const useGPFormSchema = (
   const employmentId = queryOptions?.employmentId;
   return useQuery({
     queryKey: ['gp-form-schema', countryCode, schemaType, employmentId],
-    enabled: !!countryCode && (queryOptions?.enabled ?? true),
+    enabled: !!countryCode && !!schemaType && (queryOptions?.enabled ?? true),
     retry: false,
     queryFn: async () => {
       const response = await getV1CountriesCountryCodeForm({
@@ -35,7 +35,7 @@ export const useGPFormSchema = (
         headers: { Authorization: `` },
         path: {
           country_code: countryCode as string,
-          form: schemaType,
+          form: schemaType as GPAdminSchemaType,
         },
         // Passing employment_id lets the gateway resolve the company/employment
         // context (and therefore the schema-engine user_role) for forms whose
