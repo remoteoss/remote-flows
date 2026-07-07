@@ -9,6 +9,7 @@ export function SelectCountryStep(props: GPStepCallbacks) {
 
   return (
     <PayrollAdminForm
+      key={adminBag.countryCode ?? 'no-country'}
       onSubmit={handleSubmit}
       defaultValues={
         adminBag.initialValues?.basic_information as Record<string, unknown>

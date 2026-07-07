@@ -9,6 +9,7 @@ import { mutationToPromise } from '@/src/lib/mutations';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import {
   useGPFormSchema,
+  useGPCountrySelectSchema,
   useGPCreateEmployment,
   useGPUpdateContractDetails,
   useGPUpdateAdministrativeDetails,
@@ -94,6 +95,10 @@ export const usePayrollAdminOnboarding = ({
     administrative_details: 'global_payroll_administrative_details',
   };
 
+  // Always-on: provides the country picker schema for the select_country step
+  // before a country has been chosen. Hooks must not be called conditionally.
+  const countrySelectSchemaQuery = useGPCountrySelectSchema(fieldValues);
+
   const currentSchemaQuery = useGPFormSchema(
     internalCountryCode,
     schemaTypeByStep[currentStep],
@@ -104,8 +109,16 @@ export const usePayrollAdminOnboarding = ({
     },
   );
 
-  const currentSchema = currentSchemaQuery.data;
-  const isLoadingSchema = currentSchemaQuery.isLoading;
+  // On the select_country step: show the country-picker schema until a country
+  // is chosen, then switch to the basic-information schema.
+  const isSelectCountryPhase =
+    currentStep === 'select_country' && !internalCountryCode;
+  const currentSchema = isSelectCountryPhase
+    ? countrySelectSchemaQuery.data
+    : currentSchemaQuery.data;
+  const isLoadingSchema = isSelectCountryPhase
+    ? countrySelectSchemaQuery.isLoading
+    : currentSchemaQuery.isLoading;
 
   const createEmploymentMutation = useGPCreateEmployment();
   const updateContractDetailsMutation = useGPUpdateContractDetails();
@@ -135,6 +148,22 @@ export const usePayrollAdminOnboarding = ({
   const isComplete =
     apiSteps?.find((s) => s.type === 'completion')?.sub_steps?.[0]?.status ===
     'completed';
+
+  // When the country picker is active, intercept field-change events so that
+  // selecting a country immediately sets internalCountryCode, causing the
+  // schema to switch from the country picker to the basic-information form.
+  const handleFieldValues = useCallback(
+    (values: FieldValues) => {
+      setFieldValues(values);
+      if (isSelectCountryPhase) {
+        const countryCode = values.country_code as string | undefined;
+        if (countryCode) {
+          setInternalCountryCode(countryCode);
+        }
+      }
+    },
+    [isSelectCountryPhase, setFieldValues],
+  );
 
   const handleValidation = useCallback(
     async (values: FieldValues) => {
@@ -249,7 +278,7 @@ export const usePayrollAdminOnboarding = ({
     meta: (currentSchema?.meta ??
       {}) as JSONSchemaFormResultWithFieldsets['meta'],
     fieldValues,
-    setFieldValues,
+    setFieldValues: handleFieldValues,
     handleValidation,
     parseFormValues,
     onSubmit,

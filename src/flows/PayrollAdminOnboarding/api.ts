@@ -11,6 +11,8 @@ import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { JSONSchemaFormResultWithFieldsets } from '@/src/flows/types';
+import { countriesOptions } from '@/src/common/api/countries';
+import { gpSelectCountrySchema } from '@/src/flows/PayrollAdminOnboarding/json-schemas/selectCountryStep';
 
 export type GPAdminSchemaType =
   | 'global_payroll_basic_information'
@@ -55,6 +57,28 @@ export const useGPFormSchema = (
         (data?.data as Record<string, unknown>) || {},
         fieldValues,
       ),
+  });
+};
+
+export const useGPCountrySelectSchema = (
+  fieldValues: FieldValues,
+): ReturnType<typeof useQuery<JSONSchemaFormResultWithFieldsets>> => {
+  const { client } = useClient();
+  return useQuery({
+    ...countriesOptions(client as Client, 'gp-admin'),
+    select: (response) => {
+      const countries = response?.data?.data ?? [];
+      const schema = {
+        ...gpSelectCountrySchema,
+        properties: {
+          country_code: {
+            ...gpSelectCountrySchema.properties.country_code,
+            oneOf: countries.map((c) => ({ const: c.code, title: c.name })),
+          },
+        },
+      };
+      return createHeadlessForm(schema, fieldValues);
+    },
   });
 };
 
