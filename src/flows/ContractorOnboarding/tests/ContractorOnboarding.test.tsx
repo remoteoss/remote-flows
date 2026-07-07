@@ -1253,6 +1253,59 @@ describe('ContractorOnboardingFlow', () => {
     });
   });
 
+  it('should override contract_origin field title using jsfModify options', async () => {
+    const customTitle = 'Choose how the contract is provided';
+
+    mockRender.mockImplementation(
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        {...defaultProps}
+        countryCode='PRT'
+        skipSteps={['select_country']}
+        options={{
+          jsfModify: {
+            contract_origin: {
+              fields: {
+                contract_origin: {
+                  title: customTitle,
+                },
+              },
+            },
+          },
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillBasicInformation();
+
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillContractorSubscription();
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Origin/i);
+
+    // The default schema title for this field is "Contract options"; jsfModify
+    // should replace it with our custom title.
+    await waitFor(() => {
+      expect(screen.getByText(customTitle)).toBeInTheDocument();
+      expect(screen.queryByText('Contract options')).not.toBeInTheDocument();
+    });
+  });
+
   it('should display description message when service_duration.provisional_start_date differs from employment provisional_start_date', async () => {
     const employmentId = generateUniqueEmploymentId();
 

@@ -644,6 +644,9 @@ export const useContractorOnboarding = ({
 
   const { data: contractOriginForm } = useGetContractOriginSchema({
     fieldValues: fieldValues,
+    options: {
+      jsfModify: options?.jsfModify?.contract_origin,
+    },
   });
 
   const {
