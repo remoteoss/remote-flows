@@ -56,7 +56,11 @@ export const usePayrollAdminOnboarding = ({
 
   const [internalCountryCode, setInternalCountryCode] = useState<
     string | undefined
-  >(initialCountryCode);
+  >(
+    initialCountryCode ??
+      (initialValues?.basic_information as Record<string, unknown>)
+        ?.country_code as string | undefined,
+  );
 
   // Only skip country selection when resuming an existing employment — both
   // country and employmentId must be known upfront. Providing only countryCode
