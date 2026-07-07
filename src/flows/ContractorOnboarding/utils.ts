@@ -49,14 +49,14 @@ export function buildSteps(config: StepConfig = {}) {
       visible: true,
     },
     {
-      name: 'contract_origin',
-      label: 'Contract Options',
-      visible: Boolean(config?.includeContractOrigin ?? true),
-    },
-    {
       name: 'eligibility_questionnaire',
       label: 'Eligibility Questionnaire',
       visible: Boolean(config?.includeEligibilityQuestionnaire),
+    },
+    {
+      name: 'contract_origin',
+      label: 'Contract Options',
+      visible: Boolean(config?.includeContractOrigin ?? true),
     },
     {
       name: 'contract_details',

@@ -154,6 +154,9 @@ export const useContractorOnboarding = ({
   const [includeContractDetails, setIncludeContractDetails] =
     useState<boolean>(true);
 
+  const [includeContractOrigin, setIncludeContractOrigin] =
+    useState<boolean>(true);
+
   const [pendingNavigationStep, setPendingNavigationStep] =
     useState<StepKeys | null>(null);
 
@@ -161,12 +164,13 @@ export const useContractorOnboarding = ({
     () =>
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
-        includeContractOrigin: !skipSteps?.includes('contract_origin'),
+        includeContractOrigin: includeContractOrigin,
         includeEligibilityQuestionnaire: includeEligibilityQuestionnaire,
         includeContractDetails: includeContractDetails,
         includeContractPreview: includeContractPreview,
       }),
     [
+      includeContractOrigin,
       includeEligibilityQuestionnaire,
       includeContractDetails,
       includeContractPreview,
@@ -351,6 +355,7 @@ export const useContractorOnboarding = ({
     employment?.contract_details?.contract_origin;
 
   const isContractProvidedByCustomer =
+    selectedProduct === contractorStandardProductIdentifier &&
     selectedContractOrigin === 'provided_by_customer';
 
   useEffect(() => {
@@ -555,6 +560,13 @@ export const useContractorOnboarding = ({
       setSelectedProduct(selectedPricingPlan);
     }
   }, [selectedPricingPlan, selectedProduct]);
+
+  useEffect(() => {
+    setIncludeContractOrigin(
+      !skipSteps?.includes('contract_origin') &&
+        selectedPricingPlan === contractorStandardProductIdentifier,
+    );
+  }, [skipSteps, selectedPricingPlan]);
 
   const eligibilityFields = useMemo(() => {
     return {
