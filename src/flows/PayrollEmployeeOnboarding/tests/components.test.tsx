@@ -275,7 +275,7 @@ describe('useEmployeeStepSubmitHandler', () => {
     expect(onError).toHaveBeenCalledWith({
       error: mutationErr.error,
       rawError: mutationErr.rawError,
-      fieldErrors: [{ field: 'x', messages: ['bad'], userFriendlyLabel: 'x' }],
+      fieldErrors: mutationErr.fieldErrors,
     });
     expect(next).not.toHaveBeenCalled();
   });
@@ -291,8 +291,8 @@ describe('useEmployeeStepSubmitHandler', () => {
     );
     await result.current({});
     expect(onError).toHaveBeenCalledWith({
-      error: new Error('plain'),
-      rawError: { message: 'plain' },
+      error: plainErr,
+      rawError: plainErr,
       fieldErrors: [],
     });
   });

@@ -2,9 +2,8 @@ import { PropsWithChildren } from 'react';
 import { usePayrollAdminOnboardingContext } from '@/src/flows/PayrollAdminOnboarding/context';
 import { useFormFields } from '@/src/context';
 import type { GPStepCallbacks } from '@/src/flows/types';
-import { mutationToPromise } from '@/src/lib/mutations';
+import { isMutationError, mutationToPromise } from '@/src/lib/mutations';
 import { useGPInviteEmployee } from '@/src/flows/PayrollAdminOnboarding/api';
-import { handleStepError } from '@/src/lib/utils';
 
 type InvitationStepProps = Pick<GPStepCallbacks, 'onSuccess' | 'onError'> & {
   children?: React.ReactNode;
@@ -33,7 +32,19 @@ export function InvitationStep({
       await onSuccess?.(data);
       adminBag.next();
     } catch (error: unknown) {
-      onError?.(handleStepError(error));
+      if (isMutationError(error)) {
+        onError?.({
+          error: error.error,
+          rawError: error.rawError,
+          fieldErrors: error.fieldErrors,
+        });
+      } else {
+        onError?.({
+          error: error as Error,
+          rawError: error as Record<string, unknown>,
+          fieldErrors: [],
+        });
+      }
     }
   };
 

@@ -1,7 +1,11 @@
 import { usePayrollAdminOnboardingContext } from '@/src/flows/PayrollAdminOnboarding/context';
 import type { GPStepCallbacks } from '@/src/flows/types';
-import { handleStepError } from '@/src/lib/utils';
+import { isMutationError } from '@/src/lib/mutations';
 
+/**
+ * Shared submit handler for form-based GP admin steps.
+ * Calls adminBag.onSubmit, routes errors through isMutationError, then advances step.
+ */
 export function useStepSubmitHandler({
   onSubmit,
   onSuccess,
@@ -16,7 +20,19 @@ export function useStepSubmitHandler({
       await onSuccess?.(data);
       adminBag.next();
     } catch (error: unknown) {
-      onError?.(handleStepError(error));
+      if (isMutationError(error)) {
+        onError?.({
+          error: error.error,
+          rawError: error.rawError,
+          fieldErrors: error.fieldErrors,
+        });
+      } else {
+        onError?.({
+          error: error as Error,
+          rawError: error as Record<string, unknown>,
+          fieldErrors: [],
+        });
+      }
     }
   };
 }
