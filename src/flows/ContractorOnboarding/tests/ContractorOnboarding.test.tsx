@@ -61,8 +61,8 @@ const CONTRACTOR_ONBOARDING_STEPS: Record<number, string> = {
   [0]: 'Select Country',
   [1]: 'Basic Information',
   [2]: 'Pricing Plan',
-  [3]: 'Contract Origin',
-  [4]: 'Eligibility Questionnaire',
+  [3]: 'Eligibility Questionnaire',
+  [4]: 'Contract Origin',
   [5]: 'Contract Details',
   [6]: 'Contract Preview',
   [7]: 'Review',
@@ -537,10 +537,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Origin/i);
-    await fillContractOrigin();
-    screen.getByText(/Next Step/i).click();
-
     await screen.findByText(/Step: Contract Details/i);
 
     const serviceDurationInput = await screen.findByTestId(
@@ -705,10 +701,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Origin/i);
-    await fillContractOrigin();
-    screen.getByText(/Next Step/i).click();
-
     await screen.findByText(/Step: Contract Details/i);
 
     await fillContractDetails();
@@ -783,10 +775,6 @@ describe('ContractorOnboardingFlow', () => {
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
-
-    await screen.findByText(/Step: Contract Origin/i);
-    await fillContractOrigin();
-    screen.getByText(/Next Step/i).click();
 
     await screen.findByText(/Step: Contract Details/i);
     await fillContractDetails();
@@ -876,10 +864,6 @@ describe('ContractorOnboardingFlow', () => {
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
-
-    await screen.findByText(/Step: Contract Origin/i);
-    await fillContractOrigin();
-    screen.getByText(/Next Step/i).click();
 
     await screen.findByText(/Step: Contract Details/i);
 
@@ -1181,10 +1165,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Origin/i);
-    await fillContractOrigin();
-    screen.getByText(/Next Step/i).click();
-
     await screen.findByText(/Step: Contract Details/i);
 
     await fillContractDetails();
@@ -1285,10 +1265,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Origin/i);
-    await fillContractOrigin();
-    screen.getByText(/Next Step/i).click();
-
     await screen.findByText(/Step: Contract Details/i);
 
     // Verify the field is pre-filled with the value from the mock (2025-11-26)
@@ -1364,10 +1340,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Origin/i);
-    await fillContractOrigin();
-    screen.getByText(/Next Step/i).click();
-
     await screen.findByText(/Step: Contract Details/i);
 
     await fillContractDetails();
@@ -1416,7 +1388,7 @@ describe('ContractorOnboardingFlow', () => {
     await screen.findByText(/Step: Pricing Plan/i);
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
-    await fillContractorSubscription();
+    await fillContractorSubscription('Contractor Management');
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
@@ -1526,10 +1498,6 @@ describe('ContractorOnboardingFlow', () => {
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
-    await screen.findByText(/Step: Contract Origin/i);
-    await fillContractOrigin();
-    screen.getByText(/Next Step/i).click();
-
     await screen.findByText(/Step: Eligibility Questionnaire/i);
 
     await fillEligibilityQuestionnaire();
@@ -1614,7 +1582,7 @@ describe('ContractorOnboardingFlow', () => {
 
     await screen.findByText(/Step: Pricing Plan/i);
 
-    await fillContractorSubscription();
+    await fillContractorSubscription('Contractor Management');
 
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
@@ -2064,10 +2032,6 @@ describe('ContractorOnboardingFlow', () => {
 
       nextButton.click();
 
-      await screen.findByText(/Step: Contract Origin/i);
-      await fillContractOrigin();
-      screen.getByText(/Next Step/i).click();
-
       await screen.findByText(/Step: Eligibility Questionnaire/i);
     });
 
@@ -2114,10 +2078,6 @@ describe('ContractorOnboardingFlow', () => {
 
       nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
-
-      await screen.findByText(/Step: Contract Origin/i);
-      await fillContractOrigin();
-      screen.getByText(/Next Step/i).click();
 
       await screen.findByText(/Step: Eligibility Questionnaire/i);
 
@@ -2184,10 +2144,6 @@ describe('ContractorOnboardingFlow', () => {
       nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
 
-      await screen.findByText(/Step: Contract Origin/i);
-      await fillContractOrigin();
-      screen.getByText(/Next Step/i).click();
-
       await screen.findByText(/Step: Contract Details/i);
     });
 
@@ -2246,10 +2202,6 @@ describe('ContractorOnboardingFlow', () => {
       await waitFor(() => {
         expect(deleteSpy).toHaveBeenCalled();
       });
-
-      await screen.findByText(/Step: Contract Origin/i);
-      await fillContractOrigin();
-      screen.getByText(/Next Step/i).click();
 
       await screen.findByText(/Step: Contract Details/i);
 
@@ -2364,10 +2316,6 @@ describe('ContractorOnboardingFlow', () => {
 
       nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
-
-      await screen.findByText(/Step: Contract Origin/i);
-      await fillContractOrigin();
-      screen.getByText(/Next Step/i).click();
 
       await screen.findByText(/Step: Eligibility Questionnaire/i);
 
@@ -2932,10 +2880,6 @@ describe('ContractorOnboardingFlow', () => {
       nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
 
-      await screen.findByText(/Step: Contract Origin/i);
-      await fillContractOrigin();
-      screen.getByText(/Next Step/i).click();
-
       await screen.findByText(/Step: Eligibility Questionnaire/i);
       await fillEligibilityQuestionnaire();
 
@@ -3056,10 +3000,6 @@ describe('ContractorOnboardingFlow', () => {
       nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
 
-      await screen.findByText(/Step: Contract Origin/i);
-      await fillContractOrigin();
-      screen.getByText(/Next Step/i).click();
-
       await screen.findByText(/Step: Contract Details/i);
 
       // Fill contract details
@@ -3147,10 +3087,6 @@ describe('ContractorOnboardingFlow', () => {
       nextButton.click();
 
       // Fill eligibility questionnaire (required for COR)
-      await screen.findByText(/Step: Contract Origin/i);
-      await fillContractOrigin();
-      screen.getByText(/Next Step/i).click();
-
       await screen.findByText(/Step: Eligibility Questionnaire/i);
       await fillEligibilityQuestionnaire();
 
@@ -3248,10 +3184,6 @@ describe('ContractorOnboardingFlow', () => {
       nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
 
-      await screen.findByText(/Step: Contract Origin/i);
-      await fillContractOrigin();
-      screen.getByText(/Next Step/i).click();
-
       await screen.findByText(/Step: Eligibility Questionnaire/i);
       await fillEligibilityQuestionnaire();
 
@@ -3334,10 +3266,6 @@ describe('ContractorOnboardingFlow', () => {
       nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
 
-      await screen.findByText(/Step: Contract Origin/i);
-      await fillContractOrigin();
-      screen.getByText(/Next Step/i).click();
-
       await screen.findByText(/Step: Eligibility Questionnaire/i);
       await fillEligibilityQuestionnaire();
 
@@ -3413,10 +3341,6 @@ describe('ContractorOnboardingFlow', () => {
       await fillContractorSubscription();
       nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
-
-      await screen.findByText(/Step: Contract Origin/i);
-      await fillContractOrigin();
-      screen.getByText(/Next Step/i).click();
 
       await screen.findByText(/Step: Contract Details/i);
       await fillContractDetails();
@@ -3544,10 +3468,6 @@ describe('ContractorOnboardingFlow', () => {
       nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
 
-      await screen.findByText(/Step: Contract Origin/i);
-      await fillContractOrigin();
-      screen.getByText(/Next Step/i).click();
-
       await screen.findByText(/Step: Contract Details/i);
       await fillContractDetails();
 
@@ -3642,10 +3562,6 @@ describe('ContractorOnboardingFlow', () => {
       nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
 
-      await screen.findByText(/Step: Contract Origin/i);
-      await fillContractOrigin();
-      screen.getByText(/Next Step/i).click();
-
       await screen.findByText(/Step: Contract Details/i);
       await fillContractDetails();
 
@@ -3723,10 +3639,6 @@ describe('ContractorOnboardingFlow', () => {
       nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
 
-      await screen.findByText(/Step: Contract Origin/i);
-      await fillContractOrigin();
-      screen.getByText(/Next Step/i).click();
-
       await screen.findByText(/Step: Eligibility Questionnaire/i);
       await fillEligibilityQuestionnaire();
 
@@ -3801,10 +3713,6 @@ describe('ContractorOnboardingFlow', () => {
 
       nextButton = screen.getByText(/Next Step/i);
       nextButton.click();
-
-      await screen.findByText(/Step: Contract Origin/i);
-      await fillContractOrigin();
-      screen.getByText(/Next Step/i).click();
 
       await screen.findByText(/Step: Contract Details/i);
 
