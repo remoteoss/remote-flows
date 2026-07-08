@@ -75,6 +75,7 @@ type ContractorOnboardingFlowOptions = Omit<FlowOptions, 'jsfModify'> & {
     contract_preview?: JSFModify;
     eligibility_questionnaire?: JSFModify;
     pricing_plan?: JSFModify;
+    contract_origin?: JSFModify;
   };
 };
 

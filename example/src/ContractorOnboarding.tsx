@@ -141,23 +141,6 @@ const Switcher = (props: JSFCustomComponentProps) => {
   );
 };
 
-// Consumer-side copy for each contract origin option. The SDK only ships the
-// option values; we decide here how each radio is labelled and described.
-const CONTRACT_ORIGIN_CONTENT: Record<
-  string,
-  { title: string; description: string }
-> = {
-  provided_by_remote: {
-    title: 'Contractor services agreement',
-    description:
-      'Create a new terms and conditions and statement of work. This should only be used if you do not have an agreement in place with a contractor or want to renegotiate an agreement.',
-  },
-  provided_by_customer: {
-    title: 'Continue without an agreement',
-    description: 'Use your own agreement outside Remote.',
-  },
-};
-
 const ContractOriginRadio = ({
   field,
   fieldData,
@@ -165,11 +148,17 @@ const ContractOriginRadio = ({
 }: RadioGroupComponentProps) => {
   return (
     <fieldset className='contract-origin-radio'>
+      <div className='flex flex-col gap-2 text-center mb-6'>
+        {fieldData.label && (
+          <h1 className='text-2xl font-bold text-[#000000]'>
+            {fieldData.label}
+          </h1>
+        )}
+        {fieldData.description && (
+          <p className='text-sm text-[#71717A]'>{fieldData.description}</p>
+        )}
+      </div>
       {fieldData.options?.map((option) => {
-        const content = CONTRACT_ORIGIN_CONTENT[option.value] ?? {
-          title: option.label,
-          description: option.description ?? '',
-        };
         const selected = field.value === option.value;
 
         return (
@@ -186,11 +175,13 @@ const ContractOriginRadio = ({
             />
             <span className='contract-origin-option-text'>
               <span className='contract-origin-option-title'>
-                {content.title}
+                {option.label}
               </span>
-              <span className='contract-origin-option-description'>
-                {content.description}
-              </span>
+              {option.description && (
+                <span className='contract-origin-option-description'>
+                  {option.description}
+                </span>
+              )}
             </span>
           </label>
         );
@@ -485,17 +476,6 @@ const MultiStepForm = ({
     case 'contract_origin':
       return (
         <div className='contractor-onboarding-form-layout'>
-          <div className='flex flex-col gap-2 text-center mb-6'>
-            <h1 className='text-2xl font-bold text-[#000000]'>
-              Contract options
-            </h1>
-            <p className='text-sm text-[#71717A]'>
-              Managing your relationship with contractors is easy: your contract
-              is fully editable in Remote with legally reviewed contract
-              templates specific to France. After all parties sign in Remote,
-              you're ready to go.
-            </p>
-          </div>
           <ContractOriginStep
             components={{
               radio: (props) => <ContractOriginRadio {...props} />,
@@ -665,6 +645,28 @@ export const ContractorOnboardingWithProps = ({
                           <Switcher {...props} />
                         ),
                       },
+                    },
+                  },
+                },
+                contract_origin: {
+                  fields: {
+                    contract_origin: {
+                      title: 'Contract options',
+                      description:
+                        "Managing your relationship with contractors is easy: your contract is fully editable in Remote with legally reviewed contract templates specific to France. After all parties sign in Remote, you're ready to go.",
+                      oneOf: [
+                        {
+                          const: 'provided_by_remote',
+                          title: 'Contractor services agreement',
+                          description:
+                            'Create a new terms and conditions and statement of work. This should only be used if you do not have an agreement in place with a contractor or want to renegotiate an agreement.',
+                        },
+                        {
+                          const: 'provided_by_customer',
+                          title: 'Continue without an agreement',
+                          description: 'Use your own agreement outside Remote.',
+                        },
+                      ],
                     },
                   },
                 },
