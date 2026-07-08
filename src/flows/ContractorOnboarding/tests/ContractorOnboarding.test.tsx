@@ -82,6 +82,12 @@ function createMockRenderImplementation(
     return (
       <>
         <h1>Step: {stepsMap[currentStepIndex]}</h1>
+        <div data-testid='visible-steps'>
+          {contractorOnboardingBag.steps
+            .filter((step) => step.visible !== false)
+            .map((step) => step.name)
+            .join(' ')}
+        </div>
         <FormComponent
           contractorOnboardingBag={contractorOnboardingBag}
           components={components}
@@ -1274,9 +1280,9 @@ describe('ContractorOnboardingFlow', () => {
     await fillContractorSubscription('Contractor Management');
 
     await waitFor(() => {
-      expect(
-        screen.getByRole('radio', { name: /^Contractor Management$/i }),
-      ).toBeChecked();
+      expect(screen.getByTestId('visible-steps')).toHaveTextContent(
+        'contract_origin',
+      );
     });
 
     nextButton = screen.getByText(/Next Step/i);
