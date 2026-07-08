@@ -1273,6 +1273,12 @@ describe('ContractorOnboardingFlow', () => {
 
     await fillContractorSubscription('Contractor Management');
 
+    await waitFor(() => {
+      expect(
+        screen.getByRole('radio', { name: /^Contractor Management$/i }),
+      ).toBeChecked();
+    });
+
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
