@@ -1,5 +1,15 @@
 # @remoteoss/remote-flows
 
+## 1.42.1
+
+### Patch Changes
+
+- datepicker dropdown navigation + JSF logging + build heap (#1134) [#1134](https://github.com/remoteoss/remote-flows/pull/1134)
+- select standard plan so contract_origin step is visible in jsfModify test [#1147](https://github.com/remoteoss/remote-flows/pull/1147)
+- wait for pricing plan selection to settle before navigating
+- wait for contract_origin step to be reconciled before navigating
+- trigger CI rebuild on latest commit
+
 ## 1.42.0
 
 ### Minor Changes
