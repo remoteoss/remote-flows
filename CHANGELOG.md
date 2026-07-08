@@ -4,11 +4,14 @@
 
 ### Patch Changes
 
+#### Fixes
+- Fix steps order bug (eligibility questionnaire should be the next step after selecting pricing plan) [#1147](https://github.com/remoteoss/remote-flows/pull/1147)
+- ContractOriginStep titles and options are now overridable by jsModify (see example here : https://github.com/remoteoss/remote-flows/blob/fa252eaa6ae065590bf00cacdf06debc70f516b1/example/src/ContractorOnboarding.tsx#L651-L671) [#1148](https://github.com/remoteoss/remote-flows/pull/1148)
+
+#### Chores
 - datepicker dropdown navigation + JSF logging + build heap (#1134) [#1134](https://github.com/remoteoss/remote-flows/pull/1134)
-- select standard plan so contract_origin step is visible in jsfModify test [#1147](https://github.com/remoteoss/remote-flows/pull/1147)
-- wait for pricing plan selection to settle before navigating
-- wait for contract_origin step to be reconciled before navigating
-- trigger CI rebuild on latest commit
+
+
 
 ## 1.42.0
 
