@@ -58,15 +58,17 @@ export const usePayrollAdminOnboarding = ({
     string | undefined
   >(
     initialCountryCode ??
-      (initialValues?.basic_information as Record<string, unknown>)
-        ?.country_code as string | undefined,
+      ((initialValues?.basic_information as Record<string, unknown>)
+        ?.country_code as string | undefined),
   );
 
   // Only skip country selection when resuming an existing employment — both
   // country and employmentId must be known upfront. Providing only countryCode
   // would bypass the select_country branch (the only place createEmployment
   // runs) and leave the flow with no employmentId for subsequent steps.
-  const skipCountry = !!initialCountryCode && !!initialEmploymentId;
+  // internalCountryCode also covers country inferred from initialValues, not
+  // just the explicit countryCode prop.
+  const skipCountry = !!internalCountryCode && !!initialEmploymentId;
 
   const steps = useMemo(() => buildAdminSteps(skipCountry), [skipCountry]);
 
@@ -153,20 +155,19 @@ export const usePayrollAdminOnboarding = ({
     apiSteps?.find((s) => s.type === 'completion')?.sub_steps?.[0]?.status ===
     'completed';
 
-  // When the country picker is active, intercept field-change events so that
-  // selecting a country immediately sets internalCountryCode, causing the
-  // schema to switch from the country picker to the basic-information form.
+  // Keep internalCountryCode in sync with the country_code field whenever it
+  // changes — both when it's first picked on the country-picker phase, and if
+  // it's later edited from the basic-information form (which also exposes the
+  // field), so submission never uses a stale country code.
   const handleFieldValues = useCallback(
     (values: FieldValues) => {
       setFieldValues(values);
-      if (isSelectCountryPhase) {
-        const countryCode = values.country_code as string | undefined;
-        if (countryCode) {
-          setInternalCountryCode(countryCode);
-        }
+      const countryCode = values.country_code as string | undefined;
+      if (countryCode && countryCode !== internalCountryCode) {
+        setInternalCountryCode(countryCode);
       }
     },
-    [isSelectCountryPhase, setFieldValues],
+    [internalCountryCode, setFieldValues],
   );
 
   const handleValidation = useCallback(

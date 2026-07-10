@@ -26,8 +26,12 @@ export function InvitationStep({
   }
 
   const handleInvite = async () => {
-    if (!adminBag.employmentId) return;
     try {
+      if (!adminBag.employmentId) {
+        throw new Error(
+          'Employment ID is missing. Complete the previous steps first.',
+        );
+      }
       const data = await inviteAsync({ employmentId: adminBag.employmentId });
       await adminBag.refetchSteps();
       await onSuccess?.(data);

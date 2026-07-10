@@ -7,12 +7,11 @@ export function ContractDetailsStep(props: GPStepCallbacks) {
   const { adminBag } = usePayrollAdminOnboardingContext();
   const handleSubmit = useStepSubmitHandler(props);
 
+  const defaultValues =
+    (adminBag.stepState.values?.contract_details as Record<string, unknown>) ||
+    (adminBag.initialValues?.contract_details as Record<string, unknown>);
+
   return (
-    <PayrollAdminForm
-      onSubmit={handleSubmit}
-      defaultValues={
-        adminBag.initialValues?.contract_details as Record<string, unknown>
-      }
-    />
+    <PayrollAdminForm onSubmit={handleSubmit} defaultValues={defaultValues} />
   );
 }
