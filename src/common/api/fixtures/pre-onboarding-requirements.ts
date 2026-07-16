@@ -1,33 +1,34 @@
-export const preOnboardingRequirementsMock = {
-  data: [
-    {
-      name: 'Individual Labor Agreement',
-      status: 'awaiting_signatures',
-      description:
-        'Individual Labor Agreement required for each German AUG employment',
-      slug: '5e39159e-96ef-40ea-82bc-b054917fc82f',
-      depends_on_requirement: null,
-      document_constraints_ack_at: null,
-      freeze_employment_data: false,
-      needs_constraints_ack: true,
-      redlining_help_email: null,
-      supports_redlining: false,
-    },
-    {
-      name: 'Master Service Agreement',
-      status: 'finished',
-      description:
-        'Master Service Agreement required for the first hire on this German legal entity',
-      slug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
-      depends_on_requirement: null,
-      document_constraints_ack_at: '2026-05-18T12:23:24Z',
-      freeze_employment_data: false,
-      needs_constraints_ack: true,
-      redlining_help_email: null,
-      supports_redlining: false,
-    },
-  ],
-};
+import { IndexPreOnboardingRequirementsResponse } from '@/src/client';
+
+export const preOnboardingRequirementsMock: IndexPreOnboardingRequirementsResponse =
+  {
+    data: [
+      {
+        name: 'Individual Labor Agreement',
+        status: 'awaiting',
+        type: 'document',
+        description:
+          'Individual Labor Agreement required for each German AUG employment',
+        slug: '5e39159e-96ef-40ea-82bc-b054917fc82f',
+        depends_on_requirement: null,
+        freeze_employment_data: false,
+        redlining_help_email: null,
+        supports_redlining: false,
+      },
+      {
+        name: 'Master Service Agreement',
+        status: 'finished',
+        type: 'document',
+        description:
+          'Master Service Agreement required for the first hire on this German legal entity',
+        slug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
+        depends_on_requirement: null,
+        freeze_employment_data: false,
+        redlining_help_email: null,
+        supports_redlining: false,
+      },
+    ],
+  };
 
 export const generatedDocumentMock = {
   data: {
