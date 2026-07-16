@@ -131,7 +131,7 @@ describe('useCostCalculator', () => {
 
 Always check the pull request title. Releases and semver bumps are driven by conventional commits, so PR titles must use that format.
 
-**Required format:** `type(scope): description` or `type(scope) - description`
+**Required format:** `type(scope): description`
 
 **Allowed types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`, `build`, `revert`
 
@@ -142,7 +142,7 @@ If the PR title does NOT match /^(feat|fix|docs|style|refactor|perf|test|chore|c
 - Add a blocking Bug titled "PR title must follow conventional commits"
 - Body must include:
   - The current (invalid) PR title
-  - That titles must use `type(scope): description` (or `type(scope) - description`)
+  - That titles must use `type(scope): description`
   - That this drives semver (`feat` → minor, `fix` → patch, `BREAKING CHANGE` → major)
   - A rewritten good title based on the PR changes
   - Examples:
