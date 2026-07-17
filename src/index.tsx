@@ -98,6 +98,7 @@ export {
 export type {
   PayrollAdminOnboardingFlowProps,
   PayrollAdminOnboardingRenderProps,
+  GPAdminStepCallbacks,
 } from '@/src/flows/PayrollAdminOnboarding';
 
 export {
