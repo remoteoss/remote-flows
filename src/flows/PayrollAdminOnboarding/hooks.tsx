@@ -198,24 +198,35 @@ export const usePayrollAdminOnboarding = ({
 
       switch (currentStep) {
         case 'select_country': {
-          if (!internalCountryCode) {
+          // Prefer the just-submitted country_code so the employment is created
+          // with the same country the basicInformation was validated against,
+          // even if the internalCountryCode sync hasn't caught up yet.
+          const countryCode =
+            (parsedValues.country_code as string | undefined) ??
+            internalCountryCode;
+          if (!countryCode) {
             throw new Error(
               'Country code is required to create an employment.',
             );
           }
-          const data = await createEmploymentAsync({
-            countryCode: internalCountryCode,
-            legalEntityId,
-            basicInformation: parsedValues,
-          });
-          const empId = (data as { data?: { employment?: { id?: string } } })
-            ?.data?.employment?.id;
-          if (!empId) {
-            throw new Error(
-              'Employment was created but no ID was returned. Cannot proceed.',
-            );
+          // Guard against creating a second employment if a prior attempt
+          // already created one but a later step failed and the user retried.
+          let data;
+          if (!internalEmploymentId) {
+            data = await createEmploymentAsync({
+              countryCode,
+              legalEntityId,
+              basicInformation: parsedValues,
+            });
+            const empId = (data as { data?: { employment?: { id?: string } } })
+              ?.data?.employment?.id;
+            if (!empId) {
+              throw new Error(
+                'Employment was created but no ID was returned. Cannot proceed.',
+              );
+            }
+            setInternalEmploymentId(empId);
           }
-          setInternalEmploymentId(empId);
           await refetchSteps();
           return data;
         }
