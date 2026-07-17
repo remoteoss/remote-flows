@@ -1,6 +1,8 @@
+import type { UseFormReturn } from 'react-hook-form';
 import { usePayrollAdminOnboardingContext } from '@/src/flows/PayrollAdminOnboarding/context';
 import type { GPStepCallbacks } from '@/src/flows/types';
 import { handleStepError } from '@/src/lib/utils';
+import type { $TSFixMe } from '@/src/types/remoteFlows';
 
 export function useStepSubmitHandler({
   onSubmit,
@@ -9,14 +11,19 @@ export function useStepSubmitHandler({
 }: GPStepCallbacks) {
   const { adminBag } = usePayrollAdminOnboardingContext();
 
-  return async (values: Record<string, unknown>) => {
+  return async (
+    values: Record<string, unknown>,
+    form: UseFormReturn<$TSFixMe>,
+  ) => {
     try {
       await onSubmit?.(values);
       const data = await adminBag.onSubmit(values);
       await onSuccess?.(data);
       adminBag.next();
     } catch (error: unknown) {
-      onError?.(handleStepError(error));
+      // Pass the form so server-side field errors are mapped back onto the
+      // matching form fields, not only surfaced through the onError callback.
+      onError?.(handleStepError(error, undefined, form));
     }
   };
 }

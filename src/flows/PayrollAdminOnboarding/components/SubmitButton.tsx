@@ -18,7 +18,7 @@ export function SubmitButton({
     <CustomButton
       {...props}
       form={formId}
-      disabled={props.disabled || adminBag.isSubmitting}
+      disabled={props.disabled || adminBag.isSubmitting || adminBag.isLoading}
     >
       {children}
     </CustomButton>
