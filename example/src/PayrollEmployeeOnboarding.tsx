@@ -121,36 +121,27 @@ function EmployeeFlowInner({
   jurisdiction: string | undefined;
 }) {
   const [errors, setErrors] = useState<Errors>(emptyErrors);
+  // `done` is set only by the explicit "Finish" action on an unavailable tax
+  // step. Submit-driven completion is derived reactively from the last
+  // successfully-submitted step vs the current last reachable step (below), so
+  // a step that stops being last (e.g. enrollment adds tax steps after a bank
+  // save) no longer marks the flow complete from a stale render.
   const [done, setDone] = useState(false);
+  const [lastSubmittedStep, setLastSubmittedStep] = useState<string | null>(
+    null,
+  );
 
   const clearErrors = () => setErrors(emptyErrors);
   const handleError = (error: Error, fieldErrors: Errors['fieldErrors']) =>
     setErrors({ apiError: error.message, fieldErrors });
 
-  const isUSA = countryCode === 'USA';
+  const startOver = () => {
+    setDone(false);
+    setLastSubmittedStep(null);
+    clearErrors();
+  };
 
-  if (done) {
-    return (
-      <div className='card' style={{ marginBottom: 20 }}>
-        <h1 className='heading'>Self-onboarding Complete</h1>
-        <p style={{ color: '#22356f', marginBottom: 16 }}>
-          All your information has been submitted. Your employer will review and
-          activate your employment.
-        </p>
-        <div className='buttons-container'>
-          <button
-            className='submit-button'
-            onClick={() => {
-              setDone(false);
-              clearErrors();
-            }}
-          >
-            Start over
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const isUSA = countryCode === 'USA';
 
   return (
     <PayrollEmployeeOnboardingFlow
@@ -207,6 +198,28 @@ function EmployeeFlowInner({
         const lastStepKey = reachableSteps[reachableSteps.length - 1][0];
         const isLastStep = currentStep === lastStepKey;
 
+        // Complete when the user explicitly finished, or when the last
+        // successfully-submitted step is still the last reachable one. Deriving
+        // this per-render (rather than latching in an onSuccess closure) means a
+        // step that stops being last — e.g. enrollment flips isComplete and adds
+        // tax steps — correctly keeps the flow going instead of completing.
+        if (done || lastSubmittedStep === lastStepKey) {
+          return (
+            <div className='card' style={{ marginBottom: 20 }}>
+              <h1 className='heading'>Self-onboarding Complete</h1>
+              <p style={{ color: '#22356f', marginBottom: 16 }}>
+                All your information has been submitted. Your employer will
+                review and activate your employment.
+              </p>
+              <div className='buttons-container'>
+                <button className='submit-button' onClick={startOver}>
+                  Start over
+                </button>
+              </div>
+            </div>
+          );
+        }
+
         const federalAvail = employeeBag.taxStepsAvailability.federal_taxes;
         const stateAvail = employeeBag.taxStepsAvailability.state_taxes;
 
@@ -244,7 +257,10 @@ function EmployeeFlowInner({
                         })),
                       )
                     }
-                    onSuccess={clearErrors}
+                    onSuccess={() => {
+                      clearErrors();
+                      setLastSubmittedStep(currentStep);
+                    }}
                   />
                   <AlertError errors={errors} />
                   {employeeBag.fields.length > 0 && (
@@ -274,7 +290,7 @@ function EmployeeFlowInner({
                     }
                     onSuccess={() => {
                       clearErrors();
-                      if (isLastStep) setDone(true);
+                      setLastSubmittedStep(currentStep);
                     }}
                   />
                   <AlertError errors={errors} />
@@ -306,7 +322,7 @@ function EmployeeFlowInner({
                     }
                     onSuccess={() => {
                       clearErrors();
-                      if (isLastStep) setDone(true);
+                      setLastSubmittedStep(currentStep);
                     }}
                   />
                   <AlertError errors={errors} />
@@ -339,7 +355,7 @@ function EmployeeFlowInner({
                       }
                       onSuccess={() => {
                         clearErrors();
-                        if (isLastStep) setDone(true);
+                        setLastSubmittedStep(currentStep);
                       }}
                     />
                   ) : (
@@ -388,7 +404,7 @@ function EmployeeFlowInner({
                       }
                       onSuccess={() => {
                         clearErrors();
-                        setDone(true);
+                        setLastSubmittedStep(currentStep);
                       }}
                     />
                   ) : (
