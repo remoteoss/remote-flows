@@ -107,6 +107,8 @@ export {
 export type {
   PayrollEmployeeOnboardingFlowProps,
   PayrollEmployeeOnboardingRenderProps,
+  GPEmployeeStepCallbacks,
+  TaxStepUnavailableReason,
 } from '@/src/flows/PayrollEmployeeOnboarding';
 
 export { useGPLegalEntities } from '@/src/common/api/gpOnboarding';
