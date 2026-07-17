@@ -404,11 +404,14 @@ const Requirement = ({
   onCreateDocument,
   onSignDocument,
   documentPreview,
-  isCreatingDocument,
   isSigning,
+<<<<<<< Updated upstream
   activeRequirementSlug,
   isLoadingDocumentPreview,
   employeeCountry,
+=======
+  isRequirementLoading,
+>>>>>>> Stashed changes
 }: {
   requirement: NonNullable<
     PreOnboardingRequirementsBag['requirements']
@@ -416,11 +419,14 @@ const Requirement = ({
   onCreateDocument: PreOnboardingRequirementsBag['onCreateDocument'];
   onSignDocument: PreOnboardingRequirementsBag['onSignDocument'];
   documentPreview: PreOnboardingRequirementsBag['documentPreview'];
-  isCreatingDocument: PreOnboardingRequirementsBag['isCreatingDocument'];
   isSigning: PreOnboardingRequirementsBag['isSigning'];
+<<<<<<< Updated upstream
   activeRequirementSlug: PreOnboardingRequirementsBag['activeRequirementSlug'];
   isLoadingDocumentPreview: PreOnboardingRequirementsBag['isLoadingDocumentPreview'];
   employeeCountry?: string;
+=======
+  isRequirementLoading: PreOnboardingRequirementsBag['isRequirementLoading'];
+>>>>>>> Stashed changes
 }) => {
   const [constraintsAckAt, setConstraintsAckAt] = useState<string | null>(
     requirement.document_constraints_ack_at ?? null,
@@ -429,12 +435,16 @@ const Requirement = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+<<<<<<< Updated upstream
   const needsConstraintsAck =
     requirement.needs_constraints_ack && !constraintsAckAt;
 
   const isRequirementLoading =
     activeRequirementSlug === requirement.slug &&
     (isCreatingDocument || isLoadingDocumentPreview);
+=======
+  const isLoading = isRequirementLoading(requirement.slug);
+>>>>>>> Stashed changes
 
   const handleReviewDocument = async () => {
     try {
@@ -462,15 +472,19 @@ const Requirement = ({
     return (
       <Button
         onClick={handleReviewDocument}
+<<<<<<< Updated upstream
         disabled={
           needsConstraintsAck ||
           isRequirementLoading ||
           requirement.status === 'finished'
         }
+=======
+        disabled={isLoading || requirement.status === 'finished'}
+>>>>>>> Stashed changes
       >
         {requirement.status === 'finished'
           ? 'Signed'
-          : isRequirementLoading
+          : isLoading
             ? 'Loading...'
             : 'Review document'}
       </Button>
@@ -610,8 +624,8 @@ export const ReviewOnboardingStep = ({
           documentPreview,
           onCreateDocument,
           onSignDocument,
-          isCreatingDocument,
           isSigning,
+<<<<<<< Updated upstream
           activeRequirementSlug,
           isLoadingDocumentPreview,
         }) => (
@@ -644,6 +658,46 @@ export const ReviewOnboardingStep = ({
             )}
           </>
         )}
+=======
+          onAcknowledgeRequirement,
+          isPendingAcknowledgement,
+          isAckLocked,
+          isRequirementLoading,
+        }) => {
+          return (
+            <>
+              {requirements && requirements?.length > 0 && (
+                <>
+                  <h2 className='title'>Pre-Onboarding Requirements</h2>
+                  <div className='flex flex-col gap-4'>
+                    {requirements?.map((req) =>
+                      req.type === 'acknowledgement' ? (
+                        <AckRequirement
+                          key={req.slug}
+                          requirement={req}
+                          isLocked={isAckLocked(req.slug)}
+                          onAcknowledgeRequirement={onAcknowledgeRequirement}
+                          isPendingAcknowledgement={isPendingAcknowledgement}
+                        />
+                      ) : (
+                        <DocumentRequirement
+                          key={req.slug}
+                          requirement={req}
+                          onCreateDocument={onCreateDocument}
+                          onSignDocument={onSignDocument}
+                          documentPreview={documentPreview}
+                          isSigning={isSigning}
+                          isRequirementLoading={isRequirementLoading}
+                        />
+                      ),
+                    )}
+                  </div>
+                </>
+              )}
+            </>
+          );
+        }}
+>>>>>>> Stashed changes
       />
 
       <h2 className='title'>Review</h2>

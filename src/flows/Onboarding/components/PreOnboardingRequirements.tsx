@@ -113,16 +113,38 @@ export const usePreOnboardingRequirements = ({
     return responnse;
   };
 
+<<<<<<< Updated upstream
+=======
+  const isAckLocked = (requirementSlug: string) => {
+    return dependentBySlug.get(requirementSlug)?.status === 'finished';
+  };
+
+  const isRequirementLoading = (requirementSlug: string) => {
+    return (
+      activeRequirementSlug === requirementSlug &&
+      (createDocumentMutation.isPending || isLoadingDocumentPreview)
+    );
+  };
+
+  const isPendingAcknowledgement =
+    acknowledgeRequirementMutation.isPending ||
+    deleteAcknowledgeRequirementMutation.isPending;
+
+>>>>>>> Stashed changes
   return {
     requirements,
     isLoadingRequirements,
     documentPreview,
-    isLoadingDocumentPreview,
-    activeRequirementSlug,
-    isCreatingDocument: createDocumentMutation.isPending,
     isSigning: signDocumentMutation.isPending,
     onCreateDocument,
     onSignDocument,
+<<<<<<< Updated upstream
+=======
+    onAcknowledgeRequirement,
+    isPendingAcknowledgement,
+    isAckLocked,
+    isRequirementLoading,
+>>>>>>> Stashed changes
   };
 };
 
