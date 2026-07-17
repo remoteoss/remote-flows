@@ -168,7 +168,8 @@ export const usePayrollEmployeeOnboarding = ({
   // task appears. Clear the flag when the user (re)enters the step so revisiting
   // it re-attempts the submit instead of showing not-available forever.
   useEffect(() => {
-    if (currentStep !== 'federal_taxes' && currentStep !== 'state_taxes') return;
+    if (currentStep !== 'federal_taxes' && currentStep !== 'state_taxes')
+      return;
     setTaxSubmitFailures((prev) => {
       if (!prev[currentStep]) return prev;
       const next = { ...prev };
