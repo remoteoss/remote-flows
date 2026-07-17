@@ -405,10 +405,8 @@ const DocumentRequirement = ({
   onCreateDocument,
   onSignDocument,
   documentPreview,
-  isCreatingDocument,
   isSigning,
-  activeRequirementSlug,
-  isLoadingDocumentPreview,
+  isRequirementLoading,
 }: {
   requirement: NonNullable<
     PreOnboardingRequirementsBag['requirements']
@@ -416,17 +414,13 @@ const DocumentRequirement = ({
   onCreateDocument: PreOnboardingRequirementsBag['onCreateDocument'];
   onSignDocument: PreOnboardingRequirementsBag['onSignDocument'];
   documentPreview: PreOnboardingRequirementsBag['documentPreview'];
-  isCreatingDocument: PreOnboardingRequirementsBag['isCreatingDocument'];
   isSigning: PreOnboardingRequirementsBag['isSigning'];
-  activeRequirementSlug: PreOnboardingRequirementsBag['activeRequirementSlug'];
-  isLoadingDocumentPreview: PreOnboardingRequirementsBag['isLoadingDocumentPreview'];
+  isRequirementLoading: PreOnboardingRequirementsBag['isRequirementLoading'];
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isRequirementLoading =
-    activeRequirementSlug === requirement.slug &&
-    (isCreatingDocument || isLoadingDocumentPreview);
+  const isLoading = isRequirementLoading(requirement.slug);
 
   const handleReviewDocument = async () => {
     try {
@@ -456,11 +450,11 @@ const DocumentRequirement = ({
     return (
       <Button
         onClick={handleReviewDocument}
-        disabled={isRequirementLoading || requirement.status === 'finished'}
+        disabled={isLoading || requirement.status === 'finished'}
       >
         {requirement.status === 'finished'
           ? 'Signed'
-          : isRequirementLoading
+          : isLoading
             ? 'Loading...'
             : 'Review document'}
       </Button>
@@ -666,13 +660,11 @@ export const ReviewOnboardingStep = ({
           documentPreview,
           onCreateDocument,
           onSignDocument,
-          isCreatingDocument,
           isSigning,
-          activeRequirementSlug,
-          isLoadingDocumentPreview,
           onAcknowledgeRequirement,
           isPendingAcknowledgement,
           isAckLocked,
+          isRequirementLoading,
         }) => {
           return (
             <>
@@ -696,10 +688,8 @@ export const ReviewOnboardingStep = ({
                           onCreateDocument={onCreateDocument}
                           onSignDocument={onSignDocument}
                           documentPreview={documentPreview}
-                          isCreatingDocument={isCreatingDocument}
                           isSigning={isSigning}
-                          activeRequirementSlug={activeRequirementSlug}
-                          isLoadingDocumentPreview={isLoadingDocumentPreview}
+                          isRequirementLoading={isRequirementLoading}
                         />
                       ),
                     )}
