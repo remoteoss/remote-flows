@@ -54,13 +54,13 @@ export const usePayrollAdminOnboarding = ({
     string | undefined
   >(initialEmploymentId);
 
+  const initialValuesCountryCode = (
+    initialValues?.basic_information as { country_code?: string } | undefined
+  )?.country_code;
+
   const [internalCountryCode, setInternalCountryCode] = useState<
     string | undefined
-  >(
-    initialCountryCode ??
-      ((initialValues?.basic_information as Record<string, unknown>)
-        ?.country_code as string | undefined),
-  );
+  >(initialCountryCode ?? initialValuesCountryCode);
 
   // Only skip country selection when resuming an existing employment — both
   // country and employmentId must be known upfront. Providing only countryCode
@@ -101,8 +101,7 @@ export const usePayrollAdminOnboarding = ({
     administrative_details: 'global_payroll_administrative_details',
   };
 
-  // Always-on: provides the country picker schema for the select_country step
-  // before a country has been chosen. Hooks must not be called conditionally.
+  // Country-picker schema for the select_country step, before a country is chosen.
   const countrySelectSchemaQuery = useGPCountrySelectSchema(fieldValues);
 
   const currentSchemaQuery = useGPFormSchema(

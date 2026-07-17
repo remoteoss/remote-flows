@@ -12,6 +12,8 @@ export function SelectCountryStep(props: GPStepCallbacks) {
     (adminBag.initialValues?.basic_information as Record<string, unknown>);
 
   return (
+    // Remount the form when the country changes so it re-initializes against
+    // the newly loaded basic-information schema instead of the country picker.
     <PayrollAdminForm
       key={adminBag.countryCode ?? 'no-country'}
       onSubmit={handleSubmit}
