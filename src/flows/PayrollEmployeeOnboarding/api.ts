@@ -27,15 +27,34 @@ export const useGPEmployeeFormSchema = (
   countryCode: string | undefined,
   schemaType: GPEmployeeSchemaType,
   fieldValues: FieldValues,
-  queryOptions?: { enabled?: boolean },
+  queryOptions?: {
+    enabled?: boolean;
+    employmentId?: string;
+    jurisdiction?: string;
+  },
   jsfModify?: JSFModify,
 ): ReturnType<typeof useQuery<JSONSchemaFormResultWithFieldsets>> => {
   const { client } = useClient();
+  const employmentId = queryOptions?.employmentId;
+  const jurisdiction = queryOptions?.jurisdiction;
   return useQuery({
-    queryKey: ['gp-employee-form-schema', countryCode, schemaType],
+    queryKey: [
+      'gp-employee-form-schema',
+      countryCode,
+      schemaType,
+      employmentId,
+      jurisdiction,
+    ],
     enabled: !!countryCode && (queryOptions?.enabled ?? true),
     retry: false,
     queryFn: async () => {
+      // `employment_id` and `jurisdiction` are required by the gateway for the
+      // `global_payroll_state_taxes` form (employment_id also for other forms
+      // whose `restrict_fields` branches on user_role). Only send what we have.
+      const query = {
+        ...(employmentId ? { employment_id: employmentId } : {}),
+        ...(jurisdiction ? { jurisdiction } : {}),
+      };
       const response = await getV1CountriesCountryCodeForm({
         client: client as Client,
         headers: { Authorization: `` },
@@ -43,6 +62,7 @@ export const useGPEmployeeFormSchema = (
           country_code: countryCode as string,
           form: schemaType,
         },
+        ...(Object.keys(query).length > 0 ? { query } : {}),
       });
       if (response.error || !response.data) {
         throw new Error(`Failed to fetch ${schemaType} schema`);

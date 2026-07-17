@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import type { FieldValues } from 'react-hook-form';
 import { useGPOnboardingSteps } from '@/src/common/api/gpOnboarding';
 import { useStepState } from '@/src/flows/useStepState';
@@ -162,6 +162,20 @@ export const usePayrollEmployeeOnboarding = ({
 
   const currentStep = stepState.currentStep.name;
 
+  // A tax step flagged `pending_enrollment` after a 404 would otherwise stay
+  // flagged for the whole session, trapping the user even once the backend tax
+  // task appears. Clear the flag when the user (re)enters the step so revisiting
+  // it re-attempts the submit instead of showing not-available forever.
+  useEffect(() => {
+    if (currentStep !== 'federal_taxes' && currentStep !== 'state_taxes') return;
+    setTaxSubmitFailures((prev) => {
+      if (!prev[currentStep]) return prev;
+      const next = { ...prev };
+      delete next[currentStep];
+      return next;
+    });
+  }, [currentStep]);
+
   // ── Tax-step availability ───────────────────────────────────────────────────
   //
   // The federal_taxes and state_taxes endpoints only respond once Tiger creates
@@ -209,6 +223,7 @@ export const usePayrollEmployeeOnboarding = ({
     fieldValues,
     {
       enabled: isUSA && isPostEnrollment && currentStep === 'federal_taxes',
+      employmentId,
     },
   );
 
@@ -222,6 +237,8 @@ export const usePayrollEmployeeOnboarding = ({
         !!jurisdiction &&
         isPostEnrollment &&
         currentStep === 'state_taxes',
+      employmentId,
+      jurisdiction,
     },
   );
 
