@@ -190,7 +190,21 @@ function EmployeeFlowInner({
           if (key === 'state_taxes') return isUSA && !!jurisdiction;
           return true;
         });
-        const lastStepKey = visibleSteps[visibleSteps.length - 1][0];
+
+        // The last *reachable* step mirrors the SDK's own step visibility: tax
+        // steps only become navigable post-enrollment (employeeBag.isComplete).
+        // Basing "last step" on this — not on the sidebar list above, which
+        // surfaces upcoming tax steps early — is what makes Submit/completion
+        // fire on the real final step (e.g. bank_account on a pre-enrollment
+        // USA run).
+        const reachableSteps = Object.entries(STEP_LABELS).filter(([key]) => {
+          if (key === 'bank_account') return hasBankAccount;
+          if (key === 'federal_taxes') return isUSA && employeeBag.isComplete;
+          if (key === 'state_taxes')
+            return isUSA && !!jurisdiction && employeeBag.isComplete;
+          return true;
+        });
+        const lastStepKey = reachableSteps[reachableSteps.length - 1][0];
         const isLastStep = currentStep === lastStepKey;
 
         const federalAvail = employeeBag.taxStepsAvailability.federal_taxes;
@@ -348,9 +362,11 @@ function EmployeeFlowInner({
                     ) : (
                       <button
                         className='submit-button'
-                        onClick={() => employeeBag.next()}
+                        onClick={() =>
+                          isLastStep ? setDone(true) : employeeBag.next()
+                        }
                       >
-                        Skip
+                        {isLastStep ? 'Finish' : 'Skip'}
                       </button>
                     )}
                   </div>
