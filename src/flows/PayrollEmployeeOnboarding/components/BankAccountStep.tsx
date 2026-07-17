@@ -21,13 +21,13 @@ export function BankAccountStep(props: GPStepCallbacks) {
   return (
     <PayrollEmployeeForm
       onSubmit={handleSubmit}
-      defaultValues={
-        (employeeBag.stepState.values?.bank_account as Record<
+      defaultValues={{
+        ...(employeeBag.initialValues?.bank_account as Record<string, unknown>),
+        ...(employeeBag.stepState.values?.bank_account as Record<
           string,
           unknown
-        >) ||
-        (employeeBag.initialValues?.bank_account as Record<string, unknown>)
-      }
+        >),
+      }}
     />
   );
 }

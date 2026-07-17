@@ -10,13 +10,16 @@ export function PersonalDetailsStep(props: GPStepCallbacks) {
   return (
     <PayrollEmployeeForm
       onSubmit={handleSubmit}
-      defaultValues={
-        (employeeBag.stepState.values?.personal_details as Record<
+      defaultValues={{
+        ...(employeeBag.initialValues?.personal_details as Record<
           string,
           unknown
-        >) ||
-        (employeeBag.initialValues?.personal_details as Record<string, unknown>)
-      }
+        >),
+        ...(employeeBag.stepState.values?.personal_details as Record<
+          string,
+          unknown
+        >),
+      }}
     />
   );
 }

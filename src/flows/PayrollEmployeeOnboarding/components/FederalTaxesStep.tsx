@@ -18,13 +18,16 @@ export function FederalTaxesStep(props: GPStepCallbacks) {
   return (
     <PayrollEmployeeForm
       onSubmit={handleSubmit}
-      defaultValues={
-        (employeeBag.stepState.values?.federal_taxes as Record<
+      defaultValues={{
+        ...(employeeBag.initialValues?.federal_taxes as Record<
           string,
           unknown
-        >) ||
-        (employeeBag.initialValues?.federal_taxes as Record<string, unknown>)
-      }
+        >),
+        ...(employeeBag.stepState.values?.federal_taxes as Record<
+          string,
+          unknown
+        >),
+      }}
     />
   );
 }
