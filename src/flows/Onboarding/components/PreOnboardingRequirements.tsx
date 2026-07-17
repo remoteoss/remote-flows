@@ -5,8 +5,11 @@ import {
   useCreatePreOnboardingDocument,
   useGetPreOnboardingDocument,
   useSignPreOnboardingDocument,
+  useAcknowledgePreOnboardingRequirement,
+  useRemoveAcknowledgePreOnboardingRequirement,
 } from '@/src/flows/Onboarding/api';
 import { mutationToPromise } from '@/src/lib/mutations';
+import { PreOnboardingRequirement } from '@/src/client';
 
 export const usePreOnboardingRequirements = ({
   employmentId,
@@ -35,6 +38,13 @@ export const usePreOnboardingRequirements = ({
     },
   });
 
+  const dependentBySlug = new Map<string, PreOnboardingRequirement>();
+  for (const req of requirements ?? []) {
+    if (req.depends_on_requirement) {
+      dependentBySlug.set(req.depends_on_requirement.slug, req);
+    }
+  }
+
   const activeDocumentId = activeRequirementSlug
     ? documentIds[activeRequirementSlug]
     : undefined;
@@ -46,17 +56,22 @@ export const usePreOnboardingRequirements = ({
 
   const createDocumentMutation = useCreatePreOnboardingDocument();
   const signDocumentMutation = useSignPreOnboardingDocument();
+  const acknowledgeRequirementMutation =
+    useAcknowledgePreOnboardingRequirement();
+  const deleteAcknowledgeRequirementMutation =
+    useRemoveAcknowledgePreOnboardingRequirement();
 
   const { mutateAsyncOrThrow: createDocumentMutationAsync } = mutationToPromise(
     createDocumentMutation,
   );
   const { mutateAsyncOrThrow: signDocumentMutationAsync } =
     mutationToPromise(signDocumentMutation);
+  const { mutateAsyncOrThrow: acknowledgeRequirementMutationAsync } =
+    mutationToPromise(acknowledgeRequirementMutation);
+  const { mutateAsyncOrThrow: deleteAcknowledgeRequirementMutationAsync } =
+    mutationToPromise(deleteAcknowledgeRequirementMutation);
 
-  const onCreateDocument = async (
-    requirementSlug: string,
-    constraintsAckAt?: string,
-  ) => {
+  const onCreateDocument = async (requirementSlug: string) => {
     const requirement = requirements?.find(
       (req) => req.slug === requirementSlug,
     );
@@ -78,9 +93,8 @@ export const usePreOnboardingRequirements = ({
     const result = await createDocumentMutationAsync({
       employmentId,
       body: {
-        pre_onboarding_document_requirement_slug: requirementSlug,
-        constraints_ack_at:
-          constraintsAckAt || requirement?.document_constraints_ack_at || null,
+        requirement_slug: requirementSlug,
+        employment_id: employmentId,
       },
     });
     const newDocumentId = result?.data.pre_onboarding_document.id;
@@ -88,6 +102,49 @@ export const usePreOnboardingRequirements = ({
       setDocumentIds((prev) => ({ ...prev, [requirementSlug]: newDocumentId }));
     }
     return result;
+  };
+
+  const onAcknowledgeRequirement = async (requirementSlug: string) => {
+    const requirement = requirements?.find(
+      (req) => req.slug === requirementSlug,
+    );
+
+    const isBlocked = requirement?.status === 'blocked';
+    const isLocked = isAckLocked(requirementSlug);
+    if (isBlocked) {
+      const dependsOnName = requirement?.depends_on_requirement?.name;
+      throw new Error(
+        `Cannot acknowledge blocked requirement. ${dependsOnName ? `${dependsOnName} must be completed first.` : 'A dependent requirement must be completed first.'}`,
+      );
+    }
+
+    if (isLocked) {
+      throw new Error(
+        'Cannot uncheck this acknowledgement because other requirements depend on it and are already in progress or completed.',
+      );
+    }
+
+    if (isPendingAcknowledgement) {
+      throw new Error(
+        'Cannot acknowledge requirement while pending acknowledgement',
+      );
+    }
+
+    const isFinished = requirement?.status === 'finished';
+
+    if (!isFinished) {
+      await acknowledgeRequirementMutationAsync({
+        employmentId,
+        requirementSlug,
+      });
+    } else {
+      await deleteAcknowledgeRequirementMutationAsync({
+        employmentId,
+        requirementSlug,
+      });
+    }
+
+    await refetchRequirements();
   };
 
   const onSignDocument = async (signature: string) => {
@@ -113,6 +170,14 @@ export const usePreOnboardingRequirements = ({
     return responnse;
   };
 
+  const isAckLocked = (requirementSlug: string) => {
+    return dependentBySlug.get(requirementSlug)?.status === 'finished';
+  };
+
+  const isPendingAcknowledgement =
+    acknowledgeRequirementMutation.isPending ||
+    deleteAcknowledgeRequirementMutation.isPending;
+
   return {
     requirements,
     isLoadingRequirements,
@@ -123,6 +188,9 @@ export const usePreOnboardingRequirements = ({
     isSigning: signDocumentMutation.isPending,
     onCreateDocument,
     onSignDocument,
+    onAcknowledgeRequirement,
+    isPendingAcknowledgement,
+    isAckLocked,
   };
 };
 

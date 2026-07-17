@@ -89,7 +89,7 @@ describe('OnboardingInvite', () => {
       }),
 
       http.get(
-        '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+        '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements',
         () => {
           return HttpResponse.json({ data: [] });
         },
@@ -1215,7 +1215,7 @@ describe('OnboardingInvite', () => {
 
       server.use(
         http.get(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements',
           () => {
             return HttpResponse.json(preOnboardingRequirementsMock);
           },
@@ -1236,19 +1236,18 @@ describe('OnboardingInvite', () => {
 
       server.use(
         http.get(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements',
           () => {
             return HttpResponse.json({
               data: [
                 {
                   name: 'Master Service Agreement',
                   status: 'finished',
+                  type: 'document',
                   description: 'Master Service Agreement required',
                   slug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
                   depends_on_requirement: null,
-                  document_constraints_ack_at: '2026-05-18T12:23:24Z',
                   freeze_employment_data: false,
-                  needs_constraints_ack: true,
                   redlining_help_email: null,
                   supports_redlining: false,
                 },
@@ -1280,31 +1279,29 @@ describe('OnboardingInvite', () => {
 
       server.use(
         http.get(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements',
           () => {
             return HttpResponse.json({
               data: [
                 {
                   name: 'Individual Labor Agreement',
-                  status: 'awaiting_signatures',
+                  status: 'awaiting',
+                  type: 'document',
                   description: 'Individual Labor Agreement required',
                   slug: '5e39159e-96ef-40ea-82bc-b054917fc82f',
                   depends_on_requirement: null,
-                  document_constraints_ack_at: null,
                   freeze_employment_data: false,
-                  needs_constraints_ack: true,
                   redlining_help_email: null,
                   supports_redlining: false,
                 },
                 {
                   name: 'Master Service Agreement',
                   status: 'finished',
+                  type: 'document',
                   description: 'Master Service Agreement required',
                   slug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
                   depends_on_requirement: null,
-                  document_constraints_ack_at: '2026-05-18T12:23:24Z',
                   freeze_employment_data: false,
-                  needs_constraints_ack: true,
                   redlining_help_email: null,
                   supports_redlining: false,
                 },
@@ -1329,7 +1326,7 @@ describe('OnboardingInvite', () => {
 
       server.use(
         http.get(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements',
           async () => {
             await requirementsPromise;
             return HttpResponse.json({
@@ -1337,12 +1334,11 @@ describe('OnboardingInvite', () => {
                 {
                   name: 'Master Service Agreement',
                   status: 'finished',
+                  type: 'document',
                   description: 'Master Service Agreement required',
                   slug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
                   depends_on_requirement: null,
-                  document_constraints_ack_at: '2026-05-18T12:23:24Z',
                   freeze_employment_data: false,
-                  needs_constraints_ack: true,
                   redlining_help_email: null,
                   supports_redlining: false,
                 },

@@ -9,6 +9,7 @@ import {
   MetaValues,
   NestedMeta,
   PreOnboardingRequirementsBag,
+  PreOnboardingRequirement,
 } from '@remoteoss/remote-flows';
 import {
   FullScreenDialog,
@@ -31,7 +32,7 @@ import {
 } from '@remoteoss/remote-flows/internals';
 import { AlertError } from './AlertError';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
-import { CheckedState } from '@radix-ui/react-checkbox';
+import { transformHtmlToComponents } from './utils/transformHtml';
 
 export const InviteSection = ({
   title,
@@ -399,7 +400,7 @@ const DocumentPreviewModal = ({
   );
 };
 
-const Requirement = ({
+const DocumentRequirement = ({
   requirement,
   onCreateDocument,
   onSignDocument,
@@ -408,7 +409,6 @@ const Requirement = ({
   isSigning,
   activeRequirementSlug,
   isLoadingDocumentPreview,
-  employeeCountry,
 }: {
   requirement: NonNullable<
     PreOnboardingRequirementsBag['requirements']
@@ -420,17 +420,9 @@ const Requirement = ({
   isSigning: PreOnboardingRequirementsBag['isSigning'];
   activeRequirementSlug: PreOnboardingRequirementsBag['activeRequirementSlug'];
   isLoadingDocumentPreview: PreOnboardingRequirementsBag['isLoadingDocumentPreview'];
-  employeeCountry?: string;
 }) => {
-  const [constraintsAckAt, setConstraintsAckAt] = useState<string | null>(
-    requirement.document_constraints_ack_at ?? null,
-  );
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const needsConstraintsAck =
-    requirement.needs_constraints_ack && !constraintsAckAt;
 
   const isRequirementLoading =
     activeRequirementSlug === requirement.slug &&
@@ -439,34 +431,32 @@ const Requirement = ({
   const handleReviewDocument = async () => {
     try {
       setError(null);
-      await onCreateDocument(requirement.slug, constraintsAckAt || undefined);
+      await onCreateDocument(requirement.slug);
       setIsModalOpen(true);
-    } catch {
-      setError('Failed to create document');
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Failed to create document',
+      );
     }
   };
 
   const renderButton = () => {
     if (requirement.status === 'blocked') {
       return (
-        <BasicTooltip
-          content={`${requirement.depends_on_requirement?.name} must be signed first.`}
+        <BlockedDependencyTooltip
+          dependsOnRequirement={requirement.depends_on_requirement!}
         >
           <Button variant='outline' disabled>
             Review document
           </Button>
-        </BasicTooltip>
+        </BlockedDependencyTooltip>
       );
     }
 
     return (
       <Button
         onClick={handleReviewDocument}
-        disabled={
-          needsConstraintsAck ||
-          isRequirementLoading ||
-          requirement.status === 'finished'
-        }
+        disabled={isRequirementLoading || requirement.status === 'finished'}
       >
         {requirement.status === 'finished'
           ? 'Signed'
@@ -479,35 +469,9 @@ const Requirement = ({
 
   return (
     <div className='flex flex-col gap-4'>
-      {requirement.needs_constraints_ack && (
-        <div className='flex items-start gap-2'>
-          <Checkbox
-            id={`ack-${requirement.slug}`}
-            disabled={
-              requirement.status === 'finished' ||
-              requirement.status === 'blocked'
-            }
-            checked={!!constraintsAckAt || requirement.status === 'finished'}
-            onCheckedChange={(checked: CheckedState) =>
-              checked
-                ? setConstraintsAckAt(new Date().toISOString())
-                : setConstraintsAckAt(null)
-            }
-          />
-          <Label
-            htmlFor={`ack-${requirement.slug}`}
-            className='text-sm cursor-pointer'
-          >
-            I acknowledge that I've understood information about hiring in{' '}
-            {employeeCountry ?? 'this country'}, and that these new hire details
-            can't be changed once they're submitted.
-          </Label>
-        </div>
-      )}
-
       <Card>
         <CardHeader>
-          <CardTitle>{requirement.name}</CardTitle>
+          <CardTitle> Review and sign {requirement.name}</CardTitle>
           <CardDescription>{requirement.description}</CardDescription>
         </CardHeader>
         <CardContent>
@@ -528,6 +492,98 @@ const Requirement = ({
         isSigning={isSigning}
         requirementName={requirement.name}
       />
+    </div>
+  );
+};
+
+function BlockedDependencyTooltip({
+  dependsOnRequirement,
+  children,
+}: {
+  dependsOnRequirement: PreOnboardingRequirement;
+  children: React.ReactElement;
+}) {
+  const action =
+    dependsOnRequirement.type === 'document' ? 'signed' : 'completed';
+  return (
+    <BasicTooltip
+      content={`${dependsOnRequirement.name} must be ${action} first.`}
+    >
+      {children}
+    </BasicTooltip>
+  );
+}
+
+const AckRequirement = ({
+  requirement,
+  isLocked,
+  isPendingAcknowledgement,
+  onAcknowledgeRequirement,
+}: {
+  requirement: NonNullable<
+    PreOnboardingRequirementsBag['requirements']
+  >[number];
+  isLocked: boolean;
+  onAcknowledgeRequirement: PreOnboardingRequirementsBag['onAcknowledgeRequirement'];
+  isPendingAcknowledgement: PreOnboardingRequirementsBag['isPendingAcknowledgement'];
+}) => {
+  const [error, setError] = useState<string | null>(null);
+
+  const handleChange = async () => {
+    try {
+      setError(null);
+      await onAcknowledgeRequirement(requirement.slug);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Failed to acknowledge requirement',
+      );
+    }
+  };
+
+  const isChecked = requirement.status === 'finished';
+  const isBlocked = requirement.status === 'blocked';
+
+  const isDisabled = isBlocked || isLocked || isPendingAcknowledgement;
+
+  const checkbox = (
+    <Checkbox
+      id={`acknowledgement-checkbox-${requirement.slug}`}
+      data-testid={`acknowledgement-checkbox-${requirement.slug}`}
+      checked={isChecked}
+      disabled={isDisabled}
+      onCheckedChange={handleChange}
+    />
+  );
+
+  return (
+    <div className='flex flex-col gap-2'>
+      <div className='flex items-start gap-2'>
+        {isBlocked ? (
+          <BlockedDependencyTooltip
+            dependsOnRequirement={requirement.depends_on_requirement!}
+          >
+            {checkbox}
+          </BlockedDependencyTooltip>
+        ) : (
+          checkbox
+        )}
+        <Label htmlFor={`acknowledgement-checkbox-${requirement.slug}`}>
+          {/** transformHtmlToComponents is a function that
+           * transforms the description to a React component
+           * but this makes partners able to implement this functionality...
+           * another problem is that the link is private and we need to make it public,
+           * if they don't let you a different approach must be taken...,
+           * ZendeskTriggerButton, ZendeskDialog approach but they cannot send you the link as an anchor the they need to be able to send you the link as a string...   */}
+          <span>{transformHtmlToComponents(requirement.description)}</span>
+        </Label>
+      </div>
+      {error && (
+        <p className='text-sm text-red-600' role='alert'>
+          {error}
+        </p>
+      )}
     </div>
   );
 };
@@ -614,36 +670,45 @@ export const ReviewOnboardingStep = ({
           isSigning,
           activeRequirementSlug,
           isLoadingDocumentPreview,
-        }) => (
-          <>
-            {requirements && requirements?.length > 0 && (
-              <>
-                <h2 className='title'>Pre-Onboarding Requirements</h2>
-                <div className='flex flex-col gap-4'>
-                  {requirements?.map((req) => (
-                    <Requirement
-                      key={req.slug}
-                      requirement={req}
-                      onCreateDocument={onCreateDocument}
-                      onSignDocument={onSignDocument}
-                      documentPreview={documentPreview}
-                      isCreatingDocument={isCreatingDocument}
-                      isSigning={isSigning}
-                      activeRequirementSlug={activeRequirementSlug}
-                      isLoadingDocumentPreview={isLoadingDocumentPreview}
-                      employeeCountry={
-                        (
-                          onboardingBag.employment?.basic_information
-                            ?.country as { name: string }
-                        )?.name ?? undefined
-                      }
-                    />
-                  ))}
-                </div>
-              </>
-            )}
-          </>
-        )}
+          onAcknowledgeRequirement,
+          isPendingAcknowledgement,
+          isAckLocked,
+        }) => {
+          return (
+            <>
+              {requirements && requirements?.length > 0 && (
+                <>
+                  <h2 className='title'>Pre-Onboarding Requirements</h2>
+                  <div className='flex flex-col gap-4'>
+                    {requirements?.map((req) =>
+                      req.type === 'acknowledgement' ? (
+                        <AckRequirement
+                          key={req.slug}
+                          requirement={req}
+                          isLocked={isAckLocked(req.slug)}
+                          onAcknowledgeRequirement={onAcknowledgeRequirement}
+                          isPendingAcknowledgement={isPendingAcknowledgement}
+                        />
+                      ) : (
+                        <DocumentRequirement
+                          key={req.slug}
+                          requirement={req}
+                          onCreateDocument={onCreateDocument}
+                          onSignDocument={onSignDocument}
+                          documentPreview={documentPreview}
+                          isCreatingDocument={isCreatingDocument}
+                          isSigning={isSigning}
+                          activeRequirementSlug={activeRequirementSlug}
+                          isLoadingDocumentPreview={isLoadingDocumentPreview}
+                        />
+                      ),
+                    )}
+                  </div>
+                </>
+              )}
+            </>
+          );
+        }}
       />
 
       <h2 className='title'>Review</h2>
