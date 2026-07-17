@@ -174,6 +174,13 @@ export const usePreOnboardingRequirements = ({
     return dependentBySlug.get(requirementSlug)?.status === 'finished';
   };
 
+  const isRequirementLoading = (requirementSlug: string) => {
+    return (
+      activeRequirementSlug === requirementSlug &&
+      (createDocumentMutation.isPending || isLoadingDocumentPreview)
+    );
+  };
+
   const isPendingAcknowledgement =
     acknowledgeRequirementMutation.isPending ||
     deleteAcknowledgeRequirementMutation.isPending;
@@ -182,15 +189,13 @@ export const usePreOnboardingRequirements = ({
     requirements,
     isLoadingRequirements,
     documentPreview,
-    isLoadingDocumentPreview,
-    activeRequirementSlug,
-    isCreatingDocument: createDocumentMutation.isPending,
     isSigning: signDocumentMutation.isPending,
     onCreateDocument,
     onSignDocument,
     onAcknowledgeRequirement,
     isPendingAcknowledgement,
     isAckLocked,
+    isRequirementLoading,
   };
 };
 

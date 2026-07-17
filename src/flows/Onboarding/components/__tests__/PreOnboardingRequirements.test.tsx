@@ -389,7 +389,7 @@ describe('PreOnboardingRequirements', () => {
   });
 
   describe('loading states', () => {
-    it('should show isCreatingDocument during document generation', async () => {
+    it('should show isRequirementLoading during document generation', async () => {
       server.use(
         http.post(
           '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements/:requirementSlug/documents',
@@ -414,7 +414,9 @@ describe('PreOnboardingRequirements', () => {
                 >
                   Generate
                 </button>
-                {bag.isCreatingDocument && <div>Creating document...</div>}
+                {bag.isRequirementLoading(
+                  '5e39159e-96ef-40ea-82bc-b054917fc82f',
+                ) && <div>Creating document...</div>}
               </div>
             );
           }}
@@ -586,13 +588,13 @@ describe('PreOnboardingRequirements', () => {
             <div>
               <button
                 onClick={() => bag.onCreateDocument('req-1')}
-                disabled={bag.isCreatingDocument}
+                disabled={bag.isRequirementLoading('req-1')}
               >
                 Open Req 1
               </button>
               <button
                 onClick={() => bag.onCreateDocument('req-2')}
-                disabled={bag.isCreatingDocument}
+                disabled={bag.isRequirementLoading('req-2')}
               >
                 Open Req 2
               </button>
