@@ -5,6 +5,7 @@ import {
   postV1Employments,
   postV1EmploymentsEmploymentIdInvite,
   putV2EmploymentsEmploymentIdAdministrativeDetails,
+  putV2EmploymentsEmploymentIdBasicInformation,
   putV2EmploymentsEmploymentIdContractDetails,
 } from '@/src/client';
 import { Client } from '@/src/client/client';
@@ -106,6 +107,25 @@ export const useGPCreateEmployment = () => {
           basic_information: basicInformation,
           external_id: externalId,
         },
+      }),
+  });
+};
+
+export const useGPUpdateBasicInformation = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: ({
+      employmentId,
+      basicInformation,
+    }: {
+      employmentId: string;
+      basicInformation: Record<string, unknown>;
+    }) =>
+      putV2EmploymentsEmploymentIdBasicInformation({
+        client: client as Client,
+        headers: { Authorization: `` },
+        path: { employment_id: employmentId },
+        body: { basic_information: basicInformation },
       }),
   });
 };

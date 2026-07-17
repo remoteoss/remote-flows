@@ -11,6 +11,7 @@ import {
   useGPFormSchema,
   useGPCountrySelectSchema,
   useGPCreateEmployment,
+  useGPUpdateBasicInformation,
   useGPUpdateContractDetails,
   useGPUpdateAdministrativeDetails,
   type GPAdminSchemaType,
@@ -126,11 +127,15 @@ export const usePayrollAdminOnboarding = ({
     : currentSchemaQuery.isLoading;
 
   const createEmploymentMutation = useGPCreateEmployment();
+  const updateBasicInformationMutation = useGPUpdateBasicInformation();
   const updateContractDetailsMutation = useGPUpdateContractDetails();
   const updateAdminDetailsMutation = useGPUpdateAdministrativeDetails();
 
   const { mutateAsyncOrThrow: createEmploymentAsync } = mutationToPromise(
     createEmploymentMutation,
+  );
+  const { mutateAsyncOrThrow: updateBasicInformationAsync } = mutationToPromise(
+    updateBasicInformationMutation,
   );
   const { mutateAsyncOrThrow: updateContractDetailsAsync } = mutationToPromise(
     updateContractDetailsMutation,
@@ -141,6 +146,7 @@ export const usePayrollAdminOnboarding = ({
 
   const isSubmitting =
     createEmploymentMutation.isPending ||
+    updateBasicInformationMutation.isPending ||
     updateContractDetailsMutation.isPending ||
     updateAdminDetailsMutation.isPending;
 
@@ -209,24 +215,38 @@ export const usePayrollAdminOnboarding = ({
               'Country code is required to create an employment.',
             );
           }
-          // Guard against creating a second employment if a prior attempt
-          // already created one but a later step failed and the user retried.
-          let data;
-          if (!internalEmploymentId) {
-            data = await createEmploymentAsync({
-              countryCode,
-              legalEntityId,
+          // Keep internalCountryCode in sync with the country being submitted so
+          // the contract/administrative schemas (keyed on it) load once we
+          // advance.
+          if (countryCode !== internalCountryCode) {
+            setInternalCountryCode(countryCode);
+          }
+
+          // If the employment already exists (resume, or returning to this step
+          // to edit basic information), update it instead of creating a second
+          // one — this also persists edits made on a repeat submit.
+          if (internalEmploymentId) {
+            const data = await updateBasicInformationAsync({
+              employmentId: internalEmploymentId,
               basicInformation: parsedValues,
             });
-            const empId = (data as { data?: { employment?: { id?: string } } })
-              ?.data?.employment?.id;
-            if (!empId) {
-              throw new Error(
-                'Employment was created but no ID was returned. Cannot proceed.',
-              );
-            }
-            setInternalEmploymentId(empId);
+            await refetchSteps();
+            return data;
           }
+
+          const data = await createEmploymentAsync({
+            countryCode,
+            legalEntityId,
+            basicInformation: parsedValues,
+          });
+          const empId = (data as { data?: { employment?: { id?: string } } })
+            ?.data?.employment?.id;
+          if (!empId) {
+            throw new Error(
+              'Employment was created but no ID was returned. Cannot proceed.',
+            );
+          }
+          setInternalEmploymentId(empId);
           await refetchSteps();
           return data;
         }
@@ -270,6 +290,7 @@ export const usePayrollAdminOnboarding = ({
       legalEntityId,
       parseFormValues,
       createEmploymentAsync,
+      updateBasicInformationAsync,
       updateContractDetailsAsync,
       updateAdminDetailsAsync,
       refetchSteps,
