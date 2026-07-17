@@ -85,6 +85,7 @@ const getLoadingStates = ({
   basicInformationFields,
   contractDetailsFields,
   arePreOnboardingRequirementsFulfilled,
+  isLoadingOnboardingReservesStatus,
 }: {
   isLoadingBasicInformationForm: boolean;
   isLoadingContractDetailsForm: boolean;
@@ -102,6 +103,7 @@ const getLoadingStates = ({
   basicInformationFields: JSFFields;
   contractDetailsFields: JSFFields;
   arePreOnboardingRequirementsFulfilled: boolean;
+  isLoadingOnboardingReservesStatus: boolean;
 }) => {
   const initialLoading =
     isLoadingBasicInformationForm ||
@@ -122,7 +124,8 @@ const getLoadingStates = ({
   const canInvite =
     employmentStatus &&
     !disabledInviteButtonEmploymentStatus.includes(employmentStatus) &&
-    arePreOnboardingRequirementsFulfilled;
+    arePreOnboardingRequirementsFulfilled &&
+    !isLoadingOnboardingReservesStatus;
 
   const shouldHandleReadOnlyEmployment = Boolean(
     employmentId && isEmploymentReadOnly && currentStepName !== 'review',
@@ -319,12 +322,14 @@ export const useOnboarding = ({
       stepState.currentStep.name === 'review') ||
     false;
 
-  const { data: onboardingReservesStatus } =
-    useEmploymentOnboardingReservesStatus(
-      companyId,
-      internalEmploymentId,
-      isOnboardingReservesEnabled,
-    );
+  const {
+    data: onboardingReservesStatus,
+    isLoading: isLoadingOnboardingReservesStatus,
+  } = useEmploymentOnboardingReservesStatus(
+    companyId,
+    internalEmploymentId,
+    isOnboardingReservesEnabled,
+  );
 
   const isPreOnboardingRequirementsEnabled = Boolean(
     options?.features?.includes('pre_onboarding_requirements') &&
@@ -801,6 +806,7 @@ export const useOnboarding = ({
           contractDetailsFields: stepFields.contract_details,
           currentStepName: currentStepName,
           arePreOnboardingRequirementsFulfilled,
+          isLoadingOnboardingReservesStatus,
         }),
       [
         isLoadingBasicInformationForm,
@@ -819,6 +825,7 @@ export const useOnboarding = ({
         stepFields.contract_details,
         currentStepName,
         arePreOnboardingRequirementsFulfilled,
+        isLoadingOnboardingReservesStatus,
       ],
     );
 

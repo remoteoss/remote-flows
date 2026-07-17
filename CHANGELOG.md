@@ -1,5 +1,15 @@
 # @remoteoss/remote-flows
 
+## 1.42.2
+
+### Patch Changes
+
+#### Fixes
+
+- rely on new property (#1166) [#1166](https://github.com/remoteoss/remote-flows/pull/1166)
+- radio labels can come with html (#1164) [#1164](https://github.com/remoteoss/remote-flows/pull/1164)
+- avoid refetching data on window focus (#1165) [#1165](https://github.com/remoteoss/remote-flows/pull/1165)
+
 ## 1.42.1
 
 ### Patch Changes
