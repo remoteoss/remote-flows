@@ -25,7 +25,7 @@ export const RadioGroupFieldDefault = ({
     >
       <FormItem>
         <legend>{label}</legend>
-        {description && (
+        {(description || fieldData.meta?.helpCenter) && (
           <FormDescription
             helpCenter={<HelpCenter helpCenter={fieldData.meta?.helpCenter} />}
           >
@@ -59,7 +59,9 @@ export const RadioGroupFieldDefault = ({
                   </FormControl>
                   <div>
                     <FormLabel className='font-normal mb-0 RemoteFlows__RadioField__Label'>
-                      {option.label}{' '}
+                      <span
+                        dangerouslySetInnerHTML={{ __html: option.label }}
+                      />{' '}
                       {option.recommended && (
                         <Badge variant='secondary' className='ml-2'>
                           Recommended

@@ -131,14 +131,14 @@ const benefitOffersSchemaHandler = http.get(
 );
 
 const preOnboardingRequirementsHandler = http.get(
-  '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+  '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements',
   () => {
     return HttpResponse.json(preOnboardingRequirementsMock);
   },
 );
 
 const createPreOnboardingDocumentHandler = http.post(
-  '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents',
+  '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements/:requirementSlug/documents',
   () => {
     return HttpResponse.json(generatedDocumentMock);
   },

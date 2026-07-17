@@ -85,7 +85,12 @@ export const createHeadlessForm = (
 
   return {
     meta: {
-      'x-jsf-fieldsets': jsfSchema['x-jsf-fieldsets'] as JSFFieldset,
+      // Support for both x-jsf-fieldsets and x-rmt-flatFieldsets
+      // before x-jsf-fieldsets was used, but it was migrated to x-rmt-flatFieldsets
+      // this allows to everything to keep working as expected without renaming the whole thing
+      'x-jsf-fieldsets':
+        (jsfSchema['x-jsf-fieldsets'] as JSFFieldset) ||
+        (jsfSchema['x-rmt-flatFieldsets'] as JSFFieldset),
       'x-jsf-presentation': jsfSchema['x-jsf-presentation'] as
         | Record<string, unknown>
         | undefined,
