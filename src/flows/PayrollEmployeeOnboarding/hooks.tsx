@@ -22,6 +22,7 @@ import type {
   JSONSchemaFormResultWithFieldsets,
   JSFModify,
 } from '@/src/flows/types';
+import { TaxPendingEnrollmentError } from '@/src/flows/PayrollEmployeeOnboarding/taxErrors';
 
 export type EmployeeStepKey =
   | 'personal_details'
@@ -193,7 +194,7 @@ export const usePayrollEmployeeOnboarding = ({
     countryCode,
     'global_payroll_personal_details',
     fieldValues,
-    { enabled: currentStep === 'personal_details' },
+    { enabled: currentStep === 'personal_details', employmentId },
     getPersonalDetailsJsfModify(countryCode),
   );
 
@@ -201,14 +202,14 @@ export const usePayrollEmployeeOnboarding = ({
     countryCode,
     'address_details',
     fieldValues,
-    { enabled: currentStep === 'home_address' },
+    { enabled: currentStep === 'home_address', employmentId },
   );
 
   const bankAccountSchema = useGPEmployeeFormSchema(
     countryCode,
     'global_payroll_bank_account_details',
     fieldValues,
-    { enabled: currentStep === 'bank_account' },
+    { enabled: currentStep === 'bank_account', employmentId },
   );
 
   // The tax-step schema queries are gated only on country + active. We can't
@@ -374,21 +375,25 @@ export const usePayrollEmployeeOnboarding = ({
    * not-available state instead of surfacing a raw error.
    */
   const handleTaxSubmitError = useCallback(
-    (taxStep: TaxStepKey, error: unknown) => {
-      if (!isMutationError(error)) return;
-      const status = error.response?.status;
+    (taxStep: TaxStepKey, error: unknown): boolean => {
+      if (!isMutationError(error)) return false;
       const message =
         typeof error.rawError === 'object' &&
         error.rawError !== null &&
         'message' in error.rawError
           ? String((error.rawError as { message?: unknown }).message ?? '')
           : '';
-      if (status === 404 || /tax task not found/i.test(message)) {
+      // Only a "tax task not found" response means the task isn't provisioned
+      // yet (pending enrollment). Other 404s are genuine errors and must
+      // surface rather than being hidden behind the pending-enrollment state.
+      if (/tax task not found/i.test(message)) {
         setTaxSubmitFailures((prev) => ({
           ...prev,
           [taxStep]: 'pending_enrollment' as TaxStepUnavailableReason,
         }));
+        return true;
       }
+      return false;
     },
     [],
   );
@@ -419,7 +424,9 @@ export const usePayrollEmployeeOnboarding = ({
             await refetchSteps();
             return data;
           } catch (e) {
-            handleTaxSubmitError('federal_taxes', e);
+            if (handleTaxSubmitError('federal_taxes', e)) {
+              throw new TaxPendingEnrollmentError();
+            }
             throw e;
           }
         }
@@ -429,7 +436,9 @@ export const usePayrollEmployeeOnboarding = ({
             await refetchSteps();
             return data;
           } catch (e) {
-            handleTaxSubmitError('state_taxes', e);
+            if (handleTaxSubmitError('state_taxes', e)) {
+              throw new TaxPendingEnrollmentError();
+            }
             throw e;
           }
         }

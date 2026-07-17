@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react';
+import type { UseFormReturn } from 'react-hook-form';
 import { BackButton } from '../components/BackButton';
 import { BankAccountStep } from '../components/BankAccountStep';
 import { FederalTaxesStep } from '../components/FederalTaxesStep';
@@ -237,6 +238,8 @@ describe('FederalTaxesStep / StateTaxesStep', () => {
 });
 
 describe('useEmployeeStepSubmitHandler', () => {
+  const mockForm = { setError: vi.fn() } as unknown as UseFormReturn;
+
   it('calls onSubmit, bag.onSubmit, onSuccess, then advances', async () => {
     const next = vi.fn();
     const bagOnSubmit = vi.fn().mockResolvedValue({ id: '1' });
@@ -248,7 +251,7 @@ describe('useEmployeeStepSubmitHandler', () => {
     const { result } = renderHook(() =>
       useEmployeeStepSubmitHandler({ onSubmit, onSuccess, onError }),
     );
-    await result.current({ a: 1 });
+    await result.current({ a: 1 }, mockForm);
     expect(onSubmit).toHaveBeenCalledWith({ a: 1 });
     expect(bagOnSubmit).toHaveBeenCalledWith({ a: 1 });
     expect(onSuccess).toHaveBeenCalledWith({ id: '1' });
@@ -271,7 +274,7 @@ describe('useEmployeeStepSubmitHandler', () => {
     const { result } = renderHook(() =>
       useEmployeeStepSubmitHandler({ onError }),
     );
-    await result.current({});
+    await result.current({}, mockForm);
     // handleStepError normalizes fieldErrors so they attach to form fields.
     expect(onError).toHaveBeenCalledWith({
       error: mutationErr.error,
@@ -290,7 +293,7 @@ describe('useEmployeeStepSubmitHandler', () => {
     const { result } = renderHook(() =>
       useEmployeeStepSubmitHandler({ onError }),
     );
-    await result.current({});
+    await result.current({}, mockForm);
     expect(onError).toHaveBeenCalledWith({
       error: plainErr,
       rawError: { message: 'plain' },

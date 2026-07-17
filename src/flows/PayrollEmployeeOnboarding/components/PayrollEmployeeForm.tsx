@@ -1,11 +1,15 @@
+import type { UseFormReturn } from 'react-hook-form';
 import { Form } from '@/src/components/ui/form';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { usePayrollEmployeeOnboardingContext } from '@/src/flows/PayrollEmployeeOnboarding/context';
 import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
-import type { JSFFieldset } from '@/src/types/remoteFlows';
+import type { $TSFixMe, JSFFieldset } from '@/src/types/remoteFlows';
 
 type PayrollEmployeeFormProps = {
-  onSubmit: (values: Record<string, unknown>) => Promise<void>;
+  onSubmit: (
+    values: Record<string, unknown>,
+    form: UseFormReturn<$TSFixMe>,
+  ) => Promise<void>;
   defaultValues?: Record<string, unknown>;
 };
 
@@ -25,7 +29,7 @@ export function PayrollEmployeeForm({
     <Form {...form} key={`form-${employeeBag.stepState.currentStep.name}`}>
       <form
         id={formId}
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit((values) => onSubmit(values, form))}
         className='space-y-4 RemoteFlows__PayrollEmployeeForm'
       >
         <JSONSchemaFormFields

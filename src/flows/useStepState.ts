@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FieldValues } from 'react-hook-form';
 
 export type Step<T extends string> = {
@@ -33,6 +33,13 @@ export const useStepState = <T extends string, Fields = FieldValues>(
     throw new Error('No steps provided to useStepState');
   }
 
+  // Keep the latest steps in a ref so nextStep/previousStep/goToStep resolve
+  // visibility against current data even when invoked from a callback that
+  // closed over an earlier render — e.g. right after an async refetch flips a
+  // step's visibility but before the component has re-rendered.
+  const stepsRef = useRef(steps);
+  stepsRef.current = steps;
+
   const [fieldValues, setFieldValues] = useState<Fields>({} as Fields);
   const initialStep = getInitialStep(steps);
   const [stepState, setStepState] = useState<StepState<T, Fields>>({
@@ -51,7 +58,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
 
   function nextStep() {
     const { index } = stepState.currentStep;
-    const stepValues = Object.values<Step<T>>(steps);
+    const stepValues = Object.values<Step<T>>(stepsRef.current);
     const nextStep = stepValues.find(
       (step) => step.index > index && step.visible !== false,
     );
@@ -75,7 +82,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
 
   function previousStep() {
     const { index } = stepState.currentStep;
-    const stepValues = Object.values<Step<T>>(steps);
+    const stepValues = Object.values<Step<T>>(stepsRef.current);
     const previousStep = stepValues
       .reverse()
       .find((step) => step.index < index && step.visible !== false);
@@ -100,9 +107,9 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   function goToStep(step: T) {
     setStepState((previousState) => ({
       ...previousState,
-      currentStep: steps[step],
+      currentStep: stepsRef.current[step],
     }));
-    onStepChange?.(steps[step]);
+    onStepChange?.(stepsRef.current[step]);
   }
 
   function setStepValues(values: Record<T, Fields>) {
