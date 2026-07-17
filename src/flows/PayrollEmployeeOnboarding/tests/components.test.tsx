@@ -42,6 +42,7 @@ function buildBag(overrides: Partial<Bag> = {}): Bag {
     isSubmitting: false,
     selfOnboardingSubsteps: [],
     initialValues: undefined,
+    stepState: { values: null },
     back: vi.fn(),
     next: vi.fn(),
     onSubmit: vi.fn().mockResolvedValue({ data: 'ok' }),

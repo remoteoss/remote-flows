@@ -22,7 +22,11 @@ export function BankAccountStep(props: GPStepCallbacks) {
     <PayrollEmployeeForm
       onSubmit={handleSubmit}
       defaultValues={
-        employeeBag.initialValues?.bank_account as Record<string, unknown>
+        (employeeBag.stepState.values?.bank_account as Record<
+          string,
+          unknown
+        >) ||
+        (employeeBag.initialValues?.bank_account as Record<string, unknown>)
       }
     />
   );

@@ -19,7 +19,11 @@ export function StateTaxesStep(props: GPStepCallbacks) {
     <PayrollEmployeeForm
       onSubmit={handleSubmit}
       defaultValues={
-        employeeBag.initialValues?.state_taxes as Record<string, unknown>
+        (employeeBag.stepState.values?.state_taxes as Record<
+          string,
+          unknown
+        >) ||
+        (employeeBag.initialValues?.state_taxes as Record<string, unknown>)
       }
     />
   );

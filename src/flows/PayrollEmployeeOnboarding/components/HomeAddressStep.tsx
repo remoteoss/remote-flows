@@ -11,7 +11,11 @@ export function HomeAddressStep(props: GPStepCallbacks) {
     <PayrollEmployeeForm
       onSubmit={handleSubmit}
       defaultValues={
-        employeeBag.initialValues?.home_address as Record<string, unknown>
+        (employeeBag.stepState.values?.home_address as Record<
+          string,
+          unknown
+        >) ||
+        (employeeBag.initialValues?.home_address as Record<string, unknown>)
       }
     />
   );
