@@ -8,6 +8,7 @@ import { RemoteFlows } from './RemoteFlows';
 export const JsonSchemaPlayground = () => {
   const [submissionCount, setSubmissionCount] = useState(0);
   const [formErrors, setFormErrors] = useState<string[]>([]);
+  const [showCopyToast, setShowCopyToast] = useState(false);
 
   return (
     <RemoteFlows
@@ -245,9 +246,24 @@ export const JsonSchemaPlayground = () => {
               </summary>
               <div className='px-6 pb-4 space-y-4'>
                 <div>
-                  <h4 className='text-sm font-medium text-yellow-900 mb-2'>
-                    Parsed Values (after JSON Logic):
-                  </h4>
+                  <div className='flex items-center justify-between mb-2'>
+                    <h4 className='text-sm font-medium text-yellow-900'>
+                      Parsed Values (after JSON Logic):
+                    </h4>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(
+                          JSON.stringify(playgroundBag.parsedValues, null, 2)
+                        );
+                        setShowCopyToast(true);
+                        setTimeout(() => setShowCopyToast(false), 2000);
+                      }}
+                      className='px-2 py-1 text-xs bg-yellow-200 hover:bg-yellow-300 text-yellow-800 rounded border border-yellow-400 transition-colors'
+                      title='Copy parsed values to clipboard'
+                    >
+                      Copy
+                    </button>
+                  </div>
                   <pre className='text-xs bg-white p-4 rounded border overflow-auto max-h-48'>
                     {JSON.stringify(playgroundBag.parsedValues, null, 2)}
                   </pre>
@@ -301,6 +317,13 @@ export const JsonSchemaPlayground = () => {
           </div>
         )}
       />
+
+      {/* Toast notification */}
+      {showCopyToast && (
+        <div className='fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg transition-all duration-300 z-50'>
+          ✓ Copied to clipboard!
+        </div>
+      )}
     </RemoteFlows>
   );
 };
