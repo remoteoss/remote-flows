@@ -159,11 +159,21 @@ jobs:
 
       - name: Run tests with coverage
         if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        run: pnpm test:coverage
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm test:coverage
+          else
+            npm run test:coverage
+          fi
 
       - name: Extract base coverage
         if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        run: pnpm coverage:extract --output base-coverage.json
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm coverage:extract --output base-coverage.json
+          else
+            npm run coverage:extract -- --output base-coverage.json
+          fi
 
       - name: Upload base coverage
         if: steps.check-scripts.outputs.exists == 'true'

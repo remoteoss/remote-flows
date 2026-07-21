@@ -78,12 +78,22 @@ jobs:
       - name: Build base branch
         if: steps.check_script.outputs.exists == 'true'
         working-directory: base
-        run: pnpm build
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm build
+          else
+            npm run build
+          fi
 
       - name: Analyze base bundle size
         if: steps.check_script.outputs.exists == 'true'
         working-directory: base
-        run: pnpm size --output ../out/base-bundle.json
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm size --output ../out/base-bundle.json
+          else
+            npm run size -- --output ../out/base-bundle.json
+          fi
 
       - name: Compare bundle sizes
         id: compare
