@@ -17,7 +17,7 @@
     "type-check": "tsc -b --noEmit"
   },
   "dependencies": {
-    "@remoteoss/remote-flows": "file://..",
+    "@remoteoss/remote-flows": "link:..",
     "axios": "1.18.1",
     "dompurify": "3.4.12",
     "dotenv": "17.4.2",

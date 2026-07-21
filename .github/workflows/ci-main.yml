@@ -194,8 +194,8 @@ jobs:
       - name: Install main package dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
-      # pnpm copies the `file:..` dependency (dist only) instead of symlinking
-      # it like npm did, so the SDK must be built before example/ installs.
+      # example/ consumes the SDK via a `link:..` symlink to the repo root, so
+      # dist/ must be built for anything that resolves the SDK locally.
       - name: Build main package
         run: pnpm build
 

@@ -40,18 +40,17 @@ pnpm install
 pnpm dev
 ```
 
-4. Set up the example app and link it to your local build:
+4. Set up the example app:
 
 ```bash
 cd example
 pnpm install
-pnpm link ..
 ```
 
-> **Note:** `pnpm link ..` replaces the `file:..` snapshot with a live symlink to
-> your working tree. It records an override in `example/package.json` and
-> `example/pnpm-workspace.yaml` — don't commit those changes. To switch back to
-> the regular install, revert them and re-run `pnpm install`.
+> **Note:** `example/` depends on the SDK via `link:..` — a permanent symlink to
+> your working tree (same behavior as under npm). No extra linking step is
+> needed: as long as the root build is running (`pnpm dev`), the example picks
+> up your changes live.
 
 5. Create `.env` file in the example directory:
 
@@ -416,7 +415,7 @@ When modifying a flow, update its README accordingly.
 
 ### Example app not updating
 
-1. Ensure you've linked the package: `pnpm link ..` (run inside `example/`)
+1. Ensure the SDK is built: run `pnpm dev` (or `pnpm build`) at the repo root — `example/` consumes it through the `link:..` symlink
 2. Restart both the package dev server and example dev server
 3. Check for build errors in both terminals
 

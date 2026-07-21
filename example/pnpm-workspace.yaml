@@ -1,15 +1,13 @@
 # Marks example/ as its own pnpm root, independent from the SDK at the repo root.
 # Without this, pnpm walks up, finds the root pnpm-workspace.yaml and treats the
 # whole repo as one workspace — example/ (not a listed package) would then be
-# skipped on install. example/ is a standalone consumer of the published SDK, so
-# it must resolve @remoteoss/remote-flows via `file:..` like any external app.
+# skipped on install. example/ consumes the SDK via `link:..` (a permanent
+# symlink to the working tree, same behavior as `file:..` under npm), so the SDK
+# must be built (`pnpm build` / `pnpm dev` at the repo root) for example/ to
+# type-check and run.
 #
 # No `packages:` key → not a workspace, just a settings/root marker.
 allowBuilds:
   # Native file watcher: the prebuilt platform binary ships via an optional
   # dependency (@parcel/watcher-<platform>), so the node-gyp build is not needed.
   '@parcel/watcher': false
-  # Our SDK is consumed via `file:..`, which pnpm copies using the package's
-  # `files` allowlist (dist only) — there is no `src`/tsup in that copy to build,
-  # and the dist is already produced by the SDK's own build. Nothing to run here.
-  '@remoteoss/remote-flows@file:..': false

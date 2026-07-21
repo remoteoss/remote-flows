@@ -28,7 +28,7 @@ pnpm run ci         # full local CI: build + check-format + check-exports + lint
                     # (must be `pnpm run ci` — plain `pnpm ci` is pnpm's builtin clean-install)
 ```
 
-The repo uses **pnpm** (pinned to `pnpm@11.10.0` via `packageManager`; run `corepack enable` once). Root and `example/` are two independent pnpm projects — each has its own `pnpm-lock.yaml` and a `pnpm-workspace.yaml` that is a settings/root marker, **not** a shared workspace. `example/` consumes the SDK via `file:..`, which pnpm copies (dist only) at install time — so build the SDK before installing `example/`. For live dev instead: `pnpm link ..` inside `example/` (writes an override to example's config — don't commit it), then `pnpm dev` in both. E2E lives in [example/e2e/](example/e2e/) and is run with `pnpm test:e2e` from `example/` (Playwright). E2E is excluded from the root vitest run.
+The repo uses **pnpm** (pinned to `pnpm@11.10.0` via `packageManager`; run `corepack enable` once). Root and `example/` are two independent pnpm projects — each has its own `pnpm-lock.yaml` and a `pnpm-workspace.yaml` that is a settings/root marker, **not** a shared workspace. `example/` consumes the SDK via `link:..` — a permanent symlink to the repo root (same live-dev behavior as under npm): no link command needed, just `pnpm install` in both projects and `pnpm dev` in both. The SDK's `dist/` must be built for `example/` to type-check or run. E2E lives in [example/e2e/](example/e2e/) and is run with `pnpm test:e2e` from `example/` (Playwright). E2E is excluded from the root vitest run.
 
 ## Architecture
 
