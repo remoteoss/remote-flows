@@ -8,7 +8,7 @@ export function JsonSchemaPlaygroundResetButton({
   ...props
 }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> &
   Record<string, unknown>) {
-  const { form, formId, playgroundBag } = useJsonSchemaPlaygroundContext();
+  const { formId, playgroundBag } = useJsonSchemaPlaygroundContext();
   const { components } = useFormFields();
 
   const CustomButton = components?.button;
@@ -27,7 +27,6 @@ export function JsonSchemaPlaygroundResetButton({
       form={formId}
       onClick={(evt) => {
         playgroundBag.handleReset();
-        form.reset();
         props.onClick?.(evt);
       }}
     >

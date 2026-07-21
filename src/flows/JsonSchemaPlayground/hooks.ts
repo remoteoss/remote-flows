@@ -164,6 +164,12 @@ export const useJsonSchemaPlayground = (
     clearResults,
     setFieldValues,
 
+    /**
+     * Function to update the current form field values
+     * @param values - New form values to set
+     */
+    checkFieldUpdates: setFieldValues,
+
     // Validation
     handleValidation,
     parseFormValues,

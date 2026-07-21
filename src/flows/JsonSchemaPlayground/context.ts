@@ -1,9 +1,7 @@
 import { createContext, useContext } from 'react';
-import { UseFormReturn } from 'react-hook-form';
 import { useJsonSchemaPlayground } from './hooks';
 
 export interface JsonSchemaPlaygroundContextValue {
-  form: UseFormReturn;
   formId: string;
   playgroundBag: ReturnType<typeof useJsonSchemaPlayground>;
 }
