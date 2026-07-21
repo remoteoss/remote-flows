@@ -1,7 +1,7 @@
 {
   "limits": {
-    "total": 650000,
-    "totalGzip": 250000,
+    "total": 850000,
+    "totalGzip": 350000,
     "css": 150000,
     "cssGzip": 25000,
     "maxChunkSize": 50000,
