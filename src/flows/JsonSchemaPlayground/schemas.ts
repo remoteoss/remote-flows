@@ -85,12 +85,7 @@ export const SAMPLE_SCHEMAS = {
           },
         },
       },
-      required: [
-        'annual_gross_salary',
-        'contract_duration_type',
-        'business_allowance_amount',
-        'financial_reserve_amount',
-      ],
+      required: ['annual_gross_salary', 'contract_duration_type'],
       'x-jsf-logic': {
         computedValues: {
           computed_annual_gross_salary_display: {
@@ -105,8 +100,38 @@ export const SAMPLE_SCHEMAS = {
           computed_business_allowance_amount: {
             rule: {
               if: [
-                { var: 'annual_gross_salary' },
-                { '*': [{ var: 'annual_gross_salary' }, 0.05] },
+                {
+                  var: 'annual_gross_salary',
+                },
+                {
+                  '-': [
+                    {
+                      '*': [
+                        {
+                          var: 'annual_gross_salary',
+                        },
+                        {
+                          '/': [5, 100],
+                        },
+                      ],
+                    },
+                    {
+                      '%': [
+                        {
+                          '*': [
+                            {
+                              var: 'annual_gross_salary',
+                            },
+                            {
+                              '/': [5, 100],
+                            },
+                          ],
+                        },
+                        1,
+                      ],
+                    },
+                  ],
+                },
                 null,
               ],
             },
@@ -5412,7 +5437,7 @@ export const SAMPLE_SCHEMAS = {
                   'x-jsf-presentation': {
                     statement: {
                       description:
-                        "<strong>Mandatory allowances for indefinite contracts</strong><br />Annual gross salary: {{computed_annual_gross_salary_display}} EUR<br />Business allowance: {{computed_business_allowance_display}} EUR",
+                        '<strong>Mandatory allowances for indefinite contracts</strong><br />Annual gross salary: {{computed_annual_gross_salary_display}} EUR<br />Business allowance: {{computed_business_allowance_display}} EUR',
                     },
                   },
                 },
@@ -5431,8 +5456,7 @@ export const SAMPLE_SCHEMAS = {
       ],
       properties: {
         annual_gross_salary: {
-          description:
-            "Enter the employee's annual gross base salary.",
+          description: "Enter the employee's annual gross base salary.",
           title: 'Annual gross salary',
           type: 'integer',
           'x-jsf-presentation': {
@@ -5441,8 +5465,7 @@ export const SAMPLE_SCHEMAS = {
           },
         },
         contract_duration_type: {
-          description:
-            'Select contract type to test conditional logic.',
+          description: 'Select contract type to test conditional logic.',
           oneOf: [
             {
               const: 'indefinite',
@@ -5501,10 +5524,7 @@ export const SAMPLE_SCHEMAS = {
                 {
                   '-': [
                     {
-                      '*': [
-                        { var: 'annual_gross_salary' },
-                        { '/': [5, 100] },
-                      ],
+                      '*': [{ var: 'annual_gross_salary' }, { '/': [5, 100] }],
                     },
                     {
                       '%': [

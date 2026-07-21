@@ -54,7 +54,11 @@ export const useJsonSchemaPlayground = (
   // Parse initial values when headless form is ready and fieldValues change
   useEffect(() => {
     const parseInitialValues = async () => {
-      if (headlessForm.fields && fieldValues && Object.keys(fieldValues).length > 0) {
+      if (
+        headlessForm.fields &&
+        fieldValues &&
+        Object.keys(fieldValues).length > 0
+      ) {
         try {
           const parsed = await parseJSFToValidate(
             fieldValues,
@@ -156,11 +160,9 @@ export const useJsonSchemaPlayground = (
       if (!headlessForm.fields) {
         return values;
       }
-      return parseJSFToValidate(
-        values,
-        headlessForm.fields,
-        { isPartialValidation: false },
-      );
+      return parseJSFToValidate(values, headlessForm.fields, {
+        isPartialValidation: false,
+      });
     },
     [headlessForm.fields],
   );
