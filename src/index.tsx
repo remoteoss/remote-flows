@@ -122,16 +122,6 @@ export type {
   CompanyAddressDetailsSuccess,
 } from '@/src/flows/CreateCompany';
 
-export {
-  JsonSchemaPlaygroundFlow,
-  useJsonSchemaPlayground,
-} from '@/src/flows/JsonSchemaPlayground';
-export type {
-  JsonSchemaPlaygroundFlowProps,
-  JsonSchemaPlaygroundFormProps,
-  JsonSchemaPlaygroundRenderProps,
-} from '@/src/flows/JsonSchemaPlayground';
-
 export type * from '@/src/flows/CostCalculator/types';
 
 export { useMagicLink } from '@/src/common/api';

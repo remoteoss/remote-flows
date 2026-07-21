@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { JsonSchemaPlaygroundFlow } from '@remoteoss/remote-flows';
+import { JsonSchemaPlaygroundFlow } from '@remoteoss/remote-flows/internals';
 import { RemoteFlows } from './RemoteFlows';
 
 export const JsonSchemaPlayground = () => {
