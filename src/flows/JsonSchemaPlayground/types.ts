@@ -19,6 +19,7 @@ export interface JsonSchemaPlaygroundState {
 
 export interface UseJsonSchemaPlaygroundOptions {
   defaultSchema?: string;
+  initialValues?: FieldValues;
   onSubmit?: (values: FieldValues) => void | Promise<void>;
   onError?: (error: unknown) => void;
 }

@@ -5,12 +5,23 @@ import { RemoteFlows } from './RemoteFlows';
 export const JsonSchemaPlayground = () => {
   const [submissionCount, setSubmissionCount] = useState(0);
 
+  // Sample initial values for demonstration
+  const sampleInitialValues = {
+    firstName: 'John',
+    lastName: 'Doe', 
+    email: 'john.doe@example.com',
+    age: 30,
+    country: 'US',
+    subscribe: true,
+  };
+
   return (
     <RemoteFlows
       authType='company-manager'
       proxy={{ url: window.location.origin }}
     >
       <JsonSchemaPlaygroundFlow
+        initialValues={sampleInitialValues}
         onSubmit={(values) => {
           console.log('Form submitted:', values);
           setSubmissionCount((prev) => prev + 1);
@@ -77,7 +88,7 @@ export const JsonSchemaPlayground = () => {
               </p>
               <p className='text-sm text-blue-600 mt-2'>
                 Fields: {playgroundBag.fields.length} | Submissions:{' '}
-                {submissionCount}
+                {submissionCount} | Pre-filled with sample data
               </p>
             </div>
 

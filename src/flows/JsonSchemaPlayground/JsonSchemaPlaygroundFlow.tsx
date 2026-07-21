@@ -1,4 +1,4 @@
-import React, { useId } from 'react';
+import React, { useId, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
 import { JsonSchemaPlaygroundContext } from './context';
@@ -14,6 +14,7 @@ export interface JsonSchemaPlaygroundFlowProps extends UseJsonSchemaPlaygroundOp
 
 export const JsonSchemaPlaygroundFlow = ({
   defaultSchema,
+  initialValues,
   onSubmit,
   onError,
   render,
@@ -22,6 +23,7 @@ export const JsonSchemaPlaygroundFlow = ({
   
   const playgroundBag = useJsonSchemaPlayground({
     defaultSchema,
+    initialValues,
     onSubmit,
     onError,
   });
@@ -32,10 +34,17 @@ export const JsonSchemaPlaygroundFlow = ({
 
   const form = useForm({
     resolver,
-    defaultValues: {},
+    defaultValues: initialValues || {},
     shouldUnregister: false,
     mode: 'onBlur',
   });
+
+  // Reset form values when schema changes or initial values change
+  useEffect(() => {
+    if (initialValues) {
+      form.reset(initialValues);
+    }
+  }, [playgroundBag.selectedSchema, initialValues, form]);
 
   return (
     <JsonSchemaPlaygroundContext.Provider
