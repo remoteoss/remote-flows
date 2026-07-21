@@ -8,6 +8,6 @@ export const SIMPLE_USER_PROFILE_INITIAL_VALUES = {
 };
 
 export const SIMPLE_SALARY_TEST_INITIAL_VALUES = {
-  annual_gross_salary: 4000000, // 40,000 EUR in cents
+  annual_gross_salary: 30_000,
   contract_duration_type: 'indefinite',
 };

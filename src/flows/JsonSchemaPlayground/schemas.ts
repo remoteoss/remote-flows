@@ -84,29 +84,7 @@ export const SAMPLE_SCHEMAS = {
           },
         },
       },
-      required: ['annual_gross_salary', 'contract_duration_type'],
-      allOf: [
-        {
-          // Show business allowance when salary is present
-          if: {
-            properties: {
-              annual_gross_salary: {
-                type: 'integer',
-              },
-            },
-            required: ['annual_gross_salary'],
-          },
-          then: {
-            required: ['business_allowance_amount', 'salary_statement'],
-          },
-          else: {
-            properties: {
-              business_allowance_amount: false,
-              salary_statement: false,
-            },
-          },
-        },
-      ],
+      required: ['annual_gross_salary', 'contract_duration_type', 'business_allowance_amount', 'salary_statement'],
       'x-jsf-logic': {
         computedValues: {
           computed_annual_gross_salary_display: {

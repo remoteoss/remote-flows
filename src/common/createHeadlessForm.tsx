@@ -83,6 +83,10 @@ export const createHeadlessForm = (
     }),
   );
 
+  const headlessForm = baseCreateHeadlessForm(jsfSchema, {
+    initialValues,
+  });
+
   return {
     meta: {
       // Support for both x-jsf-fieldsets and x-rmt-flatFieldsets
@@ -95,8 +99,6 @@ export const createHeadlessForm = (
         | Record<string, unknown>
         | undefined,
     },
-    ...baseCreateHeadlessForm(jsfSchema, {
-      initialValues,
-    }),
+    ...headlessForm,
   };
 };

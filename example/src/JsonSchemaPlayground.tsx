@@ -16,10 +16,7 @@ export const JsonSchemaPlayground = () => {
     >
       <JsonSchemaPlaygroundFlow
         defaultSchema='simple-salary-test'
-        initialValues={{
-          ...SIMPLE_SALARY_TEST_INITIAL_VALUES,
-          annual_gross_salary: 3000000, // €30,000 - above minimum
-        }}
+        initialValues={SIMPLE_SALARY_TEST_INITIAL_VALUES}
         onSubmit={(values) => {
           console.log('Form submitted:', values);
           setSubmissionCount((prev) => prev + 1);
