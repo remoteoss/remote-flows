@@ -1,4 +1,203 @@
 export const SAMPLE_SCHEMAS = {
+  'simple-salary-test': {
+    name: 'Simple Salary Test',
+    description:
+      'Minimal schema to test annual_gross_salary and contract_duration_type conditionals',
+    schema: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        annual_gross_salary: {
+          description:
+            "Enter the employee's annual gross base salary. This amount is used to calculate payroll and must meet the legal minimum in France.",
+          title: 'Annual gross salary',
+          type: 'integer',
+          'x-jsf-errorMessage': {
+            type: 'Please, use US standard currency format. Ex: 1024.12',
+          },
+          'x-jsf-presentation': {
+            currency: 'EUR',
+            inputType: 'money',
+            meta: {
+              helpCenter: {
+                callToAction: 'Learn more',
+                content: 'The help center content is currently unavailable.',
+                error: true,
+                id: 27657390602637,
+                title: 'Help center unavailable',
+              },
+            },
+          },
+        },
+        contract_duration_type: {
+          title: 'Contract Duration Type',
+          description: 'Select the type of contract duration',
+          type: 'string',
+          oneOf: [
+            {
+              const: 'indefinite',
+              title: 'Indefinite Contract',
+            },
+            {
+              const: 'fixed_term',
+              title: 'Fixed Term Contract',
+            },
+          ],
+          'x-jsf-presentation': {
+            inputType: 'radio',
+          },
+        },
+        business_allowance_amount: {
+          title: 'Business Allowance Amount',
+          description: 'Computed 5% allowance based on salary',
+          type: 'integer',
+          'x-jsf-logic-computedAttrs': {
+            const: 'computed_business_allowance_amount',
+            default: 'computed_business_allowance_amount',
+            'x-jsf-presentation': {
+              statement: {
+                title:
+                  'Business Allowance: {{computed_business_allowance_display}} EUR',
+                description:
+                  'Mandatory 5% allowance automatically calculated from your gross salary.',
+              },
+            },
+          },
+          'x-jsf-presentation': {
+            inputType: 'hidden',
+          },
+        },
+        salary_statement: {
+          title: 'Salary Summary',
+          type: 'null',
+          'x-jsf-logic-computedAttrs': {
+            'x-jsf-presentation': {
+              statement: {
+                title: 'Salary Summary',
+                description:
+                  'Annual gross salary: {{computed_annual_gross_salary_display}} EUR<br/>Business allowance (5%): {{computed_business_allowance_display}} EUR<br/>Contract type: {{computed_contract_duration_type_display}}<br/>{{computed_contract_info}}',
+              },
+            },
+          },
+          'x-jsf-presentation': {
+            inputType: 'hidden',
+          },
+        },
+      },
+      required: ['annual_gross_salary', 'contract_duration_type'],
+      allOf: [
+        {
+          // Show business allowance when salary is present
+          if: {
+            properties: {
+              annual_gross_salary: {
+                type: 'integer',
+              },
+            },
+            required: ['annual_gross_salary'],
+          },
+          then: {
+            required: ['business_allowance_amount', 'salary_statement'],
+          },
+          else: {
+            properties: {
+              business_allowance_amount: false,
+              salary_statement: false,
+            },
+          },
+        },
+      ],
+      'x-jsf-logic': {
+        computedValues: {
+          computed_annual_gross_salary_display: {
+            rule: {
+              if: [
+                { var: 'annual_gross_salary' },
+                {
+                  '/': [{ var: 'annual_gross_salary' }, 100],
+                },
+                null,
+              ],
+            },
+          },
+          computed_business_allowance_amount: {
+            rule: {
+              if: [
+                { var: 'annual_gross_salary' },
+                {
+                  '*': [{ var: 'annual_gross_salary' }, 0.05],
+                },
+                null,
+              ],
+            },
+          },
+          computed_business_allowance_display: {
+            rule: {
+              if: [
+                { var: 'annual_gross_salary' },
+                {
+                  '/': [{ '*': [{ var: 'annual_gross_salary' }, 0.05] }, 100],
+                },
+                null,
+              ],
+            },
+          },
+          computed_contract_duration_type_display: {
+            rule: {
+              if: [
+                { var: 'contract_duration_type' },
+                {
+                  if: [
+                    { '==': [{ var: 'contract_duration_type' }, 'indefinite'] },
+                    'Indefinite Contract',
+                    {
+                      if: [
+                        {
+                          '==': [
+                            { var: 'contract_duration_type' },
+                            'fixed_term',
+                          ],
+                        },
+                        'Fixed Term Contract',
+                        { var: 'contract_duration_type' },
+                      ],
+                    },
+                  ],
+                },
+                'Not Selected',
+              ],
+            },
+          },
+          computed_contract_info: {
+            rule: {
+              if: [
+                { var: 'contract_duration_type' },
+                {
+                  if: [
+                    { '==': [{ var: 'contract_duration_type' }, 'indefinite'] },
+                    '✅ This indefinite contract provides job security and continuous employment.',
+                    {
+                      if: [
+                        {
+                          '==': [
+                            { var: 'contract_duration_type' },
+                            'fixed_term',
+                          ],
+                        },
+                        '📅 This fixed-term contract has a specific end date.',
+                        '',
+                      ],
+                    },
+                  ],
+                },
+                '',
+              ],
+            },
+          },
+        },
+      },
+    },
+  },
   'france-wage-portage': {
     name: 'France Wage Portage Schema',
     description:

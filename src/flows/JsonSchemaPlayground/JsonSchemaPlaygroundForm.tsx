@@ -7,30 +7,45 @@ import { Components } from '@/src/types/remoteFlows';
 
 export interface JsonSchemaPlaygroundFormProps {
   onSubmit?: (values: Record<string, unknown>) => void;
+  onValidationError?: (errors: string[]) => void;
   className?: string;
   components?: Components;
-  defaultValues?: Record<string, unknown>;
 }
 
 export const JsonSchemaPlaygroundForm = ({
   onSubmit,
+  onValidationError,
   className,
   components,
-  defaultValues = {},
 }: JsonSchemaPlaygroundFormProps) => {
   const { formId, playgroundBag } = useJsonSchemaPlaygroundContext();
 
   const form = useJSONSchemaForm({
     handleValidation: playgroundBag.handleValidation,
-    defaultValues: defaultValues,
+    defaultValues: playgroundBag.fieldValues,
     checkFieldUpdates: playgroundBag.checkFieldUpdates,
   });
 
   useEffect(() => {
-    // Update field values when form values change
-    playgroundBag.checkFieldUpdates(form.getValues());
+    // Update field values when form values change or schema changes
+    const currentValues = form.getValues();
+    playgroundBag.checkFieldUpdates(currentValues);
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [playgroundBag.selectedSchema]);
+
+  // Monitor form errors and report them
+  useEffect(() => {
+    const errors = form.formState.errors;
+    if (errors && Object.keys(errors).length > 0) {
+      const errorMessages = Object.entries(errors).map(([field, error]) => {
+        const message = error?.message || 'Invalid value';
+        return `${field}: ${message}`;
+      });
+      onValidationError?.(errorMessages);
+    } else {
+      onValidationError?.([]);
+    }
+  }, [form.formState.errors, onValidationError]);
 
   const handleFormSubmit = async (values: Record<string, unknown>) => {
     const parsedValues = await playgroundBag.parseFormValues(values);
@@ -49,7 +64,7 @@ export const JsonSchemaPlaygroundForm = ({
           components={components}
           fields={playgroundBag.fields ?? []}
           fieldValues={playgroundBag.fieldValues}
-          fieldsets={playgroundBag.meta['x-jsf-fieldsets']}
+          fieldsets={playgroundBag.meta?.['x-jsf-fieldsets'] ?? []}
         />
       </form>
     </Form>

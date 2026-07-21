@@ -13,7 +13,7 @@ export const useJsonSchemaPlayground = (
   options: UseJsonSchemaPlaygroundOptions = {},
 ) => {
   const {
-    defaultSchema = 'simple-user-profile',
+    defaultSchema = 'simple-salary-test',
     initialValues = {},
     onSubmit,
     onError,
@@ -32,7 +32,7 @@ export const useJsonSchemaPlayground = (
   const currentSchemaData = useMemo(() => {
     return (
       SAMPLE_SCHEMAS[state.selectedSchema as SchemaKey] ||
-      SAMPLE_SCHEMAS['simple-user-profile']
+      SAMPLE_SCHEMAS['simple-salary-test']
     );
   }, [state.selectedSchema]);
 

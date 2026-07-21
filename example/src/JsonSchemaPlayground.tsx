@@ -1,9 +1,13 @@
 import { useState } from 'react';
-import { JsonSchemaPlaygroundFlow } from '@remoteoss/remote-flows/internals';
+import {
+  JsonSchemaPlaygroundFlow,
+  SIMPLE_SALARY_TEST_INITIAL_VALUES,
+} from '@remoteoss/remote-flows/internals';
 import { RemoteFlows } from './RemoteFlows';
 
 export const JsonSchemaPlayground = () => {
   const [submissionCount, setSubmissionCount] = useState(0);
+  const [formErrors, setFormErrors] = useState<string[]>([]);
 
   return (
     <RemoteFlows
@@ -11,14 +15,15 @@ export const JsonSchemaPlayground = () => {
       proxy={{ url: window.location.origin }}
     >
       <JsonSchemaPlaygroundFlow
-        defaultSchema='france-wage-portage'
-        initialValues={{}}
+        defaultSchema='simple-salary-test'
+        initialValues={{
+          ...SIMPLE_SALARY_TEST_INITIAL_VALUES,
+          annual_gross_salary: 3000000, // €30,000 - above minimum
+        }}
         onSubmit={(values) => {
           console.log('Form submitted:', values);
           setSubmissionCount((prev) => prev + 1);
-        }}
-        onError={(error) => {
-          console.error('Form error:', error);
+          setFormErrors([]); // Clear errors on successful submission
         }}
         render={({ playgroundBag, components }) => (
           <div className='max-w-6xl mx-auto p-6 space-y-6'>
@@ -80,6 +85,12 @@ export const JsonSchemaPlayground = () => {
               <p className='text-sm text-blue-600 mt-2'>
                 Fields: {playgroundBag.fields.length} | Submissions:{' '}
                 {submissionCount} | Pre-filled with sample data
+                {formErrors.length > 0 && (
+                  <span className='text-red-600 font-medium'>
+                    {' '}
+                    | ⚠️ {formErrors.length} validation error(s)
+                  </span>
+                )}
               </p>
             </div>
 
@@ -98,14 +109,63 @@ export const JsonSchemaPlayground = () => {
                     </div>
                   ) : (
                     <>
-                      <components.Form className='space-y-4' />
+                      <components.Form
+                        className='space-y-4'
+                        onValidationError={setFormErrors}
+                      />
+
+                      {/* Error Display */}
+                      {formErrors.length > 0 && (
+                        <div className='mt-4 p-4 bg-red-50 border border-red-200 rounded-md'>
+                          <div className='flex'>
+                            <div className='flex-shrink-0'>
+                              <svg
+                                className='h-5 w-5 text-red-400'
+                                viewBox='0 0 20 20'
+                                fill='currentColor'
+                              >
+                                <path
+                                  fillRule='evenodd'
+                                  d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
+                                  clipRule='evenodd'
+                                />
+                              </svg>
+                            </div>
+                            <div className='ml-3'>
+                              <h3 className='text-sm font-medium text-red-800'>
+                                Validation Errors ({formErrors.length})
+                              </h3>
+                              <div className='mt-2 text-sm text-red-700'>
+                                <ul className='list-disc list-inside space-y-1'>
+                                  {formErrors.map((error, index) => (
+                                    <li key={index}>{error}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       <div className='flex gap-3 mt-6 pt-6 border-t'>
                         <components.SubmitButton className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700'>
                           Submit Form
                         </components.SubmitButton>
-                        <components.ResetButton className='px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700'>
+                        <components.ResetButton
+                          className='px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700'
+                          onClick={() => setFormErrors([])} // Clear errors when resetting
+                        >
                           Reset Form
                         </components.ResetButton>
+                        {formErrors.length > 0 && (
+                          <button
+                            type='button'
+                            onClick={() => setFormErrors([])}
+                            className='px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200 border border-red-300'
+                          >
+                            Clear Errors
+                          </button>
+                        )}
                       </div>
                     </>
                   )}
@@ -180,6 +240,51 @@ export const JsonSchemaPlayground = () => {
                 </div>
               </div>
             </div>
+
+            {/* Form Debug (collapsible) */}
+            <details className='bg-yellow-50 rounded-lg border border-yellow-200'>
+              <summary className='px-6 py-4 cursor-pointer font-medium text-yellow-900 hover:bg-yellow-100'>
+                Debug: Form State & Values
+              </summary>
+              <div className='px-6 pb-4 space-y-4'>
+                <div>
+                  <h4 className='text-sm font-medium text-yellow-900 mb-2'>
+                    Current Field Values:
+                  </h4>
+                  <pre className='text-xs bg-white p-4 rounded border overflow-auto max-h-48'>
+                    {JSON.stringify(playgroundBag.fieldValues, null, 2)}
+                  </pre>
+                </div>
+
+                {formErrors.length > 0 && (
+                  <div>
+                    <h4 className='text-sm font-medium text-red-900 mb-2'>
+                      Current Errors:
+                    </h4>
+                    <pre className='text-xs bg-red-50 p-4 rounded border border-red-200 overflow-auto max-h-48'>
+                      {JSON.stringify(formErrors, null, 2)}
+                    </pre>
+                  </div>
+                )}
+
+                <div>
+                  <h4 className='text-sm font-medium text-yellow-900 mb-2'>
+                    Form Fields ({playgroundBag.fields.length}):
+                  </h4>
+                  <pre className='text-xs bg-white p-4 rounded border overflow-auto max-h-48'>
+                    {JSON.stringify(
+                      playgroundBag.fields.map((f) => ({
+                        name: f.name,
+                        type: f.type,
+                        required: f.required,
+                      })),
+                      null,
+                      2,
+                    )}
+                  </pre>
+                </div>
+              </div>
+            </details>
 
             {/* Schema Debug (collapsible) */}
             <details className='bg-gray-50 rounded-lg border'>

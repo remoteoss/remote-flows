@@ -85,6 +85,7 @@ export { JsonSchemaComparison } from './components/JsonSchemaComparison';
 // JSON Schema Playground
 export {
   SIMPLE_USER_PROFILE_INITIAL_VALUES,
+  SIMPLE_SALARY_TEST_INITIAL_VALUES,
   JsonSchemaPlaygroundFlow,
   useJsonSchemaPlayground,
 } from '@/src/flows/JsonSchemaPlayground';
