@@ -47,10 +47,12 @@ import { ContractorOnboardingForm } from './ContractorOnboarding';
 import { CreateCompanyForm } from './CreateCompany';
 import { MagicLinkTest } from './MagicLinkTest';
 import { JsonSchemaComparisonDemo } from './JsonSchemaComparisonDemo';
+import { JsonSchemaPlayground } from './JsonSchemaPlayground';
 import ContractorOnboardingCode from './ContractorOnboarding?raw';
 import CreateCompanyCode from './CreateCompany?raw';
 import MagicLinkTestCode from './MagicLinkTest?raw';
 import JsonSchemaComparisonCode from './JsonSchemaComparisonDemo?raw';
+import JsonSchemaPlaygroundCode from './JsonSchemaPlayground?raw';
 
 const costCalculatorDemos = [
   {
@@ -174,6 +176,13 @@ const additionalDemos = [
     description: 'Compare different JSON schema versions side-by-side',
     component: JsonSchemaComparisonDemo,
     sourceCode: JsonSchemaComparisonCode,
+  },
+  {
+    id: 'json-schema-playground',
+    title: 'JSON Schema Playground',
+    description: 'Test and experiment with different JSON schemas',
+    component: JsonSchemaPlayground,
+    sourceCode: JsonSchemaPlaygroundCode,
   },
 ];
 
