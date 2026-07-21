@@ -1,0 +1,13 @@
+# Not a workspace (no `packages:` key) — this file only carries pnpm settings,
+# which pnpm 11 reads from here rather than from `package.json#pnpm`.
+allowBuilds:
+  # Native binaries for these ship as per-platform optional dependencies
+  # (@parcel/watcher-<platform>, @esbuild/<platform>), so their install
+  # scripts are just validation/fallback and are safe to skip — the build
+  # runs green without them.
+  '@parcel/watcher': false
+  esbuild: false
+  # msw's postinstall only copies the browser worker script when
+  # `msw.workerDirectory` is set in package.json. We run node/jsdom tests via
+  # `msw/node` and never set it, so the script is a no-op — hence `false`.
+  msw: false

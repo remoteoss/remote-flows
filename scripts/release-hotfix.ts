@@ -127,18 +127,18 @@ ${changeDescription}
   // Format files with oxfmt
   console.log(`\n🎨 Formatting files with oxfmt...`);
   try {
-    execSync('npm run format', { stdio: 'inherit' });
+    execSync('pnpm format', { stdio: 'inherit' });
     console.log(`✅ Files formatted`);
   } catch {
     console.log(`⚠️  oxfmt formatting failed, continuing...`);
   }
 
-  // Update package-lock.json
+  // Update pnpm-lock.yaml
   try {
-    execSync('npm install', { stdio: 'inherit' });
-    console.log('✅ Updated package-lock.json');
+    execSync('pnpm install', { stdio: 'inherit' });
+    console.log('✅ Updated pnpm-lock.yaml');
   } catch (error) {
-    console.log(`⚠️  Failed to update package-lock.json: ${error}`);
+    console.log(`⚠️  Failed to update pnpm-lock.yaml: ${error}`);
   }
 
   // Create release branch

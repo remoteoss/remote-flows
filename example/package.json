@@ -3,8 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "commonjs",
+  "packageManager": "pnpm@11.10.0",
   "scripts": {
-    "audit": "npm audit --audit-level=high",
+    "preinstall": "npx only-allow pnpm",
+    "audit": "pnpm audit --audit-level=high",
     "dev": "nodemon ./dev_server.js",
     "build": "tsc -b && vite build",
     "lint": "oxlint .",

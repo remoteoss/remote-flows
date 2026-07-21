@@ -33,8 +33,11 @@ jobs:
           node-version: '24.15.0'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Check if version changed
         id: version-check
@@ -72,8 +75,8 @@ jobs:
       - name: Build and test
         if: steps.version-check.outputs.changed == 'true'
         run: |
-          npm run build
-          npm run test
+          pnpm build
+          pnpm test
 
       - name: Determine npm tag
         if: steps.version-check.outputs.changed == 'true'

@@ -20,17 +20,20 @@ jobs:
         with:
           node-version: '24.15.0'
 
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run format check
-        run: npm run check-format
+        run: pnpm check-format
 
       - name: Run lint
-        run: npm run lint
+        run: pnpm lint
 
       - name: Run type check
-        run: npm run type-check
+        run: pnpm type-check
 
   build-and-exports:
     name: Build and Check Exports
@@ -45,14 +48,17 @@ jobs:
         with:
           node-version: '24.15.0'
 
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build
-        run: npm run build
+        run: pnpm build
 
       - name: Check exports
-        run: npm run check-exports
+        run: pnpm check-exports
 
   tests:
     name: Tests with Coverage
@@ -67,17 +73,20 @@ jobs:
         with:
           node-version: '24.15.0'
 
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run tests with coverage
-        run: npm run test:coverage
+        run: pnpm test:coverage
 
       - name: Create output directory
         run: mkdir -p out
 
       - name: Extract current coverage
-        run: npm run coverage:extract -- --output out/current-coverage.json
+        run: pnpm coverage:extract --output out/current-coverage.json
 
       - name: Upload current coverage
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -133,17 +142,28 @@ jobs:
         with:
           node-version: '24.15.0'
 
+      - name: Enable Corepack (pnpm)
+        if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true' && steps.check-base-scripts.outputs.exists == 'true'
+        run: corepack enable
+
       - name: Install dependencies
         if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        run: npm ci --include=optional --ignore-scripts
+        # Transitional: the base branch may still be on npm (package-lock.json)
+        # until the pnpm migration lands on main.
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile --ignore-scripts
+          else
+            npm ci --include=optional --ignore-scripts
+          fi
 
       - name: Run tests with coverage
         if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        run: npm run test:coverage
+        run: pnpm test:coverage
 
       - name: Extract base coverage
         if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        run: npm run coverage:extract -- --output base-coverage.json
+        run: pnpm coverage:extract --output base-coverage.json
 
       - name: Upload base coverage
         if: steps.check-scripts.outputs.exists == 'true'
@@ -166,23 +186,26 @@ jobs:
         with:
           node-version: '24.15.0'
 
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
       - name: Install main package dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build main package
-        run: npm run build
+        run: pnpm build
 
       - name: Install example dependencies
         working-directory: ./example
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Lint example app
         working-directory: ./example
-        run: npm run lint
+        run: pnpm lint
 
       - name: Type-check example app
         working-directory: ./example
-        run: npm run type-check
+        run: pnpm type-check
 
   coverage-compare:
     name: Compare Coverage
@@ -201,8 +224,11 @@ jobs:
         with:
           node-version: '24.15.0'
 
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Create output directory
         run: mkdir -p out
@@ -224,7 +250,7 @@ jobs:
         id: compare
         run: |
           # Run comparison (handles missing base file gracefully)
-          npm exec tsx scripts/compare-coverage.ts out/current-coverage.json out/base-coverage.json > out/coverage-report.md 2>&1 || true
+          pnpm exec tsx scripts/compare-coverage.ts out/current-coverage.json out/base-coverage.json > out/coverage-report.md 2>&1 || true
 
           # Set output for PR comment
           echo "report<<EOF" >> $GITHUB_OUTPUT
@@ -356,16 +382,24 @@ jobs:
         with:
           node-version: '24.15.0'
 
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
       - name: Install main package dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      # pnpm copies the `file:..` dependency (dist only) instead of symlinking
+      # it like npm did, so the SDK must be built before example/ installs.
+      - name: Build main package
+        run: pnpm build
 
       - name: Install example/ dependencies
         working-directory: ./example
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Install Playwright
         working-directory: ./example
-        run: npx playwright install chromium --with-deps
+        run: pnpm exec playwright install chromium --with-deps
 
       - name: Download remote-flows URL
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
@@ -383,7 +417,7 @@ jobs:
           VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
           DEBUG: pw:api
         working-directory: ./example
-        run: npx playwright test --project=chromium
+        run: pnpm exec playwright test --project=chromium
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: ${{ !cancelled() }}

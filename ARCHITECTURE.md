@@ -729,8 +729,8 @@ const { data: identity } = useIdentity();
 All API types are generated from OpenAPI specs:
 
 ```bash
-npm run openapi-ts        # From production gateway
-npm run openapi-ts:local  # From local gateway
+pnpm openapi-ts        # From production gateway
+pnpm openapi-ts:local  # From local gateway
 ```
 
 **Generated files** (never hand-edit):
@@ -1070,7 +1070,7 @@ Consumers can override text in JSON schemas without code changes:
 
 **What we monitor:**
 
-- Total bundle size via `npm run size`
+- Total bundle size via `pnpm size`
 - Impact of new dependencies
 - Trends over time (is it growing?)
 
