@@ -1,7 +1,10 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
-import { parseJSFToValidate } from '@/src/components/form/utils';
+import {
+  getInitialValues,
+  parseJSFToValidate,
+} from '@/src/components/form/utils';
 import { SAMPLE_SCHEMAS, SchemaKey } from './schemas';
 import {
   JsonSchemaPlaygroundResult,
@@ -14,7 +17,7 @@ export const useJsonSchemaPlayground = (
 ) => {
   const {
     defaultSchema = 'simple-salary-test',
-    initialValues = {},
+    initialValues: jsonSchemaFormInitialValues = {},
     onSubmit,
     onError,
   } = options;
@@ -26,7 +29,9 @@ export const useJsonSchemaPlayground = (
     isSubmitting: false,
   });
 
-  const [fieldValues, setFieldValues] = useState<FieldValues>(initialValues);
+  const [fieldValues, setFieldValues] = useState<FieldValues>(
+    jsonSchemaFormInitialValues,
+  );
   const [parsedValues, setParsedValues] = useState<FieldValues>({});
 
   // Get current schema
@@ -80,9 +85,9 @@ export const useJsonSchemaPlayground = (
   const handleSchemaChange = useCallback(
     (schemaKey: string) => {
       setState((prev) => ({ ...prev, selectedSchema: schemaKey }));
-      setFieldValues(initialValues);
+      setFieldValues(jsonSchemaFormInitialValues);
     },
-    [initialValues],
+    [jsonSchemaFormInitialValues],
   );
 
   // Handle form submission
@@ -128,8 +133,8 @@ export const useJsonSchemaPlayground = (
 
   // Handle form reset
   const handleReset = useCallback(() => {
-    setFieldValues(initialValues);
-  }, [initialValues]);
+    setFieldValues(jsonSchemaFormInitialValues);
+  }, [jsonSchemaFormInitialValues]);
 
   // Clear results
   const clearResults = useCallback(() => {
@@ -167,6 +172,26 @@ export const useJsonSchemaPlayground = (
     [headlessForm.fields],
   );
 
+  const checkFieldUpdates = useCallback(
+    async (values: FieldValues) => {
+      const parsedValues =
+        headlessForm.fields.length > 0
+          ? await parseJSFToValidate(values, headlessForm.fields, {
+              isPartialValidation: false,
+            })
+          : values;
+      setFieldValues({
+        ...values,
+        ...parsedValues,
+      });
+    },
+    [headlessForm.fields],
+  );
+
+  const initialValues = useMemo(() => {
+    return getInitialValues(headlessForm.fields, fieldValues);
+  }, [headlessForm.fields, fieldValues]);
+
   return {
     // State
     selectedSchema: state.selectedSchema,
@@ -187,6 +212,7 @@ export const useJsonSchemaPlayground = (
     // Form data from headless form
     fields: headlessForm.fields || [],
     meta: headlessForm.meta,
+    initialValues,
 
     // Actions
     handleSchemaChange,
@@ -199,7 +225,7 @@ export const useJsonSchemaPlayground = (
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    checkFieldUpdates: setFieldValues,
+    checkFieldUpdates: checkFieldUpdates,
 
     // Validation
     handleValidation,

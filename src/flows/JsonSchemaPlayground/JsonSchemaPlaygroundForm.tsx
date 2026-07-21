@@ -22,7 +22,7 @@ export const JsonSchemaPlaygroundForm = ({
 
   const form = useJSONSchemaForm({
     handleValidation: playgroundBag.handleValidation,
-    defaultValues: playgroundBag.fieldValues,
+    defaultValues: playgroundBag.initialValues,
     checkFieldUpdates: playgroundBag.checkFieldUpdates,
   });
 

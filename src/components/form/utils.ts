@@ -244,22 +244,14 @@ export const fieldTypesTransformations: Record<string, $TSFixMe> = {
     },
   },
   [supportedTypes.MONEY]: {
-    transformValueFromAPI: () => (value: string | number) =>
-      convertFromCents(value) ?? '',
-    transformValueToAPI: () => convertToCents,
-  },
-  [supportedTypes.CHECKBOX]: {
-    transformValueToAPI: (field: $TSFixMe) => (value: string | boolean) => {
-      if (value === undefined) {
-        return false;
-      }
-
-      if (field.const && value === true) {
-        return field.const;
-      }
-      return value;
+    transformValueFromAPI: (field: $TSFixMe) => (value: string | number) => {
+      return convertFromCents(value) ?? '';
+    },
+    transformValueToAPI: (field: $TSFixMe) => (value: string | number) => {
+      return convertToCents(value) ?? '';
     },
   },
+
   [supportedTypes.SELECT]: {
     /**
      * Used for react-select, where the value is transformed
