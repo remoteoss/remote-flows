@@ -6,9 +6,10 @@
     "url": "https://github.com/remoteoss/remote-flows.git"
   },
   "scripts": {
-    "audit": "npm audit --audit-level=high",
+    "preinstall": "npx only-allow pnpm",
+    "audit": "pnpm audit --audit-level=high",
     "build": "NODE_OPTIONS='--max-old-space-size=12288' NODE_ENV=production tsup",
-    "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint && npm run type-check && npm run test",
+    "ci": "pnpm build && pnpm check-format && pnpm check-exports && pnpm lint && pnpm type-check && pnpm test",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm --exclude-entrypoints index.css styles.css --profile node16",
     "check-format": "oxfmt --check",
     "dev": "NODE_OPTIONS='--max-old-space-size=12288' NODE_ENV=development tsup --watch",
@@ -17,12 +18,12 @@
     "lint:workflows": "zizmor .github/workflows/",
     "lint:workflows:fix": "zizmor --fix .github/workflows/",
     "format": "oxfmt",
-    "openapi-ts": "openapi-ts && npm run format",
-    "openapi-ts:local": "openapi-ts -f openapi-ts.config.local.ts && tsx scripts/cleanup-local-openapi.ts && npm run format",
+    "openapi-ts": "openapi-ts && pnpm format",
+    "openapi-ts:local": "openapi-ts -f openapi-ts.config.local.ts && tsx scripts/cleanup-local-openapi.ts && pnpm format",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "coverage:extract": "tsx scripts/extract-coverage.ts",
-    "prepare": "npm run build",
+    "prepare": "pnpm build",
     "release": "tsx scripts/release.ts",
     "release:fix": "tsx scripts/release-hotfix.ts",
     "size": "tsx scripts/analyze-bundle-size.ts",
@@ -36,6 +37,7 @@
   "engines": {
     "node": ">=20"
   },
+  "packageManager": "pnpm@11.10.0",
   "type": "module",
   "main": "dist/index.js",
   "exports": {
@@ -99,6 +101,7 @@
     "@radix-ui/react-scroll-area": "1.2.11",
     "@radix-ui/react-select": "2.3.0",
     "@radix-ui/react-tabs": "1.1.14",
+    "@remoteoss/json-schema-form": "1.2.14",
     "@remoteoss/remote-json-schema-form-kit": "0.0.21",
     "@tailwindcss/cli": "4.2.4",
     "@tailwindcss/postcss": "4.2.4",
@@ -152,6 +155,7 @@
     "oxlint": "1.70.0",
     "tsup": "8.5.1",
     "tsx": "4.22.4",
+    "typescript": "6.0.2",
     "vitest": "4.1.10"
   }
 }
