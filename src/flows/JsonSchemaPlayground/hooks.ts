@@ -32,7 +32,7 @@ export const useJsonSchemaPlayground = (
   const currentSchemaData = useMemo(() => {
     return (
       SAMPLE_SCHEMAS[state.selectedSchema as SchemaKey] ||
-      SAMPLE_SCHEMAS['simple-salary-test']
+      SAMPLE_SCHEMAS['france-wage-portage-simplified']
     );
   }, [state.selectedSchema]);
 

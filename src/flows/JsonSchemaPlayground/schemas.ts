@@ -1,8 +1,8 @@
 export const SAMPLE_SCHEMAS = {
-  'simple-salary-test': {
-    name: 'Simple Salary Test',
+  'france-wage-portage-simplified': {
+    name: 'France Wage Portage (Simplified)',
     description:
-      'Minimal schema to test annual_gross_salary and contract_duration_type conditionals',
+      'Simplified version without complex allOf conditions that hide computed fields',
     schema: {
       type: 'object',
       additionalProperties: false,
@@ -18,38 +18,29 @@ export const SAMPLE_SCHEMAS = {
           'x-jsf-presentation': {
             currency: 'EUR',
             inputType: 'money',
-            meta: {
-              helpCenter: {
-                callToAction: 'Learn more',
-                content: 'The help center content is currently unavailable.',
-                error: true,
-                id: 27657390602637,
-                title: 'Help center unavailable',
-              },
-            },
           },
         },
         contract_duration_type: {
-          title: 'Contract Duration Type',
-          description: 'Select the type of contract duration',
-          type: 'string',
+          description:
+            'Under French Wage Portage regulations, assignments with the same client are limited to 18 months for fixed-term contracts and 36 months for indefinite contracts.',
           oneOf: [
             {
               const: 'indefinite',
-              title: 'Indefinite Contract',
+              title: 'Indefinite contract (without end date)',
             },
             {
               const: 'fixed_term',
-              title: 'Fixed Term Contract',
+              title: 'Fixed-term contract (with end date)',
             },
           ],
+          title: 'Contract duration type',
+          type: 'string',
           'x-jsf-presentation': {
             inputType: 'radio',
           },
         },
         business_allowance_amount: {
-          title: 'Business Allowance Amount',
-          description: 'Computed 5% allowance based on salary',
+          title: 'Business allowance amount',
           type: 'integer',
           'x-jsf-logic-computedAttrs': {
             const: 'computed_business_allowance_amount',
@@ -67,15 +58,14 @@ export const SAMPLE_SCHEMAS = {
             inputType: 'hidden',
           },
         },
-        salary_statement: {
-          title: 'Salary Summary',
+        business_allowances_statement: {
+          title: 'Mandatory allowances',
           type: 'null',
           'x-jsf-logic-computedAttrs': {
             'x-jsf-presentation': {
               statement: {
-                title: 'Salary Summary',
                 description:
-                  'Annual gross salary: {{computed_annual_gross_salary_display}} EUR<br/>Business allowance (5%): {{computed_business_allowance_display}} EUR<br/>Contract type: {{computed_contract_duration_type_display}}<br/>{{computed_contract_info}}',
+                  "<strong>Mandatory allowances</strong><br /><br />Under French Wage Portage regulations, the following amounts are required by law. We automatically applied them based on the employee's gross salary.<br /><ul><li>Mandatory 5% allowance: {{computed_business_allowance_display}} EUR</li><li>Mandatory 10% financial reserve: {{computed_financial_reserve_display}} EUR</li><li>Annual gross salary: {{computed_annual_gross_salary_display}} EUR</li><li><strong>Total annual gross salary and mandatory allowance:</strong> {{computed_total_with_allowance_display}} EUR</li></ul>",
               },
             },
           },
@@ -83,17 +73,32 @@ export const SAMPLE_SCHEMAS = {
             inputType: 'hidden',
           },
         },
+        financial_reserve_amount: {
+          title: 'Financial reserve amount',
+          type: 'integer',
+          'x-jsf-logic-computedAttrs': {
+            const: 'computed_financial_reserve_amount',
+            default: 'computed_financial_reserve_amount',
+          },
+          'x-jsf-presentation': {
+            inputType: 'hidden',
+          },
+        },
       },
-      required: ['annual_gross_salary', 'contract_duration_type', 'business_allowance_amount', 'salary_statement'],
+      required: [
+        'annual_gross_salary',
+        'contract_duration_type',
+        'business_allowance_amount',
+        'business_allowances_statement',
+        'financial_reserve_amount',
+      ],
       'x-jsf-logic': {
         computedValues: {
           computed_annual_gross_salary_display: {
             rule: {
               if: [
                 { var: 'annual_gross_salary' },
-                {
-                  '/': [{ var: 'annual_gross_salary' }, 100],
-                },
+                { '/': [{ var: 'annual_gross_salary' }, 100] },
                 null,
               ],
             },
@@ -102,9 +107,7 @@ export const SAMPLE_SCHEMAS = {
             rule: {
               if: [
                 { var: 'annual_gross_salary' },
-                {
-                  '*': [{ var: 'annual_gross_salary' }, 0.05],
-                },
+                { '*': [{ var: 'annual_gross_salary' }, 0.05] },
                 null,
               ],
             },
@@ -112,63 +115,47 @@ export const SAMPLE_SCHEMAS = {
           computed_business_allowance_display: {
             rule: {
               if: [
-                { var: 'annual_gross_salary' },
-                {
-                  '/': [{ '*': [{ var: 'annual_gross_salary' }, 0.05] }, 100],
-                },
+                { var: 'business_allowance_amount' },
+                { '/': [{ var: 'business_allowance_amount' }, 100] },
                 null,
               ],
             },
           },
-          computed_contract_duration_type_display: {
+          computed_financial_reserve_amount: {
             rule: {
               if: [
-                { var: 'contract_duration_type' },
-                {
-                  if: [
-                    { '==': [{ var: 'contract_duration_type' }, 'indefinite'] },
-                    'Indefinite Contract',
-                    {
-                      if: [
-                        {
-                          '==': [
-                            { var: 'contract_duration_type' },
-                            'fixed_term',
-                          ],
-                        },
-                        'Fixed Term Contract',
-                        { var: 'contract_duration_type' },
-                      ],
-                    },
-                  ],
-                },
-                'Not Selected',
+                { var: 'annual_gross_salary' },
+                { '*': [{ var: 'annual_gross_salary' }, 0.1] },
+                null,
               ],
             },
           },
-          computed_contract_info: {
+          computed_financial_reserve_display: {
             rule: {
               if: [
-                { var: 'contract_duration_type' },
+                { var: 'financial_reserve_amount' },
+                { '/': [{ var: 'financial_reserve_amount' }, 100] },
+                null,
+              ],
+            },
+          },
+          computed_total_with_allowance_display: {
+            rule: {
+              if: [
+                { var: 'annual_gross_salary' },
                 {
-                  if: [
-                    { '==': [{ var: 'contract_duration_type' }, 'indefinite'] },
-                    '✅ This indefinite contract provides job security and continuous employment.',
+                  '/': [
                     {
-                      if: [
-                        {
-                          '==': [
-                            { var: 'contract_duration_type' },
-                            'fixed_term',
-                          ],
-                        },
-                        '📅 This fixed-term contract has a specific end date.',
-                        '',
+                      '+': [
+                        { var: 'annual_gross_salary' },
+                        { var: 'business_allowance_amount' },
+                        { var: 'financial_reserve_amount' },
                       ],
                     },
+                    100,
                   ],
                 },
-                '',
+                null,
               ],
             },
           },
