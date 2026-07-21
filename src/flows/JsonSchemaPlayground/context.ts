@@ -8,7 +8,8 @@ export interface JsonSchemaPlaygroundContextValue {
   playgroundBag: ReturnType<typeof useJsonSchemaPlayground>;
 }
 
-export const JsonSchemaPlaygroundContext = createContext<JsonSchemaPlaygroundContextValue | null>(null);
+export const JsonSchemaPlaygroundContext =
+  createContext<JsonSchemaPlaygroundContextValue | null>(null);
 
 export const useJsonSchemaPlaygroundContext = () => {
   const context = useContext(JsonSchemaPlaygroundContext);

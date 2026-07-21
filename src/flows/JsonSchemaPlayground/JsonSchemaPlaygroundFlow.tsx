@@ -6,7 +6,10 @@ import { useJsonSchemaPlayground } from './hooks';
 import { JsonSchemaPlaygroundForm } from './JsonSchemaPlaygroundForm';
 import { JsonSchemaPlaygroundSubmitButton } from './JsonSchemaPlaygroundSubmitButton';
 import { JsonSchemaPlaygroundResetButton } from './JsonSchemaPlaygroundResetButton';
-import { UseJsonSchemaPlaygroundOptions, JsonSchemaPlaygroundRenderProps } from './types';
+import {
+  UseJsonSchemaPlaygroundOptions,
+  JsonSchemaPlaygroundRenderProps,
+} from './types';
 
 export interface JsonSchemaPlaygroundFlowProps extends UseJsonSchemaPlaygroundOptions {
   render: (renderProps: JsonSchemaPlaygroundRenderProps) => React.ReactNode;
@@ -20,7 +23,7 @@ export const JsonSchemaPlaygroundFlow = ({
   render,
 }: JsonSchemaPlaygroundFlowProps) => {
   const formId = useId();
-  
+
   const playgroundBag = useJsonSchemaPlayground({
     defaultSchema,
     initialValues,

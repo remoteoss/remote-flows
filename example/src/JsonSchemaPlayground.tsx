@@ -8,7 +8,7 @@ export const JsonSchemaPlayground = () => {
   // Sample initial values for demonstration
   const sampleInitialValues = {
     firstName: 'John',
-    lastName: 'Doe', 
+    lastName: 'Doe',
     email: 'john.doe@example.com',
     age: 30,
     country: 'US',

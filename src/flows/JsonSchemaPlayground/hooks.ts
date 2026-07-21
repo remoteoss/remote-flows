@@ -12,7 +12,12 @@ import {
 export const useJsonSchemaPlayground = (
   options: UseJsonSchemaPlaygroundOptions = {},
 ) => {
-  const { defaultSchema = 'simple-user-profile', initialValues = {}, onSubmit, onError } = options;
+  const {
+    defaultSchema = 'simple-user-profile',
+    initialValues = {},
+    onSubmit,
+    onError,
+  } = options;
 
   const [state, setState] = useState<JsonSchemaPlaygroundState>({
     selectedSchema: defaultSchema,
@@ -46,10 +51,13 @@ export const useJsonSchemaPlayground = (
   }, [currentSchemaData.schema, fieldValues, onError]);
 
   // Handle schema selection
-  const handleSchemaChange = useCallback((schemaKey: string) => {
-    setState((prev) => ({ ...prev, selectedSchema: schemaKey }));
-    setFieldValues(initialValues);
-  }, [initialValues]);
+  const handleSchemaChange = useCallback(
+    (schemaKey: string) => {
+      setState((prev) => ({ ...prev, selectedSchema: schemaKey }));
+      setFieldValues(initialValues);
+    },
+    [initialValues],
+  );
 
   // Handle form submission
   const handleSubmit = useCallback(

@@ -19,7 +19,7 @@ export function JsonSchemaPlaygroundResetButton({
   return (
     <CustomButton
       {...props}
-      type="reset"
+      type='reset'
       className={cn(
         'RemoteFlows__JsonSchemaPlayground__ResetButton',
         props.className,
