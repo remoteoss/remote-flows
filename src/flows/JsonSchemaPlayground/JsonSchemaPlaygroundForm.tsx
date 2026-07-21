@@ -10,6 +10,10 @@ export interface JsonSchemaPlaygroundFormProps {
   onValidationError?: (errors: string[]) => void;
   className?: string;
   components?: Components;
+<<<<<<< HEAD
+=======
+  defaultValues?: Record<string, unknown>;
+>>>>>>> main
 }
 
 export const JsonSchemaPlaygroundForm = ({
