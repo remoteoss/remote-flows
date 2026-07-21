@@ -253,7 +253,7 @@ export const JsonSchemaPlayground = () => {
                     <button
                       onClick={() => {
                         navigator.clipboard.writeText(
-                          JSON.stringify(playgroundBag.parsedValues, null, 2)
+                          JSON.stringify(playgroundBag.parsedValues, null, 2),
                         );
                         setShowCopyToast(true);
                         setTimeout(() => setShowCopyToast(false), 2000);
