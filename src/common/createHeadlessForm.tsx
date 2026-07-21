@@ -3,11 +3,50 @@ import {
   createHeadlessForm as baseCreateHeadlessForm,
   modify,
 } from '@remoteoss/remote-json-schema-form-kit';
+import { convertToCents } from '@/src/components/form/utils';
 import {
   JSFModify,
   JSONSchemaFormResultWithFieldsets,
 } from '@/src/flows/types';
+import { findFieldsByType } from '@/src/flows/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
+
+/**
+ * Extracts money fields that have default values (which are already in cents)
+ */
+function extractMoneyDefaults(schema: Record<string, unknown>): {
+  fieldsWithDefaults: Set<string>;
+} {
+  const properties = ((schema as { properties?: Record<string, unknown> })
+    ?.properties ?? {}) as Record<string, unknown>;
+  const fieldsWithDefaults = new Set<string>();
+
+  Object.entries(properties).forEach(([key, prop]) => {
+    const propObj = prop as Record<string, unknown>;
+    const presentation = propObj?.['x-jsf-presentation'] as
+      | Record<string, unknown>
+      | undefined;
+    const isMoney = presentation?.inputType === 'money';
+    if (isMoney && propObj?.default !== undefined) {
+      fieldsWithDefaults.add(key);
+    }
+  });
+
+  return { fieldsWithDefaults };
+}
+
+/**
+ * Gets the default value for a field from the schema
+ */
+function getFieldDefault(
+  schema: Record<string, unknown>,
+  fieldName: string,
+): unknown {
+  const properties = ((schema as { properties?: Record<string, unknown> })
+    ?.properties ?? {}) as Record<string, unknown>;
+  const field = properties[fieldName] as Record<string, unknown> | undefined;
+  return field?.default;
+}
 
 /*
  * Creates a headless form from a JSON Schema, useful to avoid code duplication when creating headless forms.
@@ -57,6 +96,33 @@ export const createHeadlessForm = (
     }
   }
 
+  let moneyFieldsData: Record<string, number | null> = {};
+
+  if (fieldValues) {
+    const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
+    const { fieldsWithDefaults } = extractMoneyDefaults(jsfSchema);
+
+    moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
+      (acc, field) => {
+        // If field has a default value and the current value matches it,
+        // don't convert to cents as it's already in cents
+        if (
+          fieldsWithDefaults.has(field) &&
+          fieldValues[field] === getFieldDefault(jsfSchema, field)
+        ) {
+          acc[field] = fieldValues[field] as number;
+        } else {
+          acc[field] = convertToCents(fieldValues[field]);
+        }
+        return acc;
+      },
+      {},
+    );
+  }
+
+  console.log('moneyFieldsData', moneyFieldsData);
+  console.log('fieldValues', fieldValues);
+
   /**
    * We create a deep copy of the field values to avoid modifying the original object.
    * This problem is caused by json-schema-form-v0.
@@ -64,6 +130,7 @@ export const createHeadlessForm = (
   const initialValues = JSON.parse(
     JSON.stringify({
       ...fieldValues,
+      ...moneyFieldsData,
     }),
   );
 
