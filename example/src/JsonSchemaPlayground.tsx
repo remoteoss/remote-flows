@@ -15,7 +15,7 @@ export const JsonSchemaPlayground = () => {
       proxy={{ url: window.location.origin }}
     >
       <JsonSchemaPlaygroundFlow
-        defaultSchema='simple-salary-test'
+        defaultSchema='france-wage-portage-simplified'
         initialValues={SIMPLE_SALARY_TEST_INITIAL_VALUES}
         onSubmit={(values) => {
           console.log('Form submitted:', values);
@@ -246,10 +246,10 @@ export const JsonSchemaPlayground = () => {
               <div className='px-6 pb-4 space-y-4'>
                 <div>
                   <h4 className='text-sm font-medium text-yellow-900 mb-2'>
-                    Current Field Values:
+                    Parsed Values (after JSON Logic):
                   </h4>
                   <pre className='text-xs bg-white p-4 rounded border overflow-auto max-h-48'>
-                    {JSON.stringify(playgroundBag.fieldValues, null, 2)}
+                    {JSON.stringify(playgroundBag.parsedValues, null, 2)}
                   </pre>
                 </div>
 

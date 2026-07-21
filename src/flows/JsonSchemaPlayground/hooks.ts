@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { parseJSFToValidate } from '@/src/components/form/utils';
@@ -27,6 +27,7 @@ export const useJsonSchemaPlayground = (
   });
 
   const [fieldValues, setFieldValues] = useState<FieldValues>(initialValues);
+  const [parsedValues, setParsedValues] = useState<FieldValues>({});
 
   // Get current schema
   const currentSchemaData = useMemo(() => {
@@ -49,6 +50,27 @@ export const useJsonSchemaPlayground = (
       throw error;
     }
   }, [currentSchemaData.schema, fieldValues, onError]);
+
+  // Parse initial values when headless form is ready and fieldValues change
+  useEffect(() => {
+    const parseInitialValues = async () => {
+      if (headlessForm.fields && fieldValues && Object.keys(fieldValues).length > 0) {
+        try {
+          const parsed = await parseJSFToValidate(
+            fieldValues,
+            headlessForm.fields,
+            { isPartialValidation: false },
+          );
+          setParsedValues(parsed);
+        } catch (error) {
+          console.error('Error parsing initial values:', error);
+          setParsedValues({});
+        }
+      }
+    };
+
+    parseInitialValues();
+  }, [headlessForm.fields, fieldValues]);
 
   // Handle schema selection
   const handleSchemaChange = useCallback(
@@ -121,6 +143,8 @@ export const useJsonSchemaPlayground = (
         headlessForm.fields,
         { isPartialValidation: false },
       );
+      // Store the parsed values for debugging
+      setParsedValues(parsedValues);
       const result = await headlessForm.handleValidation(parsedValues);
       return result;
     },
@@ -128,13 +152,17 @@ export const useJsonSchemaPlayground = (
   );
 
   const parseFormValues = useCallback(
-    async (values: FieldValues): Promise<Record<string, unknown>> => {
-      if (!headlessForm.fields) return values;
-      return parseJSFToValidate(values, headlessForm.fields, {
-        isPartialValidation: false,
-      });
+    async (values: FieldValues) => {
+      if (!headlessForm.fields) {
+        return values;
+      }
+      return parseJSFToValidate(
+        values,
+        headlessForm.fields,
+        { isPartialValidation: false },
+      );
     },
-    [headlessForm],
+    [headlessForm.fields],
   );
 
   return {
@@ -144,6 +172,7 @@ export const useJsonSchemaPlayground = (
     isSubmitting: state.isSubmitting,
     submittedResults: state.submittedResults,
     fieldValues,
+    parsedValues,
 
     // Schema data
     currentSchemaData,
