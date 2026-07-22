@@ -412,8 +412,10 @@ export async function parseFormValuesToAPI(
         }
       }
 
-      if (field.forcedValue !== undefined) {
-        acc[field.name!] = field.forcedValue;
+      // this occurs when const === default in a JSON Schema for a given field.
+      // without this, values such as money types won't use the correct value.
+      if (field.const !== undefined && field.const === field.default) {
+        acc[field.name!] = field.const;
       }
 
       return acc;

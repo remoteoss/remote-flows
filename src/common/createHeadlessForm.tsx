@@ -8,6 +8,8 @@ import {
   JSONSchemaFormResultWithFieldsets,
 } from '@/src/flows/types';
 import { JSFFieldset } from '@/src/types/remoteFlows';
+import { findFieldsByType } from '@/src/flows/utils';
+import { convertToCents } from '@/src/components/form/utils';
 
 /*
  * Creates a headless form from a JSON Schema, useful to avoid code duplication when creating headless forms.
@@ -57,6 +59,19 @@ export const createHeadlessForm = (
     }
   }
 
+  let moneyFieldsData: Record<string, number | null> = {};
+
+  if (fieldValues) {
+    const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
+    moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
+      (acc, field) => {
+        acc[field] = convertToCents(fieldValues[field]);
+        return acc;
+      },
+      {},
+    );
+  }
+
   /**
    * We create a deep copy of the field values to avoid modifying the original object.
    * This problem is caused by json-schema-form-v0.
@@ -64,6 +79,7 @@ export const createHeadlessForm = (
   const initialValues = JSON.parse(
     JSON.stringify({
       ...fieldValues,
+      ...moneyFieldsData,
     }),
   );
 
