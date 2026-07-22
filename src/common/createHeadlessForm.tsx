@@ -83,6 +83,7 @@ export const createHeadlessForm = (
   const initialValues = JSON.parse(
     JSON.stringify({
       ...fieldValues,
+      ...moneyFieldsData,
     }),
   );
   const headlessForm = baseCreateHeadlessForm(jsfSchema, {
