@@ -14,25 +14,16 @@ if (!commitHash) {
 pkg.dependencies['@remoteoss/remote-flows'] =
   `github:remoteoss/remote-flows#${commitHash}`;
 
+// Vercel builds with npm (see vercel.json), but its serverless-functions
+// phase runs its own dependency install and auto-detects the package manager
+// from `packageManager`/`pnpm-lock.yaml`. Detected pnpm + CI means a frozen
+// install, which can never match a manifest rewritten to a per-commit git
+// ref. Strip the pnpm markers from the (ephemeral) deploy workspace so every
+// phase resolves to npm — the repo itself stays pnpm for dev and CI.
+delete pkg.packageManager;
+for (const file of ['pnpm-lock.yaml', 'pnpm-workspace.yaml']) {
+  fs.rmSync(path.join(__dirname, '..', file), { force: true });
+}
+
 fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
 console.log(`✅ Set @remoteoss/remote-flows to commit hash ${commitHash}`);
-
-// pnpm refuses to run a git-hosted dependency's `prepare` script unless the
-// exact `name@<resolved tarball url>` is in `allowBuilds` — a plain package
-// name is deliberately ignored for non-registry deps (untrusted identity).
-// The SHA changes on every deploy, so the entry has to be written here.
-const workspacePath = path.join(__dirname, '..', 'pnpm-workspace.yaml');
-const tarballUrl = `https://codeload.github.com/remoteoss/remote-flows/tar.gz/${commitHash}`;
-const workspace = fs.readFileSync(workspacePath, 'utf8');
-if (!/^allowBuilds:$/m.test(workspace)) {
-  console.error('❌ No `allowBuilds:` key found in pnpm-workspace.yaml');
-  process.exit(1);
-}
-fs.writeFileSync(
-  workspacePath,
-  workspace.replace(
-    /^allowBuilds:$/m,
-    `allowBuilds:\n  '@remoteoss/remote-flows@${tarballUrl}': true`,
-  ),
-);
-console.log(`✅ Allowed build of @remoteoss/remote-flows@${tarballUrl}`);
