@@ -1,6 +1,3 @@
-import { SupportedTypes } from '../components/form/fields/types';
-import { $TSFixMe } from '@/src/types/remoteFlows';
-
 type ParsedRadioValues = Record<string, unknown>;
 
 /**
@@ -33,20 +30,53 @@ export function parseFormRadioValues(
   );
 }
 
-export function findFieldsByType(
-  fields: Record<string, $TSFixMe>,
-  type: SupportedTypes,
-) {
-  const fieldsNames = [];
-  for (const [key, value] of Object.entries(fields)) {
-    // old schemas use type, new schemas use inputType
-    // as probably we need to support both for now, that's why we check both
-    if (
-      value['x-jsf-presentation'].type === type ||
-      value['x-jsf-presentation'].inputType === type
-    ) {
-      fieldsNames.push(key);
-    }
-  }
-  return fieldsNames;
+/**
+ * Checks if a field can become computed based on allOf conditions.
+ * Searches through all conditional "then" branches for x-jsf-logic-computedAttrs.
+ */
+function isConditionallyComputedField(
+  fieldName: string,
+  schema: Record<string, unknown>,
+): boolean {
+  const allOfRules = schema.allOf;
+  if (!Array.isArray(allOfRules)) return false;
+  // Check each allOf rule's "then" branch for computedAttrs on this field
+  return allOfRules.some((rule) => {
+    const thenBranch = rule.then;
+    if (!thenBranch?.properties) return false;
+    const fieldInThen = thenBranch.properties[fieldName];
+    return fieldInThen?.['x-jsf-logic-computedAttrs'] !== undefined;
+  });
+}
+/**
+ * Checks if a field has static (unconditional) computed attributes.
+ */
+function hasStaticComputedAttrs(fieldSchema: Record<string, unknown>): boolean {
+  return fieldSchema?.['x-jsf-logic-computedAttrs'] !== undefined;
+}
+/**
+ * Finds all input money fields (excluding computed ones).
+ * Checks both static properties and conditional allOf branches.
+ */
+export function findInputMoneyFields(
+  schema: Record<string, unknown>,
+): string[] {
+  const properties = schema.properties || {};
+
+  return Object.entries(properties)
+    .filter(([fieldName, fieldSchema]) => {
+      const isMoney =
+        (
+          fieldSchema as Record<string, unknown> & {
+            'x-jsf-presentation': { inputType: string };
+          }
+        )?.['x-jsf-presentation']?.inputType === 'money';
+      if (!isMoney) return false;
+      // Check if field has static computed attributes
+      if (hasStaticComputedAttrs(fieldSchema)) return false;
+      // Check if field becomes computed in any allOf condition
+      if (isConditionallyComputedField(fieldName, schema)) return false;
+      return true;
+    })
+    .map(([fieldName]) => fieldName);
 }

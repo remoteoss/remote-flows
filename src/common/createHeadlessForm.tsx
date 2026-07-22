@@ -8,7 +8,7 @@ import {
   JSONSchemaFormResultWithFieldsets,
 } from '@/src/flows/types';
 import { JSFFieldset } from '@/src/types/remoteFlows';
-import { findFieldsByType } from '@/src/flows/utils';
+import { findInputMoneyFields } from '@/src/flows/utils';
 import { convertToCents } from '@/src/components/form/utils';
 
 /*
@@ -62,7 +62,9 @@ export const createHeadlessForm = (
   let moneyFieldsData: Record<string, number | null> = {};
 
   if (fieldValues) {
-    const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
+    const moneyFields = findInputMoneyFields(
+      jsfSchema as Record<string, unknown>,
+    );
     moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
       (acc, field) => {
         acc[field] = convertToCents(fieldValues[field]);
@@ -82,6 +84,8 @@ export const createHeadlessForm = (
       ...moneyFieldsData,
     }),
   );
+
+  console.log('initialValues for createHeadlessForm', initialValues);
 
   return {
     meta: {
