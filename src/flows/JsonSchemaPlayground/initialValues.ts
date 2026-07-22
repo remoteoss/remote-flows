@@ -6,3 +6,9 @@ export const SIMPLE_USER_PROFILE_INITIAL_VALUES = {
   country: 'US',
   subscribe: true,
 };
+
+export const SIMPLE_SALARY_TEST_INITIAL_VALUES = {
+  annual_gross_salary: 30_000 * 100,
+  contract_duration_type: 'indefinite',
+  has_wage_portage_higher_degree: 'yes',
+};
