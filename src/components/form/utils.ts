@@ -246,7 +246,14 @@ export const fieldTypesTransformations: Record<string, $TSFixMe> = {
   [supportedTypes.MONEY]: {
     transformValueFromAPI: () => (value: string | number) =>
       convertFromCents(value) ?? '',
-    transformValueToAPI: () => convertToCents,
+    transformValueToAPI: (field: $TSFixMe) => {
+      return (value: string | number) => {
+        if (field.const && field.default && field.const === field.default) {
+          return value;
+        }
+        return convertToCents(value);
+      };
+    },
   },
   [supportedTypes.CHECKBOX]: {
     transformValueToAPI: (field: $TSFixMe) => (value: string | boolean) => {
@@ -576,6 +583,7 @@ export async function parseJSFToValidate(
     isPartialValidation: false,
   },
 ) {
+  console.log('parseJSFToValidate', formValues);
   const valuesParsed = await parseSubmitValues(formValues, fields, {
     /* We cannot exclude invisible fields (excludeValuesInvisible) because
           they are needed for conditional fields validations */

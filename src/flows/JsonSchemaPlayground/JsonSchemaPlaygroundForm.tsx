@@ -32,9 +32,8 @@ export const JsonSchemaPlaygroundForm = ({
   }, []);
 
   const handleFormSubmit = async (values: Record<string, unknown>) => {
-    const parsedValues = await playgroundBag.parseFormValues(values);
-    await playgroundBag.handleSubmit(parsedValues);
-    onSubmit?.(parsedValues);
+    await playgroundBag.handleSubmit(values);
+    onSubmit?.(values);
   };
 
   return (

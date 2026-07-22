@@ -132,16 +132,6 @@ export const useJsonSchemaPlayground = (
     [headlessForm],
   );
 
-  const parseFormValues = useCallback(
-    async (values: FieldValues): Promise<Record<string, unknown>> => {
-      if (!headlessForm.fields) return values;
-      return parseJSFToValidate(values, headlessForm.fields, {
-        isPartialValidation: false,
-      });
-    },
-    [headlessForm],
-  );
-
   const initialValues = useMemo(() => {
     return getInitialValues(headlessForm.fields, fieldValues);
   }, [headlessForm.fields, fieldValues]);
@@ -182,6 +172,5 @@ export const useJsonSchemaPlayground = (
 
     // Validation
     handleValidation,
-    parseFormValues,
   };
 };
