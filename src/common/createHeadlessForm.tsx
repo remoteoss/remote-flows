@@ -85,8 +85,6 @@ export const createHeadlessForm = (
     }),
   );
 
-  console.log('initialValues for createHeadlessForm', initialValues);
-
   return {
     meta: {
       // Support for both x-jsf-fieldsets and x-rmt-flatFieldsets
