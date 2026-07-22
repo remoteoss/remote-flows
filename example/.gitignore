@@ -10,3 +10,7 @@ dist
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# tsc -b emits e2e specs as sibling .js (tsconfig.e2e.json has no noEmit/outDir)
+/e2e/**/*.js
+*.tsbuildinfo
