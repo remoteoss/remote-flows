@@ -583,7 +583,6 @@ export async function parseJSFToValidate(
     isPartialValidation: false,
   },
 ) {
-  console.log('parseJSFToValidate', formValues);
   const valuesParsed = await parseSubmitValues(formValues, fields, {
     /* We cannot exclude invisible fields (excludeValuesInvisible) because
           they are needed for conditional fields validations */
