@@ -1,7 +1,10 @@
 import { useState, useCallback, useMemo } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
-import { parseJSFToValidate } from '@/src/components/form/utils';
+import {
+  getInitialValues,
+  parseJSFToValidate,
+} from '@/src/components/form/utils';
 import { SAMPLE_SCHEMAS, SchemaKey } from './schemas';
 import {
   JsonSchemaPlaygroundResult,
@@ -14,7 +17,7 @@ export const useJsonSchemaPlayground = (
 ) => {
   const {
     defaultSchema = 'simple-user-profile',
-    initialValues = {},
+    initialValues: jsonSchemaInitialValues = {},
     onSubmit,
     onError,
   } = options;
@@ -26,7 +29,9 @@ export const useJsonSchemaPlayground = (
     isSubmitting: false,
   });
 
-  const [fieldValues, setFieldValues] = useState<FieldValues>(initialValues);
+  const [fieldValues, setFieldValues] = useState<FieldValues>(
+    jsonSchemaInitialValues,
+  );
 
   // Get current schema
   const currentSchemaData = useMemo(() => {
@@ -54,9 +59,9 @@ export const useJsonSchemaPlayground = (
   const handleSchemaChange = useCallback(
     (schemaKey: string) => {
       setState((prev) => ({ ...prev, selectedSchema: schemaKey }));
-      setFieldValues(initialValues);
+      setFieldValues(jsonSchemaInitialValues);
     },
-    [initialValues],
+    [jsonSchemaInitialValues],
   );
 
   // Handle form submission
@@ -102,8 +107,8 @@ export const useJsonSchemaPlayground = (
 
   // Handle form reset
   const handleReset = useCallback(() => {
-    setFieldValues(initialValues);
-  }, [initialValues]);
+    setFieldValues(jsonSchemaInitialValues);
+  }, [jsonSchemaInitialValues]);
 
   // Clear results
   const clearResults = useCallback(() => {
@@ -137,6 +142,10 @@ export const useJsonSchemaPlayground = (
     [headlessForm],
   );
 
+  const initialValues = useMemo(() => {
+    return getInitialValues(headlessForm.fields, fieldValues);
+  }, [headlessForm.fields, fieldValues]);
+
   return {
     // State
     selectedSchema: state.selectedSchema,
@@ -144,6 +153,7 @@ export const useJsonSchemaPlayground = (
     isSubmitting: state.isSubmitting,
     submittedResults: state.submittedResults,
     fieldValues,
+    initialValues,
 
     // Schema data
     currentSchemaData,

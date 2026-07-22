@@ -16,13 +16,12 @@ export const JsonSchemaPlaygroundForm = ({
   onSubmit,
   className,
   components,
-  defaultValues = {},
 }: JsonSchemaPlaygroundFormProps) => {
   const { formId, playgroundBag } = useJsonSchemaPlaygroundContext();
 
   const form = useJSONSchemaForm({
     handleValidation: playgroundBag.handleValidation,
-    defaultValues: defaultValues,
+    defaultValues: playgroundBag.initialValues,
     checkFieldUpdates: playgroundBag.checkFieldUpdates,
   });
 
