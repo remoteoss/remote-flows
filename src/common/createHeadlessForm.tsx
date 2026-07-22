@@ -8,8 +8,8 @@ import {
   JSFModify,
   JSONSchemaFormResultWithFieldsets,
 } from '@/src/flows/types';
-import { findFieldsByType } from '@/src/flows/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
+import { findInputMoneyFields } from '@/src/flows/utils';
 
 /*
  * Creates a headless form from a JSON Schema, useful to avoid code duplication when creating headless forms.
@@ -58,14 +58,17 @@ export const createHeadlessForm = (
       ];
     }
   }
-
   let moneyFieldsData: Record<string, number | null> = {};
 
   if (fieldValues) {
-    const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
-    moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
-      (acc, field) => {
-        acc[field] = convertToCents(fieldValues[field]);
+    // Find input money fields, excluding any that can become computed
+    const inputMoneyFields = findInputMoneyFields(
+      jsfSchema as Record<string, unknown>,
+    );
+
+    moneyFieldsData = inputMoneyFields.reduce<Record<string, number | null>>(
+      (acc, fieldName) => {
+        acc[fieldName] = convertToCents(fieldValues[fieldName]);
         return acc;
       },
       {},
@@ -82,6 +85,9 @@ export const createHeadlessForm = (
       ...moneyFieldsData,
     }),
   );
+  const headlessForm = baseCreateHeadlessForm(jsfSchema, {
+    initialValues,
+  });
 
   return {
     meta: {
@@ -95,8 +101,6 @@ export const createHeadlessForm = (
         | Record<string, unknown>
         | undefined,
     },
-    ...baseCreateHeadlessForm(jsfSchema, {
-      initialValues,
-    }),
+    ...headlessForm,
   };
 };
