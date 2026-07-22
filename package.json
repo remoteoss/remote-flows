@@ -22,7 +22,7 @@
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "coverage:extract": "tsx scripts/extract-coverage.ts",
-    "prepare": "pnpm build",
+    "prepare": "npm run build",
     "release": "tsx scripts/release.ts",
     "release:fix": "tsx scripts/release-hotfix.ts",
     "size": "tsx scripts/analyze-bundle-size.ts",

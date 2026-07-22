@@ -4,5 +4,5 @@
   "github": {
     "enabled": false
   },
-  "installCommand": "node scripts/set-commit-hash.js && { pnpm install --no-frozen-lockfile 2>&1; echo $? > /tmp/pnpm_rc; } | while IFS= read -r l; do printf '%s %s\n' \"$(date +%T)\" \"$l\"; done; exit $(cat /tmp/pnpm_rc)"
+  "installCommand": "node scripts/set-commit-hash.js && npm install"
 }
