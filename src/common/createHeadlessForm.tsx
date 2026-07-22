@@ -3,13 +3,13 @@ import {
   createHeadlessForm as baseCreateHeadlessForm,
   modify,
 } from '@remoteoss/remote-json-schema-form-kit';
-import { convertToCents } from '@/src/components/form/utils';
 import {
   JSFModify,
   JSONSchemaFormResultWithFieldsets,
 } from '@/src/flows/types';
 import { JSFFieldset } from '@/src/types/remoteFlows';
 import { findInputMoneyFields } from '@/src/flows/utils';
+import { convertToCents } from '@/src/components/form/utils';
 
 /*
  * Creates a headless form from a JSON Schema, useful to avoid code duplication when creating headless forms.
@@ -58,6 +58,7 @@ export const createHeadlessForm = (
       ];
     }
   }
+
   let moneyFieldsData: Record<string, number | null> = {};
 
   if (fieldValues) {
@@ -82,7 +83,6 @@ export const createHeadlessForm = (
   const initialValues = JSON.parse(
     JSON.stringify({
       ...fieldValues,
-      ...moneyFieldsData,
     }),
   );
   const headlessForm = baseCreateHeadlessForm(jsfSchema, {

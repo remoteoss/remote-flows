@@ -136,6 +136,10 @@ export const useJsonSchemaPlayground = (
     return getInitialValues(headlessForm.fields, fieldValues);
   }, [headlessForm.fields, fieldValues]);
 
+  const initialValues = useMemo(() => {
+    return getInitialValues(headlessForm.fields, fieldValues);
+  }, [headlessForm.fields, fieldValues]);
+
   return {
     // State
     selectedSchema: state.selectedSchema,
