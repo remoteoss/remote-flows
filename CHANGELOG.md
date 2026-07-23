@@ -1,5 +1,18 @@
 # @remoteoss/remote-flows
 
+## 1.44.0
+
+### Minor Changes
+
+- fix conditionals by using inputType (#1175) [#1175](https://github.com/remoteoss/remote-flows/pull/1175)
+- Playground for json schemas (#1176) [#1176](https://github.com/remoteoss/remote-flows/pull/1176)
+- fix conditionals and fieldsets (#1177) [#1177](https://github.com/remoteoss/remote-flows/pull/1177)
+- Add initial values to playground (#1180) [#1180](https://github.com/remoteoss/remote-flows/pull/1180)
+- update dependency dompurify to v3.4.12 [security]
+- fix the step when devs skip country (#1184) [#1184](https://github.com/remoteoss/remote-flows/pull/1184)
+- update dependency axios to v1.18.1 (#1129) [#1129](https://github.com/remoteoss/remote-flows/pull/1129)
+- update dependency @vitejs/plugin-react to v6.0.3 (#1131) [#1131](https://github.com/remoteoss/remote-flows/pull/1131)
+
 ## 1.43.0
 
 ### Minor Changes
