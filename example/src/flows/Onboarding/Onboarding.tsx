@@ -7,15 +7,61 @@ import {
   EmploymentCreationResponse,
   EmploymentResponse,
   ContractDetailsFormPayload,
+  SelectCountrySuccess,
+  SelectCountryFormPayload,
   NormalizedFieldError,
+  EngagementAgreementDetailsFormPayload,
+  ZendeskTriggerButton,
+  zendeskArticles,
+  $TSFixMe,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
-import { RemoteFlows } from './RemoteFlows';
-import { ReviewOnboardingStep } from './ReviewOnboardingStep';
+import { Card } from '@remoteoss/remote-flows/internals';
+import { ReviewOnboardingStep } from '../../ReviewOnboardingStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
-import { AlertError } from './AlertError';
-import './css/main.css';
+import { RemoteFlows } from '../../RemoteFlows';
+import { AlertError } from '../../AlertError';
+import { transformHtmlToComponents } from '../../utils/transformHtml';
+import { sanitizeHtml } from '@remoteoss/remote-flows/internals';
+import { ONBOARDING_OPTIONS } from './constants';
+import { StepsNavigation } from './StepsNavigation';
+import '../../css/main.css';
+import { PreviewEmploymentAgreementStep } from './PreviewEmploymentAgreementStep';
 
+const BenefitsAboutSection = ({
+  description,
+  url,
+}: {
+  description?: string;
+  url?: string;
+}) => {
+  if (!description) {
+    return null;
+  }
+
+  return (
+    <Card className='space-y-4 p-6 mb-4'>
+      <h2 className='text-xl font-semibold text-gray-900'>About</h2>
+      <div
+        className='prose prose-sm max-w-none text-xs text-gray-700 leading-relaxed space-y-4'
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
+      />
+      {url && (
+        <p className='text-xs text-gray-700 leading-relaxed space-y-4'>
+          Want more details on benefits?{' '}
+          <a
+            href={url}
+            className='inline-block text-blue-600 hover:text-blue-700 hover:underline text-xs mt-2'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            Check our guide
+          </a>
+        </p>
+      )}
+    </Card>
+  );
+};
 export const InviteSection = ({
   title,
   description,
@@ -33,12 +79,6 @@ export const InviteSection = ({
     </div>
   );
 };
-const STEPS = [
-  'Basic Information',
-  'Contract Details',
-  'Benefits',
-  'Review & Invite',
-];
 
 type MultiStepFormProps = {
   onboardingBag: OnboardingRenderProps['onboardingBag'];
@@ -52,7 +92,8 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     BenefitsStep,
     SubmitButton,
     BackButton,
-    SaveDraftButton,
+    SelectCountryStep,
+    EngagementAgreementDetailsStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -63,6 +104,31 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
   });
 
   switch (onboardingBag.stepState.currentStep.name) {
+    case 'select_country':
+      return (
+        <>
+          <SelectCountryStep
+            onSubmit={(payload: SelectCountryFormPayload) =>
+              console.log('payload', payload)
+            }
+            onSuccess={(response: SelectCountrySuccess) =>
+              console.log('response', response)
+            }
+            onError={({
+              error,
+              fieldErrors,
+            }: {
+              error: Error;
+              fieldErrors: NormalizedFieldError[];
+            }) => setErrors({ apiError: error.message, fieldErrors })}
+          />
+          <div className='buttons-container'>
+            <SubmitButton className='submit-button' variant='outline'>
+              Continue
+            </SubmitButton>
+          </div>
+        </>
+      );
     case 'basic_information':
       return (
         <>
@@ -76,44 +142,53 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             onSuccess={(data: EmploymentCreationResponse) =>
               console.log('data', data)
             }
-            onError={({
-              error,
-              fieldErrors,
-            }: {
-              error: Error;
-              fieldErrors: NormalizedFieldError[];
-            }) => {
-              setErrors({
-                apiError: error.message,
-                fieldErrors,
-              });
-            }}
+            onError={({ error, fieldErrors }) =>
+              setErrors({ apiError: error.message, fieldErrors })
+            }
           />
           <AlertError errors={errors} />
           <div className='buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Previous Step
+            </BackButton>
             <SubmitButton
               className='submit-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Create Employment & Continue
             </SubmitButton>
-            <SaveDraftButton
-              onSuccess={() => console.log('saving draft')}
-              onError={({
-                error,
-                fieldErrors,
-              }: {
-                error: Error;
-                fieldErrors: NormalizedFieldError[];
-              }) => {
-                setErrors({
-                  apiError: error.message,
-                  fieldErrors,
-                });
-              }}
+          </div>
+        </>
+      );
+    case 'engagement_agreement_details':
+      return (
+        <>
+          <EngagementAgreementDetailsStep
+            onSubmit={(payload: EngagementAgreementDetailsFormPayload) =>
+              console.log('payload', payload)
+            }
+            onSuccess={(data: SuccessResponse) => console.log('data', data)}
+            onError={({ error, fieldErrors }) =>
+              setErrors({ apiError: error.message, fieldErrors })
+            }
+          />
+          <AlertError errors={errors} />
+          <div className='buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
-              Save Draft
-            </SaveDraftButton>
+              Previous Step
+            </BackButton>
+            <SubmitButton
+              className='submit-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Continue
+            </SubmitButton>
           </div>
         </>
       );
@@ -134,12 +209,7 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             }: {
               error: Error;
               fieldErrors: NormalizedFieldError[];
-            }) => {
-              setErrors({
-                apiError: error.message,
-                fieldErrors,
-              });
-            }}
+            }) => setErrors({ apiError: error.message, fieldErrors })}
           />
           <AlertError errors={errors} />
           <div className='buttons-container'>
@@ -155,29 +225,21 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             >
               Continue
             </SubmitButton>
-            <SaveDraftButton
-              onSuccess={() => console.log('saving draft')}
-              onError={({
-                error,
-                fieldErrors,
-              }: {
-                error: Error;
-                fieldErrors: NormalizedFieldError[];
-              }) => {
-                setErrors({
-                  apiError: error.message,
-                  fieldErrors,
-                });
-              }}
-            >
-              Save Draft
-            </SaveDraftButton>
           </div>
         </>
       );
-    case 'benefits':
+
+    case 'benefits': {
+      // Example: Access schema-level presentation metadata
+      const benefitsPresentation = onboardingBag.meta.presentation;
+
       return (
         <div className='benefits-container'>
+          <BenefitsAboutSection
+            description={benefitsPresentation?.description as string}
+            url={benefitsPresentation?.url as string}
+          />
+
           <BenefitsStep
             onSubmit={(payload: BenefitsFormPayload) =>
               console.log('payload', payload)
@@ -188,14 +250,10 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             }: {
               error: Error;
               fieldErrors: NormalizedFieldError[];
-            }) => {
-              setErrors({
-                apiError: error.message,
-                fieldErrors,
-              });
-            }}
+            }) => setErrors({ apiError: error.message, fieldErrors })}
             onSuccess={(data: SuccessResponse) => console.log('data', data)}
           />
+
           <AlertError errors={errors} />
           <div className='buttons-container'>
             <BackButton
@@ -205,24 +263,78 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
               Previous Step
             </BackButton>
             <SubmitButton
-              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
               className='submit-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
             >
               Continue
             </SubmitButton>
           </div>
         </div>
       );
+    }
+    case 'employment_agreement_preview': {
+      return (
+        <PreviewEmploymentAgreementStep
+          onboardingBag={onboardingBag}
+          components={components}
+          setErrors={setErrors}
+        />
+      );
+    }
     case 'review':
       return (
         <ReviewOnboardingStep
           onboardingBag={onboardingBag}
           components={components}
-          setErrors={setErrors}
           errors={errors}
+          setErrors={setErrors}
         />
       );
   }
+};
+
+/* const STEPS = [
+  'Select Country',
+  'Basic Information',
+  'Contract Details',
+  'Benefits',
+  'Review & Invite',
+];
+ */
+
+const getStepTitle = (
+  step: OnboardingRenderProps['onboardingBag']['steps'][number],
+  selectedCountryCode: string | null,
+) => {
+  if (
+    selectedCountryCode === 'DEU' &&
+    step.name === 'engagement_agreement_details'
+  ) {
+    return 'Labor leasing in Germany';
+  }
+  return step.label;
+};
+
+const getStepDescription = (
+  step: OnboardingRenderProps['onboardingBag']['steps'][number],
+  selectedCountryCode: string | null,
+) => {
+  if (
+    selectedCountryCode === 'DEU' &&
+    step.name === 'engagement_agreement_details'
+  ) {
+    return (
+      <>
+        Provide some details about your <strong>current workforce</strong> to
+        make sure this employee is hired compliantly according to Germany’s AÜG
+        labor leasing model.
+        <ZendeskTriggerButton zendeskId={zendeskArticles.germanyLaborLeasing}>
+          Learn more
+        </ZendeskTriggerButton>
+      </>
+    );
+  }
+  return '';
 };
 
 const OnBoardingRender = ({
@@ -230,29 +342,40 @@ const OnBoardingRender = ({
   components,
 }: MultiStepFormProps) => {
   const currentStepIndex = onboardingBag.stepState.currentStep.index;
-  const stepTitle = STEPS[currentStepIndex];
+
+  // When using dynamic_steps feature, you need to filter and use step.index for comparison
+  // Otherwise, you can use the steps array directly with sequential indices
+  //const stepTitle = STEPS[currentStepIndex];
+  const stepTitle = getStepTitle(
+    onboardingBag.steps[currentStepIndex],
+    onboardingBag.selectedCountry?.code ?? null,
+  );
 
   if (onboardingBag.isLoading) {
     return <p>Loading...</p>;
   }
 
+  const stepDescription = getStepDescription(
+    onboardingBag.steps[currentStepIndex],
+    onboardingBag.selectedCountry?.code ?? null,
+  );
+
   return (
     <>
-      <div className='steps-navigation'>
-        <ul>
-          {STEPS.map((step, index) => (
-            <li
-              key={index}
-              className={`step-item ${index === currentStepIndex ? 'active' : ''}`}
-            >
-              {step}
-            </li>
-          ))}
-        </ul>
-      </div>
+      <StepsNavigation
+        steps={onboardingBag.steps}
+        stepState={onboardingBag.stepState}
+        selectedCountry={onboardingBag.selectedCountry}
+      />
 
       <div className='card' style={{ marginBottom: '20px' }}>
-        <h1 className='heading'>{stepTitle}</h1>
+        <h1 className='heading' data-testid='onboarding-step-title'>
+          {stepTitle}
+        </h1>
+
+        {stepDescription && (
+          <p className='text-sm text-[#71717A]'>{stepDescription}</p>
+        )}
         <MultiStepForm onboardingBag={onboardingBag} components={components} />
       </div>
     </>
@@ -260,8 +383,8 @@ const OnBoardingRender = ({
 };
 
 type OnboardingFormData = {
+  countryCode?: string;
   companyId: string;
-  countryCode: string;
   type: 'employee' | 'contractor';
   employmentId: string;
   externalId?: string;
@@ -271,35 +394,19 @@ const OnboardingWithProps = ({
   companyId,
   type,
   employmentId,
-  countryCode,
   externalId,
 }: OnboardingFormData) => (
-  <RemoteFlows>
+  <RemoteFlows
+    proxy={{ url: window.location.origin }}
+    transformHtmlToComponents={transformHtmlToComponents}
+  >
     <OnboardingFlow
       companyId={companyId}
       type={type}
       render={OnBoardingRender}
       employmentId={employmentId}
-      countryCode={countryCode}
-      skipSteps={['select_country']}
       externalId={externalId}
-      initialValues={{
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        work_email: 'john.doe@remote.com',
-        job_title: 'Software Engineer',
-        tax_servicing_countries: ['Bahrain'],
-        tax_job_category: 'legal',
-        has_seniority_date: 'no',
-        provisional_start_date: '2025-08-27',
-        annual_gross_salary: 4000000,
-        department: {
-          id: '4b771740-2db0-4e7d-a32f-78afd42c2b3a',
-        },
-        manager: {
-          id: 'a8a99466-a159-4bef-a9e1-0cb6939542e1',
-        },
-      }}
+      options={ONBOARDING_OPTIONS as $TSFixMe}
     />
   </RemoteFlows>
 );
@@ -307,9 +414,9 @@ const OnboardingWithProps = ({
 export const OnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
     type: 'employee',
-    employmentId: '',
-    companyId: 'c3c22940-e118-425c-9e31-f2fd4d43c6d8', // use your own company ID
-    countryCode: 'PRT',
+    employmentId: import.meta.env.VITE_ONBOARDING_EMPLOYMENT_ID || '', // use your own employment ID
+    companyId:
+      import.meta.env.VITE_COMPANY_ID || 'c3c22940-e118-425c-9e31-f2fd4d43c6d8', // use your own company ID
     externalId: '',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -325,7 +432,7 @@ export const OnboardingForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className='onboarding-form-container'>
-      <div className='onboarding-form-group'>
+      <div data-field='companyId' className='onboarding-form-group'>
         <label htmlFor='companyId' className='onboarding-form-label'>
           Company ID:
         </label>
@@ -341,23 +448,7 @@ export const OnboardingForm = () => {
           className='onboarding-form-input'
         />
       </div>
-      <div className='onboarding-form-group'>
-        <label htmlFor='countryCode' className='onboarding-form-label'>
-          Country Code:
-        </label>
-        <input
-          id='countryCode'
-          type='text'
-          value={formData.countryCode}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, countryCode: e.target.value }))
-          }
-          required
-          placeholder='e.g. PRT'
-          className='onboarding-form-input'
-        />
-      </div>
-      <div className='onboarding-form-group'>
+      <div data-field='type' className='onboarding-form-group'>
         <label htmlFor='type' className='onboarding-form-label'>
           Type:
         </label>
@@ -377,7 +468,7 @@ export const OnboardingForm = () => {
           <option value='contractor'>Contractor</option>
         </select>
       </div>
-      <div className='onboarding-form-group'>
+      <div data-field='employmentId' className='onboarding-form-group'>
         <label htmlFor='employmentId' className='onboarding-form-label'>
           Employment ID:
         </label>
@@ -392,7 +483,7 @@ export const OnboardingForm = () => {
           className='onboarding-form-input'
         />
       </div>
-      <div className='onboarding-form-group'>
+      <div data-field='externalId' className='onboarding-form-group'>
         <label htmlFor='externalId' className='onboarding-form-label'>
           External ID:
         </label>

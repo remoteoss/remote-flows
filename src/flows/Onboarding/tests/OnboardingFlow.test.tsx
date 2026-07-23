@@ -2688,4 +2688,99 @@ describe('OnboardingFlow', () => {
 
     expect(capturedBasicInfoPresentation).toBeUndefined();
   });
+
+  it('should include employment_agreement_preview step when ea_preview feature is enabled, select_country is skipped, and country supports it', async () => {
+    const uniqueEmploymentId = generateUniqueEmploymentId();
+    const countriesSpy = vi.fn();
+
+    // Mock the countries endpoint with EA preview support
+    server.use(
+      http.get('*/v1/countries', () => {
+        countriesSpy();
+        return HttpResponse.json({
+          data: [
+            {
+              code: 'DEU',
+              name: 'Germany',
+              eor_onboarding: true,
+              employment_agreement_preview_available: true,
+            },
+            {
+              code: 'PRT',
+              name: 'Portugal',
+              eor_onboarding: true,
+              employment_agreement_preview_available: true,
+            },
+          ],
+        });
+      }),
+      http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
+        return HttpResponse.json({
+          ...employmentDefaultResponse,
+          data: {
+            ...employmentDefaultResponse.data,
+            employment: {
+              ...employmentDefaultResponse.data.employment,
+              id: uniqueEmploymentId,
+              country: {
+                code: 'PRT',
+                name: 'Portugal',
+                alpha_2_code: 'PT',
+                supported_json_schemas: [
+                  'employment_basic_information',
+                  'contract_details',
+                ],
+              },
+            },
+          },
+        });
+      }),
+      http.get('*/v1/countries/PRT/employment_basic_information*', () => {
+        return HttpResponse.json(basicInformationSchemaV1Portugal);
+      }),
+      http.get('*/v1/countries/PRT/contract_details*', () => {
+        return HttpResponse.json(contractDetailsSchemaV1Portugal);
+      }),
+      http.get('*/v2/employments/:id/engagement-agreement-details', () => {
+        return HttpResponse.json({ error: 'Not found' }, { status: 404 });
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag }: OnboardingRenderProps) => {
+        if (onboardingBag.isLoading) {
+          return <div data-testid='spinner'>Loading...</div>;
+        }
+
+        return (
+          <ul>
+            {onboardingBag.steps
+              .filter((step) => step.visible)
+              .map((step) => (
+                <li key={step.name}>{step.label}</li>
+              ))}
+          </ul>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={uniqueEmploymentId}
+        countryCode='PRT'
+        skipSteps={['select_country']}
+        options={{
+          features: ['dynamic_steps', 'ea_preview'],
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    expect(countriesSpy).toHaveBeenCalledTimes(1);
+
+    await screen.findByText(/Preview Employment Agreement/i);
+  });
 });

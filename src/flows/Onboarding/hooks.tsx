@@ -359,6 +359,22 @@ export const useOnboarding = ({
     );
   }, [requirements, isLoadingPreOnboardingRequirements]);
 
+  const isSelectCountryEnabled = useMemo(() => {
+    return (
+      stepState.currentStep.name === 'select_country' ||
+      (skipSteps?.includes('select_country') &&
+        Boolean(internalCountryCode) &&
+        useDynamicSteps &&
+        options?.features?.includes('ea_preview'))
+    );
+  }, [
+    stepState.currentStep.name,
+    skipSteps,
+    internalCountryCode,
+    useDynamicSteps,
+    options?.features,
+  ]);
+
   const {
     selectCountryForm,
     isLoading: isLoadingCountries,
@@ -366,7 +382,7 @@ export const useOnboarding = ({
   } = useCountriesSchemaField({
     jsfModify: options?.jsfModify?.select_country,
     queryOptions: {
-      enabled: stepState.currentStep.name === 'select_country',
+      enabled: isSelectCountryEnabled,
     },
   });
 
