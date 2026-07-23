@@ -17,8 +17,8 @@ import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { AlertError } from '../../AlertError';
 import { ONBOARDING_OPTIONS } from './constants';
 import { getStepTitle, StepsNavigation } from './StepsNavigation';
-import '../../css/main.css';
 import { PreviewEmploymentAgreementStep } from './PreviewEmploymentAgreementStep';
+import '../../css/main.css';
 
 export const InviteSection = ({
   title,
