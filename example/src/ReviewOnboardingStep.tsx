@@ -31,7 +31,7 @@ import {
   BasicTooltip,
 } from '@remoteoss/remote-flows/internals';
 import { AlertError } from './AlertError';
-import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
+import { OnboardingAlertStatuses } from './flows/Onboarding/OnboardingAlertStatuses';
 import { transformHtmlToComponents } from './utils/transformHtml';
 
 export const InviteSection = ({

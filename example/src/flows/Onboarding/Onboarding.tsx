@@ -13,6 +13,7 @@ import {
   EngagementAgreementDetailsFormPayload,
   ZendeskTriggerButton,
   zendeskArticles,
+  $TSFixMe,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
 import {
@@ -21,15 +22,17 @@ import {
   FullScreenDialogContent,
   Button,
 } from '@remoteoss/remote-flows/internals';
-import { EmploymentAgreementInfoModal } from './EmploymentAgreementInfoModal';
-import { ReviewOnboardingStep } from './ReviewOnboardingStep';
+import { EmploymentAgreementInfoModal } from '../../EmploymentAgreementInfoModal';
+import { ReviewOnboardingStep } from '../../ReviewOnboardingStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
-import { RemoteFlows } from './RemoteFlows';
-import { AlertError } from './AlertError';
-import { transformHtmlToComponents } from './utils/transformHtml';
+import { RemoteFlows } from '../../RemoteFlows';
+import { AlertError } from '../../AlertError';
+import { transformHtmlToComponents } from '../../utils/transformHtml';
 import { sanitizeHtml } from '@remoteoss/remote-flows/internals';
-import { downloadFile } from './utils';
-import './css/main.css';
+import { downloadFile } from '../../utils';
+import { ONBOARDING_OPTIONS } from './constants';
+import '../../css/main.css';
+import { StepsNavigation } from './StepsNavigation';
 
 const BenefitsAboutSection = ({
   description,
@@ -530,32 +533,11 @@ const OnBoardingRender = ({
 
   return (
     <>
-      <div className='steps-navigation'>
-        <ul>
-          {/* {STEPS.map((step, index) => (
-            <li
-              key={index}
-              className={`step-item ${index === currentStepIndex ? 'active' : ''}`}
-            >
-              {step}
-            </li>
-          ))} */}
-          {onboardingBag.steps
-            .filter((step) => step.visible)
-            .map((step, index) => (
-              <li
-                key={step.name}
-                className={`step-item ${step.index === currentStepIndex ? 'active' : ''}`}
-              >
-                {index + 1}.{' '}
-                {getStepTitle(
-                  step,
-                  onboardingBag.selectedCountry?.code ?? null,
-                )}
-              </li>
-            ))}
-        </ul>
-      </div>
+      <StepsNavigation
+        steps={onboardingBag.steps}
+        stepState={onboardingBag.stepState}
+        selectedCountry={onboardingBag.selectedCountry}
+      />
 
       <div className='card' style={{ marginBottom: '20px' }}>
         <h1 className='heading' data-testid='onboarding-step-title'>
@@ -595,123 +577,7 @@ const OnboardingWithProps = ({
       render={OnBoardingRender}
       employmentId={employmentId}
       externalId={externalId}
-      options={{
-        features: [
-          'onboarding_reserves',
-          'dynamic_steps',
-          'ea_preview',
-          'pre_onboarding_requirements',
-        ],
-        jsonSchemaVersion: {
-          employment_basic_information: 3,
-        },
-        jsonSchemaVersionByCountry: {
-          ARE: {
-            // United Arab Emirates
-            contract_details: 3,
-          },
-          DEU: {
-            // Germany
-            contract_details: 4,
-          },
-          BLR: {
-            // Belarus
-            contract_details: 2,
-          },
-          CHN: {
-            // China
-            contract_details: 3,
-          },
-          CHE: {
-            // Switzerland
-            contract_details: 2,
-          },
-          CZE: {
-            // Czech Republic
-            contract_details: 2,
-          },
-          GBR: {
-            // United Kingdom
-            contract_details: 3,
-          },
-          HKG: {
-            // Hong Kong
-            contract_details: 2,
-          },
-          IND: {
-            // India
-            contract_details: 2,
-          },
-          ISL: {
-            // Iceland
-            contract_details: 2,
-          },
-          JAM: {
-            // Jamaica
-            contract_details: 2,
-          },
-          KEN: {
-            // Kenya
-            contract_details: 2,
-          },
-          LBN: {
-            // Lebanon
-            contract_details: 2,
-          },
-          MEX: {
-            // Mexico
-            contract_details: 2,
-          },
-          MUS: {
-            // Mauritius
-            contract_details: 2,
-          },
-          MYS: {
-            // Malaysia
-            contract_details: 2,
-          },
-          NGA: {
-            // Nigeria
-            contract_details: 2,
-          },
-          NLD: {
-            // Netherlands
-            contract_details: 2,
-          },
-          NOR: {
-            // Norway
-            contract_details: 2,
-          },
-          NZL: {
-            // New Zealand
-            contract_details: 2,
-          },
-          PAK: {
-            // Pakistan
-            contract_details: 2,
-          },
-          PRT: {
-            // Portugal
-            contract_details: 3,
-          },
-          SAU: {
-            // Saudi Arabia
-            contract_details: 2,
-          },
-          SGP: {
-            // Singapore
-            contract_details: 2,
-          },
-          SRB: {
-            // Serbia
-            contract_details: 2,
-          },
-          SWE: {
-            // Sweden
-            contract_details: 2,
-          },
-        },
-      }}
+      options={ONBOARDING_OPTIONS as $TSFixMe}
     />
   </RemoteFlows>
 );
