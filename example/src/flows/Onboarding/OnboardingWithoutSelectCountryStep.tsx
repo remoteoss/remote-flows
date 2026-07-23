@@ -18,6 +18,7 @@ import { AlertError } from '../../AlertError';
 import { ONBOARDING_OPTIONS } from './constants';
 import { getStepTitle, StepsNavigation } from './StepsNavigation';
 import '../../css/main.css';
+import { PreviewEmploymentAgreementStep } from './PreviewEmploymentAgreementStep';
 
 export const InviteSection = ({
   title,
@@ -171,6 +172,14 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
             </SaveDraftButton>
           </div>
         </>
+      );
+    case 'employment_agreement_preview':
+      return (
+        <PreviewEmploymentAgreementStep
+          onboardingBag={onboardingBag}
+          components={components}
+          setErrors={setErrors}
+        />
       );
     case 'benefits':
       return (
