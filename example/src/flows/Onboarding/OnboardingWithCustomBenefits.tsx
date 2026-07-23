@@ -16,6 +16,7 @@ import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
 import { RemoteFlows } from '../../RemoteFlows';
 import { AlertError } from '../../AlertError';
 import { ONBOARDING_OPTIONS } from './constants';
+import { PreviewEmploymentAgreementStep } from './PreviewEmploymentAgreementStep';
 import '../../css/main.css';
 
 type MultiStepFormProps = {
@@ -113,6 +114,15 @@ const MultiStepForm = ({ onboardingBag, components }: MultiStepFormProps) => {
             </SubmitButton>
           </div>
         </>
+      );
+
+    case 'employment_agreement_preview':
+      return (
+        <PreviewEmploymentAgreementStep
+          onboardingBag={onboardingBag}
+          components={components}
+          setErrors={setErrors}
+        />
       );
 
     case 'benefits':
