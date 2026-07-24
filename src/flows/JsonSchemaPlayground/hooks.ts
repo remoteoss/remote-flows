@@ -29,8 +29,13 @@ export const useJsonSchemaPlayground = (
     isSubmitting: false,
   });
 
-  const [fieldValues, setFieldValues] = useState<FieldValues>(
-    jsonSchemaInitialValues,
+  const [, setFieldsVersion] = useState(0);
+
+  const fieldValues = useMemo(
+    () => ({
+      ...jsonSchemaInitialValues,
+    }),
+    [jsonSchemaInitialValues],
   );
 
   // Get current schema
@@ -56,13 +61,9 @@ export const useJsonSchemaPlayground = (
   }, [currentSchemaData.schema, fieldValues, onError]);
 
   // Handle schema selection
-  const handleSchemaChange = useCallback(
-    (schemaKey: string) => {
-      setState((prev) => ({ ...prev, selectedSchema: schemaKey }));
-      setFieldValues(jsonSchemaInitialValues);
-    },
-    [jsonSchemaInitialValues],
-  );
+  const handleSchemaChange = useCallback((schemaKey: string) => {
+    setState((prev) => ({ ...prev, selectedSchema: schemaKey }));
+  }, []);
 
   // Handle form submission
   const handleSubmit = useCallback(
@@ -107,8 +108,8 @@ export const useJsonSchemaPlayground = (
 
   // Handle form reset
   const handleReset = useCallback(() => {
-    setFieldValues(jsonSchemaInitialValues);
-  }, [jsonSchemaInitialValues]);
+    //setFieldValues(jsonSchemaInitialValues);
+  }, []);
 
   // Clear results
   const clearResults = useCallback(() => {
@@ -127,17 +128,8 @@ export const useJsonSchemaPlayground = (
         { isPartialValidation: false },
       );
       const result = await headlessForm.handleValidation(parsedValues);
+      setFieldsVersion((prev) => prev + 1);
       return result;
-    },
-    [headlessForm],
-  );
-
-  const parseFormValues = useCallback(
-    async (values: FieldValues): Promise<Record<string, unknown>> => {
-      if (!headlessForm.fields) return values;
-      return parseJSFToValidate(values, headlessForm.fields, {
-        isPartialValidation: false,
-      });
     },
     [headlessForm],
   );
@@ -172,16 +164,16 @@ export const useJsonSchemaPlayground = (
     handleSubmit,
     handleReset,
     clearResults,
-    setFieldValues,
 
     /**
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    checkFieldUpdates: setFieldValues,
+    checkFieldUpdates: async (values: FieldValues) => {
+      await handleValidation(values);
+    },
 
     // Validation
     handleValidation,
-    parseFormValues,
   };
 };
