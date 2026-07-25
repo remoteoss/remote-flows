@@ -869,3 +869,15 @@ export function checkFieldHasForcedValue(field: $TSFixMe) {
     field.type !== 'hidden' // Because hidden inputs shouldn't be visible
   );
 }
+
+/**
+ * Get the value to inject into the form state for a forced-value field.
+ * Money consts come from the schema in cents, but the form state holds money
+ * values in units (the submit path converts back with convertToCents), so we
+ * convert here to avoid submitting a value 100x the accepted const.
+ * @param field - The forced-value field.
+ * @returns The value to set in the form state.
+ */
+export function getForcedFieldValue(field: $TSFixMe) {
+  return field.type === 'money' ? convertFromCents(field.const) : field.const;
+}

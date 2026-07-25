@@ -60,12 +60,35 @@ export const createHeadlessForm = (
   }
 
   let moneyFieldsData: Record<string, number | null> = {};
+  let numberFieldsData: Record<string, number> = {};
 
   if (fieldValues) {
     const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
     moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
       (acc, field) => {
         acc[field] = convertToCents(fieldValues[field]);
+        return acc;
+      },
+      {},
+    );
+
+    // Number-typed fields come from text inputs as strings (e.g. "50"). The
+    // visibility engine evaluates JSON Schema `type: 'number'` guards strictly,
+    // so an un-coerced string silently fails conditionals that reveal computed
+    // fields — while validation (parseJSFToValidate) *does* coerce, causing a
+    // mismatch. Mirror the money coercion above to keep both paths consistent.
+    const numberFields = findFieldsByType(jsfSchema.properties || {}, 'number');
+    numberFieldsData = numberFields.reduce<Record<string, number>>(
+      (acc, field) => {
+        const raw = fieldValues[field];
+        // Leave empty/invalid input untouched so required checks still fire.
+        if (raw === '' || raw === null || raw === undefined) {
+          return acc;
+        }
+        const parsed = Number(raw);
+        if (!Number.isNaN(parsed)) {
+          acc[field] = parsed;
+        }
         return acc;
       },
       {},
@@ -80,6 +103,7 @@ export const createHeadlessForm = (
     JSON.stringify({
       ...fieldValues,
       ...moneyFieldsData,
+      ...numberFieldsData,
     }),
   );
 
