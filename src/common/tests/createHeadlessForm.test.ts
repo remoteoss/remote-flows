@@ -56,6 +56,16 @@ const schemaWithNumberGuard = {
   ],
 };
 
+// The kit only treats a schema as v1 when jsfVersion is exactly '1'; anything
+// else goes through the v0 path, which casts values with yup before evaluating
+// conditionals.
+const schemaWithNumberGuardV0 = {
+  ...schemaWithNumberGuard,
+  'x-rmt-meta': {
+    jsfVersion: '0',
+  },
+};
+
 function getField(form: ReturnType<typeof createHeadlessForm>, name: string) {
   return form.fields?.find((field) => field.name === name);
 }
@@ -98,6 +108,31 @@ describe('createHeadlessForm', () => {
       expect(getField(form, 'compensation_amount')?.isVisible).toBe(false);
     });
 
+    it('should keep the conditional field hidden when the number field only contains whitespace', () => {
+      const form = createHeadlessForm(schemaWithNumberGuard, {
+        clause_apply: 'yes',
+        compensation_percentage: '   ',
+      });
+
+      expect(getField(form, 'compensation_amount')?.isVisible).toBe(false);
+    });
+
+    it('should keep the conditional field hidden for values Number() would coerce to 0', () => {
+      const booleanForm = createHeadlessForm(schemaWithNumberGuard, {
+        clause_apply: 'yes',
+        compensation_percentage: true,
+      });
+      const arrayForm = createHeadlessForm(schemaWithNumberGuard, {
+        clause_apply: 'yes',
+        compensation_percentage: [],
+      });
+
+      expect(getField(booleanForm, 'compensation_amount')?.isVisible).toBe(
+        false,
+      );
+      expect(getField(arrayForm, 'compensation_amount')?.isVisible).toBe(false);
+    });
+
     it('should keep the conditional field hidden when the clause does not apply', () => {
       const form = createHeadlessForm(schemaWithNumberGuard, {
         clause_apply: 'no',
@@ -105,6 +140,27 @@ describe('createHeadlessForm', () => {
       });
 
       expect(getField(form, 'compensation_amount')?.isVisible).toBe(false);
+    });
+
+    // Nothing in createHeadlessForm branches on jsfVersion, so the coercion also
+    // runs on v0 schemas. These lock in that it stays a no-op there.
+    it('should not change how v0 schemas evaluate the same guard', () => {
+      const numeric = createHeadlessForm(schemaWithNumberGuardV0, {
+        clause_apply: 'yes',
+        compensation_percentage: '50',
+      });
+      const empty = createHeadlessForm(schemaWithNumberGuardV0, {
+        clause_apply: 'yes',
+        compensation_percentage: '',
+      });
+      const invalid = createHeadlessForm(schemaWithNumberGuardV0, {
+        clause_apply: 'yes',
+        compensation_percentage: 'abc',
+      });
+
+      expect(getField(numeric, 'compensation_amount')?.isVisible).toBe(true);
+      expect(getField(empty, 'compensation_amount')?.isVisible).toBe(false);
+      expect(getField(invalid, 'compensation_amount')?.isVisible).toBe(false);
     });
   });
 });

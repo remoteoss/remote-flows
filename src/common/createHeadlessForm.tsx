@@ -3,7 +3,7 @@ import {
   createHeadlessForm as baseCreateHeadlessForm,
   modify,
 } from '@remoteoss/remote-json-schema-form-kit';
-import { castNumberValue, convertToCents } from '@/src/components/form/utils';
+import { convertToCents, isNumericValue } from '@/src/components/form/utils';
 import {
   JSFModify,
   JSONSchemaFormResultWithFieldsets,
@@ -75,13 +75,13 @@ export const createHeadlessForm = (
     const numberFields = findFieldsByType(jsfSchema.properties || {}, 'number');
     numberFieldsData = numberFields.reduce<Record<string, number>>(
       (acc, field) => {
-        const raw = fieldValues[field];
-        if (raw === '' || raw === null || raw === undefined) {
-          return acc;
-        }
-        const parsed = castNumberValue(raw);
-        if (typeof parsed === 'number') {
-          acc[field] = parsed;
+        // Only unambiguous numbers are injected. Conditionals are evaluated
+        // against these values before any validation runs, so a lenient cast
+        // (Number(' ') === 0) would open branches the user never filled in.
+        // Empty and untouched fields are left out entirely rather than
+        // materialised as 0.
+        if (isNumericValue(fieldValues[field])) {
+          acc[field] = Number(fieldValues[field]);
         }
         return acc;
       },
