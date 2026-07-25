@@ -3,7 +3,7 @@ import {
   createHeadlessForm as baseCreateHeadlessForm,
   modify,
 } from '@remoteoss/remote-json-schema-form-kit';
-import { convertToCents } from '@/src/components/form/utils';
+import { castNumberValue, convertToCents } from '@/src/components/form/utils';
 import {
   JSFModify,
   JSONSchemaFormResultWithFieldsets,
@@ -72,21 +72,15 @@ export const createHeadlessForm = (
       {},
     );
 
-    // Number-typed fields come from text inputs as strings (e.g. "50"). The
-    // visibility engine evaluates JSON Schema `type: 'number'` guards strictly,
-    // so an un-coerced string silently fails conditionals that reveal computed
-    // fields — while validation (parseJSFToValidate) *does* coerce, causing a
-    // mismatch. Mirror the money coercion above to keep both paths consistent.
     const numberFields = findFieldsByType(jsfSchema.properties || {}, 'number');
     numberFieldsData = numberFields.reduce<Record<string, number>>(
       (acc, field) => {
         const raw = fieldValues[field];
-        // Leave empty/invalid input untouched so required checks still fire.
         if (raw === '' || raw === null || raw === undefined) {
           return acc;
         }
-        const parsed = Number(raw);
-        if (!Number.isNaN(parsed)) {
+        const parsed = castNumberValue(raw);
+        if (typeof parsed === 'number') {
           acc[field] = parsed;
         }
         return acc;

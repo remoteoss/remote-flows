@@ -1,11 +1,5 @@
 import { createHeadlessForm } from '../createHeadlessForm';
 
-// Minimal reproduction of the Italy APL non-compete pattern: a conditional
-// guarded by a user-entered number field (`type: 'number'`) that reveals
-// another field. Number inputs are stored as strings by react-hook-form,
-// so createHeadlessForm must coerce them before evaluating conditionals.
-// jsfVersion 1 is required: the v1 engine evaluates type guards strictly,
-// while v0 casts strings via yup and never exhibited the bug.
 const schemaWithNumberGuard = {
   additionalProperties: false,
   type: 'object',
@@ -69,7 +63,6 @@ function getField(form: ReturnType<typeof createHeadlessForm>, name: string) {
 describe('createHeadlessForm', () => {
   describe('number field coercion', () => {
     it('should reveal a conditional field when the number guard value is a string', () => {
-      // react-hook-form stores number inputs as strings
       const form = createHeadlessForm(schemaWithNumberGuard, {
         clause_apply: 'yes',
         compensation_percentage: '50',

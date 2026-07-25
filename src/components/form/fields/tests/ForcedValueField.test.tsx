@@ -193,6 +193,31 @@ describe('ForcedValueField Component', () => {
       expect(mockSetValue).toHaveBeenCalledWith('testField', 'forced-value');
     });
 
+    it('converts money consts from cents to units before setting the form value', () => {
+      const mockSetValue = vi.fn();
+
+      const TestComponent = () => {
+        const methods = {
+          ...useForm(),
+          setValue: mockSetValue,
+        };
+        return (
+          <FormProvider {...methods}>
+            <ForcedValueField
+              {...defaultProps}
+              name='compensation_amount'
+              value={125000}
+              fieldType='money'
+            />
+          </FormProvider>
+        );
+      };
+
+      render(<TestComponent />);
+
+      expect(mockSetValue).toHaveBeenCalledWith('compensation_amount', 1250);
+    });
+
     it('still sets form value even when field is hidden (no description and no title)', () => {
       const mockSetValue = vi.fn();
 
