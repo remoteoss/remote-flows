@@ -67,11 +67,13 @@ export function ContractDetailsStep({
     }
   };
 
-  const initialValues =
-    onboardingBag.stepState.values?.contract_details ||
-    onboardingBag.initialValues.contract_details;
-
   return (
-    <OnboardingForm defaultValues={initialValues} onSubmit={handleSubmit} />
+    <OnboardingForm
+      defaultValues={
+        onboardingBag.stepState.values?.contract_details ||
+        onboardingBag.initialValues.contract_details
+      }
+      onSubmit={handleSubmit}
+    />
   );
 }
