@@ -29,7 +29,6 @@ export const useJsonSchemaPlayground = (
     isLoading: false,
     isSubmitting: false,
     resetKey: 0,
-    fieldsVersion: 0,
   });
 
   const [trackedFields, setTrackedFields] = useState<$TSFixMe[]>([]);
@@ -138,8 +137,6 @@ export const useJsonSchemaPlayground = (
       );
       const result = await headlessForm.handleValidation(parsedValues);
 
-      // Increment version to trigger re-render after field mutation
-      setState((prev) => ({ ...prev, fieldsVersion: prev.fieldsVersion + 1 }));
       setTrackedFields([...headlessForm.fields]);
 
       return result;
