@@ -67,23 +67,11 @@ export function ContractDetailsStep({
     }
   };
 
+  const initialValues =
+    onboardingBag.stepState.values?.contract_details ||
+    onboardingBag.initialValues.contract_details;
+
   return (
-    <OnboardingForm
-      fields={
-        onboardingBag?.isFranceContractDetailsEnabled
-          ? onboardingBag?.newFields?.contract_details
-          : onboardingBag?.fields
-      }
-      meta={
-        onboardingBag?.isFranceContractDetailsEnabled
-          ? onboardingBag?.newMeta
-          : onboardingBag?.meta
-      }
-      defaultValues={
-        onboardingBag.stepState.values?.contract_details ||
-        onboardingBag.initialValues.contract_details
-      }
-      onSubmit={handleSubmit}
-    />
+    <OnboardingForm defaultValues={initialValues} onSubmit={handleSubmit} />
   );
 }

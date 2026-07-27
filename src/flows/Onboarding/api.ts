@@ -53,6 +53,7 @@ import {
 } from '@/src/flows/Onboarding/utils';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { countriesOptions } from '@/src/common/api/countries';
+import { useMemo } from 'react';
 
 export const useCompany = (companyId: string) => {
   const { client } = useClient();
@@ -251,32 +252,29 @@ export const useJSONSchemaForm = ({
 
 export const useContractDetailsSchema = ({
   countryCode,
-  fieldValues,
   options,
   query = {},
   jsonSchemaVersion,
 }: {
   countryCode: string;
-  fieldValues: FieldValues;
   options?: FlowOptions & {
     queryOptions?: { enabled?: boolean };
     transformMoneyFields?: boolean;
   };
   query?: Record<string, unknown>;
   jsonSchemaVersion?: number | 'latest';
-}): UseQueryResult<JSONSchemaFormResultWithFieldsets> => {
+}): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
   const { client } = useClient();
   const jsonSchemaQueryParam = jsonSchemaVersion
     ? {
         json_schema_version: jsonSchemaVersion,
       }
     : {};
-  return useQuery({
+  const { data: response, ...reactQueryResult } = useQuery({
     queryKey: [
       'onboarding-contract-details-schema',
       countryCode,
       jsonSchemaVersion,
-      fieldValues, // Add fieldValues to queryKey so select reruns when it changes
     ],
     retry: false,
     queryFn: async () => {
@@ -304,11 +302,19 @@ export const useContractDetailsSchema = ({
       return response;
     },
     enabled: options?.queryOptions?.enabled,
-    select: ({ data }) => {
-      const jsfSchema = data?.data || {};
-      return createHeadlessForm(jsfSchema, fieldValues, options);
-    },
   });
+
+  const contractDetailsFormFrance: JSONSchemaFormResultWithFieldsets | null =
+    useMemo(() => {
+      const schemaData = response?.data.data || {};
+      if (!schemaData) return null;
+      return createHeadlessForm(schemaData, {}, options);
+    }, [options, response?.data]);
+
+  return {
+    data: contractDetailsFormFrance,
+    isLoading: reactQueryResult.isLoading,
+  };
 };
 
 export const useBenefitOffersSchema = (

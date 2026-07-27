@@ -1,8 +1,7 @@
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
-import { JSFFields, JSFFieldset, NestedMeta } from '@/src/types/remoteFlows';
 import {
   BasicInformationFormPayload,
   BenefitsFormPayload,
@@ -22,18 +21,10 @@ type OnboardingFormProps = {
       | EngagementAgreementDetailsFormPayload,
   ) => Promise<void>;
   components?: Components;
-  fields?: JSFFields;
-  meta?: {
-    fields: NestedMeta;
-    fieldsets?: JSFFieldset | null;
-    presentation?: Record<string, unknown> | null;
-  };
   defaultValues: Record<string, unknown>;
 };
 
 export function OnboardingForm({
-  fields,
-  meta,
   defaultValues,
   onSubmit,
   components,
@@ -50,7 +41,7 @@ export function OnboardingForm({
     // When the employmentId is set,
     // we need to run the checkFieldUpdates to update fieldValues in useStepState
     if (onboardingBag.employmentId) {
-      onboardingBag?.checkFieldUpdates(form.getValues());
+      onboardingBag.checkFieldUpdates(form.getValues());
     }
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -112,8 +103,8 @@ export function OnboardingForm({
       >
         <JSONSchemaFormFields
           components={components}
-          fields={fields || onboardingBag.fields}
-          fieldsets={meta?.fieldsets || onboardingBag.meta.fieldsets}
+          fields={onboardingBag.fields}
+          fieldsets={onboardingBag.meta.fieldsets}
           fieldValues={onboardingBag.fieldValues}
         />
       </form>
