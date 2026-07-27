@@ -18,9 +18,20 @@ export interface JsonSchemaPlaygroundState {
   isSubmitting: boolean;
 }
 
+export interface SampleSchema {
+  name: string;
+  description: string;
+  schema: Record<string, unknown>;
+}
+
 export interface UseJsonSchemaPlaygroundOptions {
   defaultSchema?: string;
   initialValues?: FieldValues;
+  /**
+   * Extra schemas made available alongside the built-in samples, keyed by
+   * schema key. An entry with the same key as a built-in overrides it.
+   */
+  schemas?: Record<string, SampleSchema>;
   onSubmit?: (values: FieldValues) => void | Promise<void>;
   onError?: (error: unknown) => void;
 }

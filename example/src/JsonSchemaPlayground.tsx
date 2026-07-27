@@ -3,6 +3,7 @@ import {
   JsonSchemaPlaygroundFlow,
   SIMPLE_SALARY_TEST_INITIAL_VALUES,
 } from '@remoteoss/remote-flows/internals';
+import { ITALY_APL_SCHEMA } from './italyAplSchema';
 import { RemoteFlows } from './RemoteFlows';
 
 export const JsonSchemaPlayground = () => {
@@ -15,6 +16,7 @@ export const JsonSchemaPlayground = () => {
     >
       <JsonSchemaPlaygroundFlow
         defaultSchema='france-wage-portage'
+        schemas={{ 'italy-apl': ITALY_APL_SCHEMA }}
         initialValues={SIMPLE_SALARY_TEST_INITIAL_VALUES}
         onSubmit={(values) => {
           console.log('Form submitted:', values);
