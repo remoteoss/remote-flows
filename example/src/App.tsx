@@ -47,12 +47,12 @@ import { ContractorOnboardingForm } from './ContractorOnboarding';
 import { CreateCompanyForm } from './CreateCompany';
 import { MagicLinkTest } from './MagicLinkTest';
 import { JsonSchemaComparisonDemo } from './JsonSchemaComparisonDemo';
-import { JsonSchemaPlayground } from './JsonSchemaPlayground';
+import { JsonSchemaPlayground } from './flows/JsonSchemaPlayground/JsonSchemaPlayground';
 import ContractorOnboardingCode from './ContractorOnboarding?raw';
 import CreateCompanyCode from './CreateCompany?raw';
 import MagicLinkTestCode from './MagicLinkTest?raw';
 import JsonSchemaComparisonCode from './JsonSchemaComparisonDemo?raw';
-import JsonSchemaPlaygroundCode from './JsonSchemaPlayground?raw';
+import JsonSchemaPlaygroundCode from './flows/JsonSchemaPlayground/JsonSchemaPlayground?raw';
 
 const costCalculatorDemos = [
   {

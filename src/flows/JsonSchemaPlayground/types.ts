@@ -11,10 +11,12 @@ export interface JsonSchemaPlaygroundResult {
 }
 
 export interface JsonSchemaPlaygroundState {
+  resetKey: number;
   selectedSchema: string;
   submittedResults: JsonSchemaPlaygroundResult[];
   isLoading: boolean;
   isSubmitting: boolean;
+  fieldsVersion: number;
 }
 
 export interface SampleSchema {
@@ -30,8 +32,9 @@ export interface UseJsonSchemaPlaygroundOptions {
    * Extra schemas made available alongside the built-in samples, keyed by
    * schema key. An entry with the same key as a built-in overrides it.
    */
-  schemas?: Record<string, SampleSchema>;
+  schemas: Record<string, SampleSchema>;
   onSubmit?: (values: FieldValues) => void | Promise<void>;
+  onSchemaChange?: (schema: string) => void;
   onError?: (error: unknown) => void;
 }
 
