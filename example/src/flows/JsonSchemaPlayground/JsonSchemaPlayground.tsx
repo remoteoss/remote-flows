@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import {
-  JsonSchemaPlaygroundFlow,
-  SIMPLE_SALARY_TEST_INITIAL_VALUES,
-} from '@remoteoss/remote-flows/internals';
+import { JsonSchemaPlaygroundFlow } from '@remoteoss/remote-flows/internals';
+import { FRANCE_WAGE_PORTAGE_INITIAL_VALUES } from './initialValues';
 import { RemoteFlows } from '../../RemoteFlows';
 import { SCHEMAS } from './schemas';
 
@@ -23,7 +21,7 @@ export const JsonSchemaPlayground = () => {
       <JsonSchemaPlaygroundFlow
         defaultSchema={selectedSchema}
         schemas={SCHEMAS}
-        initialValues={SIMPLE_SALARY_TEST_INITIAL_VALUES}
+        initialValues={FRANCE_WAGE_PORTAGE_INITIAL_VALUES}
         onSubmit={(values) => {
           console.log('Form submitted:', values);
           setSubmissionCount((prev) => prev + 1);

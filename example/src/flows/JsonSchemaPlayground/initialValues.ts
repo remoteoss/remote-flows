@@ -1,0 +1,37 @@
+export const SIMPLE_USER_PROFILE_INITIAL_VALUES = {
+  firstName: 'John',
+  lastName: 'Doe',
+  email: 'john.doe@example.com',
+  age: 30,
+  country: 'US',
+  subscribe: true,
+};
+
+export const FRANCE_WAGE_PORTAGE_INITIAL_VALUES = {
+  annual_gross_salary: 30_000 * 100,
+  contract_duration_type: 'indefinite',
+  has_wage_portage_higher_degree: 'yes',
+  has_wage_portage_years_of_experience: 'yes',
+  work_hours_per_week: '35',
+  probation_length_recommended: 'recommended',
+  has_commissions: 'no',
+  has_bonus: 'no',
+  has_signing_bonus: 'no',
+  role_description:
+    'Software Engineer dlsfafjdklsjkfdskjlsdfjlfadljksfdjlksfldjsjlkdlkjfdjlkfdjlksljkfdasjlkdflsjkljkfdsjlkfdsjlka',
+  experience_level: 'premier_niveau',
+  mission_duration: '3',
+  mission_deliverables_cadence: 'daily',
+  primary_contact_point: 'andre',
+  provided_equipment: ['laptop'],
+  provided_systems: ['workspace_account'],
+  work_address_is_home_address: 'yes',
+  employee_travel_required: 'no',
+  home_office_allowance: 1200 * 100,
+  business_allowance_ack: true,
+  non_compete_clause_apply: 'no',
+  professional_qualifications: 'masters_degree',
+  work_experience: 'adfdfasdfsafds',
+  field_of_work: 'fdafdadsdfsdsa',
+  key_skills: 'jfdjfadsjdsajdjf',
+};
