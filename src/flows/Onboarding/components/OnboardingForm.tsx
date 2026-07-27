@@ -1,7 +1,8 @@
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
+import { JSFFields } from '@/src/types/remoteFlows';
 import {
   BasicInformationFormPayload,
   BenefitsFormPayload,
@@ -21,6 +22,7 @@ type OnboardingFormProps = {
       | EngagementAgreementDetailsFormPayload,
   ) => Promise<void>;
   components?: Components;
+  fields?: JSFFields;
   defaultValues: Record<string, unknown>;
 };
 
@@ -41,7 +43,7 @@ export function OnboardingForm({
     // When the employmentId is set,
     // we need to run the checkFieldUpdates to update fieldValues in useStepState
     if (onboardingBag.employmentId) {
-      onboardingBag.checkFieldUpdates(form.getValues());
+      onboardingBag?.checkFieldUpdates(form.getValues());
     }
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
