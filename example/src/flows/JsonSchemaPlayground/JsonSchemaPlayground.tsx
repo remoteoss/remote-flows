@@ -3,11 +3,17 @@ import {
   JsonSchemaPlaygroundFlow,
   SIMPLE_SALARY_TEST_INITIAL_VALUES,
 } from '@remoteoss/remote-flows/internals';
-import { ITALY_APL_SCHEMA } from './italyAplSchema';
-import { RemoteFlows } from './RemoteFlows';
+import { RemoteFlows } from '../../RemoteFlows';
+import { SCHEMAS } from './schemas';
 
 export const JsonSchemaPlayground = () => {
   const [submissionCount, setSubmissionCount] = useState(0);
+  const [selectedSchema, setSelectedSchema] = useState('france-wage-portage');
+  const availableSchemas = Object.entries(SCHEMAS).map(([key, value]) => ({
+    key,
+    name: value.name,
+    description: value.description,
+  }));
 
   return (
     <RemoteFlows
@@ -15,12 +21,15 @@ export const JsonSchemaPlayground = () => {
       proxy={{ url: window.location.origin }}
     >
       <JsonSchemaPlaygroundFlow
-        defaultSchema='france-wage-portage'
-        schemas={{ 'italy-apl': ITALY_APL_SCHEMA }}
+        defaultSchema={selectedSchema}
+        schemas={SCHEMAS}
         initialValues={SIMPLE_SALARY_TEST_INITIAL_VALUES}
         onSubmit={(values) => {
           console.log('Form submitted:', values);
           setSubmissionCount((prev) => prev + 1);
+        }}
+        onSchemaChange={(schema) => {
+          setSelectedSchema(schema);
         }}
         onError={(error) => {
           console.error('Form error:', error);
@@ -45,7 +54,7 @@ export const JsonSchemaPlayground = () => {
                 Select Schema
               </h2>
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                {playgroundBag.availableSchemas.map(
+                {availableSchemas.map(
                   (schema: {
                     key: string;
                     name: string;

@@ -18,6 +18,7 @@ export const JsonSchemaPlaygroundFlow = ({
   initialValues,
   schemas,
   onSubmit,
+  onSchemaChange,
   onError,
   render,
 }: JsonSchemaPlaygroundFlowProps) => {
@@ -28,6 +29,7 @@ export const JsonSchemaPlaygroundFlow = ({
     initialValues,
     schemas,
     onSubmit,
+    onSchemaChange,
     onError,
   });
 

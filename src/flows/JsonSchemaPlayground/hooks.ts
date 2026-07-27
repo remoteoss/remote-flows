@@ -5,24 +5,23 @@ import {
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
-import { SAMPLE_SCHEMAS } from './schemas';
 import {
   JsonSchemaPlaygroundResult,
   JsonSchemaPlaygroundState,
-  SampleSchema,
   UseJsonSchemaPlaygroundOptions,
 } from './types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
 export const useJsonSchemaPlayground = (
-  options: UseJsonSchemaPlaygroundOptions = {},
+  options: UseJsonSchemaPlaygroundOptions,
 ) => {
   const {
     defaultSchema = 'simple-user-profile',
     initialValues: jsonSchemaInitialValues = {},
-    schemas: customSchemas,
+    schemas: customSchemas = {},
     onSubmit,
     onError,
+    onSchemaChange,
   } = options;
 
   const [state, setState] = useState<JsonSchemaPlaygroundState>({
@@ -41,18 +40,10 @@ export const useJsonSchemaPlayground = (
     };
   }, [jsonSchemaInitialValues]);
 
-  const availableSchemasMap = useMemo<Record<string, SampleSchema>>(
-    () => ({ ...SAMPLE_SCHEMAS, ...customSchemas }),
-    [customSchemas],
-  );
-
   // Get current schema
   const currentSchemaData = useMemo(() => {
-    return (
-      availableSchemasMap[state.selectedSchema] ||
-      availableSchemasMap['simple-user-profile']
-    );
-  }, [availableSchemasMap, state.selectedSchema]);
+    return customSchemas?.[state.selectedSchema];
+  }, [customSchemas, state.selectedSchema]);
 
   // Create headless form from current schema
   const headlessForm = useMemo(() => {
@@ -68,17 +59,21 @@ export const useJsonSchemaPlayground = (
       onError?.(error);
       throw error;
     }
-  }, [currentSchemaData.schema, fieldValues, onError, state.resetKey]);
+  }, [currentSchemaData.schema, fieldValues, onError]);
 
   useEffect(() => {
     setTrackedFields([...headlessForm.fields]);
   }, [headlessForm, fieldValues]);
 
   // Handle schema selection
-  const handleSchemaChange = useCallback((schemaKey: string) => {
-    setState((prev) => ({ ...prev, selectedSchema: schemaKey }));
-    setState((prev) => ({ ...prev, resetKey: prev.resetKey + 1 }));
-  }, []);
+  const handleSchemaChange = useCallback(
+    (schemaKey: string) => {
+      setState((prev) => ({ ...prev, selectedSchema: schemaKey }));
+      onSchemaChange?.(schemaKey);
+      setState((prev) => ({ ...prev, resetKey: prev.resetKey + 1 }));
+    },
+    [onSchemaChange],
+  );
 
   // Handle form submission
   const handleSubmit = useCallback(
@@ -167,13 +162,6 @@ export const useJsonSchemaPlayground = (
 
     // Schema data
     currentSchemaData,
-    availableSchemas: Object.entries(availableSchemasMap).map(
-      ([key, value]) => ({
-        key,
-        name: value.name,
-        description: value.description,
-      }),
-    ),
 
     // Form data from headless form
     fields: trackedFields,
