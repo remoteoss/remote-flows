@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import {
@@ -10,7 +10,6 @@ import {
   JsonSchemaPlaygroundState,
   UseJsonSchemaPlaygroundOptions,
 } from './types';
-import { $TSFixMe } from '@/src/types/remoteFlows';
 
 export const useJsonSchemaPlayground = (
   options: UseJsonSchemaPlaygroundOptions,
@@ -30,9 +29,8 @@ export const useJsonSchemaPlayground = (
     isLoading: false,
     isSubmitting: false,
     resetKey: 0,
+    fieldsVersion: 0,
   });
-
-  const [trackedFields, setTrackedFields] = useState<$TSFixMe[]>([]);
 
   const fieldValues = useMemo(() => {
     return {
@@ -60,10 +58,6 @@ export const useJsonSchemaPlayground = (
       throw error;
     }
   }, [currentSchemaData.schema, fieldValues, onError]);
-
-  useEffect(() => {
-    setTrackedFields([...headlessForm.fields]);
-  }, [headlessForm, fieldValues]);
 
   // Handle schema selection
   const handleSchemaChange = useCallback(
@@ -139,7 +133,7 @@ export const useJsonSchemaPlayground = (
       );
       const result = await headlessForm.handleValidation(parsedValues);
 
-      setTrackedFields([...headlessForm.fields]);
+      setState((prev) => ({ ...prev, fieldsVersion: prev.fieldsVersion + 1 }));
 
       return result;
     },
@@ -164,7 +158,7 @@ export const useJsonSchemaPlayground = (
     currentSchemaData,
 
     // Form data from headless form
-    fields: trackedFields,
+    fields: headlessForm.fields,
     meta: headlessForm.meta,
 
     // Actions

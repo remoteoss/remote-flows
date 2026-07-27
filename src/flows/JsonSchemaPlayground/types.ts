@@ -16,6 +16,7 @@ export interface JsonSchemaPlaygroundState {
   submittedResults: JsonSchemaPlaygroundResult[];
   isLoading: boolean;
   isSubmitting: boolean;
+  fieldsVersion: number;
 }
 
 export interface SampleSchema {
