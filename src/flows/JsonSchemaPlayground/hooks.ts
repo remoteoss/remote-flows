@@ -5,10 +5,11 @@ import {
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
-import { SAMPLE_SCHEMAS, SchemaKey } from './schemas';
+import { SAMPLE_SCHEMAS } from './schemas';
 import {
   JsonSchemaPlaygroundResult,
   JsonSchemaPlaygroundState,
+  SampleSchema,
   UseJsonSchemaPlaygroundOptions,
 } from './types';
 
@@ -18,6 +19,7 @@ export const useJsonSchemaPlayground = (
   const {
     defaultSchema = 'simple-user-profile',
     initialValues: jsonSchemaInitialValues = {},
+    schemas: customSchemas,
     onSubmit,
     onError,
   } = options;
@@ -33,13 +35,18 @@ export const useJsonSchemaPlayground = (
     jsonSchemaInitialValues,
   );
 
+  const availableSchemasMap = useMemo<Record<string, SampleSchema>>(
+    () => ({ ...SAMPLE_SCHEMAS, ...customSchemas }),
+    [customSchemas],
+  );
+
   // Get current schema
   const currentSchemaData = useMemo(() => {
     return (
-      SAMPLE_SCHEMAS[state.selectedSchema as SchemaKey] ||
-      SAMPLE_SCHEMAS['simple-user-profile']
+      availableSchemasMap[state.selectedSchema] ||
+      availableSchemasMap['simple-user-profile']
     );
-  }, [state.selectedSchema]);
+  }, [availableSchemasMap, state.selectedSchema]);
 
   // Create headless form from current schema
   const headlessForm = useMemo(() => {
@@ -157,11 +164,13 @@ export const useJsonSchemaPlayground = (
 
     // Schema data
     currentSchemaData,
-    availableSchemas: Object.entries(SAMPLE_SCHEMAS).map(([key, value]) => ({
-      key,
-      name: value.name,
-      description: value.description,
-    })),
+    availableSchemas: Object.entries(availableSchemasMap).map(
+      ([key, value]) => ({
+        key,
+        name: value.name,
+        description: value.description,
+      }),
+    ),
 
     // Form data from headless form
     fields: headlessForm.fields || [],

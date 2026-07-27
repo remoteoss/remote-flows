@@ -93,4 +93,5 @@ export type {
   JsonSchemaPlaygroundFlowProps,
   JsonSchemaPlaygroundFormProps,
   JsonSchemaPlaygroundRenderProps,
+  SampleSchema,
 } from '@/src/flows/JsonSchemaPlayground';

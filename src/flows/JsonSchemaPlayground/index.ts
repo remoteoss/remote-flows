@@ -5,4 +5,4 @@ export { SIMPLE_USER_PROFILE_INITIAL_VALUES } from './initialValues';
 export { SIMPLE_SALARY_TEST_INITIAL_VALUES } from './initialValues';
 export type { JsonSchemaPlaygroundFlowProps } from './JsonSchemaPlaygroundFlow';
 export type { JsonSchemaPlaygroundFormProps } from './JsonSchemaPlaygroundForm';
-export type { JsonSchemaPlaygroundRenderProps } from './types';
+export type { JsonSchemaPlaygroundRenderProps, SampleSchema } from './types';

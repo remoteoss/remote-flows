@@ -16,6 +16,7 @@ export interface JsonSchemaPlaygroundFlowProps extends UseJsonSchemaPlaygroundOp
 export const JsonSchemaPlaygroundFlow = ({
   defaultSchema,
   initialValues,
+  schemas,
   onSubmit,
   onError,
   render,
@@ -25,6 +26,7 @@ export const JsonSchemaPlaygroundFlow = ({
   const playgroundBag = useJsonSchemaPlayground({
     defaultSchema,
     initialValues,
+    schemas,
     onSubmit,
     onError,
   });
