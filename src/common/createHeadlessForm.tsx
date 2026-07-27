@@ -26,7 +26,6 @@ export const createHeadlessForm = (
   const { transformMoneyFields } = options || {
     transformMoneyFields: true,
   };
-  console.log('transformMoneyFields', transformMoneyFields);
   if (options && options.jsfModify) {
     const { required, allOf, ...modifyConfig } = options.jsfModify;
     // muteLogging: true suppresses the generic library log; we surface the
