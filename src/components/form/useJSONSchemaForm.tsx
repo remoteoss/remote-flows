@@ -18,6 +18,12 @@ export function useJSONSchemaForm({
 }: UseJsonSchemaFormOptions): UseFormReturn<$TSFixMe> {
   const resolver = useJsonSchemasValidationFormResolver(handleValidation);
   const prevValuesRef = useRef(defaultValues);
+  // The watch subscription below is created once, so it would capture the
+  // first checkFieldUpdates forever. That is fine when it is a plain setState,
+  // but not when it closes over the current headless form — after a schema
+  // change the stale closure validates against the previous schema.
+  const checkFieldUpdatesRef = useRef(checkFieldUpdates);
+  checkFieldUpdatesRef.current = checkFieldUpdates;
 
   const form = useForm({
     resolver,
@@ -30,7 +36,7 @@ export function useJSONSchemaForm({
     const subscription = form?.watch((values) => {
       const hasChanged = !equal(values, prevValuesRef.current);
       if (hasChanged) {
-        checkFieldUpdates(values);
+        checkFieldUpdatesRef.current(values);
         prevValuesRef.current = JSON.parse(JSON.stringify(values));
       }
     });
