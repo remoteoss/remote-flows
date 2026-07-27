@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import {
@@ -11,6 +11,7 @@ import {
   JsonSchemaPlaygroundState,
   UseJsonSchemaPlaygroundOptions,
 } from './types';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 export const useJsonSchemaPlayground = (
   options: UseJsonSchemaPlaygroundOptions = {},
@@ -27,11 +28,17 @@ export const useJsonSchemaPlayground = (
     submittedResults: [],
     isLoading: false,
     isSubmitting: false,
+    resetKey: 0,
+    fieldsVersion: 0,
   });
 
-  const [fieldValues, setFieldValues] = useState<FieldValues>(
-    jsonSchemaInitialValues,
-  );
+  const [trackedFields, setTrackedFields] = useState<$TSFixMe[]>([]);
+
+  const fieldValues = useMemo(() => {
+    return {
+      ...jsonSchemaInitialValues,
+    };
+  }, [jsonSchemaInitialValues]);
 
   // Get current schema
   const currentSchemaData = useMemo(() => {
@@ -45,7 +52,9 @@ export const useJsonSchemaPlayground = (
   const headlessForm = useMemo(() => {
     try {
       setState((prev) => ({ ...prev, isLoading: true }));
-      const form = createHeadlessForm(currentSchemaData.schema, fieldValues);
+      const form = createHeadlessForm(currentSchemaData.schema, fieldValues, {
+        transformMoneyFields: false,
+      });
       setState((prev) => ({ ...prev, isLoading: false }));
       return form;
     } catch (error) {
@@ -53,16 +62,17 @@ export const useJsonSchemaPlayground = (
       onError?.(error);
       throw error;
     }
-  }, [currentSchemaData.schema, fieldValues, onError]);
+  }, [currentSchemaData.schema, fieldValues, onError, state.resetKey]);
+
+  useEffect(() => {
+    setTrackedFields([...headlessForm.fields]);
+  }, [headlessForm, fieldValues]);
 
   // Handle schema selection
-  const handleSchemaChange = useCallback(
-    (schemaKey: string) => {
-      setState((prev) => ({ ...prev, selectedSchema: schemaKey }));
-      setFieldValues(jsonSchemaInitialValues);
-    },
-    [jsonSchemaInitialValues],
-  );
+  const handleSchemaChange = useCallback((schemaKey: string) => {
+    setState((prev) => ({ ...prev, selectedSchema: schemaKey }));
+    setState((prev) => ({ ...prev, resetKey: prev.resetKey + 1 }));
+  }, []);
 
   // Handle form submission
   const handleSubmit = useCallback(
@@ -107,8 +117,8 @@ export const useJsonSchemaPlayground = (
 
   // Handle form reset
   const handleReset = useCallback(() => {
-    setFieldValues(jsonSchemaInitialValues);
-  }, [jsonSchemaInitialValues]);
+    setState((prev) => ({ ...prev, resetKey: prev.resetKey + 1 }));
+  }, []);
 
   // Clear results
   const clearResults = useCallback(() => {
@@ -127,17 +137,12 @@ export const useJsonSchemaPlayground = (
         { isPartialValidation: false },
       );
       const result = await headlessForm.handleValidation(parsedValues);
-      return result;
-    },
-    [headlessForm],
-  );
 
-  const parseFormValues = useCallback(
-    async (values: FieldValues): Promise<Record<string, unknown>> => {
-      if (!headlessForm.fields) return values;
-      return parseJSFToValidate(values, headlessForm.fields, {
-        isPartialValidation: false,
-      });
+      // Increment version to trigger re-render after field mutation
+      setState((prev) => ({ ...prev, fieldsVersion: prev.fieldsVersion + 1 }));
+      setTrackedFields([...headlessForm.fields]);
+
+      return result;
     },
     [headlessForm],
   );
@@ -149,6 +154,7 @@ export const useJsonSchemaPlayground = (
   return {
     // State
     selectedSchema: state.selectedSchema,
+    resetKey: state.resetKey,
     isLoading: state.isLoading,
     isSubmitting: state.isSubmitting,
     submittedResults: state.submittedResults,
@@ -164,7 +170,7 @@ export const useJsonSchemaPlayground = (
     })),
 
     // Form data from headless form
-    fields: headlessForm.fields || [],
+    fields: trackedFields,
     meta: headlessForm.meta,
 
     // Actions
@@ -172,16 +178,16 @@ export const useJsonSchemaPlayground = (
     handleSubmit,
     handleReset,
     clearResults,
-    setFieldValues,
 
     /**
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    checkFieldUpdates: setFieldValues,
+    checkFieldUpdates: async (values: FieldValues) => {
+      await handleValidation(values);
+    },
 
     // Validation
     handleValidation,
-    parseFormValues,
   };
 };

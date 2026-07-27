@@ -11,10 +11,12 @@ export interface JsonSchemaPlaygroundResult {
 }
 
 export interface JsonSchemaPlaygroundState {
+  resetKey: number;
   selectedSchema: string;
   submittedResults: JsonSchemaPlaygroundResult[];
   isLoading: boolean;
   isSubmitting: boolean;
+  fieldsVersion: number;
 }
 
 export interface UseJsonSchemaPlaygroundOptions {

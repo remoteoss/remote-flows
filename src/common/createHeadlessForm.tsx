@@ -21,8 +21,12 @@ import { JSFFieldset } from '@/src/types/remoteFlows';
 export const createHeadlessForm = (
   jsfSchema: Record<string, unknown>,
   fieldValues?: FieldValues,
-  options?: { jsfModify?: JSFModify },
+  options?: { jsfModify?: JSFModify; transformMoneyFields?: boolean },
 ): JSONSchemaFormResultWithFieldsets => {
+  const { transformMoneyFields } = options || {
+    transformMoneyFields: true,
+  };
+  console.log('transformMoneyFields', transformMoneyFields);
   if (options && options.jsfModify) {
     const { required, allOf, ...modifyConfig } = options.jsfModify;
     // muteLogging: true suppresses the generic library log; we surface the
@@ -61,7 +65,7 @@ export const createHeadlessForm = (
 
   let moneyFieldsData: Record<string, number | null> = {};
 
-  if (fieldValues) {
+  if (fieldValues && transformMoneyFields) {
     const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
     moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
       (acc, field) => {
