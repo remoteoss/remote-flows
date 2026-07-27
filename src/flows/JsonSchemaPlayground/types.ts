@@ -20,7 +20,6 @@ export interface JsonSchemaPlaygroundState {
 }
 
 export interface SampleSchema {
-  key: string;
   name: string;
   description: string;
   schema: Record<string, unknown>;
