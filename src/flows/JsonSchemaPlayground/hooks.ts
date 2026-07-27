@@ -131,7 +131,6 @@ export const useJsonSchemaPlayground = (
         headlessForm.fields,
         { isPartialValidation: false },
       );
-      console.log('parsedValues', parsedValues);
       const result = await headlessForm.handleValidation(parsedValues);
 
       setState((prev) => ({ ...prev, fieldsVersion: prev.fieldsVersion + 1 }));
