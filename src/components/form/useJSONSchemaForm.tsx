@@ -18,6 +18,8 @@ export function useJSONSchemaForm({
 }: UseJsonSchemaFormOptions): UseFormReturn<$TSFixMe> {
   const resolver = useJsonSchemasValidationFormResolver(handleValidation);
   const prevValuesRef = useRef(defaultValues);
+  const checkFieldUpdatesRef = useRef(checkFieldUpdates);
+  checkFieldUpdatesRef.current = checkFieldUpdates;
 
   const form = useForm({
     resolver,
@@ -30,7 +32,7 @@ export function useJSONSchemaForm({
     const subscription = form?.watch((values) => {
       const hasChanged = !equal(values, prevValuesRef.current);
       if (hasChanged) {
-        checkFieldUpdates(values);
+        checkFieldUpdatesRef.current(values);
         prevValuesRef.current = JSON.parse(JSON.stringify(values));
       }
     });

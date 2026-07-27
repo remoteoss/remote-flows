@@ -69,6 +69,16 @@ export function ContractDetailsStep({
 
   return (
     <OnboardingForm
+      fields={
+        onboardingBag?.isFranceContractDetailsEnabled
+          ? onboardingBag?.newFields?.contract_details
+          : onboardingBag?.fields
+      }
+      meta={
+        onboardingBag?.isFranceContractDetailsEnabled
+          ? onboardingBag?.newMeta
+          : onboardingBag?.meta
+      }
       defaultValues={
         onboardingBag.stepState.values?.contract_details ||
         onboardingBag.initialValues.contract_details

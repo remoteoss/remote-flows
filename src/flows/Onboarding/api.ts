@@ -249,6 +249,68 @@ export const useJSONSchemaForm = ({
   });
 };
 
+export const useContractDetailsSchema = ({
+  countryCode,
+  fieldValues,
+  options,
+  query = {},
+  jsonSchemaVersion,
+}: {
+  countryCode: string;
+  fieldValues: FieldValues;
+  options?: FlowOptions & {
+    queryOptions?: { enabled?: boolean };
+    transformMoneyFields?: boolean;
+  };
+  query?: Record<string, unknown>;
+  jsonSchemaVersion?: number | 'latest';
+}): UseQueryResult<JSONSchemaFormResultWithFieldsets> => {
+  const { client } = useClient();
+  const jsonSchemaQueryParam = jsonSchemaVersion
+    ? {
+        json_schema_version: jsonSchemaVersion,
+      }
+    : {};
+  return useQuery({
+    queryKey: [
+      'onboarding-contract-details-schema',
+      countryCode,
+      jsonSchemaVersion,
+      fieldValues, // Add fieldValues to queryKey so select reruns when it changes
+    ],
+    retry: false,
+    queryFn: async () => {
+      const response = await getV1CountriesCountryCodeForm({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          country_code: countryCode,
+          form: 'contract_details',
+        },
+        query: {
+          skip_benefits: true,
+          ...query,
+          ...jsonSchemaQueryParam,
+        },
+      });
+
+      // If response status is 404 or other error, throw an error to trigger isError
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch onboarding schema');
+      }
+
+      return response;
+    },
+    enabled: options?.queryOptions?.enabled,
+    select: ({ data }) => {
+      const jsfSchema = data?.data || {};
+      return createHeadlessForm(jsfSchema, fieldValues, options);
+    },
+  });
+};
+
 export const useBenefitOffersSchema = (
   employmentId: string,
   fieldValues: FieldValues,

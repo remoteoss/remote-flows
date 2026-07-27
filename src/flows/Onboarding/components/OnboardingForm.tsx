@@ -2,7 +2,7 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { useEffect } from 'react';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
-import { JSFFields } from '@/src/types/remoteFlows';
+import { JSFFields, JSFFieldset, NestedMeta } from '@/src/types/remoteFlows';
 import {
   BasicInformationFormPayload,
   BenefitsFormPayload,
@@ -23,10 +23,17 @@ type OnboardingFormProps = {
   ) => Promise<void>;
   components?: Components;
   fields?: JSFFields;
+  meta?: {
+    fields: NestedMeta;
+    fieldsets?: JSFFieldset | null;
+    presentation?: Record<string, unknown> | null;
+  };
   defaultValues: Record<string, unknown>;
 };
 
 export function OnboardingForm({
+  fields,
+  meta,
   defaultValues,
   onSubmit,
   components,
@@ -105,8 +112,8 @@ export function OnboardingForm({
       >
         <JSONSchemaFormFields
           components={components}
-          fields={onboardingBag.fields}
-          fieldsets={onboardingBag.meta.fieldsets}
+          fields={fields || onboardingBag.fields}
+          fieldsets={meta?.fieldsets || onboardingBag.meta.fieldsets}
           fieldValues={onboardingBag.fieldValues}
         />
       </form>

@@ -29,6 +29,7 @@ import {
   useBenefitOffers,
   useBenefitOffersSchema,
   useCompany,
+  useContractDetailsSchema,
   useCountriesSchemaField,
   useCreateEmployment,
   useEmploymentAgreementPreview,
@@ -71,6 +72,7 @@ const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
 const getLoadingStates = ({
   isLoadingBasicInformationForm,
   isLoadingContractDetailsForm,
+  isLoadingContractDetailsFormFrance,
   isLoadingEngagementAgreementDetails,
   isLoadingEmploymentAgreementPreview,
   isLoadingEmploymentEngagementAgreementDetails,
@@ -89,6 +91,7 @@ const getLoadingStates = ({
 }: {
   isLoadingBasicInformationForm: boolean;
   isLoadingContractDetailsForm: boolean;
+  isLoadingContractDetailsFormFrance: boolean;
   isLoadingEngagementAgreementDetails: boolean;
   isLoadingEmploymentEngagementAgreementDetails: boolean;
   isLoadingEmployment: boolean;
@@ -115,7 +118,8 @@ const getLoadingStates = ({
     isLoadingBenefitOffers ||
     isLoadingCompany ||
     isLoadingCountries ||
-    isLoadingEmploymentAgreementPreview;
+    isLoadingEmploymentAgreementPreview ||
+    isLoadingContractDetailsFormFrance;
 
   const isEmploymentReadOnly =
     employmentStatus &&
@@ -148,6 +152,42 @@ const getLoadingStates = ({
   };
 };
 
+const useFranceContractDetails = ({
+  countryCode,
+  fieldValues,
+  query,
+  enabled,
+  jsonSchemaVersion,
+  jsfModify,
+}: {
+  countryCode: string;
+  fieldValues: FieldValues;
+  query: Record<string, string>;
+  enabled: boolean;
+  jsonSchemaVersion: number | 'latest';
+  jsfModify?: JSFModify;
+}) => {
+  const { data: form, isLoading: isLoadingContractDetails } =
+    useContractDetailsSchema({
+      countryCode,
+      fieldValues,
+      query,
+      options: {
+        queryOptions: {
+          enabled,
+        },
+        transformMoneyFields: false,
+        jsfModify,
+      },
+      jsonSchemaVersion,
+    });
+
+  return {
+    form,
+    isLoading: isLoadingContractDetails,
+  };
+};
+
 export const useOnboarding = ({
   employmentId,
   companyId,
@@ -167,6 +207,7 @@ export const useOnboarding = ({
     },
   });
 
+  const [fieldsCount, setFieldsCount] = useState<number>(0);
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
@@ -496,6 +537,13 @@ export const useOnboarding = ({
 
   const isContractDetailsEnabled = Boolean(
     internalCountryCode &&
+    ((stepState.currentStep.name === 'contract_details' &&
+      internalCountryCode !== 'FRA') ||
+      Boolean(employmentId)),
+  );
+
+  const isFranceContractDetailsEnabled = Boolean(
+    internalCountryCode === 'FRA' &&
     (stepState.currentStep.name === 'contract_details' ||
       Boolean(employmentId)),
   );
@@ -592,6 +640,18 @@ export const useOnboarding = ({
     ],
   );
 
+  const hasUserEnteredAnyValues = Object.keys(fieldValues).length > 0;
+
+  const contractDetailsFormValuesForFrance = hasUserEnteredAnyValues
+    ? {
+        ...onboardingInitialValues,
+        ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
+      }
+    : {
+        ...onboardingInitialValues,
+        ...serverEmploymentData,
+      };
+
   const effectiveContractDetailsJsonSchemaVersion =
     getContractDetailsSchemaVersion(options, internalCountryCode);
 
@@ -615,6 +675,26 @@ export const useOnboarding = ({
       },
       jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,
     });
+
+  const {
+    form: contractDetailsFormFrance,
+    isLoading: isLoadingContractDetailsFormFrance,
+  } = useFranceContractDetails({
+    countryCode: internalCountryCode as string,
+    fieldValues: contractDetailsFormValuesForFrance,
+    query: {
+      employment_id: internalEmploymentId as string,
+    },
+    enabled: isFranceContractDetailsEnabled,
+    jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,
+    jsfModify: {
+      ...options?.jsfModify?.contract_details,
+      fields: {
+        ...options?.jsfModify?.contract_details?.fields,
+        ...contractDetailsCustomFields.fields,
+      },
+    },
+  });
 
   const {
     data: benefitOffersSchema,
@@ -647,7 +727,9 @@ export const useOnboarding = ({
       basic_information: basicInformationForm?.fields || [],
       engagement_agreement_details:
         engagementAgreementDetailsSchema?.fields || [],
-      contract_details: contractDetailsForm?.fields || [],
+      contract_details: isFranceContractDetailsEnabled
+        ? contractDetailsFormFrance?.fields || []
+        : contractDetailsForm?.fields || [],
       benefits: benefitOffersSchema?.fields || [],
       employment_agreement_preview: [],
       review: [],
@@ -658,6 +740,8 @@ export const useOnboarding = ({
       contractDetailsForm?.fields,
       benefitOffersSchema?.fields,
       engagementAgreementDetailsSchema?.fields,
+      isFranceContractDetailsEnabled,
+      contractDetailsFormFrance?.fields,
     ],
   );
 
@@ -669,7 +753,9 @@ export const useOnboarding = ({
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
     engagement_agreement_details:
       engagementAgreementDetailsSchema?.meta['x-jsf-fieldsets'],
-    contract_details: contractDetailsForm?.meta['x-jsf-fieldsets'],
+    contract_details: isFranceContractDetailsEnabled
+      ? contractDetailsFormFrance?.meta['x-jsf-fieldsets']
+      : contractDetailsForm?.meta['x-jsf-fieldsets'],
     benefits: null,
     employment_agreement_preview: null,
     review: null,
@@ -683,7 +769,9 @@ export const useOnboarding = ({
     basic_information: basicInformationForm?.meta?.['x-jsf-presentation'],
     engagement_agreement_details:
       engagementAgreementDetailsSchema?.meta?.['x-jsf-presentation'],
-    contract_details: contractDetailsForm?.meta?.['x-jsf-presentation'],
+    contract_details: isFranceContractDetailsEnabled
+      ? contractDetailsFormFrance?.meta?.['x-jsf-presentation']
+      : contractDetailsForm?.meta?.['x-jsf-presentation'],
     benefits: benefitOffersSchema?.meta?.['x-jsf-presentation'],
     employment_agreement_preview: null,
     review: null,
@@ -808,6 +896,7 @@ export const useOnboarding = ({
         getLoadingStates({
           isLoadingBasicInformationForm,
           isLoadingContractDetailsForm,
+          isLoadingContractDetailsFormFrance,
           isLoadingEngagementAgreementDetails,
           isLoadingEmploymentEngagementAgreementDetails,
           isLoadingEmployment,
@@ -842,6 +931,7 @@ export const useOnboarding = ({
         currentStepName,
         arePreOnboardingRequirementsFulfilled,
         isLoadingOnboardingReservesStatus,
+        isLoadingContractDetailsFormFrance,
       ],
     );
 
@@ -1059,6 +1149,81 @@ export const useOnboarding = ({
     goToStep(step);
   }
 
+  async function handleValidation(
+    values: FieldValues,
+  ): Promise<ValidationResult | null> {
+    if (stepState.currentStep.name === 'select_country') {
+      return selectCountryForm.handleValidation(values);
+    }
+    if (stepState.currentStep.name === 'benefits' && benefitOffersSchema) {
+      const parsedValues = await parseJSFToValidate(
+        values,
+        benefitOffersSchema?.fields,
+        { isPartialValidation: false },
+      );
+
+      return benefitOffersSchema?.handleValidation(parsedValues);
+    }
+    if (
+      basicInformationForm &&
+      stepState.currentStep.name === 'basic_information'
+    ) {
+      const parsedValues = await parseJSFToValidate(
+        values,
+        basicInformationForm?.fields,
+        { isPartialValidation: false },
+      );
+      return basicInformationForm?.handleValidation(parsedValues);
+    }
+
+    if (
+      engagementAgreementDetailsSchema &&
+      stepState.currentStep.name === 'engagement_agreement_details'
+    ) {
+      const parsedValues = await parseJSFToValidate(
+        values,
+        engagementAgreementDetailsSchema?.fields,
+        { isPartialValidation: false },
+      );
+      return engagementAgreementDetailsSchema?.handleValidation(parsedValues);
+    }
+
+    if (
+      contractDetailsForm &&
+      stepState.currentStep.name === 'contract_details' &&
+      !isFranceContractDetailsEnabled
+    ) {
+      const parsedValues = await parseJSFToValidate(
+        values,
+        contractDetailsForm?.fields,
+        { isPartialValidation: false },
+      );
+      return contractDetailsForm?.handleValidation(parsedValues);
+    }
+
+    if (
+      contractDetailsFormFrance &&
+      stepState.currentStep.name === 'contract_details' &&
+      isFranceContractDetailsEnabled
+    ) {
+      const parsedValues = await parseJSFToValidate(
+        values,
+        contractDetailsFormFrance?.fields,
+        { isPartialValidation: false },
+      );
+      console.log('parsedValues', parsedValues);
+      const result = contractDetailsFormFrance?.handleValidation(parsedValues);
+      setFieldsCount((prev) => prev + 1);
+      console.log('result', result);
+      return result;
+    }
+
+    return null;
+  }
+
+  console.log('fieldsCount', fieldsCount);
+  console.log('fields', stepFields.contract_details);
+
   return {
     /**
      * Employment id passed useful to be used between components
@@ -1102,6 +1267,12 @@ export const useOnboarding = ({
      * Array of form fields from the onboarding schema
      */
     fields: stepFields[stepState.currentStep.name],
+
+    isFranceContractDetailsEnabled,
+
+    newFields: {
+      contract_details: stepFields.contract_details,
+    },
     /**
      * Loading state indicating if the onboarding schema is being fetched
      */
@@ -1124,64 +1295,22 @@ export const useOnboarding = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: async (
-      values: FieldValues,
-    ): Promise<ValidationResult | null> => {
-      if (stepState.currentStep.name === 'select_country') {
-        return selectCountryForm.handleValidation(values);
-      }
-      if (stepState.currentStep.name === 'benefits' && benefitOffersSchema) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          benefitOffersSchema?.fields,
-          { isPartialValidation: false },
-        );
-
-        return benefitOffersSchema?.handleValidation(parsedValues);
-      }
-      if (
-        basicInformationForm &&
-        stepState.currentStep.name === 'basic_information'
-      ) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          basicInformationForm?.fields,
-          { isPartialValidation: false },
-        );
-        return basicInformationForm?.handleValidation(parsedValues);
-      }
-
-      if (
-        engagementAgreementDetailsSchema &&
-        stepState.currentStep.name === 'engagement_agreement_details'
-      ) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          engagementAgreementDetailsSchema?.fields,
-          { isPartialValidation: false },
-        );
-        return engagementAgreementDetailsSchema?.handleValidation(parsedValues);
-      }
-
-      if (
-        contractDetailsForm &&
-        stepState.currentStep.name === 'contract_details'
-      ) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          contractDetailsForm?.fields,
-          { isPartialValidation: false },
-        );
-        return contractDetailsForm?.handleValidation(parsedValues);
-      }
-
-      return null;
-    },
+    handleValidation,
     /**
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    checkFieldUpdates: setFieldValues,
+    checkFieldUpdates: async (values: FieldValues) => {
+      setFieldValues(values);
+      if (
+        isFranceContractDetailsEnabled &&
+        stepState.currentStep.name === 'contract_details'
+      ) {
+        // TODO: Continue here for some reason the fields aren't reacting to handleValidation
+        console.log('triggering handleValidation in checkFieldUpdates');
+        await handleValidation(values);
+      }
+    },
 
     /**
      * Function to parse form values before submission
@@ -1220,6 +1349,12 @@ export const useOnboarding = ({
      * Fields metadata for each step
      */
     meta: {
+      fields: fieldsMetaRef.current,
+      fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
+      presentation: stepPresentation[stepState.currentStep.name],
+    },
+
+    newMeta: {
       fields: fieldsMetaRef.current,
       fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
       presentation: stepPresentation[stepState.currentStep.name],
