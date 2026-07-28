@@ -1035,11 +1035,26 @@ export const useOnboarding = ({
 
     if (
       contractDetailsForm &&
-      stepState.currentStep.name === 'contract_details'
+      stepState.currentStep.name === 'contract_details' &&
+      !isFranceContractDetailsEnabled
     ) {
       return await parseJSFToValidate(values, contractDetailsForm?.fields, {
         isPartialValidation: false,
       });
+    }
+
+    if (
+      contractDetailsFormFrance &&
+      stepState.currentStep.name === 'contract_details' &&
+      isFranceContractDetailsEnabled
+    ) {
+      return await parseJSFToValidate(
+        values,
+        contractDetailsFormFrance?.fields,
+        {
+          isPartialValidation: false,
+        },
+      );
     }
 
     if (benefitOffersSchema && stepState.currentStep.name === 'benefits') {
@@ -1054,7 +1069,9 @@ export const useOnboarding = ({
   async function onSubmit(values: FieldValues) {
     // Prettify values for the current step
     const currentStepName = stepState.currentStep.name;
+    console.log('currentStepName', currentStepName);
     const parsedValues = await parseFormValues(values);
+    console.log('parsedValues', parsedValues);
     if (currentStepName in fieldsMetaRef.current) {
       fieldsMetaRef.current[
         currentStepName as keyof typeof fieldsMetaRef.current
