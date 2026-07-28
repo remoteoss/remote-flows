@@ -53,6 +53,7 @@ import {
 } from '@/src/flows/Onboarding/utils';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { countriesOptions } from '@/src/common/api/countries';
+import { useMemo } from 'react';
 
 export const useCompany = (companyId: string) => {
   const { client } = useClient();
@@ -247,6 +248,73 @@ export const useJSONSchemaForm = ({
       return createHeadlessForm(jsfSchema, fieldValues, options);
     },
   });
+};
+
+export const useContractDetailsSchema = ({
+  countryCode,
+  options,
+  query = {},
+  jsonSchemaVersion,
+}: {
+  countryCode: string;
+  options?: FlowOptions & {
+    queryOptions?: { enabled?: boolean };
+    transformMoneyFields?: boolean;
+  };
+  query?: Record<string, unknown>;
+  jsonSchemaVersion?: number | 'latest';
+}): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
+  const { client } = useClient();
+  const jsonSchemaQueryParam = jsonSchemaVersion
+    ? {
+        json_schema_version: jsonSchemaVersion,
+      }
+    : {};
+  const { data: response, ...reactQueryResult } = useQuery({
+    queryKey: [
+      'onboarding-contract-details-schema',
+      countryCode,
+      jsonSchemaVersion,
+    ],
+    retry: false,
+    queryFn: async () => {
+      const response = await getV1CountriesCountryCodeForm({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          country_code: countryCode,
+          form: 'contract_details',
+        },
+        query: {
+          skip_benefits: true,
+          ...query,
+          ...jsonSchemaQueryParam,
+        },
+      });
+
+      // If response status is 404 or other error, throw an error to trigger isError
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch onboarding schema');
+      }
+
+      return response;
+    },
+    enabled: options?.queryOptions?.enabled,
+  });
+
+  const contractDetailsFormFrance: JSONSchemaFormResultWithFieldsets | null =
+    useMemo(() => {
+      const schemaData = response?.data.data || {};
+      if (!schemaData) return null;
+      return createHeadlessForm(schemaData, {}, options);
+    }, [options, response?.data]);
+
+  return {
+    data: contractDetailsFormFrance,
+    isLoading: reactQueryResult.isLoading,
+  };
 };
 
 export const useBenefitOffersSchema = (
