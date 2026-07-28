@@ -54,10 +54,12 @@ export const usePayrollAdminOnboarding = ({
   initialValues,
   options,
 }: Omit<PayrollAdminOnboardingFlowProps, 'render'>) => {
-  // Only fetch when the caller hasn't already pinned a legal entity — avoids
-  // an unnecessary request for callers that already know theirs.
+  // Always fetch, even when the caller already pinned a legal entity — so
+  // `legalEntities` below stays accurate for callers that inspect it (e.g. to
+  // render their own "no GP-enabled legal entity" state) instead of always
+  // reporting empty just because the fetch was skipped.
   const { data: legalEntities, isLoading: isLoadingLegalEntities } =
-    useGPLegalEntities(providedLegalEntityId ? undefined : companyId);
+    useGPLegalEntities(companyId);
 
   // If there are no GP-enabled legal entities, this stays undefined — the
   // consumer is expected to check `legalEntities` and not render the flow.

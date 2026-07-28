@@ -67,7 +67,13 @@ describe('usePayrollAdminOnboarding — legal entities', () => {
     expect(result.current.legalEntityId).toBeUndefined();
   });
 
-  it('uses an explicitly provided legalEntityId as-is', () => {
+  it('uses an explicitly provided legalEntityId as-is, while still exposing the fetched legalEntities', async () => {
+    server.use(
+      http.get('*/v1/companies/*/legal-entities', () =>
+        HttpResponse.json(legalEntitiesResponse([gpEnabledLegalEntity])),
+      ),
+    );
+
     const { result } = renderHook(
       () =>
         usePayrollAdminOnboarding({
@@ -78,5 +84,13 @@ describe('usePayrollAdminOnboarding — legal entities', () => {
     );
 
     expect(result.current.legalEntityId).toBe('explicit-le');
+
+    // legalEntities is still fetched and populated — it must not read as
+    // empty just because an explicit legalEntityId skipped derivation, or
+    // callers following the "empty legalEntities means no GP legal entity"
+    // contract would be misled.
+    await waitFor(() => {
+      expect(result.current.legalEntities).toEqual([gpEnabledLegalEntity]);
+    });
   });
 });
