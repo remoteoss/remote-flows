@@ -165,13 +165,16 @@ const useFranceContractDetails = ({
   jsonSchemaVersion: number | 'latest';
   jsfModify?: JSFModify;
 }) => {
-  const options = {
-    queryOptions: {
-      enabled,
-    },
-    transformMoneyFields: false,
-    jsfModify,
-  };
+  const options = useMemo(
+    () => ({
+      queryOptions: {
+        enabled,
+      },
+      transformMoneyFields: false,
+      jsfModify,
+    }),
+    [enabled, jsfModify],
+  );
   const { data: form, isLoading: isLoadingContractDetails } =
     useContractDetailsSchema({
       countryCode,
