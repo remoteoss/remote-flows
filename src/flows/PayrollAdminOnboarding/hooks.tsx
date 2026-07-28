@@ -58,8 +58,11 @@ export const usePayrollAdminOnboarding = ({
   // `legalEntities` below stays accurate for callers that inspect it (e.g. to
   // render their own "no GP-enabled legal entity" state) instead of always
   // reporting empty just because the fetch was skipped.
-  const { data: legalEntities, isLoading: isLoadingLegalEntities } =
-    useGPLegalEntities(companyId);
+  const {
+    data: legalEntities,
+    isLoading: isLoadingLegalEntities,
+    isError: isErrorLegalEntities,
+  } = useGPLegalEntities(companyId);
 
   // If there are no GP-enabled legal entities, this stays undefined — the
   // consumer is expected to check `legalEntities` and not render the flow.
@@ -325,6 +328,10 @@ export const usePayrollAdminOnboarding = ({
     companyId,
     legalEntityId,
     legalEntities: legalEntities ?? [],
+    // An empty `legalEntities` array means "no GP-enabled legal entity" only
+    // when this is false — check it before treating empty as that state,
+    // since a failed fetch also leaves `legalEntities` empty.
+    isErrorLegalEntities,
     countryCode: internalCountryCode,
     employmentId: internalEmploymentId,
     initialValues,

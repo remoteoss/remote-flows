@@ -93,4 +93,26 @@ describe('usePayrollAdminOnboarding — legal entities', () => {
       expect(result.current.legalEntities).toEqual([gpEnabledLegalEntity]);
     });
   });
+
+  it('exposes isErrorLegalEntities when the fetch fails, instead of reading as no GP-enabled legal entity', async () => {
+    server.use(
+      http.get('*/v1/companies/*/legal-entities', () =>
+        HttpResponse.json(
+          { message: 'Internal server error' },
+          { status: 500 },
+        ),
+      ),
+    );
+
+    const { result } = renderHook(
+      () => usePayrollAdminOnboarding({ companyId: 'company-1' }),
+      { wrapper: TestProviders },
+    );
+
+    await waitFor(() => {
+      expect(result.current.isErrorLegalEntities).toBe(true);
+    });
+    expect(result.current.legalEntities).toEqual([]);
+    expect(result.current.legalEntityId).toBeUndefined();
+  });
 });

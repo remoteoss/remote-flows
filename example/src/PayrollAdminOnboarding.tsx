@@ -90,6 +90,21 @@ function AdminFlowForm() {
           return <p>Loading...</p>;
         }
 
+        if (!adminBag.isLoading && adminBag.isErrorLegalEntities) {
+          return (
+            <div
+              className='alert'
+              style={{ background: '#fee', borderColor: '#c33' }}
+            >
+              <p>
+                <strong>Could not load legal entities</strong> for company{' '}
+                <code>{COMPANY_ID}</code>. Check your connection and
+                permissions, then reload.
+              </p>
+            </div>
+          );
+        }
+
         if (!adminBag.isLoading && adminBag.legalEntities.length === 0) {
           return (
             <div className='alert'>
