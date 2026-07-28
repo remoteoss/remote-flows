@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   PayrollAdminOnboardingFlow,
   PayrollAdminOnboardingRenderProps,
-  useGPLegalEntities,
 } from '@remoteoss/remote-flows';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
@@ -39,7 +38,7 @@ type Errors = {
 
 const emptyErrors: Errors = { apiError: '', fieldErrors: [] };
 
-function AdminFlowForm({ legalEntityId }: { legalEntityId: string }) {
+function AdminFlowForm() {
   const [errors, setErrors] = useState<Errors>(emptyErrors);
   const [done, setDone] = useState(false);
 
@@ -74,7 +73,6 @@ function AdminFlowForm({ legalEntityId }: { legalEntityId: string }) {
   return (
     <PayrollAdminOnboardingFlow
       companyId={COMPANY_ID}
-      legalEntityId={legalEntityId}
       render={({ adminBag, components }: PayrollAdminOnboardingRenderProps) => {
         const {
           SelectCountryStep,
@@ -88,8 +86,20 @@ function AdminFlowForm({ legalEntityId }: { legalEntityId: string }) {
         const currentStep = adminBag.stepState.currentStep.name;
         const allSteps = Object.entries(STEP_LABELS);
 
-        if (adminBag.isLoading && !adminBag.countryCode) {
+        if (adminBag.isLoading && adminBag.fields.length === 0) {
           return <p>Loading...</p>;
+        }
+
+        if (!adminBag.isLoading && adminBag.legalEntities.length === 0) {
+          return (
+            <div className='alert'>
+              <p>
+                <strong>No GP-enabled legal entity found.</strong> The company{' '}
+                <code>{COMPANY_ID}</code> has no legal entity with Global
+                Payroll enabled.
+              </p>
+            </div>
+          );
         }
 
         const onStepError = (e: {
@@ -116,16 +126,15 @@ function AdminFlowForm({ legalEntityId }: { legalEntityId: string }) {
                     onSuccess={clearErrors}
                   />
                   <AlertError errors={errors} />
-                  {isFormReady && (
-                    <div className='buttons-container'>
-                      <SubmitButton
-                        className='submit-button'
-                        onClick={clearErrors}
-                      >
-                        Create Employment & Continue
-                      </SubmitButton>
-                    </div>
-                  )}
+                  <div className='buttons-container'>
+                    <SubmitButton
+                      className='submit-button'
+                      onClick={clearErrors}
+                      disabled={!isFormReady}
+                    >
+                      Create Employment & Continue
+                    </SubmitButton>
+                  </div>
                 </>
               );
             }
@@ -226,32 +235,10 @@ function AdminFlowForm({ legalEntityId }: { legalEntityId: string }) {
   );
 }
 
-function GPAdminOnboardingInner() {
-  const { data: legalEntities, isLoading } = useGPLegalEntities(COMPANY_ID);
-
-  if (isLoading) {
-    return <p>Loading…</p>;
-  }
-
-  if (!legalEntities || legalEntities.length === 0) {
-    return (
-      <div className='alert'>
-        <p>
-          <strong>No GP-enabled legal entity found.</strong> The company{' '}
-          <code>{COMPANY_ID}</code> has no legal entity with Global Payroll
-          enabled.
-        </p>
-      </div>
-    );
-  }
-
-  return <AdminFlowForm legalEntityId={legalEntities[0].id} />;
-}
-
 export function PayrollAdminOnboardingForm() {
   return (
     <RemoteFlows proxy={{ url: window.location.origin }} authType='none'>
-      <GPAdminOnboardingInner />
+      <AdminFlowForm />
     </RemoteFlows>
   );
 }
