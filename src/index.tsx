@@ -124,7 +124,10 @@ export type {
 
 export type * from '@/src/flows/CostCalculator/types';
 
-export { useMagicLink } from '@/src/common/api';
+export {
+  useMagicLink,
+  useSandboxApproveRiskReservePayment,
+} from '@/src/common/api';
 export {
   useEmploymentQuery,
   useDiscardEmploymentMutation,
