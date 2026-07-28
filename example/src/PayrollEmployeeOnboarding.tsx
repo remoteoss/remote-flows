@@ -41,13 +41,19 @@ type Errors = {
 
 const emptyErrors: Errors = { apiError: '', fieldErrors: [] };
 
-// ── Outer-context loader (company manager token) ────────────────────────────
+// ── Outer-context loader ─────────────────────────────────────────────────────
 //
 // The employee assertion token can't fetch /v1/employments/:id (returns
 // {message} only), so we read country + work jurisdiction from the employment
-// here, in the outer RemoteFlows context, and hand them down to the inner
+// here, in an outer RemoteFlows context, and hand them down to the inner
 // (employee-token) context as props. This keeps consumers from having to
 // hardcode VITE_GP_COUNTRY_CODE / VITE_GP_STATE_JURISDICTION.
+//
+// This outer context also uses authType='none': the FE doesn't hold a token
+// here either — example/api/proxy.js decides the auth strategy per-path via
+// getTokenType(), and today that falls through to the same refresh-token
+// ('user-token') flow used by most other demos behind this dev proxy, not a
+// dedicated company-manager mint.
 //
 // The bank substep is derived inside the flow from the bag's
 // `selfOnboardingSubsteps`, so it isn't fetched here.
@@ -460,7 +466,7 @@ function EmployeeFlowForm({ employmentId }: { employmentId: string }) {
         <p style={{ margin: 0 }}>
           <strong>Could not determine country</strong> for employment{' '}
           <code>{employmentId}</code>. Check that the employment exists and your
-          company-manager token has access.
+          dev-proxy token (see example/api/proxy.js) has access.
         </p>
       </div>
     );
@@ -555,8 +561,9 @@ function GPEmployeeOnboardingInner() {
 
 export function PayrollEmployeeOnboardingForm() {
   return (
-    // Outer context: the proxy mints the company-manager token server-side
-    // for /v1/employments/* and /v1/companies/*, so the FE never sees one.
+    // Outer context: authType='none' since the FE doesn't hold a token here
+    // either — see the useEmployeeFlowContext comment above for how auth is
+    // actually resolved for /v1/employments/* through the dev proxy.
     <RemoteFlows proxy={{ url: window.location.origin }} authType='none'>
       <GPEmployeeOnboardingInner />
     </RemoteFlows>
