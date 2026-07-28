@@ -48,11 +48,13 @@ import { CreateCompanyForm } from './CreateCompany';
 import { MagicLinkTest } from './MagicLinkTest';
 import { JsonSchemaComparisonDemo } from './JsonSchemaComparisonDemo';
 import { JsonSchemaPlayground } from './flows/JsonSchemaPlayground/JsonSchemaPlayground';
+import { SandboxPaymentApproval } from './SandboxPaymentApproval';
 import ContractorOnboardingCode from './ContractorOnboarding?raw';
 import CreateCompanyCode from './CreateCompany?raw';
 import MagicLinkTestCode from './MagicLinkTest?raw';
 import JsonSchemaComparisonCode from './JsonSchemaComparisonDemo?raw';
 import JsonSchemaPlaygroundCode from './flows/JsonSchemaPlayground/JsonSchemaPlayground?raw';
+import SandboxPaymentApprovalCode from './SandboxPaymentApproval?raw';
 
 const costCalculatorDemos = [
   {
@@ -169,6 +171,13 @@ const additionalDemos = [
     description: 'Test magic link generation to various paths',
     component: MagicLinkTest,
     sourceCode: MagicLinkTestCode,
+  },
+  {
+    id: 'sandbox-payment-approval',
+    title: 'Sandbox Payment Approval',
+    description: 'Approve risk reserve payments for employments',
+    component: SandboxPaymentApproval,
+    sourceCode: SandboxPaymentApprovalCode,
   },
   {
     id: 'json-schema-comparison',

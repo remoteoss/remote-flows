@@ -136,6 +136,8 @@ export {
   useTimeOffLeavePoliciesSummaryQuery,
 } from '@/src/common/api/timeoff';
 
+export { useSandboxApproveRiskReservePayment } from '@/src/common/api/sandbox';
+
 export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
