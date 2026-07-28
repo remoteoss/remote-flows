@@ -124,10 +124,7 @@ export type {
 
 export type * from '@/src/flows/CostCalculator/types';
 
-export {
-  useMagicLink,
-  useSandboxApproveRiskReservePayment,
-} from '@/src/common/api';
+export { useMagicLink } from '@/src/common/api';
 export {
   useEmploymentQuery,
   useDiscardEmploymentMutation,
@@ -138,6 +135,8 @@ export {
   usePaidTimeoffBreakdownQuery,
   useTimeOffLeavePoliciesSummaryQuery,
 } from '@/src/common/api/timeoff';
+
+export { useSandboxApproveRiskReservePayment } from '@/src/common/api/sandbox';
 
 export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 
