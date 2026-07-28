@@ -1231,10 +1231,16 @@ export const useOnboarding = ({
         stepState.currentStep.name === 'contract_details' &&
         isJsfV1ContractDetailsEnabled
       ) {
+        // Invisible values are kept on purpose here. The fields still hold the
+        // visibility of the previous change, so dropping their values would hide
+        // what a field that is about to become visible needs to compute itself:
+        // a hidden fieldset coming back would lose the values driving its own
+        // children. handleValidation resolves the visibility first and nulls
+        // whatever it considers hidden afterwards, which is the right order.
         const parsedValues = await parseJSFToValidate(
           values,
           contractDetailsFormV1?.fields,
-          { isPartialValidation: false },
+          { isPartialValidation: true },
         );
         const result = contractDetailsFormV1?.handleValidation(parsedValues);
         setFieldsCount((prev) => prev + 1);
