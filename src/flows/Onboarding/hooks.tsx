@@ -785,7 +785,6 @@ export const useOnboarding = ({
       contractDetailsForm?.meta,
       benefitOffersSchema?.meta,
     ],
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
   );
 
   const {
