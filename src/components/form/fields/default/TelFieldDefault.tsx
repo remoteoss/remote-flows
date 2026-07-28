@@ -1,5 +1,6 @@
 import { FormDescription, FormMessage } from '@/src/components/ui/form';
 import { FormItem, FormLabel } from '@/src/components/ui/form';
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 import { TelFieldComponentProps } from '@/src/types/fields';
 import {
   Select,
@@ -101,8 +102,11 @@ export function TelFieldDefault({
         </div>
       </div>
 
-      {description && (
-        <FormDescription className='RemoteFlows__TelField__Description'>
+      {(description || fieldData.meta?.helpCenter) && (
+        <FormDescription
+          className='RemoteFlows__TelField__Description'
+          helpCenter={<HelpCenter helpCenter={fieldData.meta?.helpCenter} />}
+        >
           {description}
         </FormDescription>
       )}

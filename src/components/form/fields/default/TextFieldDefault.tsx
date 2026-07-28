@@ -1,6 +1,7 @@
 import { FormDescription, FormMessage } from '@/src/components/ui/form';
 import { FormControl, FormItem, FormLabel } from '@/src/components/ui/form';
 import { Input } from '@/src/components/ui/input';
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 import { TextFieldComponentProps } from '@/src/types/fields';
 
 export function TextFieldDefault({
@@ -30,8 +31,11 @@ export function TextFieldDefault({
           maxLength={maxLength}
         />
       </FormControl>
-      {description && (
-        <FormDescription className='RemoteFlows__TextField__Description'>
+      {(description || fieldData.meta?.helpCenter) && (
+        <FormDescription
+          className='RemoteFlows__TextField__Description'
+          helpCenter={<HelpCenter helpCenter={fieldData.meta?.helpCenter} />}
+        >
           {description}
         </FormDescription>
       )}

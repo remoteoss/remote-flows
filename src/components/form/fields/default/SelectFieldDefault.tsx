@@ -5,6 +5,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/src/components/ui/form';
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 import { FieldComponentProps } from '@/src/types/fields';
 import {
   Select,
@@ -62,7 +63,13 @@ export function SelectFieldDefault({
           </Select>
         </div>
       </FormControl>
-      {description && <FormDescription>{description}</FormDescription>}
+      {(description || fieldData.meta?.helpCenter) && (
+        <FormDescription
+          helpCenter={<HelpCenter helpCenter={fieldData.meta?.helpCenter} />}
+        >
+          {description}
+        </FormDescription>
+      )}
       {fieldState.error && <FormMessage />}
     </FormItem>
   );
