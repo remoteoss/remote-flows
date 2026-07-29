@@ -95,6 +95,8 @@ type TaxStepKey = (typeof TAX_STEPS)[number];
 
 export const usePayrollEmployeeOnboarding = ({
   employmentId,
+  countryCode: countryCodeProp,
+  jurisdiction: jurisdictionProp,
   initialValues,
   options,
 }: Omit<PayrollEmployeeOnboardingFlowProps, 'render'>) => {
@@ -109,13 +111,16 @@ export const usePayrollEmployeeOnboarding = ({
     flow: 'payroll_employee_onboarding',
   });
 
-  // `/v1/employments/:id` isn't an employee-scoped path, so it's reachable
-  // from the same client/token context as the employee endpoints below —
-  // no separate provider is needed to resolve country + jurisdiction.
+  // Only fetch the employment when the consumer hasn't supplied countryCode
+  // themselves. This lookup requires a token that can reach
+  // `/v1/employments/:id` — fine for a proxy that mints a different token per
+  // path, but a plain employee-scoped assertion token gets a 401 here. So
+  // consumers whose `auth` resolves to a single employee-scoped token for the
+  // whole client must supply `countryCode` (and `jurisdiction`) explicitly.
   const { data: employment, isLoading: isLoadingEmployment } =
-    useEmploymentQuery({ employmentId });
+    useEmploymentQuery({ employmentId, enabled: !countryCodeProp });
 
-  const countryCode = employment?.country?.code;
+  const countryCode = countryCodeProp ?? employment?.country?.code;
   // Prefer the work address state when present; fall back to the home
   // address state. State code is only meaningful for USA employments.
   const workState = (
@@ -124,7 +129,7 @@ export const usePayrollEmployeeOnboarding = ({
   const homeState = (
     employment?.address_details as { state?: string } | undefined
   )?.state;
-  const jurisdiction = workState || homeState;
+  const jurisdiction = jurisdictionProp ?? (workState || homeState);
 
   const onStepChange = useCallback(
     (step: Step<EmployeeStepKey>) => {

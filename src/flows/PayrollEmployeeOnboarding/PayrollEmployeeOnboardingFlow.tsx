@@ -12,6 +12,8 @@ import { BackButton } from '@/src/flows/PayrollEmployeeOnboarding/components/Bac
 
 export const PayrollEmployeeOnboardingFlow = ({
   employmentId,
+  countryCode,
+  jurisdiction,
   initialValues,
   options,
   render,
@@ -19,6 +21,8 @@ export const PayrollEmployeeOnboardingFlow = ({
   const formId = useId();
   const employeeBag = usePayrollEmployeeOnboarding({
     employmentId,
+    countryCode,
+    jurisdiction,
     initialValues,
     options,
   });
