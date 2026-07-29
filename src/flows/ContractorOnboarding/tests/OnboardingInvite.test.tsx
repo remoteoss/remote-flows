@@ -2,10 +2,12 @@ import { mockBaseResponse } from '@/src/common/api/fixtures/base';
 import { mockContractorBasicInformationSchema } from '@/src/common/api/fixtures/contractors';
 import { ContractorOnboardingFlow } from '@/src/flows/ContractorOnboarding/ContractorOnboarding';
 import {
+  contractDocumentsResponse,
   fileResponseWithIR35,
   filesResponseWithIR35,
   filesResponseWithoutIR35,
   mockContractDocumentCreatedResponse,
+  mockContractDocumentPreviewResponse,
   mockContractDocumentSignedResponse,
   mockContractorContractDetailsSchema,
   mockContractorEmploymentResponse,
@@ -111,6 +113,9 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       http.get('*/v1/countries/*/contractor-contract-details*', () => {
         return HttpResponse.json(mockContractorContractDetailsSchema);
       }),
+      http.get('*/v1/contractors/employments/*/contract-documents/*', () => {
+        return HttpResponse.json(mockContractDocumentPreviewResponse);
+      }),
       http.post('*/v1/employments', () => {
         return HttpResponse.json(mockContractorEmploymentResponse);
       }),
@@ -143,6 +148,10 @@ describe('ContractorOnboarding - OnboardingInvite', () => {
       // Mock the individual file fetch endpoint
       http.get(`*/v1/files/*`, () => {
         return HttpResponse.json(fileResponseWithIR35);
+      }),
+
+      http.get('*/v1/employments/*/contract-documents', () => {
+        return HttpResponse.json(contractDocumentsResponse);
       }),
     );
   });

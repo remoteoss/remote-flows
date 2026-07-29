@@ -104,20 +104,6 @@ const contractorBasicInformationHandler = http.get(
   },
 );
 
-const contractDocumentsHandler = http.get(
-  '*/v1/employments/*/contract-documents',
-  () => {
-    return HttpResponse.json(contractDocumentsResponse);
-  },
-);
-
-const contractDocumentPreviewHandler = http.get(
-  '*/v1/contractors/employments/*/contract-documents/*',
-  () => {
-    return HttpResponse.json(mockContractDocumentPreviewResponse);
-  },
-);
-
 const employmentOnboardingReservesStatus = http.get(
   '*/v1/companies/:companyId/employments/:employmentId/onboarding-reserves-status',
   () => {
@@ -222,6 +208,4 @@ export const defaultHandlers = [
   signPreOnboardingDocumentHandler,
   contractEligibilityHandler,
   employmentHandler,
-  contractDocumentsHandler,
-  contractDocumentPreviewHandler,
 ];
