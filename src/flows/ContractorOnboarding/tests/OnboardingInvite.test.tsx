@@ -2,12 +2,10 @@ import { mockBaseResponse } from '@/src/common/api/fixtures/base';
 import { mockContractorBasicInformationSchema } from '@/src/common/api/fixtures/contractors';
 import { ContractorOnboardingFlow } from '@/src/flows/ContractorOnboarding/ContractorOnboarding';
 import {
-  contractDocumentsResponse,
   fileResponseWithIR35,
   filesResponseWithIR35,
   filesResponseWithoutIR35,
   mockContractDocumentCreatedResponse,
-  mockContractDocumentPreviewResponse,
   mockContractDocumentSignedResponse,
   mockContractorContractDetailsSchema,
   mockContractorEmploymentResponse,

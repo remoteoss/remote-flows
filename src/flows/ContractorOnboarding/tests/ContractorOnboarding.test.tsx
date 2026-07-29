@@ -13,12 +13,10 @@ import {
   mockContractorEmploymentResponse,
   mockContractDocumentCreatedResponse,
   mockContractDocumentSignedResponse,
-  mockContractDocumentPreviewResponse,
   inviteResponse,
   filesResponseWithoutIR35,
   filesResponseWithIR35,
   fileResponseWithIR35,
-  contractDocumentsResponse,
 } from '@/src/flows/ContractorOnboarding/tests/fixtures';
 import {
   assertRadioValue,
