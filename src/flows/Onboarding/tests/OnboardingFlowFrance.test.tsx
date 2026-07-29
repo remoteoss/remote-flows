@@ -81,7 +81,9 @@ async function assertMandatoryAllowances(grossSalary: number) {
   const total = grossSalary + allowance5Percent;
 
   await waitFor(() => {
-    expect(screen.getByText('Mandatory allowances', { exact: true })).toBeInTheDocument();
+    expect(
+      screen.getByText('Mandatory allowances', { exact: true }),
+    ).toBeInTheDocument();
   });
 
   const allowancesSection = screen
