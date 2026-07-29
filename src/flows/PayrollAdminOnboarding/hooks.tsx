@@ -1,6 +1,9 @@
 import { useState, useMemo, useCallback } from 'react';
 import type { FieldValues } from 'react-hook-form';
-import { useGPOnboardingSteps } from '@/src/common/api/gpOnboarding';
+import {
+  useGPOnboardingSteps,
+  useGPLegalEntities,
+} from '@/src/common/api/gpOnboarding';
 import { useStepState } from '@/src/flows/useStepState';
 import type { Step } from '@/src/flows/useStepState';
 import type { PayrollAdminOnboardingFlowProps } from '@/src/flows/PayrollAdminOnboarding/types';
@@ -45,12 +48,26 @@ const buildAdminSteps = (
 
 export const usePayrollAdminOnboarding = ({
   companyId,
-  legalEntityId,
+  legalEntityId: providedLegalEntityId,
   countryCode: initialCountryCode,
   employmentId: initialEmploymentId,
   initialValues,
   options,
 }: Omit<PayrollAdminOnboardingFlowProps, 'render'>) => {
+  // Always fetch, even when the caller already pinned a legal entity — so
+  // `legalEntities` below stays accurate for callers that inspect it (e.g. to
+  // render their own "no GP-enabled legal entity" state) instead of always
+  // reporting empty just because the fetch was skipped.
+  const {
+    data: legalEntities,
+    isLoading: isLoadingLegalEntities,
+    isError: isErrorLegalEntities,
+  } = useGPLegalEntities(companyId);
+
+  // If there are no GP-enabled legal entities, this stays undefined — the
+  // consumer is expected to check `legalEntities` and not render the flow.
+  const legalEntityId = providedLegalEntityId ?? legalEntities?.[0]?.id;
+
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(initialEmploymentId);
@@ -234,6 +251,12 @@ export const usePayrollAdminOnboarding = ({
             return data;
           }
 
+          if (!legalEntityId) {
+            throw new Error(
+              'No GP-enabled legal entity available. Cannot create an employment.',
+            );
+          }
+
           const data = await createEmploymentAsync({
             countryCode,
             legalEntityId,
@@ -299,11 +322,16 @@ export const usePayrollAdminOnboarding = ({
 
   return {
     stepState,
-    isLoading: isLoadingSteps || isLoadingSchema,
+    isLoading: isLoadingSteps || isLoadingSchema || isLoadingLegalEntities,
     isSubmitting,
     isComplete: isComplete ?? false,
     companyId,
     legalEntityId,
+    legalEntities: legalEntities ?? [],
+    // An empty `legalEntities` array means "no GP-enabled legal entity" only
+    // when this is false — check it before treating empty as that state,
+    // since a failed fetch also leaves `legalEntities` empty.
+    isErrorLegalEntities,
     countryCode: internalCountryCode,
     employmentId: internalEmploymentId,
     initialValues,

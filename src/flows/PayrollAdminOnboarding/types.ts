@@ -30,8 +30,15 @@ export type PayrollAdminOnboardingRenderProps = {
 export type PayrollAdminOnboardingFlowProps = {
   /** UUID of the company. */
   companyId: string;
-  /** UUID of the GP-enabled legal entity (required for GP employment creation). */
-  legalEntityId: string;
+  /**
+   * UUID of the GP-enabled legal entity to create the employment under.
+   * Optional — if omitted, the flow fetches the company's GP-enabled legal
+   * entities and uses the first one. Check `adminBag.legalEntities` if you
+   * need to handle the case where the company has none — but check
+   * `adminBag.isErrorLegalEntities` first, since a failed fetch also leaves
+   * `legalEntities` empty and isn't the same as "no GP legal entity".
+   */
+  legalEntityId?: string;
   /** Optional. Pre-select country and skip country selection. */
   countryCode?: string;
   /** Optional. Resume an existing in-progress GP employment. */

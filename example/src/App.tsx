@@ -49,6 +49,7 @@ import { MagicLinkTest } from './MagicLinkTest';
 import { JsonSchemaComparisonDemo } from './JsonSchemaComparisonDemo';
 import { JsonSchemaPlayground } from './flows/JsonSchemaPlayground/JsonSchemaPlayground';
 import { SandboxPaymentApproval } from './SandboxPaymentApproval';
+import { PayrollAdminOnboardingForm } from './PayrollAdminOnboarding';
 import { PayrollEmployeeOnboardingForm } from './PayrollEmployeeOnboarding';
 import ContractorOnboardingCode from './ContractorOnboarding?raw';
 import CreateCompanyCode from './CreateCompany?raw';
@@ -193,6 +194,13 @@ const additionalDemos = [
     description: 'Test and experiment with different JSON schemas',
     component: JsonSchemaPlayground,
     sourceCode: JsonSchemaPlaygroundCode,
+  },
+  {
+    id: 'payroll-admin-onboarding',
+    title: 'GP Admin Onboarding',
+    description: 'Global Payroll admin onboarding flow',
+    component: PayrollAdminOnboardingForm,
+    sourceCode: '',
   },
   {
     id: 'payroll-employee-onboarding',
