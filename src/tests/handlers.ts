@@ -24,6 +24,7 @@ import {
   mockBenefitOffersSchema,
   mockOnboardingReservesStatusResponse,
 } from '@/src/common/api/fixtures/employments';
+import { employmentDefaultResponse } from '@/src/flows/Onboarding/tests/fixtures';
 import {
   employmentDefaultResponse,
   employmentCreatedResponse,
