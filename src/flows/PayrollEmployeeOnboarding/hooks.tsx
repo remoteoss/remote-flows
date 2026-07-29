@@ -1,6 +1,7 @@
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import type { FieldValues } from 'react-hook-form';
 import { useGPOnboardingSteps } from '@/src/common/api/gpOnboarding';
+import { useEmploymentQuery } from '@/src/common/api/employment';
 import { useStepState } from '@/src/flows/useStepState';
 import type { Step } from '@/src/flows/useStepState';
 import type {
@@ -94,8 +95,6 @@ type TaxStepKey = (typeof TAX_STEPS)[number];
 
 export const usePayrollEmployeeOnboarding = ({
   employmentId,
-  countryCode,
-  jurisdiction,
   initialValues,
   options,
 }: Omit<PayrollEmployeeOnboardingFlowProps, 'render'>) => {
@@ -109,6 +108,23 @@ export const usePayrollEmployeeOnboarding = ({
   const { updateErrorContext } = useErrorReporting({
     flow: 'payroll_employee_onboarding',
   });
+
+  // `/v1/employments/:id` isn't an employee-scoped path, so it's reachable
+  // from the same client/token context as the employee endpoints below —
+  // no separate provider is needed to resolve country + jurisdiction.
+  const { data: employment, isLoading: isLoadingEmployment } =
+    useEmploymentQuery({ employmentId });
+
+  const countryCode = employment?.country?.code;
+  // Prefer the work address state when present; fall back to the home
+  // address state. State code is only meaningful for USA employments.
+  const workState = (
+    employment?.work_address_details as { state?: string } | undefined
+  )?.state;
+  const homeState = (
+    employment?.address_details as { state?: string } | undefined
+  )?.state;
+  const jurisdiction = workState || homeState;
 
   const onStepChange = useCallback(
     (step: Step<EmployeeStepKey>) => {
@@ -315,11 +331,15 @@ export const usePayrollEmployeeOnboarding = ({
 
   // ── Mutations ───────────────────────────────────────────────────────────────
 
-  const updatePersonalDetailsMutation = useGPUpdatePersonalDetails();
-  const updateHomeAddressMutation = useGPUpdateHomeAddress();
-  const updateBankAccountMutation = useGPUpdateBankAccount();
-  const updateFederalTaxesMutation = useGPUpdateFederalTaxes();
-  const updateStateTaxesMutation = useGPUpdateStateTaxes(jurisdiction);
+  const updatePersonalDetailsMutation =
+    useGPUpdatePersonalDetails(employmentId);
+  const updateHomeAddressMutation = useGPUpdateHomeAddress(employmentId);
+  const updateBankAccountMutation = useGPUpdateBankAccount(employmentId);
+  const updateFederalTaxesMutation = useGPUpdateFederalTaxes(employmentId);
+  const updateStateTaxesMutation = useGPUpdateStateTaxes(
+    jurisdiction,
+    employmentId,
+  );
 
   const { mutateAsyncOrThrow: updatePersonalDetailsAsync } = mutationToPromise(
     updatePersonalDetailsMutation,
@@ -462,7 +482,7 @@ export const usePayrollEmployeeOnboarding = ({
 
   return {
     stepState,
-    isLoading: isLoadingSteps || isLoadingSchema,
+    isLoading: isLoadingEmployment || isLoadingSteps || isLoadingSchema,
     isSubmitting,
     isComplete: isComplete ?? false,
     employmentId,

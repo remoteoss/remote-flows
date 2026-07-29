@@ -3,7 +3,6 @@ import {
   PayrollEmployeeOnboardingFlow,
   PayrollEmployeeOnboardingRenderProps,
   TaxStepUnavailableReason,
-  useEmploymentQuery,
 } from '@remoteoss/remote-flows';
 import { RemoteFlows } from './RemoteFlows';
 import { AlertError } from './AlertError';
@@ -41,46 +40,6 @@ type Errors = {
 
 const emptyErrors: Errors = { apiError: '', fieldErrors: [] };
 
-// ── Outer-context loader ─────────────────────────────────────────────────────
-//
-// The employee assertion token can't fetch /v1/employments/:id (returns
-// {message} only), so we read country + work jurisdiction from the employment
-// here, in an outer RemoteFlows context, and hand them down to the inner
-// (employee-token) context as props. This keeps consumers from having to
-// hardcode VITE_GP_COUNTRY_CODE / VITE_GP_STATE_JURISDICTION.
-//
-// This outer context also uses authType='none': the FE doesn't hold a token
-// here either — example/api/proxy.js decides the auth strategy per-path via
-// getTokenType(), and today that falls through to the same refresh-token
-// ('user-token') flow used by most other demos behind this dev proxy, not a
-// dedicated company-manager mint.
-//
-// The bank substep is derived inside the flow from the bag's
-// `selfOnboardingSubsteps`, so it isn't fetched here.
-
-function useEmployeeFlowContext(employmentId: string) {
-  const { data: employment, isLoading: isLoadingEmployment } =
-    useEmploymentQuery({ employmentId });
-
-  const countryCode = employment?.country?.code;
-  // Prefer the work address state when present; fall back to the home address
-  // state. State code is only meaningful for USA — the SDK ignores
-  // `jurisdiction` for non-USA employments.
-  const workState = (
-    employment?.work_address_details as { state?: string } | undefined
-  )?.state;
-  const homeState = (
-    employment?.address_details as { state?: string } | undefined
-  )?.state;
-  const jurisdiction = workState || homeState;
-
-  return {
-    countryCode,
-    jurisdiction,
-    isLoading: isLoadingEmployment,
-  };
-}
-
 function TaxStepNotAvailable({
   reason,
   jurisdiction,
@@ -93,7 +52,7 @@ function TaxStepNotAvailable({
     message = 'Tax steps are only available for USA employments.';
   } else if (reason === 'no_jurisdiction') {
     message =
-      'A US state code is required to submit state taxes — pass a `jurisdiction` prop on the flow.';
+      "A US state code is required to submit state taxes — this employment's address details don't have one on file.";
   } else if (reason === 'schema_unavailable') {
     message = jurisdiction
       ? `The backend didn't return a form schema for state_taxes (jurisdiction "${jurisdiction}"). Check that the gateway has the schema configured for this country/jurisdiction.`
@@ -115,17 +74,17 @@ function TaxStepNotAvailable({
   );
 }
 
-// ── Employee form (employee-scoped token, inner context) ────────────────────
+// ── Employee form ────────────────────────────────────────────────────────────
+//
+// A single RemoteFlows context (authType='none') is enough here: the proxy
+// (example/api/proxy.js) decides the token type per-request based on the URL
+// path, not on which provider made the call. `/v1/employee/*` calls get the
+// employment-scoped assertion (via the `x-rf-employment-id` header the flow
+// attaches internally); everything else, including the `/v1/employments/:id`
+// lookup the flow uses to derive country/jurisdiction, falls through to the
+// regular user-token flow. The FE never holds either token.
 
-function EmployeeFlowInner({
-  employmentId,
-  countryCode,
-  jurisdiction,
-}: {
-  employmentId: string;
-  countryCode: string;
-  jurisdiction: string | undefined;
-}) {
+function EmployeeFlowForm({ employmentId }: { employmentId: string }) {
   const [errors, setErrors] = useState<Errors>(emptyErrors);
   // `done` is set only by the explicit "Finish" action on an unavailable tax
   // step. Submit-driven completion is derived reactively from the last
@@ -147,13 +106,9 @@ function EmployeeFlowInner({
     clearErrors();
   };
 
-  const isUSA = countryCode === 'USA';
-
   return (
     <PayrollEmployeeOnboardingFlow
       employmentId={employmentId}
-      countryCode={countryCode}
-      jurisdiction={isUSA ? jurisdiction : undefined}
       render={({
         employeeBag,
         components,
@@ -173,6 +128,24 @@ function EmployeeFlowInner({
         if (employeeBag.isLoading && !employeeBag.fields.length) {
           return <p>Loading...</p>;
         }
+
+        if (!employeeBag.countryCode) {
+          return (
+            <div
+              className='alert'
+              style={{ background: '#fee', borderColor: '#c33' }}
+            >
+              <p style={{ margin: 0 }}>
+                <strong>Could not determine country</strong> for employment{' '}
+                <code>{employmentId}</code>. Check that the employment exists
+                and your dev-proxy token (see example/api/proxy.js) has access.
+              </p>
+            </div>
+          );
+        }
+
+        const isUSA = employeeBag.countryCode === 'USA';
+        const jurisdiction = employeeBag.jurisdiction;
 
         // Visible steps depend on country + bank substep + jurisdiction. The
         // bank substep comes from the bag (selfOnboardingSubsteps); tax steps
@@ -450,48 +423,6 @@ function EmployeeFlowInner({
   );
 }
 
-// ── Step info loader (company manager context) then hands off to employee ctx ─
-
-function EmployeeFlowForm({ employmentId }: { employmentId: string }) {
-  const { countryCode, jurisdiction, isLoading } =
-    useEmployeeFlowContext(employmentId);
-
-  if (isLoading) return <p>Loading...</p>;
-  if (!countryCode) {
-    return (
-      <div
-        className='alert'
-        style={{ background: '#fee', borderColor: '#c33' }}
-      >
-        <p style={{ margin: 0 }}>
-          <strong>Could not determine country</strong> for employment{' '}
-          <code>{employmentId}</code>. Check that the employment exists and your
-          dev-proxy token (see example/api/proxy.js) has access.
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    // Inner context: the proxy mints the employee-scoped JWT-bearer token
-    // server-side when it sees the x-rf-employment-id header on /v1/employee/*
-    // routes. The FE never holds the employee token.
-    <RemoteFlows
-      proxy={{
-        url: window.location.origin,
-        headers: { 'x-rf-employment-id': employmentId },
-      }}
-      authType='none'
-    >
-      <EmployeeFlowInner
-        employmentId={employmentId}
-        countryCode={countryCode}
-        jurisdiction={jurisdiction}
-      />
-    </RemoteFlows>
-  );
-}
-
 // ── Employment ID entry ──────────────────────────────────────────────────────
 
 function GPEmployeeOnboardingInner() {
@@ -561,9 +492,9 @@ function GPEmployeeOnboardingInner() {
 
 export function PayrollEmployeeOnboardingForm() {
   return (
-    // Outer context: authType='none' since the FE doesn't hold a token here
-    // either — see the useEmployeeFlowContext comment above for how auth is
-    // actually resolved for /v1/employments/* through the dev proxy.
+    // authType='none': the FE never holds a token here. The dev proxy
+    // (example/api/proxy.js) mints the right one per-request based on the URL
+    // path — see the comment above EmployeeFlowForm.
     <RemoteFlows proxy={{ url: window.location.origin }} authType='none'>
       <GPEmployeeOnboardingInner />
     </RemoteFlows>
