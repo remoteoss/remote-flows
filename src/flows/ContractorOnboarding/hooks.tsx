@@ -44,6 +44,7 @@ import {
   reviewStepAllowedEmploymentStatus,
   disabledInviteButtonEmploymentStatus,
   StepKeys,
+  getBasicInformationSchemaVersion,
 } from '@/src/flows/ContractorOnboarding/utils';
 import {
   useCreateEmployment,
@@ -394,6 +395,7 @@ export const useContractorOnboarding = ({
     form,
     options: jsonSchemaOptions = {},
     query = {},
+    jsonSchemaVersion,
   }: {
     form: JSONSchemaFormType;
     options?: {
@@ -402,6 +404,7 @@ export const useContractorOnboarding = ({
       jsonSchemaVersion?: FlowOptions['jsonSchemaVersion'];
     };
     query?: Record<string, string>;
+    jsonSchemaVersion?: number | 'latest';
   }) => {
     const hasUserEnteredAnyValues = Object.keys(fieldValues).length > 0;
     // when you write on the fields, the values are stored in the fieldValues state
@@ -429,6 +432,7 @@ export const useContractorOnboarding = ({
           enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
         },
       },
+      jsonSchemaVersion,
     });
   };
 
@@ -481,6 +485,7 @@ export const useContractorOnboarding = ({
         enabled: isBasicInformationDetailsEnabled,
       },
     },
+    jsonSchemaVersion: getBasicInformationSchemaVersion(options),
   });
 
   const descriptionProvisionalStartDate = useMemo(() => {

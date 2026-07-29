@@ -81,11 +81,13 @@ async function assertMandatoryAllowances(grossSalary: number) {
   const total = grossSalary + allowance5Percent;
 
   await waitFor(() => {
-    expect(screen.getByText(/Mandatory allowances/i)).toBeInTheDocument();
+    expect(
+      screen.getByText('Mandatory allowances', { exact: true }),
+    ).toBeInTheDocument();
   });
 
   const allowancesSection = screen
-    .getByText(/Mandatory allowances/i)
+    .getByText('Mandatory allowances', { exact: true })
     .closest('div');
 
   expect(allowancesSection).toHaveTextContent(
@@ -266,10 +268,6 @@ describe('OnboardingFlow - France', () => {
     });
 
     await fillContractDetails();
-
-    await waitFor(() => {
-      expect(screen.getByText(/Mandatory allowances/i)).toBeInTheDocument();
-    });
 
     await assertMandatoryAllowances(50000);
   });

@@ -192,3 +192,18 @@ export function transformAiErrorResponse(
     : REMOTE_AI_SERVICES_AND_DELIVERABLES_ERROR_MESSAGE;
   return remoteAiErrorMessage;
 }
+
+const DEFAULT_VERSION = 1;
+
+/**
+ * Gets the basic information schema version from options
+ * @param options - The flow options containing version configurations
+ * @returns The jsonSchemaVersion for basic information or default (1)
+ */
+export const getBasicInformationSchemaVersion = (options?: {
+  jsonSchemaVersion?: { employment_basic_information?: number | 'latest' };
+}): number | 'latest' => {
+  return (
+    options?.jsonSchemaVersion?.employment_basic_information || DEFAULT_VERSION
+  );
+};
