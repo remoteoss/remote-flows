@@ -4,6 +4,7 @@ import {
   screen,
   waitFor,
   waitForElementToBeRemoved,
+  fireEvent,
 } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { $TSFixMe } from '@/src/types/remoteFlows';
@@ -13,13 +14,93 @@ import {
   basicInformationSchemaV3France,
   contractDetailsSchemaV1France,
 } from '@/src/flows/Onboarding/tests/fixtures';
-import { queryClient, TestProviders } from '@/src/tests/testHelpers';
+import { fillRadio, queryClient, TestProviders } from '@/src/tests/testHelpers';
 import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
 import { fillBasicInformation } from '@/src/flows/Onboarding/tests/helpers';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
 const mockOnError = vi.fn();
+
+async function fillContractDetails(
+  values?: Partial<{
+    hasWagePortageHigherDegree: string;
+    hasWagePortageYearsOfExperience: string;
+    contractDurationType: string;
+    annualGrossSalary: string;
+  }>,
+) {
+  const defaultValues = {
+    hasWagePortageHigherDegree: 'yes',
+    hasWagePortageYearsOfExperience: 'yes',
+    contractDurationType: 'indefinite', // Note: schema uses 'indefinite' or 'fixed_term', not 'yes'
+    annualGrossSalary: '50000',
+  };
+  const newValues = {
+    ...defaultValues,
+    ...values,
+  };
+  // Wait for contract details form to be available
+  await waitFor(() => {
+    expect(
+      screen.getByRole('radiogroup', {
+        name: /Does your employee hold a higher education qualification/i,
+      }),
+    ).toBeInTheDocument();
+  });
+  // Fill has_wage_portage_higher_degree
+  if (newValues.hasWagePortageHigherDegree) {
+    await fillRadio(
+      'Does your employee hold a higher education qualification',
+      newValues.hasWagePortageHigherDegree,
+    );
+  }
+  // Fill has_wage_portage_years_of_experience
+  if (newValues.hasWagePortageYearsOfExperience) {
+    await fillRadio(
+      'Does the employee have at least 3 years of relevant professional experience',
+      newValues.hasWagePortageYearsOfExperience,
+    );
+  }
+  // Fill contract_duration_type
+  if (newValues.contractDurationType) {
+    await fillRadio('Contract duration', newValues.contractDurationType);
+  }
+  // Fill annual_gross_salary
+  if (newValues.annualGrossSalary) {
+    const salaryInput = screen.getByLabelText(/Annual gross salary/i);
+    fireEvent.change(salaryInput, {
+      target: { value: newValues.annualGrossSalary },
+    });
+  }
+}
+
+async function assertMandatoryAllowances(grossSalary: number) {
+  const allowance5Percent = grossSalary * 0.05;
+  const reserve10Percent = grossSalary * 0.1;
+  const total = grossSalary + allowance5Percent;
+
+  await waitFor(() => {
+    expect(screen.getByText(/Mandatory allowances/i)).toBeInTheDocument();
+  });
+
+  const allowancesSection = screen
+    .getByText(/Mandatory allowances/i)
+    .closest('div');
+
+  expect(allowancesSection).toHaveTextContent(
+    new RegExp(`${allowance5Percent}\\s*EUR`, 'i'),
+  );
+  expect(allowancesSection).toHaveTextContent(
+    new RegExp(`${reserve10Percent}\\s*EUR`, 'i'),
+  );
+  expect(allowancesSection).toHaveTextContent(
+    new RegExp(`${grossSalary}\\s*EUR`, 'i'),
+  );
+  expect(allowancesSection).toHaveTextContent(
+    new RegExp(`${total}\\s*EUR`, 'i'),
+  );
+}
 
 describe('OnboardingFlow - France', () => {
   const MultiStepFormFrance = ({ components, onboardingBag }: $TSFixMe) => {
@@ -148,5 +229,48 @@ describe('OnboardingFlow - France', () => {
     await waitFor(() => {
       expect(screen.getByText(/Step: Contract Details/i)).toBeInTheDocument();
     });
+  });
+
+  it('should assert that computed values are correct in contract details step', async () => {
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode='FRA'
+        skipSteps={['select_country']}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    await fillBasicInformation(
+      {
+        ackNonEligibleJobTitles: true,
+      },
+      {
+        skip: ['hasSeniorityDate'],
+      },
+    );
+
+    const nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Step: Contract Details/i)).toBeInTheDocument();
+    });
+
+    await fillContractDetails();
+
+    await waitFor(() => {
+      expect(screen.getByText(/Mandatory allowances/i)).toBeInTheDocument();
+    });
+
+    await assertMandatoryAllowances(50000);
   });
 });
