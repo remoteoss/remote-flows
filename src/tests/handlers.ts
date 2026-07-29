@@ -22,7 +22,9 @@ import { mockBaseResponse } from '@/src/common/api/fixtures/base';
 import {
   mockBenefitOffersResponse,
   mockBenefitOffersSchema,
+  mockOnboardingReservesStatusResponse,
 } from '@/src/common/api/fixtures/employments';
+import { employmentDefaultResponse } from '@/src/flows/Onboarding/tests/fixtures';
 import {
   preOnboardingRequirementsMock,
   generatedDocumentMock,
@@ -101,14 +103,7 @@ const contractorBasicInformationHandler = http.get(
 const employmentOnboardingReservesStatus = http.get(
   '*/v1/companies/:companyId/employments/:employmentId/onboarding-reserves-status',
   () => {
-    return HttpResponse.json({
-      data: {
-        data: {
-          status: 'no_deposit_required',
-          policies: [],
-        },
-      },
-    });
+    return HttpResponse.json(mockOnboardingReservesStatusResponse);
   },
 );
 
@@ -165,6 +160,28 @@ const contractEligibilityHandler = http.post(
   },
 );
 
+const employmentHandler = http.get('*/v1/employments/:id', ({ params }) => {
+  const employmentId = params?.id;
+
+  if (!employmentId) {
+    return HttpResponse.json(
+      { error: 'Employment not found' },
+      { status: 404 },
+    );
+  }
+
+  return HttpResponse.json({
+    ...employmentDefaultResponse,
+    data: {
+      ...employmentDefaultResponse.data,
+      employment: {
+        ...employmentDefaultResponse.data.employment,
+        id: employmentId,
+      },
+    },
+  });
+});
+
 export const defaultHandlers = [
   identityHandler,
   legalEntitiesHandler,
@@ -186,4 +203,5 @@ export const defaultHandlers = [
   getPreOnboardingDocumentHandler,
   signPreOnboardingDocumentHandler,
   contractEligibilityHandler,
+  employmentHandler,
 ];

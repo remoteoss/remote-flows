@@ -1,3 +1,12 @@
+export const mockOnboardingReservesStatusResponse = {
+  data: {
+    data: {
+      status: 'no_deposit_required',
+      policies: [],
+    },
+  },
+};
+
 export const mockBenefitOffersResponse = {
   data: [
     {

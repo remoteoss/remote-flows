@@ -270,28 +270,6 @@ describe('OnboardingFlow', () => {
     queryClient.clear();
 
     server.use(
-      http.get('*/v1/employments/:id', ({ params }) => {
-        // Create a response with the actual employment ID from the request
-        const employmentId = params?.id;
-
-        if (!employmentId) {
-          return HttpResponse.json(
-            { error: 'Employment not found' },
-            { status: 404 },
-          );
-        }
-
-        return HttpResponse.json({
-          ...employmentDefaultResponse,
-          data: {
-            ...employmentDefaultResponse.data,
-            employment: {
-              ...employmentDefaultResponse.data.employment,
-              id: employmentId,
-            },
-          },
-        });
-      }),
       http.get('*/v1/countries/*/employment_basic_information*', () => {
         return HttpResponse.json(basicInformationSchemaV1Portugal);
       }),
