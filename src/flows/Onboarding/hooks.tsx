@@ -227,9 +227,10 @@ export const useOnboarding = ({
   ] = useState<boolean>(false);
 
   const useDynamicSteps = options?.features?.includes('dynamic_steps') ?? false;
-  const useEAPreview =
+  const useEAPreview = Boolean(
     options?.features?.includes('ea_preview') &&
-    includeEmploymentAgreementPreview;
+    includeEmploymentAgreementPreview,
+  );
 
   const { steps, stepsArray } = useMemo(
     () =>

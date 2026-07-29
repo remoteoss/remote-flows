@@ -158,6 +158,13 @@ const signPreOnboardingDocumentHandler = http.post(
   },
 );
 
+const contractEligibilityHandler = http.post(
+  '*/v1/employments/*/contract-eligibility',
+  () => {
+    return HttpResponse.json(mockBaseResponse);
+  },
+);
+
 export const defaultHandlers = [
   identityHandler,
   legalEntitiesHandler,
@@ -178,4 +185,5 @@ export const defaultHandlers = [
   createPreOnboardingDocumentHandler,
   getPreOnboardingDocumentHandler,
   signPreOnboardingDocumentHandler,
+  contractEligibilityHandler,
 ];
