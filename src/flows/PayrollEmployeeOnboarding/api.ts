@@ -78,7 +78,7 @@ export const useGPEmployeeFormSchema = (
   });
 };
 
-export const useGPUpdatePersonalDetails = () => {
+export const useGPUpdatePersonalDetails = (employmentId: string) => {
   const { client } = useClient();
   return useMutation({
     mutationFn: (personalDetails: Record<string, unknown>) => {
@@ -87,50 +87,53 @@ export const useGPUpdatePersonalDetails = () => {
       const { name: _name, ...payload } = personalDetails;
       return putV1EmployeePersonalDetails({
         client: client as Client,
-        headers: { Authorization: `` },
+        headers: { Authorization: ``, 'x-rf-employment-id': employmentId },
         body: { personal_details: payload },
       });
     },
   });
 };
 
-export const useGPUpdateHomeAddress = () => {
+export const useGPUpdateHomeAddress = (employmentId: string) => {
   const { client } = useClient();
   return useMutation({
     mutationFn: (addressDetails: Record<string, unknown>) =>
       putV1EmployeeAddress({
         client: client as Client,
-        headers: { Authorization: `` },
+        headers: { Authorization: ``, 'x-rf-employment-id': employmentId },
         body: { address_details: addressDetails },
       }),
   });
 };
 
-export const useGPUpdateBankAccount = () => {
+export const useGPUpdateBankAccount = (employmentId: string) => {
   const { client } = useClient();
   return useMutation({
     mutationFn: (bankAccountDetails: Record<string, unknown>) =>
       putV1EmployeeBankAccount({
         client: client as Client,
-        headers: { Authorization: `` },
+        headers: { Authorization: ``, 'x-rf-employment-id': employmentId },
         body: { bank_account_details: bankAccountDetails },
       }),
   });
 };
 
-export const useGPUpdateFederalTaxes = () => {
+export const useGPUpdateFederalTaxes = (employmentId: string) => {
   const { client } = useClient();
   return useMutation({
     mutationFn: (federalTaxes: Record<string, unknown>) =>
       putV1EmployeeFederalTaxes({
         client: client as Client,
-        headers: { Authorization: `` },
+        headers: { Authorization: ``, 'x-rf-employment-id': employmentId },
         body: { federal_taxes: federalTaxes },
       }),
   });
 };
 
-export const useGPUpdateStateTaxes = (jurisdiction: string | undefined) => {
+export const useGPUpdateStateTaxes = (
+  jurisdiction: string | undefined,
+  employmentId: string,
+) => {
   const { client } = useClient();
   return useMutation({
     mutationFn: (stateTaxes: Record<string, unknown>) => {
@@ -141,7 +144,7 @@ export const useGPUpdateStateTaxes = (jurisdiction: string | undefined) => {
       }
       return putV1EmployeeStateTaxesJurisdiction({
         client: client as Client,
-        headers: { Authorization: `` },
+        headers: { Authorization: ``, 'x-rf-employment-id': employmentId },
         path: { jurisdiction },
         body: { state_taxes: stateTaxes },
       });

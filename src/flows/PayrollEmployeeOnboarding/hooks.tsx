@@ -1,6 +1,7 @@
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import type { FieldValues } from 'react-hook-form';
 import { useGPOnboardingSteps } from '@/src/common/api/gpOnboarding';
+import { useEmploymentQuery } from '@/src/common/api/employment';
 import { useStepState } from '@/src/flows/useStepState';
 import type { Step } from '@/src/flows/useStepState';
 import type {
@@ -94,8 +95,8 @@ type TaxStepKey = (typeof TAX_STEPS)[number];
 
 export const usePayrollEmployeeOnboarding = ({
   employmentId,
-  countryCode,
-  jurisdiction,
+  countryCode: countryCodeProp,
+  jurisdiction: jurisdictionProp,
   initialValues,
   options,
 }: Omit<PayrollEmployeeOnboardingFlowProps, 'render'>) => {
@@ -109,6 +110,26 @@ export const usePayrollEmployeeOnboarding = ({
   const { updateErrorContext } = useErrorReporting({
     flow: 'payroll_employee_onboarding',
   });
+
+  // Only fetch the employment when the consumer hasn't supplied countryCode
+  // themselves. This lookup requires a token that can reach
+  // `/v1/employments/:id` — fine for a proxy that mints a different token per
+  // path, but a plain employee-scoped assertion token gets a 401 here. So
+  // consumers whose `auth` resolves to a single employee-scoped token for the
+  // whole client must supply `countryCode` (and `jurisdiction`) explicitly.
+  const { data: employment, isLoading: isLoadingEmployment } =
+    useEmploymentQuery({ employmentId, enabled: !countryCodeProp });
+
+  const countryCode = countryCodeProp ?? employment?.country?.code;
+  // Prefer the work address state when present; fall back to the home
+  // address state. State code is only meaningful for USA employments.
+  const workState = (
+    employment?.work_address_details as { state?: string } | undefined
+  )?.state;
+  const homeState = (
+    employment?.address_details as { state?: string } | undefined
+  )?.state;
+  const jurisdiction = jurisdictionProp ?? (workState || homeState);
 
   const onStepChange = useCallback(
     (step: Step<EmployeeStepKey>) => {
@@ -315,11 +336,15 @@ export const usePayrollEmployeeOnboarding = ({
 
   // ── Mutations ───────────────────────────────────────────────────────────────
 
-  const updatePersonalDetailsMutation = useGPUpdatePersonalDetails();
-  const updateHomeAddressMutation = useGPUpdateHomeAddress();
-  const updateBankAccountMutation = useGPUpdateBankAccount();
-  const updateFederalTaxesMutation = useGPUpdateFederalTaxes();
-  const updateStateTaxesMutation = useGPUpdateStateTaxes(jurisdiction);
+  const updatePersonalDetailsMutation =
+    useGPUpdatePersonalDetails(employmentId);
+  const updateHomeAddressMutation = useGPUpdateHomeAddress(employmentId);
+  const updateBankAccountMutation = useGPUpdateBankAccount(employmentId);
+  const updateFederalTaxesMutation = useGPUpdateFederalTaxes(employmentId);
+  const updateStateTaxesMutation = useGPUpdateStateTaxes(
+    jurisdiction,
+    employmentId,
+  );
 
   const { mutateAsyncOrThrow: updatePersonalDetailsAsync } = mutationToPromise(
     updatePersonalDetailsMutation,
@@ -462,7 +487,7 @@ export const usePayrollEmployeeOnboarding = ({
 
   return {
     stepState,
-    isLoading: isLoadingSteps || isLoadingSchema,
+    isLoading: isLoadingEmployment || isLoadingSteps || isLoadingSchema,
     isSubmitting,
     isComplete: isComplete ?? false,
     employmentId,

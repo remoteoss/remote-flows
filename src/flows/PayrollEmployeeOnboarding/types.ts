@@ -12,8 +12,9 @@ type StepComponentType = React.ComponentType<GPStepCallbacks>;
  * - `pending_enrollment`: the employment is not yet `active`, so the
  *   corresponding tax_task does not exist on the backend yet (PUT returns 404
  *   with `Tax task not found...`).
- * - `no_jurisdiction`: a `jurisdiction` prop was not supplied to the flow,
- *   which is required for the state-taxes endpoint.
+ * - `no_jurisdiction`: no `jurisdiction` was resolved — either not supplied
+ *   as a prop, or not derivable from the employment's work/home address —
+ *   and it's required for the state-taxes endpoint.
  * - `schema_unavailable`: the backend doesn't expose the form schema for this
  *   step (e.g. `GET /v1/countries/USA/global_payroll_state_taxes` returns 400
  *   or 404). Common on local/staging backends where a schema isn't seeded yet.
@@ -37,8 +38,9 @@ export type PayrollEmployeeOnboardingRenderProps = {
      */
     FederalTaxesStep: StepComponentType;
     /**
-     * USA state-taxes step for a single jurisdiction (`PayrollEmployeeOnboardingFlowProps.jurisdiction`).
-     * Returns null when `employeeBag.taxStepsAvailability.state_taxes.isAvailable` is false.
+     * USA state-taxes step for a single jurisdiction (`employeeBag.jurisdiction`,
+     * either the `jurisdiction` prop or derived from the employment). Returns
+     * null when `employeeBag.taxStepsAvailability.state_taxes.isAvailable` is false.
      */
     StateTaxesStep: StepComponentType;
     SubmitButton: React.ComponentType<
@@ -57,11 +59,20 @@ export type PayrollEmployeeOnboardingRenderProps = {
 export type PayrollEmployeeOnboardingFlowProps = {
   /** UUID of the employment, scoped to the employee token. */
   employmentId: string;
-  /** ISO 3166-1 alpha-3 country code of the employment (e.g. 'GBR'). Required for form schema fetching. */
-  countryCode: string;
   /**
-   * Optional US state code (e.g. 'CA', 'NY'). Required for the state_taxes step
-   * to be rendered; omit it for non-USA employments or to skip state taxes entirely.
+   * ISO 3166-1 alpha-3 country code of the employment (e.g. 'USA'). Optional
+   * — when omitted, the flow derives it by calling `GET /v1/employments/:id`
+   * itself. Only supply this if your `auth` resolves to a direct
+   * employee-scoped token for the whole client (no per-request/per-path
+   * token routing): that token can't call `/v1/employments/:id` (401), so
+   * there'd be nothing to derive from.
+   */
+  countryCode?: string;
+  /**
+   * Optional US state code (e.g. 'CA', 'NY'), required for the state_taxes
+   * step to be rendered. When `countryCode` is also omitted, this is derived
+   * from the employment's work/home address. See `countryCode` above for
+   * when to supply it explicitly.
    */
   jurisdiction?: string;
   /** Optional. Pre-populate form fields. */

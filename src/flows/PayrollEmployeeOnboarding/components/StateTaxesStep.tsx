@@ -7,7 +7,7 @@ import type { GPStepCallbacks } from '@/src/flows/types';
  * Render only when `employeeBag.taxStepsAvailability.state_taxes.isAvailable`
  * is true (USA + jurisdiction set + post-enrollment). Returns null otherwise.
  * Submits to PUT /v1/employee/state-taxes/{jurisdiction} where jurisdiction
- * comes from the flow's `jurisdiction` prop.
+ * is derived from the employment (`employeeBag.jurisdiction`).
  */
 export function StateTaxesStep(props: GPStepCallbacks) {
   const { employeeBag } = usePayrollEmployeeOnboardingContext();
