@@ -31,10 +31,6 @@ import {
   documentDetailsMock,
   signDocumentResponseMock,
 } from '@/src/common/api/fixtures/pre-onboarding-requirements';
-import {
-  contractDocumentsResponse,
-  mockContractDocumentPreviewResponse,
-} from '@/src/flows/ContractorOnboarding/tests/fixtures';
 
 const identityHandler = http.get('*/v1/identity/current', () => {
   return HttpResponse.json(identityMock);
