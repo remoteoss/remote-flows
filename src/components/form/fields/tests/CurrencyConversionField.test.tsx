@@ -17,6 +17,15 @@ import {
 import { useState } from 'react';
 import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
+import { $TSFixMe } from '@/src/types/remoteFlows';
+
+vi.mock('@/src/components/shared/zendesk-drawer/ZendeskTriggerButton', () => ({
+  ZendeskTriggerButton: ({ zendeskId, children, className }: $TSFixMe) => (
+    <button className={className} data-testid={`zendesk-button-${zendeskId}`}>
+      {children}
+    </button>
+  ),
+}));
 
 const queryClient = new QueryClient();
 
@@ -37,6 +46,18 @@ const defaultProps: CurrencyConversionFieldProps = {
   schema: string(),
   scopedJsonSchema: {},
   type: 'text',
+};
+
+const propsWithHelpCenter: CurrencyConversionFieldProps = {
+  ...defaultProps,
+  meta: {
+    helpCenter: {
+      callToAction: 'Learn more',
+      id: 12345,
+      content: '<p>How salaries are calculated</p>',
+      title: 'How salaries are calculated',
+    },
+  },
 };
 
 // Helper function to render the component with a form context
@@ -288,6 +309,24 @@ describe('CurrencyFieldWithConversion', () => {
     expect(descriptionElement?.parentElement).toHaveClass(
       'CustomPrefix-description',
     );
+  });
+
+  it('renders the help center link once, before the conversion toggle', () => {
+    renderWithFormContext(propsWithHelpCenter);
+
+    expect(screen.getAllByTestId('zendesk-button-12345')).toHaveLength(1);
+    expect(
+      screen.getByText(/Enter your test salary/i).parentElement?.parentElement,
+    ).toHaveTextContent(
+      'Enter your test salary Learn more Show EUR conversion',
+    );
+  });
+
+  it('renders the help center link when there is no conversion toggle', () => {
+    renderWithFormContext({ ...propsWithHelpCenter, targetCurrency: 'USD' });
+
+    expect(screen.getByTestId('zendesk-button-12345')).toBeInTheDocument();
+    expect(screen.queryByText('Show USD conversion')).not.toBeInTheDocument();
   });
 
   it('resets conversion field when source currency changes', async () => {

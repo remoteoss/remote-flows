@@ -1,11 +1,14 @@
 import { ReactNode, useState, useCallback, useEffect, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
+import omit from 'lodash.omit';
 import { TextField } from '@/src/components/form/fields/TextField';
 import { useConvertCurrency } from '@/src/flows/Onboarding/api';
 import { JSFField } from '@/src/types/remoteFlows';
+import { HelpCenterDataProps } from '@/src/types/fields';
 import { useFormFields } from '@/src/context';
 import { useDebounce } from '@/src/common/hooks';
 import { FormDescription } from '@/src/components/ui/form';
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 import {
   convertFromCents,
   convertToCents,
@@ -14,6 +17,7 @@ import {
 
 type DescriptionWithConversionProps = {
   description: ReactNode;
+  helpCenter: ReactNode;
   showConversion: boolean;
   targetCurrency: string;
   className: string;
@@ -22,6 +26,7 @@ type DescriptionWithConversionProps = {
 
 const DescriptionWithConversion = ({
   description,
+  helpCenter,
   showConversion,
   targetCurrency,
   className,
@@ -39,7 +44,9 @@ const DescriptionWithConversion = ({
 
   return (
     <span className={className}>
-      <FormDescription as='span'>{description}</FormDescription>{' '}
+      <FormDescription as='span' helpCenter={helpCenter}>
+        {description}
+      </FormDescription>{' '}
       <CustomButton
         className={`${className.replace('-description', '-button')}`}
         data-type='inline'
@@ -63,6 +70,9 @@ export type CurrencyConversionFieldProps = JSFField & {
   useProxy?: boolean;
   classNamePrefix: string;
   conversionType?: 'spread' | 'no_spread';
+  meta?: {
+    helpCenter?: HelpCenterDataProps;
+  };
 };
 
 export const CurrencyConversionField = ({
@@ -74,6 +84,7 @@ export const CurrencyConversionField = ({
   classNamePrefix,
   description,
   conversionType = 'spread',
+  meta,
   ...props
 }: CurrencyConversionFieldProps) => {
   const [showConversion, setShowConversion] = useState(false);
@@ -174,10 +185,14 @@ export const CurrencyConversionField = ({
     }
   };
 
+  // when we render the conversion toggle we also render the help center link ourselves,
+  // so it stays next to the description instead of being appended after the toggle.
+  // The link is then stripped from the meta we forward, to avoid rendering it twice.
   const extraDescription = canShowConversion ? (
     <DescriptionWithConversion
       targetCurrency={targetCurrency}
       description={description}
+      helpCenter={<HelpCenter helpCenter={meta?.helpCenter} />}
       showConversion={showConversion}
       className={`${classNamePrefix}-description`}
       onClick={toggleConversion}
@@ -190,6 +205,7 @@ export const CurrencyConversionField = ({
     <>
       <TextField
         {...props}
+        meta={canShowConversion ? omit(meta, 'helpCenter') : meta}
         name={mainFieldName || props.name}
         additionalProps={{ currency: sourceCurrency }}
         description={extraDescription}

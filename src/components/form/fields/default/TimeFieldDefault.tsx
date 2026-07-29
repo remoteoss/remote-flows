@@ -1,6 +1,7 @@
 import { FormDescription, FormMessage } from '@/src/components/ui/form';
 import { FormControl, FormItem, FormLabel } from '@/src/components/ui/form';
 import { Input } from '@/src/components/ui/input';
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 import { TimeFieldComponentProps } from '@/src/types/fields';
 
 export function TimeFieldDefault({
@@ -29,8 +30,11 @@ export function TimeFieldDefault({
           placeholder={label}
         />
       </FormControl>
-      {description && (
-        <FormDescription className='RemoteFlows__TimeField__Description'>
+      {(description || fieldData.meta?.helpCenter) && (
+        <FormDescription
+          className='RemoteFlows__TimeField__Description'
+          helpCenter={<HelpCenter helpCenter={fieldData.meta?.helpCenter} />}
+        >
           {description}
         </FormDescription>
       )}

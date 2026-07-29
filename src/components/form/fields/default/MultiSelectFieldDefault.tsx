@@ -7,6 +7,7 @@ import {
   FormMessage,
 } from '@/src/components/ui/form';
 import { MultiSelect, Option } from '@/src/components/ui/multi-select';
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 import { FieldComponentProps } from '@/src/types/fields';
 
 export const MultiSelectFieldDefault = ({
@@ -44,7 +45,13 @@ export const MultiSelectFieldDefault = ({
           }}
         />
       </FormControl>
-      {description && <FormDescription>{description}</FormDescription>}
+      {(description || fieldData.meta?.helpCenter) && (
+        <FormDescription
+          helpCenter={<HelpCenter helpCenter={fieldData.meta?.helpCenter} />}
+        >
+          {description}
+        </FormDescription>
+      )}
       {fieldState.error && <FormMessage />}
     </FormItem>
   );
