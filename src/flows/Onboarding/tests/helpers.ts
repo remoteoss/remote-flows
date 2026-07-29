@@ -1,5 +1,9 @@
 import { getYearMonthDate } from '@/src/common/dates';
-import { fillRadio, fillDatePickerByTestId } from '@/src/tests/testHelpers';
+import {
+  fillRadio,
+  fillDatePickerByTestId,
+  fillCheckbox,
+} from '@/src/tests/testHelpers';
 import { fireEvent, waitFor, screen } from '@testing-library/react';
 
 // Helper function to generate unique employment IDs for each test
@@ -19,7 +23,11 @@ export async function fillBasicInformation(
     jobCategory: string;
     provisionalStartDate: string;
     hasSeniorityDate: string;
+    ackNonEligibleJobTitles: boolean;
   }>,
+  options?: {
+    skip: string[];
+  },
 ) {
   const currentDate = getYearMonthDate(new Date());
   const defaultValues = {
@@ -29,6 +37,7 @@ export async function fillBasicInformation(
     jobTitle: 'Software Engineer',
     provisionalStartDate: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
     hasSeniorityDate: 'No',
+    ackNonEligibleJobTitles: false,
   };
 
   const newValues = {
@@ -59,7 +68,7 @@ export async function fillBasicInformation(
   }
 
   if (newValues?.jobTitle) {
-    fireEvent.change(screen.getByLabelText(/Job title/i), {
+    fireEvent.change(screen.getByLabelText(/^Job title$/i), {
       target: { value: newValues?.jobTitle },
     });
   }
@@ -71,10 +80,17 @@ export async function fillBasicInformation(
     );
   }
 
-  if (newValues?.hasSeniorityDate) {
+  if (
+    newValues?.hasSeniorityDate &&
+    !options?.skip?.includes('hasSeniorityDate')
+  ) {
     await fillRadio(
       'Does the employee have a seniority date?',
       newValues?.hasSeniorityDate,
     );
+  }
+
+  if (newValues?.ackNonEligibleJobTitles) {
+    await fillCheckbox('I confirm that this job title is eligible');
   }
 }

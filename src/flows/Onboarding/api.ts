@@ -306,7 +306,7 @@ export const useContractDetailsSchema = ({
 
   const contractDetailsFormFrance: JSONSchemaFormResultWithFieldsets | null =
     useMemo(() => {
-      const schemaData = response?.data.data || {};
+      const schemaData = response?.data.data;
       if (!schemaData) return null;
       return createHeadlessForm(schemaData, {}, options);
     }, [options, response?.data]);

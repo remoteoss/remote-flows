@@ -22,7 +22,9 @@ import { mockBaseResponse } from '@/src/common/api/fixtures/base';
 import {
   mockBenefitOffersResponse,
   mockBenefitOffersSchema,
+  mockOnboardingReservesStatusResponse,
 } from '@/src/common/api/fixtures/employments';
+import { employmentDefaultResponse } from '@/src/flows/Onboarding/tests/fixtures';
 import {
   preOnboardingRequirementsMock,
   generatedDocumentMock,
@@ -101,14 +103,7 @@ const contractorBasicInformationHandler = http.get(
 const employmentOnboardingReservesStatus = http.get(
   '*/v1/companies/:companyId/employments/:employmentId/onboarding-reserves-status',
   () => {
-    return HttpResponse.json({
-      data: {
-        data: {
-          status: 'no_deposit_required',
-          policies: [],
-        },
-      },
-    });
+    return HttpResponse.json(mockOnboardingReservesStatusResponse);
   },
 );
 
@@ -158,6 +153,35 @@ const signPreOnboardingDocumentHandler = http.post(
   },
 );
 
+const contractEligibilityHandler = http.post(
+  '*/v1/employments/*/contract-eligibility',
+  () => {
+    return HttpResponse.json(mockBaseResponse);
+  },
+);
+
+const employmentHandler = http.get('*/v1/employments/:id', ({ params }) => {
+  const employmentId = params?.id;
+
+  if (!employmentId) {
+    return HttpResponse.json(
+      { error: 'Employment not found' },
+      { status: 404 },
+    );
+  }
+
+  return HttpResponse.json({
+    ...employmentDefaultResponse,
+    data: {
+      ...employmentDefaultResponse.data,
+      employment: {
+        ...employmentDefaultResponse.data.employment,
+        id: employmentId,
+      },
+    },
+  });
+});
+
 export const defaultHandlers = [
   identityHandler,
   legalEntitiesHandler,
@@ -178,4 +202,6 @@ export const defaultHandlers = [
   createPreOnboardingDocumentHandler,
   getPreOnboardingDocumentHandler,
   signPreOnboardingDocumentHandler,
+  contractEligibilityHandler,
+  employmentHandler,
 ];
