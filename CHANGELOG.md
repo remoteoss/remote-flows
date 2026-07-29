@@ -32,7 +32,6 @@
 - update dependency filesize to v11.0.22 (#1193) [#1193](https://github.com/remoteoss/remote-flows/pull/1193)
 - update actions/setup-node digest to 2499707 (#1186) [#1186](https://github.com/remoteoss/remote-flows/pull/1186)
 
-
 ## 1.44.0
 
 ### Minor Changes
