@@ -31,6 +31,10 @@ import {
   documentDetailsMock,
   signDocumentResponseMock,
 } from '@/src/common/api/fixtures/pre-onboarding-requirements';
+import {
+  contractDocumentsResponse,
+  mockContractDocumentPreviewResponse,
+} from '@/src/flows/ContractorOnboarding/tests/fixtures';
 
 const identityHandler = http.get('*/v1/identity/current', () => {
   return HttpResponse.json(identityMock);
@@ -97,6 +101,20 @@ const contractorBasicInformationHandler = http.get(
   '*/v1/countries/*/contractor_basic_information*',
   () => {
     return HttpResponse.json(mockContractorBasicInformationSchema);
+  },
+);
+
+const contractDocumentsHandler = http.get(
+  '*/v1/employments/*/contract-documents',
+  () => {
+    return HttpResponse.json(contractDocumentsResponse);
+  },
+);
+
+const contractDocumentPreviewHandler = http.get(
+  '*/v1/contractors/employments/*/contract-documents/*',
+  () => {
+    return HttpResponse.json(mockContractDocumentPreviewResponse);
   },
 );
 
@@ -204,4 +222,6 @@ export const defaultHandlers = [
   signPreOnboardingDocumentHandler,
   contractEligibilityHandler,
   employmentHandler,
+  contractDocumentsHandler,
+  contractDocumentPreviewHandler,
 ];
