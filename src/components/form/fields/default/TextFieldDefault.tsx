@@ -9,8 +9,14 @@ export function TextFieldDefault({
   fieldState,
   fieldData,
 }: TextFieldComponentProps) {
-  const { name, label, description, maxLength, includeErrorMessage } =
-    fieldData;
+  const {
+    name,
+    label,
+    description,
+    descriptionSuffix,
+    maxLength,
+    includeErrorMessage,
+  } = fieldData;
   return (
     <FormItem
       data-field={name}
@@ -38,6 +44,11 @@ export function TextFieldDefault({
         >
           {description}
         </FormDescription>
+      )}
+      {descriptionSuffix && (
+        <span className='RemoteFlows__TextField__DescriptionSuffix'>
+          {descriptionSuffix}
+        </span>
       )}
       {includeErrorMessage && fieldState.error && (
         <FormMessage className='RemoteFlows__TextField__Error' />

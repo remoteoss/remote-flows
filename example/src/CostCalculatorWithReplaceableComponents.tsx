@@ -24,6 +24,7 @@ export const CostCalculatorWithReplaceableComponents = () => {
     <RemoteFlows isClientToken components={components}>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
+        options={{ features: ['split_salary_description'] }}
         render={(props) => {
           if (props.isLoading) {
             return <div>Loading...</div>;

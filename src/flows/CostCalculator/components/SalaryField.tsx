@@ -17,6 +17,7 @@ type SalaryFieldProps = JSFField & {
   conversionType?: 'spread' | 'no_spread';
   shouldSwapOrder: boolean;
   defaultValue?: string;
+  splitDescription?: boolean;
 };
 
 export const SalaryField = ({
@@ -25,6 +26,7 @@ export const SalaryField = ({
   salary_conversion_properties,
   conversionType = 'no_spread',
   defaultValue,
+  splitDescription,
   ...props
 }: SalaryFieldProps) => {
   const { setValue, getValues } = useFormContext();
@@ -84,6 +86,7 @@ export const SalaryField = ({
       conversionProperties={conversionProperties}
       classNamePrefix='RemoteFlows-Salary'
       conversionType={conversionType}
+      splitDescription={splitDescription}
     />
   );
 };

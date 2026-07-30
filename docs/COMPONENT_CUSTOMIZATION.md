@@ -325,6 +325,7 @@ type FieldComponentProps = {
   fieldData: {
     label?: string;
     description?: string;
+    descriptionSuffix?: React.ReactNode;
     placeholder?: string;
     options?: Array<{
       value: string;
@@ -335,6 +336,24 @@ type FieldComponentProps = {
   };
 };
 ```
+
+`description`, `meta.helpCenter` and `descriptionSuffix` are three independent slots, so you can render only the ones you need:
+
+```tsx
+const CustomInput = ({ field, fieldData }: FieldComponentProps) => (
+  <div>
+    <label htmlFor={field.name}>{fieldData.label}</label>
+    <input {...field} />
+    <p>{fieldData.description}</p>
+    {/* fieldData.descriptionSuffix carries extra controls the SDK owns,
+        for instance the currency conversion toggle of the salary field.
+        Render it, otherwise your users lose the toggle. */}
+    {fieldData.descriptionSuffix}
+  </div>
+);
+```
+
+> **Salary field:** the three slots are only separate when the flow enables the `split_salary_description` feature — `options={{ features: ['split_salary_description'] }}` on `OnboardingFlow` / `CostCalculatorFlow`. Without it, the salary description keeps packing the help center link and the conversion toggle into `description`, and `descriptionSuffix` stays empty.
 
 ### ButtonComponentProps
 

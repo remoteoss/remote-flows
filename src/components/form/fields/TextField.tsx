@@ -14,6 +14,7 @@ export type TextFieldProps = React.ComponentProps<'input'> & {
       component?: Components['text'];
       includeErrorMessage?: boolean;
       additionalProps?: Record<string, unknown>;
+      descriptionSuffix?: React.ReactNode;
     }
   >;
 
@@ -27,6 +28,7 @@ type CustomTextFieldProps = TextFieldDataProps & {
 export function TextField({
   name,
   description,
+  descriptionSuffix,
   label,
   type,
   onChange,
@@ -54,6 +56,7 @@ export function TextField({
         const customTextFieldProps: CustomTextFieldProps = {
           name,
           description,
+          descriptionSuffix,
           label,
           type,
           onChange,
