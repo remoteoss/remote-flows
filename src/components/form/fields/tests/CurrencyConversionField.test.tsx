@@ -445,6 +445,10 @@ describe('CurrencyFieldWithConversion', () => {
       expect(description?.nextElementSibling).toHaveTextContent(
         'Show EUR conversion',
       );
+      // the toggle shares the description's grid cell, so it stays on the same line
+      expect(description?.parentElement).toHaveClass(
+        'RemoteFlows__TextField__DescriptionGroup',
+      );
     });
 
     it('lets a custom text component render the help center link without the description', () => {
