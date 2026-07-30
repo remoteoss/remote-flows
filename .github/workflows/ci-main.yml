@@ -19,17 +19,20 @@ jobs:
         with:
           node-version: '24.15.0'
 
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run format check
-        run: npm run check-format
+        run: pnpm check-format
 
       - name: Run lint
-        run: npm run lint
+        run: pnpm lint
 
       - name: Run type check
-        run: npm run type-check
+        run: pnpm type-check
 
   build-and-exports:
     name: Build and Check Exports
@@ -44,14 +47,17 @@ jobs:
         with:
           node-version: '24.15.0'
 
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build
-        run: npm run build
+        run: pnpm build
 
       - name: Check exports
-        run: npm run check-exports
+        run: pnpm check-exports
 
   tests:
     name: Unit Tests
@@ -66,11 +72,14 @@ jobs:
         with:
           node-version: '24.15.0'
 
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run tests
-        run: npm run test
+        run: pnpm test
 
   example-checks:
     name: Example App Checks
@@ -85,23 +94,26 @@ jobs:
         with:
           node-version: '24.15.0'
 
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
       - name: Install main package dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build main package
-        run: npm run build
+        run: pnpm build
 
       - name: Install example dependencies
         working-directory: ./example
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Lint example app
         working-directory: ./example
-        run: npm run lint
+        run: pnpm lint
 
       - name: Type-check example app
         working-directory: ./example
-        run: npm run type-check
+        run: pnpm type-check
 
   deploy-remote-flows:
     name: Deploy Remote Flows Preview
@@ -176,16 +188,24 @@ jobs:
         with:
           node-version: '24.15.0'
 
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
       - name: Install main package dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      # example/ consumes the SDK via a `link:..` symlink to the repo root, so
+      # dist/ must be built for anything that resolves the SDK locally.
+      - name: Build main package
+        run: pnpm build
 
       - name: Install example/ dependencies
         working-directory: ./example
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Install Playwright
         working-directory: ./example
-        run: npx playwright install chromium --with-deps
+        run: pnpm exec playwright install chromium --with-deps
 
       - name: Download remote-flows URL
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
@@ -203,7 +223,7 @@ jobs:
           VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
           DEBUG: pw:api
         working-directory: ./example
-        run: npx playwright test --project=chromium
+        run: pnpm exec playwright test --project=chromium
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: ${{ !cancelled() }}

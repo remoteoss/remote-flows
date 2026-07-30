@@ -95,7 +95,7 @@ import { buildPayload } from './utils';
 - **Test edge cases** - Empty states, loading states, error states
 - **Test validation** - Form validation errors and field-level errors
 - **Fixtures per flow** - Organize test data in `src/flows/*/tests/fixtures.ts`
-- **Coverage required** - Run `npm run test:coverage` to check coverage
+- **Coverage required** - Run `pnpm test:coverage` to check coverage
 
 **Test File Conventions:**
 
@@ -155,7 +155,7 @@ Package is consumed by external applications - monitor bundle impact:
 - **Multiple entry points** - Verify exports in `package.json` work correctly
 - **Build output check** - Review `dist/` size after builds
 
-**Check:** Run `npm run build` and compare `dist/` size before/after.
+**Check:** Run `pnpm build` and compare `dist/` size before/after.
 
 ### 3. Error Handling
 
@@ -219,7 +219,7 @@ Forms are central to this library - ensure consistency:
 
 OpenAPI-driven development - never manually write client code:
 
-- **Regenerate after schema changes** - Run `npm run openapi-ts` after API updates
+- **Regenerate after schema changes** - Run `pnpm openapi-ts` after API updates
 - **Use generated types** - Import types from `src/client/types.gen.ts`
 - **Use generated SDK** - Import API methods from `src/client/sdk.gen.ts`
 - **Query hooks pattern** - Wrap generated client in custom hooks (see `src/common/api.ts`)
@@ -386,7 +386,7 @@ flows/[FlowName]/
 - **JSDoc for public APIs** - All exported functions, hooks, and components need JSDoc
 - **README updates** - Update main README when adding new flows or features
 - **Type documentation** - Complex types should have comments explaining usage
-- **Changelog** - Follows conventional commits (auto-generated via `npm run release`)
+- **Changelog** - Follows conventional commits (auto-generated via `pnpm release`)
 - **Migration guides** - Breaking changes need migration documentation
 - **Example app** - Update `example/` app when adding new features
 
@@ -517,7 +517,7 @@ This project uses automated releases via GitHub Actions:
 **Manual release:**
 
 ```bash
-npm run release
+pnpm release
 ```
 
 This will:

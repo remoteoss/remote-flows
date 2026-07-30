@@ -7,7 +7,7 @@ on:
     paths:
       - 'src/**'
       - 'package.json'
-      - 'package-lock.json'
+      - 'pnpm-lock.yaml'
       - 'tsup.config.ts'
       - '.sizelimit.json'
 
@@ -26,20 +26,25 @@ jobs:
         with:
           persist-credentials: false
 
+      # Corepack must be enabled before setup-node so its pnpm cache can
+      # resolve the store path (setup-node runs `pnpm store path`).
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
+
       - name: Setup Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24.15.0'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build current branch
-        run: npm run build
+        run: pnpm build
 
       - name: Analyze current bundle size
-        run: npm run size -- --output out/current-bundle.json
+        run: pnpm size --output out/current-bundle.json
 
       - name: Checkout base branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -61,17 +66,34 @@ jobs:
       - name: Install dependencies (base)
         if: steps.check_script.outputs.exists == 'true'
         working-directory: base
-        run: npm ci --include=optional --ignore-scripts
+        # Transitional: the base branch may still be on npm (package-lock.json)
+        # until the pnpm migration lands on main.
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile --ignore-scripts
+          else
+            npm ci --include=optional --ignore-scripts
+          fi
 
       - name: Build base branch
         if: steps.check_script.outputs.exists == 'true'
         working-directory: base
-        run: npm run build
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm build
+          else
+            npm run build
+          fi
 
       - name: Analyze base bundle size
         if: steps.check_script.outputs.exists == 'true'
         working-directory: base
-        run: npm run size -- --output ../out/base-bundle.json
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm size --output ../out/base-bundle.json
+          else
+            npm run size -- --output ../out/base-bundle.json
+          fi
 
       - name: Compare bundle sizes
         id: compare
@@ -79,10 +101,10 @@ jobs:
           # Check if we have comparison data
           if [ "${STEPS_CHECK_SCRIPT_OUTPUTS_EXISTS}" != "true" ]; then
             echo "⚠️ Comparison script not found in base branch. Showing current bundle size only."
-            npm exec tsx scripts/format-current-size.ts out/current-bundle.json > out/size-report.md
+            pnpm exec tsx scripts/format-current-size.ts out/current-bundle.json > out/size-report.md
           else
             # Run comparison and capture output
-            npm exec tsx scripts/compare-sizes.ts out/base-bundle.json out/current-bundle.json > out/size-report.md 2>&1 || true
+            pnpm exec tsx scripts/compare-sizes.ts out/base-bundle.json out/current-bundle.json > out/size-report.md 2>&1 || true
           fi
 
           # Read the report for the PR comment
@@ -137,7 +159,7 @@ jobs:
           SIZE_REPORT: ${{ steps.compare.outputs.report }}
 
       - name: Check size limits
-        run: npm run size:check
+        run: pnpm size:check
 
       - name: Upload bundle analysis
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7

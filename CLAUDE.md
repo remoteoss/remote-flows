@@ -11,23 +11,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev            # tsup watch build (link this package into example/ for live dev)
-npm run build          # production bundle (tsup)
-npm test               # vitest (jsdom). Single test: npx vitest run path/to/file.test.tsx
-npm run test:coverage  # coverage with thresholds from scripts/coverage-utils
-npm run type-check     # tsc --noEmit
-npm run lint           # oxlint
-npm run format         # oxfmt
-npm run check-format   # oxfmt --check (CI gate)
-npm run check-exports  # @arethetypeswrong/cli — verifies the package.json exports map
-npm run size           # bundle analysis → out/bundle-analysis.json
-npm run size:check     # fails if .sizelimit.json thresholds are exceeded
-npm run openapi-ts     # regenerate src/client/* from production gateway OpenAPI
-npm run openapi-ts:local  # regenerate from local gateway (openapi-ts.config.local.ts)
-npm run ci             # full local CI: build + check-format + check-exports + lint + type-check + test
+pnpm dev            # tsup watch build (link this package into example/ for live dev)
+pnpm build          # production bundle (tsup)
+pnpm test           # vitest (jsdom). Single test: pnpm exec vitest run path/to/file.test.tsx
+pnpm test:coverage  # coverage with thresholds from scripts/coverage-utils
+pnpm type-check     # tsc --noEmit
+pnpm lint           # oxlint
+pnpm format         # oxfmt
+pnpm check-format   # oxfmt --check (CI gate)
+pnpm check-exports  # @arethetypeswrong/cli — verifies the package.json exports map
+pnpm size           # bundle analysis → out/bundle-analysis.json
+pnpm size:check     # fails if .sizelimit.json thresholds are exceeded
+pnpm openapi-ts     # regenerate src/client/* from production gateway OpenAPI
+pnpm openapi-ts:local  # regenerate from local gateway (openapi-ts.config.local.ts)
+pnpm run ci         # full local CI: build + check-format + check-exports + lint + type-check + test
+                    # (must be `pnpm run ci` — plain `pnpm ci` is pnpm's builtin clean-install)
 ```
 
-The `example/` app is a separate workspace (its own `package.json`, Vite + Express dev server on `:3001`). To work against local changes: `npm link` in repo root, then `npm link @remoteoss/remote-flows` inside `example/`, then run `npm run dev` in both. E2E lives in [example/e2e/](example/e2e/) and is run with `npm run test:e2e` from `example/` (Playwright). E2E is excluded from the root vitest run.
+The repo uses **pnpm** (pinned to `pnpm@11.10.0` via `packageManager`; run `corepack enable` once). Root and `example/` are two independent pnpm projects — each has its own `pnpm-lock.yaml` and a `pnpm-workspace.yaml` that is a settings/root marker, **not** a shared workspace. `example/` consumes the SDK via `link:..` — a permanent symlink to the repo root (same live-dev behavior as under npm): no link command needed, just `pnpm install` in both projects and `pnpm dev` in both. The SDK's `dist/` must be built for `example/` to type-check or run. E2E lives in [example/e2e/](example/e2e/) and is run with `pnpm test:e2e` from `example/` (Playwright). E2E is excluded from the root vitest run.
 
 ## Architecture
 
@@ -63,7 +64,7 @@ Flows are exposed two ways: the prebuilt `<FlowNameFlow render={...}>` component
 
 ### Generated API client
 
-`src/client/` is **fully generated** by `@hey-api/openapi-ts` from [openapi-ts.config.ts](openapi-ts.config.ts) (production gateway) or `openapi-ts.config.local.ts` (local gateway). Never hand-edit `*.gen.ts`. After schema changes, run `npm run openapi-ts` and commit the regenerated files. Import types from `src/client/types.gen.ts` and SDK functions from `src/client/sdk.gen.ts`. `.oxlintrc.json` ignores `src/client/**/*.gen.ts` from lint.
+`src/client/` is **fully generated** by `@hey-api/openapi-ts` from [openapi-ts.config.ts](openapi-ts.config.ts) (production gateway) or `openapi-ts.config.local.ts` (local gateway). Never hand-edit `*.gen.ts`. After schema changes, run `pnpm openapi-ts` and commit the regenerated files. Import types from `src/client/types.gen.ts` and SDK functions from `src/client/sdk.gen.ts`. `.oxlintrc.json` ignores `src/client/**/*.gen.ts` from lint.
 
 ### Forms
 
@@ -101,11 +102,11 @@ Tailwind v4 (`@tailwindcss/postcss`) + CSS variables. Public component classes a
 - **No `any`** — `typescript/no-explicit-any: error`. Use the `$TSFixMe` type from `src/types/remoteFlows.ts` for genuine workarounds.
 - **Path alias `@/*` maps to repo root** (`tsconfig.json` paths); prefer `@/src/...` imports over deep relative ones.
 - **HTML from API responses is unsafe** — sanitize with `sanitizeHtml()` from `src/lib/utils.ts` (or DOMPurify) before rendering. The consumer-supplied `transformHtmlToComponents` receives **unsanitized** HTML; that's the consumer's responsibility per the README.
-- **Conventional commits** drive the automated release (`npm run release` → `scripts/release.ts`). `feat:` → minor, `fix:` → patch, `BREAKING CHANGE:` footer → major. Hotfix releases go through `npm run release:fix` from a version tag (see [DEVELOPMENT.md](DEVELOPMENT.md)).
+- **Conventional commits** drive the automated release (`pnpm release` → `scripts/release.ts`). `feat:` → minor, `fix:` → patch, `BREAKING CHANGE:` footer → major. Hotfix releases go through `pnpm release:fix` from a version tag (see [DEVELOPMENT.md](DEVELOPMENT.md)).
 - **CHANGELOG.md and `package.json` version** are updated by the release scripts — do not bump them by hand on feature branches.
 
 ## Things that look broken but aren't
 
 - `dist/` is checked into the working tree during dev (it's gitignored, but `prepare` runs `build`); don't be alarmed by churn there.
-- `src/client/*.gen.ts` regenerates wholesale — diffs will be large after `npm run openapi-ts` runs.
+- `src/client/*.gen.ts` regenerates wholesale — diffs will be large after `pnpm openapi-ts` runs.
 - The error boundary's `useParentErrorBoundary` defaults to `true` in code but `false` in the README example; the README documents the recommended consumer config, not the default.

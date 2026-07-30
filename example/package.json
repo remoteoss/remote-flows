@@ -3,8 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "commonjs",
+  "packageManager": "pnpm@11.10.0",
   "scripts": {
-    "audit": "npm audit --audit-level=high",
+    "preinstall": "test -n \"$VERCEL\" || npx only-allow pnpm",
+    "audit": "pnpm audit --audit-level=high",
     "dev": "nodemon ./dev_server.js",
     "build": "tsc -b && vite build",
     "lint": "oxlint .",
@@ -15,7 +17,7 @@
     "type-check": "tsc -b --noEmit"
   },
   "dependencies": {
-    "@remoteoss/remote-flows": "file://..",
+    "@remoteoss/remote-flows": "link:..",
     "axios": "1.18.1",
     "dompurify": "3.4.12",
     "dotenv": "17.4.2",
