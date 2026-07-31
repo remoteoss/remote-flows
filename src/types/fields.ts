@@ -61,6 +61,13 @@ export type FieldDataProps = Partial<JSFField> & {
     helpCenter?: HelpCenterDataProps;
   };
   /**
+   * Optional node the SDK asks the field to render after the description and its help center
+   * link. Only some fields provide it: the salary field uses it for the currency conversion
+   * toggle when the flow enables the 'split_salary_description' feature. If your custom
+   * component doesn't render it, the toggle won't be available to your users.
+   */
+  descriptionSuffix?: React.ReactNode;
+  /**
    * Optional HTML transformer function passed from RemoteFlows context.
    * Use this in custom field components to transform HTML descriptions into React components.
    * @example

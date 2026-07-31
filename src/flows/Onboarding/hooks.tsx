@@ -228,6 +228,8 @@ export const useOnboarding = ({
   ] = useState<boolean>(false);
 
   const useDynamicSteps = options?.features?.includes('dynamic_steps') ?? false;
+  const useSplitSalaryDescription =
+    options?.features?.includes('split_salary_description') ?? false;
   const useEAPreview = Boolean(
     options?.features?.includes('ea_preview') &&
     includeEmploymentAgreementPreview,
@@ -605,6 +607,7 @@ export const useOnboarding = ({
               return (
                 <AnnualGrossSalary
                   desiredCurrency={company?.desired_currency || ''}
+                  splitDescription={useSplitSalaryDescription}
                   {...props}
                 />
               );
@@ -640,6 +643,7 @@ export const useOnboarding = ({
       annualSalaryFieldPresentation,
       company?.desired_currency,
       equityCompensationField,
+      useSplitSalaryDescription,
     ],
   );
 

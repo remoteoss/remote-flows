@@ -4,6 +4,7 @@ import {
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
 } from '@remoteoss/remote-flows';
+import { COST_CALCULATOR_OPTIONS } from './costCalculatorOptions';
 import { RemoteFlows } from './RemoteFlows';
 import './css/main.css';
 
@@ -23,6 +24,7 @@ export function BasicCostCalculator() {
     <RemoteFlows isClientToken>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
+        options={COST_CALCULATOR_OPTIONS}
         render={(props) => {
           if (props.isLoading) {
             return <div>Loading...</div>;

@@ -192,6 +192,8 @@ export const useCostCalculator = (
 
   const showManagementField = estimationOptions.showManagementFee;
   const showEstimationTitleField = estimationOptions.includeEstimationTitle;
+  const useSplitSalaryDescription =
+    options?.features?.includes('split_salary_description') ?? false;
   const customFields = useMemo(() => {
     const { from, to, shouldSwapOrder } = getCurrencies();
     const salaryTitle = getSalaryTitle(salaryField, hiringBudget);
@@ -221,6 +223,7 @@ export const useCostCalculator = (
                     version === 'marketing' ? 'no_spread' : 'spread'
                   }
                   defaultValue={defaultSalary}
+                  splitDescription={useSplitSalaryDescription}
                 />
               );
             },
@@ -299,6 +302,7 @@ export const useCostCalculator = (
     showManagementField,
     showEstimationTitleField,
     defaultSalary,
+    useSplitSalaryDescription,
   ]);
 
   const fieldsJSONSchema = useStaticSchema({

@@ -11,6 +11,7 @@ import type {
 } from '@remoteoss/remote-flows';
 import Flag from 'react-flagpack';
 import { useState } from 'react';
+import { COST_CALCULATOR_OPTIONS } from './costCalculatorOptions';
 import { RemoteFlows } from './RemoteFlows';
 import './css/main.css';
 import 'react-flagpack/dist/style.css';
@@ -29,6 +30,7 @@ export function CostCalculatorWithResults() {
     <RemoteFlows isClientToken>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
+        options={COST_CALCULATOR_OPTIONS}
         render={(props) => {
           if (props.isLoading) {
             return <div>Loading...</div>;

@@ -9,8 +9,25 @@ export function TextFieldDefault({
   fieldState,
   fieldData,
 }: TextFieldComponentProps) {
-  const { name, label, description, maxLength, includeErrorMessage } =
-    fieldData;
+  const {
+    name,
+    label,
+    description,
+    descriptionSuffix,
+    maxLength,
+    includeErrorMessage,
+  } = fieldData;
+
+  const descriptionNode = (description || fieldData.meta?.helpCenter) && (
+    <FormDescription
+      as={descriptionSuffix ? 'span' : 'p'}
+      className='RemoteFlows__TextField__Description'
+      helpCenter={<HelpCenter helpCenter={fieldData.meta?.helpCenter} />}
+    >
+      {description}
+    </FormDescription>
+  );
+
   return (
     <FormItem
       data-field={name}
@@ -31,13 +48,18 @@ export function TextFieldDefault({
           maxLength={maxLength}
         />
       </FormControl>
-      {(description || fieldData.meta?.helpCenter) && (
-        <FormDescription
-          className='RemoteFlows__TextField__Description'
-          helpCenter={<HelpCenter helpCenter={fieldData.meta?.helpCenter} />}
-        >
-          {description}
-        </FormDescription>
+      {descriptionSuffix ? (
+        // FormItem lays its children out in a grid, so the suffix has to share the description's
+        // cell to stay on the same line as it (and as the help center link), the way the salary
+        // description reads when the split_salary_description feature is off.
+        <span className='RemoteFlows__TextField__DescriptionGroup'>
+          {descriptionNode}{' '}
+          <span className='RemoteFlows__TextField__DescriptionSuffix'>
+            {descriptionSuffix}
+          </span>
+        </span>
+      ) : (
+        descriptionNode
       )}
       {includeErrorMessage && fieldState.error && (
         <FormMessage className='RemoteFlows__TextField__Error' />

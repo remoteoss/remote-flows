@@ -88,10 +88,20 @@ export type EstimationError =
   | PostV1CostCalculatorEstimationError
   | ValidationError;
 
+export type CostCalculatorFeatures = 'split_salary_description';
+
 export type UseCostCalculatorOptions = {
   jsfModify?: JSFModify;
   onCurrencyChange?: (currency: string) => void;
   onValidation?: (values: CostCalculatorEstimationFormValues) => void;
+  /**
+   * The features to enable for the cost calculator.
+   * - 'split_salary_description': Hand the salary description, its help center link and the currency
+   *   conversion toggle to the text component as three separate slots (`description`,
+   *   `meta.helpCenter`, `descriptionSuffix`) instead of packing them into `description`.
+   *   Custom text components must render `fieldData.descriptionSuffix` to keep the conversion toggle.
+   */
+  features?: CostCalculatorFeatures[];
 };
 
 export type CurrencyKey = keyof typeof BASE_RATES;
