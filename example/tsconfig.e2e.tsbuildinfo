@@ -1,1 +1,0 @@
-{"root":["./e2e/add-estimation.spec.ts","./e2e/annual-gross-salary.spec.ts","./e2e/edit-estimation.spec.ts","./e2e/hiring-budget.spec.ts","./e2e/onboard-basic-employee.spec.ts","./e2e/helpers/estimation.ts","./e2e/helpers/general.ts","./e2e/helpers/onboarding.ts","./playwright.config.ts"],"version":"6.0.3"}
