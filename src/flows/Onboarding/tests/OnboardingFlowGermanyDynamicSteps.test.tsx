@@ -211,7 +211,7 @@ describe('OnboardingFlow - Germany with dynamic_steps', () => {
       http.get('*/v1/countries/DEU/contract_details*', () => {
         return HttpResponse.json(contractDetailsSchemaV1Germany);
       }),
-      http.get('*/v1/countries/DEU/engagement-agreement-details*', () => {
+      http.get('*/v1/countries/DEU/engagement_agreement_details*', () => {
         return HttpResponse.json(engagementAgreementDetailsSchemaV1Germany);
       }),
       http.get(

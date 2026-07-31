@@ -10,6 +10,7 @@ import {
   disabledInviteButtonEmploymentStatus,
   getContractDetailsSchemaVersion,
   getBasicInformationSchemaVersion,
+  getEngagementAgreementDetailsSchemaVersion,
   reviewStepAllowedEmploymentStatus,
   buildSteps,
   StepKeys,
@@ -304,6 +305,7 @@ export const useOnboarding = ({
           !!internalCountryCode && options?.features?.includes('dynamic_steps'),
         ),
       },
+      jsonSchemaVersion: getEngagementAgreementDetailsSchemaVersion(options),
     },
   );
 

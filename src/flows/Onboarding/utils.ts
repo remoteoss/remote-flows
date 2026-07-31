@@ -196,3 +196,16 @@ export const getBenefitOffersSchemaVersion = (
     options?.jsonSchemaVersion?.benefit_offers_form_schema || DEFAULT_VERSION
   );
 };
+
+/**
+ * Gets the engagement agreement details schema version from options
+ * @param options - The flow options containing version configurations
+ * @returns The jsonSchemaVersion for engagement agreement details or default
+ */
+export const getEngagementAgreementDetailsSchemaVersion = (
+  options: OnboardingFlowProps['options'],
+): number | 'latest' => {
+  return (
+    options?.jsonSchemaVersion?.engagement_agreement_details || DEFAULT_VERSION
+  );
+};
