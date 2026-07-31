@@ -5,6 +5,7 @@ import {
   CostCalculatorResetButton,
 } from '@remoteoss/remote-flows';
 import { components } from './Components';
+import { COST_CALCULATOR_OPTIONS } from './costCalculatorOptions';
 import { RemoteFlows } from './RemoteFlows';
 import './css/main.css';
 
@@ -24,7 +25,7 @@ export const CostCalculatorWithReplaceableComponents = () => {
     <RemoteFlows isClientToken components={components}>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
-        options={{ features: ['split_salary_description'] }}
+        options={COST_CALCULATOR_OPTIONS}
         render={(props) => {
           if (props.isLoading) {
             return <div>Loading...</div>;

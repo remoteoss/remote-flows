@@ -12,6 +12,7 @@ import type {
 } from '@remoteoss/remote-flows';
 import './css/main.css';
 import { useState } from 'react';
+import { COST_CALCULATOR_OPTIONS } from './costCalculatorOptions';
 import { RemoteFlows } from './RemoteFlows';
 import { downloadFile } from './utils';
 
@@ -50,6 +51,7 @@ function CostCalculatorFormDemo() {
     <>
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
+        options={COST_CALCULATOR_OPTIONS}
         render={(props) => {
           if (props.isLoading) {
             return <div>Loading...</div>;
