@@ -4,10 +4,12 @@ import { useEffect } from 'react';
 import { HelpCenterDataProps } from '@/src/types/fields';
 import { BaseFormDescription as Description } from '@/src/components/ui/form';
 import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
+import { convertFromCents } from '@/src/components/form/utils';
 
 export type ForcedValueFieldProps = {
   name: string;
-  value: string;
+  value: string | number;
+  fieldType?: string;
   description: string;
   statement?: {
     title?: string;
@@ -20,12 +22,14 @@ export type ForcedValueFieldProps = {
 export function ForcedValueField({
   name,
   value,
+  fieldType,
   description,
   statement,
   label,
   helpCenter,
 }: ForcedValueFieldProps) {
   const { setValue } = useFormContext();
+  const forcedValue = fieldType === 'money' ? convertFromCents(value) : value;
   const forcedValueDescription = statement?.description || description;
 
   const forcedValueTitle = statement?.title
@@ -36,8 +40,8 @@ export function ForcedValueField({
   const descriptionId = `forced-value-${name}-description`;
 
   useEffect(() => {
-    setValue(name, value);
-  }, [name, value, setValue]);
+    setValue(name, forcedValue);
+  }, [name, forcedValue, setValue]);
 
   const isHiddenValue = !forcedValueDescription && !statement?.title;
 

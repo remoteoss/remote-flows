@@ -3,7 +3,7 @@ import {
   createHeadlessForm as baseCreateHeadlessForm,
   modify,
 } from '@remoteoss/remote-json-schema-form-kit';
-import { convertToCents } from '@/src/components/form/utils';
+import { convertToCents, isNumericValue } from '@/src/components/form/utils';
 import {
   JSFModify,
   JSONSchemaFormResultWithFieldsets,
@@ -63,12 +63,29 @@ export const createHeadlessForm = (
   }
 
   let moneyFieldsData: Record<string, number | null> = {};
+  let numberFieldsData: Record<string, number> = {};
 
   if (fieldValues && transformMoneyFields) {
     const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
     moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
       (acc, field) => {
         acc[field] = convertToCents(fieldValues[field]);
+        return acc;
+      },
+      {},
+    );
+
+    const numberFields = findFieldsByType(jsfSchema.properties || {}, 'number');
+    numberFieldsData = numberFields.reduce<Record<string, number>>(
+      (acc, field) => {
+        // Only unambiguous numbers are injected. Conditionals are evaluated
+        // against these values before any validation runs, so a lenient cast
+        // (Number(' ') === 0) would open branches the user never filled in.
+        // Empty and untouched fields are left out entirely rather than
+        // materialised as 0.
+        if (isNumericValue(fieldValues[field])) {
+          acc[field] = Number(fieldValues[field]);
+        }
         return acc;
       },
       {},
@@ -83,6 +100,7 @@ export const createHeadlessForm = (
     JSON.stringify({
       ...fieldValues,
       ...moneyFieldsData,
+      ...numberFieldsData,
     }),
   );
 

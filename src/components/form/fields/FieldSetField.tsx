@@ -263,6 +263,7 @@ export function FieldSetField({
                     name={fieldKey}
                     description={fieldProps.description}
                     value={fieldProps.const}
+                    fieldType={fieldProps.type}
                     statement={fieldProps.statement}
                     label={fieldProps.label}
                     helpCenter={fieldProps.meta?.helpCenter}

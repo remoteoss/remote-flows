@@ -186,6 +186,37 @@ function extractFieldsetFieldsValues(
   }, {});
 }
 
+/**
+ * Tells whether a value unambiguously represents a number.
+ *
+ * Stricter than `Number()`, which happily turns booleans, arrays and blank
+ * strings into 0. Use this whenever coercing silently would change behaviour
+ * without going through validation first.
+ */
+export function isNumericValue(value: $TSFixMe): boolean {
+  if (typeof value === 'number') {
+    return Number.isFinite(value);
+  }
+
+  if (typeof value !== 'string' || value.trim() === '') {
+    return false;
+  }
+
+  return Number.isFinite(Number(value));
+}
+
+export function castNumberValue(value: $TSFixMe) {
+  // this prevents values with letters such as "2r" from being considered valid
+  // if the input is invalid, number().cast will return NaN
+  const castValue = Number(value);
+
+  if (Number.isNaN(castValue)) {
+    return value;
+  }
+
+  return castValue;
+}
+
 export const fieldTypesTransformations: Record<string, $TSFixMe> = {
   [supportedTypes.COUNTRIES]: {
     /**
@@ -231,17 +262,7 @@ export const fieldTypesTransformations: Record<string, $TSFixMe> = {
     },
   },
   [supportedTypes.NUMBER]: {
-    transformValueToAPI: () => (value: string) => {
-      // this prevents values with letters such as "2r" from being considered valid
-      // if the input is invalid, number().cast will return NaN
-      const castValue = Number(value);
-
-      if (Number.isNaN(castValue)) {
-        return value;
-      }
-
-      return castValue;
-    },
+    transformValueToAPI: () => castNumberValue,
   },
   [supportedTypes.MONEY]: {
     transformValueFromAPI: () => (value: string | number) =>

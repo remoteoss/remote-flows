@@ -74,7 +74,8 @@ export const JSONSchemaFormFields = ({
             <ForcedValueField
               name={fieldProps.name as string}
               description={fieldProps.description as string}
-              value={fieldProps.const as string}
+              value={fieldProps.const as string | number}
+              fieldType={fieldProps.type as string}
               statement={fieldProps.statement as $TSFixMe}
               label={fieldProps.label as string}
               helpCenter={fieldProps.meta?.helpCenter}
