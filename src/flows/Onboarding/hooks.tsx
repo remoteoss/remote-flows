@@ -90,6 +90,7 @@ const getLoadingStates = ({
   contractDetailsFields,
   arePreOnboardingRequirementsFulfilled,
   isLoadingOnboardingReservesStatus,
+  isLoadingPreOnboardingRequirements,
   shouldFreezeEmploymentData,
 }: {
   isLoadingBasicInformationForm: boolean;
@@ -103,6 +104,7 @@ const getLoadingStates = ({
   isLoadingCompany: boolean;
   isLoadingCountries: boolean;
   isLoadingEmploymentAgreementPreview: boolean;
+  isLoadingPreOnboardingRequirements: boolean;
   employmentStatus?: Employment['status'];
   employmentId?: string;
   currentStepName: string;
@@ -123,7 +125,9 @@ const getLoadingStates = ({
     isLoadingCompany ||
     isLoadingCountries ||
     isLoadingEmploymentAgreementPreview ||
-    isLoadingContractDetailsFormV1;
+    isLoadingContractDetailsFormV1 ||
+    isLoadingPreOnboardingRequirements ||
+    isLoadingOnboardingReservesStatus;
 
   // employment needs to be readonly if its one of the following conditions is met:
   // - the employment status is in the review step allowed employment status list
@@ -136,8 +140,7 @@ const getLoadingStates = ({
   const canInvite =
     employmentStatus &&
     !disabledInviteButtonEmploymentStatus.includes(employmentStatus) &&
-    arePreOnboardingRequirementsFulfilled &&
-    !isLoadingOnboardingReservesStatus;
+    arePreOnboardingRequirementsFulfilled;
 
   const shouldHandleReadOnlyEmployment = Boolean(
     employmentId && isEmploymentReadOnly && currentStepName !== 'review',
@@ -933,6 +936,7 @@ export const useOnboarding = ({
           isLoadingEmployment,
           isLoadingBenefitsOffersSchema,
           isLoadingBenefitOffers,
+          isLoadingPreOnboardingRequirements,
           isLoadingCompany,
           isLoadingCountries,
           isLoadingEmploymentAgreementPreview,
@@ -953,6 +957,7 @@ export const useOnboarding = ({
         isLoadingEmployment,
         isLoadingBenefitsOffersSchema,
         isLoadingBenefitOffers,
+        isLoadingPreOnboardingRequirements,
         isLoadingCompany,
         isLoadingCountries,
         isLoadingEmploymentAgreementPreview,

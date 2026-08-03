@@ -1347,7 +1347,6 @@ describe('OnboardingInvite', () => {
       await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
       const inviteButton = screen.getByTestId('onboarding-invite');
-      expect(inviteButton).toBeDisabled();
 
       await waitFor(() => {
         expect(inviteButton).not.toBeDisabled();
