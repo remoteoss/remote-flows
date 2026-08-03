@@ -57,14 +57,15 @@ export function OnboardingInvite({
     onboardingBag.creditRiskStatus === 'deposit_required' ||
     onboardingBag.onboardingReservesStatus === 'deposit_required';
 
-  const shouldCreateReserve = Boolean(
+  const isReserveFlow = Boolean(
     isDepositRequired &&
-    onboardingBag.canInvite &&
     onboardingBag.employment?.status &&
     !statusesWithReserveAlreadyHandled.includes(
       onboardingBag.employment.status,
     ),
   );
+
+  const shouldCreateReserve = Boolean(isReserveFlow && onboardingBag.canInvite);
 
   const handleSubmit = async () => {
     try {
@@ -147,7 +148,7 @@ export function OnboardingInvite({
       }}
     >
       {render({
-        employmentStatus: shouldCreateReserve
+        employmentStatus: isReserveFlow
           ? 'created_awaiting_reserve'
           : 'invited',
       })}
