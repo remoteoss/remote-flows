@@ -17,7 +17,7 @@ import {
   waitFor,
   act,
 } from '@testing-library/react';
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
 
 const mockSuccess = vi.fn();
@@ -1319,16 +1319,11 @@ describe('OnboardingInvite', () => {
     });
 
     it('should keep button disabled during requirements loading to prevent race condition', async () => {
-      let resolveRequirements: (value: unknown) => void;
-      const requirementsPromise = new Promise((resolve) => {
-        resolveRequirements = resolve;
-      });
-
       server.use(
         http.get(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements',
+          '*/v1/onboarding/employments/*/pre-onboarding-requirements',
           async () => {
-            await requirementsPromise;
+            await delay(100);
             return HttpResponse.json({
               data: [
                 {
@@ -1353,10 +1348,6 @@ describe('OnboardingInvite', () => {
 
       const inviteButton = screen.getByTestId('onboarding-invite');
       expect(inviteButton).toBeDisabled();
-
-      await act(async () => {
-        resolveRequirements!({});
-      });
 
       await waitFor(() => {
         expect(inviteButton).not.toBeDisabled();
