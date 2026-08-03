@@ -397,6 +397,10 @@ export const useOnboarding = ({
       },
     });
 
+  const shouldFreezeEmploymentData = Boolean(
+    requirements?.some((requirement) => requirement.freeze_employment_data),
+  );
+
   const arePreOnboardingRequirementsFulfilled = useMemo(() => {
     // While loading, block the invite
     if (isLoadingPreOnboardingRequirements) {
