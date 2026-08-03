@@ -160,19 +160,27 @@ export async function fillDatepicker(
   testId: string,
 ) {
   await page.getByTestId(testId).click();
+
+  // Wait for the calendar popup to be visible
+  await page
+    .locator('[role="dialog"]')
+    .waitFor({ state: 'visible', timeout: 5000 });
+
   if (value === 'auto') {
-    await page
+    const firstAvailableDate = page
       .locator('button[role="gridcell"]:not([disabled])')
-      .first()
-      .click();
+      .first();
+    await firstAvailableDate.waitFor({ state: 'visible' });
+    await firstAvailableDate.click();
   } else {
-    await page
+    const dateButton = page
       .getByRole('button', {
         name: value,
         exact: true,
       })
       .and(page.locator(':not([disabled])'))
-      .first()
-      .click();
+      .first();
+    await dateButton.waitFor({ state: 'visible' });
+    await dateButton.click();
   }
 }
