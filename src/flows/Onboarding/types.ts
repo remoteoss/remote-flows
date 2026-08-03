@@ -63,7 +63,8 @@ type OnboardingFeatures =
   | 'onboarding_reserves'
   | 'dynamic_steps'
   | 'ea_preview'
-  | 'pre_onboarding_requirements';
+  | 'pre_onboarding_requirements'
+  | 'split_salary_description';
 
 /**
  * JSON schema version configuration for a specific country
@@ -149,6 +150,12 @@ export type OnboardingFlowProps = {
        * The default value is 1.
        */
       benefit_offers_form_schema?: number | 'latest';
+      /**
+       * The json schema version to use for the engagement agreement details step.
+       * This is used to override the json schema version for the engagement agreement details step.
+       * The default value is 1.
+       */
+      engagement_agreement_details?: number | 'latest';
     };
     /**
      * The json schema version to use for the onboarding by country.
@@ -163,6 +170,10 @@ export type OnboardingFlowProps = {
      * This is used to enable or disable features for the onboarding.
      * - 'onboarding_reserves': Enable onboarding reserves feature
      * - 'dynamic_steps': Enable dynamic step generation with visibility control (opt-in, will be default in next major version)
+     * - 'split_salary_description': Hand the annual gross salary description, its help center link and the
+     *   currency conversion toggle to the text component as three separate slots (`description`,
+     *   `meta.helpCenter`, `descriptionSuffix`) instead of packing them into `description`.
+     *   Custom text components must render `fieldData.descriptionSuffix` to keep the conversion toggle.
      */
     features?: OnboardingFeatures[];
   };

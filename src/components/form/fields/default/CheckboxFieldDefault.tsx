@@ -66,7 +66,7 @@ export const CheckboxFieldDefault = ({
           )}
         </>
       </FormControl>
-      {description && (
+      {(description || fieldData.meta?.helpCenter) && (
         <FormDescription
           helpCenter={<HelpCenter helpCenter={fieldData.meta?.helpCenter} />}
         >

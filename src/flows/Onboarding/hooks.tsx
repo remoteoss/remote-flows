@@ -10,9 +10,11 @@ import {
   disabledInviteButtonEmploymentStatus,
   getContractDetailsSchemaVersion,
   getBasicInformationSchemaVersion,
+  getEngagementAgreementDetailsSchemaVersion,
   reviewStepAllowedEmploymentStatus,
   buildSteps,
   StepKeys,
+  usesJsfV1ContractDetails,
 } from '@/src/flows/Onboarding/utils';
 import { prettifyFormValues } from '@/src/lib/utils';
 import {
@@ -72,7 +74,7 @@ const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
 const getLoadingStates = ({
   isLoadingBasicInformationForm,
   isLoadingContractDetailsForm,
-  isLoadingContractDetailsFormFrance,
+  isLoadingContractDetailsFormV1,
   isLoadingEngagementAgreementDetails,
   isLoadingEmploymentAgreementPreview,
   isLoadingEmploymentEngagementAgreementDetails,
@@ -91,7 +93,7 @@ const getLoadingStates = ({
 }: {
   isLoadingBasicInformationForm: boolean;
   isLoadingContractDetailsForm: boolean;
-  isLoadingContractDetailsFormFrance: boolean;
+  isLoadingContractDetailsFormV1: boolean;
   isLoadingEngagementAgreementDetails: boolean;
   isLoadingEmploymentEngagementAgreementDetails: boolean;
   isLoadingEmployment: boolean;
@@ -119,7 +121,7 @@ const getLoadingStates = ({
     isLoadingCompany ||
     isLoadingCountries ||
     isLoadingEmploymentAgreementPreview ||
-    isLoadingContractDetailsFormFrance;
+    isLoadingContractDetailsFormV1;
 
   const isEmploymentReadOnly =
     employmentStatus &&
@@ -152,7 +154,7 @@ const getLoadingStates = ({
   };
 };
 
-const useFranceContractDetails = ({
+const useJsfV1ContractDetails = ({
   countryCode,
   query,
   enabled,
@@ -227,6 +229,8 @@ export const useOnboarding = ({
   ] = useState<boolean>(false);
 
   const useDynamicSteps = options?.features?.includes('dynamic_steps') ?? false;
+  const useSplitSalaryDescription =
+    options?.features?.includes('split_salary_description') ?? false;
   const useEAPreview = Boolean(
     options?.features?.includes('ea_preview') &&
     includeEmploymentAgreementPreview,
@@ -303,6 +307,7 @@ export const useOnboarding = ({
           !!internalCountryCode && options?.features?.includes('dynamic_steps'),
         ),
       },
+      jsonSchemaVersion: getEngagementAgreementDetailsSchemaVersion(options),
     },
   );
 
@@ -540,12 +545,12 @@ export const useOnboarding = ({
   const isContractDetailsEnabled = Boolean(
     internalCountryCode &&
     ((stepState.currentStep.name === 'contract_details' &&
-      internalCountryCode !== 'FRA') ||
+      !usesJsfV1ContractDetails(internalCountryCode)) ||
       Boolean(employmentId)),
   );
 
-  const isFranceContractDetailsEnabled = Boolean(
-    internalCountryCode === 'FRA' &&
+  const isJsfV1ContractDetailsEnabled = Boolean(
+    usesJsfV1ContractDetails(internalCountryCode) &&
     (stepState.currentStep.name === 'contract_details' ||
       Boolean(employmentId)),
   );
@@ -604,6 +609,7 @@ export const useOnboarding = ({
               return (
                 <AnnualGrossSalary
                   desiredCurrency={company?.desired_currency || ''}
+                  splitDescription={useSplitSalaryDescription}
                   {...props}
                 />
               );
@@ -639,6 +645,7 @@ export const useOnboarding = ({
       annualSalaryFieldPresentation,
       company?.desired_currency,
       equityCompensationField,
+      useSplitSalaryDescription,
     ],
   );
 
@@ -666,7 +673,7 @@ export const useOnboarding = ({
       jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,
     });
 
-  const francejsfModify = useMemo(
+  const jsfV1Modify = useMemo(
     () => ({
       ...options?.jsfModify?.contract_details,
       fields: {
@@ -678,16 +685,16 @@ export const useOnboarding = ({
   );
 
   const {
-    form: contractDetailsFormFrance,
-    isLoading: isLoadingContractDetailsFormFrance,
-  } = useFranceContractDetails({
+    form: contractDetailsFormV1,
+    isLoading: isLoadingContractDetailsFormV1,
+  } = useJsfV1ContractDetails({
     countryCode: internalCountryCode as string,
     query: {
       employment_id: internalEmploymentId as string,
     },
-    enabled: isFranceContractDetailsEnabled,
+    enabled: isJsfV1ContractDetailsEnabled,
     jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,
-    jsfModify: francejsfModify,
+    jsfModify: jsfV1Modify,
   });
 
   const {
@@ -721,8 +728,8 @@ export const useOnboarding = ({
       basic_information: basicInformationForm?.fields || [],
       engagement_agreement_details:
         engagementAgreementDetailsSchema?.fields || [],
-      contract_details: isFranceContractDetailsEnabled
-        ? contractDetailsFormFrance?.fields || []
+      contract_details: isJsfV1ContractDetailsEnabled
+        ? contractDetailsFormV1?.fields || []
         : contractDetailsForm?.fields || [],
       benefits: benefitOffersSchema?.fields || [],
       employment_agreement_preview: [],
@@ -734,8 +741,8 @@ export const useOnboarding = ({
       contractDetailsForm?.fields,
       benefitOffersSchema?.fields,
       engagementAgreementDetailsSchema?.fields,
-      isFranceContractDetailsEnabled,
-      contractDetailsFormFrance?.fields,
+      isJsfV1ContractDetailsEnabled,
+      contractDetailsFormV1?.fields,
     ],
   );
 
@@ -748,8 +755,8 @@ export const useOnboarding = ({
       basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
       engagement_agreement_details:
         engagementAgreementDetailsSchema?.meta['x-jsf-fieldsets'],
-      contract_details: isFranceContractDetailsEnabled
-        ? contractDetailsFormFrance?.meta['x-jsf-fieldsets']
+      contract_details: isJsfV1ContractDetailsEnabled
+        ? contractDetailsFormV1?.meta['x-jsf-fieldsets']
         : contractDetailsForm?.meta['x-jsf-fieldsets'],
       benefits: null,
       employment_agreement_preview: null,
@@ -758,8 +765,8 @@ export const useOnboarding = ({
     [
       basicInformationForm?.meta,
       engagementAgreementDetailsSchema?.meta,
-      isFranceContractDetailsEnabled,
-      contractDetailsFormFrance?.meta,
+      isJsfV1ContractDetailsEnabled,
+      contractDetailsFormV1?.meta,
       contractDetailsForm?.meta,
     ],
   );
@@ -773,8 +780,8 @@ export const useOnboarding = ({
       basic_information: basicInformationForm?.meta?.['x-jsf-presentation'],
       engagement_agreement_details:
         engagementAgreementDetailsSchema?.meta?.['x-jsf-presentation'],
-      contract_details: isFranceContractDetailsEnabled
-        ? contractDetailsFormFrance?.meta?.['x-jsf-presentation']
+      contract_details: isJsfV1ContractDetailsEnabled
+        ? contractDetailsFormV1?.meta?.['x-jsf-presentation']
         : contractDetailsForm?.meta?.['x-jsf-presentation'],
       benefits: benefitOffersSchema?.meta?.['x-jsf-presentation'],
       employment_agreement_preview: null,
@@ -784,8 +791,8 @@ export const useOnboarding = ({
       selectCountryForm?.meta,
       basicInformationForm?.meta,
       engagementAgreementDetailsSchema?.meta,
-      isFranceContractDetailsEnabled,
-      contractDetailsFormFrance?.meta,
+      isJsfV1ContractDetailsEnabled,
+      contractDetailsFormV1?.meta,
       contractDetailsForm?.meta,
       benefitOffersSchema?.meta,
     ],
@@ -910,7 +917,7 @@ export const useOnboarding = ({
         getLoadingStates({
           isLoadingBasicInformationForm,
           isLoadingContractDetailsForm,
-          isLoadingContractDetailsFormFrance,
+          isLoadingContractDetailsFormV1,
           isLoadingEngagementAgreementDetails,
           isLoadingEmploymentEngagementAgreementDetails,
           isLoadingEmployment,
@@ -945,7 +952,7 @@ export const useOnboarding = ({
         currentStepName,
         arePreOnboardingRequirementsFulfilled,
         isLoadingOnboardingReservesStatus,
-        isLoadingContractDetailsFormFrance,
+        isLoadingContractDetailsFormV1,
       ],
     );
 
@@ -1037,7 +1044,7 @@ export const useOnboarding = ({
     if (
       contractDetailsForm &&
       stepState.currentStep.name === 'contract_details' &&
-      !isFranceContractDetailsEnabled
+      !isJsfV1ContractDetailsEnabled
     ) {
       return await parseJSFToValidate(values, contractDetailsForm?.fields, {
         isPartialValidation: false,
@@ -1045,17 +1052,13 @@ export const useOnboarding = ({
     }
 
     if (
-      contractDetailsFormFrance &&
+      contractDetailsFormV1 &&
       stepState.currentStep.name === 'contract_details' &&
-      isFranceContractDetailsEnabled
+      isJsfV1ContractDetailsEnabled
     ) {
-      return await parseJSFToValidate(
-        values,
-        contractDetailsFormFrance?.fields,
-        {
-          isPartialValidation: false,
-        },
-      );
+      return await parseJSFToValidate(values, contractDetailsFormV1?.fields, {
+        isPartialValidation: false,
+      });
     }
 
     if (benefitOffersSchema && stepState.currentStep.name === 'benefits') {
@@ -1219,7 +1222,7 @@ export const useOnboarding = ({
       if (
         contractDetailsForm &&
         stepState.currentStep.name === 'contract_details' &&
-        !isFranceContractDetailsEnabled
+        !isJsfV1ContractDetailsEnabled
       ) {
         const parsedValues = await parseJSFToValidate(
           values,
@@ -1230,17 +1233,22 @@ export const useOnboarding = ({
       }
 
       if (
-        contractDetailsFormFrance &&
+        contractDetailsFormV1 &&
         stepState.currentStep.name === 'contract_details' &&
-        isFranceContractDetailsEnabled
+        isJsfV1ContractDetailsEnabled
       ) {
+        // Invisible values are kept on purpose here. The fields still hold the
+        // visibility of the previous change, so dropping their values would hide
+        // what a field that is about to become visible needs to compute itself:
+        // a hidden fieldset coming back would lose the values driving its own
+        // children. handleValidation resolves the visibility first and nulls
+        // whatever it considers hidden afterwards, which is the right order.
         const parsedValues = await parseJSFToValidate(
           values,
-          contractDetailsFormFrance?.fields,
-          { isPartialValidation: false },
+          contractDetailsFormV1?.fields,
+          { isPartialValidation: true },
         );
-        const result =
-          contractDetailsFormFrance?.handleValidation(parsedValues);
+        const result = contractDetailsFormV1?.handleValidation(parsedValues);
         setFieldsCount((prev) => prev + 1);
         return result;
       }
@@ -1254,8 +1262,8 @@ export const useOnboarding = ({
       basicInformationForm,
       engagementAgreementDetailsSchema,
       contractDetailsForm,
-      contractDetailsFormFrance,
-      isFranceContractDetailsEnabled,
+      contractDetailsFormV1,
+      isJsfV1ContractDetailsEnabled,
       setFieldsCount,
     ],
   );
@@ -1264,7 +1272,7 @@ export const useOnboarding = ({
     async (values: FieldValues) => {
       setFieldValues(values);
       if (
-        isFranceContractDetailsEnabled &&
+        isJsfV1ContractDetailsEnabled &&
         stepState.currentStep.name === 'contract_details'
       ) {
         await handleValidation(values);
@@ -1272,7 +1280,7 @@ export const useOnboarding = ({
     },
     [
       setFieldValues,
-      isFranceContractDetailsEnabled,
+      isJsfV1ContractDetailsEnabled,
       stepState,
       handleValidation,
     ],

@@ -4,6 +4,7 @@ import {
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
 } from '@remoteoss/remote-flows';
+import { COST_CALCULATOR_OPTIONS } from './costCalculatorOptions';
 import { RemoteFlows } from './RemoteFlows';
 import './css/main.css';
 
@@ -41,6 +42,7 @@ export function BasicCostCalculatorLabels() {
           );
         }}
         options={{
+          ...COST_CALCULATOR_OPTIONS,
           jsfModify: {
             fields: {
               country: {

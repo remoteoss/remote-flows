@@ -3,6 +3,7 @@ import {
   getBasicInformationSchemaVersion,
   getBenefitOffersSchemaVersion,
   getContractDetailsSchemaVersion,
+  usesJsfV1ContractDetails,
 } from '../utils';
 
 describe('getContractDetailsSchemaVersion', () => {
@@ -24,6 +25,18 @@ describe('getContractDetailsSchemaVersion', () => {
     const result = getContractDetailsSchemaVersion(options, 'DEU');
 
     expect(result).toEqual(2);
+  });
+});
+
+describe('usesJsfV1ContractDetails', () => {
+  it('should return true for France and Italy', () => {
+    expect(usesJsfV1ContractDetails('FRA')).toBe(true);
+    expect(usesJsfV1ContractDetails('ITA')).toBe(true);
+  });
+
+  it('should return false for the other countries', () => {
+    expect(usesJsfV1ContractDetails('PRT')).toBe(false);
+    expect(usesJsfV1ContractDetails(null)).toBe(false);
   });
 });
 

@@ -75,6 +75,9 @@ const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
       )}
 
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {/* extra controls owned by the SDK, e.g. the salary currency conversion toggle
+          when the split_salary_description feature is enabled */}
+      {fieldData.descriptionSuffix}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}

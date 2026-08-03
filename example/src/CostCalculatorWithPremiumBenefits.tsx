@@ -32,6 +32,7 @@ import {
 import { ButtonHTMLAttributes, useState, isValidElement } from 'react';
 import { RemoteFlows } from './RemoteFlows';
 import { components } from './Components';
+import { COST_CALCULATOR_OPTIONS } from './costCalculatorOptions';
 import { downloadFile } from './utils';
 import { AlertError } from './AlertError';
 import 'react-flagpack/dist/style.css';
@@ -356,6 +357,7 @@ const AddEstimateForm = ({
       estimationOptions={{ ...estimationOptions, title: options.title }}
       defaultValues={defaultValues}
       options={{
+        ...COST_CALCULATOR_OPTIONS,
         onValidation: () => setErrorMessage(null),
         jsfModify: {
           fields: {

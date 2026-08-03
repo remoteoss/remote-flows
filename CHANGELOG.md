@@ -1,5 +1,51 @@
 # @remoteoss/remote-flows
 
+## 1.46.0
+
+### Minor Changes
+
+#### Features
+
+- split description, help center and conversion toggle into separate slots, behind the `split_salary_description` feature flag on `OnboardingFlow` and `CostCalculatorFlow` (#1209) [#1209](https://github.com/remoteoss/remote-flows/pull/1209)
+
+#### Docs
+
+- share the cost calculator feature flags in a general constant in the example app (#1209) [#1209](https://github.com/remoteoss/remote-flows/pull/1209)
+
+## 1.45.0
+
+### Minor Changes
+
+#### Features
+
+- Italy APL and France SAS applies new contract details architecture (#1199, #1203) [#1199](https://github.com/remoteoss/remote-flows/pull/1199) [#1203](https://github.com/remoteoss/remote-flows/pull/1203)
+
+#### Fixes
+
+- always call the latest checkFieldUpdates (#1198) [#1198](https://github.com/remoteoss/remote-flows/pull/1198)
+- freeze basic information json schema (#1207) [#1207](https://github.com/remoteoss/remote-flows/pull/1207)
+- keep invisible values when revalidating a jsf v1 form (#1203) [#1203](https://github.com/remoteoss/remote-flows/pull/1203)
+
+#### Docs
+
+- fix france arch problems only on playground (#1195) [#1195](https://github.com/remoteoss/remote-flows/pull/1195)
+- add configurable schemas option with Italy APL example to the playground (#1190) [#1190](https://github.com/remoteoss/remote-flows/pull/1190)
+- add sandbox payment approval (#1200) [#1200](https://github.com/remoteoss/remote-flows/pull/1200)
+- example app demo for employee self-onboarding flow (PBYR-4044) (#1201) [#1201](https://github.com/remoteoss/remote-flows/pull/1201)
+- render help center link on text, select, tel, time and file fields
+- example app demo for admin onboarding flow (PBYR-4044) (#1171) [#1171](https://github.com/remoteoss/remote-flows/pull/1171)
+- add some tests for FRA (#1205) [#1205](https://github.com/remoteoss/remote-flows/pull/1205)
+- converge employee onboarding on a single RemoteFlows provider (PBYR-4044) (#1204) [#1204](https://github.com/remoteoss/remote-flows/pull/1204)
+
+#### Chores
+
+- update actions/checkout digest to 3d3c42e
+- update dependency postcss to v8.5.18 [security] (#1191) [#1191](https://github.com/remoteoss/remote-flows/pull/1191)
+- update dependency @playwright/test to v1.61.1 (#1192) [#1192](https://github.com/remoteoss/remote-flows/pull/1192)
+- update vitest monorepo to v4.1.10 (#1194) [#1194](https://github.com/remoteoss/remote-flows/pull/1194)
+- update dependency filesize to v11.0.22 (#1193) [#1193](https://github.com/remoteoss/remote-flows/pull/1193)
+- update actions/setup-node digest to 2499707 (#1186) [#1186](https://github.com/remoteoss/remote-flows/pull/1186)
+
 ## 1.44.0
 
 ### Minor Changes

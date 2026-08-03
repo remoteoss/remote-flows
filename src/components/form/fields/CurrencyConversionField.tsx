@@ -18,20 +18,37 @@ import {
 type DescriptionWithConversionProps = {
   description: ReactNode;
   helpCenter: ReactNode;
+  toggle: ReactNode;
+  className: string;
+};
+
+const DescriptionWithConversion = ({
+  description,
+  helpCenter,
+  toggle,
+  className,
+}: DescriptionWithConversionProps) => (
+  <span className={className}>
+    <FormDescription as='span' helpCenter={helpCenter}>
+      {description}
+    </FormDescription>{' '}
+    {toggle}
+  </span>
+);
+
+type ConversionToggleProps = {
   showConversion: boolean;
   targetCurrency: string;
   className: string;
   onClick: (evt: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
-const DescriptionWithConversion = ({
-  description,
-  helpCenter,
+const ConversionToggle = ({
   showConversion,
   targetCurrency,
   className,
   onClick,
-}: DescriptionWithConversionProps) => {
+}: ConversionToggleProps) => {
   const { components } = useFormFields();
   const label = showConversion
     ? `Hide ${targetCurrency} conversion`
@@ -43,18 +60,9 @@ const DescriptionWithConversion = ({
   }
 
   return (
-    <span className={className}>
-      <FormDescription as='span' helpCenter={helpCenter}>
-        {description}
-      </FormDescription>{' '}
-      <CustomButton
-        className={`${className.replace('-description', '-button')}`}
-        data-type='inline'
-        onClick={onClick}
-      >
-        {label}
-      </CustomButton>
-    </span>
+    <CustomButton className={className} data-type='inline' onClick={onClick}>
+      {label}
+    </CustomButton>
   );
 };
 
@@ -73,6 +81,12 @@ export type CurrencyConversionFieldProps = JSFField & {
   meta?: {
     helpCenter?: HelpCenterDataProps;
   };
+  /**
+   * Enabled by the 'split_salary_description' feature flag. When on, the description, the help
+   * center link and the conversion toggle are handed to the text component as three separate
+   * slots instead of being packed into the description node.
+   */
+  splitDescription?: boolean;
 };
 
 export const CurrencyConversionField = ({
@@ -85,6 +99,7 @@ export const CurrencyConversionField = ({
   description,
   conversionType = 'spread',
   meta,
+  splitDescription = false,
   ...props
 }: CurrencyConversionFieldProps) => {
   const [showConversion, setShowConversion] = useState(false);
@@ -185,30 +200,44 @@ export const CurrencyConversionField = ({
     }
   };
 
-  // when we render the conversion toggle we also render the help center link ourselves,
-  // so it stays next to the description instead of being appended after the toggle.
-  // The link is then stripped from the meta we forward, to avoid rendering it twice.
-  const extraDescription = canShowConversion ? (
-    <DescriptionWithConversion
+  const conversionToggle = canShowConversion ? (
+    <ConversionToggle
       targetCurrency={targetCurrency}
-      description={description}
-      helpCenter={<HelpCenter helpCenter={meta?.helpCenter} />}
       showConversion={showConversion}
-      className={`${classNamePrefix}-description`}
+      className={`${classNamePrefix}-button`}
       onClick={toggleConversion}
     />
-  ) : (
-    description
-  );
+  ) : null;
+
+  // With the split_salary_description feature, the toggle is handed over as a separate slot so the
+  // text component stays free to render the description, the help center link and the toggle
+  // however it wants. Without it, we keep packing them into the description node: it's the only
+  // slot every text component is known to render, so the toggle can't get lost. The help center
+  // link is then rendered by us and stripped from the meta we forward, to avoid rendering it twice
+  // (FormDescription appends it after its children, which would put it after the toggle).
+  const descriptionProps = splitDescription
+    ? { meta, description, descriptionSuffix: conversionToggle }
+    : {
+        meta: conversionToggle ? omit(meta, 'helpCenter') : meta,
+        description: conversionToggle ? (
+          <DescriptionWithConversion
+            description={description}
+            helpCenter={<HelpCenter helpCenter={meta?.helpCenter} />}
+            toggle={conversionToggle}
+            className={`${classNamePrefix}-description`}
+          />
+        ) : (
+          description
+        ),
+      };
 
   return (
     <>
       <TextField
         {...props}
-        meta={canShowConversion ? omit(meta, 'helpCenter') : meta}
+        {...descriptionProps}
         name={mainFieldName || props.name}
         additionalProps={{ currency: sourceCurrency }}
-        description={extraDescription}
         type='text'
         inputMode='decimal'
         pattern='^[0-9.]*$'

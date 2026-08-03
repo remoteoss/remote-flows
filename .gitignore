@@ -16,3 +16,4 @@ dist
 coverage
 example/public/
 out
+example/tsconfig.e2e.tsbuildinfo
