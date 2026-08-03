@@ -121,6 +121,18 @@ export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
   'active',
 ];
 
+/**
+ * Array of employment statuses that have already handled the reserve flow.
+ * @type {Employment['status'][]}
+ * @constant
+ */
+export const statusesWithReserveAlreadyHandled: Employment['status'][] = [
+  'created_awaiting_reserve',
+  'created_reserve_paid',
+  'invited',
+  'active',
+];
+
 export const DEFAULT_VERSION = 1;
 
 /**
