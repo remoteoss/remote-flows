@@ -90,6 +90,7 @@ const getLoadingStates = ({
   contractDetailsFields,
   arePreOnboardingRequirementsFulfilled,
   isLoadingOnboardingReservesStatus,
+  shouldFreezeEmploymentData,
 }: {
   isLoadingBasicInformationForm: boolean;
   isLoadingContractDetailsForm: boolean;
@@ -109,6 +110,7 @@ const getLoadingStates = ({
   contractDetailsFields: JSFFields;
   arePreOnboardingRequirementsFulfilled: boolean;
   isLoadingOnboardingReservesStatus: boolean;
+  shouldFreezeEmploymentData: boolean;
 }) => {
   const initialLoading =
     isLoadingBasicInformationForm ||
@@ -123,9 +125,13 @@ const getLoadingStates = ({
     isLoadingEmploymentAgreementPreview ||
     isLoadingContractDetailsFormV1;
 
+  // employment needs to be readonly if its one of the following conditions is met:
+  // - the employment status is in the review step allowed employment status list
+  // - the employment data is frozen by a pre-onboarding requirement
   const isEmploymentReadOnly =
-    employmentStatus &&
-    reviewStepAllowedEmploymentStatus.includes(employmentStatus);
+    (employmentStatus &&
+      reviewStepAllowedEmploymentStatus.includes(employmentStatus)) ||
+    shouldFreezeEmploymentData;
 
   const canInvite =
     employmentStatus &&
@@ -933,6 +939,7 @@ export const useOnboarding = ({
           currentStepName: currentStepName,
           arePreOnboardingRequirementsFulfilled,
           isLoadingOnboardingReservesStatus,
+          shouldFreezeEmploymentData,
         }),
       [
         isLoadingBasicInformationForm,
@@ -953,6 +960,7 @@ export const useOnboarding = ({
         arePreOnboardingRequirementsFulfilled,
         isLoadingOnboardingReservesStatus,
         isLoadingContractDetailsFormV1,
+        shouldFreezeEmploymentData,
       ],
     );
 
