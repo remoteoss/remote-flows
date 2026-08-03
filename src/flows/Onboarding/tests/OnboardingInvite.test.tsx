@@ -1323,7 +1323,6 @@ describe('OnboardingInvite', () => {
         http.get(
           '*/v1/onboarding/employments/*/pre-onboarding-requirements',
           async () => {
-            await delay(100);
             return HttpResponse.json({
               data: [
                 {
