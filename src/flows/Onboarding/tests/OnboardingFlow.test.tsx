@@ -1198,6 +1198,97 @@ describe('OnboardingFlow', () => {
     },
   );
 
+  it('should automatically navigate to review step when freeze_employment_data is true in pre-onboarding requirement', async () => {
+    const employmentId = generateUniqueEmploymentId();
+
+    server.use(
+      // Mock employment endpoint with 'created' status (editable status normally)
+      http.get(`*/v1/employments/${employmentId}`, () => {
+        return HttpResponse.json({
+          ...employmentDefaultResponse,
+          data: {
+            ...employmentDefaultResponse.data,
+            employment: {
+              ...employmentDefaultResponse.data.employment,
+              id: employmentId,
+              status: 'created', // Normally editable status
+            },
+          },
+        });
+      }),
+
+      // Mock pre-onboarding requirements with freeze_employment_data: true
+      http.get(
+        `*/v1/onboarding/employments/${employmentId}/pre-onboarding-requirements`,
+        () => {
+          return HttpResponse.json({
+            data: [
+              {
+                name: 'Individual Labor Agreement',
+                status: 'awaiting',
+                type: 'document',
+                description: 'Individual Labor Agreement required',
+                slug: '5e39159e-96ef-40ea-82bc-b054917fc82f',
+                depends_on_requirement: null,
+                freeze_employment_data: true,
+                redlining_help_email: null,
+                supports_redlining: false,
+              },
+            ],
+          });
+        },
+      ),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        employmentId={employmentId}
+        skipSteps={['select_country']}
+        {...defaultProps}
+        options={{
+          features: ['pre_onboarding_requirements'],
+        }}
+      />,
+      {
+        wrapper: TestProviders,
+      },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    // Should automatically go to review step due to freeze_employment_data: true
+    await screen.findByText(/Step: Review/i);
+
+    // Verify basic information data is displayed in the Review component
+    expect(screen.getByText('name: Gabriel')).toBeInTheDocument();
+
+    // Verify contract details data is displayed in the Review component
+    expect(screen.getByText('annual_gross_salary: 20000')).toBeInTheDocument();
+  });
+
   it('should not show intermediate steps when automatically navigating to review (no flickering)', async () => {
     const renderSequence: Array<{ isLoading: boolean; step?: string }> = [];
     const employmentId = generateUniqueEmploymentId(); // Use a fixed ID for consistency
