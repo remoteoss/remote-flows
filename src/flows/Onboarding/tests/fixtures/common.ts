@@ -534,6 +534,19 @@ export const employmentDefaultResponseFrance = (employmentId: string) => {
       employment: {
         ...employmentDefaultResponse.data.employment,
         id: employmentId,
+        country: {
+          code: 'FRA',
+          name: 'France',
+          alpha_2_code: 'FR',
+          supported_json_schemas: [
+            'additional_documents',
+            'administrative_details',
+            'contract_details',
+            'employment_basic_information',
+            'emergency_contact',
+            'address_details',
+          ],
+        },
         contract_details: {
           ...employmentDefaultResponse.data.employment.contract_details,
           wage_type: 'salary',
