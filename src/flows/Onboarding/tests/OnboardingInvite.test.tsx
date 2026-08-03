@@ -17,7 +17,7 @@ import {
   waitFor,
   act,
 } from '@testing-library/react';
-import { delay, http, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { PropsWithChildren } from 'react';
 
 const mockSuccess = vi.fn();
