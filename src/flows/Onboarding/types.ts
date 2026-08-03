@@ -150,6 +150,12 @@ export type OnboardingFlowProps = {
        * The default value is 1.
        */
       benefit_offers_form_schema?: number | 'latest';
+      /**
+       * The json schema version to use for the engagement agreement details step.
+       * This is used to override the json schema version for the engagement agreement details step.
+       * The default value is 1.
+       */
+      engagement_agreement_details?: number | 'latest';
     };
     /**
      * The json schema version to use for the onboarding by country.

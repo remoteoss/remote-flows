@@ -9,7 +9,6 @@ import {
   EmploymentFullParams,
   getV1CompaniesCompanyId,
   getV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatus,
-  getV1CountriesCountryCodeEngagementAgreementDetails,
   getV1CountriesCountryCodeForm,
   getV1EmploymentsEmploymentIdBenefitOffers,
   getV1EmploymentsEmploymentIdBenefitOffersSchema,
@@ -609,21 +608,36 @@ export const useEngagementAgreementDetailsSchema = (
   options?: {
     jsfModify?: OnboardingJsfModify;
     queryOptions?: { enabled?: boolean };
+    jsonSchemaVersion?: number | 'latest';
   },
 ) => {
   const { client } = useClient();
+  const jsonSchemaQueryParam = options?.jsonSchemaVersion
+    ? {
+        json_schema_version: options.jsonSchemaVersion,
+      }
+    : {};
+
   return useQuery({
-    queryKey: ['engagement-agreement-details', countryCode],
+    queryKey: [
+      'engagement-agreement-details',
+      countryCode,
+      options?.jsonSchemaVersion,
+    ],
     retry: false,
     enabled: options?.queryOptions?.enabled ?? !!countryCode,
     queryFn: async () => {
-      const response =
-        await getV1CountriesCountryCodeEngagementAgreementDetails({
-          client: client as Client,
-          path: {
-            country_code: countryCode,
-          },
-        });
+      const response = await getV1CountriesCountryCodeForm({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          country_code: countryCode,
+          form: 'engagement_agreement_details',
+        },
+        query: jsonSchemaQueryParam,
+      });
 
       if (response.error || !response.data) {
         throw new Error('Failed to fetch engagement agreement details');
@@ -632,7 +646,7 @@ export const useEngagementAgreementDetailsSchema = (
       return response;
     },
     select: ({ data }) => {
-      const jsfSchema = data?.data?.schema || {};
+      const jsfSchema = data?.data || {};
 
       return createHeadlessForm(jsfSchema, fieldValues, {
         jsfModify: options?.jsfModify?.engagement_agreement_details,
