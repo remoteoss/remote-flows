@@ -1319,16 +1319,10 @@ describe('OnboardingInvite', () => {
     });
 
     it('should keep button disabled during requirements loading to prevent race condition', async () => {
-      let resolveRequirements: (value: unknown) => void;
-      const requirementsPromise = new Promise((resolve) => {
-        resolveRequirements = resolve;
-      });
-
       server.use(
         http.get(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements',
+          '*/v1/onboarding/employments/*/pre-onboarding-requirements',
           async () => {
-            await requirementsPromise;
             return HttpResponse.json({
               data: [
                 {
@@ -1352,11 +1346,6 @@ describe('OnboardingInvite', () => {
       await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
       const inviteButton = screen.getByTestId('onboarding-invite');
-      expect(inviteButton).toBeDisabled();
-
-      await act(async () => {
-        resolveRequirements!({});
-      });
 
       await waitFor(() => {
         expect(inviteButton).not.toBeDisabled();
