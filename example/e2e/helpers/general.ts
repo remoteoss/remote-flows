@@ -162,9 +162,7 @@ export async function fillDatepicker(
   await page.getByTestId(testId).click();
 
   // Wait for the calendar popup to be visible
-  await page
-    .locator('[role="dialog"]')
-    .waitFor({ state: 'visible', timeout: 5000 });
+  await page.locator('[role="dialog"]').waitFor({ state: 'visible' });
 
   if (value === 'auto') {
     const firstAvailableDate = page
