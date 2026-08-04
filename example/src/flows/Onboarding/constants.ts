@@ -113,5 +113,10 @@ export const ONBOARDING_OPTIONS = {
       // Sweden
       contract_details: 2,
     },
+
+    USA: {
+      // United States
+      contract_details: 3,
+    },
   },
 };

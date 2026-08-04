@@ -5,7 +5,7 @@ For each country in apps/tiger/priv/json_schemas/contract_details/ (excluding ba
 3. Create an array of version objects from 1 to the total count
 Output format:
 ```typescript
-const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
+export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   COUNTRY_CODE: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
