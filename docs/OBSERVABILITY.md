@@ -371,9 +371,7 @@ try {
 ```typescript
 const { updateErrorContext } = useErrorReporting({
   flow: 'myFlow',
-  metadata: {
-    /* relevant business context */
-  },
+  metadata: {/* relevant business context */},
 });
 
 // Update on step changes
