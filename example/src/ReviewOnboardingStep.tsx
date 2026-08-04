@@ -448,16 +448,21 @@ const DocumentRequirement = ({
     }
 
     return (
-      <Button
-        onClick={handleReviewDocument}
-        disabled={isLoading || requirement.status === 'finished'}
-      >
-        {requirement.status === 'finished'
-          ? 'Signed'
-          : isLoading
-            ? 'Loading...'
-            : 'Review document'}
-      </Button>
+      <>
+        <Button
+          onClick={handleReviewDocument}
+          disabled={isLoading || requirement.status === 'finished'}
+        >
+          {requirement.status === 'finished'
+            ? 'Signed'
+            : isLoading
+              ? 'Loading...'
+              : 'Review document'}
+        </Button>
+        {requirement.status === 'finished' && (
+          <Button onClick={handleReviewDocument}>Preview Document</Button>
+        )}
+      </>
     );
   };
 
