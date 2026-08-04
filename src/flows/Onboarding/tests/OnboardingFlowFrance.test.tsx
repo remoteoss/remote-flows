@@ -10,13 +10,16 @@ import { http, HttpResponse } from 'msw';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
-  employmentCreatedResponse,
   basicInformationSchemaV3France,
   contractDetailsSchemaV1France,
+  employmentDefaultResponseFrance,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import { fillRadio, queryClient, TestProviders } from '@/src/tests/testHelpers';
 import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
-import { fillBasicInformation } from '@/src/flows/Onboarding/tests/helpers';
+import {
+  fillBasicInformation,
+  generateUniqueEmploymentId,
+} from '@/src/flows/Onboarding/tests/helpers';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -106,8 +109,12 @@ async function assertMandatoryAllowances(grossSalary: number) {
 
 describe('OnboardingFlow - France', () => {
   const MultiStepFormFrance = ({ components, onboardingBag }: $TSFixMe) => {
-    const { BasicInformationStep, ContractDetailsStep, SubmitButton } =
-      components;
+    const {
+      BasicInformationStep,
+      ContractDetailsStep,
+      BenefitsStep,
+      SubmitButton,
+    } = components;
 
     if (onboardingBag.isLoading) {
       return <div data-testid='spinner'>Loading...</div>;
@@ -136,6 +143,17 @@ describe('OnboardingFlow - France', () => {
             <SubmitButton>Next Step</SubmitButton>
           </>
         );
+      case 'benefits':
+        return (
+          <>
+            <BenefitsStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <SubmitButton>Next Step</SubmitButton>
+          </>
+        );
     }
 
     return null;
@@ -148,6 +166,7 @@ describe('OnboardingFlow - France', () => {
       const steps: Record<number, string> = {
         [0]: 'Basic Information',
         [1]: 'Contract Details',
+        [2]: 'Benefits',
       };
 
       return (
@@ -178,10 +197,6 @@ describe('OnboardingFlow - France', () => {
     queryClient.clear();
 
     server.use(
-      // POST to create employment
-      http.post('*/v1/employments', () => {
-        return HttpResponse.json(employmentCreatedResponse);
-      }),
       // GET basic information schema for France
       http.get('*/v1/countries/FRA/employment_basic_information*', () => {
         return HttpResponse.json(basicInformationSchemaV3France);
@@ -270,5 +285,70 @@ describe('OnboardingFlow - France', () => {
     await fillContractDetails();
 
     await assertMandatoryAllowances(50000);
+  });
+
+  it('should submit contract details and reach benefits step', async () => {
+    server.use(
+      http.get('*/v1/employments/:id', ({ params }) => {
+        const employmentId = params?.id as string;
+        if (!employmentId) {
+          return HttpResponse.json(
+            { error: 'Employment not found' },
+            { status: 404 },
+          );
+        }
+
+        return HttpResponse.json(employmentDefaultResponseFrance(employmentId));
+      }),
+    );
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode='FRA'
+        skipSteps={['select_country']}
+        employmentId={generateUniqueEmploymentId()}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await screen.findByText(/Step: Basic Information/i);
+
+    await fillBasicInformation(
+      {
+        ackNonEligibleJobTitles: true,
+      },
+      {
+        skip: ['hasSeniorityDate'],
+      },
+    );
+
+    let nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Step: Contract Details/i)).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Annual gross salary')).toHaveValue('50000');
+    });
+
+    nextButton = screen.getByText(/Next Step/i);
+    expect(nextButton).toBeInTheDocument();
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledTimes(2);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Step: Benefits/i)).toBeInTheDocument();
+    });
   });
 });

@@ -24,7 +24,13 @@ import {
   mockBenefitOffersSchema,
   mockOnboardingReservesStatusResponse,
 } from '@/src/common/api/fixtures/employments';
-import { employmentDefaultResponse } from '@/src/flows/Onboarding/tests/fixtures';
+import {
+  employmentDefaultResponse,
+  employmentCreatedResponse,
+  employmentUpdatedResponse,
+  benefitOffersUpdatedResponse,
+  conversionFromEURToUSD,
+} from '@/src/flows/Onboarding/tests/fixtures';
 import {
   preOnboardingRequirementsMock,
   generatedDocumentMock,
@@ -182,6 +188,28 @@ const employmentHandler = http.get('*/v1/employments/:id', ({ params }) => {
   });
 });
 
+const createEmploymentHandler = http.post('*/v1/employments', () => {
+  return HttpResponse.json(employmentCreatedResponse);
+});
+
+const updateEmploymentHandler = http.patch('*/v1/employments/*', () => {
+  return HttpResponse.json(employmentUpdatedResponse);
+});
+
+const updateBenefitOffersHandler = http.put(
+  '*/v1/employments/*/benefit-offers',
+  () => {
+    return HttpResponse.json(benefitOffersUpdatedResponse);
+  },
+);
+
+const currencyConverterHandler = http.post(
+  '*/v1/currency-converter/effective',
+  () => {
+    return HttpResponse.json(conversionFromEURToUSD);
+  },
+);
+
 export const defaultHandlers = [
   identityHandler,
   legalEntitiesHandler,
@@ -204,4 +232,8 @@ export const defaultHandlers = [
   signPreOnboardingDocumentHandler,
   contractEligibilityHandler,
   employmentHandler,
+  createEmploymentHandler,
+  updateEmploymentHandler,
+  updateBenefitOffersHandler,
+  currencyConverterHandler,
 ];

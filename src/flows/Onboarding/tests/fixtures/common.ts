@@ -525,3 +525,70 @@ export const employmentSouthKoreaResponse = {
     },
   },
 };
+
+export const employmentDefaultResponseFrance = (employmentId: string) => {
+  return {
+    ...employmentDefaultResponse,
+    data: {
+      ...employmentDefaultResponse.data,
+      employment: {
+        ...employmentDefaultResponse.data.employment,
+        id: employmentId,
+        country: {
+          code: 'FRA',
+          name: 'France',
+          alpha_2_code: 'FR',
+          supported_json_schemas: [
+            'additional_documents',
+            'administrative_details',
+            'contract_details',
+            'employment_basic_information',
+            'emergency_contact',
+            'address_details',
+          ],
+        },
+        contract_details: {
+          ...employmentDefaultResponse.data.employment.contract_details,
+          wage_type: 'salary',
+          role_requires_license: 'no',
+          non_compete_clause_apply: 'no',
+          probation_length_recommended: 'recommended',
+          business_allowance_ack: 'acknowledged',
+          work_hours_per_week: '35',
+          compensation_currency_code: 'EUR',
+          work_experience: 'fafdafdsfdsfdsada',
+          has_commissions: 'no',
+          has_bonus: 'no',
+          has_wage_portage_higher_degree: 'yes',
+          primary_contact_point: 'andre',
+          job_title_check_enabled: true,
+          business_allowance_amount: 250000,
+          key_skills:
+            'dfsafdsfdsfdsdfsafdsfdsfdsdfsafdsfdsfdsdfsafdsfdsfdsdfsafdsfdsfdsdfsafdsfdsfdsdfsafdsfdsfdsdfsafdsfdsfdsdfsafdsfdsfds',
+          contract_duration_type: 'indefinite',
+          available_pto: 30,
+          probation_length: 4,
+          experience_level: 'premier_niveau',
+          role_description:
+            'fdafdfdsfdfdafdfdsfdfdafdfdsfdfdafdfdsfdfdafdfdsfdfdafdfdsfdfdafdfdsfdfdafdfdsfdfdafdfdsfdfdafdfdsfdfdafdfdsfdfdafdfdsfdfdafdfdsfdfdafdfdsfdfdafdfdsfdfdafdfdsfd',
+          has_probation_period: 'yes',
+          annual_gross_salary: 5000000,
+          provided_systems: ['manuals'],
+          financial_reserve_amount: 500000,
+          role_is_onsite: 'no',
+          field_of_work: 'dfasfdsadfsfdsfds',
+          work_schedule: 'full_time',
+          mission_deliverables_cadence: 'daily',
+          has_wage_portage_years_of_experience: 'yes',
+          work_address_is_home_address: 'yes',
+          professional_qualifications: 'masters_degree',
+          home_office_allowance: 120000,
+          employee_travel_required: 'no',
+          has_signing_bonus: 'no',
+          provided_equipment: ['landline'],
+          mission_duration: 3,
+        },
+      },
+    },
+  };
+};

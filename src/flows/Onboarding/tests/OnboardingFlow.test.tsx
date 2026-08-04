@@ -15,9 +15,7 @@ import {
   employmentCreatedResponse,
   employmentUpdatedResponse,
   employmentDefaultResponse,
-  benefitOffersUpdatedResponse,
   inviteResponse,
-  conversionFromEURToUSD,
   employmentSouthKoreaResponse,
   contractDetailsSchemaV1SouthKorea,
 } from '@/src/flows/Onboarding/tests/fixtures';
@@ -275,19 +273,6 @@ describe('OnboardingFlow', () => {
       }),
       http.get('*/v1/countries/PRT/contract_details*', () => {
         return HttpResponse.json(contractDetailsSchemaV1Portugal);
-      }),
-
-      http.post('*/v1/employments', () => {
-        return HttpResponse.json(employmentCreatedResponse);
-      }),
-      http.put('*/v1/employments/*/benefit-offers', () => {
-        return HttpResponse.json(benefitOffersUpdatedResponse);
-      }),
-      http.patch('*/v1/employments/*', async () => {
-        return HttpResponse.json(employmentUpdatedResponse);
-      }),
-      http.post('*/v1/currency-converter/effective', () => {
-        return HttpResponse.json(conversionFromEURToUSD);
       }),
     );
   });
