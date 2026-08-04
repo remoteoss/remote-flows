@@ -131,26 +131,31 @@ describe('useCostCalculator', () => {
 
 Always check the pull request title. Releases and semver bumps are driven by conventional commits, so PR titles must use that format.
 
-**Required format:** `type(scope): description`
+**Required format:** `type(scope): description` (colon, not hyphen)
 
 **Allowed types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`, `build`, `revert`
 
-**Rules:**
+**Validation regex:** `^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\([^)]+\))?!?:\s+.+`
 
-```text
-If the PR title does NOT match /^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\([^)]+\))?!?\s*[:-]\s+.+/i, then:
-- Add a blocking Bug titled "PR title must follow conventional commits"
-- Body must include:
-  - The current (invalid) PR title
-  - That titles must use `type(scope): description`
-  - That this drives semver (`feat` → minor, `fix` → patch, `BREAKING CHANGE` → major)
-  - A rewritten good title based on the PR changes
-  - Examples:
-    - BAD: `canInvite is now depending of onboarding-reserve-status pending request`
-    - GOOD: `fix(onboarding-reserves) - fix race condition on the invite button, now depending on onboarding-reserve-status`
-    - GOOD: `feat(gp): add PayrollAdminOnboarding flow mutations and schemas`
-- Assign the Bug to the PR author
-```
+If the PR title does not match the regex above:
+
+1. Add a blocking Bug titled `PR title must follow conventional commits`.
+2. Use this exact template for the body:
+
+   ```markdown
+   **Current title:** `<paste current title>`
+
+   PR titles must use `type(scope): description` (see Allowed types above).
+   This format drives semver: `feat` → minor, `fix` → patch, `BREAKING CHANGE` footer → major.
+
+   **Suggested title:** `<rewritten title based on the PR's actual changes>`
+
+   **Examples:**
+   - ❌ `canInvite is now depending of onboarding-reserve-status pending request`
+   - ✅ `fix(onboarding-reserves): fix race condition on the invite button, now depending on onboarding-reserve-status`
+   ```
+
+3. Assign the Bug to the PR author.
 
 Do not skip this check even if the code looks correct. Flag the title on every review until it complies.
 
@@ -518,7 +523,7 @@ listItems: [
 
 Before approving a PR, verify:
 
-- [ ] **PR title follows conventional commits** - e.g. `fix(scope) - description` or `feat(scope): description`
+- [ ] **PR title follows conventional commits** - e.g. `fix(scope): description` or `feat(scope): description`
 - [ ] **No breaking changes** - Or properly documented with `BREAKING CHANGE:`
 - [ ] **New tests added** - All new features/fixes have tests
 - [ ] **JSDoc added** - Public APIs have documentation
