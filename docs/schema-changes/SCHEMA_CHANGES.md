@@ -57,10 +57,11 @@ Schema versions for the Contract Details step in employee onboarding flows.
 ## Version Support Matrix
 
 Track which schema versions are supported by each SDK version.
-| SDK Version | Basic Information | Contract Details |
-|-------------|-------------------|------------------|
-| 1.23.0+ | v3 (recommended) | v2 (18 countries) |
-| 1.0.0+ | v1 (legacy) | v1 (default) |
+
+| SDK Version | Basic Information | Contract Details  |
+| ----------- | ----------------- | ----------------- |
+| 1.23.0+     | v3 (recommended)  | v2 (18 countries) |
+| 1.0.0+      | v1 (legacy)       | v1 (default)      |
 
 **Legend:**
 
