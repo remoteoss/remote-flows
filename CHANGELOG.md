@@ -1,5 +1,34 @@
 # @remoteoss/remote-flows
 
+## 1.47.0
+
+### Minor Changes
+
+#### Features
+
+- make employment readonly when shouldFreezeEmploymentData is true (#1213) [#1213](https://github.com/remoteoss/remote-flows/pull/1213)
+
+#### Fixes
+
+- add explicit waits for datepicker calendar popup in e2e tests (#1214) [#1214](https://github.com/remoteoss/remote-flows/pull/1214)
+
+#### Docs
+
+- replace endpoint (#1210) [#1210](https://github.com/remoteoss/remote-flows/pull/1210)
+- add test to make sure submission keeps working (#1206) [#1206](https://github.com/remoteoss/remote-flows/pull/1206)
+- add contract details changelog (#1215) [#1215](https://github.com/remoteoss/remote-flows/pull/1215)
+
+#### Chores
+
+- remove build files (#1211) [#1211](https://github.com/remoteoss/remote-flows/pull/1211)
+- update dependency html-react-parser to v6.1.5 (#1197) [#1197](https://github.com/remoteoss/remote-flows/pull/1197)
+- update dependency @tanstack/react-query to v5.101.4 (#1196) [#1196](https://github.com/remoteoss/remote-flows/pull/1196)
+- update dependency @arethetypeswrong/cli to v0.18.5 (#1128) [#1128](https://github.com/remoteoss/remote-flows/pull/1128)
+- update dependency @vitejs/plugin-react to v6.0.4 (#1217) [#1217](https://github.com/remoteoss/remote-flows/pull/1217)
+- update dependency postcss to v8.5.23 [security] (#1216) [#1216](https://github.com/remoteoss/remote-flows/pull/1216)
+- update dependency @remoteoss/remote-json-schema-form-kit to v0.0.23 (#1218) [#1218](https://github.com/remoteoss/remote-flows/pull/1218)
+- update dependency @playwright/test to v1.62.0 (#1219) [#1219](https://github.com/remoteoss/remote-flows/pull/1219)
+
 ## 1.46.0
 
 ### Minor Changes
