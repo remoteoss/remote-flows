@@ -20,6 +20,12 @@ import type {
   DeleteV1IncentivesRecurringIdData,
   DeleteV1IncentivesRecurringIdErrors,
   DeleteV1IncentivesRecurringIdResponses,
+  DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeData,
+  DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeErrors,
+  DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponses,
+  DeleteV1SandboxEmploymentsEmploymentIdData,
+  DeleteV1SandboxEmploymentsEmploymentIdErrors,
+  DeleteV1SandboxEmploymentsEmploymentIdResponses,
   DeleteV1WebhookCallbacksIdData,
   DeleteV1WebhookCallbacksIdErrors,
   DeleteV1WebhookCallbacksIdResponses,
@@ -75,6 +81,9 @@ import type {
   GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityData,
   GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityErrors,
   GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityResponses,
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesData,
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesErrors,
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesResponses,
   GetV1CompaniesCompanyIdLegalEntitiesResponses,
   GetV1CompaniesCompanyIdPricingPlansData,
   GetV1CompaniesCompanyIdPricingPlansErrors,
@@ -334,6 +343,9 @@ import type {
   GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdData,
   GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdErrors,
   GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdResponses,
+  GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsData,
+  GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsErrors,
+  GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsResponses,
   GetV1PayItemsData,
   GetV1PayItemsErrors,
   GetV1PayItemsResponses,
@@ -350,6 +362,12 @@ import type {
   GetV1PayrollRunsPayrollRunIdEmployeeDetailsErrors,
   GetV1PayrollRunsPayrollRunIdEmployeeDetailsResponses,
   GetV1PayrollRunsPayrollRunIdErrors,
+  GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdData,
+  GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadData,
+  GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadErrors,
+  GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadResponses,
+  GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdErrors,
+  GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdResponses,
   GetV1PayrollRunsPayrollRunIdResponses,
   GetV1PayrollRunsResponses,
   GetV1PayslipsData,
@@ -613,6 +631,9 @@ import type {
   PostV1EmploymentsEmploymentIdContractEligibilityData,
   PostV1EmploymentsEmploymentIdContractEligibilityErrors,
   PostV1EmploymentsEmploymentIdContractEligibilityResponses,
+  PostV1EmploymentsEmploymentIdContractOriginData,
+  PostV1EmploymentsEmploymentIdContractOriginErrors,
+  PostV1EmploymentsEmploymentIdContractOriginResponses,
   PostV1EmploymentsEmploymentIdEngagementAgreementDetailsData,
   PostV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
   PostV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
@@ -651,9 +672,18 @@ import type {
   PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignErrors,
   PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignResponses,
   PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsResponses,
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeData,
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeErrors,
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponses,
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsData,
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsErrors,
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsResponses,
   PostV1PayItemsBulkData,
   PostV1PayItemsBulkErrors,
   PostV1PayItemsBulkResponses,
+  PostV1PayrollRunsPayrollRunIdGlReportsData,
+  PostV1PayrollRunsPayrollRunIdGlReportsErrors,
+  PostV1PayrollRunsPayrollRunIdGlReportsResponses,
   PostV1ProbationCompletionLetterData,
   PostV1ProbationCompletionLetterErrors,
   PostV1ProbationCompletionLetterResponses,
@@ -677,6 +707,9 @@ import type {
   PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollData,
   PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollErrors,
   PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollResponses,
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusData,
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusErrors,
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusResponses,
   PostV1SandboxCompaniesCompanyIdLegalEntitiesResponses,
   PostV1SandboxEmploymentsData,
   PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveData,
@@ -2512,6 +2545,74 @@ export const getV1EmploymentsEmploymentIdContractDocuments = <
   });
 
 /**
+ * Remove a pre-onboarding acknowledgement
+ *
+ * Removes a previously recorded acknowledgement. Rejected once a requirement that depends on
+ * this acknowledgement has been signed/completed.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
+ *
+ */
+export const deleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledge =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).delete<
+      DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponses,
+      DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-requirements/{requirement_slug}/acknowledge',
+      ...options,
+    });
+
+/**
+ * Acknowledge a pre-onboarding acknowledgement requirement
+ *
+ * Records an acknowledgement for an acknowledgement requirement. Rejected if the requirement
+ * is blocked by an unmet dependency or has already been acknowledged.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
+ *
+ */
+export const postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledge =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).post<
+      PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponses,
+      PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-requirements/{requirement_slug}/acknowledge',
+      ...options,
+    });
+
+/**
  * List expenses
  *
  * Lists all expenses records
@@ -2704,6 +2805,43 @@ export const putV1SandboxContractAmendmentsContractAmendmentRequestIdApprove = <
     ],
     url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/approve',
     ...options,
+  });
+
+/**
+ * Create a GL report
+ *
+ * Triggers generation of a General Ledger report for the given payroll run and type.
+ * Returns immediately with a `pending` report — poll `show` until `status` is `completed`,
+ * then call `download`.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | View payroll runs (`payroll_run:read`) | - |
+ *
+ */
+export const postV1PayrollRunsPayrollRunIdGlReports = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostV1PayrollRunsPayrollRunIdGlReportsData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostV1PayrollRunsPayrollRunIdGlReportsResponses,
+    PostV1PayrollRunsPayrollRunIdGlReportsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/payroll-runs/{payroll_run_id}/gl-reports',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 
 /**
@@ -3173,6 +3311,9 @@ export const patchV1ContractorInvoiceSchedulesId = <
  * Returns the list of pre-onboarding document requirements (e.g. master service agreements,
  * individual labour agreements) that must be fulfilled before the given employment can be onboarded.
  *
+ * Deprecated: use `GET /onboarding/employments/:employment_id/pre-onboarding-requirements` instead,
+ * which returns both document and acknowledgement requirements.
+ *
  *
  * ## Scopes
  *
@@ -3180,6 +3321,8 @@ export const patchV1ContractorInvoiceSchedulesId = <
  * |---|---|---|
  * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
  *
+ *
+ * @deprecated
  */
 export const getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirements =
   <ThrowOnError extends boolean = false>(
@@ -3200,6 +3343,39 @@ export const getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirem
       url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-document-requirements',
       ...options,
     });
+
+/**
+ * Show a GL report
+ *
+ * Returns the current status of a GL report. Poll until `status` is `completed`, then call `download`.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | View payroll runs (`payroll_run:read`) | - |
+ *
+ */
+export const getV1PayrollRunsPayrollRunIdGlReportsGlReportId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdResponses,
+    GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/payroll-runs/{payroll_run_id}/gl-reports/{gl_report_id}',
+    ...options,
+  });
 
 /**
  * Show Billing Document
@@ -4367,6 +4543,40 @@ export const getV1TimeoffBalancesEmploymentId = <
   });
 
 /**
+ * Find or create a document for a pre-onboarding requirement
+ *
+ * Finds an existing unsigned pre-onboarding document for the given document requirement, or
+ * creates a new one. Idempotent: repeated calls return the same document until it is signed.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
+ *
+ */
+export const postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocuments =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).post<
+      PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsResponses,
+      PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-requirements/{requirement_slug}/documents',
+      ...options,
+    });
+
+/**
  * List expense categories
  *
  * Lists the effective hierarchy of expense categories. At least one of employment_id, expense_id, or country_code must be provided.
@@ -4884,6 +5094,41 @@ export const getV1EmployeeTimesheets = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * List Pay Codes
+ *
+ * Lists pay codes available for a legal entity.
+ * Pay codes represent the allowed pay element types that can be submitted via `POST /v1/pay-items/bulk`.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | View pay items (`pay_item:read`) | Manage pay items (`pay_item:write`) |
+ *
+ */
+export const getV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodes = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesResponses,
+    GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/pay-codes',
+    ...options,
+  });
+
+/**
  * Update emergency contact
  *
  * Updates the employment's emergency contact details.
@@ -5004,6 +5249,7 @@ export const postV1WebhookCallbacks = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     security: [
+      { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
       { scheme: 'bearer', type: 'http' },
     ],
@@ -6305,6 +6551,51 @@ export const getV1LeavePoliciesDetailsEmploymentId = <
   });
 
 /**
+ * Set contract origin for a contractor employment
+ *
+ * Sets the `contract_origin` for a contractor employment.
+ *
+ * * `remote_contract` — Remote provides and manages the contract (a contract document is created)
+ * * `custom_remote_contract` — A customised Remote contract is used (a contract document is created)
+ * * `provided_by_customer` — The employer provides their own contract (no contract document is created)
+ *
+ * When `provided_by_customer` is selected, the contractor can be invited without completing the
+ * `contract_details` onboarding step.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ *
+ */
+export const postV1EmploymentsEmploymentIdContractOrigin = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostV1EmploymentsEmploymentIdContractOriginData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostV1EmploymentsEmploymentIdContractOriginResponses,
+    PostV1EmploymentsEmploymentIdContractOriginErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/{employment_id}/contract-origin',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * List Time Off Types
  *
  * Lists all time off types that can be used for the `timeoff_type` parameter.
@@ -6619,6 +6910,39 @@ export const postV1CurrencyConverterEffective = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * Download a GL report
+ *
+ * Downloads the generated GL report as a CSV file. The report must have `status: completed` before calling this endpoint.
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | View payroll runs (`payroll_run:read`) | - |
+ *
+ */
+export const getV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownload = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadResponses,
+    GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/payroll-runs/{payroll_run_id}/gl-reports/{gl_report_id}/download',
+    ...options,
   });
 
 /**
@@ -6960,6 +7284,35 @@ export const getV1CompanyCurrencies = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/company-currencies',
+    ...options,
+  });
+
+/**
+ * Archive employment
+ *
+ * Archives an employment, setting its status to `archived`.
+ *
+ * This endpoint is only available in Sandbox and allows partners to clean up test
+ * employees during automated E2E testing without requiring Remote manual intervention.
+ *
+ * This endpoint will respond with a 404 outside of the Sandbox environment.
+ *
+ */
+export const deleteV1SandboxEmploymentsEmploymentId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<DeleteV1SandboxEmploymentsEmploymentIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).delete<
+    DeleteV1SandboxEmploymentsEmploymentIdResponses,
+    DeleteV1SandboxEmploymentsEmploymentIdErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/sandbox/employments/{employment_id}',
     ...options,
   });
 
@@ -7476,6 +7829,40 @@ export const getV1EmploymentsEmploymentIdCompanyStructureNodes = <
     url: '/v1/employments/{employment_id}/company-structure-nodes',
     ...options,
   });
+
+/**
+ * Set company credit risk status
+ *
+ * Sets the credit risk status of a specific legal entity to any valid credit risk status.
+ *
+ * Use this endpoint to test hiring flows affected by credit risk, without needing Remote admin intervention.
+ *
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ */
+export const postV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatus =
+  <ThrowOnError extends boolean = false>(
+    options: Options<
+      PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusData,
+      ThrowOnError
+    >,
+  ) =>
+    (options.client ?? client).post<
+      PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusResponses,
+      PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusErrors,
+      ThrowOnError
+    >({
+      security: [
+        { scheme: 'bearer', type: 'http' },
+        { scheme: 'bearer', type: 'http' },
+      ],
+      url: '/v1/sandbox/companies/{company_id}/legal-entities/{legal_entity_id}/set-credit-risk-status',
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    });
 
 /**
  * List custom field value for an employment
@@ -8666,6 +9053,9 @@ export const getV1PayrollRuns = <ThrowOnError extends boolean = false>(
  * Idempotent: repeated calls with the same `pre_onboarding_document_requirement_slug` return the same
  * document until it is signed.
  *
+ * Deprecated: use
+ * `POST /onboarding/employments/:employment_id/pre-onboarding-requirements/:requirement_slug/documents` instead.
+ *
  *
  * ## Scopes
  *
@@ -8673,6 +9063,8 @@ export const getV1PayrollRuns = <ThrowOnError extends boolean = false>(
  * |---|---|---|
  * | Manage employment documents (`employment_documents`) | - | Manage documents (`document:write`) |
  *
+ *
+ * @deprecated
  */
 export const postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments = <
   ThrowOnError extends boolean = false,
@@ -9761,5 +10153,42 @@ export const getV1BillingDocumentsBillingDocumentIdPdf = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/billing-documents/{billing_document_id}/pdf',
+    ...options,
+  });
+
+/**
+ * List pre-onboarding requirements for an employment
+ *
+ * Returns the list of pre-onboarding requirements — both documents (e.g. master service
+ * agreements, individual labour agreements) and acknowledgements — that must be fulfilled
+ * before the given employment can be onboarded. Each requirement carries its `type`, current
+ * `status`, and the requirement it `depends_on` (if any).
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employment documents (`employment_documents`) | View documents (`document:read`) | Manage documents (`document:write`) |
+ *
+ */
+export const getV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirements = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsResponses,
+    GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-requirements',
     ...options,
   });

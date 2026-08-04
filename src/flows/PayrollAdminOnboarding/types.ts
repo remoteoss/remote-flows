@@ -1,27 +1,44 @@
-import { FlowOptions } from '@/src/flows/types';
+import { FlowOptions, GPStepCallbacks } from '@/src/flows/types';
 import { usePayrollAdminOnboarding } from '@/src/flows/PayrollAdminOnboarding/hooks';
 
-// Step component prop types are intentionally empty for this scaffold — PBYR-4044 will
-// replace these with typed props once each step component is implemented.
-type StepComponentType = React.ComponentType<Record<string, never>>;
+export type { GPStepCallbacks as GPAdminStepCallbacks };
 
 export type PayrollAdminOnboardingRenderProps = {
   adminBag: ReturnType<typeof usePayrollAdminOnboarding>;
   components: {
-    SelectCountryStep: StepComponentType;
-    ContractDetailsStep: StepComponentType;
-    AdministrativeDetailsStep: StepComponentType;
-    InvitationStep: StepComponentType;
-    SubmitButton: StepComponentType;
-    BackButton: StepComponentType;
+    SelectCountryStep: React.ComponentType<GPStepCallbacks>;
+    ContractDetailsStep: React.ComponentType<GPStepCallbacks>;
+    AdministrativeDetailsStep: React.ComponentType<GPStepCallbacks>;
+    InvitationStep: React.ComponentType<
+      Pick<GPStepCallbacks, 'onSuccess' | 'onError'> & {
+        children?: React.ReactNode;
+      }
+    >;
+    SubmitButton: React.ComponentType<
+      React.ButtonHTMLAttributes<HTMLButtonElement> & {
+        children?: React.ReactNode;
+      }
+    >;
+    BackButton: React.ComponentType<
+      React.ButtonHTMLAttributes<HTMLButtonElement> & {
+        children?: React.ReactNode;
+      }
+    >;
   };
 };
 
 export type PayrollAdminOnboardingFlowProps = {
   /** UUID of the company. */
   companyId: string;
-  /** UUID of the GP-enabled legal entity (required for GP employment creation). */
-  legalEntityId: string;
+  /**
+   * UUID of the GP-enabled legal entity to create the employment under.
+   * Optional — if omitted, the flow fetches the company's GP-enabled legal
+   * entities and uses the first one. Check `adminBag.legalEntities` if you
+   * need to handle the case where the company has none — but check
+   * `adminBag.isErrorLegalEntities` first, since a failed fetch also leaves
+   * `legalEntities` empty and isn't the same as "no GP legal entity".
+   */
+  legalEntityId?: string;
   /** Optional. Pre-select country and skip country selection. */
   countryCode?: string;
   /** Optional. Resume an existing in-progress GP employment. */

@@ -30,9 +30,9 @@ import { TerminationForm } from './Termination';
 import { ContractAmendment } from './ContractAmendment';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { OnboardingForm } from './Onboarding';
-import { OnboardingForm as OnboardingFormWithoutSelectCountry } from './OnboardingWithoutSelectCountryStep';
-import { OnboardingCustomBenefitsForm } from './OnboardingWithCustomBenefits';
+import { OnboardingForm } from './flows/Onboarding/Onboarding';
+import { OnboardingForm as OnboardingFormWithoutSelectCountry } from './flows/Onboarding/OnboardingWithoutSelectCountryStep';
+import { OnboardingCustomBenefitsForm } from './flows/Onboarding/OnboardingWithCustomBenefits';
 import { CostCalculatorWithReplaceableComponents } from './CostCalculatorWithReplaceableComponents';
 import BasicCostCalculatorCode from './BasicCostCalculator?raw';
 import BasicCostCalculatorDefaultValuesCode from './BasicCostCalculatorDefaultValues?raw';
@@ -47,10 +47,16 @@ import { ContractorOnboardingForm } from './ContractorOnboarding';
 import { CreateCompanyForm } from './CreateCompany';
 import { MagicLinkTest } from './MagicLinkTest';
 import { JsonSchemaComparisonDemo } from './JsonSchemaComparisonDemo';
+import { JsonSchemaPlayground } from './flows/JsonSchemaPlayground/JsonSchemaPlayground';
+import { SandboxPaymentApproval } from './SandboxPaymentApproval';
+import { PayrollAdminOnboardingForm } from './PayrollAdminOnboarding';
+import { PayrollEmployeeOnboardingForm } from './PayrollEmployeeOnboarding';
 import ContractorOnboardingCode from './ContractorOnboarding?raw';
 import CreateCompanyCode from './CreateCompany?raw';
 import MagicLinkTestCode from './MagicLinkTest?raw';
 import JsonSchemaComparisonCode from './JsonSchemaComparisonDemo?raw';
+import JsonSchemaPlaygroundCode from './flows/JsonSchemaPlayground/JsonSchemaPlayground?raw';
+import SandboxPaymentApprovalCode from './SandboxPaymentApproval?raw';
 
 const costCalculatorDemos = [
   {
@@ -169,11 +175,39 @@ const additionalDemos = [
     sourceCode: MagicLinkTestCode,
   },
   {
+    id: 'sandbox-payment-approval',
+    title: 'Sandbox Payment Approval',
+    description: 'Approve risk reserve payments for employments',
+    component: SandboxPaymentApproval,
+    sourceCode: SandboxPaymentApprovalCode,
+  },
+  {
     id: 'json-schema-comparison',
     title: 'JSON Schema Comparison',
     description: 'Compare different JSON schema versions side-by-side',
     component: JsonSchemaComparisonDemo,
     sourceCode: JsonSchemaComparisonCode,
+  },
+  {
+    id: 'json-schema-playground',
+    title: 'JSON Schema Playground',
+    description: 'Test and experiment with different JSON schemas',
+    component: JsonSchemaPlayground,
+    sourceCode: JsonSchemaPlaygroundCode,
+  },
+  {
+    id: 'payroll-admin-onboarding',
+    title: 'GP Admin Onboarding',
+    description: 'Global Payroll admin onboarding flow',
+    component: PayrollAdminOnboardingForm,
+    sourceCode: '',
+  },
+  {
+    id: 'payroll-employee-onboarding',
+    title: 'GP Employee Onboarding',
+    description: 'Global Payroll employee self-onboarding flow',
+    component: PayrollEmployeeOnboardingForm,
+    sourceCode: '',
   },
 ];
 

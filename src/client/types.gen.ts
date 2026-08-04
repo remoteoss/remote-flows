@@ -134,9 +134,9 @@ export type CountryCode = string;
 /**
  * V2OffboardingRequest
  *
- * The exact shape depends on the offboarding `type`:
- * `termination` offboardings carry a `V2TerminationRequest`, `resignation` offboardings
- * carry a `V2ResignationRequest`.
+ * The shape depends on the originating request: offboardings that originated from a
+ * termination carry a `V2TerminationRequest`; those that originated from a resignation carry
+ * a `V2ResignationRequest`.
  *
  */
 export type V2OffboardingRequest =
@@ -303,6 +303,40 @@ export type V2OffboardingResponse = {
   data?: {
     offboarding?: V2Offboarding;
   };
+};
+
+/**
+ * PayCode
+ */
+export type PayCode = {
+  /**
+   * Pay element category (e.g. time_and_attendance, bonus)
+   */
+  category: string;
+  /**
+   * Code to use in the `code` field of POST /v1/pay-items/bulk
+   */
+  code: string;
+  /**
+   * Description of the pay code
+   */
+  description?: string | null;
+  /**
+   * Customer-specific code used for bulk import mapping
+   */
+  external_import_code?: string | null;
+  /**
+   * Human-readable name of the pay code
+   */
+  name: string;
+  /**
+   * Unique identifier for this pay code
+   */
+  slug: UuidSlug;
+  /**
+   * Value type (e.g. hours, money, days)
+   */
+  type: string;
 };
 
 /**
@@ -997,6 +1031,16 @@ export type Employment = {
    */
   company_id: string;
   /**
+   * The planned service end date for contractor of record (COR) employments.
+   *
+   * For signed COR contractors, this date is stored on the contract record (not in `contract_details`).
+   * It is `null` for employee employments or unsigned contractor agreements.
+   *
+   * Date format is ISO 8601 without the time component (e.g. "2024-12-31").
+   *
+   */
+  expiration_date?: string | null;
+  /**
    * Work address information. Its properties may vary depending on the country.
    */
   work_address_details: {
@@ -1369,6 +1413,19 @@ export type Step = {
    * Step type identifier
    */
   type: string;
+};
+
+/**
+ * CreatePreOnboardingAcknowledgementResponse
+ *
+ * Returns the slug of the recorded pre-onboarding acknowledgement.
+ */
+export type CreatePreOnboardingAcknowledgementResponse = {
+  data: {
+    pre_onboarding_acknowledgement: {
+      id: UuidSlug;
+    };
+  };
 };
 
 /**
@@ -2358,10 +2415,14 @@ export type CreateTimeoffParams = {
   document?: TimeoffDocumentParams;
   employment_id: string;
   end_date: string;
+  /**
+   * UUID of a custom company leave policy assigned to the employment. Use this field instead of `timeoff_type` when creating time off against a custom leave policy. Discover available custom leave policy UUIDs via `GET /v1/leave-policies/details/{employment_id}`.
+   */
+  leave_policy_variant_id?: string;
   notes?: string;
   start_date: string;
   timeoff_days: Array<TimeoffDaysParams>;
-  timeoff_type: TimeoffType;
+  timeoff_type?: TimeoffType;
   timezone: Timezone;
 };
 
@@ -2664,8 +2725,24 @@ export type ImportJobRow = {
           [key: string]: unknown;
         };
   };
+  /**
+   * Row metadata. For login-email-selection-enabled imports (e.g. EOR bulk invite), each reviewed row carries a `login_email_signals` object with the per-row login-email review signals.
+   */
   metadata?: {
-    [key: string]: unknown;
+    /**
+     * LoginEmailSignals
+     *
+     * Per-row review-step signals for login email selection, present only when the feature is enabled. `sso_enforced` reflects whether SSO login is enforced for the row's category. `personal` and `work` report, for each provided email, whether it is already registered on another account.
+     */
+    login_email_signals?: {
+      personal?: {
+        registered?: boolean;
+      };
+      sso_enforced?: boolean;
+      work?: {
+        registered?: boolean;
+      };
+    };
   };
   row_error_details?: {
     ambiguous?: Array<{
@@ -3535,6 +3612,7 @@ export type CreateWebhookCallbackParams = {
     | 'company.manager_created'
     | 'company.manager_deleted'
     | 'company.manager_updated'
+    | 'company.owner_changed'
     | 'company.archived'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
@@ -3923,6 +4001,16 @@ export type Payment = {
 };
 
 /**
+ * CreateGLReportParams
+ */
+export type CreateGlReportParams = {
+  /**
+   * The type of GL report to generate.
+   */
+  type: 'summary' | 'by_department' | 'employee_detail';
+};
+
+/**
  * BenefitRenewalRequests.MinimalBenefitGroup
  *
  * A lightweight benefit group reference used in renewal requests.
@@ -3950,6 +4038,30 @@ export type PayrollCalendarEor = {
   cycle_frequency: CycleFrequency;
   cycles: Array<Cycle>;
   id: string;
+};
+
+/**
+ * GLReport
+ *
+ * A General Ledger report generation request and its current status.
+ */
+export type GlReport = {
+  /**
+   * Unique identifier of the GL report.
+   */
+  id: string;
+  /**
+   * Timestamp when the report was requested.
+   */
+  inserted_at: string;
+  /**
+   * Current generation status of the report.
+   */
+  status: 'pending' | 'completed' | 'failed';
+  /**
+   * The type of GL report.
+   */
+  type: 'summary' | 'by_department' | 'employee_detail';
 };
 
 /**
@@ -4404,6 +4516,29 @@ export type MinimalPayrollRun = {
     | 'parallel';
 };
 
+/**
+ * ListPayCodesResponse
+ *
+ * Response schema listing many pay_codes
+ */
+export type ListPayCodesResponse = {
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    pay_codes?: Array<PayCode>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
+};
+
 export type MaybeUnifiedMinimalBenefitGroup = UnifiedMinimalBenefitGroup | null;
 
 /**
@@ -4500,6 +4635,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'company.manager_created'
     | 'company.manager_deleted'
     | 'company.manager_updated'
+    | 'company.owner_changed'
     | 'company.archived'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
@@ -6151,6 +6287,15 @@ export type ApprovedTravelLetter = {
 };
 
 /**
+ * IndexPreOnboardingRequirementsResponse
+ *
+ * List of pre-onboarding requirements for an employment.
+ */
+export type IndexPreOnboardingRequirementsResponse = {
+  data: Array<PreOnboardingRequirement>;
+};
+
+/**
  * DeclineTimeoffParams
  */
 export type DeclineTimeoffParams = {
@@ -7314,6 +7459,15 @@ export type LeavePolicySummary = {
 };
 
 /**
+ * GLReportResponse
+ */
+export type GlReportResponse = {
+  data?: {
+    gl_report?: GlReport;
+  };
+};
+
+/**
  * EmploymentCreationResponse
  */
 export type EmploymentCreationResponse = {
@@ -7750,7 +7904,7 @@ export type PayItemParams = {
   /**
    * Pay item type code
    */
-  code: 'regular_hours' | 'overtime' | 'sick_leave' | 'paid_time_off';
+  code: string;
   /**
    * Working day date (YYYY-MM-DD)
    */
@@ -8467,6 +8621,18 @@ export type Status = {
 };
 
 /**
+ * ContractorCreateTimesheetUnprocessableEntityResponse
+ *
+ * A validation error (HTTP 422). Either a standard error response, or — when the submitted
+ * dates overlap an existing timesheet — a response that additionally includes
+ * `conflicting_timesheet_id`.
+ *
+ */
+export type ContractorCreateTimesheetUnprocessableEntityResponse =
+  | UnprocessableEntityResponse
+  | ContractorTimesheetOverlapResponse;
+
+/**
  * LeavePolicy
  *
  * The leave policy associated with a time off request. Policies define the rules and entitlements for specific types of leave.
@@ -8734,6 +8900,47 @@ export type ParameterErrors = Array<ParameterError>;
 export type UnifiedEmploymentBenefitOffer = {
   benefit_group: UnifiedEmploymentBenefitGroup;
   benefit_tier: UnifiedEmploymentBenefitTier | null;
+};
+
+/**
+ * PreOnboardingRequirement
+ *
+ * A pre-onboarding requirement (document or acknowledgement) that must be fulfilled before an employee can be onboarded.
+ */
+export type PreOnboardingRequirement = {
+  /**
+   * The requirement that must be fulfilled before this one becomes available (if any).
+   */
+  depends_on_requirement: PreOnboardingRequirement | null;
+  /**
+   * Human-readable description; rich HTML for acknowledgement requirements.
+   */
+  description: string;
+  /**
+   * Whether the employment data is frozen because this requirement is finished.
+   */
+  freeze_employment_data: boolean | null;
+  /**
+   * Human-readable name of the requirement.
+   */
+  name: string;
+  /**
+   * Email address to contact for help with redlining (document requirements only).
+   */
+  redlining_help_email: string | null;
+  slug: UuidSlug;
+  /**
+   * Current status of this requirement for the given employment.
+   */
+  status: 'blocked' | 'awaiting' | 'finished' | 'revised';
+  /**
+   * Whether the requirement supports redlining (document requirements only).
+   */
+  supports_redlining: boolean | null;
+  /**
+   * The requirement type.
+   */
+  type: 'document' | 'acknowledgement';
 };
 
 /**
@@ -9046,8 +9253,15 @@ export type V2Offboarding = {
   termination_date?: string | null;
   /**
    * The offboarding type.
+   *
    */
-  type: 'termination' | 'resignation';
+  type:
+    | 'termination'
+    | 'resignation'
+    | 'cancellation'
+    | 'relocation'
+    | 'transfer'
+    | 'conversion';
 };
 
 /**
@@ -9223,6 +9437,7 @@ export type WebhookCallback = {
     | 'company.manager_created'
     | 'company.manager_deleted'
     | 'company.manager_updated'
+    | 'company.owner_changed'
     | 'company.archived'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
@@ -9344,9 +9559,13 @@ export type MaybeAccountsAccount = AccountsAccount | null;
 export type TimeoffDay = {
   day: Date;
   /**
-   * The number of hours taken off on this day (e.g., 8 for a full day, 4 for a half day).
+   * The number of hours taken off on this day (e.g., 8 for a full day, 4 for a half day). For minute-precision durations (e.g., 7 hours 30 minutes), use `minutes`.
    */
   hours: number;
+  /**
+   * The number of minutes taken off on this day (e.g., 480 for a full 8-hour day, 450 for 7 hours 30 minutes). Minute-precision counterpart of `hours`.
+   */
+  minutes: number;
 };
 
 /**
@@ -10452,6 +10671,23 @@ export type ListWebhookEventsResponse = {
 };
 
 /**
+ * ContractorTimesheetOverlapResponse
+ *
+ * Returned when the submitted dates overlap an existing timesheet for the employment (HTTP 422).
+ *
+ * In addition to the standard `errors`/`message` fields, the response includes
+ * `conflicting_timesheet_id` — the `id` of the existing timesheet the submitted dates overlap.
+ *
+ */
+export type ContractorTimesheetOverlapResponse = {
+  conflicting_timesheet_id: UuidSlug;
+  errors: {
+    [key: string]: Array<string>;
+  };
+  message: string;
+};
+
+/**
  * PaySummaryResponse
  */
 export type PaySummaryResponse = {
@@ -11048,6 +11284,7 @@ export type UpdateWebhookCallbackParams = {
     | 'company.manager_created'
     | 'company.manager_deleted'
     | 'company.manager_updated'
+    | 'company.owner_changed'
     | 'company.archived'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
@@ -11757,6 +11994,10 @@ export type Timeoff = {
   id: string;
   leave_policy: LeavePolicy;
   /**
+   * UUID of the custom company leave policy variant associated with this time off. Null for standard leave types.
+   */
+  leave_policy_variant_id?: string | null;
+  /**
    * Optional notes provided by the employee when requesting the time off.
    */
   notes?: string | null;
@@ -11788,6 +12029,10 @@ export type Timeoff = {
   timeoff_days: Array<TimeoffDay>;
   timeoff_type: TimeoffType;
   timezone: Timezone;
+  /**
+   * The total number of minutes taken off across all `timeoff_days`. Always equals the sum of the per-day `minutes` values.
+   */
+  total_minutes: number;
 };
 
 /**
@@ -12565,6 +12810,21 @@ export type ContractorInvoice = {
 };
 
 /**
+ * LoginEmailSignals
+ *
+ * Per-row review-step signals for login email selection, present only when the feature is enabled. `sso_enforced` reflects whether SSO login is enforced for the row's category. `personal` and `work` report, for each provided email, whether it is already registered on another account.
+ */
+export type LoginEmailSignals = {
+  personal?: {
+    registered?: boolean;
+  };
+  sso_enforced?: boolean;
+  work?: {
+    registered?: boolean;
+  };
+};
+
+/**
  * BillingDocumentAmountItem
  *
  * A line item on a billing document, representing a specific cost category (e.g., base salary, allowances, taxes) for an employment.
@@ -12801,9 +13061,15 @@ export type GetV2OffboardingsData = {
      */
     employment_id?: string;
     /**
-     * Filter by offboarding type. Only `termination` and `resignation` offboardings are supported.
+     * Filter by offboarding type.
      */
-    type?: 'termination' | 'resignation';
+    type?:
+      | 'termination'
+      | 'resignation'
+      | 'cancellation'
+      | 'relocation'
+      | 'transfer'
+      | 'conversion';
     /**
      * By default, the results do not include confidential termination requests.
      * Send `include_confidential=true` to include confidential requests in the response.
@@ -15388,6 +15654,108 @@ export type GetV1EmploymentsEmploymentIdContractDocumentsResponses = {
 export type GetV1EmploymentsEmploymentIdContractDocumentsResponse =
   GetV1EmploymentsEmploymentIdContractDocumentsResponses[keyof GetV1EmploymentsEmploymentIdContractDocumentsResponses];
 
+export type DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Employment ID
+       */
+      employment_id: string;
+      /**
+       * Pre-onboarding requirement slug
+       */
+      requirement_slug: string;
+    };
+    query?: never;
+    url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-requirements/{requirement_slug}/acknowledge';
+  };
+
+export type DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeErrors =
+  {
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Forbidden
+     */
+    403: ForbiddenResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+  };
+
+export type DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeError =
+  DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeErrors[keyof DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeErrors];
+
+export type DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponses =
+  {
+    /**
+     * Success
+     */
+    200: SuccessResponse;
+  };
+
+export type DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponse =
+  DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponses[keyof DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponses];
+
+export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Employment ID
+       */
+      employment_id: string;
+      /**
+       * Pre-onboarding requirement slug
+       */
+      requirement_slug: string;
+    };
+    query?: never;
+    url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-requirements/{requirement_slug}/acknowledge';
+  };
+
+export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeErrors =
+  {
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Forbidden
+     */
+    403: ForbiddenResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+  };
+
+export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeError =
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeErrors[keyof PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeErrors];
+
+export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponses =
+  {
+    /**
+     * Success
+     */
+    200: CreatePreOnboardingAcknowledgementResponse;
+  };
+
+export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponse =
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponses[keyof PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponses];
+
 export type GetV1ExpensesData = {
   body?: never;
   headers: {
@@ -15627,7 +15995,7 @@ export type PostV1ContractorsEmploymentsEmploymentIdTimesheetsErrors = {
   /**
    * Unprocessable Entity
    */
-  422: UnprocessableEntityResponse;
+  422: ContractorCreateTimesheetUnprocessableEntityResponse;
 };
 
 export type PostV1ContractorsEmploymentsEmploymentIdTimesheetsError =
@@ -15693,6 +16061,49 @@ export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveRespo
 
 export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveResponse =
   PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveResponses[keyof PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveResponses];
+
+export type PostV1PayrollRunsPayrollRunIdGlReportsData = {
+  /**
+   * GL report type
+   */
+  body: CreateGlReportParams;
+  path: {
+    /**
+     * The payroll run's ID
+     */
+    payroll_run_id: string;
+  };
+  query?: never;
+  url: '/v1/payroll-runs/{payroll_run_id}/gl-reports';
+};
+
+export type PostV1PayrollRunsPayrollRunIdGlReportsErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostV1PayrollRunsPayrollRunIdGlReportsError =
+  PostV1PayrollRunsPayrollRunIdGlReportsErrors[keyof PostV1PayrollRunsPayrollRunIdGlReportsErrors];
+
+export type PostV1PayrollRunsPayrollRunIdGlReportsResponses = {
+  /**
+   * Success
+   */
+  200: GlReportResponse;
+};
+
+export type PostV1PayrollRunsPayrollRunIdGlReportsResponse =
+  PostV1PayrollRunsPayrollRunIdGlReportsResponses[keyof PostV1PayrollRunsPayrollRunIdGlReportsResponses];
 
 export type GetV1EmployeeLeavePoliciesData = {
   body?: never;
@@ -16413,6 +16824,46 @@ export type GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequireme
 
 export type GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirementsResponse =
   GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirementsResponses[keyof GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirementsResponses];
+
+export type GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdData = {
+  body?: never;
+  path: {
+    /**
+     * The payroll run's ID
+     */
+    payroll_run_id: string;
+    /**
+     * The GL report's ID
+     */
+    gl_report_id: string;
+  };
+  query?: never;
+  url: '/v1/payroll-runs/{payroll_run_id}/gl-reports/{gl_report_id}';
+};
+
+export type GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdError =
+  GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdErrors[keyof GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdErrors];
+
+export type GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdResponses = {
+  /**
+   * Success
+   */
+  200: GlReportResponse;
+};
+
+export type GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdResponse =
+  GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdResponses[keyof GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdResponses];
 
 export type GetV1BillingDocumentsBillingDocumentIdData = {
   body?: never;
@@ -17918,6 +18369,57 @@ export type GetV1TimeoffBalancesEmploymentIdResponses = {
 export type GetV1TimeoffBalancesEmploymentIdResponse =
   GetV1TimeoffBalancesEmploymentIdResponses[keyof GetV1TimeoffBalancesEmploymentIdResponses];
 
+export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Employment ID
+       */
+      employment_id: string;
+      /**
+       * Pre-onboarding requirement slug
+       */
+      requirement_slug: string;
+    };
+    query?: never;
+    url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-requirements/{requirement_slug}/documents';
+  };
+
+export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsErrors =
+  {
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Forbidden
+     */
+    403: ForbiddenResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+  };
+
+export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsError =
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsErrors[keyof PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsErrors];
+
+export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsResponses =
+  {
+    /**
+     * Success
+     */
+    200: CreatePreOnboardingDocumentResponse;
+  };
+
+export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsResponse =
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsResponses[keyof PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsResponses];
+
 export type GetV1ExpensesCategoriesData = {
   body?: never;
   path?: never;
@@ -18727,6 +19229,60 @@ export type GetV1EmployeeTimesheetsResponses = {
 export type GetV1EmployeeTimesheetsResponse =
   GetV1EmployeeTimesheetsResponses[keyof GetV1EmployeeTimesheetsResponses];
 
+export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesData = {
+  body?: never;
+  path: {
+    /**
+     * Company ID
+     */
+    company_id: UuidSlug;
+    /**
+     * Legal entity ID
+     */
+    legal_entity_id: UuidSlug;
+  };
+  query?: {
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/pay-codes';
+};
+
+export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesError =
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesErrors[keyof GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesErrors];
+
+export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesResponses =
+  {
+    /**
+     * Success
+     */
+    200: ListPayCodesResponse;
+  };
+
+export type GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesResponse =
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesResponses[keyof GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesResponses];
+
 export type PutV2EmploymentsEmploymentIdEmergencyContactData = {
   /**
    * Employment emergency contact params
@@ -18925,9 +19481,8 @@ export type PostV1WebhookCallbacksData = {
   body?: CreateWebhookCallbackParams;
   headers: {
     /**
-     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
-     *
-     * The refresh token needs to have been obtained through the Authorization Code flow.
+     * This endpoint works with any of the access tokens provided. You can use an access
+     * token obtained through the Client Credentials flow, the Authorization Code flow, or the Refresh Token flow.
      *
      */
     Authorization: string;
@@ -20871,6 +21426,67 @@ export type GetV1LeavePoliciesDetailsEmploymentIdResponses = {
 export type GetV1LeavePoliciesDetailsEmploymentIdResponse =
   GetV1LeavePoliciesDetailsEmploymentIdResponses[keyof GetV1LeavePoliciesDetailsEmploymentIdResponses];
 
+export type PostV1EmploymentsEmploymentIdContractOriginData = {
+  /**
+   * Contract origin parameters
+   */
+  body: {
+    contract_origin:
+      | 'remote_contract'
+      | 'custom_remote_contract'
+      | 'provided_by_customer';
+    /**
+     * Required when contract_origin is remote_contract or custom_remote_contract, ignored when provided_by_customer
+     */
+    template_type:
+      | 'contractor_agreement'
+      | 'contractor_services_agreement'
+      | 'contractor_statement_of_work'
+      | 'custom_contractor_agreement'
+      | 'custom_contractor_agreement_v2';
+  };
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/contract-origin';
+};
+
+export type PostV1EmploymentsEmploymentIdContractOriginErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostV1EmploymentsEmploymentIdContractOriginError =
+  PostV1EmploymentsEmploymentIdContractOriginErrors[keyof PostV1EmploymentsEmploymentIdContractOriginErrors];
+
+export type PostV1EmploymentsEmploymentIdContractOriginResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostV1EmploymentsEmploymentIdContractOriginResponse =
+  PostV1EmploymentsEmploymentIdContractOriginResponses[keyof PostV1EmploymentsEmploymentIdContractOriginResponses];
+
 export type GetV1TimeoffTypesData = {
   body?: never;
   headers: {
@@ -21348,6 +21964,46 @@ export type PostV1CurrencyConverterEffectiveResponses = {
 
 export type PostV1CurrencyConverterEffectiveResponse =
   PostV1CurrencyConverterEffectiveResponses[keyof PostV1CurrencyConverterEffectiveResponses];
+
+export type GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadData = {
+  body?: never;
+  path: {
+    /**
+     * The payroll run's ID
+     */
+    payroll_run_id: string;
+    /**
+     * The GL report's ID
+     */
+    gl_report_id: string;
+  };
+  query?: never;
+  url: '/v1/payroll-runs/{payroll_run_id}/gl-reports/{gl_report_id}/download';
+};
+
+export type GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadError =
+  GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadErrors[keyof GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadErrors];
+
+export type GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadResponses = {
+  /**
+   * Success
+   */
+  200: GenericFile;
+};
+
+export type GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadResponse =
+  GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadResponses[keyof GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadResponses];
 
 export type GetV1TimeoffIdData = {
   body?: never;
@@ -21845,6 +22501,63 @@ export type GetV1CompanyCurrenciesResponses = {
 
 export type GetV1CompanyCurrenciesResponse =
   GetV1CompanyCurrenciesResponses[keyof GetV1CompanyCurrenciesResponses];
+
+export type DeleteV1SandboxEmploymentsEmploymentIdData = {
+  body?: never;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/employments/{employment_id}';
+};
+
+export type DeleteV1SandboxEmploymentsEmploymentIdErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type DeleteV1SandboxEmploymentsEmploymentIdError =
+  DeleteV1SandboxEmploymentsEmploymentIdErrors[keyof DeleteV1SandboxEmploymentsEmploymentIdErrors];
+
+export type DeleteV1SandboxEmploymentsEmploymentIdResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type DeleteV1SandboxEmploymentsEmploymentIdResponse =
+  DeleteV1SandboxEmploymentsEmploymentIdResponses[keyof DeleteV1SandboxEmploymentsEmploymentIdResponses];
 
 export type PatchV1SandboxEmploymentsEmploymentId2Data = {
   /**
@@ -22617,6 +23330,78 @@ export type GetV1EmploymentsEmploymentIdCompanyStructureNodesResponses = {
 
 export type GetV1EmploymentsEmploymentIdCompanyStructureNodesResponse =
   GetV1EmploymentsEmploymentIdCompanyStructureNodesResponses[keyof GetV1EmploymentsEmploymentIdCompanyStructureNodesResponses];
+
+export type PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusData =
+  {
+    /**
+     * Credit risk status params
+     */
+    body?: {
+      /**
+       * Credit risk status to set.
+       */
+      credit_risk_status: string;
+    };
+    headers: {
+      /**
+       * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+       *
+       * The refresh token needs to have been obtained through the Authorization Code flow.
+       *
+       */
+      Authorization: string;
+    };
+    path: {
+      /**
+       * Company ID
+       */
+      company_id: string;
+      /**
+       * Legal Entity ID
+       */
+      legal_entity_id: string;
+    };
+    query?: never;
+    url: '/v1/sandbox/companies/{company_id}/legal-entities/{legal_entity_id}/set-credit-risk-status';
+  };
+
+export type PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusErrors =
+  {
+    /**
+     * Bad Request
+     */
+    400: BadRequestResponse;
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+    /**
+     * Too many requests
+     */
+    429: TooManyRequestsResponse;
+  };
+
+export type PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusError =
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusErrors[keyof PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusErrors];
+
+export type PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusResponses =
+  {
+    /**
+     * Success
+     */
+    200: SuccessResponse;
+  };
+
+export type PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusResponse =
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusResponses[keyof PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusResponses];
 
 export type GetV1EmploymentsEmploymentIdCustomFieldsData = {
   body?: never;
@@ -24386,6 +25171,16 @@ export type GetV1TimeoffData = {
      */
     status?: TimeoffStatus;
     /**
+     * ISO 8601 date. When combined with `end_date`, returns all time off records that overlap the `[start_date, end_date]` window — including records that only partially overlap at either boundary. When used alone, returns records whose `start_date` is on or after this date.
+     *
+     */
+    start_date?: Date;
+    /**
+     * ISO 8601 date. When combined with `start_date`, returns all time off records that overlap the `[start_date, end_date]` window — including records that only partially overlap at either boundary. When used alone, returns records whose `end_date` is on or before this date.
+     *
+     */
+    end_date?: Date;
+    /**
      * Sort order
      */
     order?: 'asc' | 'desc';
@@ -26144,3 +26939,46 @@ export type GetV1BillingDocumentsBillingDocumentIdPdfResponses = {
 
 export type GetV1BillingDocumentsBillingDocumentIdPdfResponse =
   GetV1BillingDocumentsBillingDocumentIdPdfResponses[keyof GetV1BillingDocumentsBillingDocumentIdPdfResponses];
+
+export type GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsData =
+  {
+    body?: never;
+    path: {
+      /**
+       * Employment ID
+       */
+      employment_id: string;
+    };
+    query?: never;
+    url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-requirements';
+  };
+
+export type GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsErrors =
+  {
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Forbidden
+     */
+    403: ForbiddenResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+  };
+
+export type GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsError =
+  GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsErrors[keyof GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsErrors];
+
+export type GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsResponses =
+  {
+    /**
+     * Success
+     */
+    200: IndexPreOnboardingRequirementsResponse;
+  };
+
+export type GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsResponse =
+  GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsResponses[keyof GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsResponses];

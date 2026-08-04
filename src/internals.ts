@@ -81,3 +81,15 @@ export { BasicTooltip } from './components/ui/basic-tooltip';
 
 // JSON Schema Comparison Tool
 export { JsonSchemaComparison } from './components/JsonSchemaComparison';
+
+// JSON Schema Playground
+export {
+  JsonSchemaPlaygroundFlow,
+  useJsonSchemaPlayground,
+} from '@/src/flows/JsonSchemaPlayground';
+export type {
+  JsonSchemaPlaygroundFlowProps,
+  JsonSchemaPlaygroundFormProps,
+  JsonSchemaPlaygroundRenderProps,
+  SampleSchema,
+} from '@/src/flows/JsonSchemaPlayground';

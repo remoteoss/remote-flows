@@ -18,5 +18,11 @@ export const countriesMock = {
       eor_onboarding: true,
       contractor_products_available: ['standard', 'plus', 'cor'],
     },
+    {
+      code: 'FRA',
+      name: 'France',
+      eor_onboarding: true,
+      contractor_products_available: ['standard', 'plus', 'cor'],
+    },
   ],
 };

@@ -412,8 +412,8 @@ export async function parseFormValuesToAPI(
         }
       }
 
-      if (field.forcedValue !== undefined) {
-        acc[field.name!] = field.forcedValue;
+      if (field.const !== undefined && field.const === field.default) {
+        acc[field.name!] = field.const;
       }
 
       return acc;

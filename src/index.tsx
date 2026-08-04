@@ -63,6 +63,7 @@ export type {
   CreditRiskState,
   OnboardingRenderProps,
   PreOnboardingRequirementsBag,
+  PreOnboardingRequirement,
 } from '@/src/flows/Onboarding';
 
 export {
@@ -97,6 +98,7 @@ export {
 export type {
   PayrollAdminOnboardingFlowProps,
   PayrollAdminOnboardingRenderProps,
+  GPAdminStepCallbacks,
 } from '@/src/flows/PayrollAdminOnboarding';
 
 export {
@@ -106,6 +108,8 @@ export {
 export type {
   PayrollEmployeeOnboardingFlowProps,
   PayrollEmployeeOnboardingRenderProps,
+  GPEmployeeStepCallbacks,
+  TaxStepUnavailableReason,
 } from '@/src/flows/PayrollEmployeeOnboarding';
 
 export { useGPLegalEntities } from '@/src/common/api/gpOnboarding';
@@ -131,6 +135,8 @@ export {
   usePaidTimeoffBreakdownQuery,
   useTimeOffLeavePoliciesSummaryQuery,
 } from '@/src/common/api/timeoff';
+
+export { useSandboxApproveRiskReservePayment } from '@/src/common/api/sandbox';
 
 export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 

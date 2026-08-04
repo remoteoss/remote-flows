@@ -4,6 +4,7 @@ import {
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
 } from '@remoteoss/remote-flows';
+import { COST_CALCULATOR_OPTIONS } from './costCalculatorOptions';
 import { RemoteFlows } from './RemoteFlows';
 import './css/main.css';
 
@@ -23,6 +24,7 @@ export function BasicCostCalculatorWithDefaultValues() {
           currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
           salary: '50000',
         }}
+        options={COST_CALCULATOR_OPTIONS}
         render={(props) => {
           if (props.isLoading) {
             return <div>Loading...</div>;

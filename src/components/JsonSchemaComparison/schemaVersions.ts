@@ -31,6 +31,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
     { value: 3, label: 'v3' },
+    { value: 4, label: 'v4' },
   ],
   AUT: [
     { value: 1, label: 'v1' },
@@ -75,6 +76,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   CAN: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
+    { value: 3, label: 'v3' },
   ],
   CHE: [
     { value: 1, label: 'v1' },
@@ -96,6 +98,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   COL: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
+    { value: 3, label: 'v3' },
   ],
   CRI: [
     { value: 1, label: 'v1' },
@@ -105,6 +108,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   CYP: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
+    { value: 3, label: 'v3' },
   ],
   CZE: [
     { value: 1, label: 'v1' },
@@ -153,6 +157,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
     { value: 3, label: 'v3' },
+    { value: 4, label: 'v4' },
   ],
   GEO: [
     { value: 1, label: 'v1' },
@@ -161,6 +166,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   GRC: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
+    { value: 3, label: 'v3' },
   ],
   GTM: [
     { value: 1, label: 'v1' },
@@ -171,7 +177,10 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
   ],
-  HND: [{ value: 1, label: 'v1' }],
+  HND: [
+    { value: 1, label: 'v1' },
+    { value: 2, label: 'v2' },
+  ],
   HRV: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
@@ -193,6 +202,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
     { value: 3, label: 'v3' },
+    { value: 4, label: 'v4' },
   ],
   ITA: [
     { value: 1, label: 'v1' },
@@ -239,6 +249,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
     { value: 3, label: 'v3' },
+    { value: 4, label: 'v4' },
   ],
   MAR: [
     { value: 1, label: 'v1' },
@@ -278,6 +289,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   NLD: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
+    { value: 3, label: 'v3' },
   ],
   NOR: [
     { value: 1, label: 'v1' },
@@ -297,9 +309,13 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   PAN: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
+    { value: 3, label: 'v3' },
   ],
   PER: [{ value: 1, label: 'v1' }],
-  PHL: [{ value: 1, label: 'v1' }],
+  PHL: [
+    { value: 1, label: 'v1' },
+    { value: 2, label: 'v2' },
+  ],
   POL: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
@@ -321,6 +337,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   ROU: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
+    { value: 3, label: 'v3' },
   ],
   SAU: [
     { value: 1, label: 'v1' },
@@ -336,6 +353,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 2, label: 'v2' },
     { value: 3, label: 'v3' },
     { value: 4, label: 'v4' },
+    { value: 5, label: 'v5' },
   ],
   SVK: [
     { value: 1, label: 'v1' },
@@ -380,6 +398,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   USA: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
+    { value: 3, label: 'v3' },
   ],
   VNM: [
     { value: 1, label: 'v1' },

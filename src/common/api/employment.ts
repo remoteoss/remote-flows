@@ -18,9 +18,12 @@ import { Client } from '@/src/client/client';
 export const useEmploymentQuery = ({
   employmentId,
   queryParams,
+  enabled = true,
 }: {
   employmentId: string;
   queryParams?: $TSFixMe; // TODO: we need to generate openapi-ts types but it's broken at the moment
+  /** Optional. Set to `false` to skip the query, e.g. when the caller's token can't reach this endpoint. */
+  enabled?: boolean;
 }): UseQueryResult<
   GetV1EmploymentsEmploymentIdResponse['data']['employment'],
   unknown
@@ -39,7 +42,7 @@ export const useEmploymentQuery = ({
         query: queryParams,
       });
     },
-    enabled: !!employmentId,
+    enabled: !!employmentId && enabled,
     select: ({ data }) => data?.data?.employment,
   });
 };

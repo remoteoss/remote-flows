@@ -39,7 +39,12 @@ export function findFieldsByType(
 ) {
   const fieldsNames = [];
   for (const [key, value] of Object.entries(fields)) {
-    if (value['x-jsf-presentation'].type === type) {
+    // old schemas use type, new schemas use inputType
+    // as probably we need to support both for now, that's why we check both
+    if (
+      value['x-jsf-presentation'].type === type ||
+      value['x-jsf-presentation'].inputType === type
+    ) {
       fieldsNames.push(key);
     }
   }

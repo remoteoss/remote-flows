@@ -6,6 +6,7 @@ import {
   FormMessage,
 } from '@/src/components/ui/form';
 import { FileUploader } from '@/src/components/ui/file-uploader';
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 import { cn } from '@/src/lib/utils';
 import { FileComponentProps } from '@/src/types/fields';
 
@@ -31,9 +32,12 @@ export function FileUploadFieldDefault({
           files={field.value}
         />
       </FormControl>
-      {description && (
+      {(description || fieldData.meta?.helpCenter) && (
         <div className='flex items-center justify-between'>
-          <FormDescription className='RemoteFlows__FileUpload__Description'>
+          <FormDescription
+            className='RemoteFlows__FileUpload__Description'
+            helpCenter={<HelpCenter helpCenter={fieldData.meta?.helpCenter} />}
+          >
             {description}
           </FormDescription>
         </div>

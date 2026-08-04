@@ -17,6 +17,17 @@ import {
 import { useState } from 'react';
 import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 import { ButtonDefault } from '@/src/components/form/fields/default/ButtonDefault';
+import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
+import { TextFieldComponentProps } from '@/src/types/fields';
+import { $TSFixMe } from '@/src/types/remoteFlows';
+
+vi.mock('@/src/components/shared/zendesk-drawer/ZendeskTriggerButton', () => ({
+  ZendeskTriggerButton: ({ zendeskId, children, className }: $TSFixMe) => (
+    <button className={className} data-testid={`zendesk-button-${zendeskId}`}>
+      {children}
+    </button>
+  ),
+}));
 
 const queryClient = new QueryClient();
 
@@ -39,6 +50,18 @@ const defaultProps: CurrencyConversionFieldProps = {
   type: 'text',
 };
 
+const propsWithHelpCenter: CurrencyConversionFieldProps = {
+  ...defaultProps,
+  meta: {
+    helpCenter: {
+      callToAction: 'Learn more',
+      id: 12345,
+      content: '<p>How salaries are calculated</p>',
+      title: 'How salaries are calculated',
+    },
+  },
+};
+
 // Helper function to render the component with a form context
 const renderWithFormContext = (props = defaultProps) => {
   const TestComponent = () => {
@@ -54,6 +77,36 @@ const renderWithFormContext = (props = defaultProps) => {
       <QueryClientProvider client={queryClient}>
         <FormFieldsProvider
           components={{ text: TextFieldDefault, button: ButtonDefault }}
+        >
+          <FormProvider {...methods}>
+            <CurrencyConversionField {...props} />
+          </FormProvider>
+        </FormFieldsProvider>
+      </QueryClientProvider>
+    );
+  };
+
+  return render(<TestComponent />);
+};
+
+// Helper function to render with a custom text component
+const renderWithCustomTextComponent = (
+  CustomText: React.ComponentType<TextFieldComponentProps>,
+  props = defaultProps,
+) => {
+  const TestComponent = () => {
+    const methods = useForm({
+      defaultValues: {
+        [props.name]: '',
+        [props.conversionFieldName]: '',
+      },
+      mode: 'onChange',
+    });
+
+    return (
+      <QueryClientProvider client={queryClient}>
+        <FormFieldsProvider
+          components={{ text: CustomText, button: ButtonDefault }}
         >
           <FormProvider {...methods}>
             <CurrencyConversionField {...props} />
@@ -290,6 +343,38 @@ describe('CurrencyFieldWithConversion', () => {
     );
   });
 
+  it('renders the help center link once, before the conversion toggle', () => {
+    renderWithFormContext(propsWithHelpCenter);
+
+    expect(screen.getAllByTestId('zendesk-button-12345')).toHaveLength(1);
+    expect(
+      screen.getByText(/Enter your test salary/i).parentElement?.parentElement,
+    ).toHaveTextContent(
+      'Enter your test salary Learn more Show EUR conversion',
+    );
+  });
+
+  it('renders the help center link when there is no conversion toggle', () => {
+    renderWithFormContext({ ...propsWithHelpCenter, targetCurrency: 'USD' });
+
+    expect(screen.getByTestId('zendesk-button-12345')).toBeInTheDocument();
+    expect(screen.queryByText('Show USD conversion')).not.toBeInTheDocument();
+  });
+
+  it('does not pass a description suffix to the text component', () => {
+    const CustomText = vi
+      .fn()
+      .mockImplementation(({ fieldData }: TextFieldComponentProps) => (
+        <input aria-label={fieldData.label} />
+      ));
+
+    renderWithCustomTextComponent(CustomText, propsWithHelpCenter);
+
+    expect(CustomText.mock.calls[0][0].fieldData.descriptionSuffix).toBe(
+      undefined,
+    );
+  });
+
   it('resets conversion field when source currency changes', async () => {
     const TestComponent = () => {
       const [sourceCurrency, setSourceCurrency] = useState('USD');
@@ -338,6 +423,66 @@ describe('CurrencyFieldWithConversion', () => {
 
     // The conversion field should be reset to empty
     expect(conversionInput).toHaveValue('');
+  });
+
+  describe('with the split_salary_description feature enabled', () => {
+    const propsWithSplitDescription: CurrencyConversionFieldProps = {
+      ...propsWithHelpCenter,
+      splitDescription: true,
+    };
+
+    it('renders the description with its help center link, then the toggle', () => {
+      renderWithFormContext(propsWithSplitDescription);
+
+      expect(screen.getAllByTestId('zendesk-button-12345')).toHaveLength(1);
+
+      const description = screen
+        .getByText(/Enter your test salary/i)
+        .closest('[data-slot="form-description"]');
+      expect(description).toContainElement(
+        screen.getByTestId('zendesk-button-12345'),
+      );
+      expect(description?.nextElementSibling).toHaveTextContent(
+        'Show EUR conversion',
+      );
+      // the toggle shares the description's grid cell, so it stays on the same line
+      expect(description?.parentElement).toHaveClass(
+        'RemoteFlows__TextField__DescriptionGroup',
+      );
+    });
+
+    it('lets a custom text component render the help center link without the description', () => {
+      const HelpCenterOnlyText = ({ fieldData }: TextFieldComponentProps) => (
+        <>
+          <label htmlFor={fieldData.name}>{fieldData.label}</label>
+          <input id={fieldData.name} name={fieldData.name} />
+          <HelpCenter helpCenter={fieldData.meta?.helpCenter} />
+          {fieldData.descriptionSuffix}
+        </>
+      );
+
+      renderWithCustomTextComponent(
+        HelpCenterOnlyText,
+        propsWithSplitDescription,
+      );
+
+      expect(screen.getByTestId('zendesk-button-12345')).toBeInTheDocument();
+      expect(
+        screen.queryByText(/Enter your test salary/i),
+      ).not.toBeInTheDocument();
+      expect(screen.getByText('Show EUR conversion')).toBeInTheDocument();
+    });
+
+    it('shows conversion field when toggle is clicked', async () => {
+      renderWithFormContext(propsWithSplitDescription);
+
+      const toggleButton = screen.getByText('Show EUR conversion');
+      fireEvent.click(toggleButton);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText('Conversion')).toBeInTheDocument();
+      });
+    });
   });
 
   describe('with custom button component', () => {

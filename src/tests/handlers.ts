@@ -22,7 +22,15 @@ import { mockBaseResponse } from '@/src/common/api/fixtures/base';
 import {
   mockBenefitOffersResponse,
   mockBenefitOffersSchema,
+  mockOnboardingReservesStatusResponse,
 } from '@/src/common/api/fixtures/employments';
+import {
+  employmentDefaultResponse,
+  employmentCreatedResponse,
+  employmentUpdatedResponse,
+  benefitOffersUpdatedResponse,
+  conversionFromEURToUSD,
+} from '@/src/flows/Onboarding/tests/fixtures';
 import {
   preOnboardingRequirementsMock,
   generatedDocumentMock,
@@ -101,14 +109,7 @@ const contractorBasicInformationHandler = http.get(
 const employmentOnboardingReservesStatus = http.get(
   '*/v1/companies/:companyId/employments/:employmentId/onboarding-reserves-status',
   () => {
-    return HttpResponse.json({
-      data: {
-        data: {
-          status: 'no_deposit_required',
-          policies: [],
-        },
-      },
-    });
+    return HttpResponse.json(mockOnboardingReservesStatusResponse);
   },
 );
 
@@ -131,14 +132,14 @@ const benefitOffersSchemaHandler = http.get(
 );
 
 const preOnboardingRequirementsHandler = http.get(
-  '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+  '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements',
   () => {
     return HttpResponse.json(preOnboardingRequirementsMock);
   },
 );
 
 const createPreOnboardingDocumentHandler = http.post(
-  '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents',
+  '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements/:requirementSlug/documents',
   () => {
     return HttpResponse.json(generatedDocumentMock);
   },
@@ -155,6 +156,57 @@ const signPreOnboardingDocumentHandler = http.post(
   '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents/:documentId/sign',
   () => {
     return HttpResponse.json(signDocumentResponseMock);
+  },
+);
+
+const contractEligibilityHandler = http.post(
+  '*/v1/employments/*/contract-eligibility',
+  () => {
+    return HttpResponse.json(mockBaseResponse);
+  },
+);
+
+const employmentHandler = http.get('*/v1/employments/:id', ({ params }) => {
+  const employmentId = params?.id;
+
+  if (!employmentId) {
+    return HttpResponse.json(
+      { error: 'Employment not found' },
+      { status: 404 },
+    );
+  }
+
+  return HttpResponse.json({
+    ...employmentDefaultResponse,
+    data: {
+      ...employmentDefaultResponse.data,
+      employment: {
+        ...employmentDefaultResponse.data.employment,
+        id: employmentId,
+      },
+    },
+  });
+});
+
+const createEmploymentHandler = http.post('*/v1/employments', () => {
+  return HttpResponse.json(employmentCreatedResponse);
+});
+
+const updateEmploymentHandler = http.patch('*/v1/employments/*', () => {
+  return HttpResponse.json(employmentUpdatedResponse);
+});
+
+const updateBenefitOffersHandler = http.put(
+  '*/v1/employments/*/benefit-offers',
+  () => {
+    return HttpResponse.json(benefitOffersUpdatedResponse);
+  },
+);
+
+const currencyConverterHandler = http.post(
+  '*/v1/currency-converter/effective',
+  () => {
+    return HttpResponse.json(conversionFromEURToUSD);
   },
 );
 
@@ -178,4 +230,10 @@ export const defaultHandlers = [
   createPreOnboardingDocumentHandler,
   getPreOnboardingDocumentHandler,
   signPreOnboardingDocumentHandler,
+  contractEligibilityHandler,
+  employmentHandler,
+  createEmploymentHandler,
+  updateEmploymentHandler,
+  updateBenefitOffersHandler,
+  currencyConverterHandler,
 ];

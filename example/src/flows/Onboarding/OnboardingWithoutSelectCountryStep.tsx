@@ -8,13 +8,17 @@ import {
   EmploymentResponse,
   ContractDetailsFormPayload,
   NormalizedFieldError,
+  $TSFixMe,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
-import { RemoteFlows } from './RemoteFlows';
-import { ReviewOnboardingStep } from './ReviewOnboardingStep';
+import { RemoteFlows } from '../../RemoteFlows';
+import { ReviewOnboardingStep } from '../../ReviewOnboardingStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
-import { AlertError } from './AlertError';
-import './css/main.css';
+import { AlertError } from '../../AlertError';
+import { ONBOARDING_OPTIONS } from './constants';
+import { getStepTitle, StepsNavigation } from './StepsNavigation';
+import { PreviewEmploymentAgreementStep } from './PreviewEmploymentAgreementStep';
+import '../../css/main.css';
 
 export const InviteSection = ({
   title,
@@ -33,12 +37,6 @@ export const InviteSection = ({
     </div>
   );
 };
-const STEPS = [
-  'Basic Information',
-  'Contract Details',
-  'Benefits',
-  'Review & Invite',
-];
 
 type MultiStepFormProps = {
   onboardingBag: OnboardingRenderProps['onboardingBag'];
@@ -175,6 +173,14 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
           </div>
         </>
       );
+    case 'employment_agreement_preview':
+      return (
+        <PreviewEmploymentAgreementStep
+          onboardingBag={onboardingBag}
+          components={components}
+          setErrors={setErrors}
+        />
+      );
     case 'benefits':
       return (
         <div className='benefits-container'>
@@ -230,7 +236,10 @@ const OnBoardingRender = ({
   components,
 }: MultiStepFormProps) => {
   const currentStepIndex = onboardingBag.stepState.currentStep.index;
-  const stepTitle = STEPS[currentStepIndex];
+  const stepTitle = getStepTitle(
+    onboardingBag.steps[currentStepIndex],
+    onboardingBag.selectedCountry?.code ?? null,
+  );
 
   if (onboardingBag.isLoading) {
     return <p>Loading...</p>;
@@ -238,18 +247,11 @@ const OnBoardingRender = ({
 
   return (
     <>
-      <div className='steps-navigation'>
-        <ul>
-          {STEPS.map((step, index) => (
-            <li
-              key={index}
-              className={`step-item ${index === currentStepIndex ? 'active' : ''}`}
-            >
-              {step}
-            </li>
-          ))}
-        </ul>
-      </div>
+      <StepsNavigation
+        steps={onboardingBag.steps}
+        stepState={onboardingBag.stepState}
+        selectedCountry={onboardingBag.selectedCountry}
+      />
 
       <div className='card' style={{ marginBottom: '20px' }}>
         <h1 className='heading'>{stepTitle}</h1>
@@ -283,23 +285,7 @@ const OnboardingWithProps = ({
       countryCode={countryCode}
       skipSteps={['select_country']}
       externalId={externalId}
-      initialValues={{
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        work_email: 'john.doe@remote.com',
-        job_title: 'Software Engineer',
-        tax_servicing_countries: ['Bahrain'],
-        tax_job_category: 'legal',
-        has_seniority_date: 'no',
-        provisional_start_date: '2025-08-27',
-        annual_gross_salary: 4000000,
-        department: {
-          id: '4b771740-2db0-4e7d-a32f-78afd42c2b3a',
-        },
-        manager: {
-          id: 'a8a99466-a159-4bef-a9e1-0cb6939542e1',
-        },
-      }}
+      options={ONBOARDING_OPTIONS as $TSFixMe}
     />
   </RemoteFlows>
 );

@@ -8,12 +8,14 @@ type AnnualGrossSalaryProps = JSFField & {
     label?: string;
     description?: string;
   };
+  splitDescription?: boolean;
 };
 
 export const AnnualGrossSalary = ({
   currency,
   desiredCurrency,
   annual_gross_salary_conversion_properties,
+  splitDescription,
   ...props
 }: AnnualGrossSalaryProps) => {
   return (
@@ -21,6 +23,7 @@ export const AnnualGrossSalary = ({
       {...props}
       sourceCurrency={currency}
       targetCurrency={desiredCurrency}
+      splitDescription={splitDescription}
       conversionFieldName='annual_gross_salary_conversion'
       conversionProperties={{
         ...annual_gross_salary_conversion_properties,

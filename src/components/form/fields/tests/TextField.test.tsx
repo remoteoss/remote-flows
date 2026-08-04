@@ -16,6 +16,14 @@ vi.mock('@/src/context', async (importOriginal) => {
   };
 });
 
+vi.mock('@/src/components/shared/zendesk-drawer/ZendeskTriggerButton', () => ({
+  ZendeskTriggerButton: ({ zendeskId, children, className }: $TSFixMe) => (
+    <button className={className} data-testid={`zendesk-button-${zendeskId}`}>
+      {children}
+    </button>
+  ),
+}));
+
 describe('TextField Component', () => {
   const mockOnChange = vi.fn();
   const defaultProps: TextFieldProps = {
@@ -64,6 +72,24 @@ describe('TextField Component', () => {
     expect(screen.getByText('Test Field')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Test Field')).toBeInTheDocument();
     expect(screen.getByText('This is a test field')).toBeInTheDocument();
+  });
+
+  it('renders the help center link from meta', () => {
+    renderWithFormContext({
+      ...defaultProps,
+      meta: {
+        helpCenter: {
+          callToAction: 'Learn more',
+          id: 12345,
+          content: '<p>How salaries are calculated</p>',
+          title: 'How salaries are calculated',
+        },
+      },
+    });
+
+    expect(screen.getByTestId('zendesk-button-12345')).toHaveTextContent(
+      'Learn more',
+    );
   });
 
   it('handles input change correctly', () => {

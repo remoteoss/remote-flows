@@ -1,5 +1,88 @@
 # @remoteoss/remote-flows
 
+## 1.46.0
+
+### Minor Changes
+
+#### Features
+
+- split description, help center and conversion toggle into separate slots, behind the `split_salary_description` feature flag on `OnboardingFlow` and `CostCalculatorFlow` (#1209) [#1209](https://github.com/remoteoss/remote-flows/pull/1209)
+
+#### Docs
+
+- share the cost calculator feature flags in a general constant in the example app (#1209) [#1209](https://github.com/remoteoss/remote-flows/pull/1209)
+
+## 1.45.0
+
+### Minor Changes
+
+#### Features
+
+- Italy APL and France SAS applies new contract details architecture (#1199, #1203) [#1199](https://github.com/remoteoss/remote-flows/pull/1199) [#1203](https://github.com/remoteoss/remote-flows/pull/1203)
+
+#### Fixes
+
+- always call the latest checkFieldUpdates (#1198) [#1198](https://github.com/remoteoss/remote-flows/pull/1198)
+- freeze basic information json schema (#1207) [#1207](https://github.com/remoteoss/remote-flows/pull/1207)
+- keep invisible values when revalidating a jsf v1 form (#1203) [#1203](https://github.com/remoteoss/remote-flows/pull/1203)
+
+#### Docs
+
+- fix france arch problems only on playground (#1195) [#1195](https://github.com/remoteoss/remote-flows/pull/1195)
+- add configurable schemas option with Italy APL example to the playground (#1190) [#1190](https://github.com/remoteoss/remote-flows/pull/1190)
+- add sandbox payment approval (#1200) [#1200](https://github.com/remoteoss/remote-flows/pull/1200)
+- example app demo for employee self-onboarding flow (PBYR-4044) (#1201) [#1201](https://github.com/remoteoss/remote-flows/pull/1201)
+- render help center link on text, select, tel, time and file fields
+- example app demo for admin onboarding flow (PBYR-4044) (#1171) [#1171](https://github.com/remoteoss/remote-flows/pull/1171)
+- add some tests for FRA (#1205) [#1205](https://github.com/remoteoss/remote-flows/pull/1205)
+- converge employee onboarding on a single RemoteFlows provider (PBYR-4044) (#1204) [#1204](https://github.com/remoteoss/remote-flows/pull/1204)
+
+#### Chores
+
+- update actions/checkout digest to 3d3c42e
+- update dependency postcss to v8.5.18 [security] (#1191) [#1191](https://github.com/remoteoss/remote-flows/pull/1191)
+- update dependency @playwright/test to v1.61.1 (#1192) [#1192](https://github.com/remoteoss/remote-flows/pull/1192)
+- update vitest monorepo to v4.1.10 (#1194) [#1194](https://github.com/remoteoss/remote-flows/pull/1194)
+- update dependency filesize to v11.0.22 (#1193) [#1193](https://github.com/remoteoss/remote-flows/pull/1193)
+- update actions/setup-node digest to 2499707 (#1186) [#1186](https://github.com/remoteoss/remote-flows/pull/1186)
+
+## 1.44.0
+
+### Minor Changes
+
+### Internal Features
+
+- Playground for json schemas (#1176) [#1176](https://github.com/remoteoss/remote-flows/pull/1176)
+- fix conditionals and fieldsets (#1177) [#1177](https://github.com/remoteoss/remote-flows/pull/1177)
+- Add initial values to playground (#1180) [#1180](https://github.com/remoteoss/remote-flows/pull/1180)
+
+### Fixes
+
+- update dependency dompurify to v3.4.12 [security]
+- fix conditionals by using inputType (#1175) [#1175](https://github.com/remoteoss/remote-flows/pull/1175)
+- fix the step when devs skip country (#1184) [#1184](https://github.com/remoteoss/remote-flows/pull/1184)
+
+## 1.43.0
+
+### Minor Changes
+
+#### Features
+
+- refactor preonboarding requirements (#1170) [#1170](https://github.com/remoteoss/remote-flows/pull/1170)
+- PayrollAdminOnboarding flow — mutations, schemas, and step components (PBYR-4044) (#1142) [#1142](https://github.com/remoteoss/remote-flows/pull/1142)
+- PayrollEmployeeOnboarding flow — core steps, tax state machine, and tests (PBYR-4044) (#1168) [#1168](https://github.com/remoteoss/remote-flows/pull/1168)
+- merge initialValues with saved step values in admin steps (#1172) [#1172](https://github.com/remoteoss/remote-flows/pull/1172)
+
+## 1.42.2
+
+### Patch Changes
+
+#### Fixes
+
+- rely on new property (#1166) [#1166](https://github.com/remoteoss/remote-flows/pull/1166)
+- radio labels can come with html (#1164) [#1164](https://github.com/remoteoss/remote-flows/pull/1164)
+- avoid refetching data on window focus (#1165) [#1165](https://github.com/remoteoss/remote-flows/pull/1165)
+
 ## 1.42.1
 
 ### Patch Changes

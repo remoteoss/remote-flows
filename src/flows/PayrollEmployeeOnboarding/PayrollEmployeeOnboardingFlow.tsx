@@ -2,17 +2,18 @@ import { useId } from 'react';
 import { usePayrollEmployeeOnboarding } from '@/src/flows/PayrollEmployeeOnboarding/hooks';
 import { PayrollEmployeeOnboardingContext } from '@/src/flows/PayrollEmployeeOnboarding/context';
 import type { PayrollEmployeeOnboardingFlowProps } from '@/src/flows/PayrollEmployeeOnboarding/types';
-
-// Stable module-level references — prevents consumer subtrees from unmounting on parent re-renders.
-// Each will be replaced with a real implementation in PBYR-4045.
-const PersonalDetailsStep = () => null;
-const HomeAddressStep = () => null;
-const BankAccountStep = () => null;
-const SubmitButton = () => null;
-const BackButton = () => null;
+import { PersonalDetailsStep } from '@/src/flows/PayrollEmployeeOnboarding/components/PersonalDetailsStep';
+import { HomeAddressStep } from '@/src/flows/PayrollEmployeeOnboarding/components/HomeAddressStep';
+import { BankAccountStep } from '@/src/flows/PayrollEmployeeOnboarding/components/BankAccountStep';
+import { FederalTaxesStep } from '@/src/flows/PayrollEmployeeOnboarding/components/FederalTaxesStep';
+import { StateTaxesStep } from '@/src/flows/PayrollEmployeeOnboarding/components/StateTaxesStep';
+import { SubmitButton } from '@/src/flows/PayrollEmployeeOnboarding/components/SubmitButton';
+import { BackButton } from '@/src/flows/PayrollEmployeeOnboarding/components/BackButton';
 
 export const PayrollEmployeeOnboardingFlow = ({
   employmentId,
+  countryCode,
+  jurisdiction,
   initialValues,
   options,
   render,
@@ -20,6 +21,8 @@ export const PayrollEmployeeOnboardingFlow = ({
   const formId = useId();
   const employeeBag = usePayrollEmployeeOnboarding({
     employmentId,
+    countryCode,
+    jurisdiction,
     initialValues,
     options,
   });
@@ -32,6 +35,8 @@ export const PayrollEmployeeOnboardingFlow = ({
           PersonalDetailsStep,
           HomeAddressStep,
           BankAccountStep,
+          FederalTaxesStep,
+          StateTaxesStep,
           SubmitButton,
           BackButton,
         },

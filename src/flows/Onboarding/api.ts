@@ -7,10 +7,8 @@ import {
   EmploymentCreateParams,
   EmploymentEngagementAgreementDetailsParams,
   EmploymentFullParams,
-  FindOrCreatePreOnboardingDocumentParams,
   getV1CompaniesCompanyId,
   getV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatus,
-  getV1CountriesCountryCodeEngagementAgreementDetails,
   getV1CountriesCountryCodeForm,
   getV1EmploymentsEmploymentIdBenefitOffers,
   getV1EmploymentsEmploymentIdBenefitOffersSchema,
@@ -24,13 +22,16 @@ import {
   postV2EmploymentsEmploymentIdEngagementAgreementDetails,
   postV1EmploymentsEmploymentIdInvite,
   PostV1EmploymentsEmploymentIdInviteData,
-  postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments,
+  postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocuments,
+  postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledge,
+  deleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledge,
   postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSign,
   postV1RiskReserve,
   putV1EmploymentsEmploymentIdBenefitOffers,
   UnifiedEmploymentUpsertBenefitOffersRequest,
-  getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirements,
+  getV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirements,
   getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId,
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsData,
 } from '@/src/client';
 
 import { useClient } from '@/src/context';
@@ -51,6 +52,7 @@ import {
 } from '@/src/flows/Onboarding/utils';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { countriesOptions } from '@/src/common/api/countries';
+import { useMemo } from 'react';
 
 export const useCompany = (companyId: string) => {
   const { client } = useClient();
@@ -245,6 +247,73 @@ export const useJSONSchemaForm = ({
       return createHeadlessForm(jsfSchema, fieldValues, options);
     },
   });
+};
+
+export const useContractDetailsSchema = ({
+  countryCode,
+  options,
+  query = {},
+  jsonSchemaVersion,
+}: {
+  countryCode: string;
+  options?: FlowOptions & {
+    queryOptions?: { enabled?: boolean };
+    transformMoneyFields?: boolean;
+  };
+  query?: Record<string, unknown>;
+  jsonSchemaVersion?: number | 'latest';
+}): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
+  const { client } = useClient();
+  const jsonSchemaQueryParam = jsonSchemaVersion
+    ? {
+        json_schema_version: jsonSchemaVersion,
+      }
+    : {};
+  const { data: response, ...reactQueryResult } = useQuery({
+    queryKey: [
+      'onboarding-contract-details-schema',
+      countryCode,
+      jsonSchemaVersion,
+    ],
+    retry: false,
+    queryFn: async () => {
+      const response = await getV1CountriesCountryCodeForm({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          country_code: countryCode,
+          form: 'contract_details',
+        },
+        query: {
+          skip_benefits: true,
+          ...query,
+          ...jsonSchemaQueryParam,
+        },
+      });
+
+      // If response status is 404 or other error, throw an error to trigger isError
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch onboarding schema');
+      }
+
+      return response;
+    },
+    enabled: options?.queryOptions?.enabled,
+  });
+
+  const contractDetailsFormFrance: JSONSchemaFormResultWithFieldsets | null =
+    useMemo(() => {
+      const schemaData = response?.data.data;
+      if (!schemaData) return null;
+      return createHeadlessForm(schemaData, {}, options);
+    }, [options, response?.data]);
+
+  return {
+    data: contractDetailsFormFrance,
+    isLoading: reactQueryResult.isLoading,
+  };
 };
 
 export const useBenefitOffersSchema = (
@@ -539,21 +608,36 @@ export const useEngagementAgreementDetailsSchema = (
   options?: {
     jsfModify?: OnboardingJsfModify;
     queryOptions?: { enabled?: boolean };
+    jsonSchemaVersion?: number | 'latest';
   },
 ) => {
   const { client } = useClient();
+  const jsonSchemaQueryParam = options?.jsonSchemaVersion
+    ? {
+        json_schema_version: options.jsonSchemaVersion,
+      }
+    : {};
+
   return useQuery({
-    queryKey: ['engagement-agreement-details', countryCode],
+    queryKey: [
+      'engagement-agreement-details',
+      countryCode,
+      options?.jsonSchemaVersion,
+    ],
     retry: false,
     enabled: options?.queryOptions?.enabled ?? !!countryCode,
     queryFn: async () => {
-      const response =
-        await getV1CountriesCountryCodeEngagementAgreementDetails({
-          client: client as Client,
-          path: {
-            country_code: countryCode,
-          },
-        });
+      const response = await getV1CountriesCountryCodeForm({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          country_code: countryCode,
+          form: 'engagement_agreement_details',
+        },
+        query: jsonSchemaQueryParam,
+      });
 
       if (response.error || !response.data) {
         throw new Error('Failed to fetch engagement agreement details');
@@ -562,7 +646,7 @@ export const useEngagementAgreementDetailsSchema = (
       return response;
     },
     select: ({ data }) => {
-      const jsfSchema = data?.data?.schema || {};
+      const jsfSchema = data?.data || {};
 
       return createHeadlessForm(jsfSchema, fieldValues, {
         jsfModify: options?.jsfModify?.engagement_agreement_details,
@@ -584,14 +668,12 @@ export const useGetPreOnboardingRequirements = (
     queryKey: ['pre-onboarding-requirements', employmentId],
     queryFn: async () => {
       const response =
-        await getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirements(
-          {
-            client: client as Client,
-            path: {
-              employment_id: employmentId,
-            },
+        await getV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirements({
+          client: client as Client,
+          path: {
+            employment_id: employmentId,
           },
-        );
+        });
 
       if (response.error || !response.data) {
         throw new Error('Failed to fetch pre-onboarding requirements');
@@ -616,15 +698,17 @@ export const useCreatePreOnboardingDocument = () => {
       body,
     }: {
       employmentId: string;
-      body: FindOrCreatePreOnboardingDocumentParams;
+      body: PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsData['path'];
     }) => {
-      return postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments({
-        client: client as Client,
-        body,
-        path: {
-          employment_id: employmentId,
+      return postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocuments(
+        {
+          client: client as Client,
+          path: {
+            employment_id: employmentId,
+            requirement_slug: body.requirement_slug,
+          },
         },
-      });
+      );
     },
   });
 };
@@ -688,6 +772,58 @@ export const useSignPreOnboardingDocument = () => {
           signature,
         },
       }),
+  });
+};
+
+/**
+ * Acknowledge a pre-onboarding requirement
+ */
+export const useAcknowledgePreOnboardingRequirement = () => {
+  const { client } = useClient();
+
+  return useMutation({
+    mutationFn: ({
+      employmentId,
+      requirementSlug,
+    }: {
+      employmentId: string;
+      requirementSlug: string;
+    }) =>
+      postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledge(
+        {
+          client: client as Client,
+          path: {
+            employment_id: employmentId,
+            requirement_slug: requirementSlug,
+          },
+        },
+      ),
+  });
+};
+
+/**
+ * Remove acknowledgement from a pre-onboarding requirement
+ */
+export const useRemoveAcknowledgePreOnboardingRequirement = () => {
+  const { client } = useClient();
+
+  return useMutation({
+    mutationFn: ({
+      employmentId,
+      requirementSlug,
+    }: {
+      employmentId: string;
+      requirementSlug: string;
+    }) =>
+      deleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledge(
+        {
+          client: client as Client,
+          path: {
+            employment_id: employmentId,
+            requirement_slug: requirementSlug,
+          },
+        },
+      ),
   });
 };
 

@@ -122,7 +122,7 @@ describe('PreOnboardingRequirements', () => {
     const ilaStatus = screen.getByTestId(
       'status-5e39159e-96ef-40ea-82bc-b054917fc82f',
     );
-    expect(ilaStatus).toHaveTextContent('awaiting_signatures');
+    expect(ilaStatus).toHaveTextContent('awaiting');
   });
 
   describe('document generation', () => {
@@ -133,7 +133,7 @@ describe('PreOnboardingRequirements', () => {
 
       server.use(
         http.post(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents',
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements/:requirementSlug/documents',
           createDocumentSpy,
         ),
       );
@@ -222,20 +222,19 @@ describe('PreOnboardingRequirements', () => {
       );
     });
 
-    it('should include constraints_ack_at when provided', async () => {
+    it('should pass the requirement slug in the request path', async () => {
       const createDocumentSpy = vi.fn(() =>
         HttpResponse.json(generatedDocumentMock),
       );
 
       server.use(
         http.post(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents',
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements/:requirementSlug/documents',
           createDocumentSpy,
         ),
       );
 
       let renderBag: ReturnType<typeof usePreOnboardingRequirements>;
-      const ackTime = '2026-05-19T10:00:00Z';
 
       render(
         <PreOnboardingRequirements
@@ -244,13 +243,10 @@ describe('PreOnboardingRequirements', () => {
             return (
               <button
                 onClick={() =>
-                  bag.onCreateDocument(
-                    '5e39159e-96ef-40ea-82bc-b054917fc82f',
-                    ackTime,
-                  )
+                  bag.onCreateDocument('5e39159e-96ef-40ea-82bc-b054917fc82f')
                 }
               >
-                Generate with Ack
+                Generate Document
               </button>
             );
           }}
@@ -262,12 +258,21 @@ describe('PreOnboardingRequirements', () => {
         expect(renderBag?.requirements).toBeDefined();
       });
 
-      const button = screen.getByText('Generate with Ack');
+      const button = screen.getByText('Generate Document');
       fireEvent.click(button);
 
       await waitFor(() => {
         expect(createDocumentSpy).toHaveBeenCalled();
       });
+
+      expect(createDocumentSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            employmentId: TEST_EMPLOYMENT_ID,
+            requirementSlug: '5e39159e-96ef-40ea-82bc-b054917fc82f',
+          }),
+        }),
+      );
     });
   });
 
@@ -384,10 +389,10 @@ describe('PreOnboardingRequirements', () => {
   });
 
   describe('loading states', () => {
-    it('should show isCreatingDocument during document generation', async () => {
+    it('should show isRequirementLoading during document generation', async () => {
       server.use(
         http.post(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents',
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements/:requirementSlug/documents',
           () => {
             return new Promise(() => {});
           },
@@ -409,7 +414,9 @@ describe('PreOnboardingRequirements', () => {
                 >
                   Generate
                 </button>
-                {bag.isCreatingDocument && <div>Creating document...</div>}
+                {bag.isRequirementLoading(
+                  '5e39159e-96ef-40ea-82bc-b054917fc82f',
+                ) && <div>Creating document...</div>}
               </div>
             );
           }}
@@ -570,7 +577,7 @@ describe('PreOnboardingRequirements', () => {
 
       server.use(
         http.post(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents',
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements/:requirementSlug/documents',
           createDocumentSpy,
         ),
       );
@@ -581,13 +588,13 @@ describe('PreOnboardingRequirements', () => {
             <div>
               <button
                 onClick={() => bag.onCreateDocument('req-1')}
-                disabled={bag.isCreatingDocument}
+                disabled={bag.isRequirementLoading('req-1')}
               >
                 Open Req 1
               </button>
               <button
                 onClick={() => bag.onCreateDocument('req-2')}
-                disabled={bag.isCreatingDocument}
+                disabled={bag.isRequirementLoading('req-2')}
               >
                 Open Req 2
               </button>
@@ -620,30 +627,28 @@ describe('PreOnboardingRequirements', () => {
 
       server.use(
         http.get(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements',
           () => {
             return HttpResponse.json({
               data: [
                 {
                   name: 'Individual Labor Agreement',
                   status: 'blocked',
+                  type: 'document',
                   description: 'Blocked until MSA is signed',
                   slug: '5e39159e-96ef-40ea-82bc-b054917fc82f',
                   depends_on_requirement: {
                     name: 'Master Service Agreement',
-                    status: 'awaiting_signatures',
+                    status: 'awaiting',
+                    type: 'document',
                     description: 'Master Service Agreement',
                     slug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
                     depends_on_requirement: null,
-                    document_constraints_ack_at: null,
                     freeze_employment_data: false,
-                    needs_constraints_ack: true,
                     redlining_help_email: null,
                     supports_redlining: false,
                   },
-                  document_constraints_ack_at: null,
                   freeze_employment_data: false,
-                  needs_constraints_ack: true,
                   redlining_help_email: null,
                   supports_redlining: false,
                 },
@@ -652,7 +657,7 @@ describe('PreOnboardingRequirements', () => {
           },
         ),
         http.post(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-documents',
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements/:requirementSlug/documents',
           createDocumentSpy,
         ),
       );
@@ -697,30 +702,28 @@ describe('PreOnboardingRequirements', () => {
     it('should throw error when attempting to create document for blocked requirement', async () => {
       server.use(
         http.get(
-          '*/v1/onboarding/employments/:employmentId/pre-onboarding-document-requirements',
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements',
           () => {
             return HttpResponse.json({
               data: [
                 {
                   name: 'Individual Labor Agreement',
                   status: 'blocked',
+                  type: 'document',
                   description: 'Blocked until MSA is signed',
                   slug: '5e39159e-96ef-40ea-82bc-b054917fc82f',
                   depends_on_requirement: {
                     name: 'Master Service Agreement',
-                    status: 'awaiting_signatures',
+                    status: 'awaiting',
+                    type: 'document',
                     description: 'Master Service Agreement',
                     slug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
                     depends_on_requirement: null,
-                    document_constraints_ack_at: null,
                     freeze_employment_data: false,
-                    needs_constraints_ack: true,
                     redlining_help_email: null,
                     supports_redlining: false,
                   },
-                  document_constraints_ack_at: null,
                   freeze_employment_data: false,
-                  needs_constraints_ack: true,
                   redlining_help_email: null,
                   supports_redlining: false,
                 },
@@ -750,6 +753,192 @@ describe('PreOnboardingRequirements', () => {
         renderBag.onCreateDocument('5e39159e-96ef-40ea-82bc-b054917fc82f'),
       ).rejects.toThrow(
         'Cannot create document for blocked requirement. Master Service Agreement must be completed first.',
+      );
+    });
+  });
+
+  describe('requirement acknowledgement', () => {
+    it('should acknowledge requirement when onAcknowledgeRequirement is called', async () => {
+      const acknowledgeSpy = vi.fn(() =>
+        HttpResponse.json({ data: { status: 'ok' } }),
+      );
+
+      server.use(
+        http.post(
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements/:requirementSlug/acknowledge',
+          acknowledgeSpy,
+        ),
+      );
+
+      let renderBag: ReturnType<typeof usePreOnboardingRequirements>;
+
+      render(
+        <PreOnboardingRequirements
+          render={(bag) => {
+            renderBag = bag;
+            return (
+              <button
+                onClick={() =>
+                  bag.onAcknowledgeRequirement(
+                    '5e39159e-96ef-40ea-82bc-b054917fc82f',
+                  )
+                }
+              >
+                Acknowledge
+              </button>
+            );
+          }}
+        />,
+        { wrapper: TestWrapper },
+      );
+
+      await waitFor(() => {
+        expect(renderBag?.requirements).toBeDefined();
+      });
+
+      const button = screen.getByText('Acknowledge');
+      fireEvent.click(button);
+
+      await waitFor(() => {
+        expect(acknowledgeSpy).toHaveBeenCalled();
+      });
+
+      expect(acknowledgeSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            employmentId: TEST_EMPLOYMENT_ID,
+            requirementSlug: '5e39159e-96ef-40ea-82bc-b054917fc82f',
+          }),
+        }),
+      );
+    });
+
+    it('should remove acknowledgement when requirement is finished', async () => {
+      const removeAcknowledgeSpy = vi.fn(() =>
+        HttpResponse.json({ data: { status: 'ok' } }),
+      );
+
+      server.use(
+        http.delete(
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements/:requirementSlug/acknowledge',
+          removeAcknowledgeSpy,
+        ),
+      );
+
+      let renderBag: ReturnType<typeof usePreOnboardingRequirements>;
+
+      render(
+        <PreOnboardingRequirements
+          render={(bag) => {
+            renderBag = bag;
+            return (
+              <button
+                onClick={() =>
+                  bag.onAcknowledgeRequirement(
+                    'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
+                  )
+                }
+              >
+                Remove Acknowledgement
+              </button>
+            );
+          }}
+        />,
+        { wrapper: TestWrapper },
+      );
+
+      await waitFor(() => {
+        expect(renderBag?.requirements).toBeDefined();
+      });
+
+      const button = screen.getByText('Remove Acknowledgement');
+      fireEvent.click(button);
+
+      await waitFor(() => {
+        expect(removeAcknowledgeSpy).toHaveBeenCalled();
+      });
+
+      expect(removeAcknowledgeSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({
+            employmentId: TEST_EMPLOYMENT_ID,
+            requirementSlug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
+          }),
+        }),
+      );
+    });
+
+    it('should throw error when acknowledgement is locked by a dependent requirement', async () => {
+      server.use(
+        http.get(
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements',
+          () => {
+            return HttpResponse.json({
+              data: [
+                {
+                  name: 'Master Service Agreement',
+                  status: 'finished',
+                  type: 'acknowledgement',
+                  description: 'Master Service Agreement',
+                  slug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
+                  depends_on_requirement: null,
+                  freeze_employment_data: false,
+                  redlining_help_email: null,
+                  supports_redlining: false,
+                },
+                {
+                  name: 'Individual Labor Agreement',
+                  status: 'finished',
+                  type: 'document',
+                  description: 'Individual Labor Agreement',
+                  slug: '5e39159e-96ef-40ea-82bc-b054917fc82f',
+                  depends_on_requirement: {
+                    name: 'Master Service Agreement',
+                    status: 'finished',
+                    type: 'acknowledgement',
+                    description: 'Master Service Agreement',
+                    slug: 'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
+                    depends_on_requirement: null,
+                    freeze_employment_data: false,
+                    redlining_help_email: null,
+                    supports_redlining: false,
+                  },
+                  freeze_employment_data: false,
+                  redlining_help_email: null,
+                  supports_redlining: false,
+                },
+              ],
+            });
+          },
+        ),
+      );
+
+      let renderBag!: ReturnType<typeof usePreOnboardingRequirements>;
+
+      render(
+        <PreOnboardingRequirements
+          render={(bag) => {
+            renderBag = bag;
+            return <div>Test</div>;
+          }}
+        />,
+        { wrapper: TestWrapper },
+      );
+
+      await waitFor(() => {
+        expect(renderBag.requirements).toBeDefined();
+      });
+
+      expect(
+        renderBag.isAckLocked('dc3b954c-9d6c-4ddd-b8dc-531f9be773fb'),
+      ).toBe(true);
+
+      await expect(
+        renderBag.onAcknowledgeRequirement(
+          'dc3b954c-9d6c-4ddd-b8dc-531f9be773fb',
+        ),
+      ).rejects.toThrow(
+        'Cannot uncheck this acknowledgement because other requirements depend on it and are already in progress or completed.',
       );
     });
   });

@@ -124,6 +124,24 @@ export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
 export const DEFAULT_VERSION = 1;
 
 /**
+ * Countries whose contract details schema is served as jsfVersion 1.
+ * Those forms keep their own field state, so they go through
+ * useContractDetailsSchema instead of useJSONSchemaForm.
+ * FRA = wage portage, ITA = APL.
+ */
+const JSF_V1_CONTRACT_DETAILS_COUNTRIES = ['FRA', 'ITA'];
+
+/**
+ * Checks if a country's contract details schema is served as jsfVersion 1
+ *
+ * @param countryCode - The country code to check
+ */
+export const usesJsfV1ContractDetails = (countryCode: string | null) =>
+  Boolean(
+    countryCode && JSF_V1_CONTRACT_DETAILS_COUNTRIES.includes(countryCode),
+  );
+
+/**
  * Gets the default (recommended) contract details schema version for a country
  */
 const getDefaultContractDetailsSchemaVersion = (): number => {
@@ -176,5 +194,18 @@ export const getBenefitOffersSchemaVersion = (
 ): number | 'latest' => {
   return (
     options?.jsonSchemaVersion?.benefit_offers_form_schema || DEFAULT_VERSION
+  );
+};
+
+/**
+ * Gets the engagement agreement details schema version from options
+ * @param options - The flow options containing version configurations
+ * @returns The jsonSchemaVersion for engagement agreement details or default
+ */
+export const getEngagementAgreementDetailsSchemaVersion = (
+  options: OnboardingFlowProps['options'],
+): number | 'latest' => {
+  return (
+    options?.jsonSchemaVersion?.engagement_agreement_details || DEFAULT_VERSION
   );
 };

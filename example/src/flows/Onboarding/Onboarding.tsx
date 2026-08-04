@@ -13,23 +13,20 @@ import {
   EngagementAgreementDetailsFormPayload,
   ZendeskTriggerButton,
   zendeskArticles,
+  $TSFixMe,
 } from '@remoteoss/remote-flows';
 import React, { useState } from 'react';
-import {
-  Card,
-  FullScreenDialog,
-  FullScreenDialogContent,
-  Button,
-} from '@remoteoss/remote-flows/internals';
-import { EmploymentAgreementInfoModal } from './EmploymentAgreementInfoModal';
-import { ReviewOnboardingStep } from './ReviewOnboardingStep';
+import { Card } from '@remoteoss/remote-flows/internals';
+import { ReviewOnboardingStep } from '../../ReviewOnboardingStep';
 import { OnboardingAlertStatuses } from './OnboardingAlertStatuses';
-import { RemoteFlows } from './RemoteFlows';
-import { AlertError } from './AlertError';
-import { transformHtmlToComponents } from './utils/transformHtml';
+import { RemoteFlows } from '../../RemoteFlows';
+import { AlertError } from '../../AlertError';
+import { transformHtmlToComponents } from '../../utils/transformHtml';
 import { sanitizeHtml } from '@remoteoss/remote-flows/internals';
-import { downloadFile } from './utils';
-import './css/main.css';
+import { ONBOARDING_OPTIONS } from './constants';
+import { StepsNavigation } from './StepsNavigation';
+import '../../css/main.css';
+import { PreviewEmploymentAgreementStep } from './PreviewEmploymentAgreementStep';
 
 const BenefitsAboutSection = ({
   description,
@@ -97,7 +94,6 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     BackButton,
     SelectCountryStep,
     EngagementAgreementDetailsStep,
-    PreviewEmploymentAgreementStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -106,9 +102,6 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
     apiError: '',
     fieldErrors: [],
   });
-  const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const [isPdfLoading, setIsPdfLoading] = useState(true);
-  const [showInfoModal, setShowInfoModal] = useState(false);
 
   switch (onboardingBag.stepState.currentStep.name) {
     case 'select_country':
@@ -280,173 +273,12 @@ const MultiStepForm = ({ components, onboardingBag }: MultiStepFormProps) => {
       );
     }
     case 'employment_agreement_preview': {
-      const pdfContent = onboardingBag.employmentAgreementPreview?.content;
-      const pdfUrl = pdfContent
-        ? `${pdfContent as unknown as string}#view=FitV&toolbar=0`
-        : undefined;
-
-      const handleDownload = () => {
-        if (pdfContent) {
-          downloadFile(
-            pdfContent as unknown as string,
-            'employment-agreement.pdf',
-          );
-        }
-      };
-
       return (
-        <>
-          <PreviewEmploymentAgreementStep />
-          <div className='space-y-4'>
-            <Button
-              onClick={() => {
-                setShowPreviewModal(true);
-                setIsPdfLoading(true);
-              }}
-              className='w-full'
-              variant='outline'
-              disabled={!pdfContent}
-            >
-              Preview employment agreement
-            </Button>
-          </div>
-          <FullScreenDialog
-            open={showPreviewModal}
-            onOpenChange={(open: boolean) => {
-              setShowPreviewModal(open);
-              if (!open) {
-                setIsPdfLoading(true);
-              }
-            }}
-          >
-            <FullScreenDialogContent>
-              {/* Header */}
-              <div className='flex items-center justify-between px-6 py-4 border-b bg-white'>
-                <div className='flex items-center gap-4'>
-                  <Button
-                    variant='ghost'
-                    size='icon'
-                    onClick={() => setShowPreviewModal(false)}
-                  >
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      width='24'
-                      height='24'
-                      viewBox='0 0 24 24'
-                      fill='none'
-                      stroke='currentColor'
-                      strokeWidth='2'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                    >
-                      <path d='M19 12H5M12 19l-7-7 7-7' />
-                    </svg>
-                  </Button>
-                  <h2 className='text-lg font-semibold'>
-                    Employment Agreement Preview
-                  </h2>
-                </div>
-
-                {/* Right side buttons */}
-                <div className='flex items-center gap-2'>
-                  {/* About this preview button */}
-                  <Button
-                    onClick={() => setShowInfoModal(true)}
-                    variant='ghost'
-                    size='sm'
-                    className='text-blue-600 hover:text-blue-700'
-                  >
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      width='16'
-                      height='16'
-                      viewBox='0 0 24 24'
-                      fill='none'
-                      stroke='currentColor'
-                      strokeWidth='2'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      className='mr-1'
-                    >
-                      <circle cx='12' cy='12' r='10' />
-                      <path d='M12 16v-4' />
-                      <path d='M12 8h.01' />
-                    </svg>
-                    About this preview
-                  </Button>
-
-                  {/* Download Button */}
-                  <Button
-                    onClick={handleDownload}
-                    disabled={!pdfContent}
-                    variant='outline'
-                  >
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      width='20'
-                      height='20'
-                      viewBox='0 0 24 24'
-                      fill='none'
-                      stroke='currentColor'
-                      strokeWidth='2'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      className='mr-2'
-                    >
-                      <path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' />
-                      <polyline points='7 10 12 15 17 10' />
-                      <line x1='12' y1='15' x2='12' y2='3' />
-                    </svg>
-                    Download
-                  </Button>
-                </div>
-              </div>
-
-              {/* Full screen PDF viewer */}
-              <div className='flex-1 relative bg-gray-50 overflow-hidden'>
-                {isPdfLoading && (
-                  <div className='absolute inset-0 flex items-center justify-center bg-white z-10'>
-                    <div className='text-center'>
-                      <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-2'></div>
-                      <p className='text-sm text-gray-600'>
-                        Loading document...
-                      </p>
-                    </div>
-                  </div>
-                )}
-                {pdfUrl && (
-                  <iframe
-                    src={pdfUrl}
-                    className='w-full h-full border-0'
-                    title='Employment Agreement Preview'
-                    onLoad={() => setIsPdfLoading(false)}
-                  />
-                )}
-              </div>
-            </FullScreenDialogContent>
-          </FullScreenDialog>
-
-          {/* Info Modal */}
-          <EmploymentAgreementInfoModal
-            open={showInfoModal}
-            onOpenChange={setShowInfoModal}
-          />
-
-          <div className='buttons-container'>
-            <BackButton
-              className='back-button'
-              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
-            >
-              Previous Step
-            </BackButton>
-            <SubmitButton
-              className='submit-button'
-              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
-            >
-              Continue
-            </SubmitButton>
-          </div>
-        </>
+        <PreviewEmploymentAgreementStep
+          onboardingBag={onboardingBag}
+          components={components}
+          setErrors={setErrors}
+        />
       );
     }
     case 'review':
@@ -530,32 +362,11 @@ const OnBoardingRender = ({
 
   return (
     <>
-      <div className='steps-navigation'>
-        <ul>
-          {/* {STEPS.map((step, index) => (
-            <li
-              key={index}
-              className={`step-item ${index === currentStepIndex ? 'active' : ''}`}
-            >
-              {step}
-            </li>
-          ))} */}
-          {onboardingBag.steps
-            .filter((step) => step.visible)
-            .map((step, index) => (
-              <li
-                key={step.name}
-                className={`step-item ${step.index === currentStepIndex ? 'active' : ''}`}
-              >
-                {index + 1}.{' '}
-                {getStepTitle(
-                  step,
-                  onboardingBag.selectedCountry?.code ?? null,
-                )}
-              </li>
-            ))}
-        </ul>
-      </div>
+      <StepsNavigation
+        steps={onboardingBag.steps}
+        stepState={onboardingBag.stepState}
+        selectedCountry={onboardingBag.selectedCountry}
+      />
 
       <div className='card' style={{ marginBottom: '20px' }}>
         <h1 className='heading' data-testid='onboarding-step-title'>
@@ -595,118 +406,7 @@ const OnboardingWithProps = ({
       render={OnBoardingRender}
       employmentId={employmentId}
       externalId={externalId}
-      options={{
-        features: ['onboarding_reserves', 'dynamic_steps', 'ea_preview'],
-        jsonSchemaVersion: {
-          employment_basic_information: 3,
-        },
-        jsonSchemaVersionByCountry: {
-          ARE: {
-            // United Arab Emirates
-            contract_details: 3,
-          },
-          DEU: {
-            // Germany
-            contract_details: 4,
-          },
-          BLR: {
-            // Belarus
-            contract_details: 2,
-          },
-          CHN: {
-            // China
-            contract_details: 3,
-          },
-          CHE: {
-            // Switzerland
-            contract_details: 2,
-          },
-          CZE: {
-            // Czech Republic
-            contract_details: 2,
-          },
-          GBR: {
-            // United Kingdom
-            contract_details: 3,
-          },
-          HKG: {
-            // Hong Kong
-            contract_details: 2,
-          },
-          IND: {
-            // India
-            contract_details: 2,
-          },
-          ISL: {
-            // Iceland
-            contract_details: 2,
-          },
-          JAM: {
-            // Jamaica
-            contract_details: 2,
-          },
-          KEN: {
-            // Kenya
-            contract_details: 2,
-          },
-          LBN: {
-            // Lebanon
-            contract_details: 2,
-          },
-          MEX: {
-            // Mexico
-            contract_details: 2,
-          },
-          MUS: {
-            // Mauritius
-            contract_details: 2,
-          },
-          MYS: {
-            // Malaysia
-            contract_details: 2,
-          },
-          NGA: {
-            // Nigeria
-            contract_details: 2,
-          },
-          NLD: {
-            // Netherlands
-            contract_details: 2,
-          },
-          NOR: {
-            // Norway
-            contract_details: 2,
-          },
-          NZL: {
-            // New Zealand
-            contract_details: 2,
-          },
-          PAK: {
-            // Pakistan
-            contract_details: 2,
-          },
-          PRT: {
-            // Portugal
-            contract_details: 3,
-          },
-          SAU: {
-            // Saudi Arabia
-            contract_details: 2,
-          },
-          SGP: {
-            // Singapore
-            contract_details: 2,
-          },
-          SRB: {
-            // Serbia
-            contract_details: 2,
-          },
-          SWE: {
-            // Sweden
-            contract_details: 2,
-          },
-        },
-      }}
+      options={ONBOARDING_OPTIONS as $TSFixMe}
     />
   </RemoteFlows>
 );
