@@ -36,6 +36,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Sweden (SWE)](./SWE.md)
 - [United Arab Emirates (ARE)](./ARE.md)
 - [United Kingdom (GBR)](./GBR.md)
+- [United States (USA)](./USA.md)
 
 ### Countries on Contract Details v1
 
@@ -45,7 +46,6 @@ These countries have upgraded to different versions, check each guide to know ho
 
 | Country              | Code | Contract Details | Last Updated |
 | -------------------- | ---- | ---------------- | ------------ |
-| United Arab Emirates | ARE  | v3               | March 2026   |
 | Belarus              | BLR  | v2               | March 2026   |
 | China                | CHN  | v3               | March 2026   |
 | Switzerland          | CHE  | v2               | March 2026   |
@@ -70,6 +70,8 @@ These countries have upgraded to different versions, check each guide to know ho
 | Serbia               | SRB  | v2               | March 2026   |
 | Sweden               | SWE  | v2               | March 2026   |
 | United Kingdom       | GBR  | v2               | March 2026   |
+| United Arab Emirates | ARE  | v3               | March 2026   |
+| United States        | USA  | v3               | August 2026  |
 
 ## How to Use
 
