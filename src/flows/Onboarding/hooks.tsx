@@ -90,6 +90,8 @@ const getLoadingStates = ({
   contractDetailsFields,
   arePreOnboardingRequirementsFulfilled,
   isLoadingOnboardingReservesStatus,
+  isLoadingPreOnboardingRequirements,
+  shouldFreezeEmploymentData,
 }: {
   isLoadingBasicInformationForm: boolean;
   isLoadingContractDetailsForm: boolean;
@@ -102,6 +104,7 @@ const getLoadingStates = ({
   isLoadingCompany: boolean;
   isLoadingCountries: boolean;
   isLoadingEmploymentAgreementPreview: boolean;
+  isLoadingPreOnboardingRequirements: boolean;
   employmentStatus?: Employment['status'];
   employmentId?: string;
   currentStepName: string;
@@ -109,6 +112,7 @@ const getLoadingStates = ({
   contractDetailsFields: JSFFields;
   arePreOnboardingRequirementsFulfilled: boolean;
   isLoadingOnboardingReservesStatus: boolean;
+  shouldFreezeEmploymentData: boolean;
 }) => {
   const initialLoading =
     isLoadingBasicInformationForm ||
@@ -121,17 +125,22 @@ const getLoadingStates = ({
     isLoadingCompany ||
     isLoadingCountries ||
     isLoadingEmploymentAgreementPreview ||
-    isLoadingContractDetailsFormV1;
+    isLoadingContractDetailsFormV1 ||
+    isLoadingPreOnboardingRequirements ||
+    isLoadingOnboardingReservesStatus;
 
+  // employment needs to be readonly if its one of the following conditions is met:
+  // - the employment status is in the review step allowed employment status list
+  // - the employment data is frozen by a pre-onboarding requirement
   const isEmploymentReadOnly =
-    employmentStatus &&
-    reviewStepAllowedEmploymentStatus.includes(employmentStatus);
+    (employmentStatus &&
+      reviewStepAllowedEmploymentStatus.includes(employmentStatus)) ||
+    shouldFreezeEmploymentData;
 
   const canInvite =
     employmentStatus &&
     !disabledInviteButtonEmploymentStatus.includes(employmentStatus) &&
-    arePreOnboardingRequirementsFulfilled &&
-    !isLoadingOnboardingReservesStatus;
+    arePreOnboardingRequirementsFulfilled;
 
   const shouldHandleReadOnlyEmployment = Boolean(
     employmentId && isEmploymentReadOnly && currentStepName !== 'review',
@@ -390,6 +399,10 @@ export const useOnboarding = ({
         enabled: isPreOnboardingRequirementsEnabled,
       },
     });
+
+  const shouldFreezeEmploymentData = Boolean(
+    requirements?.some((requirement) => requirement.freeze_employment_data),
+  );
 
   const arePreOnboardingRequirementsFulfilled = useMemo(() => {
     // While loading, block the invite
@@ -923,6 +936,7 @@ export const useOnboarding = ({
           isLoadingEmployment,
           isLoadingBenefitsOffersSchema,
           isLoadingBenefitOffers,
+          isLoadingPreOnboardingRequirements,
           isLoadingCompany,
           isLoadingCountries,
           isLoadingEmploymentAgreementPreview,
@@ -933,6 +947,7 @@ export const useOnboarding = ({
           currentStepName: currentStepName,
           arePreOnboardingRequirementsFulfilled,
           isLoadingOnboardingReservesStatus,
+          shouldFreezeEmploymentData,
         }),
       [
         isLoadingBasicInformationForm,
@@ -942,6 +957,7 @@ export const useOnboarding = ({
         isLoadingEmployment,
         isLoadingBenefitsOffersSchema,
         isLoadingBenefitOffers,
+        isLoadingPreOnboardingRequirements,
         isLoadingCompany,
         isLoadingCountries,
         isLoadingEmploymentAgreementPreview,
@@ -953,6 +969,7 @@ export const useOnboarding = ({
         arePreOnboardingRequirementsFulfilled,
         isLoadingOnboardingReservesStatus,
         isLoadingContractDetailsFormV1,
+        shouldFreezeEmploymentData,
       ],
     );
 

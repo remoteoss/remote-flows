@@ -5,6 +5,7 @@ import { FieldError, mutationToPromise } from '@/src/lib/mutations';
 import { SuccessResponse } from '@/src/client';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
 import { useFormFields } from '@/src/context';
+import { statusesWithReserveAlreadyHandled } from '@/src/flows/Onboarding/utils';
 
 export type OnboardingInviteProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -56,15 +57,20 @@ export function OnboardingInvite({
     onboardingBag.creditRiskStatus === 'deposit_required' ||
     onboardingBag.onboardingReservesStatus === 'deposit_required';
 
+  const isReserveFlow = Boolean(
+    isDepositRequired &&
+    onboardingBag.employment?.status &&
+    !statusesWithReserveAlreadyHandled.includes(
+      onboardingBag.employment.status,
+    ),
+  );
+
+  const shouldCreateReserve = Boolean(isReserveFlow && onboardingBag.canInvite);
+
   const handleSubmit = async () => {
     try {
       await onSubmit?.();
-      if (
-        isDepositRequired &&
-        onboardingBag.employmentId &&
-        onboardingBag.employment?.status &&
-        !onboardingBag.isEmploymentReadOnly
-      ) {
+      if (shouldCreateReserve && onboardingBag.employmentId) {
         const response = await createReserveInvoiceMutationAsync({
           employment_slug: onboardingBag.employmentId,
         });
@@ -120,11 +126,6 @@ export function OnboardingInvite({
       });
     }
   };
-
-  const isReserveFlow =
-    isDepositRequired &&
-    onboardingBag.employment?.status &&
-    !onboardingBag.isEmploymentReadOnly;
 
   const CustomButton = components?.button;
   if (!CustomButton) {
