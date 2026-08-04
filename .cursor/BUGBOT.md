@@ -151,8 +151,10 @@ If the PR title does not match the regex above:
    **Suggested title:** `<rewritten title based on the PR's actual changes>`
 
    **Examples:**
+
    - ❌ `canInvite is now depending of onboarding-reserve-status pending request`
    - ✅ `fix(onboarding-reserves): fix race condition on the invite button, now depending on onboarding-reserve-status`
+   - ✅ `feat(gp): add PayrollAdminOnboarding flow mutations and schemas`
    ```
 
 3. Assign the Bug to the PR author.
