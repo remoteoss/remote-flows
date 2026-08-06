@@ -6,7 +6,7 @@ export const ONBOARDING_OPTIONS = {
     'pre_onboarding_requirements',
   ] as const,
   jsonSchemaVersion: {
-    employment_basic_information: 3,
+    employment_basic_information: 4,
   },
   jsonSchemaVersionByCountry: {
     ARE: {

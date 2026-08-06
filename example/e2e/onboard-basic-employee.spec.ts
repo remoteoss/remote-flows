@@ -35,6 +35,7 @@ test.describe('Onboard basic employee', () => {
 
     await fillOnboardingStep2Form(page, {
       fullname: `John Doe${Date.now()}`,
+      login_email: 'personal',
       personal_email: `john.doe${Date.now()}@example.com`,
       work_email: `john.doe${Date.now()}@pro.com`,
       job_title: 'Software Engineer',
