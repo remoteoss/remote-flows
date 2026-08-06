@@ -45,6 +45,7 @@ export async function fillOnboardingStep1Form(
 
 interface fillOnboardingStep2FormOptions {
   fullname?: string;
+  login_email?: string;
   personal_email?: string;
   work_email?: string;
   job_title?: string;
@@ -60,7 +61,16 @@ export async function fillOnboardingStep2Form(
 ) {
   await fillForm(page, [
     { type: 'textField', value: options.fullname, name: 'name' },
-    { type: 'textField', value: options.personal_email, name: 'email' },
+    {
+      type: 'radio',
+      value: options.login_email,
+      name: 'login_email',
+    },
+    {
+      type: 'textField',
+      value: options.personal_email,
+      name: 'personal_email',
+    },
     { type: 'textField', value: options.work_email, name: 'work_email' },
     { type: 'textField', value: options.job_title, name: 'job_title' },
     {
