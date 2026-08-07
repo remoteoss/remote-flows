@@ -128,3 +128,13 @@ export type GPStepCallbacks<TSuccess = unknown> = {
     fieldErrors: NormalizedFieldError[];
   }) => void;
 };
+
+export type JSFModifyField = {
+  'x-jsf-presentation'?: {
+    options?: Array<{
+      value: string;
+      label?: string;
+      description?: string;
+    }>;
+  };
+};
