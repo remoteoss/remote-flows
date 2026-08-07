@@ -19,6 +19,7 @@ import {
   corProductIdentifier,
   eorProductIdentifier,
   $TSFixMe,
+  JSFModifyField,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -631,12 +632,31 @@ export const ContractorOnboardingWithProps = ({
             employmentId={employmentId}
             externalId={externalId}
             options={{
+              jsonSchemaVersion: {
+                employment_basic_information: 1,
+              },
               // Uncomment to hide specific products from the pricing selection:
               // excludeProducts: ['eor'] // Hide EOR option
               // excludeProducts: ['eor', 'cor'] // Hide both EOR and COR
               // excludeProducts: ['cm+'] // Hide Contractor Management Plus
               //excludeProducts: ['eor', 'cor', 'cm+', 'cm'], // Hide all products
               jsfModify: {
+                basic_information: {
+                  fields: {
+                    // Use a function to modify a single option in place instead of
+                    // hardcoding the full options list (labels/values you don't own).
+                    login_email: (field: JSFModifyField) => ({
+                      'x-jsf-presentation': {
+                        options: field['x-jsf-presentation']?.options?.map(
+                          (option: { value: string }) =>
+                            option.value === 'work'
+                              ? { ...option, description: 'Select...' }
+                              : option,
+                        ),
+                      },
+                    }),
+                  },
+                },
                 contract_details: {
                   fields: {
                     'payment_terms.payment_terms_type': {
