@@ -19,6 +19,7 @@ import {
   corProductIdentifier,
   eorProductIdentifier,
   $TSFixMe,
+  JSFModifyField,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -644,7 +645,7 @@ export const ContractorOnboardingWithProps = ({
                   fields: {
                     // Use a function to modify a single option in place instead of
                     // hardcoding the full options list (labels/values you don't own).
-                    login_email: (field: $TSFixMe) => ({
+                    login_email: (field: JSFModifyField) => ({
                       'x-jsf-presentation': {
                         options: field['x-jsf-presentation']?.options?.map(
                           (option: { value: string }) =>
