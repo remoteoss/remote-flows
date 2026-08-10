@@ -1,3 +1,5 @@
+import { JSFModifyField } from '@remoteoss/remote-flows';
+
 export const ONBOARDING_OPTIONS = {
   features: [
     'onboarding_reserves',
@@ -117,6 +119,24 @@ export const ONBOARDING_OPTIONS = {
     USA: {
       // United States
       contract_details: 3,
+    },
+  },
+  jsfModify: {
+    basic_information: {
+      fields: {
+        // Use a function to modify a single option in place instead of
+        // hardcoding the full options list (labels/values you don't own).
+        login_email: (field: JSFModifyField) => ({
+          'x-jsf-presentation': {
+            options: field['x-jsf-presentation']?.options?.map(
+              (option: { value: string }) =>
+                option.value === 'work'
+                  ? { ...option, description: 'Select...' }
+                  : option,
+            ),
+          },
+        }),
+      },
     },
   },
 };
