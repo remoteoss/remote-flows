@@ -27,7 +27,6 @@ import { ONBOARDING_OPTIONS } from './constants';
 import { StepsNavigation } from './StepsNavigation';
 import '../../css/main.css';
 import { PreviewEmploymentAgreementStep } from './PreviewEmploymentAgreementStep';
-import { components } from '../../Components';
 
 const BenefitsAboutSection = ({
   description,
@@ -400,7 +399,6 @@ const OnboardingWithProps = ({
   <RemoteFlows
     proxy={{ url: window.location.origin }}
     transformHtmlToComponents={transformHtmlToComponents}
-    components={components}
   >
     <OnboardingFlow
       companyId={companyId}
