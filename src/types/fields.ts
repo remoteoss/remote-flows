@@ -148,6 +148,27 @@ export type StatementComponentProps = {
   };
 };
 
+/**
+ * Data passed to custom forced value components.
+ * Forced value fields display a non-editable value that is automatically set on the form
+ * (via `const`), typically rendered as informational text (e.g. a statement-like description).
+ *
+ * `title` and `description` are already resolved (statement overrides falling back to
+ * label/description) and sanitized where applicable, so custom components don't need to
+ * reimplement that fallback logic themselves.
+ */
+export type ForcedValueDataProps = FieldDataProps & {
+  value: string;
+  title?: string;
+};
+
+/**
+ * Props for custom forced value components.
+ */
+export type ForcedValueComponentProps = {
+  fieldData: ForcedValueDataProps;
+};
+
 export type PricingPlanDataProps = Omit<Partial<JSFField>, 'options'> & {
   metadata?: Record<string, unknown>;
   meta?: {

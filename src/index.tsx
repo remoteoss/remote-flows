@@ -162,6 +162,7 @@ export type {
   FileComponentProps,
   CountryComponentProps,
   StatementComponentProps,
+  ForcedValueComponentProps,
   TextFieldComponentProps,
   DatePickerComponentProps,
   WorkScheduleComponentProps,
