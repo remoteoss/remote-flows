@@ -186,6 +186,7 @@ export type {
 } from './client/types.gen';
 
 export type { $TSFixMe, JSFCustomComponentProps } from './types/remoteFlows';
+export type { JSFModifyField } from './flows/types';
 export type { FieldError, NormalizedFieldError } from './lib/mutations';
 export { zendeskArticles } from './components/shared/zendesk-drawer/utils';
 export { ZendeskTriggerButton } from './components/shared/zendesk-drawer/ZendeskTriggerButton';
