@@ -95,6 +95,16 @@ export type FileComponentProps = FieldComponentProps & {
   fieldData: FieldFileDataProps;
 };
 
+/**
+ * Reference to a file already uploaded, as returned by the API on `GET` for `inputType: file`
+ * fields. Sent back unchanged on the next submit to keep the file instead of re-uploading it.
+ */
+export type UploadedFileReference = {
+  name: string;
+  slug: string;
+  sub_type?: string | null;
+};
+
 type FieldCountryDataProps = Omit<FieldDataProps, 'meta'> & {
   $meta: {
     regions: Record<string, string[]>;

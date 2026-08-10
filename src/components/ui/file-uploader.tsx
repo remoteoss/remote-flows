@@ -2,6 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/src/components/ui/button';
 import { Upload, X } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
+import { UploadedFileReference } from '@/src/types/fields';
+
+type UploaderFile = File | UploadedFileReference;
 
 // Convert accept string to readable format (e.g., ".pdf, .doc" -> "PDF, DOC")
 const getAcceptedFormats = (accept?: string) => {
@@ -13,11 +16,11 @@ const getAcceptedFormats = (accept?: string) => {
 };
 
 type FileUploaderProps = {
-  onChange: (files: File[]) => void;
+  onChange: (files: UploaderFile[]) => void;
   className?: string;
   multiple?: boolean;
   accept?: string;
-  files?: File[];
+  files?: UploaderFile[];
   id?: string;
 };
 
@@ -29,9 +32,9 @@ export function FileUploader({
   files: externalFiles,
   id,
 }: FileUploaderProps) {
-  const syncedRef = useRef<File[] | undefined>(undefined);
+  const syncedRef = useRef<UploaderFile[] | undefined>(undefined);
 
-  const [files, setFiles] = useState<File[]>(externalFiles || []);
+  const [files, setFiles] = useState<UploaderFile[]>(externalFiles || []);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -57,7 +60,7 @@ export function FileUploader({
     }
   };
 
-  const onRemoveFile = (file: File) => {
+  const onRemoveFile = (file: UploaderFile) => {
     setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
     onChange(files.filter((f) => f.name !== file.name));
   };
@@ -100,8 +103,8 @@ export function FileUploader({
       {files.length > 0 &&
         files.map((file, index) => (
           <div key={index} className='text-sm flex items-center gap-2'>
-            Selected file: <span className='font-medium'>{file.name}</span> (
-            {Math.round(file.size / 1024)} KB)
+            Selected file: <span className='font-medium'>{file.name}</span>
+            {'size' in file && ` (${Math.round(file.size / 1024)} KB)`}
             <Button
               type='button'
               variant='ghost'

@@ -1,3 +1,5 @@
+import { UploadedFileReference } from '@/src/types/fields';
+
 const toBase64 = (file: File): Promise<string> => {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -7,12 +9,22 @@ const toBase64 = (file: File): Promise<string> => {
   });
 };
 
-export const convertFilesToBase64 = async (files: File[]) => {
+/**
+ * Base64-encodes newly selected files. Items that aren't a `File` (i.e. a reference to a file
+ * already uploaded, as returned by the API) are passed through by `name`/`slug` instead of being
+ * re-encoded — there's no binary content to read for those.
+ */
+export const convertFilesToBase64 = async (
+  files: (File | UploadedFileReference)[],
+) => {
   const base64Files = await Promise.all(
     files.map(async (file) => {
+      if (!(file instanceof File)) {
+        return { name: file.name, slug: file.slug };
+      }
+
       const base64 = await toBase64(file);
       return {
-        ...file,
         name: file.name,
         size: file.size,
         type: file.type,

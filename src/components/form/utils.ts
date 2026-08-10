@@ -4,6 +4,7 @@ import { JSFFields } from '@/src/types/remoteFlows';
 import { convertFilesToBase64 } from '@/src/lib/files';
 import { addBusinessDays, isWeekend, nextMonday } from 'date-fns';
 import { getNestedValue } from '@/src/lib/utils';
+import { UploadedFileReference } from '@/src/types/fields';
 
 const textInputTypes = {
   TEXT: 'text',
@@ -278,13 +279,14 @@ export const fieldTypesTransformations: Record<string, $TSFixMe> = {
         : (option?.value ?? ''), // Fallback to '' in case user removes all options,
   },
   [supportedTypes.FILE]: {
-    transformValueToAPI: () => async (files: File[]) => {
-      if (!files) {
-        return null;
-      }
+    transformValueToAPI:
+      () => async (files: (File | UploadedFileReference)[]) => {
+        if (!files) {
+          return null;
+        }
 
-      return await convertFilesToBase64(files);
-    },
+        return await convertFilesToBase64(files);
+      },
   },
 };
 export async function parseFormValuesToAPI(
