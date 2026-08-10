@@ -1,9 +1,8 @@
 import { useFormContext } from 'react-hook-form';
-import { sanitizeHtml } from '@/src/lib/utils';
 import { useEffect } from 'react';
+import { useFormFields, useTransformer } from '@/src/context';
+import { sanitizeHtml } from '@/src/lib/utils';
 import { HelpCenterDataProps } from '@/src/types/fields';
-import { BaseFormDescription as Description } from '@/src/components/ui/form';
-import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 
 export type ForcedValueFieldProps = {
   name: string;
@@ -26,53 +25,42 @@ export function ForcedValueField({
   helpCenter,
 }: ForcedValueFieldProps) {
   const { setValue } = useFormContext();
-  const forcedValueDescription = statement?.description || description;
-
-  const forcedValueTitle = statement?.title
-    ? sanitizeHtml(statement?.title)
-    : sanitizeHtml(label);
-
-  const titleId = `forced-value-${name}-title`;
-  const descriptionId = `forced-value-${name}-description`;
+  const { components } = useFormFields();
+  const transformHtml = useTransformer();
 
   useEffect(() => {
     setValue(name, value);
   }, [name, value, setValue]);
 
+  const forcedValueDescription = statement?.description || description;
+  const forcedValueTitle = statement?.title
+    ? sanitizeHtml(statement.title)
+    : sanitizeHtml(label);
+
+  // A forced value with no title and no description has nothing to show the user, so we
+  // skip rendering entirely (the value is still set on the form via the effect above).
   const isHiddenValue = !forcedValueDescription && !statement?.title;
 
   if (isHiddenValue) {
     return null;
   }
 
+  const Component = components?.forcedValue;
+
+  if (!Component) {
+    throw new Error(`Forced value component not found for field ${name}`);
+  }
+
   return (
-    <div
-      role='group'
-      aria-labelledby={forcedValueTitle ? titleId : undefined}
-      aria-describedby={forcedValueDescription ? descriptionId : undefined}
-    >
-      {forcedValueTitle && (
-        <p
-          id={titleId}
-          className={`text-sm RemoteFlows__ForcedValue__Title__${name}`}
-          dangerouslySetInnerHTML={{
-            __html: forcedValueTitle,
-          }}
-        />
-      )}
-      <Description
-        as='span'
-        id={descriptionId}
-        className={`text-xs RemoteFlows__ForcedValue__Description__${name}`}
-        helpCenter={
-          <HelpCenter
-            className='RemoteFlows__ForcedValue__HelpCenterLink'
-            helpCenter={helpCenter}
-          />
-        }
-      >
-        {forcedValueDescription}
-      </Description>
-    </div>
+    <Component
+      fieldData={{
+        name,
+        value,
+        title: forcedValueTitle,
+        description: forcedValueDescription,
+        meta: { helpCenter },
+        transformHtml,
+      }}
+    />
   );
 }

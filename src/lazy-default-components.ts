@@ -60,6 +60,13 @@ export const lazyDefaultComponents: Components = {
       }),
     ),
   ),
+  forcedValue: lazy(() =>
+    import('./components/form/fields/default/ForcedValueFieldDefault').then(
+      (m) => ({
+        default: m.ForcedValueFieldDefault,
+      }),
+    ),
+  ),
   'multi-select': lazy(() =>
     import('./components/form/fields/default/MultiSelectFieldDefault').then(
       (m) => ({

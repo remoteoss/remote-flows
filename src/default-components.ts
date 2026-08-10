@@ -1,5 +1,6 @@
 import { Components } from '@/src/types/remoteFlows';
 import { FileUploadFieldDefault } from '@/src/components/form/fields/default/FileUploadFieldDefault';
+import { ForcedValueFieldDefault } from '@/src/components/form/fields/default/ForcedValueFieldDefault';
 import { TextAreaFieldDefault } from '@/src/components/form/fields/default/TextAreaFieldDefault';
 import { SelectFieldDefault } from '@/src/components/form/fields/default/SelectFieldDefault';
 import { CountryFieldDefault } from '@/src/components/form/fields/default/CountryFieldDefault';
@@ -36,6 +37,7 @@ export const defaultComponents: Components = {
   email: EmailFieldDefault,
   fieldsetToggle: FieldsetToggleButtonDefault,
   file: FileUploadFieldDefault,
+  forcedValue: ForcedValueFieldDefault,
   // TODO: we have doubts multi-select, it's actually used
   'multi-select': MultiSelectFieldDefault,
   number: NumberFieldDefault,

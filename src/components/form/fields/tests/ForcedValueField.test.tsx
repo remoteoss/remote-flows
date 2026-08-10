@@ -1,6 +1,17 @@
+import { useFormFields } from '@/src/context';
 import { render, screen } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ForcedValueField, ForcedValueFieldProps } from '../ForcedValueField';
+import { ForcedValueFieldDefault } from '@/src/components/form/fields/default/ForcedValueFieldDefault';
+import { $TSFixMe } from '@/src/types/remoteFlows';
+
+vi.mock('@/src/context', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/src/context')>();
+  return {
+    ...actual,
+    useFormFields: vi.fn(),
+  };
+});
 
 describe('ForcedValueField Component', () => {
   const defaultProps: ForcedValueFieldProps = {
@@ -10,10 +21,12 @@ describe('ForcedValueField Component', () => {
     label: 'Test Label',
   };
 
-  // Helper function to render the component with a form context
-  const renderWithFormContext = (props: ForcedValueFieldProps) => {
+  const renderWithFormContext = (
+    props: ForcedValueFieldProps,
+    setValue = vi.fn(),
+  ) => {
     const TestComponent = () => {
-      const methods = useForm();
+      const methods = { ...useForm(), setValue };
       return (
         <FormProvider {...methods}>
           <ForcedValueField {...props} />
@@ -21,261 +34,91 @@ describe('ForcedValueField Component', () => {
       );
     };
 
-    return render(<TestComponent />);
+    return { setValue, ...render(<TestComponent />) };
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
-  });
-
-  describe('when statement is not provided', () => {
-    it('renders only the label and description', () => {
-      renderWithFormContext(defaultProps);
-
-      expect(
-        screen.getByText('This is a test description'),
-      ).toBeInTheDocument();
-      expect(screen.getByText('Test Label')).toBeInTheDocument();
+    (useFormFields as $TSFixMe).mockReturnValue({
+      components: { forcedValue: ForcedValueFieldDefault },
     });
   });
 
-  describe('when statement is provided with title', () => {
-    const propsWithStatement: ForcedValueFieldProps = {
+  it('sets the form value using setValue from useFormContext', () => {
+    const { setValue } = renderWithFormContext(defaultProps);
+
+    expect(setValue).toHaveBeenCalledWith('testField', 'forced-value');
+  });
+
+  it('renders the resolved label and description via the registered component', () => {
+    renderWithFormContext(defaultProps);
+
+    expect(screen.getByText('This is a test description')).toBeInTheDocument();
+    expect(screen.getByText('Test Label')).toBeInTheDocument();
+  });
+
+  it('falls back to label/description when statement fields are undefined', () => {
+    renderWithFormContext({
+      ...defaultProps,
+      statement: { title: undefined, description: undefined },
+    });
+
+    expect(screen.getByText('Test Label')).toBeInTheDocument();
+    expect(screen.getByText('This is a test description')).toBeInTheDocument();
+  });
+
+  it('prioritizes statement title/description over label/description', () => {
+    renderWithFormContext({
       ...defaultProps,
       statement: {
         title: 'Statement Title',
         description: 'Statement Description',
       },
-    };
-
-    it('renders statement title and description', () => {
-      renderWithFormContext(propsWithStatement);
-
-      expect(screen.getByText('Statement Title')).toBeInTheDocument();
-      expect(screen.getByText('Statement Description')).toBeInTheDocument();
-      expect(
-        screen.queryByText('This is a test description'),
-      ).not.toBeInTheDocument();
     });
+
+    expect(screen.getByText('Statement Title')).toBeInTheDocument();
+    expect(screen.getByText('Statement Description')).toBeInTheDocument();
+    expect(
+      screen.queryByText('This is a test description'),
+    ).not.toBeInTheDocument();
   });
 
-  describe('when statement is provided but title is undefined', () => {
-    const propsWithStatementNoTitle: ForcedValueFieldProps = {
-      ...defaultProps,
-      statement: {
-        title: undefined,
-        description: 'Statement Description',
-      },
-    };
+  it('renders a custom forcedValue component when provided', () => {
+    const CustomForcedValue = vi
+      .fn()
+      .mockImplementation(() => (
+        <div data-testid='custom-forced-value'>Custom Forced Value</div>
+      ));
 
-    it('falls back to label when statement.title is undefined', () => {
-      renderWithFormContext(propsWithStatementNoTitle);
-
-      expect(screen.getByText('Test Label')).toBeInTheDocument();
-      expect(screen.getByText('Statement Description')).toBeInTheDocument();
+    (useFormFields as $TSFixMe).mockReturnValue({
+      components: { forcedValue: CustomForcedValue },
     });
+
+    renderWithFormContext(defaultProps);
+
+    expect(CustomForcedValue).toHaveBeenCalled();
+    expect(screen.getByTestId('custom-forced-value')).toBeInTheDocument();
   });
 
-  describe('when statement is provided but title is empty string', () => {
-    const propsWithEmptyTitle: ForcedValueFieldProps = {
-      ...defaultProps,
-      statement: {
-        title: '',
-        description: 'Statement Description',
-      },
-    };
+  describe('when there is nothing to show', () => {
+    it('still sets the form value but renders nothing, without requiring a registered component', () => {
+      (useFormFields as $TSFixMe).mockReturnValue({ components: {} });
 
-    it('falls back to label when statement.title is empty string', () => {
-      renderWithFormContext(propsWithEmptyTitle);
-
-      expect(screen.getByText('Test Label')).toBeInTheDocument();
-      expect(screen.getByText('Statement Description')).toBeInTheDocument();
-    });
-  });
-
-  describe('when statement is provided but description is undefined', () => {
-    const propsWithUndefinedDescription: ForcedValueFieldProps = {
-      ...defaultProps,
-      statement: {
-        title: 'Test Label',
-        description: undefined,
-      },
-    };
-
-    it('falls back to description', () => {
-      renderWithFormContext(propsWithUndefinedDescription);
-
-      expect(screen.getByText('Test Label')).toBeInTheDocument();
-      expect(
-        screen.getByText('This is a test description'),
-      ).toBeInTheDocument();
-    });
-  });
-
-  describe('HTML content rendering', () => {
-    it('renders HTML content in statement title using dangerouslySetInnerHTML', () => {
-      const propsWithHtmlTitle: ForcedValueFieldProps = {
-        ...defaultProps,
-        statement: {
-          title: '<strong>Bold Title</strong>',
-          description: 'Statement Description',
-        },
-      };
-
-      renderWithFormContext(propsWithHtmlTitle);
-
-      const titleElement = screen.getByText('Bold Title');
-      expect(titleElement.tagName).toBe('STRONG');
-    });
-
-    it('renders HTML content in statement description using dangerouslySetInnerHTML', () => {
-      const propsWithHtmlDescription: ForcedValueFieldProps = {
-        ...defaultProps,
-        statement: {
-          title: 'Statement Title',
-          description: '<em>Italic Description</em>',
-        },
-      };
-
-      renderWithFormContext(propsWithHtmlDescription);
-
-      const descriptionElement = screen.getByText('Italic Description');
-      expect(descriptionElement.tagName).toBe('EM');
-    });
-
-    it('renders HTML content in fallback description using dangerouslySetInnerHTML', () => {
-      const propsWithHtmlFallbackDescription: ForcedValueFieldProps = {
-        ...defaultProps,
-        description: '<u>Underlined Description</u>',
-      };
-
-      renderWithFormContext(propsWithHtmlFallbackDescription);
-
-      const descriptionElement = screen.getByText('Underlined Description');
-      expect(descriptionElement.tagName).toBe('U');
-    });
-
-    it('renders HTML content in label fallback using dangerouslySetInnerHTML', () => {
-      const propsWithHtmlLabel: ForcedValueFieldProps = {
-        ...defaultProps,
-        label: '<span>Span Label</span>',
-        statement: {
-          title: '', // Empty title to trigger fallback
-          description: 'Statement Description',
-        },
-      };
-
-      renderWithFormContext(propsWithHtmlLabel);
-
-      const labelElement = screen.getByText('Span Label');
-      expect(labelElement.tagName).toBe('SPAN');
-    });
-  });
-
-  describe('form integration', () => {
-    it('sets the form value using setValue from useFormContext', () => {
-      const mockSetValue = vi.fn();
-
-      const TestComponent = () => {
-        const methods = {
-          ...useForm(),
-          setValue: mockSetValue,
-        };
-        return (
-          <FormProvider {...methods}>
-            <ForcedValueField {...defaultProps} />
-          </FormProvider>
-        );
-      };
-
-      render(<TestComponent />);
-
-      expect(mockSetValue).toHaveBeenCalledWith('testField', 'forced-value');
-    });
-
-    it('still sets form value even when field is hidden (no description and no title)', () => {
-      const mockSetValue = vi.fn();
-
-      const TestComponent = () => {
-        const methods = {
-          ...useForm(),
-          setValue: mockSetValue,
-        };
-        return (
-          <FormProvider {...methods}>
-            <ForcedValueField
-              name='testField'
-              value='forced-value'
-              description=''
-              label='Test Label'
-            />
-          </FormProvider>
-        );
-      };
-
-      render(<TestComponent />);
-
-      expect(mockSetValue).toHaveBeenCalledWith('testField', 'forced-value');
-    });
-  });
-
-  describe('edge cases for statement title fallback', () => {
-    it('handles statement with only description property', () => {
-      const propsWithDescriptionOnly: ForcedValueFieldProps = {
-        ...defaultProps,
-        statement: {
-          description: 'Only description provided',
-        },
-      };
-
-      renderWithFormContext(propsWithDescriptionOnly);
-
-      expect(screen.getByText('Test Label')).toBeInTheDocument();
-      expect(screen.getByText('Only description provided')).toBeInTheDocument();
-    });
-
-    it('prioritizes statement.title over label when title is truthy', () => {
-      const propsWithBothTitleAndLabel: ForcedValueFieldProps = {
-        ...defaultProps,
-        label: 'Should Not Appear',
-        statement: {
-          title: 'Should Appear',
-          description: 'Statement Description',
-        },
-      };
-
-      renderWithFormContext(propsWithBothTitleAndLabel);
-
-      expect(screen.getByText('Should Appear')).toBeInTheDocument();
-      expect(screen.queryByText('Should Not Appear')).not.toBeInTheDocument();
-    });
-  });
-
-  describe('when component returns null (no rendering)', () => {
-    it('returns null when description is empty and no statement provided', () => {
-      const props: ForcedValueFieldProps = {
+      const { setValue, container } = renderWithFormContext({
         ...defaultProps,
         description: '',
-      };
+      });
 
-      const { container } = renderWithFormContext(props);
-
+      expect(setValue).toHaveBeenCalledWith('testField', 'forced-value');
       expect(container.firstChild).toBeNull();
     });
+  });
 
-    it('returns null when both descriptions are empty and statement.title is empty', () => {
-      const props: ForcedValueFieldProps = {
-        ...defaultProps,
-        description: '',
-        statement: {
-          title: '',
-          description: '',
-        },
-      };
+  it('throws when no forcedValue component is registered and there is content to show', () => {
+    (useFormFields as $TSFixMe).mockReturnValue({ components: {} });
 
-      const { container } = renderWithFormContext(props);
-
-      expect(container.firstChild).toBeNull();
-    });
+    expect(() => renderWithFormContext(defaultProps)).toThrow(
+      'Forced value component not found for field testField',
+    );
   });
 });

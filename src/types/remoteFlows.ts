@@ -10,6 +10,7 @@ import {
   DatePickerComponentProps,
   FieldComponentProps,
   FileComponentProps,
+  ForcedValueComponentProps,
   StatementComponentProps,
   TextFieldComponentProps,
   WorkScheduleComponentProps,
@@ -151,6 +152,7 @@ export type Components = {
   date?: React.ComponentType<DatePickerComponentProps>;
   countries?: React.ComponentType<CountryComponentProps>;
   statement?: React.ComponentType<StatementComponentProps>;
+  forcedValue?: React.ComponentType<ForcedValueComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
   fieldsetToggle?: React.ComponentType<FieldSetToggleComponentProps>;
   zendeskDrawer?: React.ComponentType<ZendeskDrawerComponentProps>;

@@ -4,6 +4,7 @@ import type {
   FieldComponentProps,
   FieldSetToggleComponentProps,
   FileComponentProps,
+  ForcedValueComponentProps,
   PDFPreviewComponentProps,
   TelFieldComponentProps,
   TimeFieldComponentProps,
@@ -324,6 +325,30 @@ const DatePickerInput = ({
   );
 };
 
+// Forced value fields render a non-editable value the SDK already set on the form (via
+// `const`). `title`/`description` come pre-resolved (statement overrides falling back to
+// label/description), so this component only needs to decide how to present them.
+const ForcedValue = ({ fieldData }: ForcedValueComponentProps) => {
+  const { title, description, transformHtml, meta } = fieldData;
+
+  return (
+    <div className='forced-value-container'>
+      {title && (
+        <p
+          className='forced-value-title'
+          dangerouslySetInnerHTML={{ __html: title }}
+        />
+      )}
+      {renderDescription(description, transformHtml)}
+      {meta?.helpCenter?.callToAction && (
+        <span className='forced-value-help-center'>
+          {meta.helpCenter.callToAction}
+        </span>
+      )}
+    </div>
+  );
+};
+
 const PDFPreview = ({ base64Data }: PDFPreviewComponentProps) => {
   return (
     <iframe
@@ -447,6 +472,7 @@ export const components: Components = {
   countries: Countries,
   fieldsetToggle: FieldsetToggle,
   file: FileUploadField,
+  forcedValue: ForcedValue,
   date: DatePickerInput,
   pdfViewer: PDFPreview,
   tel: TelField,
