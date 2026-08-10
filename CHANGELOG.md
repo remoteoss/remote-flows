@@ -1,5 +1,29 @@
 # @remoteoss/remote-flows
 
+## 1.47.1
+
+### Patch Changes
+
+#### Docs
+
+- add docs about v4 (#1231) [#1231](https://github.com/remoteoss/remote-flows/pull/1231)
+- fix field description (#1232) [#1232](https://github.com/remoteoss/remote-flows/pull/1232)
+- fix login field jsfModify (#1239) [#1239](https://github.com/remoteoss/remote-flows/pull/1239)
+- make force value a component that devs can override (#1238) [#1238](https://github.com/remoteoss/remote-flows/pull/1238)
+
+#### Chores
+
+- update dependency oxfmt to v0.61.0 (#1221) [#1221](https://github.com/remoteoss/remote-flows/pull/1221)
+- update dependency oxlint to v1.76.0 (#1223) [#1223](https://github.com/remoteoss/remote-flows/pull/1223)
+- update dependency vite to v8.1.5 (#1225) [#1225](https://github.com/remoteoss/remote-flows/pull/1225)
+- update dependency tsx to v4.23.1 (#1224) [#1224](https://github.com/remoteoss/remote-flows/pull/1224)
+- update dependency axios to v1.19.0
+- update schneegans/dynamic-badges-action action to v1.9.0 (#1229) [#1229](https://github.com/remoteoss/remote-flows/pull/1229)
+- update dependency @playwright/test to v1.62.1 (#1233) [#1233](https://github.com/remoteoss/remote-flows/pull/1233)
+- update dependency dompurify to v3.4.13 [security] (#1234) [#1234](https://github.com/remoteoss/remote-flows/pull/1234)
+- update dependency @vitejs/plugin-react to v6.0.5 (#1235) [#1235](https://github.com/remoteoss/remote-flows/pull/1235)
+- update dependency tsx to v4.23.5 (#1236) [#1236](https://github.com/remoteoss/remote-flows/pull/1236)
+
 ## 1.47.0
 
 ### Minor Changes
