@@ -160,6 +160,7 @@ export type {
 export type {
   FieldComponentProps,
   FileComponentProps,
+  UploadedFileReference,
   CountryComponentProps,
   StatementComponentProps,
   ForcedValueComponentProps,
