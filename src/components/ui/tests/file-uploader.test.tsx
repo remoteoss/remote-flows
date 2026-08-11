@@ -5,7 +5,7 @@ describe('FileUploader', () => {
   it('renders an already-uploaded file reference by name without crashing', () => {
     const uploadedFile = {
       name: 'cba_document.pdf',
-      slug: 'a1526614-e218-4f8f-a9d7-055a014ab42c',
+      id: 'a1526614-e218-4f8f-a9d7-055a014ab42c',
     };
 
     render(<FileUploader onChange={vi.fn()} files={[uploadedFile]} />);
@@ -25,7 +25,7 @@ describe('FileUploader', () => {
 
   it('calls onChange with the remaining files when removing an uploaded reference', () => {
     const onChange = vi.fn();
-    const uploadedFile = { name: 'cba_document.pdf', slug: 'existing-slug' };
+    const uploadedFile = { name: 'cba_document.pdf', id: 'existing-id' };
     const file = new File(['content'], 'new.pdf', { type: 'application/pdf' });
 
     render(

@@ -20,7 +20,7 @@ export const convertFilesToBase64 = async (
   const base64Files = await Promise.all(
     files.map(async (file) => {
       if (!(file instanceof File)) {
-        return { name: file.name, slug: file.slug };
+        return { name: file.name, id: file.id };
       }
 
       const base64 = await toBase64(file);

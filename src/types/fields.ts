@@ -101,7 +101,7 @@ export type FileComponentProps = FieldComponentProps & {
  */
 export type UploadedFileReference = {
   name: string;
-  slug: string;
+  id: string;
   sub_type?: string | null;
 };
 

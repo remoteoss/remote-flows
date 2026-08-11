@@ -22,7 +22,7 @@ describe('files lib', () => {
     it('passes through an already-uploaded file by reference instead of re-encoding it', async () => {
       const uploadedFile = {
         name: 'cba_document.pdf',
-        slug: 'a1526614-e218-4f8f-a9d7-055a014ab42c',
+        id: 'a1526614-e218-4f8f-a9d7-055a014ab42c',
         sub_type: 'cba_document',
       };
 
@@ -31,7 +31,7 @@ describe('files lib', () => {
       expect(result).toEqual([
         {
           name: 'cba_document.pdf',
-          slug: 'a1526614-e218-4f8f-a9d7-055a014ab42c',
+          id: 'a1526614-e218-4f8f-a9d7-055a014ab42c',
         },
       ]);
     });
@@ -40,7 +40,7 @@ describe('files lib', () => {
       const newFile = new File(['content'], 'new.pdf', {
         type: 'application/pdf',
       });
-      const uploadedFile = { name: 'existing.pdf', slug: 'existing-slug' };
+      const uploadedFile = { name: 'existing.pdf', id: 'existing-id' };
 
       const result = await convertFilesToBase64([newFile, uploadedFile]);
 
@@ -51,7 +51,7 @@ describe('files lib', () => {
           type: 'application/pdf',
           content: expect.any(String),
         },
-        { name: 'existing.pdf', slug: 'existing-slug' },
+        { name: 'existing.pdf', id: 'existing-id' },
       ]);
     });
   });
