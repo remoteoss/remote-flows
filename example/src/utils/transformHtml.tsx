@@ -14,7 +14,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@remoteoss/remote-flows/internals';
-import { Accordion } from '../components/Accordion';
 
 // Shared <details data-component="Accordion"> detection, parameterized by how the match
 // should be rendered (inline accordion vs. a button that opens a modal).
@@ -89,9 +88,42 @@ export const transformHtmlToComponents = createHtmlTransformer(
   ),
 );
 
-// Used for forced-value fields: keeps the classic inline expand/collapse accordion.
-export const transformHtmlToAccordion = createHtmlTransformer(
-  (summary, content) => (
-    <Accordion summary={summary}>{content}</Accordion>
-  ),
-);
+// Used for forced-value fields whose description embeds a
+// <details data-component="Accordion">: instead of an inline accordion nested inside the
+// description, the ForcedValue's own title + the description's leading content (everything
+// outside the <details>) become the single accordion's summary, and the <details> body
+// (minus its own <summary>) becomes the collapsible content.
+export const splitAccordionDescription = (
+  htmlContent: string,
+): { leading: React.ReactNode; content: React.ReactNode } | null => {
+  const clean = DOMPurify.sanitize(htmlContent);
+  let found = false;
+  let accordionContent: React.ReactNode = null;
+
+  const options: HTMLReactParserOptions = {
+    replace: (domNode) => {
+      if (domNode.type === 'tag' && domNode.name === 'details') {
+        const element = domNode as Element;
+
+        if (element.attribs?.['data-component'] === 'Accordion') {
+          found = true;
+
+          const body = element.children?.filter(
+            (child: $TSFixMe) =>
+              !(child.type === 'tag' && child.name === 'summary'),
+          );
+
+          accordionContent = domToReact((body || []) as $TSFixMe[], options);
+
+          // Drop the <details> node from the leading output — its content becomes the
+          // accordion's collapsible body instead.
+          return <></>;
+        }
+      }
+    },
+  };
+
+  const leading = parse(clean, options);
+
+  return found ? { leading, content: accordionContent } : null;
+};

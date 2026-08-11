@@ -10,7 +10,8 @@ import type {
   TimeFieldComponentProps,
 } from '@remoteoss/remote-flows';
 import { FileUploader } from '@remoteoss/remote-flows/internals';
-import { transformHtmlToAccordion } from './utils/transformHtml';
+import { splitAccordionDescription } from './utils/transformHtml';
+import { Accordion } from './components/Accordion';
 //import { ZendeskDialog } from './ZendeskDialog';
 
 const renderDescription = (
@@ -330,7 +331,34 @@ const DatePickerInput = ({
 // `const`). `title`/`description` come pre-resolved (statement overrides falling back to
 // label/description), so this component only needs to decide how to present them.
 const ForcedValue = ({ fieldData }: ForcedValueComponentProps) => {
-  const { title, description, meta } = fieldData;
+  const { title, description, meta, transformHtml } = fieldData;
+
+  const accordionParts =
+    typeof description === 'string'
+      ? splitAccordionDescription(description)
+      : null;
+
+  if (accordionParts) {
+    return (
+      <Accordion
+        summary={
+          <div>
+            {title && (
+              <div
+                className='font-semibold text-blue-600 text-sm'
+                dangerouslySetInnerHTML={{ __html: title }}
+              />
+            )}
+            <div className='font-normal text-gray-700 text-sm mt-1'>
+              {accordionParts.leading}
+            </div>
+          </div>
+        }
+      >
+        {accordionParts.content}
+      </Accordion>
+    );
+  }
 
   return (
     <div className='forced-value-container'>
@@ -340,7 +368,7 @@ const ForcedValue = ({ fieldData }: ForcedValueComponentProps) => {
           dangerouslySetInnerHTML={{ __html: title }}
         />
       )}
-      {renderDescription(description, transformHtmlToAccordion)}
+      {renderDescription(description, transformHtml)}
       {meta?.helpCenter?.callToAction && (
         <span className='forced-value-help-center'>
           {meta.helpCenter.callToAction}
