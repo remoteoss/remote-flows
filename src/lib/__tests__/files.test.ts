@@ -29,7 +29,10 @@ describe('files lib', () => {
       const result = await convertFilesToBase64([uploadedFile]);
 
       expect(result).toEqual([
-        { name: 'cba_document.pdf', slug: 'a1526614-e218-4f8f-a9d7-055a014ab42c' },
+        {
+          name: 'cba_document.pdf',
+          slug: 'a1526614-e218-4f8f-a9d7-055a014ab42c',
+        },
       ]);
     });
 
