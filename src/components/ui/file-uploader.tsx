@@ -2,9 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/src/components/ui/button';
 import { Upload, X } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
-import { UploadedFileReference } from '@/src/types/fields';
-
-type UploaderFile = File | UploadedFileReference;
 
 // Convert accept string to readable format (e.g., ".pdf, .doc" -> "PDF, DOC")
 const getAcceptedFormats = (accept?: string) => {
@@ -16,11 +13,11 @@ const getAcceptedFormats = (accept?: string) => {
 };
 
 type FileUploaderProps = {
-  onChange: (files: UploaderFile[]) => void;
+  onChange: (files: File[]) => void;
   className?: string;
   multiple?: boolean;
   accept?: string;
-  files?: UploaderFile[];
+  files?: File[];
   id?: string;
 };
 
@@ -32,9 +29,9 @@ export function FileUploader({
   files: externalFiles,
   id,
 }: FileUploaderProps) {
-  const syncedRef = useRef<UploaderFile[] | undefined>(undefined);
+  const syncedRef = useRef<File[] | undefined>(undefined);
 
-  const [files, setFiles] = useState<UploaderFile[]>(externalFiles || []);
+  const [files, setFiles] = useState<File[]>(externalFiles || []);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -54,13 +51,19 @@ export function FileUploader({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newFiles = Array.from(e.target.files);
+      // `multiple` unset keeps the historical accumulate-across-selections behavior. Only an
+      // explicit `multiple={false}` (as opposed to just not passing the prop) opts a field out
+      // of that and replaces its selection instead — see the discussion on why this can't be
+      // `!multiple` without reverting the field's own past "preserve existing files" fix.
+      const updatedFiles =
+        multiple === false ? newFiles : [...files, ...newFiles];
 
-      setFiles([...files, ...newFiles]);
-      onChange([...files, ...newFiles]);
+      setFiles(updatedFiles);
+      onChange(updatedFiles);
     }
   };
 
-  const onRemoveFile = (file: UploaderFile) => {
+  const onRemoveFile = (file: File) => {
     setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
     onChange(files.filter((f) => f.name !== file.name));
   };

@@ -6,17 +6,14 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import { FormField } from '../../ui/form';
-import { FieldDataProps, UploadedFileReference } from '@/src/types/fields';
+import { FieldDataProps } from '@/src/types/fields';
 
-type FieldFile = File | UploadedFileReference;
-
-const validateFileSize = (
-  files: FieldFile[],
-  maxSize?: number,
-): string | null => {
+const validateFileSize = (files: File[], maxSize?: number): string | null => {
   if (!maxSize) return null;
 
   for (const file of files) {
+    // `file` may not be a real File at runtime (e.g. an already-uploaded reference mixed in
+    // via a multi-file field) even though the public type says otherwise — guard defensively.
     if (file instanceof File && file.size > maxSize) {
       const maxSizeMB = Math.round(maxSize / (1024 * 1024));
       const fileSizeMB = Math.round(file.size / (1024 * 1024));
@@ -33,7 +30,7 @@ export type FieldFileDataProps = FieldDataProps & {
 };
 
 export type FileUploadFieldProps = JSFField & {
-  onChange?: (value: FieldFile[]) => void;
+  onChange?: (value: File[]) => void;
   multiple?: boolean;
   component?: Components['file'];
   maxSize?: number;
@@ -56,7 +53,7 @@ export function FileUploadField({
   const transformHtml = useTransformer();
 
   const handleOnChange = async (
-    files: FieldFile[],
+    files: File[],
     field: ControllerRenderProps<FieldValues, string>,
   ) => {
     const sizeError = validateFileSize(files, maxSize);
@@ -96,8 +93,7 @@ export function FileUploadField({
             field={{
               ...field,
               value: field.value,
-              onChange: async (value: FieldFile[]) =>
-                handleOnChange(value, field),
+              onChange: async (value: File[]) => handleOnChange(value, field),
             }}
             fieldState={fieldState}
             fieldData={customFileUploadFieldProps}
