@@ -400,7 +400,7 @@ const OnboardingWithProps = ({
   <RemoteFlows
     proxy={{ url: window.location.origin }}
     transformHtmlToComponents={transformHtmlToComponents}
-    components={components}
+    /* components={components} */
   >
     <OnboardingFlow
       companyId={companyId}
