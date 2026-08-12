@@ -1,5 +1,16 @@
 # @remoteoss/remote-flows
 
+## 1.48.0
+
+### Minor Changes
+
+- preserve already-uploaded file references instead of re-encoding them
+- fix formatting flagged by oxfmt in CI
+- use id instead of slug for the uploaded-file reference
+- avoid public API breaking change, fix multiple=false accumulating files
+- export UploadedFileReference and document the custom-component risk
+- add better examples on how to want partners want (#1242) [#1242](https://github.com/remoteoss/remote-flows/pull/1242)
+
 ## 1.47.1
 
 ### Patch Changes
