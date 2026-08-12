@@ -25,8 +25,8 @@ import { transformHtmlToComponents } from '../../utils/transformHtml';
 import { sanitizeHtml } from '@remoteoss/remote-flows/internals';
 import { ONBOARDING_OPTIONS } from './constants';
 import { StepsNavigation } from './StepsNavigation';
-import '../../css/main.css';
 import { PreviewEmploymentAgreementStep } from './PreviewEmploymentAgreementStep';
+import '../../css/main.css';
 
 const BenefitsAboutSection = ({
   description,

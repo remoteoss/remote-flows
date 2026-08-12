@@ -1,57 +1,83 @@
-import parse, {
-  domToReact,
-  HTMLReactParserOptions,
-  Element,
-  DOMNode,
-} from 'html-react-parser';
-import DOMPurify from 'dompurify';
+import { domToReact, Element, DOMNode } from 'html-react-parser';
 import { $TSFixMe } from '@remoteoss/remote-flows';
-import { Accordion } from '../components/Accordion';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@remoteoss/remote-flows/internals';
+import {
+  DataComponentEntry,
+  DataComponentRegistry,
+  extractFirstDataComponent,
+  replaceDataComponents,
+} from './dataComponent';
 
-export const transformHtmlToComponents = (htmlContent: string) => {
-  // 1. Sanitize HTML first (IMPORTANT for security)
-  const clean = DOMPurify.sanitize(htmlContent);
+type AccordionParts = { summary: React.ReactNode; content: React.ReactNode };
 
-  // 2. Define transformation options
-  const options: HTMLReactParserOptions = {
-    replace: (domNode) => {
-      // Check if it's an element node
-      if (domNode.type === 'tag' && domNode.name === 'details') {
-        const element = domNode as Element;
-        const dataComponent = element.attribs?.['data-component'];
+// Shared <details data-component="Accordion"> extraction: split the <summary> from the
+// rest of the body so callers can present the two pieces however they need to.
+const accordionEntry: DataComponentEntry<AccordionParts> = {
+  extract: (element, options) => {
+    const summaryNode = element.children?.find(
+      (child: $TSFixMe) => child.type === 'tag' && child.name === 'summary',
+    );
 
-        // Transform <details data-component="Accordion"> to custom Accordion
-        if (dataComponent === 'Accordion') {
-          // Find the <summary> tag
-          const summaryNode = element.children?.find(
-            (child: $TSFixMe) =>
-              child.type === 'tag' && child.name === 'summary',
-          );
+    const summary = summaryNode
+      ? domToReact((summaryNode as Element).children as DOMNode[], options)
+      : 'Details';
 
-          // Extract summary content
-          const summary = summaryNode
-            ? domToReact(
-                (summaryNode as Element).children as DOMNode[],
-                options,
-              )
-            : 'Details';
+    const content = element.children?.filter(
+      (child: $TSFixMe) => !(child.type === 'tag' && child.name === 'summary'),
+    );
 
-          // Get all other content (not the summary)
-          const content = element.children?.filter(
-            (child: $TSFixMe) =>
-              !(child.type === 'tag' && child.name === 'summary'),
-          );
+    return {
+      summary,
+      content: domToReact((content || []) as DOMNode[], options),
+    };
+  },
+  // Used for regular fields: the accordion becomes a button that opens a modal with its
+  // content.
+  render: ({ summary, content }) => (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant='link'>{summary}</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{summary}</DialogTitle>
+        </DialogHeader>
+        <div className='accordion-modal-content'>{content}</div>
+      </DialogContent>
+    </Dialog>
+  ),
+};
 
-          return (
-            <Accordion summary={summary}>
-              {domToReact((content || []) as $TSFixMe[], options)}
-            </Accordion>
-          );
-        }
-      }
-    },
-  };
+export const dataComponentRegistry: DataComponentRegistry = {
+  Accordion: accordionEntry,
+};
 
-  // 3. Parse and transform
-  return parse(clean, options);
+export const transformHtmlToComponents = (htmlContent: string) =>
+  replaceDataComponents(htmlContent, dataComponentRegistry);
+
+// Used for forced-value fields whose description embeds a
+// <details data-component="Accordion">: instead of an inline accordion nested inside the
+// description, the ForcedValue's own title + the description's leading content (everything
+// outside the <details>) become the single accordion's summary, and the <details> body
+// (minus its own <summary>) becomes the collapsible content.
+export const splitAccordionDescription = (
+  htmlContent: string,
+): { leading: React.ReactNode; content: React.ReactNode } | null => {
+  const match = extractFirstDataComponent(
+    htmlContent,
+    'Accordion',
+    accordionEntry.extract,
+    dataComponentRegistry,
+  );
+
+  return match
+    ? { leading: match.leading, content: match.extracted.content }
+    : null;
 };
