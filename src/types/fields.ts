@@ -91,8 +91,31 @@ export type FieldDataProps = Partial<JSFField> & {
   transformHtml?: (html: string) => React.ReactNode;
 };
 
+/**
+ * Props for a custom `inputType: file` component.
+ *
+ * `field.value` is typed as `File[]` for convenience, but for a field that already has a
+ * previously uploaded file (e.g. loaded from a `GET` response), an entry can be an
+ * {@link UploadedFileReference} instead of a real `File` — it only has `name` (and `id`), not
+ * `size`/`type`/any `Blob` method. Check `instanceof File` before relying on anything beyond
+ * `.name`.
+ */
 export type FileComponentProps = FieldComponentProps & {
   fieldData: FieldFileDataProps;
+};
+
+/**
+ * Reference to a file already uploaded, as returned by the API on `GET` for `inputType: file`
+ * fields. Sent back unchanged on the next submit to keep the file instead of re-uploading it.
+ *
+ * A custom `inputType: file` component (see {@link FileComponentProps}) can receive one of these
+ * in place of a real `File` for a field that already had a file attached — it carries no binary
+ * content and doesn't implement the `Blob`/`File` interface.
+ */
+export type UploadedFileReference = {
+  name: string;
+  id: string;
+  sub_type?: string | null;
 };
 
 type FieldCountryDataProps = Omit<FieldDataProps, 'meta'> & {

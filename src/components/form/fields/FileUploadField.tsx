@@ -12,7 +12,9 @@ const validateFileSize = (files: File[], maxSize?: number): string | null => {
   if (!maxSize) return null;
 
   for (const file of files) {
-    if (file.size > maxSize) {
+    // `file` may not be a real File at runtime (e.g. an already-uploaded reference mixed in
+    // via a multi-file field) even though the public type says otherwise — guard defensively.
+    if (file instanceof File && file.size > maxSize) {
       const maxSizeMB = Math.round(maxSize / (1024 * 1024));
       const fileSizeMB = Math.round(file.size / (1024 * 1024));
       return `File "${file.name}" exceeds maximum size of ${maxSizeMB}MB (file is ${fileSizeMB}MB)`;
