@@ -51,9 +51,15 @@ export function FileUploader({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newFiles = Array.from(e.target.files);
+      // `multiple` unset keeps the historical accumulate-across-selections behavior. Only an
+      // explicit `multiple={false}` (as opposed to just not passing the prop) opts a field out
+      // of that and replaces its selection instead — see the discussion on why this can't be
+      // `!multiple` without reverting the field's own past "preserve existing files" fix.
+      const updatedFiles =
+        multiple === false ? newFiles : [...files, ...newFiles];
 
-      setFiles([...files, ...newFiles]);
-      onChange([...files, ...newFiles]);
+      setFiles(updatedFiles);
+      onChange(updatedFiles);
     }
   };
 
@@ -100,8 +106,8 @@ export function FileUploader({
       {files.length > 0 &&
         files.map((file, index) => (
           <div key={index} className='text-sm flex items-center gap-2'>
-            Selected file: <span className='font-medium'>{file.name}</span> (
-            {Math.round(file.size / 1024)} KB)
+            Selected file: <span className='font-medium'>{file.name}</span>
+            {'size' in file && ` (${Math.round(file.size / 1024)} KB)`}
             <Button
               type='button'
               variant='ghost'
