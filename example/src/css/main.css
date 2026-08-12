@@ -24,6 +24,16 @@
   transform: rotate(90deg);
 }
 
+.heading-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heading-icon-glyph {
+  flex-shrink: 0;
+}
+
 .cost-calculator__container {
   padding: 100px;
 }

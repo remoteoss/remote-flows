@@ -1,10 +1,5 @@
-import parse, {
-  domToReact,
-  HTMLReactParserOptions,
-  Element,
-  DOMNode,
-} from 'html-react-parser';
-import DOMPurify from 'dompurify';
+import { createElement } from 'react';
+import { domToReact, Element, DOMNode } from 'html-react-parser';
 import { $TSFixMe } from '@remoteoss/remote-flows';
 import {
   Button,
@@ -14,66 +9,39 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@remoteoss/remote-flows/internals';
+import {
+  DataComponentEntry,
+  DataComponentRegistry,
+  extractFirstDataComponent,
+  replaceDataComponents,
+} from './dataComponent';
 
-// Shared <details data-component="Accordion"> detection, parameterized by how the match
-// should be rendered (inline accordion vs. a button that opens a modal).
-const createHtmlTransformer =
-  (
-    renderAccordion: (
-      summary: React.ReactNode,
-      content: React.ReactNode,
-    ) => React.ReactElement,
-  ) =>
-  (htmlContent: string) => {
-    // 1. Sanitize HTML first (IMPORTANT for security)
-    const clean = DOMPurify.sanitize(htmlContent);
+type AccordionParts = { summary: React.ReactNode; content: React.ReactNode };
 
-    // 2. Define transformation options
-    const options: HTMLReactParserOptions = {
-      replace: (domNode) => {
-        // Check if it's an element node
-        if (domNode.type === 'tag' && domNode.name === 'details') {
-          const element = domNode as Element;
-          const dataComponent = element.attribs?.['data-component'];
+// Shared <details data-component="Accordion"> extraction: split the <summary> from the
+// rest of the body so callers can present the two pieces however they need to.
+const accordionEntry: DataComponentEntry<AccordionParts> = {
+  extract: (element, options) => {
+    const summaryNode = element.children?.find(
+      (child: $TSFixMe) => child.type === 'tag' && child.name === 'summary',
+    );
 
-          // Transform <details data-component="Accordion"> per renderAccordion
-          if (dataComponent === 'Accordion') {
-            // Find the <summary> tag
-            const summaryNode = element.children?.find(
-              (child: $TSFixMe) =>
-                child.type === 'tag' && child.name === 'summary',
-            );
+    const summary = summaryNode
+      ? domToReact((summaryNode as Element).children as DOMNode[], options)
+      : 'Details';
 
-            // Extract summary content
-            const summary = summaryNode
-              ? domToReact(
-                  (summaryNode as Element).children as DOMNode[],
-                  options,
-                )
-              : 'Details';
+    const content = element.children?.filter(
+      (child: $TSFixMe) => !(child.type === 'tag' && child.name === 'summary'),
+    );
 
-            // Get all other content (not the summary)
-            const content = element.children?.filter(
-              (child: $TSFixMe) =>
-                !(child.type === 'tag' && child.name === 'summary'),
-            );
-
-            return renderAccordion(
-              summary,
-              domToReact((content || []) as $TSFixMe[], options),
-            );
-          }
-        }
-      },
+    return {
+      summary,
+      content: domToReact((content || []) as DOMNode[], options),
     };
-
-    // 3. Parse and transform
-    return parse(clean, options);
-  };
-
-// Used for regular fields: the accordion becomes a button that opens a modal with its content.
-export const transformHtmlToComponents = createHtmlTransformer(
-  (summary, content) => (
+  },
+  // Used for regular fields: the accordion becomes a button that opens a modal with its
+  // content.
+  render: ({ summary, content }) => (
     <Dialog>
       <DialogTrigger asChild>
         <Button variant='link'>{summary}</Button>
@@ -86,7 +54,35 @@ export const transformHtmlToComponents = createHtmlTransformer(
       </DialogContent>
     </Dialog>
   ),
-);
+};
+
+type HeadingIconParts = { tagName: string; text: React.ReactNode };
+
+const headingIconEntry: DataComponentEntry<HeadingIconParts> = {
+  extract: (element, options) => ({
+    tagName: element.name,
+    text: domToReact((element.children ?? []) as DOMNode[], options),
+  }),
+  render: ({ tagName, text }) =>
+    createElement(
+      tagName,
+      { className: 'heading-icon' },
+      createElement(
+        'span',
+        { className: 'heading-icon-glyph', 'aria-hidden': true },
+        'ℹ️',
+      ),
+      text,
+    ),
+};
+
+export const dataComponentRegistry: DataComponentRegistry = {
+  Accordion: accordionEntry,
+  HeadingIcon: headingIconEntry,
+};
+
+export const transformHtmlToComponents = (htmlContent: string) =>
+  replaceDataComponents(htmlContent, dataComponentRegistry);
 
 // Used for forced-value fields whose description embeds a
 // <details data-component="Accordion">: instead of an inline accordion nested inside the
@@ -96,34 +92,14 @@ export const transformHtmlToComponents = createHtmlTransformer(
 export const splitAccordionDescription = (
   htmlContent: string,
 ): { leading: React.ReactNode; content: React.ReactNode } | null => {
-  const clean = DOMPurify.sanitize(htmlContent);
-  let found = false;
-  let accordionContent: React.ReactNode = null;
+  const match = extractFirstDataComponent(
+    htmlContent,
+    'Accordion',
+    accordionEntry.extract,
+    dataComponentRegistry,
+  );
 
-  const options: HTMLReactParserOptions = {
-    replace: (domNode) => {
-      if (domNode.type === 'tag' && domNode.name === 'details') {
-        const element = domNode as Element;
-
-        if (element.attribs?.['data-component'] === 'Accordion') {
-          found = true;
-
-          const body = element.children?.filter(
-            (child: $TSFixMe) =>
-              !(child.type === 'tag' && child.name === 'summary'),
-          );
-
-          accordionContent = domToReact((body || []) as $TSFixMe[], options);
-
-          // Drop the <details> node from the leading output — its content becomes the
-          // accordion's collapsible body instead.
-          return <></>;
-        }
-      }
-    },
-  };
-
-  const leading = parse(clean, options);
-
-  return found ? { leading, content: accordionContent } : null;
+  return match
+    ? { leading: match.leading, content: match.extracted.content }
+    : null;
 };
