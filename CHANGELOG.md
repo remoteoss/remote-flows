@@ -1,5 +1,17 @@
 # @remoteoss/remote-flows
 
+## 1.48.0
+
+### Minor Changes
+
+#### Fixes
+
+- preserve already-uploaded file references instead of re-encoding them (#1241) [#1241](https://github.com/remoteoss/remote-flows/pull/1241)
+
+#### Docs
+
+- add better examples on how to want partners want (#1242) [#1242](https://github.com/remoteoss/remote-flows/pull/1242)
+
 ## 1.47.1
 
 ### Patch Changes
