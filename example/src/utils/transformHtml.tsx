@@ -1,4 +1,3 @@
-import { createElement } from 'react';
 import { domToReact, Element, DOMNode } from 'html-react-parser';
 import { $TSFixMe } from '@remoteoss/remote-flows';
 import {
@@ -56,29 +55,8 @@ const accordionEntry: DataComponentEntry<AccordionParts> = {
   ),
 };
 
-type HeadingIconParts = { tagName: string; text: React.ReactNode };
-
-const headingIconEntry: DataComponentEntry<HeadingIconParts> = {
-  extract: (element, options) => ({
-    tagName: element.name,
-    text: domToReact((element.children ?? []) as DOMNode[], options),
-  }),
-  render: ({ tagName, text }) =>
-    createElement(
-      tagName,
-      { className: 'heading-icon' },
-      createElement(
-        'span',
-        { className: 'heading-icon-glyph', 'aria-hidden': true },
-        'ℹ️',
-      ),
-      text,
-    ),
-};
-
 export const dataComponentRegistry: DataComponentRegistry = {
   Accordion: accordionEntry,
-  HeadingIcon: headingIconEntry,
 };
 
 export const transformHtmlToComponents = (htmlContent: string) =>
