@@ -44,6 +44,7 @@ import CostCalculatorWithReplaceableComponentsCode from './CostCalculatorWithRep
 import TerminationCode from './Termination?raw';
 import ContractAmendmentCode from './ContractAmendment?raw';
 import { ContractorOnboardingForm } from './ContractorOnboarding';
+import { ContractorContractCreationForm } from './ContractorContractCreation';
 import { CreateCompanyForm } from './CreateCompany';
 import { MagicLinkTest } from './MagicLinkTest';
 import { JsonSchemaComparisonDemo } from './JsonSchemaComparisonDemo';
@@ -52,6 +53,7 @@ import { SandboxPaymentApproval } from './SandboxPaymentApproval';
 import { PayrollAdminOnboardingForm } from './PayrollAdminOnboarding';
 import { PayrollEmployeeOnboardingForm } from './PayrollEmployeeOnboarding';
 import ContractorOnboardingCode from './ContractorOnboarding?raw';
+import ContractorContractCreationCode from './ContractorContractCreation?raw';
 import CreateCompanyCode from './CreateCompany?raw';
 import MagicLinkTestCode from './MagicLinkTest?raw';
 import JsonSchemaComparisonCode from './JsonSchemaComparisonDemo?raw';
@@ -159,6 +161,13 @@ const additionalDemos = [
     description: 'Onboarding flow of a new contractor',
     component: ContractorOnboardingForm,
     sourceCode: ContractorOnboardingCode,
+  },
+  {
+    id: 'contractor-contract-creation',
+    title: 'Contractor Contract Creation',
+    description: 'Create a contract for an existing contractor',
+    component: ContractorContractCreationForm,
+    sourceCode: ContractorContractCreationCode,
   },
   {
     id: 'create-company',

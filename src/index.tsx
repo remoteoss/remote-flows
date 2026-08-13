@@ -91,6 +91,8 @@ export type {
 
 export type { ContractPreviewStatementProps } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
 
+export { ContractorContractCreationFlow } from '@/src/flows/ContractorContractCreation';
+
 export {
   PayrollAdminOnboardingFlow,
   usePayrollAdminOnboarding,
