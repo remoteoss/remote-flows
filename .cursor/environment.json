@@ -1,0 +1,15 @@
+{
+  "install": "npm ci --include=optional --ignore-scripts && npm run build && cd example && npm ci --include=optional --ignore-scripts && npm run postinstall",
+  "terminals": [
+    {
+      "name": "lib-watch",
+      "command": "npm run dev",
+      "description": "tsup watch build for the main package"
+    },
+    {
+      "name": "example-app",
+      "command": "cd example && npm run dev",
+      "description": "Vite/Express dev server for the example app"
+    }
+  ]
+}
