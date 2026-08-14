@@ -439,6 +439,7 @@ flows/[FlowName]/
 - Reimplementing existing UI components
 - Not using `cn()` helper for class merging
 - Missing `asChild` pattern for polymorphic components
+- Adding a new ad-hoc flag, condition, or check where an existing one nearby (in the same file, hook, or context) already covers the same case — prefer extending/reusing it over introducing a parallel mechanism
 
 ### 8. Testing Issues
 
