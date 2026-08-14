@@ -27,13 +27,13 @@ import {
   usePostManageContractorCorSubscription,
   useDeleteContractorCorSubscription,
   useCountriesSchemaField,
-  useContractorOnboardingDetailsSchemaWithCurrencies,
   CONTRACT_PRODUCT_TITLES,
   useHasCompanySignedContract,
   useCompanyOpenTasks,
   useSetContractOrigin,
   useGetContractOriginSchema,
 } from '@/src/flows/ContractorOnboarding/api';
+import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
   ContractorOnboardingFlowProps,
   ContractorOnboardingHookOptions,
@@ -624,7 +624,7 @@ export const useContractorOnboarding = ({
   const {
     data: contractorOnboardingDetailsForm,
     isLoading: isLoadingContractorOnboardingDetailsForm,
-  } = useContractorOnboardingDetailsSchemaWithCurrencies({
+  } = useContractorContractDetailsSchema({
     countryCode: internalCountryCode as string,
     fieldValues: fieldValues,
     employmentId: internalEmploymentId as string,
