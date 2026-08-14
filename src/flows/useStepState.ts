@@ -41,6 +41,8 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   stepsRef.current = steps;
 
   const [fieldValues, setFieldValues] = useState<Fields>({} as Fields);
+  const fieldValuesRef = useRef(fieldValues);
+  fieldValuesRef.current = fieldValues;
   const initialStep = getInitialStep(steps);
   const [stepState, setStepState] = useState<StepState<T, Fields>>({
     currentStep: initialStep,
@@ -64,17 +66,27 @@ export const useStepState = <T extends string, Fields = FieldValues>(
     );
 
     if (nextStep) {
-      setStepState((previousState) => ({
-        ...previousState,
-        currentStep: nextStep,
-        values: {
-          ...previousState.values,
-          [previousState.currentStep.name]: {
-            ...previousState.values?.[previousState.currentStep.name as T],
-            ...fieldValues,
-          },
-        } as { [key in T]: Fields },
-      }));
+      // Captured before setFieldValues({}) below clears it: both updates
+      // land in the same render, and fieldValuesRef.current would already
+      // reflect the cleared value by the time the setStepState updater runs.
+      const capturedFieldValues = fieldValuesRef.current;
+      setStepState((previousState) => {
+        const currentStepName = previousState.currentStep.name;
+        const previousValues = previousState.values?.[currentStepName as T];
+        const hasCapturedValues =
+          Object.keys(capturedFieldValues as object).length > 0;
+
+        return {
+          ...previousState,
+          currentStep: nextStep,
+          values: {
+            ...previousState.values,
+            [currentStepName]: hasCapturedValues
+              ? { ...previousValues, ...capturedFieldValues }
+              : previousValues,
+          } as { [key in T]: Fields },
+        };
+      });
       onStepChange?.(nextStep);
       setFieldValues({} as Fields);
     }
@@ -88,17 +100,24 @@ export const useStepState = <T extends string, Fields = FieldValues>(
       .find((step) => step.index < index && step.visible !== false);
 
     if (previousStep) {
-      setStepState((previousState) => ({
-        ...previousState,
-        currentStep: previousStep,
-        values: {
-          ...previousState.values,
-          [previousState.currentStep.name]: {
-            ...previousState.values?.[previousState.currentStep.name as T],
-            ...fieldValues,
-          },
-        } as { [key in T]: Fields },
-      }));
+      const capturedFieldValues = fieldValuesRef.current;
+      setStepState((previousState) => {
+        const currentStepName = previousState.currentStep.name;
+        const previousValues = previousState.values?.[currentStepName as T];
+        const hasCapturedValues =
+          Object.keys(capturedFieldValues as object).length > 0;
+
+        return {
+          ...previousState,
+          currentStep: previousStep,
+          values: {
+            ...previousState.values,
+            [currentStepName]: hasCapturedValues
+              ? { ...previousValues, ...capturedFieldValues }
+              : previousValues,
+          } as { [key in T]: Fields },
+        };
+      });
       onStepChange?.(previousStep);
       setFieldValues({} as Fields);
     }
