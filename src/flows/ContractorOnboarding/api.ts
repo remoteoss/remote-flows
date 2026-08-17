@@ -762,9 +762,13 @@ export const useGetInvoiceScheduleSchema = ({
 }) => {
   return useMemo(() => {
     if (!enabled) return null;
-    return createHeadlessForm(invoiceScheduleSchema, {}, {
-      jsfModify,
-    });
+    return createHeadlessForm(
+      invoiceScheduleSchema,
+      {},
+      {
+        jsfModify,
+      },
+    );
   }, [enabled, jsfModify]);
 };
 
