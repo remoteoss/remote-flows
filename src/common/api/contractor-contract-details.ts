@@ -14,7 +14,7 @@ import {
 } from '@/src/flows/types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
-const useContractorCurrencies = ({
+export const useContractorCurrencies = ({
   employmentId,
   options,
 }: {
@@ -86,17 +86,26 @@ const useContractorOnboardingDetailsSchema = ({
 
 /**
  * Get contractor onboarding details schema with currency options overridden
- * from the getIndexContractorCurrency endpoint
+ * from the getIndexContractorCurrency endpoint.
+ *
+ * `currencies` is fetched once by the caller (via useContractorCurrencies) and
+ * passed in, rather than fetched here, so that flows needing the same
+ * employment's currencies for more than one schema (e.g. ContractorOnboarding's
+ * contract_details and invoice_schedule steps) share a single query observer.
  */
 export const useContractorContractDetailsSchema = ({
   countryCode,
   employmentId,
   fieldValues,
+  currencies,
+  isLoadingCurrencies,
   options,
 }: {
   countryCode: string;
   fieldValues: FieldValues;
   employmentId: string;
+  currencies?: { code: string; source: string }[];
+  isLoadingCurrencies?: boolean;
   options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
 }) => {
   const schemaQuery = useContractorOnboardingDetailsSchema({
@@ -105,14 +114,6 @@ export const useContractorContractDetailsSchema = ({
     fieldValues,
     options,
   });
-
-  const { data: currencies, isLoading: isLoadingCurrencies } =
-    useContractorCurrencies({
-      employmentId,
-      options: {
-        queryOptions: { enabled: options?.queryOptions?.enabled },
-      },
-    });
 
   const dataWithCurrencies = useMemo(() => {
     if (!schemaQuery.data || !currencies) {
@@ -153,6 +154,6 @@ export const useContractorContractDetailsSchema = ({
   return {
     ...schemaQuery,
     data: dataWithCurrencies as $TSFixMe,
-    isLoading: schemaQuery.isLoading || isLoadingCurrencies,
+    isLoading: schemaQuery.isLoading || Boolean(isLoadingCurrencies),
   };
 };

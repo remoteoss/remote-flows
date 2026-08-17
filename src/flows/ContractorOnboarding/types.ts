@@ -190,6 +190,33 @@ export type EligibilityQuestionnaireResponse = SuccessResponse;
 
 export type InvoiceScheduleFormPayload = {
   invoice_schedule_preference: string;
+  // The fields below are only present when invoice_schedule_preference is 'schedule'.
+  currency?: string;
+  periodicity?: string;
+  start_date?: string;
+  item_1_description?: string;
+  item_1_amount?: number;
+  item_2_description?: string;
+  item_2_amount?: number;
+  item_3_description?: string;
+  item_3_amount?: number;
+  item_4_description?: string;
+  item_4_amount?: number;
+  item_5_description?: string;
+  item_5_amount?: number;
+  item_6_description?: string;
+  item_6_amount?: number;
+  item_7_description?: string;
+  item_7_amount?: number;
+  item_8_description?: string;
+  item_8_amount?: number;
+  item_9_description?: string;
+  item_9_amount?: number;
+  item_10_description?: string;
+  item_10_amount?: number;
+  number?: string;
+  note?: string;
+  nr_occurrences?: number;
 };
 
 export type InvoiceScheduleResponse = {

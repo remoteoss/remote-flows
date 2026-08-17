@@ -34,7 +34,10 @@ import {
   useGetContractOriginSchema,
   useGetInvoiceScheduleSchema,
 } from '@/src/flows/ContractorOnboarding/api';
-import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
+import {
+  useContractorContractDetailsSchema,
+  useContractorCurrencies,
+} from '@/src/common/api/contractor-contract-details';
 import {
   ContractorOnboardingFlowProps,
   ContractorOnboardingHookOptions,
@@ -636,6 +639,26 @@ export const useContractorOnboarding = ({
     isEmploymentReadOnly,
   );
 
+  const isInvoiceScheduleEnabled =
+    includeInvoiceSchedule && Boolean(internalEmploymentId);
+
+  // Fetched once and shared: both contract_details and invoice_schedule need
+  // this employment's supported currencies, so a single query observer avoids
+  // mounting two competing fetches for the same data.
+  const {
+    data: contractorCurrencies,
+    isLoading: isLoadingContractorCurrencies,
+  } = useContractorCurrencies({
+    employmentId: internalEmploymentId as string,
+    options: {
+      queryOptions: {
+        enabled:
+          Boolean(internalEmploymentId) &&
+          (isContractorOnboardingDetailsEnabled || isInvoiceScheduleEnabled),
+      },
+    },
+  });
+
   const {
     data: contractorOnboardingDetailsForm,
     isLoading: isLoadingContractorOnboardingDetailsForm,
@@ -643,6 +666,8 @@ export const useContractorOnboarding = ({
     countryCode: internalCountryCode as string,
     fieldValues: fieldValues,
     employmentId: internalEmploymentId as string,
+    currencies: contractorCurrencies,
+    isLoadingCurrencies: isLoadingContractorCurrencies,
     options: {
       queryOptions: {
         enabled: isContractorOnboardingDetailsEnabled,
@@ -683,9 +708,11 @@ export const useContractorOnboarding = ({
 
   const { data: invoiceScheduleForm } = useGetInvoiceScheduleSchema({
     fieldValues: fieldValues,
+    currencies: contractorCurrencies,
+    isLoadingCurrencies: isLoadingContractorCurrencies,
     options: {
       queryOptions: {
-        enabled: includeInvoiceSchedule,
+        enabled: isInvoiceScheduleEnabled,
       },
       jsfModify: options?.jsfModify?.invoice_schedule,
     },

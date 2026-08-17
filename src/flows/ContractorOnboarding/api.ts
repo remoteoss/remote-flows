@@ -753,14 +753,24 @@ export const useGetContractOriginSchema = ({
   });
 };
 
+/**
+ * `currencies` is fetched once by the caller (via useContractorCurrencies) and
+ * passed in, rather than fetched here, so that flows needing the same
+ * employment's currencies for more than one schema (e.g. this flow's
+ * contract_details and invoice_schedule steps) share a single query observer.
+ */
 export const useGetInvoiceScheduleSchema = ({
   fieldValues,
+  currencies,
+  isLoadingCurrencies,
   options,
 }: {
   fieldValues: FieldValues;
+  currencies?: { code: string; source: string }[];
+  isLoadingCurrencies?: boolean;
   options?: { queryOptions?: { enabled?: boolean }; jsfModify?: JSFModify };
 }) => {
-  return useQuery({
+  const schemaQuery = useQuery({
     queryKey: ['invoice-schedule-schema', options?.jsfModify],
     queryFn: async () => {
       return createHeadlessForm(invoiceScheduleSchema, fieldValues, {
@@ -769,6 +779,34 @@ export const useGetInvoiceScheduleSchema = ({
     },
     enabled: options?.queryOptions?.enabled,
   });
+
+  const dataWithCurrencies = useMemo(() => {
+    if (!schemaQuery.data || !currencies) {
+      return schemaQuery.data;
+    }
+
+    return {
+      ...schemaQuery.data,
+      fields: schemaQuery.data.fields.map((field: $TSFixMe) =>
+        field.name !== 'currency'
+          ? field
+          : {
+              ...field,
+              options: currencies.map((currency) => ({
+                label: currency.code,
+                value: currency.code,
+                meta: { source: currency.source },
+              })),
+            },
+      ),
+    };
+  }, [schemaQuery.data, currencies]);
+
+  return {
+    ...schemaQuery,
+    data: dataWithCurrencies as $TSFixMe,
+    isLoading: schemaQuery.isLoading || Boolean(isLoadingCurrencies),
+  };
 };
 
 export const useCountriesSchemaField = (
