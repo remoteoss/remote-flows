@@ -22,6 +22,7 @@ import {
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
 import { contractOriginSchema } from '@/src/flows/ContractorOnboarding/json-schemas/contractOrigin';
+import { invoiceScheduleSchema } from '@/src/flows/ContractorOnboarding/json-schemas/invoiceSchedule';
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
 import {
   JSONSchemaFormResultWithFieldsets,
@@ -745,6 +746,24 @@ export const useGetContractOriginSchema = ({
     queryKey: ['contract-origin-schema', options?.jsfModify],
     queryFn: async () => {
       return createHeadlessForm(contractOriginSchema, fieldValues, {
+        jsfModify: options?.jsfModify,
+      });
+    },
+    enabled: options?.queryOptions?.enabled,
+  });
+};
+
+export const useGetInvoiceScheduleSchema = ({
+  fieldValues,
+  options,
+}: {
+  fieldValues: FieldValues;
+  options?: { queryOptions?: { enabled?: boolean }; jsfModify?: JSFModify };
+}) => {
+  return useQuery({
+    queryKey: ['invoice-schedule-schema', options?.jsfModify],
+    queryFn: async () => {
+      return createHeadlessForm(invoiceScheduleSchema, fieldValues, {
         jsfModify: options?.jsfModify,
       });
     },

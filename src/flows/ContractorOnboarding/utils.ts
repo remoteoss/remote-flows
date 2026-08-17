@@ -13,6 +13,7 @@ export type StepKeys =
   | 'select_country'
   | 'basic_information'
   | 'contract_origin'
+  | 'invoice_schedule'
   | 'contract_details'
   | 'eligibility_questionnaire'
   | 'contract_preview'
@@ -22,6 +23,7 @@ export type StepKeys =
 type StepConfig = {
   includeSelectCountry?: boolean;
   includeContractOrigin?: boolean;
+  includeInvoiceSchedule?: boolean;
   includeEligibilityQuestionnaire?: boolean;
   includeContractDetails?: boolean;
   includeContractPreview?: boolean;
@@ -67,6 +69,11 @@ export function buildSteps(config: StepConfig = {}) {
       name: 'contract_preview',
       label: 'Contract Preview',
       visible: Boolean(config?.includeContractPreview),
+    },
+    {
+      name: 'invoice_schedule',
+      label: 'Invoice schedule',
+      visible: Boolean(config?.includeInvoiceSchedule),
     },
     {
       name: 'review',

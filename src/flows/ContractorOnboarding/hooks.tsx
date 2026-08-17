@@ -32,6 +32,7 @@ import {
   useCompanyOpenTasks,
   useSetContractOrigin,
   useGetContractOriginSchema,
+  useGetInvoiceScheduleSchema,
 } from '@/src/flows/ContractorOnboarding/api';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
@@ -86,6 +87,7 @@ const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
   select_country: null,
   basic_information: 'employment_basic_information',
   contract_origin: null,
+  invoice_schedule: null,
   contract_details: null,
   eligibility_questionnaire: null,
   pricing_plan: null,
@@ -128,6 +130,7 @@ export const useContractorOnboarding = ({
     select_country: Meta;
     basic_information: Meta;
     contract_origin: Meta;
+    invoice_schedule: Meta;
     contract_details: Meta;
     contract_preview: Meta;
     pricing_plan: Meta;
@@ -136,6 +139,7 @@ export const useContractorOnboarding = ({
     select_country: {},
     basic_information: {},
     contract_origin: {},
+    invoice_schedule: {},
     contract_details: {},
     contract_preview: {},
     pricing_plan: {},
@@ -158,6 +162,9 @@ export const useContractorOnboarding = ({
   const [includeContractOrigin, setIncludeContractOrigin] =
     useState<boolean>(true);
 
+  const [includeInvoiceSchedule, setIncludeInvoiceSchedule] =
+    useState<boolean>(false);
+
   const [pendingNavigationStep, setPendingNavigationStep] =
     useState<StepKeys | null>(null);
 
@@ -166,12 +173,14 @@ export const useContractorOnboarding = ({
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
         includeContractOrigin: includeContractOrigin,
+        includeInvoiceSchedule: includeInvoiceSchedule,
         includeEligibilityQuestionnaire: includeEligibilityQuestionnaire,
         includeContractDetails: includeContractDetails,
         includeContractPreview: includeContractPreview,
       }),
     [
       includeContractOrigin,
+      includeInvoiceSchedule,
       includeEligibilityQuestionnaire,
       includeContractDetails,
       includeContractPreview,
@@ -237,7 +246,7 @@ export const useContractorOnboarding = ({
   const createEmploymentMutation = useCreateEmployment();
   const updateEmploymentMutation = useUpdateEmployment(
     internalCountryCode as string,
-    options,
+    options as $TSFixMe, // TODO: done it as its shared between contractor and onboarding flows
   );
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
@@ -573,6 +582,12 @@ export const useContractorOnboarding = ({
     );
   }, [skipSteps, selectedPricingPlan]);
 
+  useEffect(() => {
+    setIncludeInvoiceSchedule(
+      options?.features?.includes('create_invoice_schedule') ?? false,
+    );
+  }, [options?.features]);
+
   const eligibilityFields = useMemo(() => {
     return {
       ...eligibilityAnswers,
@@ -666,6 +681,13 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const { data: invoiceScheduleForm } = useGetInvoiceScheduleSchema({
+    fieldValues: fieldValues,
+    options: {
+      jsfModify: options?.jsfModify?.invoice_schedule,
+    },
+  });
+
   const {
     data: documentPreviewPdf,
     isLoading: isLoadingDocumentPreviewForm,
@@ -695,6 +717,7 @@ export const useContractorOnboarding = ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
       contract_origin: contractOriginForm?.fields || [],
+      invoice_schedule: invoiceScheduleForm?.fields || [],
       pricing_plan: selectContractorSubscriptionForm?.fields || [],
       eligibility_questionnaire: eligibilityQuestionnaireForm?.fields || [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
@@ -705,6 +728,7 @@ export const useContractorOnboarding = ({
       selectCountryForm?.fields,
       basicInformationForm?.fields,
       contractOriginForm?.fields,
+      invoiceScheduleForm?.fields,
       selectContractorSubscriptionForm?.fields,
       contractorOnboardingDetailsForm?.fields,
       signatureSchemaForm?.fields,
@@ -719,6 +743,7 @@ export const useContractorOnboarding = ({
     select_country: null,
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
     contract_origin: null,
+    invoice_schedule: null,
     pricing_plan: null,
     contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
     eligibility_questionnaire: null,
@@ -733,6 +758,7 @@ export const useContractorOnboarding = ({
     select_country: selectCountryForm?.meta?.['x-jsf-presentation'],
     basic_information: basicInformationForm?.meta?.['x-jsf-presentation'],
     contract_origin: contractOriginForm?.meta?.['x-jsf-presentation'],
+    invoice_schedule: invoiceScheduleForm?.meta?.['x-jsf-presentation'],
     pricing_plan:
       selectContractorSubscriptionForm?.meta?.['x-jsf-presentation'],
     eligibility_questionnaire:
@@ -798,6 +824,13 @@ export const useContractorOnboarding = ({
     onboardingInitialValues,
     employment?.contract_details?.contract_origin,
   ]);
+
+  const invoiceScheduleInitialValues = useMemo(() => {
+    const initialValues = {
+      ...onboardingInitialValues,
+    };
+    return getInitialValues(stepFields.invoice_schedule, initialValues);
+  }, [stepFields.invoice_schedule, onboardingInitialValues]);
 
   const contractDetailsInitialValues = useMemo(() => {
     const hardcodedValues = {
@@ -868,6 +901,7 @@ export const useContractorOnboarding = ({
       select_country: selectCountryInitialValues,
       basic_information: basicInformationInitialValues,
       contract_origin: contractOriginInitialValues,
+      invoice_schedule: invoiceScheduleInitialValues,
       contract_details: contractDetailsInitialValues,
       contract_preview: contractPreviewInitialValues,
       pricing_plan: pricingPlanInitialValues,
@@ -877,6 +911,7 @@ export const useContractorOnboarding = ({
     selectCountryInitialValues,
     basicInformationInitialValues,
     contractOriginInitialValues,
+    invoiceScheduleInitialValues,
     contractDetailsInitialValues,
     contractPreviewInitialValues,
     pricingPlanInitialValues,
@@ -937,6 +972,7 @@ export const useContractorOnboarding = ({
           { skipMoneyConversion: true },
         ),
         contract_origin: {},
+        invoice_schedule: {},
         contract_details: prettifyFormValues(
           contractDetailsInitialValues,
           stepFields.contract_details,
@@ -963,6 +999,7 @@ export const useContractorOnboarding = ({
         select_country: selectCountryInitialValues,
         basic_information: basicInformationInitialValues,
         contract_origin: {},
+        invoice_schedule: {},
         contract_details: contractDetailsInitialValues,
         contract_preview: contractPreviewInitialValues,
         pricing_plan: pricingPlanInitialValues,
@@ -1060,6 +1097,15 @@ export const useContractorOnboarding = ({
       stepState.currentStep.name === 'contract_origin'
     ) {
       return await parseJSFToValidate(values, contractOriginForm?.fields, {
+        isPartialValidation: false,
+      });
+    }
+
+    if (
+      invoiceScheduleForm &&
+      stepState.currentStep.name === 'invoice_schedule'
+    ) {
+      return await parseJSFToValidate(values, invoiceScheduleForm?.fields, {
         isPartialValidation: false,
       });
     }
@@ -1347,6 +1393,14 @@ export const useContractorOnboarding = ({
         };
       }
 
+      case 'invoice_schedule': {
+        return {
+          data: {
+            invoiceSchedulePreference: values.invoice_schedule_preference,
+          },
+        };
+      }
+
       case 'eligibility_questionnaire': {
         try {
           const response = await createEligibilityQuestionnaireMutationAsync({
@@ -1559,6 +1613,18 @@ export const useContractorOnboarding = ({
           { isPartialValidation: false },
         );
         return contractOriginForm?.handleValidation(parsedValues);
+      }
+
+      if (
+        invoiceScheduleForm &&
+        stepState.currentStep.name === 'invoice_schedule'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          invoiceScheduleForm?.fields,
+          { isPartialValidation: false },
+        );
+        return invoiceScheduleForm?.handleValidation(parsedValues);
       }
 
       return null;
