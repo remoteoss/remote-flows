@@ -4,6 +4,10 @@ import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding
 import { ContractorOnboardingForm } from '@/src/flows/ContractorOnboarding/components/ContractorOnboardingForm';
 import { handleStepError } from '@/src/lib/utils';
 import { UseFormReturn } from 'react-hook-form';
+import {
+  InvoiceScheduleFormPayload,
+  InvoiceScheduleResponse,
+} from '@/src/flows/ContractorOnboarding/types';
 
 type InvoiceScheduleStepProps = {
   /**
@@ -13,15 +17,11 @@ type InvoiceScheduleStepProps = {
   /*
    * The function is called when the form is submitted. It receives the form values as an argument.
    */
-  onSubmit?: (payload: {
-    invoice_schedule_preference: string;
-  }) => void | Promise<void>;
+  onSubmit?: (payload: InvoiceScheduleFormPayload) => void | Promise<void>;
   /*
    * The function is called when the form submission is successful.
    */
-  onSuccess?: (data: {
-    invoiceSchedulePreference: string;
-  }) => void | Promise<void>;
+  onSuccess?: (data: InvoiceScheduleResponse) => void | Promise<void>;
   /*
    * The function is called when an error occurs during form submission.
    */
@@ -51,19 +51,11 @@ export function InvoiceScheduleStep({
     try {
       const parsedValues =
         await contractorOnboardingBag.parseFormValues(payload);
-      await onSubmit?.(
-        parsedValues as {
-          invoice_schedule_preference: string;
-        },
-      );
+      await onSubmit?.(parsedValues as InvoiceScheduleFormPayload);
       const response = await contractorOnboardingBag.onSubmit(payload);
 
       if (response?.data) {
-        await onSuccess?.(
-          response.data as {
-            invoiceSchedulePreference: string;
-          },
-        );
+        await onSuccess?.(response.data as InvoiceScheduleResponse);
         contractorOnboardingBag?.next();
         return;
       }

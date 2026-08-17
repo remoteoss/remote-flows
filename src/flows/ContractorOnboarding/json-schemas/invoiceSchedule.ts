@@ -6,13 +6,13 @@ export const invoiceScheduleSchema = {
         'Set up a schedule to automatically create invoices on behalf of this contractor.',
       oneOf: [
         {
-          const: 'create_now',
+          const: 'schedule',
           description:
             'Set up a schedule to create invoices for this contractor now.',
           title: 'Create invoice schedule now',
         },
         {
-          const: 'skip',
+          const: 'manual',
           description:
             'You or your contractor can always set up an invoice schedule later.',
           title: 'Skip for now',

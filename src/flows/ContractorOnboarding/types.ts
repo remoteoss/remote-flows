@@ -187,3 +187,11 @@ export type EligibilityQuestionnaireFormPayload = {
 };
 
 export type EligibilityQuestionnaireResponse = SuccessResponse;
+
+export type InvoiceScheduleFormPayload = {
+  invoice_schedule_preference: string;
+};
+
+export type InvoiceScheduleResponse = {
+  invoiceSchedulePreference: string;
+};
