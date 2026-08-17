@@ -754,21 +754,18 @@ export const useGetContractOriginSchema = ({
 };
 
 export const useGetInvoiceScheduleSchema = ({
-  fieldValues,
-  options,
+  enabled,
+  jsfModify,
 }: {
-  fieldValues: FieldValues;
-  options?: { queryOptions?: { enabled?: boolean }; jsfModify?: JSFModify };
+  enabled?: boolean;
+  jsfModify?: JSFModify;
 }) => {
-  return useQuery({
-    queryKey: ['invoice-schedule-schema', options?.jsfModify],
-    queryFn: async () => {
-      return createHeadlessForm(invoiceScheduleSchema, fieldValues, {
-        jsfModify: options?.jsfModify,
-      });
-    },
-    enabled: options?.queryOptions?.enabled,
-  });
+  return useMemo(() => {
+    if (!enabled) return null;
+    return createHeadlessForm(invoiceScheduleSchema, {}, {
+      jsfModify,
+    });
+  }, [enabled, jsfModify]);
 };
 
 export const useCountriesSchemaField = (

@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import omit from 'lodash.omit';
-import { $TSFixMe, JSFFields } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFFields, NestedMeta } from '@/src/types/remoteFlows';
 import {
   CreateContractDocument,
   Employment,
@@ -56,7 +56,7 @@ import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise, isMutationError } from '@/src/lib/mutations';
 import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
-import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
+import { JSFFieldset } from '@/src/types/remoteFlows';
 import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
@@ -127,14 +127,14 @@ export const useContractorOnboarding = ({
     string | undefined
   >(undefined);
   const fieldsMetaRef = useRef<{
-    select_country: Meta;
-    basic_information: Meta;
-    contract_origin: Meta;
-    invoice_schedule: Meta;
-    contract_details: Meta;
-    contract_preview: Meta;
-    pricing_plan: Meta;
-    eligibility_questionnaire: Meta;
+    select_country: NestedMeta;
+    basic_information: NestedMeta;
+    contract_origin: NestedMeta;
+    invoice_schedule: NestedMeta;
+    contract_details: NestedMeta;
+    contract_preview: NestedMeta;
+    pricing_plan: NestedMeta;
+    eligibility_questionnaire: NestedMeta;
   }>({
     select_country: {},
     basic_information: {},
@@ -681,14 +681,9 @@ export const useContractorOnboarding = ({
     },
   });
 
-  const { data: invoiceScheduleForm } = useGetInvoiceScheduleSchema({
-    fieldValues: fieldValues,
-    options: {
-      queryOptions: {
-        enabled: includeInvoiceSchedule,
-      },
-      jsfModify: options?.jsfModify?.invoice_schedule,
-    },
+  const invoiceScheduleForm = useGetInvoiceScheduleSchema({
+    enabled: includeInvoiceSchedule,
+    jsfModify: options?.jsfModify?.invoice_schedule,
   });
 
   const {
@@ -1448,100 +1443,8 @@ export const useContractorOnboarding = ({
     nextStep();
   };
 
-  const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
-
-  return {
-    /**
-     * Loading state indicating if the flow is loading data
-     */
-    isLoading,
-
-    /**
-     * Current state of the form fields for the current step.
-     */
-    fieldValues,
-
-    /**
-     * Current step state containing the current step and total number of steps
-     */
-    stepState,
-
-    /**
-     * Function to update the current form field values
-     * @param values - New form values to set
-     */
-    checkFieldUpdates: setFieldValues,
-
-    /**
-     * Function to mark the contract as reviewed
-     * @param values - New form values to check
-     * @returns {boolean}
-     */
-    markContractAsReviewed,
-
-    /**
-     * Function to handle going back to the previous step
-     * @returns {void}
-     */
-    back: previousStep,
-
-    /**
-     * Function to handle going to the next step
-     * @returns {void}
-     */
-    next: handleNextStep,
-
-    /**
-     * Function to handle going to a specific step
-     * @param step The step to go to.
-     * @returns {void}
-     */
-    goTo: goTo,
-
-    /**
-     * Function to handle form submission
-     * @param values - Form values to submit
-     * @returns Promise resolving to the mutation result
-     */
-    onSubmit,
-
-    /**
-     * Array of form fields from the onboarding schema
-     */
-    fields: stepFields[stepState.currentStep.name],
-
-    /**
-     * Fields metadata for each step
-     */
-    meta: {
-      fields: fieldsMetaRef.current,
-      fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
-      presentation: stepPresentation[stepState.currentStep.name],
-    },
-
-    /**
-     * Function to parse form values before submission
-     * @param values - Form values to parse
-     * @returns Parsed form values
-     */
-    parseFormValues,
-
-    /**
-     * Indicates whether AI validation errors can be skipped (user can continue at their own risk).
-     * True when there's a skippable AI validation error on services_and_deliverables field.
-     * @returns {boolean}
-     */
-    canSkipAiValidation:
-      fieldValues.services_and_deliverables_error_skippable === true,
-
-    /**
-     * Function to validate form values against the onboarding schema
-     * @param values - Form values to validate
-     * @returns Validation result or null if no schema is available
-     */
-    handleValidation: async (
-      values: FieldValues,
-    ): Promise<ValidationResult | null> => {
+  const handleValidation = useCallback(
+    async (values: FieldValues): Promise<ValidationResult | null> => {
       if (stepState.currentStep.name === 'select_country') {
         return selectCountryForm.handleValidation(values);
       }
@@ -1632,6 +1535,124 @@ export const useContractorOnboarding = ({
 
       return null;
     },
+    [
+      stepState.currentStep.name,
+      selectCountryForm,
+      basicInformationForm,
+      contractorOnboardingDetailsForm,
+      signatureSchemaForm,
+      selectContractorSubscriptionForm,
+      eligibilityQuestionnaireForm,
+      contractOriginForm,
+      invoiceScheduleForm,
+    ],
+  );
+
+  const checkFieldUpdates = useCallback(
+    async (values: FieldValues) => {
+      setFieldValues(values);
+      if (
+        includeInvoiceSchedule &&
+        stepState.currentStep.name === 'invoice_schedule'
+      ) {
+        await handleValidation(values);
+      }
+    },
+    [setFieldValues, includeInvoiceSchedule, stepState, handleValidation],
+  );
+
+  const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
+
+  return {
+    /**
+     * Loading state indicating if the flow is loading data
+     */
+    isLoading,
+
+    /**
+     * Current state of the form fields for the current step.
+     */
+    fieldValues,
+
+    /**
+     * Current step state containing the current step and total number of steps
+     */
+    stepState,
+
+    /**
+     * Function to update the current form field values
+     * @param values - New form values to set
+     */
+    checkFieldUpdates,
+
+    /**
+     * Function to mark the contract as reviewed
+     * @param values - New form values to check
+     * @returns {boolean}
+     */
+    markContractAsReviewed,
+
+    /**
+     * Function to handle going back to the previous step
+     * @returns {void}
+     */
+    back: previousStep,
+
+    /**
+     * Function to handle going to the next step
+     * @returns {void}
+     */
+    next: handleNextStep,
+
+    /**
+     * Function to handle going to a specific step
+     * @param step The step to go to.
+     * @returns {void}
+     */
+    goTo: goTo,
+
+    /**
+     * Function to handle form submission
+     * @param values - Form values to submit
+     * @returns Promise resolving to the mutation result
+     */
+    onSubmit,
+
+    /**
+     * Array of form fields from the onboarding schema
+     */
+    fields: stepFields[stepState.currentStep.name],
+
+    /**
+     * Fields metadata for each step
+     */
+    meta: {
+      fields: fieldsMetaRef.current,
+      fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
+      presentation: stepPresentation[stepState.currentStep.name],
+    },
+
+    /**
+     * Function to parse form values before submission
+     * @param values - Form values to parse
+     * @returns Parsed form values
+     */
+    parseFormValues,
+
+    /**
+     * Indicates whether AI validation errors can be skipped (user can continue at their own risk).
+     * True when there's a skippable AI validation error on services_and_deliverables field.
+     * @returns {boolean}
+     */
+    canSkipAiValidation:
+      fieldValues.services_and_deliverables_error_skippable === true,
+
+    /**
+     * Function to validate form values against the onboarding schema
+     * @param values - Form values to validate
+     * @returns Validation result or null if no schema is available
+     */
+    handleValidation,
 
     /**
      * Initial form values
