@@ -684,6 +684,9 @@ export const useContractorOnboarding = ({
   const { data: invoiceScheduleForm } = useGetInvoiceScheduleSchema({
     fieldValues: fieldValues,
     options: {
+      queryOptions: {
+        enabled: includeInvoiceSchedule,
+      },
       jsfModify: options?.jsfModify?.invoice_schedule,
     },
   });
