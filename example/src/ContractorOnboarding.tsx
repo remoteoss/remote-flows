@@ -20,6 +20,7 @@ import {
   eorProductIdentifier,
   $TSFixMe,
   JSFModifyField,
+  ZendeskTriggerButton,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -156,7 +157,18 @@ const ContractOriginRadio = ({
           </h1>
         )}
         {fieldData.description && (
-          <p className='text-sm text-[#71717A]'>{fieldData.description}</p>
+          <p className='text-sm text-[#71717A]'>
+            {fieldData.description}{' '}
+            {fieldData.meta?.helpCenter?.callToAction &&
+              fieldData.meta?.helpCenter?.id && (
+                <ZendeskTriggerButton
+                  zendeskId={fieldData.meta?.helpCenter?.id}
+                  external
+                >
+                  {fieldData.meta?.helpCenter?.callToAction}
+                </ZendeskTriggerButton>
+              )}
+          </p>
         )}
       </div>
       {fieldData.options?.map((option) => {

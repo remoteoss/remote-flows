@@ -1551,6 +1551,8 @@ export const useContractorOnboarding = ({
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
       setFieldValues(values);
+      // new steps or refactor ones should rely on json-schema-form-mutability
+      // instead of passing fieldValues
       if (
         includeInvoiceSchedule &&
         stepState.currentStep.name === 'invoice_schedule'

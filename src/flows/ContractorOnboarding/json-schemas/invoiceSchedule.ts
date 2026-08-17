@@ -23,6 +23,12 @@ export const invoiceScheduleSchema = {
       'x-jsf-presentation': {
         direction: 'column',
         inputType: 'radio',
+        meta: {
+          helpCenter: {
+            id: 13291039232141,
+            callToAction: 'Learn about invoice schedules',
+          },
+        },
       },
     },
   },
