@@ -22,6 +22,7 @@ import {
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
 import { contractOriginSchema } from '@/src/flows/ContractorOnboarding/json-schemas/contractOrigin';
+import { invoiceScheduleSchema } from '@/src/flows/ContractorOnboarding/json-schemas/invoiceSchedule';
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
 import {
   JSONSchemaFormResultWithFieldsets,
@@ -750,6 +751,25 @@ export const useGetContractOriginSchema = ({
     },
     enabled: options?.queryOptions?.enabled,
   });
+};
+
+export const useGetInvoiceScheduleSchema = ({
+  enabled,
+  jsfModify,
+}: {
+  enabled?: boolean;
+  jsfModify?: JSFModify;
+}) => {
+  return useMemo(() => {
+    if (!enabled) return null;
+    return createHeadlessForm(
+      invoiceScheduleSchema,
+      {},
+      {
+        jsfModify,
+      },
+    );
+  }, [enabled, jsfModify]);
 };
 
 export const useCountriesSchemaField = (

@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import omit from 'lodash.omit';
-import { $TSFixMe, JSFFields } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFFields, NestedMeta } from '@/src/types/remoteFlows';
 import {
   CreateContractDocument,
   Employment,
@@ -32,6 +32,7 @@ import {
   useCompanyOpenTasks,
   useSetContractOrigin,
   useGetContractOriginSchema,
+  useGetInvoiceScheduleSchema,
 } from '@/src/flows/ContractorOnboarding/api';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
@@ -55,7 +56,7 @@ import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise, isMutationError } from '@/src/lib/mutations';
 import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
-import { JSFFieldset, Meta } from '@/src/types/remoteFlows';
+import { JSFFieldset } from '@/src/types/remoteFlows';
 import {
   contractorStandardProductIdentifier,
   contractorPlusProductIdentifier,
@@ -86,6 +87,7 @@ const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
   select_country: null,
   basic_information: 'employment_basic_information',
   contract_origin: null,
+  invoice_schedule: null,
   contract_details: null,
   eligibility_questionnaire: null,
   pricing_plan: null,
@@ -125,17 +127,19 @@ export const useContractorOnboarding = ({
     string | undefined
   >(undefined);
   const fieldsMetaRef = useRef<{
-    select_country: Meta;
-    basic_information: Meta;
-    contract_origin: Meta;
-    contract_details: Meta;
-    contract_preview: Meta;
-    pricing_plan: Meta;
-    eligibility_questionnaire: Meta;
+    select_country: NestedMeta;
+    basic_information: NestedMeta;
+    contract_origin: NestedMeta;
+    invoice_schedule: NestedMeta;
+    contract_details: NestedMeta;
+    contract_preview: NestedMeta;
+    pricing_plan: NestedMeta;
+    eligibility_questionnaire: NestedMeta;
   }>({
     select_country: {},
     basic_information: {},
     contract_origin: {},
+    invoice_schedule: {},
     contract_details: {},
     contract_preview: {},
     pricing_plan: {},
@@ -158,6 +162,9 @@ export const useContractorOnboarding = ({
   const [includeContractOrigin, setIncludeContractOrigin] =
     useState<boolean>(true);
 
+  const [includeInvoiceSchedule, setIncludeInvoiceSchedule] =
+    useState<boolean>(false);
+
   const [pendingNavigationStep, setPendingNavigationStep] =
     useState<StepKeys | null>(null);
 
@@ -166,12 +173,14 @@ export const useContractorOnboarding = ({
       buildSteps({
         includeSelectCountry: !skipSteps?.includes('select_country'),
         includeContractOrigin: includeContractOrigin,
+        includeInvoiceSchedule: includeInvoiceSchedule,
         includeEligibilityQuestionnaire: includeEligibilityQuestionnaire,
         includeContractDetails: includeContractDetails,
         includeContractPreview: includeContractPreview,
       }),
     [
       includeContractOrigin,
+      includeInvoiceSchedule,
       includeEligibilityQuestionnaire,
       includeContractDetails,
       includeContractPreview,
@@ -237,7 +246,7 @@ export const useContractorOnboarding = ({
   const createEmploymentMutation = useCreateEmployment();
   const updateEmploymentMutation = useUpdateEmployment(
     internalCountryCode as string,
-    options,
+    options as $TSFixMe, // TODO: done it as its shared between contractor and onboarding flows
   );
   const createContractorContractDocumentMutation =
     useCreateContractorContractDocument();
@@ -573,6 +582,12 @@ export const useContractorOnboarding = ({
     );
   }, [skipSteps, selectedPricingPlan]);
 
+  useEffect(() => {
+    setIncludeInvoiceSchedule(
+      options?.features?.includes('create_invoice_schedule') ?? false,
+    );
+  }, [options?.features]);
+
   const eligibilityFields = useMemo(() => {
     return {
       ...eligibilityAnswers,
@@ -666,6 +681,11 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const invoiceScheduleForm = useGetInvoiceScheduleSchema({
+    enabled: includeInvoiceSchedule,
+    jsfModify: options?.jsfModify?.invoice_schedule,
+  });
+
   const {
     data: documentPreviewPdf,
     isLoading: isLoadingDocumentPreviewForm,
@@ -695,6 +715,7 @@ export const useContractorOnboarding = ({
       select_country: selectCountryForm?.fields || [],
       basic_information: basicInformationForm?.fields || [],
       contract_origin: contractOriginForm?.fields || [],
+      invoice_schedule: invoiceScheduleForm?.fields || [],
       pricing_plan: selectContractorSubscriptionForm?.fields || [],
       eligibility_questionnaire: eligibilityQuestionnaireForm?.fields || [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
@@ -705,6 +726,7 @@ export const useContractorOnboarding = ({
       selectCountryForm?.fields,
       basicInformationForm?.fields,
       contractOriginForm?.fields,
+      invoiceScheduleForm?.fields,
       selectContractorSubscriptionForm?.fields,
       contractorOnboardingDetailsForm?.fields,
       signatureSchemaForm?.fields,
@@ -719,6 +741,7 @@ export const useContractorOnboarding = ({
     select_country: null,
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
     contract_origin: null,
+    invoice_schedule: null,
     pricing_plan: null,
     contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
     eligibility_questionnaire: null,
@@ -733,6 +756,7 @@ export const useContractorOnboarding = ({
     select_country: selectCountryForm?.meta?.['x-jsf-presentation'],
     basic_information: basicInformationForm?.meta?.['x-jsf-presentation'],
     contract_origin: contractOriginForm?.meta?.['x-jsf-presentation'],
+    invoice_schedule: invoiceScheduleForm?.meta?.['x-jsf-presentation'],
     pricing_plan:
       selectContractorSubscriptionForm?.meta?.['x-jsf-presentation'],
     eligibility_questionnaire:
@@ -798,6 +822,13 @@ export const useContractorOnboarding = ({
     onboardingInitialValues,
     employment?.contract_details?.contract_origin,
   ]);
+
+  const invoiceScheduleInitialValues = useMemo(() => {
+    const initialValues = {
+      ...onboardingInitialValues,
+    };
+    return getInitialValues(stepFields.invoice_schedule, initialValues);
+  }, [stepFields.invoice_schedule, onboardingInitialValues]);
 
   const contractDetailsInitialValues = useMemo(() => {
     const hardcodedValues = {
@@ -868,6 +899,7 @@ export const useContractorOnboarding = ({
       select_country: selectCountryInitialValues,
       basic_information: basicInformationInitialValues,
       contract_origin: contractOriginInitialValues,
+      invoice_schedule: invoiceScheduleInitialValues,
       contract_details: contractDetailsInitialValues,
       contract_preview: contractPreviewInitialValues,
       pricing_plan: pricingPlanInitialValues,
@@ -877,6 +909,7 @@ export const useContractorOnboarding = ({
     selectCountryInitialValues,
     basicInformationInitialValues,
     contractOriginInitialValues,
+    invoiceScheduleInitialValues,
     contractDetailsInitialValues,
     contractPreviewInitialValues,
     pricingPlanInitialValues,
@@ -937,6 +970,7 @@ export const useContractorOnboarding = ({
           { skipMoneyConversion: true },
         ),
         contract_origin: {},
+        invoice_schedule: {},
         contract_details: prettifyFormValues(
           contractDetailsInitialValues,
           stepFields.contract_details,
@@ -963,6 +997,7 @@ export const useContractorOnboarding = ({
         select_country: selectCountryInitialValues,
         basic_information: basicInformationInitialValues,
         contract_origin: {},
+        invoice_schedule: {},
         contract_details: contractDetailsInitialValues,
         contract_preview: contractPreviewInitialValues,
         pricing_plan: pricingPlanInitialValues,
@@ -1060,6 +1095,15 @@ export const useContractorOnboarding = ({
       stepState.currentStep.name === 'contract_origin'
     ) {
       return await parseJSFToValidate(values, contractOriginForm?.fields, {
+        isPartialValidation: false,
+      });
+    }
+
+    if (
+      invoiceScheduleForm &&
+      stepState.currentStep.name === 'invoice_schedule'
+    ) {
+      return await parseJSFToValidate(values, invoiceScheduleForm?.fields, {
         isPartialValidation: false,
       });
     }
@@ -1347,6 +1391,14 @@ export const useContractorOnboarding = ({
         };
       }
 
+      case 'invoice_schedule': {
+        return {
+          data: {
+            invoiceSchedulePreference: values.invoice_schedule_preference,
+          },
+        };
+      }
+
       case 'eligibility_questionnaire': {
         try {
           const response = await createEligibilityQuestionnaireMutationAsync({
@@ -1391,100 +1443,8 @@ export const useContractorOnboarding = ({
     nextStep();
   };
 
-  const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
-
-  return {
-    /**
-     * Loading state indicating if the flow is loading data
-     */
-    isLoading,
-
-    /**
-     * Current state of the form fields for the current step.
-     */
-    fieldValues,
-
-    /**
-     * Current step state containing the current step and total number of steps
-     */
-    stepState,
-
-    /**
-     * Function to update the current form field values
-     * @param values - New form values to set
-     */
-    checkFieldUpdates: setFieldValues,
-
-    /**
-     * Function to mark the contract as reviewed
-     * @param values - New form values to check
-     * @returns {boolean}
-     */
-    markContractAsReviewed,
-
-    /**
-     * Function to handle going back to the previous step
-     * @returns {void}
-     */
-    back: previousStep,
-
-    /**
-     * Function to handle going to the next step
-     * @returns {void}
-     */
-    next: handleNextStep,
-
-    /**
-     * Function to handle going to a specific step
-     * @param step The step to go to.
-     * @returns {void}
-     */
-    goTo: goTo,
-
-    /**
-     * Function to handle form submission
-     * @param values - Form values to submit
-     * @returns Promise resolving to the mutation result
-     */
-    onSubmit,
-
-    /**
-     * Array of form fields from the onboarding schema
-     */
-    fields: stepFields[stepState.currentStep.name],
-
-    /**
-     * Fields metadata for each step
-     */
-    meta: {
-      fields: fieldsMetaRef.current,
-      fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
-      presentation: stepPresentation[stepState.currentStep.name],
-    },
-
-    /**
-     * Function to parse form values before submission
-     * @param values - Form values to parse
-     * @returns Parsed form values
-     */
-    parseFormValues,
-
-    /**
-     * Indicates whether AI validation errors can be skipped (user can continue at their own risk).
-     * True when there's a skippable AI validation error on services_and_deliverables field.
-     * @returns {boolean}
-     */
-    canSkipAiValidation:
-      fieldValues.services_and_deliverables_error_skippable === true,
-
-    /**
-     * Function to validate form values against the onboarding schema
-     * @param values - Form values to validate
-     * @returns Validation result or null if no schema is available
-     */
-    handleValidation: async (
-      values: FieldValues,
-    ): Promise<ValidationResult | null> => {
+  const handleValidation = useCallback(
+    async (values: FieldValues): Promise<ValidationResult | null> => {
       if (stepState.currentStep.name === 'select_country') {
         return selectCountryForm.handleValidation(values);
       }
@@ -1561,8 +1521,140 @@ export const useContractorOnboarding = ({
         return contractOriginForm?.handleValidation(parsedValues);
       }
 
+      if (
+        invoiceScheduleForm &&
+        stepState.currentStep.name === 'invoice_schedule'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          invoiceScheduleForm?.fields,
+          { isPartialValidation: false },
+        );
+        return invoiceScheduleForm?.handleValidation(parsedValues);
+      }
+
       return null;
     },
+    [
+      stepState.currentStep.name,
+      selectCountryForm,
+      basicInformationForm,
+      contractorOnboardingDetailsForm,
+      signatureSchemaForm,
+      selectContractorSubscriptionForm,
+      eligibilityQuestionnaireForm,
+      contractOriginForm,
+      invoiceScheduleForm,
+    ],
+  );
+
+  const checkFieldUpdates = useCallback(
+    async (values: FieldValues) => {
+      setFieldValues(values);
+      // new steps or refactor ones should rely on json-schema-form-mutability
+      // instead of passing fieldValues
+      if (
+        includeInvoiceSchedule &&
+        stepState.currentStep.name === 'invoice_schedule'
+      ) {
+        await handleValidation(values);
+      }
+    },
+    [setFieldValues, includeInvoiceSchedule, stepState, handleValidation],
+  );
+
+  const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
+
+  return {
+    /**
+     * Loading state indicating if the flow is loading data
+     */
+    isLoading,
+
+    /**
+     * Current state of the form fields for the current step.
+     */
+    fieldValues,
+
+    /**
+     * Current step state containing the current step and total number of steps
+     */
+    stepState,
+
+    /**
+     * Function to update the current form field values
+     * @param values - New form values to set
+     */
+    checkFieldUpdates,
+
+    /**
+     * Function to mark the contract as reviewed
+     * @param values - New form values to check
+     * @returns {boolean}
+     */
+    markContractAsReviewed,
+
+    /**
+     * Function to handle going back to the previous step
+     * @returns {void}
+     */
+    back: previousStep,
+
+    /**
+     * Function to handle going to the next step
+     * @returns {void}
+     */
+    next: handleNextStep,
+
+    /**
+     * Function to handle going to a specific step
+     * @param step The step to go to.
+     * @returns {void}
+     */
+    goTo: goTo,
+
+    /**
+     * Function to handle form submission
+     * @param values - Form values to submit
+     * @returns Promise resolving to the mutation result
+     */
+    onSubmit,
+
+    /**
+     * Array of form fields from the onboarding schema
+     */
+    fields: stepFields[stepState.currentStep.name],
+
+    /**
+     * Fields metadata for each step
+     */
+    meta: {
+      fields: fieldsMetaRef.current,
+      fieldsets: stepFieldsWithFlatFieldsets[stepState.currentStep.name],
+      presentation: stepPresentation[stepState.currentStep.name],
+    },
+
+    /**
+     * Function to parse form values before submission
+     * @param values - Form values to parse
+     * @returns Parsed form values
+     */
+    parseFormValues,
+
+    /**
+     * Indicates whether AI validation errors can be skipped (user can continue at their own risk).
+     * True when there's a skippable AI validation error on services_and_deliverables field.
+     * @returns {boolean}
+     */
+    canSkipAiValidation:
+      fieldValues.services_and_deliverables_error_skippable === true,
+
+    /**
+     * Function to validate form values against the onboarding schema
+     * @param values - Form values to validate
+     * @returns Validation result or null if no schema is available
+     */
+    handleValidation,
 
     /**
      * Initial form values

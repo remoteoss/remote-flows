@@ -10,6 +10,8 @@ export type {
   ContractPreviewResponse,
   EligibilityQuestionnaireFormPayload,
   EligibilityQuestionnaireResponse,
+  InvoiceScheduleFormPayload,
+  InvoiceScheduleResponse,
 } from './types';
 export type { ProductType } from './constants';
 export {

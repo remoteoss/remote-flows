@@ -20,6 +20,7 @@ import {
   eorProductIdentifier,
   $TSFixMe,
   JSFModifyField,
+  ZendeskTriggerButton,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -156,7 +157,18 @@ const ContractOriginRadio = ({
           </h1>
         )}
         {fieldData.description && (
-          <p className='text-sm text-[#71717A]'>{fieldData.description}</p>
+          <p className='text-sm text-[#71717A]'>
+            {fieldData.description}{' '}
+            {fieldData.meta?.helpCenter?.callToAction &&
+              fieldData.meta?.helpCenter?.id && (
+                <ZendeskTriggerButton
+                  zendeskId={fieldData.meta?.helpCenter?.id}
+                  external
+                >
+                  {fieldData.meta?.helpCenter?.callToAction}
+                </ZendeskTriggerButton>
+              )}
+          </p>
         )}
       </div>
       {fieldData.options?.map((option) => {
@@ -215,6 +227,7 @@ const MultiStepForm = ({
     ContractReviewButton,
     SaveDraftButton,
     ContractOriginStep,
+    InvoiceScheduleStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -504,6 +517,41 @@ const MultiStepForm = ({
         </div>
       );
 
+    case 'invoice_schedule':
+      return (
+        <div className='contractor-onboarding-form-layout'>
+          <InvoiceScheduleStep
+            components={{
+              radio: (props) => <ContractOriginRadio {...props} />,
+            }}
+            onSubmit={(payload) =>
+              console.log('invoice schedule payload', payload)
+            }
+            onSuccess={(response) =>
+              console.log('invoice schedule response', response)
+            }
+            onError={({ error, fieldErrors }) =>
+              setErrors({ apiError: error.message, fieldErrors })
+            }
+          />
+          <AlertError errors={errors} />
+          <div className='contractor-onboarding-buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Back
+            </BackButton>
+            <SubmitButton
+              className='submit-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Continue
+            </SubmitButton>
+          </div>
+        </div>
+      );
+
     case 'eligibility_questionnaire':
       return (
         <div className='contractor-onboarding-form-layout'>
@@ -632,6 +680,7 @@ export const ContractorOnboardingWithProps = ({
             employmentId={employmentId}
             externalId={externalId}
             options={{
+              features: ['create_invoice_schedule'],
               jsonSchemaVersion: {
                 employment_basic_information: 1,
               },

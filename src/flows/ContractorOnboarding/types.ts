@@ -16,6 +16,7 @@ import { OnboardingInvite } from '@/src/flows/ContractorOnboarding/components/On
 import { ContractReviewButton } from '@/src/flows/ContractorOnboarding/components/ContractReviewButton';
 import { EligibilityQuestionnaireStep } from '@/src/flows/ContractorOnboarding/components/EligibilityQuestionnaireStep';
 import { ContractOriginStep } from '@/src/flows/ContractorOnboarding/components/ContractOriginStep';
+import { InvoiceScheduleStep } from '@/src/flows/ContractorOnboarding/components/InvoiceScheduleStep';
 import { ProductType } from '@/src/flows/ContractorOnboarding/constants';
 import { SaveDraftButton } from '@/src/flows/ContractorOnboarding/components/SaveDraftButton';
 
@@ -46,6 +47,7 @@ export type ContractorOnboardingRenderProps = {
     SubmitButton: typeof OnboardingSubmit;
     PricingPlanStep: typeof PricingPlanStep;
     ContractOriginStep: typeof ContractOriginStep;
+    InvoiceScheduleStep: typeof InvoiceScheduleStep;
     ContractDetailsStep: typeof ContractDetailsStep;
     ContractPreviewStep: typeof ContractPreviewStep;
     OnboardingInvite: typeof OnboardingInvite;
@@ -55,6 +57,8 @@ export type ContractorOnboardingRenderProps = {
   };
 };
 
+type ContractorOnboardingFeatures = 'create_invoice_schedule';
+
 type ContractorOnboardingFlowOptions = Omit<FlowOptions, 'jsfModify'> & {
   /**
    * Products to exclude from the available options in pricing_plan step.
@@ -63,6 +67,11 @@ type ContractorOnboardingFlowOptions = Omit<FlowOptions, 'jsfModify'> & {
    * @example excludeProducts: ['eor', 'cor'] // Hide both EOR and COR
    */
   excludeProducts?: ProductType[];
+  /**
+   * Features to enable for the contractor onboarding flow.
+   * - 'create_invoice_schedule': Enable the invoice schedule step
+   */
+  features?: ContractorOnboardingFeatures[];
   /**
    * The JSON schema modification to use for the onboarding.
    * This is used to modify the JSON schema for the onboarding.
@@ -76,6 +85,7 @@ type ContractorOnboardingFlowOptions = Omit<FlowOptions, 'jsfModify'> & {
     eligibility_questionnaire?: JSFModify;
     pricing_plan?: JSFModify;
     contract_origin?: JSFModify;
+    invoice_schedule?: JSFModify;
   };
 };
 
@@ -177,3 +187,11 @@ export type EligibilityQuestionnaireFormPayload = {
 };
 
 export type EligibilityQuestionnaireResponse = SuccessResponse;
+
+export type InvoiceScheduleFormPayload = {
+  invoice_schedule_preference: string;
+};
+
+export type InvoiceScheduleResponse = {
+  invoiceSchedulePreference: string;
+};
