@@ -25,6 +25,7 @@ import { contractOriginSchema } from '@/src/flows/ContractorOnboarding/json-sche
 import { invoiceScheduleSchema } from '@/src/flows/ContractorOnboarding/json-schemas/invoiceSchedule';
 import { createInvoiceScheduleSchema } from '@/src/flows/ContractorOnboarding/json-schemas/createInvoiceSchedule';
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
+import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
 import {
   JSONSchemaFormResultWithFieldsets,
   FlowOptions,
@@ -773,14 +774,27 @@ export const useGetInvoiceScheduleSchema = ({
   }, [enabled, jsfModify]);
 };
 
+/**
+ * Get the create invoice schedule schema with currency options from the contractor currencies endpoint.
+ * React Query caches the result, so multiple calls share the same data.
+ */
 export const useGetCreateInvoiceScheduleSchema = ({
   enabled,
+  employmentId,
   jsfModify,
 }: {
   enabled?: boolean;
+  employmentId?: string;
   jsfModify?: JSFModify;
-}) => {
-  return useMemo(() => {
+}): JSONSchemaFormResultWithFieldsets | null => {
+  const { data: currencies } = useContractorCurrencies({
+    employmentId: employmentId as string,
+    options: {
+      queryOptions: { enabled: enabled && Boolean(employmentId) },
+    },
+  });
+
+  const schemaQuery = useMemo(() => {
     if (!enabled) return null;
     return createHeadlessForm(
       createInvoiceScheduleSchema,
@@ -790,6 +804,32 @@ export const useGetCreateInvoiceScheduleSchema = ({
       },
     );
   }, [enabled, jsfModify]);
+
+  const dataWithCurrencies = useMemo(() => {
+    if (!schemaQuery || !currencies) {
+      return schemaQuery;
+    }
+
+    return {
+      ...schemaQuery,
+      fields: schemaQuery.fields.map((field: $TSFixMe) =>
+        field.name !== 'currency'
+          ? field
+          : {
+              ...field,
+              options: currencies.map(
+                (currency: { code: string; source: string }) => ({
+                  label: currency.code,
+                  value: currency.code,
+                  meta: { source: currency.source },
+                }),
+              ),
+            },
+      ),
+    };
+  }, [schemaQuery, currencies]);
+
+  return dataWithCurrencies;
 };
 
 export const useCountriesSchemaField = (

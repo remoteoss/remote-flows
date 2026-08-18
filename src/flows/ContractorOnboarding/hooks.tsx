@@ -697,6 +697,7 @@ export const useContractorOnboarding = ({
 
   const createInvoiceScheduleForm = useGetCreateInvoiceScheduleSchema({
     enabled: includeInvoiceSchedule,
+    employmentId: internalEmploymentId,
     jsfModify: options?.jsfModify?.create_invoice_schedule,
   });
 
