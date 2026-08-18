@@ -914,7 +914,7 @@ export const useCreateInvoiceSchedule = () => {
       for (let i = 1; i <= 10; i++) {
         const description = values[`item_${i}_description`];
         const amount = values[`item_${i}_amount`];
-        if (description && amount) {
+        if (description && amount != null) {
           items.push({
             description,
             amount: Number(amount),
