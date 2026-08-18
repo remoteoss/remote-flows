@@ -33,6 +33,7 @@ import {
   useSetContractOrigin,
   useGetContractOriginSchema,
   useGetInvoiceScheduleSchema,
+  useGetInvoiceSchedules,
   useGetCreateInvoiceScheduleSchema,
   useCreateInvoiceSchedule,
 } from '@/src/flows/ContractorOnboarding/api';
@@ -702,6 +703,21 @@ export const useContractorOnboarding = ({
     jsfModify: options?.jsfModify?.invoice_schedule,
   });
 
+  const { data: invoiceSchedules, isLoading: isLoadingInvoiceSchedules } =
+    useGetInvoiceSchedules({
+      employmentId: internalEmploymentId as string,
+      options: {
+        queryOptions: {
+          enabled:
+            includeInvoiceSchedule &&
+            stepState.currentStep.name === 'invoice_schedule' &&
+            Boolean(internalEmploymentId),
+        },
+      },
+    });
+
+  console.log('invoiceSchedules', invoiceSchedules);
+
   const {
     data: createInvoiceScheduleForm,
     isLoading: isLoadingCreateInvoiceScheduleForm,
@@ -973,7 +989,8 @@ export const useContractorOnboarding = ({
     isLoadingIR35File ||
     isLoadingContractDocuments ||
     isLoadingEligibilityQuestionnaire ||
-    isLoadingCreateInvoiceScheduleForm;
+    isLoadingCreateInvoiceScheduleForm ||
+    isLoadingInvoiceSchedules;
 
   const isNavigatingToReview = useMemo(() => {
     const isCor = employment?.contractor_type === 'cor';

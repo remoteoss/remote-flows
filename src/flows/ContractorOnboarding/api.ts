@@ -6,6 +6,7 @@ import {
   getV1CompaniesCompanyIdActions,
   getV1ContractorsEmploymentsEmploymentIdContractDocumentsId,
   getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions,
+  getV1ContractorInvoiceSchedules,
   ManageContractorPlusSubscriptionOperationsParams,
   postV1ContractorsEmploymentsEmploymentIdContractDocuments,
   postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription,
@@ -824,6 +825,35 @@ export const useGetCreateInvoiceScheduleSchema = ({
     data: schemaWithCurrencies,
     isLoading: isLoadingCurrencies,
   };
+};
+
+/**
+ * Get the invoice schedules for the given employment id
+ * @param employmentId - The employment ID
+ * @param options - Query options
+ * @returns The invoice schedules for the employment
+ */
+export const useGetInvoiceSchedules = ({
+  employmentId,
+  options,
+}: {
+  employmentId: string;
+  options?: { queryOptions?: { enabled?: boolean } };
+}) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['contractor-invoice-schedules', employmentId],
+    queryFn: async () => {
+      return getV1ContractorInvoiceSchedules({
+        client: client as Client,
+        query: { employment_id: employmentId },
+      });
+    },
+    enabled: options?.queryOptions?.enabled,
+    select: ({ data }) => {
+      return data?.data?.contractor_invoice_schedules;
+    },
+  });
 };
 
 export const useCountriesSchemaField = (
