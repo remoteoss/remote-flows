@@ -88,6 +88,7 @@ const stepToFormSchemaMap: Record<StepKeys, JSONSchemaFormType | null> = {
   basic_information: 'employment_basic_information',
   contract_origin: null,
   invoice_schedule: null,
+  create_invoice_schedule: null,
   contract_details: null,
   eligibility_questionnaire: null,
   pricing_plan: null,
@@ -131,6 +132,7 @@ export const useContractorOnboarding = ({
     basic_information: NestedMeta;
     contract_origin: NestedMeta;
     invoice_schedule: NestedMeta;
+    create_invoice_schedule: NestedMeta;
     contract_details: NestedMeta;
     contract_preview: NestedMeta;
     pricing_plan: NestedMeta;
@@ -140,6 +142,7 @@ export const useContractorOnboarding = ({
     basic_information: {},
     contract_origin: {},
     invoice_schedule: {},
+    create_invoice_schedule: {},
     contract_details: {},
     contract_preview: {},
     pricing_plan: {},
@@ -165,6 +168,9 @@ export const useContractorOnboarding = ({
   const [includeInvoiceSchedule, setIncludeInvoiceSchedule] =
     useState<boolean>(false);
 
+  const [includeCreateInvoiceSchedule, setIncludeCreateInvoiceSchedule] =
+    useState<boolean>(false);
+
   const [pendingNavigationStep, setPendingNavigationStep] =
     useState<StepKeys | null>(null);
 
@@ -174,6 +180,7 @@ export const useContractorOnboarding = ({
         includeSelectCountry: !skipSteps?.includes('select_country'),
         includeContractOrigin: includeContractOrigin,
         includeInvoiceSchedule: includeInvoiceSchedule,
+        includeCreateInvoiceSchedule: includeCreateInvoiceSchedule,
         includeEligibilityQuestionnaire: includeEligibilityQuestionnaire,
         includeContractDetails: includeContractDetails,
         includeContractPreview: includeContractPreview,
@@ -181,6 +188,7 @@ export const useContractorOnboarding = ({
     [
       includeContractOrigin,
       includeInvoiceSchedule,
+      includeCreateInvoiceSchedule,
       includeEligibilityQuestionnaire,
       includeContractDetails,
       includeContractPreview,
@@ -716,6 +724,7 @@ export const useContractorOnboarding = ({
       basic_information: basicInformationForm?.fields || [],
       contract_origin: contractOriginForm?.fields || [],
       invoice_schedule: invoiceScheduleForm?.fields || [],
+      create_invoice_schedule: [],
       pricing_plan: selectContractorSubscriptionForm?.fields || [],
       eligibility_questionnaire: eligibilityQuestionnaireForm?.fields || [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
@@ -742,6 +751,7 @@ export const useContractorOnboarding = ({
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
     contract_origin: null,
     invoice_schedule: null,
+    create_invoice_schedule: null,
     pricing_plan: null,
     contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
     eligibility_questionnaire: null,
@@ -757,6 +767,7 @@ export const useContractorOnboarding = ({
     basic_information: basicInformationForm?.meta?.['x-jsf-presentation'],
     contract_origin: contractOriginForm?.meta?.['x-jsf-presentation'],
     invoice_schedule: invoiceScheduleForm?.meta?.['x-jsf-presentation'],
+    create_invoice_schedule: null,
     pricing_plan:
       selectContractorSubscriptionForm?.meta?.['x-jsf-presentation'],
     eligibility_questionnaire:
@@ -830,6 +841,13 @@ export const useContractorOnboarding = ({
     return getInitialValues(stepFields.invoice_schedule, initialValues);
   }, [stepFields.invoice_schedule, onboardingInitialValues]);
 
+  const createInvoiceScheduleInitialValues = useMemo(() => {
+    const initialValues = {
+      ...onboardingInitialValues,
+    };
+    return getInitialValues(stepFields.create_invoice_schedule, initialValues);
+  }, [stepFields.create_invoice_schedule, onboardingInitialValues]);
+
   const contractDetailsInitialValues = useMemo(() => {
     const hardcodedValues = {
       service_duration: {
@@ -900,6 +918,7 @@ export const useContractorOnboarding = ({
       basic_information: basicInformationInitialValues,
       contract_origin: contractOriginInitialValues,
       invoice_schedule: invoiceScheduleInitialValues,
+      create_invoice_schedule: createInvoiceScheduleInitialValues,
       contract_details: contractDetailsInitialValues,
       contract_preview: contractPreviewInitialValues,
       pricing_plan: pricingPlanInitialValues,
@@ -910,6 +929,7 @@ export const useContractorOnboarding = ({
     basicInformationInitialValues,
     contractOriginInitialValues,
     invoiceScheduleInitialValues,
+    createInvoiceScheduleInitialValues,
     contractDetailsInitialValues,
     contractPreviewInitialValues,
     pricingPlanInitialValues,
@@ -971,6 +991,7 @@ export const useContractorOnboarding = ({
         ),
         contract_origin: {},
         invoice_schedule: {},
+        create_invoice_schedule: {},
         contract_details: prettifyFormValues(
           contractDetailsInitialValues,
           stepFields.contract_details,
@@ -998,6 +1019,7 @@ export const useContractorOnboarding = ({
         basic_information: basicInformationInitialValues,
         contract_origin: {},
         invoice_schedule: {},
+        create_invoice_schedule: {},
         contract_details: contractDetailsInitialValues,
         contract_preview: contractPreviewInitialValues,
         pricing_plan: pricingPlanInitialValues,
@@ -1392,10 +1414,23 @@ export const useContractorOnboarding = ({
       }
 
       case 'invoice_schedule': {
+        // Show create_invoice_schedule step only when user selects 'schedule'
+        const shouldShowCreateStep =
+          values.invoice_schedule_preference === 'schedule';
+        setIncludeCreateInvoiceSchedule(shouldShowCreateStep);
+
         return {
           data: {
             invoiceSchedulePreference: values.invoice_schedule_preference,
           },
+        };
+      }
+
+      case 'create_invoice_schedule': {
+        // TODO: Add form schema and API call when ready
+        // For now, just return empty data to allow progression
+        return {
+          data: {},
         };
       }
 

@@ -17,6 +17,7 @@ import { ContractReviewButton } from '@/src/flows/ContractorOnboarding/component
 import { EligibilityQuestionnaireStep } from '@/src/flows/ContractorOnboarding/components/EligibilityQuestionnaireStep';
 import { ContractOriginStep } from '@/src/flows/ContractorOnboarding/components/ContractOriginStep';
 import { InvoiceScheduleStep } from '@/src/flows/ContractorOnboarding/components/InvoiceScheduleStep';
+import { CreateInvoiceScheduleStep } from '@/src/flows/ContractorOnboarding/components/CreateInvoiceScheduleStep';
 import { ProductType } from '@/src/flows/ContractorOnboarding/constants';
 import { SaveDraftButton } from '@/src/flows/ContractorOnboarding/components/SaveDraftButton';
 
@@ -48,6 +49,7 @@ export type ContractorOnboardingRenderProps = {
     PricingPlanStep: typeof PricingPlanStep;
     ContractOriginStep: typeof ContractOriginStep;
     InvoiceScheduleStep: typeof InvoiceScheduleStep;
+    CreateInvoiceScheduleStep: typeof CreateInvoiceScheduleStep;
     ContractDetailsStep: typeof ContractDetailsStep;
     ContractPreviewStep: typeof ContractPreviewStep;
     OnboardingInvite: typeof OnboardingInvite;
@@ -86,6 +88,7 @@ type ContractorOnboardingFlowOptions = Omit<FlowOptions, 'jsfModify'> & {
     pricing_plan?: JSFModify;
     contract_origin?: JSFModify;
     invoice_schedule?: JSFModify;
+    create_invoice_schedule?: JSFModify;
   };
 };
 
