@@ -1508,29 +1508,24 @@ export const useContractorOnboarding = ({
       }
 
       case 'create_invoice_schedule': {
-<<<<<<< HEAD
-        const response = await createInvoiceScheduleMutationAsync({
-          employmentId: internalEmploymentId as string,
-=======
         if (!internalEmploymentId) {
           throw createStructuredError('Employment ID is required');
         }
 
         // Use update if we have an existing schedule, otherwise create
         if (existingInvoiceSchedule?.id) {
-          return updateInvoiceScheduleMutationAsync({
+          const response = await updateInvoiceScheduleMutationAsync({
             scheduleId: existingInvoiceSchedule.id,
             values: parsedValues,
           });
+          return response;
         }
 
-        return createInvoiceScheduleMutationAsync({
+        const response = await createInvoiceScheduleMutationAsync({
           employmentId: internalEmploymentId,
->>>>>>> ee83ac7f (edit a scheduled invoice)
           values: parsedValues,
         });
 
-        // Check for failures in the bulk response
         const failures = response?.data?.failures;
         if (failures && failures.length > 0) {
           throw createStructuredError('Failed to create invoice schedule');
