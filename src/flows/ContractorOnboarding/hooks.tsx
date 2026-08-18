@@ -700,7 +700,10 @@ export const useContractorOnboarding = ({
     jsfModify: options?.jsfModify?.invoice_schedule,
   });
 
-  const createInvoiceScheduleForm = useGetCreateInvoiceScheduleSchema({
+  const {
+    data: createInvoiceScheduleForm,
+    isLoading: isLoadingCreateInvoiceScheduleForm,
+  } = useGetCreateInvoiceScheduleSchema({
     enabled: includeInvoiceSchedule,
     employmentId: internalEmploymentId,
     jsfModify: options?.jsfModify?.create_invoice_schedule,
@@ -965,7 +968,8 @@ export const useContractorOnboarding = ({
     isLoadingDocumentPreviewForm ||
     isLoadingIR35File ||
     isLoadingContractDocuments ||
-    isLoadingEligibilityQuestionnaire;
+    isLoadingEligibilityQuestionnaire ||
+    isLoadingCreateInvoiceScheduleForm;
 
   const isNavigatingToReview = useMemo(() => {
     const isCor = employment?.contractor_type === 'cor';
@@ -1764,7 +1768,8 @@ export const useContractorOnboarding = ({
       createEligibilityQuestionnaireMutation.isPending ||
       manageContractorCorSubscriptionMutation.isPending ||
       deleteContractorCorSubscriptionMutation.isPending ||
-      setContractOriginMutation.isPending,
+      setContractOriginMutation.isPending ||
+      createInvoiceScheduleMutation.isPending,
 
     /**
      * Document preview PDF data

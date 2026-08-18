@@ -788,13 +788,14 @@ export const useGetCreateInvoiceScheduleSchema = ({
   enabled?: boolean;
   employmentId?: string;
   jsfModify?: JSFModify;
-}): JSONSchemaFormResultWithFieldsets | null => {
-  const { data: currencies } = useContractorCurrencies({
-    employmentId: employmentId as string,
-    options: {
-      queryOptions: { enabled: enabled && Boolean(employmentId) },
-    },
-  });
+}): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
+  const { data: currencies, isLoading: isLoadingCurrencies } =
+    useContractorCurrencies({
+      employmentId: employmentId as string,
+      options: {
+        queryOptions: { enabled: enabled && Boolean(employmentId) },
+      },
+    });
 
   const schemaWithCurrencies = useMemo(() => {
     if (!enabled || !currencies) return null;
@@ -819,7 +820,10 @@ export const useGetCreateInvoiceScheduleSchema = ({
     return createHeadlessForm(schema, {}, { jsfModify });
   }, [enabled, currencies, jsfModify]);
 
-  return schemaWithCurrencies;
+  return {
+    data: schemaWithCurrencies,
+    isLoading: isLoadingCurrencies,
+  };
 };
 
 export const useCountriesSchemaField = (
