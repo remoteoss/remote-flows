@@ -33,6 +33,7 @@ import {
   useSetContractOrigin,
   useGetContractOriginSchema,
   useGetInvoiceScheduleSchema,
+  useGetCreateInvoiceScheduleSchema,
 } from '@/src/flows/ContractorOnboarding/api';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
@@ -694,6 +695,11 @@ export const useContractorOnboarding = ({
     jsfModify: options?.jsfModify?.invoice_schedule,
   });
 
+  const createInvoiceScheduleForm = useGetCreateInvoiceScheduleSchema({
+    enabled: includeInvoiceSchedule,
+    jsfModify: options?.jsfModify?.create_invoice_schedule,
+  });
+
   const {
     data: documentPreviewPdf,
     isLoading: isLoadingDocumentPreviewForm,
@@ -724,7 +730,7 @@ export const useContractorOnboarding = ({
       basic_information: basicInformationForm?.fields || [],
       contract_origin: contractOriginForm?.fields || [],
       invoice_schedule: invoiceScheduleForm?.fields || [],
-      create_invoice_schedule: [],
+      create_invoice_schedule: createInvoiceScheduleForm?.fields || [],
       pricing_plan: selectContractorSubscriptionForm?.fields || [],
       eligibility_questionnaire: eligibilityQuestionnaireForm?.fields || [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
@@ -736,6 +742,7 @@ export const useContractorOnboarding = ({
       basicInformationForm?.fields,
       contractOriginForm?.fields,
       invoiceScheduleForm?.fields,
+      createInvoiceScheduleForm?.fields,
       selectContractorSubscriptionForm?.fields,
       contractorOnboardingDetailsForm?.fields,
       signatureSchemaForm?.fields,
@@ -767,7 +774,8 @@ export const useContractorOnboarding = ({
     basic_information: basicInformationForm?.meta?.['x-jsf-presentation'],
     contract_origin: contractOriginForm?.meta?.['x-jsf-presentation'],
     invoice_schedule: invoiceScheduleForm?.meta?.['x-jsf-presentation'],
-    create_invoice_schedule: null,
+    create_invoice_schedule:
+      createInvoiceScheduleForm?.meta?.['x-jsf-presentation'],
     pricing_plan:
       selectContractorSubscriptionForm?.meta?.['x-jsf-presentation'],
     eligibility_questionnaire:
@@ -1588,9 +1596,14 @@ export const useContractorOnboarding = ({
       setFieldValues(values);
       // new steps or refactor ones should rely on json-schema-form-mutability
       // instead of passing fieldValues
+      const stepsUsingHandleValidation = [
+        'invoice_schedule',
+        'create_invoice_schedule',
+      ];
+
       if (
         includeInvoiceSchedule &&
-        stepState.currentStep.name === 'invoice_schedule'
+        stepsUsingHandleValidation.includes(stepState.currentStep.name)
       ) {
         await handleValidation(values);
       }

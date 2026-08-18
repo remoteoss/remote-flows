@@ -23,6 +23,7 @@ import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
 import { contractOriginSchema } from '@/src/flows/ContractorOnboarding/json-schemas/contractOrigin';
 import { invoiceScheduleSchema } from '@/src/flows/ContractorOnboarding/json-schemas/invoiceSchedule';
+import { createInvoiceScheduleSchema } from '@/src/flows/ContractorOnboarding/json-schemas/createInvoiceSchedule';
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
 import {
   JSONSchemaFormResultWithFieldsets,
@@ -764,6 +765,25 @@ export const useGetInvoiceScheduleSchema = ({
     if (!enabled) return null;
     return createHeadlessForm(
       invoiceScheduleSchema,
+      {},
+      {
+        jsfModify,
+      },
+    );
+  }, [enabled, jsfModify]);
+};
+
+export const useGetCreateInvoiceScheduleSchema = ({
+  enabled,
+  jsfModify,
+}: {
+  enabled?: boolean;
+  jsfModify?: JSFModify;
+}) => {
+  return useMemo(() => {
+    if (!enabled) return null;
+    return createHeadlessForm(
+      createInvoiceScheduleSchema,
       {},
       {
         jsfModify,
