@@ -66,7 +66,8 @@ const CONTRACTOR_ONBOARDING_STEPS: Record<number, string> = {
   [5]: 'Contract Details',
   [6]: 'Contract Preview',
   [7]: 'Invoice schedule',
-  [8]: 'Review',
+  [8]: 'Create Invoice Schedule',
+  [9]: 'Review',
 };
 
 function createMockRenderImplementation(
