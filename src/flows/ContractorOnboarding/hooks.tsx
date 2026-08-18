@@ -696,7 +696,9 @@ export const useContractorOnboarding = ({
   });
 
   const invoiceScheduleForm = useGetInvoiceScheduleSchema({
-    enabled: includeInvoiceSchedule,
+    enabled:
+      includeInvoiceSchedule &&
+      stepState.currentStep.name === 'invoice_schedule',
     jsfModify: options?.jsfModify?.invoice_schedule,
   });
 
@@ -704,7 +706,9 @@ export const useContractorOnboarding = ({
     data: createInvoiceScheduleForm,
     isLoading: isLoadingCreateInvoiceScheduleForm,
   } = useGetCreateInvoiceScheduleSchema({
-    enabled: includeInvoiceSchedule,
+    enabled:
+      includeInvoiceSchedule &&
+      stepState.currentStep.name === 'create_invoice_schedule',
     employmentId: internalEmploymentId,
     jsfModify: options?.jsfModify?.create_invoice_schedule,
   });
