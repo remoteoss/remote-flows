@@ -1139,6 +1139,19 @@ export const useContractorOnboarding = ({
       });
     }
 
+    if (
+      createInvoiceScheduleForm &&
+      stepState.currentStep.name === 'create_invoice_schedule'
+    ) {
+      return await parseJSFToValidate(
+        values,
+        createInvoiceScheduleForm?.fields,
+        {
+          isPartialValidation: false,
+        },
+      );
+    }
+
     return {};
   };
 
@@ -1577,6 +1590,18 @@ export const useContractorOnboarding = ({
         return invoiceScheduleForm?.handleValidation(parsedValues);
       }
 
+      if (
+        createInvoiceScheduleForm &&
+        stepState.currentStep.name === 'create_invoice_schedule'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          createInvoiceScheduleForm?.fields,
+          { isPartialValidation: false },
+        );
+        return createInvoiceScheduleForm?.handleValidation(parsedValues);
+      }
+
       return null;
     },
     [
@@ -1589,6 +1614,7 @@ export const useContractorOnboarding = ({
       eligibilityQuestionnaireForm,
       contractOriginForm,
       invoiceScheduleForm,
+      createInvoiceScheduleForm,
     ],
   );
 
