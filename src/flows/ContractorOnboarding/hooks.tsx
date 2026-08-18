@@ -34,6 +34,7 @@ import {
   useGetContractOriginSchema,
   useGetInvoiceScheduleSchema,
   useGetCreateInvoiceScheduleSchema,
+  useCreateInvoiceSchedule,
 } from '@/src/flows/ContractorOnboarding/api';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
@@ -271,6 +272,7 @@ export const useContractorOnboarding = ({
   const manageContractorCorSubscriptionMutation =
     usePostManageContractorCorSubscription();
   const setContractOriginMutation = useSetContractOrigin();
+  const createInvoiceScheduleMutation = useCreateInvoiceSchedule();
 
   const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
     mutationToPromise(updateEmploymentMutation);
@@ -303,6 +305,9 @@ export const useContractorOnboarding = ({
 
   const { mutateAsyncOrThrow: setContractOriginMutationAsync } =
     mutationToPromise(setContractOriginMutation);
+
+  const { mutateAsyncOrThrow: createInvoiceScheduleMutationAsync } =
+    mutationToPromise(createInvoiceScheduleMutation);
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -1449,11 +1454,10 @@ export const useContractorOnboarding = ({
       }
 
       case 'create_invoice_schedule': {
-        // TODO: Add form schema and API call when ready
-        // For now, just return empty data to allow progression
-        return {
-          data: {},
-        };
+        return createInvoiceScheduleMutationAsync({
+          employmentId: internalEmploymentId as string,
+          values: parsedValues,
+        });
       }
 
       case 'eligibility_questionnaire': {
