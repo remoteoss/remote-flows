@@ -327,6 +327,12 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Basic Information/i);
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
 
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Personal email/i)).toHaveValue(
+        employmentDefaultResponse.data.employment.personal_email,
+      );
+    });
+
     const nextButton = screen.getByText(/Next Step/i);
     expect(nextButton).toBeInTheDocument();
 
