@@ -1462,10 +1462,48 @@ export const useContractorOnboarding = ({
       }
 
       case 'create_invoice_schedule': {
-        return createInvoiceScheduleMutationAsync({
+        const response = await createInvoiceScheduleMutationAsync({
           employmentId: internalEmploymentId as string,
           values: parsedValues,
         });
+
+        // Check for failures in the bulk response
+        const failures = response?.data?.failures;
+        if (failures && failures.length > 0) {
+          // Extract the first failure for error message
+          const firstFailure = failures[0];
+          const errorMessages: string[] = [];
+
+          // Collect all error messages from the failure
+          if (firstFailure.errors) {
+            Object.entries(firstFailure.errors).forEach(([, messages]) => {
+              if (Array.isArray(messages)) {
+                // Check if it's an array of strings or array of objects
+                messages.forEach((message) => {
+                  if (typeof message === 'string') {
+                    errorMessages.push(message);
+                  } else if (typeof message === 'object' && message !== null) {
+                    // Handle nested error objects (e.g., items array)
+                    Object.values(message).forEach((nestedMessages) => {
+                      if (Array.isArray(nestedMessages)) {
+                        errorMessages.push(...nestedMessages);
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          }
+
+          const errorMessage =
+            errorMessages.length > 0
+              ? errorMessages.join(', ')
+              : 'Failed to create invoice schedule';
+
+          throw createStructuredError(errorMessage);
+        }
+
+        return response;
       }
 
       case 'eligibility_questionnaire': {

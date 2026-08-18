@@ -25,7 +25,11 @@ function invoiceItemProperties() {
         inputType: 'money',
       },
       'x-jsf-logic-computedAttrs': {
-        currency: 'currency_selected',
+        'x-jsf-presentation': {
+          additionalProps: {
+            currency: 'currency_selected',
+          },
+        },
       },
     };
   }
