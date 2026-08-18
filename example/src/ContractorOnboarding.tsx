@@ -554,19 +554,20 @@ const MultiStepForm = ({
       );
 
     case 'create_invoice_schedule':
+      const presentation = contractorOnboardingBag.meta.presentation as {
+        title: string;
+        description: string;
+      };
       return (
         <div className='contractor-onboarding-form-layout'>
-          {contractorOnboardingBag.meta.presentation?.title && (
+          {presentation?.title && (
             <div className='flex flex-col gap-2 text-center mb-6'>
               <h1 className='text-2xl font-bold text-[#000000]'>
-                {contractorOnboardingBag.meta.presentation.title as string}
+                {presentation.title}
               </h1>
-              {contractorOnboardingBag.meta.presentation.description && (
+              {presentation.description && (
                 <p className='text-sm text-[#71717A]'>
-                  {
-                    contractorOnboardingBag.meta.presentation
-                      .description as string
-                  }
+                  {presentation.description}
                 </p>
               )}
             </div>
