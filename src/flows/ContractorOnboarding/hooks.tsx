@@ -33,9 +33,10 @@ import {
   useSetContractOrigin,
   useGetContractOriginSchema,
   useGetInvoiceScheduleSchema,
-  useGetInvoiceSchedules,
+  useGetLastInvoiceSchedule,
   useGetCreateInvoiceScheduleSchema,
   useCreateInvoiceSchedule,
+  useUpdateInvoiceSchedule,
 } from '@/src/flows/ContractorOnboarding/api';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
@@ -274,6 +275,7 @@ export const useContractorOnboarding = ({
     usePostManageContractorCorSubscription();
   const setContractOriginMutation = useSetContractOrigin();
   const createInvoiceScheduleMutation = useCreateInvoiceSchedule();
+  const updateInvoiceScheduleMutation = useUpdateInvoiceSchedule();
 
   const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
     mutationToPromise(updateEmploymentMutation);
@@ -309,6 +311,9 @@ export const useContractorOnboarding = ({
 
   const { mutateAsyncOrThrow: createInvoiceScheduleMutationAsync } =
     mutationToPromise(createInvoiceScheduleMutation);
+
+  const { mutateAsyncOrThrow: updateInvoiceScheduleMutationAsync } =
+    mutationToPromise(updateInvoiceScheduleMutation);
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -703,20 +708,17 @@ export const useContractorOnboarding = ({
     jsfModify: options?.jsfModify?.invoice_schedule,
   });
 
-  const { data: invoiceSchedules, isLoading: isLoadingInvoiceSchedules } =
-    useGetInvoiceSchedules({
-      employmentId: internalEmploymentId as string,
-      options: {
-        queryOptions: {
-          enabled:
-            includeInvoiceSchedule &&
-            stepState.currentStep.name === 'invoice_schedule' &&
-            Boolean(internalEmploymentId),
-        },
+  const {
+    data: existingInvoiceSchedule,
+    isLoading: isLoadingInvoiceSchedules,
+  } = useGetLastInvoiceSchedule({
+    employmentId: internalEmploymentId as string,
+    options: {
+      queryOptions: {
+        enabled: includeInvoiceSchedule && Boolean(internalEmploymentId),
       },
-    });
-
-  console.log('invoiceSchedules', invoiceSchedules);
+    },
+  });
 
   const {
     data: createInvoiceScheduleForm,
@@ -879,11 +881,38 @@ export const useContractorOnboarding = ({
   }, [stepFields.invoice_schedule, onboardingInitialValues]);
 
   const createInvoiceScheduleInitialValues = useMemo(() => {
+    // If an existing schedule exists, transform it to form values
+    if (existingInvoiceSchedule) {
+      const formValues: Record<string, unknown> = {
+        currency: existingInvoiceSchedule.currency,
+        periodicity: existingInvoiceSchedule.periodicity,
+        start_date: existingInvoiceSchedule.start_date,
+        number: existingInvoiceSchedule.number,
+        note: existingInvoiceSchedule.note,
+        nr_occurrences: existingInvoiceSchedule.nr_occurrences,
+      };
+
+      // Map items array to form fields (item_1, item_2, etc.)
+      existingInvoiceSchedule.items?.forEach(
+        (item: $TSFixMe, index: number) => {
+          const itemNumber = index + 1;
+          formValues[`item_${itemNumber}_description`] = item.description;
+          formValues[`item_${itemNumber}_amount`] = item.amount;
+        },
+      );
+
+      return formValues;
+    }
+
     const initialValues = {
       ...onboardingInitialValues,
     };
     return getInitialValues(stepFields.create_invoice_schedule, initialValues);
-  }, [stepFields.create_invoice_schedule, onboardingInitialValues]);
+  }, [
+    stepFields.create_invoice_schedule,
+    onboardingInitialValues,
+    existingInvoiceSchedule,
+  ]);
 
   const contractDetailsInitialValues = useMemo(() => {
     const hardcodedValues = {
@@ -1479,8 +1508,25 @@ export const useContractorOnboarding = ({
       }
 
       case 'create_invoice_schedule': {
+<<<<<<< HEAD
         const response = await createInvoiceScheduleMutationAsync({
           employmentId: internalEmploymentId as string,
+=======
+        if (!internalEmploymentId) {
+          throw createStructuredError('Employment ID is required');
+        }
+
+        // Use update if we have an existing schedule, otherwise create
+        if (existingInvoiceSchedule?.id) {
+          return updateInvoiceScheduleMutationAsync({
+            scheduleId: existingInvoiceSchedule.id,
+            values: parsedValues,
+          });
+        }
+
+        return createInvoiceScheduleMutationAsync({
+          employmentId: internalEmploymentId,
+>>>>>>> ee83ac7f (edit a scheduled invoice)
           values: parsedValues,
         });
 
