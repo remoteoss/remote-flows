@@ -902,7 +902,7 @@ export const useContractorOnboarding = ({
         },
       );
 
-      return formValues;
+      return getInitialValues(stepFields.create_invoice_schedule, formValues);
     }
 
     const initialValues = {
