@@ -228,6 +228,7 @@ const MultiStepForm = ({
     SaveDraftButton,
     ContractOriginStep,
     InvoiceScheduleStep,
+    CreateInvoiceScheduleStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -529,6 +530,54 @@ const MultiStepForm = ({
             }
             onSuccess={(response) =>
               console.log('invoice schedule response', response)
+            }
+            onError={({ error, fieldErrors }) =>
+              setErrors({ apiError: error.message, fieldErrors })
+            }
+          />
+          <AlertError errors={errors} />
+          <div className='contractor-onboarding-buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Back
+            </BackButton>
+            <SubmitButton
+              className='submit-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Continue
+            </SubmitButton>
+          </div>
+        </div>
+      );
+
+    case 'create_invoice_schedule':
+      const presentation = contractorOnboardingBag.meta.presentation as {
+        title: string;
+        description: string;
+      };
+      return (
+        <div className='contractor-onboarding-form-layout'>
+          {presentation?.title && (
+            <div className='flex flex-col gap-2 text-center mb-6'>
+              <h1 className='text-2xl font-bold text-[#000000]'>
+                {presentation.title}
+              </h1>
+              {presentation.description && (
+                <p className='text-sm text-[#71717A]'>
+                  {presentation.description}
+                </p>
+              )}
+            </div>
+          )}
+          <CreateInvoiceScheduleStep
+            onSubmit={(payload) =>
+              console.log('create invoice schedule payload', payload)
+            }
+            onSuccess={(response) =>
+              console.log('create invoice schedule response', response)
             }
             onError={({ error, fieldErrors }) =>
               setErrors({ apiError: error.message, fieldErrors })
