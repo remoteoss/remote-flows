@@ -711,6 +711,7 @@ export const useContractorOnboarding = ({
   const {
     data: existingInvoiceSchedule,
     isLoading: isLoadingInvoiceSchedules,
+    refetch: refetchInvoiceSchedule,
   } = useGetLastInvoiceSchedule({
     employmentId: internalEmploymentId as string,
     options: {
@@ -1518,6 +1519,7 @@ export const useContractorOnboarding = ({
             scheduleId: existingInvoiceSchedule.id,
             values: parsedValues,
           });
+          await refetchInvoiceSchedule();
           return response;
         }
 
@@ -1531,6 +1533,7 @@ export const useContractorOnboarding = ({
           throw createStructuredError('Failed to create invoice schedule');
         }
 
+        await refetchInvoiceSchedule();
         return response;
       }
 
