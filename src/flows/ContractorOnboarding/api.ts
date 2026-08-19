@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import {
+  BulkContractorInvoiceScheduleCreateParams,
   CompanyAction,
   CreateContractDocument,
   getV1CompaniesCompanyIdActions,
@@ -9,6 +10,7 @@ import {
   postV1ContractorsEmploymentsEmploymentIdContractDocuments,
   postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription,
   postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign,
+  postV1ContractorInvoiceSchedules,
   SignContractDocument,
   getV1EmploymentsEmploymentIdContractDocuments,
   EligibilityQuestionnaireJsonSchemaResponse,
@@ -23,7 +25,9 @@ import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
 import { contractOriginSchema } from '@/src/flows/ContractorOnboarding/json-schemas/contractOrigin';
 import { invoiceScheduleSchema } from '@/src/flows/ContractorOnboarding/json-schemas/invoiceSchedule';
+import { createInvoiceScheduleSchema } from '@/src/flows/ContractorOnboarding/json-schemas/createInvoiceSchedule';
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
+import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
 import {
   JSONSchemaFormResultWithFieldsets,
   FlowOptions,
@@ -772,6 +776,56 @@ export const useGetInvoiceScheduleSchema = ({
   }, [enabled, jsfModify]);
 };
 
+/**
+ * Get the create invoice schedule schema with currency options from the contractor currencies endpoint.
+ * React Query caches the result, so multiple calls share the same data.
+ */
+export const useGetCreateInvoiceScheduleSchema = ({
+  enabled,
+  employmentId,
+  jsfModify,
+}: {
+  enabled?: boolean;
+  employmentId?: string;
+  jsfModify?: JSFModify;
+}): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
+  const { data: currencies, isLoading: isLoadingCurrencies } =
+    useContractorCurrencies({
+      employmentId: employmentId as string,
+      options: {
+        queryOptions: { enabled: enabled && Boolean(employmentId) },
+      },
+    });
+
+  const schemaWithCurrencies = useMemo(() => {
+    if (!enabled || !currencies) return null;
+
+    // Clone the schema and update the currency oneOf with actual currencies
+    const schema = {
+      ...createInvoiceScheduleSchema,
+      properties: {
+        ...createInvoiceScheduleSchema.properties,
+        currency: {
+          ...createInvoiceScheduleSchema.properties.currency,
+          oneOf: currencies.map(
+            (currency: { code: string; source: string }) => ({
+              const: currency.code,
+              title: currency.code,
+            }),
+          ),
+        },
+      },
+    };
+
+    return createHeadlessForm(schema, {}, { jsfModify });
+  }, [enabled, currencies, jsfModify]);
+
+  return {
+    data: schemaWithCurrencies,
+    isLoading: isLoadingCurrencies,
+  };
+};
+
 export const useCountriesSchemaField = (
   options?: Omit<FlowOptions, 'jsonSchemaVersion'> & {
     queryOptions?: { enabled?: boolean };
@@ -836,5 +890,59 @@ export const useCompanyOpenTasks = ({
       }),
     select: ({ data }) => data?.data?.actions ?? ([] as CompanyAction[]),
     enabled: (options?.queryOptions?.enabled ?? true) && !!companyId,
+  });
+};
+
+/**
+ * Creates contractor invoice schedules
+ * @param employmentId - The employment ID
+ * @param values - The form values containing invoice schedule data
+ * @returns The created invoice schedules
+ */
+export const useCreateInvoiceSchedule = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: async ({
+      employmentId,
+      values,
+    }: {
+      employmentId: string;
+      values: FieldValues;
+    }) => {
+      // Collect invoice items from form fields (item_1 through item_10)
+      const items = [];
+      for (let i = 1; i <= 10; i++) {
+        const description = values[`item_${i}_description`];
+        const amount = values[`item_${i}_amount`];
+        if (description && amount != null) {
+          items.push({
+            description,
+            amount: Number(amount),
+          });
+        }
+      }
+
+      const payload: BulkContractorInvoiceScheduleCreateParams = {
+        contractor_invoice_schedules: [
+          {
+            employment_id: employmentId,
+            currency: values.currency,
+            periodicity: values.periodicity,
+            start_date: values.start_date,
+            items,
+            ...(values.number && { number: values.number }),
+            ...(values.note && { note: values.note }),
+            ...(values.nr_occurrences && {
+              nr_occurrences: Number(values.nr_occurrences),
+            }),
+          },
+        ],
+      };
+
+      return postV1ContractorInvoiceSchedules({
+        client: client as Client,
+        body: payload,
+      });
+    },
   });
 };

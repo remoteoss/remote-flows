@@ -33,6 +33,8 @@ import {
   useSetContractOrigin,
   useGetContractOriginSchema,
   useGetInvoiceScheduleSchema,
+  useGetCreateInvoiceScheduleSchema,
+  useCreateInvoiceSchedule,
 } from '@/src/flows/ContractorOnboarding/api';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
@@ -270,6 +272,7 @@ export const useContractorOnboarding = ({
   const manageContractorCorSubscriptionMutation =
     usePostManageContractorCorSubscription();
   const setContractOriginMutation = useSetContractOrigin();
+  const createInvoiceScheduleMutation = useCreateInvoiceSchedule();
 
   const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
     mutationToPromise(updateEmploymentMutation);
@@ -302,6 +305,9 @@ export const useContractorOnboarding = ({
 
   const { mutateAsyncOrThrow: setContractOriginMutationAsync } =
     mutationToPromise(setContractOriginMutation);
+
+  const { mutateAsyncOrThrow: createInvoiceScheduleMutationAsync } =
+    mutationToPromise(createInvoiceScheduleMutation);
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -690,8 +696,21 @@ export const useContractorOnboarding = ({
   });
 
   const invoiceScheduleForm = useGetInvoiceScheduleSchema({
-    enabled: includeInvoiceSchedule,
+    enabled:
+      includeInvoiceSchedule &&
+      stepState.currentStep.name === 'invoice_schedule',
     jsfModify: options?.jsfModify?.invoice_schedule,
+  });
+
+  const {
+    data: createInvoiceScheduleForm,
+    isLoading: isLoadingCreateInvoiceScheduleForm,
+  } = useGetCreateInvoiceScheduleSchema({
+    enabled:
+      includeInvoiceSchedule &&
+      stepState.currentStep.name === 'create_invoice_schedule',
+    employmentId: internalEmploymentId,
+    jsfModify: options?.jsfModify?.create_invoice_schedule,
   });
 
   const {
@@ -724,7 +743,7 @@ export const useContractorOnboarding = ({
       basic_information: basicInformationForm?.fields || [],
       contract_origin: contractOriginForm?.fields || [],
       invoice_schedule: invoiceScheduleForm?.fields || [],
-      create_invoice_schedule: [],
+      create_invoice_schedule: createInvoiceScheduleForm?.fields || [],
       pricing_plan: selectContractorSubscriptionForm?.fields || [],
       eligibility_questionnaire: eligibilityQuestionnaireForm?.fields || [],
       contract_details: contractorOnboardingDetailsForm?.fields || [],
@@ -736,6 +755,7 @@ export const useContractorOnboarding = ({
       basicInformationForm?.fields,
       contractOriginForm?.fields,
       invoiceScheduleForm?.fields,
+      createInvoiceScheduleForm?.fields,
       selectContractorSubscriptionForm?.fields,
       contractorOnboardingDetailsForm?.fields,
       signatureSchemaForm?.fields,
@@ -767,7 +787,8 @@ export const useContractorOnboarding = ({
     basic_information: basicInformationForm?.meta?.['x-jsf-presentation'],
     contract_origin: contractOriginForm?.meta?.['x-jsf-presentation'],
     invoice_schedule: invoiceScheduleForm?.meta?.['x-jsf-presentation'],
-    create_invoice_schedule: null,
+    create_invoice_schedule:
+      createInvoiceScheduleForm?.meta?.['x-jsf-presentation'],
     pricing_plan:
       selectContractorSubscriptionForm?.meta?.['x-jsf-presentation'],
     eligibility_questionnaire:
@@ -951,7 +972,8 @@ export const useContractorOnboarding = ({
     isLoadingDocumentPreviewForm ||
     isLoadingIR35File ||
     isLoadingContractDocuments ||
-    isLoadingEligibilityQuestionnaire;
+    isLoadingEligibilityQuestionnaire ||
+    isLoadingCreateInvoiceScheduleForm;
 
   const isNavigatingToReview = useMemo(() => {
     const isCor = employment?.contractor_type === 'cor';
@@ -1128,6 +1150,19 @@ export const useContractorOnboarding = ({
       return await parseJSFToValidate(values, invoiceScheduleForm?.fields, {
         isPartialValidation: false,
       });
+    }
+
+    if (
+      createInvoiceScheduleForm &&
+      stepState.currentStep.name === 'create_invoice_schedule'
+    ) {
+      return await parseJSFToValidate(
+        values,
+        createInvoiceScheduleForm?.fields,
+        {
+          isPartialValidation: false,
+        },
+      );
     }
 
     return {};
@@ -1427,11 +1462,18 @@ export const useContractorOnboarding = ({
       }
 
       case 'create_invoice_schedule': {
-        // TODO: Add form schema and API call when ready
-        // For now, just return empty data to allow progression
-        return {
-          data: {},
-        };
+        const response = await createInvoiceScheduleMutationAsync({
+          employmentId: internalEmploymentId as string,
+          values: parsedValues,
+        });
+
+        // Check for failures in the bulk response
+        const failures = response?.data?.failures;
+        if (failures && failures.length > 0) {
+          throw createStructuredError('Failed to create invoice schedule');
+        }
+
+        return response;
       }
 
       case 'eligibility_questionnaire': {
@@ -1568,6 +1610,18 @@ export const useContractorOnboarding = ({
         return invoiceScheduleForm?.handleValidation(parsedValues);
       }
 
+      if (
+        createInvoiceScheduleForm &&
+        stepState.currentStep.name === 'create_invoice_schedule'
+      ) {
+        const parsedValues = await parseJSFToValidate(
+          values,
+          createInvoiceScheduleForm?.fields,
+          { isPartialValidation: false },
+        );
+        return createInvoiceScheduleForm?.handleValidation(parsedValues);
+      }
+
       return null;
     },
     [
@@ -1580,6 +1634,7 @@ export const useContractorOnboarding = ({
       eligibilityQuestionnaireForm,
       contractOriginForm,
       invoiceScheduleForm,
+      createInvoiceScheduleForm,
     ],
   );
 
@@ -1588,9 +1643,14 @@ export const useContractorOnboarding = ({
       setFieldValues(values);
       // new steps or refactor ones should rely on json-schema-form-mutability
       // instead of passing fieldValues
+      const stepsUsingHandleValidation = [
+        'invoice_schedule',
+        'create_invoice_schedule',
+      ];
+
       if (
         includeInvoiceSchedule &&
-        stepState.currentStep.name === 'invoice_schedule'
+        stepsUsingHandleValidation.includes(stepState.currentStep.name)
       ) {
         await handleValidation(values);
       }
@@ -1720,7 +1780,8 @@ export const useContractorOnboarding = ({
       createEligibilityQuestionnaireMutation.isPending ||
       manageContractorCorSubscriptionMutation.isPending ||
       deleteContractorCorSubscriptionMutation.isPending ||
-      setContractOriginMutation.isPending,
+      setContractOriginMutation.isPending ||
+      createInvoiceScheduleMutation.isPending,
 
     /**
      * Document preview PDF data

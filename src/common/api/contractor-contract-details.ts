@@ -14,7 +14,7 @@ import {
 } from '@/src/flows/types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
-const useContractorCurrencies = ({
+export const useContractorCurrencies = ({
   employmentId,
   options,
 }: {
