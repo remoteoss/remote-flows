@@ -16,6 +16,7 @@ import { EligibilityQuestionnaireStep } from '@/src/flows/ContractorOnboarding/c
 import { SaveDraftButton } from '@/src/flows/ContractorOnboarding/components/SaveDraftButton';
 import { ContractOriginStep } from '@/src/flows/ContractorOnboarding/components/ContractOriginStep';
 import { InvoiceScheduleStep } from '@/src/flows/ContractorOnboarding/components/InvoiceScheduleStep';
+import { CreateInvoiceScheduleStep } from '@/src/flows/ContractorOnboarding/components/CreateInvoiceScheduleStep';
 
 export const ContractorOnboardingFlow = ({
   render,
@@ -66,6 +67,7 @@ export const ContractorOnboardingFlow = ({
           EligibilityQuestionnaireStep: EligibilityQuestionnaireStep,
           ContractOriginStep: ContractOriginStep,
           InvoiceScheduleStep: InvoiceScheduleStep,
+          CreateInvoiceScheduleStep: CreateInvoiceScheduleStep,
           ContractDetailsStep: ContractDetailsStep,
           ContractPreviewStep: ContractPreviewStep,
           OnboardingInvite: OnboardingInvite,

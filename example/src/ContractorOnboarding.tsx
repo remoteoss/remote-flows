@@ -228,6 +228,7 @@ const MultiStepForm = ({
     SaveDraftButton,
     ContractOriginStep,
     InvoiceScheduleStep,
+    CreateInvoiceScheduleStep,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -529,6 +530,38 @@ const MultiStepForm = ({
             }
             onSuccess={(response) =>
               console.log('invoice schedule response', response)
+            }
+            onError={({ error, fieldErrors }) =>
+              setErrors({ apiError: error.message, fieldErrors })
+            }
+          />
+          <AlertError errors={errors} />
+          <div className='contractor-onboarding-buttons-container'>
+            <BackButton
+              className='back-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Back
+            </BackButton>
+            <SubmitButton
+              className='submit-button'
+              onClick={() => setErrors({ apiError: '', fieldErrors: [] })}
+            >
+              Continue
+            </SubmitButton>
+          </div>
+        </div>
+      );
+
+    case 'create_invoice_schedule':
+      return (
+        <div className='contractor-onboarding-form-layout'>
+          <CreateInvoiceScheduleStep
+            onSubmit={(payload) =>
+              console.log('create invoice schedule payload', payload)
+            }
+            onSuccess={(response) =>
+              console.log('create invoice schedule response', response)
             }
             onError={({ error, fieldErrors }) =>
               setErrors({ apiError: error.message, fieldErrors })
