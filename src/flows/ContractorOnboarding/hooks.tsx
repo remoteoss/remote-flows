@@ -387,9 +387,11 @@ export const useContractorOnboarding = ({
   const shouldIncludeContractPreview = employment?.contractor_type !== 'cor';
 
   const selectedContractOrigin =
-    (stepState.values?.contract_origin?.contract_origin as
-      | string
-      | undefined) ?? basicInformation?.contract_origin;
+    (stepState.currentStep.name === 'contract_origin'
+      ? fieldValues.contract_origin
+      : undefined) ??
+    stepState.values?.contract_origin?.contract_origin ??
+    basicInformation?.contract_origin;
 
   const isContractProvidedByCustomer =
     selectedProduct === contractorStandardProductIdentifier &&

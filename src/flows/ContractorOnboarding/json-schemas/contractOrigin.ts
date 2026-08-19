@@ -5,7 +5,7 @@ export const contractOriginSchema = {
       description: '',
       oneOf: [
         {
-          const: 'provided_by_remote',
+          const: 'remote_contract',
           description:
             'Create a new terms and conditions and statement of work. This should only be used if you do not have an agreement in place with a contractor or want to renegotiate an agreement.',
           title: 'Contractor services agreement',
