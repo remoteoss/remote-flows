@@ -35,6 +35,8 @@ import {
   useGetInvoiceScheduleSchema,
   useGetCreateInvoiceScheduleSchema,
   useCreateInvoiceSchedule,
+  useUpdateInvoiceSchedule,
+  useGetExistingInvoiceSchedule,
 } from '@/src/flows/ContractorOnboarding/api';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
@@ -273,6 +275,7 @@ export const useContractorOnboarding = ({
     usePostManageContractorCorSubscription();
   const setContractOriginMutation = useSetContractOrigin();
   const createInvoiceScheduleMutation = useCreateInvoiceSchedule();
+  const updateInvoiceScheduleMutation = useUpdateInvoiceSchedule();
 
   const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
     mutationToPromise(updateEmploymentMutation);
@@ -308,6 +311,9 @@ export const useContractorOnboarding = ({
 
   const { mutateAsyncOrThrow: createInvoiceScheduleMutationAsync } =
     mutationToPromise(createInvoiceScheduleMutation);
+
+  const { mutateAsyncOrThrow: updateInvoiceScheduleMutationAsync } =
+    mutationToPromise(updateInvoiceScheduleMutation);
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -703,6 +709,19 @@ export const useContractorOnboarding = ({
   });
 
   const {
+    data: existingInvoiceSchedule,
+    isLoading: isLoadingInvoiceSchedules,
+    refetch: refetchInvoiceSchedule,
+  } = useGetExistingInvoiceSchedule({
+    employmentId: internalEmploymentId as string,
+    options: {
+      queryOptions: {
+        enabled: includeInvoiceSchedule && Boolean(internalEmploymentId),
+      },
+    },
+  });
+
+  const {
     data: createInvoiceScheduleForm,
     isLoading: isLoadingCreateInvoiceScheduleForm,
   } = useGetCreateInvoiceScheduleSchema({
@@ -863,11 +882,35 @@ export const useContractorOnboarding = ({
   }, [stepFields.invoice_schedule, onboardingInitialValues]);
 
   const createInvoiceScheduleInitialValues = useMemo(() => {
+    // If an existing schedule exists, transform it to form values
+    if (existingInvoiceSchedule) {
+      const formValues: Record<string, unknown> = {
+        currency: existingInvoiceSchedule.currency,
+        periodicity: existingInvoiceSchedule.periodicity,
+        start_date: existingInvoiceSchedule.start_date,
+        number: existingInvoiceSchedule.number,
+        note: existingInvoiceSchedule.note,
+        nr_occurrences: existingInvoiceSchedule.nr_occurrences,
+      };
+
+      existingInvoiceSchedule.items?.forEach((item, index: number) => {
+        const itemNumber = index + 1;
+        formValues[`item_${itemNumber}_description`] = item.description;
+        formValues[`item_${itemNumber}_amount`] = item.amount;
+      });
+
+      return getInitialValues(stepFields.create_invoice_schedule, formValues);
+    }
+
     const initialValues = {
       ...onboardingInitialValues,
     };
     return getInitialValues(stepFields.create_invoice_schedule, initialValues);
-  }, [stepFields.create_invoice_schedule, onboardingInitialValues]);
+  }, [
+    stepFields.create_invoice_schedule,
+    onboardingInitialValues,
+    existingInvoiceSchedule,
+  ]);
 
   const contractDetailsInitialValues = useMemo(() => {
     const hardcodedValues = {
@@ -973,7 +1016,8 @@ export const useContractorOnboarding = ({
     isLoadingIR35File ||
     isLoadingContractDocuments ||
     isLoadingEligibilityQuestionnaire ||
-    isLoadingCreateInvoiceScheduleForm;
+    isLoadingCreateInvoiceScheduleForm ||
+    isLoadingInvoiceSchedules;
 
   const isNavigatingToReview = useMemo(() => {
     const isCor = employment?.contractor_type === 'cor';
@@ -1462,17 +1506,31 @@ export const useContractorOnboarding = ({
       }
 
       case 'create_invoice_schedule': {
+        if (!internalEmploymentId) {
+          throw createStructuredError('Employment ID is required');
+        }
+
+        // Use update if we have an existing schedule, otherwise create
+        if (existingInvoiceSchedule?.id) {
+          const response = await updateInvoiceScheduleMutationAsync({
+            scheduleId: existingInvoiceSchedule.id,
+            values: parsedValues,
+          });
+          await refetchInvoiceSchedule();
+          return response;
+        }
+
         const response = await createInvoiceScheduleMutationAsync({
-          employmentId: internalEmploymentId as string,
+          employmentId: internalEmploymentId,
           values: parsedValues,
         });
 
-        // Check for failures in the bulk response
         const failures = response?.data?.failures;
         if (failures && failures.length > 0) {
           throw createStructuredError('Failed to create invoice schedule');
         }
 
+        await refetchInvoiceSchedule();
         return response;
       }
 
@@ -1781,7 +1839,8 @@ export const useContractorOnboarding = ({
       manageContractorCorSubscriptionMutation.isPending ||
       deleteContractorCorSubscriptionMutation.isPending ||
       setContractOriginMutation.isPending ||
-      createInvoiceScheduleMutation.isPending,
+      createInvoiceScheduleMutation.isPending ||
+      updateInvoiceScheduleMutation.isPending,
 
     /**
      * Document preview PDF data
