@@ -1482,9 +1482,6 @@ export const useContractorOnboarding = ({
       }
 
       case 'contract_origin': {
-        // Step visibility is already reconciled reactively from the selected
-        // value, so a plain next() lands on the right step (review when the
-        // customer provides their own contract, otherwise eligibility /
         await setContractOriginMutationAsync({
           employmentId: internalEmploymentId as string,
           contractOrigin: parsedValues.contract_origin,
