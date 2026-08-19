@@ -23,6 +23,7 @@ import {
   postV1ContractorsEmploymentsEmploymentIdContractorCorSubscription,
   deleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscription,
   Country,
+  ContractorInvoiceScheduleCreateParams,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
@@ -61,7 +62,10 @@ import {
 import { convertFromCents } from '@/src/components/form/utils';
 import { countriesOptions } from '@/src/common/api/countries';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
-import { shouldIncludeProduct } from '@/src/flows/ContractorOnboarding/utils';
+import {
+  shouldIncludeProduct,
+  buildInvoiceSchedulePayload,
+} from '@/src/flows/ContractorOnboarding/utils';
 import { useCompanyPricingPlans, hasCompany } from '@/src/common/api/companies';
 import { useIdentity } from '@/src/common/api/identity';
 
@@ -859,7 +863,7 @@ export const invoiceSchedulesOptions = (
  * @param options - Query options
  * @returns The last matching invoice schedule or undefined
  */
-export const useGetLastInvoiceSchedule = ({
+export const useGetExistingInvoiceSchedule = ({
   employmentId,
   options,
 }: {
@@ -966,33 +970,12 @@ export const useCreateInvoiceSchedule = () => {
       employmentId: string;
       values: FieldValues;
     }) => {
-      // Collect invoice items from form fields (item_1 through item_10)
-      const items = [];
-      for (let i = 1; i <= 10; i++) {
-        const description = values[`item_${i}_description`];
-        const amount = values[`item_${i}_amount`];
-        if (description && amount != null) {
-          items.push({
-            description,
-            amount: Number(amount),
-          });
-        }
-      }
-
       const payload: BulkContractorInvoiceScheduleCreateParams = {
         contractor_invoice_schedules: [
           {
             employment_id: employmentId,
-            currency: values.currency,
-            periodicity: values.periodicity,
-            start_date: values.start_date,
-            items,
-            ...(values.number && { number: values.number }),
-            ...(values.note && { note: values.note }),
-            ...(values.nr_occurrences && {
-              nr_occurrences: Number(values.nr_occurrences),
-            }),
-          },
+            ...buildInvoiceSchedulePayload(values),
+          } as ContractorInvoiceScheduleCreateParams,
         ],
       };
 
@@ -1020,30 +1003,8 @@ export const useUpdateInvoiceSchedule = () => {
       scheduleId: string;
       values: FieldValues;
     }) => {
-      // Collect invoice items from form fields (item_1 through item_10)
-      const items = [];
-      for (let i = 1; i <= 10; i++) {
-        const description = values[`item_${i}_description`];
-        const amount = values[`item_${i}_amount`];
-        if (description && amount) {
-          items.push({
-            description,
-            amount: Number(amount),
-          });
-        }
-      }
-
-      const payload: UpdateScheduleContractorInvoiceParams = {
-        currency: values.currency,
-        periodicity: values.periodicity,
-        start_date: values.start_date,
-        items,
-        ...(values.number && { number: values.number }),
-        ...(values.note && { note: values.note }),
-        ...(values.nr_occurrences && {
-          nr_occurrences: Number(values.nr_occurrences),
-        }),
-      };
+      const payload: UpdateScheduleContractorInvoiceParams =
+        buildInvoiceSchedulePayload(values);
 
       return patchV1ContractorInvoiceSchedulesId2({
         client: client as Client,

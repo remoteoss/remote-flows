@@ -221,3 +221,54 @@ export const getBasicInformationSchemaVersion = (options?: {
     options?.jsonSchemaVersion?.employment_basic_information || DEFAULT_VERSION
   );
 };
+
+/**
+ * Builds invoice items array from form values
+ * Collects up to 10 invoice items (item_1 through item_10)
+ * @param values - Form values containing item_N_description and item_N_amount fields
+ * @returns Array of invoice items with description and amount
+ */
+export function buildInvoiceItems(values: Record<string, unknown>) {
+  const items = [];
+  for (let i = 1; i <= 10; i++) {
+    const description = values[`item_${i}_description`];
+    const amount = values[`item_${i}_amount`];
+    if (description && amount != null) {
+      items.push({
+        description,
+        amount: Number(amount),
+      });
+    }
+  }
+  return items;
+}
+
+/**
+ * Builds the base invoice schedule payload from form values
+ * @param values - Form values containing invoice schedule data
+ * @returns Invoice schedule payload object
+ */
+export function buildInvoiceSchedulePayload(
+  values: Record<string, unknown>,
+): Record<string, unknown> {
+  const payload: Record<string, unknown> = {
+    currency: values.currency,
+    periodicity: values.periodicity,
+    start_date: values.start_date,
+    items: buildInvoiceItems(values),
+  };
+
+  if (values.number) {
+    payload.number = values.number;
+  }
+
+  if (values.note) {
+    payload.note = values.note;
+  }
+
+  if (values.nr_occurrences) {
+    payload.nr_occurrences = Number(values.nr_occurrences);
+  }
+
+  return payload;
+}

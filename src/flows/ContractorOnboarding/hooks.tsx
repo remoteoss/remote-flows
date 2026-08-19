@@ -33,10 +33,10 @@ import {
   useSetContractOrigin,
   useGetContractOriginSchema,
   useGetInvoiceScheduleSchema,
-  useGetLastInvoiceSchedule,
   useGetCreateInvoiceScheduleSchema,
   useCreateInvoiceSchedule,
   useUpdateInvoiceSchedule,
+  useGetExistingInvoiceSchedule,
 } from '@/src/flows/ContractorOnboarding/api';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
@@ -712,7 +712,7 @@ export const useContractorOnboarding = ({
     data: existingInvoiceSchedule,
     isLoading: isLoadingInvoiceSchedules,
     refetch: refetchInvoiceSchedule,
-  } = useGetLastInvoiceSchedule({
+  } = useGetExistingInvoiceSchedule({
     employmentId: internalEmploymentId as string,
     options: {
       queryOptions: {
@@ -893,14 +893,11 @@ export const useContractorOnboarding = ({
         nr_occurrences: existingInvoiceSchedule.nr_occurrences,
       };
 
-      // Map items array to form fields (item_1, item_2, etc.)
-      existingInvoiceSchedule.items?.forEach(
-        (item: $TSFixMe, index: number) => {
-          const itemNumber = index + 1;
-          formValues[`item_${itemNumber}_description`] = item.description;
-          formValues[`item_${itemNumber}_amount`] = item.amount;
-        },
-      );
+      existingInvoiceSchedule.items?.forEach((item, index: number) => {
+        const itemNumber = index + 1;
+        formValues[`item_${itemNumber}_description`] = item.description;
+        formValues[`item_${itemNumber}_amount`] = item.amount;
+      });
 
       return getInitialValues(stepFields.create_invoice_schedule, formValues);
     }
@@ -1842,7 +1839,8 @@ export const useContractorOnboarding = ({
       manageContractorCorSubscriptionMutation.isPending ||
       deleteContractorCorSubscriptionMutation.isPending ||
       setContractOriginMutation.isPending ||
-      createInvoiceScheduleMutation.isPending,
+      createInvoiceScheduleMutation.isPending ||
+      updateInvoiceScheduleMutation.isPending,
 
     /**
      * Document preview PDF data
