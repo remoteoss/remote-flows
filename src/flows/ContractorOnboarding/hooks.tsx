@@ -77,7 +77,10 @@ import { transformAiErrorResponse } from '@/src/flows/ContractorOnboarding/utils
 import { AiValidationError } from '@/src/flows/ContractorOnboarding/types';
 import { useUploadFile } from '@/src/common/api/files';
 import { dataURLtoFile } from '@/src/lib/files';
-import { useEmploymentQuery } from '@/src/common/api/employment';
+import {
+  useEmploymentQuery,
+  useBasicInformationQuery,
+} from '@/src/common/api/employment';
 import { useDefaultLegalEntity } from '@/src/common/api/legal-entities';
 
 type useContractorOnboardingProps = Omit<
@@ -226,6 +229,12 @@ export const useContractorOnboarding = ({
     employmentId: internalEmploymentId as string,
     queryParams: { exclude_files: true },
   });
+
+  const { data: basicInformation, refetch: refetchBasicInformation } =
+    useBasicInformationQuery({
+      employmentId: internalEmploymentId as string,
+      enabled: !!internalEmploymentId,
+    });
 
   const defaultLegalEntity = useDefaultLegalEntity();
 
@@ -378,11 +387,12 @@ export const useContractorOnboarding = ({
   const shouldIncludeContractPreview = employment?.contractor_type !== 'cor';
 
   const selectedContractOrigin =
-    (fieldValues.contract_origin as string | undefined) ??
     (stepState.values?.contract_origin?.contract_origin as
       | string
-      | undefined) ??
-    employment?.contract_details?.contract_origin;
+      | undefined) ?? basicInformation?.contract_origin;
+
+  console.log('selectedContractOrigin', selectedContractOrigin);
+  console.log('basicInformation', basicInformation);
 
   const isContractProvidedByCustomer =
     selectedProduct === contractorStandardProductIdentifier &&
@@ -865,13 +875,13 @@ export const useContractorOnboarding = ({
   const contractOriginInitialValues = useMemo(() => {
     const initialValues = {
       ...onboardingInitialValues,
-      contract_origin: employment?.contract_details?.contract_origin,
+      contract_origin: basicInformation?.contract_origin,
     };
     return getInitialValues(stepFields.contract_origin, initialValues);
   }, [
     stepFields.contract_origin,
     onboardingInitialValues,
-    employment?.contract_details?.contract_origin,
+    basicInformation?.contract_origin,
   ]);
 
   const invoiceScheduleInitialValues = useMemo(() => {
@@ -1478,14 +1488,16 @@ export const useContractorOnboarding = ({
         // Step visibility is already reconciled reactively from the selected
         // value, so a plain next() lands on the right step (review when the
         // customer provides their own contract, otherwise eligibility /
-        // contract_details). We only persist the choice server-side here.
-        if (values.contract_origin === 'provided_by_customer') {
-          await setContractOriginMutationAsync({
-            employmentId: internalEmploymentId as string,
-            contractOrigin: 'provided_by_customer',
-            templateType: 'contractor_agreement',
-          });
-        }
+        await setContractOriginMutationAsync({
+          employmentId: internalEmploymentId as string,
+          contractOrigin: parsedValues.contract_origin,
+          templateType:
+            parsedValues.contract_origin === 'provided_by_customer'
+              ? 'contractor_agreement'
+              : 'contractor_services_agreement',
+        });
+        // Refetch basic information to get the updated contract_origin from server
+        await refetchBasicInformation();
 
         return {
           data: { contractOrigin: values.contract_origin },
