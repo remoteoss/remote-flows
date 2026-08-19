@@ -8,6 +8,11 @@ import {
   REMOTE_AI_SERVICES_AND_DELIVERABLES_COR_ERROR_MESSAGE,
 } from '@/src/flows/ContractorOnboarding/constants';
 import { Employment } from '@/src/flows/Onboarding/types';
+import type {
+  ContractorInvoiceScheduleItem,
+  CurrencyCode,
+  ContractorInvoiceSchedulePeriodicity,
+} from '@/src/client';
 
 export type StepKeys =
   | 'select_country'
@@ -223,20 +228,36 @@ export const getBasicInformationSchemaVersion = (options?: {
 };
 
 /**
+ * Shared invoice schedule payload type
+ * Represents the common structure for both create and update operations
+ */
+export type InvoiceSchedulePayload = {
+  currency: CurrencyCode;
+  periodicity: ContractorInvoiceSchedulePeriodicity;
+  start_date: string;
+  items: ContractorInvoiceScheduleItem[];
+  number?: string;
+  note?: string;
+  nr_occurrences?: number;
+};
+
+/**
  * Builds invoice items array from form values
  * Collects up to 10 invoice items (item_1 through item_10)
  * @param values - Form values containing item_N_description and item_N_amount fields
  * @returns Array of invoice items with description and amount
  */
-export function buildInvoiceItems(values: Record<string, unknown>) {
-  const items = [];
+export function buildInvoiceItems(
+  values: Record<string, unknown>,
+): ContractorInvoiceScheduleItem[] {
+  const items: ContractorInvoiceScheduleItem[] = [];
   for (let i = 1; i <= 10; i++) {
     const description = values[`item_${i}_description`];
     const amount = values[`item_${i}_amount`];
-    if (description && amount != null) {
+    if (typeof description === 'string' && typeof amount === 'number') {
       items.push({
-        description,
-        amount: Number(amount),
+        description: description,
+        amount: amount,
       });
     }
   }
@@ -250,20 +271,20 @@ export function buildInvoiceItems(values: Record<string, unknown>) {
  */
 export function buildInvoiceSchedulePayload(
   values: Record<string, unknown>,
-): Record<string, unknown> {
-  const payload: Record<string, unknown> = {
-    currency: values.currency,
-    periodicity: values.periodicity,
-    start_date: values.start_date,
+): InvoiceSchedulePayload {
+  const payload: InvoiceSchedulePayload = {
+    currency: values.currency as CurrencyCode,
+    periodicity: values.periodicity as ContractorInvoiceSchedulePeriodicity,
+    start_date: values.start_date as string,
     items: buildInvoiceItems(values),
   };
 
   if (values.number) {
-    payload.number = values.number;
+    payload.number = String(values.number);
   }
 
   if (values.note) {
-    payload.note = values.note;
+    payload.note = String(values.note);
   }
 
   if (values.nr_occurrences) {
