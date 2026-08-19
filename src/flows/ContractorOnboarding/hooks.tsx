@@ -391,9 +391,6 @@ export const useContractorOnboarding = ({
       | string
       | undefined) ?? basicInformation?.contract_origin;
 
-  console.log('selectedContractOrigin', selectedContractOrigin);
-  console.log('basicInformation', basicInformation);
-
   const isContractProvidedByCustomer =
     selectedProduct === contractorStandardProductIdentifier &&
     selectedContractOrigin === 'provided_by_customer';
