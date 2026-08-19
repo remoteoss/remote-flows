@@ -140,5 +140,10 @@ export type JSFModifyField = {
       label?: string;
       description?: string;
     }>;
+    oneOf?: Array<{
+      value: string;
+      label?: string;
+      description?: string;
+    }>;
   };
 };
