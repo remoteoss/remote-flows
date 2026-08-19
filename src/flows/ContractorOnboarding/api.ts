@@ -847,10 +847,16 @@ export const invoiceSchedulesOptions = (
   return queryOptions({
     queryKey: ['contractor-invoice-schedules', employmentId] as const,
     queryFn: async () => {
-      return getV1ContractorInvoiceSchedules({
+      const response = await getV1ContractorInvoiceSchedules({
         client,
         query: { employment_id: employmentId },
       });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch invoice schedules');
+      }
+
+      return response;
     },
   });
 };
