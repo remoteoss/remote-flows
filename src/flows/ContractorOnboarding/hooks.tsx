@@ -114,6 +114,12 @@ const contractOriginMapping: Record<string, string> = {
   // Add other mappings as needed
 };
 
+// Inverse mapping: frontend -> backend
+const contractOriginToBackend: Record<string, string> = {
+  provided_by_remote: 'remote_contract',
+  // Add other mappings as needed
+};
+
 export const useContractorOnboarding = ({
   countryCode,
   externalId,
@@ -1494,12 +1500,11 @@ export const useContractorOnboarding = ({
       }
 
       case 'contract_origin': {
-        // provided_by_remote -> remote_contract why to mantain retrocompatibility with the backend
+        // provided_by_remote -> remote_contract to maintain retrocompatibility with the backend
         // provided_by_remote doesn't exist in the backend, so we need to map it to remote_contract
-        const contractOrigin =
-          parsedValues.contract_origin === 'provided_by_remote'
-            ? 'remote_contract'
-            : parsedValues.contract_origin;
+        const contractOrigin: $TSFixMe =
+          contractOriginToBackend[parsedValues.contract_origin] ??
+          parsedValues.contract_origin;
         const templateType =
           parsedValues.contract_origin === 'provided_by_customer'
             ? 'contractor_agreement'
