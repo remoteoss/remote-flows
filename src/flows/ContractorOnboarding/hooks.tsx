@@ -109,6 +109,11 @@ const jsonSchemaToEmployment: Partial<
   employment_basic_information: 'basic_information',
 };
 
+const contractOriginMapping: Record<string, string> = {
+  remote_contract: 'provided_by_remote',
+  // Add other mappings as needed
+};
+
 export const useContractorOnboarding = ({
   countryCode,
   externalId,
@@ -386,12 +391,15 @@ export const useContractorOnboarding = ({
 
   const shouldIncludeContractPreview = employment?.contractor_type !== 'cor';
 
-  const selectedContractOrigin =
+  const rawContractOrigin =
     (stepState.currentStep.name === 'contract_origin'
       ? fieldValues.contract_origin
       : undefined) ??
     stepState.values?.contract_origin?.contract_origin ??
     basicInformation?.contract_origin;
+
+  const selectedContractOrigin =
+    contractOriginMapping[rawContractOrigin] ?? rawContractOrigin;
 
   const isContractProvidedByCustomer =
     selectedProduct === contractorStandardProductIdentifier &&
@@ -874,7 +882,9 @@ export const useContractorOnboarding = ({
   const contractOriginInitialValues = useMemo(() => {
     const initialValues = {
       ...onboardingInitialValues,
-      contract_origin: basicInformation?.contract_origin,
+      contract_origin:
+        contractOriginMapping[basicInformation?.contract_origin as string] ??
+        basicInformation?.contract_origin,
     };
     return getInitialValues(stepFields.contract_origin, initialValues);
   }, [
@@ -1484,13 +1494,20 @@ export const useContractorOnboarding = ({
       }
 
       case 'contract_origin': {
+        // provided_by_remote -> remote_contract why to mantain retrocompatibility with the backend
+        // provided_by_remote doesn't exist in the backend, so we need to map it to remote_contract
+        const contractOrigin =
+          parsedValues.contract_origin === 'provided_by_remote'
+            ? 'remote_contract'
+            : parsedValues.contract_origin;
+        const templateType =
+          parsedValues.contract_origin === 'provided_by_customer'
+            ? 'contractor_agreement'
+            : 'contractor_services_agreement';
         await setContractOriginMutationAsync({
           employmentId: internalEmploymentId as string,
-          contractOrigin: parsedValues.contract_origin,
-          templateType:
-            parsedValues.contract_origin === 'provided_by_customer'
-              ? 'contractor_agreement'
-              : 'contractor_services_agreement',
+          contractOrigin,
+          templateType,
         });
         // Refetch basic information to get the updated contract_origin from server
         await refetchBasicInformation();

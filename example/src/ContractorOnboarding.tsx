@@ -774,7 +774,7 @@ export const ContractorOnboardingWithProps = ({
                         "Managing your relationship with contractors is easy: your contract is fully editable in Remote with legally reviewed contract templates specific to France. After all parties sign in Remote, you're ready to go.",
                       oneOf: [
                         {
-                          const: 'remote_contract',
+                          const: 'provided_by_remote',
                           title: 'Contractor services agreement',
                           description:
                             'Create a new terms and conditions and statement of work. This should only be used if you do not have an agreement in place with a contractor or want to renegotiate an agreement.',
