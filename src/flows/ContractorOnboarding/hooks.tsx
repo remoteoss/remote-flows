@@ -716,7 +716,10 @@ export const useContractorOnboarding = ({
     employmentId: internalEmploymentId as string,
     options: {
       queryOptions: {
-        enabled: includeInvoiceSchedule && Boolean(internalEmploymentId),
+        enabled:
+          includeInvoiceSchedule &&
+          Boolean(internalEmploymentId) &&
+          stepState.currentStep.name === 'invoice_schedule',
       },
     },
   });
