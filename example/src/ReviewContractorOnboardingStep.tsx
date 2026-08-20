@@ -85,8 +85,6 @@ const CompanyVerificationBanner = () => {
   );
 };
 
-// ... existing code ...
-
 export const ReviewContractorOnboardingStep = ({
   onboardingBag,
   components,
@@ -165,6 +163,48 @@ export const ReviewContractorOnboardingStep = ({
             <ReviewMeta meta={onboardingBag.meta.fields.contract_preview} />
           </>
         )}
+
+      {Object.keys(onboardingBag.meta.fields.contract_origin).length > 0 && (
+        <>
+          <h2 className='title'>Contract Origin</h2>
+          <button
+            className='back-button'
+            onClick={() => onboardingBag.goTo('contract_origin')}
+          >
+            Edit Contract Origin
+          </button>
+          <ReviewMeta meta={onboardingBag.meta.fields.contract_origin} />
+        </>
+      )}
+
+      {Object.keys(onboardingBag.meta.fields.invoice_schedule).length > 0 && (
+        <>
+          <h2 className='title'>Invoice Schedule</h2>
+          <button
+            className='back-button'
+            onClick={() => onboardingBag.goTo('invoice_schedule')}
+          >
+            Edit Invoice Schedule
+          </button>
+          <ReviewMeta meta={onboardingBag.meta.fields.invoice_schedule} />
+        </>
+      )}
+
+      {Object.keys(onboardingBag.meta.fields.create_invoice_schedule).length >
+        0 && (
+        <>
+          <h2 className='title'>Create Invoice Schedule</h2>
+          <button
+            className='back-button'
+            onClick={() => onboardingBag.goTo('create_invoice_schedule')}
+          >
+            Edit Credit Invoice Schedule
+          </button>
+          <ReviewMeta
+            meta={onboardingBag.meta.fields.create_invoice_schedule}
+          />
+        </>
+      )}
 
       {invitedStatus === 'not_invited' &&
         typeof onboardingBag.employment?.basic_information?.name ===
