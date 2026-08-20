@@ -231,6 +231,16 @@ const contractOriginHandler = http.post(
   },
 );
 
+const createContractorInvoiceScheduleHandler = http.post(
+  '*/v1/contractor-invoice-schedules',
+  async ({ request }) => {
+    const requestBody = await request.json();
+    return HttpResponse.json({
+      data: requestBody,
+    });
+  },
+);
+
 export const defaultHandlers = [
   identityHandler,
   legalEntitiesHandler,
@@ -259,4 +269,5 @@ export const defaultHandlers = [
   currencyConverterHandler,
   contractorInvoiceSchedulesHandler,
   contractOriginHandler,
+  createContractorInvoiceScheduleHandler,
 ];
