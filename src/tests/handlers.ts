@@ -240,6 +240,64 @@ const currencyConverterHandler = http.post(
   },
 );
 
+const contractorInvoiceSchedulesHandler = http.get(
+  '*/v1/contractor-invoice-schedules',
+  () => {
+    return HttpResponse.json({
+      data: {
+        total_count: 0,
+        current_page: 1,
+        per_page: 10,
+        total_pages: 0,
+        contractor_invoice_schedules: [],
+      },
+    });
+  },
+);
+
+const contractOriginHandler = http.post(
+  '*/v1/employments/*/contract-origin',
+  async ({ request }) => {
+    const requestBody = await request.json();
+    return HttpResponse.json({
+      data: requestBody,
+    });
+  },
+);
+
+const createContractorInvoiceScheduleHandler = http.post(
+  '*/v1/contractor-invoice-schedules',
+  async ({ request }) => {
+    const requestBody = await request.json();
+    return HttpResponse.json({
+      data: requestBody,
+    });
+  },
+);
+
+const updateContractorInvoiceScheduleHandler = http.patch(
+  '*/v1/contractor-invoice-schedules/*',
+  async ({ request, params }) => {
+    const requestBody = (await request.json()) as Record<string, unknown>;
+    const scheduleId = Array.isArray(params[0]) ? params[0][0] : params[0];
+
+    return HttpResponse.json({
+      data: {
+        total_count: 1,
+        current_page: 1,
+        total_pages: 1,
+        contractor_invoice_schedules: [
+          {
+            id: scheduleId,
+            status: 'pending_contractor_action',
+            ...requestBody,
+          },
+        ],
+      },
+    });
+  },
+);
+
 export const defaultHandlers = [
   identityHandler,
   legalEntitiesHandler,
@@ -268,4 +326,8 @@ export const defaultHandlers = [
   updateEmploymentHandler,
   updateBenefitOffersHandler,
   currencyConverterHandler,
+  contractorInvoiceSchedulesHandler,
+  contractOriginHandler,
+  createContractorInvoiceScheduleHandler,
+  updateContractorInvoiceScheduleHandler,
 ];

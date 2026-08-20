@@ -279,3 +279,78 @@ export async function fillSignature(
     );
   }
 }
+
+export async function fillCreateInvoiceSchedule(
+  values?: Partial<{
+    currency: string;
+    periodicity: string;
+    startDate: string;
+    item1Description: string;
+    item1Amount: string;
+    invoiceNumber: string;
+    note: string;
+    nrOccurrences: number;
+  }>,
+) {
+  const currentDate = getYearMonthDate(new Date());
+  const defaultValues = {
+    currency: 'EUR',
+    periodicity: 'monthly',
+    startDate: `${currentDate.year}-${currentDate.month}-${currentDate.day}`,
+    item1Description: 'Salary',
+    item1Amount: '2500',
+    invoiceNumber: '1234',
+    note: 'Test notes',
+  };
+
+  const newValues = {
+    ...defaultValues,
+    ...values,
+  };
+
+  await waitFor(() => {
+    expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
+  });
+
+  if (newValues?.currency) {
+    await fillSelect('currency', newValues?.currency);
+  }
+
+  if (newValues?.periodicity) {
+    await fillSelect('periodicity', newValues?.periodicity);
+  }
+
+  if (newValues?.startDate) {
+    await fillDatePickerByTestId(newValues?.startDate, 'start_date');
+  }
+
+  if (newValues?.item1Description) {
+    fireEvent.change(screen.getByLabelText(/Item 1 description/i), {
+      target: { value: newValues?.item1Description },
+    });
+  }
+
+  if (newValues?.item1Amount) {
+    fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
+      target: { value: newValues?.item1Amount },
+    });
+  }
+
+  if (newValues?.invoiceNumber) {
+    fireEvent.change(screen.getByLabelText(/Invoice number/i), {
+      target: { value: newValues?.invoiceNumber },
+    });
+  }
+
+  if (newValues?.note) {
+    fireEvent.change(screen.getByLabelText(/Additional notes/i), {
+      target: { value: newValues?.note },
+    });
+  }
+
+  if (newValues?.nrOccurrences) {
+    fireEvent.change(screen.getByLabelText(/Number of occurrences/i), {
+      target: { value: newValues?.nrOccurrences },
+    });
+  }
+}
