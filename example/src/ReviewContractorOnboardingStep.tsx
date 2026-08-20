@@ -159,6 +159,12 @@ export const ReviewContractorOnboardingStep = ({
         Object.keys(onboardingBag.meta.fields.contract_preview).length > 0 && (
           <>
             <h2 className='title'>Contract Preview</h2>
+            <button
+              className='back-button'
+              onClick={() => onboardingBag.goTo('contract_preview')}
+            >
+              Edit Contract Preview
+            </button>
             <ReviewMeta meta={onboardingBag.meta.fields.contract_preview} />
           </>
         )}
