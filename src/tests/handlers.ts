@@ -210,6 +210,27 @@ const currencyConverterHandler = http.post(
   },
 );
 
+const contractorInvoiceSchedulesHandler = http.get(
+  '*/v1/contractor-invoice-schedules',
+  () => {
+    return HttpResponse.json({
+      data: {
+        contractor_invoice_schedules: [],
+      },
+    });
+  },
+);
+
+const contractOriginHandler = http.post(
+  '*/v1/employments/*/contract-origin',
+  async ({ request }) => {
+    const requestBody = await request.json();
+    return HttpResponse.json({
+      data: requestBody,
+    });
+  },
+);
+
 export const defaultHandlers = [
   identityHandler,
   legalEntitiesHandler,
@@ -236,4 +257,6 @@ export const defaultHandlers = [
   updateEmploymentHandler,
   updateBenefitOffersHandler,
   currencyConverterHandler,
+  contractorInvoiceSchedulesHandler,
+  contractOriginHandler,
 ];

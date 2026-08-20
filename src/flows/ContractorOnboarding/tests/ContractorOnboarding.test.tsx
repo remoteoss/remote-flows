@@ -244,6 +244,7 @@ describe('ContractorOnboardingFlow', () => {
       PricingPlanStep,
       EligibilityQuestionnaireStep,
       ContractOriginStep,
+      InvoiceScheduleStep,
       SubmitButton,
       BackButton,
       OnboardingInvite,
@@ -343,6 +344,19 @@ describe('ContractorOnboardingFlow', () => {
           </>
         );
 
+      case 'invoice_schedule':
+        return (
+          <>
+            <InvoiceScheduleStep
+              onSubmit={mockOnSubmit}
+              onSuccess={mockOnSuccess}
+              onError={mockOnError}
+            />
+            <BackButton>Back</BackButton>
+            <SubmitButton>Continue</SubmitButton>
+          </>
+        );
+
       case 'review':
         return (
           <div className='contractor-onboarding-review'>
@@ -365,6 +379,12 @@ describe('ContractorOnboardingFlow', () => {
             <PrettifiedValuesRenderer
               values={
                 contractorOnboardingBag.stepState.values?.contract_details || {}
+              }
+            />
+            <h2 className='title'>Invoice Schedule</h2>
+            <PrettifiedValuesRenderer
+              values={
+                contractorOnboardingBag.stepState.values?.invoice_schedule || {}
               }
             />
             <BackButton>Back</BackButton>
@@ -4040,5 +4060,83 @@ describe('ContractorOnboardingFlow', () => {
         });
       },
     );
+  });
+
+  describe('Invoice Schedule', () => {
+    it('should skip invoice schedule when "Skip for now" is selected', async () => {
+      const employmentId = generateUniqueEmploymentId();
+
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: employmentId,
+                status: 'created',
+              },
+            },
+          });
+        }),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <RemoteFlowContext.Provider value={{ client: apiClient }}>
+          <ContractorOnboardingFlow
+            employmentId={employmentId}
+            skipSteps={['select_country']}
+            options={{
+              features: ['create_invoice_schedule'],
+            }}
+            {...defaultProps}
+          />
+        </RemoteFlowContext.Provider>,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText('Step: Basic Information');
+
+      await fillBasicInformation();
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText('Step: Pricing Plan');
+      await fillContractorSubscription('Contractor Management');
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText('Step: Contract Origin');
+      await fillContractOrigin('Without an agreement');
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText('Step: Invoice schedule');
+      await waitFor(() => {
+        expect(
+          screen.getByRole('radio', { name: /skip for now/i }),
+        ).toBeInTheDocument();
+      });
+
+      const skipRadio = screen.getByRole('radio', { name: /skip for now/i });
+      fireEvent.click(skipRadio);
+      const continueButton = screen.getByRole('button', { name: /continue/i });
+      fireEvent.click(continueButton);
+
+      await screen.findByText('Step: Review');
+
+      await waitFor(() => {
+        const invoiceScheduleSection =
+          screen.getByText('Invoice Schedule').parentElement;
+        expect(invoiceScheduleSection).toHaveTextContent(
+          'invoice_schedule_preference: manual',
+        );
+      });
+    });
   });
 });
