@@ -133,6 +133,11 @@ export type JSFModifyField = {
   description?: string;
   enum?: string[];
   type?: string;
+  oneOf?: Array<{
+    const: string;
+    title?: string;
+    description?: string;
+  }>;
   'x-jsf-presentation'?: {
     inputType?: string;
     options?: Array<{

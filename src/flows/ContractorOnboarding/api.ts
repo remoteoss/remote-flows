@@ -21,9 +21,11 @@ import {
   SubmitEligibilityQuestionnaireRequest,
   postV1ContractorsEligibilityQuestionnaire,
   postV1ContractorsEmploymentsEmploymentIdContractorCorSubscription,
+  postV1EmploymentsEmploymentIdContractOrigin,
   deleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscription,
   Country,
   ContractorInvoiceScheduleCreateParams,
+  PostV1EmploymentsEmploymentIdContractOriginData,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
@@ -728,20 +730,18 @@ export const useSetContractOrigin = () => {
       templateType,
     }: {
       employmentId: string;
-      contractOrigin: string;
-      templateType: string;
+      contractOrigin: PostV1EmploymentsEmploymentIdContractOriginData['body']['contract_origin'];
+      templateType: PostV1EmploymentsEmploymentIdContractOriginData['body']['template_type'];
     }) => {
-      return (client as Client).post({
-        url: '/v1/employments/{employment_id}/contract-origin',
-        path: { employment_id: employmentId },
+      return postV1EmploymentsEmploymentIdContractOrigin({
+        client: client as Client,
+        path: {
+          employment_id: employmentId,
+        },
         body: {
           contract_origin: contractOrigin,
           template_type: templateType,
         },
-        security: [
-          { scheme: 'bearer', type: 'http' },
-          { scheme: 'bearer', type: 'http' },
-        ],
       });
     },
   });
