@@ -716,7 +716,10 @@ export const useContractorOnboarding = ({
     employmentId: internalEmploymentId as string,
     options: {
       queryOptions: {
-        enabled: includeInvoiceSchedule && Boolean(internalEmploymentId),
+        enabled:
+          includeInvoiceSchedule &&
+          Boolean(internalEmploymentId) &&
+          stepState.currentStep.name === 'invoice_schedule',
       },
     },
   });
@@ -877,9 +880,17 @@ export const useContractorOnboarding = ({
   const invoiceScheduleInitialValues = useMemo(() => {
     const initialValues = {
       ...onboardingInitialValues,
+      // If an existing schedule exists, default to 'schedule' preference
+      ...(existingInvoiceSchedule && {
+        invoice_schedule_preference: 'schedule',
+      }),
     };
     return getInitialValues(stepFields.invoice_schedule, initialValues);
-  }, [stepFields.invoice_schedule, onboardingInitialValues]);
+  }, [
+    stepFields.invoice_schedule,
+    onboardingInitialValues,
+    existingInvoiceSchedule,
+  ]);
 
   const createInvoiceScheduleInitialValues = useMemo(() => {
     // If an existing schedule exists, transform it to form values
