@@ -164,7 +164,7 @@ export const ReviewContractorOnboardingStep = ({
         </>
       )}
 
-      {onboardingBag.stepState.values?.contract_origin && (
+      {Object.keys(onboardingBag.meta.fields.contract_origin).length > 0 && (
         <>
           <h2 className='title'>Contract Origin</h2>
           <button
@@ -177,7 +177,7 @@ export const ReviewContractorOnboardingStep = ({
         </>
       )}
 
-      {onboardingBag.stepState.values?.invoice_schedule && (
+      {Object.keys(onboardingBag.meta.fields.invoice_schedule).length > 0 && (
         <>
           <h2 className='title'>Invoice Schedule</h2>
           <button
@@ -190,9 +190,10 @@ export const ReviewContractorOnboardingStep = ({
         </>
       )}
 
-      {onboardingBag.stepState.values?.create_invoice_schedule && (
+      {Object.keys(onboardingBag.meta.fields.create_invoice_schedule).length >
+        0 && (
         <>
-          <h2 className='title'>Invoice Schedule</h2>
+          <h2 className='title'>Create Invoice Schedule</h2>
           <button
             className='back-button'
             onClick={() => onboardingBag.goTo('create_invoice_schedule')}
