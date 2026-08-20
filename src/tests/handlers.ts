@@ -20,6 +20,7 @@ import {
 } from '@/src/common/api/fixtures/companies';
 import { mockBaseResponse } from '@/src/common/api/fixtures/base';
 import {
+  mockBasicInformationResponse,
   mockBenefitOffersResponse,
   mockBenefitOffersSchema,
   mockOnboardingReservesStatusResponse,
@@ -192,6 +193,35 @@ const createEmploymentHandler = http.post('*/v1/employments', () => {
   return HttpResponse.json(employmentCreatedResponse);
 });
 
+const basicInformationHandler = http.get(
+  '*/v2/employments/:id/basic-information',
+  ({ params }) => {
+    const employmentId = params?.id;
+
+    return HttpResponse.json({
+      ...mockBasicInformationResponse,
+      data: {
+        ...mockBasicInformationResponse.data,
+        employment: {
+          ...mockBasicInformationResponse.data.employment,
+          id: employmentId,
+        },
+      },
+    });
+  },
+);
+
+const setContractOriginHandler = http.post(
+  '*/v1/employments/*/contract-origin',
+  async ({ request }) => {
+    const body = (await request.json()) as { contract_origin: string };
+
+    return HttpResponse.json({
+      data: { contract_origin: body.contract_origin },
+    });
+  },
+);
+
 const updateEmploymentHandler = http.patch('*/v1/employments/*', () => {
   return HttpResponse.json(employmentUpdatedResponse);
 });
@@ -291,6 +321,8 @@ export const defaultHandlers = [
   contractEligibilityHandler,
   employmentHandler,
   createEmploymentHandler,
+  basicInformationHandler,
+  setContractOriginHandler,
   updateEmploymentHandler,
   updateBenefitOffersHandler,
   currencyConverterHandler,

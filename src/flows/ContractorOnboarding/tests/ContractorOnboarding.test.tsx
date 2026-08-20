@@ -53,6 +53,7 @@ import {
 import { mockBlockedEligibilityQuestionnaireResponse } from '@/src/common/api/fixtures/eligibility-questionnaire';
 import { mockContractorBasicInformationSchema } from '@/src/common/api/fixtures/contractors';
 import { PrettifiedValuesRenderer } from '@/src/tests/components/PrettifiedValuesRenderer';
+import { mockBasicInformationResponse } from '@/src/common/api/fixtures/employments';
 
 const mockOnSubmit = vi.fn();
 const mockOnSuccess = vi.fn();
@@ -1339,6 +1340,68 @@ describe('ContractorOnboardingFlow', () => {
     await waitFor(() => {
       expect(screen.getByText(customTitle)).toBeInTheDocument();
       expect(screen.queryByText('Contract options')).not.toBeInTheDocument();
+    });
+  });
+
+  it('should preselect contract_origin when defined in basic information response', async () => {
+    const employmentId = generateUniqueEmploymentId();
+
+    server.use(
+      http.get(`*/v2/employments/${employmentId}/basic-information`, () => {
+        return HttpResponse.json({
+          ...mockBasicInformationResponse,
+          data: {
+            ...mockBasicInformationResponse.data,
+            employment: {
+              ...mockBasicInformationResponse.data.employment,
+              contract_origin: 'remote_contract',
+            },
+          },
+        });
+      }),
+    );
+
+    mockRender.mockImplementation(
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        employmentId={employmentId}
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    await fillBasicInformation();
+
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    await fillContractorSubscription('Contractor Management');
+
+    await waitFor(() => {
+      expect(screen.getByTestId('visible-steps')).toHaveTextContent(
+        'contract_origin',
+      );
+    });
+
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Origin/i);
+
+    // Verify the "Contractor services agreement" option is pre-selected
+    await waitFor(() => {
+      const remoteContractRadio = screen.getByRole('radio', {
+        name: /Contractor services agreement/i,
+      });
+      expect(remoteContractRadio).toBeChecked();
     });
   });
 

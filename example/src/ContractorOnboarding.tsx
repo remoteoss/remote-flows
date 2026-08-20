@@ -768,23 +768,20 @@ export const ContractorOnboardingWithProps = ({
                 },
                 contract_origin: {
                   fields: {
-                    contract_origin: {
-                      title: 'Contract options',
-                      description:
-                        "Managing your relationship with contractors is easy: your contract is fully editable in Remote with legally reviewed contract templates specific to France. After all parties sign in Remote, you're ready to go.",
-                      oneOf: [
-                        {
-                          const: 'provided_by_remote',
-                          title: 'Contractor services agreement',
+                    contract_origin: (field: JSFModifyField) => {
+                      const titleOverrides: Record<string, string> = {
+                        provided_by_customer: 'Continue without an agreement',
+                      };
+                      return {
+                        oneOf: field?.oneOf?.map((option) => ({
+                          ...option,
+                          title: titleOverrides[option.const] ?? option.title,
+                        })),
+                        'x-jsf-presentation': {
                           description:
-                            'Create a new terms and conditions and statement of work. This should only be used if you do not have an agreement in place with a contractor or want to renegotiate an agreement.',
+                            "Managing your relationship with contractors is easy: your contract is fully editable in Remote with legally reviewed contract templates specific to France. After all parties sign in Remote, you're ready to go.",
                         },
-                        {
-                          const: 'provided_by_customer',
-                          title: 'Continue without an agreement',
-                          description: 'Use your own agreement outside Remote.',
-                        },
-                      ],
+                      };
                     },
                   },
                 },

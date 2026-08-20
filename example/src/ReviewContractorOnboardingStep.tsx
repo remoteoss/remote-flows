@@ -154,7 +154,6 @@ export const ReviewContractorOnboardingStep = ({
           </button>
         </>
       )}
-
       {onboardingBag.stepState.values?.pricing_plan?.subscription !==
         corProductIdentifier &&
         Object.keys(onboardingBag.meta.fields.contract_preview).length > 0 && (

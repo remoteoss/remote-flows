@@ -77,7 +77,10 @@ import { transformAiErrorResponse } from '@/src/flows/ContractorOnboarding/utils
 import { AiValidationError } from '@/src/flows/ContractorOnboarding/types';
 import { useUploadFile } from '@/src/common/api/files';
 import { dataURLtoFile } from '@/src/lib/files';
-import { useEmploymentQuery } from '@/src/common/api/employment';
+import {
+  useEmploymentQuery,
+  useBasicInformationQuery,
+} from '@/src/common/api/employment';
 import { useDefaultLegalEntity } from '@/src/common/api/legal-entities';
 
 type useContractorOnboardingProps = Omit<
@@ -104,6 +107,17 @@ const jsonSchemaToEmployment: Partial<
   Record<JSONSchemaFormType, keyof Employment>
 > = {
   employment_basic_information: 'basic_information',
+};
+
+const contractOriginMapping: Record<string, string> = {
+  remote_contract: 'provided_by_remote',
+  // Add other mappings as needed
+};
+
+// Inverse mapping: frontend -> backend
+const contractOriginToBackend: Record<string, string> = {
+  provided_by_remote: 'remote_contract',
+  // Add other mappings as needed
 };
 
 export const useContractorOnboarding = ({
@@ -226,6 +240,12 @@ export const useContractorOnboarding = ({
     employmentId: internalEmploymentId as string,
     queryParams: { exclude_files: true },
   });
+
+  const { data: basicInformation, refetch: refetchBasicInformation } =
+    useBasicInformationQuery({
+      employmentId: internalEmploymentId as string,
+      enabled: !!internalEmploymentId,
+    });
 
   const defaultLegalEntity = useDefaultLegalEntity();
 
@@ -377,12 +397,15 @@ export const useContractorOnboarding = ({
 
   const shouldIncludeContractPreview = employment?.contractor_type !== 'cor';
 
+  const rawContractOrigin =
+    (stepState.currentStep.name === 'contract_origin'
+      ? fieldValues.contract_origin
+      : undefined) ??
+    stepState.values?.contract_origin?.contract_origin ??
+    basicInformation?.contract_origin;
+
   const selectedContractOrigin =
-    (fieldValues.contract_origin as string | undefined) ??
-    (stepState.values?.contract_origin?.contract_origin as
-      | string
-      | undefined) ??
-    employment?.contract_details?.contract_origin;
+    contractOriginMapping[rawContractOrigin] ?? rawContractOrigin;
 
   const isContractProvidedByCustomer =
     selectedProduct === contractorStandardProductIdentifier &&
@@ -716,7 +739,10 @@ export const useContractorOnboarding = ({
     employmentId: internalEmploymentId as string,
     options: {
       queryOptions: {
-        enabled: includeInvoiceSchedule && Boolean(internalEmploymentId),
+        enabled:
+          includeInvoiceSchedule &&
+          Boolean(internalEmploymentId) &&
+          stepState.currentStep.name === 'invoice_schedule',
       },
     },
   });
@@ -865,21 +891,31 @@ export const useContractorOnboarding = ({
   const contractOriginInitialValues = useMemo(() => {
     const initialValues = {
       ...onboardingInitialValues,
-      contract_origin: employment?.contract_details?.contract_origin,
+      contract_origin:
+        contractOriginMapping[basicInformation?.contract_origin as string] ??
+        basicInformation?.contract_origin,
     };
     return getInitialValues(stepFields.contract_origin, initialValues);
   }, [
     stepFields.contract_origin,
     onboardingInitialValues,
-    employment?.contract_details?.contract_origin,
+    basicInformation?.contract_origin,
   ]);
 
   const invoiceScheduleInitialValues = useMemo(() => {
     const initialValues = {
       ...onboardingInitialValues,
+      // If an existing schedule exists, default to 'schedule' preference
+      ...(existingInvoiceSchedule && {
+        invoice_schedule_preference: 'schedule',
+      }),
     };
     return getInitialValues(stepFields.invoice_schedule, initialValues);
-  }, [stepFields.invoice_schedule, onboardingInitialValues]);
+  }, [
+    stepFields.invoice_schedule,
+    onboardingInitialValues,
+    existingInvoiceSchedule,
+  ]);
 
   const createInvoiceScheduleInitialValues = useMemo(() => {
     // If an existing schedule exists, transform it to form values
@@ -1475,17 +1511,22 @@ export const useContractorOnboarding = ({
       }
 
       case 'contract_origin': {
-        // Step visibility is already reconciled reactively from the selected
-        // value, so a plain next() lands on the right step (review when the
-        // customer provides their own contract, otherwise eligibility /
-        // contract_details). We only persist the choice server-side here.
-        if (values.contract_origin === 'provided_by_customer') {
-          await setContractOriginMutationAsync({
-            employmentId: internalEmploymentId as string,
-            contractOrigin: 'provided_by_customer',
-            templateType: 'contractor_agreement',
-          });
-        }
+        // provided_by_remote -> remote_contract to maintain retrocompatibility with the backend
+        // provided_by_remote doesn't exist in the backend, so we need to map it to remote_contract
+        const contractOrigin: $TSFixMe =
+          contractOriginToBackend[parsedValues.contract_origin] ??
+          parsedValues.contract_origin;
+        const templateType =
+          parsedValues.contract_origin === 'provided_by_customer'
+            ? 'contractor_agreement'
+            : 'contractor_services_agreement';
+        await setContractOriginMutationAsync({
+          employmentId: internalEmploymentId as string,
+          contractOrigin,
+          templateType,
+        });
+        // Refetch basic information to get the updated contract_origin from server
+        await refetchBasicInformation();
 
         return {
           data: { contractOrigin: values.contract_origin },

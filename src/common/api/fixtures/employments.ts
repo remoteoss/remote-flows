@@ -1,3 +1,30 @@
+export const mockBasicInformationResponse = {
+  data: {
+    employment: {
+      id: 'fb33c6c7-941c-4316-a9ba-e12dfef05daa',
+      status: 'created',
+      type: 'contractor',
+      updated_at: '2026-08-19T10:46:17',
+      basic_information: {
+        name: 'Gabriel',
+        manager: null,
+        email: 'john.doe@example.com',
+        job_title: 'pm',
+        login_email: 'personal',
+        provisional_start_date: '2025-11-26',
+        tax_servicing_countries: ['Turkey'],
+        personal_email: 'john.doe@example.com',
+        work_email: 'john.doe@remote.com',
+        seniority_date: null,
+        tax_job_category: 'operations',
+        has_seniority_date: 'no',
+      },
+      user_status: 'created',
+      contract_origin: null,
+    },
+  },
+};
+
 export const mockOnboardingReservesStatusResponse = {
   data: {
     data: {
