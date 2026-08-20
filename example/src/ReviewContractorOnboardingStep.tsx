@@ -85,8 +85,6 @@ const CompanyVerificationBanner = () => {
   );
 };
 
-// ... existing code ...
-
 export const ReviewContractorOnboardingStep = ({
   onboardingBag,
   components,
@@ -156,7 +154,54 @@ export const ReviewContractorOnboardingStep = ({
         corProductIdentifier && (
         <>
           <h2 className='title'>Contract Preview</h2>
+          <button
+            className='back-button'
+            onClick={() => onboardingBag.goTo('contract_preview')}
+          >
+            Edit Contract Preview
+          </button>
           <ReviewMeta meta={onboardingBag.meta.fields.contract_preview} />
+        </>
+      )}
+
+      {onboardingBag.stepState.values?.contract_origin && (
+        <>
+          <h2 className='title'>Contract Origin</h2>
+          <button
+            className='back-button'
+            onClick={() => onboardingBag.goTo('contract_origin')}
+          >
+            Edit Contract Origin
+          </button>
+          <ReviewMeta meta={onboardingBag.meta.fields.contract_origin} />
+        </>
+      )}
+
+      {onboardingBag.stepState.values?.invoice_schedule && (
+        <>
+          <h2 className='title'>Invoice Schedule</h2>
+          <button
+            className='back-button'
+            onClick={() => onboardingBag.goTo('invoice_schedule')}
+          >
+            Edit Invoice Schedule
+          </button>
+          <ReviewMeta meta={onboardingBag.meta.fields.invoice_schedule} />
+        </>
+      )}
+
+      {onboardingBag.stepState.values?.create_invoice_schedule && (
+        <>
+          <h2 className='title'>Invoice Schedule</h2>
+          <button
+            className='back-button'
+            onClick={() => onboardingBag.goTo('create_invoice_schedule')}
+          >
+            Edit Credit Invoice Schedule
+          </button>
+          <ReviewMeta
+            meta={onboardingBag.meta.fields.create_invoice_schedule}
+          />
         </>
       )}
 
