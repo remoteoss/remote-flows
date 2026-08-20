@@ -215,6 +215,10 @@ const contractorInvoiceSchedulesHandler = http.get(
   () => {
     return HttpResponse.json({
       data: {
+        total_count: 0,
+        current_page: 1,
+        per_page: 10,
+        total_pages: 0,
         contractor_invoice_schedules: [],
       },
     });
@@ -237,6 +241,29 @@ const createContractorInvoiceScheduleHandler = http.post(
     const requestBody = await request.json();
     return HttpResponse.json({
       data: requestBody,
+    });
+  },
+);
+
+const updateContractorInvoiceScheduleHandler = http.patch(
+  '*/v1/contractor-invoice-schedules/*',
+  async ({ request, params }) => {
+    const requestBody = (await request.json()) as Record<string, unknown>;
+    const scheduleId = Array.isArray(params[0]) ? params[0][0] : params[0];
+
+    return HttpResponse.json({
+      data: {
+        total_count: 1,
+        current_page: 1,
+        total_pages: 1,
+        contractor_invoice_schedules: [
+          {
+            id: scheduleId,
+            status: 'pending_contractor_action',
+            ...requestBody,
+          },
+        ],
+      },
     });
   },
 );
@@ -270,4 +297,5 @@ export const defaultHandlers = [
   contractorInvoiceSchedulesHandler,
   contractOriginHandler,
   createContractorInvoiceScheduleHandler,
+  updateContractorInvoiceScheduleHandler,
 ];
