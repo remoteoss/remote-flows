@@ -8,6 +8,7 @@ import type {
   PDFPreviewComponentProps,
   TelFieldComponentProps,
   TimeFieldComponentProps,
+  ZendeskTriggerButtonComponentProps,
 } from '@remoteoss/remote-flows';
 import { FileUploader } from '@remoteoss/remote-flows/internals';
 import { splitAccordionDescription } from './utils/transformHtml';
@@ -491,6 +492,35 @@ const TimeField = ({
   );
 };
 
+const ZendeskTriggerButton = ({
+  zendeskId,
+  onClick,
+  children,
+  className,
+}: ZendeskTriggerButtonComponentProps) => {
+  const handleClick = () => {
+    onClick?.(zendeskId);
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      className={`${className} zendesk-custom-button`}
+      style={{
+        color: '#0066cc',
+        textDecoration: 'underline',
+        background: 'transparent',
+        border: 'none',
+        cursor: 'pointer',
+        padding: '0.25rem 0.5rem',
+        fontSize: '0.875rem',
+      }}
+    >
+      {children}
+    </button>
+  );
+};
+
 export const components: Components = {
   button: Button,
   text: Input,
@@ -506,5 +536,6 @@ export const components: Components = {
   pdfViewer: PDFPreview,
   tel: TelField,
   time: TimeField,
+  zendeskTriggerButton: ZendeskTriggerButton,
   //zendeskDrawer: ZendeskDialog,
 };
