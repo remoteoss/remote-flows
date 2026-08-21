@@ -1,15 +1,17 @@
-import type {
-  ButtonComponentProps,
-  Components,
-  FieldComponentProps,
-  FieldSetToggleComponentProps,
-  FileComponentProps,
-  ForcedValueComponentProps,
-  PDFPreviewComponentProps,
-  TelFieldComponentProps,
-  TimeFieldComponentProps,
+import {
+  buildZendeskURL,
+  type ButtonComponentProps,
+  type Components,
+  type FieldComponentProps,
+  type FieldSetToggleComponentProps,
+  type FileComponentProps,
+  type ForcedValueComponentProps,
+  type PDFPreviewComponentProps,
+  type TelFieldComponentProps,
+  type TimeFieldComponentProps,
+  type ZendeskTriggerButtonComponentProps,
 } from '@remoteoss/remote-flows';
-import { FileUploader } from '@remoteoss/remote-flows/internals';
+import { cn, FileUploader } from '@remoteoss/remote-flows/internals';
 import { splitAccordionDescription } from './utils/transformHtml';
 import { Accordion } from './components/Accordion';
 //import { ZendeskDialog } from './ZendeskDialog';
@@ -491,6 +493,40 @@ const TimeField = ({
   );
 };
 
+const ZendeskTriggerButton = ({
+  zendeskId,
+  onClick,
+  children,
+  external,
+  className,
+}: ZendeskTriggerButtonComponentProps) => {
+  const handleClick = () => {
+    onClick?.(zendeskId);
+  };
+
+  if (external) {
+    return (
+      <a
+        href={buildZendeskURL(zendeskId)}
+        target='_blank'
+        rel='noopener noreferrer'
+        className={cn('zendesk-custom-button zendesk-link', className)}
+      >
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <button
+      onClick={handleClick}
+      className={cn('zendesk-custom-button', className)}
+    >
+      {children}
+    </button>
+  );
+};
+
 export const components: Components = {
   button: Button,
   text: Input,
@@ -506,5 +542,6 @@ export const components: Components = {
   pdfViewer: PDFPreview,
   tel: TelField,
   time: TimeField,
+  zendeskTriggerButton: ZendeskTriggerButton,
   //zendeskDrawer: ZendeskDialog,
 };

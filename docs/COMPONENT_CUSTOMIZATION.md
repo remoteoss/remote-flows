@@ -106,7 +106,9 @@ Available component types include:
 - `statement` - Statement/information display
 - `table` - Table components
 - `drawer` - Drawer components
+- `forcedValue` - Forced value components
 - `zendeskDrawer` - Zendesk drawer components
+- `zendeskTriggerButton` - Zendesk trigger button components
 - `pdfViewer` - PDF viewer component
 - `tel` - Tel field component
 - `time` - Time field component
@@ -117,6 +119,7 @@ and their typescript definitions
 - `ButtonComponentProps`: For custom button components
 - `StatementComponentProps`: For custom statement components
 - `ZendeskDrawerComponentProps`: For custom zendesk drawer
+- `ZendeskTriggerButtonComponentProps`: For custom zendesk trigger button
 - `FileComponentProps`: for custom file field components
 - `CountryComponentProps`: for country field components
 - `TextFieldComponentProps`: for textfield components
@@ -125,6 +128,7 @@ and their typescript definitions
 - `PDFPreviewComponentProps`: for the pdf viewer component
 - `TelFieldComponentProps`: for the tel component
 - `TimeFieldComponentProps`: for the timefield component
+- `ForcedValueComponentProps`: for the forced value component
 
 > **Tip:** Check [src/default-components.ts](../src/default-components.ts) to see the default implementations. You can use these as a starting point or reference when building your own custom components.
 
@@ -391,6 +395,76 @@ type JSFCustomComponentProps = {
   }>;
   // ... additional JSON Schema Form props
 };
+```
+
+### ZendeskTriggerButtonComponentProps
+
+For custom Zendesk trigger button components:
+
+```tsx
+import { ZendeskTriggerButtonComponentProps } from '@remoteoss/remote-flows';
+
+type ZendeskTriggerButtonComponentProps = {
+  zendeskId: number;
+  className?: string;
+  onClick?: (zendeskId: number) => void;
+  children?: React.ReactNode;
+  external?: boolean;
+} & Record<string, unknown>;
+```
+
+**Example: Custom Zendesk Trigger Button**
+
+```tsx
+import {
+  RemoteFlows,
+  ZendeskTriggerButtonComponentProps,
+} from '@remoteoss/remote-flows';
+
+const CustomZendeskTriggerButton = ({
+  zendeskId,
+  onClick,
+  children,
+  className,
+  external,
+}: ZendeskTriggerButtonComponentProps) => {
+  const handleClick = () => {
+    onClick?.(zendeskId);
+  };
+
+  if (external) {
+    return (
+      <a
+        href={`https://support.example.com/article/${zendeskId}`}
+        target='_blank'
+        rel='noopener noreferrer'
+        onClick={handleClick}
+        className={className}
+      >
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <button onClick={handleClick} className={className}>
+      {children}
+    </button>
+  );
+};
+
+function App() {
+  return (
+    <RemoteFlows
+      auth={fetchToken}
+      components={{
+        zendeskTriggerButton: CustomZendeskTriggerButton,
+      }}
+    >
+      {/* All flows will use this custom Zendesk trigger button */}
+    </RemoteFlows>
+  );
+}
 ```
 
 ## When to Use Each Method

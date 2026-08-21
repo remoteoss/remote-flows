@@ -142,4 +142,11 @@ export const lazyDefaultComponents: Components = {
       }),
     ),
   ),
+  zendeskTriggerButton: lazy(() =>
+    import('./components/shared/zendesk-drawer/default/ZendeskTriggerButtonDefault').then(
+      (m) => ({
+        default: m.ZendeskTriggerButtonDefault,
+      }),
+    ),
+  ),
 };

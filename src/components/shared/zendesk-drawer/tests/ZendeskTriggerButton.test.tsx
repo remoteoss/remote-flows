@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { server } from '@/src/tests/server';
 import { ZendeskTriggerButton } from '../ZendeskTriggerButton';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
+import type { ZendeskTriggerButtonComponentProps } from '@/src/types/remoteFlows';
 
 describe('ZendeskTriggerButton', () => {
   const mockArticle = {
@@ -174,6 +175,107 @@ describe('ZendeskTriggerButton', () => {
       // Drawer should not appear (only the link in the document)
       const links = screen.getAllByRole('link');
       expect(links).toHaveLength(1);
+    });
+  });
+
+  describe('with custom trigger button component', () => {
+    const CustomTriggerButton = ({
+      zendeskId,
+      onClick,
+      children,
+      className,
+    }: ZendeskTriggerButtonComponentProps) => {
+      return (
+        <button
+          onClick={() => onClick?.(zendeskId)}
+          className={className}
+          data-testid='custom-trigger'
+        >
+          Custom: {children}
+        </button>
+      );
+    };
+
+    const WrapperWithCustomButton = ({
+      children,
+    }: {
+      children: React.ReactNode;
+    }) => (
+      <TestProviders components={{ zendeskTriggerButton: CustomTriggerButton }}>
+        {children}
+      </TestProviders>
+    );
+
+    it('renders custom trigger button when provided', () => {
+      render(
+        <ZendeskTriggerButton zendeskId={123456}>
+          Open Article
+        </ZendeskTriggerButton>,
+        { wrapper: WrapperWithCustomButton },
+      );
+
+      const customButton = screen.getByTestId('custom-trigger');
+      expect(customButton).toBeInTheDocument();
+      expect(customButton).toHaveTextContent('Custom: Open Article');
+    });
+
+    it('calls onClick when custom trigger button is clicked', async () => {
+      const onClick = vi.fn();
+
+      render(
+        <ZendeskTriggerButton zendeskId={123456} onClick={onClick}>
+          Open Article
+        </ZendeskTriggerButton>,
+        { wrapper: WrapperWithCustomButton },
+      );
+
+      await userEvent.click(screen.getByTestId('custom-trigger'));
+      expect(onClick).toHaveBeenCalledWith(123456);
+    });
+
+    it('opens drawer when custom trigger button is clicked and external is false', async () => {
+      render(
+        <ZendeskTriggerButton zendeskId={123456}>
+          Open Article
+        </ZendeskTriggerButton>,
+        { wrapper: WrapperWithCustomButton },
+      );
+
+      await userEvent.click(screen.getByTestId('custom-trigger'));
+
+      // Wait for drawer to load and display content
+      const title = await screen.findByText('Test Article');
+      expect(title).toBeInTheDocument();
+    });
+
+    it('does not open drawer when custom trigger button is clicked and external is true', async () => {
+      render(
+        <ZendeskTriggerButton zendeskId={123456} external={true}>
+          Open Article
+        </ZendeskTriggerButton>,
+        { wrapper: WrapperWithCustomButton },
+      );
+
+      await userEvent.click(screen.getByTestId('custom-trigger'));
+
+      // Drawer should not appear
+      const title = screen.queryByText('Test Article');
+      expect(title).not.toBeInTheDocument();
+    });
+
+    it('passes className to custom trigger button', () => {
+      render(
+        <ZendeskTriggerButton
+          zendeskId={123456}
+          className='custom-class-from-parent'
+        >
+          Open Article
+        </ZendeskTriggerButton>,
+        { wrapper: WrapperWithCustomButton },
+      );
+
+      const customButton = screen.getByTestId('custom-trigger');
+      expect(customButton).toHaveClass('custom-class-from-parent');
     });
   });
 });
