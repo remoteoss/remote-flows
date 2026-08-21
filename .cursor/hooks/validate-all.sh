@@ -31,16 +31,26 @@ if [ -d ".git" ] && command -v npm &> /dev/null; then
     type_status="❌ Type check failed (see 'npm run type-check')"
   fi
   
-  # Build summary message
-  summary="Validation Results:\n$format_status\n$lint_status\n$type_status"
+  # Check if any validation failed
+  has_failures=false
+  if [[ "$format_status" == *"❌"* ]] || [[ "$type_status" == *"❌"* ]]; then
+    has_failures=true
+  fi
   
-  # Return the validation summary as a followup message
-  echo "{
-    \"followup_message\": \"$summary\"
-  }"
+  if [ "$has_failures" = true ]; then
+    # Build summary message only for failures
+    summary="Validation Results:\n$format_status\n$lint_status\n$type_status"
+    
+    echo "{
+      \"followup_message\": \"$summary\"
+    }"
+  else
+    # All checks passed - return empty response to end the session
+    echo "{}"
+  fi
 else
   # If not in git repo or npm not available, skip validation
-  echo '{ "followup_message": "Skipped validation (not in git repo or npm not available)" }'
+  echo '{}'
 fi
 
 exit 0
