@@ -1,0 +1,75 @@
+# Component Documentation Rule
+
+## Philosophy: Keep Documentation in Sync
+
+When adding a new customizable component to the `Components` type, documentation must be updated immediately. This ensures library consumers can discover and use new customization options.
+
+## Required Updates
+
+When adding a new customizable component:
+
+### 1. Update docs/COMPONENT_CUSTOMIZATION.md
+
+Add the component type to the **"Available component types"** list (around line 92-113):
+
+```markdown
+- `componentName` - Component description
+```
+
+Add the TypeScript type to the **"and their typescript definitions"** list (around line 115-130):
+
+```markdown
+- `ComponentNameComponentProps`: For custom componentName components
+```
+
+If the component has unique props or usage patterns, add an example section similar to the existing `ZendeskTriggerButtonComponentProps` example (lines 398-467).
+
+### 2. Verify Exports
+
+Ensure the component props type is exported from:
+- `src/types/remoteFlows.ts` - Type definition
+- `src/index.tsx` - Public API export
+
+### 3. When to Update
+
+**Always check and update this documentation when:**
+- Adding a new field to `Components` type in `src/types/remoteFlows.ts`
+- Creating a new customizable component
+- Exporting a new component props type from `src/index.tsx`
+- Adding a new field type that consumers can override
+
+## Example Pattern
+
+For a new `CustomWidget` component:
+
+1. **docs/COMPONENT_CUSTOMIZATION.md** (line ~113):
+```markdown
+- `customWidget` - Custom widget component
+```
+
+2. **docs/COMPONENT_CUSTOMIZATION.md** (line ~130):
+```markdown
+- `CustomWidgetComponentProps`: For custom widget components
+```
+
+3. **Verify exports**:
+```typescript
+// src/types/remoteFlows.ts
+export type CustomWidgetComponentProps = { /* ... */ };
+
+// src/index.tsx
+export type { CustomWidgetComponentProps } from '@/src/types/remoteFlows';
+```
+
+## Red Flags
+
+If you find yourself:
+- Adding a type to `Components` without updating docs
+- Exporting a new `*ComponentProps` type without documenting it
+- Implementing a custom component without checking the docs
+
+**STOP** and update the documentation first.
+
+## Remember
+
+The documentation is the contract with library consumers. Missing documentation means features that are undiscoverable and unused.
