@@ -11,7 +11,7 @@ import {
   type TimeFieldComponentProps,
   type ZendeskTriggerButtonComponentProps,
 } from '@remoteoss/remote-flows';
-import { FileUploader } from '@remoteoss/remote-flows/internals';
+import { cn, FileUploader } from '@remoteoss/remote-flows/internals';
 import { splitAccordionDescription } from './utils/transformHtml';
 import { Accordion } from './components/Accordion';
 //import { ZendeskDialog } from './ZendeskDialog';
@@ -497,8 +497,8 @@ const ZendeskTriggerButton = ({
   zendeskId,
   onClick,
   children,
-  className,
   external,
+  className,
 }: ZendeskTriggerButtonComponentProps) => {
   const handleClick = () => {
     onClick?.(zendeskId);
@@ -510,6 +510,7 @@ const ZendeskTriggerButton = ({
         href={buildZendeskURL(zendeskId)}
         target='_blank'
         rel='noopener noreferrer'
+        className={cn('zendesk-custom-button zendesk-link', className)}
       >
         {children}
       </a>
@@ -519,16 +520,7 @@ const ZendeskTriggerButton = ({
   return (
     <button
       onClick={handleClick}
-      className={`${className} zendesk-custom-button`}
-      style={{
-        color: '#0066cc',
-        textDecoration: 'underline',
-        background: 'transparent',
-        border: 'none',
-        cursor: 'pointer',
-        padding: '0.25rem 0.5rem',
-        fontSize: '0.875rem',
-      }}
+      className={cn('zendesk-custom-button', className)}
     >
       {children}
     </button>
