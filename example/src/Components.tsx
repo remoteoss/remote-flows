@@ -1,14 +1,15 @@
-import type {
-  ButtonComponentProps,
-  Components,
-  FieldComponentProps,
-  FieldSetToggleComponentProps,
-  FileComponentProps,
-  ForcedValueComponentProps,
-  PDFPreviewComponentProps,
-  TelFieldComponentProps,
-  TimeFieldComponentProps,
-  ZendeskTriggerButtonComponentProps,
+import {
+  buildZendeskURL,
+  type ButtonComponentProps,
+  type Components,
+  type FieldComponentProps,
+  type FieldSetToggleComponentProps,
+  type FileComponentProps,
+  type ForcedValueComponentProps,
+  type PDFPreviewComponentProps,
+  type TelFieldComponentProps,
+  type TimeFieldComponentProps,
+  type ZendeskTriggerButtonComponentProps,
 } from '@remoteoss/remote-flows';
 import { FileUploader } from '@remoteoss/remote-flows/internals';
 import { splitAccordionDescription } from './utils/transformHtml';
@@ -497,10 +498,23 @@ const ZendeskTriggerButton = ({
   onClick,
   children,
   className,
+  external,
 }: ZendeskTriggerButtonComponentProps) => {
   const handleClick = () => {
     onClick?.(zendeskId);
   };
+
+  if (external) {
+    return (
+      <a
+        href={buildZendeskURL(zendeskId)}
+        target='_blank'
+        rel='noopener noreferrer'
+      >
+        {children}
+      </a>
+    );
+  }
 
   return (
     <button
