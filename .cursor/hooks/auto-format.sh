@@ -3,11 +3,16 @@
 
 set -euo pipefail
 
+<<<<<<< Updated upstream
 # Read hook input from stdin
 input=$(cat)
 
 # Extract the file path from the hook input
 file_path=$(echo "$input" | jq -r '.path // empty')
+=======
+# Read and discard hook input from stdin
+cat > /dev/null
+>>>>>>> Stashed changes
 
 # Only run format if we're in a git repository and npm is available
 if [ -d ".git" ] && command -v npm &> /dev/null; then
