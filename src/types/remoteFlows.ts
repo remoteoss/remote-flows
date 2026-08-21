@@ -104,6 +104,32 @@ export type ZendeskDrawerComponentProps = {
   Trigger: React.ReactElement;
 };
 
+/**
+ * Props for custom Zendesk trigger button components.
+ */
+export type ZendeskTriggerButtonComponentProps = {
+  /**
+   * The Zendesk ID for the help article
+   */
+  zendeskId: number;
+  /**
+   * The class name for the button
+   */
+  className?: string;
+  /**
+   * The callback function to be called when the button is clicked
+   */
+  onClick?: (zendeskId: number) => void;
+  /**
+   * The children to be rendered inside the button
+   */
+  children?: React.ReactNode;
+  /**
+   * Whether to open the help article in a new tab
+   */
+  external?: boolean;
+} & Record<string, unknown>;
+
 export type DrawerComponentProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -156,6 +182,7 @@ export type Components = {
   button?: React.ComponentType<ButtonComponentProps>;
   fieldsetToggle?: React.ComponentType<FieldSetToggleComponentProps>;
   zendeskDrawer?: React.ComponentType<ZendeskDrawerComponentProps>;
+  zendeskTriggerButton?: React.ComponentType<ZendeskTriggerButtonComponentProps>;
   drawer?: React.ComponentType<DrawerComponentProps>;
   table?: React.ComponentType<TableComponentProps>;
   'work-schedule'?: React.ComponentType<WorkScheduleComponentProps>;

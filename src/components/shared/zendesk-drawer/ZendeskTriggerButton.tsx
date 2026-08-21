@@ -2,6 +2,7 @@ import { cn } from '@/src/lib/utils';
 import { ZendeskDrawer } from './ZendeskDrawer';
 import { buildZendeskURL } from './utils';
 import { useState } from 'react';
+import { useFormFields } from '@/src/context';
 
 interface ZendeskTriggerButtonProps {
   /**
@@ -36,6 +37,7 @@ export function ZendeskTriggerButton({
   children,
   external = false,
 }: ZendeskTriggerButtonProps) {
+  const { components } = useFormFields();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = () => {
@@ -45,6 +47,36 @@ export function ZendeskTriggerButton({
     onClick?.(zendeskId);
   };
 
+  const CustomZendeskTriggerButton = components?.zendeskTriggerButton;
+
+  // If a custom trigger button is provided, use it
+  if (CustomZendeskTriggerButton) {
+    const customTriggerElement = (
+      <CustomZendeskTriggerButton
+        zendeskId={zendeskId}
+        className={className}
+        onClick={handleClick}
+        external={external}
+      >
+        {children}
+      </CustomZendeskTriggerButton>
+    );
+
+    if (external) {
+      return customTriggerElement;
+    }
+
+    return (
+      <ZendeskDrawer
+        zendeskId={zendeskId}
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        Trigger={customTriggerElement}
+      />
+    );
+  }
+
+  // Default implementation
   if (external) {
     return (
       <a

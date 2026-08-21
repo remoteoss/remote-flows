@@ -152,6 +152,7 @@ export type {
   FieldSetToggleComponentProps,
   ButtonComponentProps,
   ZendeskDrawerComponentProps,
+  ZendeskTriggerButtonComponentProps,
   DrawerComponentProps,
   PDFPreviewComponentProps,
   Meta,
