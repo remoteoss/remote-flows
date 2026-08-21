@@ -106,6 +106,7 @@ Available component types include:
 - `statement` - Statement/information display
 - `table` - Table components
 - `drawer` - Drawer components
+- `forcedValue` - Forced value components
 - `zendeskDrawer` - Zendesk drawer components
 - `zendeskTriggerButton` - Zendesk trigger button components
 - `pdfViewer` - PDF viewer component
@@ -127,6 +128,7 @@ and their typescript definitions
 - `PDFPreviewComponentProps`: for the pdf viewer component
 - `TelFieldComponentProps`: for the tel component
 - `TimeFieldComponentProps`: for the timefield component
+- `ForcedValueComponentProps`: for the forced value component
 
 > **Tip:** Check [src/default-components.ts](../src/default-components.ts) to see the default implementations. You can use these as a starting point or reference when building your own custom components.
 
