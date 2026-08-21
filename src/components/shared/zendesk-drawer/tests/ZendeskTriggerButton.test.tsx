@@ -196,7 +196,11 @@ describe('ZendeskTriggerButton', () => {
       );
     };
 
-    const WrapperWithCustomButton = ({ children }: { children: React.ReactNode }) => (
+    const WrapperWithCustomButton = ({
+      children,
+    }: {
+      children: React.ReactNode;
+    }) => (
       <TestProviders components={{ zendeskTriggerButton: CustomTriggerButton }}>
         {children}
       </TestProviders>
