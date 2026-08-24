@@ -11,4 +11,5 @@ export const INVOICE_SCHEDULE_STATUS = {
   COMPLETED: 'completed',
   GENERATION_FAILED_UNRELATED_TO_WITHDRAWAL_METHOD:
     'generation_failed_unrelated_to_withdrawal_method',
+  DELETED: 'deleted',
 } as const;

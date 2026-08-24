@@ -298,6 +298,20 @@ const updateContractorInvoiceScheduleHandler = http.patch(
   },
 );
 
+const previewContractorInvoiceHandler = http.post(
+  '*/v1/employments/*/contractor-invoices/preview',
+  async () => {
+    return HttpResponse.json({
+      data: {
+        contractor_invoice_preview: {
+          name: 'invoice-preview.pdf',
+          content: 'data:application/pdf;base64,JVBERi0xLjQK',
+        },
+      },
+    });
+  },
+);
+
 export const defaultHandlers = [
   identityHandler,
   legalEntitiesHandler,
@@ -330,4 +344,5 @@ export const defaultHandlers = [
   contractOriginHandler,
   createContractorInvoiceScheduleHandler,
   updateContractorInvoiceScheduleHandler,
+  previewContractorInvoiceHandler,
 ];

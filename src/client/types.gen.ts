@@ -5583,6 +5583,29 @@ export type UpdateScheduleContractorInvoiceParams = {
   number?: string | null;
   periodicity?: ContractorInvoiceSchedulePeriodicity;
   start_date?: Date;
+  status?: 'inactive' | 'deleted' | 'active' | 'processing';
+};
+
+/**
+ * PreviewContractorInvoiceParams
+ *
+ * Payload shape used to preview a contractor invoice before it's created.
+ */
+export type PreviewContractorInvoiceParams = {
+  currency: CurrencyCode;
+  /**
+   * List of invoice items that composes the overall invoice amount.
+   */
+  items: Array<ContractorInvoiceScheduleItem>;
+  /**
+   * Custom defined note.
+   */
+  note?: string | null;
+  /**
+   * Invoice identifier.
+   */
+  number?: string | null;
+  start_date: Date;
 };
 
 /**
@@ -5634,10 +5657,12 @@ export type CommonIncentiveParams = {
  * - `generation_failed_unrelated_to_withdrawal_method`: Generation failed for any other reason.
  * - `completed`: Number of generated contractor invoices has been reached.
  * - `inactive`: Does not create any further contractor invoices but it's still possible for the employer to activate it again.
+ * - `deleted`: The schedule was cancelled and will not generate any further contractor invoices.
  *
  */
 export type ContractorInvoiceScheduleStatus =
   | 'inactive'
+  | 'deleted'
   | 'completed'
   | 'active'
   | 'processing'
@@ -12307,6 +12332,20 @@ export type ContractorInvoiceScheduleItem = {
    * Describes invoice item intent.
    */
   description: string;
+};
+
+/**
+ * ContractorInvoicePreviewResponse
+ *
+ * Returns a base64 encoded Contractor Invoice preview document.
+ */
+export type ContractorInvoicePreviewResponse = {
+  data: {
+    contractor_invoice_preview: {
+      content: Blob | File;
+      name: string;
+    };
+  };
 };
 
 /**
@@ -21486,6 +21525,53 @@ export type PostV1EmploymentsEmploymentIdContractOriginResponses = {
 
 export type PostV1EmploymentsEmploymentIdContractOriginResponse =
   PostV1EmploymentsEmploymentIdContractOriginResponses[keyof PostV1EmploymentsEmploymentIdContractOriginResponses];
+
+export type PostV1EmploymentsEmploymentIdContractorInvoicesPreviewData = {
+  /**
+   * Preview parameters
+   */
+  body: PreviewContractorInvoiceParams;
+  path: {
+    /**
+     * Employment identifier
+     */
+    employment_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/contractor-invoices/preview';
+};
+
+export type PostV1EmploymentsEmploymentIdContractorInvoicesPreviewErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostV1EmploymentsEmploymentIdContractorInvoicesPreviewError =
+  PostV1EmploymentsEmploymentIdContractorInvoicesPreviewErrors[keyof PostV1EmploymentsEmploymentIdContractorInvoicesPreviewErrors];
+
+export type PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponses = {
+  /**
+   * Success
+   */
+  200: ContractorInvoicePreviewResponse;
+};
+
+export type PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponse =
+  PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponses[keyof PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponses];
 
 export type GetV1TimeoffTypesData = {
   body?: never;

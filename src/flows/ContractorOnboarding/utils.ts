@@ -272,3 +272,31 @@ export function buildInvoiceSchedulePayload(
 
   return payload;
 }
+
+/**
+ * Builds the payload for previewing a contractor invoice from form values.
+ * Unlike buildInvoiceSchedulePayload, the preview endpoint previews a single
+ * invoice, not a recurring schedule, so it doesn't accept periodicity or
+ * nr_occurrences.
+ * @param values - Form values containing invoice schedule data
+ * @returns Invoice preview payload object
+ */
+export function buildInvoicePreviewPayload(
+  values: Record<string, unknown>,
+): Record<string, unknown> {
+  const payload: Record<string, unknown> = {
+    currency: values.currency,
+    start_date: values.start_date,
+    items: buildInvoiceItems(values),
+  };
+
+  if (values.number) {
+    payload.number = String(values.number);
+  }
+
+  if (values.note) {
+    payload.note = values.note;
+  }
+
+  return payload;
+}
