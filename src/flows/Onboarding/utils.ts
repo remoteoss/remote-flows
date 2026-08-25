@@ -141,7 +141,7 @@ export const DEFAULT_VERSION = 1;
  * useContractDetailsSchema instead of useJSONSchemaForm.
  * FRA = wage portage, ITA = APL.
  */
-const JSF_V1_CONTRACT_DETAILS_COUNTRIES = ['FRA', 'ITA'];
+const JSF_V1_CONTRACT_DETAILS_COUNTRIES = ['FRA', 'ITA', 'DEU'];
 
 /**
  * Checks if a country's contract details schema is served as jsfVersion 1
