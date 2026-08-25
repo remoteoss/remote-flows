@@ -41,7 +41,7 @@ export function FileUploadField({
   name,
   description,
   label,
-  multiple,
+  multiple = false,
   onChange,
   component,
   accept,
