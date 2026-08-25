@@ -4,6 +4,8 @@
 
 ### Patch Changes
 
+#### Fixes
+
 - fix contract details validation by using the new way to validate/render fields (#1268) [#1268](https://github.com/remoteoss/remote-flows/pull/1268)
 - set multiple to false explicitely to avoid multiple files (#1267) [#1267](https://github.com/remoteoss/remote-flows/pull/1267)
 
