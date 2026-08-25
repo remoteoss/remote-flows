@@ -51,10 +51,7 @@ export function FileUploader({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newFiles = Array.from(e.target.files);
-      // `multiple` unset keeps the historical accumulate-across-selections behavior. Only an
-      // explicit `multiple={false}` (as opposed to just not passing the prop) opts a field out
-      // of that and replaces its selection instead — see the discussion on why this can't be
-      // `!multiple` without reverting the field's own past "preserve existing files" fix.
+      // now the multiple is always a boolean, before multiple could be undefined and it would accumulate files
       const updatedFiles =
         multiple === false ? newFiles : [...files, ...newFiles];
 
