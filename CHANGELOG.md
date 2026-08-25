@@ -1,5 +1,38 @@
 # @remoteoss/remote-flows
 
+## 1.49.0
+
+### Minor Changes
+
+#### Features
+
+- build intermeddiate step (#1249) [#1249](https://github.com/remoteoss/remote-flows/pull/1249)
+- build next step to put the form in (#1252) [#1252](https://github.com/remoteoss/remote-flows/pull/1252)
+- render form (#1253) [#1253](https://github.com/remoteoss/remote-flows/pull/1253)
+- edit a previous scheduled invoice (#1254) [#1254](https://github.com/remoteoss/remote-flows/pull/1254)
+- prefill selection (#1257) [#1257](https://github.com/remoteoss/remote-flows/pull/1257)
+- add tests about scheduling an invoice (#1261) [#1261](https://github.com/remoteoss/remote-flows/pull/1261)
+- Add customization support for ZendeskTriggerButton component (#1262) [#1262](https://github.com/remoteoss/remote-flows/pull/1262)
+
+#### Fixes
+
+- fix prefill contract origin (#1258) [#1258](https://github.com/remoteoss/remote-flows/pull/1258)
+
+#### Docs
+
+- extract contract details schema hook to common/api (#1245) [#1245](https://github.com/remoteoss/remote-flows/pull/1245)
+- tentative flaky fix (#1248) [#1248](https://github.com/remoteoss/remote-flows/pull/1248)
+- change e2e config to avoid flaky installs (#1256) [#1256](https://github.com/remoteoss/remote-flows/pull/1256)
+- change main e2e pipeline (#1259) [#1259](https://github.com/remoteoss/remote-flows/pull/1259)
+
+#### Chores
+
+- setup for cloud agents (#1247) [#1247](https://github.com/remoteoss/remote-flows/pull/1247)
+- add cursor rules (#1250) [#1250](https://github.com/remoteoss/remote-flows/pull/1250)
+- more options example (#1260) [#1260](https://github.com/remoteoss/remote-flows/pull/1260)
+- Add Cursor hooks for auto-format and validation (#1263) [#1263](https://github.com/remoteoss/remote-flows/pull/1263)
+- add cursor rules for component customization patterns (#1264) [#1264](https://github.com/remoteoss/remote-flows/pull/1264)
+
 ## 1.48.0
 
 ### Minor Changes
