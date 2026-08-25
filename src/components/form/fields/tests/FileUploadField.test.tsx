@@ -222,7 +222,11 @@ describe('FileUploadField Component', () => {
       const methods = useForm();
       return (
         <FormProvider {...methods}>
-          <FileUploadField {...defaultProps} onChange={mockOnChange} />
+          <FileUploadField
+            multiple={true}
+            {...defaultProps}
+            onChange={mockOnChange}
+          />
         </FormProvider>
       );
     };
