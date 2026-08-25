@@ -1,4 +1,5 @@
 const { buildGatewayURL } = require('./utils.js');
+const { fetchCompanyManagerToken } = require('./jwt_auth.js');
 
 async function fetchAccessToken() {
   const {
@@ -6,7 +7,15 @@ async function fetchAccessToken() {
     VITE_CLIENT_SECRET,
     VITE_REMOTE_GATEWAY,
     VITE_REFRESH_TOKEN,
+    VITE_USER_ID,
   } = process.env;
+
+  // Local dev has no interactively-obtained refresh token; fall back to the
+  // JWT-bearer assertion flow (same as fetchCompanyManagerToken) using
+  // VITE_USER_ID instead.
+  if (VITE_REMOTE_GATEWAY === 'local' && !VITE_REFRESH_TOKEN && VITE_USER_ID) {
+    return fetchCompanyManagerToken();
+  }
 
   // for local development, we don't need a client secret
   if (
