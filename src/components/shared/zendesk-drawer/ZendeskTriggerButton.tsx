@@ -1,7 +1,6 @@
-import { cn } from '@/src/lib/utils';
 import { ZendeskDrawer } from './ZendeskDrawer';
-import { buildZendeskURL } from './utils';
 import { useState } from 'react';
+import { useFormFields } from '@/src/context';
 
 interface ZendeskTriggerButtonProps {
   /**
@@ -26,9 +25,6 @@ interface ZendeskTriggerButtonProps {
   external?: boolean;
 }
 
-const baseClassName =
-  'RemoteFlows__ZendeskTriggerButton text-blue-500 hover:underline inline-block text-xs bg-transparent border-none cursor-pointer p-0';
-
 export function ZendeskTriggerButton({
   zendeskId,
   className,
@@ -36,6 +32,7 @@ export function ZendeskTriggerButton({
   children,
   external = false,
 }: ZendeskTriggerButtonProps) {
+  const { components } = useFormFields();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = () => {
@@ -45,18 +42,25 @@ export function ZendeskTriggerButton({
     onClick?.(zendeskId);
   };
 
+  const CustomZendeskTriggerButton = components?.zendeskTriggerButton;
+
+  if (!CustomZendeskTriggerButton) {
+    throw new Error(`Zendesk trigger button component not found`);
+  }
+
+  const triggerElement = (
+    <CustomZendeskTriggerButton
+      zendeskId={zendeskId}
+      className={className}
+      onClick={handleClick}
+      external={external}
+    >
+      {children}
+    </CustomZendeskTriggerButton>
+  );
+
   if (external) {
-    return (
-      <a
-        href={buildZendeskURL(zendeskId)}
-        target='_blank'
-        rel='noopener noreferrer'
-        onClick={handleClick}
-        className={cn(baseClassName, className)}
-      >
-        {children}
-      </a>
-    );
+    return triggerElement;
   }
 
   return (
@@ -64,11 +68,7 @@ export function ZendeskTriggerButton({
       zendeskId={zendeskId}
       open={isOpen}
       onClose={() => setIsOpen(false)}
-      Trigger={
-        <button onClick={handleClick} className={cn(baseClassName, className)}>
-          {children}
-        </button>
-      }
+      Trigger={triggerElement}
     />
   );
 }
