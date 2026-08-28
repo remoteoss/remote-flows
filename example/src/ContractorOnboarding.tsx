@@ -229,6 +229,8 @@ const MultiStepForm = ({
     ContractOriginStep,
     InvoiceScheduleStep,
     CreateInvoiceScheduleStep,
+    SkipInvoiceScheduleButton,
+    PreviewInvoiceButton,
   } = components;
   const [errors, setErrors] = useState<{
     apiError: string;
@@ -591,6 +593,29 @@ const MultiStepForm = ({
             >
               Back
             </BackButton>
+            {contractorOnboardingBag.existingInvoiceSchedule?.id && (
+              <SkipInvoiceScheduleButton
+                className='back-button'
+                onSuccess={() => console.log('invoice schedule skipped')}
+                onError={({ error, fieldErrors }) =>
+                  setErrors({ apiError: error.message, fieldErrors })
+                }
+              >
+                Skip this invoice schedule
+              </SkipInvoiceScheduleButton>
+            )}
+            <PreviewInvoiceButton
+              className='back-button'
+              onSuccess={(preview) => {
+                console.log('invoice preview', preview);
+                window.open(preview.content, '_blank');
+              }}
+              onError={({ error, fieldErrors }) =>
+                setErrors({ apiError: error.message, fieldErrors })
+              }
+            >
+              Preview invoice
+            </PreviewInvoiceButton>
             <SubmitButton
               className='submit-button'
               onClick={() => setErrors({ apiError: '', fieldErrors: [] })}

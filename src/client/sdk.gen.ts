@@ -634,6 +634,9 @@ import type {
   PostV1EmploymentsEmploymentIdContractOriginData,
   PostV1EmploymentsEmploymentIdContractOriginErrors,
   PostV1EmploymentsEmploymentIdContractOriginResponses,
+  PostV1EmploymentsEmploymentIdContractorInvoicesPreviewData,
+  PostV1EmploymentsEmploymentIdContractorInvoicesPreviewErrors,
+  PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponses,
   PostV1EmploymentsEmploymentIdEngagementAgreementDetailsData,
   PostV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
   PostV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
@@ -6588,6 +6591,39 @@ export const postV1EmploymentsEmploymentIdContractOrigin = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/employments/{employment_id}/contract-origin',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Preview a Contractor Invoice
+ *
+ * Returns a base64-encoded PDF preview of a contractor invoice built from the given parameters.
+ *
+ * The document is a draft and is not persisted.
+ *
+ */
+export const postV1EmploymentsEmploymentIdContractorInvoicesPreview = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostV1EmploymentsEmploymentIdContractorInvoicesPreviewData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponses,
+    PostV1EmploymentsEmploymentIdContractorInvoicesPreviewErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/{employment_id}/contractor-invoices/preview',
     ...options,
     headers: {
       'Content-Type': 'application/json',

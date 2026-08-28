@@ -15,8 +15,10 @@ The contractor onboarding process consists of the following steps in order:
 3. **Contract Details** - Define contract terms including services, duration, compensation, and notice periods
 4. **Pricing Plan** - Select and configure subscription/pricing tier
 5. **Contract Origin** - Choose where the contract comes from
-6. **Contract Preview** - Review and electronically sign the generated contract
-7. **Review** - Final review step (internal)
+6. **Invoice Schedule** - Choose whether to set up a recurring invoice schedule now or skip it for later (shown when `options.features` includes `'create_invoice_schedule'`)
+7. **Create Invoice Schedule** - Fill in the invoice schedule details (currency, periodicity, items, etc.); also used to edit an already-created schedule
+8. **Contract Preview** - Review and electronically sign the generated contract
+9. **Review** - Final review step (internal)
 
 ### Skipping Steps
 
@@ -72,6 +74,10 @@ The render function receives an object with:
   - `ContractDetailsStep` - Contract terms form
   - `PricingPlanStep` - Pricing tier selection
   - `ContractOriginStep` - Contract origin selection form
+  - `InvoiceScheduleStep` - Invoice schedule preference selection form
+  - `CreateInvoiceScheduleStep` - Invoice schedule detail form (create or edit)
+  - `SkipInvoiceScheduleButton` - Cancels an existing invoice schedule
+  - `PreviewInvoiceButton` - Previews a draft invoice PDF from unsaved form values
   - `ContractPreviewStep` - Contract review and signature
   - `OnboardingInvite` - Invitation/status component
   - `SubmitButton` - Multi-purpose submit button
@@ -137,6 +143,59 @@ Rendered as a radio group.
 
 - `onSubmit?: (payload: { contract_origin: string }) => void` - Called before submission
 - `onSuccess?: (data: { contractOrigin: string }) => void` - Called on successful submission
+- `onError?: (error: { error: Error; rawError: Record<string, unknown>; fieldErrors: NormalizedFieldError[] }) => void` - Called on error
+
+### InvoiceScheduleStep
+
+Lets the employer choose whether to set up a recurring invoice schedule now (`schedule`) or skip it for now (`manual`). Only rendered when `options.features` includes `'create_invoice_schedule'`.
+
+**Props:**
+
+- `onSubmit?: (payload: InvoiceScheduleFormPayload) => void` - Called before submission
+- `onSuccess?: (data: InvoiceScheduleResponse) => void` - Called on successful submission
+- `onError?: (error: { error: Error; fieldErrors: NormalizedFieldError[] }) => void` - Called on error
+
+### CreateInvoiceScheduleStep
+
+Collects the invoice schedule details: currency, periodicity, start date, up to 10 invoice items, invoice number, note, and number of occurrences. When an invoice schedule already exists for the employment, this same step is prefilled and submitting it updates the existing schedule instead of creating a new one.
+
+**Props:**
+
+- `onSubmit?: (payload: $TSFixMe) => void` - Called before submission
+- `onSuccess?: (data: $TSFixMe) => void` - Called on successful submission
+- `onError?: (error: { error: Error; fieldErrors: NormalizedFieldError[] }) => void` - Called on error
+
+#### SkipInvoiceScheduleButton
+
+Cancels the existing invoice schedule (marks it as `deleted`) and returns the wizard to the `InvoiceScheduleStep`. Disabled unless `contractorOnboardingBag.existingInvoiceSchedule` is present, so it's meant to be rendered alongside `CreateInvoiceScheduleStep` only when editing an existing schedule.
+
+```tsx
+<SkipInvoiceScheduleButton onSuccess={() => {}} onError={(error) => {}}>
+  Skip this invoice schedule
+</SkipInvoiceScheduleButton>
+```
+
+**Props:**
+
+- `onSuccess?: () => void` - Called after the schedule is successfully skipped
+- `onError?: (error: { error: Error; rawError: Record<string, unknown>; fieldErrors: NormalizedFieldError[] }) => void` - Called on error
+
+#### PreviewInvoiceButton
+
+Generates a draft (non-persisted) PDF preview of a contractor invoice from the current, unsaved `CreateInvoiceScheduleStep` form values (`contractorOnboardingBag.fieldValues`). Meant to be rendered alongside `CreateInvoiceScheduleStep`.
+
+```tsx
+<PreviewInvoiceButton
+  onSuccess={(preview) => window.open(preview.content, '_blank')}
+  onError={(error) => {}}
+>
+  Preview invoice
+</PreviewInvoiceButton>
+```
+
+**Props:**
+
+- `onSuccess?: (data: ContractorInvoicePreview) => void` - Called with `{ name, content }` (`content` is a `data:application/pdf;base64,...` URI) on success
 - `onError?: (error: { error: Error; rawError: Record<string, unknown>; fieldErrors: NormalizedFieldError[] }) => void` - Called on error
 
 ### ContractPreviewStep

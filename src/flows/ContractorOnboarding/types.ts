@@ -20,6 +20,8 @@ import { InvoiceScheduleStep } from '@/src/flows/ContractorOnboarding/components
 import { CreateInvoiceScheduleStep } from '@/src/flows/ContractorOnboarding/components/CreateInvoiceScheduleStep';
 import { ProductType } from '@/src/flows/ContractorOnboarding/constants';
 import { SaveDraftButton } from '@/src/flows/ContractorOnboarding/components/SaveDraftButton';
+import { SkipInvoiceScheduleButton } from '@/src/flows/ContractorOnboarding/components/SkipInvoiceScheduleButton';
+import { PreviewInvoiceButton } from '@/src/flows/ContractorOnboarding/components/PreviewInvoiceButton';
 
 export type ContractorOnboardingRenderProps = {
   /**
@@ -56,6 +58,8 @@ export type ContractorOnboardingRenderProps = {
     ContractReviewButton: typeof ContractReviewButton;
     EligibilityQuestionnaireStep: typeof EligibilityQuestionnaireStep;
     SaveDraftButton: typeof SaveDraftButton;
+    SkipInvoiceScheduleButton: typeof SkipInvoiceScheduleButton;
+    PreviewInvoiceButton: typeof PreviewInvoiceButton;
   };
 };
 
@@ -197,4 +201,15 @@ export type InvoiceScheduleFormPayload = {
 
 export type InvoiceScheduleResponse = {
   invoiceSchedulePreference: string;
+};
+
+/**
+ * A draft (non-persisted) contractor invoice preview document.
+ */
+export type ContractorInvoicePreview = {
+  name: string;
+  /**
+   * A `data:application/pdf;base64,...` data URI.
+   */
+  content: string;
 };

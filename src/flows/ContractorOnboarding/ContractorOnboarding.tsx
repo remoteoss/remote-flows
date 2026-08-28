@@ -14,6 +14,8 @@ import { OnboardingInvite } from '@/src/flows/ContractorOnboarding/components/On
 import { ContractReviewButton } from '@/src/flows/ContractorOnboarding/components/ContractReviewButton';
 import { EligibilityQuestionnaireStep } from '@/src/flows/ContractorOnboarding/components/EligibilityQuestionnaireStep';
 import { SaveDraftButton } from '@/src/flows/ContractorOnboarding/components/SaveDraftButton';
+import { SkipInvoiceScheduleButton } from '@/src/flows/ContractorOnboarding/components/SkipInvoiceScheduleButton';
+import { PreviewInvoiceButton } from '@/src/flows/ContractorOnboarding/components/PreviewInvoiceButton';
 import { ContractOriginStep } from '@/src/flows/ContractorOnboarding/components/ContractOriginStep';
 import { InvoiceScheduleStep } from '@/src/flows/ContractorOnboarding/components/InvoiceScheduleStep';
 import { CreateInvoiceScheduleStep } from '@/src/flows/ContractorOnboarding/components/CreateInvoiceScheduleStep';
@@ -73,6 +75,8 @@ export const ContractorOnboardingFlow = ({
           OnboardingInvite: OnboardingInvite,
           ContractReviewButton: ContractReviewButton,
           SaveDraftButton: SaveDraftButton,
+          SkipInvoiceScheduleButton: SkipInvoiceScheduleButton,
+          PreviewInvoiceButton: PreviewInvoiceButton,
         },
       })}
     </ContractorOnboardingContext.Provider>

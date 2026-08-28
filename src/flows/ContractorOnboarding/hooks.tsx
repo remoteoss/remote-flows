@@ -36,6 +36,8 @@ import {
   useGetCreateInvoiceScheduleSchema,
   useCreateInvoiceSchedule,
   useUpdateInvoiceSchedule,
+  useSkipInvoiceSchedule,
+  usePreviewContractorInvoice,
   useGetExistingInvoiceSchedule,
 } from '@/src/flows/ContractorOnboarding/api';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
@@ -74,7 +76,10 @@ import {
   buildContractPreviewJsfModify,
 } from '@/src/flows/ContractorOnboarding/jsfModify';
 import { transformAiErrorResponse } from '@/src/flows/ContractorOnboarding/utils';
-import { AiValidationError } from '@/src/flows/ContractorOnboarding/types';
+import {
+  AiValidationError,
+  ContractorInvoicePreview,
+} from '@/src/flows/ContractorOnboarding/types';
 import { useUploadFile } from '@/src/common/api/files';
 import { dataURLtoFile } from '@/src/lib/files';
 import {
@@ -296,6 +301,8 @@ export const useContractorOnboarding = ({
   const setContractOriginMutation = useSetContractOrigin();
   const createInvoiceScheduleMutation = useCreateInvoiceSchedule();
   const updateInvoiceScheduleMutation = useUpdateInvoiceSchedule();
+  const skipInvoiceScheduleMutation = useSkipInvoiceSchedule();
+  const previewContractorInvoiceMutation = usePreviewContractorInvoice();
 
   const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
     mutationToPromise(updateEmploymentMutation);
@@ -334,6 +341,12 @@ export const useContractorOnboarding = ({
 
   const { mutateAsyncOrThrow: updateInvoiceScheduleMutationAsync } =
     mutationToPromise(updateInvoiceScheduleMutation);
+
+  const { mutateAsyncOrThrow: skipInvoiceScheduleMutationAsync } =
+    mutationToPromise(skipInvoiceScheduleMutation);
+
+  const { mutateAsyncOrThrow: previewContractorInvoiceMutationAsync } =
+    mutationToPromise(previewContractorInvoiceMutation);
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
@@ -1612,6 +1625,46 @@ export const useContractorOnboarding = ({
     onContractReviewedRef.current?.();
   };
 
+  const skipInvoiceSchedule = async () => {
+    if (!existingInvoiceSchedule?.id) {
+      throw createStructuredError('No invoice schedule to skip');
+    }
+
+    await skipInvoiceScheduleMutationAsync({
+      scheduleId: existingInvoiceSchedule.id,
+    });
+    await refetchInvoiceSchedule();
+    setIncludeCreateInvoiceSchedule(false);
+    setStepValues({
+      ...stepState.values,
+      invoice_schedule: {},
+      create_invoice_schedule: {},
+    } as Record<StepKeys, FieldValues>);
+    goToStep('invoice_schedule');
+  };
+
+  const previewContractorInvoice = async (values: FieldValues) => {
+    if (!internalEmploymentId) {
+      throw createStructuredError('Employment ID is required');
+    }
+
+    // fieldValues are the raw, unparsed form values (e.g. money fields still
+    // in display units) — run them through the same parsing/type-coercion
+    // pipeline a real submit would use before building the preview payload.
+    const parsedValues = await parseFormValues(values);
+
+    const response = await previewContractorInvoiceMutationAsync({
+      employmentId: internalEmploymentId,
+      values: parsedValues,
+    });
+
+    // The API returns `content` as a `data:application/pdf;base64,...` string,
+    // not the `Blob | File` the OpenAPI spec's `format: binary` implies.
+    return response?.data?.contractor_invoice_preview as
+      | ContractorInvoicePreview
+      | undefined;
+  };
+
   const handleNextStep = () => {
     if (internalEmploymentId) {
       refetchEmployment();
@@ -1787,6 +1840,36 @@ export const useContractorOnboarding = ({
      * @returns {boolean}
      */
     markContractAsReviewed,
+
+    /**
+     * The existing invoice schedule for the current employment, if any.
+     */
+    existingInvoiceSchedule,
+
+    /**
+     * Skips (cancels) the existing invoice schedule and returns to the
+     * invoice_schedule step.
+     * @returns {Promise<void>}
+     */
+    skipInvoiceSchedule,
+
+    /**
+     * Whether a skip-invoice-schedule request is in flight.
+     */
+    isSkippingInvoiceSchedule: skipInvoiceScheduleMutation.isPending,
+
+    /**
+     * Previews a contractor invoice as a draft PDF from the given (typically
+     * unsaved) form values, without persisting anything.
+     * @param values - Form values to build the preview from
+     * @returns {Promise<{name: string; content: string} | undefined>}
+     */
+    previewContractorInvoice,
+
+    /**
+     * Whether a preview-contractor-invoice request is in flight.
+     */
+    isPreviewingInvoiceSchedule: previewContractorInvoiceMutation.isPending,
 
     /**
      * Function to handle going back to the previous step

@@ -12,6 +12,7 @@ export type {
   EligibilityQuestionnaireResponse,
   InvoiceScheduleFormPayload,
   InvoiceScheduleResponse,
+  ContractorInvoicePreview,
 } from './types';
 export type { ProductType } from './constants';
 export {

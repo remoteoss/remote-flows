@@ -26,6 +26,8 @@ import {
   Country,
   ContractorInvoiceScheduleCreateParams,
   PostV1EmploymentsEmploymentIdContractOriginData,
+  postV1EmploymentsEmploymentIdContractorInvoicesPreview,
+  PreviewContractorInvoiceParams,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
@@ -67,6 +69,7 @@ import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/sel
 import {
   shouldIncludeProduct,
   buildInvoiceSchedulePayload,
+  buildInvoicePreviewPayload,
 } from '@/src/flows/ContractorOnboarding/utils';
 import { useCompanyPricingPlans, hasCompany } from '@/src/common/api/companies';
 import { useIdentity } from '@/src/common/api/identity';
@@ -1015,6 +1018,57 @@ export const useUpdateInvoiceSchedule = () => {
       return patchV1ContractorInvoiceSchedulesId2({
         client: client as Client,
         path: { id: scheduleId },
+        body: payload,
+      });
+    },
+  });
+};
+
+/**
+ * Skips (cancels) an existing contractor invoice schedule by marking it as deleted.
+ * @param scheduleId - The invoice schedule ID
+ * @returns The updated invoice schedule
+ */
+export const useSkipInvoiceSchedule = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: async ({ scheduleId }: { scheduleId: string }) => {
+      const payload: UpdateScheduleContractorInvoiceParams = {
+        status: 'deleted',
+      };
+
+      return patchV1ContractorInvoiceSchedulesId2({
+        client: client as Client,
+        path: { id: scheduleId },
+        body: payload,
+      });
+    },
+  });
+};
+
+/**
+ * Previews a contractor invoice as a draft PDF, without persisting it.
+ * @param employmentId - The employment ID
+ * @param values - The form values containing invoice details
+ * @returns The base64-encoded PDF preview
+ */
+export const usePreviewContractorInvoice = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: async ({
+      employmentId,
+      values,
+    }: {
+      employmentId: string;
+      values: FieldValues;
+    }) => {
+      const payload = buildInvoicePreviewPayload(
+        values,
+      ) as PreviewContractorInvoiceParams;
+
+      return postV1EmploymentsEmploymentIdContractorInvoicesPreview({
+        client: client as Client,
+        path: { employment_id: employmentId },
         body: payload,
       });
     },
