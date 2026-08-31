@@ -1,4 +1,5 @@
 export const signatureSchema = {
+  'x-rmt-meta': { jsfOldVersion: true },
   type: 'object',
   properties: {
     contract_preview_header: {

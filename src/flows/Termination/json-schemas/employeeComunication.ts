@@ -2,6 +2,7 @@ export const employeeComunicationSchema = {
   data: {
     version: 7,
     schema: {
+      'x-rmt-meta': { jsfOldVersion: true },
       additionalProperties: false,
       allOf: [
         {

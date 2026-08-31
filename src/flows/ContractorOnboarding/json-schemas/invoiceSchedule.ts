@@ -1,4 +1,5 @@
 export const invoiceScheduleSchema = {
+  'x-rmt-meta': { jsfOldVersion: true },
   type: 'object',
   properties: {
     invoice_schedule_preference: {

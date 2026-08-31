@@ -277,6 +277,14 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
    * ```
    */
   transformHtmlToComponents?: (htmlContent: string) => ReactNode;
+  /**
+   * JSON Schema Form engine used for schemas that don't declare a version in
+   * `x-rmt-meta` (`{ jsfOldVersion: true }` → v0, `{ jsfVersion: '1' }` → v1).
+   * A schema that declares its version is always rendered with the engine it
+   * declares, regardless of this setting.
+   * @default 'v0'
+   */
+  jsfEngineFallback?: 'v0' | 'v1';
 };
 
 // oxlint-disable-next-line typescript/no-explicit-any
