@@ -4,7 +4,8 @@ import type {
 } from '@/src/client';
 
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { AnyObjectSchema, number, object } from 'yup';
+import { AnyObjectSchema, number, object, ValidationError } from 'yup';
+import type { FormErrors } from '@remoteoss/remote-json-schema-form-kit';
 import { CostCalculatorVersion, defaultEstimationOptions } from './hooks';
 import type {
   CostCalculatorEstimationOptions,
@@ -67,6 +68,38 @@ export function buildValidationSchema(
     {},
   );
   return object(fieldsSchema) as AnyObjectSchema;
+}
+
+/**
+ * Converts kit formErrors into yup ValidationError entries. The v1 engine's
+ * handleValidation only returns formErrors (no yupError attached), so this
+ * keeps the `yupError` returned by useCostCalculator's handleValidation
+ * populated regardless of which engine validated the region schema.
+ */
+export function formErrorsToValidationErrors(
+  formErrors: FormErrors | null | undefined,
+  parentPath = '',
+): ValidationError[] {
+  return Object.entries(formErrors || {}).flatMap(([fieldName, message]) => {
+    const path = parentPath ? `${parentPath}.${fieldName}` : fieldName;
+
+    // Nested fieldset errors (e.g. benefits) come back as nested objects
+    if (
+      typeof message === 'object' &&
+      message !== null &&
+      !Array.isArray(message)
+    ) {
+      return formErrorsToValidationErrors(message as FormErrors, path);
+    }
+
+    return [
+      new ValidationError(
+        typeof message === 'string' ? message : JSON.stringify(message),
+        undefined,
+        path,
+      ),
+    ];
+  });
 }
 
 /**

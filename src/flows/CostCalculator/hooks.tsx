@@ -13,7 +13,11 @@ import { iterateErrors } from '@/src/components/form/validationResolver';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { string, ValidationError } from 'yup';
-import { buildPayload, buildValidationSchema } from './utils';
+import {
+  buildPayload,
+  buildValidationSchema,
+  formErrorsToValidationErrors,
+} from './utils';
 import {
   useCompanyCurrencies,
   useCostCalculatorCountries,
@@ -483,19 +487,37 @@ export const useCostCalculator = (
     }
 
     // 2. validate json schema fields using the handleValidation (from json-schema-form)
+    // Only pass the region schema's own values: the v1 engine enforces
+    // additionalProperties, so static-field values would be rejected
+    const regionFieldNames = new Set(
+      (jsonSchemaRegionFields?.fields || []).map((field) => field.name),
+    );
+    const regionValues = Object.fromEntries(
+      Object.entries(parsedValues).filter(([name]) =>
+        regionFieldNames.has(name),
+      ),
+    );
     const handleValidationResult =
-      jsonSchemaRegionFields?.handleValidation(parsedValues);
+      jsonSchemaRegionFields?.handleValidation(regionValues);
+
+    // The v0 engine attaches a yupError to its result; the v1 engine only
+    // returns formErrors, so synthesize the yup entries to keep the same shape
+    const regionYupError =
+      handleValidationResult && 'yupError' in handleValidationResult
+        ? (handleValidationResult.yupError as ValidationError | undefined)
+        : new ValidationError(
+            formErrorsToValidationErrors(handleValidationResult?.formErrors),
+            regionValues,
+          );
 
     // 3. combine the errors from both validations
     const combinedInnerErrors = [
       ...(errors?.yupError.inner || []),
-      ...((handleValidationResult as { yupError: ValidationError })?.yupError
-        ?.inner || []),
+      ...(regionYupError?.inner || []),
     ];
     const combinedValues = {
       ...(errors?.yupError?.value || {}),
-      ...((handleValidationResult as { yupError: ValidationError })?.yupError
-        ?.value || {}),
+      ...(regionYupError?.value || {}),
     };
 
     return {
