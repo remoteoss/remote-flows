@@ -16,6 +16,9 @@ export const selectContractorSubscriptionStepSchema = {
       required: ['subscription'],
       type: 'object',
       'x-jsf-order': ['subscription'],
+      'x-rmt-meta': {
+        jsfVersion: '1',
+      },
     },
   },
 };

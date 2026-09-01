@@ -25,4 +25,7 @@ export const contractOriginSchema = {
     },
   },
   required: ['contract_origin'],
+  'x-rmt-meta': {
+    jsfVersion: '1',
+  },
 };

@@ -8,6 +8,9 @@ export const defaultSchema = {
       required: [],
       type: 'object',
       'x-jsf-order': [],
+      'x-rmt-meta': {
+        jsfVersion: '1',
+      },
     },
   },
 };

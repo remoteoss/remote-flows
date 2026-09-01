@@ -43,4 +43,7 @@ export const signatureSchema = {
     },
   },
   required: ['signature'],
+  'x-rmt-meta': {
+    jsfVersion: '1',
+  },
 };

@@ -252,6 +252,9 @@ export const terminationDetailsSchema = {
         'proposed_termination_date_info',
         'proposed_termination_date',
       ],
+      'x-rmt-meta': {
+        jsfVersion: '1',
+      },
     },
   },
 };

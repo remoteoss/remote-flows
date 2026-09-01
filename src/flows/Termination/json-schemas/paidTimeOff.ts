@@ -111,6 +111,9 @@ export const paidTimeOffSchema = {
         'agrees_to_pto_amount_notes',
         'timesheet_file',
       ],
+      'x-rmt-meta': {
+        jsfVersion: '1',
+      },
     },
   },
 };

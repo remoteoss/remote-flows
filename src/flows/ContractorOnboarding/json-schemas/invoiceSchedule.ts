@@ -33,4 +33,7 @@ export const invoiceScheduleSchema = {
     },
   },
   required: ['invoice_schedule_preference'],
+  'x-rmt-meta': {
+    jsfVersion: '1',
+  },
 };

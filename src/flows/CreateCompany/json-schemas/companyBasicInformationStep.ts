@@ -81,6 +81,9 @@ export const companyBasicInformationStepSchema = {
         'company_owner_name',
         'company_owner_email',
       ],
+      'x-rmt-meta': {
+        jsfVersion: '1',
+      },
     },
   },
 };
