@@ -21,6 +21,7 @@ import {
   $TSFixMe,
   JSFModifyField,
   ZendeskTriggerButton,
+  ContractorInvoicePreview,
 } from '@remoteoss/remote-flows';
 import {
   Card,
@@ -204,6 +205,16 @@ const ContractOriginRadio = ({
       )}
     </fieldset>
   );
+};
+
+const downloadInvoicePreview = ({
+  content,
+  name,
+}: ContractorInvoicePreview) => {
+  const link = document.createElement('a');
+  link.href = content;
+  link.download = name;
+  link.click();
 };
 
 type MultiStepFormProps = {
@@ -608,7 +619,7 @@ const MultiStepForm = ({
               className='back-button'
               onSuccess={(preview) => {
                 console.log('invoice preview', preview);
-                window.open(preview.content, '_blank');
+                downloadInvoicePreview(preview);
               }}
               onError={({ error, fieldErrors }) =>
                 setErrors({ apiError: error.message, fieldErrors })
