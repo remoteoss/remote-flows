@@ -127,6 +127,40 @@ describe('useCostCalculator', () => {
 });
 ```
 
+## PR Title Convention (Required)
+
+Always check the pull request title. Releases and semver bumps are driven by conventional commits, so PR titles must use that format.
+
+**Required format:** `type(scope): description` (colon, not hyphen)
+
+**Allowed types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`, `build`, `revert`
+
+**Validation regex:** `^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\([^)]+\))?!?:\s+.+`
+
+If the PR title does not match the regex above:
+
+1. Add a blocking Bug titled `PR title must follow conventional commits`.
+2. Use this exact template for the body:
+
+   ```markdown
+   **Current title:** `<paste current title>`
+
+   PR titles must use `type(scope): description` (see Allowed types above).
+   This format drives semver: `feat` → minor, `fix` → patch, `BREAKING CHANGE` footer → major.
+
+   **Suggested title:** `<rewritten title based on the PR's actual changes>`
+
+   **Examples:**
+
+   - ❌ `canInvite is now depending of onboarding-reserve-status pending request`
+   - ✅ `fix(onboarding-reserves): fix race condition on the invite button, now depending on onboarding-reserve-status`
+   - ✅ `feat(gp): add PayrollAdminOnboarding flow mutations and schemas`
+   ```
+
+3. Assign the Bug to the PR author.
+
+Do not skip this check even if the code looks correct. Flag the title on every review until it complies.
+
 ## Specific Areas of Focus
 
 When reviewing code, pay special attention to:
@@ -492,6 +526,7 @@ listItems: [
 
 Before approving a PR, verify:
 
+- [ ] **PR title follows conventional commits** - e.g. `fix(scope): description` or `feat(scope): description`
 - [ ] **No breaking changes** - Or properly documented with `BREAKING CHANGE:`
 - [ ] **New tests added** - All new features/fixes have tests
 - [ ] **JSDoc added** - Public APIs have documentation
