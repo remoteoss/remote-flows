@@ -606,10 +606,9 @@ const MultiStepForm = ({
             )}
             <PreviewInvoiceButton
               className='back-button'
-              onSuccess={(preview) => {
-                console.log('invoice preview', preview);
-                window.open(preview.content, '_blank');
-              }}
+              // The button renders the PDF itself, in a drawer — onSuccess is
+              // only here to observe the preview document.
+              onSuccess={(preview) => console.log('invoice preview', preview)}
               onError={({ error, fieldErrors }) =>
                 setErrors({ apiError: error.message, fieldErrors })
               }

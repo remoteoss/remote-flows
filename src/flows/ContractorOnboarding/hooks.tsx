@@ -61,7 +61,11 @@ import {
 import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise, isMutationError } from '@/src/lib/mutations';
-import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
+import {
+  clearBase64Data,
+  createStructuredError,
+  prettifyFormValues,
+} from '@/src/lib/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
 import {
   contractorStandardProductIdentifier,
@@ -1660,9 +1664,17 @@ export const useContractorOnboarding = ({
 
     // The API returns `content` as a `data:application/pdf;base64,...` string,
     // not the `Blob | File` the OpenAPI spec's `format: binary` implies.
-    return response?.data?.contractor_invoice_preview as
+    const preview = response?.data?.contractor_invoice_preview as
       | ContractorInvoicePreview
       | undefined;
+
+    if (!preview) {
+      return undefined;
+    }
+
+    // Same normalization the contract document preview does — the data URI
+    // prefix is what makes the content renderable in an iframe / downloadable.
+    return { ...preview, content: clearBase64Data(preview.content) };
   };
 
   const handleNextStep = () => {

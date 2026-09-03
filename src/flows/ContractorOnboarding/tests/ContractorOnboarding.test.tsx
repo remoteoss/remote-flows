@@ -4162,6 +4162,56 @@ describe('ContractorOnboardingFlow', () => {
   });
 
   describe('Invoice Schedule', () => {
+    /**
+     * Renders the flow and walks it up to a filled-in create_invoice_schedule
+     * step, ready for the preview / skip buttons to be exercised.
+     */
+    const goToFilledCreateInvoiceSchedule = async (employmentId: string) => {
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <RemoteFlowContext.Provider value={{ client: apiClient }}>
+          <ContractorOnboardingFlow
+            employmentId={employmentId}
+            skipSteps={['select_country']}
+            options={{
+              features: ['create_invoice_schedule'],
+            }}
+            {...defaultProps}
+          />
+        </RemoteFlowContext.Provider>,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText('Step: Basic Information');
+
+      await fillBasicInformation();
+      let nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText('Step: Pricing Plan');
+      await fillContractorSubscription('Contractor Management');
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText('Step: Contract Origin');
+      await fillContractOrigin('Without an agreement');
+      nextButton = screen.getByText(/Next Step/i);
+      nextButton.click();
+
+      await screen.findByText('Step: Invoice schedule');
+      const createScheduleRadio = await screen.findByRole('radio', {
+        name: /create invoice schedule now/i,
+      });
+      fireEvent.click(createScheduleRadio);
+      fireEvent.click(screen.getByRole('button', { name: /continue/i }));
+
+      await screen.findByText('Step: Create Invoice Schedule');
+      await fillCreateInvoiceSchedule();
+    };
+
     it('should skip invoice schedule when "Skip for now" is selected', async () => {
       const employmentId = generateUniqueEmploymentId();
 
@@ -4627,49 +4677,11 @@ describe('ContractorOnboardingFlow', () => {
         ),
       );
 
-      mockRender.mockImplementation(
-        createMockRenderImplementation(MultiStepFormWithoutCountry),
-      );
+      await goToFilledCreateInvoiceSchedule(employmentId);
 
-      render(
-        <RemoteFlowContext.Provider value={{ client: apiClient }}>
-          <ContractorOnboardingFlow
-            employmentId={employmentId}
-            skipSteps={['select_country']}
-            options={{
-              features: ['create_invoice_schedule'],
-            }}
-            {...defaultProps}
-          />
-        </RemoteFlowContext.Provider>,
-        { wrapper: TestProviders },
-      );
-
-      await screen.findByText('Step: Basic Information');
-
-      await fillBasicInformation();
-      let nextButton = screen.getByText(/Next Step/i);
-      nextButton.click();
-
-      await screen.findByText('Step: Pricing Plan');
-      await fillContractorSubscription('Contractor Management');
-      nextButton = screen.getByText(/Next Step/i);
-      nextButton.click();
-
-      await screen.findByText('Step: Contract Origin');
-      await fillContractOrigin('Without an agreement');
-      nextButton = screen.getByText(/Next Step/i);
-      nextButton.click();
-
-      await screen.findByText('Step: Invoice schedule');
-      const createScheduleRadio = await screen.findByRole('radio', {
-        name: /create invoice schedule now/i,
-      });
-      fireEvent.click(createScheduleRadio);
-      fireEvent.click(screen.getByRole('button', { name: /continue/i }));
-
-      await screen.findByText('Step: Create Invoice Schedule');
-      await fillCreateInvoiceSchedule();
+      expect(
+        screen.queryByTitle('invoice-preview.pdf'),
+      ).not.toBeInTheDocument();
 
       const previewButton = screen.getByRole('button', { name: /^preview$/i });
       fireEvent.click(previewButton);
@@ -4681,6 +4693,15 @@ describe('ContractorOnboardingFlow', () => {
         });
       });
 
+      // The button renders the document itself — consumers don't have to deal
+      // with the data URI (and can't open it in a new tab: browsers block
+      // top-level navigation to `data:`).
+      const pdfPreview = await screen.findByTitle('invoice-preview.pdf');
+      expect(pdfPreview).toHaveAttribute(
+        'src',
+        'data:application/pdf;base64,JVBERi0xLjQK',
+      );
+
       expect(previewRequestBody).toMatchObject({
         currency: 'EUR',
         start_date: expect.any(String),
@@ -4688,6 +4709,40 @@ describe('ContractorOnboardingFlow', () => {
       });
       expect(previewRequestBody).not.toHaveProperty('periodicity');
       expect(previewRequestBody).not.toHaveProperty('nr_occurrences');
+    });
+
+    it('should add the data URI prefix when the invoice preview comes back as bare base64', async () => {
+      const employmentId = generateUniqueEmploymentId();
+
+      server.use(
+        http.post(`*/v1/employments/*/contractor-invoices/preview`, () => {
+          return HttpResponse.json({
+            data: {
+              contractor_invoice_preview: {
+                name: 'invoice-preview.pdf',
+                content: 'JVBERi0xLjQK',
+              },
+            },
+          });
+        }),
+      );
+
+      await goToFilledCreateInvoiceSchedule(employmentId);
+
+      fireEvent.click(screen.getByRole('button', { name: /^preview$/i }));
+
+      await waitFor(() => {
+        expect(mockOnSuccess).toHaveBeenCalledWith({
+          name: 'invoice-preview.pdf',
+          content: 'data:application/pdf;base64,JVBERi0xLjQK',
+        });
+      });
+
+      const pdfPreview = await screen.findByTitle('invoice-preview.pdf');
+      expect(pdfPreview).toHaveAttribute(
+        'src',
+        'data:application/pdf;base64,JVBERi0xLjQK',
+      );
     });
 
     it('should surface normalized field errors when previewing fails', async () => {
