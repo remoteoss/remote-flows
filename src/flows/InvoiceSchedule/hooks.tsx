@@ -138,8 +138,18 @@ export const useInvoiceSchedule = ({
   const handleValidation = useCallback(
     async (
       values: InvoiceScheduleFormValues,
-    ): Promise<ValidationResult | null> =>
-      (schemaForm?.handleValidation(values) as ValidationResult | null) ?? null,
+    ): Promise<ValidationResult | null> => {
+      if (!schemaForm) return null;
+
+      // Values must be parsed first — money inputs hold strings, and the item amounts are
+      // declared `integer`, which JSF v1 enforces. Validating raw values fails on every
+      // amount and blocks submission.
+      const parsed = await parseJSFToValidate(values, schemaForm.fields, {
+        isPartialValidation: false,
+      });
+
+      return (schemaForm.handleValidation(parsed) as ValidationResult) ?? null;
+    },
     [schemaForm],
   );
 

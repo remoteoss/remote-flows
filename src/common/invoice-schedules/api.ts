@@ -15,7 +15,10 @@ import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
-import { INVOICE_SCHEDULE_STATUS } from '@/src/common/invoice-schedules/constants';
+import {
+  INVOICE_ITEM_SLOTS,
+  INVOICE_SCHEDULE_STATUS,
+} from '@/src/common/invoice-schedules/constants';
 import {
   buildCreateInvoiceScheduleSchema,
   ContractorOption,
@@ -28,6 +31,31 @@ import {
   JSONSchemaFormResultWithFieldsets,
   JSFModify,
 } from '@/src/flows/types';
+
+/**
+ * Money inputs hold their value as a string, but the item slots are declared `integer` — and
+ * under JSF v1 that mismatch makes the row-reveal conditional never match, so no further
+ * item row is ever offered. Coerce them before the conditionals are evaluated.
+ */
+function normaliseItemAmounts(
+  fieldValues?: Record<string, unknown>,
+): Record<string, unknown> {
+  if (!fieldValues) return {};
+
+  const normalised = { ...fieldValues };
+
+  for (let slot = 1; slot <= INVOICE_ITEM_SLOTS; slot++) {
+    const key = `item_${slot}_amount`;
+    const value = normalised[key];
+
+    if (typeof value === 'string' && value !== '') {
+      const parsed = Number(value);
+      if (!Number.isNaN(parsed)) normalised[key] = parsed;
+    }
+  }
+
+  return normalised;
+}
 
 /**
  * Get the create invoice schedule schema with currency options from the contractor currencies endpoint.
@@ -103,7 +131,9 @@ export const useGetCreateInvoiceScheduleSchema = ({
       contractors,
     });
 
-    return createHeadlessForm(schema, fieldValues ?? {}, { jsfModify });
+    return createHeadlessForm(schema, normaliseItemAmounts(fieldValues), {
+      jsfModify,
+    });
   }, [
     enabled,
     currencies,
