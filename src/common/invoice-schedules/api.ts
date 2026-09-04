@@ -41,6 +41,8 @@ export const useGetCreateInvoiceScheduleSchema = ({
   isContractorOfRecord,
   includeContractorSelect,
   contractors,
+  isLoadingContractors,
+  fieldValues,
 }: {
   enabled?: boolean;
   employmentId?: string;
@@ -62,6 +64,17 @@ export const useGetCreateInvoiceScheduleSchema = ({
    * Contractors to offer in the picker.
    */
   contractors?: ContractorOption[];
+  /**
+   * Whether the contractor list is still loading, so the picker's placeholder can tell
+   * "loading" apart from "no contractors".
+   */
+  isLoadingContractors?: boolean;
+  /**
+   * Current form values. Passed to `createHeadlessForm` so the schema's conditionals — the
+   * item-row reveal, and the semi-monthly day fields — re-evaluate as the user fills the
+   * form. Without this the form is built once against empty values and nothing ever reveals.
+   */
+  fieldValues?: Record<string, unknown>;
 }): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
   const { data: currencies, isLoading: isLoadingCurrencies } =
     useContractorCurrencies({
@@ -88,9 +101,10 @@ export const useGetCreateInvoiceScheduleSchema = ({
       isContractorOfRecord,
       includeContractorSelect,
       contractors,
+      isLoadingContractors,
     });
 
-    return createHeadlessForm(schema, {}, { jsfModify });
+    return createHeadlessForm(schema, fieldValues ?? {}, { jsfModify });
   }, [
     enabled,
     currencies,
@@ -99,6 +113,8 @@ export const useGetCreateInvoiceScheduleSchema = ({
     isContractorOfRecord,
     includeContractorSelect,
     contractors,
+    isLoadingContractors,
+    fieldValues,
   ]);
 
   return {

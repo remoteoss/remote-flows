@@ -4,12 +4,12 @@ import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 
 /**
- * Pages to walk when loading contractors for the picker. `GET /v1/employments` is paginated
- * and, as of writing, exposes no name/search parameter — so the picker loads pages up front
- * and filters in the browser.
+ * Pages to walk when loading contractors for the picker. `GET /v1/employments` is paginated,
+ * so the picker loads pages up front to populate a plain select.
  *
- * When a `name` query parameter lands on the endpoint, drop the walk and pass the search term
- * through instead: `contractorsOptions` is the only place that needs to change.
+ * Pass a `search` term to have the API filter by name instead — matched per word, ignoring
+ * case and accents — which keeps the response small enough that the walk rarely runs past
+ * the first page.
  */
 const MAX_PAGES = 10;
 const PAGE_SIZE = 100;
@@ -40,9 +40,9 @@ const toContractor = (employment: MinimalEmployment): Contractor => ({
 /**
  * Query options factory for the active contractors of the authenticated company.
  */
-export const contractorsOptions = (client: Client) =>
+export const contractorsOptions = (client: Client, search?: string) =>
   queryOptions({
-    queryKey: ['invoice-schedule-contractors'] as const,
+    queryKey: ['invoice-schedule-contractors', search ?? null] as const,
     queryFn: async (): Promise<ContractorsResult> => {
       const collected: MinimalEmployment[] = [];
       let page = 1;
@@ -57,6 +57,11 @@ export const contractorsOptions = (client: Client) =>
           query: {
             employment_type: 'contractor',
             status: 'active',
+            // `name` is not in the generated client's query type yet — it arrives with the
+            // next `npm run openapi-ts` once the API change adding it is deployed. Spread
+            // rather than an inline key so this type-checks against the current client; the
+            // parameter is forwarded either way, and ignored by the API until then.
+            ...(search ? { name: search } : {}),
             page,
             page_size: PAGE_SIZE,
           },
@@ -84,12 +89,19 @@ export const contractorsOptions = (client: Client) =>
 /**
  * Active contractors for the invoice-schedule contractor picker.
  */
-export const useContractors = (options?: {
-  queryOptions?: { enabled?: boolean };
-}) => {
+export const useContractors = ({
+  search,
+  options,
+}: {
+  /**
+   * Filter contractors by name, server-side. Omit to load the company's active contractors.
+   */
+  search?: string;
+  options?: { queryOptions?: { enabled?: boolean } };
+} = {}) => {
   const { client } = useClient();
   return useQuery({
-    ...contractorsOptions(client as Client),
+    ...contractorsOptions(client as Client, search),
     enabled: options?.queryOptions?.enabled ?? true,
   });
 };

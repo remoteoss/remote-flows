@@ -40,6 +40,11 @@ export const RECURRING_PERIODICITY_OPTIONS = [
  */
 export const ONE_TIME_PERIODICITY = 'one_time';
 
+/**
+ * The only periodicity for which `custom_days` is meaningful.
+ */
+export const SEMI_MONTHLY_PERIODICITY = 'semi_monthly';
+
 export const ONE_TIME_PERIODICITY_OPTION = {
   const: ONE_TIME_PERIODICITY,
   title: 'One time',

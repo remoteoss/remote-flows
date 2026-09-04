@@ -2,6 +2,7 @@ import {
   INVOICE_ITEM_SLOTS,
   ONE_TIME_PERIODICITY,
   ONE_TIME_PERSISTED_PERIODICITY,
+  SEMI_MONTHLY_PERIODICITY,
 } from '@/src/common/invoice-schedules/constants';
 
 /**
@@ -56,6 +57,34 @@ export function buildRecurrence(values: Record<string, unknown>): {
 }
 
 /**
+ * Resolves the two calendar days a semi-monthly schedule generates invoices on.
+ *
+ * Only meaningful for `semi_monthly`, and optional even then: omit it and the API derives the
+ * cycle from `start_date` (that day, and the day 14 days apart from it). Both days are needed
+ * to override, so a half-filled pair is treated as "use the default".
+ *
+ * @param values - Form values containing `periodicity` and optionally the two day fields
+ */
+/**
+ * Note `custom_days` is not yet in the generated client's create params — it arrives with
+ * the next `npm run openapi-ts` once the API change exposing it is deployed. Until then the
+ * payload carries it and the API ignores it, so a semi-monthly schedule falls back to the
+ * cycle derived from `start_date` — the behaviour before this field existed.
+ */
+export function buildCustomDays(
+  values: Record<string, unknown>,
+): [number, number] | undefined {
+  if (values.periodicity !== SEMI_MONTHLY_PERIODICITY) return undefined;
+
+  const first = Number(values.custom_day_1);
+  const second = Number(values.custom_day_2);
+
+  if (!first || !second) return undefined;
+
+  return [first, second];
+}
+
+/**
  * Builds the base invoice schedule payload from form values
  * @param values - Form values containing invoice schedule data
  * @returns Invoice schedule payload object
@@ -82,6 +111,11 @@ export function buildInvoiceSchedulePayload(
 
   if (nr_occurrences) {
     payload.nr_occurrences = nr_occurrences;
+  }
+
+  const customDays = buildCustomDays(values);
+  if (customDays) {
+    payload.custom_days = customDays;
   }
 
   return payload;

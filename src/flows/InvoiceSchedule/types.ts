@@ -47,6 +47,13 @@ export type UseInvoiceScheduleOptions = {
    * Modify the generated JSON-schema form fields.
    */
   jsfModify?: JSFModify;
+  /**
+   * Filter the `contractors` bag entry by name, server-side.
+   *
+   * The rendered picker is a type-ahead that owns its own search, so this is only needed by
+   * headless consumers building their own picker from `contractors`.
+   */
+  contractorSearch?: string;
 };
 
 export type InvoiceScheduleContractorsState = {

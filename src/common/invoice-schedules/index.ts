@@ -5,6 +5,7 @@ export {
   ONE_TIME_PERIODICITY_OPTION,
   ONE_TIME_PERSISTED_PERIODICITY,
   RECURRING_PERIODICITY_OPTIONS,
+  SEMI_MONTHLY_PERIODICITY,
 } from './constants';
 
 export {
@@ -13,6 +14,7 @@ export {
 } from './json-schema';
 
 export {
+  buildCustomDays,
   buildInvoiceItems,
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,

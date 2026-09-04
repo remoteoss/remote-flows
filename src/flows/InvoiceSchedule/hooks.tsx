@@ -6,6 +6,7 @@ import {
 import { buildInvoiceSchedulePayload } from '@/src/common/invoice-schedules/utils';
 import { useEmploymentQuery } from '@/src/common/api/employment';
 import { useContractors } from '@/src/flows/InvoiceSchedule/api';
+import { ContractorSelectField } from '@/src/flows/InvoiceSchedule/components/ContractorSelectField';
 import {
   InvoiceScheduleFormValues,
   InvoiceSchedulePayload,
@@ -29,12 +30,18 @@ import {
 export const useInvoiceSchedule = ({
   employmentId,
   jsfModify,
+  contractorSearch,
 }: UseInvoiceScheduleOptions = {}) => {
   // When the flow owns the picker, the selected contractor drives the currency options and the
   // Contractor-of-Record restriction, so it has to live in state rather than only in the form.
   const [selectedEmploymentId, setSelectedEmploymentId] = useState<
     string | undefined
   >(employmentId);
+
+  // The schema's conditionals depend on what has been filled in so far, so the current
+  // values have to reach `createHeadlessForm`. `checkFieldUpdates` is wired to the form's
+  // watch subscription by `useJSONSchemaForm`.
+  const [fieldValues, setFieldValues] = useState<Record<string, unknown>>({});
 
   const rendersContractorSelect = !employmentId;
 
@@ -43,7 +50,8 @@ export const useInvoiceSchedule = ({
     isLoading: isLoadingContractors,
     error: contractorsError,
   } = useContractors({
-    queryOptions: { enabled: rendersContractorSelect },
+    search: contractorSearch,
+    options: { queryOptions: { enabled: rendersContractorSelect } },
   });
 
   // `contractor_type` is not on the employments list payload, so the individual employment is
@@ -66,15 +74,40 @@ export const useInvoiceSchedule = ({
     [contractorsResult],
   );
 
+  // Render the contractor field as a searchable type-ahead rather than the plain select the
+  // `select` inputType gives, so the picker queries by name instead of needing every
+  // contractor loaded up front. Consumers can still replace it via their own `jsfModify`.
+  const jsfModifyWithContractorSelect = useMemo(() => {
+    if (!rendersContractorSelect) return jsfModify;
+
+    return {
+      ...jsfModify,
+      fields: {
+        ...(jsfModify as $TSFixMe)?.fields,
+        employment_id: {
+          ...((jsfModify as $TSFixMe)?.fields?.employment_id ?? {}),
+          'x-jsf-presentation': {
+            ...((jsfModify as $TSFixMe)?.fields?.employment_id?.[
+              'x-jsf-presentation'
+            ] ?? {}),
+            Component: ContractorSelectField,
+          },
+        },
+      },
+    } as typeof jsfModify;
+  }, [jsfModify, rendersContractorSelect]);
+
   const { data: schemaForm, isLoading: isLoadingSchema } =
     useGetCreateInvoiceScheduleSchema({
       enabled: true,
       employmentId: selectedEmploymentId,
-      jsfModify,
+      jsfModify: jsfModifyWithContractorSelect,
       includeOneTime: true,
       isContractorOfRecord,
       includeContractorSelect: rendersContractorSelect,
       contractors,
+      isLoadingContractors,
+      fieldValues,
     });
 
   const createInvoiceScheduleMutation = useCreateInvoiceSchedule();
@@ -88,6 +121,14 @@ export const useInvoiceSchedule = ({
    */
   const onContractorChange = useCallback((nextEmploymentId?: string) => {
     setSelectedEmploymentId(nextEmploymentId || undefined);
+  }, []);
+
+  /**
+   * Feed the latest form values back in so the schema's conditionals re-evaluate.
+   * `InvoiceScheduleForm` wires this to the form's watch subscription.
+   */
+  const checkFieldUpdates = useCallback((values: InvoiceScheduleFormValues) => {
+    setFieldValues(values);
   }, []);
 
   // Annotated rather than inferred: the generated result's inferred type reaches into
@@ -164,6 +205,10 @@ export const useInvoiceSchedule = ({
      * Notify the flow that the chosen contractor changed.
      */
     onContractorChange,
+    /**
+     * Feed the latest form values back in so conditional fields re-evaluate.
+     */
+    checkFieldUpdates,
     /**
      * The contractor the schedule will be created for, if known.
      */

@@ -1,6 +1,5 @@
 import React, { useEffect, useId, useRef } from 'react';
-import { useForm } from 'react-hook-form';
-import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
+import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
 import { InvoiceScheduleContext } from '@/src/flows/InvoiceSchedule/context';
 import { useInvoiceSchedule } from '@/src/flows/InvoiceSchedule/hooks';
 import { UseInvoiceScheduleOptions } from '@/src/flows/InvoiceSchedule/types';
@@ -15,6 +14,11 @@ export type InvoiceScheduleFlowProps = {
    * Modify the generated JSON-schema form fields.
    */
   jsfModify?: UseInvoiceScheduleOptions['jsfModify'];
+  /**
+   * Filter the `contractors` bag entry by name, server-side. The rendered picker is a
+   * type-ahead that owns its own search, so this is only needed if you build your own picker.
+   */
+  contractorSearch?: string;
   /**
    * Default values for the form fields.
    */
@@ -31,17 +35,23 @@ export type InvoiceScheduleFlowProps = {
 export const InvoiceScheduleFlow = ({
   employmentId,
   jsfModify,
+  contractorSearch,
   defaultValues,
   render,
 }: InvoiceScheduleFlowProps) => {
   const formId = useId();
-  const invoiceScheduleBag = useInvoiceSchedule({ employmentId, jsfModify });
-  const resolver = useJsonSchemasValidationFormResolver(
-    invoiceScheduleBag.handleValidation,
-  );
+  const invoiceScheduleBag = useInvoiceSchedule({
+    employmentId,
+    jsfModify,
+    contractorSearch,
+  });
 
-  const form = useForm({
-    resolver,
+  // `useJSONSchemaForm` subscribes to form changes and feeds them back through
+  // `checkFieldUpdates`, which is what makes the schema's conditionals — the item-row
+  // reveal and the semi-monthly day fields — re-evaluate as the form is filled in.
+  const form = useJSONSchemaForm({
+    handleValidation: invoiceScheduleBag.handleValidation,
+    checkFieldUpdates: invoiceScheduleBag.checkFieldUpdates,
     defaultValues: {
       employment_id: employmentId ?? '',
       currency: '',
@@ -51,8 +61,6 @@ export const InvoiceScheduleFlow = ({
       note: '',
       ...defaultValues,
     },
-    shouldUnregister: false,
-    mode: 'onBlur',
   });
 
   // The picker drives the currency options and the Contractor-of-Record restriction, so the

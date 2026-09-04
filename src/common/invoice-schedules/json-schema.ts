@@ -70,6 +70,24 @@ function invoiceItemRevealConditionals() {
   return conditionals;
 }
 
+// The two custom-day fields only mean anything for a semi-monthly schedule; the API rejects
+// them for any other periodicity. Hide them unless semi-monthly is selected.
+function semiMonthlyConditional() {
+  return {
+    if: {
+      properties: { periodicity: { const: 'semi_monthly' } },
+      required: ['periodicity'],
+    },
+    then: {},
+    else: {
+      properties: {
+        custom_day_1: false,
+        custom_day_2: false,
+      },
+    },
+  };
+}
+
 // `nr_occurrences` is meaningless for a one-off — the payload builder pins it to 1 — so
 // hide the field rather than letting a user contradict their own choice.
 function occurrencesConditional() {
@@ -152,6 +170,12 @@ type CreateInvoiceScheduleSchemaOptions = {
    * Contractors to offer in the picker. Only read when `includeContractorSelect` is set.
    */
   contractors?: ContractorOption[];
+  /**
+   * Whether the contractor list is still loading. Distinguishes "not loaded yet" from
+   * "loaded and empty", so the placeholder does not claim to be loading forever when the
+   * company simply has no active contractors.
+   */
+  isLoadingContractors?: boolean;
 };
 
 /**
@@ -167,6 +191,7 @@ export function buildCreateInvoiceScheduleSchema({
   isContractorOfRecord = false,
   includeContractorSelect = false,
   contractors,
+  isLoadingContractors = false,
 }: CreateInvoiceScheduleSchemaOptions = {}) {
   return {
     type: 'object',
@@ -188,7 +213,14 @@ export function buildCreateInvoiceScheduleSchema({
                     const: value,
                     title: label,
                   }))
-                : [{ const: 'placeholder', title: 'Loading contractors…' }],
+                : [
+                    {
+                      const: 'placeholder',
+                      title: isLoadingContractors
+                        ? 'Loading contractors…'
+                        : 'No active contractors found',
+                    },
+                  ],
               'x-jsf-presentation': {
                 inputType: 'select',
               },
@@ -222,6 +254,27 @@ export function buildCreateInvoiceScheduleSchema({
         format: 'date',
         'x-jsf-presentation': {
           inputType: 'date',
+        },
+      },
+      custom_day_1: {
+        description:
+          'First day of the month an invoice is generated. Leave both days blank to use the cycle derived from the start date. One of the two days must be the start date\u2019s day.',
+        title: 'First invoice day',
+        type: 'integer',
+        minimum: 1,
+        maximum: 31,
+        'x-jsf-presentation': {
+          inputType: 'number',
+        },
+      },
+      custom_day_2: {
+        description: 'Second day of the month an invoice is generated.',
+        title: 'Second invoice day',
+        type: 'integer',
+        minimum: 1,
+        maximum: 31,
+        'x-jsf-presentation': {
+          inputType: 'number',
         },
       },
       ...invoiceItemProperties(),
@@ -266,6 +319,8 @@ export function buildCreateInvoiceScheduleSchema({
       'currency',
       'periodicity',
       'start_date',
+      'custom_day_1',
+      'custom_day_2',
       ...itemFieldOrder,
       'number',
       'note',
@@ -285,6 +340,7 @@ export function buildCreateInvoiceScheduleSchema({
     },
     allOf: [
       ...invoiceItemRevealConditionals(),
+      semiMonthlyConditional(),
       ...(includeOneTime || isContractorOfRecord
         ? [occurrencesConditional()]
         : []),

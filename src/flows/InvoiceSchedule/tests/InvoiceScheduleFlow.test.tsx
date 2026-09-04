@@ -1,4 +1,5 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
 import {
@@ -76,20 +77,96 @@ describe('InvoiceScheduleFlow', () => {
     server.use(employmentsListHandler(contractorsListResponse));
   });
 
-  it('renders a contractor picker populated from the employments list', async () => {
+  it('renders a searchable contractor picker and lists contractors when opened', async () => {
+    const user = userEvent.setup();
     renderFlow();
 
-    // The picker renders with a placeholder option first, then rebuilds once the
-    // employments query resolves.
-    await waitFor(() => {
-      expect(
-        screen.getByRole('option', { name: 'Grace Hopper' }),
-      ).toBeInTheDocument();
-    });
+    const trigger = await screen.findByRole(
+      'combobox',
+      { name: /Contractor/i },
+      { timeout: 10000 },
+    );
 
+    await user.click(trigger);
+
+    expect(
+      await screen.findByRole('option', { name: 'Grace Hopper' }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole('option', { name: 'Ada Lovelace' }),
     ).toBeInTheDocument();
+  });
+
+  it('asks the API to filter by name as the user types', async () => {
+    const requestedNames: (string | null)[] = [];
+    server.use(
+      http.get('*/v1/employments', ({ request }) => {
+        const name = new URL(request.url).searchParams.get('name');
+        requestedNames.push(name);
+        const all = contractorsListResponse.data.employments;
+        const matched = name
+          ? all.filter((e) =>
+              e.full_name.toLowerCase().includes(name.toLowerCase()),
+            )
+          : all;
+        return HttpResponse.json({
+          data: {
+            ...contractorsListResponse.data,
+            employments: matched,
+            total_count: matched.length,
+          },
+        });
+      }),
+    );
+
+    const user = userEvent.setup();
+    renderFlow();
+
+    const trigger = await screen.findByRole(
+      'combobox',
+      { name: /Contractor/i },
+      { timeout: 10000 },
+    );
+    await user.click(trigger);
+
+    await user.type(screen.getByPlaceholderText(/Search contractors/i), 'hopp');
+
+    // Debounced, so the filtered request lands a moment after typing stops.
+    await waitFor(
+      () => {
+        expect(requestedNames).toContain('hopp');
+      },
+      { timeout: 10000 },
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('option', { name: 'Ada Lovelace' }),
+      ).not.toBeInTheDocument();
+    });
+    expect(
+      screen.getByRole('option', { name: 'Grace Hopper' }),
+    ).toBeInTheDocument();
+  });
+
+  it('selects a contractor from the picker', async () => {
+    const user = userEvent.setup();
+    renderFlow();
+
+    const trigger = await screen.findByRole(
+      'combobox',
+      { name: /Contractor/i },
+      { timeout: 10000 },
+    );
+    await user.click(trigger);
+    await user.click(
+      await screen.findByRole('option', { name: 'Grace Hopper' }),
+    );
+
+    // The chosen contractor stays visible on the trigger after the popover closes.
+    await waitFor(() => {
+      expect(trigger).toHaveTextContent('Grace Hopper');
+    });
   });
 
   it('omits the contractor picker when an employmentId is supplied', async () => {
@@ -99,7 +176,9 @@ describe('InvoiceScheduleFlow', () => {
       expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
     });
 
-    expect(screen.queryByLabelText(/^Contractor$/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('combobox', { name: /Contractor/i }),
+    ).not.toBeInTheDocument();
   });
 
   it('reports when the contractor list is truncated', async () => {
@@ -107,11 +186,11 @@ describe('InvoiceScheduleFlow', () => {
 
     renderFlow();
 
-    await waitFor(() => {
-      expect(
-        screen.getByText(/Showing some of your contractors/i),
-      ).toBeInTheDocument();
-    });
+    expect(
+      await screen.findByText(/Showing some of your contractors/i, undefined, {
+        timeout: 10000,
+      }),
+    ).toBeInTheDocument();
   });
 
   it('offers the one-off option alongside the recurring cadences', async () => {
@@ -147,11 +226,13 @@ describe('InvoiceScheduleFlow', () => {
     renderFlow({ employmentId: 'employment-grace' });
 
     // The schema rebuilds once the employment reveals the contractor is a CoR.
-    await waitFor(() => {
-      expect(
-        screen.getByRole('option', { name: 'One time' }),
-      ).toBeInTheDocument();
-    });
+    expect(
+      await screen.findByRole(
+        'option',
+        { name: 'One time' },
+        { timeout: 10000 },
+      ),
+    ).toBeInTheDocument();
 
     expect(
       screen.queryByRole('option', { name: 'Monthly' }),
@@ -226,6 +307,36 @@ describe('InvoiceScheduleFlow', () => {
     );
     expect(requestBody.contractor_invoice_schedules[0]).not.toHaveProperty(
       'nr_occurrences',
+    );
+  });
+
+  it('reveals the second item row once the first has a description and an amount', async () => {
+    renderFlow({ employmentId: 'employment-grace' });
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Item 1 description/i)).toBeInTheDocument();
+    });
+
+    expect(
+      screen.queryByLabelText(/Item 2 description/i),
+    ).not.toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText(/Item 1 description/i), {
+      target: { value: 'Design work' },
+    });
+    fireEvent.blur(screen.getByLabelText(/Item 1 description/i));
+    fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
+      target: { value: '2500' },
+    });
+    fireEvent.blur(screen.getByLabelText(/Item 1 amount/i));
+
+    await waitFor(
+      () => {
+        expect(
+          screen.getByLabelText(/Item 2 description/i),
+        ).toBeInTheDocument();
+      },
+      { timeout: 10000 },
     );
   });
 

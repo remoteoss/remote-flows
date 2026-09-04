@@ -4212,6 +4212,21 @@ describe('ContractorOnboardingFlow', () => {
       await fillCreateInvoiceSchedule();
     };
 
+    it('reveals the second item row once the first has a description and an amount', async () => {
+      const employmentId = generateUniqueEmploymentId();
+      await goToFilledCreateInvoiceSchedule(employmentId);
+
+      // fillCreateInvoiceSchedule() already filled item 1, so row 2 should be reachable.
+      await waitFor(
+        () => {
+          expect(
+            screen.getByLabelText(/Item 2 description/i),
+          ).toBeInTheDocument();
+        },
+        { timeout: 10000 },
+      );
+    });
+
     it('should skip invoice schedule when "Skip for now" is selected', async () => {
       const employmentId = generateUniqueEmploymentId();
 
