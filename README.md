@@ -195,6 +195,7 @@ Each flow handles a specific Remote employment operation. For detailed API docum
 - [**Onboarding**](./src/flows/Onboarding/README.md) - Onboard new employees
 - [**Contract Amendment**](./src/flows/ContractAmendment/README.md) - Modify existing employment contracts
 - [**Termination**](./src/flows/Termination/README.md) - Handle employee terminations
+- [**Invoice Schedule**](./src/flows/InvoiceSchedule/README.md) - Standalone screen to create a contractor invoice schedule
 
 ## Authentication
 

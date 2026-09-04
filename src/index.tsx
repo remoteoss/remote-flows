@@ -17,6 +17,23 @@ export {
 export type { CostCalculatorFlowProps } from '@/src/flows/CostCalculator';
 
 export {
+  InvoiceScheduleFlow,
+  InvoiceScheduleForm,
+  InvoiceScheduleSubmitButton,
+  useInvoiceSchedule,
+  useContractors,
+} from '@/src/flows/InvoiceSchedule';
+
+export type {
+  Contractor,
+  InvoiceScheduleFlowProps,
+  InvoiceScheduleContractorsState,
+  InvoiceScheduleFormValues,
+  InvoiceSchedulePayload,
+  UseInvoiceScheduleOptions,
+} from '@/src/flows/InvoiceSchedule';
+
+export {
   ContractAmendmentConfirmationForm,
   ContractAmendmentFlow,
   ContractAmendmentForm,
