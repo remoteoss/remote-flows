@@ -340,6 +340,80 @@ describe('InvoiceScheduleFlow', () => {
     );
   });
 
+  it('keeps the form mounted while the chosen contractor loads', async () => {
+    const user = userEvent.setup();
+    let sawLoadingAfterSelection = false;
+
+    render(
+      <InvoiceScheduleFlow
+        render={(bag) => {
+          if (bag.isLoading) return <p>Loading contractors…</p>;
+          if (bag.isLoadingContractorDetails) sawLoadingAfterSelection = true;
+          return (
+            <>
+              <InvoiceScheduleForm />
+              <InvoiceScheduleSubmitButton>
+                Create schedule
+              </InvoiceScheduleSubmitButton>
+            </>
+          );
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    const trigger = await screen.findByRole(
+      'combobox',
+      { name: /Contractor/i },
+      { timeout: 10000 },
+    );
+    await user.click(trigger);
+    await user.click(
+      await screen.findByRole('option', { name: 'Grace Hopper' }),
+    );
+
+    // The documented pattern returns early on isLoading; selecting a contractor must not
+    // trip it, or the form unmounts mid-flow.
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/Loading contractors/i)).not.toBeInTheDocument();
+    expect(sawLoadingAfterSelection).toBe(true);
+  });
+
+  it('clears currency and frequency when the contractor is switched', async () => {
+    const user = userEvent.setup();
+    renderFlow();
+
+    const trigger = await screen.findByRole(
+      'combobox',
+      { name: /Contractor/i },
+      { timeout: 10000 },
+    );
+    await user.click(trigger);
+    await user.click(
+      await screen.findByRole('option', { name: 'Grace Hopper' }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
+    });
+    await fillSelect('currency', 'EUR');
+    await fillSelect('periodicity', 'weekly');
+
+    // Switching contractor: the previous currency and frequency may not be offered for the
+    // new one, so they must not carry over.
+    await user.click(trigger);
+    await user.click(
+      await screen.findByRole('option', { name: 'Ada Lovelace' }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('currency')).toHaveValue('');
+    });
+    expect(screen.getByTestId('periodicity')).toHaveValue('');
+  });
+
   it('surfaces a creation failure through onError', async () => {
     server.use(
       http.post('*/v1/contractor-invoice-schedules', () =>

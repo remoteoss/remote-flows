@@ -72,9 +72,21 @@ export const InvoiceScheduleFlow = ({
   useEffect(() => {
     if (!rendersContractorSelect) return;
     if (lastNotified.current === employmentIdValue) return;
+
+    const isContractorSwitch = lastNotified.current !== undefined;
     lastNotified.current = employmentIdValue;
     onContractorChange(employmentIdValue);
-  }, [employmentIdValue, onContractorChange, rendersContractorSelect]);
+
+    // Currency options and the available frequencies both depend on the contractor, so a
+    // value chosen for the previous one may no longer be offered — a Contractor of Record
+    // could otherwise keep a recurring frequency the product does not support, and the API
+    // does not reject that today. Cleared on a switch, not on the first selection, so
+    // picking a contractor does not wipe details already filled in.
+    if (isContractorSwitch) {
+      form.setValue('currency', '');
+      form.setValue('periodicity', '');
+    }
+  }, [employmentIdValue, onContractorChange, rendersContractorSelect, form]);
 
   return (
     <InvoiceScheduleContext.Provider

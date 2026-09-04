@@ -57,6 +57,10 @@ export function CreateInvoiceSchedule() {
 
           return (
             <>
+              {invoiceScheduleBag.isLoadingContractorDetails && (
+                <p>Loading this contractor's currencies…</p>
+              )}
+
               {invoiceScheduleBag.contractors.isTruncated && (
                 <p>
                   Showing {invoiceScheduleBag.contractors.contractors.length} of{' '}
@@ -121,20 +125,21 @@ while the schedule is being created.
 `useInvoiceSchedule()` is the headless equivalent of the render prop, for fully custom UIs.
 Both surfaces expose the same bag:
 
-| Key                       | Description                                                                              |
-| ------------------------- | ---------------------------------------------------------------------------------------- |
-| `fields`                  | Generated form fields, including the contractor picker when the flow owns it.            |
-| `handleValidation`        | Validation handler for the generated form.                                               |
-| `parseFormValues`         | Turns form values into the API payload without submitting.                               |
-| `onSubmit`                | Creates the invoice schedule.                                                            |
-| `onContractorChange`      | Tell the flow the chosen contractor changed (wired up for you by `InvoiceScheduleForm`). |
-| `employmentId`            | The contractor the schedule will be created for, if known.                               |
-| `rendersContractorSelect` | Whether this flow renders its own picker.                                                |
-| `isSubmitting`            | True while creating.                                                                     |
-| `isLoading`               | True while contractors, the employment, or the schema are loading.                       |
-| `isContractorOfRecord`    | Whether the selected contractor is a Contractor of Record.                               |
-| `contractors`             | `{ contractors, totalCount, isTruncated }` — picker state.                               |
-| `contractorsError`        | Error raised while loading contractors, if any.                                          |
+| Key                          | Description                                                                                |
+| ---------------------------- | ------------------------------------------------------------------------------------------ |
+| `fields`                     | Generated form fields, including the contractor picker when the flow owns it.              |
+| `handleValidation`           | Validation handler for the generated form.                                                 |
+| `parseFormValues`            | Turns form values into the API payload without submitting.                                 |
+| `onSubmit`                   | Creates the invoice schedule.                                                              |
+| `onContractorChange`         | Tell the flow the chosen contractor changed (wired up for you by `InvoiceScheduleForm`).   |
+| `employmentId`               | The contractor the schedule will be created for, if known.                                 |
+| `rendersContractorSelect`    | Whether this flow renders its own picker.                                                  |
+| `isSubmitting`               | True while creating.                                                                       |
+| `isLoading`                  | True only for the initial load, before there is a form to show. Safe to return early on.   |
+| `isLoadingContractorDetails` | True while the chosen contractor's employment and currencies load; the form stays mounted. |
+| `isContractorOfRecord`       | Whether the selected contractor is a Contractor of Record.                                 |
+| `contractors`                | `{ contractors, totalCount, isTruncated }` — picker state.                                 |
+| `contractorsError`           | Error raised while loading contractors, if any.                                            |
 
 ## How values map to the API
 

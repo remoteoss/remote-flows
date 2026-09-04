@@ -8,8 +8,7 @@ dotenv.config();
 
 const startServer = async () => {
   const app = express();
-  // Overridable so several worktrees can run their own demo side by side.
-  const port = Number(process.env.PORT) || 3001;
+  const port = 3001;
 
   // Create Vite server in middleware mode
   const vite = await createViteServer({

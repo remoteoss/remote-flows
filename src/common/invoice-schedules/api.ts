@@ -40,8 +40,8 @@ export const useGetCreateInvoiceScheduleSchema = ({
   includeOneTime,
   isContractorOfRecord,
   includeContractorSelect,
+  includeCustomDays,
   contractors,
-  isLoadingContractors,
   fieldValues,
 }: {
   enabled?: boolean;
@@ -65,10 +65,9 @@ export const useGetCreateInvoiceScheduleSchema = ({
    */
   contractors?: ContractorOption[];
   /**
-   * Whether the contractor list is still loading, so the picker's placeholder can tell
-   * "loading" apart from "no contractors".
+   * Offer the two semi-monthly day fields, which map to `custom_days`.
    */
-  isLoadingContractors?: boolean;
+  includeCustomDays?: boolean;
   /**
    * Current form values. Passed to `createHeadlessForm` so the schema's conditionals — the
    * item-row reveal, and the semi-monthly day fields — re-evaluate as the user fills the
@@ -100,8 +99,8 @@ export const useGetCreateInvoiceScheduleSchema = ({
       includeOneTime,
       isContractorOfRecord,
       includeContractorSelect,
+      includeCustomDays,
       contractors,
-      isLoadingContractors,
     });
 
     return createHeadlessForm(schema, fieldValues ?? {}, { jsfModify });
@@ -112,8 +111,8 @@ export const useGetCreateInvoiceScheduleSchema = ({
     includeOneTime,
     isContractorOfRecord,
     includeContractorSelect,
+    includeCustomDays,
     contractors,
-    isLoadingContractors,
     fieldValues,
   ]);
 

@@ -18,6 +18,8 @@ export function InvoiceSchedule() {
       <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
         <InvoiceScheduleFlow
           render={(invoiceScheduleBag) => {
+            // Only the initial load — deliberately not isLoadingContractorDetails, which
+            // goes true after a contractor is chosen and would unmount the form.
             if (invoiceScheduleBag.isLoading) {
               return <div>Loading contractors…</div>;
             }
@@ -49,6 +51,10 @@ export function InvoiceSchedule() {
                     Showing {invoiceScheduleBag.contractors.contractors.length}{' '}
                     of {invoiceScheduleBag.contractors.totalCount} contractors.
                   </p>
+                )}
+
+                {invoiceScheduleBag.isLoadingContractorDetails && (
+                  <p>Loading this contractor's currencies…</p>
                 )}
 
                 {invoiceScheduleBag.isContractorOfRecord && (

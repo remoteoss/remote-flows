@@ -1,6 +1,7 @@
 import {
   INVOICE_ITEM_SLOTS,
   ONE_TIME_PERIODICITY_OPTION,
+  PLACEHOLDER_OPTION,
   RECURRING_PERIODICITY_OPTIONS,
 } from '@/src/common/invoice-schedules/constants';
 
@@ -68,6 +69,34 @@ function invoiceItemRevealConditionals() {
   }
 
   return conditionals;
+}
+
+// Only offered when asked for, so the in-flow onboarding step keeps the field set it
+// shipped with — the same reason `includeOneTime` is opt-in.
+function semiMonthlyDayProperties() {
+  return {
+    custom_day_1: {
+      description:
+        'First day of the month an invoice is generated. Leave both days blank to use the cycle derived from the start date. One of the two days must be the start date\u2019s day.',
+      title: 'First invoice day',
+      type: 'integer',
+      minimum: 1,
+      maximum: 31,
+      'x-jsf-presentation': {
+        inputType: 'number',
+      },
+    },
+    custom_day_2: {
+      description: 'Second day of the month an invoice is generated.',
+      title: 'Second invoice day',
+      type: 'integer',
+      minimum: 1,
+      maximum: 31,
+      'x-jsf-presentation': {
+        inputType: 'number',
+      },
+    },
+  };
 }
 
 // The two custom-day fields only mean anything for a semi-monthly schedule; the API rejects
@@ -161,6 +190,11 @@ type CreateInvoiceScheduleSchemaOptions = {
    */
   isContractorOfRecord?: boolean;
   /**
+   * Offer the two semi-monthly day fields, which map to `custom_days`. Off by default so
+   * the in-flow onboarding step keeps the field set it shipped with.
+   */
+  includeCustomDays?: boolean;
+  /**
    * Prepend a contractor picker. This is the only structural difference between the in-flow
    * onboarding step, which already knows its employment, and the standalone screen, which
    * chooses the contractor in the form itself.
@@ -170,12 +204,6 @@ type CreateInvoiceScheduleSchemaOptions = {
    * Contractors to offer in the picker. Only read when `includeContractorSelect` is set.
    */
   contractors?: ContractorOption[];
-  /**
-   * Whether the contractor list is still loading. Distinguishes "not loaded yet" from
-   * "loaded and empty", so the placeholder does not claim to be loading forever when the
-   * company simply has no active contractors.
-   */
-  isLoadingContractors?: boolean;
 };
 
 /**
@@ -190,8 +218,8 @@ export function buildCreateInvoiceScheduleSchema({
   includeOneTime = false,
   isContractorOfRecord = false,
   includeContractorSelect = false,
+  includeCustomDays = false,
   contractors,
-  isLoadingContractors = false,
 }: CreateInvoiceScheduleSchemaOptions = {}) {
   return {
     type: 'object',
@@ -208,21 +236,17 @@ export function buildCreateInvoiceScheduleSchema({
                 'Who would you like to set up automatic invoicing with?',
               title: 'Contractor',
               type: 'string',
-              oneOf: contractors?.length
-                ? contractors.map(({ value, label }) => ({
-                    const: value,
-                    title: label,
-                  }))
-                : [
-                    {
-                      const: 'placeholder',
-                      title: isLoadingContractors
-                        ? 'Loading contractors…'
-                        : 'No active contractors found',
-                    },
-                  ],
+              // Deliberately unconstrained by a `oneOf`. The picker queries the API by name
+              // as the user types, so it can legitimately surface a contractor that is not
+              // in whatever page of results happened to be loaded here — enumerating them
+              // would reject a valid selection, which is exactly the large-company case the
+              // search exists for. Existence is the API's to enforce on submit.
               'x-jsf-presentation': {
                 inputType: 'select',
+                options: contractors?.map(({ value, label }) => ({
+                  value,
+                  label,
+                })),
               },
             },
           }
@@ -233,7 +257,18 @@ export function buildCreateInvoiceScheduleSchema({
         type: 'string',
         oneOf: currencies?.length
           ? currencies.map((code) => ({ const: code, title: code }))
-          : [{ const: 'placeholder', title: 'Loading currencies…' }],
+          : [
+              {
+                // Empty rather than a sentinel like 'placeholder': the field is required, so
+                // an empty value cannot be submitted and reports a normal required error.
+                // A sentinel would be a selectable, submittable currency whenever the
+                // currency list fails to arrive.
+                const: PLACEHOLDER_OPTION,
+                title: includeContractorSelect
+                  ? 'Select a contractor first'
+                  : 'Loading currencies…',
+              },
+            ],
         'x-jsf-presentation': {
           inputType: 'select',
         },
@@ -256,27 +291,7 @@ export function buildCreateInvoiceScheduleSchema({
           inputType: 'date',
         },
       },
-      custom_day_1: {
-        description:
-          'First day of the month an invoice is generated. Leave both days blank to use the cycle derived from the start date. One of the two days must be the start date\u2019s day.',
-        title: 'First invoice day',
-        type: 'integer',
-        minimum: 1,
-        maximum: 31,
-        'x-jsf-presentation': {
-          inputType: 'number',
-        },
-      },
-      custom_day_2: {
-        description: 'Second day of the month an invoice is generated.',
-        title: 'Second invoice day',
-        type: 'integer',
-        minimum: 1,
-        maximum: 31,
-        'x-jsf-presentation': {
-          inputType: 'number',
-        },
-      },
+      ...(includeCustomDays ? semiMonthlyDayProperties() : {}),
       ...invoiceItemProperties(),
       number: {
         description: 'Optional identifier shown on generated invoices.',
@@ -319,8 +334,7 @@ export function buildCreateInvoiceScheduleSchema({
       'currency',
       'periodicity',
       'start_date',
-      'custom_day_1',
-      'custom_day_2',
+      ...(includeCustomDays ? ['custom_day_1', 'custom_day_2'] : []),
       ...itemFieldOrder,
       'number',
       'note',
@@ -340,7 +354,7 @@ export function buildCreateInvoiceScheduleSchema({
     },
     allOf: [
       ...invoiceItemRevealConditionals(),
-      semiMonthlyConditional(),
+      ...(includeCustomDays ? [semiMonthlyConditional()] : []),
       ...(includeOneTime || isContractorOfRecord
         ? [occurrencesConditional()]
         : []),

@@ -32,11 +32,12 @@ export const useInvoiceSchedule = ({
   jsfModify,
   contractorSearch,
 }: UseInvoiceScheduleOptions = {}) => {
-  // When the flow owns the picker, the selected contractor drives the currency options and the
-  // Contractor-of-Record restriction, so it has to live in state rather than only in the form.
-  const [selectedEmploymentId, setSelectedEmploymentId] = useState<
+  // Only what the picker chose. The effective contractor is derived below rather than
+  // seeded from the prop, so an `employmentId` that arrives after the first render is
+  // honoured instead of leaving the derived queries keyed to an empty initial value.
+  const [pickedEmploymentId, setPickedEmploymentId] = useState<
     string | undefined
-  >(employmentId);
+  >(undefined);
 
   // The schema's conditionals depend on what has been filled in so far, so the current
   // values have to reach `createHeadlessForm`. `checkFieldUpdates` is wired to the form's
@@ -44,6 +45,7 @@ export const useInvoiceSchedule = ({
   const [fieldValues, setFieldValues] = useState<Record<string, unknown>>({});
 
   const rendersContractorSelect = !employmentId;
+  const selectedEmploymentId = employmentId ?? pickedEmploymentId;
 
   const {
     data: contractorsResult,
@@ -97,7 +99,7 @@ export const useInvoiceSchedule = ({
     } as typeof jsfModify;
   }, [jsfModify, rendersContractorSelect]);
 
-  const { data: schemaForm, isLoading: isLoadingSchema } =
+  const { data: schemaForm, isLoading: isLoadingCurrencies } =
     useGetCreateInvoiceScheduleSchema({
       enabled: true,
       employmentId: selectedEmploymentId,
@@ -105,8 +107,8 @@ export const useInvoiceSchedule = ({
       includeOneTime: true,
       isContractorOfRecord,
       includeContractorSelect: rendersContractorSelect,
+      includeCustomDays: true,
       contractors,
-      isLoadingContractors,
       fieldValues,
     });
 
@@ -120,7 +122,7 @@ export const useInvoiceSchedule = ({
    * when driving the form yourself; `InvoiceScheduleForm` wires this up for you.
    */
   const onContractorChange = useCallback((nextEmploymentId?: string) => {
-    setSelectedEmploymentId(nextEmploymentId || undefined);
+    setPickedEmploymentId(nextEmploymentId || undefined);
   }, []);
 
   /**
@@ -222,9 +224,16 @@ export const useInvoiceSchedule = ({
      */
     isSubmitting: createInvoiceScheduleMutation.isPending,
     /**
-     * True while contractors, the employment, or the schema are loading.
+     * True only for the initial load, before there is a form to show. Consumers gate their
+     * first render on this, so it deliberately excludes the per-contractor fetches below —
+     * otherwise choosing a contractor would unmount the form mid-flow.
      */
-    isLoading: isLoadingContractors || isLoadingEmployment || isLoadingSchema,
+    isLoading: (isLoadingContractors || isLoadingCurrencies) && !schemaForm,
+    /**
+     * True while the chosen contractor's employment and currencies load. The form stays
+     * mounted; use this to disable submission or show an inline indicator.
+     */
+    isLoadingContractorDetails: isLoadingEmployment || isLoadingCurrencies,
     /**
      * Whether the selected contractor is a Contractor of Record, which the platform restricts
      * to one-off invoicing.

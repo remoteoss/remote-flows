@@ -7,6 +7,7 @@ import {
   buildInvoiceSchedulePayload,
   buildRecurrence,
 } from '@/src/common/invoice-schedules';
+import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
 const baseValues = {
@@ -275,8 +276,17 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     ]);
   });
 
-  it('exposes the semi-monthly day fields, hidden unless semi-monthly is chosen', () => {
+  it('omits the semi-monthly day fields by default, so the in-flow step is unchanged', () => {
     const schema = buildCreateInvoiceScheduleSchema();
+
+    expect(schema.properties).not.toHaveProperty('custom_day_1');
+    expect(schema['x-jsf-order']).not.toContain('custom_day_1');
+  });
+
+  it('exposes the semi-monthly day fields when asked, hidden unless semi-monthly is chosen', () => {
+    const schema = buildCreateInvoiceScheduleSchema({
+      includeCustomDays: true,
+    });
 
     expect(schema.properties).toHaveProperty('custom_day_1');
     expect(schema.properties).toHaveProperty('custom_day_2');
@@ -288,6 +298,29 @@ describe('buildCreateInvoiceScheduleSchema', () => {
         c.else?.properties?.custom_day_1 === false,
     );
     expect(hides).toBe(true);
+  });
+
+  it('gives the placeholder currency an unsubmittable value', () => {
+    expect(
+      buildCreateInvoiceScheduleSchema().properties.currency.oneOf,
+    ).toEqual([{ const: '', title: 'Loading currencies…' }]);
+  });
+
+  it('rejects the placeholder currency on validation', async () => {
+    const form = createHeadlessForm(
+      buildCreateInvoiceScheduleSchema() as $TSFixMe,
+      {},
+    );
+
+    const result = await form.handleValidation({
+      currency: '',
+      periodicity: 'monthly',
+      start_date: '2026-10-01',
+      item_1_description: 'Design work',
+      item_1_amount: 250000,
+    });
+
+    expect(result?.formErrors).toHaveProperty('currency');
   });
 
   it('omits the contractor picker unless asked', () => {
@@ -303,9 +336,12 @@ describe('buildCreateInvoiceScheduleSchema', () => {
       contractors: [{ value: 'emp_1', label: 'Grace Hopper' }],
     });
 
-    expect(schema.properties.employment_id?.oneOf).toEqual([
-      { const: 'emp_1', title: 'Grace Hopper' },
-    ]);
+    // Deliberately no `oneOf`: the picker searches the API, so enumerating the loaded page
+    // here would reject a contractor found by search. Options are presentation-only.
+    expect(schema.properties.employment_id).not.toHaveProperty('oneOf');
+    expect(
+      schema.properties.employment_id?.['x-jsf-presentation']?.options,
+    ).toEqual([{ value: 'emp_1', label: 'Grace Hopper' }]);
     expect(schema.required).toContain('employment_id');
     expect(schema['x-jsf-order'][0]).toBe('employment_id');
   });

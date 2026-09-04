@@ -55,3 +55,10 @@ export const ONE_TIME_PERIODICITY_OPTION = {
  * completes after its single invoice, so it never recurs.
  */
 export const ONE_TIME_PERSISTED_PERIODICITY = 'monthly';
+
+/**
+ * Value used by the stand-in option shown while a dependent list has not loaded. Empty on
+ * purpose: the fields that use it are required, so it cannot be submitted and surfaces as a
+ * normal required error rather than travelling to the API as a real value.
+ */
+export const PLACEHOLDER_OPTION = '';
