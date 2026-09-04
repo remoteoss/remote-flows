@@ -79,6 +79,7 @@ const itemFieldOrder = Array.from(
 ).flatMap((slot) => [`item_${slot}_description`, `item_${slot}_amount`]);
 
 export const createInvoiceScheduleSchema = {
+  'x-rmt-meta': { jsfOldVersion: true },
   type: 'object',
   'x-jsf-presentation': {
     title: 'Create invoice schedule',

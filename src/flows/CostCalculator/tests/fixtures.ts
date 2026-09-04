@@ -178,6 +178,18 @@ export const regionFieldsWithAgeProperty = {
   },
 };
 
+// Same region fields, but served as a jsf v1 schema (the gateway declares the
+// engine version in x-rmt-meta)
+export const regionFieldsWithAgePropertyV1 = {
+  data: {
+    ...regionFieldsWithAgeProperty.data,
+    schema: {
+      ...regionFieldsWithAgeProperty.data.schema,
+      'x-rmt-meta': { jsfVersion: '1' },
+    },
+  },
+};
+
 export const regionFieldsWithContractDurationTypeProperty = {
   data: {
     version: 7,

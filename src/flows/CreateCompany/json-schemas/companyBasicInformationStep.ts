@@ -2,6 +2,7 @@ export const companyBasicInformationStepSchema = {
   data: {
     version: 7,
     schema: {
+      'x-rmt-meta': { jsfOldVersion: true },
       additionalProperties: false,
       properties: {
         country_code: {

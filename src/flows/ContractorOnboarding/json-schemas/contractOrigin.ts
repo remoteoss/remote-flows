@@ -1,4 +1,5 @@
 export const contractOriginSchema = {
+  'x-rmt-meta': { jsfOldVersion: true },
   type: 'object',
   properties: {
     contract_origin: {

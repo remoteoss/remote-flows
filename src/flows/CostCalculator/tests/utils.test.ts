@@ -3,7 +3,7 @@ import type {
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
 } from '../types';
-import { buildPayload } from '../utils';
+import { buildPayload, formErrorsToValidationErrors } from '../utils';
 
 describe('buildPayload', () => {
   it('should build a payload with minimal values', () => {
@@ -513,5 +513,36 @@ describe('buildPayload', () => {
         'annual_gross_salary_in_employer_currency',
       );
     });
+  });
+});
+
+describe('formErrorsToValidationErrors', () => {
+  it('should convert flat form errors to yup validation errors', () => {
+    const errors = formErrorsToValidationErrors({
+      age: 'Required field',
+      region: 'Region is required',
+    });
+
+    expect(errors.map((error) => [error.path, error.message])).toEqual([
+      ['age', 'Required field'],
+      ['region', 'Region is required'],
+    ]);
+  });
+
+  it('should flatten nested form errors into dotted paths', () => {
+    const errors = formErrorsToValidationErrors({
+      benefits: {
+        'benefit-a': 'Required field',
+      },
+    });
+
+    expect(errors.map((error) => [error.path, error.message])).toEqual([
+      ['benefits.benefit-a', 'Required field'],
+    ]);
+  });
+
+  it('should return an empty list when there are no form errors', () => {
+    expect(formErrorsToValidationErrors(null)).toEqual([]);
+    expect(formErrorsToValidationErrors({})).toEqual([]);
   });
 });

@@ -1,9 +1,18 @@
-import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
+import {
+  defaultEstimationOptions,
+  useCostCalculator,
+} from '@/src/flows/CostCalculator/hooks';
 import { server } from '@/src/tests/server';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import { countries, currencies, estimation, regionFields } from './fixtures';
+import {
+  countries,
+  currencies,
+  estimation,
+  regionFields,
+  regionFieldsWithAgePropertyV1,
+} from './fixtures';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
 describe('useCostCalculator', () => {
@@ -80,6 +89,49 @@ describe('useCostCalculator', () => {
     ).resolves.toMatchObject({
       formErrors: {},
     });
+  });
+
+  it('should return region field errors when region fields are served as jsf v1', async () => {
+    server.use(
+      http.get('*/v1/cost-calculator/regions/*/fields', () => {
+        return HttpResponse.json(regionFieldsWithAgePropertyV1);
+      }),
+    );
+
+    const { result } = renderHook(
+      () =>
+        useCostCalculator({
+          defaultRegion: 'POL',
+          estimationOptions: defaultEstimationOptions,
+        }),
+      {
+        wrapper: TestProviders,
+      },
+    );
+
+    await waitFor(() => {
+      expect(
+        result.current.fields.find((field) => field.name === 'age'),
+      ).toBeDefined();
+    });
+
+    const validationResult = await result.current.handleValidation({
+      country: 'POL',
+      currency: 'USD',
+      currency_code: 'USD',
+      salary: '500000',
+      salary_converted: 'salary',
+      salary_conversion: '',
+      estimation_title: 'Test estimation',
+    } as $TSFixMe);
+
+    expect(validationResult.formErrors).toMatchObject({
+      age: 'Required field',
+    });
+    // The v1 engine returns no yupError; handleValidation synthesizes it
+    expect(
+      validationResult.yupError.inner.map((error) => error.path),
+    ).toContain('age');
   });
 
   it('should return an error when invalid data is passed to handleValidation', async () => {

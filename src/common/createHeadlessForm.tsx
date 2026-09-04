@@ -9,7 +9,20 @@ import {
   JSONSchemaFormResultWithFieldsets,
 } from '@/src/flows/types';
 import { findFieldsByType } from '@/src/flows/utils';
-import { JSFFieldset } from '@/src/types/remoteFlows';
+import { JSFFieldset, RemoteFlowsSDKProps } from '@/src/types/remoteFlows';
+
+type JsfEngineFallback = NonNullable<RemoteFlowsSDKProps['jsfEngineFallback']>;
+
+// Engine used for schemas that don't declare a version in `x-rmt-meta`.
+// Kit >=1.0.0 runs undeclared schemas on the v1 engine, but undeclared schemas
+// (our local static schemas, gateway responses predating the `x-rmt-meta`
+// stamping) were authored against v0 — so the SDK falls back to v0 until
+// consumers opt into v1 via the `jsfEngineFallback` prop on `<RemoteFlows>`.
+let jsfEngineFallback: JsfEngineFallback = 'v0';
+
+export const setJsfEngineFallback = (engine: JsfEngineFallback = 'v0') => {
+  jsfEngineFallback = engine;
+};
 
 /*
  * Creates a headless form from a JSON Schema, useful to avoid code duplication when creating headless forms.
@@ -26,6 +39,13 @@ export const createHeadlessForm = (
   const { transformMoneyFields } = options || {
     transformMoneyFields: true,
   };
+
+  // A schema that declares its engine version in `x-rmt-meta` is left
+  // untouched; an undeclared one is stamped with the configured fallback
+  // (kit >=1.0.0 would otherwise run it on the v1 engine).
+  if (!jsfSchema['x-rmt-meta'] && jsfEngineFallback === 'v0') {
+    jsfSchema = { ...jsfSchema, 'x-rmt-meta': { jsfOldVersion: true } };
+  }
   if (options && options.jsfModify) {
     const { required, allOf, ...modifyConfig } = options.jsfModify;
     // muteLogging: true suppresses the generic library log; we surface the

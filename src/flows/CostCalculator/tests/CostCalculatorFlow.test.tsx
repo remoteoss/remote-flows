@@ -13,6 +13,7 @@ import {
   estimation,
   regionFields,
   regionFieldsWithAgeProperty,
+  regionFieldsWithAgePropertyV1,
   regionFieldsWithContractDurationTypeProperty,
 } from './fixtures';
 import { $TSFixMe } from '@/src/types/remoteFlows';
@@ -407,6 +408,105 @@ describe('CostCalculatorFlow', () => {
         salary_conversion: 5000000,
       });
     });
+  });
+
+  it('should load, fill and submit form with regional fields served as jsf v1', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get('*/v1/cost-calculator/regions/*/fields', () => {
+        return HttpResponse.json(regionFieldsWithAgePropertyV1);
+      }),
+    );
+
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /age/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    // type age
+    await user.type(
+      screen.getByRole('textbox', {
+        name: /age/i,
+      }),
+      '30',
+    );
+
+    // select life insurance
+    await fillSelect(
+      'benefits.benefit-53c5fc69-f299-47e7-9004-86def3f0e845',
+      '8a32160f-62cb-4fd7-b90a-47b92e8bb734',
+    );
+
+    // select health insurance
+    await fillSelect(
+      'benefits.benefit-b5b325b7-f997-4679-9e63-bd77d8d1ed1f',
+      'df47a18f-ee55-4fd8-ab53-9eefe937c4e1',
+    );
+
+    // submit form
+    fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith({
+        age: 30,
+        benefits: {
+          'benefit-53c5fc69-f299-47e7-9004-86def3f0e845':
+            '8a32160f-62cb-4fd7-b90a-47b92e8bb734',
+          'benefit-b5b325b7-f997-4679-9e63-bd77d8d1ed1f':
+            'df47a18f-ee55-4fd8-ab53-9eefe937c4e1',
+        },
+        country: 'POL',
+        currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
+        currency_code: 'USD',
+        salary: 5_000_000,
+        estimation_title: 'Estimation',
+        hiring_budget: 'my_hiring_budget',
+        salary_converted: 'salary_conversion',
+        salary_conversion: 5000000,
+      });
+    });
+  });
+
+  it('should show validation errors for empty regional fields served as jsf v1', async () => {
+    server.use(
+      http.get('*/v1/cost-calculator/regions/*/fields', () => {
+        return HttpResponse.json(regionFieldsWithAgePropertyV1);
+      }),
+    );
+
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', {
+          name: /age/i,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
+
+    // Unlike the v0 engine, v1 doesn't require the nested benefits fields when
+    // the benefits object itself is absent (it's not in the schema's root
+    // required), so only the age error fires
+    await waitFor(() => {
+      expect(screen.getAllByText(/Required field/i)).toHaveLength(1);
+    });
+
+    expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
   it("should reset to the initial form values when the 'Reset' button is clicked", async () => {

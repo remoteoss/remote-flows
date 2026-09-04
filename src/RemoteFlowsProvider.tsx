@@ -12,6 +12,7 @@ import { lazyDefaultComponents } from './lazy-default-components';
 import { FormLoadingFallback } from '@/src/components/form/FormLoadingFallback';
 import { DelayedFallback } from '@/src/components/form/DelayedFallback';
 import { getQueryClient } from '@/src/queryConfig';
+import { setJsfEngineFallback } from '@/src/common/createHeadlessForm';
 import { ErrorContextProvider } from '@/src/components/error-handling/ErrorContext';
 
 type RemoteFlowContextWrapperProps = {
@@ -85,12 +86,16 @@ export function RemoteFlows({
   debug = false,
   credentials,
   transformHtmlToComponents,
+  jsfEngineFallback = 'v0',
 }: PropsWithChildren<RemoteFlowsSDKProps>) {
   // WE NEED TO FIX: react-hooks/refs - Cannot access refs during render
   // oxlint-disable-next-line react-hooks/refs
   const remoteApiClient = useRef(
     createClient(auth, { proxy, environment, credentials }),
   ).current;
+
+  // Module-level setting: with multiple providers, the last rendered wins.
+  setJsfEngineFallback(jsfEngineFallback);
 
   return (
     <ErrorContextProvider>
