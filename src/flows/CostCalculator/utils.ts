@@ -3,8 +3,8 @@ import type {
   CostCalculatorEstimateParams,
 } from '@/src/client';
 
-import { $TSFixMe } from '@/src/types/remoteFlows';
-import { AnyObjectSchema, number, object } from 'yup';
+import { ValidationError } from 'yup';
+import type { FormErrors } from '@remoteoss/remote-json-schema-form-kit';
 import { CostCalculatorVersion, defaultEstimationOptions } from './hooks';
 import type {
   CostCalculatorEstimationOptions,
@@ -13,60 +13,43 @@ import type {
 } from './types';
 import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
 
-/**
- * Build the validation schema for the form.
- * @returns
- */
-export function buildValidationSchema(
-  fields: $TSFixMe[],
-  employerBillingCurrency: string,
-  includeEstimationTitle?: boolean,
-) {
-  const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
-    (fieldsSchemaAcc, field) => {
-      // Special handling for salary fields
-      if (field.name === 'salary' || field.name === 'salary_conversion') {
-        fieldsSchemaAcc[field.name] = (field.schema as AnyObjectSchema).when(
-          'salary_converted',
-          {
-            is: (val: string | null) => val === field.name,
-            then: (schema) => schema.required('Required field'),
-            otherwise: (schema) => schema.optional(),
-          },
-        );
-      } else if (field.name === 'management') {
-        fieldsSchemaAcc[field.name] = object({
-          management_fee: number()
-            .transform((value) => {
-              return isNaN(value) ? undefined : value;
-            })
-            .min(0, 'Management fee must be greater than or equal to 0')
-            .max(
-              employerBillingCurrency
-                ? BASE_RATES[employerBillingCurrency as CurrencyKey]
-                : BASE_RATES.USD,
-              () => {
-                const maxValue = employerBillingCurrency
-                  ? BASE_RATES[employerBillingCurrency as CurrencyKey]
-                  : BASE_RATES.USD;
-                const displayValue = maxValue / 100;
-                return `Management fee cannot exceed ${displayValue} ${employerBillingCurrency}`;
-              },
-            ),
-        });
-      } else if (field.name === 'estimation_title' && includeEstimationTitle) {
-        // Make estimation_title required when includeEstimationTitle is true
-        fieldsSchemaAcc[field.name] = (
-          field.schema as AnyObjectSchema
-        ).required('Required field');
-      } else {
-        fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
-      }
-      return fieldsSchemaAcc;
+export function buildManagementFeeRules(employerBillingCurrency: string) {
+  const maximum =
+    BASE_RATES[employerBillingCurrency as CurrencyKey] ?? BASE_RATES.USD;
+
+  return {
+    minimum: 0,
+    maximum,
+    'x-jsf-errorMessage': {
+      minimum: 'Management fee must be greater than or equal to 0',
+      maximum: `Management fee cannot exceed ${maximum / 100} ${employerBillingCurrency}`,
     },
-    {},
-  );
-  return object(fieldsSchema) as AnyObjectSchema;
+  };
+}
+
+export function formErrorsToValidationErrors(
+  formErrors: FormErrors | null | undefined,
+  parentPath = '',
+): ValidationError[] {
+  return Object.entries(formErrors || {}).flatMap(([fieldName, message]) => {
+    const path = parentPath ? `${parentPath}.${fieldName}` : fieldName;
+
+    if (
+      typeof message === 'object' &&
+      message !== null &&
+      !Array.isArray(message)
+    ) {
+      return formErrorsToValidationErrors(message as FormErrors, path);
+    }
+
+    return [
+      new ValidationError(
+        typeof message === 'string' ? message : JSON.stringify(message),
+        undefined,
+        path,
+      ),
+    ];
+  });
 }
 
 /**

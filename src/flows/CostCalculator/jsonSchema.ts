@@ -2,6 +2,7 @@ export const jsonSchema = {
   data: {
     version: 7,
     schema: {
+      'x-rmt-meta': { jsfVersion: '1' },
       additionalProperties: false,
       properties: {
         country: {
@@ -20,6 +21,9 @@ export const jsonSchema = {
           oneOf: [],
           'x-jsf-presentation': {
             inputType: 'select',
+          },
+          'x-jsf-errorMessage': {
+            required: 'Region is required',
           },
         },
         currency: {
@@ -128,12 +132,22 @@ export const jsonSchema = {
           },
         },
       },
-      required: [
-        'country',
-        'currency',
-        'salary',
-        'salary_conversion',
-        'salary_converted',
+      required: ['country', 'currency', 'salary_converted'],
+      allOf: [
+        {
+          if: {
+            properties: { salary_converted: { const: 'salary' } },
+            required: ['salary_converted'],
+          },
+          then: { required: ['salary'] },
+        },
+        {
+          if: {
+            properties: { salary_converted: { const: 'salary_conversion' } },
+            required: ['salary_converted'],
+          },
+          then: { required: ['salary_conversion'] },
+        },
       ],
       type: 'object',
       'x-jsf-order': [

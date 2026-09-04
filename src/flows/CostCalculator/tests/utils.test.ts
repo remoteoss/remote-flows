@@ -3,7 +3,11 @@ import type {
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
 } from '../types';
-import { buildPayload } from '../utils';
+import {
+  buildManagementFeeRules,
+  buildPayload,
+  formErrorsToValidationErrors,
+} from '../utils';
 
 describe('buildPayload', () => {
   it('should build a payload with minimal values', () => {
@@ -512,6 +516,61 @@ describe('buildPayload', () => {
       expect(employments[1]).not.toHaveProperty(
         'annual_gross_salary_in_employer_currency',
       );
+    });
+  });
+});
+
+describe('formErrorsToValidationErrors', () => {
+  it('should convert flat form errors to yup validation errors', () => {
+    const errors = formErrorsToValidationErrors({
+      age: 'Required field',
+      region: 'Region is required',
+    });
+
+    expect(errors.map((error) => [error.path, error.message])).toEqual([
+      ['age', 'Required field'],
+      ['region', 'Region is required'],
+    ]);
+  });
+
+  it('should flatten nested form errors into dotted paths', () => {
+    const errors = formErrorsToValidationErrors({
+      benefits: {
+        'benefit-a': 'Required field',
+      },
+    });
+
+    expect(errors.map((error) => [error.path, error.message])).toEqual([
+      ['benefits.benefit-a', 'Required field'],
+    ]);
+  });
+
+  it('should return an empty list when there are no form errors', () => {
+    expect(formErrorsToValidationErrors(null)).toEqual([]);
+    expect(formErrorsToValidationErrors({})).toEqual([]);
+  });
+});
+
+describe('buildManagementFeeRules', () => {
+  it('should cap the management fee at the base rate of the employer currency', () => {
+    expect(buildManagementFeeRules('EUR')).toEqual({
+      minimum: 0,
+      maximum: 64500,
+      'x-jsf-errorMessage': {
+        minimum: 'Management fee must be greater than or equal to 0',
+        maximum: 'Management fee cannot exceed 645 EUR',
+      },
+    });
+  });
+
+  it('should fall back to the USD base rate for an unknown currency', () => {
+    expect(buildManagementFeeRules('XYZ')).toEqual({
+      minimum: 0,
+      maximum: 69900,
+      'x-jsf-errorMessage': {
+        minimum: 'Management fee must be greater than or equal to 0',
+        maximum: 'Management fee cannot exceed 699 XYZ',
+      },
     });
   });
 });

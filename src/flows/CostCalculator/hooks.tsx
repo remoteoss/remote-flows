@@ -9,11 +9,18 @@ import type {
 import type { JSFModify } from '@/src/flows/types';
 
 import { parseJSFToValidate } from '@/src/components/form/utils';
-import { iterateErrors } from '@/src/components/form/validationResolver';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { string, ValidationError } from 'yup';
-import { buildPayload, buildValidationSchema } from './utils';
+import { object, ValidationError } from 'yup';
+import type {
+  FormErrors,
+  ValidationResult,
+} from '@remoteoss/remote-json-schema-form-kit';
+import {
+  buildManagementFeeRules,
+  buildPayload,
+  formErrorsToValidationErrors,
+} from './utils';
 import {
   useCompanyCurrencies,
   useCostCalculatorCountries,
@@ -38,14 +45,7 @@ type CostCalculatorCountry = {
   currency: string;
 };
 
-type JSFValidationError = {
-  formErrors: Record<
-    string,
-    {
-      type: string;
-      message: string;
-    }
-  >;
+type CostCalculatorValidationResult = ValidationResult & {
   yupError: ValidationError;
 };
 
@@ -84,6 +84,9 @@ type UseCostCalculatorParams = {
 const useStaticSchema = (options?: { jsfModify?: JSFModify }) => {
   return createHeadlessForm(jsonSchema.data.schema, undefined, options);
 };
+
+const toOneOf = (items: Array<{ value: string; label: string }> = []) =>
+  items.map(({ value, label }) => ({ const: value, title: label }));
 
 type HiringBudget = 'my_hiring_budget' | 'employee_annual_salary';
 
@@ -242,6 +245,7 @@ export const useCostCalculator = (
             management_fee: {
               ...(options?.jsfModify?.fields?.management as $TSFixMe)
                 ?.properties?.management_fee,
+              ...buildManagementFeeRules(employerBillingCurrency || 'USD'),
               'x-jsf-presentation': {
                 inputType: 'money',
                 additionalProps: {
@@ -305,12 +309,49 @@ export const useCostCalculator = (
     useSplitSalaryDescription,
   ]);
 
+  const regions =
+    selectedCountry?.childRegions.map((region) => ({
+      value: region.slug,
+      label: region.name,
+    })) ?? [];
+
   const fieldsJSONSchema = useStaticSchema({
     jsfModify: {
       fields: {
         ...options?.jsfModify?.fields,
         ...customFields?.fields,
+        country: {
+          ...options?.jsfModify?.fields?.country,
+          oneOf: toOneOf(countries),
+          presentation: { onChange: onCountryChange },
+        },
+        region: {
+          ...options?.jsfModify?.fields?.region,
+          oneOf: toOneOf(regions),
+          presentation: {
+            hidden: regions.length === 0,
+            onChange: onRegionChange,
+          },
+        },
+        currency: {
+          ...options?.jsfModify?.fields?.currency,
+          oneOf: toOneOf(currencies),
+          presentation: { onChange: onChangeCurrency },
+        },
+        hiring_budget: {
+          ...customFields.fields.hiring_budget,
+          presentation: {
+            ...customFields.fields.hiring_budget.presentation,
+            onChange: onHiringBudgetChange,
+          },
+        },
       },
+      required: [
+        ...(regions.length > 0 ? ['region'] : []),
+        ...(estimationOptions.includeEstimationTitle
+          ? ['estimation_title']
+          : []),
+      ],
     },
   });
 
@@ -376,8 +417,8 @@ export const useCostCalculator = (
     setSelectedRegion(region);
   }
 
-  function onHiringBudgetChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setHiringBudget(event.target.value as HiringBudget);
+  function onHiringBudgetChange(value: string) {
+    setHiringBudget(value as HiringBudget);
   }
 
   function onChangeCurrency(currency: string) {
@@ -386,55 +427,6 @@ export const useCostCalculator = (
     )?.label;
     setEmployerBillingCurrency(selectedCurrency);
     options?.onCurrencyChange?.(selectedCurrency || '');
-  }
-
-  const regionField = fieldsJSONSchema.fields.find(
-    (field) => field.name === 'region',
-  );
-
-  if (regionField) {
-    const regions =
-      selectedCountry?.childRegions.map((region) => ({
-        value: region.slug,
-        label: region.name,
-      })) ?? [];
-    regionField.options = regions;
-    regionField.isVisible = regions.length > 0;
-    regionField.required = regions.length > 0;
-    regionField.onChange = onRegionChange;
-    regionField.schema =
-      regions.length > 0
-        ? string()
-            .transform((value) => (typeof value === 'string' ? value : ''))
-            .required('Region is required')
-        : string();
-  }
-
-  if (currencies) {
-    const currencyField = fieldsJSONSchema.fields.find(
-      (field) => field.name === 'currency',
-    );
-    if (currencyField) {
-      currencyField.options = currencies;
-      currencyField.onChange = onChangeCurrency;
-    }
-  }
-
-  const hiringBudgetField = fieldsJSONSchema.fields.find(
-    (field) => field.name === 'hiring_budget',
-  );
-  if (hiringBudgetField) {
-    hiringBudgetField.onChange = onHiringBudgetChange;
-  }
-
-  if (countries) {
-    const countryField = fieldsJSONSchema.fields.find(
-      (field) => field.name === 'country',
-    );
-    if (countryField) {
-      countryField.options = countries;
-      countryField.onChange = onCountryChange;
-    }
   }
 
   const resetForm = () => {
@@ -448,64 +440,60 @@ export const useCostCalculator = (
     ...fieldsJSONSchema.fields.filter((field) => field.name === 'management'),
   ];
 
-  const validationSchema = buildValidationSchema(
-    fieldsJSONSchema.fields,
-    employerBillingCurrency || 'USD',
-    estimationOptions.includeEstimationTitle,
+  const staticFieldNames = new Set(
+    fieldsJSONSchema.fields.map((field) => field.name as string),
+  );
+  const regionFieldNames = new Set(
+    (jsonSchemaRegionFields?.fields || []).map((field) => field.name as string),
   );
 
-  async function handleValidation(values: CostCalculatorEstimationFormValues) {
-    let errors: JSFValidationError | null = null;
+  function pickFieldValues(
+    values: Record<string, unknown>,
+    fieldNames: Set<string>,
+  ) {
+    return Object.fromEntries(
+      Object.entries(values).filter(([name]) => fieldNames.has(name)),
+    ) as $TSFixMe;
+  }
 
+  async function handleValidation(
+    values: CostCalculatorEstimationFormValues,
+  ): Promise<CostCalculatorValidationResult> {
     options?.onValidation?.(values);
     const parsedValues = await parseJSFToValidate(values, allFields);
 
-    // 1. validate static fields first using Yup validate function
-    try {
-      await validationSchema.validate(parsedValues, {
-        abortEarly: false,
-      });
-      errors = {
-        formErrors: {},
-        yupError: new ValidationError([], values),
-      };
-    } catch (error) {
-      const iterateResult = iterateErrors(error as ValidationError);
+    const staticFieldsResult = fieldsJSONSchema.handleValidation(
+      pickFieldValues(parsedValues, staticFieldNames),
+    );
+    const regionFieldsResult = jsonSchemaRegionFields?.handleValidation(
+      pickFieldValues(parsedValues, regionFieldNames),
+    );
 
-      errors = {
-        // convert the errors to a format that can be used in the form
-        formErrors: Object.entries(iterateResult).reduce(
-          (acc, [key, value]) => ({ ...acc, [key]: value.message }),
-          {},
-        ),
-        yupError: error as ValidationError,
-      };
-    }
-
-    // 2. validate json schema fields using the handleValidation (from json-schema-form)
-    const handleValidationResult =
-      jsonSchemaRegionFields?.handleValidation(parsedValues);
-
-    // 3. combine the errors from both validations
-    const combinedInnerErrors = [
-      ...(errors?.yupError.inner || []),
-      ...((handleValidationResult as { yupError: ValidationError })?.yupError
-        ?.inner || []),
-    ];
-    const combinedValues = {
-      ...(errors?.yupError?.value || {}),
-      ...((handleValidationResult as { yupError: ValidationError })?.yupError
-        ?.value || {}),
+    const formErrors: FormErrors = {
+      ...staticFieldsResult?.formErrors,
+      ...regionFieldsResult?.formErrors,
     };
 
     return {
-      formErrors: {
-        ...(errors?.formErrors || {}),
-        ...(handleValidationResult?.formErrors || {}),
-      },
-      yupError: new ValidationError(combinedInnerErrors, combinedValues),
+      formErrors,
+      yupError: new ValidationError(
+        formErrorsToValidationErrors(formErrors),
+        parsedValues,
+      ),
     };
   }
+
+  const validationSchema = object().test(
+    'cost-calculator',
+    'Invalid cost calculator values',
+    async function (values) {
+      const { formErrors } = await handleValidation(
+        values as unknown as CostCalculatorEstimationFormValues,
+      );
+      const errors = formErrorsToValidationErrors(formErrors);
+      return errors.length === 0 || new ValidationError(errors, values);
+    },
+  );
 
   // WE NEED TO FIX: react-hooks/refs - Cannot access ref value during render
   // oxlint-disable-next-line react-hooks/refs
@@ -523,7 +511,8 @@ export const useCostCalculator = (
      */
     fields: allFields,
     /**
-     * Validation schema for the cost calculator form
+     * Yup schema delegating to `handleValidation`, kept for backwards compatibility
+     * @deprecated use `handleValidation` instead
      */
     validationSchema,
     /**

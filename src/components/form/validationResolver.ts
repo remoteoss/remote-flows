@@ -1,30 +1,8 @@
 import { FieldErrors, FieldValues, Resolver } from 'react-hook-form';
-import type { ValidationError } from 'yup';
 import type {
   FormErrors,
   ValidationResult,
 } from '@remoteoss/remote-json-schema-form-kit';
-
-// TODO: deprecated only used in the CostCalculatorFlow as we're using yup there
-export function iterateErrors(error: ValidationError) {
-  const errors = (error as ValidationError).inner.reduce(
-    (
-      allErrors: Record<string, { type: string; message: string }>,
-      currentError: ValidationError,
-    ) => {
-      return {
-        ...allErrors,
-        [currentError.path as string]: {
-          type: currentError.type ?? 'validation',
-          message: currentError.message,
-        },
-      };
-    },
-    {} as Record<string, { type: string; message: string }>,
-  );
-
-  return errors;
-}
 
 export function iterateFormErrors(
   formErrors?: FormErrors,

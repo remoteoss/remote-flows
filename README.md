@@ -289,7 +289,7 @@ function CustomCostCalculator() {
   const {
     onSubmit: submitCostCalculator,
     fields, // Field definitions from json-schema-form
-    validationSchema,
+    handleValidation, // Validates form values, returns { formErrors }
   } = useCostCalculator();
 
   return (
