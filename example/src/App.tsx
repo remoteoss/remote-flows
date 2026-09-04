@@ -28,6 +28,7 @@ import { CostCalculatorWithExportPdf } from './CostCalculatorWithExportPdf';
 import { CostCalculatorWithPremiumBenefits } from './CostCalculatorWithPremiumBenefits';
 import { TerminationForm } from './Termination';
 import { ContractAmendment } from './ContractAmendment';
+import { InvoiceSchedule } from './InvoiceSchedule';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { OnboardingForm } from './flows/Onboarding/Onboarding';
@@ -43,6 +44,7 @@ import CostCalculatorWithPremiumBenefitsCode from './CostCalculatorWithPremiumBe
 import CostCalculatorWithReplaceableComponentsCode from './CostCalculatorWithReplaceableComponents?raw';
 import TerminationCode from './Termination?raw';
 import ContractAmendmentCode from './ContractAmendment?raw';
+import InvoiceScheduleCode from './InvoiceSchedule?raw';
 import { ContractorOnboardingForm } from './ContractorOnboarding';
 import { CreateCompanyForm } from './CreateCompany';
 import { MagicLinkTest } from './MagicLinkTest';
@@ -124,6 +126,14 @@ const additionalDemos = [
     description: 'Manage changes to existing contracts',
     component: ContractAmendment,
     sourceCode: ContractAmendmentCode,
+  },
+  {
+    id: 'invoice-schedule',
+    title: 'Invoice Schedule',
+    description:
+      'Standalone screen to create a contractor invoice schedule, with a contractor picker',
+    component: InvoiceSchedule,
+    sourceCode: InvoiceScheduleCode,
   },
   {
     id: 'onboarding',

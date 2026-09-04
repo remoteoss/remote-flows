@@ -1,19 +1,14 @@
 import { useMemo } from 'react';
 import {
-  BulkContractorInvoiceScheduleCreateParams,
   CompanyAction,
   CreateContractDocument,
   getV1CompaniesCompanyIdActions,
   getV1ContractorsEmploymentsEmploymentIdContractDocumentsId,
   getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions,
-  getV1ContractorInvoiceSchedules,
   ManageContractorPlusSubscriptionOperationsParams,
   postV1ContractorsEmploymentsEmploymentIdContractDocuments,
   postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription,
   postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign,
-  postV1ContractorInvoiceSchedules,
-  patchV1ContractorInvoiceSchedulesId2,
-  UpdateScheduleContractorInvoiceParams,
   SignContractDocument,
   getV1EmploymentsEmploymentIdContractDocuments,
   EligibilityQuestionnaireJsonSchemaResponse,
@@ -24,19 +19,13 @@ import {
   postV1EmploymentsEmploymentIdContractOrigin,
   deleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscription,
   Country,
-  ContractorInvoiceScheduleCreateParams,
   PostV1EmploymentsEmploymentIdContractOriginData,
-  postV1EmploymentsEmploymentIdContractorInvoicesPreview,
-  PreviewContractorInvoiceParams,
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
 import { contractOriginSchema } from '@/src/flows/ContractorOnboarding/json-schemas/contractOrigin';
 import { invoiceScheduleSchema } from '@/src/flows/ContractorOnboarding/json-schemas/invoiceSchedule';
-import { createInvoiceScheduleSchema } from '@/src/flows/ContractorOnboarding/json-schemas/createInvoiceSchedule';
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
-import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
-import { INVOICE_SCHEDULE_STATUS } from '@/src/flows/ContractorOnboarding/invoiceScheduleConstants';
 import {
   JSONSchemaFormResultWithFieldsets,
   FlowOptions,
@@ -45,7 +34,7 @@ import {
 import { clearBase64Data } from '@/src/lib/utils';
 import { Client } from '@/src/client/client';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
-import { useMutation, useQuery, queryOptions } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import {
   contractorPlusProductIdentifier,
@@ -66,11 +55,7 @@ import {
 import { convertFromCents } from '@/src/components/form/utils';
 import { countriesOptions } from '@/src/common/api/countries';
 import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
-import {
-  shouldIncludeProduct,
-  buildInvoiceSchedulePayload,
-  buildInvoicePreviewPayload,
-} from '@/src/flows/ContractorOnboarding/utils';
+import { shouldIncludeProduct } from '@/src/flows/ContractorOnboarding/utils';
 import { useCompanyPricingPlans, hasCompany } from '@/src/common/api/companies';
 import { useIdentity } from '@/src/common/api/identity';
 
@@ -768,6 +753,18 @@ export const useGetContractOriginSchema = ({
   });
 };
 
+// Invoice-schedule API hooks are shared with the standalone InvoiceSchedule flow and live in
+// src/common/invoice-schedules. Re-exported here so existing imports keep resolving.
+export {
+  invoiceSchedulesOptions,
+  useCreateInvoiceSchedule,
+  useGetCreateInvoiceScheduleSchema,
+  useGetExistingInvoiceSchedule,
+  usePreviewContractorInvoice,
+  useSkipInvoiceSchedule,
+  useUpdateInvoiceSchedule,
+} from '@/src/common/invoice-schedules/api';
+
 export const useGetInvoiceScheduleSchema = ({
   enabled,
   jsfModify,
@@ -785,115 +782,6 @@ export const useGetInvoiceScheduleSchema = ({
       },
     );
   }, [enabled, jsfModify]);
-};
-
-/**
- * Get the create invoice schedule schema with currency options from the contractor currencies endpoint.
- * React Query caches the result, so multiple calls share the same data.
- */
-export const useGetCreateInvoiceScheduleSchema = ({
-  enabled,
-  employmentId,
-  jsfModify,
-}: {
-  enabled?: boolean;
-  employmentId?: string;
-  jsfModify?: JSFModify;
-}): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
-  const { data: currencies, isLoading: isLoadingCurrencies } =
-    useContractorCurrencies({
-      employmentId: employmentId as string,
-      options: {
-        queryOptions: { enabled: enabled && Boolean(employmentId) },
-      },
-    });
-
-  const schemaWithCurrencies = useMemo(() => {
-    if (!enabled || !currencies) return null;
-
-    // Clone the schema and update the currency oneOf with actual currencies
-    const schema = {
-      ...createInvoiceScheduleSchema,
-      properties: {
-        ...createInvoiceScheduleSchema.properties,
-        currency: {
-          ...createInvoiceScheduleSchema.properties.currency,
-          oneOf: currencies.map(
-            (currency: { code: string; source: string }) => ({
-              const: currency.code,
-              title: currency.code,
-            }),
-          ),
-        },
-      },
-    };
-
-    return createHeadlessForm(schema, {}, { jsfModify });
-  }, [enabled, currencies, jsfModify]);
-
-  return {
-    data: schemaWithCurrencies,
-    isLoading: isLoadingCurrencies,
-  };
-};
-
-/**
- * Query options factory for fetching invoice schedules by employment id
- * @param client - The API client
- * @param employmentId - The employment ID
- * @returns Query options for contractor invoice schedules
- */
-export const invoiceSchedulesOptions = (
-  client: Client,
-  employmentId: string,
-) => {
-  return queryOptions({
-    queryKey: ['contractor-invoice-schedules', employmentId] as const,
-    queryFn: async () => {
-      const response = await getV1ContractorInvoiceSchedules({
-        client,
-        query: { employment_id: employmentId },
-      });
-
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch invoice schedules');
-      }
-
-      return response;
-    },
-  });
-};
-
-/**
- * Get the last invoice schedule for an employment that matches specific statuses.
- * This is used to determine if a schedule was previously created during onboarding.
- *
- * @param employmentId - The employment ID
- * @param options - Query options
- * @returns The last matching invoice schedule or undefined
- */
-export const useGetExistingInvoiceSchedule = ({
-  employmentId,
-  options,
-}: {
-  employmentId: string;
-  options?: { queryOptions?: { enabled?: boolean } };
-}) => {
-  const { client } = useClient();
-  return useQuery({
-    ...invoiceSchedulesOptions(client as Client, employmentId),
-    enabled: options?.queryOptions?.enabled,
-    select: (response) => {
-      // Find the first invoice schedule that matches the editing criteria
-      return response.data?.data?.contractor_invoice_schedules?.find(
-        (invoice) =>
-          invoice.status ===
-            INVOICE_SCHEDULE_STATUS.PENDING_CONTRACTOR_ACTION ||
-          invoice.status === INVOICE_SCHEDULE_STATUS.PROCESSING ||
-          invoice.status === INVOICE_SCHEDULE_STATUS.PENDING_COMPANY_ACTION,
-      );
-    },
-  });
 };
 
 export const useCountriesSchemaField = (
@@ -960,117 +848,5 @@ export const useCompanyOpenTasks = ({
       }),
     select: ({ data }) => data?.data?.actions ?? ([] as CompanyAction[]),
     enabled: (options?.queryOptions?.enabled ?? true) && !!companyId,
-  });
-};
-
-/**
- * Creates contractor invoice schedules
- * @param employmentId - The employment ID
- * @param values - The form values containing invoice schedule data
- * @returns The created invoice schedules
- */
-export const useCreateInvoiceSchedule = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({
-      employmentId,
-      values,
-    }: {
-      employmentId: string;
-      values: FieldValues;
-    }) => {
-      const payload: BulkContractorInvoiceScheduleCreateParams = {
-        contractor_invoice_schedules: [
-          {
-            employment_id: employmentId,
-            ...buildInvoiceSchedulePayload(values),
-          } as ContractorInvoiceScheduleCreateParams,
-        ],
-      };
-
-      return postV1ContractorInvoiceSchedules({
-        client: client as Client,
-        body: payload,
-      });
-    },
-  });
-};
-
-/**
- * Updates an existing contractor invoice schedule
- * @param scheduleId - The invoice schedule ID
- * @param values - The form values containing invoice schedule data
- * @returns The updated invoice schedule
- */
-export const useUpdateInvoiceSchedule = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({
-      scheduleId,
-      values,
-    }: {
-      scheduleId: string;
-      values: FieldValues;
-    }) => {
-      const payload: UpdateScheduleContractorInvoiceParams =
-        buildInvoiceSchedulePayload(values);
-
-      return patchV1ContractorInvoiceSchedulesId2({
-        client: client as Client,
-        path: { id: scheduleId },
-        body: payload,
-      });
-    },
-  });
-};
-
-/**
- * Skips (cancels) an existing contractor invoice schedule by marking it as deleted.
- * @param scheduleId - The invoice schedule ID
- * @returns The updated invoice schedule
- */
-export const useSkipInvoiceSchedule = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({ scheduleId }: { scheduleId: string }) => {
-      const payload: UpdateScheduleContractorInvoiceParams = {
-        status: 'deleted',
-      };
-
-      return patchV1ContractorInvoiceSchedulesId2({
-        client: client as Client,
-        path: { id: scheduleId },
-        body: payload,
-      });
-    },
-  });
-};
-
-/**
- * Previews a contractor invoice as a draft PDF, without persisting it.
- * @param employmentId - The employment ID
- * @param values - The form values containing invoice details
- * @returns The base64-encoded PDF preview
- */
-export const usePreviewContractorInvoice = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({
-      employmentId,
-      values,
-    }: {
-      employmentId: string;
-      values: FieldValues;
-    }) => {
-      const payload = buildInvoicePreviewPayload(
-        values,
-      ) as PreviewContractorInvoiceParams;
-
-      return postV1EmploymentsEmploymentIdContractorInvoicesPreview({
-        client: client as Client,
-        path: { employment_id: employmentId },
-        body: payload,
-      });
-    },
   });
 };

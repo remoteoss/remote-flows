@@ -222,81 +222,10 @@ export const getBasicInformationSchemaVersion = (options?: {
   );
 };
 
-/**
- * Builds invoice items array from form values
- * Collects up to 10 invoice items (item_1 through item_10)
- * @param values - Form values containing item_N_description and item_N_amount fields
- * @returns Array of invoice items with description and amount
- */
-export function buildInvoiceItems(values: Record<string, unknown>) {
-  const items = [];
-  for (let i = 1; i <= 10; i++) {
-    const description = values[`item_${i}_description`];
-    const amount = values[`item_${i}_amount`];
-    if (typeof description === 'string' && typeof amount === 'number') {
-      items.push({
-        description,
-        amount: amount,
-      });
-    }
-  }
-  return items;
-}
-
-/**
- * Builds the base invoice schedule payload from form values
- * @param values - Form values containing invoice schedule data
- * @returns Invoice schedule payload object
- */
-export function buildInvoiceSchedulePayload(
-  values: Record<string, unknown>,
-): Record<string, unknown> {
-  const payload: Record<string, unknown> = {
-    currency: values.currency,
-    periodicity: values.periodicity,
-    start_date: values.start_date,
-    items: buildInvoiceItems(values),
-  };
-
-  if (values.number) {
-    payload.number = String(values.number);
-  }
-
-  if (values.note) {
-    payload.note = values.note;
-  }
-
-  if (values.nr_occurrences) {
-    payload.nr_occurrences = Number(values.nr_occurrences);
-  }
-
-  return payload;
-}
-
-/**
- * Builds the payload for previewing a contractor invoice from form values.
- * Unlike buildInvoiceSchedulePayload, the preview endpoint previews a single
- * invoice, not a recurring schedule, so it doesn't accept periodicity or
- * nr_occurrences.
- * @param values - Form values containing invoice schedule data
- * @returns Invoice preview payload object
- */
-export function buildInvoicePreviewPayload(
-  values: Record<string, unknown>,
-): Record<string, unknown> {
-  const payload: Record<string, unknown> = {
-    currency: values.currency,
-    start_date: values.start_date,
-    items: buildInvoiceItems(values),
-  };
-
-  if (values.number) {
-    payload.number = String(values.number);
-  }
-
-  if (values.note) {
-    payload.note = values.note;
-  }
-
-  return payload;
-}
+// Invoice-schedule payload builders are shared with the standalone InvoiceSchedule flow and
+// live in src/common/invoice-schedules. Re-exported here so existing imports keep resolving.
+export {
+  buildInvoiceItems,
+  buildInvoicePreviewPayload,
+  buildInvoiceSchedulePayload,
+} from '@/src/common/invoice-schedules/utils';

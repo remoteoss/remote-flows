@@ -773,6 +773,12 @@ export const useContractorOnboarding = ({
       stepState.currentStep.name === 'create_invoice_schedule',
     employmentId: internalEmploymentId,
     jsfModify: options?.jsfModify?.create_invoice_schedule,
+    // The schema hides item rows 2..10 until the row before them is filled in, and that
+    // conditional is evaluated against the values handed to createHeadlessForm. Calling
+    // handleValidation on change (see checkFieldUpdates) validates but does not re-derive
+    // field visibility, so without the current values here every row past the first stays
+    // hidden for good.
+    fieldValues,
   });
 
   const {

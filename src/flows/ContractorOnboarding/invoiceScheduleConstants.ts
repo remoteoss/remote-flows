@@ -1,15 +1,3 @@
-/**
- * Invoice schedule status values
- * Based on ContractorInvoiceScheduleStatus from the API
- */
-export const INVOICE_SCHEDULE_STATUS = {
-  PENDING_CONTRACTOR_ACTION: 'pending_contractor_action',
-  PROCESSING: 'processing',
-  PENDING_COMPANY_ACTION: 'pending_company_action',
-  ACTIVE: 'active',
-  INACTIVE: 'inactive',
-  COMPLETED: 'completed',
-  GENERATION_FAILED_UNRELATED_TO_WITHDRAWAL_METHOD:
-    'generation_failed_unrelated_to_withdrawal_method',
-  DELETED: 'deleted',
-} as const;
+// Invoice-schedule logic is shared with the standalone InvoiceSchedule flow and lives in
+// src/common/invoice-schedules. Re-exported here so existing imports keep resolving.
+export { INVOICE_SCHEDULE_STATUS } from '@/src/common/invoice-schedules/constants';
