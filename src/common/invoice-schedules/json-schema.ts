@@ -259,14 +259,14 @@ export function buildCreateInvoiceScheduleSchema({
           ? currencies.map((code) => ({ const: code, title: code }))
           : [
               {
-                // Empty rather than a sentinel like 'placeholder': the field is required, so
-                // an empty value cannot be submitted and reports a normal required error.
-                // A sentinel would be a selectable, submittable currency whenever the
-                // currency list fails to arrive.
                 const: PLACEHOLDER_OPTION,
                 title: includeContractorSelect
                   ? 'Select a contractor first'
                   : 'Loading currencies…',
+                // Unselectable, so it cannot be submitted as a real currency if the list
+                // never arrives. Nothing is then selected, so the field's `required` rule
+                // reports a normal error on submit.
+                disabled: true,
               },
             ],
         'x-jsf-presentation': {

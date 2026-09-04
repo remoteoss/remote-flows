@@ -57,8 +57,10 @@ export const ONE_TIME_PERIODICITY_OPTION = {
 export const ONE_TIME_PERSISTED_PERIODICITY = 'monthly';
 
 /**
- * Value used by the stand-in option shown while a dependent list has not loaded. Empty on
- * purpose: the fields that use it are required, so it cannot be submitted and surfaces as a
- * normal required error rather than travelling to the API as a real value.
+ * Value used by the stand-in option shown while a dependent list has not loaded.
+ *
+ * Non-empty on purpose: Radix's `Select.Item` rejects an empty value, since it reserves
+ * that for clearing the selection. The option is instead marked `disabled` so it cannot be
+ * chosen, which is what keeps it from ever being submitted.
  */
-export const PLACEHOLDER_OPTION = '';
+export const PLACEHOLDER_OPTION = 'placeholder';

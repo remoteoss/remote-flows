@@ -300,20 +300,35 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     expect(hides).toBe(true);
   });
 
-  it('gives the placeholder currency an unsubmittable value', () => {
+  it('makes the placeholder currency unselectable rather than empty', () => {
+    // A non-empty value is required: Radix's Select.Item rejects an empty one. `disabled`
+    // is what stops it being chosen, and therefore submitted.
     expect(
       buildCreateInvoiceScheduleSchema().properties.currency.oneOf,
-    ).toEqual([{ const: '', title: 'Loading currencies…' }]);
+    ).toEqual([
+      { const: 'placeholder', title: 'Loading currencies…', disabled: true },
+    ]);
   });
 
-  it('rejects the placeholder currency on validation', async () => {
+  it('carries the disabled flag through to the rendered field option', () => {
+    const form = createHeadlessForm(
+      buildCreateInvoiceScheduleSchema() as $TSFixMe,
+      {},
+    );
+    const currency = (form.fields as $TSFixMe[]).find(
+      (f) => f.name === 'currency',
+    );
+
+    expect(currency?.options?.[0]?.disabled).toBe(true);
+  });
+
+  it('reports a required error when no currency has been chosen', async () => {
     const form = createHeadlessForm(
       buildCreateInvoiceScheduleSchema() as $TSFixMe,
       {},
     );
 
     const result = await form.handleValidation({
-      currency: '',
       periodicity: 'monthly',
       start_date: '2026-10-01',
       item_1_description: 'Design work',
