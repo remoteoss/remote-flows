@@ -155,6 +155,9 @@ export const employeeComunicationSchema = {
         'customer_informed_employee_description',
         'personal_email',
       ],
+      'x-rmt-meta': {
+        jsfVersion: '1',
+      },
     },
   },
 };

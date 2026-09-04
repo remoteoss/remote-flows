@@ -168,4 +168,7 @@ export const createInvoiceScheduleSchema = {
     },
   },
   allOf: invoiceItemRevealConditionals(),
+  'x-rmt-meta': {
+    jsfVersion: '1',
+  },
 };

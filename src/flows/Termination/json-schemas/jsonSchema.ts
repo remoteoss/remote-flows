@@ -33,6 +33,9 @@ export const jsonSchema = {
         ...paidTimeOffSchema.data.schema['x-jsf-order'],
         ...additionalInformationSchema.data.schema['x-jsf-order'],
       ],
+      'x-rmt-meta': {
+        jsfVersion: '1',
+      },
     },
   },
 };
