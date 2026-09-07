@@ -1,5 +1,24 @@
 # @remoteoss/remote-flows
 
+## 1.50.0
+
+### Minor Changes
+
+#### Features
+
+- add a standalone create-invoice-schedule flow (#1275) [#1275](https://github.com/remoteoss/remote-flows/pull/1275)
+- render the invoice preview PDF in a drawer (#1273) [#1273](https://github.com/remoteoss/remote-flows/pull/1273)
+
+#### Fixes
+
+- skip the initial ILA signature email (#1278) [#1278](https://github.com/remoteoss/remote-flows/pull/1278)
+
+#### Chores
+
+- move Termination, ContractorOnboarding and CreateCompany static schemas to v1 (#1271) [#1271](https://github.com/remoteoss/remote-flows/pull/1278)
+- update testing-library monorepo (#1274) [#1274](https://github.com/remoteoss/remote-flows/pull/1274)
+- enforce conventional commit format on PR titles (#1279) [#1279](https://github.com/remoteoss/remote-flows/pull/1279)
+
 ## 1.49.1
 
 ### Patch Changes
