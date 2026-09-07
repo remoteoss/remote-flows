@@ -3,6 +3,7 @@ import { useFormContext } from 'react-hook-form';
 import omit from 'lodash.omit';
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { Statement } from '@/src/components/form/Statement';
+import { FormFieldNameProvider } from '@/src/components/ui/form';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
 import {
   Components,
@@ -88,7 +89,11 @@ export const JSONSchemaFormFields = ({
           const { Component } = field as $TSFixMe;
           const fieldProps = omit(field, ['Component', 'WrapperComponent']);
           return wrapWithCustomWrapper(
-            <>
+            // Named, but deliberately not wrapped in `FormField`: the component owns its value
+            // through the `value`/`setValue` props below, so a `Controller` would fight it.
+            // Without the name, a `FormMessage` inside the component has no field to read an
+            // error from and silently renders nothing, so validation failures go unreported.
+            <FormFieldNameProvider name={field.name as string}>
               <Component
                 {...fieldProps}
                 value={watch(field.name) as string}
@@ -100,7 +105,7 @@ export const JSONSchemaFormFields = ({
                 />
               ) : null}
               {field.extra ? field.extra : null}
-            </>,
+            </FormFieldNameProvider>,
             field,
             field.name as string,
           );

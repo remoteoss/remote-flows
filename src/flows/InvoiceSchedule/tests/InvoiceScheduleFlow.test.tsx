@@ -497,6 +497,29 @@ describe('InvoiceScheduleFlow', () => {
     expect(screen.queryByText(/is not valid/i)).not.toBeInTheDocument();
   });
 
+  // The picker is supplied through `x-jsf-presentation.Component`, which `JSONSchemaForm`
+  // renders on its own rather than inside a `FormField`. Without the field name in context,
+  // the `FormMessage` the picker renders had no error to read and stayed silent, so a missing
+  // contractor was the one required field that failed without saying so.
+  it('reports a missing contractor on the picker itself', async () => {
+    renderFlow();
+
+    await screen.findByRole(
+      'combobox',
+      { name: /Contractor/i },
+      { timeout: 10000 },
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    const contractorField = await screen.findByTestId('employment_id');
+    const fieldContainer = contractorField.closest('[data-field]');
+
+    await waitFor(() => {
+      expect(fieldContainer).toHaveTextContent(/Required field/i);
+    });
+  });
+
   it('surfaces a creation failure through onError', async () => {
     server.use(
       http.post('*/v1/contractor-invoice-schedules', () =>
