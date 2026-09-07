@@ -88,7 +88,10 @@ export const PreviewInvoiceButton = ({
         }
       }}
       title='Invoice Preview'
-      className='max-h-[90vh] flex flex-col w-full'
+      // A side panel, not the bottom sheet `DrawerContent`'s base classes assume: the
+      // primitive positions every drawer along the bottom regardless of `direction`, so the
+      // inset is overridden here rather than in the shared drawer, which other flows use.
+      className='top-0 bottom-0 left-auto right-0 h-full max-h-none w-full max-w-[900px] rounded-t-none flex flex-col'
       trigger={
         <CustomButton
           {...props}
