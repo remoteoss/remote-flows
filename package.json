@@ -28,7 +28,8 @@
     "size": "tsx scripts/analyze-bundle-size.ts",
     "size:check": "tsx scripts/check-size-limits.ts",
     "size:badge": "tsx scripts/update-size-badge.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "worktree": "tsx scripts/create-worktree.ts"
   },
   "sideEffects": [
     "**/*.css"
