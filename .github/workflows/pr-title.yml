@@ -36,8 +36,8 @@ jobs:
 
             const [, type] = match;
             const validTypes = [
-              'feat', 'fix', 'chore', 'docs', 'refactor',
-              'test', 'style', 'perf', 'ci', 'build', 'revert',
+              "feat", "fix", "chore", "docs", "refactor",
+              "test", "style", "perf", "ci", "build", "revert",
             ];
 
             if (!validTypes.includes(type)) {
