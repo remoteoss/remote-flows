@@ -4,20 +4,17 @@
 
 ### Minor Changes
 
-- support skipping a scheduled invoice and previewing a draft invoice PDF
-- wire skip/preview buttons into the demo, fix local dev auth fallback
-- move Termination, ContractorOnboarding and CreateCompany static schemas to v1
-- render the invoice preview PDF in a drawer
-- update testing-library monorepo
-- add a standalone create-invoice-schedule flow
-- searchable contractor picker, semi-monthly cycle, fix conditional fields
-- address review findings on the contractor picker
-- keep the currency placeholder unselectable rather than empty
-- work with the JSF v1 engine
-- regenerate from the production gateway
-- skip the initial ILA signature email
-- address the second round of review findings
-- cover the standalone screen with an e2e spec
+#### Features
+
+- add a standalone create-invoice-schedule flow (#1275) [#1275](https://github.com/remoteoss/remote-flows/pull/1275)
+- render the invoice preview PDF in a drawer (#1273) [#1273](https://github.com/remoteoss/remote-flows/pull/1273)
+
+#### Fixes
+- skip the initial ILA signature email (#1278) [#1278](https://github.com/remoteoss/remote-flows/pull/1278)
+
+#### Chores
+- move Termination, ContractorOnboarding and CreateCompany static schemas to v1 (#1271) [#1271](https://github.com/remoteoss/remote-flows/pull/1278)
+- update testing-library monorepo (#1274) [#1274](https://github.com/remoteoss/remote-flows/pull/1274)
 - enforce conventional commit format on PR titles (#1279) [#1279](https://github.com/remoteoss/remote-flows/pull/1279)
 
 ## 1.49.1
