@@ -55,7 +55,14 @@ function seedNodeModules(source: string, worktreePath: string, dir: string) {
   const sourceDir = path.join(source, dir);
   const targetDir = path.join(worktreePath, dir);
   const sourceNodeModules = path.join(sourceDir, 'node_modules');
-  if (!existsSync(sourceNodeModules)) return;
+
+  if (!existsSync(sourceNodeModules)) {
+    log.warn(
+      `Source ${dir || 'root'}/node_modules not found. Falling back to npm install...`,
+    );
+    shInherit('npm install', targetDir);
+    return;
+  }
 
   if (process.platform === 'darwin') {
     try {
