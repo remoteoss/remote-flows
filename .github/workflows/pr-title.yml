@@ -1,0 +1,52 @@
+name: PR Title Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+    branches:
+      - main
+      - release/*
+
+jobs:
+  check-title:
+    name: Enforce Conventional Commit Title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          node -e '
+            // Same pattern scripts/release.ts uses to parse commit subjects
+            // for changelog/version-bump detection. A squash-merged PR title
+            // that fails this regex is silently skipped by the release script.
+            const title = process.env.PR_TITLE;
+            const match = title.match(/^(\w+)(?:\(([^)]+)\))?\s*[-:]\s*(.+)$/);
+
+            if (!match) {
+              console.error(
+                `PR title does not follow Conventional Commits format:\n\n  "${title}"\n\n` +
+                `Expected: type(scope): description  (e.g. "feat(onboarding): skip initial signature email")\n` +
+                `This repo squash-merges PRs, so the PR title becomes the commit on main that ` +
+                `scripts/release.ts parses to determine the version bump and changelog entry. ` +
+                `A title that does not match is silently ignored by that script.`
+              );
+              process.exit(1);
+            }
+
+            const [, type] = match;
+            const validTypes = [
+              "feat", "fix", "chore", "docs", "refactor",
+              "test", "style", "perf", "ci", "build", "revert",
+            ];
+
+            if (!validTypes.includes(type)) {
+              console.error(
+                `PR title type "${type}" is not a recognized Conventional Commits type.\n` +
+                `Expected one of: ${validTypes.join(", ")}`
+              );
+              process.exit(1);
+            }
+
+            console.log(`PR title is valid: "${title}"`);
+          '
