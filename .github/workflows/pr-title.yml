@@ -11,6 +11,8 @@ jobs:
   check-title:
     name: Enforce Conventional Commit Title
     runs-on: ubuntu-latest
+    # Release PRs (scripts/release.ts) title themselves with just the version, e.g. "1.50.0"
+    if: ${{ !startsWith(github.head_ref, 'release/') }}
     steps:
       - name: Validate PR title
         env:
