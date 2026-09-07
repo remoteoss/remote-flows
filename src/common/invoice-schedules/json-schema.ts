@@ -51,6 +51,9 @@ function invoiceItemRevealConditionals() {
             type: 'string',
             minLength: 1,
           },
+          // Integer cents, like the slot itself — `createHeadlessForm` converts the money
+          // input's major units before the conditionals are evaluated. `minimum: 1` is
+          // therefore one cent, so any non-zero amount reveals the next row.
           [`item_${previousSlot}_amount`]: { type: 'integer', minimum: 1 },
         },
         required: [

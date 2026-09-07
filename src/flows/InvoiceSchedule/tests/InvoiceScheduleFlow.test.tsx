@@ -340,6 +340,37 @@ describe('InvoiceScheduleFlow', () => {
     );
   });
 
+  // The reveal condition used to require an integer, which the flow's own values can never
+  // satisfy once an amount has cents: the money input holds major units and the schema is
+  // built without the cents conversion, so `2500.50` stayed a decimal and froze the form at
+  // one item. Driven through the rendered form because that is the only place the flow's
+  // real `createHeadlessForm` call is exercised.
+  it('reveals the second item row when the first amount has cents', async () => {
+    renderFlow({ employmentId: 'employment-grace' });
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Item 1 description/i)).toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByLabelText(/Item 1 description/i), {
+      target: { value: 'Design work' },
+    });
+    fireEvent.blur(screen.getByLabelText(/Item 1 description/i));
+    fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
+      target: { value: '2500.50' },
+    });
+    fireEvent.blur(screen.getByLabelText(/Item 1 amount/i));
+
+    await waitFor(
+      () => {
+        expect(
+          screen.getByLabelText(/Item 2 description/i),
+        ).toBeInTheDocument();
+      },
+      { timeout: 10000 },
+    );
+  });
+
   it('keeps the form mounted while the chosen contractor loads', async () => {
     const user = userEvent.setup();
     let sawLoadingAfterSelection = false;
@@ -412,6 +443,58 @@ describe('InvoiceScheduleFlow', () => {
       expect(screen.getByTestId('currency')).toHaveValue('');
     });
     expect(screen.getByTestId('periodicity')).toHaveValue('');
+  });
+
+  it('clears a recurring frequency chosen before the contractor turns out to be a CoR', async () => {
+    // `contractor_type` only arrives with the employment, so the recurring cadences are on
+    // offer until it does. Held open here to pick one inside that window.
+    let revealContractorType: () => void = () => {};
+    const employmentRequested = new Promise<void>((resolve) => {
+      revealContractorType = resolve;
+    });
+
+    server.use(
+      http.get('*/v1/employments/:id', async ({ params }) => {
+        await employmentRequested;
+
+        return HttpResponse.json({
+          ...employmentDefaultResponse,
+          data: {
+            ...employmentDefaultResponse.data,
+            employment: {
+              ...employmentDefaultResponse.data.employment,
+              id: params.id,
+              contractor_type: 'cor',
+            },
+          },
+        });
+      }),
+    );
+
+    renderFlow({ employmentId: 'employment-grace' });
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'weekly');
+
+    revealContractorType();
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('option', { name: 'Weekly' }),
+      ).not.toBeInTheDocument();
+    });
+
+    // Asserting on the error rather than the select's value: the rendered select is a
+    // native one in tests and blanks itself when its option disappears, whether or not the
+    // form still holds the stale value. Submitting is what tells them apart — a form still
+    // holding `weekly` is rejected for an option the user can no longer see, where a cleared
+    // one asks them to pick a frequency.
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    expect(
+      await screen.findByText(/Required field/i, undefined, { timeout: 10000 }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/is not valid/i)).not.toBeInTheDocument();
   });
 
   it('surfaces a creation failure through onError', async () => {
