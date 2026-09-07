@@ -332,9 +332,11 @@ export type PayCode = {
   /**
    * Unique identifier for this pay code
    */
-  slug: UuidSlug;
+  slug: string;
   /**
-   * Value type (e.g. hours, money, days)
+   * How the `amount` field on POST /v1/pay-items/bulk must be encoded for this pay code:
+   * `amount` in cents, `percentage` in basis points, `unit` as a raw count, `hours` as a whole number of hours, `duration` in seconds.
+   *
    */
   type: string;
 };
@@ -496,6 +498,43 @@ export type DeclinedWorkAuthozation = {
 };
 
 /**
+ * EngagementAgreementDetailsDEU
+ */
+export type EngagementAgreementDetailsDeu = {
+  allowances_details?: Array<string> | null;
+  available_pto?: number | null;
+  break_time_per_day?: number | null;
+  business_expenses?: string | null;
+  cba?: string | null;
+  cba_document?: Array<EngagementAgreementDetailsFile> | null;
+  covenants?: Array<string> | null;
+  has_allowances?: string | null;
+  has_bonus?: string | null;
+  has_business_expenses?: string | null;
+  has_business_presence?: string;
+  has_cba?: string | null;
+  has_commissions?: string | null;
+  has_covenants?: string | null;
+  has_illness_remuneration?: string | null;
+  has_overtime_compensation?: string | null;
+  has_pension_scheme?: string | null;
+  has_signing_bonus?: string | null;
+  has_similar_roles?: string;
+  has_similar_work_conditions?: string | null;
+  illness_remuneration_details?: string | null;
+  max_annual_gross_salary?: number | null;
+  min_annual_gross_salary?: number | null;
+  overtime_compensation_begins?: number | null;
+  overtime_compensation_type?: string | null;
+  overtime_pay_percentage?: number | null;
+  pension_scheme?: string | null;
+  similar_roles?: string | null;
+  similar_work_conditions_details?: string | null;
+  work_hours_per_week?: number | null;
+  working_days?: Array<string> | null;
+};
+
+/**
  * CreateSSOConfigurationResponse
  */
 export type CreateSsoConfigurationResponse = {
@@ -546,6 +585,32 @@ export type OfferedBenefitTier = {
   benefit_tier: BenefitTier;
   employee_stats: EmployeeStats;
 };
+
+/**
+ * ContractorInvoiceScheduleStatusFilter
+ *
+ * Status to filter contractor invoice schedules by.
+ *
+ * Skipped schedules (`deleted`) are always excluded from listings, so `deleted` is not a valid filter value here
+ * — see `ContractorInvoiceScheduleStatus` for the full set of states a schedule can report.
+ *
+ * - `active`: Once an invoice is generated, and a withdrawal method has been set, then it's set to active.
+ * - `processing`: Ephemeral status indicating that we are currently attempting to generate a contractor invoice from the scheduled contractor invoice.
+ * - `pending_company_action`: Company needs to trigger some actions related to payment configuration.
+ * - `pending_contractor_action`: When schedule is blocked by contractor onboarding or invoice generation failed due to withdrawal methods issues that needs contractor action.
+ * - `generation_failed_unrelated_to_withdrawal_method`: Generation failed for any other reason.
+ * - `completed`: Number of generated contractor invoices has been reached.
+ * - `inactive`: Does not create any further contractor invoices but it's still possible for the employer to activate it again.
+ *
+ */
+export type ContractorInvoiceScheduleStatusFilter =
+  | 'inactive'
+  | 'completed'
+  | 'active'
+  | 'processing'
+  | 'pending_company_action'
+  | 'pending_contractor_action'
+  | 'generation_failed_unrelated_to_withdrawal_method';
 
 /**
  * Base64File
@@ -632,6 +697,20 @@ export type UpdateEmploymentCustomFieldValueParams = {
  */
 export type CompanyDepartmentCreatedResponse = {
   company_department?: CompanyDepartment;
+};
+
+/**
+ * CompanyManagerBillingContact
+ */
+export type CompanyManagerBillingContact = {
+  /**
+   * Whether this manager is the primary billing contact for the legal entity
+   */
+  is_primary_billing_contact: boolean;
+  /**
+   * Slug of the legal entity
+   */
+  legal_entity_slug: string;
 };
 
 /**
@@ -853,12 +932,18 @@ export type CycleFrequency = 'monthly' | 'bi_monthly' | 'bi_weekly' | 'weekly';
  * Item in a billing document breakdown
  */
 export type BillingDocumentBreakdownItem = {
-  country_code: CountryCode;
+  /**
+   * Country code according to ISO 3166-1 3-digit alphabetic codes. May be null for legal-entity-wide lines.
+   */
+  country_code: string | null;
   /**
    * A human-readable description of this cost item.
    */
   description: string;
-  employment_id: UuidSlug;
+  /**
+   * A unique identifier in UUID v4 format for the employment this cost belongs to. May be null for legal-entity-wide lines that apply to the whole legal entity rather than a single employment.
+   */
+  employment_id: string | null;
   /**
    * The foreign exchange rate applied to convert from the source currency to the invoice currency.
    */
@@ -968,6 +1053,13 @@ export type Employment = {
    */
   full_name: string;
   /**
+   * A reference code for the employment record in the calling integration's own system.
+   * Private to that integration — no other integration can read or overwrite it.
+   * Null when the integration has not set one.
+   *
+   */
+  partner_external_id?: string | null;
+  /**
    * For the employment types `contractor`, `global_payroll_employee` and `direct_employee`, only [List employments](#operation/get_index_employment) and
    * [Show employment](#operation/get_show_employment) operations are available.
    *
@@ -1064,6 +1156,9 @@ export type Employment = {
   /**
    * Employment basic information. Its properties may vary depending on the country.
    *
+   * When present, `login_email` indicates which address the employee logs in with:
+   * `"personal"` or `"work"`.
+   *
    */
   basic_information?: {
     [key: string]: unknown;
@@ -1097,7 +1192,7 @@ export type Employment = {
   /**
    * A unique reference code for the employment record in a non-Remote system. While uniqueness is recommended, it is not strictly enforced within Remote's system.
    */
-  external_id?: string;
+  external_id?: string | null;
   /**
    * For the employment models `peo` and `global_payroll`, only [List employments](#operation/get_index_employment) and
    * [Show employment](#operation/get_show_employment) operations are available.
@@ -1584,7 +1679,8 @@ export type DownloadFileResponse = {
  */
 export type PayItem = {
   /**
-   * Value of the pay item (e.g. duration in seconds, amount in cents)
+   * Value of the pay item. Its unit depends on the `type` of the pay code (see GET /v1/companies/:company_id/legal-entities/:legal_entity_id/pay-codes): `amount` in cents, `percentage` in basis points, `unit` as a raw count, `hours` as a whole number of hours, `duration` in seconds.
+   *
    */
   amount: number;
   /**
@@ -1596,10 +1692,19 @@ export type PayItem = {
    */
   effective_date: string;
   /**
-   * Employment UUID.
+   * Employment UUID
    */
-  employment_id: UuidSlug;
+  employment_id: string;
+  /**
+   * Pay item's unique identifier
+   */
+  id: string;
   provider_data: PayItemProviderData;
+  /**
+   * Ids of pay items this one has replaced, oldest first. Empty if this pay item has never been edited.
+   *
+   */
+  replaced_ids: Array<string>;
 };
 
 /**
@@ -1927,7 +2032,7 @@ export type EmployeeFileParams = {
    */
   sub_type?: string;
   /**
-   * The broad category of the file (e.g., "id", "tax_form").
+   * The broad category of the file (e.g., "id", "tax_document").
    */
   type?: string;
 };
@@ -1942,6 +2047,9 @@ export type EmploymentBasicResponse = {
    * Employment basic information. As its properties may vary depending on the country,
    * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
    * passing the country code and `basic_information` as path parameters.
+   *
+   * When present, `login_email` indicates which address the employee logs in with: `"personal"` or
+   * `"work"`.
    */
   basic_information?: {
     [key: string]: unknown;
@@ -1972,6 +2080,13 @@ export type EmploymentBasicResponse = {
    * The email the employee uses to log in to Remote.
    */
   login_email?: string;
+  /**
+   * A reference code for the employment record in the calling integration's own system.
+   * Private to that integration — no other integration can read or overwrite it.
+   * Null when the integration has not set one.
+   *
+   */
+  partner_external_id?: string | null;
   /**
    * The employee's personal email address.
    */
@@ -2407,6 +2522,29 @@ export type NullableMinimalBenefitTier = {
 } | null;
 
 /**
+ * ListDirectOffboardingResponse
+ *
+ * Response schema listing many direct_offboardings
+ */
+export type ListDirectOffboardingResponse = {
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    direct_offboardings?: Array<DirectOffboarding>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
+};
+
+/**
  * CreateTimeoffParams
  *
  * Timeoff creation params
@@ -2416,7 +2554,7 @@ export type CreateTimeoffParams = {
   employment_id: string;
   end_date: string;
   /**
-   * UUID of a custom company leave policy assigned to the employment. Use this field instead of `timeoff_type` when creating time off against a custom leave policy. Discover available custom leave policy UUIDs via `GET /v1/leave-policies/details/{employment_id}`.
+   * UUID of a leave policy assigned to the employment. Use this field instead of `timeoff_type` to book against a specific policy; for employments on the leave-type model it is the only way to target one. Discover the available UUIDs via `GET /v1/leave-policies/details/{employment_id}`.
    */
   leave_policy_variant_id?: string;
   notes?: string;
@@ -2578,6 +2716,59 @@ export type UserStatus =
   | 'deleted';
 
 /**
+ * EmploymentFile
+ *
+ * A file associated with an employment, such as a contract, tax document, or identity document.
+ */
+export type EmploymentFile = {
+  /**
+   * The unique identifier (UUID) of the file.
+   */
+  id: string;
+  inserted_at: DateTimeIso8601;
+  /**
+   * The file name including extension (e.g., "id.pdf", "contract.pdf").
+   */
+  name: string;
+  /**
+   * A more specific classification of the file within its type (e.g., "personal_id" within type "id", or "ir_35" within type "contract"). Null if no sub-type applies.
+   */
+  sub_type?: string | null;
+  /**
+   * The broad category of the file. Contractor Services Agreements (CSAs) are reported here with type "contract" — see the /contract-documents endpoint for contract-document-specific types.
+   */
+  type:
+    | 'background_check'
+    | 'bank_account_holder_name'
+    | 'contractor_invoice'
+    | 'direct_offboarding'
+    | 'document_scan'
+    | 'expense'
+    | 'external_contract'
+    | 'generic_employment_document'
+    | 'health_check'
+    | 'i9_document'
+    | 'id'
+    | 'job'
+    | 'leave_of_absence'
+    | 'occupational_risk'
+    | 'offboarding'
+    | 'other'
+    | 'performance_review'
+    | 'personal'
+    | 'safety_training'
+    | 'time_attendance'
+    | 'timeoff'
+    | 'work_confirmation'
+    | 'contract'
+    | 'document'
+    | 'tax_document'
+    | 'termination_reason_file'
+    | 'timesheet'
+    | 'visa';
+};
+
+/**
  * DeleteRecurringIncentiveResponse
  *
  * `"status": "ok"` indicates that any recurring incentives with `pending` status were
@@ -2658,12 +2849,14 @@ export type CompanyCreationResponse = {
  *
  * - `draft`: The document is being prepared and has not been sent for signing.
  * - `awaiting_signatures`: The document has been sent and is waiting for one or more parties to sign.
+ * - `deadline_passed`: The signing deadline passed before all required signatures were collected.
  * - `finished`: All required signatures have been collected and the contract is fully executed.
  *
  */
 export type ContractorContractDocumentStatus =
   | 'draft'
   | 'awaiting_signatures'
+  | 'deadline_passed'
   | 'finished';
 
 /**
@@ -2688,6 +2881,15 @@ export type EmploymentV2UpdateParams = {
    *
    */
   manager_id?: string;
+  /**
+   * A reference code for the employment record in the calling integration's own system.
+   * Private to that integration — no other integration can read or overwrite it.
+   * Omit the field to leave the value unchanged; send `null` to clear it. Surrounding
+   * whitespace is trimmed off. It can be set at any employment status, and the same
+   * value may be used on several employments (for example a rehire).
+   *
+   */
+  partner_external_id?: string | null;
   /**
    * The work email of the employment.
    */
@@ -2848,6 +3050,21 @@ export type BenefitOffersByEmployment = {
   benefit_offers: Array<BenefitOffer>;
   costs: Costs;
   employment: BenefitOffersEmployment;
+};
+
+/**
+ * EmploymentsBulkResponse
+ *
+ * A keyset-paginated page of full-detail employment records.
+ */
+export type EmploymentsBulkResponse = {
+  data: Array<Employment>;
+  /**
+   * Opaque cursor to pass as the `cursor` query parameter to fetch the next page.
+   * `null` once the last page has been reached.
+   *
+   */
+  next_cursor: string | null;
 };
 
 /**
@@ -3208,6 +3425,7 @@ export type ResignationOffboarding = {
  */
 export type ContractorInvoiceSchedule = {
   currency: CurrencyCode;
+  custom_days?: ContractorInvoiceScheduleCustomDays;
   /**
    * Employment identifier.
    */
@@ -3279,7 +3497,7 @@ export type CustomFieldDataType =
 /**
  * File
  *
- * A file associated with an employment, such as a contract, tax form, or identity document.
+ * A file associated with an employment, such as a contract, tax document, or identity document.
  */
 export type File = {
   /**
@@ -3296,7 +3514,7 @@ export type File = {
    */
   sub_type?: string | null;
   /**
-   * The broad category of the file (e.g., "id", "contract", "tax_form").
+   * The broad category of the file (e.g., "id", "contract", "tax_document").
    */
   type: string;
 };
@@ -3354,7 +3572,7 @@ export type EmploymentDocument = {
    */
   sub_type?: string | null;
   /**
-   * The broad category of the file (e.g., "id", "contract", "tax_form").
+   * The broad category of the file (e.g., "id", "contract", "tax_document").
    */
   type: string;
 } | null;
@@ -3521,6 +3739,15 @@ export type EmploymentFullParams = {
    */
   manager_id?: string;
   /**
+   * A reference code for the employment record in the calling integration's own system.
+   * Private to that integration — no other integration can read or overwrite it.
+   * Omit the field to leave the value unchanged; send `null` to clear it. Surrounding
+   * whitespace is trimmed off. It can be set at any employment status, and the same
+   * value may be used on several employments (for example a rehire).
+   *
+   */
+  partner_external_id?: string | null;
+  /**
    * Personal details information. As its properties may vary depending on the country,
    * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
    * passing the country code and `personal_details` as path parameters.
@@ -3593,6 +3820,29 @@ export type CostCalculatorCountryLevelRegion = {
   original_country_slug: string;
   region_slug: string;
 };
+
+/**
+ * AccountsAssignedRoles
+ */
+export type AccountsAssignedRoles = Array<{
+  data_scope?:
+    | 'all'
+    | 'employment_entities'
+    | 'external'
+    | 'internal'
+    | 'rps'
+    | 'secondary_reports'
+    | 'direct_reports'
+    | 'assigned_billing_legal_entities'
+    | 'employment_countries'
+    | 'direct_and_indirect_reports'
+    | 'employment_departments'
+    | 'employment_company_structure_nodes'
+    | 'onboarding_reports';
+  name: string;
+  slug: string;
+  type?: 'default' | 'custom' | 'template' | 'owner';
+}> | null;
 
 /**
  * CreateWebhookCallbackParams
@@ -3741,7 +3991,7 @@ export type EmploymentImage = {
    */
   sub_type?: string | null;
   /**
-   * The broad category of the file (e.g., "id", "contract", "tax_form").
+   * The broad category of the file (e.g., "id", "contract", "tax_document").
    */
   type: string;
 } | null;
@@ -4194,8 +4444,10 @@ export type BulkEmploymentImportJob = {
     | MinimalUser
     | {
         account?: AccountsAccount | null;
+        assigned_roles?: AccountsAssignedRoles;
         integration_users?: Array<AccountUserIntegrationUser>;
         invited_by?: AccountsMinimalCompanyAdmin | null;
+        job_title?: string | null;
         login_synced_with?: AccountsLoginSyncedWith;
         raw_email?: string;
         role?:
@@ -4249,6 +4501,48 @@ export type BulkEmploymentImportJob = {
    */
   total_count: number;
   updated_at: DateTime;
+};
+
+/**
+ * JobTitleScreeningItem
+ */
+export type JobTitleScreeningItem = {
+  /**
+   * The screened job title.
+   */
+  job_title: string;
+  /**
+   * The role description, if provided.
+   */
+  role_description?: string | null;
+  /**
+   * Whether the role is onsite, if provided.
+   */
+  role_is_onsite?: 'yes' | 'no' | 'not_applicable';
+  /**
+   * Whether the role requires a license, if provided.
+   */
+  role_requires_license?: 'yes' | 'no' | 'not_applicable';
+  /**
+   * The screening verdict. `pending` while the screening is processing; `eligible` and `not_eligible` are definitive; `needs_review` means the title will require a human review during onboarding; `eligible_with_risk_acknowledgement` means the title is eligible once the employer acknowledges the risk during onboarding. Verdicts are advisory and reflect the eligibility policy at the time of screening: the policy evolves over time and the same checks re-run during onboarding, so the onboarding outcome may differ from an earlier screening verdict for the same title.
+   */
+  verdict:
+    | 'pending'
+    | 'eligible'
+    | 'not_eligible'
+    | 'needs_review'
+    | 'eligible_with_risk_acknowledgement';
+};
+
+/**
+ * CurrencyWithoutSlug
+ *
+ * Currency structure without the slug, eg: built from ex_money
+ */
+export type CurrencyWithoutSlug = {
+  code: string;
+  name: string;
+  symbol: string;
 };
 
 /**
@@ -4584,6 +4878,15 @@ export type ApprovedWorkAuthozation = {
 };
 
 /**
+ * PayItemResponse
+ */
+export type PayItemResponse = {
+  data: {
+    pay_item: PayItem;
+  };
+};
+
+/**
  * EngagementAgreementDetailsParamsDEU
  */
 export type EngagementAgreementDetailsParamsDeu = {
@@ -4592,9 +4895,7 @@ export type EngagementAgreementDetailsParamsDeu = {
   break_time_per_day?: number | null;
   business_expenses?: string | null;
   cba?: string | null;
-  cba_document?: {
-    [key: string]: unknown;
-  } | null;
+  cba_document?: Array<EngagementAgreementDetailsFileParams> | null;
   covenants?: Array<string> | null;
   has_allowances?: string | null;
   has_bonus?: string | null;
@@ -4879,6 +5180,14 @@ export type CostCalculatorCosts = {
    */
   extra_statutory_payments_total: number;
   /**
+   * The list of all annual fringe benefits tax costs
+   */
+  fringe_benefits_tax_breakdown?: Array<CostCalculatorCost>;
+  /**
+   * Estimated tax on employer-paid benefit premiums (e.g. New Zealand FBT)
+   */
+  fringe_benefits_tax_total?: number;
+  /**
    * The list of all monthly benefit costs
    */
   monthly_benefits_breakdown?: Array<CostCalculatorCost>;
@@ -4894,6 +5203,14 @@ export type CostCalculatorCosts = {
    * The contributions that the company pays monthly
    */
   monthly_contributions_total: number;
+  /**
+   * The list of all monthly fringe benefits tax costs
+   */
+  monthly_fringe_benefits_tax_breakdown?: Array<CostCalculatorCost>;
+  /**
+   * Monthly estimated tax on employer-paid benefit premiums (e.g. New Zealand FBT)
+   */
+  monthly_fringe_benefits_tax_total?: number;
   /**
    * The gross monthly salary for the Employee
    */
@@ -5116,6 +5433,45 @@ export type UnifiedEmploymentBenefitTier = {
 };
 
 /**
+ * ContractorRate
+ *
+ * A rate configured for a contractor, with the dates of the contract it is paid under.
+ *
+ * `type` discriminates the payment mode: `one_off` is a single payment on completion of
+ * services; any other value is paid per pay period, where `type` is the calculation unit and
+ * `pay_frequency` the invoicing cadence.
+ *
+ * `type` and `pay_frequency` are open enums: new values may be added, so treat an unrecognised
+ * value as opaque rather than an error.
+ *
+ */
+export type ContractorRate = {
+  amount: MoneyResponse;
+  /**
+   * Expiration date of the contractor's active contract (or the last active one for ended engagements). This is not a termination date. Null for an open-ended contract, and when the contractor has no contract on record.
+   */
+  contract_expiration_date: string | null;
+  /**
+   * Date the contractor started working under their active contract (or the last active one for ended engagements). This is the work start date, which can precede the date the contract became effective. Null when the contractor has no contract on record.
+   */
+  contract_start_date: string | null;
+  /**
+   * UuidSlug
+   *
+   * Unique identifier of the rate.
+   */
+  id: string;
+  /**
+   * How often the contractor is paid. Always null for `one_off` rates.
+   */
+  pay_frequency: 'weekly' | 'bi_weekly' | 'semi_monthly' | 'monthly';
+  /**
+   * The unit the amount is paid per.
+   */
+  type: 'hourly' | 'daily' | 'weekly' | 'monthly' | 'one_off';
+};
+
+/**
  * CompanyManagerParams
  */
 export type CompanyManagerParams = {
@@ -5204,6 +5560,7 @@ export type CompanyWithTokensResponse = {
  */
 export type ContractorInvoiceScheduleCreateParams = {
   currency: CurrencyCode;
+  custom_days?: ContractorInvoiceScheduleCustomDays;
   /**
    * Employment identifier
    */
@@ -5217,7 +5574,13 @@ export type ContractorInvoiceScheduleCreateParams = {
    */
   note?: string;
   /**
-   * Count of invoices that should be generated during schedule lifetime.
+   * Count of invoices that should be generated during schedule lifetime. Omit for a
+   * schedule that repeats indefinitely.
+   *
+   * A one-off invoice is expressed as `nr_occurrences: 1` — there is no `one_time`
+   * periodicity. Pair it with any `periodicity` (`monthly` is conventional); the schedule
+   * completes after its single invoice, so the cadence never applies.
+   *
    */
   nr_occurrences?: number;
   /**
@@ -5565,6 +5928,7 @@ export type BillingDocumentsResponse = {
  */
 export type UpdateScheduleContractorInvoiceParams = {
   currency?: CurrencyCode;
+  custom_days?: ContractorInvoiceScheduleCustomDays;
   /**
    * List of invoice items that composes the overall invoice amount.
    */
@@ -5584,28 +5948,6 @@ export type UpdateScheduleContractorInvoiceParams = {
   periodicity?: ContractorInvoiceSchedulePeriodicity;
   start_date?: Date;
   status?: 'inactive' | 'deleted' | 'active' | 'processing';
-};
-
-/**
- * PreviewContractorInvoiceParams
- *
- * Payload shape used to preview a contractor invoice before it's created.
- */
-export type PreviewContractorInvoiceParams = {
-  currency: CurrencyCode;
-  /**
-   * List of invoice items that composes the overall invoice amount.
-   */
-  items: Array<ContractorInvoiceScheduleItem>;
-  /**
-   * Custom defined note.
-   */
-  note?: string | null;
-  /**
-   * Invoice identifier.
-   */
-  number?: string | null;
-  start_date: Date;
 };
 
 /**
@@ -5796,6 +6138,43 @@ export type BillingDocument = {
 };
 
 /**
+ * EngagementAgreementDetailsFileParams
+ *
+ * A file attached to the engagement agreement details.
+ *
+ * To upload a new file, send its `name` and its base64-encoded `content`. To keep a file uploaded
+ * previously, send back the `name` and `id` returned by the show endpoint instead. Every entry
+ * must do one or the other — an entry carrying neither is rejected, and an `id` that does not
+ * belong to this record is rejected too. Files that are not included in the payload are deleted.
+ *
+ * Only the properties below are accepted; any other one is rejected. In particular a file's
+ * `sub_type` is derived from the field it is attached to and cannot be set by the caller.
+ *
+ */
+export type EngagementAgreementDetailsFileParams = {
+  /**
+   * The file content, Base64 encoded. Required when uploading a new file. The decoded content must match the extension given in `name`. Requests are capped at 25MB in total, which leaves room for a file of roughly 18MB once Base64 encoded.
+   */
+  content?: string;
+  /**
+   * ID of a file uploaded previously, as returned by the show endpoint. Send it to keep that file.
+   */
+  id?: string;
+  /**
+   * The file name, including its extension.
+   */
+  name: string;
+  /**
+   * The file size in bytes, before Base64 encoding.
+   */
+  size?: number;
+  /**
+   * The file's media type.
+   */
+  type?: string;
+};
+
+/**
  * ContractorTimesheet
  *
  * A contractor timesheet, returned by the contractor create endpoint. Only contains fields relevant to the contractor flow — EOR-only fields (overtime, night/weekend/holiday hours, approval flag) are not included.
@@ -5874,6 +6253,15 @@ export type TimeTrackingParams = {
    * The category of time being tracked (e.g., regular hours, overtime, on-call).
    */
   type: 'regular_hours' | 'overtime' | 'on_call' | 'break' | 'unpaid_break';
+};
+
+/**
+ * JobTitleScreeningResponse
+ */
+export type JobTitleScreeningResponse = {
+  data?: {
+    job_title_screening?: JobTitleScreening;
+  };
 };
 
 /**
@@ -6006,6 +6394,13 @@ export type MinimalEmployment = {
    */
   login_email: string;
   /**
+   * A reference code for the employment record in the calling integration's own system.
+   * Private to that integration — no other integration can read or overwrite it.
+   * Null when the integration has not set one.
+   *
+   */
+  partner_external_id: string | null;
+  /**
    * The employee's personal email address.
    */
   personal_email: string;
@@ -6090,8 +6485,8 @@ export type ResourceErrorResponse = {
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_required_missing'
       | 'parameter_one_of_required_missing'
+      | 'parameter_required_missing'
       | 'parameter_too_many'
       | 'parameter_unknown'
       | 'parameter_map_empty'
@@ -6328,6 +6723,16 @@ export type DeclineTimeoffParams = {
 };
 
 /**
+ * MoneyResponse
+ *
+ * Monetary amount and currency. `amount` is a decimal string in the major unit, e.g. 109.87.
+ */
+export type MoneyResponse = {
+  amount: string;
+  currency: CurrencyWithoutSlug;
+};
+
+/**
  * CreatePricingPlanWithPartnerTemplateParams
  *
  * Parameters for creating a pricing plan with a partner template
@@ -6444,6 +6849,33 @@ export type OnboardingReservesStatus = {
     | 'fail'
     | 'deposit_required'
     | 'no_deposit_required';
+};
+
+/**
+ * CreateJobTitleScreeningParams
+ */
+export type CreateJobTitleScreeningParams = {
+  /**
+   * The job titles to screen. `role_description`, `role_is_onsite` and `role_requires_license` are optional but must be provided together; when present they allow an ambiguous title to be resolved without a human review.
+   */
+  items: Array<{
+    /**
+     * The job title to screen.
+     */
+    job_title: string;
+    /**
+     * The role description.
+     */
+    role_description?: string;
+    /**
+     * Whether the role is onsite.
+     */
+    role_is_onsite?: 'yes' | 'no' | 'not_applicable';
+    /**
+     * Whether the role requires a license.
+     */
+    role_requires_license?: 'yes' | 'no' | 'not_applicable';
+  }>;
 };
 
 /**
@@ -6701,6 +7133,29 @@ export type ListTimeoffResponse = {
 };
 
 /**
+ * JobTitleScreening
+ */
+export type JobTitleScreening = {
+  /**
+   * The timestamp when the screening request was created.
+   */
+  created_at: string;
+  /**
+   * The unique identifier (UUID) of the screening request.
+   */
+  id: string;
+  items: Array<JobTitleScreeningItem>;
+  /**
+   * The processing status of the screening request. Poll until `completed` or `failed`. A `failed` screening gave up after retries; unscreened items stay `pending` and the batch should be resubmitted as a new screening.
+   */
+  status: 'processing' | 'completed' | 'failed';
+  /**
+   * The timestamp of the last update to the screening request.
+   */
+  updated_at: string;
+};
+
+/**
  * ExpenseOrDraft
  *
  * An expense or a draft object, depending on the status. Drafts (status `draft` or `archived`) may have incomplete(null) data.
@@ -6870,6 +7325,65 @@ export type CreateContractDocument = {
 };
 
 /**
+ * ResponseTimeoffType
+ *
+ * The type of leave a time off record or leave policy represents.
+ *
+ * Responses may return any of these values. The set is a superset of the values
+ * accepted when creating or updating a time off record (see `TimeoffType`): employments on the newer leave-type model can hold leave types that are not bookable by name.
+ *
+ */
+export type ResponseTimeoffType =
+  | 'time_off'
+  | 'sick_leave'
+  | 'public_holiday'
+  | 'unpaid_leave'
+  | 'extended_leave'
+  | 'in_lieu_time'
+  | 'maternity_leave'
+  | 'paternity_leave'
+  | 'parental_leave'
+  | 'bereavement'
+  | 'military_leave'
+  | 'other'
+  | 'paid_time_off'
+  | 'custom_company_leave'
+  | 'rtt'
+  | 'casual_leave'
+  | 'rol'
+  | 'ex_festivita'
+  | 'civic_duty'
+  | 'adoption'
+  | 'caregiver'
+  | 'transfer'
+  | 'exam'
+  | 'monkhood'
+  | 'marriage'
+  | 'sterilization'
+  | 'celebration'
+  | 'blood_donation'
+  | 'health_day'
+  | 'special'
+  | 'career'
+  | 'study'
+  | 'voluntary'
+  | 'adv'
+  | 'public_duties'
+  | 'force_majeure'
+  | 'medical_visits'
+  | 'marriage_child'
+  | 'breastfeeding'
+  | 'maternity_paid'
+  | 'maternity_unpaid'
+  | 'paternity_paid'
+  | 'paternity_unpaid'
+  | 'pregnancy_leave'
+  | 'business_trip_eu'
+  | 'business_trip_non_eu'
+  | 'training'
+  | 'sustainable_employability';
+
+/**
  * ValidationError
  */
 export type ValidationError = {
@@ -6926,7 +7440,37 @@ export type LeavePolicyDetails = {
     | 'rtt'
     | 'casual_leave'
     | 'rol'
-    | 'ex_festivita';
+    | 'ex_festivita'
+    | 'civic_duty'
+    | 'adoption'
+    | 'caregiver'
+    | 'transfer'
+    | 'exam'
+    | 'monkhood'
+    | 'marriage'
+    | 'sterilization'
+    | 'celebration'
+    | 'blood_donation'
+    | 'health_day'
+    | 'special'
+    | 'career'
+    | 'study'
+    | 'voluntary'
+    | 'adv'
+    | 'public_duties'
+    | 'force_majeure'
+    | 'medical_visits'
+    | 'marriage_child'
+    | 'breastfeeding'
+    | 'maternity_paid'
+    | 'maternity_unpaid'
+    | 'paternity_paid'
+    | 'paternity_unpaid'
+    | 'pregnancy_leave'
+    | 'business_trip_eu'
+    | 'business_trip_non_eu'
+    | 'training'
+    | 'sustainable_employability';
   name: string;
   /**
    * Whether leave balance is determined by accruals
@@ -7001,6 +7545,10 @@ export type Incentive = {
    */
   note?: string | null;
   /**
+   * The broader payroll category this incentive's `type` belongs to (e.g., "incentive", "benefits_cash").
+   */
+  payroll_output_category?: string;
+  /**
    * The end date of the period this incentive covers. Null for non-periodic incentives.
    */
   period_end?: string | null;
@@ -7020,6 +7568,10 @@ export type Incentive = {
    * The type of incentive (e.g., "signing_bonus", "performance_bonus", "commission", "referral_bonus").
    */
   type: string;
+  /**
+   * The human-readable label for `type` (e.g., "Signing bonus", "Commission", "Severance").
+   */
+  type_label?: string;
 };
 
 /**
@@ -7111,6 +7663,24 @@ export type NullableCountry = {
    */
   supported_json_schemas?: Array<string>;
 } | null;
+
+/**
+ * UpdatePayItemParams
+ *
+ * Partial update — only the fields provided are changed. Editing `amount` or `effective_date` archives the existing pay item and creates a new one with a new `id`; use the response's `replaced_ids` to reconcile. Editing `provider_data` alone updates the pay item in place and keeps the same `id`.
+ *
+ */
+export type UpdatePayItemParams = {
+  /**
+   * Value of the pay item. See PayItemParams.amount for unit details. Must be non-zero; negative values are allowed for corrections.
+   */
+  amount?: number;
+  /**
+   * Working day date (YYYY-MM-DD)
+   */
+  effective_date?: string;
+  provider_data?: PayItemProviderData;
+};
 
 /**
  * PayGroup
@@ -7384,7 +7954,7 @@ export type FileParams = {
    */
   sub_type?: string;
   /**
-   * The broad category of the file (e.g., "contract", "id", "tax_form").
+   * The broad category of the file (e.g., "contract", "id", "tax_document").
    */
   type?: string;
 };
@@ -7568,6 +8138,10 @@ export type CostCalculatorEmployment = {
    */
   has_extra_statutory_payment: boolean;
   /**
+   * Whether this country has a fringe benefits tax on employer-paid benefit premiums (e.g. New Zealand).
+   */
+  has_fringe_benefits_tax?: boolean;
+  /**
    * The minimum number of business days required to onboard an employee in this country. Null if not determined.
    */
   minimum_onboarding_time: number | null;
@@ -7724,9 +8298,29 @@ export type PersonalDetails = {
   preferred_name?: string | null;
   preferred_pronouns?: string | null;
   recovery_number?: string | null;
+  /**
+   * Names of fields redacted because the caller lacks the required attribute permission
+   */
+  redacted_fields?: Array<string>;
   sex?: string | null;
   surname?: string | null;
   title?: 'mr' | 'mrs' | 'miss' | 'ms' | 'mx';
+};
+
+/**
+ * EngagementAgreementDetailsFile
+ *
+ * A file attached to the engagement agreement details.
+ */
+export type EngagementAgreementDetailsFile = {
+  /**
+   * ID of the file. Send it back when upserting to keep the file.
+   */
+  id: string;
+  /**
+   * The file name, including its extension.
+   */
+  name: string;
 };
 
 /**
@@ -7760,7 +8354,7 @@ export type Slug = string;
 export type EmploymentEngagementAgreementDetailsResponse = {
   data: {
     /**
-     * EngagementAgreementDetailsParamsDEU
+     * EngagementAgreementDetailsDEU
      */
     details: {
       allowances_details?: Array<string> | null;
@@ -7768,9 +8362,7 @@ export type EmploymentEngagementAgreementDetailsResponse = {
       break_time_per_day?: number | null;
       business_expenses?: string | null;
       cba?: string | null;
-      cba_document?: {
-        [key: string]: unknown;
-      } | null;
+      cba_document?: Array<EngagementAgreementDetailsFile> | null;
       covenants?: Array<string> | null;
       has_allowances?: string | null;
       has_bonus?: string | null;
@@ -7819,7 +8411,7 @@ export type ListFilesResponse = {
      * The current page among all of the total_pages
      */
     current_page?: number;
-    files?: Array<File>;
+    files?: Array<EmploymentFile>;
     /**
      * The total number of records in the result
      */
@@ -7923,13 +8515,15 @@ export type EmployeeStats = {
  */
 export type PayItemParams = {
   /**
-   * Duration in seconds
+   * Value of the pay item. Its unit depends on the `type` of the pay code (see GET /v1/companies/:company_id/legal-entities/:legal_entity_id/pay-codes): `amount` in cents, `percentage` in basis points, `unit` as a raw count, `hours` as a whole number of hours, `duration` in seconds. Must be non-zero; negative values are allowed for corrections.
+   *
    */
   amount: number;
   /**
-   * Pay item type code
+   * Pay item type code. Mutually exclusive with `external_import_code` — provide exactly one.
    */
-  code: string;
+  code?: string;
+  currency?: CurrencyCode;
   /**
    * Working day date (YYYY-MM-DD)
    */
@@ -7937,7 +8531,11 @@ export type PayItemParams = {
   /**
    * Employment UUID. Only Global Payroll employments are supported.
    */
-  employment_id: UuidSlug;
+  employment_id: string;
+  /**
+   * Partner-defined pay element identifier, as configured on the legal entity pay element. Mutually exclusive with `code` — provide exactly one.
+   */
+  external_import_code?: string;
   provider_data?: PayItemProviderData;
 };
 
@@ -8430,7 +9028,60 @@ export type Resignation = {
  */
 export type EmployeeLeavePolicy = {
   description: string | null;
-  leave_type: TimeoffType;
+  /**
+   * The ID of the leave policy variant
+   */
+  leave_policy_variant_id:
+    | string
+    | 'time_off'
+    | 'sick_leave'
+    | 'public_holiday'
+    | 'unpaid_leave'
+    | 'extended_leave'
+    | 'in_lieu_time'
+    | 'maternity_leave'
+    | 'paternity_leave'
+    | 'parental_leave'
+    | 'bereavement'
+    | 'military_leave'
+    | 'other'
+    | 'paid_time_off'
+    | 'custom_company_leave'
+    | 'rtt'
+    | 'casual_leave'
+    | 'rol'
+    | 'ex_festivita'
+    | 'civic_duty'
+    | 'adoption'
+    | 'caregiver'
+    | 'transfer'
+    | 'exam'
+    | 'monkhood'
+    | 'marriage'
+    | 'sterilization'
+    | 'celebration'
+    | 'blood_donation'
+    | 'health_day'
+    | 'special'
+    | 'career'
+    | 'study'
+    | 'voluntary'
+    | 'adv'
+    | 'public_duties'
+    | 'force_majeure'
+    | 'medical_visits'
+    | 'marriage_child'
+    | 'breastfeeding'
+    | 'maternity_paid'
+    | 'maternity_unpaid'
+    | 'paternity_paid'
+    | 'paternity_unpaid'
+    | 'pregnancy_leave'
+    | 'business_trip_eu'
+    | 'business_trip_non_eu'
+    | 'training'
+    | 'sustainable_employability';
+  leave_type: ResponseTimeoffType;
   name: string;
   unit: 'days' | 'hours' | 'unlimited';
 };
@@ -8569,6 +9220,15 @@ export type ListWorkAuthorizationRequestsResponse = {
  */
 export type ImportJobRowsResponse = {
   data: {
+    /**
+     * Per-column error and valid row counts across all rows, keyed by the column's field path
+     */
+    counts_by_column?: {
+      [key: string]: {
+        error: number;
+        valid: number;
+      };
+    };
     counts_by_status: {
       deleted: number;
       error: number;
@@ -8667,7 +9327,7 @@ export type LeavePolicy = {
    * The unique identifier (slug) of the specific policy variant.
    */
   leave_policy_variant_slug: string;
-  leave_type: TimeoffType;
+  leave_type: ResponseTimeoffType;
   /**
    * The display name of the leave policy (e.g., "Self-Care", "Annual Leave").
    */
@@ -8704,6 +9364,10 @@ export type CompanyLegalEntity = {
  * CompanyManager
  */
 export type CompanyManager = {
+  /**
+   * The legal entities this manager is a billing contact for.
+   */
+  billing_contacts: Array<CompanyManagerBillingContactStatus>;
   /**
    * Company ID
    */
@@ -9004,7 +9668,7 @@ export type AccountsMinimalCompanyAdmin = {
  */
 export type PayItemBulkCreateFailures = {
   /**
-   * Failure reason. Includes `employment_not_global_payroll` when the provided employment is not Global Payroll.
+   * Failure reason. Includes `employment_not_global_payroll` when the provided employment is not Global Payroll, and `pay_item_code_not_allowed` / `pay_item_external_import_code_not_allowed` when the given identifier does not resolve to an allowed pay element.
    */
   error?: string | UnprocessableEntityResponse;
   row_number?: number;
@@ -9095,6 +9759,53 @@ export type TimeoffEntitlement = {
     | 'additional_pto'
     | 'transfer_pto'
     | 'annual_paid_timeoff';
+};
+
+/**
+ * DirectOffboarding
+ *
+ * A Global Payroll employment's offboarding record.
+ */
+export type DirectOffboarding = {
+  /**
+   * The unique identifier (UUID) of the employment being offboarded.
+   */
+  employment_id: string;
+  /**
+   * The unique identifier (UUID) of the offboarding.
+   */
+  id: string;
+  /**
+   * Whether the termination is confidential.
+   */
+  is_confidential_termination: boolean | null;
+  /**
+   * Last working day of the employee.
+   */
+  last_working_day?: string | null;
+  /**
+   * The current status of the offboarding.
+   */
+  status:
+    | 'submitted'
+    | 'in_review'
+    | 'rejected'
+    | 'pending_payment_details'
+    | 'pending_payment'
+    | 'completed';
+  /**
+   * Date when the employment terminates.
+   */
+  termination_date?: string | null;
+  /**
+   * The type of offboarding.
+   */
+  type:
+    | 'termination'
+    | 'resignation'
+    | 'mutual_agreement'
+    | 'retirement'
+    | 'end_of_contract';
 };
 
 /**
@@ -9577,6 +10288,15 @@ export type WebhookCallback = {
 export type MaybeAccountsAccount = AccountsAccount | null;
 
 /**
+ * SandboxContractorRateResponse
+ *
+ * The contractor rate that was seeded.
+ */
+export type SandboxContractorRateResponse = {
+  data: ContractorRate;
+};
+
+/**
  * TimeoffDay
  *
  * A single day within a time off request, specifying the date and the number of hours taken off that day.
@@ -9716,8 +10436,10 @@ export type AccountsUser =
   | MinimalUser
   | {
       account?: AccountsAccount | null;
+      assigned_roles?: AccountsAssignedRoles;
       integration_users?: Array<AccountUserIntegrationUser>;
       invited_by?: AccountsMinimalCompanyAdmin | null;
+      job_title?: string | null;
       login_synced_with?: AccountsLoginSyncedWith;
       raw_email?: string;
       role?:
@@ -10171,12 +10893,14 @@ export type EmploymentJobResponse = {
  */
 export type ContractorInvoiceScheduleCreateResponseFailure = {
   currency: CurrencyCode;
+  custom_days?: ContractorInvoiceScheduleCustomDays;
   /**
    * Employment identifier
    */
   employment_id: string;
   errors: {
     currency?: Array<string>;
+    custom_days?: Array<string>;
     employment_id?: Array<string>;
     items?: Array<{
       amount?: Array<string>;
@@ -10197,7 +10921,13 @@ export type ContractorInvoiceScheduleCreateResponseFailure = {
    */
   note?: string;
   /**
-   * Count of invoices that should be generated during schedule lifetime.
+   * Count of invoices that should be generated during schedule lifetime. Omit for a
+   * schedule that repeats indefinitely.
+   *
+   * A one-off invoice is expressed as `nr_occurrences: 1` — there is no `one_time`
+   * periodicity. Pair it with any `periodicity` (`monthly` is conventional); the schedule
+   * completes after its single invoice, so the cadence never applies.
+   *
    */
   nr_occurrences?: number;
   /**
@@ -10353,6 +11083,28 @@ export type WorkAuthorizationUser = {
    */
   name: string;
 } | null;
+
+/**
+ * PreviewContractorInvoiceParams
+ *
+ * Payload shape used to preview a contractor invoice before it's created.
+ */
+export type PreviewContractorInvoiceParams = {
+  currency: CurrencyCode;
+  /**
+   * List of invoice items that composes the overall invoice amount.
+   */
+  items: Array<ContractorInvoiceScheduleItem>;
+  /**
+   * Custom defined note.
+   */
+  note?: string | null;
+  /**
+   * Invoice identifier.
+   */
+  number?: string | null;
+  start_date: Date;
+};
 
 /**
  * SignContractDocument
@@ -10998,6 +11750,17 @@ export type EmploymentBasicInformationParams = {
 };
 
 /**
+ * ListContractorRatesResponse
+ *
+ * Response listing the rates configured for a contractor.
+ */
+export type ListContractorRatesResponse = {
+  data: {
+    rates: Array<ContractorRate>;
+  };
+};
+
+/**
  * Date
  *
  * UTC date in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format
@@ -11056,9 +11819,9 @@ export type IntegrationsScimUser = {
    */
   active: boolean;
   /**
-   * Identifies the name of a department (Enterprise User extension)
+   * The name to display for the user
    */
-  department?: string;
+  displayName?: string;
   emails: Array<{
     /**
      * Whether this is the primary email
@@ -11074,30 +11837,9 @@ export type IntegrationsScimUser = {
     value: string;
   }>;
   /**
-   * Numeric or alphanumeric identifier assigned to a person (Enterprise User extension)
-   */
-  employeeNumber?: string;
-  /**
    * Unique identifier for the user
    */
   id: string;
-  /**
-   * The user's manager (Enterprise User extension)
-   */
-  manager?: {
-    /**
-     * The URI of the SCIM resource representing the user's manager
-     */
-    $ref?: string;
-    /**
-     * The displayName of the user's manager
-     */
-    displayName?: string;
-    /**
-     * The id of the SCIM resource representing the user's manager
-     */
-    value?: string;
-  };
   meta?: {
     /**
      * Creation timestamp
@@ -11125,11 +11867,49 @@ export type IntegrationsScimUser = {
      * First name
      */
     givenName: string;
+    /**
+     * Salutation, e.g. 'Ms', 'Mr'
+     */
+    honorificPrefix?: string;
   };
+  /**
+   * The casual/preferred name for the user
+   */
+  nickName?: string;
   /**
    * SCIM schema identifiers
    */
   schemas: Array<string>;
+  /**
+   * Enterprise User extension attributes (RFC 7643 §4.3)
+   */
+  'urn:ietf:params:scim:schemas:extension:enterprise:2.0:User'?: {
+    /**
+     * Identifies the name of a department
+     */
+    department?: string;
+    /**
+     * Numeric or alphanumeric identifier assigned to a person
+     */
+    employeeNumber?: string | null;
+    /**
+     * The user's manager
+     */
+    manager?: {
+      /**
+       * The URI of the SCIM resource representing the user's manager
+       */
+      $ref?: string;
+      /**
+       * The displayName of the user's manager
+       */
+      displayName?: string;
+      /**
+       * The id of the SCIM resource representing the user's manager
+       */
+      value?: string;
+    };
+  };
   /**
    * Username for the user
    */
@@ -11262,7 +12042,7 @@ export type ProbationCompletionLetterFile = {
    */
   sub_type?: string | null;
   /**
-   * The broad category of the file (e.g., "id", "contract", "tax_form").
+   * The broad category of the file (e.g., "id", "contract", "tax_document").
    */
   type: string;
 } | null;
@@ -11512,6 +12292,8 @@ export type PayslipItem = {
 
 /**
  * TimeoffType
+ *
+ * The type of leave accepted when creating or updating a time off record.
  */
 export type TimeoffType =
   | 'time_off'
@@ -11590,6 +12372,20 @@ export type ProbationExtensionResponse = {
 };
 
 /**
+ * ContractorInvoicePreviewResponse
+ *
+ * Returns a base64 encoded Contractor Invoice preview document.
+ */
+export type ContractorInvoicePreviewResponse = {
+  data: {
+    contractor_invoice_preview: {
+      content: Blob | File;
+      name: string;
+    };
+  };
+};
+
+/**
  * Decimal
  *
  * A decimal number represented as a string to preserve precision. Supports negative values and fractional digits.
@@ -11664,7 +12460,8 @@ export type BackgroundChecksBackgroundCheck = {
     | 'needs_review'
     | 'complete'
     | 'rejected'
-    | 'canceled';
+    | 'canceled'
+    | 'submission_failed';
 };
 
 /**
@@ -11768,6 +12565,40 @@ export type EmploymentStateTaxesParams = {
   state_taxes: {
     [key: string]: unknown;
   };
+};
+
+/**
+ * ContractorInvoiceScheduleCustomDays
+ *
+ * The two calendar days of the month on which invoices are generated. Only applies when
+ * `periodicity` is `semi_monthly`; must be omitted (or `null`) for every other periodicity.
+ *
+ * When omitted for a `semi_monthly` schedule, the two days are derived from `start_date`:
+ * the start day and the day 14 days apart from it. Supply this field only to pick a cycle
+ * other than that default.
+ *
+ * One of the two days must be the day of `start_date`, the days must be distinct, and they
+ * cannot resolve to the same day within a month.
+ *
+ */
+export type ContractorInvoiceScheduleCustomDays = [number, number] | null;
+
+/**
+ * CompanyManagerBillingContactStatus
+ */
+export type CompanyManagerBillingContactStatus = {
+  /**
+   * Whether this manager will become the primary billing contact once they have an active login
+   */
+  is_pending_primary_billing_contact: boolean;
+  /**
+   * Whether this manager is the primary billing contact for the legal entity
+   */
+  is_primary_billing_contact: boolean;
+  /**
+   * Slug of the legal entity
+   */
+  legal_entity_slug: string;
 };
 
 /**
@@ -12019,7 +12850,7 @@ export type Timeoff = {
   id: string;
   leave_policy: LeavePolicy;
   /**
-   * UUID of the custom company leave policy variant associated with this time off. Null for standard leave types.
+   * Identifier of the leave policy this time off was booked against. For employments on the leave-type model this is the leave type's UUID, the same value `GET /leave-policies/details/{employment_id}` returns and `POST /timeoff` accepts. Otherwise it is the UUID of the custom company leave policy variant, and is null for standard leave types.
    */
   leave_policy_variant_id?: string | null;
   /**
@@ -12052,7 +12883,7 @@ export type Timeoff = {
    * The individual days and hours within this time off period.
    */
   timeoff_days: Array<TimeoffDay>;
-  timeoff_type: TimeoffType;
+  timeoff_type: ResponseTimeoffType;
   timezone: Timezone;
   /**
    * The total number of minutes taken off across all `timeoff_days`. Always equals the sum of the per-day `minutes` values.
@@ -12094,7 +12925,7 @@ export type Email = {
   confirmed_at?: NullableDateTime;
   login_synced?: boolean;
   status?: 'pending' | 'confirmed' | 'deleted';
-  type?: 'login' | 'personal';
+  type?: 'login' | 'personal' | 'work';
   unconfirmed_address?: string | null;
 };
 
@@ -12105,6 +12936,26 @@ export type Email = {
  */
 export type ApproveTimeoffParams = {
   approver_id: NullableApproverId;
+};
+
+/**
+ * SandboxCreateContractorRateParams
+ *
+ * Parameters for seeding a contractor rate in Sandbox.
+ */
+export type SandboxCreateContractorRateParams = {
+  /**
+   * The amount paid per `type`, in the major unit, e.g. 103.83.
+   */
+  amount: string;
+  /**
+   * How often the contractor is paid. Must be null or omitted for a `one_off` rate.
+   */
+  pay_frequency?: 'weekly' | 'bi_weekly' | 'semi_monthly' | 'monthly';
+  /**
+   * The unit the amount is paid per.
+   */
+  type: 'hourly' | 'daily' | 'weekly' | 'monthly' | 'one_off';
 };
 
 /**
@@ -12150,6 +13001,15 @@ export type EmploymentCreateParams = {
    */
   external_id?: string;
   /**
+   * A reference code for the employment record in the calling integration's own system.
+   * Private to that integration — no other integration can read or overwrite it.
+   * Omit the field to leave the value unchanged; send `null` to clear it. Surrounding
+   * whitespace is trimmed off. It can be set at any employment status, and the same
+   * value may be used on several employments (for example a rehire).
+   *
+   */
+  partner_external_id?: string | null;
+  /**
    * If not provided, it will default to `employee`.
    */
   type?: 'employee' | 'contractor' | 'global_payroll_employee' | 'hris';
@@ -12176,9 +13036,7 @@ export type EmploymentEngagementAgreementDetailsParams = {
     break_time_per_day?: number | null;
     business_expenses?: string | null;
     cba?: string | null;
-    cba_document?: {
-      [key: string]: unknown;
-    } | null;
+    cba_document?: Array<EngagementAgreementDetailsFileParams> | null;
     covenants?: Array<string> | null;
     has_allowances?: string | null;
     has_bonus?: string | null;
@@ -12335,20 +13193,6 @@ export type ContractorInvoiceScheduleItem = {
 };
 
 /**
- * ContractorInvoicePreviewResponse
- *
- * Returns a base64 encoded Contractor Invoice preview document.
- */
-export type ContractorInvoicePreviewResponse = {
-  data: {
-    contractor_invoice_preview: {
-      content: Blob | File;
-      name: string;
-    };
-  };
-};
-
-/**
  * ForbiddenResponse
  *
  * Returned when the authenticated user or token does not have permission to perform the requested action. Check that the token has the required OAuth2 scopes and that the user has the necessary role.
@@ -12448,6 +13292,16 @@ export type EmploymentPersonalDetailsParams = {
 };
 
 /**
+ * CompanyManagerUpdateParams
+ */
+export type CompanyManagerUpdateParams = {
+  /**
+   * The legal entities to assign or unassign this manager as billing contact for.
+   */
+  billing_contact_for: Array<CompanyManagerBillingContact>;
+};
+
+/**
  * CompanyCreationConflictErrorResponse
  */
 export type CompanyCreationConflictErrorResponse = {
@@ -12492,6 +13346,10 @@ export type EmploymentDetailsOnlyResponse = {
       }>;
       /**
        * Basic information. Its properties may vary depending on the country.
+       *
+       * When present, `login_email` indicates which address the employee logs in with:
+       * `"personal"` or `"work"`.
+       *
        */
       basic_information?: {
         [key: string]: unknown;
@@ -12915,7 +13773,7 @@ export type FindOrCreatePreOnboardingDocumentParams = {
   /**
    * Slug of the pre-onboarding document requirement to fulfil. Obtain this from the `GET .../pre-onboarding-document-requirements` endpoint.
    */
-  pre_onboarding_document_requirement_slug: UuidSlug;
+  pre_onboarding_document_requirement_slug: string;
 };
 
 /**
@@ -12947,6 +13805,7 @@ export type CreateContractDocumentResponse = {
  */
 export type ContractorInvoiceScheduleCreateResponseSuccess = {
   currency: CurrencyCode;
+  custom_days?: ContractorInvoiceScheduleCustomDays;
   /**
    * Employment identifier
    */
@@ -12961,7 +13820,13 @@ export type ContractorInvoiceScheduleCreateResponseSuccess = {
    */
   note?: string;
   /**
-   * Count of invoices that should be generated during schedule lifetime.
+   * Count of invoices that should be generated during schedule lifetime. Omit for a
+   * schedule that repeats indefinitely.
+   *
+   * A one-off invoice is expressed as `nr_occurrences: 1` — there is no `one_time`
+   * periodicity. Pair it with any `periodicity` (`monthly` is conventional); the schedule
+   * completes after its single invoice, so the cadence never applies.
+   *
    */
   nr_occurrences?: number;
   /**
@@ -13851,6 +14716,12 @@ export type GetV1EmploymentsData = {
      */
     email?: string;
     /**
+     * Filters the results by the employee's name. Each whitespace-separated word is matched
+     * partially, ignoring casing and accents, so `grace hop` matches "Gráce Brewster Murray Hopper".
+     *
+     */
+    name?: string;
+    /**
      * Filters the results by employments whose status matches the value.
      * Supports multiple values separated by commas.
      * Also supports the value `incomplete` to get all employments that are not onboarded yet.
@@ -13871,6 +14742,14 @@ export type GetV1EmploymentsData = {
      * Filters the results by the employment's short ID. Returns at most one result.
      */
     short_id?: string;
+    /**
+     * Filters the results by the `partner_external_id` value the calling integration holds
+     * for the employment; another integration's identifiers are never matched. Matching is
+     * exact, including case. The same value may be set on several employments (for example
+     * a rehire), so several results may be returned.
+     *
+     */
+    partner_external_id?: string;
     /**
      * Starts fetching records after the given page
      */
@@ -14592,6 +15471,66 @@ export type GetV1CompaniesSchemaResponses = {
 export type GetV1CompaniesSchemaResponse =
   GetV1CompaniesSchemaResponses[keyof GetV1CompaniesSchemaResponses];
 
+export type PostV1SandboxContractorsEmploymentsEmploymentIdRatesData = {
+  /**
+   * Contractor rate params
+   */
+  body: SandboxCreateContractorRateParams;
+  headers: {
+    /**
+     * Requires a Company-scoped access token obtained through the Authorization Code flow or the Refresh Token flow.
+     *
+     * The refresh token needs to have been obtained through the Authorization Code flow.
+     *
+     */
+    Authorization: string;
+  };
+  path: {
+    /**
+     * Contractor employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/contractors/employments/{employment_id}/rates';
+};
+
+export type PostV1SandboxContractorsEmploymentsEmploymentIdRatesErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostV1SandboxContractorsEmploymentsEmploymentIdRatesError =
+  PostV1SandboxContractorsEmploymentsEmploymentIdRatesErrors[keyof PostV1SandboxContractorsEmploymentsEmploymentIdRatesErrors];
+
+export type PostV1SandboxContractorsEmploymentsEmploymentIdRatesResponses = {
+  /**
+   * Created
+   */
+  201: SandboxContractorRateResponse;
+};
+
+export type PostV1SandboxContractorsEmploymentsEmploymentIdRatesResponse =
+  PostV1SandboxContractorsEmploymentsEmploymentIdRatesResponses[keyof PostV1SandboxContractorsEmploymentsEmploymentIdRatesResponses];
+
 export type GetV1EmploymentsEmploymentIdBenefitOffersData = {
   body?: never;
   path: {
@@ -14823,6 +15762,54 @@ export type GetV1EmployeePayslipsResponses = {
 
 export type GetV1EmployeePayslipsResponse =
   GetV1EmployeePayslipsResponses[keyof GetV1EmployeePayslipsResponses];
+
+export type GetV1ContractorsEmploymentsEmploymentIdRatesData = {
+  body?: never;
+  path: {
+    /**
+     * Contractor employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/contractors/employments/{employment_id}/rates';
+};
+
+export type GetV1ContractorsEmploymentsEmploymentIdRatesErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV1ContractorsEmploymentsEmploymentIdRatesError =
+  GetV1ContractorsEmploymentsEmploymentIdRatesErrors[keyof GetV1ContractorsEmploymentsEmploymentIdRatesErrors];
+
+export type GetV1ContractorsEmploymentsEmploymentIdRatesResponses = {
+  /**
+   * Success
+   */
+  200: ListContractorRatesResponse;
+};
+
+export type GetV1ContractorsEmploymentsEmploymentIdRatesResponse =
+  GetV1ContractorsEmploymentsEmploymentIdRatesResponses[keyof GetV1ContractorsEmploymentsEmploymentIdRatesResponses];
 
 export type GetV1ContractorsCorTerminationRequestsData = {
   body?: never;
@@ -16101,6 +17088,42 @@ export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveRespo
 export type PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveResponse =
   PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveResponses[keyof PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveResponses];
 
+export type GetV1AdpUserAssignmentsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch.
+     */
+    eventUrl?: string;
+  };
+  url: '/v1/adp/user-assignments';
+};
+
+export type GetV1AdpUserAssignmentsErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetV1AdpUserAssignmentsError =
+  GetV1AdpUserAssignmentsErrors[keyof GetV1AdpUserAssignmentsErrors];
+
+export type GetV1AdpUserAssignmentsResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type GetV1AdpUserAssignmentsResponse =
+  GetV1AdpUserAssignmentsResponses[keyof GetV1AdpUserAssignmentsResponses];
+
 export type PostV1PayrollRunsPayrollRunIdGlReportsData = {
   /**
    * GL report type
@@ -16534,6 +17557,14 @@ export type GetV1IncentivesData = {
      * Filter by Recurring Incentive id
      */
     recurring_incentive_id?: string;
+    /**
+     * Filter by Incentive type. Defaults to all self-serve incentive types (the types
+     * creatable through this API) when omitted. Pass this explicitly (e.g. `severance`)
+     * to also retrieve types that are entered outside of self-serve, such as severance.
+     * Pass `all` to retrieve every incentive type, including those types.
+     *
+     */
+    type?: string;
     /**
      * Starts fetching records after the given page
      */
@@ -16999,6 +18030,54 @@ export type PostV1CostCalculatorEstimationPdfResponses = {
 
 export type PostV1CostCalculatorEstimationPdfResponse =
   PostV1CostCalculatorEstimationPdfResponses[keyof PostV1CostCalculatorEstimationPdfResponses];
+
+export type GetV1EmploymentsBulkData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Company ID
+     */
+    company_id?: string;
+    /**
+     * Opaque pagination cursor returned as `next_cursor` from a previous page.
+     */
+    cursor?: string;
+    /**
+     * Number of employments to return per page (max 100, default 50).
+     */
+    limit?: number;
+  };
+  url: '/v1/employments/bulk';
+};
+
+export type GetV1EmploymentsBulkErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type GetV1EmploymentsBulkError =
+  GetV1EmploymentsBulkErrors[keyof GetV1EmploymentsBulkErrors];
+
+export type GetV1EmploymentsBulkResponses = {
+  /**
+   * Success
+   */
+  200: EmploymentsBulkResponse;
+};
+
+export type GetV1EmploymentsBulkResponse =
+  GetV1EmploymentsBulkResponses[keyof GetV1EmploymentsBulkResponses];
 
 export type GetV1EmploymentsEmploymentIdCostCenterAllocationsData = {
   body?: never;
@@ -17980,6 +19059,42 @@ export type PutV1EmploymentsEmploymentIdFederalTaxesResponses = {
 export type PutV1EmploymentsEmploymentIdFederalTaxesResponse =
   PutV1EmploymentsEmploymentIdFederalTaxesResponses[keyof PutV1EmploymentsEmploymentIdFederalTaxesResponses];
 
+export type GetV1AdpSubscriptionChangesData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch.
+     */
+    eventUrl?: string;
+  };
+  url: '/v1/adp/subscription-changes';
+};
+
+export type GetV1AdpSubscriptionChangesErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetV1AdpSubscriptionChangesError =
+  GetV1AdpSubscriptionChangesErrors[keyof GetV1AdpSubscriptionChangesErrors];
+
+export type GetV1AdpSubscriptionChangesResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type GetV1AdpSubscriptionChangesResponse =
+  GetV1AdpSubscriptionChangesResponses[keyof GetV1AdpSubscriptionChangesResponses];
+
 export type GetV1ContractAmendmentsData = {
   body?: never;
   headers: {
@@ -18421,7 +19536,22 @@ export type PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequ
        */
       requirement_slug: string;
     };
-    query?: never;
+    query?: {
+      /**
+       * When `true`, skips the email that asks the company signatory to sign the
+       * newly created document. Signature reminders are still sent while the
+       * document remains unsigned.
+       *
+       * The company signatory is the authenticated user when they are allowed to
+       * sign, otherwise the company's legal representative or owner. This parameter
+       * only takes effect when the signatory is the authenticated user, who is about
+       * to sign the document themselves. When the signatory is someone else, they
+       * are emailed right away as usual, since they still need to know about the
+       * document.
+       *
+       */
+      skip_initial_signature_email?: boolean;
+    };
     url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-requirements/{requirement_slug}/documents';
   };
 
@@ -19965,6 +21095,88 @@ export type GetV1EmploymentsEmploymentIdBenefitOffersSchemaResponses = {
 export type GetV1EmploymentsEmploymentIdBenefitOffersSchemaResponse =
   GetV1EmploymentsEmploymentIdBenefitOffersSchemaResponses[keyof GetV1EmploymentsEmploymentIdBenefitOffersSchemaResponses];
 
+export type PostV1JobTitleScreeningsData = {
+  /**
+   * Job title screening params
+   */
+  body?: CreateJobTitleScreeningParams;
+  path?: never;
+  query?: never;
+  url: '/v1/job-title-screenings';
+};
+
+export type PostV1JobTitleScreeningsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostV1JobTitleScreeningsError =
+  PostV1JobTitleScreeningsErrors[keyof PostV1JobTitleScreeningsErrors];
+
+export type PostV1JobTitleScreeningsResponses = {
+  /**
+   * Accepted
+   */
+  202: JobTitleScreeningResponse;
+};
+
+export type PostV1JobTitleScreeningsResponse =
+  PostV1JobTitleScreeningsResponses[keyof PostV1JobTitleScreeningsResponses];
+
+export type GetV1JobTitleScreeningsIdData = {
+  body?: never;
+  path: {
+    /**
+     * Job title screening id
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/v1/job-title-screenings/{id}';
+};
+
+export type GetV1JobTitleScreeningsIdErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+};
+
+export type GetV1JobTitleScreeningsIdError =
+  GetV1JobTitleScreeningsIdErrors[keyof GetV1JobTitleScreeningsIdErrors];
+
+export type GetV1JobTitleScreeningsIdResponses = {
+  /**
+   * Success
+   */
+  200: JobTitleScreeningResponse;
+};
+
+export type GetV1JobTitleScreeningsIdResponse =
+  GetV1JobTitleScreeningsIdResponses[keyof GetV1JobTitleScreeningsIdResponses];
+
 export type PostV1ContractorsEligibilityQuestionnaireData = {
   /**
    * Eligibility questionnaire submission
@@ -20202,7 +21414,7 @@ export type GetV1EmploymentsEmploymentIdData = {
   };
   query?: {
     /**
-     * Wether files should be excluded
+     * Whether files should be excluded
      */
     exclude_files?: boolean;
   };
@@ -21526,52 +22738,41 @@ export type PostV1EmploymentsEmploymentIdContractOriginResponses = {
 export type PostV1EmploymentsEmploymentIdContractOriginResponse =
   PostV1EmploymentsEmploymentIdContractOriginResponses[keyof PostV1EmploymentsEmploymentIdContractOriginResponses];
 
-export type PostV1EmploymentsEmploymentIdContractorInvoicesPreviewData = {
-  /**
-   * Preview parameters
-   */
-  body: PreviewContractorInvoiceParams;
-  path: {
+export type GetV1AdpSubscriptionOrdersData = {
+  body?: never;
+  path?: never;
+  query?: {
     /**
-     * Employment identifier
+     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch.
      */
-    employment_id: UuidSlug;
+    eventUrl?: string;
   };
-  query?: never;
-  url: '/v1/employments/{employment_id}/contractor-invoices/preview';
+  url: '/v1/adp/subscription-orders';
 };
 
-export type PostV1EmploymentsEmploymentIdContractorInvoicesPreviewErrors = {
+export type GetV1AdpSubscriptionOrdersErrors = {
   /**
    * Unauthorized
    */
   401: UnauthorizedResponse;
-  /**
-   * Forbidden
-   */
-  403: ForbiddenResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
   /**
    * Unprocessable Entity
    */
   422: UnprocessableEntityResponse;
 };
 
-export type PostV1EmploymentsEmploymentIdContractorInvoicesPreviewError =
-  PostV1EmploymentsEmploymentIdContractorInvoicesPreviewErrors[keyof PostV1EmploymentsEmploymentIdContractorInvoicesPreviewErrors];
+export type GetV1AdpSubscriptionOrdersError =
+  GetV1AdpSubscriptionOrdersErrors[keyof GetV1AdpSubscriptionOrdersErrors];
 
-export type PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponses = {
+export type GetV1AdpSubscriptionOrdersResponses = {
   /**
    * Success
    */
-  200: ContractorInvoicePreviewResponse;
+  200: SuccessResponse;
 };
 
-export type PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponse =
-  PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponses[keyof PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponses];
+export type GetV1AdpSubscriptionOrdersResponse =
+  GetV1AdpSubscriptionOrdersResponses[keyof GetV1AdpSubscriptionOrdersResponses];
 
 export type GetV1TimeoffTypesData = {
   body?: never;
@@ -22012,6 +23213,117 @@ export type GetV1PayslipsPayslipIdPdfResponses = {
 
 export type GetV1PayslipsPayslipIdPdfResponse =
   GetV1PayslipsPayslipIdPdfResponses[keyof GetV1PayslipsPayslipIdPdfResponses];
+
+export type DeleteV1PayItemsIdData = {
+  body?: never;
+  path: {
+    /**
+     * Pay item ID
+     */
+    id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/pay-items/{id}';
+};
+
+export type DeleteV1PayItemsIdErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type DeleteV1PayItemsIdError =
+  DeleteV1PayItemsIdErrors[keyof DeleteV1PayItemsIdErrors];
+
+export type DeleteV1PayItemsIdResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type DeleteV1PayItemsIdResponse =
+  DeleteV1PayItemsIdResponses[keyof DeleteV1PayItemsIdResponses];
+
+export type PatchV1PayItemsIdData = {
+  /**
+   * Pay Item
+   */
+  body: UpdatePayItemParams;
+  path: {
+    /**
+     * Pay item ID
+     */
+    id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/pay-items/{id}';
+};
+
+export type PatchV1PayItemsIdErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Conflict
+   */
+  409: ConflictResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PatchV1PayItemsIdError =
+  PatchV1PayItemsIdErrors[keyof PatchV1PayItemsIdErrors];
+
+export type PatchV1PayItemsIdResponses = {
+  /**
+   * Success
+   */
+  200: PayItemResponse;
+};
+
+export type PatchV1PayItemsIdResponse =
+  PatchV1PayItemsIdResponses[keyof PatchV1PayItemsIdResponses];
 
 export type PostV1CurrencyConverterEffectiveData = {
   /**
@@ -22483,6 +23795,10 @@ export type GetV1CustomFieldsData = {
   body?: never;
   path?: never;
   query?: {
+    /**
+     * The company to list definitions for. Send it whenever you know which company you mean. Requests that don't resolve to a company fail with "Company not found".
+     */
+    company_id?: string;
     /**
      * Starts fetching records after the given page
      */
@@ -23345,6 +24661,42 @@ export type GetV1EmploymentsEmploymentIdOnboardingStepsResponses = {
 
 export type GetV1EmploymentsEmploymentIdOnboardingStepsResponse =
   GetV1EmploymentsEmploymentIdOnboardingStepsResponses[keyof GetV1EmploymentsEmploymentIdOnboardingStepsResponses];
+
+export type GetV1AdpSubscriptionStatusData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch.
+     */
+    eventUrl?: string;
+  };
+  url: '/v1/adp/subscription-status';
+};
+
+export type GetV1AdpSubscriptionStatusErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetV1AdpSubscriptionStatusError =
+  GetV1AdpSubscriptionStatusErrors[keyof GetV1AdpSubscriptionStatusErrors];
+
+export type GetV1AdpSubscriptionStatusResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type GetV1AdpSubscriptionStatusResponse =
+  GetV1AdpSubscriptionStatusResponses[keyof GetV1AdpSubscriptionStatusResponses];
 
 export type GetV1EmployeeCurrentData = {
   body?: never;
@@ -24421,6 +25773,42 @@ export type GetV1WorkAuthorizationRequestsResponses = {
 export type GetV1WorkAuthorizationRequestsResponse =
   GetV1WorkAuthorizationRequestsResponses[keyof GetV1WorkAuthorizationRequestsResponses];
 
+export type GetV1AdpUserUnassignmentsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch.
+     */
+    eventUrl?: string;
+  };
+  url: '/v1/adp/user-unassignments';
+};
+
+export type GetV1AdpUserUnassignmentsErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetV1AdpUserUnassignmentsError =
+  GetV1AdpUserUnassignmentsErrors[keyof GetV1AdpUserUnassignmentsErrors];
+
+export type GetV1AdpUserUnassignmentsResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type GetV1AdpUserUnassignmentsResponse =
+  GetV1AdpUserUnassignmentsResponses[keyof GetV1AdpUserUnassignmentsResponses];
+
 export type GetV1BulkEmploymentJobsJobIdData = {
   body?: never;
   path: {
@@ -24523,6 +25911,62 @@ export type GetV1PayItemsResponses = {
 
 export type GetV1PayItemsResponse =
   GetV1PayItemsResponses[keyof GetV1PayItemsResponses];
+
+export type GetV1DirectOffboardingsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Filter by employment ID
+     */
+    employment_id?: string;
+    /**
+     * Filter by employment model. Currently only 'global_payroll' is supported.
+     */
+    employment_model?: 'global_payroll';
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/direct-offboardings';
+};
+
+export type GetV1DirectOffboardingsErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetV1DirectOffboardingsError =
+  GetV1DirectOffboardingsErrors[keyof GetV1DirectOffboardingsErrors];
+
+export type GetV1DirectOffboardingsResponses = {
+  /**
+   * Success
+   */
+  200: ListDirectOffboardingResponse;
+};
+
+export type GetV1DirectOffboardingsResponse =
+  GetV1DirectOffboardingsResponses[keyof GetV1DirectOffboardingsResponses];
 
 export type GetV1BenefitOffersCountrySummariesData = {
   body?: never;
@@ -25249,9 +26693,9 @@ export type GetV1TimeoffData = {
      */
     employment_id?: string;
     /**
-     * Filter time off by its type
+     * Filter time off by its type. Accepts every value a time off record may carry.
      */
-    timeoff_type?: TimeoffType;
+    timeoff_type?: ResponseTimeoffType;
     /**
      * Filter time off by its status
      */
@@ -25895,6 +27339,53 @@ export type PostV1BulkEmploymentJobsResponses = {
 export type PostV1BulkEmploymentJobsResponse =
   PostV1BulkEmploymentJobsResponses[keyof PostV1BulkEmploymentJobsResponses];
 
+export type PostV1EmploymentsEmploymentIdContractorInvoicesPreviewData = {
+  /**
+   * Preview parameters
+   */
+  body: PreviewContractorInvoiceParams;
+  path: {
+    /**
+     * Employment identifier
+     */
+    employment_id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/employments/{employment_id}/contractor-invoices/preview';
+};
+
+export type PostV1EmploymentsEmploymentIdContractorInvoicesPreviewErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostV1EmploymentsEmploymentIdContractorInvoicesPreviewError =
+  PostV1EmploymentsEmploymentIdContractorInvoicesPreviewErrors[keyof PostV1EmploymentsEmploymentIdContractorInvoicesPreviewErrors];
+
+export type PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponses = {
+  /**
+   * Success
+   */
+  200: ContractorInvoicePreviewResponse;
+};
+
+export type PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponse =
+  PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponses[keyof PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponses];
+
 export type PostV1TimesheetsTimesheetIdSendBackData = {
   /**
    * SendBackTimesheetParams
@@ -26043,6 +27534,108 @@ export type GetV1CompanyManagersUserIdResponses = {
 export type GetV1CompanyManagersUserIdResponse =
   GetV1CompanyManagersUserIdResponses[keyof GetV1CompanyManagersUserIdResponses];
 
+export type PatchV1CompanyManagersUserId2Data = {
+  /**
+   * Company Manager billing contact params
+   */
+  body?: CompanyManagerUpdateParams;
+  path: {
+    /**
+     * User ID
+     */
+    user_id: string;
+  };
+  query?: never;
+  url: '/v1/company-managers/{user_id}';
+};
+
+export type PatchV1CompanyManagersUserId2Errors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PatchV1CompanyManagersUserId2Error =
+  PatchV1CompanyManagersUserId2Errors[keyof PatchV1CompanyManagersUserId2Errors];
+
+export type PatchV1CompanyManagersUserId2Responses = {
+  /**
+   * Success
+   */
+  200: CompanyManagerResponse;
+};
+
+export type PatchV1CompanyManagersUserId2Response =
+  PatchV1CompanyManagersUserId2Responses[keyof PatchV1CompanyManagersUserId2Responses];
+
+export type PatchV1CompanyManagersUserIdData = {
+  /**
+   * Company Manager billing contact params
+   */
+  body?: CompanyManagerUpdateParams;
+  path: {
+    /**
+     * User ID
+     */
+    user_id: string;
+  };
+  query?: never;
+  url: '/v1/company-managers/{user_id}';
+};
+
+export type PatchV1CompanyManagersUserIdErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PatchV1CompanyManagersUserIdError =
+  PatchV1CompanyManagersUserIdErrors[keyof PatchV1CompanyManagersUserIdErrors];
+
+export type PatchV1CompanyManagersUserIdResponses = {
+  /**
+   * Success
+   */
+  200: CompanyManagerResponse;
+};
+
+export type PatchV1CompanyManagersUserIdResponse =
+  PatchV1CompanyManagersUserIdResponses[keyof PatchV1CompanyManagersUserIdResponses];
+
 export type PutV1EmploymentsEmploymentIdPersonalDetailsData = {
   /**
    * Employment personal details params
@@ -26170,6 +27763,42 @@ export type PostV1EmployeeExpensesResponses = {
 
 export type PostV1EmployeeExpensesResponse =
   PostV1EmployeeExpensesResponses[keyof PostV1EmployeeExpensesResponses];
+
+export type GetV1AdpSubscriptionCancellationsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * URL ADP provides to fetch the event payload from. Absent for ADP's own connectivity/test calls, which are acked without a fetch.
+     */
+    eventUrl?: string;
+  };
+  url: '/v1/adp/subscription-cancellations';
+};
+
+export type GetV1AdpSubscriptionCancellationsErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetV1AdpSubscriptionCancellationsError =
+  GetV1AdpSubscriptionCancellationsErrors[keyof GetV1AdpSubscriptionCancellationsErrors];
+
+export type GetV1AdpSubscriptionCancellationsResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type GetV1AdpSubscriptionCancellationsResponse =
+  GetV1AdpSubscriptionCancellationsResponses[keyof GetV1AdpSubscriptionCancellationsResponses];
 
 export type DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionData =
   {
@@ -26343,7 +27972,7 @@ export type GetV1ContractorInvoiceSchedulesData = {
     /**
      * Filters contractor invoice schedules by status matching the value.
      */
-    status?: ContractorInvoiceScheduleStatus;
+    status?: ContractorInvoiceScheduleStatusFilter;
     /**
      * Filters contractor invoice schedules by employment id matching the value.
      */
@@ -26640,7 +28269,10 @@ export type GetV1BillingDocumentsBillingDocumentIdBreakdownData = {
   };
   query?: {
     /**
-     * Filters the results by the type of the billing breakdown item.
+     * Filters the results by the type of the billing breakdown item. Matched exactly against the `type` field of
+     * the returned items, so unrecognised values yield an empty list. Card spend is reported as `Card expenses`,
+     * separately from payroll-reimbursed `Expenses`.
+     *
      */
     type?: string;
   };

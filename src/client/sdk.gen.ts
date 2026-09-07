@@ -23,12 +23,33 @@ import type {
   DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeData,
   DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeErrors,
   DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponses,
+  DeleteV1PayItemsIdData,
+  DeleteV1PayItemsIdErrors,
+  DeleteV1PayItemsIdResponses,
   DeleteV1SandboxEmploymentsEmploymentIdData,
   DeleteV1SandboxEmploymentsEmploymentIdErrors,
   DeleteV1SandboxEmploymentsEmploymentIdResponses,
   DeleteV1WebhookCallbacksIdData,
   DeleteV1WebhookCallbacksIdErrors,
   DeleteV1WebhookCallbacksIdResponses,
+  GetV1AdpSubscriptionCancellationsData,
+  GetV1AdpSubscriptionCancellationsErrors,
+  GetV1AdpSubscriptionCancellationsResponses,
+  GetV1AdpSubscriptionChangesData,
+  GetV1AdpSubscriptionChangesErrors,
+  GetV1AdpSubscriptionChangesResponses,
+  GetV1AdpSubscriptionOrdersData,
+  GetV1AdpSubscriptionOrdersErrors,
+  GetV1AdpSubscriptionOrdersResponses,
+  GetV1AdpSubscriptionStatusData,
+  GetV1AdpSubscriptionStatusErrors,
+  GetV1AdpSubscriptionStatusResponses,
+  GetV1AdpUserAssignmentsData,
+  GetV1AdpUserAssignmentsErrors,
+  GetV1AdpUserAssignmentsResponses,
+  GetV1AdpUserUnassignmentsData,
+  GetV1AdpUserUnassignmentsErrors,
+  GetV1AdpUserUnassignmentsResponses,
   GetV1BenefitOffersCountrySummariesData,
   GetV1BenefitOffersCountrySummariesErrors,
   GetV1BenefitOffersCountrySummariesResponses,
@@ -152,6 +173,9 @@ import type {
   GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdData,
   GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdErrors,
   GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdResponses,
+  GetV1ContractorsEmploymentsEmploymentIdRatesData,
+  GetV1ContractorsEmploymentsEmploymentIdRatesErrors,
+  GetV1ContractorsEmploymentsEmploymentIdRatesResponses,
   GetV1ContractorsSchemasEligibilityQuestionnaireData,
   GetV1ContractorsSchemasEligibilityQuestionnaireErrors,
   GetV1ContractorsSchemasEligibilityQuestionnaireResponses,
@@ -184,6 +208,9 @@ import type {
   GetV1CustomFieldsData,
   GetV1CustomFieldsErrors,
   GetV1CustomFieldsResponses,
+  GetV1DirectOffboardingsData,
+  GetV1DirectOffboardingsErrors,
+  GetV1DirectOffboardingsResponses,
   GetV1EmployeeAddressData,
   GetV1EmployeeAddressErrors,
   GetV1EmployeeAddressResponses,
@@ -241,6 +268,9 @@ import type {
   GetV1EmploymentContractsEmploymentIdPendingChangesResponses,
   GetV1EmploymentContractsErrors,
   GetV1EmploymentContractsResponses,
+  GetV1EmploymentsBulkData,
+  GetV1EmploymentsBulkErrors,
+  GetV1EmploymentsBulkResponses,
   GetV1EmploymentsData,
   GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdData,
   GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdErrors,
@@ -322,6 +352,9 @@ import type {
   GetV1IncentivesRecurringErrors,
   GetV1IncentivesRecurringResponses,
   GetV1IncentivesResponses,
+  GetV1JobTitleScreeningsIdData,
+  GetV1JobTitleScreeningsIdErrors,
+  GetV1JobTitleScreeningsIdResponses,
   GetV1LeavePoliciesDetailsEmploymentIdData,
   GetV1LeavePoliciesDetailsEmploymentIdErrors,
   GetV1LeavePoliciesDetailsEmploymentIdResponses,
@@ -462,6 +495,12 @@ import type {
   PatchV1CompaniesCompanyIdData,
   PatchV1CompaniesCompanyIdErrors,
   PatchV1CompaniesCompanyIdResponses,
+  PatchV1CompanyManagersUserId2Data,
+  PatchV1CompanyManagersUserId2Errors,
+  PatchV1CompanyManagersUserId2Responses,
+  PatchV1CompanyManagersUserIdData,
+  PatchV1CompanyManagersUserIdErrors,
+  PatchV1CompanyManagersUserIdResponses,
   PatchV1ContractorInvoiceSchedulesId2Data,
   PatchV1ContractorInvoiceSchedulesId2Errors,
   PatchV1ContractorInvoiceSchedulesId2Responses,
@@ -498,6 +537,9 @@ import type {
   PatchV1IncentivesIdData,
   PatchV1IncentivesIdErrors,
   PatchV1IncentivesIdResponses,
+  PatchV1PayItemsIdData,
+  PatchV1PayItemsIdErrors,
+  PatchV1PayItemsIdResponses,
   PatchV1SandboxEmploymentsEmploymentId2Data,
   PatchV1SandboxEmploymentsEmploymentId2Errors,
   PatchV1SandboxEmploymentsEmploymentId2Responses,
@@ -663,6 +705,9 @@ import type {
   PostV1IncentivesRecurringErrors,
   PostV1IncentivesRecurringResponses,
   PostV1IncentivesResponses,
+  PostV1JobTitleScreeningsData,
+  PostV1JobTitleScreeningsErrors,
+  PostV1JobTitleScreeningsResponses,
   PostV1MagicLinkData,
   PostV1MagicLinkErrors,
   PostV1MagicLinkResponses,
@@ -714,6 +759,9 @@ import type {
   PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusErrors,
   PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusResponses,
   PostV1SandboxCompaniesCompanyIdLegalEntitiesResponses,
+  PostV1SandboxContractorsEmploymentsEmploymentIdRatesData,
+  PostV1SandboxContractorsEmploymentsEmploymentIdRatesErrors,
+  PostV1SandboxContractorsEmploymentsEmploymentIdRatesResponses,
   PostV1SandboxEmploymentsData,
   PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveData,
   PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveErrors,
@@ -1087,6 +1135,7 @@ export const getV1ContractAmendmentsSchema = <
  * Bulk Create Pay Items
  *
  * Bulk creates pay items for employments. Supports up to 500 items per request.
+ * Each item must supply exactly one of `code` or `external_import_code` to identify the pay element.
  * Integration-specific fields (shift code, currency, pay amount, etc.) go in the `provider_data` object.
  * Only Global Payroll employments are supported. Non-GP employments are returned as `employment_not_global_payroll`.
  *
@@ -1910,6 +1959,43 @@ export const getV1CompaniesSchema = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Seed a contractor rate
+ *
+ * Creates or replaces the contractor's rate, so that the rate endpoints can be exercised without
+ * going through contract signature.
+ *
+ * The currency is derived from the legal entity the contractor is paid in by. A rate in a
+ * currency the contractor cannot be paid in is rejected with `422`.
+ *
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ */
+export const postV1SandboxContractorsEmploymentsEmploymentIdRates = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostV1SandboxContractorsEmploymentsEmploymentIdRatesData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostV1SandboxContractorsEmploymentsEmploymentIdRatesResponses,
+    PostV1SandboxContractorsEmploymentsEmploymentIdRatesErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/sandbox/contractors/employments/{employment_id}/rates',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * Get employment benefit offers
  *
  * ## Scopes
@@ -2033,7 +2119,7 @@ export const getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
+ * | Manage payroll runs (`payroll`) | View payslips (`payslip:read`) | - |
  *
  */
 export const getV1EmployeePayslips = <ThrowOnError extends boolean = false>(
@@ -2046,6 +2132,54 @@ export const getV1EmployeePayslips = <ThrowOnError extends boolean = false>(
   >({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/v1/employee/payslips',
+    ...options,
+  });
+
+/**
+ * List the rates of a contractor
+ *
+ * Lists the rates configured for a contractor, whatever the origin of their contract: rates agreed
+ * through a Remote-managed services agreement and statement of work, and rates recorded by the
+ * company on its own paper, are returned in the same shape.
+ *
+ * What the response contains:
+ *
+ * - The **configured** rate — not amounts that were scheduled, invoiced, or paid.
+ * - **Effective** rates only. Terms of a statement of work that has not been signed yet are not included.
+ * - The stored rate, even when the contractor's contract has already expired.
+ *
+ * `contract_start_date` and `contract_expiration_date` describe the contract the rate is paid under,
+ * not where the rate came from. `type` and `pay_frequency` are open enums, so treat an unrecognised
+ * value as opaque rather than an error. See the field descriptions for how each is derived.
+ *
+ * A contractor with no rate, and an employment that is not a contractor, both return an empty list.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getV1ContractorsEmploymentsEmploymentIdRates = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetV1ContractorsEmploymentsEmploymentIdRatesData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetV1ContractorsEmploymentsEmploymentIdRatesResponses,
+    GetV1ContractorsEmploymentsEmploymentIdRatesErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/contractors/employments/{employment_id}/rates',
     ...options,
   });
 
@@ -2811,6 +2945,24 @@ export const putV1SandboxContractAmendmentsContractAmendmentRequestIdApprove = <
   });
 
 /**
+ * Receive an ADP Marketplace user-assignment event
+ *
+ * Called by ADP Marketplace when a user is assigned to manage the subscription.
+ */
+export const getV1AdpUserAssignments = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1AdpUserAssignmentsData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1AdpUserAssignmentsResponses,
+    GetV1AdpUserAssignmentsErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/adp/user-assignments',
+    ...options,
+  });
+
+/**
  * Create a GL report
  *
  * Triggers generation of a General Ledger report for the given payroll run and type.
@@ -3440,6 +3592,42 @@ export const postV1CostCalculatorEstimationPdf = <
       'Content-Type': 'application/json',
       ...options?.headers,
     },
+  });
+
+/**
+ * Bulk list employments
+ *
+ * Lists full-detail employments for the company scope, page-by-page via an opaque cursor.
+ * Each employment is the same shape returned by Show employment, except files are excluded
+ * to avoid a per-employment file lookup; use the Show employment endpoint to fetch files for
+ * a specific employment. The `files` field is always `null` on this endpoint.
+ *
+ * Pass the `next_cursor` value from a page's response as the `cursor` query parameter to fetch
+ * the next page. `next_cursor` is `null` once the last page has been reached.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View employments (`employment:read`) | Manage employments (`employment:write`) |
+ *
+ */
+export const getV1EmploymentsBulk = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1EmploymentsBulkData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1EmploymentsBulkResponses,
+    GetV1EmploymentsBulkErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/bulk',
+    ...options,
   });
 
 /**
@@ -4230,6 +4418,26 @@ export const putV1EmploymentsEmploymentIdFederalTaxes = <
   });
 
 /**
+ * Receive an ADP Marketplace subscription-change event
+ *
+ * Called by ADP Marketplace when a customer changes their subscription (e.g. edition or user count).
+ */
+export const getV1AdpSubscriptionChanges = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetV1AdpSubscriptionChangesData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1AdpSubscriptionChangesResponses,
+    GetV1AdpSubscriptionChangesErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/adp/subscription-changes',
+    ...options,
+  });
+
+/**
  * List Contract Amendment
  *
  * List Contract Amendment requests.
@@ -4647,6 +4855,7 @@ export const postV1EmployeeTimeoffIdCancel = <
  * - emergency_contact
  * - emergency_contact_details
  * - employment_document_details
+ * - engagement_agreement_details
  * - personal_details
  * - pricing_plan_details
  * - company_basic_information
@@ -4817,7 +5026,7 @@ export const postV1CompanyManagers = <ThrowOnError extends boolean = false>(
 /**
  * List countries for Cost Calculator
  *
- * Lists active and processing countries
+ * Lists countries available for cost calculation
  */
 export const getV1CostCalculatorCountries = <
   ThrowOnError extends boolean = false,
@@ -5569,6 +5778,60 @@ export const getV1EmploymentsEmploymentIdBenefitOffersSchema = <
   });
 
 /**
+ * Create a job title screening
+ *
+ * Screens a batch of job titles for EOR hiring eligibility, before any company or
+ * employment exists. Callable with an integration (client credentials) token or a
+ * company-scoped token issued through the integration; screenings belong to the
+ * integration either way. Returns immediately with a `processing` screening — poll the
+ * show endpoint until `status` is `completed`. Verdicts are advisory and reflect the
+ * eligibility policy at the time of screening: the policy evolves over time and the same
+ * checks re-run during onboarding, so the onboarding outcome may differ from an earlier
+ * screening verdict for the same title.
+ *
+ */
+export const postV1JobTitleScreenings = <ThrowOnError extends boolean = false>(
+  options?: Options<PostV1JobTitleScreeningsData, ThrowOnError>,
+) =>
+  (options?.client ?? client).post<
+    PostV1JobTitleScreeningsResponses,
+    PostV1JobTitleScreeningsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/job-title-screenings',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+
+/**
+ * Show a job title screening
+ *
+ * Shows a job title screening and its per-item verdicts.
+ */
+export const getV1JobTitleScreeningsId = <ThrowOnError extends boolean = false>(
+  options: Options<GetV1JobTitleScreeningsIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetV1JobTitleScreeningsIdResponses,
+    GetV1JobTitleScreeningsIdErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/job-title-screenings/{id}',
+    ...options,
+  });
+
+/**
  * Submit eligibility questionnaire
  *
  * Submits an eligibility questionnaire for a contractor employment.
@@ -5767,6 +6030,8 @@ export const getV1EmploymentsEmploymentId = <
  *
  * It is possible to update the `external_id` of the employment for all employment statuses.
  *
+ * The same applies to `partner_external_id`, the reference code private to the calling integration. Omit the field to leave it unchanged; send `null` to clear it.
+ *
  * ## Global Payroll Employees
  *
  * To update a Global Payment employment your input data must comply with the global payroll json schemas.
@@ -5843,6 +6108,8 @@ export const patchV1EmploymentsEmploymentId2 = <
  * Currently, these amendments can only be done through the Remote UI.
  *
  * It is possible to update the `external_id` of the employment for all employment statuses.
+ *
+ * The same applies to `partner_external_id`, the reference code private to the calling integration. Omit the field to leave it unchanged; send `null` to clear it.
  *
  * ## Global Payroll Employees
  *
@@ -6339,7 +6606,7 @@ export const postV1EmploymentsEmploymentIdContractEligibility = <
 /**
  * List countries
  *
- * Returns a list of all countries that are supported by Remote API alphabetically ordered.
+ * Returns the countries supported by Remote API, alphabetically ordered.
  * The supported list accounts for creating employment with basic information and it does not imply fully onboarding employment via JSON Schema.
  * The countries present in the list are the ones where creating a company is allowed.
  *
@@ -6432,7 +6699,7 @@ export const putV2EmploymentsEmploymentIdContractDetails = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
+ * | Manage payroll runs (`payroll`) | View payslips (`payslip:read`) | - |
  *
  */
 export const getV1EmployeePayslipFiles = <ThrowOnError extends boolean = false>(
@@ -6599,36 +6866,23 @@ export const postV1EmploymentsEmploymentIdContractOrigin = <
   });
 
 /**
- * Preview a Contractor Invoice
+ * Receive an ADP Marketplace subscription-order event
  *
- * Returns a base64-encoded PDF preview of a contractor invoice built from the given parameters.
- *
- * The document is a draft and is not persisted.
- *
+ * Called by ADP Marketplace when a customer subscribes to Remote's listing.
  */
-export const postV1EmploymentsEmploymentIdContractorInvoicesPreview = <
+export const getV1AdpSubscriptionOrders = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<
-    PostV1EmploymentsEmploymentIdContractorInvoicesPreviewData,
-    ThrowOnError
-  >,
+  options?: Options<GetV1AdpSubscriptionOrdersData, ThrowOnError>,
 ) =>
-  (options.client ?? client).post<
-    PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponses,
-    PostV1EmploymentsEmploymentIdContractorInvoicesPreviewErrors,
+  (options?.client ?? client).get<
+    GetV1AdpSubscriptionOrdersResponses,
+    GetV1AdpSubscriptionOrdersErrors,
     ThrowOnError
   >({
-    security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-    ],
-    url: '/v1/employments/{employment_id}/contractor-invoices/preview',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/adp/subscription-orders',
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
   });
 
 /**
@@ -6894,7 +7148,7 @@ export const postV1SandboxWebhookCallbacksTrigger = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
+ * | Manage payroll runs (`payroll`) | View payslips (`payslip:read`) | - |
  *
  */
 export const getV1PayslipsPayslipIdPdf = <ThrowOnError extends boolean = false>(
@@ -6911,6 +7165,69 @@ export const getV1PayslipsPayslipIdPdf = <ThrowOnError extends boolean = false>(
     ],
     url: '/v1/payslips/{payslip_id}/pdf',
     ...options,
+  });
+
+/**
+ * Delete a Pay Item
+ *
+ * Archives a pay item. Cannot delete pay items linked to a payroll adjustment, salary pay items, pay items automatically created from an external source, or pay items whose payroll run is no longer in preparation.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | - | Manage pay items (`pay_item:write`) |
+ *
+ */
+export const deleteV1PayItemsId = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteV1PayItemsIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).delete<
+    DeleteV1PayItemsIdResponses,
+    DeleteV1PayItemsIdErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/pay-items/{id}',
+    ...options,
+  });
+
+/**
+ * Update a Pay Item
+ *
+ * Updates a pay item. Editing a pay item archives the existing one and creates a new one with a new `id` — use the response's `replaced_ids` to reconcile with the id you had stored. Only the fields provided are changed.
+ * Cannot update pay items linked to a payroll adjustment, salary pay items, pay items automatically created from an external source, or pay items whose payroll run is no longer in preparation.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage payroll runs (`payroll`) | - | Manage pay items (`pay_item:write`) |
+ *
+ */
+export const patchV1PayItemsId = <ThrowOnError extends boolean = false>(
+  options: Options<PatchV1PayItemsIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchV1PayItemsIdResponses,
+    PatchV1PayItemsIdErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/pay-items/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 
 /**
@@ -7243,7 +7560,7 @@ export const getV1EmploymentsEmploymentIdFiles = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage employments (`employments`) | - | Manage custom fields (`custom_field:write`) |
+ * | Manage employments (`employments`) | View custom fields (`custom_field:read`) | Manage custom fields (`custom_field:write`) |
  *
  */
 export const getV1CustomFields = <ThrowOnError extends boolean = false>(
@@ -7361,6 +7678,9 @@ export const deleteV1SandboxEmploymentsEmploymentId = <
  *
  * This endpoint will respond with a 404 outside of the Sandbox environment.
  *
+ * `partner_external_id` cannot be updated here and is ignored if sent, like any other
+ * unsupported field. Set it with `PATCH /api/eor/v1/employments/{employment_id}` instead.
+ *
  * For updating an employment's parameters outside of testing purposes, use [this Employment update endpoint](#operation/patch_update_employment).
  *
  */
@@ -7394,6 +7714,9 @@ export const patchV1SandboxEmploymentsEmploymentId2 = <
  * - Backdate employment start dates
  *
  * This endpoint will respond with a 404 outside of the Sandbox environment.
+ *
+ * `partner_external_id` cannot be updated here and is ignored if sent, like any other
+ * unsupported field. Set it with `PATCH /api/eor/v1/employments/{employment_id}` instead.
  *
  * For updating an employment's parameters outside of testing purposes, use [this Employment update endpoint](#operation/patch_update_employment).
  *
@@ -7811,6 +8134,26 @@ export const getV1EmploymentsEmploymentIdOnboardingSteps = <
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/employments/{employment_id}/onboarding-steps',
+    ...options,
+  });
+
+/**
+ * Receive an ADP Marketplace subscription-status event
+ *
+ * Called by ADP Marketplace when a subscription's status changes (e.g. trial ended, suspended).
+ */
+export const getV1AdpSubscriptionStatus = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetV1AdpSubscriptionStatusData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1AdpSubscriptionStatusResponses,
+    GetV1AdpSubscriptionStatusErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/adp/subscription-status',
     ...options,
   });
 
@@ -8503,6 +8846,24 @@ export const getV1WorkAuthorizationRequests = <
   });
 
 /**
+ * Receive an ADP Marketplace user-unassignment event
+ *
+ * Called by ADP Marketplace when a user is unassigned from managing the subscription.
+ */
+export const getV1AdpUserUnassignments = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1AdpUserUnassignmentsData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1AdpUserUnassignmentsResponses,
+    GetV1AdpUserUnassignmentsErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/adp/user-unassignments',
+    ...options,
+  });
+
+/**
  * Show bulk employment job
  *
  * ## Scopes
@@ -8555,6 +8916,35 @@ export const getV1PayItems = <ThrowOnError extends boolean = false>(
       { scheme: 'bearer', type: 'http' },
     ],
     url: '/v1/pay-items',
+    ...options,
+  });
+
+/**
+ * List Direct Offboardings
+ *
+ * Lists offboardings for global payroll employments, optionally filtered by employment ID.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View offboarding requests (`offboarding:read`) | Manage offboarding (`offboarding:write`) |
+ *
+ */
+export const getV1DirectOffboardings = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1DirectOffboardingsData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1DirectOffboardingsResponses,
+    GetV1DirectOffboardingsErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/direct-offboardings',
     ...options,
   });
 
@@ -8842,7 +9232,7 @@ export const getV1ProbationExtensionsId = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
+ * | Manage payroll runs (`payroll`) | View payslips (`payslip:read`) | - |
  *
  */
 export const getV1Payslips = <ThrowOnError extends boolean = false>(
@@ -9415,6 +9805,46 @@ export const postV1BulkEmploymentJobs = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Preview a Contractor Invoice
+ *
+ * Returns a base64-encoded PDF preview of a contractor invoice built from the given parameters.
+ *
+ * The document is a draft and is not persisted.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage invoices (`invoices`) | View invoices (`invoices:read`) | Manage invoices (`invoices:write`) |
+ *
+ */
+export const postV1EmploymentsEmploymentIdContractorInvoicesPreview = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostV1EmploymentsEmploymentIdContractorInvoicesPreviewData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponses,
+    PostV1EmploymentsEmploymentIdContractorInvoicesPreviewErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/employments/{employment_id}/contractor-invoices/preview',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * Send back a timesheet for review or modification
  *
  * Sends the given timesheet back to the employee for review or modification.
@@ -9506,6 +9936,78 @@ export const getV1CompanyManagersUserId = <
     ],
     url: '/v1/company-managers/{user_id}',
     ...options,
+  });
+
+/**
+ * Update a Company Manager's billing contact assignment
+ *
+ * Assigns or unassigns a Company Manager as the billing contact (primary or additional)
+ * for one or more legal entities.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage managers (`company_manager:write`) |
+ *
+ */
+export const patchV1CompanyManagersUserId2 = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchV1CompanyManagersUserId2Data, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchV1CompanyManagersUserId2Responses,
+    PatchV1CompanyManagersUserId2Errors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/company-managers/{user_id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update a Company Manager's billing contact assignment
+ *
+ * Assigns or unassigns a Company Manager as the billing contact (primary or additional)
+ * for one or more legal entities.
+ *
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage company resources (`company_admin`) | - | Manage managers (`company_manager:write`) |
+ *
+ */
+export const patchV1CompanyManagersUserId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchV1CompanyManagersUserIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PatchV1CompanyManagersUserIdResponses,
+    PatchV1CompanyManagersUserIdErrors,
+    ThrowOnError
+  >({
+    security: [
+      { scheme: 'bearer', type: 'http' },
+      { scheme: 'bearer', type: 'http' },
+    ],
+    url: '/v1/company-managers/{user_id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 
 /**
@@ -9615,6 +10117,26 @@ export const postV1EmployeeExpenses = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options?.headers,
     },
+  });
+
+/**
+ * Receive an ADP Marketplace subscription-cancel event
+ *
+ * Called by ADP Marketplace when a customer cancels their subscription.
+ */
+export const getV1AdpSubscriptionCancellations = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetV1AdpSubscriptionCancellationsData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetV1AdpSubscriptionCancellationsResponses,
+    GetV1AdpSubscriptionCancellationsErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/v1/adp/subscription-cancellations',
+    ...options,
   });
 
 /**
