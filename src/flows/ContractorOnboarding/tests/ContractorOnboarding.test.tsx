@@ -4166,7 +4166,10 @@ describe('ContractorOnboardingFlow', () => {
      * Renders the flow and walks it up to a filled-in create_invoice_schedule
      * step, ready for the preview / skip buttons to be exercised.
      */
-    const goToFilledCreateInvoiceSchedule = async (employmentId: string) => {
+    const goToFilledCreateInvoiceSchedule = async (
+      employmentId: string,
+      values?: Parameters<typeof fillCreateInvoiceSchedule>[0],
+    ) => {
       mockRender.mockImplementation(
         createMockRenderImplementation(MultiStepFormWithoutCountry),
       );
@@ -4209,8 +4212,42 @@ describe('ContractorOnboardingFlow', () => {
       fireEvent.click(screen.getByRole('button', { name: /continue/i }));
 
       await screen.findByText('Step: Create Invoice Schedule');
-      await fillCreateInvoiceSchedule();
+      await fillCreateInvoiceSchedule(values);
     };
+
+    it('reveals the second item row once the first has a description and an amount', async () => {
+      const employmentId = generateUniqueEmploymentId();
+      await goToFilledCreateInvoiceSchedule(employmentId);
+
+      // fillCreateInvoiceSchedule() already filled item 1, so row 2 should be reachable.
+      await waitFor(
+        () => {
+          expect(
+            screen.getByLabelText(/Item 2 description/i),
+          ).toBeInTheDocument();
+        },
+        { timeout: 10000 },
+      );
+    });
+
+    // The reveal is driven by the values handed to `createHeadlessForm`, which only match the
+    // conditional's `integer` because money fields are converted to cents on the way in. An
+    // amount with cents used to stay a decimal and leave this step stuck at one item.
+    it('reveals the second item row when the first amount has cents', async () => {
+      const employmentId = generateUniqueEmploymentId();
+      await goToFilledCreateInvoiceSchedule(employmentId, {
+        item1Amount: '2500.50',
+      });
+
+      await waitFor(
+        () => {
+          expect(
+            screen.getByLabelText(/Item 2 description/i),
+          ).toBeInTheDocument();
+        },
+        { timeout: 10000 },
+      );
+    });
 
     it('should skip invoice schedule when "Skip for now" is selected', async () => {
       const employmentId = generateUniqueEmploymentId();
