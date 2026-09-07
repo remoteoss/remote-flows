@@ -707,6 +707,9 @@ export const useCreatePreOnboardingDocument = () => {
             employment_id: employmentId,
             requirement_slug: body.requirement_slug,
           },
+          query: {
+            skip_initial_signature_email: true,
+          },
         },
       );
     },
