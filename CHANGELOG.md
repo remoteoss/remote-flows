@@ -10,9 +10,11 @@
 - render the invoice preview PDF in a drawer (#1273) [#1273](https://github.com/remoteoss/remote-flows/pull/1273)
 
 #### Fixes
+
 - skip the initial ILA signature email (#1278) [#1278](https://github.com/remoteoss/remote-flows/pull/1278)
 
 #### Chores
+
 - move Termination, ContractorOnboarding and CreateCompany static schemas to v1 (#1271) [#1271](https://github.com/remoteoss/remote-flows/pull/1278)
 - update testing-library monorepo (#1274) [#1274](https://github.com/remoteoss/remote-flows/pull/1274)
 - enforce conventional commit format on PR titles (#1279) [#1279](https://github.com/remoteoss/remote-flows/pull/1279)
