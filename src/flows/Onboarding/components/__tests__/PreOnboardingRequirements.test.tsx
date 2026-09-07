@@ -274,6 +274,55 @@ describe('PreOnboardingRequirements', () => {
         }),
       );
     });
+
+    it('should ask the api to skip the initial signature email', async () => {
+      let requestUrl: URL | undefined;
+
+      server.use(
+        http.post(
+          '*/v1/onboarding/employments/:employmentId/pre-onboarding-requirements/:requirementSlug/documents',
+          ({ request }) => {
+            requestUrl = new URL(request.url);
+            return HttpResponse.json(generatedDocumentMock);
+          },
+        ),
+      );
+
+      let renderBag: ReturnType<typeof usePreOnboardingRequirements>;
+
+      render(
+        <PreOnboardingRequirements
+          render={(bag) => {
+            renderBag = bag;
+            return (
+              <button
+                onClick={() =>
+                  bag.onCreateDocument('5e39159e-96ef-40ea-82bc-b054917fc82f')
+                }
+              >
+                Generate Document
+              </button>
+            );
+          }}
+        />,
+        { wrapper: TestWrapper },
+      );
+
+      await waitFor(() => {
+        expect(renderBag?.requirements).toBeDefined();
+      });
+
+      const button = screen.getByText('Generate Document');
+      fireEvent.click(button);
+
+      await waitFor(() => {
+        expect(requestUrl).toBeDefined();
+      });
+
+      expect(requestUrl?.searchParams.get('skip_initial_signature_email')).toBe(
+        'true',
+      );
+    });
   });
 
   describe('document signing', () => {
