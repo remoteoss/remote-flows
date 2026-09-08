@@ -203,13 +203,6 @@ export type InvoiceScheduleResponse = {
   invoiceSchedulePreference: string;
 };
 
-/**
- * A draft (non-persisted) contractor invoice preview document.
- */
-export type ContractorInvoicePreview = {
-  name: string;
-  /**
-   * A `data:application/pdf;base64,...` data URI.
-   */
-  content: string;
-};
+// Shared with the standalone InvoiceSchedule flow, so it lives in
+// src/common/invoice-schedules. Re-exported here so existing imports keep resolving.
+export type { ContractorInvoicePreview } from '@/src/common/invoice-schedules/types';

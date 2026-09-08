@@ -57,7 +57,9 @@ export function ContractReviewButton({
       open={isOpen}
       onOpenChange={handleClose}
       title='Contract Document'
-      className='max-h-[90vh] flex flex-col w-full'
+      // Matches the invoice preview drawers: a side panel rather than the bottom sheet
+      // `DrawerContent`'s base classes assume for every direction.
+      className='top-0 bottom-0 left-auto right-0 h-full max-h-none w-full max-w-[900px] rounded-t-none flex flex-col'
       trigger={
         <CustomButton
           {...props}

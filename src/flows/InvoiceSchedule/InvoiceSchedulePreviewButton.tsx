@@ -1,12 +1,12 @@
-import { useFormFields } from '@/src/context';
-import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ButtonHTMLAttributes, useState } from 'react';
-import { NormalizedFieldError } from '@/src/lib/mutations';
-import { handleStepError } from '@/src/lib/utils';
-import { ContractorInvoicePreview } from '@/src/flows/ContractorOnboarding/types';
 import { Drawer } from '@/src/components/shared/drawer/Drawer';
+import { useFormFields } from '@/src/context';
+import { ContractorInvoicePreview } from '@/src/common/invoice-schedules/types';
+import { useInvoiceScheduleContext } from '@/src/flows/InvoiceSchedule/context';
+import { cn, handleStepError } from '@/src/lib/utils';
+import { NormalizedFieldError } from '@/src/lib/mutations';
 
-type PreviewInvoiceButtonProps = Omit<
+type InvoiceSchedulePreviewButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   'onError'
 > & {
@@ -23,47 +23,47 @@ type PreviewInvoiceButtonProps = Omit<
 };
 
 /**
- * Generates a draft (non-persisted) PDF preview of a contractor invoice from
- * the current, unsaved create_invoice_schedule form values, and shows it in a
- * drawer through the `pdfViewer` component.
+ * Renders the invoice the form currently describes as a draft (non-persisted) PDF, shown in
+ * a drawer through the `pdfViewer` component. The standalone twin of the onboarding step's
+ * `PreviewInvoiceButton`.
  *
- * `onSuccess` receives the same preview document, for consumers that want to do
- * something else with it as well. Note that `preview.content` is a
- * `data:application/pdf;base64,...` URI: browsers block top-level navigation to
- * the `data:` scheme, so it can be rendered in an `iframe`/`embed` or handed to
- * an `<a download>`, but not passed to `window.open`.
+ * Disabled until a contractor is known, since the preview endpoint is scoped to an
+ * employment — with the picker on screen that is whatever the user has chosen, otherwise the
+ * flow's `employmentId`.
+ *
+ * `onSuccess` receives the same document, for consumers that want to do something else with
+ * it. Note `preview.content` is a `data:application/pdf;base64,...` URI: browsers block
+ * top-level navigation to the `data:` scheme, so it can be rendered in an `iframe`/`embed`
+ * or handed to an `<a download>`, but not passed to `window.open`.
  */
-export const PreviewInvoiceButton = ({
+export function InvoiceSchedulePreviewButton({
   onSuccess,
   onError,
   className,
   children,
   disabled = false,
   ...props
-}: PreviewInvoiceButtonProps) => {
+}: InvoiceSchedulePreviewButtonProps) {
   const [preview, setPreview] = useState<ContractorInvoicePreview | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const { contractorOnboardingBag } = useContractorOnboardingContext();
-
+  const { form, invoiceScheduleBag } = useInvoiceScheduleContext();
   const { components } = useFormFields();
 
   const handlePreview = async () => {
     try {
-      const previewDocument =
-        await contractorOnboardingBag.previewContractorInvoice(
-          contractorOnboardingBag.fieldValues,
-        );
+      const previewDocument = await invoiceScheduleBag?.previewInvoice(
+        form.getValues(),
+      );
+
       if (previewDocument) {
         setPreview(previewDocument);
         setIsOpen(true);
         await onSuccess?.(previewDocument);
       }
     } catch (error: unknown) {
-      const structuredError = handleStepError(
-        error,
-        contractorOnboardingBag.meta?.fields?.create_invoice_schedule,
-      );
-      onError?.(structuredError);
+      // No field meta: this flow's `meta.fields` is the flat field list, not the per-step
+      // `NestedMeta` the onboarding step passes, so errors keep their raw field names.
+      onError?.(handleStepError(error));
     }
   };
 
@@ -80,8 +80,8 @@ export const PreviewInvoiceButton = ({
   return (
     <Drawer
       open={isOpen}
-      // The drawer is opened by handlePreview once the PDF is available, so the
-      // trigger's own open request is ignored — only close requests are honored.
+      // Opened by handlePreview once the PDF is available, so the trigger's own open request
+      // is ignored — only close requests are honored.
       onOpenChange={(open) => {
         if (!open) {
           setIsOpen(false);
@@ -98,9 +98,14 @@ export const PreviewInvoiceButton = ({
           type='button'
           onClick={handlePreview}
           disabled={
-            disabled || contractorOnboardingBag.isPreviewingInvoiceSchedule
+            disabled ||
+            invoiceScheduleBag?.isPreviewingInvoice ||
+            !invoiceScheduleBag?.employmentId
           }
-          className={className}
+          className={cn(
+            'RemoteFlows__InvoiceScheduleForm__PreviewButton',
+            className,
+          )}
         >
           {children}
         </CustomButton>
@@ -111,4 +116,4 @@ export const PreviewInvoiceButton = ({
       )}
     </Drawer>
   );
-};
+}

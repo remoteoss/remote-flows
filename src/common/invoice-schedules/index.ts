@@ -22,6 +22,8 @@ export {
   buildRecurrence,
 } from './utils';
 
+export type { ContractorInvoicePreview } from './types';
+
 export {
   invoiceSchedulesOptions,
   useCreateInvoiceSchedule,
