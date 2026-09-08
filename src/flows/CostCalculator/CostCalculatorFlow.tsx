@@ -192,35 +192,27 @@ const CostCalculatorFlowInner = ({
 
   useEffect(() => {
     if (
-      defaultValues.currencySlug &&
-      costCalculatorBag.currencies &&
+      costCalculatorBag.selectedCurrency &&
       estimationOptions.includeManagementFee &&
       !defaultValues.management?.management_fee
     ) {
-      const currencyData = costCalculatorBag.currencies.find(
-        (currency) =>
-          currency.value === defaultValues.currencySlug ||
-          currency.label === defaultValues.currencySlug,
+      const currencyCode = costCalculatorBag.selectedCurrency
+        .label as CurrencyKey;
+      // WE NEED TO FIX: react-hooks/set-state-in-effect - Calling setState synchronously within an effect can trigger cascading renders
+      // oxlint-disable-next-line react-hooks/set-state-in-effect
+      setCurrency(currencyCode);
+      const defaultManagementFee = getDefaultManagementFee(
+        BASE_RATES,
+        currencyCode,
+        estimationOptions.managementFees,
       );
-      const currencyCode = currencyData?.label;
-      if (currencyCode) {
-        // WE NEED TO FIX: react-hooks/set-state-in-effect - Calling setState synchronously within an effect can trigger cascading renders
-        // oxlint-disable-next-line react-hooks/set-state-in-effect
-        setCurrency(currencyCode as CurrencyKey);
-        const defaultManagementFee = getDefaultManagementFee(
-          BASE_RATES,
-          currencyCode as CurrencyKey,
-          estimationOptions.managementFees,
-        );
-        form.setValue(
-          'management.management_fee',
-          defaultManagementFee?.toString() || '',
-        );
-      }
+      form.setValue(
+        'management.management_fee',
+        defaultManagementFee?.toString() || '',
+      );
     }
   }, [
-    defaultValues.currencySlug,
-    costCalculatorBag.currencies,
+    costCalculatorBag.selectedCurrency,
     estimationOptions.includeManagementFee,
     estimationOptions.managementFees,
     defaultValues.management?.management_fee,
@@ -230,43 +222,21 @@ const CostCalculatorFlowInner = ({
 
   // `countryRegionSlug`/`currencySlug` may be a plain code (e.g. 'USA'/'EUR') rather
   // than the actual slug the `country`/`currency` fields' `oneOf` expects — the RHF
-  // default set above is the raw value as-is, so once the countries/currencies lists
-  // load, correct the field to the resolved slug when the raw value was a code.
+  // default set above is the raw value as-is. `costCalculatorBag.selectedCountry`/
+  // `selectedCurrency` already resolve either shape against the loaded
+  // countries/currencies lists, so once they're available, mirror the resolved slug
+  // into the field (a no-op if the raw value was already the correct slug).
   useEffect(() => {
-    if (!defaultValues.countryRegionSlug || !costCalculatorBag.countries) {
-      return;
+    if (costCalculatorBag.selectedCountry) {
+      form.setValue('country', costCalculatorBag.selectedCountry.value);
     }
-    const isAlreadySlug = costCalculatorBag.countries.some(
-      (country) => country.value === defaultValues.countryRegionSlug,
-    );
-    if (isAlreadySlug) {
-      return;
-    }
-    const resolvedCountry = costCalculatorBag.countries.find(
-      (country) => country.code === defaultValues.countryRegionSlug,
-    );
-    if (resolvedCountry) {
-      form.setValue('country', resolvedCountry.value);
-    }
-  }, [defaultValues.countryRegionSlug, costCalculatorBag.countries, form]);
+  }, [costCalculatorBag.selectedCountry, form]);
 
   useEffect(() => {
-    if (!defaultValues.currencySlug || !costCalculatorBag.currencies) {
-      return;
+    if (costCalculatorBag.selectedCurrency) {
+      form.setValue('currency', costCalculatorBag.selectedCurrency.value);
     }
-    const isAlreadySlug = costCalculatorBag.currencies.some(
-      (currency) => currency.value === defaultValues.currencySlug,
-    );
-    if (isAlreadySlug) {
-      return;
-    }
-    const resolvedCurrency = costCalculatorBag.currencies.find(
-      (currency) => currency.label === defaultValues.currencySlug,
-    );
-    if (resolvedCurrency) {
-      form.setValue('currency', resolvedCurrency.value);
-    }
-  }, [defaultValues.currencySlug, costCalculatorBag.currencies, form]);
+  }, [costCalculatorBag.selectedCurrency, form]);
 
   return (
     <CostCalculatorContext.Provider

@@ -106,7 +106,9 @@ describe('CostCalculatorFlow', () => {
     const comboboxes = screen.getAllByRole('combobox');
     const countryDropdown = comboboxes[0];
     const currencyDropdown = comboboxes[1];
-    const salaryInput = screen.getByRole('textbox', { name: /salary/i });
+    // Salary field's title switches to "Hiring budget" when hiring_budget is
+    // 'my_hiring_budget', which is `defaultProps`' default here.
+    const salaryInput = screen.getByRole('textbox', { name: /hiring budget/i });
 
     await waitFor(() => {
       expect(countryDropdown).toHaveTextContent(/Poland/i);
@@ -700,7 +702,7 @@ describe('CostCalculatorFlow', () => {
 
     expect(
       screen.getByRole('textbox', {
-        name: /salary/i,
+        name: /hiring budget/i,
       }),
     ).toHaveValue('50000');
 
@@ -1140,7 +1142,9 @@ describe('CostCalculatorFlow', () => {
       });
 
       // Start with USD (no conversion needed)
-      const salaryInput = screen.getByRole('textbox', { name: /salary/i });
+      const salaryInput = screen.getByRole('textbox', {
+        name: /hiring budget/i,
+      });
       fireEvent.change(salaryInput, { target: { value: '75000' } });
       expect(salaryInput).toHaveValue('75000');
 
@@ -1161,7 +1165,9 @@ describe('CostCalculatorFlow', () => {
       // Start with EUR (conversion needed)
       await fillSelect('Currency', 'eur-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8');
 
-      const salaryInput = screen.getByRole('textbox', { name: /salary/i });
+      const salaryInput = screen.getByRole('textbox', {
+        name: /hiring budget/i,
+      });
       fireEvent.change(salaryInput, { target: { value: '65000' } });
       expect(salaryInput).toHaveValue('65000');
 
@@ -1182,7 +1188,9 @@ describe('CostCalculatorFlow', () => {
       // Start with EUR
       await fillSelect('Currency', 'eur-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8');
 
-      const salaryInput = screen.getByRole('textbox', { name: /salary/i });
+      const salaryInput = screen.getByRole('textbox', {
+        name: /hiring budget/i,
+      });
       fireEvent.change(salaryInput, { target: { value: '55000' } });
       expect(salaryInput).toHaveValue('55000');
 
@@ -1201,7 +1209,9 @@ describe('CostCalculatorFlow', () => {
       });
 
       // Start with US (USD)
-      const salaryInput = screen.getByRole('textbox', { name: /salary/i });
+      const salaryInput = screen.getByRole('textbox', {
+        name: /hiring budget/i,
+      });
       fireEvent.change(salaryInput, { target: { value: '80000' } });
       expect(salaryInput).toHaveValue('80000');
 

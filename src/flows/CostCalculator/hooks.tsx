@@ -112,10 +112,11 @@ export const useCostCalculator = (
   );
   const [selectedCountry, setSelectedCountry] =
     useState<CostCalculatorCountry>();
-  const [employerBillingCurrency, setEmployerBillingCurrency] = useState<
-    string | undefined
-  >();
-  const [hiringBudget, setHiringBudget] = useState<HiringBudget>();
+  const [selectedCurrency, setSelectedCurrency] = useState<{
+    value: string;
+    label: string;
+  }>();
+  const employerBillingCurrency = selectedCurrency?.label;
   const [resetKey, setResetKey] = useState(0);
   const [fieldValues, setFieldValues] = useState<FieldValues>({});
   const checkFieldUpdates = useCallback((values: FieldValues) => {
@@ -183,7 +184,10 @@ export const useCostCalculator = (
     options?.features?.includes('split_salary_description') ?? false;
   const customFields = useMemo(() => {
     const { from, to, shouldSwapOrder } = getCurrencies();
-    const salaryTitle = getSalaryTitle(salaryField, hiringBudget);
+    const salaryTitle = getSalaryTitle(
+      salaryField,
+      fieldValues.hiring_budget as HiringBudget,
+    );
 
     return {
       fields: {
@@ -278,7 +282,7 @@ export const useCostCalculator = (
   }, [
     getCurrencies,
     salaryField,
-    hiringBudget,
+    fieldValues.hiring_budget,
     salaryFieldPresentation?.salary_conversion_properties?.label,
     salaryFieldPresentation?.salary_conversion_properties?.description,
     options?.jsfModify?.fields?.hiring_budget,
@@ -362,7 +366,7 @@ export const useCostCalculator = (
           value === defaultCurrency || label === defaultCurrency,
       );
       if (defaultCurrencyObj) {
-        setEmployerBillingCurrency(defaultCurrencyObj.label);
+        setSelectedCurrency(defaultCurrencyObj);
       }
     }
   }, [defaultCurrency, currencies, resetKey]);
@@ -405,16 +409,10 @@ export const useCostCalculator = (
     setSelectedRegion(region);
   }
 
-  function onHiringBudgetChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setHiringBudget(event.target.value as HiringBudget);
-  }
-
   function onChangeCurrency(currency: string) {
-    const selectedCurrency = currencies?.find(
-      (c) => c.value === currency,
-    )?.label;
-    setEmployerBillingCurrency(selectedCurrency);
-    options?.onCurrencyChange?.(selectedCurrency || '');
+    const currencyOption = currencies?.find((c) => c.value === currency);
+    setSelectedCurrency(currencyOption);
+    options?.onCurrencyChange?.(currencyOption?.label || '');
   }
 
   // `options`/`isVisible`/`required` for country, currency, and region are no longer set
@@ -438,13 +436,6 @@ export const useCostCalculator = (
     if (currencyField) {
       currencyField.onChange = onChangeCurrency;
     }
-  }
-
-  const hiringBudgetField = schemaForm.fields.find(
-    (field) => field.name === 'hiring_budget',
-  );
-  if (hiringBudgetField) {
-    hiringBudgetField.onChange = onHiringBudgetChange;
   }
 
   if (countries) {
@@ -575,6 +566,20 @@ export const useCostCalculator = (
      * into the value used internally by the `country` field.
      */
     countries,
+
+    /**
+     * The country resolved from `defaultRegion` (or picked via the `country` field's
+     * `onChange`) — its `value` is the actual slug the `country` field expects, already
+     * resolved whether the input was a plain code (e.g. 'USA') or a slug.
+     */
+    selectedCountry,
+
+    /**
+     * The currency resolved from `defaultCurrency` (or picked via the `currency` field's
+     * `onChange`) — its `value` is the actual slug the `currency` field expects, already
+     * resolved whether the input was a plain code (e.g. 'EUR') or a slug.
+     */
+    selectedCurrency,
 
     /**
      * Fields metadata
