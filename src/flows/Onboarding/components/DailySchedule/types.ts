@@ -79,9 +79,10 @@ export type WorkHoursBoundsInput = {
 /**
  * `daily_schedule`'s JSF Component-override props, with `value`/`setValue`
  * narrowed from JSFCustomComponentProps' generic `string` to the field's real
- * shape. `scopedJsonSchema` is left as-is (Record<string, unknown>, per
- * JSFField) — how DailyScheduleContainer pulls the metadata block off it is
- * still unverified and left to Phase 3, built/checked live in the Playground.
+ * shape. `metadata` is confirmed in Phase 3: json-schema-form's field builder
+ * merges `x-jsf-presentation` keys (other than `inputType`) directly onto the
+ * field object, so `daily_schedule['x-jsf-presentation'].metadata` arrives as
+ * `field.metadata` — not nested under `scopedJsonSchema` or `meta`.
  */
 export type DailyScheduleFieldProps = Omit<
   JSFCustomComponentProps,
@@ -89,6 +90,7 @@ export type DailyScheduleFieldProps = Omit<
 > & {
   value: DailyScheduleValue | undefined;
   setValue: (value: DailyScheduleValue) => void;
+  metadata: DailyScheduleMetadata;
 };
 
 export type DailyScheduleRenderProps = DailyScheduleFieldProps &

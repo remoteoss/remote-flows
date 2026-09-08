@@ -1,6 +1,8 @@
 import {
+  DailyScheduleDefaultDay,
   DailyScheduleDefaults,
   DailyScheduleMetadata,
+  DailyScheduleValue,
   WorkHoursBoundsInput,
   WorkHoursPerWeekConfig,
   WorkHoursRange,
@@ -129,5 +131,38 @@ export function getWorkHoursBounds(
   return {
     minimum: minimumOverride ?? workHoursPerWeekConfig.baseline.minimum,
     maximum: workHoursPerWeekConfig.baseline.maximum,
+  };
+}
+
+/**
+ * The schedule to display/edit: the field's saved `value` when present,
+ * otherwise a schedule built from the metadata's `default_schedule` — so the
+ * summary and the edit modal show sensible defaults before the employer has
+ * saved anything (create flow), not just after (edit flow).
+ */
+export function resolveDailyScheduleValue({
+  value,
+  defaultSchedule,
+}: {
+  value: DailyScheduleValue | undefined;
+  defaultSchedule: DailyScheduleDefaultDay[];
+}): DailyScheduleValue {
+  if (value) {
+    return value;
+  }
+
+  return {
+    selected_days: defaultSchedule.map((day) => day.day),
+    schedule: defaultSchedule.reduce(
+      (acc, day) => ({
+        ...acc,
+        [day.day]: {
+          start_time: day.start_time,
+          end_time: day.end_time,
+          break_duration_minutes: day.break_duration_minutes,
+        },
+      }),
+      {},
+    ),
   };
 }

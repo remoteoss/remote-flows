@@ -6,36 +6,7 @@ import {
   getWorkHoursBounds,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
 import { DailyScheduleMetadata } from '@/src/flows/Onboarding/components/DailySchedule/types';
-
-const germanyMetadata: DailyScheduleMetadata = {
-  country_name: 'Germany',
-  default_break_duration_minutes: 60,
-  default_end_time: '18:00',
-  default_start_time: '09:00',
-  subtract_breaks_in_work_hours: true,
-  default_schedule: [
-    {
-      day: 'monday',
-      start_time: '09:00',
-      end_time: '18:00',
-      break_duration_minutes: 60,
-      hours: 8,
-    },
-  ],
-  work_days: [
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday',
-  ],
-  work_hours_per_week: {
-    baseline: { minimum: 1, maximum: 48 },
-    full_time: { minimum: 31, maximum: 48 },
-    part_time: { minimum: 1, maximum: 30 },
-  },
-};
+import { germanyDailyScheduleMetadata as germanyMetadata } from '@/src/flows/Onboarding/components/DailySchedule/tests/fixtures';
 
 describe('DailySchedule utils', () => {
   describe('convertTimeStringToMinutes', () => {
