@@ -41,7 +41,9 @@ export const useJsonSchemaPlayground = (
         resetKey: prev.resetKey + 1,
       }));
     }
-  }, [defaultSchema, state.selectedSchema]);
+    // Only react to defaultSchema changes from parent, not internal state changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultSchema]);
 
   const fieldValues = useMemo(() => {
     return {
