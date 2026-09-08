@@ -130,7 +130,7 @@ export function buildPayload(
   }
 
   return {
-    employer_currency_slug: employments[0].currency,
+    //employer_currency_slug: employments[0].currency,
     include_benefits: estimationOptions.includeBenefits,
     include_cost_breakdowns: estimationOptions.includeCostBreakdowns,
     include_premium_benefits: estimationOptions.includePremiumBenefits,

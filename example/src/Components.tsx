@@ -144,7 +144,6 @@ const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
 };
 
 const Select = ({ field, fieldData, fieldState }: FieldComponentProps) => {
-  console.log('Select', fieldData);
   const hasError = !!fieldState.error;
   const { onChange, value, ...fieldProps } = field;
 
