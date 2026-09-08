@@ -136,6 +136,7 @@ const staticRequired = ['country', 'currency', 'salary_converted'];
 // `management` is always last so region-fetched fields (benefits, age, etc.) render
 // between the base fields and the management fee fieldset, matching the platform's layout.
 const staticOrderBeforeManagement = [
+  'hiring_budget',
   'country',
   'region',
   'currency',
