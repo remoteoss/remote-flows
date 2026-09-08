@@ -6,7 +6,11 @@ import { SCHEMAS } from './schemas';
 
 export const JsonSchemaPlayground = () => {
   const [submissionCount, setSubmissionCount] = useState(0);
-  const [selectedSchema, setSelectedSchema] = useState('france-wage-portage');
+  const [selectedSchema, setSelectedSchema] = useState(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const schemaKey = urlParams.get('schema');
+    return schemaKey && SCHEMAS[schemaKey] ? schemaKey : 'france-wage-portage';
+  });
   const availableSchemas = Object.entries(SCHEMAS).map(([key, value]) => ({
     key,
     name: value.name,
@@ -28,6 +32,10 @@ export const JsonSchemaPlayground = () => {
         }}
         onSchemaChange={(schema) => {
           setSelectedSchema(schema);
+
+          const url = new URL(window.location.href);
+          url.searchParams.set('schema', schema);
+          window.history.pushState({}, '', url);
         }}
         onError={(error) => {
           console.error('Form error:', error);
