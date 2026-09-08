@@ -126,10 +126,15 @@ export const useJsonSchemaPlayground = (
       if (!headlessForm.fields) {
         return null;
       }
+      // Invisible values are kept on purpose here, mirroring Onboarding's
+      // jsfVersion-1 contract_details handling: a hidden fieldset coming
+      // back would lose the values driving its own children (e.g.
+      // daily_schedule's selected_days) if they were stripped before
+      // handleValidation resolves visibility.
       const parsedValues = await parseJSFToValidate(
         values,
         headlessForm.fields,
-        { isPartialValidation: false },
+        { isPartialValidation: true },
       );
       const result = await headlessForm.handleValidation(parsedValues);
 

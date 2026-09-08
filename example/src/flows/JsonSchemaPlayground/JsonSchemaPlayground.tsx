@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { JsonSchemaPlaygroundFlow } from '@remoteoss/remote-flows/internals';
 import { FRANCE_WAGE_PORTAGE_INITIAL_VALUES } from './initialValues';
 import { RemoteFlows } from '../../RemoteFlows';
@@ -6,12 +6,21 @@ import { SCHEMAS } from './schemas';
 
 export const JsonSchemaPlayground = () => {
   const [submissionCount, setSubmissionCount] = useState(0);
-  const [selectedSchema, setSelectedSchema] = useState('france-wage-portage');
+  const [selectedSchema, setSelectedSchema] = useState(
+    'germany-contract-details',
+  );
   const availableSchemas = Object.entries(SCHEMAS).map(([key, value]) => ({
     key,
     name: value.name,
     description: value.description,
   }));
+
+  const initialValues = useMemo(() => {
+    return {
+      'france-wage-portage': FRANCE_WAGE_PORTAGE_INITIAL_VALUES,
+      'germany-contract-details': {},
+    };
+  }, []);
 
   return (
     <RemoteFlows
@@ -21,7 +30,9 @@ export const JsonSchemaPlayground = () => {
       <JsonSchemaPlaygroundFlow
         defaultSchema={selectedSchema}
         schemas={SCHEMAS}
-        initialValues={FRANCE_WAGE_PORTAGE_INITIAL_VALUES}
+        initialValues={
+          initialValues?.[selectedSchema as keyof typeof initialValues] ?? {}
+        }
         onSubmit={(values) => {
           console.log('Form submitted:', values);
           setSubmissionCount((prev) => prev + 1);
