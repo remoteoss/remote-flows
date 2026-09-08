@@ -1,7 +1,4 @@
 import { useState } from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 
 import { Button } from '@/src/components/ui/button';
 import {
@@ -14,7 +11,6 @@ import {
 import { Form } from '@/src/components/ui/form';
 import { CheckBoxField } from '@/src/components/form/fields/CheckBoxField';
 import { TextField } from '@/src/components/form/fields/TextField';
-import { $TSFixMe } from '@/src/types/remoteFlows';
 import {
   DailyScheduleRenderProps,
   Weekday,
@@ -23,17 +19,18 @@ import {
   calculateWorkingHours,
   resolveDailyScheduleValue,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
+import { useDailyScheduleEditForm } from '@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm';
 
 /**
  * Default UI for the `daily_schedule` field (PAY-2868), matching Dragon's
  * `WorkScheduleFieldForJSONSchema` UX (reference MR
  * gitlab.com/remote-com/employ-starbase/dragon/-/merge_requests/49203):
  * a summary of the current schedule + an "Edit" action opening a modal to
- * pick work days and set per-day start/end/break times. See
- * plans/daily-schedule-field.md.
+ * pick work days and set per-day start/end/break times. All validation and
+ * save-mapping logic lives in `useDailyScheduleEditForm` — this component is
+ * markup only, so a consumer replacing it doesn't need to reimplement
+ * either. See plans/daily-schedule-field.md.
  */
-
-const TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 const DAY_LABELS: Record<Weekday, string> = {
   monday: 'Monday',
@@ -44,98 +41,6 @@ const DAY_LABELS: Record<Weekday, string> = {
   saturday: 'Saturday',
   sunday: 'Sunday',
 };
-
-type DayRow = {
-  day: Weekday;
-  checked: boolean;
-  start_time: string;
-  end_time: string;
-  break_duration_minutes: string;
-};
-
-type DailyScheduleFormData = {
-  schedule: DayRow[];
-};
-
-const dayRowSchema = z
-  .object({
-    day: z.string().min(1),
-    checked: z.boolean(),
-    start_time: z.string().optional().nullable(),
-    end_time: z.string().optional().nullable(),
-    break_duration_minutes: z.string().optional().nullable(),
-  })
-  .superRefine((row, ctx) => {
-    for (const field of ['start_time', 'end_time'] as const) {
-      const value = row[field];
-      if (value && !TIME_PATTERN.test(value)) {
-        ctx.addIssue({
-          code: 'custom',
-          path: [field],
-          message: 'Invalid time format (HH:mm)',
-        });
-      } else if (row.checked && !value) {
-        ctx.addIssue({ code: 'custom', path: [field], message: 'Required' });
-      }
-    }
-
-    if (row.checked) {
-      if (!row.break_duration_minutes) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['break_duration_minutes'],
-          message: 'Required',
-        });
-      } else if (!/^\d+$/.test(row.break_duration_minutes)) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['break_duration_minutes'],
-          message: 'Must be a whole number of minutes',
-        });
-      }
-    }
-  });
-
-const formSchema = z.object({
-  schedule: z
-    .array(dayRowSchema)
-    .refine((rows) => rows.some((row) => row.checked), {
-      message: 'Select at least one work day',
-    }),
-});
-
-function buildDefaultRows({
-  availableWorkDays,
-  defaultSchedule,
-  defaultStartTime,
-  defaultEndTime,
-  defaultBreakDurationMinutes,
-  value,
-}: Pick<
-  DailyScheduleRenderProps,
-  | 'availableWorkDays'
-  | 'defaultSchedule'
-  | 'defaultStartTime'
-  | 'defaultEndTime'
-  | 'defaultBreakDurationMinutes'
-  | 'value'
->): DayRow[] {
-  const effectiveValue = resolveDailyScheduleValue({ value, defaultSchedule });
-
-  return availableWorkDays.map((day) => {
-    const daySchedule = effectiveValue.schedule[day];
-
-    return {
-      day,
-      checked: effectiveValue.selected_days.includes(day),
-      start_time: daySchedule?.start_time ?? defaultStartTime,
-      end_time: daySchedule?.end_time ?? defaultEndTime,
-      break_duration_minutes: String(
-        daySchedule?.break_duration_minutes ?? defaultBreakDurationMinutes,
-      ),
-    };
-  });
-}
 
 function DailyScheduleEditForm({
   availableWorkDays,
@@ -156,49 +61,17 @@ function DailyScheduleEditForm({
   | 'value'
   | 'setValue'
 > & { onClose: () => void }) {
-  const form = useForm<DailyScheduleFormData>({
-    defaultValues: {
-      schedule: buildDefaultRows({
-        availableWorkDays,
-        defaultSchedule,
-        defaultStartTime,
-        defaultEndTime,
-        defaultBreakDurationMinutes,
-        value,
-      }),
-    },
-    resolver: zodResolver(formSchema) as $TSFixMe,
-  });
-
-  const { handleSubmit, watch, control, formState } = form;
-  const { fields } = useFieldArray({ name: 'schedule', control });
-  const watchedSchedule = watch('schedule');
-
-  function handleSave(data: DailyScheduleFormData) {
-    const selectedRows = data.schedule.filter((row) => row.checked);
-
-    setValue({
-      selected_days: selectedRows.map((row) => row.day),
-      schedule: selectedRows.reduce(
-        (acc, row) => ({
-          ...acc,
-          [row.day]: {
-            start_time: row.start_time,
-            end_time: row.end_time,
-            break_duration_minutes: Number(row.break_duration_minutes),
-          },
-        }),
-        {},
-      ),
+  const { form, fields, watchedSchedule, handleSave, rootError } =
+    useDailyScheduleEditForm({
+      availableWorkDays,
+      defaultSchedule,
+      defaultStartTime,
+      defaultEndTime,
+      defaultBreakDurationMinutes,
+      value,
+      setValue,
+      onSaved: onClose,
     });
-    onClose();
-  }
-
-  // `schedule` is a field array; a whole-array `.refine()` failure (as
-  // opposed to a per-row error) lands under `.root`, not directly on
-  // `.message` — react-hook-form normalizes this for registered field
-  // arrays regardless of resolver.
-  const rootError = formState.errors.schedule?.root?.message;
 
   return (
     <Form {...form}>
@@ -272,7 +145,7 @@ function DailyScheduleEditForm({
           <Button type='button' variant='outline' onClick={onClose}>
             Cancel
           </Button>
-          <Button type='button' onClick={handleSubmit(handleSave)}>
+          <Button type='button' onClick={handleSave}>
             Save schedule
           </Button>
         </div>
