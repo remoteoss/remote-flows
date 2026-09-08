@@ -8,7 +8,7 @@ dotenv.config();
 
 const startServer = async () => {
   const app = express();
-  const port = 3001;
+  const port = process.env.PORT ? Number(process.env.PORT) : 3001;
 
   // Create Vite server in middleware mode
   const vite = await createViteServer({

@@ -4,8 +4,8 @@ export async function setupVercelBypass(page: Page) {
   await page.route('**/*', async (route: Route) => {
     const url = route.request().url();
 
-    // Only add Vercel bypass headers to requests to the Vercel deployment
-    if (url.includes('vercel.app') || url.includes('localhost:3001')) {
+    // Only add Vercel bypass headers to requests to the Vercel deployment or localhost
+    if (url.includes('vercel.app') || url.includes('localhost')) {
       const headers = {
         ...route.request().headers(),
         'x-vercel-protection-bypass': process.env.VERCEL_BYPASS_TOKEN || '',

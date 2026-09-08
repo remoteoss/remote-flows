@@ -1,12 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+import path from 'path';
 
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+
+const PORT = process.env.PORT || '3001';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -32,7 +34,7 @@ export default defineConfig({
     trace: 'on-first-retry',
     baseURL:
       process.env.BASE_URL ||
-      'http://localhost:3001/?demo=with-premium-benefits-cost-calculator',
+      `http://localhost:${PORT}/?demo=with-premium-benefits-cost-calculator`,
     extraHTTPHeaders: {
       'x-vercel-protection-bypass': process.env.VERCEL_BYPASS_TOKEN || '',
       'x-vercel-set-bypass-cookie': 'true',
