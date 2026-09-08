@@ -190,4 +190,26 @@ describe('DailySchedule', () => {
     expect(within(dialog).getByDisplayValue('10:00')).toBeInTheDocument();
     expect(within(dialog).getByDisplayValue('14:00')).toBeInTheDocument();
   });
+
+  it('displays field validation errors when invalid time format is entered', async () => {
+    const user = userEvent.setup();
+    renderWithForm([createDailyScheduleField()], {
+      daily_schedule: undefined,
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+    const dialog = screen.getByRole('dialog');
+    const startTimeInput = within(dialog).getAllByDisplayValue('09:00')[0];
+    await user.clear(startTimeInput);
+    await user.type(startTimeInput, '9:00');
+
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Save schedule' }),
+    );
+
+    expect(
+      await within(dialog).findByText(/Please check the form for errors/),
+    ).toBeInTheDocument();
+  });
 });

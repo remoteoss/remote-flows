@@ -1,0 +1,1018 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Daily Schedule Field</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+      :root {
+        --bg: #f2f3ee;
+        --surface: #ffffff;
+        --surface-sunken: #eceee6;
+        --ink: #1c2230;
+        --ink-soft: #5b6472;
+        --ink-faint: #8991a0;
+        --line: #dadcd3;
+        --accent: #a86518;
+        --accent-ink: #6e4310;
+        --accent-soft: #f1e3c6;
+        --done-ink: #2e6b49;
+        --done-bg: #dfeee2;
+        --now-ink: #7a4a11;
+        --now-bg: #f6e6c7;
+        --pending-ink: #6b6455;
+        --pending-bg: #e9e6dc;
+        --code-bg: #eceee5;
+        --shadow:
+          0 1px 2px rgba(28, 34, 48, 0.06), 0 8px 24px rgba(28, 34, 48, 0.05);
+        color-scheme: light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #12161d;
+          --surface: #1a1f28;
+          --surface-sunken: #171b22;
+          --ink: #e9e6dd;
+          --ink-soft: #a2aab5;
+          --ink-faint: #6d7482;
+          --line: #2b323c;
+          --accent: #e3a94f;
+          --accent-ink: #f2c780;
+          --accent-soft: #3a2d15;
+          --done-ink: #7fcb9c;
+          --done-bg: #1c3327;
+          --now-ink: #f0be74;
+          --now-bg: #3a2c14;
+          --pending-ink: #a39b8a;
+          --pending-bg: #23271f;
+          --code-bg: #171b22;
+          --shadow:
+            0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+          color-scheme: dark;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: var(--bg);
+      }
+
+      body {
+        color: var(--ink);
+        font-family:
+          'Public Sans',
+          system-ui,
+          -apple-system,
+          sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      img {
+        max-width: 100%;
+      }
+
+      main {
+        max-width: 780px;
+        margin: 0 auto;
+        padding: 56px 24px 96px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: 'Fraunces', Georgia, serif;
+        font-weight: 600;
+        text-wrap: balance;
+        color: var(--ink);
+      }
+
+      code,
+      .mono {
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+      }
+
+      a {
+        color: var(--accent-ink);
+        text-decoration-color: var(--line);
+        text-underline-offset: 3px;
+      }
+      a:hover {
+        text-decoration-color: currentColor;
+      }
+
+      /* ---------- header ---------- */
+
+      header.doc-head {
+        margin-bottom: 48px;
+      }
+
+      .eyebrow {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12.5px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--accent-ink);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .eyebrow::before {
+        content: '';
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: var(--accent);
+      }
+
+      h1.doc-title {
+        font-size: clamp(32px, 5vw, 44px);
+        line-height: 1.08;
+        margin: 0 0 14px;
+      }
+
+      .doc-dek {
+        font-size: 18px;
+        color: var(--ink-soft);
+        max-width: 62ch;
+        margin: 0 0 22px;
+      }
+
+      .meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 10px;
+        font-size: 13px;
+        color: var(--ink-soft);
+      }
+
+      .meta-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--surface);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12.5px;
+      }
+
+      /* ---------- sections ---------- */
+
+      section {
+        margin-top: 52px;
+        padding-top: 8px;
+      }
+
+      .section-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        border-top: 1px solid var(--line);
+        padding-top: 10px;
+        margin-bottom: 18px;
+      }
+
+      section h2 {
+        font-size: 24px;
+        margin: 0 0 14px;
+      }
+
+      section p {
+        max-width: 66ch;
+        color: var(--ink);
+      }
+
+      section p.lede {
+        color: var(--ink-soft);
+      }
+
+      /* ---------- scope table ---------- */
+
+      .scope-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 22px 0;
+      }
+
+      .scope-cell {
+        background: var(--surface);
+        padding: 16px 16px 18px;
+      }
+
+      .scope-cell h3 {
+        font-family: 'Public Sans', sans-serif;
+        font-weight: 700;
+        font-size: 13.5px;
+        margin: 0 0 6px;
+        color: var(--ink);
+      }
+
+      .scope-cell .tag {
+        display: inline-block;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        color: var(--pending-ink);
+        background: var(--pending-bg);
+        padding: 2px 7px;
+        border-radius: 999px;
+        margin-bottom: 8px;
+      }
+
+      .scope-cell.is-this .tag {
+        color: var(--accent-ink);
+        background: var(--accent-soft);
+      }
+
+      .scope-cell p {
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        margin: 0;
+      }
+
+      @media (max-width: 640px) {
+        .scope-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- code blocks ---------- */
+
+      .code-block {
+        background: var(--code-bg);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow-x: auto;
+        margin: 18px 0;
+      }
+
+      .code-block .code-caption {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        color: var(--ink-faint);
+        padding: 10px 16px 0;
+      }
+
+      .code-block pre {
+        margin: 0;
+        padding: 12px 16px 16px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12.5px;
+        line-height: 1.65;
+        color: var(--ink);
+        white-space: pre;
+      }
+
+      .code-block .c-key {
+        color: var(--accent-ink);
+      }
+      .code-block .c-str {
+        color: var(--done-ink);
+      }
+      .code-block .c-com {
+        color: var(--ink-faint);
+        font-style: italic;
+      }
+
+      /* ---------- diagram frames ---------- */
+
+      .diagram-frame {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 20px 18px 8px;
+        box-shadow: var(--shadow);
+        margin: 20px 0 8px;
+        overflow-x: auto;
+      }
+
+      .diagram-frame .mermaid {
+        display: flex;
+        justify-content: center;
+      }
+
+      .diagram-caption {
+        font-size: 13px;
+        color: var(--ink-faint);
+        margin: 0 0 24px;
+        max-width: 66ch;
+      }
+
+      .diagram-caption strong {
+        color: var(--ink-soft);
+        font-weight: 600;
+      }
+
+      /* ---------- decisions ---------- */
+
+      .decision {
+        display: grid;
+        grid-template-columns: 190px 1fr;
+        gap: 4px 20px;
+        padding: 16px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .decision:last-child {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .decision dt {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--ink);
+      }
+
+      .decision dd {
+        margin: 0;
+        font-size: 14.5px;
+        color: var(--ink-soft);
+      }
+
+      .decision .why {
+        margin-top: 6px;
+        font-size: 13px;
+      }
+      .decision .why b {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      @media (max-width: 640px) {
+        .decision {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- phase timeline ---------- */
+
+      .phase-list {
+        list-style: none;
+        margin: 18px 0 0;
+        padding: 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .phase {
+        display: grid;
+        grid-template-columns: 32px 1fr auto;
+        align-items: start;
+        gap: 4px 16px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .phase-num {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        color: var(--ink-faint);
+        padding-top: 2px;
+      }
+
+      .phase-body h3 {
+        font-family: 'Public Sans', sans-serif;
+        font-size: 14.5px;
+        font-weight: 700;
+        margin: 0 0 3px;
+      }
+
+      .phase-body p {
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        margin: 0;
+        max-width: 58ch;
+      }
+
+      .status {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 0.02em;
+        padding: 3px 9px;
+        border-radius: 999px;
+        white-space: nowrap;
+        height: fit-content;
+      }
+
+      .status.done {
+        color: var(--done-ink);
+        background: var(--done-bg);
+      }
+      .status.now {
+        color: var(--now-ink);
+        background: var(--now-bg);
+      }
+      .status.pending {
+        color: var(--pending-ink);
+        background: var(--pending-bg);
+      }
+
+      /* ---------- file list ---------- */
+
+      .file-list {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 18px 0;
+      }
+
+      .file-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+        gap: 16px;
+        padding: 9px 14px;
+        font-size: 13px;
+        border-bottom: 1px solid var(--line);
+        background: var(--surface);
+      }
+
+      .file-row:last-child {
+        border-bottom: none;
+      }
+      .file-row:nth-child(even) {
+        background: var(--surface-sunken);
+      }
+
+      .file-row .path {
+        font-family: 'JetBrains Mono', monospace;
+        color: var(--ink);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .file-row .role {
+        color: var(--ink-soft);
+      }
+
+      .file-row .path .new-tag {
+        font-family: 'Public Sans', sans-serif;
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--accent-ink);
+        background: var(--accent-soft);
+        padding: 1px 5px;
+        border-radius: 4px;
+        margin-left: 8px;
+        letter-spacing: 0.02em;
+      }
+
+      @media (max-width: 640px) {
+        .file-row {
+          grid-template-columns: 1fr;
+          gap: 2px;
+        }
+      }
+
+      /* ---------- footer ---------- */
+
+      footer {
+        margin-top: 64px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        font-size: 13px;
+        color: var(--ink-faint);
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header class="doc-head">
+        <div class="eyebrow">
+          PAY-2868 · remote-flows ·
+          <a href="https://github.com/remoteoss/remote-flows/pull/1288"
+            >PR #1288</a
+          >
+        </div>
+        <h1 class="doc-title">Daily Schedule Field</h1>
+        <p class="doc-dek">
+          A headless container and a validation hook that give partners building
+          custom onboarding UIs the same schema-driven defaults, hour-bounds,
+          and save logic Dragon's <code>WorkScheduleFieldForJSONSchema</code>
+          already computes — without registering a new field type, and without
+          touching Dragon.
+        </p>
+        <div class="meta-row">
+          <span class="meta-pill"
+            >branch: feat/pay-2868-daily-schedule-render-prop-contract</span
+          >
+          <span class="meta-pill">Phases 1–3 done, restructured</span>
+          <span class="meta-pill">948 tests passing</span>
+        </div>
+      </header>
+
+      <section>
+        <div class="section-label">Scope</div>
+        <h2>Three things named "schedule," only one of them this</h2>
+        <p class="lede">
+          The plan is explicit that this is not a Dragon migration and not a
+          rebuild of the existing, unrelated <code>work-schedule</code> field
+          type. Keeping the three apart matters more than it sounds:
+        </p>
+
+        <div class="scope-grid">
+          <div class="scope-cell">
+            <span class="tag">untouched</span>
+            <h3>Dragon's WorkScheduleFieldForJSONSchema</h3>
+            <p>
+              Formik-based, lives in <code>employ-starbase</code>. Ground truth
+              for the UX this plan matches. Never consumes remote-flows — no
+              migration happening here.
+            </p>
+          </div>
+          <div class="scope-cell">
+            <span class="tag">untouched</span>
+            <h3>the <code>work-schedule</code> field type</h3>
+            <p>
+              Already in remote-flows, already RHF-based — but a flat,
+              schema-metadata-blind <code>DailySchedule[]</code> shape. Unused
+              in production. Not retrofitted.
+            </p>
+          </div>
+          <div class="scope-cell is-this">
+            <span class="tag">this PR</span>
+            <h3><code>daily_schedule</code></h3>
+            <p>
+              New: a headless container + reusable validation hook, swapped in
+              over the field's existing generic-fieldset rendering via
+              <code>jsfModify</code>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-label">Where it lives</div>
+        <h2>The schema already carries the answer</h2>
+        <p>
+          Tiger sends <code>daily_schedule</code> as an ordinary
+          <code>fieldset</code>, but its <code>x-jsf-presentation</code> carries
+          a <code>metadata</code> block with everything a UI needs to render
+          sensible defaults and enforce hour bounds — country name, default
+          times, which days are available, and the weekly-hour range per
+          work-schedule type. Nothing here needed inventing; it only needed
+          reading correctly.
+        </p>
+
+        <div class="code-block">
+          <div class="code-caption">
+            daily_schedule['x-jsf-presentation'] — Germany contract-details
+            schema (real fixture)
+          </div>
+          <pre>{
+  <span class="c-key">"inputType"</span>: <span class="c-str">"fieldset"</span>,
+  <span class="c-key">"metadata"</span>: {
+    <span class="c-key">"country_name"</span>: <span class="c-str">"Germany"</span>,
+    <span class="c-key">"default_start_time"</span>: <span class="c-str">"09:00"</span>,
+    <span class="c-key">"default_end_time"</span>: <span class="c-str">"18:00"</span>,
+    <span class="c-key">"default_break_duration_minutes"</span>: <span class="c-str">60</span>,
+    <span class="c-key">"subtract_breaks_in_work_hours"</span>: <span class="c-str">true</span>,
+    <span class="c-key">"work_days"</span>: [<span class="c-str">"monday"</span>, <span class="c-str">"tuesday"</span>, <span class="c-str">"…"</span>, <span class="c-str">"saturday"</span>],
+    <span class="c-key">"default_schedule"</span>: [
+      { <span class="c-key">"day"</span>: <span class="c-str">"monday"</span>, <span class="c-key">"start_time"</span>: <span class="c-str">"09:00"</span>, <span class="c-key">"end_time"</span>: <span class="c-str">"18:00"</span>, <span class="c-key">"break_duration_minutes"</span>: <span class="c-str">60</span>, <span class="c-key">"hours"</span>: <span class="c-str">8</span> }
+      <span class="c-com">// … tuesday–friday, same shape</span>
+    ],
+    <span class="c-key">"work_hours_per_week"</span>: {
+      <span class="c-key">"baseline"</span>:  { <span class="c-key">"minimum"</span>: <span class="c-str">1</span>,  <span class="c-key">"maximum"</span>: <span class="c-str">48</span> },
+      <span class="c-key">"full_time"</span>: { <span class="c-key">"minimum"</span>: <span class="c-str">31</span>, <span class="c-key">"maximum"</span>: <span class="c-str">48</span> },
+      <span class="c-key">"part_time"</span>: { <span class="c-key">"minimum"</span>: <span class="c-str">1</span>,  <span class="c-key">"maximum"</span>: <span class="c-str">30</span> }
+    }
+  }
+}</pre>
+        </div>
+        <p class="lede" style="font-size: 13.5px">
+          Confirmed empirically against <code>json-schema-form</code>'s field
+          builder: every key under <code>x-jsf-presentation</code> except
+          <code>inputType</code> is merged directly onto the field object — so
+          this whole block arrives at the container as
+          <code>field.metadata</code>, not nested under
+          <code>scopedJsonSchema</code> as originally guessed in the plan.
+        </p>
+      </section>
+
+      <section>
+        <div class="section-label">Architecture</div>
+        <h2>One hook, two possible UIs</h2>
+        <p class="lede">
+          The container owns every schema derivation. The validation hook owns
+          every rule about what a valid schedule is. The default UI is markup
+          wired to both — and so is any consumer's own UI, if they replace it.
+        </p>
+
+        <div class="diagram-frame">
+          <pre class="mermaid">
+flowchart TB
+    schema["daily_schedule field\n(x-jsf-presentation.metadata)"]
+    jsfmodify["jsfModify Component override\nOnboarding contract_details step\n(Phase 4 — not yet wired)"]
+    container["DailyScheduleContainer\ngetDefaultsFromSchema / getWorkHoursBounds"]
+    renderprop{{"render(props)"}}
+    default["DailySchedule\n(shipped default UI)"]
+    custom["consumer's own UI\n(swapped in via jsfModify)"]
+    hook[["useDailyScheduleEditForm\nzod schema · RHF form · save mapping"]]
+    setValue["field.setValue(\n{ selected_days, schedule }\n)"]
+
+    schema -->|"read at field-build time"| jsfmodify
+    jsfmodify -->|"injects Component"| container
+    container -->|"metadata + work_schedule/schedule_type\n(sibling fields, read via useFormContext)"| renderprop
+    renderprop -->|"default path"| default
+    renderprop -.->|"consumer override\n(receives same render props)"| custom
+    default -->|"calls"| hook
+    custom -.->|"calls"| hook
+    hook -->|"single write-back on Save"| setValue
+
+    classDef pending stroke-dasharray: 4 3;
+    class jsfmodify,custom pending;
+</pre>
+        </div>
+        <p class="diagram-caption">
+          Dashed = not built yet (Phase 4). The property being protected:
+          whichever UI renders — ours or a consumer's — it goes through the same
+          <code>useDailyScheduleEditForm</code>, so
+          <strong>the library</strong>, not each integrator, decides what a
+          valid schedule looks like.
+        </p>
+      </section>
+
+      <section>
+        <div class="section-label">Data flow</div>
+        <h2>Edit, validate, one write</h2>
+        <p class="lede">
+          Dragon's version wrote per-field as the user typed. Here, the whole
+          <code>{ selected_days, schedule }</code> object is written back
+          exactly once, on a successful save — which is also why Dragon's "only
+          validate on the last field update" workaround wasn't needed here.
+        </p>
+
+        <div class="diagram-frame">
+          <pre class="mermaid">
+sequenceDiagram
+    actor Employer
+    participant UI as DailySchedule (modal)
+    participant Hook as useDailyScheduleEditForm
+    participant Field as daily_schedule field value
+
+    Employer->>UI: click "Edit schedule"
+    UI->>Hook: open with current value (or schema defaults if unset)
+    Hook-->>UI: form rows: one per available work day
+    Employer->>UI: toggle days, edit start/end/break
+    Employer->>UI: click "Save schedule"
+    UI->>Hook: handleSave()
+    Hook->>Hook: validate with dailyScheduleEditFormSchema (zod)
+    alt schedule invalid
+        Hook-->>UI: rootError ("Select at least one work day", etc.)
+        UI-->>Employer: inline error, modal stays open
+    else schedule valid
+        Hook->>Field: setValue({ selected_days, schedule })
+        Field-->>UI: onSaved() closes the modal
+    end
+</pre>
+        </div>
+        <p class="diagram-caption">
+          One <code>setValue</code> call per save — never one write per field or
+          per day.
+        </p>
+      </section>
+
+      <section>
+        <div class="section-label">Decisions</div>
+        <h2>What was chosen, and why</h2>
+
+        <dl>
+          <div class="decision">
+            <dt>
+              Container + <code>jsfModify</code> override,<br />not a new field
+              type
+            </dt>
+            <dd>
+              Mirrors <code>paid_time_off_info</code> in Termination exactly — a
+              documented, shipped pattern ("Method 3: Field-Specific Override,"
+              <code>docs/COMPONENT_CUSTOMIZATION.md</code>) — instead of
+              teaching <code>jsfModify</code> to rewrite
+              <code>inputType</code> and registering
+              <code>daily_schedule</code> as a globally swappable type reachable
+              from every flow.
+              <div class="why">
+                <b>Tradeoff:</b> customization goes through
+                <code>jsfModify.fields.daily_schedule</code>, not the global
+                <code>components</code> prop — same limitation
+                <code>annual_gross_salary</code> already has.
+              </div>
+            </dd>
+          </div>
+
+          <div class="decision">
+            <dt>
+              Validation extracted into<br /><code
+                >useDailyScheduleEditForm</code
+              >
+            </dt>
+            <dd>
+              The first pass put react-hook-form + schema validation directly
+              inside the default UI component. A consumer swapping in their own
+              UI would've had to reinvent every rule from scratch — and could
+              quietly diverge from what counts as valid.
+              <div class="why">
+                <b>Now:</b> the hook is the single source of truth for defaults,
+                validation, and the save mapping; both the shipped UI and any
+                custom one call it.
+              </div>
+            </dd>
+          </div>
+
+          <div class="decision">
+            <dt>zod for this one form,<br />not the repo's usual Yup</dt>
+            <dd>
+              A deliberate, scoped exception. This edit-modal form is entirely
+              local — it never touches
+              <code>json-schema-form-kit</code>'s own Yup-based resolver — so
+              there's no compatibility concern, only a second validation library
+              now shipping in the bundle.
+              <div class="why">
+                <b>Worth revisiting:</b> a size-check glance in Phase 6.
+              </div>
+            </dd>
+          </div>
+
+          <div class="decision">
+            <dt>
+              Phase 4 will <em>not</em> fully mirror<br /><code
+                >paid_time_off_info</code
+              >'s override
+            </dt>
+            <dd>
+              PTO lets a consumer-supplied <code>Component</code> fully replace
+              the field, bypassing the container — fine there, since PTO's
+              queries barely depend on what renders. Not fine here: a full
+              bypass would force a custom UI to reimplement schema derivation
+              <em>and</em> validation from raw field props.
+              <div class="why">
+                <b>Plan:</b> always route through
+                <code>DailyScheduleContainer</code>; treat a consumer's
+                <code>Component</code> as the <em>render function</em> instead.
+              </div>
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section>
+        <div class="section-label">Status</div>
+        <h2>Phases 0–6</h2>
+
+        <ul class="phase-list">
+          <li class="phase">
+            <div class="phase-num">0</div>
+            <div class="phase-body">
+              <h3>Open inputs resolved</h3>
+              <p>
+                Country scope (all at once), feature-flag name
+                (<code>daily_schedule</code>) decided upfront.
+              </p>
+            </div>
+            <div class="status done">done</div>
+          </li>
+          <li class="phase">
+            <div class="phase-num">1</div>
+            <div class="phase-body">
+              <h3>Real schema wired into the Playground sandbox</h3>
+              <p>
+                Germany contract-details schema added to
+                <code>JsonSchemaPlayground</code> — zero production risk.
+              </p>
+            </div>
+            <div class="status done">done</div>
+          </li>
+          <li class="phase">
+            <div class="phase-num">2</div>
+            <div class="phase-body">
+              <h3>Render-prop contract designed</h3>
+              <p>
+                Ported <code>getDefaultsFromSchema</code> /
+                <code>getWorkHoursBounds</code> /
+                <code>calculateWorkingHours</code> from Dragon into typed,
+                tested utils.
+              </p>
+            </div>
+            <div class="status done">done</div>
+          </li>
+          <li class="phase">
+            <div class="phase-num">3</div>
+            <div class="phase-body">
+              <h3>Container + default UI + validation hook built</h3>
+              <p>
+                <code>DailyScheduleContainer</code>, <code>DailySchedule</code>,
+                and — after a restructure —
+                <code>useDailyScheduleEditForm</code>. Verified via the Germany
+                fixture through the real
+                <code>JSONSchemaFormFields</code> render path.
+              </p>
+            </div>
+            <div class="status done">done — this PR</div>
+          </li>
+          <li class="phase">
+            <div class="phase-num">4</div>
+            <div class="phase-body">
+              <h3>Wire <code>jsfModify</code> into Onboarding</h3>
+              <p>
+                Inject the <code>Component</code> override in
+                <code>contract_details</code>, gated behind the
+                <code>daily_schedule</code> feature flag. Not started.
+              </p>
+            </div>
+            <div class="status pending">not started</div>
+          </li>
+          <li class="phase">
+            <div class="phase-num">5</div>
+            <div class="phase-body">
+              <h3>Guard against silent drift from Dragon</h3>
+              <p>
+                Bugbot rule + <code>.agents/rules/*.mdc</code> in
+                <code>employ-starbase</code>, pointing back at this port. Lives
+                in the other repo.
+              </p>
+            </div>
+            <div class="status pending">not started</div>
+          </li>
+          <li class="phase">
+            <div class="phase-num">6</div>
+            <div class="phase-body">
+              <h3>Verification</h3>
+              <p>
+                Full-flow manual pass, contract-details test coverage, no-op
+                check for schemas without <code>daily_schedule</code>, and a
+                validation review against Dragon's client-side checks.
+              </p>
+            </div>
+            <div class="status pending">not started</div>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-label">Files</div>
+        <h2>What's actually in this PR</h2>
+        <div class="file-list">
+          <div class="file-row">
+            <span class="path">types.ts</span
+            ><span class="role"
+              >Render-prop contract: <code>DailyScheduleRenderProps</code>,
+              <code>DailyScheduleValue</code>,
+              <code>DailyScheduleMetadata</code></span
+            >
+          </div>
+          <div class="file-row">
+            <span class="path">utils.ts</span
+            ><span class="role"
+              >Pure schema-derivation: defaults, hour bounds, working-hours
+              math, save-time fallback</span
+            >
+          </div>
+          <div class="file-row">
+            <span class="path"
+              >DailyScheduleContainer.tsx <span class="new-tag">new</span></span
+            ><span class="role"
+              >Headless container — reads sibling fields, calls
+              <code>render(props)</code></span
+            >
+          </div>
+          <div class="file-row">
+            <span class="path"
+              >DailySchedule.tsx <span class="new-tag">new</span></span
+            ><span class="role"
+              >Shipped default UI — summary + edit dialog, markup only</span
+            >
+          </div>
+          <div class="file-row">
+            <span class="path"
+              >useDailyScheduleEditForm.ts
+              <span class="new-tag">new</span></span
+            ><span class="role"
+              >Reusable RHF + zod edit-form hook — validation and save
+              mapping</span
+            >
+          </div>
+          <div class="file-row">
+            <span class="path">tests/*.test.ts(x)</span
+            ><span class="role"
+              >4 files, 470 lines, 20 tests — incl. one proving the hook works
+              with bare <code>&lt;input&gt;</code></span
+            >
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <span
+          >Reference: Dragon MR
+          <a
+            href="https://gitlab.com/remote-com/employ-starbase/dragon/-/merge_requests/49203"
+            >employ-starbase!49203</a
+          ></span
+        >
+        <span>Plan: <code>plans/daily-schedule-field.md</code></span>
+      </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+    <script>
+      var isDark =
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      var lightVars = {
+        background: '#f2f3ee',
+        primaryColor: '#ffffff',
+        primaryTextColor: '#1c2230',
+        primaryBorderColor: '#dadcd3',
+        lineColor: '#8991a0',
+        secondaryColor: '#f1e3c6',
+        secondaryTextColor: '#1c2230',
+        secondaryBorderColor: '#dadcd3',
+        tertiaryColor: '#eceee6',
+        tertiaryTextColor: '#1c2230',
+        tertiaryBorderColor: '#dadcd3',
+        noteBkgColor: '#f1e3c6',
+        noteTextColor: '#1c2230',
+        noteBorderColor: '#dadcd3',
+        actorBkg: '#ffffff',
+        actorBorder: '#dadcd3',
+        actorTextColor: '#1c2230',
+        actorLineColor: '#8991a0',
+        signalColor: '#5b6472',
+        signalTextColor: '#1c2230',
+        labelBoxBkgColor: '#f1e3c6',
+        labelBoxBorderColor: '#dadcd3',
+        labelTextColor: '#1c2230',
+        loopTextColor: '#1c2230',
+        activationBorderColor: '#a86518',
+        activationBkgColor: '#f1e3c6',
+        sequenceNumberColor: '#1c2230',
+      };
+
+      var darkVars = {
+        background: '#12161d',
+        primaryColor: '#1a1f28',
+        primaryTextColor: '#e9e6dd',
+        primaryBorderColor: '#2b323c',
+        lineColor: '#6d7482',
+        secondaryColor: '#3a2d15',
+        secondaryTextColor: '#e9e6dd',
+        secondaryBorderColor: '#2b323c',
+        tertiaryColor: '#171b22',
+        tertiaryTextColor: '#e9e6dd',
+        tertiaryBorderColor: '#2b323c',
+        noteBkgColor: '#3a2d15',
+        noteTextColor: '#e9e6dd',
+        noteBorderColor: '#2b323c',
+        actorBkg: '#1a1f28',
+        actorBorder: '#2b323c',
+        actorTextColor: '#e9e6dd',
+        actorLineColor: '#6d7482',
+        signalColor: '#a2aab5',
+        signalTextColor: '#e9e6dd',
+        labelBoxBkgColor: '#3a2d15',
+        labelBoxBorderColor: '#2b323c',
+        labelTextColor: '#e9e6dd',
+        loopTextColor: '#e9e6dd',
+        activationBorderColor: '#e3a94f',
+        activationBkgColor: '#3a2d15',
+        sequenceNumberColor: '#e9e6dd',
+      };
+
+      var themeVariables = isDark ? darkVars : lightVars;
+      themeVariables.fontFamily = "'JetBrains Mono', monospace";
+      themeVariables.fontSize = '13px';
+
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: themeVariables,
+        flowchart: { htmlLabels: true, curve: 'basis' },
+        securityLevel: 'loose',
+      });
+    </script>
+  </body>
+</html>

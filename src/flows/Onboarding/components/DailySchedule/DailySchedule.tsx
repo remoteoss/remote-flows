@@ -73,6 +73,8 @@ function DailyScheduleEditForm({
       onSaved: onClose,
     });
 
+  const hasFieldErrors = Object.keys(form.formState.errors).length > 0;
+
   return (
     <Form {...form}>
       <form className='space-y-4 RemoteFlows__DailyScheduleForm'>
@@ -140,6 +142,14 @@ function DailyScheduleEditForm({
         {rootError ? (
           <p className='text-destructive text-sm mb-0'>{rootError}</p>
         ) : null}
+
+        {!rootError && hasFieldErrors && (
+          <p className='text-destructive text-sm mb-0'>
+            Please check the form for errors. Time fields must use HH:mm format
+            (e.g., 09:00), and all checked days must have start time, end time,
+            and break duration filled in.
+          </p>
+        )}
 
         <div className='flex gap-4 pt-4'>
           <Button type='button' variant='outline' onClick={onClose}>
