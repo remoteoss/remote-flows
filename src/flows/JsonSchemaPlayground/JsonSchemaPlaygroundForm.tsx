@@ -12,7 +12,7 @@ export interface JsonSchemaPlaygroundFormProps {
   defaultValues?: Record<string, unknown>;
 }
 
-export const JsonSchemaPlaygroundForm = ({
+const JsonSchemaPlaygroundFormInner = ({
   onSubmit,
   className,
   components,
@@ -37,10 +37,7 @@ export const JsonSchemaPlaygroundForm = ({
   };
 
   return (
-    <Form
-      {...form}
-      key={`form-${playgroundBag.selectedSchema}-${playgroundBag.resetKey}`}
-    >
+    <Form {...form}>
       <form
         id={formId}
         onSubmit={form.handleSubmit(handleFormSubmit)}
@@ -54,5 +51,23 @@ export const JsonSchemaPlaygroundForm = ({
         />
       </form>
     </Form>
+  );
+};
+
+export const JsonSchemaPlaygroundForm = (
+  props: JsonSchemaPlaygroundFormProps,
+) => {
+  const { playgroundBag } = useJsonSchemaPlaygroundContext();
+
+  // `useJSONSchemaForm` (inside JsonSchemaPlaygroundFormInner) creates its
+  // react-hook-form instance with `defaultValues` that react-hook-form only
+  // reads once, on mount. The key must live here, not on the inner <Form>,
+  // so switching schemas or resetting fully remounts that hook instance
+  // instead of re-rendering it with stale defaults.
+  return (
+    <JsonSchemaPlaygroundFormInner
+      key={`form-${playgroundBag.selectedSchema}-${playgroundBag.resetKey}`}
+      {...props}
+    />
   );
 };
