@@ -13,10 +13,14 @@ export function PDFPreviewDefault({
   }
 
   return (
-    <div className='w-full space-y-4'>
+    // Fills its container when given one — in a drawer the viewer should use the height it
+    // has rather than a fixed slab with dead space under it. `min-h` keeps the previous
+    // rendering wherever the parent's height is unconstrained, since an iframe has no
+    // intrinsic height to grow from.
+    <div className='w-full h-full flex flex-col gap-4'>
       <iframe
         src={base64Data}
-        className='w-full h-[600px] border rounded'
+        className='w-full flex-1 min-h-[600px] border rounded'
         title={fileName}
       />
       <div className='flex justify-between items-center text-sm'>

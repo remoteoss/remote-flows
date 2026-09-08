@@ -1,6 +1,7 @@
 import {
   InvoiceScheduleFlow,
   InvoiceScheduleForm,
+  InvoiceSchedulePreviewButton,
   InvoiceScheduleSubmitButton,
 } from '@remoteoss/remote-flows';
 import { useState } from 'react';
@@ -75,6 +76,14 @@ export function InvoiceSchedule() {
                 />
 
                 {error && <p>{error}</p>}
+
+                <InvoiceSchedulePreviewButton
+                  onError={({ error }) => setError(error.message)}
+                >
+                  {invoiceScheduleBag.isPreviewingInvoice
+                    ? 'Generating preview…'
+                    : 'Preview invoice'}
+                </InvoiceSchedulePreviewButton>
 
                 <InvoiceScheduleSubmitButton>
                   Create schedule

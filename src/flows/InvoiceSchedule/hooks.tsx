@@ -2,7 +2,9 @@ import { useCallback, useMemo, useState } from 'react';
 import {
   useCreateInvoiceSchedule,
   useGetCreateInvoiceScheduleSchema,
+  usePreviewContractorInvoice,
 } from '@/src/common/invoice-schedules/api';
+import { ContractorInvoicePreview } from '@/src/common/invoice-schedules/types';
 import { buildInvoiceSchedulePayload } from '@/src/common/invoice-schedules/utils';
 import { useEmploymentQuery } from '@/src/common/api/employment';
 import { useContractors } from '@/src/flows/InvoiceSchedule/api';
@@ -13,6 +15,7 @@ import {
   UseInvoiceScheduleOptions,
 } from '@/src/flows/InvoiceSchedule/types';
 import { parseJSFToValidate } from '@/src/components/form/utils';
+import { clearBase64Data } from '@/src/lib/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import {
@@ -117,6 +120,10 @@ export const useInvoiceSchedule = ({
     createInvoiceScheduleMutation,
   );
 
+  const previewContractorInvoiceMutation = usePreviewContractorInvoice();
+  const { mutateAsyncOrThrow: previewContractorInvoiceAsync } =
+    mutationToPromise(previewContractorInvoiceMutation);
+
   /**
    * Keeps the derived queries in step with the picker. Call from the consumer's change handler
    * when driving the form yourself; `InvoiceScheduleForm` wires this up for you.
@@ -176,6 +183,42 @@ export const useInvoiceSchedule = ({
     [employmentId, parseValues],
   );
 
+  /**
+   * Renders the invoice the current form values describe as a draft PDF, without creating
+   * anything. The preview endpoint covers a single invoice, so the recurrence fields are
+   * left out of the payload — `buildInvoicePreviewPayload` does that.
+   */
+  const previewInvoice = useCallback(
+    async (
+      values: InvoiceScheduleFormValues,
+    ): Promise<ContractorInvoicePreview | undefined> => {
+      const parsed = await parseValues(values);
+      const targetEmploymentId = employmentId ?? parsed.employment_id;
+
+      if (!targetEmploymentId) {
+        throw new Error(
+          'No contractor selected. Pick a contractor or pass `employmentId` to the flow.',
+        );
+      }
+
+      const response = await previewContractorInvoiceAsync({
+        employmentId: targetEmploymentId,
+        values: parsed,
+      });
+
+      // Cast because `content` arrives as a `data:application/pdf;base64,…` string, not the
+      // `Blob | File` the OpenAPI spec's `format: binary` makes the generated type promise.
+      const preview = response?.data?.contractor_invoice_preview as
+        | ContractorInvoicePreview
+        | undefined;
+
+      if (!preview) return undefined;
+
+      return { ...preview, content: clearBase64Data(preview.content) };
+    },
+    [employmentId, parseValues, previewContractorInvoiceAsync],
+  );
+
   const onSubmit = useCallback(
     async (values: InvoiceScheduleFormValues) => {
       const parsed = await parseValues(values);
@@ -214,6 +257,12 @@ export const useInvoiceSchedule = ({
      */
     onSubmit,
     /**
+     * Renders the current form values as a draft invoice PDF without creating anything.
+     * Resolves to a `data:application/pdf;base64,…` document, or `undefined` if the API
+     * returned none. `InvoiceSchedulePreviewButton` wires this up for you.
+     */
+    previewInvoice,
+    /**
      * Notify the flow that the chosen contractor changed.
      */
     onContractorChange,
@@ -233,6 +282,10 @@ export const useInvoiceSchedule = ({
      * True while the schedule is being created.
      */
     isSubmitting: createInvoiceScheduleMutation.isPending,
+    /**
+     * True while a draft PDF preview is being generated.
+     */
+    isPreviewingInvoice: previewContractorInvoiceMutation.isPending,
     /**
      * True only for the initial load, before there is a form to show. Consumers gate their
      * first render on this, so it deliberately excludes the per-contractor fetches below —

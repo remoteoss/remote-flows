@@ -39,6 +39,28 @@ const FormField = <
   );
 };
 
+/**
+ * Names the field for `FormLabel`, `FormControl` and `FormMessage` without registering a
+ * controller for it.
+ *
+ * `FormField` is what normally supplies this, but a component supplied through
+ * `x-jsf-presentation.Component` is rendered on its own — it already receives `value` and
+ * `setValue` as props, so wrapping it in a `Controller` would take over the value handling it
+ * was given. This provides only the missing name, so those three components can find the
+ * field's error the way they do everywhere else.
+ */
+const FormFieldNameProvider = ({
+  name,
+  children,
+}: {
+  name: string;
+  children: React.ReactNode;
+}) => (
+  <FormFieldContext.Provider value={{ name }}>
+    {children}
+  </FormFieldContext.Provider>
+);
+
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext);
   const itemContext = React.useContext(FormItemContext);
@@ -235,6 +257,7 @@ export {
   FormControl,
   FormDescription,
   FormField,
+  FormFieldNameProvider,
   FormItem,
   FormLabel,
   FormMessage,

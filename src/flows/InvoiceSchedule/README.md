@@ -17,6 +17,7 @@ If you want the invoice-schedule step **inside** contractor onboarding, that is 
   - [InvoiceScheduleFlow](#invoicescheduleflow)
   - [InvoiceScheduleForm](#invoicescheduleform)
   - [InvoiceScheduleSubmitButton](#invoiceschedulesubmitbutton)
+  - [InvoiceSchedulePreviewButton](#invoiceschedulepreviewbutton)
 - [The bag](#the-bag)
 - [How values map to the API](#how-values-map-to-the-api)
 - [Current limitations](#current-limitations)
@@ -120,6 +121,33 @@ fields:
 Must be rendered inside the flow's `render` prop. Accepts any button props; disables itself
 while the schedule is being created.
 
+### InvoiceSchedulePreviewButton
+
+Renders the invoice the form currently describes as a draft PDF and shows it in a drawer,
+without creating anything. Must be rendered inside the flow's `render` prop.
+
+Disabled until a contractor is known — the preview endpoint is scoped to an employment — and
+while a preview is in flight.
+
+| Prop        | Type                                         | Description                                                           |
+| ----------- | -------------------------------------------- | --------------------------------------------------------------------- |
+| `onSuccess` | `(preview) => void \| Promise<void>`         | Receives the preview document, for consumers that want it themselves. |
+| `onError`   | `({ error, rawError, fieldErrors }) => void` | Called when the preview fails.                                        |
+
+```tsx
+<InvoiceSchedulePreviewButton onError={({ error }) => console.error(error)}>
+  Preview invoice
+</InvoiceSchedulePreviewButton>
+```
+
+A preview covers a single invoice, so the recurrence fields (`periodicity`,
+`nr_occurrences`) are left out of the request.
+
+`preview.content` is a `data:application/pdf;base64,…` URI. Browsers block top-level
+navigation to the `data:` scheme, so it can be rendered in an `iframe`/`embed` or handed to an
+`<a download>`, but not passed to `window.open`. Override the `pdfViewer` component on
+`<RemoteFlows components={…}>` to render it your own way.
+
 ## The bag
 
 `useInvoiceSchedule()` is the headless equivalent of the render prop, for fully custom UIs.
@@ -131,10 +159,12 @@ Both surfaces expose the same bag:
 | `handleValidation`           | Validation handler for the generated form.                                                 |
 | `parseFormValues`            | Turns form values into the API payload without submitting.                                 |
 | `onSubmit`                   | Creates the invoice schedule.                                                              |
+| `previewInvoice`             | Renders the current values as a draft PDF without creating anything.                       |
 | `onContractorChange`         | Tell the flow the chosen contractor changed (wired up for you by `InvoiceScheduleForm`).   |
 | `employmentId`               | The contractor the schedule will be created for, if known.                                 |
 | `rendersContractorSelect`    | Whether this flow renders its own picker.                                                  |
 | `isSubmitting`               | True while creating.                                                                       |
+| `isPreviewingInvoice`        | True while a draft PDF preview is being generated.                                         |
 | `isLoading`                  | True only for the initial load, before there is a form to show. Safe to return early on.   |
 | `isLoadingContractorDetails` | True while the chosen contractor's employment and currencies load; the form stays mounted. |
 | `isContractorOfRecord`       | Whether the selected contractor is a Contractor of Record.                                 |
@@ -166,14 +196,14 @@ platform. Note this is a client-side restriction; it is not enforced by the API 
 
 ## Current limitations
 
-- **Contractor search.** `GET /v1/employments` has no name-search parameter, so the picker
-  loads up to 10 pages (1000 contractors) and filters in the browser. When the list is
-  incomplete, `contractors.isTruncated` is `true` and `contractors.totalCount` reports the real
-  figure — surface that rather than implying the list is complete. If you have more contractors
-  than that, pass `employmentId` and supply your own picker.
-- **Semi-monthly cycle.** Choosing semi-monthly uses the cycle Remote derives from your start
-  date (that day and the day 14 days apart). Picking a different pair of days is not yet
-  exposed by the API.
+- **Contractor search.** The picker queries `GET /v1/employments?name=` as you type, matched
+  per word and ignoring case and accents. Without a search term it walks up to 10 pages (1000
+  contractors); when that is not everyone, `contractors.isTruncated` is `true` and
+  `contractors.totalCount` reports the real figure — surface that rather than implying the list
+  is complete.
+- **Semi-monthly cycle.** Leave both invoice-day fields blank to use the cycle Remote derives
+  from your start date (that day and the day 14 days apart), or set them to pick the pair
+  yourself. One of the two must be the start date's day.
 - **Create only.** Editing an existing schedule is not part of this flow.
 - **No advisory banners.** The platform also warns about missing contractor deposit methods and
   SWIFT fees. Those signals are not on the public API, so they are omitted. A schedule created

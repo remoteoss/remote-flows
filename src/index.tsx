@@ -20,6 +20,7 @@ export {
   InvoiceScheduleFlow,
   InvoiceScheduleForm,
   InvoiceScheduleSubmitButton,
+  InvoiceSchedulePreviewButton,
   useInvoiceSchedule,
   useContractors,
 } from '@/src/flows/InvoiceSchedule';

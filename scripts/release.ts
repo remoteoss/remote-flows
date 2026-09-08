@@ -350,7 +350,8 @@ ${changeset.content}
     execSync('npm run format', { stdio: 'inherit' });
     console.log(`✅ Files formatted with oxfmt`);
   } catch (error) {
-    console.log(`⚠️  oxfmt formatting failed: ${error.message}`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`⚠️  oxfmt formatting failed: ${message}`);
     console.log(`Continuing with release...`);
   }
 
@@ -359,7 +360,8 @@ ${changeset.content}
     execSync('npm install', { stdio: 'inherit' });
     console.log('✅ Updated package-lock.json');
   } catch (error) {
-    console.log(`⚠️  Failed to update package-lock.json: ${error.message}`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`⚠️  Failed to update package-lock.json: ${message}`);
   }
 
   // Create release branch
