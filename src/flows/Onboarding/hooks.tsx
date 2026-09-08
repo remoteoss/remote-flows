@@ -47,6 +47,8 @@ import {
 } from '@/src/flows/Onboarding/api';
 import { JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { AnnualGrossSalary } from '@/src/flows/Onboarding/components/AnnualGrossSalary';
+import { DailyScheduleContainer } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleContainer';
+import { DailySchedule } from '@/src/flows/Onboarding/components/DailySchedule/DailySchedule';
 import { $TSFixMe, JSFField, JSFFieldset } from '@/src/types/remoteFlows';
 import { EquityPriceDetails } from '@/src/flows/Onboarding/components/EquityPriceDetails';
 import { useErrorReporting } from '@/src/components/error-handling/useErrorReporting';
@@ -603,6 +605,12 @@ export const useOnboarding = ({
   const equityCompensationField =
     options?.jsfModify?.contract_details?.fields?.equity_compensation;
 
+  const dailyScheduleField =
+    options?.jsfModify?.contract_details?.fields?.daily_schedule;
+  const isDailyScheduleEnabled = Boolean(
+    options?.features?.includes('daily_schedule'),
+  );
+
   const contractDetailsCustomFields = useMemo(
     () => ({
       fields: {
@@ -651,6 +659,34 @@ export const useOnboarding = ({
             },
           },
         },
+        ...(isDailyScheduleEnabled
+          ? {
+              daily_schedule: {
+                ...(dailyScheduleField as $TSFixMe),
+                'x-jsf-presentation': {
+                  ...(dailyScheduleField as $TSFixMe)?.['x-jsf-presentation'],
+                  Component: (props: $TSFixMe) => {
+                    const CustomComponent = (dailyScheduleField as $TSFixMe)?.[
+                      'x-jsf-presentation'
+                    ]?.Component;
+
+                    return (
+                      <DailyScheduleContainer
+                        {...props}
+                        render={(renderProps) =>
+                          CustomComponent ? (
+                            <CustomComponent {...renderProps} />
+                          ) : (
+                            <DailySchedule {...renderProps} />
+                          )
+                        }
+                      />
+                    );
+                  },
+                },
+              },
+            }
+          : {}),
       },
     }),
     [
@@ -659,6 +695,8 @@ export const useOnboarding = ({
       company?.desired_currency,
       equityCompensationField,
       useSplitSalaryDescription,
+      dailyScheduleField,
+      isDailyScheduleEnabled,
     ],
   );
 
