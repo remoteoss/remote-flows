@@ -17,9 +17,10 @@ import {
 
 import { Check, Copy, ChevronRight, ChevronDown } from 'lucide-react';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
 import type { $TSFixMe } from '@remoteoss/remote-flows';
+import { useUrlState } from './utils/urlState';
 import { BasicCostCalculator } from './BasicCostCalculator';
 import { BasicCostCalculatorWithDefaultValues } from './BasicCostCalculatorDefaultValues';
 import { BasicCostCalculatorLabels } from './BasicCostCalculatorLabels';
@@ -288,19 +289,13 @@ function App() {
   >({
     'cost-calculator': true, // Start with Cost Calculator expanded
   });
-  const [activeDemo, setActiveDemo] = useState(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const demoId = urlParams.get('demo');
-    return demoId && flattenedDemos[demoId] ? demoId : defaultDemoId;
+  const [activeDemo, setActiveDemo] = useUrlState('demo', defaultDemoId, {
+    validate: (value) => value in flattenedDemos,
   });
   const [copied, setCopied] = useState<string | null>(null);
 
   const selectDemo = (demoId: string) => {
-    setActiveDemo(demoId);
-
-    const url = new URL(window.location.href);
-    url.searchParams.set('demo', demoId);
-    window.history.pushState({}, '', url);
+    setActiveDemo(demoId as typeof activeDemo);
 
     // If this is a child demo, ensure its parent is expanded
     const demo = flattenedDemos[demoId];
@@ -311,6 +306,17 @@ function App() {
       }));
     }
   };
+
+  // Ensure parent category is expanded when activeDemo changes (including from browser back/forward)
+  useEffect(() => {
+    const demo = flattenedDemos[activeDemo];
+    if (demo?.parentId) {
+      setExpandedCategories((prev) => ({
+        ...prev,
+        [demo.parentId as string]: true,
+      }));
+    }
+  }, [activeDemo]);
 
   const toggleCategory = (categoryId: string) => {
     setExpandedCategories((prev) => ({
