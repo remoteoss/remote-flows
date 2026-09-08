@@ -1,5 +1,6 @@
 export const basicInformationSchemaV3Korea = {
   data: {
+    'x-rmt-meta': { jsfOldVersion: true },
     additionalProperties: false,
     allOf: [
       {

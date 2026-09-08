@@ -1,5 +1,6 @@
 export const basicInformationSchemaV1Portugal = {
   data: {
+    'x-rmt-meta': { jsfOldVersion: true },
     additionalProperties: false,
     allOf: [
       {

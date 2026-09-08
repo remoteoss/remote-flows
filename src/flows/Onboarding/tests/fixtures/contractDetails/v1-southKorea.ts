@@ -1,5 +1,6 @@
 export const contractDetailsSchemaV1SouthKorea = {
   data: {
+    'x-rmt-meta': { jsfOldVersion: true },
     additionalProperties: false,
     allOf: [
       {

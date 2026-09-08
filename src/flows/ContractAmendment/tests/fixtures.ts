@@ -1,5 +1,6 @@
 export const contractAmendementSchema = {
   data: {
+    'x-rmt-meta': { jsfOldVersion: true },
     additionalProperties: false,
     allOf: [
       {
