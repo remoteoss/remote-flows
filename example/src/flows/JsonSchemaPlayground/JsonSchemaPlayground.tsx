@@ -3,10 +3,17 @@ import { JsonSchemaPlaygroundFlow } from '@remoteoss/remote-flows/internals';
 import { FRANCE_WAGE_PORTAGE_INITIAL_VALUES } from './initialValues';
 import { RemoteFlows } from '../../RemoteFlows';
 import { SCHEMAS } from './schemas';
+import { useUrlState } from '../../utils/urlState';
 
 export const JsonSchemaPlayground = () => {
   const [submissionCount, setSubmissionCount] = useState(0);
-  const [selectedSchema, setSelectedSchema] = useState('france-wage-portage');
+  const [selectedSchema, setSelectedSchema] = useUrlState(
+    'schema',
+    'france-wage-portage',
+    {
+      validate: (value) => value in SCHEMAS,
+    },
+  );
   const availableSchemas = Object.entries(SCHEMAS).map(([key, value]) => ({
     key,
     name: value.name,
@@ -27,7 +34,7 @@ export const JsonSchemaPlayground = () => {
           setSubmissionCount((prev) => prev + 1);
         }}
         onSchemaChange={(schema) => {
-          setSelectedSchema(schema);
+          setSelectedSchema(schema as typeof selectedSchema);
         }}
         onError={(error) => {
           console.error('Form error:', error);

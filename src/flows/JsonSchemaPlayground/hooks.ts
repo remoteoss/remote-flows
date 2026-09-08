@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import {
@@ -31,6 +31,19 @@ export const useJsonSchemaPlayground = (
     resetKey: 0,
     fieldsVersion: 0,
   });
+
+  // Sync internal state with external defaultSchema prop (for browser back/forward)
+  useEffect(() => {
+    if (defaultSchema && defaultSchema !== state.selectedSchema) {
+      setState((prev) => ({
+        ...prev,
+        selectedSchema: defaultSchema,
+        resetKey: prev.resetKey + 1,
+      }));
+    }
+    // Only react to defaultSchema changes from parent, not internal state changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultSchema]);
 
   const fieldValues = useMemo(() => {
     return {
