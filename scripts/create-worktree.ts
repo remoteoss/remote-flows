@@ -10,9 +10,11 @@
  *   npm run worktree -- --pr <number>                    Create a worktree for a PR's branch
  */
 import { execSync } from 'child_process';
-import { existsSync, copyFileSync } from 'fs';
+import { existsSync, copyFileSync, readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 import { parseArgs } from 'util';
+
+const DEFAULT_DEV_PORT = 3001;
 
 const log = {
   info: (msg: string) => console.log(`ℹ️  ${msg}`),
@@ -81,6 +83,45 @@ function seedNodeModules(source: string, worktreePath: string, dir: string) {
   shInherit('npm install', targetDir);
 }
 
+function listWorktreePaths(root: string): string[] {
+  const output = sh('git worktree list --porcelain', root);
+  return output
+    .split('\n')
+    .filter((line) => line.startsWith('worktree '))
+    .map((line) => line.slice('worktree '.length));
+}
+
+function readEnvPort(envPath: string): number {
+  if (!existsSync(envPath)) {
+    return DEFAULT_DEV_PORT;
+  }
+  const match = readFileSync(envPath, 'utf-8').match(/^PORT=(\d+)\s*$/m);
+  return match ? Number(match[1]) : DEFAULT_DEV_PORT;
+}
+
+function pickFreePort(root: string): number {
+  const usedPorts = new Set(
+    listWorktreePaths(root).map((worktreePath) =>
+      readEnvPort(path.join(worktreePath, 'example', '.env')),
+    ),
+  );
+
+  let port = DEFAULT_DEV_PORT;
+  while (usedPorts.has(port)) {
+    port += 1;
+  }
+  return port;
+}
+
+function setEnvPort(envPath: string, port: number) {
+  const content = existsSync(envPath) ? readFileSync(envPath, 'utf-8') : '';
+  const line = `PORT=${port}`;
+  const updated = /^PORT=\d+\s*$/m.test(content)
+    ? content.replace(/^PORT=\d+\s*$/m, line)
+    : `${content}${content.endsWith('\n') || content === '' ? '' : '\n'}${line}\n`;
+  writeFileSync(envPath, updated);
+}
+
 async function main() {
   const { values } = parseArgs({
     options: {
@@ -140,11 +181,16 @@ async function main() {
     shInherit(`git worktree add -b ${branch} "${worktreePath}" ${base}`, root);
   }
 
+  const port = pickFreePort(root);
+
   const exampleEnv = path.join(root, 'example', '.env');
+  const worktreeEnv = path.join(worktreePath, 'example', '.env');
   if (existsSync(exampleEnv)) {
-    copyFileSync(exampleEnv, path.join(worktreePath, 'example', '.env'));
+    copyFileSync(exampleEnv, worktreeEnv);
     log.info('Copied example/.env');
   }
+  setEnvPort(worktreeEnv, port);
+  log.info(`Assigned example dev server port ${port}`);
 
   seedNodeModules(root, worktreePath, '');
   seedNodeModules(root, worktreePath, 'example');
@@ -152,7 +198,9 @@ async function main() {
   log.success(`Worktree ready at ${worktreePath}`);
   log.info(`  cd ${worktreePath}`);
   log.info('  npm run dev            # watch-build the library');
-  log.info('  cd example && npm run dev   # run the example app against it');
+  log.info(
+    `  cd example && npm run dev   # run the example app at http://localhost:${port}`,
+  );
 }
 
 main().catch((error) => {

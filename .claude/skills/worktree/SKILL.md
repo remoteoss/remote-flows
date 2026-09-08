@@ -23,7 +23,9 @@ installed (and `example/.env` copied) automatically — don't run raw
 - For an existing local/remote branch that isn't tied to a PR, use its exact
   name: `npm run worktree -- --branch <branch> --existing`.
 - Confirm success and give the user the worktree path plus the two dev
-  commands the script prints (`npm run dev` and `cd example && npm run dev`).
+  commands the script prints (`npm run dev` and `cd example && npm run dev`),
+  including the example app's assigned port (each worktree gets its own, so
+  several can run concurrently without colliding).
 - When the user is done with a worktree, remove it with
   `git worktree remove <path>` from the main checkout (not the worktree
   itself), and delete the branch only if asked.
