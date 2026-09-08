@@ -64,6 +64,21 @@ export const countries = {
       original_country_slug:
         'united-states-d3f6d510-2fdf-4b9d-8520-2b581a862411',
     },
+    {
+      code: 'DEU',
+      name: 'Germany',
+      currency: {
+        code: 'EUR',
+        name: 'Euro',
+        symbol: '€',
+        slug: 'eur-33441af1-a601-4a22-8f52-1ec090f10b4a',
+      },
+      region_slug: 'deu-a1aea868-0e0a-4cd7-9b73-9941d92e5bbe',
+      child_regions: [],
+      has_additional_fields: false,
+      availability: 'active',
+      original_country_slug: 'germany-d3f6d510-2fdf-4b9d-8520-2b581a862411',
+    },
   ],
 };
 

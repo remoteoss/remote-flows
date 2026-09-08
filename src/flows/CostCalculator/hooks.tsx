@@ -29,6 +29,7 @@ export type CostCalculatorVersion = 'standard' | 'marketing';
 type CostCalculatorCountry = {
   value: string;
   label: string;
+  code: string;
   childRegions: MinimalRegion[];
   hasAdditionalFields: boolean | undefined;
   regionSlug: string;
@@ -47,11 +48,11 @@ export const defaultEstimationOptions: CostCalculatorEstimationOptions = {
 
 type UseCostCalculatorParams = {
   /**
-   * The default region slug to preselect a country and a region.
+   * The default region slug (or country code, e.g. 'USA') to preselect a country and a region.
    */
   defaultRegion?: string;
   /**
-   * The default currency slug to preselect a currency.
+   * The default currency slug (or currency code, e.g. 'EUR') to preselect a currency.
    */
   defaultCurrency?: string;
 
@@ -333,28 +334,38 @@ export const useCostCalculator = (
   });
 
   useEffect(() => {
-    // Initialize selectedCountry from defaultRegion
+    // Initialize selectedCountry from defaultRegion — matches either the region slug
+    // or a plain country code (e.g. 'USA'), so consumers can pass either. Also re-runs
+    // after a full reset (resetKey changes) since resetForm() clears selectedCountry.
     if (defaultRegion && countries) {
       const defaultCountry = countries.find(
-        ({ value }) => value === defaultRegion,
+        ({ value, code }) => value === defaultRegion || code === defaultRegion,
       );
       if (defaultCountry) {
         setSelectedCountry(defaultCountry);
+        if (
+          defaultCountry.childRegions.length === 0 &&
+          defaultCountry.hasAdditionalFields
+        ) {
+          setSelectedRegion(defaultCountry.regionSlug);
+        }
       }
     }
-  }, [defaultRegion, countries]);
+  }, [defaultRegion, countries, resetKey]);
 
   useEffect(() => {
-    // Initialize selectedCurrency from defaultCurrency
+    // Initialize selectedCurrency from defaultCurrency — matches either the currency
+    // slug or a plain currency code (e.g. 'EUR').
     if (defaultCurrency && currencies) {
       const defaultCurrencyObj = currencies.find(
-        ({ value }) => value === defaultCurrency,
+        ({ value, label }) =>
+          value === defaultCurrency || label === defaultCurrency,
       );
       if (defaultCurrencyObj) {
         setEmployerBillingCurrency(defaultCurrencyObj.label);
       }
     }
-  }, [defaultCurrency, currencies]);
+  }, [defaultCurrency, currencies, resetKey]);
 
   /**
    * Submit the estimation form with the given values.
@@ -558,6 +569,12 @@ export const useCostCalculator = (
      * Currencies data useful to get the currency if you have a currencySlug
      */
     currencies,
+
+    /**
+     * Countries data useful to resolve a country code (e.g. 'USA') or region slug
+     * into the value used internally by the `country` field.
+     */
+    countries,
 
     /**
      * Fields metadata

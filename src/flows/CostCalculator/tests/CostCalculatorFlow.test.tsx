@@ -152,6 +152,62 @@ describe('CostCalculatorFlow', () => {
     });
   });
 
+  it('should resolve a country code and currency code passed as default values', async () => {
+    renderComponent({
+      defaultValues: {
+        ...defaultProps.defaultValues,
+        countryRegionSlug: 'DEU',
+        currencySlug: 'USD',
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    const comboboxes = screen.getAllByRole('combobox');
+    const countryDropdown = comboboxes[0];
+    const currencyDropdown = comboboxes[1];
+
+    await waitFor(() => {
+      expect(countryDropdown).toHaveTextContent(/Germany/i);
+    });
+    expect(currencyDropdown).toHaveTextContent(/USD/i);
+  });
+
+  it('should submit the form with a country code and currency code resolved to their slugs', async () => {
+    renderComponent({
+      defaultValues: {
+        ...defaultProps.defaultValues,
+        countryRegionSlug: 'DEU',
+        currencySlug: 'USD',
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('combobox')[0]).toHaveTextContent(/Germany/i);
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Get estimate/i }));
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalledWith({
+        country: 'deu-a1aea868-0e0a-4cd7-9b73-9941d92e5bbe',
+        currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
+        currency_code: 'USD',
+        salary: 5_000_000,
+        hiring_budget: 'my_hiring_budget',
+        salary_converted: 'salary_conversion',
+        salary_conversion: 5000000,
+        estimation_title: 'Estimation',
+      });
+    });
+  });
+
   it('should submit the form with default values', async () => {
     renderComponent();
     await waitFor(() => {

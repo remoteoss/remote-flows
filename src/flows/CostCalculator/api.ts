@@ -38,6 +38,7 @@ export const useCostCalculatorCountries = ({
         .map((country) => ({
           value: country.region_slug,
           label: country.name,
+          code: country.code,
           childRegions: country.child_regions,
           hasAdditionalFields: country.has_additional_fields,
           regionSlug: country.region_slug,

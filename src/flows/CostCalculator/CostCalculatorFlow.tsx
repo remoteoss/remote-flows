@@ -26,11 +26,13 @@ export type CostCalculatorFlowProps = {
   defaultValues?: Partial<
     {
       /**
-       * Default value for the country field.
+       * Default value for the country field. Accepts either the country's region slug
+       * (as returned by `/v1/cost-calculator/countries`) or a plain country code (e.g. 'USA').
        */
       countryRegionSlug: string;
       /**
-       * Default value for the currency field.
+       * Default value for the currency field. Accepts either the currency slug (as
+       * returned by `/v1/company-currencies`) or a plain currency code (e.g. 'EUR').
        */
       currencySlug: string;
       /**
@@ -196,7 +198,9 @@ const CostCalculatorFlowInner = ({
       !defaultValues.management?.management_fee
     ) {
       const currencyData = costCalculatorBag.currencies.find(
-        (currency) => currency.value === defaultValues.currencySlug,
+        (currency) =>
+          currency.value === defaultValues.currencySlug ||
+          currency.label === defaultValues.currencySlug,
       );
       const currencyCode = currencyData?.label;
       if (currencyCode) {
@@ -223,6 +227,46 @@ const CostCalculatorFlowInner = ({
     form,
     setCurrency,
   ]);
+
+  // `countryRegionSlug`/`currencySlug` may be a plain code (e.g. 'USA'/'EUR') rather
+  // than the actual slug the `country`/`currency` fields' `oneOf` expects — the RHF
+  // default set above is the raw value as-is, so once the countries/currencies lists
+  // load, correct the field to the resolved slug when the raw value was a code.
+  useEffect(() => {
+    if (!defaultValues.countryRegionSlug || !costCalculatorBag.countries) {
+      return;
+    }
+    const isAlreadySlug = costCalculatorBag.countries.some(
+      (country) => country.value === defaultValues.countryRegionSlug,
+    );
+    if (isAlreadySlug) {
+      return;
+    }
+    const resolvedCountry = costCalculatorBag.countries.find(
+      (country) => country.code === defaultValues.countryRegionSlug,
+    );
+    if (resolvedCountry) {
+      form.setValue('country', resolvedCountry.value);
+    }
+  }, [defaultValues.countryRegionSlug, costCalculatorBag.countries, form]);
+
+  useEffect(() => {
+    if (!defaultValues.currencySlug || !costCalculatorBag.currencies) {
+      return;
+    }
+    const isAlreadySlug = costCalculatorBag.currencies.some(
+      (currency) => currency.value === defaultValues.currencySlug,
+    );
+    if (isAlreadySlug) {
+      return;
+    }
+    const resolvedCurrency = costCalculatorBag.currencies.find(
+      (currency) => currency.label === defaultValues.currencySlug,
+    );
+    if (resolvedCurrency) {
+      form.setValue('currency', resolvedCurrency.value);
+    }
+  }, [defaultValues.currencySlug, costCalculatorBag.currencies, form]);
 
   return (
     <CostCalculatorContext.Provider
