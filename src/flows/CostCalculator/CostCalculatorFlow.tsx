@@ -25,11 +25,15 @@ export type CostCalculatorFlowProps = {
   defaultValues?: Partial<
     {
       /**
-       * Default value for the country field.
+       * Default value for the country field. Accepts the country's region
+       * slug, or its name or code (e.g. "United States" or "USA"), since
+       * region slugs differ between environments.
        */
       countryRegionSlug: string;
       /**
-       * Default value for the currency field.
+       * Default value for the currency field. Accepts the currency's slug,
+       * or its code (e.g. "USD"), since currency slugs differ between
+       * environments.
        */
       currencySlug: string;
       /**
@@ -193,14 +197,11 @@ export const CostCalculatorFlow = ({
   useEffect(() => {
     if (
       defaultValues.currencySlug &&
-      costCalculatorBag.currencies &&
+      costCalculatorBag.selectedCurrency &&
       estimationOptions.includeManagementFee &&
       !defaultValues.management?.management_fee
     ) {
-      const currencyData = costCalculatorBag.currencies.find(
-        (currency) => currency.value === defaultValues.currencySlug,
-      );
-      const currencyCode = currencyData?.label;
+      const currencyCode = costCalculatorBag.selectedCurrency.label;
       if (currencyCode) {
         // WE NEED TO FIX: react-hooks/set-state-in-effect - Calling setState synchronously within an effect can trigger cascading renders
         // oxlint-disable-next-line react-hooks/set-state-in-effect
@@ -218,7 +219,7 @@ export const CostCalculatorFlow = ({
     }
   }, [
     defaultValues.currencySlug,
-    costCalculatorBag.currencies,
+    costCalculatorBag.selectedCurrency,
     estimationOptions.includeManagementFee,
     estimationOptions.managementFees,
     defaultValues.management?.management_fee,

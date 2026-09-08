@@ -61,6 +61,29 @@ describe('useCostCalculator', () => {
     expect(regionField?.required).toBe(true);
   });
 
+  it('should resolve defaultRegion and defaultCurrency by name/code, not just by slug', async () => {
+    const { result } = renderHook(
+      () =>
+        useCostCalculator({
+          defaultRegion: 'Poland',
+          defaultCurrency: 'USD',
+          estimationOptions: { title: 'Estimation' },
+        }),
+      {
+        wrapper: TestProviders,
+      },
+    );
+
+    await waitFor(() => {
+      expect(result.current.selectedCountry?.value).toBe('POL');
+    });
+
+    expect(result.current.selectedCurrency).toEqual({
+      value: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
+      label: 'USD',
+    });
+  });
+
   it('should not return errors when valid data is passed to handleValidation', async () => {
     const { result } = renderHook(() => useCostCalculator(), {
       wrapper: TestProviders,

@@ -136,8 +136,8 @@ export function BasicCostCalculatorWithDefaultValues() {
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         defaultValues={{
-          countryRegionSlug: 'a1aea868-0e0a-4cd7-9b73-9941d92e5bbe', // it's the region slug from the v1/cost-calculator/countries, different in each env
-          currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba', // it's a currency slug from v1/company-currencies, different in each env
+          countryRegionSlug: 'a1aea868-0e0a-4cd7-9b73-9941d92e5bbe', // region slug from v1/cost-calculator/countries (differs per env), or the country's name/code, e.g. 'USA'
+          currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba', // currency slug from v1/company-currencies (differs per env), or the currency's code, e.g. 'EUR'
           salary: '50000',
         }}
         render={(props) => {
@@ -608,12 +608,12 @@ Note: The spread in currency conversion accounts for foreign exchange risk (curr
 
 #### defaultValues Properties
 
-| Property            | Type     | Description                 |
-| ------------------- | -------- | --------------------------- |
-| `countryRegionSlug` | `string` | Pre-selected country/region |
-| `currencySlug`      | `string` | Pre-selected currency       |
-| `salary`            | `string` | Pre-filled salary amount    |
-| `hiringBudget`      | `string` | Pre-filled hiring budget    |
+| Property            | Type     | Description                                                                                     |
+| ------------------- | -------- | ----------------------------------------------------------------------------------------------- |
+| `countryRegionSlug` | `string` | Pre-selected country/region. Accepts the region slug, or the country's name/code (e.g. `'USA'`) |
+| `currencySlug`      | `string` | Pre-selected currency. Accepts the currency slug, or the currency's code (e.g. `'USD'`)         |
+| `salary`            | `string` | Pre-filled salary amount                                                                        |
+| `hiringBudget`      | `string` | Pre-filled hiring budget                                                                        |
 
 #### options.jsfModify properties
 
@@ -837,7 +837,7 @@ The `useCostCalculator` hook provides access to the underlying functionality of 
 
 | Parameter           | Type                              | Required | Description                                                                                    |
 | ------------------- | --------------------------------- | -------- | ---------------------------------------------------------------------------------------------- |
-| `defaultRegion`     | `string`                          | No       | Pre-selected region slug                                                                       |
+| `defaultRegion`     | `string`                          | No       | Pre-selected region slug, or the country's name/code (e.g. `'USA'`)                            |
 | `estimationOptions` | `CostCalculatorEstimationOptions` | Yes      | Options for the cost estimation (same as `estimationParams` in the `CostCalculator` component) |
 
 The `estimationOptions` object has the following properties:

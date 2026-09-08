@@ -152,6 +152,29 @@ describe('CostCalculatorFlow', () => {
     });
   });
 
+  it('should resolve the country name and currency code when slugs are not provided', async () => {
+    renderComponent({
+      defaultValues: {
+        ...defaultProps.defaultValues,
+        countryRegionSlug: 'Poland',
+        currencySlug: 'USD',
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    const comboboxes = screen.getAllByRole('combobox');
+    const countryDropdown = comboboxes[0];
+    const currencyDropdown = comboboxes[1];
+
+    await waitFor(() => {
+      expect(countryDropdown).toHaveTextContent(/Poland/i);
+    });
+    expect(currencyDropdown).toHaveTextContent(/USD/i);
+  });
+
   it('should submit the form with default values', async () => {
     renderComponent();
     await waitFor(() => {

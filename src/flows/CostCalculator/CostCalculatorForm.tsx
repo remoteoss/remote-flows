@@ -72,6 +72,29 @@ export function CostCalculatorForm({
   } = form;
 
   useEffect(() => {
+    // When countryRegionSlug/currencySlug were given as a name or code
+    // rather than the exact slug, sync the resolved slug into the form
+    // once it's known so the select fields show the right selection.
+    const resolvedCountrySlug = costCalculatorBag?.selectedCountry?.value;
+    if (
+      resolvedCountrySlug &&
+      form.getValues('country') !== resolvedCountrySlug
+    ) {
+      form.setValue('country', resolvedCountrySlug);
+    }
+  }, [costCalculatorBag?.selectedCountry, form]);
+
+  useEffect(() => {
+    const resolvedCurrencySlug = costCalculatorBag?.selectedCurrency?.value;
+    if (
+      resolvedCurrencySlug &&
+      form.getValues('currency') !== resolvedCurrencySlug
+    ) {
+      form.setValue('currency', resolvedCurrencySlug);
+    }
+  }, [costCalculatorBag?.selectedCurrency, form]);
+
+  useEffect(() => {
     // resets the entire form if the form is successfully submitted and the shouldResetForm prop is true
     if (isSubmitSuccessful && shouldResetForm) {
       costCalculatorBag?.resetForm();
