@@ -26,6 +26,8 @@ installed (and `example/.env` copied) automatically — don't run raw
   commands the script prints (`npm run dev` and `cd example && npm run dev`),
   including the example app's assigned port (each worktree gets its own, so
   several can run concurrently without colliding).
+- The Playwright e2e tests automatically respect the PORT from `example/.env`,
+  so `npm run test:e2e` from a worktree will target the correct port.
 - When the user is done with a worktree, remove it with
   `git worktree remove <path>` from the main checkout (not the worktree
   itself), and delete the branch only if asked.
