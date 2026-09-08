@@ -21,6 +21,9 @@ export const jsonSchema = {
           'x-jsf-presentation': {
             inputType: 'select',
           },
+          'x-jsf-errorMessage': {
+            required: 'Region is required',
+          },
         },
         currency: {
           title: 'Currency',
@@ -109,8 +112,12 @@ export const jsonSchema = {
             management_fee: {
               title: 'Desired monthly management fee',
               type: 'integer',
+              minimum: 0,
               'x-jsf-presentation': {
                 inputType: 'money',
+              },
+              'x-jsf-errorMessage': {
+                minimum: 'Management fee must be greater than or equal to 0',
               },
             },
             _expanded: {
@@ -128,13 +135,27 @@ export const jsonSchema = {
           },
         },
       },
-      required: [
-        'country',
-        'currency',
-        'salary',
-        'salary_conversion',
-        'salary_converted',
+      // salary/salary_conversion are mutually exclusive: only the one named by
+      // salary_converted is required. See CostCalculator/JSF_V1_MIGRATION.md.
+      allOf: [
+        {
+          if: {
+            properties: { salary_converted: { const: 'salary' } },
+            required: ['salary_converted'],
+          },
+          then: { required: ['salary'] },
+          else: {},
+        },
+        {
+          if: {
+            properties: { salary_converted: { const: 'salary_conversion' } },
+            required: ['salary_converted'],
+          },
+          then: { required: ['salary_conversion'] },
+          else: {},
+        },
       ],
+      required: ['country', 'currency', 'salary_converted'],
       type: 'object',
       'x-jsf-order': [
         'country',
@@ -145,6 +166,9 @@ export const jsonSchema = {
         'estimation_title',
         'management',
       ],
+      'x-rmt-meta': {
+        jsfVersion: '1',
+      },
     },
   },
 };

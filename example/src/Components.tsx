@@ -10,11 +10,45 @@ import {
   type TelFieldComponentProps,
   type TimeFieldComponentProps,
   type ZendeskTriggerButtonComponentProps,
+  ZendeskTriggerButton as ZendeskTriggerButtonLibrary,
 } from '@remoteoss/remote-flows';
 import { cn, FileUploader } from '@remoteoss/remote-flows/internals';
 import { splitAccordionDescription } from './utils/transformHtml';
 import { Accordion } from './components/Accordion';
 //import { ZendeskDialog } from './ZendeskDialog';
+
+const ZendeskTriggerButtonCustom = ({
+  zendeskId,
+  onClick,
+  children,
+  external,
+  className,
+}: ZendeskTriggerButtonComponentProps) => {
+  const handleClick = () => onClick?.(zendeskId);
+
+  if (external) {
+    return (
+      <a
+        href={buildZendeskURL(zendeskId)}
+        target='_blank'
+        rel='noopener noreferrer'
+        className={cn('zendesk-custom-button zendesk-link', className)}
+      >
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <button
+      onClick={handleClick}
+      className={cn('zendesk-custom-button', className)}
+      data-custom-trigger='true'
+    >
+      {children}
+    </button>
+  );
+};
 
 const renderDescription = (
   desc?: React.ReactNode | string,
@@ -29,6 +63,24 @@ const renderDescription = (
   }
 
   return <p className='input-description'>{desc}</p>;
+};
+
+// Renders the "Learn more" Zendesk link the SDK hands custom components via
+// `fieldData.meta.helpCenter` (id + callToAction only - content/title are for
+// other consumers like a full drawer, not needed for the button itself).
+const renderHelpCenter = (meta?: {
+  helpCenter?: { id?: number; callToAction?: string };
+}) => {
+  const helpCenter = meta?.helpCenter;
+  if (!helpCenter?.id || !helpCenter?.callToAction) {
+    return null;
+  }
+
+  return (
+    <ZendeskTriggerButtonLibrary zendeskId={helpCenter.id} className='text-sm'>
+      {helpCenter.callToAction}
+    </ZendeskTriggerButtonLibrary>
+  );
 };
 
 // you can define HTML button attributes or event props that exist in your Button like variant, size, etc.
@@ -80,6 +132,7 @@ const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
       )}
 
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderHelpCenter(fieldData.meta)}
       {/* extra controls owned by the SDK, e.g. the salary currency conversion toggle
           when the split_salary_description feature is enabled */}
       {fieldData.descriptionSuffix}
@@ -91,6 +144,7 @@ const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
 };
 
 const Select = ({ field, fieldData, fieldState }: FieldComponentProps) => {
+  console.log('Select', fieldData);
   const hasError = !!fieldState.error;
   const { onChange, value, ...fieldProps } = field;
 
@@ -135,6 +189,7 @@ const Select = ({ field, fieldData, fieldState }: FieldComponentProps) => {
       </div>
 
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderHelpCenter(fieldData.meta)}
 
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
@@ -156,6 +211,7 @@ const Textarea = ({ field, fieldData, fieldState }: FieldComponentProps) => {
         {...field}
       />
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderHelpCenter(fieldData.meta)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}
@@ -186,6 +242,7 @@ const Radio = ({ field, fieldData, fieldState }: FieldComponentProps) => {
         })}
       </div>
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderHelpCenter(fieldData.meta)}
       {hasError && <p className='error-message'>{fieldState.error?.message}</p>}
     </div>
   );
@@ -201,6 +258,7 @@ const Checkbox = ({ field, fieldData, fieldState }: FieldComponentProps) => {
         <label htmlFor={field.name}>{fieldData.label}</label>
       </div>
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderHelpCenter(fieldData.meta)}
       {hasError && <p className='error-message'>{fieldState.error?.message}</p>}
     </div>
   );
@@ -252,6 +310,7 @@ export const Countries = ({
       </div>
 
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderHelpCenter(fieldData.meta)}
 
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
@@ -297,6 +356,7 @@ const FileUploadField = ({
         multiple={fieldData.multiple}
       />
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderHelpCenter(fieldData.meta)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}
@@ -322,6 +382,7 @@ const DatePickerInput = ({
         }}
       />
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderHelpCenter(fieldData.meta)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}
@@ -371,11 +432,7 @@ const ForcedValue = ({ fieldData }: ForcedValueComponentProps) => {
         />
       )}
       {renderDescription(description, transformHtml)}
-      {meta?.helpCenter?.callToAction && (
-        <span className='forced-value-help-center'>
-          {meta.helpCenter.callToAction}
-        </span>
-      )}
+      {renderHelpCenter(meta)}
     </div>
   );
 };
@@ -458,6 +515,7 @@ const TelField = ({ field, fieldData, fieldState }: TelFieldComponentProps) => {
       </div>
 
       {renderDescription(description, fieldData.transformHtml)}
+      {renderHelpCenter(fieldData.meta)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}
@@ -486,44 +544,11 @@ const TimeField = ({
         }}
       />
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderHelpCenter(fieldData.meta)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}
     </div>
-  );
-};
-
-const ZendeskTriggerButton = ({
-  zendeskId,
-  onClick,
-  children,
-  external,
-  className,
-}: ZendeskTriggerButtonComponentProps) => {
-  const handleClick = () => {
-    onClick?.(zendeskId);
-  };
-
-  if (external) {
-    return (
-      <a
-        href={buildZendeskURL(zendeskId)}
-        target='_blank'
-        rel='noopener noreferrer'
-        className={cn('zendesk-custom-button zendesk-link', className)}
-      >
-        {children}
-      </a>
-    );
-  }
-
-  return (
-    <button
-      onClick={handleClick}
-      className={cn('zendesk-custom-button', className)}
-    >
-      {children}
-    </button>
   );
 };
 
@@ -542,6 +567,6 @@ export const components: Components = {
   pdfViewer: PDFPreview,
   tel: TelField,
   time: TimeField,
-  zendeskTriggerButton: ZendeskTriggerButton,
+  zendeskTriggerButton: ZendeskTriggerButtonCustom,
   //zendeskDrawer: ZendeskDialog,
 };

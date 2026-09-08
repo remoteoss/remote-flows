@@ -4,16 +4,15 @@ import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
+  CurrencyKey,
   UseCostCalculatorOptions,
 } from '@/src/flows/CostCalculator/types';
 import type { JSFModify } from '@/src/flows/types';
 
 import { parseJSFToValidate } from '@/src/components/form/utils';
-import { iterateErrors } from '@/src/components/form/validationResolver';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { string, ValidationError } from 'yup';
-import { buildPayload, buildValidationSchema } from './utils';
+import { buildPayload } from './utils';
 import {
   useCompanyCurrencies,
   useCostCalculatorCountries,
@@ -27,6 +26,7 @@ import {
   FieldSetProps,
 } from '@/src/components/form/fields/FieldSetField';
 import { mutationToPromise } from '@/src/lib/mutations';
+import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
 export type CostCalculatorVersion = 'standard' | 'marketing';
 
 type CostCalculatorCountry = {
@@ -36,17 +36,6 @@ type CostCalculatorCountry = {
   hasAdditionalFields: boolean | undefined;
   regionSlug: string;
   currency: string;
-};
-
-type JSFValidationError = {
-  formErrors: Record<
-    string,
-    {
-      type: string;
-      message: string;
-    }
-  >;
-  yupError: ValidationError;
 };
 
 export const defaultEstimationOptions: CostCalculatorEstimationOptions = {
@@ -190,6 +179,12 @@ export const useCostCalculator = (
     };
   }, [employeeBillingCurrency, employerBillingCurrency]);
 
+  const regions =
+    selectedCountry?.childRegions.map((region) => ({
+      value: region.slug,
+      label: region.name,
+    })) ?? [];
+
   const showManagementField = estimationOptions.showManagementFee;
   const showEstimationTitleField = estimationOptions.includeEstimationTitle;
   const useSplitSalaryDescription =
@@ -242,6 +237,16 @@ export const useCostCalculator = (
             management_fee: {
               ...(options?.jsfModify?.fields?.management as $TSFixMe)
                 ?.properties?.management_fee,
+              maximum: employerBillingCurrency
+                ? BASE_RATES[employerBillingCurrency as CurrencyKey]
+                : BASE_RATES.USD,
+              'x-jsf-errorMessage': {
+                maximum: `Management fee cannot exceed ${
+                  (employerBillingCurrency
+                    ? BASE_RATES[employerBillingCurrency as CurrencyKey]
+                    : BASE_RATES.USD) / 100
+                } ${employerBillingCurrency || 'USD'}`,
+              },
               'x-jsf-presentation': {
                 inputType: 'money',
                 additionalProps: {
@@ -310,6 +315,15 @@ export const useCostCalculator = (
       fields: {
         ...options?.jsfModify?.fields,
         ...customFields?.fields,
+      },
+      required: (existingRequired: string[]) => {
+        const withRegion =
+          regions.length > 0
+            ? [...existingRequired, 'region']
+            : existingRequired;
+        return showEstimationTitleField
+          ? [...withRegion, 'estimation_title']
+          : withRegion;
       },
     },
   });
@@ -393,21 +407,10 @@ export const useCostCalculator = (
   );
 
   if (regionField) {
-    const regions =
-      selectedCountry?.childRegions.map((region) => ({
-        value: region.slug,
-        label: region.name,
-      })) ?? [];
     regionField.options = regions;
     regionField.isVisible = regions.length > 0;
     regionField.required = regions.length > 0;
     regionField.onChange = onRegionChange;
-    regionField.schema =
-      regions.length > 0
-        ? string()
-            .transform((value) => (typeof value === 'string' ? value : ''))
-            .required('Region is required')
-        : string();
   }
 
   if (currencies) {
@@ -448,62 +451,25 @@ export const useCostCalculator = (
     ...fieldsJSONSchema.fields.filter((field) => field.name === 'management'),
   ];
 
-  const validationSchema = buildValidationSchema(
-    fieldsJSONSchema.fields,
-    employerBillingCurrency || 'USD',
-    estimationOptions.includeEstimationTitle,
-  );
-
   async function handleValidation(values: CostCalculatorEstimationFormValues) {
-    let errors: JSFValidationError | null = null;
-
     options?.onValidation?.(values);
     const parsedValues = await parseJSFToValidate(values, allFields);
 
-    // 1. validate static fields first using Yup validate function
-    try {
-      await validationSchema.validate(parsedValues, {
-        abortEarly: false,
-      });
-      errors = {
-        formErrors: {},
-        yupError: new ValidationError([], values),
-      };
-    } catch (error) {
-      const iterateResult = iterateErrors(error as ValidationError);
+    // 1. validate the static fields (country, salary, management, ...)
+    const staticFieldsResult = fieldsJSONSchema.handleValidation(parsedValues);
 
-      errors = {
-        // convert the errors to a format that can be used in the form
-        formErrors: Object.entries(iterateResult).reduce(
-          (acc, [key, value]) => ({ ...acc, [key]: value.message }),
-          {},
-        ),
-        yupError: error as ValidationError,
-      };
-    }
-
-    // 2. validate json schema fields using the handleValidation (from json-schema-form)
-    const handleValidationResult =
+    // 2. validate the dynamically-fetched region fields (benefits, age, ...)
+    const regionFieldsResult =
       jsonSchemaRegionFields?.handleValidation(parsedValues);
 
-    // 3. combine the errors from both validations
-    const combinedInnerErrors = [
-      ...(errors?.yupError.inner || []),
-      ...((handleValidationResult as { yupError: ValidationError })?.yupError
-        ?.inner || []),
-    ];
-    const combinedValues = {
-      ...(errors?.yupError?.value || {}),
-      ...((handleValidationResult as { yupError: ValidationError })?.yupError
-        ?.value || {}),
-    };
-
+    // 3. combine the errors from both validations - the two field sets are
+    // disjoint (region fields never reuse a static field name), so a shallow
+    // merge is safe.
     return {
       formErrors: {
-        ...(errors?.formErrors || {}),
-        ...(handleValidationResult?.formErrors || {}),
+        ...(staticFieldsResult?.formErrors || {}),
+        ...(regionFieldsResult?.formErrors || {}),
       },
-      yupError: new ValidationError(combinedInnerErrors, combinedValues),
     };
   }
 
@@ -522,10 +488,6 @@ export const useCostCalculator = (
      * Array of form fields from the cost calculator schema + dynamic region fields like benefits, age, etc.
      */
     fields: allFields,
-    /**
-     * Validation schema for the cost calculator form
-     */
-    validationSchema,
     /**
      * Function to parse form values before submission
      * @param values - Form values to parse
