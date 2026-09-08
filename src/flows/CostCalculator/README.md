@@ -245,9 +245,12 @@ import {
   CostCalculatorSubmitButton,
   CostCalculatorResetButton,
   RemoteFlows,
-  CostCalculatorResults,
+  EstimationResults,
 } from '@remoteoss/remote-flows';
-import type { CostCalculatorEstimateResponse } from '@remoteoss/remote-flows';
+import type {
+  CostCalculatorEstimateResponse,
+  CostCalculatorEstimation,
+} from '@remoteoss/remote-flows';
 import { useState } from 'react';
 import './css/main.css';
 
@@ -291,7 +294,15 @@ export function CostCalculatoWithResults() {
         }}
       />
       {estimations && (
-        <CostCalculatorResults employmentData={estimations.data} />
+        <EstimationResults
+          estimation={
+            estimations.data.employments?.[0] as CostCalculatorEstimation
+          }
+          title='My first estimate'
+          onDelete={() => {}}
+          onExportPdf={() => {}}
+          onEdit={() => {}}
+        />
       )}
     </RemoteFlows>
   );
@@ -415,11 +426,12 @@ import {
   RemoteFlows,
   useCostCalculatorEstimationPdf,
   buildCostCalculatorEstimationPayload,
-  CostCalculatorResults,
+  EstimationResults,
 } from '@remoteoss/remote-flows';
 import type {
   CostCalculatorEstimateResponse,
   CostCalculatorEstimationSubmitValues,
+  CostCalculatorEstimation,
 } from '@remoteoss/remote-flows';
 import './css/main.css';
 import { useState } from 'react';
@@ -486,9 +498,16 @@ function CostCalculatorFormDemo() {
         }}
       />
       {estimations && (
-        <CostCalculatorResults employmentData={estimations.data} />
+        <EstimationResults
+          estimation={
+            estimations.data.employments?.[0] as CostCalculatorEstimation
+          }
+          title='My first estimate'
+          onDelete={() => {}}
+          onExportPdf={handleExportPdf}
+          onEdit={() => {}}
+        />
       )}
-      {estimations && <button onClick={handleExportPdf}>Export as PDF</button>}
     </>
   );
 }
@@ -822,16 +841,18 @@ A component that displays a comparative summary of costs across multiple estimat
 
 The `useCostCalculator` hook provides access to the underlying functionality of the cost calculator, allowing for custom implementations.
 
-| Property           | Type                                                                                                                 | Description                                                                                                              |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `stepState`        | `{ current: number; total: number; isLastStep: boolean }`                                                            | Information about the current step in multi-step forms                                                                   |
-| `fields`           | `Field[]`                                                                                                            | Array of form field definitions with metadata ([json-schema-form](https://github.com/remoteoss/json-schema-form) format) |
-| `validationSchema` | `yup.Schema`                                                                                                         | Yup validation schema for the form                                                                                       |
-| `handleValidation` | `Function`                                                                                                           | Function to handle custom field validation                                                                               |
-| `isSubmitting`     | `boolean`                                                                                                            | Whether the form is currently submitting                                                                                 |
-| `isLoading`        | `boolean`                                                                                                            | Whether any required data is still loading                                                                               |
-| `onSubmit`         | `(values: CostCalculatorEstimationSubmitValues) => Promise<Result<CostCalculatorEstimateResponse, EstimationError>>` | Function to submit the form data to the Remote API                                                                       |
-| `resetForm`        | `Function`                                                                                                           | Function that clears country and region selection state                                                                  |
+| Property            | Type                                                                                                                 | Description                                                                                                                                                                            |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `stepState`         | `{ current: number; total: number; isLastStep: boolean }`                                                            | Information about the current step in multi-step forms                                                                                                                                 |
+| `fields`            | `Field[]`                                                                                                            | Array of form field definitions with metadata ([json-schema-form](https://github.com/remoteoss/json-schema-form) format)                                                               |
+| `fieldValues`       | `FieldValues`                                                                                                        | Current form values, kept in sync via `checkFieldUpdates`                                                                                                                              |
+| `checkFieldUpdates` | `(values: FieldValues) => void`                                                                                      | Call on every form value change so field-level dynamic properties can react to live input                                                                                              |
+| `handleValidation`  | `Function`                                                                                                           | Function to handle custom field validation                                                                                                                                             |
+| `isSubmitting`      | `boolean`                                                                                                            | Whether the form is currently submitting                                                                                                                                               |
+| `isLoading`         | `boolean`                                                                                                            | Whether any required data is still loading                                                                                                                                             |
+| `onSubmit`          | `(values: CostCalculatorEstimationSubmitValues) => Promise<Result<CostCalculatorEstimateResponse, EstimationError>>` | Function to submit the form data to the Remote API                                                                                                                                     |
+| `resetForm`         | `(options?: { remount?: boolean }) => void`                                                                          | Resets country/region selection state. By default also remounts the form with fresh default values; pass `{ remount: false }` to skip that (used internally by the `resetFields` prop) |
+| `resetKey`          | `number`                                                                                                             | Bumped by `resetForm()`; used internally as a React `key` to remount the form on reset                                                                                                 |
 
 #### Parameters
 

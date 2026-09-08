@@ -8,7 +8,7 @@ export function CostCalculatorResetButton({
   ...props
 }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> &
   Record<string, unknown>) {
-  const { form, formId, costCalculatorBag } = useCostCalculatorContext();
+  const { formId, costCalculatorBag } = useCostCalculatorContext();
   const { components } = useFormFields();
 
   const CustomButton = components?.button;
@@ -27,7 +27,6 @@ export function CostCalculatorResetButton({
       form={formId}
       onClick={(evt) => {
         costCalculatorBag?.resetForm();
-        form.reset();
         props.onClick?.(evt);
       }}
     >

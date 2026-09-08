@@ -1,4 +1,3 @@
-import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import {
   CostCalculatorEstimateParams,
   getV1CompanyCurrencies,
@@ -12,7 +11,6 @@ import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { CostCalculatorEstimationOptions } from '@/src/flows/CostCalculator/types';
-import { JSFModify } from '@/src/flows/types';
 
 /**
  * Hook to fetch the countries for the cost calculator.
@@ -123,7 +121,10 @@ export const useCostCalculatorEstimationCsv = () => {
 };
 
 /**
- * Hook to fetch the region fields.
+ * Hook to fetch the raw region-fields JSON Schema (e.g. benefits, age) for a given region.
+ * The schema is merged into the cost calculator's unified schema by
+ * `buildCostCalculatorSchema` rather than built into its own headless form here, so the
+ * whole cost calculator is a single `createHeadlessForm` instance.
  * @param region
  * @returns
  */
@@ -131,12 +132,8 @@ export const useRegionFields = (
   region: string | undefined,
   {
     includePremiumBenefits,
-    options,
   }: {
     includePremiumBenefits: CostCalculatorEstimationOptions['includePremiumBenefits'];
-    options?: {
-      jsfModify?: JSFModify;
-    };
   },
 ) => {
   const { client } = useClient();
@@ -153,9 +150,6 @@ export const useRegionFields = (
       });
     },
     enabled: !!region,
-    select: ({ data }) => {
-      const jsfSchema = data?.data?.schema || {};
-      return createHeadlessForm(jsfSchema, undefined, options);
-    },
+    select: ({ data }) => data?.data?.schema || {},
   });
 };

@@ -72,23 +72,31 @@ export function CostCalculatorForm({
   } = form;
 
   useEffect(() => {
-    // resets the entire form if the form is successfully submitted and the shouldResetForm prop is true
+    // resets the entire form if the form is successfully submitted and the shouldResetForm prop is true.
+    // `resetForm()` bumps the flow's `resetKey`, remounting the RHF form with freshly computed
+    // default values — no explicit `form.reset()` needed (and calling it here would race the
+    // remount against a form instance that's about to be torn down).
     if (isSubmitSuccessful && shouldResetForm) {
       costCalculatorBag?.resetForm();
-      form.reset();
       return;
     }
 
-    // resets the specified fields if the form is successfully submitted and the resetFields prop is provided
+    // resets the specified fields if the form is successfully submitted and the resetFields prop is provided.
+    // This must NOT remount the form — it has to preserve every value the user entered other
+    // than the fields being blanked — so it opts out of the resetKey bump and blanks each field
+    // to the same default it would get from a full reset.
     if (isSubmitSuccessful && resetFields) {
-      // Reset only the specified fields
+      // `resetFields` clears the listed fields to blank so the user can pick again — e.g.
+      // `resetFields={['country']}` after a successful estimate — regardless of whatever
+      // `defaultValues` the consumer originally configured the flow with, so this
+      // intentionally does not source the blanked value from `defaultValues`.
       const currentValues = form.getValues();
       const resetValues = { ...currentValues };
       resetFields.forEach((field) => {
         resetValues[field] = '';
       });
 
-      costCalculatorBag?.resetForm();
+      costCalculatorBag?.resetForm({ remount: false });
       form.reset(resetValues);
     }
   }, [
@@ -181,7 +189,11 @@ export function CostCalculatorForm({
         onSubmit={form.handleSubmit(handleSubmit)}
         className='space-y-4 RemoteFlows__CostCalculatorForm'
       >
-        <JSONSchemaFormFields fields={costCalculatorBag?.fields ?? []} />
+        <JSONSchemaFormFields
+          fields={costCalculatorBag?.fields ?? []}
+          fieldValues={costCalculatorBag?.fieldValues}
+          fieldsets={costCalculatorBag?.meta?.['x-jsf-fieldsets']}
+        />
       </form>
     </Form>
   );

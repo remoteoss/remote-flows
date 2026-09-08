@@ -19,16 +19,18 @@ const mockUseFormFields = vi.mocked(useFormFields);
 
 describe('CostCalculatorResetButton', () => {
   const mockFormId = 'test-form-id';
-  const mockFormReset = vi.fn();
   const mockResetForm = vi.fn();
   const mockOnClick = vi.fn();
 
   beforeEach(() => {
     mockUseCostCalculatorContext.mockReturnValue({
       formId: mockFormId,
-      form: {
-        reset: mockFormReset,
-      } as unknown as ReturnType<typeof useCostCalculatorContext>['form'],
+      // The button only reads `formId`/`costCalculatorBag` — `resetForm()` now bumps the
+      // flow's `resetKey` to remount the RHF form with fresh defaults instead of the button
+      // calling `form.reset()` itself, so this mock's `form` value is unused.
+      form: {} as unknown as ReturnType<
+        typeof useCostCalculatorContext
+      >['form'],
       costCalculatorBag: {
         resetForm: mockResetForm,
       } as unknown as ReturnType<
@@ -82,7 +84,6 @@ describe('CostCalculatorResetButton', () => {
       fireEvent.click(button);
 
       expect(mockResetForm).toHaveBeenCalledTimes(1);
-      expect(mockFormReset).toHaveBeenCalledTimes(1);
       expect(mockOnClick).toHaveBeenCalledTimes(1);
     });
 
@@ -93,7 +94,6 @@ describe('CostCalculatorResetButton', () => {
       fireEvent.click(button);
 
       expect(mockResetForm).toHaveBeenCalledTimes(1);
-      expect(mockFormReset).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -154,7 +154,6 @@ describe('CostCalculatorResetButton', () => {
       fireEvent.click(button);
 
       expect(mockResetForm).toHaveBeenCalledTimes(1);
-      expect(mockFormReset).toHaveBeenCalledTimes(1);
       expect(mockOnClick).toHaveBeenCalledTimes(1);
     });
 
@@ -165,7 +164,6 @@ describe('CostCalculatorResetButton', () => {
       fireEvent.click(button);
 
       expect(mockResetForm).toHaveBeenCalledTimes(1);
-      expect(mockFormReset).toHaveBeenCalledTimes(1);
     });
   });
 });

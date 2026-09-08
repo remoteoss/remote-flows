@@ -1,5 +1,6 @@
 import {
   buildZendeskURL,
+  ZendeskTriggerButton as ZendeskTriggerButtonComponent,
   type ButtonComponentProps,
   type Components,
   type FieldComponentProps,
@@ -29,6 +30,25 @@ const renderDescription = (
   }
 
   return <p className='input-description'>{desc}</p>;
+};
+
+const renderZendeskTriggerButton = (helpCenter?: {
+  id: number;
+  callToAction: string;
+}) => {
+  if (!helpCenter) {
+    return null;
+  }
+
+  return (
+    <ZendeskTriggerButtonComponent
+      zendeskId={helpCenter?.id}
+      onClick={() => {}}
+      className='text-sm'
+    >
+      {helpCenter?.callToAction}
+    </ZendeskTriggerButtonComponent>
+  );
 };
 
 // you can define HTML button attributes or event props that exist in your Button like variant, size, etc.
@@ -83,6 +103,7 @@ const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
       {/* extra controls owned by the SDK, e.g. the salary currency conversion toggle
           when the split_salary_description feature is enabled */}
       {fieldData.descriptionSuffix}
+      {renderZendeskTriggerButton(fieldData.meta?.helpCenter)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}
@@ -135,6 +156,7 @@ const Select = ({ field, fieldData, fieldState }: FieldComponentProps) => {
       </div>
 
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderZendeskTriggerButton(fieldData.meta?.helpCenter)}
 
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
@@ -156,6 +178,7 @@ const Textarea = ({ field, fieldData, fieldState }: FieldComponentProps) => {
         {...field}
       />
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderZendeskTriggerButton(fieldData.meta?.helpCenter)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}
@@ -186,6 +209,7 @@ const Radio = ({ field, fieldData, fieldState }: FieldComponentProps) => {
         })}
       </div>
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderZendeskTriggerButton(fieldData.meta?.helpCenter)}
       {hasError && <p className='error-message'>{fieldState.error?.message}</p>}
     </div>
   );
@@ -201,6 +225,7 @@ const Checkbox = ({ field, fieldData, fieldState }: FieldComponentProps) => {
         <label htmlFor={field.name}>{fieldData.label}</label>
       </div>
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderZendeskTriggerButton(fieldData.meta?.helpCenter)}
       {hasError && <p className='error-message'>{fieldState.error?.message}</p>}
     </div>
   );
@@ -252,6 +277,7 @@ export const Countries = ({
       </div>
 
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderZendeskTriggerButton(fieldData.meta?.helpCenter)}
 
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
@@ -297,6 +323,7 @@ const FileUploadField = ({
         multiple={fieldData.multiple}
       />
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderZendeskTriggerButton(fieldData.meta?.helpCenter)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}
@@ -322,6 +349,7 @@ const DatePickerInput = ({
         }}
       />
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderZendeskTriggerButton(fieldData.meta?.helpCenter)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}
@@ -458,6 +486,7 @@ const TelField = ({ field, fieldData, fieldState }: TelFieldComponentProps) => {
       </div>
 
       {renderDescription(description, fieldData.transformHtml)}
+      {renderZendeskTriggerButton(fieldData.meta?.helpCenter)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}
@@ -486,6 +515,7 @@ const TimeField = ({
         }}
       />
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderZendeskTriggerButton(fieldData.meta?.helpCenter)}
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
       )}

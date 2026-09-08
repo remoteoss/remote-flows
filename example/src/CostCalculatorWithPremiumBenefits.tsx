@@ -368,20 +368,16 @@ const AddEstimateForm = ({
             },
             currency: {
               title: 'Employer billing currency',
-              description: (
-                <>
-                  Select the currency you want to be invoiced in for this
-                  employee's services.
-                  <ZendeskTriggerButton
-                    className='text-sm'
-                    zendeskId={zendeskArticles.internationalPricing}
-                  >
-                    Learn more ↗
-                  </ZendeskTriggerButton>
-                </>
-              ),
+              description:
+                "Select the currency you want to be invoiced in for this employee's services.",
               'x-jsf-presentation': {
                 hidden: options.hideCurrency,
+                meta: {
+                  helpCenter: {
+                    id: zendeskArticles.internationalPricing,
+                    callToAction: 'Learn more ↗',
+                  },
+                },
               },
             },
             currency_statement: {

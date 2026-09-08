@@ -1,6 +1,6 @@
-import React, { useEffect, useId, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
+import React, { useEffect, useId, useRef, useState } from 'react';
+import { UseFormReturn } from 'react-hook-form';
+import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
 import { CostCalculatorContext } from '@/src/flows/CostCalculator/context';
 import {
   CostCalculatorVersion,
@@ -13,6 +13,7 @@ import {
   UseCostCalculatorOptions,
 } from '@/src/flows/CostCalculator/types';
 import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 export type CostCalculatorFlowProps = {
   /**
@@ -104,50 +105,35 @@ const getManagementFee = (
   return management?.management_fee;
 };
 
-export const CostCalculatorFlow = ({
-  estimationOptions = defaultEstimationOptions,
-  defaultValues = {
-    countryRegionSlug: '',
-    regionSlug: '',
-    currencySlug: '',
-    salary: '',
-    benefits: {},
-    management: {
-      management_fee: '',
-    },
-  },
-  options,
-  render,
-  version = 'standard',
-}: CostCalculatorFlowProps) => {
-  const formId = useId();
-  const [currency, setCurrency] = useState<CurrencyKey>('USD');
-  const onCurrencyChange = (currency: string) => {
-    setCurrency(currency as CurrencyKey);
-    const managementFee = getDefaultManagementFee(
-      BASE_RATES,
-      currency as CurrencyKey,
-      estimationOptions.managementFees,
-    );
-    if (managementFee) {
-      form.setValue('management.management_fee', managementFee.toString());
-    }
-  };
-  const costCalculatorBag = useCostCalculator({
-    defaultRegion: defaultValues.countryRegionSlug,
-    defaultCurrency: defaultValues.currencySlug,
-    defaultSalary: defaultValues.salary,
-    estimationOptions,
-    version,
-    options: {
-      ...options,
-      onCurrencyChange: onCurrencyChange,
-    },
-  });
-  const resolver = useJsonSchemasValidationFormResolver(
-    costCalculatorBag.handleValidation,
-  );
+type ResolvedDefaultValues = NonNullable<
+  CostCalculatorFlowProps['defaultValues']
+>;
 
+type CostCalculatorFlowInnerProps = {
+  formId: string;
+  formRef: React.MutableRefObject<UseFormReturn<$TSFixMe> | null>;
+  currency: CurrencyKey;
+  setCurrency: (currency: CurrencyKey) => void;
+  defaultValues: ResolvedDefaultValues;
+  estimationOptions: CostCalculatorEstimationOptions;
+  costCalculatorBag: ReturnType<typeof useCostCalculator>;
+  render: CostCalculatorFlowProps['render'];
+};
+
+// Owns the RHF form instance. Rendered with a `key` derived from `costCalculatorBag.resetKey`
+// (see the outer `CostCalculatorFlow` below) so a full reset remounts this component instead of
+// calling `form.reset()` against a stale `defaultValues` snapshot — `useJSONSchemaForm`/RHF only
+// ever read `defaultValues` once, at mount.
+const CostCalculatorFlowInner = ({
+  formId,
+  formRef,
+  currency,
+  setCurrency,
+  defaultValues,
+  estimationOptions,
+  costCalculatorBag,
+  render,
+}: CostCalculatorFlowInnerProps) => {
   const defaultManagementFee = getManagementFee(
     currency,
     defaultValues.currencySlug,
@@ -167,28 +153,40 @@ export const CostCalculatorFlow = ({
     ...formDefaultValues
   } = defaultValues;
 
-  const form = useForm({
-    resolver,
-    defaultValues: {
-      country: countryRegionSlug,
-      currency: currencySlug,
-      region: regionSlug,
-      salary: salary,
-      salary_conversion: '',
-      salary_converted: undefined,
-      hiring_budget: hiringBudget || 'employee_annual_salary',
-      age: age,
-      contract_duration_type: contractDurationType,
-      management: {
-        management_fee: defaultManagementFee?.toString() || '',
-      },
-      benefits: benefits,
-      estimation_title: estimationOptions.title,
-      ...formDefaultValues,
+  // `useJSONSchemaForm` (via RHF) only reads this once, at mount — recomputing it on later
+  // renders of this same mount is harmless but pointless, so this intentionally isn't memoized
+  // beyond what a plain render already gives it.
+  const rhfDefaultValues = {
+    country: countryRegionSlug,
+    currency: currencySlug,
+    region: regionSlug,
+    salary: salary,
+    salary_conversion: '',
+    salary_converted: undefined,
+    hiring_budget: hiringBudget || 'employee_annual_salary',
+    age: age,
+    contract_duration_type: contractDurationType,
+    management: {
+      management_fee: defaultManagementFee?.toString() || '',
     },
-    shouldUnregister: false,
-    mode: 'onBlur',
+    benefits: benefits,
+    estimation_title: estimationOptions.title,
+    ...formDefaultValues,
+  };
+
+  const form = useJSONSchemaForm({
+    // `costCalculatorBag.handleValidation` is narrower than `useJSONSchemaForm`'s generic
+    // `(values: FieldValues) => ...` contract (it returns the flow's own
+    // `{ formErrors, yupError }` shape rather than the library's `ValidationResult`) — the same
+    // adapter mismatch `$TSFixMe` exists for elsewhere in this codebase.
+    handleValidation: costCalculatorBag.handleValidation as $TSFixMe,
+    defaultValues: rhfDefaultValues,
+    checkFieldUpdates: costCalculatorBag.checkFieldUpdates,
   });
+
+  // Lets the outer component's `onCurrencyChange` (passed into `useCostCalculator` before this
+  // form exists) reach this mount's `form.setValue` without lifting the form instance itself.
+  formRef.current = form;
 
   useEffect(() => {
     if (
@@ -223,6 +221,7 @@ export const CostCalculatorFlow = ({
     estimationOptions.managementFees,
     defaultValues.management?.management_fee,
     form,
+    setCurrency,
   ]);
 
   return (
@@ -235,5 +234,67 @@ export const CostCalculatorFlow = ({
     >
       {render(costCalculatorBag)}
     </CostCalculatorContext.Provider>
+  );
+};
+
+export const CostCalculatorFlow = ({
+  estimationOptions = defaultEstimationOptions,
+  defaultValues = {
+    countryRegionSlug: '',
+    regionSlug: '',
+    currencySlug: '',
+    salary: '',
+    benefits: {},
+    management: {
+      management_fee: '',
+    },
+  },
+  options,
+  render,
+  version = 'standard',
+}: CostCalculatorFlowProps) => {
+  const formId = useId();
+  const [currency, setCurrency] = useState<CurrencyKey>('USD');
+  const formRef = useRef<UseFormReturn<$TSFixMe> | null>(null);
+
+  const onCurrencyChange = (currency: string) => {
+    setCurrency(currency as CurrencyKey);
+    const managementFee = getDefaultManagementFee(
+      BASE_RATES,
+      currency as CurrencyKey,
+      estimationOptions.managementFees,
+    );
+    if (managementFee) {
+      formRef.current?.setValue(
+        'management.management_fee',
+        managementFee.toString(),
+      );
+    }
+  };
+
+  const costCalculatorBag = useCostCalculator({
+    defaultRegion: defaultValues.countryRegionSlug,
+    defaultCurrency: defaultValues.currencySlug,
+    defaultSalary: defaultValues.salary,
+    estimationOptions,
+    version,
+    options: {
+      ...options,
+      onCurrencyChange: onCurrencyChange,
+    },
+  });
+
+  return (
+    <CostCalculatorFlowInner
+      key={`cost-calculator-${costCalculatorBag.resetKey}`}
+      formId={formId}
+      formRef={formRef}
+      currency={currency}
+      setCurrency={setCurrency}
+      defaultValues={defaultValues}
+      estimationOptions={estimationOptions}
+      costCalculatorBag={costCalculatorBag}
+      render={render}
+    />
   );
 };

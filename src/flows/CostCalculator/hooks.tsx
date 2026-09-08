@@ -1,19 +1,16 @@
 import { MinimalRegion } from '@/src/client';
-import { jsonSchema } from '@/src/flows/CostCalculator/jsonSchema';
+import { buildCostCalculatorSchema } from '@/src/flows/CostCalculator/jsonSchema';
 import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
   UseCostCalculatorOptions,
 } from '@/src/flows/CostCalculator/types';
-import type { JSFModify } from '@/src/flows/types';
-
 import { parseJSFToValidate } from '@/src/components/form/utils';
-import { iterateErrors } from '@/src/components/form/validationResolver';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { string, ValidationError } from 'yup';
-import { buildPayload, buildValidationSchema } from './utils';
+import { FieldValues } from 'react-hook-form';
+import { buildPayload } from './utils';
 import {
   useCompanyCurrencies,
   useCostCalculatorCountries,
@@ -36,17 +33,6 @@ type CostCalculatorCountry = {
   hasAdditionalFields: boolean | undefined;
   regionSlug: string;
   currency: string;
-};
-
-type JSFValidationError = {
-  formErrors: Record<
-    string,
-    {
-      type: string;
-      message: string;
-    }
-  >;
-  yupError: ValidationError;
 };
 
 export const defaultEstimationOptions: CostCalculatorEstimationOptions = {
@@ -79,10 +65,6 @@ type UseCostCalculatorParams = {
   estimationOptions: CostCalculatorEstimationOptions;
   options?: UseCostCalculatorOptions;
   version?: CostCalculatorVersion;
-};
-
-const useStaticSchema = (options?: { jsfModify?: JSFModify }) => {
-  return createHeadlessForm(jsonSchema.data.schema, undefined, options);
 };
 
 type HiringBudget = 'my_hiring_budget' | 'employee_annual_salary';
@@ -133,6 +115,11 @@ export const useCostCalculator = (
     string | undefined
   >();
   const [hiringBudget, setHiringBudget] = useState<HiringBudget>();
+  const [resetKey, setResetKey] = useState(0);
+  const [fieldValues, setFieldValues] = useState<FieldValues>({});
+  const checkFieldUpdates = useCallback((values: FieldValues) => {
+    setFieldValues(values);
+  }, []);
   const { data: countries, isLoading: isLoadingCountries } =
     useCostCalculatorCountries({
       includePremiumBenefits: estimationOptions.includePremiumBenefits,
@@ -142,10 +129,9 @@ export const useCostCalculator = (
 
   const jsonSchemaRegionSlug = selectedRegion || selectedCountry?.value;
 
-  const { data: jsonSchemaRegionFields, isLoading: isLoadingRegionFields } =
+  const { data: regionSchema, isLoading: isLoadingRegionFields } =
     useRegionFields(jsonSchemaRegionSlug, {
       includePremiumBenefits: estimationOptions.includePremiumBenefits,
-      options,
     });
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
   const { mutateAsync: costCalculatorEstimationMutationAsync } =
@@ -305,7 +291,39 @@ export const useCostCalculator = (
     useSplitSalaryDescription,
   ]);
 
-  const fieldsJSONSchema = useStaticSchema({
+  const hasChildRegions = (selectedCountry?.childRegions?.length ?? 0) > 0;
+  const regionOptions = useMemo(
+    () =>
+      selectedCountry?.childRegions.map((region) => ({
+        value: region.slug,
+        label: region.name,
+      })) ?? [],
+    [selectedCountry?.childRegions],
+  );
+
+  const mergedSchema = useMemo(
+    () =>
+      buildCostCalculatorSchema({
+        regionSchema,
+        countries,
+        currencies,
+        regions: regionOptions,
+        employerBillingCurrency,
+        showEstimationTitleField,
+        hasChildRegions,
+      }),
+    [
+      regionSchema,
+      countries,
+      currencies,
+      regionOptions,
+      employerBillingCurrency,
+      showEstimationTitleField,
+      hasChildRegions,
+    ],
+  );
+
+  const schemaForm = createHeadlessForm(mergedSchema, fieldValues, {
     jsfModify: {
       fields: {
         ...options?.jsfModify?.fields,
@@ -388,39 +406,30 @@ export const useCostCalculator = (
     options?.onCurrencyChange?.(selectedCurrency || '');
   }
 
-  const regionField = fieldsJSONSchema.fields.find(
+  // `options`/`isVisible`/`required` for country, currency, and region are no longer set
+  // here — they're baked into `mergedSchema` itself (via `countries`/`currencies`/`regions`/
+  // `hasChildRegions`), since the library recomputes those properties from the schema
+  // whenever it re-validates, which silently discarded a post-hoc mutation like this one.
+  // `onChange` is a pure UI callback the schema has no way to express, so it's still
+  // attached here — gated on the corresponding data having loaded, same as before, so a
+  // field's `onChange` isn't "ready" before its `options` actually are.
+  const regionField = schemaForm.fields.find(
     (field) => field.name === 'region',
   );
-
   if (regionField) {
-    const regions =
-      selectedCountry?.childRegions.map((region) => ({
-        value: region.slug,
-        label: region.name,
-      })) ?? [];
-    regionField.options = regions;
-    regionField.isVisible = regions.length > 0;
-    regionField.required = regions.length > 0;
     regionField.onChange = onRegionChange;
-    regionField.schema =
-      regions.length > 0
-        ? string()
-            .transform((value) => (typeof value === 'string' ? value : ''))
-            .required('Region is required')
-        : string();
   }
 
   if (currencies) {
-    const currencyField = fieldsJSONSchema.fields.find(
+    const currencyField = schemaForm.fields.find(
       (field) => field.name === 'currency',
     );
     if (currencyField) {
-      currencyField.options = currencies;
       currencyField.onChange = onChangeCurrency;
     }
   }
 
-  const hiringBudgetField = fieldsJSONSchema.fields.find(
+  const hiringBudgetField = schemaForm.fields.find(
     (field) => field.name === 'hiring_budget',
   );
   if (hiringBudgetField) {
@@ -428,83 +437,34 @@ export const useCostCalculator = (
   }
 
   if (countries) {
-    const countryField = fieldsJSONSchema.fields.find(
+    const countryField = schemaForm.fields.find(
       (field) => field.name === 'country',
     );
     if (countryField) {
-      countryField.options = countries;
       countryField.onChange = onCountryChange;
     }
   }
 
-  const resetForm = () => {
+  // `remount` (default true) bumps `resetKey`, which the flow component uses as a React `key`
+  // to fully remount the RHF form instance — necessary because `useForm`/`useJSONSchemaForm`
+  // only read `defaultValues` once, at mount, so a bare `form.reset()` would otherwise revert
+  // to a stale snapshot rather than the freshly-computed defaults. Partial resets (the
+  // `resetFields` prop) pass `{ remount: false }` since they must preserve untouched field
+  // values, which a remount would discard.
+  const resetForm = (options?: { remount?: boolean }) => {
     setSelectedCountry(undefined);
     setSelectedRegion(defaultRegion);
+    if (options?.remount !== false) {
+      setResetKey((key) => key + 1);
+    }
   };
 
-  const allFields = [
-    ...fieldsJSONSchema.fields.filter((field) => field.name !== 'management'),
-    ...(jsonSchemaRegionFields?.fields || []),
-    ...fieldsJSONSchema.fields.filter((field) => field.name === 'management'),
-  ];
-
-  const validationSchema = buildValidationSchema(
-    fieldsJSONSchema.fields,
-    employerBillingCurrency || 'USD',
-    estimationOptions.includeEstimationTitle,
-  );
+  const allFields = schemaForm.fields;
 
   async function handleValidation(values: CostCalculatorEstimationFormValues) {
-    let errors: JSFValidationError | null = null;
-
     options?.onValidation?.(values);
     const parsedValues = await parseJSFToValidate(values, allFields);
-
-    // 1. validate static fields first using Yup validate function
-    try {
-      await validationSchema.validate(parsedValues, {
-        abortEarly: false,
-      });
-      errors = {
-        formErrors: {},
-        yupError: new ValidationError([], values),
-      };
-    } catch (error) {
-      const iterateResult = iterateErrors(error as ValidationError);
-
-      errors = {
-        // convert the errors to a format that can be used in the form
-        formErrors: Object.entries(iterateResult).reduce(
-          (acc, [key, value]) => ({ ...acc, [key]: value.message }),
-          {},
-        ),
-        yupError: error as ValidationError,
-      };
-    }
-
-    // 2. validate json schema fields using the handleValidation (from json-schema-form)
-    const handleValidationResult =
-      jsonSchemaRegionFields?.handleValidation(parsedValues);
-
-    // 3. combine the errors from both validations
-    const combinedInnerErrors = [
-      ...(errors?.yupError.inner || []),
-      ...((handleValidationResult as { yupError: ValidationError })?.yupError
-        ?.inner || []),
-    ];
-    const combinedValues = {
-      ...(errors?.yupError?.value || {}),
-      ...((handleValidationResult as { yupError: ValidationError })?.yupError
-        ?.value || {}),
-    };
-
-    return {
-      formErrors: {
-        ...(errors?.formErrors || {}),
-        ...(handleValidationResult?.formErrors || {}),
-      },
-      yupError: new ValidationError(combinedInnerErrors, combinedValues),
-    };
+    return schemaForm.handleValidation(parsedValues);
   }
 
   // WE NEED TO FIX: react-hooks/refs - Cannot access ref value during render
@@ -523,10 +483,6 @@ export const useCostCalculator = (
      */
     fields: allFields,
     /**
-     * Validation schema for the cost calculator form
-     */
-    validationSchema,
-    /**
      * Function to parse form values before submission
      * @param values - Form values to parse
      * @returns Parsed form values
@@ -534,44 +490,17 @@ export const useCostCalculator = (
     parseFormValues: async (
       values: CostCalculatorEstimationFormValues,
     ): Promise<CostCalculatorEstimationSubmitValues> => {
-      const {
-        country,
-        region,
-        currency,
-        salary_converted,
-        hiring_budget,
-        salary_conversion,
-        management,
-        estimation_title,
-        ...rest
-      } = values;
+      const { salary_converted, salary_conversion, currency } = values;
 
       // If the salary has been converted, we take the one the user has inputted
-      let salary = values.salary;
-      if (salary_converted === 'salary_conversion') {
-        salary = salary_conversion;
-      }
+      const salary =
+        salary_converted === 'salary_conversion'
+          ? salary_conversion
+          : values.salary;
 
-      const jsonSchemaStaticFieldValues = {
-        country,
-        region,
-        salary,
-        salary_converted,
-        salary_conversion,
-        hiring_budget,
-        currency,
-        management,
-        estimation_title,
-      };
-
-      const parsedStaticFields = await parseJSFToValidate(
-        jsonSchemaStaticFieldValues,
-        fieldsJSONSchema.fields,
-      );
-
-      const parsedRegionFields = await parseJSFToValidate(
-        rest,
-        jsonSchemaRegionFields?.fields || [],
+      const parsedFields = await parseJSFToValidate(
+        { ...values, salary },
+        allFields,
       );
 
       const additionalFields = {
@@ -579,8 +508,7 @@ export const useCostCalculator = (
       };
 
       return {
-        ...parsedStaticFields,
-        ...parsedRegionFields,
+        ...parsedFields,
         ...additionalFields,
       } as CostCalculatorEstimationSubmitValues;
     },
@@ -607,6 +535,24 @@ export const useCostCalculator = (
      * Function to reset the cost calculator form
      */
     resetForm,
+    /**
+     * Bumped by `resetForm()` (unless called with `{ remount: false }`). Used as a React `key`
+     * on the component instantiating the RHF form so a full reset remounts it with freshly
+     * computed default values instead of reverting to the stale snapshot RHF captured at
+     * first mount.
+     */
+    resetKey,
+    /**
+     * Current form values, kept in sync via `checkFieldUpdates`. Passed to `JSONSchemaFormFields`
+     * so field-level dynamic properties (visibility, computed values) can react to live input.
+     */
+    fieldValues,
+    /**
+     * Called on every form value change (wired into `useJSONSchemaForm`'s `watch` subscription).
+     * Keeps `fieldValues` in sync so the schema form's conditionals re-evaluate against current
+     * input.
+     */
+    checkFieldUpdates,
 
     /**
      * Currencies data useful to get the currency if you have a currencySlug
@@ -622,6 +568,7 @@ export const useCostCalculator = (
       // WE NEED TO FIX: react-hooks/refs - Cannot access ref value during render
       // oxlint-disable-next-line react-hooks/refs
       fields: fieldsMetaRef.current?.fields,
+      'x-jsf-fieldsets': schemaForm.meta?.['x-jsf-fieldsets'],
     },
   };
 };

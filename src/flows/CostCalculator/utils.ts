@@ -3,70 +3,56 @@ import type {
   CostCalculatorEstimateParams,
 } from '@/src/client';
 
-import { $TSFixMe } from '@/src/types/remoteFlows';
-import { AnyObjectSchema, number, object } from 'yup';
+import { FieldValues } from 'react-hook-form';
 import { CostCalculatorVersion, defaultEstimationOptions } from './hooks';
 import type {
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
-  CurrencyKey,
 } from './types';
 import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
 
 /**
- * Build the validation schema for the form.
- * @returns
+ * Decides which of `salary`/`salary_conversion` needs correcting after a currency-swap
+ * change, so the value the user already typed carries over to whichever field is now the
+ * "main" one instead of appearing to vanish. Pure — returns the patch to apply (or `null` if
+ * nothing needs to change) rather than calling `setValue` itself.
+ * @param values - Current form values.
+ * @param shouldSwapOrder - Whether the employer/employee currencies differ, so the
+ * conversion field is currently the one collecting live input.
+ * @param fieldName - The field's own name (`salary`, unless the schema is customized).
+ * @param defaultValue - Fallback used when neither field has a value yet.
  */
-export function buildValidationSchema(
-  fields: $TSFixMe[],
-  employerBillingCurrency: string,
-  includeEstimationTitle?: boolean,
-) {
-  const fieldsSchema = fields.reduce<Record<string, AnyObjectSchema>>(
-    (fieldsSchemaAcc, field) => {
-      // Special handling for salary fields
-      if (field.name === 'salary' || field.name === 'salary_conversion') {
-        fieldsSchemaAcc[field.name] = (field.schema as AnyObjectSchema).when(
-          'salary_converted',
-          {
-            is: (val: string | null) => val === field.name,
-            then: (schema) => schema.required('Required field'),
-            otherwise: (schema) => schema.optional(),
-          },
-        );
-      } else if (field.name === 'management') {
-        fieldsSchemaAcc[field.name] = object({
-          management_fee: number()
-            .transform((value) => {
-              return isNaN(value) ? undefined : value;
-            })
-            .min(0, 'Management fee must be greater than or equal to 0')
-            .max(
-              employerBillingCurrency
-                ? BASE_RATES[employerBillingCurrency as CurrencyKey]
-                : BASE_RATES.USD,
-              () => {
-                const maxValue = employerBillingCurrency
-                  ? BASE_RATES[employerBillingCurrency as CurrencyKey]
-                  : BASE_RATES.USD;
-                const displayValue = maxValue / 100;
-                return `Management fee cannot exceed ${displayValue} ${employerBillingCurrency}`;
-              },
-            ),
-        });
-      } else if (field.name === 'estimation_title' && includeEstimationTitle) {
-        // Make estimation_title required when includeEstimationTitle is true
-        fieldsSchemaAcc[field.name] = (
-          field.schema as AnyObjectSchema
-        ).required('Required field');
-      } else {
-        fieldsSchemaAcc[field.name] = field.schema as AnyObjectSchema;
-      }
-      return fieldsSchemaAcc;
-    },
-    {},
-  );
-  return object(fieldsSchema) as AnyObjectSchema;
+export function syncSalaryConversion(
+  values: FieldValues,
+  shouldSwapOrder: boolean,
+  fieldName: string,
+  defaultValue?: string,
+): Record<string, string> | null {
+  if (shouldSwapOrder) {
+    const currentValue = values[fieldName];
+    if (currentValue) {
+      return {
+        salary_conversion: currentValue,
+        salary_converted: 'salary_conversion',
+      };
+    }
+    if (defaultValue) {
+      return {
+        salary_conversion: defaultValue,
+        salary_converted: 'salary_conversion',
+      };
+    }
+    return null;
+  }
+
+  const conversionValue = values.salary_conversion;
+  if (conversionValue) {
+    return { [fieldName]: conversionValue, salary_converted: fieldName };
+  }
+  if (defaultValue) {
+    return { [fieldName]: defaultValue, salary_converted: fieldName };
+  }
+  return null;
 }
 
 /**

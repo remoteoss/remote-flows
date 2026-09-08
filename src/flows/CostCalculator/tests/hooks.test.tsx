@@ -75,11 +75,14 @@ describe('useCostCalculator', () => {
       estimation_title: 'Test estimation',
     } as const;
 
-    await expect(
-      result.current.handleValidation(validValues),
-    ).resolves.toMatchObject({
-      formErrors: {},
-    });
+    const validationResult = await result.current.handleValidation(
+      validValues as $TSFixMe,
+    );
+
+    // The v1 engine doesn't include a `formErrors` key at all when there's nothing to
+    // report (unlike the removed Yup path, which always returned `{ formErrors: {} }`) —
+    // assert there are no errors rather than the exact shape of a "no errors" result.
+    expect(validationResult?.formErrors ?? {}).toEqual({});
   });
 
   it('should return an error when invalid data is passed to handleValidation', async () => {

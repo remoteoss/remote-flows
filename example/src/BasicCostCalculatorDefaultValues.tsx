@@ -20,8 +20,8 @@ export function BasicCostCalculatorWithDefaultValues() {
       <CostCalculatorFlow
         estimationOptions={estimationOptions}
         defaultValues={{
-          countryRegionSlug: 'bf098ccf-7457-4556-b2a8-80c48f67cca4',
-          currencySlug: 'eur-acf7d6b5-654a-449f-873f-aca61a280eba',
+          countryRegionSlug: '12f0ec18-5dbc-48b5-bf34-7d0fe9ee96f0',
+          currencySlug: 'a9635cae-5c4b-438b-b34f-bfb80946036e',
           salary: '50000',
         }}
         options={COST_CALCULATOR_OPTIONS}

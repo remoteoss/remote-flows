@@ -1,6 +1,7 @@
 import { CurrencyConversionField } from '@/src/components/form/fields/CurrencyConversionField';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
+import { syncSalaryConversion } from '@/src/flows/CostCalculator/utils';
 import { JSFField } from '@/src/types/remoteFlows';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -31,6 +32,13 @@ export const SalaryField = ({
 }: SalaryFieldProps) => {
   const { setValue, getValues } = useFormContext();
 
+  // Applies whatever `syncSalaryConversion` decides needs to change, via `setValue` so RHF
+  // re-renders the affected field(s).
+  const applySalarySync = (patch: Record<string, string> | null) => {
+    if (!patch) return;
+    Object.entries(patch).forEach(([field, value]) => setValue(field, value));
+  };
+
   const conversionProperties = {
     label: salary_conversion_properties?.label || 'Salary conversion',
     description: salary_conversion_properties?.description || (
@@ -52,29 +60,15 @@ export const SalaryField = ({
     : 'salary_conversion';
 
   useEffect(() => {
-    if (shouldSwapOrder) {
-      const currentValue = getValues(props.name);
-
-      if (currentValue) {
-        setValue('salary_conversion', currentValue);
-        setValue('salary_converted', 'salary_conversion');
-      } else if (defaultValue) {
-        // Fallback to defaultValue if no current value
-        setValue('salary_conversion', defaultValue);
-        setValue('salary_converted', 'salary_conversion');
-      }
-    } else {
-      const conversionValue = getValues('salary_conversion');
-
-      if (conversionValue) {
-        setValue(props.name, conversionValue);
-        setValue('salary_converted', props.name);
-      } else if (defaultValue) {
-        // Fallback to defaultValue if no conversion value
-        setValue(props.name, defaultValue);
-        setValue('salary_converted', props.name);
-      }
-    }
+    applySalarySync(
+      syncSalaryConversion(
+        getValues(),
+        shouldSwapOrder,
+        props.name,
+        defaultValue,
+      ),
+    );
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldSwapOrder, defaultValue, setValue, getValues, props.name]);
   return (
     <CurrencyConversionField
