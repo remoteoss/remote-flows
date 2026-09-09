@@ -352,6 +352,11 @@ export const useCostCalculator = (
           defaultCountry.hasAdditionalFields
         ) {
           setSelectedRegion(defaultCountry.regionSlug);
+        } else {
+          // Clear selectedRegion if the country doesn't meet the criteria (has child
+          // regions or no additional fields), so jsonSchemaRegionSlug falls back to
+          // selectedCountry.value (the correct region slug).
+          setSelectedRegion(undefined);
         }
       }
     }

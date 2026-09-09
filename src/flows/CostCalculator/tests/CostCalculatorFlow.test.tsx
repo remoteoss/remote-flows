@@ -210,6 +210,43 @@ describe('CostCalculatorFlow', () => {
     });
   });
 
+  it('should resolve country code to region slug when defaultRegion is a country code without additional fields', async () => {
+    // This test verifies the fix for a bug where if defaultRegion was a country code
+    // (e.g. 'DEU') for a country without additional fields or child regions, the region
+    // fields API endpoint would be called with the wrong slug (the country code instead
+    // of the region slug). Germany has: code='DEU',
+    // region_slug='deu-a1aea868-0e0a-4cd7-9b73-9941d92e5bbe',
+    // has_additional_fields=false, child_regions=[]
+    const mockRegionFieldsEndpoint = vi.fn();
+
+    server.use(
+      http.get('*/v1/cost-calculator/regions/:slug/fields', ({ params }) => {
+        mockRegionFieldsEndpoint(params.slug);
+        return HttpResponse.json(regionFields);
+      }),
+    );
+
+    renderComponent({
+      defaultValues: {
+        ...defaultProps.defaultValues,
+        countryRegionSlug: 'DEU', // Pass country code as defaultRegion
+        currencySlug: 'USD',
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
+
+    // The bug: without the fix, this would be called with 'DEU' instead of the
+    // correct region slug 'deu-a1aea868-0e0a-4cd7-9b73-9941d92e5bbe'
+    await waitFor(() => {
+      expect(mockRegionFieldsEndpoint).toHaveBeenCalledWith(
+        'deu-a1aea868-0e0a-4cd7-9b73-9941d92e5bbe',
+      );
+    });
+  });
+
   it('should submit the form with default values', async () => {
     renderComponent();
     await waitFor(() => {
