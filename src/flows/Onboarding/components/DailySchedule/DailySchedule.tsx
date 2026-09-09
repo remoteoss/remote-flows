@@ -20,7 +20,9 @@ import {
 import {
   buildDailyScheduleSummary,
   calculateWorkingHours,
+  getDailyScheduleHoursError,
   resolveDailyScheduleValue,
+  DailyScheduleHoursError,
   DailyScheduleSummaryDay,
   DailyScheduleSummarySegment,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
@@ -107,6 +109,27 @@ function DailyScheduleSummaryBody({
   );
 }
 
+/**
+ * Flags a schedule whose total weekly hours fall outside the country/
+ * work-schedule's allowed range — shown both here (live, inside the edit
+ * modal) and in the read-only summary, matching Dragon's `DailyScheduleError`.
+ */
+function DailyScheduleHoursErrorBanner({
+  error,
+}: {
+  error: DailyScheduleHoursError | null;
+}) {
+  if (!error) {
+    return null;
+  }
+
+  return (
+    <p className='text-destructive text-sm RemoteFlows__DailySchedule__HoursError'>
+      <strong>{error.header}</strong> - {error.message}
+    </p>
+  );
+}
+
 function DailyScheduleEditForm({
   availableWorkDays,
   defaultSchedule,
@@ -114,6 +137,9 @@ function DailyScheduleEditForm({
   defaultEndTime,
   defaultBreakDurationMinutes,
   subtractBreaksFromWorkHours,
+  workHoursBounds,
+  workSchedule,
+  countryName,
   value,
   setValue,
   onClose,
@@ -125,6 +151,9 @@ function DailyScheduleEditForm({
   | 'defaultEndTime'
   | 'defaultBreakDurationMinutes'
   | 'subtractBreaksFromWorkHours'
+  | 'workHoursBounds'
+  | 'workSchedule'
+  | 'countryName'
   | 'value'
   | 'setValue'
 > & { onClose: () => void }) {
@@ -132,6 +161,8 @@ function DailyScheduleEditForm({
     form,
     fields,
     watchedSchedule,
+    previewDays,
+    hoursError,
     handleSave,
     handleReset,
     isScheduleAtDefault,
@@ -142,21 +173,16 @@ function DailyScheduleEditForm({
       defaultStartTime,
       defaultEndTime,
       defaultBreakDurationMinutes,
+      subtractBreaksFromWorkHours,
+      workHoursBounds,
+      workSchedule,
+      countryName,
       value,
       setValue,
       onSaved: onClose,
     });
 
   const hasFieldErrors = Object.keys(form.formState.errors).length > 0;
-
-  const previewDays: DailyScheduleSummaryDay[] = watchedSchedule
-    .filter((row) => row.checked)
-    .map((row) => ({
-      day: row.day,
-      start_time: row.start_time,
-      end_time: row.end_time,
-      break_duration_minutes: Number(row.break_duration_minutes) || 0,
-    }));
 
   return (
     <Form {...form}>
@@ -229,6 +255,8 @@ function DailyScheduleEditForm({
           />
         </div>
 
+        <DailyScheduleHoursErrorBanner error={hoursError} />
+
         {rootError ? (
           <p className='text-destructive text-sm mb-0'>{rootError}</p>
         ) : null}
@@ -257,7 +285,11 @@ function DailyScheduleEditForm({
             <Button type='button' variant='outline' onClick={onClose}>
               Cancel
             </Button>
-            <Button type='button' onClick={handleSave}>
+            <Button
+              type='button'
+              onClick={handleSave}
+              disabled={!!hoursError}
+            >
               Save schedule
             </Button>
           </div>
@@ -276,6 +308,9 @@ export const DailySchedule = ({
   defaultEndTime,
   defaultBreakDurationMinutes,
   subtractBreaksFromWorkHours,
+  workHoursBounds,
+  workSchedule,
+  countryName,
   value,
   setValue,
 }: DailyScheduleProps) => {
@@ -292,6 +327,17 @@ export const DailySchedule = ({
         break_duration_minutes: daySchedule?.break_duration_minutes ?? 0,
       };
     });
+
+  const { totalWeeklyHours } = buildDailyScheduleSummary(
+    summaryDays,
+    subtractBreaksFromWorkHours,
+  );
+  const hoursError = getDailyScheduleHoursError({
+    totalWeeklyHours,
+    workHoursBounds,
+    countryName,
+    workSchedule,
+  });
 
   return (
     <div className='flex flex-col gap-3 RemoteFlows__DailySchedule'>
@@ -311,6 +357,8 @@ export const DailySchedule = ({
           days={summaryDays}
           subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
         />
+
+        <DailyScheduleHoursErrorBanner error={hoursError} />
 
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
@@ -334,6 +382,9 @@ export const DailySchedule = ({
               defaultEndTime={defaultEndTime}
               defaultBreakDurationMinutes={defaultBreakDurationMinutes}
               subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
+              workHoursBounds={workHoursBounds}
+              workSchedule={workSchedule}
+              countryName={countryName}
               value={value}
               setValue={setValue}
               onClose={() => setOpen(false)}

@@ -283,6 +283,64 @@ describe('DailySchedule', () => {
     ).toBeInTheDocument();
   });
 
+  it('shows the weekly hours-range error outside the modal when the saved schedule is too short', () => {
+    renderWithForm(
+      [createDailyScheduleField()],
+      {
+        work_schedule: 'full_time',
+        daily_schedule: {
+          selected_days: ['monday'],
+          schedule: {
+            monday: {
+              start_time: '09:00',
+              end_time: '13:00',
+              break_duration_minutes: 0,
+            },
+          },
+        },
+      },
+    );
+
+    expect(
+      screen.getByText('Work hours outside of weekly range'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /The work week for a full-time employee in Germany is between 31 and 48 hours\./,
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('does not show the weekly hours-range error when the saved schedule is within range', () => {
+    renderWithForm([createDailyScheduleField()], { daily_schedule: undefined });
+
+    expect(
+      screen.queryByText('Work hours outside of weekly range'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows the weekly hours-range error live inside the modal and disables saving while it is out of range', async () => {
+    const user = userEvent.setup();
+    renderWithForm([createDailyScheduleField()], {
+      work_schedule: 'full_time',
+      daily_schedule: undefined,
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+    const dialog = screen.getByRole('dialog');
+    for (const day of ['Tuesday', 'Wednesday', 'Thursday', 'Friday']) {
+      await user.click(within(dialog).getByRole('checkbox', { name: day }));
+    }
+
+    expect(
+      within(dialog).getByText('Work hours outside of weekly range'),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).getByRole('button', { name: 'Save schedule' }),
+    ).toBeDisabled();
+  });
+
   it('displays field validation errors when invalid time format is entered', async () => {
     const user = userEvent.setup();
     renderWithForm([createDailyScheduleField()], {

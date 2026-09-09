@@ -26,11 +26,12 @@ export const DailyScheduleContainer = ({
   const { watch } = useFormContext();
   const watchedScheduleType = watch('schedule_type');
   const watchedWorkSchedule = watch('work_schedule');
+  const resolvedWorkSchedule = workSchedule ?? watchedWorkSchedule;
 
   const defaults = getDefaultsFromSchema(metadata);
   const workHoursBounds = getWorkHoursBounds(defaults.workHoursPerWeekConfig, {
     scheduleType: scheduleType ?? watchedScheduleType,
-    workSchedule: workSchedule ?? watchedWorkSchedule,
+    workSchedule: resolvedWorkSchedule,
   });
 
   return render({
@@ -38,5 +39,6 @@ export const DailyScheduleContainer = ({
     metadata,
     ...defaults,
     workHoursBounds,
+    workSchedule: resolvedWorkSchedule,
   });
 };

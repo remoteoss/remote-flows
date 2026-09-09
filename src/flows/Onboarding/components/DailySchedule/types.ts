@@ -96,6 +96,8 @@ export type DailyScheduleFieldProps = Omit<
 export type DailyScheduleRenderProps = DailyScheduleFieldProps &
   DailyScheduleDefaults & {
     workHoursBounds: WorkHoursRange;
+    /** The resolved `work_schedule` value ('full_time' / 'part_time'), used to word the hours-range error. */
+    workSchedule: string | undefined;
   };
 
 export type DailyScheduleContainerProps = DailyScheduleFieldProps &

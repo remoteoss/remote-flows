@@ -8,7 +8,12 @@ import {
   DailyScheduleValue,
   Weekday,
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
-import { resolveDailyScheduleValue } from '@/src/flows/Onboarding/components/DailySchedule/utils';
+import {
+  buildDailyScheduleSummary,
+  DailyScheduleSummaryDay,
+  getDailyScheduleHoursError,
+  resolveDailyScheduleValue,
+} from '@/src/flows/Onboarding/components/DailySchedule/utils';
 
 /**
  * Owns the `daily_schedule` edit-modal's validation and save mapping (PAY-2868
@@ -175,10 +180,21 @@ export type UseDailyScheduleEditFormOptions = Pick<
   | 'defaultBreakDurationMinutes'
   | 'value'
   | 'setValue'
-> & {
-  /** Called after a successful save, e.g. to close the hosting modal. */
-  onSaved?: () => void;
-};
+> &
+  // Optional: only needed to surface the weekly hours-range error (below);
+  // a consumer that doesn't pass these simply never sees `hoursError`.
+  Partial<
+    Pick<
+      DailyScheduleRenderProps,
+      | 'subtractBreaksFromWorkHours'
+      | 'workHoursBounds'
+      | 'workSchedule'
+      | 'countryName'
+    >
+  > & {
+    /** Called after a successful save, e.g. to close the hosting modal. */
+    onSaved?: () => void;
+  };
 
 /**
  * Headless edit-form for `daily_schedule`: react-hook-form + the library's
@@ -190,6 +206,10 @@ export function useDailyScheduleEditForm({
   defaultStartTime,
   defaultEndTime,
   defaultBreakDurationMinutes,
+  subtractBreaksFromWorkHours = false,
+  workHoursBounds,
+  workSchedule,
+  countryName,
   value,
   setValue,
   onSaved,
@@ -245,10 +265,39 @@ export function useDailyScheduleEditForm({
   // arrays regardless of resolver.
   const rootError = formState.errors.schedule?.root?.message;
 
+  // Same "checked rows -> summary days" shape the read-only summary and the
+  // edit modal's live preview both build from, kept here so `hoursError`
+  // reflects the schedule as the user is actively editing it.
+  const previewDays: DailyScheduleSummaryDay[] = watchedSchedule
+    .filter((row) => row.checked)
+    .map((row) => ({
+      day: row.day,
+      start_time: row.start_time,
+      end_time: row.end_time,
+      break_duration_minutes: Number(row.break_duration_minutes) || 0,
+    }));
+
+  const { totalWeeklyHours } = buildDailyScheduleSummary(
+    previewDays,
+    subtractBreaksFromWorkHours,
+  );
+
+  const hoursError =
+    workHoursBounds && countryName
+      ? getDailyScheduleHoursError({
+          totalWeeklyHours,
+          workHoursBounds,
+          countryName,
+          workSchedule,
+        })
+      : null;
+
   return {
     form,
     fields,
     watchedSchedule,
+    previewDays,
+    hoursError,
     handleSave,
     handleReset,
     isScheduleAtDefault,
