@@ -112,7 +112,7 @@ export const paidTimeOffSchema = {
         'timesheet_file',
       ],
       'x-rmt-meta': {
-        jsfVersion: '1',
+        jsfOldVersion: true,
       },
     },
   },

@@ -34,7 +34,7 @@ export const jsonSchema = {
         ...additionalInformationSchema.data.schema['x-jsf-order'],
       ],
       'x-rmt-meta': {
-        jsfVersion: '1',
+        jsfOldVersion: true,
       },
     },
   },

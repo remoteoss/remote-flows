@@ -40,7 +40,7 @@ export const additionalInformationSchema = {
         'acknowledge_termination_procedure_fees_info',
       ],
       'x-rmt-meta': {
-        jsfVersion: '1',
+        jsfOldVersion: true,
       },
     },
   },
