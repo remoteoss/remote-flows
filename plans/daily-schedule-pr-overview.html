@@ -1,0 +1,581 @@
+<title>Daily Schedule Field</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --bg: #f4f5f7;
+    --surface: #ffffff;
+    --surface-alt: #eceef2;
+    --border: #d8dbe1;
+    --text: #171a21;
+    --text-muted: #5b626f;
+    --accent: #2f6f6b;
+    --accent-soft: #e4efee;
+    --added: #1a7f4f;
+    --added-soft: #e3f5ea;
+    --removed: #c23a3a;
+    --removed-soft: #fbe9e9;
+    --flag: #93650a;
+    --flag-soft: #f7ecd6;
+    --shadow: 0 1px 2px rgba(23, 26, 33, 0.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11141a;
+      --surface: #171b22;
+      --surface-alt: #1d222b;
+      --border: #2a303b;
+      --text: #e7e9ee;
+      --text-muted: #9aa3b2;
+      --accent: #5fc9c0;
+      --accent-soft: rgba(95, 201, 192, 0.14);
+      --added: #4ec98a;
+      --added-soft: rgba(78, 201, 138, 0.14);
+      --removed: #e2726c;
+      --removed-soft: rgba(226, 114, 108, 0.14);
+      --flag: #d7a94a;
+      --flag-soft: rgba(215, 169, 74, 0.14);
+      --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11141a;
+    --surface: #171b22;
+    --surface-alt: #1d222b;
+    --border: #2a303b;
+    --text: #e7e9ee;
+    --text-muted: #9aa3b2;
+    --accent: #5fc9c0;
+    --accent-soft: rgba(95, 201, 192, 0.14);
+    --added: #4ec98a;
+    --added-soft: rgba(78, 201, 138, 0.14);
+    --removed: #e2726c;
+    --removed-soft: rgba(226, 114, 108, 0.14);
+    --flag: #d7a94a;
+    --flag-soft: rgba(215, 169, 74, 0.14);
+    --shadow: none;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  code, .mono, .stat b, .path {
+    font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px 96px; }
+
+  header.hero {
+    background: var(--surface-alt);
+    border-bottom: 1px solid var(--border);
+    padding: 56px 24px 40px;
+    margin-bottom: 40px;
+  }
+  header.hero .wrap { padding: 0; }
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+  h1 {
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 12px;
+    text-wrap: balance;
+  }
+  .lede {
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 640px;
+    margin: 0 0 28px;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .stat {
+    background: var(--surface);
+    padding: 14px 16px;
+  }
+  .stat span {
+    display: block;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .stat b {
+    font-size: 20px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat.add b { color: var(--added); }
+  .stat.rm b { color: var(--removed); }
+
+  nav.toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 40px;
+  }
+  nav.toc a {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 13px;
+    background: var(--surface);
+    transition: color .15s, border-color .15s;
+  }
+  nav.toc a:hover { color: var(--accent); border-color: var(--accent); }
+
+  section { margin-bottom: 48px; }
+  section > h2 {
+    font-size: 21px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  section > h2 .num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  section > p.section-intro {
+    color: var(--text-muted);
+    max-width: 700px;
+    margin: 0 0 20px;
+  }
+
+  p { max-width: 700px; }
+  a { color: var(--accent); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .card .card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-alt);
+    flex-wrap: wrap;
+  }
+  .card .path {
+    font-size: 13px;
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+    word-break: break-all;
+  }
+  .badge {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .badge.new { color: var(--added); background: var(--added-soft); }
+  .badge.mod { color: var(--flag); background: var(--flag-soft); }
+  .delta {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .delta .a { color: var(--added); }
+  .delta .r { color: var(--removed); }
+
+  .card .card-body { padding: 14px 16px 16px; }
+  .card .card-body p { margin: 0 0 10px; font-size: 14.5px; }
+  .card .card-body p:last-child { margin-bottom: 0; }
+  .card ul.tight { margin: 6px 0 10px; padding-left: 20px; font-size: 14px; }
+  .card ul.tight li { margin-bottom: 4px; }
+
+  pre {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    overflow-x: auto;
+    font-size: 12.5px;
+    line-height: 1.6;
+    margin: 10px 0;
+  }
+  pre code { font-family: inherit; }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 640px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .callout {
+    border: 1px solid var(--accent);
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-size: 14.5px;
+  }
+  .callout strong { color: var(--accent); }
+
+  table.filetable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  table.filetable th {
+    text-align: left;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  table.filetable td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.filetable tr:last-child td { border-bottom: none; }
+  table.filetable td.path { font-size: 12.5px; }
+
+  footer {
+    color: var(--text-muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    margin-top: 60px;
+  }
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">PAY-2868 · Onboarding · contract_details</div>
+    <h1>Daily Schedule Field</h1>
+    <p class="lede">
+      Adds a schema-driven summary + edit-modal UI for the <code>daily_schedule</code>
+      contract-details field — porting Dragon's <code>WorkScheduleField</code> UX —
+      gated behind an opt-in <code>daily_schedule</code> feature flag.
+    </p>
+    <div class="stats">
+      <div class="stat"><span>Files changed</span><b>21</b></div>
+      <div class="stat add"><span>Insertions</span><b>+3,994</b></div>
+      <div class="stat rm"><span>Deletions</span><b>−3</b></div>
+      <div class="stat"><span>New files</span><b>13</b></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <a href="#why">Why</a>
+    <a href="#wiring">How it's wired</a>
+    <a href="#data-layer">Data layer</a>
+    <a href="#ui-layer">UI layer</a>
+    <a href="#exports">Public exports</a>
+    <a href="#tests">Tests</a>
+    <a href="#misc">Everything else</a>
+  </nav>
+
+  <section id="why">
+    <h2><span class="num">01</span> Why this shape</h2>
+    <p class="section-intro">
+      <code>daily_schedule</code> is one JSON-schema field, but it stands in for seven
+      per-day time triples plus a derived weekly-hours validity check — too much for
+      the generic nested-fieldset renderer to present well. Dragon solved the same
+      problem with a dedicated component; this PR ports that UX rather than
+      reinventing it.
+    </p>
+    <div class="card">
+      <div class="card-body">
+        <p>
+          The field only renders through this path when a consumer opts in via
+          <code>options.features: ['daily_schedule']</code> — everyone else keeps the
+          existing generic field UI, so this ships with zero behavior change for
+          current integrators.
+        </p>
+        <p style="margin-bottom:0">
+          Reference: Dragon's <code>WorkScheduleFieldForJSONSchema</code>
+          (<span class="mono">employ-starbase/dragon</span> MR !49203). Design notes
+          live in <code>plans/daily-schedule-field.md</code>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="wiring">
+    <h2><span class="num">02</span> How it's wired</h2>
+    <p class="section-intro">
+      <code>useOnboarding()</code> (<span class="path">src/flows/Onboarding/hooks.tsx</span>)
+      injects the field only when the flag is on, and — this is the extensibility
+      point the rest of the PR is built around — always renders through
+      <code>DailyScheduleContainer</code> first, so a consumer override never has to
+      redo the schema/metadata derivation.
+    </p>
+    <div class="card">
+      <div class="card-head">
+        <span class="path">src/flows/Onboarding/hooks.tsx</span>
+        <span class="badge mod">modified</span>
+        <span class="delta"><span class="a">+38</span></span>
+      </div>
+      <div class="card-body">
+        <pre><code>...(isDailyScheduleEnabled
+  ? {
+      daily_schedule: {
+        ...dailyScheduleField,
+        presentation: {
+          Component: (props) => (
+            &lt;DailyScheduleContainer
+              {...props}
+              render={(renderProps) =>
+                CustomComponent
+                  ? &lt;CustomComponent {...renderProps} /&gt;
+                  : &lt;DailySchedule {...renderProps} /&gt;
+              }
+            /&gt;
+          ),
+        },
+      },
+    }
+  : {})</code></pre>
+        <p style="margin-bottom:0">
+          A consumer overrides the UI via
+          <code>jsfModify.contract_details.fields.daily_schedule['x-jsf-presentation'].Component</code> —
+          but that override still sits <em>inside</em> <code>DailyScheduleContainer</code>,
+          so it receives the fully-derived <code>DailyScheduleRenderProps</code>, not
+          the raw field. It never needs to touch schema metadata directly.
+        </p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <span class="path">src/flows/Onboarding/types.ts</span>
+        <span class="badge mod">modified</span>
+        <span class="delta"><span class="a">+6</span> <span class="r">−1</span></span>
+      </div>
+      <div class="card-body">
+        <p style="margin-bottom:0">
+          Adds <code>'daily_schedule'</code> to <code>OnboardingFeatures</code> and
+          documents the override slot on <code>OnboardingFlowProps.options.features</code>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="data-layer">
+    <h2><span class="num">03</span> Data layer</h2>
+    <p class="section-intro">
+      Everything that decides <em>what's valid</em> and <em>what to save</em> is
+      framework-agnostic — no JSX — so it's testable in isolation and reusable by
+      any replacement UI.
+    </p>
+
+    <div class="card">
+      <div class="card-head">
+        <span class="path">components/DailySchedule/types.ts</span>
+        <span class="badge new">new</span>
+        <span class="delta"><span class="a">+106</span></span>
+      </div>
+      <div class="card-body">
+        <p style="margin-bottom:0">
+          The contracts: <code class="mono">Weekday</code>, <code class="mono">DayHours</code>,
+          <code class="mono">DailyScheduleValue</code> (the shape written back to the
+          field), <code class="mono">WorkHoursRange</code>,
+          <code class="mono">DailyScheduleMetadata</code> (the raw schema
+          <code>x-jsf-presentation.metadata</code> block), and the composite
+          <code class="mono">DailyScheduleRenderProps</code> every UI — default or
+          custom — is handed.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <span class="path">components/DailySchedule/utils.ts</span>
+        <span class="badge new">new</span>
+        <span class="delta"><span class="a">+474</span></span>
+      </div>
+      <div class="card-body">
+        <p>Ported from Dragon's <code>schedule.js</code> / <code>time.js</code>. Pure functions:</p>
+        <ul class="tight">
+          <li><code>calculateWorkingHours</code> — start/end/break → hours for one day</li>
+          <li><code>getDefaultsFromSchema</code> / <code>getWorkHoursBounds</code> — metadata → camelCase defaults + the allowed weekly-hours range for the current work schedule</li>
+          <li><code>resolveDailyScheduleValue</code> — saved <code>value</code>, or a schedule built from <code>default_schedule</code> when there isn't one yet</li>
+          <li><code>buildDailyScheduleSummary</code> — groups selected days into Dragon-style lines (<em>"Monday to Friday, from 09h00 to 18h00"</em>) plus the weekly total</li>
+          <li><code>getDailyScheduleHoursError</code> — flags a total outside the country/schedule's allowed range</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <span class="path">components/DailySchedule/useDailyScheduleEditForm.ts</span>
+        <span class="badge new">new</span>
+        <span class="delta"><span class="a">+306</span></span>
+      </div>
+      <div class="card-body">
+        <p style="margin-bottom:0">
+          The headless edit-form: react-hook-form + a Zod schema encoding every
+          validation rule (HH:mm format, required fields on checked days, "at least
+          one work day"), plus the save mapping
+          (<code>mapDailyScheduleEditFormDataToValue</code>) and reset-to-default
+          logic. Its own doc comment is explicit that a fully custom UI should call
+          this hook rather than re-deriving the rules.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="ui-layer">
+    <h2><span class="num">04</span> UI layer</h2>
+    <div class="card">
+      <div class="card-head">
+        <span class="path">components/DailySchedule/DailyScheduleContainer.tsx</span>
+        <span class="badge new">new</span>
+        <span class="delta"><span class="a">+44</span></span>
+      </div>
+      <div class="card-body">
+        <p style="margin-bottom:0">
+          Headless, render-prop shaped (mirrors <code>PaidTimeOffContainer</code>):
+          reads <code>work_schedule</code> / <code>schedule_type</code> off the
+          surrounding form via <code>useFormContext()</code>, derives defaults and
+          hour bounds from the metadata, and calls <code>render(renderProps)</code>.
+          Always runs, regardless of whether the default or a custom UI is rendered.
+        </p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <span class="path">components/DailySchedule/DailySchedule.tsx</span>
+        <span class="badge new">new</span>
+        <span class="delta"><span class="a">+395</span></span>
+      </div>
+      <div class="card-body">
+        <p style="margin-bottom:0">
+          The shipped default UI: a read-only summary + badge, an "Edit schedule"
+          link opening a modal with per-day checkboxes and start/end/break inputs,
+          a live preview, and the hours-error banner. Covered in its own deep-dive —
+          see the companion artifact.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="exports">
+    <h2><span class="num">05</span> Public exports <span class="badge new" style="margin-left:6px;">this change</span></h2>
+    <p class="section-intro">
+      Everything above was reachable from inside the package but not from it — a
+      partner overriding <code>Component</code> had no supported way to reuse the
+      validation rules or summary formatting, only to re-derive them. This PR now
+      exports the pieces a replacement UI actually depends on.
+    </p>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head">
+          <span class="path">src/flows/Onboarding/index.ts</span>
+          <span class="badge mod">modified</span>
+          <span class="delta"><span class="a">+37</span></span>
+        </div>
+        <div class="card-body">
+          <p style="margin-bottom:0">Flow-level barrel: adds the hook, utils, and types below.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <span class="path">src/index.tsx</span>
+          <span class="badge mod">modified</span>
+          <span class="delta"><span class="a">+29</span></span>
+        </div>
+        <div class="card-body">
+          <p style="margin-bottom:0">Root package entry point: re-exports the same names so they're importable from <code>@remoteoss/remote-flows</code> directly.</p>
+        </div>
+      </div>
+    </div>
+    <table class="filetable">
+      <tr><th>Kind</th><th>Name</th><th>From</th></tr>
+      <tr><td>Hook</td><td class="path">useDailyScheduleEditForm</td><td class="path">useDailyScheduleEditForm.ts</td></tr>
+      <tr><td>Functions</td><td class="path">buildDailyScheduleSummary, calculateWorkingHours, getDailyScheduleHoursError, resolveDailyScheduleValue</td><td class="path">utils.ts</td></tr>
+      <tr><td>Types</td><td class="path">Weekday, DayHours, DailyScheduleDefaultDay, DailyScheduleValue, WorkHoursRange, WorkHoursPerWeekConfig, DailyScheduleMetadata, DailyScheduleDefaults, DailyScheduleFieldProps, DailyScheduleRenderProps</td><td class="path">types.ts</td></tr>
+      <tr><td>Types</td><td class="path">UseDailyScheduleEditFormOptions, DailyScheduleEditFormRow, DailyScheduleEditFormData</td><td class="path">useDailyScheduleEditForm.ts</td></tr>
+      <tr><td>Types</td><td class="path">DailyScheduleHoursError, DailyScheduleSummaryDay, DailyScheduleSummarySegment, DailyScheduleSummaryLine</td><td class="path">utils.ts</td></tr>
+    </table>
+    <p style="margin-top:14px;">
+      Deliberately <em>not</em> exported: <code>DailyScheduleContainer</code>,
+      <code>getDefaultsFromSchema</code>, <code>getWorkHoursBounds</code>. A custom
+      <code>Component</code> is always mounted inside the container (see §2), so it
+      already receives resolved <code>renderProps</code> — it never needs the
+      schema-metadata derivation itself.
+    </p>
+  </section>
+
+  <section id="tests">
+    <h2><span class="num">06</span> Tests</h2>
+    <table class="filetable">
+      <tr><th>File</th><th>Covers</th></tr>
+      <tr><td class="path">DailySchedule/tests/utils.test.ts</td><td>Every exported pure function — hours math, defaults derivation, summary grouping, error thresholds</td></tr>
+      <tr><td class="path">DailySchedule/tests/useDailyScheduleEditForm.test.tsx</td><td>Validation rules, save mapping, reset-to-default</td></tr>
+      <tr><td class="path">DailySchedule/tests/DailySchedule.test.tsx</td><td>Rendered summary, modal open/edit/save flow, hours-error banner</td></tr>
+      <tr><td class="path">Onboarding/tests/useOnboardingDailySchedule.test.tsx</td><td>Flag on/off, <code>jsfModify</code> override wiring, MSW-backed contract-details fetch</td></tr>
+      <tr><td class="path">fixtures/contractDetails/v1-daily-schedule.ts</td><td>Germany <code>daily_schedule</code> schema fixture used by the above</td></tr>
+    </table>
+  </section>
+
+  <section id="misc">
+    <h2><span class="num">07</span> Everything else</h2>
+    <table class="filetable">
+      <tr><th>File</th><th>What</th></tr>
+      <tr><td class="path">src/components/form/fields/FieldSetField.tsx</td><td>Fixes fieldset rendering to respect a component override, needed for <code>daily_schedule</code>'s <code>Component</code> slot to take effect</td></tr>
+      <tr><td class="path">example/src/flows/Onboarding/constants.ts</td><td>Enables the <code>daily_schedule</code> flag in the demo app</td></tr>
+      <tr><td class="path">plans/daily-schedule-field.md / -overview.html</td><td>Design rationale and phased rollout plan (Phases 1–4, referenced throughout the code comments as PAY-2868)</td></tr>
+    </table>
+  </section>
+
+  <footer>
+    Branch <code>feat/pay-2868-daily-schedule-render-prop-contract</code> · generated to accompany the PR description.
+  </footer>
+</div>
