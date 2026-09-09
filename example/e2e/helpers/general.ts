@@ -1,4 +1,4 @@
-import { Page, Route } from '@playwright/test';
+import { Page, Route, test } from '@playwright/test';
 
 export async function setupVercelBypass(page: Page) {
   await page.route('**/*', async (route: Route) => {
@@ -34,10 +34,53 @@ export type FillFormOptions = {
   name?: string;
   testId?: string;
   options?: { nativeSelect?: boolean };
+  /**
+   * The field may legitimately not be rendered, so skip it instead of failing when it is
+   * absent. For fields the backend adds or drops behind a feature flag — the form is built
+   * from a server-supplied JSON schema, so a flag flip changes which fields exist without
+   * anything changing here.
+   *
+   * Use it only where absence is a supported state. On an ordinary field this would turn a
+   * real regression into a silent pass.
+   */
+  optional?: boolean;
 };
+
+/**
+ * How long to wait for a field that may not exist at all. Long enough to outlast a re-render
+ * once the rest of the form is on screen, short enough that skipping several absent fields
+ * does not eat the test's timeout budget.
+ */
+const OPTIONAL_FIELD_TIMEOUT_MS = 5000;
+
+async function isFieldRendered(page: Page, name: string) {
+  try {
+    await page
+      .locator(`[data-field="${name}"]`)
+      .first()
+      .waitFor({ state: 'visible', timeout: OPTIONAL_FIELD_TIMEOUT_MS });
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export async function fillForm(page: Page, values: FillFormOptions[]) {
   for (const option of values) {
+    if (
+      option.optional &&
+      option.name &&
+      !(await isFieldRendered(page, option.name))
+    ) {
+      // Recorded rather than skipped silently: which layout the run exercised is the first
+      // thing you want to know when reading a report for this form.
+      test.info().annotations.push({
+        type: 'optional-field-absent',
+        description: `${option.name} was not rendered; skipped.`,
+      });
+      continue;
+    }
+
     switch (option.type) {
       case 'textField':
         if (option.name) {
