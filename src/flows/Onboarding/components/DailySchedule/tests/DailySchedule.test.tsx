@@ -2,6 +2,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import userEvent from '@testing-library/user-event';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
+import { FieldSetField } from '@/src/components/form/fields/FieldSetField';
 import { DailyScheduleContainer } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleContainer';
 import { DailySchedule } from '@/src/flows/Onboarding/components/DailySchedule/DailySchedule';
 import {
@@ -53,6 +54,49 @@ const renderWithForm = (
       <TestProviders>
         <FormProvider {...methods}>
           <JSONSchemaFormFields fields={fields} />
+        </FormProvider>
+      </TestProviders>
+    );
+  };
+
+  const utils = render(<TestComponent />);
+  return { ...utils, getFormValues: () => formValues };
+};
+
+/**
+ * Renders `daily_schedule` the way it actually appears in production: Tiger
+ * groups it into a UI-only `x-jsf-fieldsets` section alongside sibling
+ * fields, which `getFieldsWithFlatFieldsets` turns into a flat
+ * `FieldSetField` wrapping it — a different render path than
+ * `JSONSchemaFormFields`'s direct `field.Component` branch above. A
+ * `Component`-overridden field whose own `type` is `fieldset` (true for
+ * `daily_schedule`, since its schema is a nested object) hits
+ * `FieldSetField`'s nested-fieldset branch before its `field.Component`
+ * branch, recursing into a second `FieldSetField` layer — regression
+ * coverage for that layer dropping `value`/`setValue`.
+ */
+const renderNestedInFieldSet = (
+  fields: Array<Record<string, unknown>>,
+  defaultValues: Record<string, unknown> = {},
+) => {
+  let formValues: Record<string, unknown> = {};
+
+  const TestComponent = () => {
+    const methods = useForm({ defaultValues });
+    formValues = methods.watch();
+
+    return (
+      <TestProviders>
+        <FormProvider {...methods}>
+          <FieldSetField
+            name='work_schedule_section'
+            label='Work schedule'
+            description=''
+            fields={fields as $TSFixMe}
+            components={{}}
+            isFlatFieldset
+            variant='outset'
+          />
         </FormProvider>
       </TestProviders>
     );
@@ -361,5 +405,70 @@ describe('DailySchedule', () => {
     expect(
       await within(dialog).findByText(/Please check the form for errors/),
     ).toBeInTheDocument();
+  });
+
+  describe('nested inside a parent fieldset (production `x-jsf-fieldsets` grouping)', () => {
+    it('writes the whole schedule back in a single setValue call on save', async () => {
+      const user = userEvent.setup();
+      const { getFormValues } = renderNestedInFieldSet(
+        [createDailyScheduleField({ type: 'fieldset', inputType: 'fieldset', fields: [] })],
+        { daily_schedule: undefined },
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+      const dialog = screen.getByRole('dialog');
+      await user.click(
+        within(dialog).getByRole('checkbox', { name: 'Friday' }),
+      );
+      await user.click(
+        within(dialog).getByRole('button', { name: 'Save schedule' }),
+      );
+
+      await waitFor(() => {
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      });
+
+      const value = getFormValues().daily_schedule as {
+        selected_days: string[];
+        schedule: Record<string, unknown>;
+      };
+      expect(value.selected_days).toEqual([
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+      ]);
+      expect(value.schedule.friday).toBeUndefined();
+    });
+
+    it('requires at least one selected day', async () => {
+      const user = userEvent.setup();
+      renderNestedInFieldSet(
+        [createDailyScheduleField({ type: 'fieldset', inputType: 'fieldset', fields: [] })],
+        { daily_schedule: undefined },
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+      const dialog = screen.getByRole('dialog');
+      for (const day of [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+      ]) {
+        await user.click(within(dialog).getByRole('checkbox', { name: day }));
+      }
+
+      await user.click(
+        within(dialog).getByRole('button', { name: 'Save schedule' }),
+      );
+
+      expect(
+        await within(dialog).findByText('Select at least one work day'),
+      ).toBeInTheDocument();
+    });
   });
 });

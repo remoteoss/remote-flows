@@ -168,19 +168,19 @@ function DailyScheduleEditForm({
     isScheduleAtDefault,
     rootError,
   } = useDailyScheduleEditForm({
-      availableWorkDays,
-      defaultSchedule,
-      defaultStartTime,
-      defaultEndTime,
-      defaultBreakDurationMinutes,
-      subtractBreaksFromWorkHours,
-      workHoursBounds,
-      workSchedule,
-      countryName,
-      value,
-      setValue,
-      onSaved: onClose,
-    });
+    availableWorkDays,
+    defaultSchedule,
+    defaultStartTime,
+    defaultEndTime,
+    defaultBreakDurationMinutes,
+    subtractBreaksFromWorkHours,
+    workHoursBounds,
+    workSchedule,
+    countryName,
+    value,
+    setValue,
+    onSaved: onClose,
+  });
 
   const hasFieldErrors = Object.keys(form.formState.errors).length > 0;
 
@@ -285,11 +285,7 @@ function DailyScheduleEditForm({
             <Button type='button' variant='outline' onClick={onClose}>
               Cancel
             </Button>
-            <Button
-              type='button'
-              onClick={handleSave}
-              disabled={!!hoursError}
-            >
+            <Button type='button' onClick={handleSave} disabled={!!hoursError}>
               Save schedule
             </Button>
           </div>
@@ -387,7 +383,9 @@ export const DailySchedule = ({
               countryName={countryName}
               value={value}
               setValue={setValue}
-              onClose={() => setOpen(false)}
+              onClose={() => {
+                setOpen(false);
+              }}
             />
           </DialogContent>
         </Dialog>

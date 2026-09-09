@@ -155,7 +155,16 @@ export function FieldSetField({
   const headerId = `${name}-header`;
 
   if (Component) {
-    return <Component {...props} />;
+    return (
+      <Component
+        {...props}
+        name={name}
+        value={watch(name)}
+        setValue={(value: unknown) => {
+          setValue(name, value);
+        }}
+      />
+    );
   }
 
   return (
