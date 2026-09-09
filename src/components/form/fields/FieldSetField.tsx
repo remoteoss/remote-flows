@@ -59,6 +59,7 @@ export type FieldSetProps = {
   isFlatFieldset: boolean;
   extra?: React.ReactNode;
   variant: 'outset' | 'inset';
+  Component?: React.ComponentType<$TSFixMe>;
   meta?: {
     helpCenter?: {
       callToAction: string;
@@ -81,6 +82,8 @@ export function FieldSetField({
   variant = 'outset',
   features,
   meta,
+  Component,
+  ...props
 }: FieldSetProps) {
   const { helpCenter } = meta || {};
   const { watch, setValue, trigger, formState } = useFormContext();
@@ -150,6 +153,19 @@ export function FieldSetField({
     formComponents?.fieldsetToggle || FieldsetToggleButtonDefault;
   const contentId = `${name}-content`;
   const headerId = `${name}-header`;
+
+  if (Component) {
+    return (
+      <Component
+        {...props}
+        name={name}
+        value={watch(name)}
+        setValue={(value: unknown) => {
+          setValue(name, value);
+        }}
+      />
+    );
+  }
 
   return (
     <fieldset

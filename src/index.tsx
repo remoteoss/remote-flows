@@ -84,6 +84,36 @@ export type {
   PreOnboardingRequirement,
 } from '@/src/flows/Onboarding';
 
+export { useDailyScheduleEditForm } from '@/src/flows/Onboarding';
+export type {
+  UseDailyScheduleEditFormOptions,
+  DailyScheduleEditFormRow,
+  DailyScheduleEditFormData,
+} from '@/src/flows/Onboarding';
+
+export {
+  buildDailyScheduleSummary,
+  calculateWorkingHours,
+  getDailyScheduleHoursError,
+  resolveDailyScheduleValue,
+} from '@/src/flows/Onboarding';
+export type {
+  DailyScheduleHoursError,
+  DailyScheduleSummaryDay,
+  DailyScheduleSummarySegment,
+  DailyScheduleSummaryLine,
+  Weekday,
+  DayHours,
+  DailyScheduleDefaultDay,
+  DailyScheduleValue,
+  WorkHoursRange,
+  WorkHoursPerWeekConfig,
+  DailyScheduleMetadata,
+  DailyScheduleDefaults,
+  DailyScheduleFieldProps,
+  DailyScheduleRenderProps,
+} from '@/src/flows/Onboarding';
+
 export {
   ContractorOnboardingFlow,
   contractorPlusProductIdentifier,

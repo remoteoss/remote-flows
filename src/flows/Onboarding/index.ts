@@ -15,3 +15,35 @@ export type {
   CreditRiskState,
   OnboardingRenderProps,
 } from './types';
+
+// dayly schedule utilities && types
+export { useDailyScheduleEditForm } from './components/DailySchedule/useDailyScheduleEditForm';
+export type {
+  UseDailyScheduleEditFormOptions,
+  DailyScheduleEditFormRow,
+  DailyScheduleEditFormData,
+} from './components/DailySchedule/useDailyScheduleEditForm';
+export {
+  buildDailyScheduleSummary,
+  calculateWorkingHours,
+  getDailyScheduleHoursError,
+  resolveDailyScheduleValue,
+} from './components/DailySchedule/utils';
+export type {
+  DailyScheduleHoursError,
+  DailyScheduleSummaryDay,
+  DailyScheduleSummarySegment,
+  DailyScheduleSummaryLine,
+} from './components/DailySchedule/utils';
+export type {
+  Weekday,
+  DayHours,
+  DailyScheduleDefaultDay,
+  DailyScheduleValue,
+  WorkHoursRange,
+  WorkHoursPerWeekConfig,
+  DailyScheduleMetadata,
+  DailyScheduleDefaults,
+  DailyScheduleFieldProps,
+  DailyScheduleRenderProps,
+} from './components/DailySchedule/types';

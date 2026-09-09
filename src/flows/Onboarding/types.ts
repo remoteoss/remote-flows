@@ -64,7 +64,8 @@ type OnboardingFeatures =
   | 'dynamic_steps'
   | 'ea_preview'
   | 'pre_onboarding_requirements'
-  | 'split_salary_description';
+  | 'split_salary_description'
+  | 'daily_schedule';
 
 /**
  * JSON schema version configuration for a specific country
@@ -174,6 +175,10 @@ export type OnboardingFlowProps = {
      *   currency conversion toggle to the text component as three separate slots (`description`,
      *   `meta.helpCenter`, `descriptionSuffix`) instead of packing them into `description`.
      *   Custom text components must render `fieldData.descriptionSuffix` to keep the conversion toggle.
+     * - 'daily_schedule': Render the `daily_schedule` field (when present in the contract-details schema) with
+     *   a schema-driven summary + edit-modal UI instead of the generic nested-fieldset UI. Override the default
+     *   UI via `jsfModify.contract_details.fields.daily_schedule['x-jsf-presentation'].Component` — it still
+     *   receives the derived defaults/hour-bounds payload, not just the raw field.
      */
     features?: OnboardingFeatures[];
   };
