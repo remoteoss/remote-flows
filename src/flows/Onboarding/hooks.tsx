@@ -663,12 +663,14 @@ export const useOnboarding = ({
           ? {
               daily_schedule: {
                 ...(dailyScheduleField as $TSFixMe),
-                'x-jsf-presentation': {
+                presentation: {
                   ...(dailyScheduleField as $TSFixMe)?.['x-jsf-presentation'],
+                  ...(dailyScheduleField as $TSFixMe)?.presentation,
                   Component: (props: $TSFixMe) => {
-                    const CustomComponent = (dailyScheduleField as $TSFixMe)?.[
-                      'x-jsf-presentation'
-                    ]?.Component;
+                    const CustomComponent =
+                      (dailyScheduleField as $TSFixMe)?.['x-jsf-presentation']
+                        ?.Component ??
+                      (dailyScheduleField as $TSFixMe)?.presentation?.Component;
 
                     return (
                       <DailyScheduleContainer
