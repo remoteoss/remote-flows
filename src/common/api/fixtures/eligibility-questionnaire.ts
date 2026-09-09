@@ -3,6 +3,7 @@ import { mockBaseResponse } from '@/src/common/api/fixtures/base';
 export const mockEligibilityQuestionnaireSchema = {
   data: {
     schema: {
+      'x-rmt-meta': { jsfOldVersion: true },
       type: 'object',
       properties: {
         control_the_way_contractors_work: {

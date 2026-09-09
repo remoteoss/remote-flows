@@ -83,6 +83,7 @@ export const companyCreatedWithTokensResponse = {
 export const addressDetailsSchema = {
   data: {
     data: {
+      'x-rmt-meta': { jsfOldVersion: true },
       type: 'object',
       properties: {
         address: {

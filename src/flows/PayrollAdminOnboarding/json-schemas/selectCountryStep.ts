@@ -1,4 +1,5 @@
 export const gpSelectCountrySchema = {
+  'x-rmt-meta': { jsfOldVersion: true },
   additionalProperties: false,
   properties: {
     country_code: {

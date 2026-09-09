@@ -156,7 +156,7 @@ export const employeeComunicationSchema = {
         'personal_email',
       ],
       'x-rmt-meta': {
-        jsfVersion: '1',
+        jsfOldVersion: true,
       },
     },
   },

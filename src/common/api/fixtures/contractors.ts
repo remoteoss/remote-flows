@@ -21,6 +21,7 @@ export const mockContractorCurrenciesResponse = {
 
 export const mockContractorBasicInformationSchema = {
   data: {
+    'x-rmt-meta': { jsfOldVersion: true },
     additionalProperties: false,
     allOf: [
       {

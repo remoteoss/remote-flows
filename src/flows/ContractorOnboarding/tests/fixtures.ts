@@ -109,6 +109,7 @@ export const mockContractorContractDetailsSchema = {
   data: {
     version: 7,
     schema: {
+      'x-rmt-meta': { jsfOldVersion: true },
       additionalProperties: false,
       properties: {
         payment_terms: {

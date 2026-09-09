@@ -9,7 +9,7 @@ export const defaultSchema = {
       type: 'object',
       'x-jsf-order': [],
       'x-rmt-meta': {
-        jsfVersion: '1',
+        jsfOldVersion: true,
       },
     },
   },

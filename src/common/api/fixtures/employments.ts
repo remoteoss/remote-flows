@@ -85,6 +85,7 @@ export const mockBenefitOffersSchema = {
   data: {
     version: 7,
     schema: {
+      'x-rmt-meta': { jsfOldVersion: true },
       additionalProperties: false,
       properties: {
         '072e0edb-bfca-46e8-a449-9eed5cbaba33': {

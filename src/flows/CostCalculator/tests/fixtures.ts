@@ -90,6 +90,7 @@ export const regionFields = {
   data: {
     version: 7,
     schema: {
+      'x-rmt-meta': { jsfOldVersion: true },
       additionalProperties: false,
       properties: {},
       required: [],
@@ -102,6 +103,7 @@ export const regionFieldsWithAgeProperty = {
   data: {
     version: 7,
     schema: {
+      'x-rmt-meta': { jsfOldVersion: true },
       additionalProperties: false,
       properties: {
         age: {
@@ -182,6 +184,7 @@ export const regionFieldsWithContractDurationTypeProperty = {
   data: {
     version: 7,
     schema: {
+      'x-rmt-meta': { jsfOldVersion: true },
       additionalProperties: false,
       properties: {
         benefits: {
