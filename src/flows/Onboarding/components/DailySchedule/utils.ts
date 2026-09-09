@@ -1,3 +1,5 @@
+import groupBy from 'lodash.groupby';
+
 import {
   DailyScheduleDefaultDay,
   DailyScheduleDefaults,
@@ -165,4 +167,246 @@ export function resolveDailyScheduleValue({
       {},
     ),
   };
+}
+
+/**
+ * A selected day's schedule, in the shape the summary builder groups on —
+ * both the read-only summary (from `DailyScheduleValue.schedule`) and the
+ * edit modal's live preview (from `watchedSchedule`) normalize to this.
+ */
+export type DailyScheduleSummaryDay = {
+  day: Weekday;
+  start_time: string;
+  end_time: string;
+  break_duration_minutes: number;
+};
+
+export type DailyScheduleSummarySegment = { text: string; bold?: boolean };
+
+export type DailyScheduleSummaryLine = {
+  key: string;
+  segments: DailyScheduleSummarySegment[];
+};
+
+function capitalizeDay(day: Weekday): string {
+  return day.charAt(0).toUpperCase() + day.slice(1);
+}
+
+/** Dragon's display format for a HH:mm time, e.g. "09:00" -> "09h00". */
+function formatTimeLabel(time: string): string {
+  return time.replace(':', 'h');
+}
+
+function formatBreakDurationLabel(minutes: number): string {
+  if (minutes < MINUTES_IN_HOUR) {
+    return `${minutes}m`;
+  }
+
+  const hours = Math.floor(minutes / MINUTES_IN_HOUR);
+  const remainingMinutes = minutes % MINUTES_IN_HOUR;
+
+  return remainingMinutes > 0 ? `${hours}h${remainingMinutes}m` : `${hours}h`;
+}
+
+/**
+ * The last day, starting from `startDay`, in an unbroken run of consecutive
+ * weekdays within `days` — used to collapse e.g. Monday-Friday into a single
+ * "Monday to Friday" range instead of five separate lines.
+ */
+function findLastConsecutiveDay(
+  startDay: Weekday,
+  days: Weekday[],
+): Weekday | null {
+  let index = days.indexOf(startDay);
+  let lastConsecutiveDay: Weekday | null = null;
+
+  while (index < days.length && !lastConsecutiveDay) {
+    const currentDay = days[index];
+    const nextDay = days[index + 1];
+    const nextDayInWeek =
+      DAYS_OF_THE_WEEK[DAYS_OF_THE_WEEK.indexOf(currentDay) + 1];
+
+    if (nextDayInWeek !== nextDay) {
+      lastConsecutiveDay = currentDay;
+    }
+
+    index += 1;
+  }
+
+  return lastConsecutiveDay;
+}
+
+/** "Monday" / "Monday and Tuesday" / "Monday, Tuesday and Wednesday", each day bold. */
+function boldDayListSegments(days: Weekday[]): DailyScheduleSummarySegment[] {
+  return days.flatMap((day, index) => {
+    const dayLabel: DailyScheduleSummarySegment = {
+      text: capitalizeDay(day),
+      bold: true,
+    };
+
+    if (index === 0) {
+      return [dayLabel];
+    }
+
+    const joiner = index === days.length - 1 ? ' and ' : ', ';
+    return [{ text: joiner }, dayLabel];
+  });
+}
+
+/** "Monday" / "Monday and Tuesday" / "Monday, Tuesday and Wednesday" (plain text). */
+function formatDayListText(days: Weekday[]): string {
+  const names = days.map(capitalizeDay);
+
+  if (names.length === 1) {
+    return names[0];
+  }
+
+  if (names.length === 2) {
+    return `${names[0]} and ${names[1]}`;
+  }
+
+  return `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
+}
+
+function buildWorkHoursLine(
+  timeKey: string,
+  daysInGroup: DailyScheduleSummaryDay[],
+): DailyScheduleSummaryLine {
+  const [startTime, endTime] = timeKey.split('|');
+  const dayNames = daysInGroup.map((day) => day.day);
+  const startDay = dayNames[0];
+  const lastConsecutiveDay = findLastConsecutiveDay(startDay, dayNames);
+  const allDaysAreConsecutive =
+    lastConsecutiveDay !== null &&
+    dayNames.indexOf(lastConsecutiveDay) === dayNames.length - 1;
+
+  const timeSegments: DailyScheduleSummarySegment[] = [
+    { text: 'from ' },
+    { text: formatTimeLabel(startTime), bold: true },
+    { text: ' to ' },
+    { text: formatTimeLabel(endTime), bold: true },
+  ];
+
+  if (dayNames.length === 1) {
+    return {
+      key: timeKey,
+      segments: [
+        { text: capitalizeDay(startDay), bold: true },
+        { text: ', ' },
+        ...timeSegments,
+      ],
+    };
+  }
+
+  if (allDaysAreConsecutive) {
+    return {
+      key: timeKey,
+      segments: [
+        { text: capitalizeDay(startDay), bold: true },
+        { text: ' to ' },
+        { text: capitalizeDay(lastConsecutiveDay), bold: true },
+        { text: ', ' },
+        ...timeSegments,
+      ],
+    };
+  }
+
+  return {
+    key: timeKey,
+    segments: [
+      ...boldDayListSegments(dayNames),
+      { text: ', ' },
+      ...timeSegments,
+    ],
+  };
+}
+
+function buildBreakLine(
+  breakDurationMinutes: string,
+  daysInGroup: DailyScheduleSummaryDay[],
+  isOnlyGroup: boolean,
+): DailyScheduleSummaryLine {
+  const breakLabel = formatBreakDurationLabel(Number(breakDurationMinutes));
+
+  if (isOnlyGroup) {
+    return {
+      key: breakDurationMinutes,
+      segments: [
+        { text: 'With ' },
+        { text: `${breakLabel} daily breaks`, bold: true },
+      ],
+    };
+  }
+
+  const dayListText = formatDayListText(daysInGroup.map((day) => day.day));
+
+  return {
+    key: breakDurationMinutes,
+    segments: [
+      { text: 'With ' },
+      { text: breakLabel, bold: true },
+      { text: ` break on ${dayListText}.` },
+    ],
+  };
+}
+
+/**
+ * Groups a schedule's selected days into Dragon-style summary lines: runs of
+ * consecutive days sharing the same start/end time collapse into one line
+ * (e.g. "Monday to Friday, from 09h00 to 18h00"), and likewise for shared
+ * break durations (e.g. "With 1h daily breaks").
+ */
+export function buildDailyScheduleSummary(
+  days: DailyScheduleSummaryDay[],
+  subtractBreaksFromWorkHours: boolean,
+): {
+  workHoursLines: DailyScheduleSummaryLine[];
+  breakLines: DailyScheduleSummaryLine[];
+  totalWeeklyHours: number;
+} {
+  const orderedDays = [...days].sort(
+    (a, b) =>
+      DAYS_OF_THE_WEEK.indexOf(a.day) - DAYS_OF_THE_WEEK.indexOf(b.day),
+  );
+
+  const totalWeeklyHours = orderedDays.reduce(
+    (total, day) =>
+      total +
+      calculateWorkingHours(
+        day.start_time,
+        day.end_time,
+        subtractBreaksFromWorkHours ? day.break_duration_minutes : 0,
+      ),
+    0,
+  );
+
+  const groupedByTime = groupBy(
+    orderedDays,
+    (day) => `${day.start_time}|${day.end_time}`,
+  );
+  const workHoursLines = Object.entries(groupedByTime).map(
+    ([timeKey, daysInGroup]) => buildWorkHoursLine(timeKey, daysInGroup),
+  );
+
+  const daysWithBreaks = orderedDays.filter(
+    (day) => day.break_duration_minutes > 0,
+  );
+  const groupedByBreak = groupBy(daysWithBreaks, (day) =>
+    String(day.break_duration_minutes),
+  );
+  // Object.entries would reorder purely-numeric keys ("30", "60", ...)
+  // ascending numerically regardless of insertion order, so walk the
+  // group keys in the order their first day appears instead.
+  const breakDurationKeysInOrder = [
+    ...new Set(daysWithBreaks.map((day) => String(day.break_duration_minutes))),
+  ];
+  const breakLines = breakDurationKeysInOrder.map((breakDurationMinutes) =>
+    buildBreakLine(
+      breakDurationMinutes,
+      groupedByBreak[breakDurationMinutes],
+      breakDurationKeysInOrder.length === 1,
+    ),
+  );
+
+  return { workHoursLines, breakLines, totalWeeklyHours };
 }

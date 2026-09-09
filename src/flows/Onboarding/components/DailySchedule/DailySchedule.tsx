@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { Badge } from '@/src/components/ui/badge';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
@@ -16,8 +17,11 @@ import {
   Weekday,
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import {
+  buildDailyScheduleSummary,
   calculateWorkingHours,
   resolveDailyScheduleValue,
+  DailyScheduleSummaryDay,
+  DailyScheduleSummarySegment,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
 import { useDailyScheduleEditForm } from '@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm';
 
@@ -42,12 +46,73 @@ const DAY_LABELS: Record<Weekday, string> = {
   sunday: 'Sunday',
 };
 
+function DailyScheduleSummarySegments({
+  segments,
+}: {
+  segments: DailyScheduleSummarySegment[];
+}) {
+  return (
+    <>
+      {segments.map((segment, index) =>
+        segment.bold ? (
+          <strong key={index}>{segment.text}</strong>
+        ) : (
+          segment.text
+        ),
+      )}
+    </>
+  );
+}
+
+/**
+ * The Dragon-style schedule summary: grouped work-hours/break lines + total,
+ * shared between the read-only view and the edit modal's live preview so
+ * both always render identically.
+ */
+function DailyScheduleSummaryBody({
+  days,
+  subtractBreaksFromWorkHours,
+}: {
+  days: DailyScheduleSummaryDay[];
+  subtractBreaksFromWorkHours: boolean;
+}) {
+  if (days.length === 0) {
+    return (
+      <p className='text-sm text-gray-500 RemoteFlows__DailySchedule__Summary__Empty'>
+        No work days selected yet.
+      </p>
+    );
+  }
+
+  const { workHoursLines, breakLines, totalWeeklyHours } =
+    buildDailyScheduleSummary(days, subtractBreaksFromWorkHours);
+
+  return (
+    <div className='flex flex-col gap-1 text-sm text-gray-500 RemoteFlows__DailySchedule__Summary__Lines'>
+      {workHoursLines.map((line) => (
+        <p key={line.key}>
+          <DailyScheduleSummarySegments segments={line.segments} />
+        </p>
+      ))}
+      {breakLines.map((line) => (
+        <p key={line.key}>
+          <DailyScheduleSummarySegments segments={line.segments} />
+        </p>
+      ))}
+      <p className='RemoteFlows__DailySchedule__Summary__Total'>
+        Total of <strong>{totalWeeklyHours} hours</strong> per week
+      </p>
+    </div>
+  );
+}
+
 function DailyScheduleEditForm({
   availableWorkDays,
   defaultSchedule,
   defaultStartTime,
   defaultEndTime,
   defaultBreakDurationMinutes,
+  subtractBreaksFromWorkHours,
   value,
   setValue,
   onClose,
@@ -58,6 +123,7 @@ function DailyScheduleEditForm({
   | 'defaultStartTime'
   | 'defaultEndTime'
   | 'defaultBreakDurationMinutes'
+  | 'subtractBreaksFromWorkHours'
   | 'value'
   | 'setValue'
 > & { onClose: () => void }) {
@@ -74,6 +140,15 @@ function DailyScheduleEditForm({
     });
 
   const hasFieldErrors = Object.keys(form.formState.errors).length > 0;
+
+  const previewDays: DailyScheduleSummaryDay[] = watchedSchedule
+    .filter((row) => row.checked)
+    .map((row) => ({
+      day: row.day,
+      start_time: row.start_time,
+      end_time: row.end_time,
+      break_duration_minutes: Number(row.break_duration_minutes) || 0,
+    }));
 
   return (
     <Form {...form}>
@@ -139,6 +214,13 @@ function DailyScheduleEditForm({
           })}
         </div>
 
+        <div className='rounded-lg border p-4 RemoteFlows__DailyScheduleForm__Preview'>
+          <DailyScheduleSummaryBody
+            days={previewDays}
+            subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
+          />
+        </div>
+
         {rootError ? (
           <p className='text-destructive text-sm mb-0'>{rootError}</p>
         ) : null}
@@ -168,7 +250,6 @@ export type DailyScheduleProps = DailyScheduleRenderProps;
 
 export const DailySchedule = ({
   availableWorkDays,
-  countryName,
   defaultSchedule,
   defaultStartTime,
   defaultEndTime,
@@ -180,42 +261,35 @@ export const DailySchedule = ({
   const [open, setOpen] = useState(false);
 
   const effectiveValue = resolveDailyScheduleValue({ value, defaultSchedule });
-  const selectedDays = effectiveValue.selected_days;
-  const totalWeeklyHours = selectedDays.reduce((total, day) => {
-    const daySchedule = effectiveValue.schedule[day];
-    return (
-      total +
-      calculateWorkingHours(
-        daySchedule?.start_time,
-        daySchedule?.end_time,
-        subtractBreaksFromWorkHours ? daySchedule?.break_duration_minutes : 0,
-      )
-    );
-  }, 0);
+  const summaryDays: DailyScheduleSummaryDay[] =
+    effectiveValue.selected_days.map((day) => {
+      const daySchedule = effectiveValue.schedule[day];
+      return {
+        day,
+        start_time: daySchedule?.start_time ?? '',
+        end_time: daySchedule?.end_time ?? '',
+        break_duration_minutes: daySchedule?.break_duration_minutes ?? 0,
+      };
+    });
 
   return (
     <div className='flex flex-col gap-3 RemoteFlows__DailySchedule'>
-      <p className='text-sm RemoteFlows__DailySchedule__Title'>
-        Work hours in {countryName}
-      </p>
-      <div className='flex flex-col gap-1 RemoteFlows__DailySchedule__Summary'>
-        {selectedDays.length > 0 ? (
-          <ul className='text-sm text-gray-500 RemoteFlows__DailySchedule__Summary__Days'>
-            {selectedDays.map((day) => {
-              const daySchedule = effectiveValue.schedule[day];
-              const summaryLine = `${DAY_LABELS[day]}: ${daySchedule?.start_time} - ${daySchedule?.end_time} (${daySchedule?.break_duration_minutes}min break)`;
-
-              return <li key={day}>{summaryLine}</li>;
-            })}
-          </ul>
-        ) : (
-          <p className='text-sm text-gray-500 RemoteFlows__DailySchedule__Summary__Empty'>
-            No work days selected yet.
-          </p>
-        )}
-        <p className='text-sm text-gray-500 RemoteFlows__DailySchedule__Summary__Total'>
-          Total of <span>{totalWeeklyHours}</span> hours per week
+      <div className='flex items-center gap-2 RemoteFlows__DailySchedule__Header'>
+        <p className='text-sm font-medium RemoteFlows__DailySchedule__Title'>
+          Daily schedule
         </p>
+        <Badge
+          variant='secondary'
+          className='RemoteFlows__DailySchedule__Badge'
+        >
+          customized hours (employee&apos;s timezone)
+        </Badge>
+      </div>
+      <div className='flex flex-col gap-1 RemoteFlows__DailySchedule__Summary'>
+        <DailyScheduleSummaryBody
+          days={summaryDays}
+          subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
+        />
 
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
@@ -238,6 +312,7 @@ export const DailySchedule = ({
               defaultStartTime={defaultStartTime}
               defaultEndTime={defaultEndTime}
               defaultBreakDurationMinutes={defaultBreakDurationMinutes}
+              subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
               value={value}
               setValue={setValue}
               onClose={() => setOpen(false)}

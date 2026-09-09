@@ -62,21 +62,36 @@ const renderWithForm = (
   return { ...utils, getFormValues: () => formValues };
 };
 
+/** Matches an element whose own full text (across bold/plain child spans) equals `text`. */
+const byOwnText = (text: string) => (_: string, element: Element | null) =>
+  element?.textContent === text;
+
 describe('DailySchedule', () => {
-  it('summarizes the default schedule when no value is set yet', () => {
+  it('renders the "Daily schedule" header with the customized-hours badge', () => {
+    renderWithForm([createDailyScheduleField()], { daily_schedule: undefined });
+
+    expect(screen.getByText('Daily schedule')).toBeInTheDocument();
+    expect(
+      screen.getByText("customized hours (employee's timezone)"),
+    ).toBeInTheDocument();
+  });
+
+  it('summarizes the default schedule when no value is set yet, grouping consecutive days', () => {
     renderWithForm([createDailyScheduleField()], { daily_schedule: undefined });
 
     expect(
-      screen.getByText('Monday: 09:00 - 18:00 (60min break)'),
+      screen.getByText(byOwnText('Monday to Friday, from 09h00 to 18h00')),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Friday: 09:00 - 18:00 (60min break)'),
+      screen.getByText(byOwnText('With 1h daily breaks')),
     ).toBeInTheDocument();
-    expect(screen.queryByText(/Saturday:/)).not.toBeInTheDocument();
-    expect(screen.getByText('40')).toBeInTheDocument();
+    expect(
+      screen.getByText(byOwnText('Total of 40 hours per week')),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/Saturday/)).not.toBeInTheDocument();
   });
 
-  it('summarizes an already-saved schedule', () => {
+  it('summarizes an already-saved schedule, grouping consecutive days', () => {
     renderWithForm([createDailyScheduleField()], {
       daily_schedule: {
         selected_days: ['monday', 'tuesday'],
@@ -96,9 +111,12 @@ describe('DailySchedule', () => {
     });
 
     expect(
-      screen.getByText('Monday: 08:00 - 16:00 (30min break)'),
+      screen.getByText(byOwnText('Monday to Tuesday, from 08h00 to 16h00')),
     ).toBeInTheDocument();
-    expect(screen.queryByText(/Wednesday:/)).not.toBeInTheDocument();
+    expect(
+      screen.getByText(byOwnText('With 30m daily breaks')),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/Wednesday/)).not.toBeInTheDocument();
   });
 
   it('writes the whole schedule back in a single setValue call on save', async () => {
