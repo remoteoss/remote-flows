@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { RotateCcw } from 'lucide-react';
 
 import { Badge } from '@/src/components/ui/badge';
 import { Button } from '@/src/components/ui/button';
@@ -127,8 +128,15 @@ function DailyScheduleEditForm({
   | 'value'
   | 'setValue'
 > & { onClose: () => void }) {
-  const { form, fields, watchedSchedule, handleSave, rootError } =
-    useDailyScheduleEditForm({
+  const {
+    form,
+    fields,
+    watchedSchedule,
+    handleSave,
+    handleReset,
+    isScheduleAtDefault,
+    rootError,
+  } = useDailyScheduleEditForm({
       availableWorkDays,
       defaultSchedule,
       defaultStartTime,
@@ -233,13 +241,26 @@ function DailyScheduleEditForm({
           </p>
         )}
 
-        <div className='flex gap-4 pt-4'>
-          <Button type='button' variant='outline' onClick={onClose}>
-            Cancel
-          </Button>
-          <Button type='button' onClick={handleSave}>
-            Save schedule
-          </Button>
+        <div className='flex items-center gap-4 pt-4'>
+          {!isScheduleAtDefault && (
+            <Button
+              type='button'
+              variant='ghost'
+              className='gap-2 RemoteFlows__DailyScheduleForm__ResetButton'
+              onClick={handleReset}
+            >
+              <RotateCcw className='h-4 w-4' />
+              Reset to default
+            </Button>
+          )}
+          <div className='flex gap-4 ml-auto'>
+            <Button type='button' variant='outline' onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type='button' onClick={handleSave}>
+              Save schedule
+            </Button>
+          </div>
         </div>
       </form>
     </Form>

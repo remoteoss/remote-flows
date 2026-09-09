@@ -209,6 +209,80 @@ describe('DailySchedule', () => {
     expect(within(dialog).getByDisplayValue('14:00')).toBeInTheDocument();
   });
 
+  it('hides the "Reset to default" button when the schedule already matches the default', async () => {
+    const user = userEvent.setup();
+    renderWithForm([createDailyScheduleField()], {
+      daily_schedule: undefined,
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+    const dialog = screen.getByRole('dialog');
+    expect(
+      within(dialog).queryByRole('button', { name: 'Reset to default' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows the "Reset to default" button once the schedule deviates from the default, and resets on click', async () => {
+    const user = userEvent.setup();
+    renderWithForm([createDailyScheduleField()], {
+      daily_schedule: {
+        selected_days: ['monday'],
+        schedule: {
+          monday: {
+            start_time: '10:00',
+            end_time: '14:00',
+            break_duration_minutes: 15,
+          },
+        },
+      },
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+    const dialog = screen.getByRole('dialog');
+    // Already deviates from the default (Monday-Friday) on open, since only
+    // Monday is saved — matches Dragon's "dirty on build" behavior.
+    expect(
+      within(dialog).getByRole('button', { name: 'Reset to default' }),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).getByRole('checkbox', { name: 'Monday' }),
+    ).toBeChecked();
+    expect(
+      within(dialog).getByRole('checkbox', { name: 'Tuesday' }),
+    ).not.toBeChecked();
+
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Reset to default' }),
+    );
+
+    // Default schedule (from germanyDailyScheduleMetadata) is Monday-Friday,
+    // 09:00-18:00 — discarding the saved value (Monday only, 10:00-14:00).
+    expect(
+      within(dialog).getByRole('checkbox', { name: 'Monday' }),
+    ).toBeChecked();
+    expect(
+      within(dialog).getByRole('checkbox', { name: 'Friday' }),
+    ).toBeChecked();
+    expect(
+      within(dialog).getByRole('checkbox', { name: 'Saturday' }),
+    ).not.toBeChecked();
+    expect(within(dialog).getAllByDisplayValue('09:00')[0]).toBeInTheDocument();
+    expect(within(dialog).getAllByDisplayValue('18:00')[0]).toBeInTheDocument();
+
+    // Back at the default, so the button hides itself again.
+    expect(
+      within(dialog).queryByRole('button', { name: 'Reset to default' }),
+    ).not.toBeInTheDocument();
+
+    // Editing away from the default brings it back.
+    await user.click(within(dialog).getByRole('checkbox', { name: 'Saturday' }));
+    expect(
+      within(dialog).getByRole('button', { name: 'Reset to default' }),
+    ).toBeInTheDocument();
+  });
+
   it('displays field validation errors when invalid time format is entered', async () => {
     const user = userEvent.setup();
     renderWithForm([createDailyScheduleField()], {

@@ -115,6 +115,35 @@ export function buildDailyScheduleEditFormDefaultValues({
   });
 }
 
+/**
+ * True when `rows` matches the metadata-driven default schedule — ported from
+ * Dragon's `compareSchedules`/`dirty` tracking (`workScheduleFieldReducer.js`),
+ * which only shows its "Reset to default" button once the schedule actually
+ * deviates from the default, rather than showing it unconditionally.
+ */
+function isDefaultSchedule(
+  rows: DailyScheduleEditFormRow[],
+  defaultRows: DailyScheduleEditFormRow[],
+): boolean {
+  return rows.every((row, index) => {
+    const defaultRow = defaultRows[index];
+
+    if (row.checked !== defaultRow.checked) {
+      return false;
+    }
+
+    if (!row.checked) {
+      return true;
+    }
+
+    return (
+      row.start_time === defaultRow.start_time &&
+      row.end_time === defaultRow.end_time &&
+      row.break_duration_minutes === defaultRow.break_duration_minutes
+    );
+  });
+}
+
 /** The single write-back shape Tiger expects, built from a validated edit-form submission. */
 export function mapDailyScheduleEditFormDataToValue(
   data: DailyScheduleEditFormData,
@@ -188,11 +217,41 @@ export function useDailyScheduleEditForm({
     onSaved?.();
   });
 
+  // Same rows `resolveDailyScheduleValue` would produce for a field with no
+  // saved value yet — the reset target, and what "at default" is measured against.
+  const defaultScheduleRows = buildDailyScheduleEditFormDefaultValues({
+    availableWorkDays,
+    defaultSchedule,
+    defaultStartTime,
+    defaultEndTime,
+    defaultBreakDurationMinutes,
+    value: undefined,
+  });
+
+  // Resets the form to the metadata-driven default schedule, discarding both
+  // the saved `value` and any unsaved edits.
+  const handleReset = () => {
+    form.reset({ schedule: defaultScheduleRows });
+  };
+
+  const isScheduleAtDefault = isDefaultSchedule(
+    watchedSchedule,
+    defaultScheduleRows,
+  );
+
   // `schedule` is a field array; a whole-array `.refine()` failure (as
   // opposed to a per-row error) lands under `.root`, not directly on
   // `.message` — react-hook-form normalizes this for registered field
   // arrays regardless of resolver.
   const rootError = formState.errors.schedule?.root?.message;
 
-  return { form, fields, watchedSchedule, handleSave, rootError };
+  return {
+    form,
+    fields,
+    watchedSchedule,
+    handleSave,
+    handleReset,
+    isScheduleAtDefault,
+    rootError,
+  };
 }
