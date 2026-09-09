@@ -107,4 +107,79 @@ describe('useCostCalculator', () => {
       },
     });
   });
+
+  it('should clear fieldValues when resetForm is called with remount', async () => {
+    const { result } = renderHook(() => useCostCalculator(), {
+      wrapper: TestProviders,
+    });
+
+    // Wait for the hook to be ready
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    // Simulate user input by calling checkFieldUpdates
+    const testValues = {
+      country: 'PRT',
+      salary: '50000',
+      currency: 'EUR',
+    };
+
+    act(() => {
+      result.current.checkFieldUpdates(testValues);
+    });
+
+    // Verify fieldValues was updated
+    expect(result.current.fieldValues).toEqual(testValues);
+
+    const initialResetKey = result.current.resetKey;
+
+    // Call resetForm (with default remount: true)
+    act(() => {
+      result.current.resetForm();
+    });
+
+    // Verify resetKey incremented (confirming remount will happen)
+    expect(result.current.resetKey).toBe(initialResetKey + 1);
+
+    // Verify fieldValues was cleared
+    expect(result.current.fieldValues).toEqual({});
+  });
+
+  it('should NOT clear fieldValues when resetForm is called with remount: false', async () => {
+    const { result } = renderHook(() => useCostCalculator(), {
+      wrapper: TestProviders,
+    });
+
+    // Wait for the hook to be ready
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    // Simulate user input
+    const testValues = {
+      country: 'PRT',
+      salary: '50000',
+      currency: 'EUR',
+    };
+
+    act(() => {
+      result.current.checkFieldUpdates(testValues);
+    });
+
+    expect(result.current.fieldValues).toEqual(testValues);
+
+    const initialResetKey = result.current.resetKey;
+
+    // Call resetForm with remount: false
+    act(() => {
+      result.current.resetForm({ remount: false });
+    });
+
+    // Verify resetKey did NOT increment
+    expect(result.current.resetKey).toBe(initialResetKey);
+
+    // Verify fieldValues was NOT cleared (should still have values)
+    expect(result.current.fieldValues).toEqual(testValues);
+  });
 });

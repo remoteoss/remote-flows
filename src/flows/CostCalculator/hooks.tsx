@@ -457,6 +457,7 @@ export const useCostCalculator = (
     setSelectedCountry(undefined);
     setSelectedRegion(defaultRegion);
     if (options?.remount !== false) {
+      setFieldValues({});
       setResetKey((key) => key + 1);
     }
   };

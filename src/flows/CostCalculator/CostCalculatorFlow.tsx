@@ -113,7 +113,7 @@ type ResolvedDefaultValues = NonNullable<
 
 type CostCalculatorFlowInnerProps = {
   formId: string;
-  formRef: React.MutableRefObject<UseFormReturn<$TSFixMe> | null>;
+  formRef: React.RefObject<UseFormReturn<$TSFixMe> | null>;
   currency: CurrencyKey;
   setCurrency: (currency: CurrencyKey) => void;
   defaultValues: ResolvedDefaultValues;
