@@ -176,15 +176,21 @@ export async function fillOnboardingStep3SpainForm(
       value: options.experience_level,
       name: 'experience_level',
     },
+    // Contributed by the job-title eligibility check, which is gated per feature source on
+    // `job_title_eligibility_check_v2_remote_api`. With the flag off the whole rule set drops
+    // out and the form falls back to a standalone role description, so these two are absent —
+    // a supported state, not a regression.
     {
       type: 'radio',
       value: options.role_is_onsite,
       name: 'role_is_onsite',
+      optional: true,
     },
     {
       type: 'radio',
       value: options.role_requires_license,
       name: 'role_requires_license',
+      optional: true,
     },
     {
       type: 'radio',

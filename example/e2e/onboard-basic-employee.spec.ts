@@ -73,6 +73,8 @@ test.describe('Onboard basic employee', () => {
       has_social_security_number: 'yes',
       work_equipment: '200',
       compensation_expenses_ack: true,
+      // Only rendered when the job-title eligibility check applies; the helper skips them
+      // when it does not.
       role_is_onsite: 'yes',
       role_requires_license: 'no',
     });
