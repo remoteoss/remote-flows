@@ -378,4 +378,63 @@ describe('FieldSetField', () => {
       expect(screen.queryByText('Deprecated')).not.toBeInTheDocument();
     });
   });
+
+  it('wires value/setValue into a nested fieldset-type field with a Component override', async () => {
+    const CustomComponent = ({
+      value,
+      setValue,
+    }: {
+      value?: string;
+      setValue?: (value: unknown) => void;
+    }) => (
+      <div>
+        <span data-testid='nested-component-value'>{value ?? 'empty'}</span>
+        <button type='button' onClick={() => setValue?.('updated')}>
+          Save nested
+        </button>
+      </div>
+    );
+
+    const TestComponent = () => {
+      const methods = useForm({
+        defaultValues: {
+          'test-fieldset._expanded': false,
+          'test-fieldset.nested': 'initial',
+        },
+      });
+
+      return (
+        <FormProvider {...methods}>
+          <FieldSetField
+            {...defaultProps}
+            fields={[
+              {
+                name: 'nested',
+                label: 'Nested Section',
+                description: 'Nested',
+                type: 'fieldset',
+                inputType: 'fieldset',
+                fields: [],
+                Component: CustomComponent,
+              } as $TSFixMe,
+            ]}
+          />
+        </FormProvider>
+      );
+    };
+
+    render(<TestComponent />);
+
+    expect(screen.getByTestId('nested-component-value')).toHaveTextContent(
+      'initial',
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save nested' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('nested-component-value')).toHaveTextContent(
+        'updated',
+      );
+    });
+  });
 });
