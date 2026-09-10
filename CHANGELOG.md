@@ -4,21 +4,22 @@
 
 ### Minor Changes
 
-- preview a draft invoice PDF from the standalone screen
-- render PDF drawers as a side panel that the document fills
-- name custom fields so their validation messages render
+#### Features
+
+- release one step invoice schedule
+- add feature flag and system to modify a fieldset (#1296) [#1296](https://github.com/remoteoss/remote-flows/pull/1296)
+
+#### Chores
+
 - add worktree creation helper and skill (#1284) [#1284](https://github.com/remoteoss/remote-flows/pull/1284)
 - persist JSON Schema Playground selection in URL (#1285) [#1285](https://github.com/remoteoss/remote-flows/pull/1285)
 - assign each worktree a distinct example dev server port (#1287) [#1287](https://github.com/remoteoss/remote-flows/pull/1287)
 - wire germany-contract-details schema into JsonSchemaPlayground (#1286) [#1286](https://github.com/remoteoss/remote-flows/pull/1286)
 - upgrade remote-json-schema-form-kit to 1.0.1
 - keep the static schemas on the jsf v0 engine
-- drop the fields Spain's contract-details schema no longer has
 - tolerate the job-title questions being on or off
 - reuse Express server for Vite HMR websocket (#1297) [#1297](https://github.com/remoteoss/remote-flows/pull/1297)
 - close race in OnboardingInvite reserve-status test (#1298) [#1298](https://github.com/remoteoss/remote-flows/pull/1298)
-- add feature flag and system to modify a fieldset (#1296) [#1296](https://github.com/remoteoss/remote-flows/pull/1296)
-- take an employmentId instead of picking a contractor
 
 ## 1.50.0
 
