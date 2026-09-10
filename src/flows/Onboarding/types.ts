@@ -64,7 +64,8 @@ type OnboardingFeatures =
   | 'dynamic_steps'
   | 'ea_preview'
   | 'pre_onboarding_requirements'
-  | 'split_salary_description';
+  | 'split_salary_description'
+  | 'daily_schedule';
 
 /**
  * JSON schema version configuration for a specific country
