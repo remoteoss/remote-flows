@@ -35,8 +35,20 @@ export const createHeadlessForm = (
       muteLogging: true,
     } as Parameters<typeof modify>[1]);
     if (warnings && warnings.length > 0) {
-      // eslint-disable-next-line no-console
-      console.warn('jsfModify warnings:', warnings);
+      // FIELD_TO_CHANGE_NOT_FOUND is expected noise, not a bug: some field
+      // customizations (e.g. equity_compensation) are shared across every
+      // country's schema even though not every country's schema defines
+      // that field. Only surface the warning types that do indicate a real
+      // misconfiguration, and only in this repo's own dev build (see
+      // RF_INTERNAL_DEV in tsup.config.ts) — never to consumers of the
+      // published package.
+      const actionableWarnings = warnings.filter(
+        (warning) => warning?.type !== 'FIELD_TO_CHANGE_NOT_FOUND',
+      );
+      if (actionableWarnings.length > 0 && process.env.RF_INTERNAL_DEV === 'true') {
+        // eslint-disable-next-line no-console
+        console.warn('jsfModify warnings:', actionableWarnings);
+      }
     }
     jsfSchema = schema;
 
