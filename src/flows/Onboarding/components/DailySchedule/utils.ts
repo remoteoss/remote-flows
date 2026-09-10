@@ -364,7 +364,7 @@ function resolveDailyScheduleValue({
   value: DailyScheduleValue | undefined;
   defaultSchedule: DailyScheduleDefaultDay[];
 }): DailyScheduleValue {
-  if (value) {
+  if (value !== undefined) {
     return value;
   }
 
@@ -388,17 +388,19 @@ export function getDailyScheduleSummaryDays(
   value: DailyScheduleValue | undefined,
   defaultSchedule: DailyScheduleDefaultDay[],
 ): DailyScheduleSummaryDay[] {
-  const effectiveValue = resolveDailyScheduleValue({ value, defaultSchedule });
-  const summaryDays: DailyScheduleSummaryDay[] =
-    effectiveValue.selected_days.map((day) => {
-      const daySchedule = effectiveValue.schedule[day];
-      return {
-        day,
-        start_time: daySchedule?.start_time ?? '',
-        end_time: daySchedule?.end_time ?? '',
-        break_duration_minutes: daySchedule?.break_duration_minutes ?? 0,
-      };
-    });
+  const { selected_days: selectedDays, schedule } = resolveDailyScheduleValue({
+    value,
+    defaultSchedule,
+  });
+  const summaryDays: DailyScheduleSummaryDay[] = selectedDays.map((day) => {
+    const daySchedule = schedule[day];
+    return {
+      day,
+      start_time: daySchedule?.start_time ?? '',
+      end_time: daySchedule?.end_time ?? '',
+      break_duration_minutes: daySchedule?.break_duration_minutes ?? 0,
+    };
+  });
 
   return summaryDays;
 }
