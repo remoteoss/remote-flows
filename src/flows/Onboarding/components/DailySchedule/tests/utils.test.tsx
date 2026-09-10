@@ -28,7 +28,7 @@ describe('DailySchedule utils', () => {
       expect(
         getDefaultsFromSchema(metadataWithoutWorkDays as DailyScheduleMetadata)
           .availableWorkDays,
-      ).toEqual([DAYS_OF_THE_WEEK]);
+      ).toEqual(DAYS_OF_THE_WEEK);
     });
   });
 
