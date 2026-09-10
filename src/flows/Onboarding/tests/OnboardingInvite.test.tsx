@@ -454,9 +454,8 @@ describe('OnboardingInvite', () => {
       // Should NOT call risk-reserve or reserve invoice endpoints
       expect(riskReserveSpy).not.toHaveBeenCalled();
       expect(reserveInvoiceSpy).not.toHaveBeenCalled();
+      expect(mockSuccess).toHaveBeenCalled();
     });
-
-    expect(mockSuccess).toHaveBeenCalled();
   });
 
   it('should disable button when disabled prop is passed', async () => {
