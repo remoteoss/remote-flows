@@ -14,10 +14,19 @@
 logged repeatedly (a "flood") in the browser console while going through the Onboarding flow.
 
 **Conclusion up front:** this is not a bug in the sibling `@remoteoss/json-schema-form` /
-`@remoteoss/remote-json-schema-form-kit` library. `modify()` is behaving exactly per its
-documented contract. The warning is a correct signal that remote-flows is misusing the
-library in two compounding ways, both isolated to the Onboarding flow's contract-details
-schema customization.
+`@remoteoss/remote-json-schema-form-kit` library — `modify()` is behaving exactly per its
+documented contract. There are two separate mechanisms at play, and (per a comparison with
+Dragon, Remote's main web app, added below) only one of them is actually a remote-flows-side
+gap:
+
+- Applying one global `fields` customization (including `equity_compensation`) to every
+  country's schema, regardless of whether that country's schema defines the field, is an
+  **established, intentional convention** — Dragon does the exact same thing and explicitly
+  accepts the resulting occasional `FIELD_TO_CHANGE_NOT_FOUND` warning as tolerable noise.
+  Not a mistake unique to remote-flows.
+- What *is* remote-flows-specific is that this warning reruns on almost every render instead
+  of once per schema fetch, because of an unmemoized React Query `select`, which is what
+  turns an accepted, occasional warning into a flood. See "Comparison with Dragon" below.
 
 ## Where the warning comes from
 
@@ -144,22 +153,60 @@ Notably, the codebase already knows the correct pattern: the JSF-v1 path
 (`api.ts:306-311`), and `useJsfV1ContractDetails` (`hooks.tsx:181-190`) memoizes the
 `options` object it depends on. The default-engine path just never got the same treatment.
 
-## Summary
+## Comparison with Dragon (Remote's main web app)
 
-Two independent, compounding issues on the remote-flows side (not in the sibling
-`json-schema-form` library):
+Dragon (`apps/employ`) uses the same `@remoteoss/json-schema-form` /
+`remote-json-schema-form-kit` stack for its own contract-details form, so it's a useful
+reference for whether the "one global `fields` config for every country" pattern (Bug A) is
+actually an established, intentional convention rather than a mistake.
 
-1. **`equity_compensation` (and to a lesser extent `annual_gross_salary`/`daily_schedule`)
-   is injected into `jsfModify.contract_details.fields` unconditionally, for every country,
-   instead of only for countries whose schema actually defines that field.** This is what
-   makes the warning fire at all for markets like France/Italy that don't offer equity
-   compensation.
-2. **`useJSONSchemaForm`'s `select` (the default contract-details/basic-information engine)
-   is not memoized**, unlike its JSF-v1 sibling `useContractDetailsSchema`. This is what
-   turns a single misconfiguration warning into a flood — it reruns on nearly every render
-   while the user is typing.
+`apps/employ/src/domains/shared/employment/employer/contractDetails/jsfModify.jsx` builds a
+`commonFieldsModify` object that — just like remote-flows — includes an
+`equity_compensation` customization (and `annual_gross_salary`, `hourly_gross_salary`,
+`has_bonus`, etc.) applied **unconditionally to every country**, then merges it with
+per-country overrides. Structurally identical to what `Onboarding/hooks.tsx` does.
 
-Fixing (1) alone would remove the warning; fixing (2) alone would reduce the flood to one
-warning per fetch but wouldn't remove the underlying incorrect config. Both would need to
-change to fully resolve this cleanly. No code changes are included in this PR — investigation
-only, per request.
+Their `useCreateHeadlessForm.js` wrapper (`maybeModifySchema`) mutes the library's own log
+line and re-surfaces the `warnings` array itself, same as remote-flows' wrapper — but with
+an explicit comment acknowledging the tradeoff:
+
+```js
+/* We could log this to Datadog, but might be too noisy, depending on the warning type.
+   For example: 'FIELD_TO_CHANGE_NOT_FOUND': -> This will happen in every country form,
+   as we apply global changes. It's noisy... */
+console.warn('JSF Modify warnings:', warning.message, warning.type, warning.meta);
+```
+
+So **Bug A is confirmed to be an intentional, accepted convention shared across both
+codebases** — not a remote-flows-specific misuse. Applying one static field-customization
+map to every country's dynamic schema, and accepting the resulting occasional
+`FIELD_TO_CHANGE_NOT_FOUND` as tolerable console noise, is the established pattern here.
+Dragon's own code even demonstrates the "smarter" alternative exists when it's judged worth
+the complexity: `workScheduleFieldForJsonSchemaModify()` explicitly checks
+`!!jsonSchema?.properties.daily_schedule` before including that field — they just haven't
+applied the same guard to `equity_compensation`/`annual_gross_salary`.
+
+**What Dragon does not have, though, is the flood.** Its `useCreateHeadlessForm` wraps the
+modify + `createHeadlessForm` call in `useMemo`, keyed on
+`[enabled, formSchema, valuesMemo, shallowMemo]` — so the computation (and any warning it
+produces) only reruns when the schema or relevant values actually change, not on every
+render. That lines up with Bug B: remote-flows' default-engine `useJSONSchemaForm` is the
+odd one out for *not* memoizing this, which is why the same kind of warning that Dragon gets
+once per country-schema-load turns into a per-keystroke flood here.
+
+## Summary (revised)
+
+- **Bug A (the warning exists at all for equity_compensation) is not a misuse specific to
+  remote-flows** — it mirrors Dragon's own established, intentionally-accepted pattern of
+  applying one global field-customization map to every country's schema and tolerating the
+  resulting `FIELD_TO_CHANGE_NOT_FOUND` noise. Not something to "fix" without also changing
+  the same convention in Dragon; more of a known, accepted cost of the dynamic-form approach.
+- **Bug B (the flood) is still a remote-flows-specific gap**, not shared by Dragon. Dragon's
+  equivalent computation is memoized; remote-flows' default-engine `useJSONSchemaForm`
+  (`src/flows/Onboarding/api.ts:245-248`) is not, so the same kind of warning that Dragon
+  logs once per schema load gets re-triggered on almost every keystroke here.
+
+The console noise reported can be meaningfully reduced by fixing Bug B alone (matching the
+memoization pattern already used elsewhere in this same file, and in Dragon), without
+needing to change the shared "one global fields config" convention. No code changes are
+included in this PR — investigation only, per request.
