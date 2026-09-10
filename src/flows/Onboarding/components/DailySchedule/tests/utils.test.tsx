@@ -267,5 +267,48 @@ describe('DailySchedule utils', () => {
 
       expect(totalWeeklyHours).toBe(45);
     });
+
+    it('collapses consecutive days ending on Sunday as a range', () => {
+      const { workHoursLines } = buildDailyScheduleSummary(
+        [
+          {
+            day: 'saturday',
+            start_time: '10:00',
+            end_time: '16:00',
+            break_duration_minutes: 30,
+          },
+          {
+            day: 'sunday',
+            start_time: '10:00',
+            end_time: '16:00',
+            break_duration_minutes: 30,
+          },
+        ],
+        true,
+      );
+
+      expect(workHoursLines).toHaveLength(1);
+      expect(segmentsToText(workHoursLines[0].segments)).toBe(
+        'Saturday to Sunday, from 10h00 to 16h00',
+      );
+    });
+
+    it('renders Sunday alone without a range', () => {
+      const { workHoursLines } = buildDailyScheduleSummary(
+        [
+          {
+            day: 'sunday',
+            start_time: '10:00',
+            end_time: '14:00',
+            break_duration_minutes: 0,
+          },
+        ],
+        true,
+      );
+
+      expect(segmentsToText(workHoursLines[0].segments)).toBe(
+        'Sunday, from 10h00 to 14h00',
+      );
+    });
   });
 });

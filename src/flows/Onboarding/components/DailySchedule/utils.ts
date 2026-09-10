@@ -144,6 +144,10 @@ function findLastConsecutiveDay(
   while (index < days.length && !lastConsecutiveDay) {
     const currentDay = days[index];
     const nextDay = days[index + 1];
+    if (nextDay === undefined) {
+      lastConsecutiveDay = currentDay;
+      break;
+    }
     const nextDayInWeek =
       DAYS_OF_THE_WEEK[DAYS_OF_THE_WEEK.indexOf(currentDay) + 1];
 
@@ -340,6 +344,7 @@ export function buildDailyScheduleSummary(
   const breakDurationKeysInOrder = [
     ...new Set(daysWithBreaks.map((day) => String(day.break_duration_minutes))),
   ];
+
   const breakLines = breakDurationKeysInOrder.map((breakDurationMinutes) =>
     buildBreakLine(
       breakDurationMinutes,
@@ -384,6 +389,13 @@ function resolveDailyScheduleValue({
   };
 }
 
+/**
+ * Returns the days of the week that are selected in the daily schedule, and the start/end time and break duration for each day.
+ * If the daily schedule is not set, it returns the default schedule.
+ * @param value - The daily schedule value.
+ * @param defaultSchedule - The default schedule.
+ * @returns The days of the week that are selected in the daily schedule, and the start/end time and break duration for each day.
+ */
 export function getDailyScheduleSummaryDays(
   value: DailyScheduleValue | undefined,
   defaultSchedule: DailyScheduleDefaultDay[],
