@@ -101,3 +101,8 @@ export type DailyScheduleSummaryLine = {
   key: string;
   segments: DailyScheduleSummarySegment[];
 };
+
+export type DailyScheduleHoursError = {
+  header: string;
+  message: string;
+};

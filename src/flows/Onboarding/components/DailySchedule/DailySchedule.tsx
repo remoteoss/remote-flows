@@ -1,7 +1,12 @@
 import { Badge } from '@/src/components/ui/badge';
+import { DailyScheduleHoursErrorBanner } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleHoursErrorBanner';
 import { DailyScheduleSummaryBody } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleSummaryBody';
 import { DailyScheduleRenderProps } from '@/src/flows/Onboarding/components/DailySchedule/types';
-import { getDailyScheduleSummaryDays } from '@/src/flows/Onboarding/components/DailySchedule/utils';
+import {
+  buildDailyScheduleSummary,
+  getDailyScheduleHoursError,
+  getDailyScheduleSummaryDays,
+} from '@/src/flows/Onboarding/components/DailySchedule/utils';
 
 type DailyScheduleProps = DailyScheduleRenderProps;
 
@@ -9,8 +14,22 @@ export const DailySchedule = ({
   value,
   defaultSchedule,
   subtractBreaksFromWorkHours,
+  workHoursBounds,
+  countryName,
+  workSchedule,
 }: DailyScheduleProps) => {
   const summaryDays = getDailyScheduleSummaryDays(value, defaultSchedule);
+  const { totalWeeklyHours } = buildDailyScheduleSummary(
+    summaryDays,
+    subtractBreaksFromWorkHours,
+  );
+
+  const hoursError = getDailyScheduleHoursError({
+    totalWeeklyHours,
+    workHoursBounds,
+    countryName,
+    workSchedule,
+  });
 
   return (
     <div className='flex flex-col gap-3 RemoteFlows__DailySchedule'>
@@ -30,6 +49,7 @@ export const DailySchedule = ({
           days={summaryDays}
           subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
         />
+        <DailyScheduleHoursErrorBanner error={hoursError} />
       </div>
     </div>
   );
