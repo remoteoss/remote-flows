@@ -171,13 +171,6 @@ function periodicityOptions({
     : [...RECURRING_PERIODICITY_OPTIONS];
 }
 
-export type ContractorOption = {
-  /** Employment id, submitted as `employment_id`. */
-  value: string;
-  /** Contractor's name. */
-  label: string;
-};
-
 type CreateInvoiceScheduleSchemaOptions = {
   /**
    * Currency codes the contractor can be invoiced in. Replaces the placeholder `oneOf`.
@@ -197,16 +190,6 @@ type CreateInvoiceScheduleSchemaOptions = {
    * the in-flow onboarding step keeps the field set it shipped with.
    */
   includeCustomDays?: boolean;
-  /**
-   * Prepend a contractor picker. This is the only structural difference between the in-flow
-   * onboarding step, which already knows its employment, and the standalone screen, which
-   * chooses the contractor in the form itself.
-   */
-  includeContractorSelect?: boolean;
-  /**
-   * Contractors to offer in the picker. Only read when `includeContractorSelect` is set.
-   */
-  contractors?: ContractorOption[];
 };
 
 /**
@@ -220,9 +203,7 @@ export function buildCreateInvoiceScheduleSchema({
   currencies,
   includeOneTime = false,
   isContractorOfRecord = false,
-  includeContractorSelect = false,
   includeCustomDays = false,
-  contractors,
 }: CreateInvoiceScheduleSchemaOptions = {}) {
   return {
     type: 'object',
@@ -232,28 +213,6 @@ export function buildCreateInvoiceScheduleSchema({
         'Fill out the invoice details and specify the recurrence options.',
     },
     properties: {
-      ...(includeContractorSelect
-        ? {
-            employment_id: {
-              description:
-                'Who would you like to set up automatic invoicing with?',
-              title: 'Contractor',
-              type: 'string',
-              // Deliberately unconstrained by a `oneOf`. The picker queries the API by name
-              // as the user types, so it can legitimately surface a contractor that is not
-              // in whatever page of results happened to be loaded here — enumerating them
-              // would reject a valid selection, which is exactly the large-company case the
-              // search exists for. Existence is the API's to enforce on submit.
-              'x-jsf-presentation': {
-                inputType: 'select',
-                options: contractors?.map(({ value, label }) => ({
-                  value,
-                  label,
-                })),
-              },
-            },
-          }
-        : {}),
       currency: {
         description: 'The currency this invoice schedule will be issued in.',
         title: 'Invoice currency',
@@ -263,12 +222,17 @@ export function buildCreateInvoiceScheduleSchema({
           : [
               {
                 const: PLACEHOLDER_OPTION,
-                title: includeContractorSelect
-                  ? 'Select a contractor first'
+                // An empty list is an answer — this contractor has no currencies to be
+                // invoiced in — where no list at all means the fetch has not resolved. Both
+                // states exist: the flows build the schema once currencies arrive, but the
+                // static `createInvoiceScheduleSchema` fallback is built without any.
+                // Labelling the empty case "loading" left it looking stuck forever.
+                title: currencies
+                  ? 'No currencies available'
                   : 'Loading currencies…',
-                // Unselectable, so it cannot be submitted as a real currency if the list
-                // never arrives. Nothing is then selected, so the field's `required` rule
-                // reports a normal error on submit.
+                // Unselectable, so it cannot be submitted as a real currency. Nothing is
+                // then selected, so the field's `required` rule reports a normal error on
+                // submit.
                 disabled: true,
               },
             ],
@@ -325,7 +289,6 @@ export function buildCreateInvoiceScheduleSchema({
       },
     },
     required: [
-      ...(includeContractorSelect ? ['employment_id'] : []),
       'currency',
       'periodicity',
       'start_date',
@@ -333,7 +296,6 @@ export function buildCreateInvoiceScheduleSchema({
       'item_1_amount',
     ],
     'x-jsf-order': [
-      ...(includeContractorSelect ? ['employment_id'] : []),
       'currency',
       'periodicity',
       'start_date',

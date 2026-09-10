@@ -1,5 +1,4 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
 import {
@@ -11,18 +10,11 @@ import {
 import { InvoiceScheduleFlow } from '@/src/flows/InvoiceSchedule/InvoiceScheduleFlow';
 import { InvoiceScheduleForm } from '@/src/flows/InvoiceSchedule/InvoiceScheduleForm';
 import { InvoiceScheduleSubmitButton } from '@/src/flows/InvoiceSchedule/InvoiceScheduleSubmitButton';
-import {
-  contractorsListResponse,
-  truncatedContractorsListResponse,
-} from '@/src/flows/InvoiceSchedule/tests/fixtures';
 import { employmentDefaultResponse } from '@/src/flows/Onboarding/tests/fixtures';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
-const employmentsListHandler = (body: Record<string, unknown>) =>
-  http.get('*/v1/employments', () => HttpResponse.json(body));
-
 function renderFlow({
-  employmentId,
+  employmentId = 'employment-grace',
   onSuccess,
   onError,
 }: {
@@ -33,11 +25,8 @@ function renderFlow({
   return render(
     <InvoiceScheduleFlow
       employmentId={employmentId}
-      render={(invoiceScheduleBag) => (
+      render={() => (
         <>
-          {invoiceScheduleBag.contractors.isTruncated && (
-            <p>Showing some of your contractors</p>
-          )}
           <InvoiceScheduleForm onSuccess={onSuccess} onError={onError} />
           <InvoiceScheduleSubmitButton>
             Create schedule
@@ -50,8 +39,8 @@ function renderFlow({
 }
 
 /**
- * Fills every required field other than the contractor picker and the periodicity, which the
- * individual tests drive themselves.
+ * Fills every required field other than the periodicity, which the individual tests drive
+ * themselves.
  */
 async function fillScheduleDetails({
   currency = 'EUR',
@@ -74,127 +63,170 @@ async function fillScheduleDetails({
 describe('InvoiceScheduleFlow', () => {
   beforeEach(() => {
     queryClient.clear();
-    server.use(employmentsListHandler(contractorsListResponse));
   });
 
-  it('renders a searchable contractor picker and lists contractors when opened', async () => {
-    const user = userEvent.setup();
+  it('renders the schedule form for the given contractor, without asking for one', async () => {
     renderFlow();
-
-    const trigger = await screen.findByRole(
-      'combobox',
-      { name: /Contractor/i },
-      { timeout: 10000 },
-    );
-
-    await user.click(trigger);
-
-    expect(
-      await screen.findByRole('option', { name: 'Grace Hopper' }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('option', { name: 'Ada Lovelace' }),
-    ).toBeInTheDocument();
-  });
-
-  it('asks the API to filter by name as the user types', async () => {
-    const requestedNames: (string | null)[] = [];
-    server.use(
-      http.get('*/v1/employments', ({ request }) => {
-        const name = new URL(request.url).searchParams.get('name');
-        requestedNames.push(name);
-        const all = contractorsListResponse.data.employments;
-        const matched = name
-          ? all.filter((e) =>
-              e.full_name.toLowerCase().includes(name.toLowerCase()),
-            )
-          : all;
-        return HttpResponse.json({
-          data: {
-            ...contractorsListResponse.data,
-            employments: matched,
-            total_count: matched.length,
-          },
-        });
-      }),
-    );
-
-    const user = userEvent.setup();
-    renderFlow();
-
-    const trigger = await screen.findByRole(
-      'combobox',
-      { name: /Contractor/i },
-      { timeout: 10000 },
-    );
-    await user.click(trigger);
-
-    await user.type(screen.getByPlaceholderText(/Search contractors/i), 'hopp');
-
-    // Debounced, so the filtered request lands a moment after typing stops.
-    await waitFor(
-      () => {
-        expect(requestedNames).toContain('hopp');
-      },
-      { timeout: 10000 },
-    );
-
-    await waitFor(() => {
-      expect(
-        screen.queryByRole('option', { name: 'Ada Lovelace' }),
-      ).not.toBeInTheDocument();
-    });
-    expect(
-      screen.getByRole('option', { name: 'Grace Hopper' }),
-    ).toBeInTheDocument();
-  });
-
-  it('selects a contractor from the picker', async () => {
-    const user = userEvent.setup();
-    renderFlow();
-
-    const trigger = await screen.findByRole(
-      'combobox',
-      { name: /Contractor/i },
-      { timeout: 10000 },
-    );
-    await user.click(trigger);
-    await user.click(
-      await screen.findByRole('option', { name: 'Grace Hopper' }),
-    );
-
-    // The chosen contractor stays visible on the trigger after the popover closes.
-    await waitFor(() => {
-      expect(trigger).toHaveTextContent('Grace Hopper');
-    });
-  });
-
-  it('omits the contractor picker when an employmentId is supplied', async () => {
-    renderFlow({ employmentId: 'employment-grace' });
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
     });
 
-    expect(
-      screen.queryByRole('combobox', { name: /Contractor/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Contractor/i)).not.toBeInTheDocument();
+    expect(screen.queryByTestId('employment_id')).not.toBeInTheDocument();
   });
 
-  it('reports when the contractor list is truncated', async () => {
-    server.use(employmentsListHandler(truncatedContractorsListResponse));
+  // A consumer reading the id off a route that has not resolved yet hands over an empty
+  // string. The currencies query is disabled without one, so nothing is in flight and no
+  // schema is built — reporting "ready" there hands back a form with no fields.
+  it('keeps reporting loading while employmentId is empty', async () => {
+    let sawReady = false;
 
-    renderFlow();
+    render(
+      <InvoiceScheduleFlow
+        employmentId=''
+        render={(bag) => {
+          if (bag.isLoading) return <p>Loading…</p>;
+          sawReady = true;
+          return (
+            <>
+              <InvoiceScheduleForm />
+              <InvoiceScheduleSubmitButton>
+                Create schedule
+              </InvoiceScheduleSubmitButton>
+            </>
+          );
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    expect(await screen.findByText(/Loading…/i)).toBeInTheDocument();
+    expect(sawReady).toBe(false);
+  });
+
+  // The Contractor-of-Record restriction only arrives with the employment, and it can
+  // withdraw a frequency. Showing the form first lets the user pick one that then vanishes,
+  // so `isLoading` waits for the employment as well as the currencies.
+  it('keeps reporting loading until the employment resolves', async () => {
+    let currenciesServed = false;
+    let releaseEmployment: () => void = () => {};
+    const employmentRequested = new Promise<void>((resolve) => {
+      releaseEmployment = resolve;
+    });
+
+    server.use(
+      // Served immediately, and recorded — once this has landed the employment is the only
+      // request still outstanding, which is what makes the assertion below meaningful.
+      http.get('*/v1/contractors/employments/*/contractor-currencies', () => {
+        currenciesServed = true;
+        return HttpResponse.json({
+          data: [{ code: 'EUR', source: 'default_payment_currency' }],
+        });
+      }),
+      http.get('*/v1/employments/:id', async ({ params }) => {
+        await employmentRequested;
+        return HttpResponse.json({
+          ...employmentDefaultResponse,
+          data: {
+            ...employmentDefaultResponse.data,
+            employment: {
+              ...employmentDefaultResponse.data.employment,
+              id: params.id,
+            },
+          },
+        });
+      }),
+    );
+
+    render(
+      <InvoiceScheduleFlow
+        employmentId='employment-grace'
+        render={(bag) =>
+          bag.isLoading ? <p>Loading…</p> : <InvoiceScheduleForm />
+        }
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await waitFor(() => {
+      expect(currenciesServed).toBe(true);
+    });
+    // Long enough for the schema to have been built and rendered had the employment not
+    // been holding it back — without that settle this passes whether or not it waits.
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    expect(screen.getByText(/Loading…/i)).toBeInTheDocument();
+    expect(
+      screen.queryByLabelText(/Invoice currency/i),
+    ).not.toBeInTheDocument();
+
+    releaseEmployment();
+
+    await waitFor(
+      () => {
+        expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
+      },
+      { timeout: 10000 },
+    );
+  });
+
+  it('disables submission when there is no contractor to create for', async () => {
+    render(
+      <InvoiceScheduleFlow
+        employmentId=''
+        render={() => (
+          <InvoiceScheduleSubmitButton>
+            Create schedule
+          </InvoiceScheduleSubmitButton>
+        )}
+      />,
+      { wrapper: TestProviders },
+    );
 
     expect(
-      await screen.findByText(/Showing some of your contractors/i, undefined, {
-        timeout: 10000,
+      await screen.findByRole('button', { name: /Create schedule/i }),
+    ).toBeDisabled();
+  });
+
+  it('refuses to create a schedule for an empty employmentId', async () => {
+    let createCalls = 0;
+    server.use(
+      http.post('*/v1/contractor-invoice-schedules', () => {
+        createCalls += 1;
+        return HttpResponse.json({
+          data: { successes: [{ id: 'schedule-1' }], failures: [] },
+        });
       }),
-    ).toBeInTheDocument();
+    );
+
+    const onError = vi.fn();
+    render(
+      <InvoiceScheduleFlow
+        employmentId=''
+        render={(bag) => (
+          <button
+            type='button'
+            onClick={() => bag.onSubmit({}).catch((error) => onError(error))}
+          >
+            Submit directly
+          </button>
+        )}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /Submit directly/i }));
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalled();
+    });
+    expect(onError.mock.calls[0][0]).toBeInstanceOf(Error);
+    expect(createCalls).toBe(0);
   });
 
   it('offers the one-off option alongside the recurring cadences', async () => {
-    renderFlow({ employmentId: 'employment-grace' });
+    renderFlow();
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Frequency/i)).toBeInTheDocument();
@@ -223,7 +255,7 @@ describe('InvoiceScheduleFlow', () => {
       ),
     );
 
-    renderFlow({ employmentId: 'employment-grace' });
+    renderFlow();
 
     // The schema rebuilds once the employment reveals the contractor is a CoR.
     expect(
@@ -254,7 +286,7 @@ describe('InvoiceScheduleFlow', () => {
     );
 
     const onSuccess = vi.fn();
-    renderFlow({ employmentId: 'employment-grace', onSuccess });
+    renderFlow({ onSuccess });
 
     await fillScheduleDetails();
     await fillSelect('periodicity', 'one_time');
@@ -291,7 +323,7 @@ describe('InvoiceScheduleFlow', () => {
     );
 
     const onSuccess = vi.fn();
-    renderFlow({ employmentId: 'employment-grace', onSuccess });
+    renderFlow({ onSuccess });
 
     await fillScheduleDetails();
     await fillSelect('periodicity', 'weekly');
@@ -311,7 +343,7 @@ describe('InvoiceScheduleFlow', () => {
   });
 
   it('reveals the second item row once the first has a description and an amount', async () => {
-    renderFlow({ employmentId: 'employment-grace' });
+    renderFlow();
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Item 1 description/i)).toBeInTheDocument();
@@ -346,7 +378,7 @@ describe('InvoiceScheduleFlow', () => {
   // one item. Driven through the rendered form because that is the only place the flow's
   // real `createHeadlessForm` call is exercised.
   it('reveals the second item row when the first amount has cents', async () => {
-    renderFlow({ employmentId: 'employment-grace' });
+    renderFlow();
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Item 1 description/i)).toBeInTheDocument();
@@ -369,80 +401,6 @@ describe('InvoiceScheduleFlow', () => {
       },
       { timeout: 10000 },
     );
-  });
-
-  it('keeps the form mounted while the chosen contractor loads', async () => {
-    const user = userEvent.setup();
-    let sawLoadingAfterSelection = false;
-
-    render(
-      <InvoiceScheduleFlow
-        render={(bag) => {
-          if (bag.isLoading) return <p>Loading contractors…</p>;
-          if (bag.isLoadingContractorDetails) sawLoadingAfterSelection = true;
-          return (
-            <>
-              <InvoiceScheduleForm />
-              <InvoiceScheduleSubmitButton>
-                Create schedule
-              </InvoiceScheduleSubmitButton>
-            </>
-          );
-        }}
-      />,
-      { wrapper: TestProviders },
-    );
-
-    const trigger = await screen.findByRole(
-      'combobox',
-      { name: /Contractor/i },
-      { timeout: 10000 },
-    );
-    await user.click(trigger);
-    await user.click(
-      await screen.findByRole('option', { name: 'Grace Hopper' }),
-    );
-
-    // The documented pattern returns early on isLoading; selecting a contractor must not
-    // trip it, or the form unmounts mid-flow.
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
-    });
-    expect(screen.queryByText(/Loading contractors/i)).not.toBeInTheDocument();
-    expect(sawLoadingAfterSelection).toBe(true);
-  });
-
-  it('clears currency and frequency when the contractor is switched', async () => {
-    const user = userEvent.setup();
-    renderFlow();
-
-    const trigger = await screen.findByRole(
-      'combobox',
-      { name: /Contractor/i },
-      { timeout: 10000 },
-    );
-    await user.click(trigger);
-    await user.click(
-      await screen.findByRole('option', { name: 'Grace Hopper' }),
-    );
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
-    });
-    await fillSelect('currency', 'EUR');
-    await fillSelect('periodicity', 'weekly');
-
-    // Switching contractor: the previous currency and frequency may not be offered for the
-    // new one, so they must not carry over.
-    await user.click(trigger);
-    await user.click(
-      await screen.findByRole('option', { name: 'Ada Lovelace' }),
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId('currency')).toHaveValue('');
-    });
-    expect(screen.getByTestId('periodicity')).toHaveValue('');
   });
 
   it('clears a recurring frequency chosen before the contractor turns out to be a CoR', async () => {
@@ -471,7 +429,7 @@ describe('InvoiceScheduleFlow', () => {
       }),
     );
 
-    renderFlow({ employmentId: 'employment-grace' });
+    renderFlow();
 
     await fillScheduleDetails();
     await fillSelect('periodicity', 'weekly');
@@ -497,29 +455,6 @@ describe('InvoiceScheduleFlow', () => {
     expect(screen.queryByText(/is not valid/i)).not.toBeInTheDocument();
   });
 
-  // The picker is supplied through `x-jsf-presentation.Component`, which `JSONSchemaForm`
-  // renders on its own rather than inside a `FormField`. Without the field name in context,
-  // the `FormMessage` the picker renders had no error to read and stayed silent, so a missing
-  // contractor was the one required field that failed without saying so.
-  it('reports a missing contractor on the picker itself', async () => {
-    renderFlow();
-
-    await screen.findByRole(
-      'combobox',
-      { name: /Contractor/i },
-      { timeout: 10000 },
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
-
-    const contractorField = await screen.findByTestId('employment_id');
-    const fieldContainer = contractorField.closest('[data-field]');
-
-    await waitFor(() => {
-      expect(fieldContainer).toHaveTextContent(/Required field/i);
-    });
-  });
-
   it('surfaces a creation failure through onError', async () => {
     server.use(
       http.post('*/v1/contractor-invoice-schedules', () =>
@@ -528,7 +463,7 @@ describe('InvoiceScheduleFlow', () => {
     );
 
     const onError = vi.fn();
-    renderFlow({ employmentId: 'employment-grace', onError });
+    renderFlow({ onError });
 
     await fillScheduleDetails();
     await fillSelect('periodicity', 'monthly');

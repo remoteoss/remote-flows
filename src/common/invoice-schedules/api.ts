@@ -16,10 +16,7 @@ import { useClient } from '@/src/context';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
 import { INVOICE_SCHEDULE_STATUS } from '@/src/common/invoice-schedules/constants';
-import {
-  buildCreateInvoiceScheduleSchema,
-  ContractorOption,
-} from '@/src/common/invoice-schedules/json-schema';
+import { buildCreateInvoiceScheduleSchema } from '@/src/common/invoice-schedules/json-schema';
 import {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
@@ -39,9 +36,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
   jsfModify,
   includeOneTime,
   isContractorOfRecord,
-  includeContractorSelect,
   includeCustomDays,
-  contractors,
   fieldValues,
 }: {
   enabled?: boolean;
@@ -56,14 +51,6 @@ export const useGetCreateInvoiceScheduleSchema = ({
    * Restrict to one-off only, as the platform does for Contractor of Record.
    */
   isContractorOfRecord?: boolean;
-  /**
-   * Prepend a contractor picker, for the standalone screen.
-   */
-  includeContractorSelect?: boolean;
-  /**
-   * Contractors to offer in the picker.
-   */
-  contractors?: ContractorOption[];
   /**
    * Offer the two semi-monthly day fields, which map to `custom_days`.
    */
@@ -86,11 +73,9 @@ export const useGetCreateInvoiceScheduleSchema = ({
   const schemaWithCurrencies = useMemo(() => {
     if (!enabled) return null;
 
-    // The standalone screen picks the contractor in this very form, so the currencies cannot
-    // be known on first render — build the schema anyway and let the currency field show its
-    // placeholder until a contractor is chosen. The in-flow step always knows its employment,
-    // so it keeps waiting for currencies and renders nothing until they arrive.
-    if (!currencies && !includeContractorSelect) return null;
+    // Both callers know their employment up front, so there is always a currency list on the
+    // way — render nothing until it arrives rather than a currency field with no options.
+    if (!currencies) return null;
 
     const schema = buildCreateInvoiceScheduleSchema({
       currencies: currencies?.map(
@@ -98,9 +83,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
       ),
       includeOneTime,
       isContractorOfRecord,
-      includeContractorSelect,
       includeCustomDays,
-      contractors,
     });
 
     // `transformMoneyFields` has to be explicit: `createHeadlessForm` only defaults it on
@@ -118,9 +101,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
     jsfModify,
     includeOneTime,
     isContractorOfRecord,
-    includeContractorSelect,
     includeCustomDays,
-    contractors,
     fieldValues,
   ]);
 

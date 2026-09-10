@@ -1,5 +1,4 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
 import {
@@ -11,11 +10,10 @@ import {
 import { InvoiceScheduleFlow } from '@/src/flows/InvoiceSchedule/InvoiceScheduleFlow';
 import { InvoiceScheduleForm } from '@/src/flows/InvoiceSchedule/InvoiceScheduleForm';
 import { InvoiceSchedulePreviewButton } from '@/src/flows/InvoiceSchedule/InvoiceSchedulePreviewButton';
-import { contractorsListResponse } from '@/src/flows/InvoiceSchedule/tests/fixtures';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
 function renderFlow({
-  employmentId,
+  employmentId = 'employment-grace',
   onSuccess,
   onError,
 }: {
@@ -42,11 +40,6 @@ function renderFlow({
 describe('InvoiceSchedulePreviewButton', () => {
   beforeEach(() => {
     queryClient.clear();
-    server.use(
-      http.get('*/v1/employments', () =>
-        HttpResponse.json(contractorsListResponse),
-      ),
-    );
   });
 
   it('previews the invoice the form describes, without creating a schedule', async () => {
@@ -135,30 +128,17 @@ describe('InvoiceSchedulePreviewButton', () => {
     );
   });
 
-  it('stays disabled until a contractor is chosen', async () => {
-    const user = userEvent.setup();
-    renderFlow();
+  it('stays disabled while the flow has no contractor to preview against', async () => {
+    // The endpoint is scoped to an employment. `employmentId` is required, but a consumer
+    // reading it off a route that has not resolved yet hands over an empty string.
+    renderFlow({ employmentId: '' });
 
     const button = await screen.findByRole(
       'button',
       { name: /Preview invoice/i },
       { timeout: 10000 },
     );
-    // Nothing to preview against: the endpoint is scoped to an employment.
     expect(button).toBeDisabled();
-
-    await user.click(
-      await screen.findByRole('combobox', { name: /Contractor/i }),
-    );
-    await user.click(
-      await screen.findByRole('option', { name: 'Grace Hopper' }),
-    );
-
-    await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: /Preview invoice/i }),
-      ).toBeEnabled();
-    });
   });
 
   it('reports a failed preview through onError', async () => {
