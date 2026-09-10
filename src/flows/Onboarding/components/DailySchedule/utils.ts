@@ -92,39 +92,6 @@ export function getWorkHoursBounds(
   };
 }
 
-/**
- * The schedule to display/edit: the field's saved `value` when present,
- * otherwise a schedule built from the metadata's `default_schedule` — so the
- * summary and the edit modal show sensible defaults before the employer has
- * saved anything (create flow), not just after (edit flow).
- */
-export function resolveDailyScheduleValue({
-  value,
-  defaultSchedule,
-}: {
-  value: DailyScheduleValue | undefined;
-  defaultSchedule: DailyScheduleDefaultDay[];
-}): DailyScheduleValue {
-  if (value) {
-    return value;
-  }
-
-  return {
-    selected_days: defaultSchedule.map((day) => day.day),
-    schedule: defaultSchedule.reduce(
-      (acc, day) => ({
-        ...acc,
-        [day.day]: {
-          start_time: day.start_time,
-          end_time: day.end_time,
-          break_duration_minutes: day.break_duration_minutes,
-        },
-      }),
-      {},
-    ),
-  };
-}
-
 const MINUTES_IN_HOUR = 60;
 
 export function convertTimeStringToMinutes(time: string): number {
@@ -382,4 +349,56 @@ export function buildDailyScheduleSummary(
   );
 
   return { workHoursLines, breakLines, totalWeeklyHours };
+}
+
+/**
+ * The schedule to display/edit: the field's saved `value` when present,
+ * otherwise a schedule built from the metadata's `default_schedule` — so the
+ * summary and the edit modal show sensible defaults before the employer has
+ * saved anything (create flow), not just after (edit flow).
+ */
+function resolveDailyScheduleValue({
+  value,
+  defaultSchedule,
+}: {
+  value: DailyScheduleValue | undefined;
+  defaultSchedule: DailyScheduleDefaultDay[];
+}): DailyScheduleValue {
+  if (value) {
+    return value;
+  }
+
+  return {
+    selected_days: defaultSchedule.map((day) => day.day),
+    schedule: defaultSchedule.reduce(
+      (acc, day) => ({
+        ...acc,
+        [day.day]: {
+          start_time: day.start_time,
+          end_time: day.end_time,
+          break_duration_minutes: day.break_duration_minutes,
+        },
+      }),
+      {},
+    ),
+  };
+}
+
+export function getDailyScheduleSummaryDays(
+  value: DailyScheduleValue | undefined,
+  defaultSchedule: DailyScheduleDefaultDay[],
+): DailyScheduleSummaryDay[] {
+  const effectiveValue = resolveDailyScheduleValue({ value, defaultSchedule });
+  const summaryDays: DailyScheduleSummaryDay[] =
+    effectiveValue.selected_days.map((day) => {
+      const daySchedule = effectiveValue.schedule[day];
+      return {
+        day,
+        start_time: daySchedule?.start_time ?? '',
+        end_time: daySchedule?.end_time ?? '',
+        break_duration_minutes: daySchedule?.break_duration_minutes ?? 0,
+      };
+    });
+
+  return summaryDays;
 }
