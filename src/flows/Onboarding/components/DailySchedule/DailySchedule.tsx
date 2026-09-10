@@ -19,6 +19,9 @@ export const DailySchedule = ({
   workSchedule,
 }: DailyScheduleProps) => {
   const summaryDays = getDailyScheduleSummaryDays(value, defaultSchedule);
+  // TODO: potential refactor for later as buildDailyScheduleSummary is also used in DailyScheduleSummaryBody
+  // TODO: I believe buildDailyScheduleSummary is mixing business logic with UI logic.
+  // TODO: Think later what should go in DailyScheduleContainer and what goes on DailySchedule.
   const { totalWeeklyHours } = buildDailyScheduleSummary(
     summaryDays,
     subtractBreaksFromWorkHours,
