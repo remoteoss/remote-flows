@@ -1,16 +1,12 @@
 import { FieldValues } from 'react-hook-form';
 import { BulkContractorInvoiceScheduleCreateResponse } from '@/src/client';
-import { Contractor } from '@/src/flows/InvoiceSchedule/api';
 import { JSFModify } from '@/src/flows/types';
 
-export type { Contractor } from '@/src/flows/InvoiceSchedule/api';
-
 /**
- * Values the invoice-schedule form collects. `employment_id` is only present when the flow
- * renders its own contractor picker.
+ * Values the invoice-schedule form collects. The contractor is not among them — the flow is
+ * told which one it is acting on through `employmentId`.
  */
 export type InvoiceScheduleFormValues = FieldValues & {
-  employment_id?: string;
   currency?: string;
   periodicity?: string;
   start_date?: string;
@@ -39,34 +35,11 @@ export type InvoiceScheduleResponse =
 
 export type UseInvoiceScheduleOptions = {
   /**
-   * Create the schedule for this contractor and skip the picker. Omit to have the flow load
-   * the company's active contractors and render a picker as the first field.
+   * The contractor to create the schedule for.
    */
-  employmentId?: string;
+  employmentId: string;
   /**
    * Modify the generated JSON-schema form fields.
    */
   jsfModify?: JSFModify;
-  /**
-   * Filter the `contractors` bag entry by name, server-side.
-   *
-   * The rendered picker is a type-ahead that owns its own search, so this is only needed by
-   * headless consumers building their own picker from `contractors`.
-   */
-  contractorSearch?: string;
-};
-
-export type InvoiceScheduleContractorsState = {
-  /**
-   * Active contractors available in the picker.
-   */
-  contractors: Contractor[];
-  /**
-   * Total the API reports. Exceeds `contractors.length` when the list was truncated.
-   */
-  totalCount: number;
-  /**
-   * True when not every contractor could be loaded, so the picker shows a subset.
-   */
-  isTruncated: boolean;
 };

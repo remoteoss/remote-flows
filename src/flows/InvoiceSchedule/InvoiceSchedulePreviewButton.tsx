@@ -27,9 +27,8 @@ type InvoiceSchedulePreviewButtonProps = Omit<
  * a drawer through the `pdfViewer` component. The standalone twin of the onboarding step's
  * `PreviewInvoiceButton`.
  *
- * Disabled until a contractor is known, since the preview endpoint is scoped to an
- * employment — with the picker on screen that is whatever the user has chosen, otherwise the
- * flow's `employmentId`.
+ * Disabled while a preview is in flight, and while the flow has no contractor to preview
+ * against — the endpoint is scoped to an employment.
  *
  * `onSuccess` receives the same document, for consumers that want to do something else with
  * it. Note `preview.content` is a `data:application/pdf;base64,...` URI: browsers block

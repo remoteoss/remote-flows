@@ -5,6 +5,9 @@ Welcome to the Invoice Schedule flow docs.
 A standalone, single-screen flow for creating a contractor invoice schedule — the same screen
 Remote exposes on its platform. Mount it anywhere; it does not depend on the onboarding flow.
 
+The flow acts on one contractor, which you name with the required `employmentId` prop. How you
+source that id — a picker of your own, a route param, the row the user clicked — is up to you.
+
 If you want the invoice-schedule step **inside** contractor onboarding, that is part of the
 [Contractor Onboarding](../ContractorOnboarding/README.md) flow instead.
 
@@ -12,7 +15,6 @@ If you want the invoice-schedule step **inside** contractor onboarding, that is 
 
 - [Getting Started](#getting-started)
   - [Full Example](#full-example)
-  - [Targeting a known contractor](#targeting-a-known-contractor)
 - [Components API](#components-api)
   - [InvoiceScheduleFlow](#invoicescheduleflow)
   - [InvoiceScheduleForm](#invoicescheduleform)
@@ -41,15 +43,20 @@ import {
 } from '@remoteoss/remote-flows';
 import { useState } from 'react';
 
-export function CreateInvoiceSchedule() {
+export function CreateInvoiceSchedule({
+  employmentId,
+}: {
+  employmentId: string;
+}) {
   const [scheduleId, setScheduleId] = useState<string | null>(null);
 
   return (
     <RemoteFlows auth={/* your token fetcher */}>
       <InvoiceScheduleFlow
+        employmentId={employmentId}
         render={(invoiceScheduleBag) => {
           if (invoiceScheduleBag.isLoading) {
-            return <div>Loading contractors…</div>;
+            return <div>Loading…</div>;
           }
 
           if (scheduleId) {
@@ -58,15 +65,8 @@ export function CreateInvoiceSchedule() {
 
           return (
             <>
-              {invoiceScheduleBag.isLoadingContractorDetails && (
-                <p>Loading this contractor's currencies…</p>
-              )}
-
-              {invoiceScheduleBag.contractors.isTruncated && (
-                <p>
-                  Showing {invoiceScheduleBag.contractors.contractors.length} of{' '}
-                  {invoiceScheduleBag.contractors.totalCount} contractors.
-                </p>
+              {invoiceScheduleBag.isContractorOfRecord && (
+                <p>This contractor can only be invoiced one-off.</p>
               )}
 
               <InvoiceScheduleForm
@@ -88,25 +88,16 @@ export function CreateInvoiceSchedule() {
 }
 ```
 
-### Targeting a known contractor
-
-Pass `employmentId` and the flow drops the contractor picker, rendering only the schedule
-fields:
-
-```tsx
-<InvoiceScheduleFlow employmentId={employmentId} render={/* … */} />
-```
-
 ## Components API
 
 ### InvoiceScheduleFlow
 
-| Prop            | Type                      | Required | Description                                                                                     |
-| --------------- | ------------------------- | -------- | ----------------------------------------------------------------------------------------------- |
-| `render`        | `(bag) => ReactNode`      | Yes      | Render prop receiving the flow bag.                                                             |
-| `employmentId`  | `string`                  | No       | Create for this contractor and omit the picker. Omit to have the flow load and render a picker. |
-| `jsfModify`     | `JSFModify`               | No       | Modify the generated JSON-schema fields (labels, order, presentation).                          |
-| `defaultValues` | `Record<string, unknown>` | No       | Default form values.                                                                            |
+| Prop            | Type                      | Required | Description                                                            |
+| --------------- | ------------------------- | -------- | ---------------------------------------------------------------------- |
+| `employmentId`  | `string`                  | Yes      | The contractor the schedule is created for.                            |
+| `render`        | `(bag) => ReactNode`      | Yes      | Render prop receiving the flow bag.                                    |
+| `jsfModify`     | `JSFModify`               | No       | Modify the generated JSON-schema fields (labels, order, presentation). |
+| `defaultValues` | `Record<string, unknown>` | No       | Default form values.                                                   |
 
 ### InvoiceScheduleForm
 
@@ -119,15 +110,15 @@ fields:
 ### InvoiceScheduleSubmitButton
 
 Must be rendered inside the flow's `render` prop. Accepts any button props; disables itself
-while the schedule is being created.
+while the schedule is being created, and while the flow has no contractor to create for.
 
 ### InvoiceSchedulePreviewButton
 
 Renders the invoice the form currently describes as a draft PDF and shows it in a drawer,
 without creating anything. Must be rendered inside the flow's `render` prop.
 
-Disabled until a contractor is known — the preview endpoint is scoped to an employment — and
-while a preview is in flight.
+Disabled while a preview is in flight, and while the flow has no contractor to preview against
+— the preview endpoint is scoped to an employment.
 
 | Prop        | Type                                         | Description                                                           |
 | ----------- | -------------------------------------------- | --------------------------------------------------------------------- |
@@ -153,23 +144,18 @@ navigation to the `data:` scheme, so it can be rendered in an `iframe`/`embed` o
 `useInvoiceSchedule()` is the headless equivalent of the render prop, for fully custom UIs.
 Both surfaces expose the same bag:
 
-| Key                          | Description                                                                                |
-| ---------------------------- | ------------------------------------------------------------------------------------------ |
-| `fields`                     | Generated form fields, including the contractor picker when the flow owns it.              |
-| `handleValidation`           | Validation handler for the generated form.                                                 |
-| `parseFormValues`            | Turns form values into the API payload without submitting.                                 |
-| `onSubmit`                   | Creates the invoice schedule.                                                              |
-| `previewInvoice`             | Renders the current values as a draft PDF without creating anything.                       |
-| `onContractorChange`         | Tell the flow the chosen contractor changed (wired up for you by `InvoiceScheduleForm`).   |
-| `employmentId`               | The contractor the schedule will be created for, if known.                                 |
-| `rendersContractorSelect`    | Whether this flow renders its own picker.                                                  |
-| `isSubmitting`               | True while creating.                                                                       |
-| `isPreviewingInvoice`        | True while a draft PDF preview is being generated.                                         |
-| `isLoading`                  | True only for the initial load, before there is a form to show. Safe to return early on.   |
-| `isLoadingContractorDetails` | True while the chosen contractor's employment and currencies load; the form stays mounted. |
-| `isContractorOfRecord`       | Whether the selected contractor is a Contractor of Record.                                 |
-| `contractors`                | `{ contractors, totalCount, isTruncated }` — picker state.                                 |
-| `contractorsError`           | Error raised while loading contractors, if any.                                            |
+| Key                    | Description                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------ |
+| `fields`               | Generated form fields.                                                                                 |
+| `handleValidation`     | Validation handler for the generated form.                                                             |
+| `parseFormValues`      | Turns form values into the API payload without submitting.                                             |
+| `onSubmit`             | Creates the invoice schedule.                                                                          |
+| `previewInvoice`       | Renders the current values as a draft PDF without creating anything.                                   |
+| `employmentId`         | The contractor the schedule will be created for.                                                       |
+| `isSubmitting`         | True while creating.                                                                                   |
+| `isPreviewingInvoice`  | True while a draft PDF preview is being generated.                                                     |
+| `isLoading`            | True until there is a form to show: no `employmentId`, or its currencies and employment still loading. |
+| `isContractorOfRecord` | Whether the contractor is a Contractor of Record.                                                      |
 
 ## How values map to the API
 
@@ -177,8 +163,8 @@ The form submits to `POST /v1/contractor-invoice-schedules`.
 
 | Field            | API field        | Notes                                                                     |
 | ---------------- | ---------------- | ------------------------------------------------------------------------- |
-| Contractor       | `employment_id`  | Only present when the flow renders the picker.                            |
-| Invoice currency | `currency`       | Restricted to the selected contractor's supported currencies.             |
+| —                | `employment_id`  | Taken from the `employmentId` prop, not collected by the form.            |
+| Invoice currency | `currency`       | Restricted to the contractor's supported currencies.                      |
 | Frequency        | `periodicity`    | See the one-off note below.                                               |
 | Start date       | `start_date`     | Date the first invoice is generated.                                      |
 | Items 1–10       | `items`          | Slot _n+1_ is revealed once slot _n_ is filled. The API accepts up to 10. |
@@ -192,15 +178,12 @@ lives on `nr_occurrences` (1 = one-off, omitted = indefinite, N = capped). This 
 encoding the Remote platform and Remote's own bulk CSV importer use.
 
 **Contractor of Record.** A CoR contractor is offered only the one-off option, matching the
-platform. Note this is a client-side restriction; it is not enforced by the API today.
+platform. `contractor_type` arrives with the employment, so the recurring cadences are on offer
+for a moment first; a recurring choice made in that window is cleared once the restriction is
+known. Note this is a client-side restriction; it is not enforced by the API today.
 
 ## Current limitations
 
-- **Contractor search.** The picker queries `GET /v1/employments?name=` as you type, matched
-  per word and ignoring case and accents. Without a search term it walks up to 10 pages (1000
-  contractors); when that is not everyone, `contractors.isTruncated` is `true` and
-  `contractors.totalCount` reports the real figure — surface that rather than implying the list
-  is complete.
 - **Semi-monthly cycle.** Leave both invoice-day fields blank to use the cycle Remote derives
   from your start date (that day and the day 14 days apart), or set them to pick the pair
   yourself. One of the two must be the start date's day.

@@ -4,14 +4,16 @@ import { server } from '@/src/tests/server';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 import { InvoiceScheduleFlow } from '@/src/flows/InvoiceSchedule/InvoiceScheduleFlow';
 import { InvoiceScheduleForm } from '@/src/flows/InvoiceSchedule/InvoiceScheduleForm';
-import { contractorsListResponse } from '@/src/flows/InvoiceSchedule/tests/fixtures';
 
 describe('currency placeholder', () => {
   beforeEach(() => {
     queryClient.clear();
+    // The placeholder is what the currency field falls back to when the contractor has no
+    // currencies to offer, which is the only way to reach it now that the flow is always
+    // told which contractor it is acting on.
     server.use(
-      http.get('*/v1/employments', () =>
-        HttpResponse.json(contractorsListResponse),
+      http.get('*/v1/contractors/employments/*/contractor-currencies', () =>
+        HttpResponse.json({ data: [] }),
       ),
     );
   });
@@ -22,9 +24,13 @@ describe('currency placeholder', () => {
       .spyOn(console, 'error')
       .mockImplementation((...a) => errors.push(a.join(' ')));
 
-    render(<InvoiceScheduleFlow render={() => <InvoiceScheduleForm />} />, {
-      wrapper: TestProviders,
-    });
+    render(
+      <InvoiceScheduleFlow
+        employmentId='employment-grace'
+        render={() => <InvoiceScheduleForm />}
+      />,
+      { wrapper: TestProviders },
+    );
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();

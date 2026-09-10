@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useRef } from 'react';
+import React, { useEffect, useId } from 'react';
 import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
 import { ONE_TIME_PERIODICITY } from '@/src/common/invoice-schedules';
 import { InvoiceScheduleContext } from '@/src/flows/InvoiceSchedule/context';
@@ -7,19 +7,14 @@ import { UseInvoiceScheduleOptions } from '@/src/flows/InvoiceSchedule/types';
 
 export type InvoiceScheduleFlowProps = {
   /**
-   * Create the schedule for this contractor and skip the picker. Omit to have the flow load
-   * the company's active contractors and render a picker as the first field.
+   * The contractor to create the schedule for. Sourcing it is yours — a picker of your own, a
+   * route param, the row the user clicked; the flow only ever acts on this one contractor.
    */
-  employmentId?: string;
+  employmentId: string;
   /**
    * Modify the generated JSON-schema form fields.
    */
   jsfModify?: UseInvoiceScheduleOptions['jsfModify'];
-  /**
-   * Filter the `contractors` bag entry by name, server-side. The rendered picker is a
-   * type-ahead that owns its own search, so this is only needed if you build your own picker.
-   */
-  contractorSearch?: string;
   /**
    * Default values for the form fields.
    */
@@ -36,7 +31,6 @@ export type InvoiceScheduleFlowProps = {
 export const InvoiceScheduleFlow = ({
   employmentId,
   jsfModify,
-  contractorSearch,
   defaultValues,
   render,
 }: InvoiceScheduleFlowProps) => {
@@ -44,7 +38,6 @@ export const InvoiceScheduleFlow = ({
   const invoiceScheduleBag = useInvoiceSchedule({
     employmentId,
     jsfModify,
-    contractorSearch,
   });
 
   // `useJSONSchemaForm` subscribes to form changes and feeds them back through
@@ -54,7 +47,6 @@ export const InvoiceScheduleFlow = ({
     handleValidation: invoiceScheduleBag.handleValidation,
     checkFieldUpdates: invoiceScheduleBag.checkFieldUpdates,
     defaultValues: {
-      employment_id: employmentId ?? '',
       currency: '',
       periodicity: '',
       start_date: '',
@@ -63,31 +55,6 @@ export const InvoiceScheduleFlow = ({
       ...defaultValues,
     },
   });
-
-  // The picker drives the currency options and the Contractor-of-Record restriction, so the
-  // hook needs to know about a change before the form is submitted.
-  const employmentIdValue = form.watch('employment_id');
-  const { onContractorChange, rendersContractorSelect } = invoiceScheduleBag;
-  const lastNotified = useRef<string | undefined>(employmentId);
-
-  useEffect(() => {
-    if (!rendersContractorSelect) return;
-    if (lastNotified.current === employmentIdValue) return;
-
-    const isContractorSwitch = lastNotified.current !== undefined;
-    lastNotified.current = employmentIdValue;
-    onContractorChange(employmentIdValue);
-
-    // Currency options and the available frequencies both depend on the contractor, so a
-    // value chosen for the previous one may no longer be offered — a Contractor of Record
-    // could otherwise keep a recurring frequency the product does not support, and the API
-    // does not reject that today. Cleared on a switch, not on the first selection, so
-    // picking a contractor does not wipe details already filled in.
-    if (isContractorSwitch) {
-      form.setValue('currency', '');
-      form.setValue('periodicity', '');
-    }
-  }, [employmentIdValue, onContractorChange, rendersContractorSelect, form]);
 
   // Contractor of Record is only known once the employment request resolves, so the form
   // offers the recurring frequencies until then and a frequency chosen in that window

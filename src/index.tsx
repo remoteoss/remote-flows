@@ -22,13 +22,10 @@ export {
   InvoiceScheduleSubmitButton,
   InvoiceSchedulePreviewButton,
   useInvoiceSchedule,
-  useContractors,
 } from '@/src/flows/InvoiceSchedule';
 
 export type {
-  Contractor,
   InvoiceScheduleFlowProps,
-  InvoiceScheduleContractorsState,
   InvoiceScheduleFormValues,
   InvoiceSchedulePayload,
   UseInvoiceScheduleOptions,

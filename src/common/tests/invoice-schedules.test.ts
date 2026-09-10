@@ -310,6 +310,21 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     ]);
   });
 
+  it('says the contractor has no currencies rather than that they are loading', () => {
+    // The flows only build the schema once the request has resolved, so an empty list is a
+    // real answer. Calling that "loading" left the field looking stuck forever.
+    expect(
+      buildCreateInvoiceScheduleSchema({ currencies: [] }).properties.currency
+        .oneOf,
+    ).toEqual([
+      {
+        const: 'placeholder',
+        title: 'No currencies available',
+        disabled: true,
+      },
+    ]);
+  });
+
   it('carries the disabled flag through to the rendered field option', () => {
     const form = createHeadlessForm(
       buildCreateInvoiceScheduleSchema() as $TSFixMe,
@@ -336,28 +351,5 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     });
 
     expect(result?.formErrors).toHaveProperty('currency');
-  });
-
-  it('omits the contractor picker unless asked', () => {
-    const schema = buildCreateInvoiceScheduleSchema();
-
-    expect(schema.properties).not.toHaveProperty('employment_id');
-    expect(schema.required).not.toContain('employment_id');
-  });
-
-  it('prepends a required contractor picker for the standalone screen', () => {
-    const schema = buildCreateInvoiceScheduleSchema({
-      includeContractorSelect: true,
-      contractors: [{ value: 'emp_1', label: 'Grace Hopper' }],
-    });
-
-    // Deliberately no `oneOf`: the picker searches the API, so enumerating the loaded page
-    // here would reject a contractor found by search. Options are presentation-only.
-    expect(schema.properties.employment_id).not.toHaveProperty('oneOf');
-    expect(
-      schema.properties.employment_id?.['x-jsf-presentation']?.options,
-    ).toEqual([{ value: 'emp_1', label: 'Grace Hopper' }]);
-    expect(schema.required).toContain('employment_id');
-    expect(schema['x-jsf-order'][0]).toBe('employment_id');
   });
 });

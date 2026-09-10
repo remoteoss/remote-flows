@@ -25,7 +25,13 @@ export function InvoiceScheduleSubmitButton({
         props.className,
       )}
       form={formId}
-      disabled={props.disabled || invoiceScheduleBag?.isSubmitting}
+      // Mirrors the preview button: both endpoints are scoped to an employment, so with no
+      // contractor to create for there is nothing to submit.
+      disabled={
+        props.disabled ||
+        invoiceScheduleBag?.isSubmitting ||
+        !invoiceScheduleBag?.employmentId
+      }
     >
       {children}
     </CustomButton>
