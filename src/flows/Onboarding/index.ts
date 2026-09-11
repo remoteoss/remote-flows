@@ -34,3 +34,5 @@ export {
 } from './components/DailySchedule/utils';
 
 export { WEEKDAY_LABELS } from './components/DailySchedule/constants';
+
+export { DAILY_SCHEDULE_FIELD_NAMES } from './components/DailySchedule/useDailyScheduleEditForm';
