@@ -15,12 +15,12 @@ type DayHours = {
   break_duration_minutes: number;
 };
 
-type DailyScheduleValue = {
+export type DailyScheduleValue = {
   selected_days: Weekday[];
   schedule: Partial<Record<Weekday, DayHours>>;
 };
 
-type DailyScheduleDefaultDay = DayHours & {
+export type DailyScheduleDefaultDay = DayHours & {
   day: Weekday;
   hours: number;
 };
@@ -81,4 +81,23 @@ export type DailyScheduleRenderProps = DailyScheduleFieldProps &
 
 export type DailyScheduleContainerProps = DailyScheduleFieldProps & {
   render: (props: DailyScheduleRenderProps) => React.ReactNode;
+};
+
+/**
+ * A selected day's schedule, in the shape the summary builder groups on —
+ * both the read-only summary (from `DailyScheduleValue.schedule`) and the
+ * edit modal's live preview (from `watchedSchedule`) normalize to this.
+ */
+export type DailyScheduleSummaryDay = {
+  day: Weekday;
+  start_time: string;
+  end_time: string;
+  break_duration_minutes: number;
+};
+
+export type DailyScheduleSummarySegment = { text: string; bold?: boolean };
+
+export type DailyScheduleSummaryLine = {
+  key: string;
+  segments: DailyScheduleSummarySegment[];
 };
