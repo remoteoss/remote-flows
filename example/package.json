@@ -12,7 +12,8 @@
     "postinstall": "react-flagpack",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "type-check": "tsc -b --noEmit"
+    "type-check": "tsc -b --noEmit",
+    "seed:onboarding": "node scripts/seed-onboarding.mjs"
   },
   "dependencies": {
     "@remoteoss/remote-flows": "file://..",
@@ -29,6 +30,7 @@
     "typescript": "6.0.3"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.6.0",
     "@playwright/test": "1.62.1",
     "@types/node": "24.12.4",
     "@types/react-dom": "19.2.3",
