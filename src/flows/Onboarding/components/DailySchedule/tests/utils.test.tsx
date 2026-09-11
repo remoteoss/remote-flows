@@ -9,6 +9,7 @@ import {
   convertMinutesToHours,
   convertTimeStringToMinutes,
   DAYS_OF_THE_WEEK,
+  getDailyScheduleHoursError,
   getDefaultsFromSchema,
   getWorkHoursBounds,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
@@ -308,6 +309,88 @@ describe('DailySchedule utils', () => {
 
       expect(segmentsToText(workHoursLines[0].segments)).toBe(
         'Sunday, from 10h00 to 14h00',
+      );
+    });
+  });
+
+  describe('getDailyScheduleHoursError', () => {
+    const workHoursBounds = { minimum: 31, maximum: 48 };
+
+    it('returns null when the total is within the range', () => {
+      expect(
+        getDailyScheduleHoursError({
+          totalWeeklyHours: 40,
+          workHoursBounds,
+          countryName: 'Germany',
+          workSchedule: 'full_time',
+        }),
+      ).toBeNull();
+    });
+
+    it('returns null when the total is 0 (no schedule set yet)', () => {
+      expect(
+        getDailyScheduleHoursError({
+          totalWeeklyHours: 0,
+          workHoursBounds,
+          countryName: 'Germany',
+          workSchedule: 'full_time',
+        }),
+      ).toBeNull();
+    });
+
+    it("flags a full-time schedule below the minimum, mirroring Dragon's copy", () => {
+      expect(
+        getDailyScheduleHoursError({
+          totalWeeklyHours: 20,
+          workHoursBounds,
+          countryName: 'Germany',
+          workSchedule: 'full_time',
+        }),
+      ).toEqual({
+        header: 'Work hours outside of weekly range',
+        message:
+          'The work week for a full-time employee in Germany is between 31 and 48 hours.',
+      });
+    });
+
+    it('flags a schedule above the maximum', () => {
+      expect(
+        getDailyScheduleHoursError({
+          totalWeeklyHours: 50,
+          workHoursBounds,
+          countryName: 'Germany',
+          workSchedule: 'part_time',
+        }),
+      ).toEqual({
+        header: 'Work hours outside of weekly range',
+        message:
+          'The work week for a part-time employee in Germany is between 31 and 48 hours.',
+      });
+    });
+
+    it('falls back to generic "an employee" copy when no work schedule is selected', () => {
+      const error = getDailyScheduleHoursError({
+        totalWeeklyHours: 20,
+        workHoursBounds,
+        countryName: 'Germany',
+        workSchedule: undefined,
+      });
+
+      expect(error?.message).toBe(
+        'The work week for an employee in Germany is between 31 and 48 hours.',
+      );
+    });
+
+    it('states a single number when minimum and maximum are equal', () => {
+      const error = getDailyScheduleHoursError({
+        totalWeeklyHours: 20,
+        workHoursBounds: { minimum: 40, maximum: 40 },
+        countryName: 'Germany',
+        workSchedule: 'full_time',
+      });
+
+      expect(error?.message).toBe(
+        'The work week for a full-time employee in Germany is 40 hours.',
       );
     });
   });

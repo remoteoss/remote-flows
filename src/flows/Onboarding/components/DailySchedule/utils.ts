@@ -5,6 +5,7 @@ import groupBy from 'lodash.groupby';
 import {
   DailyScheduleDefaultDay,
   DailyScheduleDefaults,
+  DailyScheduleHoursError,
   DailyScheduleMetadata,
   DailyScheduleSummaryDay,
   DailyScheduleSummaryLine,
@@ -15,6 +16,7 @@ import {
   WorkHoursPerWeekConfig,
   WorkHoursRange,
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
+import { getSingularPluralUnit } from '@/src/lib/i18n';
 
 export const DAYS_OF_THE_WEEK: Weekday[] = [
   'monday',
@@ -415,4 +417,60 @@ export function getDailyScheduleSummaryDays(
   });
 
   return summaryDays;
+}
+
+function workScheduleCopy(workSchedule: string | undefined): string {
+  if (workSchedule === WORK_SCHEDULE_FULL_TIME) {
+    return 'a full-time employee';
+  }
+
+  if (workSchedule === WORK_SCHEDULE_PART_TIME) {
+    return 'a part-time employee';
+  }
+
+  return 'an employee';
+}
+
+/**
+ * Ported from Platform's `DailyScheduleError.jsx`: flags a schedule whose total
+ * weekly hours fall outside the country/work-schedule's allowed range, e.g.
+ * "Work hours outside of weekly range - The work week for a full-time
+ * employee in Germany is between 31 and 48 hours."
+ */
+export function getDailyScheduleHoursError({
+  totalWeeklyHours,
+  workHoursBounds,
+  countryName,
+  workSchedule,
+}: {
+  totalWeeklyHours: number;
+  workHoursBounds: WorkHoursRange;
+  countryName: string;
+  workSchedule: string | undefined;
+}): DailyScheduleHoursError | null {
+  if (totalWeeklyHours === 0) {
+    return null;
+  }
+
+  const { minimum, maximum } = workHoursBounds;
+
+  if (totalWeeklyHours >= minimum && totalWeeklyHours <= maximum) {
+    return null;
+  }
+
+  const maxHoursCopy = getSingularPluralUnit({
+    number: maximum,
+    singular: 'hour',
+    plural: 'hours',
+    followCopyGuidelines: false,
+  });
+  const rangeCopy =
+    minimum === maximum
+      ? maxHoursCopy
+      : `between ${minimum} and ${maxHoursCopy}`;
+
+  return {
+    header: 'Work hours outside of weekly range',
+    message: `The work week for ${workScheduleCopy(workSchedule)} in ${countryName} is ${rangeCopy}.`,
+  };
 }
