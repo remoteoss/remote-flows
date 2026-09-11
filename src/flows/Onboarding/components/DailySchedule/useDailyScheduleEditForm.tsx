@@ -226,6 +226,10 @@ export function useDailyScheduleEditForm({
 
   const handleSave = handleSubmit((data) => {
     setValue(mapDailyScheduleEditFormDataToValue(data));
+    // Update the form's default values to the newly saved state, so future
+    // reset() calls (when canceling) restore this saved state, not the
+    // original mount-time defaults.
+    form.reset(data);
   });
 
   const defaultScheduleRows = buildDailyScheduleEditFormDefaultValues({
