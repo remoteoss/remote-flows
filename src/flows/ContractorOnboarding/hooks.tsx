@@ -1177,7 +1177,9 @@ export const useContractorOnboarding = ({
 
   const parseFormValues = async (values: FieldValues) => {
     if (selectCountryForm && stepState.currentStep.name === 'select_country') {
-      return values;
+      return await parseJSFToValidate(values, selectCountryForm.fields, {
+        isPartialValidation: false,
+      });
     }
 
     if (
@@ -1693,7 +1695,13 @@ export const useContractorOnboarding = ({
   const handleValidation = useCallback(
     async (values: FieldValues): Promise<ValidationResult | null> => {
       if (stepState.currentStep.name === 'select_country') {
-        return selectCountryForm.handleValidation(values);
+        const parsedValues = await parseJSFToValidate(
+          values,
+          selectCountryForm.fields,
+          { isPartialValidation: false },
+        );
+
+        return selectCountryForm.handleValidation(parsedValues);
       }
 
       if (
