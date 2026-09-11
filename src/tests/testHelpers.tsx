@@ -48,19 +48,14 @@ export async function assertRadioValue(
   radioName: string,
   expectedValue: string,
 ) {
-  // Wait for the radio group to be available
-  await waitFor(() => {
-    const radioGroup = screen.getByRole('radiogroup', {
+  // Wait for the radio group to be available, keeping the resolved element
+  // instead of re-querying afterwards (which raced against the group
+  // briefly unmounting again, e.g. during a second async loading phase)
+  const radioGroup = await waitFor(() =>
+    screen.getByRole('radiogroup', {
       name: new RegExp(radioName, 'i'),
-    });
-    expect(radioGroup).toBeInTheDocument();
-  });
-
-  // Get the radio group
-  const radioGroup = screen.getByRole('radiogroup', {
-    name: new RegExp(radioName, 'i'),
-  });
-  expect(radioGroup).toBeInTheDocument();
+    }),
+  );
 
   // Find all radio buttons within the group
   const radioButtons = within(radioGroup).getAllByRole('radio');
@@ -86,15 +81,12 @@ export async function assertRadioValue(
 export async function fillRadio(radioName: string, radioValue: string) {
   const user = userEvent.setup();
 
-  // Wait for the radio group to be available - use role-based query for specificity
-  await waitFor(() => {
-    screen.getByRole('radiogroup', { name: new RegExp(radioName, 'i') });
-  });
-
-  // Get the specific radiogroup by role (not just by text)
-  const radioGroup = screen.getByRole('radiogroup', {
-    name: new RegExp(radioName, 'i'),
-  });
+  // Wait for the radio group to be available, keeping the resolved element
+  // instead of re-querying afterwards (which raced against the group
+  // briefly unmounting again, e.g. during a second async loading phase)
+  const radioGroup = await waitFor(() =>
+    screen.getByRole('radiogroup', { name: new RegExp(radioName, 'i') }),
+  );
 
   // Find the radio button within that group
   const radioButton = within(radioGroup).getByRole('radio', {
