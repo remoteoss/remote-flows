@@ -341,7 +341,7 @@ export function CustomDailySchedule({
                     <Button
                       type='button'
                       onClick={handleSave}
-                      disabled={!!savedScheduleHoursError}
+                      disabled={!!hoursRangeError}
                     >
                       Save Custom Schedule
                     </Button>
