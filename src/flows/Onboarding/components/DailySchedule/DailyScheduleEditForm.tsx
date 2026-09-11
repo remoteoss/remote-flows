@@ -12,6 +12,7 @@ import {
   DailyScheduleEditFormRow,
   DailyScheduleEditFormData,
   useDailyScheduleEditForm,
+  DAILY_SCHEDULE_FIELD_NAMES,
 } from '@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm';
 import { useDialogControl } from '@/src/flows/Onboarding/components/DailySchedule/EditEmployeeWorkingHoursDialog';
 import { WEEKDAY_LABELS } from '@/src/flows/Onboarding/components/DailySchedule/constants';
@@ -32,7 +33,7 @@ const DayRow = memo(
     // More performant than watching the entire schedule array
     const currentRow = useWatch({
       control: form.control,
-      name: `schedule.${index}`,
+      name: `${DAILY_SCHEDULE_FIELD_NAMES.SCHEDULE}.${index}`,
     }) as DailyScheduleEditFormRow;
 
     const hours = calculateWorkingHours(
@@ -55,26 +56,26 @@ const DayRow = memo(
         <div className='col-span-3'>
           <CheckBoxField
             label={WEEKDAY_LABELS[field.day]}
-            name={`schedule.${index}.checked`}
+            name={`${DAILY_SCHEDULE_FIELD_NAMES.SCHEDULE}.${index}.${DAILY_SCHEDULE_FIELD_NAMES.CHECKED}`}
           />
         </div>
         <div className='col-span-3'>
           <TextField
-            name={`schedule.${index}.start_time`}
+            name={`${DAILY_SCHEDULE_FIELD_NAMES.SCHEDULE}.${index}.${DAILY_SCHEDULE_FIELD_NAMES.START_TIME}`}
             includeErrorMessage={false}
             disabled={!currentRow?.checked}
           />
         </div>
         <div className='col-span-3'>
           <TextField
-            name={`schedule.${index}.end_time`}
+            name={`${DAILY_SCHEDULE_FIELD_NAMES.SCHEDULE}.${index}.${DAILY_SCHEDULE_FIELD_NAMES.END_TIME}`}
             includeErrorMessage={false}
             disabled={!currentRow?.checked}
           />
         </div>
         <div className='col-span-2'>
           <TextField
-            name={`schedule.${index}.break_duration_minutes`}
+            name={`${DAILY_SCHEDULE_FIELD_NAMES.SCHEDULE}.${index}.${DAILY_SCHEDULE_FIELD_NAMES.BREAK_DURATION_MINUTES}`}
             includeErrorMessage={false}
             disabled={!currentRow?.checked}
           />

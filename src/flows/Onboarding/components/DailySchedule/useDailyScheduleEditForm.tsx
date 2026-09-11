@@ -40,6 +40,31 @@ export type DailyScheduleEditFormData = {
   schedule: DailyScheduleEditFormRow[];
 };
 
+/**
+ * Type-safe field name constants for DailyScheduleEditForm.
+ * Use these to build field paths instead of magic strings.
+ *
+ * @example
+ * ```tsx
+ * <Controller
+ *   name={`${DAILY_SCHEDULE_FIELD_NAMES.SCHEDULE}.${index}.${DAILY_SCHEDULE_FIELD_NAMES.START_TIME}`}
+ *   control={form.control}
+ *   render={({ field }) => <Input {...field} />}
+ * />
+ * ```
+ */
+export const DAILY_SCHEDULE_FIELD_NAMES = {
+  SCHEDULE: 'schedule',
+  DAY: 'day',
+  CHECKED: 'checked',
+  START_TIME: 'start_time',
+  END_TIME: 'end_time',
+  BREAK_DURATION_MINUTES: 'break_duration_minutes',
+} as const satisfies Record<
+  string,
+  keyof DailyScheduleEditFormData | keyof DailyScheduleEditFormRow
+>;
+
 const dayRowSchema = z
   .object({
     day: z.string().min(1),

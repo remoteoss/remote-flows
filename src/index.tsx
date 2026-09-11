@@ -66,6 +66,7 @@ export {
   buildDailyScheduleSummary,
   calculateWorkingHours,
   WEEKDAY_LABELS,
+  DAILY_SCHEDULE_FIELD_NAMES,
 } from '@/src/flows/Onboarding';
 
 export type {

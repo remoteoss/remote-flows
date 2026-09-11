@@ -5,13 +5,14 @@
  * using only exported pieces from @remoteoss/remote-flows:
  * - Types (DailyScheduleRenderProps, etc.)
  * - Utilities (buildDailyScheduleSummary, calculateWorkingHours, WEEKDAY_LABELS)
+ * - Field name constants (DAILY_SCHEDULE_FIELD_NAMES) for type-safe form paths
  * - UI primitives from /internals (Dialog, Button, Input, Checkbox, Label, etc.)
  *
  * NO component exports needed - customers rebuild with primitives!
  * Form fields are registered manually using formBag.form.register() and setValue().
  *
- * Note: This is demo/example code showing the pattern. In production,
- * customers would properly type their form paths.
+ * Note: Use DAILY_SCHEDULE_FIELD_NAMES constants instead of magic strings
+ * to ensure field paths match the contract defined by DailyScheduleEditFormData.
  */
 
 import { useState, memo } from 'react';
@@ -28,6 +29,7 @@ import {
   buildDailyScheduleSummary,
   calculateWorkingHours,
   WEEKDAY_LABELS,
+  DAILY_SCHEDULE_FIELD_NAMES,
   RFForm,
   useWatch,
   Controller,
@@ -123,7 +125,7 @@ const DayRow = memo(
     // Watch only THIS row's values for hours calculation and disabled state
     const row = useWatch({
       control: form.control,
-      name: `schedule.${index}`,
+      name: `${DAILY_SCHEDULE_FIELD_NAMES.SCHEDULE}.${index}`,
     }) as DailyScheduleEditFormRow;
 
     const hours = calculateWorkingHours(
@@ -142,23 +144,25 @@ const DayRow = memo(
       <div className='grid grid-cols-12 gap-4 items-center py-2'>
         <div className='col-span-3 flex items-center gap-2'>
           <Controller
-            name={`schedule.${index}.checked`}
+            name={`${DAILY_SCHEDULE_FIELD_NAMES.SCHEDULE}.${index}.${DAILY_SCHEDULE_FIELD_NAMES.CHECKED}`}
             control={form.control}
             render={({ field: controllerField }) => (
               <Checkbox
-                id={`schedule.${index}.checked`}
+                id={`${DAILY_SCHEDULE_FIELD_NAMES.SCHEDULE}.${index}.${DAILY_SCHEDULE_FIELD_NAMES.CHECKED}`}
                 checked={controllerField.value}
                 onCheckedChange={controllerField.onChange}
               />
             )}
           />
-          <Label htmlFor={`schedule.${index}.checked`}>
+          <Label
+            htmlFor={`${DAILY_SCHEDULE_FIELD_NAMES.SCHEDULE}.${index}.${DAILY_SCHEDULE_FIELD_NAMES.CHECKED}`}
+          >
             {WEEKDAY_LABELS[field.day]}
           </Label>
         </div>
         <div className='col-span-3'>
           <Controller
-            name={`schedule.${index}.start_time`}
+            name={`${DAILY_SCHEDULE_FIELD_NAMES.SCHEDULE}.${index}.${DAILY_SCHEDULE_FIELD_NAMES.START_TIME}`}
             control={form.control}
             render={({ field }) => (
               <Input
@@ -171,7 +175,7 @@ const DayRow = memo(
         </div>
         <div className='col-span-3'>
           <Controller
-            name={`schedule.${index}.end_time`}
+            name={`${DAILY_SCHEDULE_FIELD_NAMES.SCHEDULE}.${index}.${DAILY_SCHEDULE_FIELD_NAMES.END_TIME}`}
             control={form.control}
             render={({ field }) => (
               <Input
@@ -184,7 +188,7 @@ const DayRow = memo(
         </div>
         <div className='col-span-2'>
           <Controller
-            name={`schedule.${index}.break_duration_minutes`}
+            name={`${DAILY_SCHEDULE_FIELD_NAMES.SCHEDULE}.${index}.${DAILY_SCHEDULE_FIELD_NAMES.BREAK_DURATION_MINUTES}`}
             control={form.control}
             render={({ field }) => (
               <Input
