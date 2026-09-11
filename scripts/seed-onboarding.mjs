@@ -27,7 +27,7 @@
  * on specific values, and it makes real API calls, so keep it out of
  * example/e2e/ (Playwright's testDir / CI).
  *
- * Usage (from example/):
+ * Usage (from repo root):
  *   npm run seed:onboarding -- --country=DEU
  *   npm run seed:onboarding -- --country=ESP --basic-info-version=4
  */
@@ -38,7 +38,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
+dotenv.config({ path: path.resolve(__dirname, '..', 'example', '.env') });
 
 function parseArgs(argv) {
   const args = {};
