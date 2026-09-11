@@ -1,0 +1,192 @@
+import {
+  DailyScheduleDefaultDay,
+  DailyScheduleValue,
+  Weekday,
+  WorkHoursRange,
+} from '@/src/flows/Onboarding/components/DailySchedule/types';
+import { Form } from '@/src/components/ui/form';
+import { calculateWorkingHours } from '@/src/flows/Onboarding/components/DailySchedule/utils';
+import { CheckBoxField } from '@/src/components/form/fields/CheckBoxField';
+import { TextField } from '@/src/components/form/fields/TextField';
+import { DailyScheduleSummaryBody } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleSummaryBody';
+import { DailyScheduleHoursErrorBanner } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleHoursErrorBanner';
+import { Button } from '@/src/components/ui/button';
+import { RotateCcw } from 'lucide-react';
+import { useDailyScheduleEditForm } from '@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm';
+
+const DAY_LABELS: Record<Weekday, string> = {
+  monday: 'Monday',
+  tuesday: 'Tuesday',
+  wednesday: 'Wednesday',
+  thursday: 'Thursday',
+  friday: 'Friday',
+  saturday: 'Saturday',
+  sunday: 'Sunday',
+};
+
+type DailyScheduleEditFormProps = {
+  availableWorkDays: Weekday[];
+  defaultSchedule: DailyScheduleDefaultDay[];
+  defaultStartTime: string;
+  defaultEndTime: string;
+  defaultBreakDurationMinutes: number;
+  subtractBreaksFromWorkHours: boolean;
+  workHoursBounds: WorkHoursRange;
+  workSchedule: string | undefined;
+  countryName: string;
+  value: DailyScheduleValue | undefined;
+  setValue: (value: DailyScheduleValue) => void;
+  onClose: () => void;
+};
+
+export const DailyScheduleEditForm = ({
+  availableWorkDays,
+  defaultSchedule,
+  defaultStartTime,
+  defaultEndTime,
+  defaultBreakDurationMinutes,
+  subtractBreaksFromWorkHours,
+  workHoursBounds,
+  workSchedule,
+  countryName,
+  value,
+  setValue,
+  onClose,
+}: DailyScheduleEditFormProps) => {
+  const {
+    form,
+    fields,
+    watchedSchedule,
+    previewDays,
+    hoursError,
+    handleSave,
+    handleReset,
+    isScheduleAtDefault,
+    rootError,
+  } = useDailyScheduleEditForm({
+    availableWorkDays,
+    defaultSchedule,
+    defaultStartTime,
+    defaultEndTime,
+    defaultBreakDurationMinutes,
+    subtractBreaksFromWorkHours,
+    workHoursBounds,
+    workSchedule,
+    countryName,
+    value,
+    setValue,
+    onSaved: onClose,
+  });
+
+  const hasFieldErrors = Object.keys(form.formState.errors).length > 0;
+
+  return (
+    <Form {...form}>
+      <form className='space-y-4 RemoteFlows__DailyScheduleForm'>
+        <p className='text-gray-600 text-sm mb-4 RemoteFlows__DailyScheduleForm__Description'>
+          The times displayed are in the employee&apos;s time zone in the
+          24-hour format.
+        </p>
+
+        <div className='grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 uppercase tracking-wide RemoteFlows__DailyScheduleForm__Header'>
+          <div className='col-span-3'></div>
+          <div className='col-span-3 text-center'>Start</div>
+          <div className='col-span-3 text-center'>End</div>
+          <div className='col-span-3 text-center'>Break (minutes)</div>
+        </div>
+
+        <div className='RemoteFlows__DailyScheduleForm__Rows'>
+          {fields.map((field, index) => {
+            const currentRow = watchedSchedule[index];
+            const hours = calculateWorkingHours(
+              currentRow?.start_time,
+              currentRow?.end_time,
+              Number(currentRow?.break_duration_minutes) || 0,
+            );
+
+            return (
+              <div
+                key={field.id}
+                className='grid grid-cols-12 gap-4 items-center py-2 RemoteFlows__DailyScheduleForm__Row'
+              >
+                <div className='col-span-3'>
+                  <CheckBoxField
+                    label={DAY_LABELS[field.day]}
+                    name={`schedule.${index}.checked`}
+                  />
+                </div>
+                <div className='col-span-3'>
+                  <TextField
+                    name={`schedule.${index}.start_time`}
+                    includeErrorMessage={false}
+                    disabled={!currentRow?.checked}
+                  />
+                </div>
+                <div className='col-span-3'>
+                  <TextField
+                    name={`schedule.${index}.end_time`}
+                    includeErrorMessage={false}
+                    disabled={!currentRow?.checked}
+                  />
+                </div>
+                <div className='col-span-2'>
+                  <TextField
+                    name={`schedule.${index}.break_duration_minutes`}
+                    includeErrorMessage={false}
+                    disabled={!currentRow?.checked}
+                  />
+                </div>
+                <div className='col-span-1 text-center text-sm text-gray-500 RemoteFlows__DailyScheduleForm__Row__Hours'>
+                  {currentRow?.checked ? `${hours}h` : '-'}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className='rounded-lg border p-4 RemoteFlows__DailyScheduleForm__Preview'>
+          <DailyScheduleSummaryBody
+            days={previewDays}
+            subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
+          />
+        </div>
+
+        <DailyScheduleHoursErrorBanner error={hoursError} />
+
+        {rootError ? (
+          <p className='text-destructive text-sm mb-0'>{rootError}</p>
+        ) : null}
+
+        {!rootError && hasFieldErrors && (
+          <p className='text-destructive text-sm mb-0'>
+            Please check the form for errors. Time fields must use HH:mm format
+            (e.g., 09:00), and all checked days must have start time, end time,
+            and break duration filled in.
+          </p>
+        )}
+
+        <div className='flex items-center gap-4 pt-4'>
+          {!isScheduleAtDefault && (
+            <Button
+              type='button'
+              variant='ghost'
+              className='gap-2 RemoteFlows__DailyScheduleForm__ResetButton'
+              onClick={handleReset}
+            >
+              <RotateCcw className='h-4 w-4' />
+              Reset to default
+            </Button>
+          )}
+          <div className='flex gap-4 ml-auto'>
+            <Button type='button' variant='outline' onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type='button' onClick={handleSave} disabled={!!hoursError}>
+              Save schedule
+            </Button>
+          </div>
+        </div>
+      </form>
+    </Form>
+  );
+};
