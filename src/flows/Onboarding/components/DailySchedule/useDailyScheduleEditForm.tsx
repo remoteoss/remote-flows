@@ -11,7 +11,7 @@ import {
   WorkHoursRange,
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import {
-  buildDailyScheduleSummary,
+  calculateTotalWeeklyHours,
   getDailyScheduleHoursError,
   resolveDailyScheduleValue,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
@@ -270,7 +270,7 @@ export function useDailyScheduleEditForm({
       break_duration_minutes: Number(row.break_duration_minutes) || 0,
     }));
 
-  const { totalWeeklyHours } = buildDailyScheduleSummary(
+  const totalWeeklyHours = calculateTotalWeeklyHours(
     previewDays,
     subtractBreaksFromWorkHours,
   );
