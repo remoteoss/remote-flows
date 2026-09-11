@@ -1,6 +1,7 @@
 import { Badge } from '@/src/components/ui/badge';
 import { DailyScheduleHoursErrorBanner } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleHoursErrorBanner';
 import { DailyScheduleSummaryBody } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleSummaryBody';
+import { EditEmployeeWorkingHoursDialog } from '@/src/flows/Onboarding/components/DailySchedule/EditEmployeeWorkingHoursDialog';
 import { DailyScheduleRenderProps } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import {
   buildDailyScheduleSummary,
@@ -17,6 +18,11 @@ export const DailySchedule = ({
   workHoursBounds,
   countryName,
   workSchedule,
+  availableWorkDays,
+  defaultStartTime,
+  defaultEndTime,
+  defaultBreakDurationMinutes,
+  setValue,
 }: DailyScheduleProps) => {
   const summaryDays = getDailyScheduleSummaryDays(value, defaultSchedule);
   // TODO: potential refactor for later as buildDailyScheduleSummary is also used in DailyScheduleSummaryBody
@@ -53,6 +59,19 @@ export const DailySchedule = ({
           subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
         />
         <DailyScheduleHoursErrorBanner error={hoursError} />
+        <EditEmployeeWorkingHoursDialog
+          availableWorkDays={availableWorkDays}
+          defaultSchedule={defaultSchedule}
+          defaultStartTime={defaultStartTime}
+          defaultEndTime={defaultEndTime}
+          defaultBreakDurationMinutes={defaultBreakDurationMinutes}
+          subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
+          workHoursBounds={workHoursBounds}
+          workSchedule={workSchedule}
+          countryName={countryName}
+          value={value}
+          setValue={setValue}
+        />
       </div>
     </div>
   );

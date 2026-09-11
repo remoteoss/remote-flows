@@ -364,7 +364,7 @@ export function buildDailyScheduleSummary(
  * summary and the edit modal show sensible defaults before the employer has
  * saved anything (create flow), not just after (edit flow).
  */
-function resolveDailyScheduleValue({
+export function resolveDailyScheduleValue({
   value,
   defaultSchedule,
 }: {
