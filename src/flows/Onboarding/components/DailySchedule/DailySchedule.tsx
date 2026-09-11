@@ -2,24 +2,16 @@ import { Badge } from '@/src/components/ui/badge';
 import { DailyScheduleHoursErrorBanner } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleHoursErrorBanner';
 import { DailyScheduleSummaryBody } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleSummaryBody';
 import { EditEmployeeWorkingHoursDialog } from '@/src/flows/Onboarding/components/DailySchedule/EditEmployeeWorkingHoursDialog';
+import { DailyScheduleEditForm } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleEditForm';
 import { DailyScheduleRenderProps } from '@/src/flows/Onboarding/components/DailySchedule/types';
 
 type DailyScheduleProps = DailyScheduleRenderProps;
 
 export const DailySchedule = ({
-  value,
-  defaultSchedule,
-  subtractBreaksFromWorkHours,
-  workHoursBounds,
-  countryName,
-  workSchedule,
-  availableWorkDays,
-  defaultStartTime,
-  defaultEndTime,
-  defaultBreakDurationMinutes,
-  setValue,
   summaryDays,
+  subtractBreaksFromWorkHours,
   hoursError,
+  formBag,
 }: DailyScheduleProps) => {
   return (
     <div className='flex flex-col gap-3 RemoteFlows__DailySchedule'>
@@ -40,19 +32,12 @@ export const DailySchedule = ({
           subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
         />
         <DailyScheduleHoursErrorBanner error={hoursError} />
-        <EditEmployeeWorkingHoursDialog
-          availableWorkDays={availableWorkDays}
-          defaultSchedule={defaultSchedule}
-          defaultStartTime={defaultStartTime}
-          defaultEndTime={defaultEndTime}
-          defaultBreakDurationMinutes={defaultBreakDurationMinutes}
-          subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
-          workHoursBounds={workHoursBounds}
-          workSchedule={workSchedule}
-          countryName={countryName}
-          value={value}
-          setValue={setValue}
-        />
+        <EditEmployeeWorkingHoursDialog>
+          <DailyScheduleEditForm
+            {...formBag}
+            subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
+          />
+        </EditEmployeeWorkingHoursDialog>
       </div>
     </div>
   );

@@ -1,9 +1,4 @@
-import {
-  DailyScheduleDefaultDay,
-  DailyScheduleValue,
-  Weekday,
-  WorkHoursRange,
-} from '@/src/flows/Onboarding/components/DailySchedule/types';
+import { Weekday } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import { Form } from '@/src/components/ui/form';
 import { calculateWorkingHours } from '@/src/flows/Onboarding/components/DailySchedule/utils';
 import { CheckBoxField } from '@/src/components/form/fields/CheckBoxField';
@@ -13,6 +8,7 @@ import { DailyScheduleHoursErrorBanner } from '@/src/flows/Onboarding/components
 import { Button } from '@/src/components/ui/button';
 import { RotateCcw } from 'lucide-react';
 import { useDailyScheduleEditForm } from '@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm';
+import { useDialogControl } from '@/src/flows/Onboarding/components/DailySchedule/EditEmployeeWorkingHoursDialog';
 
 const DAY_LABELS: Record<Weekday, string> = {
   monday: 'Monday',
@@ -24,59 +20,33 @@ const DAY_LABELS: Record<Weekday, string> = {
   sunday: 'Sunday',
 };
 
-type DailyScheduleEditFormProps = {
-  availableWorkDays: Weekday[];
-  defaultSchedule: DailyScheduleDefaultDay[];
-  defaultStartTime: string;
-  defaultEndTime: string;
-  defaultBreakDurationMinutes: number;
+type DailyScheduleEditFormProps = ReturnType<
+  typeof useDailyScheduleEditForm
+> & {
   subtractBreaksFromWorkHours: boolean;
-  workHoursBounds: WorkHoursRange;
-  workSchedule: string | undefined;
-  countryName: string;
-  value: DailyScheduleValue | undefined;
-  setValue: (value: DailyScheduleValue) => void;
-  onClose: () => void;
 };
 
 export const DailyScheduleEditForm = ({
-  availableWorkDays,
-  defaultSchedule,
-  defaultStartTime,
-  defaultEndTime,
-  defaultBreakDurationMinutes,
+  form,
+  fields,
+  watchedSchedule,
+  previewDays,
+  hoursError,
+  handleSave: hookHandleSave,
+  handleReset,
+  isScheduleAtDefault,
+  rootError,
   subtractBreaksFromWorkHours,
-  workHoursBounds,
-  workSchedule,
-  countryName,
-  value,
-  setValue,
-  onClose,
 }: DailyScheduleEditFormProps) => {
-  const {
-    form,
-    fields,
-    watchedSchedule,
-    previewDays,
-    hoursError,
-    handleSave,
-    handleReset,
-    isScheduleAtDefault,
-    rootError,
-  } = useDailyScheduleEditForm({
-    availableWorkDays,
-    defaultSchedule,
-    defaultStartTime,
-    defaultEndTime,
-    defaultBreakDurationMinutes,
-    subtractBreaksFromWorkHours,
-    workHoursBounds,
-    workSchedule,
-    countryName,
-    value,
-    setValue,
-    onSaved: onClose,
-  });
+  const { close } = useDialogControl();
+
+  const handleSave = async () => {
+    await hookHandleSave();
+    // Only close if there are no validation errors
+    if (Object.keys(form.formState.errors).length === 0) {
+      close();
+    }
+  };
 
   const hasFieldErrors = Object.keys(form.formState.errors).length > 0;
 
@@ -178,7 +148,7 @@ export const DailyScheduleEditForm = ({
             </Button>
           )}
           <div className='flex gap-4 ml-auto'>
-            <Button type='button' variant='outline' onClick={onClose}>
+            <Button type='button' variant='outline' onClick={close}>
               Cancel
             </Button>
             <Button type='button' onClick={handleSave} disabled={!!hoursError}>

@@ -7,6 +7,7 @@ import {
   getDefaultsFromSchema,
   getWorkHoursBounds,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
+import { useDailyScheduleEditForm } from '@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm';
 
 /**
  * Headless container for the `daily_schedule`, following the pattern of the
@@ -46,15 +47,24 @@ export const DailyScheduleContainer = ({
     workSchedule: resolvedWorkSchedule,
   });
 
-  return render({
-    ...fieldProps,
-    value,
-    ...defaults,
-    metadata,
+  const formBag = useDailyScheduleEditForm({
+    availableWorkDays: defaults.availableWorkDays,
+    defaultSchedule: defaults.defaultSchedule,
+    defaultStartTime: defaults.defaultStartTime,
+    defaultEndTime: defaults.defaultEndTime,
+    defaultBreakDurationMinutes: defaults.defaultBreakDurationMinutes,
+    subtractBreaksFromWorkHours: defaults.subtractBreaksFromWorkHours,
     workHoursBounds,
     workSchedule: resolvedWorkSchedule,
+    countryName: defaults.countryName,
+    value,
+    setValue: fieldProps.setValue,
+  });
+
+  return render({
     summaryDays,
-    totalWeeklyHours,
+    subtractBreaksFromWorkHours: defaults.subtractBreaksFromWorkHours,
     hoursError,
+    formBag,
   });
 };
