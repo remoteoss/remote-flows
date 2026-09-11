@@ -135,7 +135,11 @@ function fakeValueFor(field) {
     case 'textarea':
       return faker.lorem.sentence();
     case 'checkbox':
-      return [];
+      // No enumerated options: this is a single acknowledgement toggle
+      // (jsonType array, items usually `{const: true}`) - an empty array
+      // reads as "filled" to our missing-field check but is actually an
+      // unchecked/invalid value for a required field, so mark it checked.
+      return [true];
     case 'file':
       return null;
     default:
