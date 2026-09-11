@@ -309,4 +309,72 @@ describe('DailySchedule', () => {
       within(dialog).getByRole('button', { name: 'Reset to default' }),
     ).toBeInTheDocument();
   });
+
+  it('discards unsaved edits when the dialog is closed via Cancel button', async () => {
+    const user = userEvent.setup();
+    renderWithForm([createDailyScheduleField()], {
+      daily_schedule: {
+        selected_days: ['monday', 'tuesday'],
+        schedule: {
+          monday: {
+            start_time: '09:00',
+            end_time: '17:00',
+            break_duration_minutes: 60,
+          },
+          tuesday: {
+            start_time: '09:00',
+            end_time: '17:00',
+            break_duration_minutes: 60,
+          },
+        },
+      },
+    });
+
+    // Open the dialog and make edits
+    await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+    let dialog = screen.getByRole('dialog');
+
+    // Uncheck Tuesday and check Wednesday
+    await user.click(within(dialog).getByRole('checkbox', { name: 'Tuesday' }));
+    await user.click(
+      within(dialog).getByRole('checkbox', { name: 'Wednesday' }),
+    );
+
+    // Verify edits are in the form
+    await waitFor(() => {
+      expect(
+        within(dialog).getByRole('checkbox', { name: 'Tuesday' }),
+      ).not.toBeChecked();
+      expect(
+        within(dialog).getByRole('checkbox', { name: 'Wednesday' }),
+      ).toBeChecked();
+    });
+
+    // Cancel without saving
+    await user.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+
+    // Wait for dialog to close
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
+    // Reopen the dialog
+    await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+    // Wait for dialog to open and form to be reset
+    await waitFor(() => {
+      dialog = screen.getByRole('dialog');
+      expect(
+        within(dialog).getByRole('checkbox', { name: 'Tuesday' }),
+      ).toBeChecked(); // Should be back to saved value
+    });
+
+    // Verify all saved values are restored
+    expect(
+      within(dialog).getByRole('checkbox', { name: 'Monday' }),
+    ).toBeChecked();
+    expect(
+      within(dialog).getByRole('checkbox', { name: 'Wednesday' }),
+    ).not.toBeChecked(); // Should not be checked (edit was discarded)
+  });
 });

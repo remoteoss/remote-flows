@@ -28,20 +28,30 @@ export const useDialogControl = () => {
 
 type EditEmployeeWorkingHoursDialogProps = {
   children: React.ReactNode;
+  /** Called when the dialog closes, used to reset form state */
+  onClose?: () => void;
 };
 
 export const EditEmployeeWorkingHoursDialog = ({
   children,
+  onClose,
 }: EditEmployeeWorkingHoursDialogProps) => {
   const [open, setOpen] = useState(false);
 
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen && onClose) {
+      onClose();
+    }
+    setOpen(newOpen);
+  };
+
   const close = () => {
-    setOpen(false);
+    handleOpenChange(false);
   };
 
   return (
     <DialogControlContext.Provider value={{ close }}>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
           <Button
             variant='link'
