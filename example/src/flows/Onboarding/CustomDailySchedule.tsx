@@ -132,6 +132,12 @@ const DayRow = memo(
       Number(row?.break_duration_minutes) || 0,
     );
 
+    const hoursDisplay = row?.checked
+      ? Number.isNaN(hours)
+        ? '-'
+        : `${hours}h`
+      : '-';
+
     return (
       <div className='grid grid-cols-12 gap-4 items-center py-2'>
         <div className='col-span-3 flex items-center gap-2'>
@@ -190,7 +196,7 @@ const DayRow = memo(
           />
         </div>
         <div className='col-span-1 text-center text-sm text-gray-500'>
-          {row?.checked ? `${hours}h` : '-'}
+          {hoursDisplay}
         </div>
       </div>
     );

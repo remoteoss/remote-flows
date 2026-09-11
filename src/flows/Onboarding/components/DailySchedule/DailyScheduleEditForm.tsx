@@ -64,6 +64,12 @@ export const DailyScheduleEditForm = ({
               Number(currentRow?.break_duration_minutes) || 0,
             );
 
+            const hoursDisplay = currentRow?.checked
+              ? Number.isNaN(hours)
+                ? '-'
+                : `${hours}h`
+              : '-';
+
             return (
               <div
                 key={field.id}
@@ -97,7 +103,7 @@ export const DailyScheduleEditForm = ({
                   />
                 </div>
                 <div className='col-span-1 text-center text-sm text-gray-500 RemoteFlows__DailyScheduleForm__Row__Hours'>
-                  {currentRow?.checked ? `${hours}h` : '-'}
+                  {hoursDisplay}
                 </div>
               </div>
             );

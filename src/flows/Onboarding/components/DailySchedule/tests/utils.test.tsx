@@ -82,6 +82,19 @@ describe('DailySchedule utils', () => {
       expect(convertTimeStringToMinutes('09:30')).toBe(570);
       expect(convertTimeStringToMinutes('00:00')).toBe(0);
     });
+
+    it('handles single digit inputs', () => {
+      expect(convertTimeStringToMinutes('0')).toBeNaN();
+      expect(convertTimeStringToMinutes('9')).toBeNaN();
+    });
+
+    it('returns NaN for empty string', () => {
+      expect(convertTimeStringToMinutes('')).toBeNaN();
+    });
+
+    it('returns NaN for invalid time format', () => {
+      expect(convertTimeStringToMinutes('invalid')).toBeNaN();
+    });
   });
 
   describe('convertMinutesToHours', () => {
@@ -98,6 +111,23 @@ describe('DailySchedule utils', () => {
     it('returns 0 when start or end time is missing', () => {
       expect(calculateWorkingHours(undefined, '18:00', 60)).toBe(0);
       expect(calculateWorkingHours('09:00', undefined, 60)).toBe(0);
+    });
+
+    it('returns 0 when start time is empty string', () => {
+      expect(calculateWorkingHours('', '18:00', 60)).toBe(0);
+    });
+
+    it('returns 0 when end time is empty string', () => {
+      expect(calculateWorkingHours('09:00', '', 60)).toBe(0);
+    });
+
+    it('returns 0 when both times are empty strings', () => {
+      expect(calculateWorkingHours('', '', 60)).toBe(0);
+    });
+
+    it('returns NaN for incomplete time inputs like single digits', () => {
+      expect(calculateWorkingHours('0', '18:00', 60)).toBeNaN();
+      expect(calculateWorkingHours('09:00', '1', 60)).toBeNaN();
     });
 
     it('subtracts the break duration when provided', () => {
