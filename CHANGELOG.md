@@ -4,9 +4,11 @@
 
 ### Minor Changes
 
+#### Features
+
 - silence expected FIELD_TO_CHANGE_NOT_FOUND, hide dev warnings from consumers (#1299) [#1299](https://github.com/remoteoss/remote-flows/pull/1299)
 - add daily schedule summary days/hours (#1301) [#1301](https://github.com/remoteoss/remote-flows/pull/1301)
-- add error component (#1302) [#1302](https://github.com/remoteoss/remote-flows/pull/1302)
+- add error component for daily schedule (#1302) [#1302](https://github.com/remoteoss/remote-flows/pull/1302)
 
 ## 1.51.0
 
