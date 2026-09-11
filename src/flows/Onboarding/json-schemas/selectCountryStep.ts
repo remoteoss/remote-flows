@@ -2,7 +2,7 @@ export const selectCountryStepSchema = {
   data: {
     version: 7,
     schema: {
-      'x-rmt-meta': { jsfOldVersion: true },
+      'x-rmt-meta': { jsfVersion: '1' },
       additionalProperties: false,
       properties: {
         country: {

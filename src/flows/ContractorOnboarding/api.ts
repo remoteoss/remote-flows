@@ -811,17 +811,22 @@ export const useCountriesSchemaField = (
   const selectCountryForm = createHeadlessForm(
     selectCountryStepSchema.data.schema,
     {},
-    options,
+    {
+      jsfModify: {
+        ...options?.jsfModify,
+        fields: {
+          ...options?.jsfModify?.fields,
+          country: {
+            ...options?.jsfModify?.fields?.country,
+            oneOf: (countries ?? []).map(({ value, label }) => ({
+              const: value,
+              title: label,
+            })),
+          },
+        },
+      },
+    },
   );
-
-  if (countries) {
-    const countryField = selectCountryForm.fields.find(
-      (field) => field.name === 'country',
-    );
-    if (countryField) {
-      countryField.options = countries;
-    }
-  }
 
   return {
     isLoading,
