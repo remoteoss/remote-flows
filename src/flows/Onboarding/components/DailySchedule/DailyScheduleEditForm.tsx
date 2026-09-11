@@ -6,9 +6,88 @@ import { DailyScheduleSummaryBody } from '@/src/flows/Onboarding/components/Dail
 import { DailyScheduleHoursErrorBanner } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleHoursErrorBanner';
 import { Button } from '@/src/components/ui/button';
 import { RotateCcw } from 'lucide-react';
-import { useDailyScheduleEditForm } from '@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm';
+import { memo } from 'react';
+import { useWatch, UseFormReturn, FieldArrayWithId } from 'react-hook-form';
+import {
+  DailyScheduleEditFormRow,
+  DailyScheduleEditFormData,
+  useDailyScheduleEditForm,
+} from '@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm';
 import { useDialogControl } from '@/src/flows/Onboarding/components/DailySchedule/EditEmployeeWorkingHoursDialog';
 import { WEEKDAY_LABELS } from '@/src/flows/Onboarding/components/DailySchedule/constants';
+
+// Memoized day row to prevent unnecessary re-renders
+// Uses per-row useWatch for optimal performance
+const DayRow = memo(
+  ({
+    field,
+    index,
+    form,
+  }: {
+    field: FieldArrayWithId<DailyScheduleEditFormData, 'schedule', 'id'>;
+    index: number;
+    form: UseFormReturn<DailyScheduleEditFormData>;
+  }) => {
+    // Watch only THIS row's values for hours calculation and disabled state
+    // More performant than watching the entire schedule array
+    const currentRow = useWatch({
+      control: form.control,
+      name: `schedule.${index}`,
+    }) as DailyScheduleEditFormRow;
+
+    const hours = calculateWorkingHours(
+      currentRow?.start_time,
+      currentRow?.end_time,
+      Number(currentRow?.break_duration_minutes) || 0,
+    );
+
+    const hoursDisplay = currentRow?.checked
+      ? Number.isNaN(hours)
+        ? '-'
+        : `${hours}h`
+      : '-';
+
+    return (
+      <div
+        key={field.id}
+        className='grid grid-cols-12 gap-4 items-center py-2 RemoteFlows__DailyScheduleForm__Row'
+      >
+        <div className='col-span-3'>
+          <CheckBoxField
+            label={WEEKDAY_LABELS[field.day]}
+            name={`schedule.${index}.checked`}
+          />
+        </div>
+        <div className='col-span-3'>
+          <TextField
+            name={`schedule.${index}.start_time`}
+            includeErrorMessage={false}
+            disabled={!currentRow?.checked}
+          />
+        </div>
+        <div className='col-span-3'>
+          <TextField
+            name={`schedule.${index}.end_time`}
+            includeErrorMessage={false}
+            disabled={!currentRow?.checked}
+          />
+        </div>
+        <div className='col-span-2'>
+          <TextField
+            name={`schedule.${index}.break_duration_minutes`}
+            includeErrorMessage={false}
+            disabled={!currentRow?.checked}
+          />
+        </div>
+        <div className='col-span-1 text-center text-sm text-gray-500 RemoteFlows__DailyScheduleForm__Row__Hours'>
+          {hoursDisplay}
+        </div>
+      </div>
+    );
+  },
+);
+
+DayRow.displayName = 'DayRow';
 
 type DailyScheduleEditFormProps = ReturnType<
   typeof useDailyScheduleEditForm
@@ -19,7 +98,6 @@ type DailyScheduleEditFormProps = ReturnType<
 export const DailyScheduleEditForm = ({
   form,
   fields,
-  formValues,
   unsavedSummaryDays,
   hoursRangeError,
   handleSave: hookHandleSave,
@@ -56,58 +134,9 @@ export const DailyScheduleEditForm = ({
         </div>
 
         <div className='RemoteFlows__DailyScheduleForm__Rows'>
-          {fields.map((field, index) => {
-            const currentRow = formValues[index];
-            const hours = calculateWorkingHours(
-              currentRow?.start_time,
-              currentRow?.end_time,
-              Number(currentRow?.break_duration_minutes) || 0,
-            );
-
-            const hoursDisplay = currentRow?.checked
-              ? Number.isNaN(hours)
-                ? '-'
-                : `${hours}h`
-              : '-';
-
-            return (
-              <div
-                key={field.id}
-                className='grid grid-cols-12 gap-4 items-center py-2 RemoteFlows__DailyScheduleForm__Row'
-              >
-                <div className='col-span-3'>
-                  <CheckBoxField
-                    label={WEEKDAY_LABELS[field.day]}
-                    name={`schedule.${index}.checked`}
-                  />
-                </div>
-                <div className='col-span-3'>
-                  <TextField
-                    name={`schedule.${index}.start_time`}
-                    includeErrorMessage={false}
-                    disabled={!currentRow?.checked}
-                  />
-                </div>
-                <div className='col-span-3'>
-                  <TextField
-                    name={`schedule.${index}.end_time`}
-                    includeErrorMessage={false}
-                    disabled={!currentRow?.checked}
-                  />
-                </div>
-                <div className='col-span-2'>
-                  <TextField
-                    name={`schedule.${index}.break_duration_minutes`}
-                    includeErrorMessage={false}
-                    disabled={!currentRow?.checked}
-                  />
-                </div>
-                <div className='col-span-1 text-center text-sm text-gray-500 RemoteFlows__DailyScheduleForm__Row__Hours'>
-                  {hoursDisplay}
-                </div>
-              </div>
-            );
-          })}
+          {fields.map((field, index) => (
+            <DayRow key={field.id} field={field} index={index} form={form} />
+          ))}
         </div>
 
         <div className='rounded-lg border p-4 RemoteFlows__DailyScheduleForm__Preview'>

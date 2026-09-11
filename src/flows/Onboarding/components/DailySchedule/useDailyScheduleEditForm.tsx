@@ -223,7 +223,6 @@ export function useDailyScheduleEditForm({
 
   const { control, handleSubmit, watch, formState } = form;
   const { fields } = useFieldArray({ name: 'schedule', control });
-  const formValues = watch('schedule');
 
   const handleSave = handleSubmit((data) => {
     setValue(mapDailyScheduleEditFormDataToValue(data));
@@ -243,6 +242,10 @@ export function useDailyScheduleEditForm({
   const handleReset = () => {
     form.reset({ schedule: defaultScheduleRows });
   };
+
+  // Watch the entire schedule array for isDirty check and summary calculations
+  // Individual rows should use per-row useWatch in the component for better performance
+  const formValues = watch('schedule');
 
   const isDirty = !isDefaultSchedule(formValues, defaultScheduleRows);
 
@@ -282,7 +285,6 @@ export function useDailyScheduleEditForm({
   return {
     form,
     fields,
-    formValues,
     unsavedSummaryDays,
     hoursRangeError,
     handleSave,
