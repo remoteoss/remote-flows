@@ -1,4 +1,5 @@
 import { JSFModifyField } from '@remoteoss/remote-flows';
+import { CustomDailySchedule } from './CustomDailySchedule';
 
 export const ONBOARDING_OPTIONS = {
   features: [
@@ -135,6 +136,17 @@ export const ONBOARDING_OPTIONS = {
                   ? { ...option, description: 'Select...' }
                   : option,
             ),
+          },
+        }),
+      },
+    },
+    contract_details: {
+      fields: {
+        // Demo: Replace default DailySchedule with custom implementation
+        // Shows how customers can rebuild using only exported pieces
+        daily_schedule: () => ({
+          'x-jsf-presentation': {
+            Component: CustomDailySchedule,
           },
         }),
       },

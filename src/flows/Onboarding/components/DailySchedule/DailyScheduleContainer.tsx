@@ -36,10 +36,12 @@ export const DailyScheduleContainer = ({
     value,
     defaults.defaultSchedule,
   );
+
   const totalWeeklyHours = calculateTotalWeeklyHours(
     summaryDays,
     defaults.subtractBreaksFromWorkHours,
   );
+
   const hoursError = getDailyScheduleHoursError({
     totalWeeklyHours,
     workHoursBounds,
