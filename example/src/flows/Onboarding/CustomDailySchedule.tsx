@@ -234,6 +234,13 @@ export function CustomDailySchedule({
     }
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
+      form.reset();
+    }
+    setOpen(newOpen);
+  };
+
   const hasFieldErrors = Object.keys(form.formState.errors).length > 0;
 
   return (
@@ -254,7 +261,7 @@ export function CustomDailySchedule({
         <CustomHoursError error={savedScheduleHoursError} />
 
         {/* Custom Edit Dialog (using internals Dialog + FormProvider from library) */}
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
           <DialogTrigger asChild>
             <Button variant='link' className='self-start p-0'>
               Edit Custom Schedule
