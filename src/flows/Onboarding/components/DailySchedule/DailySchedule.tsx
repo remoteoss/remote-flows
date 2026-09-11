@@ -3,11 +3,6 @@ import { DailyScheduleHoursErrorBanner } from '@/src/flows/Onboarding/components
 import { DailyScheduleSummaryBody } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleSummaryBody';
 import { EditEmployeeWorkingHoursDialog } from '@/src/flows/Onboarding/components/DailySchedule/EditEmployeeWorkingHoursDialog';
 import { DailyScheduleRenderProps } from '@/src/flows/Onboarding/components/DailySchedule/types';
-import {
-  calculateTotalWeeklyHours,
-  getDailyScheduleHoursError,
-  getDailyScheduleSummaryDays,
-} from '@/src/flows/Onboarding/components/DailySchedule/utils';
 
 type DailyScheduleProps = DailyScheduleRenderProps;
 
@@ -23,20 +18,9 @@ export const DailySchedule = ({
   defaultEndTime,
   defaultBreakDurationMinutes,
   setValue,
+  summaryDays,
+  hoursError,
 }: DailyScheduleProps) => {
-  const summaryDays = getDailyScheduleSummaryDays(value, defaultSchedule);
-  const totalWeeklyHours = calculateTotalWeeklyHours(
-    summaryDays,
-    subtractBreaksFromWorkHours,
-  );
-
-  const hoursError = getDailyScheduleHoursError({
-    totalWeeklyHours,
-    workHoursBounds,
-    countryName,
-    workSchedule,
-  });
-
   return (
     <div className='flex flex-col gap-3 RemoteFlows__DailySchedule'>
       <div className='flex items-center gap-2 RemoteFlows__DailySchedule__Header'>

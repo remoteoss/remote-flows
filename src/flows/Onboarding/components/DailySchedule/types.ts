@@ -77,6 +77,12 @@ export type DailyScheduleRenderProps = DailyScheduleFieldProps &
     workHoursBounds: WorkHoursRange;
     /** The resolved `work_schedule` value ('full_time' / 'part_time'), used to word the hours-range error. */
     workSchedule: string | undefined;
+    /** The summary days derived from the current value and default schedule. */
+    summaryDays: DailyScheduleSummaryDay[];
+    /** The total weekly hours calculated from summary days. */
+    totalWeeklyHours: number;
+    /** The hours error message if the total hours are outside the bounds. */
+    hoursError: DailyScheduleHoursError | null;
   };
 
 export type DailyScheduleContainerProps = DailyScheduleFieldProps & {
