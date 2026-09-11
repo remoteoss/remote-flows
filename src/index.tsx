@@ -85,6 +85,8 @@ export type {
   DailyScheduleRenderProps,
   DailyScheduleSummaryDay,
   DailyScheduleHoursError,
+  DailyScheduleEditFormRow,
+  DailyScheduleEditFormData,
   Weekday,
 } from '@/src/flows/Onboarding';
 
@@ -169,7 +171,14 @@ export { RemoteFlows } from '@/src/RemoteFlowsProvider';
 
 export { convertFromCents } from '@/src/components/form/utils';
 
-export { RFForm } from '@/src/components/form/adapters';
+export { RFForm, useWatch, Controller } from '@/src/components/form/adapters';
+
+export type {
+  UseFormReturn,
+  FieldValues,
+  FieldArrayWithId,
+  Path,
+} from '@/src/components/form/adapters';
 
 export type {
   Components,

@@ -23,6 +23,11 @@ export type {
   Weekday,
 } from './components/DailySchedule/types';
 
+export type {
+  DailyScheduleEditFormRow,
+  DailyScheduleEditFormData,
+} from './components/DailySchedule/useDailyScheduleEditForm';
+
 export {
   buildDailyScheduleSummary,
   calculateWorkingHours,

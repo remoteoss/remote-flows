@@ -14,17 +14,23 @@
  * customers would properly type their form paths.
  */
 
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import type {
   DailyScheduleRenderProps,
   DailyScheduleSummaryDay,
   DailyScheduleHoursError,
+  DailyScheduleEditFormRow,
+  DailyScheduleEditFormData,
+  UseFormReturn,
+  FieldArrayWithId,
 } from '@remoteoss/remote-flows';
 import {
   buildDailyScheduleSummary,
   calculateWorkingHours,
   WEEKDAY_LABELS,
   RFForm,
+  useWatch,
+  Controller,
 } from '@remoteoss/remote-flows';
 import {
   Dialog,
@@ -102,6 +108,95 @@ function CustomHoursError({
   );
 }
 
+// Memoized day row to prevent cursor reset when typing
+// Uses Controller for stable controlled inputs
+const DayRow = memo(
+  ({
+    field,
+    index,
+    form,
+  }: {
+    field: FieldArrayWithId<DailyScheduleEditFormData, 'schedule', 'id'>;
+    index: number;
+    form: UseFormReturn<DailyScheduleEditFormData>;
+  }) => {
+    // Watch only THIS row's values for hours calculation and disabled state
+    const row = useWatch({
+      control: form.control,
+      name: `schedule.${index}`,
+    }) as DailyScheduleEditFormRow;
+
+    const hours = calculateWorkingHours(
+      row?.start_time,
+      row?.end_time,
+      Number(row?.break_duration_minutes) || 0,
+    );
+
+    return (
+      <div className='grid grid-cols-12 gap-4 items-center py-2'>
+        <div className='col-span-3 flex items-center gap-2'>
+          <Controller
+            name={`schedule.${index}.checked`}
+            control={form.control}
+            render={({ field: controllerField }) => (
+              <Checkbox
+                id={`schedule.${index}.checked`}
+                checked={controllerField.value}
+                onCheckedChange={controllerField.onChange}
+              />
+            )}
+          />
+          <Label htmlFor={`schedule.${index}.checked`}>
+            {WEEKDAY_LABELS[field.day]}
+          </Label>
+        </div>
+        <div className='col-span-3'>
+          <Controller
+            name={`schedule.${index}.start_time`}
+            control={form.control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                value={field.value ?? ''}
+                disabled={!row?.checked}
+              />
+            )}
+          />
+        </div>
+        <div className='col-span-3'>
+          <Controller
+            name={`schedule.${index}.end_time`}
+            control={form.control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                value={field.value ?? ''}
+                disabled={!row?.checked}
+              />
+            )}
+          />
+        </div>
+        <div className='col-span-2'>
+          <Controller
+            name={`schedule.${index}.break_duration_minutes`}
+            control={form.control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                value={field.value ?? ''}
+                disabled={!row?.checked}
+              />
+            )}
+          />
+        </div>
+        <div className='col-span-1 text-center text-sm text-gray-500'>
+          {row?.checked ? `${hours}h` : '-'}
+        </div>
+      </div>
+    );
+  },
+);
+
 /**
  * Custom DailySchedule Component
  *
@@ -120,7 +215,6 @@ export function CustomDailySchedule({
     hoursRangeError,
     fields,
     unsavedSummaryDays,
-    formValues,
     handleReset,
     handleSave: formHandleSave,
   } = formBag;
@@ -182,68 +276,16 @@ export function CustomDailySchedule({
                   <div className='col-span-3 text-center'>Break (min)</div>
                 </div>
 
-                {/* Map over fields with custom inputs */}
+                {/* Map over fields with custom inputs - using memoized component */}
                 <div>
-                  {fields.map((field, index) => {
-                    const row = formValues[index];
-                    const hours = calculateWorkingHours(
-                      row?.start_time,
-                      row?.end_time,
-                      Number(row?.break_duration_minutes) || 0,
-                    );
-
-                    return (
-                      <div
-                        key={field.id}
-                        className='grid grid-cols-12 gap-4 items-center py-2'
-                      >
-                        {/* Checkbox */}
-                        <div className='col-span-3 flex items-center gap-2'>
-                          <Checkbox
-                            id={`schedule.${index}.checked`}
-                            checked={row?.checked}
-                            onCheckedChange={(checked) => {
-                              form.setValue(
-                                `schedule.${index}.checked`,
-                                Boolean(checked),
-                              );
-                            }}
-                          />
-                          <Label htmlFor={`schedule.${index}.checked`}>
-                            {WEEKDAY_LABELS[field.day]}
-                          </Label>
-                        </div>
-
-                        {/* Time and Break Inputs */}
-                        <div className='col-span-3'>
-                          <Input
-                            {...form.register(`schedule.${index}.start_time`)}
-                            disabled={!row?.checked}
-                            placeholder='09:00'
-                          />
-                        </div>
-                        <div className='col-span-3'>
-                          <Input
-                            {...form.register(`schedule.${index}.end_time`)}
-                            disabled={!row?.checked}
-                            placeholder='17:00'
-                          />
-                        </div>
-                        <div className='col-span-2'>
-                          <Input
-                            {...form.register(
-                              `schedule.${index}.break_duration_minutes`,
-                            )}
-                            disabled={!row?.checked}
-                            placeholder='60'
-                          />
-                        </div>
-                        <div className='col-span-1 text-center text-sm text-gray-500'>
-                          {row?.checked ? `${hours}h` : '-'}
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {fields.map((field, index) => (
+                    <DayRow
+                      key={field.id}
+                      field={field}
+                      index={index}
+                      form={form}
+                    />
+                  ))}
                 </div>
 
                 {/* Live Preview (using exported utility) */}
