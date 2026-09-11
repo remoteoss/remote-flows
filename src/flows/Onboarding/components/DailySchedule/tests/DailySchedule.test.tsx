@@ -8,7 +8,8 @@ import {
   DailyScheduleRenderProps,
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import { TestProviders } from '@/src/tests/testHelpers';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 
 const DailyScheduleField = (
@@ -141,5 +142,171 @@ describe('DailySchedule', () => {
     expect(
       screen.queryByText('Work hours outside of weekly range'),
     ).not.toBeInTheDocument();
+  });
+
+  it('writes the whole schedule back in a single setValue call on save', async () => {
+    const user = userEvent.setup();
+    const { getFormValues } = renderWithForm([createDailyScheduleField()], {
+      daily_schedule: undefined,
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+    const dialog = screen.getByRole('dialog');
+    await user.click(within(dialog).getByRole('checkbox', { name: 'Friday' }));
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Save schedule' }),
+    );
+
+    await waitFor(() => {
+      const value = getFormValues().daily_schedule as {
+        selected_days: string[];
+        schedule: Record<string, unknown>;
+      };
+      expect(value.selected_days).toEqual([
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+      ]);
+      expect(value.schedule.friday).toBeUndefined();
+      expect(value.schedule.monday).toEqual({
+        start_time: '09:00',
+        end_time: '18:00',
+        break_duration_minutes: 60,
+      });
+    });
+  });
+
+  it('requires at least one selected day', async () => {
+    const user = userEvent.setup();
+    renderWithForm([createDailyScheduleField()], {
+      daily_schedule: undefined,
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+    const dialog = screen.getByRole('dialog');
+    for (const day of [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+    ]) {
+      await user.click(within(dialog).getByRole('checkbox', { name: day }));
+    }
+
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Save schedule' }),
+    );
+
+    expect(
+      await within(dialog).findByText('Select at least one work day'),
+    ).toBeInTheDocument();
+  });
+
+  it('pre-populates the edit modal from an already-saved schedule', async () => {
+    const user = userEvent.setup();
+    renderWithForm([createDailyScheduleField()], {
+      daily_schedule: {
+        selected_days: ['monday'],
+        schedule: {
+          monday: {
+            start_time: '10:00',
+            end_time: '14:00',
+            break_duration_minutes: 15,
+          },
+        },
+      },
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+    const dialog = screen.getByRole('dialog');
+    expect(
+      within(dialog).getByRole('checkbox', { name: 'Monday' }),
+    ).toBeChecked();
+    expect(
+      within(dialog).getByRole('checkbox', { name: 'Tuesday' }),
+    ).not.toBeChecked();
+    expect(within(dialog).getByDisplayValue('10:00')).toBeInTheDocument();
+    expect(within(dialog).getByDisplayValue('14:00')).toBeInTheDocument();
+  });
+
+  it('hides the "Reset to default" button when the schedule already matches the default', async () => {
+    const user = userEvent.setup();
+    renderWithForm([createDailyScheduleField()], {
+      daily_schedule: undefined,
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+    const dialog = screen.getByRole('dialog');
+    expect(
+      within(dialog).queryByRole('button', { name: 'Reset to default' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows the "Reset to default" button once the schedule deviates from the default, and resets on click', async () => {
+    const user = userEvent.setup();
+    renderWithForm([createDailyScheduleField()], {
+      daily_schedule: {
+        selected_days: ['monday'],
+        schedule: {
+          monday: {
+            start_time: '10:00',
+            end_time: '14:00',
+            break_duration_minutes: 15,
+          },
+        },
+      },
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+    const dialog = screen.getByRole('dialog');
+    // Already deviates from the default (Monday-Friday) on open, since only
+    // Monday is saved — matches Dragon's "dirty on build" behavior.
+    expect(
+      within(dialog).getByRole('button', { name: 'Reset to default' }),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).getByRole('checkbox', { name: 'Monday' }),
+    ).toBeChecked();
+    expect(
+      within(dialog).getByRole('checkbox', { name: 'Tuesday' }),
+    ).not.toBeChecked();
+
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Reset to default' }),
+    );
+
+    // Default schedule (from germanyDailyScheduleMetadata) is Monday-Friday,
+    // 09:00-18:00 — discarding the saved value (Monday only, 10:00-14:00).
+    expect(
+      within(dialog).getByRole('checkbox', { name: 'Monday' }),
+    ).toBeChecked();
+    expect(
+      within(dialog).getByRole('checkbox', { name: 'Friday' }),
+    ).toBeChecked();
+    expect(
+      within(dialog).getByRole('checkbox', { name: 'Saturday' }),
+    ).not.toBeChecked();
+    expect(within(dialog).getAllByDisplayValue('09:00')[0]).toBeInTheDocument();
+    expect(within(dialog).getAllByDisplayValue('18:00')[0]).toBeInTheDocument();
+
+    // Back at the default, so the button hides itself again.
+    expect(
+      within(dialog).queryByRole('button', { name: 'Reset to default' }),
+    ).not.toBeInTheDocument();
+
+    // Editing away from the default brings it back.
+    await user.click(
+      within(dialog).getByRole('checkbox', { name: 'Saturday' }),
+    );
+    expect(
+      within(dialog).getByRole('button', { name: 'Reset to default' }),
+    ).toBeInTheDocument();
   });
 });
