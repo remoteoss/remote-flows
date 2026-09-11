@@ -35,7 +35,10 @@ import {
 } from '@/src/client';
 
 import { useClient } from '@/src/context';
-import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
+import {
+  buildSelectCountryJsfModify,
+  selectCountryStepSchema,
+} from '@/src/common/selectCountryStep';
 import {
   OnboardingFlowProps,
   OnboardingJsfModify,
@@ -494,24 +497,16 @@ export const useCountriesSchemaField = (
     enabled: options?.queryOptions?.enabled,
   });
 
-  const selectCountryForm = createHeadlessForm(
-    selectCountryStepSchema.data.schema,
-    {},
-    {
-      jsfModify: {
-        ...options?.jsfModify,
-        fields: {
-          ...options?.jsfModify?.fields,
-          country: {
-            ...options?.jsfModify?.fields?.country,
-            oneOf: (countries ?? []).map(({ value, label }) => ({
-              const: value,
-              title: label,
-            })),
-          },
+  const selectCountryForm = useMemo(
+    () =>
+      createHeadlessForm(
+        selectCountryStepSchema.data.schema,
+        {},
+        {
+          jsfModify: buildSelectCountryJsfModify(countries, options?.jsfModify),
         },
-      },
-    },
+      ),
+    [countries, options?.jsfModify],
   );
 
   return {
