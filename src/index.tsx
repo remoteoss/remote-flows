@@ -63,6 +63,9 @@ export type {
 export {
   OnboardingFlow,
   EmploymentAgreementInfoContent,
+  buildDailyScheduleSummary,
+  calculateWorkingHours,
+  WEEKDAY_LABELS,
 } from '@/src/flows/Onboarding';
 
 export type {
@@ -79,6 +82,12 @@ export type {
   OnboardingRenderProps,
   PreOnboardingRequirementsBag,
   PreOnboardingRequirement,
+  DailyScheduleRenderProps,
+  DailyScheduleSummaryDay,
+  DailyScheduleHoursError,
+  DailyScheduleEditFormRow,
+  DailyScheduleEditFormData,
+  Weekday,
 } from '@/src/flows/Onboarding';
 
 export {
@@ -161,6 +170,15 @@ export { transformYupErrorsIntoObject } from '@/src/lib/utils';
 export { RemoteFlows } from '@/src/RemoteFlowsProvider';
 
 export { convertFromCents } from '@/src/components/form/utils';
+
+export { RFForm, useWatch, Controller } from '@/src/components/form/adapters';
+
+export type {
+  UseFormReturn,
+  FieldValues,
+  FieldArrayWithId,
+  Path,
+} from '@/src/components/form/adapters';
 
 export type {
   Components,

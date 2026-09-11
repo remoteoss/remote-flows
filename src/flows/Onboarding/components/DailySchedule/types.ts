@@ -77,8 +77,8 @@ export type DailyScheduleRenderProps = {
   summaryDays: DailyScheduleSummaryDay[];
   /** Whether to subtract breaks from work hours in the summary display. */
   subtractBreaksFromWorkHours: boolean;
-  /** The hours error message if the total hours are outside the bounds. */
-  hoursError: DailyScheduleHoursError | null;
+  /** Validation error for the saved schedule when weekly hours are outside acceptable bounds. */
+  savedScheduleHoursError: DailyScheduleHoursError | null;
   /** The form bag from useDailyScheduleEditForm hook */
   formBag: ReturnType<
     typeof import('@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm').useDailyScheduleEditForm
@@ -92,7 +92,7 @@ export type DailyScheduleContainerProps = DailyScheduleFieldProps & {
 /**
  * A selected day's schedule, in the shape the summary builder groups on —
  * both the read-only summary (from `DailyScheduleValue.schedule`) and the
- * edit modal's live preview (from `watchedSchedule`) normalize to this.
+ * edit modal's live preview (from `formValues`) normalize to this.
  */
 export type DailyScheduleSummaryDay = {
   day: Weekday;

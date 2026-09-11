@@ -15,3 +15,22 @@ export type {
   CreditRiskState,
   OnboardingRenderProps,
 } from './types';
+
+export type {
+  DailyScheduleRenderProps,
+  DailyScheduleSummaryDay,
+  DailyScheduleHoursError,
+  Weekday,
+} from './components/DailySchedule/types';
+
+export type {
+  DailyScheduleEditFormRow,
+  DailyScheduleEditFormData,
+} from './components/DailySchedule/useDailyScheduleEditForm';
+
+export {
+  buildDailyScheduleSummary,
+  calculateWorkingHours,
+} from './components/DailySchedule/utils';
+
+export { WEEKDAY_LABELS } from './components/DailySchedule/constants';
