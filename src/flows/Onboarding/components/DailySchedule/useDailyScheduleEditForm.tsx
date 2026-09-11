@@ -4,10 +4,11 @@ import { z } from 'zod';
 
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import {
-  DailyScheduleRenderProps,
   DailyScheduleValue,
   DailyScheduleSummaryDay,
   Weekday,
+  DailyScheduleDefaultDay,
+  WorkHoursRange,
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import {
   buildDailyScheduleSummary,
@@ -87,6 +88,15 @@ export const dailyScheduleEditFormSchema = z.object({
     }),
 });
 
+type BuildDailyScheduleEditFormDefaultValuesOptions = {
+  availableWorkDays: Weekday[];
+  defaultSchedule: DailyScheduleDefaultDay[];
+  defaultStartTime: string;
+  defaultEndTime: string;
+  defaultBreakDurationMinutes: number;
+  value: DailyScheduleValue | undefined;
+};
+
 export function buildDailyScheduleEditFormDefaultValues({
   availableWorkDays,
   defaultSchedule,
@@ -94,23 +104,18 @@ export function buildDailyScheduleEditFormDefaultValues({
   defaultEndTime,
   defaultBreakDurationMinutes,
   value,
-}: Pick<
-  DailyScheduleRenderProps,
-  | 'availableWorkDays'
-  | 'defaultSchedule'
-  | 'defaultStartTime'
-  | 'defaultEndTime'
-  | 'defaultBreakDurationMinutes'
-  | 'value'
->): DailyScheduleEditFormRow[] {
-  const effectiveValue = resolveDailyScheduleValue({ value, defaultSchedule });
+}: BuildDailyScheduleEditFormDefaultValuesOptions): DailyScheduleEditFormRow[] {
+  const { schedule, selected_days: selectedDays } = resolveDailyScheduleValue({
+    value,
+    defaultSchedule,
+  });
 
   return availableWorkDays.map((day) => {
-    const daySchedule = effectiveValue.schedule[day];
+    const daySchedule = schedule[day];
 
     return {
       day,
-      checked: effectiveValue.selected_days.includes(day),
+      checked: selectedDays.includes(day),
       start_time: daySchedule?.start_time ?? defaultStartTime,
       end_time: daySchedule?.end_time ?? defaultEndTime,
       break_duration_minutes: String(
@@ -171,30 +176,20 @@ export function mapDailyScheduleEditFormDataToValue(
   };
 }
 
-export type UseDailyScheduleEditFormOptions = Pick<
-  DailyScheduleRenderProps,
-  | 'availableWorkDays'
-  | 'defaultSchedule'
-  | 'defaultStartTime'
-  | 'defaultEndTime'
-  | 'defaultBreakDurationMinutes'
-  | 'value'
-  | 'setValue'
-> &
-  // Optional: only needed to surface the weekly hours-range error (below);
-  // a consumer that doesn't pass these simply never sees `hoursError`.
-  Partial<
-    Pick<
-      DailyScheduleRenderProps,
-      | 'subtractBreaksFromWorkHours'
-      | 'workHoursBounds'
-      | 'workSchedule'
-      | 'countryName'
-    >
-  > & {
-    /** Called after a successful save, e.g. to close the hosting modal. */
-    onSaved?: () => void;
-  };
+export type UseDailyScheduleEditFormOptions = {
+  availableWorkDays: Weekday[];
+  defaultSchedule: DailyScheduleDefaultDay[];
+  defaultStartTime: string;
+  defaultEndTime: string;
+  defaultBreakDurationMinutes: number;
+  value: DailyScheduleValue | undefined;
+  setValue: (value: DailyScheduleValue) => void;
+  subtractBreaksFromWorkHours?: boolean;
+  workHoursBounds?: WorkHoursRange;
+  workSchedule?: string;
+  countryName?: string;
+  onSaved?: () => void;
+};
 
 /**
  * Headless edit-form for `daily_schedule`: react-hook-form + the library's
@@ -237,8 +232,6 @@ export function useDailyScheduleEditForm({
     onSaved?.();
   });
 
-  // Same rows `resolveDailyScheduleValue` would produce for a field with no
-  // saved value yet — the reset target, and what "at default" is measured against.
   const defaultScheduleRows = buildDailyScheduleEditFormDefaultValues({
     availableWorkDays,
     defaultSchedule,
