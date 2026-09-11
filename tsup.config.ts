@@ -26,6 +26,10 @@ export const tsup: Options = {
     VERSION: process.env.npm_package_version || '',
     REMOTE_GATEWAY_URL:
       env === 'production' ? ENVIRONMENTS.production : ENVIRONMENTS.staging,
+    // Baked in at build time, not read from the consumer's own NODE_ENV: the
+    // published package is always built via `npm run build` (NODE_ENV=production),
+    // so this is only ever "true" in this repo's own `npm run dev` watch build.
+    RF_INTERNAL_DEV: env === 'production' ? 'false' : 'true',
   },
   external: ['react', 'react-dom'],
   noExternal: ['react-hook-form', '@hookform/resolvers'],
