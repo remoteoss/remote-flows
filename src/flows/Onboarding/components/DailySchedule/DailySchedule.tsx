@@ -2,41 +2,17 @@ import { Badge } from '@/src/components/ui/badge';
 import { DailyScheduleHoursErrorBanner } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleHoursErrorBanner';
 import { DailyScheduleSummaryBody } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleSummaryBody';
 import { EditEmployeeWorkingHoursDialog } from '@/src/flows/Onboarding/components/DailySchedule/EditEmployeeWorkingHoursDialog';
+import { DailyScheduleEditForm } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleEditForm';
 import { DailyScheduleRenderProps } from '@/src/flows/Onboarding/components/DailySchedule/types';
-import {
-  calculateTotalWeeklyHours,
-  getDailyScheduleHoursError,
-  getDailyScheduleSummaryDays,
-} from '@/src/flows/Onboarding/components/DailySchedule/utils';
 
 type DailyScheduleProps = DailyScheduleRenderProps;
 
 export const DailySchedule = ({
-  value,
-  defaultSchedule,
+  summaryDays,
   subtractBreaksFromWorkHours,
-  workHoursBounds,
-  countryName,
-  workSchedule,
-  availableWorkDays,
-  defaultStartTime,
-  defaultEndTime,
-  defaultBreakDurationMinutes,
-  setValue,
+  hoursError,
+  formBag,
 }: DailyScheduleProps) => {
-  const summaryDays = getDailyScheduleSummaryDays(value, defaultSchedule);
-  const totalWeeklyHours = calculateTotalWeeklyHours(
-    summaryDays,
-    subtractBreaksFromWorkHours,
-  );
-
-  const hoursError = getDailyScheduleHoursError({
-    totalWeeklyHours,
-    workHoursBounds,
-    countryName,
-    workSchedule,
-  });
-
   return (
     <div className='flex flex-col gap-3 RemoteFlows__DailySchedule'>
       <div className='flex items-center gap-2 RemoteFlows__DailySchedule__Header'>
@@ -56,19 +32,12 @@ export const DailySchedule = ({
           subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
         />
         <DailyScheduleHoursErrorBanner error={hoursError} />
-        <EditEmployeeWorkingHoursDialog
-          availableWorkDays={availableWorkDays}
-          defaultSchedule={defaultSchedule}
-          defaultStartTime={defaultStartTime}
-          defaultEndTime={defaultEndTime}
-          defaultBreakDurationMinutes={defaultBreakDurationMinutes}
-          subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
-          workHoursBounds={workHoursBounds}
-          workSchedule={workSchedule}
-          countryName={countryName}
-          value={value}
-          setValue={setValue}
-        />
+        <EditEmployeeWorkingHoursDialog>
+          <DailyScheduleEditForm
+            {...formBag}
+            subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
+          />
+        </EditEmployeeWorkingHoursDialog>
       </div>
     </div>
   );
