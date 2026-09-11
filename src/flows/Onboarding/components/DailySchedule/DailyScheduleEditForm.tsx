@@ -1,4 +1,3 @@
-import { Weekday } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import { Form } from '@/src/components/ui/form';
 import { calculateWorkingHours } from '@/src/flows/Onboarding/components/DailySchedule/utils';
 import { CheckBoxField } from '@/src/components/form/fields/CheckBoxField';
@@ -9,16 +8,7 @@ import { Button } from '@/src/components/ui/button';
 import { RotateCcw } from 'lucide-react';
 import { useDailyScheduleEditForm } from '@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm';
 import { useDialogControl } from '@/src/flows/Onboarding/components/DailySchedule/EditEmployeeWorkingHoursDialog';
-
-const DAY_LABELS: Record<Weekday, string> = {
-  monday: 'Monday',
-  tuesday: 'Tuesday',
-  wednesday: 'Wednesday',
-  thursday: 'Thursday',
-  friday: 'Friday',
-  saturday: 'Saturday',
-  sunday: 'Sunday',
-};
+import { WEEKDAY_LABELS } from '@/src/flows/Onboarding/components/DailySchedule/constants';
 
 type DailyScheduleEditFormProps = ReturnType<
   typeof useDailyScheduleEditForm
@@ -34,7 +24,7 @@ export const DailyScheduleEditForm = ({
   hoursError,
   handleSave: hookHandleSave,
   handleReset,
-  isScheduleAtDefault,
+  isDirty,
   rootError,
   subtractBreaksFromWorkHours,
 }: DailyScheduleEditFormProps) => {
@@ -81,7 +71,7 @@ export const DailyScheduleEditForm = ({
               >
                 <div className='col-span-3'>
                   <CheckBoxField
-                    label={DAY_LABELS[field.day]}
+                    label={WEEKDAY_LABELS[field.day]}
                     name={`schedule.${index}.checked`}
                   />
                 </div>
@@ -136,7 +126,7 @@ export const DailyScheduleEditForm = ({
         )}
 
         <div className='flex items-center gap-4 pt-4'>
-          {!isScheduleAtDefault && (
+          {isDirty && (
             <Button
               type='button'
               variant='ghost'

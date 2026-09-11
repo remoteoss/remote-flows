@@ -65,6 +65,7 @@ export {
   EmploymentAgreementInfoContent,
   buildDailyScheduleSummary,
   calculateWorkingHours,
+  WEEKDAY_LABELS,
 } from '@/src/flows/Onboarding';
 
 export type {

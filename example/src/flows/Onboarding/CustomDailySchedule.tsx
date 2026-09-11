@@ -4,28 +4,26 @@
  * This demonstrates how customers can rebuild the DailySchedule component
  * using only exported pieces from @remoteoss/remote-flows:
  * - Types (DailyScheduleRenderProps, etc.)
- * - Utilities (buildDailyScheduleSummary, calculateWorkingHours)
- * - Form adapters (FormProvider, useFormContext - NOT direct react-hook-form!)
- * - UI primitives from /internals (Dialog, Button, Input, etc.)
+ * - Utilities (buildDailyScheduleSummary, calculateWorkingHours, WEEKDAY_LABELS)
+ * - UI primitives from /internals (Dialog, Button, Input, Checkbox, Label, etc.)
  *
  * NO component exports needed - customers rebuild with primitives!
+ * Form fields are registered manually using formBag.form.register() and setValue().
  *
  * Note: This is demo/example code showing the pattern. In production,
  * customers would properly type their form paths.
  */
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState } from 'react';
 import type {
   DailyScheduleRenderProps,
   DailyScheduleSummaryDay,
   DailyScheduleHoursError,
-  Weekday,
 } from '@remoteoss/remote-flows';
 import {
   buildDailyScheduleSummary,
   calculateWorkingHours,
+  WEEKDAY_LABELS,
   RFForm,
 } from '@remoteoss/remote-flows';
 import {
@@ -104,16 +102,6 @@ function CustomHoursError({
   );
 }
 
-const DAY_LABELS: Record<Weekday, string> = {
-  monday: 'Monday',
-  tuesday: 'Tuesday',
-  wednesday: 'Wednesday',
-  thursday: 'Thursday',
-  friday: 'Friday',
-  saturday: 'Saturday',
-  sunday: 'Sunday',
-};
-
 /**
  * Custom DailySchedule Component
  *
@@ -125,6 +113,14 @@ export function CustomDailySchedule({
   hoursError,
   formBag,
 }: DailyScheduleRenderProps) {
+  const {
+    form,
+    isDirty,
+    rootError,
+    hoursError: formHoursError,
+    fields,
+    previewDays,
+  } = formBag;
   const [open, setOpen] = useState(false);
 
   const handleSave = async () => {
@@ -135,10 +131,10 @@ export function CustomDailySchedule({
     }
   };
 
-  const hasFieldErrors = Object.keys(formBag.form.formState.errors).length > 0;
+  const hasFieldErrors = Object.keys(form.formState.errors).length > 0;
 
   return (
-    <div className='flex flex-col gap-3 border-2 border-purple-400 p-4 rounded-lg'>
+    <div className='flex flex-col gap-3 border-2 p-4 rounded-lg'>
       <div className='flex items-center gap-2'>
         <p className='text-sm font-medium'>Custom Daily Schedule (Demo)</p>
         <Badge variant='secondary'>rebuilt with exported utilities</Badge>
@@ -168,7 +164,7 @@ export function CustomDailySchedule({
             </DialogHeader>
 
             {/* Use FormProvider from library (not direct react-hook-form!) */}
-            <RFForm {...formBag.form}>
+            <RFForm {...form}>
               <form className='space-y-4'>
                 <p className='text-gray-600 text-sm'>
                   This is a custom implementation showing how customers can
@@ -185,7 +181,7 @@ export function CustomDailySchedule({
 
                 {/* Map over formBag.fields with custom inputs */}
                 <div>
-                  {formBag.fields.map((field, index) => {
+                  {fields.map((field, index) => {
                     const row = formBag.watchedSchedule[index];
                     const hours = calculateWorkingHours(
                       row?.start_time,
@@ -198,46 +194,42 @@ export function CustomDailySchedule({
                         key={field.id}
                         className='grid grid-cols-12 gap-4 items-center py-2'
                       >
-                        {/* Custom Checkbox */}
+                        {/* Checkbox */}
                         <div className='col-span-3 flex items-center gap-2'>
                           <Checkbox
                             id={`schedule.${index}.checked`}
                             checked={row?.checked}
                             onCheckedChange={(checked) => {
-                              formBag.form.setValue(
-                                `schedule.${index}.checked` as any,
-                                checked,
+                              form.setValue(
+                                `schedule.${index}.checked`,
+                                Boolean(checked),
                               );
                             }}
                           />
                           <Label htmlFor={`schedule.${index}.checked`}>
-                            {DAY_LABELS[field.day]}
+                            {WEEKDAY_LABELS[field.day]}
                           </Label>
                         </div>
 
-                        {/* Custom Time Inputs */}
+                        {/* Time and Break Inputs */}
                         <div className='col-span-3'>
                           <Input
-                            {...formBag.form.register(
-                              `schedule.${index}.start_time` as any,
-                            )}
+                            {...form.register(`schedule.${index}.start_time`)}
                             disabled={!row?.checked}
                             placeholder='09:00'
                           />
                         </div>
                         <div className='col-span-3'>
                           <Input
-                            {...formBag.form.register(
-                              `schedule.${index}.end_time` as any,
-                            )}
+                            {...form.register(`schedule.${index}.end_time`)}
                             disabled={!row?.checked}
                             placeholder='17:00'
                           />
                         </div>
                         <div className='col-span-2'>
                           <Input
-                            {...formBag.form.register(
-                              `schedule.${index}.break_duration_minutes` as any,
+                            {...form.register(
+                              `schedule.${index}.break_duration_minutes`,
                             )}
                             disabled={!row?.checked}
                             placeholder='60'
@@ -252,19 +244,19 @@ export function CustomDailySchedule({
                 </div>
 
                 {/* Live Preview (using exported utility) */}
-                <div className='rounded-lg border-2 border-purple-300 p-4 bg-purple-50'>
+                <div className='rounded-lg'>
                   <p className='text-sm font-medium mb-2'>Live Preview:</p>
                   <CustomSummaryBody
-                    days={formBag.previewDays}
+                    days={previewDays}
                     subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
                   />
                 </div>
 
                 {/* Validation Errors */}
-                <CustomHoursError error={formBag.hoursError} />
+                <CustomHoursError error={formHoursError} />
 
-                {formBag.rootError && (
-                  <p className='text-red-600 text-sm'>{formBag.rootError}</p>
+                {rootError && (
+                  <p className='text-red-600 text-sm'>{rootError}</p>
                 )}
 
                 {!formBag.rootError && hasFieldErrors && (
@@ -276,7 +268,7 @@ export function CustomDailySchedule({
 
                 {/* Action Buttons */}
                 <div className='flex items-center gap-4 pt-4'>
-                  {!formBag.isScheduleAtDefault && (
+                  {isDirty && (
                     <Button
                       type='button'
                       variant='ghost'
@@ -299,7 +291,6 @@ export function CustomDailySchedule({
                       type='button'
                       onClick={handleSave}
                       disabled={!!formBag.hoursError}
-                      className='bg-purple-600 hover:bg-purple-700'
                     >
                       Save Custom Schedule
                     </Button>

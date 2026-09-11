@@ -244,10 +244,7 @@ export function useDailyScheduleEditForm({
     form.reset({ schedule: defaultScheduleRows });
   };
 
-  const isScheduleAtDefault = isDefaultSchedule(
-    watchedSchedule,
-    defaultScheduleRows,
-  );
+  const isDirty = !isDefaultSchedule(watchedSchedule, defaultScheduleRows);
 
   // `schedule` is a field array; a whole-array `.refine()` failure (as
   // opposed to a per-row error) lands under `.root`, not directly on
@@ -290,7 +287,7 @@ export function useDailyScheduleEditForm({
     hoursError,
     handleSave,
     handleReset,
-    isScheduleAtDefault,
+    isDirty,
     rootError,
   };
 }

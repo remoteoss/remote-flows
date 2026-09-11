@@ -611,8 +611,6 @@ export const useOnboarding = ({
     options?.features?.includes('daily_schedule'),
   );
 
-  console.log('dailyScheduleField', dailyScheduleField);
-
   const contractDetailsCustomFields = useMemo(
     () => ({
       fields: {

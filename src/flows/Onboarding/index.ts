@@ -27,3 +27,5 @@ export {
   buildDailyScheduleSummary,
   calculateWorkingHours,
 } from './components/DailySchedule/utils';
+
+export { WEEKDAY_LABELS } from './components/DailySchedule/constants';

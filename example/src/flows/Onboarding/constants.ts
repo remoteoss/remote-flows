@@ -144,11 +144,11 @@ export const ONBOARDING_OPTIONS = {
       fields: {
         // Demo: Replace default DailySchedule with custom implementation
         // Shows how customers can rebuild using only exported pieces
-        daily_schedule: () => ({
+        daily_schedule: {
           'x-jsf-presentation': {
             Component: CustomDailySchedule,
           },
-        }),
+        },
       },
     },
   },
