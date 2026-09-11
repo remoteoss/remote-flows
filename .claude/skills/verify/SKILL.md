@@ -6,7 +6,7 @@ description: Drive the example app (API-first, browser when needed) to check a f
 # Verify
 
 Two complementary techniques. Prefer the API-first one whenever you just need
-the app to *be in* a certain data state (an employment sitting at a given
+the app to _be in_ a certain data state (an employment sitting at a given
 step, for a given country); reach for the browser when you need to actually
 look at or interact with rendered UI.
 
@@ -48,7 +48,9 @@ const schema = await fetch(`${BASE_URL}/v1/countries/${COUNTRY}/${form}?...`)
 let values = {};
 for (let round = 0; round < 8; round++) {
   const { fields } = createHeadlessForm(schema, { initialValues: values });
-  const missing = fields.filter((f) => f.required && f.isVisible && values[f.name] === undefined);
+  const missing = fields.filter(
+    (f) => f.required && f.isVisible && values[f.name] === undefined,
+  );
   if (!missing.length) break;
   for (const f of missing) values[f.name] = fakeValueFor(f); // by f.inputType: text/email/tel/date/number/money/radio/select/countries/textarea/checkbox
 }
@@ -92,9 +94,12 @@ above. `npx playwright install chromium` once if it's not present.
 import { chromium } from '@playwright/test';
 const browser = await chromium.launch({ headless: true }); // headed if the user wants to watch
 const page = await browser.newPage();
-page.on('console', (msg) => { if (msg.type() === 'error') console.log(msg.text()); });
+page.on('console', (msg) => {
+  if (msg.type() === 'error') console.log(msg.text());
+});
 page.on('response', async (res) => {
-  if (res.status() >= 400) console.log(res.status(), res.url(), await res.text().catch(() => ''));
+  if (res.status() >= 400)
+    console.log(res.status(), res.url(), await res.text().catch(() => ''));
 });
 ```
 

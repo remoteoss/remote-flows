@@ -90,7 +90,9 @@ async function fetchSchema(form, jsonSchemaVersion) {
 /** First option whose value/label reads as "no" - collapses conditional sub-fields (file
  * uploads, free-text detail boxes) that a generic filler can't produce plausible data for. */
 function preferNoOption(options) {
-  return options.find((o) => String(o.value).toLowerCase() === 'no') || options[0];
+  return (
+    options.find((o) => String(o.value).toLowerCase() === 'no') || options[0]
+  );
 }
 
 function fakeValueFor(field) {
@@ -166,9 +168,16 @@ function fillSchema(schema, seedValues = {}) {
 
 async function main() {
   console.log(`Fetching employment_basic_information schema for ${COUNTRY}...`);
-  const basicInfoSchema = await fetchSchema('employment_basic_information', BASIC_INFO_VERSION);
-  const { values: basicInformation, skipped: basicSkipped } = fillSchema(basicInfoSchema);
-  console.log('basic_information payload:', JSON.stringify(basicInformation, null, 2));
+  const basicInfoSchema = await fetchSchema(
+    'employment_basic_information',
+    BASIC_INFO_VERSION,
+  );
+  const { values: basicInformation, skipped: basicSkipped } =
+    fillSchema(basicInfoSchema);
+  console.log(
+    'basic_information payload:',
+    JSON.stringify(basicInformation, null, 2),
+  );
   if (basicSkipped.length) {
     console.log('Skipped (unfillable) fields:', basicSkipped.join(', '));
   }
@@ -184,7 +193,9 @@ async function main() {
   });
   const employmentId = created?.data?.employment?.id;
   if (!employmentId) {
-    throw new Error(`Could not find employment id in response: ${JSON.stringify(created)}`);
+    throw new Error(
+      `Could not find employment id in response: ${JSON.stringify(created)}`,
+    );
   }
   console.log(`Employment created: ${employmentId}`);
 
@@ -202,24 +213,39 @@ async function main() {
     engagementSchema = await fetchSchema('engagement_agreement_details');
   } catch (err) {
     if (err.status === 404) {
-      console.log(`No engagement_agreement_details schema for ${COUNTRY} - skipping.`);
+      console.log(
+        `No engagement_agreement_details schema for ${COUNTRY} - skipping.`,
+      );
     } else {
       throw err;
     }
   }
 
-  if (engagementSchema && Object.keys(engagementSchema.properties || {}).length > 0) {
+  if (
+    engagementSchema &&
+    Object.keys(engagementSchema.properties || {}).length > 0
+  ) {
     const { values: engagementDetails, skipped } = fillSchema(engagementSchema);
-    console.log('engagement_agreement_details payload:', JSON.stringify(engagementDetails, null, 2));
-    if (skipped.length) console.log('Skipped (unfillable) fields:', skipped.join(', '));
+    console.log(
+      'engagement_agreement_details payload:',
+      JSON.stringify(engagementDetails, null, 2),
+    );
+    if (skipped.length)
+      console.log('Skipped (unfillable) fields:', skipped.join(', '));
 
-    await api('POST', `/v2/employments/${employmentId}/engagement-agreement-details`, {
-      body: { engagement_agreement_details: engagementDetails },
-    });
+    await api(
+      'POST',
+      `/v2/employments/${employmentId}/engagement-agreement-details`,
+      {
+        body: { engagement_agreement_details: engagementDetails },
+      },
+    );
     console.log('engagement_agreement_details submitted.');
   }
 
-  console.log(`\nDone. Employment ${employmentId} for ${COUNTRY} is now sitting at contract_details.`);
+  console.log(
+    `\nDone. Employment ${employmentId} for ${COUNTRY} is now sitting at contract_details.`,
+  );
   console.log(
     `Open ${BASE_URL}/?demo=onboarding-basic , enter this Employment ID (with the usual\n` +
       'company id) on the intro form, and click Continue through Select Country and Basic\n' +
