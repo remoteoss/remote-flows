@@ -10,7 +10,7 @@ type DailyScheduleProps = DailyScheduleRenderProps;
 export const DailySchedule = ({
   summaryDays,
   subtractBreaksFromWorkHours,
-  hoursError,
+  savedScheduleHoursError,
   formBag,
 }: DailyScheduleProps) => {
   return (
@@ -31,7 +31,7 @@ export const DailySchedule = ({
           days={summaryDays}
           subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
         />
-        <DailyScheduleHoursErrorBanner error={hoursError} />
+        <DailyScheduleHoursErrorBanner error={savedScheduleHoursError} />
         <EditEmployeeWorkingHoursDialog>
           <DailyScheduleEditForm
             {...formBag}

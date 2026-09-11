@@ -110,23 +110,26 @@ function CustomHoursError({
 export function CustomDailySchedule({
   summaryDays,
   subtractBreaksFromWorkHours,
-  hoursError,
+  savedScheduleHoursError,
   formBag,
 }: DailyScheduleRenderProps) {
   const {
     form,
     isDirty,
-    rootError,
-    hoursError: formHoursError,
+    selectionError,
+    hoursRangeError,
     fields,
-    previewDays,
+    unsavedSummaryDays,
+    formValues,
+    handleReset,
+    handleSave: formHandleSave,
   } = formBag;
   const [open, setOpen] = useState(false);
 
   const handleSave = async () => {
-    await formBag.handleSave();
+    await formHandleSave();
     // Only close if there are no validation errors
-    if (Object.keys(formBag.form.formState.errors).length === 0) {
+    if (Object.keys(form.formState.errors).length === 0) {
       setOpen(false);
     }
   };
@@ -148,7 +151,7 @@ export function CustomDailySchedule({
         />
 
         {/* Custom Error Banner (trivial rebuild) */}
-        <CustomHoursError error={hoursError} />
+        <CustomHoursError error={savedScheduleHoursError} />
 
         {/* Custom Edit Dialog (using internals Dialog + FormProvider from library) */}
         <Dialog open={open} onOpenChange={setOpen}>
@@ -179,10 +182,10 @@ export function CustomDailySchedule({
                   <div className='col-span-3 text-center'>Break (min)</div>
                 </div>
 
-                {/* Map over formBag.fields with custom inputs */}
+                {/* Map over fields with custom inputs */}
                 <div>
                   {fields.map((field, index) => {
-                    const row = formBag.watchedSchedule[index];
+                    const row = formValues[index];
                     const hours = calculateWorkingHours(
                       row?.start_time,
                       row?.end_time,
@@ -247,19 +250,19 @@ export function CustomDailySchedule({
                 <div className='rounded-lg'>
                   <p className='text-sm font-medium mb-2'>Live Preview:</p>
                   <CustomSummaryBody
-                    days={previewDays}
+                    days={unsavedSummaryDays}
                     subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
                   />
                 </div>
 
                 {/* Validation Errors */}
-                <CustomHoursError error={formHoursError} />
+                <CustomHoursError error={hoursRangeError} />
 
-                {rootError && (
-                  <p className='text-red-600 text-sm'>{rootError}</p>
+                {selectionError && (
+                  <p className='text-red-600 text-sm'>{selectionError}</p>
                 )}
 
-                {!formBag.rootError && hasFieldErrors && (
+                {!selectionError && hasFieldErrors && (
                   <p className='text-red-600 text-sm'>
                     Please check the form for errors. Time fields must use HH:mm
                     format (e.g., 09:00).
@@ -273,7 +276,7 @@ export function CustomDailySchedule({
                       type='button'
                       variant='ghost'
                       className='gap-2'
-                      onClick={formBag.handleReset}
+                      onClick={handleReset}
                     >
                       <RotateCcw className='h-4 w-4' />
                       Reset to default
@@ -290,7 +293,7 @@ export function CustomDailySchedule({
                     <Button
                       type='button'
                       onClick={handleSave}
-                      disabled={!!formBag.hoursError}
+                      disabled={!!savedScheduleHoursError}
                     >
                       Save Custom Schedule
                     </Button>

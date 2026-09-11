@@ -19,13 +19,13 @@ type DailyScheduleEditFormProps = ReturnType<
 export const DailyScheduleEditForm = ({
   form,
   fields,
-  watchedSchedule,
-  previewDays,
-  hoursError,
+  formValues,
+  unsavedSummaryDays,
+  hoursRangeError,
   handleSave: hookHandleSave,
   handleReset,
   isDirty,
-  rootError,
+  selectionError,
   subtractBreaksFromWorkHours,
 }: DailyScheduleEditFormProps) => {
   const { close } = useDialogControl();
@@ -57,7 +57,7 @@ export const DailyScheduleEditForm = ({
 
         <div className='RemoteFlows__DailyScheduleForm__Rows'>
           {fields.map((field, index) => {
-            const currentRow = watchedSchedule[index];
+            const currentRow = formValues[index];
             const hours = calculateWorkingHours(
               currentRow?.start_time,
               currentRow?.end_time,
@@ -106,18 +106,18 @@ export const DailyScheduleEditForm = ({
 
         <div className='rounded-lg border p-4 RemoteFlows__DailyScheduleForm__Preview'>
           <DailyScheduleSummaryBody
-            days={previewDays}
+            days={unsavedSummaryDays}
             subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
           />
         </div>
 
-        <DailyScheduleHoursErrorBanner error={hoursError} />
+        <DailyScheduleHoursErrorBanner error={hoursRangeError} />
 
-        {rootError ? (
-          <p className='text-destructive text-sm mb-0'>{rootError}</p>
+        {selectionError ? (
+          <p className='text-destructive text-sm mb-0'>{selectionError}</p>
         ) : null}
 
-        {!rootError && hasFieldErrors && (
+        {!selectionError && hasFieldErrors && (
           <p className='text-destructive text-sm mb-0'>
             Please check the form for errors. Time fields must use HH:mm format
             (e.g., 09:00), and all checked days must have start time, end time,
@@ -141,7 +141,11 @@ export const DailyScheduleEditForm = ({
             <Button type='button' variant='outline' onClick={close}>
               Cancel
             </Button>
-            <Button type='button' onClick={handleSave} disabled={!!hoursError}>
+            <Button
+              type='button'
+              onClick={handleSave}
+              disabled={!!hoursRangeError}
+            >
               Save schedule
             </Button>
           </div>
