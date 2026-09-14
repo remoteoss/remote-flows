@@ -40,7 +40,7 @@ export const DailyScheduleContainer = ({
     summaryDays,
     defaults.subtractBreaksFromWorkHours,
   );
-  const hoursError = getDailyScheduleHoursError({
+  const savedScheduleHoursError = getDailyScheduleHoursError({
     totalWeeklyHours,
     workHoursBounds,
     countryName: defaults.countryName,
@@ -64,7 +64,7 @@ export const DailyScheduleContainer = ({
   return render({
     summaryDays,
     subtractBreaksFromWorkHours: defaults.subtractBreaksFromWorkHours,
-    hoursError,
+    savedScheduleHoursError,
     formBag,
   });
 };
