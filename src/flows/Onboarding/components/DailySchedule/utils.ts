@@ -301,6 +301,22 @@ type DailyScheduleSummary = {
   totalWeeklyHours: number;
 };
 
+export function calculateTotalWeeklyHours(
+  days: DailyScheduleSummaryDay[],
+  subtractBreaksFromWorkHours: boolean,
+): number {
+  return days.reduce(
+    (total, day) =>
+      total +
+      calculateWorkingHours(
+        day.start_time,
+        day.end_time,
+        subtractBreaksFromWorkHours ? day.break_duration_minutes : 0,
+      ),
+    0,
+  );
+}
+
 /**
  * Groups a schedule's selected days into Dragon-style summary lines: runs of
  * consecutive days sharing the same start/end time collapse into one line
@@ -315,15 +331,9 @@ export function buildDailyScheduleSummary(
     (a, b) => DAYS_OF_THE_WEEK.indexOf(a.day) - DAYS_OF_THE_WEEK.indexOf(b.day),
   );
 
-  const totalWeeklyHours = orderedDays.reduce(
-    (total, day) =>
-      total +
-      calculateWorkingHours(
-        day.start_time,
-        day.end_time,
-        subtractBreaksFromWorkHours ? day.break_duration_minutes : 0,
-      ),
-    0,
+  const totalWeeklyHours = calculateTotalWeeklyHours(
+    orderedDays,
+    subtractBreaksFromWorkHours,
   );
 
   const groupedByTime = groupBy(

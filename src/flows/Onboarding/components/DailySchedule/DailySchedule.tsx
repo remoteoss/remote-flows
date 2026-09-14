@@ -4,7 +4,7 @@ import { DailyScheduleSummaryBody } from '@/src/flows/Onboarding/components/Dail
 import { EditEmployeeWorkingHoursDialog } from '@/src/flows/Onboarding/components/DailySchedule/EditEmployeeWorkingHoursDialog';
 import { DailyScheduleRenderProps } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import {
-  buildDailyScheduleSummary,
+  calculateTotalWeeklyHours,
   getDailyScheduleHoursError,
   getDailyScheduleSummaryDays,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
@@ -25,10 +25,7 @@ export const DailySchedule = ({
   setValue,
 }: DailyScheduleProps) => {
   const summaryDays = getDailyScheduleSummaryDays(value, defaultSchedule);
-  // TODO: potential refactor for later as buildDailyScheduleSummary is also used in DailyScheduleSummaryBody
-  // TODO: I believe buildDailyScheduleSummary is mixing business logic with UI logic.
-  // TODO: Think later what should go in DailyScheduleContainer and what goes on DailySchedule.
-  const { totalWeeklyHours } = buildDailyScheduleSummary(
+  const totalWeeklyHours = calculateTotalWeeklyHours(
     summaryDays,
     subtractBreaksFromWorkHours,
   );
