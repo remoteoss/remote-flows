@@ -2,7 +2,6 @@
  * Example: Custom DailySchedule Implementation
  *
  * This demonstrates how to build a custom DailySchedule UI using the headless API.
- * Notice that we DON'T use `_form` or `_fields` - only the public `editBag` API!
  *
  * The DailyScheduleContainer is already wrapped in hooks.tsx, so this component
  * receives DailyScheduleRenderProps directly from the render prop.
@@ -16,9 +15,6 @@ import {
 } from '@remoteoss/remote-flows/internals';
 import { WEEKDAY_LABELS } from '@remoteoss/remote-flows';
 
-/**
- * Custom edit form that uses ONLY the public API - no react-hook-form!
- */
 function CustomDailyScheduleEditForm({
   editBag,
   subtractBreaksFromWorkHours,
@@ -184,10 +180,6 @@ export function CustomDailySchedule(props: DailyScheduleRenderProps) {
     editBag,
   } = props;
   const [isEditing, setIsEditing] = useState(false);
-
-  // editBag has both public API and internals
-  // Custom implementations should only use editBag.state and editBag.actions
-  // NOT editBag._form or editBag._fields
 
   return (
     <div className='border rounded p-4 bg-yellow-50'>
