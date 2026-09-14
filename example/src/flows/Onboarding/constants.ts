@@ -7,7 +7,7 @@ export const ONBOARDING_OPTIONS = {
     'dynamic_steps',
     'ea_preview',
     'pre_onboarding_requirements',
-    'daily_schedule', // ✅ Enabled to test custom DailySchedule
+    'daily_schedule',
   ] as const,
   jsonSchemaVersion: {
     employment_basic_information: 4,
