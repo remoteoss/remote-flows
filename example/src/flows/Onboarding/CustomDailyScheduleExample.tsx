@@ -30,7 +30,6 @@ function CustomDailyScheduleEditForm({
     <div className='p-4 space-y-4 border rounded-lg'>
       <h3 className='text-lg font-semibold'>Custom Daily Schedule Editor</h3>
 
-      {/* Render using state.rows - NO _fields needed! */}
       <div className='space-y-2'>
         {state.rows.map((row, index) => (
           <div

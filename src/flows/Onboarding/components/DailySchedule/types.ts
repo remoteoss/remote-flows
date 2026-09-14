@@ -143,8 +143,6 @@ export type DailyScheduleRenderProps = {
   /**
    * The edit form API with state and actions.
    *
-   * For custom implementations: use `editBag.state` and `editBag.actions` only.
-   * The `_form` and `_fields` properties are internal and used only by the default form.
    */
   editBag: ReturnType<
     typeof import('@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm').useDailyScheduleEditForm
