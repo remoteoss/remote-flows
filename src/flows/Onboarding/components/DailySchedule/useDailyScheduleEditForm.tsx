@@ -299,6 +299,8 @@ export function useDailyScheduleEditForm({
   // the saved `value` and any unsaved edits.
   const handleReset = () => {
     form.reset({ schedule: defaultScheduleRows });
+    // Sync the ref to match the reset state so uncheck detection works correctly
+    prevCheckedRef.current = defaultScheduleRows.map((row) => row.checked);
   };
 
   const isScheduleAtDefault = isDefaultSchedule(

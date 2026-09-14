@@ -475,6 +475,78 @@ describe('DailySchedule', () => {
         ).not.toBeInTheDocument();
       });
     });
+
+    it('clears validation errors when unchecking a day that became checked after reset (regression for prevCheckedRef sync)', async () => {
+      const user = userEvent.setup();
+      // Start with only Monday checked. Default will be Monday-Friday.
+      // This means Friday is initially UNCHECKED (not in the saved value)
+      renderWithForm([createDailyScheduleField()], {
+        daily_schedule: {
+          selected_days: ['monday'],
+          schedule: {
+            monday: {
+              start_time: '10:00',
+              end_time: '14:00',
+              break_duration_minutes: 15,
+            },
+          },
+        },
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+      const dialog = screen.getByRole('dialog');
+
+      // Initially: Only Monday is checked, Friday is unchecked
+      // prevCheckedRef[friday_index] = false
+      const fridayCheckbox = within(dialog).getByRole('checkbox', {
+        name: 'Friday',
+      });
+      expect(fridayCheckbox).not.toBeChecked();
+
+      // Reset to default (Monday-Friday) - Friday becomes CHECKED
+      await user.click(
+        within(dialog).getByRole('button', { name: 'Reset to default' }),
+      );
+
+      // After reset, Friday should be checked (it's in the default schedule)
+      // WITHOUT FIX: prevCheckedRef[friday] is still false (stale!)
+      // WITH FIX: prevCheckedRef[friday] = true (synced with reset)
+      let fridayAfterReset: HTMLElement;
+      await waitFor(() => {
+        fridayAfterReset = within(dialog).getByRole('checkbox', {
+          name: 'Friday',
+        });
+        expect(fridayAfterReset).toBeChecked();
+      });
+
+      // Add invalid time to Friday (which is now checked)
+      const allTextboxes = within(dialog).getAllByRole('textbox');
+      // Friday is index 4, each row has 3 inputs: start (0), end (1), break (2)
+      // Friday start time is at 4*3 = 12
+      const fridayStartInput = allTextboxes[12];
+      await user.clear(fridayStartInput);
+      await user.type(fridayStartInput, '99:99');
+      await user.tab();
+
+      // Validation error should appear
+      expect(
+        await within(dialog).findByText(/Please check the form for errors/),
+      ).toBeInTheDocument();
+
+      // Uncheck Friday
+      // WITHOUT FIX: wasChecked = false (stale!), isChecked = false
+      //   → false && true = false → NO CLEANUP, error persists!
+      // WITH FIX: wasChecked = true, isChecked = false
+      //   → true && true = true → cleanup happens, error clears
+      await user.click(fridayAfterReset!);
+
+      // Error should be cleared after unchecking
+      await waitFor(() => {
+        expect(
+          within(dialog).queryByText(/Please check the form for errors/),
+        ).not.toBeInTheDocument();
+      });
+    });
   });
 
   describe('Row hours display', () => {
