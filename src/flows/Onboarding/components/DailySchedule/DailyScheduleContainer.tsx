@@ -65,6 +65,6 @@ export const DailyScheduleContainer = ({
     summaryDays,
     subtractBreaksFromWorkHours: defaults.subtractBreaksFromWorkHours,
     savedScheduleHoursError,
-    formBag,
+    editBag: formBag,
   });
 };

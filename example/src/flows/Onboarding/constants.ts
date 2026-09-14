@@ -1,4 +1,5 @@
 import { JSFModifyField } from '@remoteoss/remote-flows';
+import { CustomDailySchedule } from './CustomDailyScheduleExample';
 
 export const ONBOARDING_OPTIONS = {
   features: [
@@ -6,7 +7,7 @@ export const ONBOARDING_OPTIONS = {
     'dynamic_steps',
     'ea_preview',
     'pre_onboarding_requirements',
-    //'daily_schedule',
+    'daily_schedule', // ✅ Enabled to test custom DailySchedule
   ] as const,
   jsonSchemaVersion: {
     employment_basic_information: 4,
@@ -137,6 +138,16 @@ export const ONBOARDING_OPTIONS = {
             ),
           },
         }),
+        // Custom DailySchedule implementation using headless API
+      },
+    },
+    contract_details: {
+      fields: {
+        daily_schedule: {
+          presentation: {
+            Component: CustomDailySchedule,
+          },
+        },
       },
     },
   },

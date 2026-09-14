@@ -347,16 +347,38 @@ export function useDailyScheduleEditForm({
         })
       : null;
 
+  // Return both the stable public API and internal form details
   return {
-    form,
-    fields,
-    watchedSchedule,
-    unsavedSummaryDays,
-    hoursRangeError,
-    saveValue,
-    handleReset,
-    isDirty,
-    selectionError,
-    handleClose,
+    // Public API - framework-agnostic
+    state: {
+      rows: watchedSchedule,
+      unsavedSummaryDays,
+      hoursRangeError,
+      isDirty,
+      selectionError,
+    },
+    actions: {
+      updateRow: (
+        index: number,
+        field: keyof DailyScheduleEditFormRow,
+        value: unknown,
+      ) => {
+        setFormValue(`schedule.${index}.${field}` as $TSFixMe, value);
+      },
+      toggleDay: (index: number) => {
+        const currentValue = watchedSchedule[index]?.checked;
+        setFormValue(`schedule.${index}.checked`, !currentValue);
+      },
+      save: async () => {
+        // Use form.handleSubmit which triggers validation and only calls saveValue if valid
+        await form.handleSubmit(saveValue)();
+      },
+      reset: handleReset,
+      close: handleClose,
+      validate: () => Object.keys(form.formState.errors).length === 0,
+    },
+    // Internal form details for default implementation
+    _form: form,
+    _fields: fields,
   };
 }

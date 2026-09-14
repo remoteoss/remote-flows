@@ -11,7 +11,7 @@ export const DailySchedule = ({
   summaryDays,
   subtractBreaksFromWorkHours,
   savedScheduleHoursError,
-  formBag,
+  editBag,
 }: DailyScheduleProps) => {
   return (
     <div className='flex flex-col gap-3 RemoteFlows__DailySchedule'>
@@ -32,9 +32,9 @@ export const DailySchedule = ({
           subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
         />
         <DailyScheduleHoursErrorBanner error={savedScheduleHoursError} />
-        <EditEmployeeWorkingHoursDialog onClose={formBag.handleClose}>
+        <EditEmployeeWorkingHoursDialog onClose={editBag.actions.close}>
           <DailyScheduleEditForm
-            {...formBag}
+            {...editBag}
             subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
           />
         </EditEmployeeWorkingHoursDialog>

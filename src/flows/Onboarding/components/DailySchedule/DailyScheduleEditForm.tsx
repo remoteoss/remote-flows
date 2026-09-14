@@ -1,4 +1,3 @@
-import { Weekday } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import { Form } from '@/src/components/ui/form';
 import { calculateWorkingHours } from '@/src/flows/Onboarding/components/DailySchedule/utils';
 import { CheckBoxField } from '@/src/components/form/fields/CheckBoxField';
@@ -9,16 +8,7 @@ import { Button } from '@/src/components/ui/button';
 import { RotateCcw } from 'lucide-react';
 import { useDailyScheduleEditForm } from '@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm';
 import { useDialogControl } from '@/src/flows/Onboarding/components/DailySchedule/EditEmployeeWorkingHoursDialog';
-
-const DAY_LABELS: Record<Weekday, string> = {
-  monday: 'Monday',
-  tuesday: 'Tuesday',
-  wednesday: 'Wednesday',
-  thursday: 'Thursday',
-  friday: 'Friday',
-  saturday: 'Saturday',
-  sunday: 'Sunday',
-};
+import { WEEKDAY_LABELS } from '@/src/flows/Onboarding/components/DailySchedule/constants';
 
 type DailyScheduleEditFormProps = ReturnType<
   typeof useDailyScheduleEditForm
@@ -27,30 +17,26 @@ type DailyScheduleEditFormProps = ReturnType<
 };
 
 export const DailyScheduleEditForm = ({
-  form,
-  fields,
-  watchedSchedule,
-  unsavedSummaryDays,
-  hoursRangeError,
-  saveValue,
-  handleReset,
-  isDirty,
-  selectionError,
+  state,
+  actions,
+  _form,
+  _fields,
   subtractBreaksFromWorkHours,
 }: DailyScheduleEditFormProps) => {
   const { close, cancel } = useDialogControl();
 
-  // Use form.handleSubmit directly with saveValue to ensure close() only runs on validation success
-  // The callback inside handleSubmit only executes if validation passes
-  const handleSave = form.handleSubmit((data) => {
-    saveValue(data);
-    close();
-  });
+  const handleSave = async () => {
+    await actions.save();
+    // Only close if validation passed
+    if (actions.validate()) {
+      close();
+    }
+  };
 
-  const hasFieldErrors = Object.keys(form.formState.errors).length > 0;
+  const hasFieldErrors = Object.keys(_form.formState.errors).length > 0;
 
   return (
-    <Form {...form}>
+    <Form {..._form}>
       <form className='space-y-4 RemoteFlows__DailyScheduleForm'>
         <p className='text-gray-600 text-sm mb-4 RemoteFlows__DailyScheduleForm__Description'>
           The times displayed are in the employee&apos;s time zone in the
@@ -65,8 +51,8 @@ export const DailyScheduleEditForm = ({
         </div>
 
         <div className='RemoteFlows__DailyScheduleForm__Rows'>
-          {fields.map((field, index) => {
-            const currentRow = watchedSchedule[index];
+          {_fields.map((field, index) => {
+            const currentRow = state.rows[index];
             const hours = calculateWorkingHours(
               currentRow?.start_time,
               currentRow?.end_time,
@@ -82,7 +68,7 @@ export const DailyScheduleEditForm = ({
               >
                 <div className='col-span-3'>
                   <CheckBoxField
-                    label={DAY_LABELS[field.day]}
+                    label={WEEKDAY_LABELS[field.day]}
                     name={`schedule.${index}.checked`}
                   />
                 </div>
@@ -117,18 +103,20 @@ export const DailyScheduleEditForm = ({
 
         <div className='rounded-lg border p-4 RemoteFlows__DailyScheduleForm__Preview'>
           <DailyScheduleSummaryBody
-            days={unsavedSummaryDays}
+            days={state.unsavedSummaryDays}
             subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
           />
         </div>
 
-        <DailyScheduleHoursErrorBanner error={hoursRangeError} />
+        <DailyScheduleHoursErrorBanner error={state.hoursRangeError} />
 
-        {selectionError ? (
-          <p className='text-destructive text-sm mb-0'>{selectionError}</p>
+        {state.selectionError ? (
+          <p className='text-destructive text-sm mb-0'>
+            {state.selectionError}
+          </p>
         ) : null}
 
-        {!selectionError && hasFieldErrors && (
+        {!state.selectionError && hasFieldErrors && (
           <p className='text-destructive text-sm mb-0'>
             Please check the form for errors. Time fields must use HH:mm format
             (e.g., 09:00), and all checked days must have start time, end time,
@@ -137,12 +125,12 @@ export const DailyScheduleEditForm = ({
         )}
 
         <div className='flex items-center gap-4 pt-4'>
-          {isDirty && (
+          {state.isDirty && (
             <Button
               type='button'
               variant='ghost'
               className='gap-2 RemoteFlows__DailyScheduleForm__ResetButton'
-              onClick={handleReset}
+              onClick={actions.reset}
             >
               <RotateCcw className='h-4 w-4' />
               Reset to default
@@ -155,7 +143,7 @@ export const DailyScheduleEditForm = ({
             <Button
               type='button'
               onClick={handleSave}
-              disabled={!!hoursRangeError}
+              disabled={!!state.hoursRangeError}
             >
               Save schedule
             </Button>
