@@ -9,7 +9,10 @@ import {
 import { Button } from '@/src/components/ui/button';
 
 type DialogControlContextValue = {
+  /** Closes the dialog as-is, without discarding form state (used after a successful save). */
   close: () => void;
+  /** Discards unsaved edits and closes the dialog. */
+  cancel: () => void;
 };
 
 const DialogControlContext = createContext<DialogControlContextValue | null>(
@@ -28,10 +31,17 @@ export const useDialogControl = () => {
 
 type EditEmployeeWorkingHoursDialogProps = {
   children: React.ReactNode;
+  /**
+   * Called whenever the dialog closes without saving — Cancel, overlay
+   * click, Escape, or the close button — so the parent can reset the edit
+   * form back to the last saved schedule before it's shown again.
+   */
+  onClose?: () => void;
 };
 
 export const EditEmployeeWorkingHoursDialog = ({
   children,
+  onClose,
 }: EditEmployeeWorkingHoursDialogProps) => {
   const [open, setOpen] = useState(false);
 
@@ -39,9 +49,24 @@ export const EditEmployeeWorkingHoursDialog = ({
     setOpen(false);
   };
 
+  const cancel = () => {
+    onClose?.();
+    setOpen(false);
+  };
+
+  // Radix funnels the close button, overlay click, and Escape all through
+  // `onOpenChange(false)` — treat those the same as an explicit Cancel.
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      cancel();
+      return;
+    }
+    setOpen(nextOpen);
+  };
+
   return (
-    <DialogControlContext.Provider value={{ close }}>
-      <Dialog open={open} onOpenChange={setOpen}>
+    <DialogControlContext.Provider value={{ close, cancel }}>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
           <Button
             variant='link'

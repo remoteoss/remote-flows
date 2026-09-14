@@ -32,7 +32,7 @@ export const DailySchedule = ({
           subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
         />
         <DailyScheduleHoursErrorBanner error={hoursError} />
-        <EditEmployeeWorkingHoursDialog>
+        <EditEmployeeWorkingHoursDialog onClose={formBag.handleClose}>
           <DailyScheduleEditForm
             {...formBag}
             subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}

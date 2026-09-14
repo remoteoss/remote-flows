@@ -310,6 +310,99 @@ describe('DailySchedule', () => {
     ).toBeInTheDocument();
   });
 
+  describe('Cancelling edits', () => {
+    const savedSchedule = {
+      selected_days: ['monday'],
+      schedule: {
+        monday: {
+          start_time: '10:00',
+          end_time: '14:00',
+          break_duration_minutes: 15,
+        },
+      },
+    };
+
+    it('discards unsaved edits when Cancel is clicked, so reopening shows the last saved schedule', async () => {
+      const user = userEvent.setup();
+      renderWithForm([createDailyScheduleField()], {
+        daily_schedule: savedSchedule,
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+      let dialog = screen.getByRole('dialog');
+      const mondayStartInput = within(dialog).getByDisplayValue('10:00');
+      await user.clear(mondayStartInput);
+      await user.type(mondayStartInput, '11:00');
+      await user.click(
+        within(dialog).getByRole('checkbox', { name: 'Tuesday' }),
+      );
+
+      await user.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+      dialog = screen.getByRole('dialog');
+
+      expect(within(dialog).getByDisplayValue('10:00')).toBeInTheDocument();
+      expect(
+        within(dialog).queryByDisplayValue('11:00'),
+      ).not.toBeInTheDocument();
+      expect(
+        within(dialog).getByRole('checkbox', { name: 'Tuesday' }),
+      ).not.toBeChecked();
+    });
+
+    it('discards unsaved edits when the dialog is closed via the close button', async () => {
+      const user = userEvent.setup();
+      renderWithForm([createDailyScheduleField()], {
+        daily_schedule: savedSchedule,
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+      let dialog = screen.getByRole('dialog');
+      await user.click(
+        within(dialog).getByRole('checkbox', { name: 'Tuesday' }),
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Close' }));
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+      dialog = screen.getByRole('dialog');
+
+      expect(
+        within(dialog).getByRole('checkbox', { name: 'Tuesday' }),
+      ).not.toBeChecked();
+    });
+
+    it('does not write back previously cancelled edits on a later save', async () => {
+      const user = userEvent.setup();
+      const { getFormValues } = renderWithForm([createDailyScheduleField()], {
+        daily_schedule: savedSchedule,
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+      let dialog = screen.getByRole('dialog');
+      await user.click(
+        within(dialog).getByRole('checkbox', { name: 'Friday' }),
+      );
+      await user.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+      dialog = screen.getByRole('dialog');
+      await user.click(
+        within(dialog).getByRole('button', { name: 'Save schedule' }),
+      );
+
+      await waitFor(() => {
+        const value = getFormValues().daily_schedule as {
+          selected_days: string[];
+        };
+        expect(value.selected_days).toEqual(['monday']);
+      });
+    });
+  });
+
   describe('Validation on blur', () => {
     it('shows validation error when invalid time format is entered and field is blurred', async () => {
       const user = userEvent.setup();

@@ -38,7 +38,7 @@ export const DailyScheduleEditForm = ({
   rootError,
   subtractBreaksFromWorkHours,
 }: DailyScheduleEditFormProps) => {
-  const { close } = useDialogControl();
+  const { close, cancel } = useDialogControl();
 
   const handleSave = async () => {
     await hookHandleSave();
@@ -150,7 +150,7 @@ export const DailyScheduleEditForm = ({
             </Button>
           )}
           <div className='flex gap-4 ml-auto'>
-            <Button type='button' variant='outline' onClick={close}>
+            <Button type='button' variant='outline' onClick={cancel}>
               Cancel
             </Button>
             <Button type='button' onClick={handleSave} disabled={!!hoursError}>
