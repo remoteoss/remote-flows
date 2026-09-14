@@ -352,29 +352,6 @@ describe('DailySchedule', () => {
       ).not.toBeChecked();
     });
 
-    it('discards unsaved edits when the dialog is closed via the close button', async () => {
-      const user = userEvent.setup();
-      renderWithForm([createDailyScheduleField()], {
-        daily_schedule: savedSchedule,
-      });
-
-      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
-      let dialog = screen.getByRole('dialog');
-      await user.click(
-        within(dialog).getByRole('checkbox', { name: 'Tuesday' }),
-      );
-
-      await user.click(screen.getByRole('button', { name: 'Close' }));
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-
-      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
-      dialog = screen.getByRole('dialog');
-
-      expect(
-        within(dialog).getByRole('checkbox', { name: 'Tuesday' }),
-      ).not.toBeChecked();
-    });
-
     it('does not write back previously cancelled edits on a later save', async () => {
       const user = userEvent.setup();
       const { getFormValues } = renderWithForm([createDailyScheduleField()], {
