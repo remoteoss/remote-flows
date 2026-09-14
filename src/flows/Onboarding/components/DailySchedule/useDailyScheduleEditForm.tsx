@@ -286,9 +286,6 @@ export function useDailyScheduleEditForm({
 
   const handleSave = handleSubmit((data) => {
     setValue(mapDailyScheduleEditFormDataToValue(data));
-    // The just-submitted data is the new baseline immediately — don't wait
-    // for the saved `value` prop to round-trip back down before the form is
-    // considered pristine again.
     form.reset(data);
     prevCheckedRef.current = data.schedule.map((row) => row.checked);
   });
@@ -365,7 +362,10 @@ export function useDailyScheduleEditForm({
     hoursError,
     handleSave,
     handleReset,
+<<<<<<< HEAD
     handleClose,
+=======
+>>>>>>> main
     isScheduleAtDefault,
     rootError,
   };

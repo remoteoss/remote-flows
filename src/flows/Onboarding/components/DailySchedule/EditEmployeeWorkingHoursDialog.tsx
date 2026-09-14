@@ -9,10 +9,14 @@ import {
 import { Button } from '@/src/components/ui/button';
 
 type DialogControlContextValue = {
+<<<<<<< HEAD
   /** Closes the dialog as-is, without discarding form state (used after a successful save). */
   close: () => void;
   /** Discards unsaved edits and closes the dialog. */
   cancel: () => void;
+=======
+  close: () => void;
+>>>>>>> main
 };
 
 const DialogControlContext = createContext<DialogControlContextValue | null>(
@@ -31,12 +35,15 @@ export const useDialogControl = () => {
 
 type EditEmployeeWorkingHoursDialogProps = {
   children: React.ReactNode;
+<<<<<<< HEAD
   /**
    * Called whenever the dialog closes without saving — Cancel, overlay
    * click, Escape, or the close button — so the parent can reset the edit
    * form back to the last saved schedule before it's shown again.
    */
   onClose?: () => void;
+=======
+>>>>>>> main
 };
 
 export const EditEmployeeWorkingHoursDialog = ({
