@@ -362,10 +362,7 @@ export function useDailyScheduleEditForm({
     hoursError,
     handleSave,
     handleReset,
-<<<<<<< HEAD
     handleClose,
-=======
->>>>>>> main
     isScheduleAtDefault,
     rootError,
   };
