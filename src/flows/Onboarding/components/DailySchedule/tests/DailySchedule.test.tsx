@@ -441,6 +441,40 @@ describe('DailySchedule', () => {
         expect(value.schedule.monday).toBeUndefined(); // Unchecked day not saved
       });
     });
+
+    it('clears validation errors when a day with invalid time is unchecked', async () => {
+      const user = userEvent.setup();
+      renderWithForm([createDailyScheduleField()], {
+        daily_schedule: undefined,
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+      const dialog = screen.getByRole('dialog');
+      const mondayStartInput = within(dialog).getAllByRole('textbox')[0];
+
+      // Type invalid time in Monday (checked) and blur
+      await user.clear(mondayStartInput);
+      await user.type(mondayStartInput, '25:00');
+      await user.tab();
+
+      // Error should appear
+      expect(
+        await within(dialog).findByText(/Please check the form for errors/),
+      ).toBeInTheDocument();
+
+      // Uncheck Monday - this should reset the field values and clear errors
+      await user.click(
+        within(dialog).getByRole('checkbox', { name: 'Monday' }),
+      );
+
+      // Error should be cleared after unchecking
+      await waitFor(() => {
+        expect(
+          within(dialog).queryByText(/Please check the form for errors/),
+        ).not.toBeInTheDocument();
+      });
+    });
   });
 
   describe('Row hours display', () => {

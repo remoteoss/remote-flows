@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -227,9 +228,58 @@ export function useDailyScheduleEditForm({
     resolver: zodResolver(dailyScheduleEditFormSchema) as $TSFixMe,
   });
 
-  const { control, handleSubmit, watch, formState } = form;
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState,
+    setValue: setFormValue,
+    trigger,
+  } = form;
   const { fields } = useFieldArray({ name: 'schedule', control });
   const watchedSchedule = watch('schedule');
+  const prevCheckedRef = useRef<boolean[]>(
+    watchedSchedule.map((row) => row.checked),
+  );
+
+  // Watch all schedule changes - using useEffect with watch callback
+  useEffect(() => {
+    const subscription = watch((value, { name: fieldName }) => {
+      // Only react to checkbox changes
+      if (fieldName?.includes('.checked')) {
+        const scheduleValue = value.schedule as DailyScheduleEditFormRow[];
+        const currentChecked = scheduleValue?.map((row) => row.checked) || [];
+
+        currentChecked.forEach((isChecked, index) => {
+          const wasChecked = prevCheckedRef.current[index];
+
+          if (wasChecked && !isChecked) {
+            // Day was just unchecked - reset its fields to defaults
+            setFormValue(`schedule.${index}.start_time`, defaultStartTime);
+            setFormValue(`schedule.${index}.end_time`, defaultEndTime);
+            setFormValue(
+              `schedule.${index}.break_duration_minutes`,
+              String(defaultBreakDurationMinutes),
+            );
+
+            // Trigger validation for this row to clear errors
+            trigger(`schedule.${index}`);
+          }
+        });
+
+        prevCheckedRef.current = currentChecked;
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [
+    watch,
+    defaultStartTime,
+    defaultEndTime,
+    defaultBreakDurationMinutes,
+    setFormValue,
+    trigger,
+  ]);
 
   const handleSave = handleSubmit((data) => {
     setValue(mapDailyScheduleEditFormDataToValue(data));
