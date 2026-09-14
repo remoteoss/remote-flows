@@ -53,21 +53,25 @@ function CustomDailyScheduleEditForm({
             {row.checked && (
               <>
                 <input
-                  type='time'
+                  type='text'
                   value={row.start_time}
                   onChange={(e) =>
                     actions.updateRow(index, 'start_time', e.target.value)
                   }
+                  onBlur={() => actions.triggerValidation(index, 'start_time')}
                   className='border rounded px-2 py-1'
+                  placeholder='HH:mm'
                 />
                 <span>to</span>
                 <input
-                  type='time'
+                  type='text'
                   value={row.end_time}
                   onChange={(e) =>
                     actions.updateRow(index, 'end_time', e.target.value)
                   }
+                  onBlur={() => actions.triggerValidation(index, 'end_time')}
                   className='border rounded px-2 py-1'
+                  placeholder='HH:mm'
                 />
                 <input
                   type='number'
@@ -78,6 +82,9 @@ function CustomDailyScheduleEditForm({
                       'break_duration_minutes',
                       e.target.value,
                     )
+                  }
+                  onBlur={() =>
+                    actions.triggerValidation(index, 'break_duration_minutes')
                   }
                   className='border rounded px-2 py-1 w-20'
                   placeholder='Break (min)'
@@ -103,6 +110,15 @@ function CustomDailyScheduleEditForm({
       )}
       {state.selectionError && (
         <p className='text-red-600 text-sm'>{state.selectionError}</p>
+      )}
+
+      {/* Field-level validation errors */}
+      {!state.selectionError && state.hasFieldErrors && (
+        <p className='text-red-600 text-sm'>
+          Please check the form for errors. Time fields must use HH:mm format
+          (e.g., 09:00), and all checked days must have start time, end time,
+          and break duration filled in.
+        </p>
       )}
 
       {/* Actions */}

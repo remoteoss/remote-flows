@@ -347,6 +347,8 @@ export function useDailyScheduleEditForm({
         })
       : null;
 
+  const hasFieldErrors = Object.keys(formState.errors).length > 0;
+
   // Return both the stable public API and internal form details
   return {
     // Public API - framework-agnostic
@@ -356,6 +358,7 @@ export function useDailyScheduleEditForm({
       hoursRangeError,
       isDirty,
       selectionError,
+      hasFieldErrors,
     },
     actions: {
       updateRow: (
@@ -368,6 +371,12 @@ export function useDailyScheduleEditForm({
       toggleDay: (index: number) => {
         const currentValue = watchedSchedule[index]?.checked;
         setFormValue(`schedule.${index}.checked`, !currentValue);
+      },
+      triggerValidation: (
+        index: number,
+        field: keyof DailyScheduleEditFormRow,
+      ) => {
+        trigger(`schedule.${index}.${field}` as $TSFixMe);
       },
       save: async () => {
         // Use form.handleSubmit which triggers validation and only calls saveValue if valid
