@@ -23,10 +23,12 @@ const DayRow = memo(
     field,
     index,
     form,
+    subtractBreaksFromWorkHours,
   }: {
     field: FieldArrayWithId<DailyScheduleEditFormData, 'schedule', 'id'>;
     index: number;
     form: UseFormReturn<DailyScheduleEditFormData>;
+    subtractBreaksFromWorkHours: boolean;
   }) => {
     // Watch only THIS row's values for hours calculation and disabled state
     // More performant than watching the entire schedule array
@@ -38,7 +40,9 @@ const DayRow = memo(
     const hours = calculateWorkingHours(
       currentRow?.start_time,
       currentRow?.end_time,
-      Number(currentRow?.break_duration_minutes) || 0,
+      subtractBreaksFromWorkHours
+        ? Number(currentRow?.break_duration_minutes) || 0
+        : 0,
     );
 
     const hoursDisplay = currentRow?.checked
@@ -135,7 +139,13 @@ export const DailyScheduleEditForm = ({
 
         <div className='RemoteFlows__DailyScheduleForm__Rows'>
           {fields.map((field, index) => (
-            <DayRow key={field.id} field={field} index={index} form={form} />
+            <DayRow
+              key={field.id}
+              field={field}
+              index={index}
+              form={form}
+              subtractBreaksFromWorkHours={subtractBreaksFromWorkHours}
+            />
           ))}
         </div>
 
