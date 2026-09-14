@@ -309,4 +309,211 @@ describe('DailySchedule', () => {
       within(dialog).getByRole('button', { name: 'Reset to default' }),
     ).toBeInTheDocument();
   });
+
+  describe('Validation on blur', () => {
+    it('shows validation error when invalid time format is entered and field is blurred', async () => {
+      const user = userEvent.setup();
+      renderWithForm([createDailyScheduleField()], {
+        daily_schedule: undefined,
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+      const dialog = screen.getByRole('dialog');
+      const mondayStartInput = within(dialog).getAllByRole('textbox')[0]; // First start time input
+
+      // Type invalid time and blur
+      await user.clear(mondayStartInput);
+      await user.type(mondayStartInput, '25:00');
+      await user.tab(); // Trigger blur
+
+      // Generic error should appear after blur
+      expect(
+        await within(dialog).findByText(
+          /Please check the form for errors. Time fields must use HH:mm format/,
+        ),
+      ).toBeInTheDocument();
+    });
+
+    it('shows validation error when incomplete time format is entered (missing leading zero)', async () => {
+      const user = userEvent.setup();
+      renderWithForm([createDailyScheduleField()], {
+        daily_schedule: undefined,
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+      const dialog = screen.getByRole('dialog');
+      const mondayStartInput = within(dialog).getAllByRole('textbox')[0];
+
+      await user.clear(mondayStartInput);
+      await user.type(mondayStartInput, '9:00'); // Missing leading zero
+      await user.tab();
+
+      expect(
+        await within(dialog).findByText(/Please check the form for errors/),
+      ).toBeInTheDocument();
+    });
+
+    it('does not show validation error when valid time format is entered', async () => {
+      const user = userEvent.setup();
+      renderWithForm([createDailyScheduleField()], {
+        daily_schedule: undefined,
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+      const dialog = screen.getByRole('dialog');
+      const mondayStartInput = within(dialog).getAllByRole('textbox')[0];
+
+      await user.clear(mondayStartInput);
+      await user.type(mondayStartInput, '09:00');
+      await user.tab();
+
+      // No error should appear
+      expect(
+        within(dialog).queryByText(/Please check the form for errors/),
+      ).not.toBeInTheDocument();
+    });
+
+    it('blocks save when invalid time format is present', async () => {
+      const user = userEvent.setup();
+      renderWithForm([createDailyScheduleField()], {
+        daily_schedule: undefined,
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+      const dialog = screen.getByRole('dialog');
+      const mondayStartInput = within(dialog).getAllByRole('textbox')[0];
+
+      await user.clear(mondayStartInput);
+      await user.type(mondayStartInput, '25:00');
+
+      await user.click(
+        within(dialog).getByRole('button', { name: 'Save schedule' }),
+      );
+
+      // Error appears and form does not save
+      expect(
+        await within(dialog).findByText(/Please check the form for errors/),
+      ).toBeInTheDocument();
+
+      // Dialog should still be open (save was blocked)
+      expect(dialog).toBeInTheDocument();
+    });
+
+    it('allows unchecked days with invalid times to not block save', async () => {
+      const user = userEvent.setup();
+      const { getFormValues } = renderWithForm([createDailyScheduleField()], {
+        daily_schedule: {
+          selected_days: ['tuesday'],
+          schedule: {
+            tuesday: {
+              start_time: '09:00',
+              end_time: '18:00',
+              break_duration_minutes: 60,
+            },
+          },
+        },
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+      const dialog = screen.getByRole('dialog');
+
+      // Type invalid time in Monday (unchecked)
+      const mondayStartInput = within(dialog).getAllByRole('textbox')[0];
+      await user.clear(mondayStartInput);
+      await user.type(mondayStartInput, '25:00');
+
+      // Tuesday is checked and valid, should save successfully
+      await user.click(
+        within(dialog).getByRole('button', { name: 'Save schedule' }),
+      );
+
+      await waitFor(() => {
+        const value = getFormValues().daily_schedule as {
+          selected_days: string[];
+          schedule: Record<string, unknown>;
+        };
+        expect(value.selected_days).toEqual(['tuesday']);
+        expect(value.schedule.monday).toBeUndefined(); // Unchecked day not saved
+      });
+    });
+  });
+
+  describe('Row hours display', () => {
+    it('row hours match summary hours when subtractBreaksFromWorkHours is false', async () => {
+      const user = userEvent.setup();
+      renderWithForm(
+        [
+          createDailyScheduleField({
+            metadata: {
+              ...germanyDailyScheduleMetadata,
+              subtract_breaks_in_work_hours: false,
+              default_schedule: [
+                {
+                  day: 'monday',
+                  start_time: '09:00',
+                  end_time: '17:00',
+                  break_duration_minutes: 60,
+                },
+              ],
+              work_days: ['monday'],
+            },
+          }),
+        ],
+        { daily_schedule: undefined },
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+      const dialog = screen.getByRole('dialog');
+
+      // Row should show 8h (09:00-17:00 = 8h, break not subtracted)
+      expect(within(dialog).getByText('8h')).toBeInTheDocument();
+
+      // Summary should also show 8h per week
+      expect(
+        within(dialog).getByText(byOwnText('Total of 8 hours per week')),
+      ).toBeInTheDocument();
+    });
+
+    it('row hours match summary hours when subtractBreaksFromWorkHours is true', async () => {
+      const user = userEvent.setup();
+      renderWithForm(
+        [
+          createDailyScheduleField({
+            metadata: {
+              ...germanyDailyScheduleMetadata,
+              subtract_breaks_in_work_hours: true,
+              default_schedule: [
+                {
+                  day: 'monday',
+                  start_time: '09:00',
+                  end_time: '17:00',
+                  break_duration_minutes: 60,
+                },
+              ],
+              work_days: ['monday'],
+            },
+          }),
+        ],
+        { daily_schedule: undefined },
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+      const dialog = screen.getByRole('dialog');
+
+      // Row should show 7h (09:00-17:00 = 8h, minus 1h break = 7h)
+      expect(within(dialog).getByText('7h')).toBeInTheDocument();
+
+      // Summary should also show 7h per week
+      expect(
+        within(dialog).getByText(byOwnText('Total of 7 hours per week')),
+      ).toBeInTheDocument();
+    });
+  });
 });

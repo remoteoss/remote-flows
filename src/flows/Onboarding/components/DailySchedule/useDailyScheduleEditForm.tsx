@@ -49,6 +49,9 @@ const dayRowSchema = z
     break_duration_minutes: z.string().optional().nullable(),
   })
   .superRefine((row, ctx) => {
+    if (!row.checked) {
+      return;
+    }
     for (const field of ['start_time', 'end_time'] as const) {
       const value = row[field];
       if (value && !TIME_PATTERN.test(value)) {
@@ -210,6 +213,7 @@ export function useDailyScheduleEditForm({
   onSaved,
 }: UseDailyScheduleEditFormOptions) {
   const form = useForm<DailyScheduleEditFormData>({
+    mode: 'onBlur',
     defaultValues: {
       schedule: buildDailyScheduleEditFormDefaultValues({
         availableWorkDays,
