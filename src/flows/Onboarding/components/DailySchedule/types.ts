@@ -78,7 +78,7 @@ export type DailyScheduleRenderProps = {
   /** Whether to subtract breaks from work hours in the summary display. */
   subtractBreaksFromWorkHours: boolean;
   /** The hours error message if the total hours are outside the bounds. */
-  hoursError: DailyScheduleHoursError | null;
+  savedScheduleHoursError: DailyScheduleHoursError | null;
   /** The form bag from useDailyScheduleEditForm hook */
   formBag: ReturnType<
     typeof import('@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm').useDailyScheduleEditForm

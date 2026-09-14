@@ -300,21 +300,20 @@ export function useDailyScheduleEditForm({
     prevCheckedRef.current = defaultScheduleRows.map((row) => row.checked);
   };
 
-  const isScheduleAtDefault = isDefaultSchedule(
-    watchedSchedule,
-    defaultScheduleRows,
-  );
+  const formValues = watch('schedule');
+
+  const isDirty = !isDefaultSchedule(formValues, defaultScheduleRows);
 
   // `schedule` is a field array; a whole-array `.refine()` failure (as
   // opposed to a per-row error) lands under `.root`, not directly on
   // `.message` — react-hook-form normalizes this for registered field
   // arrays regardless of resolver.
-  const rootError = formState.errors.schedule?.root?.message;
+  const selectionError = formState.errors.schedule?.root?.message;
 
   // Same "checked rows -> summary days" shape the read-only summary and the
   // edit modal's live preview both build from, kept here so `hoursError`
   // reflects the schedule as the user is actively editing it.
-  const previewDays: DailyScheduleSummaryDay[] = watchedSchedule
+  const unsavedSummaryDays: DailyScheduleSummaryDay[] = watchedSchedule
     .filter((row) => row.checked)
     .map((row) => ({
       day: row.day,
@@ -324,11 +323,11 @@ export function useDailyScheduleEditForm({
     }));
 
   const totalWeeklyHours = calculateTotalWeeklyHours(
-    previewDays,
+    unsavedSummaryDays,
     subtractBreaksFromWorkHours,
   );
 
-  const hoursError =
+  const hoursRangeError =
     workHoursBounds && countryName
       ? getDailyScheduleHoursError({
           totalWeeklyHours,
@@ -342,11 +341,11 @@ export function useDailyScheduleEditForm({
     form,
     fields,
     watchedSchedule,
-    previewDays,
-    hoursError,
+    unsavedSummaryDays,
+    hoursRangeError,
     handleSave,
     handleReset,
-    isScheduleAtDefault,
-    rootError,
+    isDirty,
+    selectionError,
   };
 }
