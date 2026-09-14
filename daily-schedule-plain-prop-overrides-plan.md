@@ -10,34 +10,44 @@ The screenshot you shared (Dragon's "Edit Schedule" modal — fixed list of week
 
 ## Design
 
-Add two new `Components` map entries, following the exact pattern already used for `drawer`/`zendeskDrawer` (generic, non-JSF, resolved via `useFormFields()` — confirmed nothing about that mechanism requires JSON-Schema-Form or react-hook-form context: `Drawer.tsx` doesn't call `useFormContext` at all):
+Add a single new `Components` map entry, **`dailySchedule`**, namespacing the two sub-components instead of adding them as two flat top-level keys:
 
-- **`dailyScheduleRow`** — one weekday row, plain props only: `day`, `label`, `checked`/`onCheckedChange`, `startTime`/`onStartTimeChange`, `endTime`/`onEndTimeChange`, `breakDurationMinutes`/`onBreakDurationMinutesChange`, computed `hoursDisplay`, `disabled`. No RHF types anywhere in the signature.
-- **`dailyScheduleModal`** — chrome only, same shape family as `DrawerComponentProps` (`src/types/remoteFlows.ts:133-141`): `open`, `onOpenChange`, `title`, `trigger`, `children`, `className`.
+```ts
+dailySchedule?: {
+  row?: React.ComponentType<DailyScheduleRowComponentProps>;
+  modal?: React.ComponentType<DailyScheduleModalComponentProps>;
+};
+```
 
-The SDK keeps doing `useFieldArray`/per-row `useWatch` internally (`DailyScheduleEditForm.tsx`'s existing `DayRow`, lines 22-93) and just hands plain values/callbacks to whichever component gets resolved — the consumer's override or the internal default — exactly like `TextField` resolves `components.text` today (`TextField.tsx:41`, `const Component = component || components?.text`).
+- **`row`** — one weekday row, plain props only: `day`, `label`, `checked`/`onCheckedChange`, `startTime`/`onStartTimeChange`, `endTime`/`onEndTimeChange`, `breakDurationMinutes`/`onBreakDurationMinutesChange`, computed `hoursDisplay`, `disabled`. No RHF types anywhere in the signature.
+- **`modal`** — chrome only, same shape family as `DrawerComponentProps` (`src/types/remoteFlows.ts:133-141`): `open`, `onOpenChange`, `title`, `trigger`, `children`, `className`.
+
+This is a deliberate deviation from every other `Components` entry, which all resolve to a component directly (`components.text`, `components.drawer`, …) — `row` and `modal` are two tightly-coupled facets of one field type (`daily_schedule`), so they're grouped under one namespace rather than reading as two unrelated top-level overrides. It's the same generic, non-JSF mechanism as `drawer`/`zendeskDrawer` underneath (resolved via `useFormFields()` — confirmed nothing about that mechanism requires JSON-Schema-Form or react-hook-form context: `Drawer.tsx` doesn't call `useFormContext` at all), just nested one level.
+
+**Merge implication of the nesting:** `FormFieldsProvider` merges defaults and user components with a shallow spread (`{...lazyDefaultComponents, ...userComponents}`, `RemoteFlowsProvider.tsx:44-48`). For every existing flat key that's fine — the whole value is one component. For a nested `dailySchedule` object it isn't: a consumer passing only `components={{ dailySchedule: { row: MyRow } }}` would shallow-merge to `{ row: MyRow }`, silently dropping the internal default `modal` rather than falling back to it. To avoid special-casing the generic merge for one key, **don't** register `dailySchedule` in `lazy-default-components.ts` at all. Instead, each consumption site resolves its own half independently: `DayRow` does `components?.dailySchedule?.row ?? DefaultDailyScheduleRow`, the modal wiring does `components?.dailySchedule?.modal ?? DefaultDailyScheduleModal`, each importing its own default (still `React.lazy()`-wrapped at the point of use for the same code-splitting benefit — just declared next to its consumer instead of centralized).
+
+The SDK keeps doing `useFieldArray`/per-row `useWatch` internally (`DailyScheduleEditForm.tsx`'s existing `DayRow`, lines 22-93) and just hands plain values/callbacks to whichever component gets resolved — the consumer's override or the internal default.
 
 ## Phases
 
 ### Phase 1 — Types only (no behavior change)
 
-Add `DailyScheduleRowComponentProps` and `DailyScheduleModalComponentProps` to `src/types/remoteFlows.ts`, extend the `Components` type with `dailyScheduleRow?` / `dailyScheduleModal?`. Purely additive, zero runtime effect, trivially reviewable/revertable on its own.
+Add `DailyScheduleRowComponentProps` and `DailyScheduleModalComponentProps` to `src/types/remoteFlows.ts`, extend the `Components` type with the nested `dailySchedule?: { row?; modal? }` shape. Purely additive, zero runtime effect, trivially reviewable/revertable on its own.
 
 ### Phase 2 — Row override wiring
 
-- In `DailyScheduleEditForm.tsx`, teach `DayRow` to call `useFormFields()` and resolve `components.dailyScheduleRow`; if present, render it with the plain props computed from the existing per-row `useWatch` (already there, lines 36-53) instead of `CheckBoxField`/`TextField`. No override → identical output to today (byte-for-byte, so existing `DailySchedule.test.tsx` keeps passing unmodified).
-- Register the internal row UI as the default via `lazy-default-components.ts` (same shape as the `drawer` entry, `lazy-default-components.ts:39-43`), so the override mechanism is symmetric with every other `Components` key.
-- Tests: default path unchanged (existing suite); new test rendering with a custom `dailyScheduleRow` and asserting it receives the right plain props and that typing in it round-trips through `formBag`.
+- In `DailyScheduleEditForm.tsx`, teach `DayRow` to call `useFormFields()` and resolve `components.dailySchedule?.row`; if present, render it with the plain props computed from the existing per-row `useWatch` (already there, lines 36-53) instead of `CheckBoxField`/`TextField`. No override → falls back to the internal default row component (see below) → identical output to today (byte-for-byte, so existing `DailySchedule.test.tsx` keeps passing unmodified).
+- The internal default row UI is **not** registered in `lazy-default-components.ts` (see Design's merge-implication note — a shallow merge on a nested key would drop a sibling default). Instead `DayRow` imports its own `React.lazy()`-wrapped default directly and does `components?.dailySchedule?.row ?? DefaultDailyScheduleRow`.
+- Tests: default path unchanged (existing suite); new test rendering with a custom `dailySchedule.row` and asserting it receives the right plain props and that typing in it round-trips through `formBag`.
 
 ### Phase 3 — Modal override wiring
 
-- In `EditEmployeeWorkingHoursDialog.tsx`, resolve `components.dailyScheduleModal` the same way `Drawer.tsx` resolves `components.drawer` (`Drawer.tsx:9-23`). Internal code keeps building the trigger element (the "Edit schedule" `Button`) and title, and hands them to the resolved component as `trigger`/`title` — consumer only owns the chrome, not what triggers it, mirroring how `ContractReviewButton`/`PaidTimeOffButton` build their own trigger and hand it to the generic `Drawer`.
-- Register a default (internal `Dialog`) via `lazy-default-components.ts`.
+- In `EditEmployeeWorkingHoursDialog.tsx`, resolve `components.dailySchedule?.modal`, same fallback-at-the-call-site approach as Phase 2 (own local default, not centrally registered). Internal code keeps building the trigger element (the "Edit schedule" `Button`) and title, and hands them to the resolved component as `trigger`/`title` — consumer only owns the chrome, not what triggers it, mirroring how `ContractReviewButton`/`PaidTimeOffButton` build their own trigger and hand it to the generic `Drawer`.
 - Tests: default path unchanged; override path renders custom chrome and still opens/closes/saves correctly.
 
 ### Phase 4 — Example rewrite
 
-Update `example/src/flows/Onboarding/CustomDailySchedule.tsx` to pass `dailyScheduleRow`/`dailyScheduleModal` via the `components` prop on `<RemoteFlows>`, and delete the `RFForm`/`Controller`/`useWatch`/`UseFormReturn`/`FieldArrayWithId` usage entirely. Keep `buildDailyScheduleSummary`/`calculateWorkingHours`/`WEEKDAY_LABELS`/`DAILY_SCHEDULE_FIELD_NAMES` only where still needed.
+Update `example/src/flows/Onboarding/CustomDailySchedule.tsx` to pass `dailySchedule: { row, modal }` via the `components` prop on `<RemoteFlows>`, and delete the `RFForm`/`Controller`/`useWatch`/`UseFormReturn`/`FieldArrayWithId` usage entirely. Keep `buildDailyScheduleSummary`/`calculateWorkingHours`/`WEEKDAY_LABELS`/`DAILY_SCHEDULE_FIELD_NAMES` only where still needed.
 
 ### Phase 5 — Deferred, not in this PR
 
@@ -51,6 +61,6 @@ Revisit whether `RFForm`/`Controller`/`useWatch` should stay exported from the m
 
 ## Open questions for you
 
-1. Does the `dailyScheduleRow` prop list above match what you'd want partners to control, or should `disabled` derive purely from `checked` internally (no separate prop)?
-2. Phase 3's "internal code owns the trigger" call — agree, or do you want the trigger swappable too (a third `dailyScheduleTriggerButton`, mirroring the `zendeskDrawer`/`zendeskTriggerButton` pairing)?
+1. Does the `dailySchedule.row` prop list above match what you'd want partners to control, or should `disabled` derive purely from `checked` internally (no separate prop)?
+2. Phase 3's "internal code owns the trigger" call — agree, or do you want the trigger swappable too (a third `dailySchedule.triggerButton`, mirroring the `zendeskDrawer`/`zendeskTriggerButton` pairing)?
 3. Ship all 4 phases as one PR, or land Phase 1 (types) separately first since it's zero-risk?
