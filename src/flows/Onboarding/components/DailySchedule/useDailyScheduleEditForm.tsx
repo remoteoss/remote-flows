@@ -357,5 +357,6 @@ export function useDailyScheduleEditForm({
     handleReset,
     isDirty,
     selectionError,
+    handleClose,
   };
 }
