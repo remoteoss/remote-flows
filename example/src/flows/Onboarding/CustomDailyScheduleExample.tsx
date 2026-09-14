@@ -167,6 +167,7 @@ export function CustomDailySchedule(props: DailyScheduleRenderProps) {
       <div className='flex justify-between items-center mb-4'>
         <h3 className='text-lg font-semibold'>Daily Schedule</h3>
         <button
+          type='button'
           onClick={() => setIsEditing(!isEditing)}
           className='px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700'
         >
