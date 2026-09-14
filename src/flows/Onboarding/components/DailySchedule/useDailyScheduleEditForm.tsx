@@ -13,7 +13,6 @@ import {
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import {
   calculateTotalWeeklyHours,
-  buildDailyScheduleSummary,
   getDailyScheduleHoursError,
   resolveDailyScheduleValue,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
