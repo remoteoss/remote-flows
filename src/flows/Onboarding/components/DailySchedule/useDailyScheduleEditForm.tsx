@@ -192,7 +192,6 @@ export type UseDailyScheduleEditFormOptions = {
   workHoursBounds?: WorkHoursRange;
   workSchedule?: string;
   countryName?: string;
-  onSaved?: () => void;
 };
 
 /**
@@ -211,7 +210,6 @@ export function useDailyScheduleEditForm({
   countryName,
   value,
   setValue,
-  onSaved,
 }: UseDailyScheduleEditFormOptions) {
   const form = useForm<DailyScheduleEditFormData>({
     mode: 'onBlur',
@@ -283,7 +281,6 @@ export function useDailyScheduleEditForm({
 
   const handleSave = handleSubmit((data) => {
     setValue(mapDailyScheduleEditFormDataToValue(data));
-    onSaved?.();
   });
 
   const defaultScheduleRows = buildDailyScheduleEditFormDefaultValues({

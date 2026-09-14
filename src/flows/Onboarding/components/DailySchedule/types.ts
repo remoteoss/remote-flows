@@ -72,12 +72,18 @@ export type DailyScheduleDefaults = {
   workHoursPerWeekConfig: WorkHoursPerWeekConfig;
 };
 
-export type DailyScheduleRenderProps = DailyScheduleFieldProps &
-  DailyScheduleDefaults & {
-    workHoursBounds: WorkHoursRange;
-    /** The resolved `work_schedule` value ('full_time' / 'part_time'), used to word the hours-range error. */
-    workSchedule: string | undefined;
-  };
+export type DailyScheduleRenderProps = {
+  /** The summary days derived from the current value and default schedule. */
+  summaryDays: DailyScheduleSummaryDay[];
+  /** Whether to subtract breaks from work hours in the summary display. */
+  subtractBreaksFromWorkHours: boolean;
+  /** The hours error message if the total hours are outside the bounds. */
+  hoursError: DailyScheduleHoursError | null;
+  /** The form bag from useDailyScheduleEditForm hook */
+  formBag: ReturnType<
+    typeof import('@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm').useDailyScheduleEditForm
+  >;
+};
 
 export type DailyScheduleContainerProps = DailyScheduleFieldProps & {
   render: (props: DailyScheduleRenderProps) => React.ReactNode;
