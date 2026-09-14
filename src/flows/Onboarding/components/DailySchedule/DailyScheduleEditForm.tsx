@@ -101,7 +101,9 @@ export const DailyScheduleEditForm = ({
             const hours = calculateWorkingHours(
               currentRow?.start_time,
               currentRow?.end_time,
-              Number(currentRow?.break_duration_minutes) || 0,
+              subtractBreaksFromWorkHours
+                ? Number(currentRow?.break_duration_minutes) || 0
+                : 0,
             );
 
             return (
