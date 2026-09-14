@@ -50,47 +50,62 @@ function CustomDailyScheduleEditForm({
               <span>{WEEKDAY_LABELS[row.day]}</span>
             </label>
 
-            {row.checked && (
-              <>
-                <input
-                  type='text'
-                  value={row.start_time}
-                  onChange={(e) =>
-                    actions.updateRow(index, 'start_time', e.target.value)
-                  }
-                  onBlur={() => actions.triggerValidation(index, 'start_time')}
-                  className='border rounded px-2 py-1'
-                  placeholder='HH:mm'
-                />
-                <span>to</span>
-                <input
-                  type='text'
-                  value={row.end_time}
-                  onChange={(e) =>
-                    actions.updateRow(index, 'end_time', e.target.value)
-                  }
-                  onBlur={() => actions.triggerValidation(index, 'end_time')}
-                  className='border rounded px-2 py-1'
-                  placeholder='HH:mm'
-                />
-                <input
-                  type='number'
-                  value={row.break_duration_minutes}
-                  onChange={(e) =>
-                    actions.updateRow(
-                      index,
-                      'break_duration_minutes',
-                      e.target.value,
-                    )
-                  }
-                  onBlur={() =>
-                    actions.triggerValidation(index, 'break_duration_minutes')
-                  }
-                  className='border rounded px-2 py-1 w-20'
-                  placeholder='Break (min)'
-                />
-              </>
-            )}
+            <input
+              type='text'
+              value={row.start_time}
+              onChange={(e) =>
+                actions.updateRow(index, 'start_time', e.target.value)
+              }
+              onBlur={() => actions.triggerValidation(index, 'start_time')}
+              disabled={!row.checked}
+              className={`border rounded px-2 py-1 ${
+                state.getFieldError(index, 'start_time') ? 'border-red-500' : ''
+              }`}
+              placeholder='HH:mm'
+              aria-invalid={!!state.getFieldError(index, 'start_time')}
+            />
+            <span>to</span>
+            <input
+              type='text'
+              value={row.end_time}
+              onChange={(e) =>
+                actions.updateRow(index, 'end_time', e.target.value)
+              }
+              onBlur={() => actions.triggerValidation(index, 'end_time')}
+              disabled={!row.checked}
+              className={`border rounded px-2 py-1 ${
+                state.getFieldError(index, 'end_time') ? 'border-red-500' : ''
+              }`}
+              placeholder='HH:mm'
+              aria-invalid={!!state.getFieldError(index, 'end_time')}
+            />
+            <input
+              type='number'
+              value={row.break_duration_minutes}
+              onChange={(e) =>
+                actions.updateRow(
+                  index,
+                  'break_duration_minutes',
+                  e.target.value,
+                )
+              }
+              onBlur={() =>
+                actions.triggerValidation(index, 'break_duration_minutes')
+              }
+              disabled={!row.checked}
+              className={`border rounded px-2 py-1 w-20 ${
+                state.getFieldError(index, 'break_duration_minutes')
+                  ? 'border-red-500'
+                  : ''
+              }`}
+              placeholder='Break (min)'
+              aria-invalid={
+                !!state.getFieldError(index, 'break_duration_minutes')
+              }
+            />
+            <span className='text-sm text-gray-500 w-12 text-center'>
+              {row.checked ? `${row.hours}h` : '-'}
+            </span>
           </div>
         ))}
       </div>

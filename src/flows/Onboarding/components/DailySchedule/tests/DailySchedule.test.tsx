@@ -492,10 +492,33 @@ describe('DailySchedule', () => {
 
       const dialog = screen.getByRole('dialog');
 
-      // Type invalid time in Monday (unchecked)
+      // Check Monday (to enable its inputs)
+      await user.click(
+        within(dialog).getByRole('checkbox', { name: 'Monday' }),
+      );
+
+      // Type invalid time in Monday (now checked and editable)
       const mondayStartInput = within(dialog).getAllByRole('textbox')[0];
       await user.clear(mondayStartInput);
       await user.type(mondayStartInput, '25:00');
+      await user.tab(); // Trigger validation
+
+      // Error should appear for Monday
+      expect(
+        await within(dialog).findByText(/Please check the form for errors/),
+      ).toBeInTheDocument();
+
+      // Uncheck Monday - this should clear the error (invalid data stays but doesn't block save)
+      await user.click(
+        within(dialog).getByRole('checkbox', { name: 'Monday' }),
+      );
+
+      // Error should be cleared
+      await waitFor(() => {
+        expect(
+          within(dialog).queryByText(/Please check the form for errors/),
+        ).not.toBeInTheDocument();
+      });
 
       // Tuesday is checked and valid, should save successfully
       await user.click(
@@ -533,7 +556,7 @@ describe('DailySchedule', () => {
         await within(dialog).findByText(/Please check the form for errors/),
       ).toBeInTheDocument();
 
-      // Uncheck Monday - this should reset the field values and clear errors
+      // Uncheck Monday - this should clear errors (but keep the invalid value in the disabled field)
       await user.click(
         within(dialog).getByRole('checkbox', { name: 'Monday' }),
       );
@@ -590,10 +613,14 @@ describe('DailySchedule', () => {
       });
 
       // Add invalid time to Friday (which is now checked)
+      // Query textboxes after the DOM has stabilized from the reset
       const allTextboxes = within(dialog).getAllByRole('textbox');
-      // Friday is index 4, each row has 3 inputs: start (0), end (1), break (2)
-      // Friday start time is at 4*3 = 12
-      const fridayStartInput = allTextboxes[12];
+      // getAllByRole('textbox') returns only text inputs (start_time, end_time), not number inputs (break)
+      // Each day has 2 textboxes: start (even index), end (odd index)
+      // Friday is day index 4: start_time is at textbox index 4*2 = 8
+      const fridayStartInput = allTextboxes[8];
+
+      // Clear and type invalid time
       await user.clear(fridayStartInput);
       await user.type(fridayStartInput, '99:99');
       await user.tab();

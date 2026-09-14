@@ -13,6 +13,7 @@ import {
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import {
   calculateTotalWeeklyHours,
+  calculateWorkingHours,
   getDailyScheduleHoursError,
   resolveDailyScheduleValue,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
@@ -35,6 +36,11 @@ export type DailyScheduleEditFormRow = {
   start_time: string;
   end_time: string;
   break_duration_minutes: string;
+};
+
+/** Public API row type with calculated hours */
+export type DailyScheduleEditFormRowWithHours = DailyScheduleEditFormRow & {
+  hours: number;
 };
 
 export type DailyScheduleEditFormData = {
@@ -194,6 +200,52 @@ export type UseDailyScheduleEditFormOptions = {
   countryName?: string;
 };
 
+/** Framework-agnostic validation result */
+type ValidationResult =
+  | { valid: true }
+  | {
+      valid: false;
+      selectionError?: string;
+      hasFieldErrors: boolean;
+      fieldErrors: Map<string, string>; // "schedule.0.start_time" -> error message
+    };
+
+/**
+ * Framework-agnostic validation using the Zod schema directly.
+ * Returns validation result that both RHF and custom implementations can use.
+ */
+function validateSchedule(rows: DailyScheduleEditFormRow[]): ValidationResult {
+  const result = dailyScheduleEditFormSchema.safeParse({ schedule: rows });
+
+  if (result.success) {
+    return { valid: true };
+  }
+
+  // Extract selection error (array-level validation)
+  const selectionError = result.error.issues.find(
+    (issue) => issue.path[0] === 'schedule' && issue.path.length === 1,
+  )?.message;
+
+  // Build a map of field-level errors
+  const fieldErrors = new Map<string, string>();
+  result.error.issues.forEach((issue) => {
+    // schedule[index].field - we want field-level errors only
+    if (issue.path.length === 3 && issue.path[0] === 'schedule') {
+      const index = issue.path[1];
+      const field = issue.path[2];
+      // Ensure index and field are strings/numbers, not symbols
+      if (typeof index === 'number' && typeof field === 'string') {
+        const key = `schedule.${index}.${field}`;
+        fieldErrors.set(key, issue.message);
+      }
+    }
+  });
+
+  const hasFieldErrors = fieldErrors.size > 0;
+
+  return { valid: false, selectionError, hasFieldErrors, fieldErrors };
+}
+
 /**
  * Headless edit-form for `daily_schedule`: react-hook-form + the library's
  * own validation rules + the save mapping, ready for any UI to bind to.
@@ -231,8 +283,9 @@ export function useDailyScheduleEditForm({
     resolver: zodResolver(dailyScheduleEditFormSchema) as $TSFixMe,
   });
 
-  const { control, watch, formState, setValue: setFormValue, trigger } = form;
-  const { fields } = useFieldArray({ name: 'schedule', control });
+  const { control } = form;
+  useFieldArray({ name: 'schedule', control });
+  const { watch, setValue: setFormValue, trigger } = form;
   const watchedSchedule = watch('schedule');
   const prevCheckedRef = useRef<boolean[]>(
     watchedSchedule.map((row) => row.checked),
@@ -250,15 +303,8 @@ export function useDailyScheduleEditForm({
           const wasChecked = prevCheckedRef.current[index];
 
           if (wasChecked && !isChecked) {
-            // Day was just unchecked - reset its fields to defaults
-            setFormValue(`schedule.${index}.start_time`, defaultStartTime);
-            setFormValue(`schedule.${index}.end_time`, defaultEndTime);
-            setFormValue(
-              `schedule.${index}.break_duration_minutes`,
-              String(defaultBreakDurationMinutes),
-            );
-
-            // Trigger validation for this row to clear errors
+            // Day was just unchecked - trigger validation to clear errors
+            // (don't reset values - let the user keep their data in case they re-check)
             trigger(`schedule.${index}`);
           }
         });
@@ -314,12 +360,6 @@ export function useDailyScheduleEditForm({
 
   const isDirty = !isDefaultSchedule(formValues, defaultScheduleRows);
 
-  // `schedule` is a field array; a whole-array `.refine()` failure (as
-  // opposed to a per-row error) lands under `.root`, not directly on
-  // `.message` — react-hook-form normalizes this for registered field
-  // arrays regardless of resolver.
-  const selectionError = formState.errors.schedule?.root?.message;
-
   // Same "checked rows -> summary days" shape the read-only summary and the
   // edit modal's live preview both build from, kept here so `hoursError`
   // reflects the schedule as the user is actively editing it.
@@ -347,18 +387,49 @@ export function useDailyScheduleEditForm({
         })
       : null;
 
-  const hasFieldErrors = Object.keys(formState.errors).length > 0;
+  // Framework-agnostic validation - computed from current state
+  const validationResult = validateSchedule(watchedSchedule);
+  const selectionError = validationResult.valid
+    ? undefined
+    : validationResult.selectionError;
+  const hasFieldErrors = validationResult.valid
+    ? false
+    : validationResult.hasFieldErrors;
+  const fieldErrors = validationResult.valid
+    ? new Map<string, string>()
+    : validationResult.fieldErrors;
 
-  // Return both the stable public API and internal form details
+  // Enrich rows with calculated hours for display
+  const rowsWithHours: DailyScheduleEditFormRowWithHours[] =
+    watchedSchedule.map((row) => ({
+      ...row,
+      hours: calculateWorkingHours(
+        row.start_time,
+        row.end_time,
+        subtractBreaksFromWorkHours
+          ? Number(row.break_duration_minutes) || 0
+          : 0,
+      ),
+    }));
+
+  // Helper to check if a specific field has an error
+  const getFieldError = (
+    index: number,
+    field: keyof DailyScheduleEditFormRow,
+  ) => {
+    return fieldErrors.get(`schedule.${index}.${field}`);
+  };
+
+  // Return the stable public API - framework-agnostic
   return {
-    // Public API - framework-agnostic
     state: {
-      rows: watchedSchedule,
+      rows: rowsWithHours,
       unsavedSummaryDays,
       hoursRangeError,
       isDirty,
       selectionError,
       hasFieldErrors,
+      getFieldError,
     },
     actions: {
       updateRow: (
@@ -376,18 +447,24 @@ export function useDailyScheduleEditForm({
         index: number,
         field: keyof DailyScheduleEditFormRow,
       ) => {
+        // Trigger React Hook Form validation for the native implementation
         trigger(`schedule.${index}.${field}` as $TSFixMe);
       },
       save: async () => {
-        // Use form.handleSubmit which triggers validation and only calls saveValue if valid
-        await form.handleSubmit(saveValue)();
+        // Framework-agnostic validation
+        const validation = validateSchedule(watchedSchedule);
+        if (validation.valid) {
+          saveValue({ schedule: watchedSchedule });
+        }
+        // Note: If invalid, errors are already visible via state.selectionError / state.hasFieldErrors
       },
       reset: handleReset,
       close: handleClose,
-      validate: () => Object.keys(form.formState.errors).length === 0,
+      validate: () => {
+        // Framework-agnostic validation check
+        const validation = validateSchedule(watchedSchedule);
+        return validation.valid;
+      },
     },
-    // Internal form details for default implementation
-    _form: form,
-    _fields: fields,
   };
 }

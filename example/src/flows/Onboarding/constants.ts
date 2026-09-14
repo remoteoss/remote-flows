@@ -138,7 +138,6 @@ export const ONBOARDING_OPTIONS = {
             ),
           },
         }),
-        // Custom DailySchedule implementation using headless API
       },
     },
     contract_details: {
