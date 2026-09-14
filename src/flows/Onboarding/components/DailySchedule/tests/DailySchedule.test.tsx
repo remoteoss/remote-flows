@@ -533,11 +533,6 @@ describe('DailySchedule', () => {
         await within(dialog).findByText(/Please check the form for errors/),
       ).toBeInTheDocument();
 
-      // Uncheck Friday
-      // WITHOUT FIX: wasChecked = false (stale!), isChecked = false
-      //   → false && true = false → NO CLEANUP, error persists!
-      // WITH FIX: wasChecked = true, isChecked = false
-      //   → true && true = true → cleanup happens, error clears
       await user.click(fridayAfterReset!);
 
       // Error should be cleared after unchecking
