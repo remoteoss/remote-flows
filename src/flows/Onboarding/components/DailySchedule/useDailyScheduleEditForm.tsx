@@ -231,14 +231,7 @@ export function useDailyScheduleEditForm({
     resolver: zodResolver(dailyScheduleEditFormSchema) as $TSFixMe,
   });
 
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState,
-    setValue: setFormValue,
-    trigger,
-  } = form;
+  const { control, watch, formState, setValue: setFormValue, trigger } = form;
   const { fields } = useFieldArray({ name: 'schedule', control });
   const watchedSchedule = watch('schedule');
   const prevCheckedRef = useRef<boolean[]>(
@@ -284,11 +277,12 @@ export function useDailyScheduleEditForm({
     trigger,
   ]);
 
-  const handleSave = handleSubmit((data) => {
+  // Export a manual save function that form components can call with their own onSuccess
+  const saveValue = (data: DailyScheduleEditFormData) => {
     setValue(mapDailyScheduleEditFormDataToValue(data));
     form.reset(data);
     prevCheckedRef.current = data.schedule.map((row) => row.checked);
-  });
+  };
 
   // Discards any unsaved edits by resetting the form back to the last saved
   // schedule. Wired to every way of closing the dialog without saving
@@ -360,7 +354,7 @@ export function useDailyScheduleEditForm({
     watchedSchedule,
     previewDays,
     hoursError,
-    handleSave,
+    saveValue,
     handleReset,
     handleClose,
     isScheduleAtDefault,
