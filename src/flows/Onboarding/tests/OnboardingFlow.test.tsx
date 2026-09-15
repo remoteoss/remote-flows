@@ -2251,6 +2251,258 @@ describe('OnboardingFlow', () => {
     });
   });
 
+  it('should send partner_external_id when creating employment for the first time', async () => {
+    const postSpy = vi.fn();
+    const testPartnerExternalId = 'test-partner-external-id-123';
+
+    server.use(
+      http.post('*/v1/employments', async ({ request }) => {
+        const requestBody = await request.json();
+        postSpy(requestBody);
+        return HttpResponse.json(employmentCreatedResponse);
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        countryCode='PRT'
+        skipSteps={['select_country']}
+        partnerExternalId={testPartnerExternalId}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+
+    // Fill basic information and submit
+    await fillBasicInformation();
+    const nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Verify POST was called with partner_external_id
+    expect(postSpy).toHaveBeenCalledTimes(1);
+    const requestPayload = postSpy.mock.calls[0][0];
+
+    expect(requestPayload).toMatchObject({
+      basic_information: expect.any(Object),
+      type: 'employee',
+      country_code: 'PRT',
+      partner_external_id: testPartnerExternalId,
+    });
+  });
+
+  it('should send partner_external_id when updating employment in basic information step', async () => {
+    const patchSpy = vi.fn();
+    const testPartnerExternalId = 'test-partner-external-id-456';
+    const uniqueEmploymentId = generateUniqueEmploymentId();
+
+    server.use(
+      http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
+        return HttpResponse.json({
+          ...employmentDefaultResponse,
+          data: {
+            ...employmentDefaultResponse.data,
+            employment: {
+              ...employmentDefaultResponse.data.employment,
+              id: uniqueEmploymentId,
+              status: 'created', // Ensure it's not a readonly status
+            },
+          },
+        });
+      }),
+      http.patch('*/v1/employments/*', async ({ request }) => {
+        const requestBody = await request.json();
+        patchSpy(requestBody);
+        return HttpResponse.json(employmentUpdatedResponse);
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={uniqueEmploymentId}
+        skipSteps={['select_country']}
+        partnerExternalId={testPartnerExternalId}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    // Modify a field and submit to trigger update
+    const personalEmailInput = screen.getByLabelText(/Personal email/i);
+    fireEvent.change(personalEmailInput, { target: { value: '' } });
+    fireEvent.change(personalEmailInput, {
+      target: { value: 'updated@email.com' },
+    });
+
+    const nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Verify PATCH was called with partner_external_id
+    expect(patchSpy).toHaveBeenCalledTimes(1);
+    const requestPayload = patchSpy.mock.calls[0][0];
+
+    expect(requestPayload).toMatchObject({
+      basic_information: expect.any(Object),
+      pricing_plan_details: {
+        frequency: 'monthly',
+      },
+      partner_external_id: testPartnerExternalId, // ✅ Verify partner_external_id is sent
+    });
+  });
+
+  it('should send partner_external_id when updating employment in contract details step', async () => {
+    const patchSpy = vi.fn();
+    const testPartnerExternalId = 'test-partner-external-id-789';
+    const uniqueEmploymentId = generateUniqueEmploymentId();
+    let patchCallCount = 0;
+
+    server.use(
+      http.get(`*/v1/employments/${uniqueEmploymentId}`, () => {
+        return HttpResponse.json({
+          ...employmentDefaultResponse,
+          data: {
+            ...employmentDefaultResponse.data,
+            employment: {
+              ...employmentDefaultResponse.data.employment,
+              id: uniqueEmploymentId,
+              status: 'created', // Ensure it's not a readonly status
+            },
+          },
+        });
+      }),
+      http.patch('*/v1/employments/*', async ({ request }) => {
+        const requestBody = await request.json();
+        patchCallCount++;
+
+        // Only spy on the contract details call (second PATCH)
+        if (patchCallCount === 2) {
+          patchSpy(requestBody);
+        }
+
+        return HttpResponse.json(employmentUpdatedResponse);
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const currentStepIndex = onboardingBag.stepState.currentStep.index;
+
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+          [2]: 'Benefits',
+          [3]: 'Review',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[currentStepIndex]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={uniqueEmploymentId}
+        skipSteps={['select_country']}
+        partnerExternalId={testPartnerExternalId}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    // Navigate to contract details step
+    let nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Contract Details/i);
+
+    // Wait for the form to be populated
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Role description/i)).toBeInTheDocument();
+    });
+
+    // Submit contract details
+    nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Benefits/i);
+
+    // Verify PATCH was called with partner_external_id for contract details
+    expect(patchSpy).toHaveBeenCalledTimes(1);
+    const requestPayload = patchSpy.mock.calls[0][0];
+
+    expect(requestPayload).toMatchObject({
+      contract_details: expect.any(Object),
+      pricing_plan_details: {
+        frequency: 'monthly',
+      },
+      partner_external_id: testPartnerExternalId,
+    });
+  });
+
   it('should properly set initialValues in the form fields', async () => {
     const initialValues = {
       name: 'John Doe',

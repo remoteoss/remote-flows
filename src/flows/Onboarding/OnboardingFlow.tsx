@@ -21,6 +21,7 @@ export const OnboardingFlow = ({
   countryCode,
   type = 'employee',
   externalId,
+  partnerExternalId,
   skipSteps,
   initialValues,
   render,
@@ -35,6 +36,7 @@ export const OnboardingFlow = ({
     options,
     skipSteps,
     externalId,
+    partnerExternalId,
     initialValues,
   });
 
