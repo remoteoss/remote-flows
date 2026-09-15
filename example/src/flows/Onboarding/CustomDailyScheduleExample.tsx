@@ -145,6 +145,7 @@ function CustomDailyScheduleEditForm({
       <div className='flex gap-2'>
         {state.isDirty && (
           <button
+            type='button'
             onClick={actions.reset}
             className='px-4 py-2 border rounded hover:bg-gray-100'
           >
@@ -152,6 +153,7 @@ function CustomDailyScheduleEditForm({
           </button>
         )}
         <button
+          type='button'
           onClick={() => {
             actions.close();
             onClose();
@@ -161,6 +163,7 @@ function CustomDailyScheduleEditForm({
           Cancel
         </button>
         <button
+          type='button'
           onClick={async () => {
             await actions.save();
             if (actions.validate()) {
@@ -200,7 +203,12 @@ export function CustomDailySchedule(props: DailyScheduleRenderProps) {
         <h3 className='text-lg font-semibold'>Daily Schedule</h3>
         <button
           type='button'
-          onClick={() => setIsEditing(!isEditing)}
+          onClick={() => {
+            if (isEditing) {
+              editBag.actions.close();
+            }
+            setIsEditing(!isEditing);
+          }}
           className='px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700'
         >
           {isEditing ? 'Close' : 'Edit Schedule'}
