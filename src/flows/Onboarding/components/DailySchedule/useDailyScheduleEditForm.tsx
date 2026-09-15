@@ -211,17 +211,22 @@ export function useDailyScheduleEditForm({
   value,
   setValue,
 }: UseDailyScheduleEditFormOptions) {
+  // Recomputed on every render from the latest saved `value`, so a later
+  // `handleClose()` call always discards-to the current saved schedule
+  // rather than whatever `value` looked like when the form first mounted.
+  const savedScheduleRows = buildDailyScheduleEditFormDefaultValues({
+    availableWorkDays,
+    defaultSchedule,
+    defaultStartTime,
+    defaultEndTime,
+    defaultBreakDurationMinutes,
+    value,
+  });
+
   const form = useForm<DailyScheduleEditFormData>({
     mode: 'onBlur',
     defaultValues: {
-      schedule: buildDailyScheduleEditFormDefaultValues({
-        availableWorkDays,
-        defaultSchedule,
-        defaultStartTime,
-        defaultEndTime,
-        defaultBreakDurationMinutes,
-        value,
-      }),
+      schedule: savedScheduleRows,
     },
     resolver: zodResolver(dailyScheduleEditFormSchema) as $TSFixMe,
   });
@@ -275,6 +280,17 @@ export function useDailyScheduleEditForm({
   // Export a manual save function that form components can call with their own onSuccess
   const saveValue = (data: DailyScheduleEditFormData) => {
     setValue(mapDailyScheduleEditFormDataToValue(data));
+    form.reset(data);
+    prevCheckedRef.current = data.schedule.map((row) => row.checked);
+  };
+
+  // Discards any unsaved edits by resetting the form back to the last saved
+  // schedule. Wired to every way of closing the dialog without saving
+  // (Cancel, overlay click, Escape, the close button) so reopening the
+  // dialog never shows stale, discarded edits.
+  const handleClose = () => {
+    form.reset({ schedule: savedScheduleRows });
+    prevCheckedRef.current = savedScheduleRows.map((row) => row.checked);
   };
 
   const defaultScheduleRows = buildDailyScheduleEditFormDefaultValues({
@@ -339,6 +355,7 @@ export function useDailyScheduleEditForm({
     hoursRangeError,
     saveValue,
     handleReset,
+    handleClose,
     isDirty,
     selectionError,
   };

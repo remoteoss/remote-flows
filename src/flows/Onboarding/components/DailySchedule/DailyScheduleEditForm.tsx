@@ -38,7 +38,7 @@ export const DailyScheduleEditForm = ({
   selectionError,
   subtractBreaksFromWorkHours,
 }: DailyScheduleEditFormProps) => {
-  const { close } = useDialogControl();
+  const { close, cancel } = useDialogControl();
 
   // Use form.handleSubmit directly with saveValue to ensure close() only runs on validation success
   // The callback inside handleSubmit only executes if validation passes
@@ -149,7 +149,7 @@ export const DailyScheduleEditForm = ({
             </Button>
           )}
           <div className='flex gap-4 ml-auto'>
-            <Button type='button' variant='outline' onClick={close}>
+            <Button type='button' variant='outline' onClick={cancel}>
               Cancel
             </Button>
             <Button
