@@ -69,7 +69,6 @@ export const DailyScheduleEditForm = ({
                 onChange={(e) =>
                   actions.updateRow(index, 'start_time', e.target.value)
                 }
-                onBlur={() => actions.triggerValidation(index, 'start_time')}
                 disabled={!row.checked}
                 placeholder='HH:mm'
                 aria-invalid={!!state.getFieldError(index, 'start_time')}
@@ -87,7 +86,6 @@ export const DailyScheduleEditForm = ({
                 onChange={(e) =>
                   actions.updateRow(index, 'end_time', e.target.value)
                 }
-                onBlur={() => actions.triggerValidation(index, 'end_time')}
                 disabled={!row.checked}
                 placeholder='HH:mm'
                 aria-invalid={!!state.getFieldError(index, 'end_time')}
@@ -108,9 +106,6 @@ export const DailyScheduleEditForm = ({
                     'break_duration_minutes',
                     e.target.value,
                   )
-                }
-                onBlur={() =>
-                  actions.triggerValidation(index, 'break_duration_minutes')
                 }
                 disabled={!row.checked}
                 placeholder='Minutes'

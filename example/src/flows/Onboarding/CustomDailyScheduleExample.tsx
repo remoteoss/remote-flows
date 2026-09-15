@@ -12,6 +12,7 @@ import { type DailyScheduleRenderProps } from '@remoteoss/remote-flows';
 import {
   DailyScheduleSummaryBody,
   DailyScheduleHoursErrorBanner,
+  cn,
 } from '@remoteoss/remote-flows/internals';
 import { WEEKDAY_LABELS } from '@remoteoss/remote-flows';
 
@@ -51,11 +52,14 @@ function CustomDailyScheduleEditForm({
               onChange={(e) =>
                 actions.updateRow(index, 'start_time', e.target.value)
               }
-              onBlur={() => actions.triggerValidation(index, 'start_time')}
               disabled={!row.checked}
-              className={`border rounded px-2 py-1 ${
-                state.getFieldError(index, 'start_time') ? 'border-red-500' : ''
-              }`}
+              className={cn(
+                'border rounded px-2 py-1',
+                state.getFieldError(index, 'start_time') && 'border-red-500',
+                !row.checked
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-white',
+              )}
               placeholder='HH:mm'
               aria-invalid={!!state.getFieldError(index, 'start_time')}
             />
@@ -66,11 +70,14 @@ function CustomDailyScheduleEditForm({
               onChange={(e) =>
                 actions.updateRow(index, 'end_time', e.target.value)
               }
-              onBlur={() => actions.triggerValidation(index, 'end_time')}
               disabled={!row.checked}
-              className={`border rounded px-2 py-1 ${
-                state.getFieldError(index, 'end_time') ? 'border-red-500' : ''
-              }`}
+              className={cn(
+                'border rounded px-2 py-1',
+                state.getFieldError(index, 'end_time') && 'border-red-500',
+                !row.checked
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-white',
+              )}
               placeholder='HH:mm'
               aria-invalid={!!state.getFieldError(index, 'end_time')}
             />
@@ -84,15 +91,15 @@ function CustomDailyScheduleEditForm({
                   e.target.value,
                 )
               }
-              onBlur={() =>
-                actions.triggerValidation(index, 'break_duration_minutes')
-              }
               disabled={!row.checked}
-              className={`border rounded px-2 py-1 w-20 ${
-                state.getFieldError(index, 'break_duration_minutes')
-                  ? 'border-red-500'
-                  : ''
-              }`}
+              className={cn(
+                'border rounded px-2 py-1 w-20',
+                state.getFieldError(index, 'break_duration_minutes') &&
+                  'border-red-500',
+                !row.checked
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-white',
+              )}
               placeholder='Break (min)'
               aria-invalid={
                 !!state.getFieldError(index, 'break_duration_minutes')
