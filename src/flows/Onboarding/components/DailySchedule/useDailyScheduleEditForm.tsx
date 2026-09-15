@@ -195,7 +195,7 @@ type ValidationResult =
   | { valid: true }
   | {
       valid: false;
-      selectionError?: string;
+      formError?: string;
       hasFieldErrors: boolean;
       fieldErrors: Map<string, string>; // "schedule.0.start_time" -> error message
     };
@@ -212,7 +212,7 @@ function validateSchedule(rows: DailyScheduleEditFormRow[]): ValidationResult {
   }
 
   // Extract selection error (array-level validation)
-  const selectionError = result.error.issues.find(
+  const formError = result.error.issues.find(
     (issue) => issue.path[0] === 'schedule' && issue.path.length === 1,
   )?.message;
 
@@ -233,7 +233,7 @@ function validateSchedule(rows: DailyScheduleEditFormRow[]): ValidationResult {
 
   const hasFieldErrors = fieldErrors.size > 0;
 
-  return { valid: false, selectionError, hasFieldErrors, fieldErrors };
+  return { valid: false, formError, hasFieldErrors, fieldErrors };
 }
 
 /**
@@ -366,9 +366,9 @@ export function useDailyScheduleEditForm({
     setValidationResult(validateSchedule(watchedSchedule));
   }, [watchedSchedule]);
 
-  const selectionError = validationResult.valid
+  const formError = validationResult.valid
     ? undefined
-    : validationResult.selectionError;
+    : validationResult.formError;
   const hasFieldErrors = validationResult.valid
     ? false
     : validationResult.hasFieldErrors;
@@ -408,7 +408,7 @@ export function useDailyScheduleEditForm({
       unsavedSummaryDays,
       hoursRangeError,
       isDirty,
-      selectionError,
+      formError,
       hasFieldErrors,
       getFieldError,
     },

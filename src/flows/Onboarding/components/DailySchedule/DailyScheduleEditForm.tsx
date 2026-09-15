@@ -138,11 +138,11 @@ export const DailyScheduleEditForm = ({
 
       <DailyScheduleHoursErrorBanner error={state.hoursRangeError} />
 
-      {state.selectionError ? (
-        <p className='text-destructive text-sm mb-0'>{state.selectionError}</p>
+      {state.formError ? (
+        <p className='text-destructive text-sm mb-0'>{state.formError}</p>
       ) : null}
 
-      {!state.selectionError && state.hasFieldErrors && (
+      {!state.formError && state.hasFieldErrors && (
         <p className='text-destructive text-sm mb-0'>
           Please check the form for errors. Time fields must use HH:mm format
           (e.g., 09:00), and all checked days must have start time, end time,
