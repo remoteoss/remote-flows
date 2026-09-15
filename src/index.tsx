@@ -213,3 +213,25 @@ export {
   buildZendeskURL,
 } from './components/shared/zendesk-drawer/utils';
 export { ZendeskTriggerButton } from './components/shared/zendesk-drawer/ZendeskTriggerButton';
+
+// DailySchedule utilities and types
+export {
+  buildDailyScheduleSummary,
+  calculateWorkingHours,
+  calculateTotalWeeklyHours,
+} from '@/src/flows/Onboarding/components/DailySchedule/utils';
+export { DailyScheduleContainer } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleContainer';
+export { WEEKDAY_LABELS } from '@/src/flows/Onboarding/components/DailySchedule/constants';
+export type {
+  DailyScheduleValue,
+  DailyScheduleMetadata,
+  DailyScheduleSummaryDay,
+  DailyScheduleHoursError,
+  Weekday,
+  DailyScheduleEditBag,
+  DailyScheduleEditState,
+  DailyScheduleEditActions,
+  DailyScheduleEditFormRow,
+  DailyScheduleRenderProps,
+  DailyScheduleContainerProps,
+} from '@/src/flows/Onboarding/components/DailySchedule/types';
