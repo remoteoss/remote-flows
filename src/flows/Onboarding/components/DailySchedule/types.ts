@@ -72,15 +72,79 @@ export type DailyScheduleDefaults = {
   workHoursPerWeekConfig: WorkHoursPerWeekConfig;
 };
 
+/**
+ * A single row in the edit form representing one day of the week.
+ * This is the framework-agnostic representation that customers work with.
+ */
+export type DailyScheduleEditFormRow = {
+  day: Weekday;
+  checked: boolean;
+  start_time: string;
+  end_time: string;
+  break_duration_minutes: string;
+};
+
+/**
+ * Framework-agnostic state for the daily schedule edit form.
+ * Exposes only the data customers need, not react-hook-form internals.
+ */
+export type DailyScheduleEditState = {
+  /** The current schedule rows being edited */
+  rows: DailyScheduleEditFormRow[];
+  /** Live preview of the schedule as summary days (unsaved changes) */
+  unsavedSummaryDays: DailyScheduleSummaryDay[];
+  /** Weekly hours validation error for the current draft */
+  hoursRangeError: DailyScheduleHoursError | null;
+  /** Whether the form has unsaved changes from the default schedule */
+  isDirty: boolean;
+  /** Form-level validation error (e.g., "Select at least one work day") */
+  selectionError: string | null;
+};
+
+/**
+ * Framework-agnostic actions for the daily schedule edit form.
+ * These are stable functions that don't expose form library details.
+ */
+export type DailyScheduleEditActions = {
+  /** Update a specific field in a specific row */
+  updateRow: (
+    index: number,
+    field: keyof DailyScheduleEditFormRow,
+    value: unknown,
+  ) => void;
+  /** Toggle a day's checked state */
+  toggleDay: (index: number) => void;
+  /** Save the current draft (validates and calls setValue) */
+  save: () => Promise<void>;
+  /** Reset the schedule to the default */
+  reset: () => void;
+  /** Discard unsaved edits and close (resets to last saved schedule) */
+  close: () => void;
+  /** Check if the current form state is valid */
+  validate: () => boolean;
+};
+
+/**
+ * The stable public API for the daily schedule edit form.
+ * This is what customers receive and work with - no react-hook-form internals.
+ */
+export type DailyScheduleEditBag = {
+  state: DailyScheduleEditState;
+  actions: DailyScheduleEditActions;
+};
+
 export type DailyScheduleRenderProps = {
-  /** The summary days derived from the current value and default schedule. */
+  /** The summary days derived from the current saved value and default schedule. */
   summaryDays: DailyScheduleSummaryDay[];
   /** Whether to subtract breaks from work hours in the summary display. */
   subtractBreaksFromWorkHours: boolean;
-  /** The hours error message if the total hours are outside the bounds. */
+  /** The hours error for the currently saved schedule (shown in read-only summary). */
   savedScheduleHoursError: DailyScheduleHoursError | null;
-  /** The form bag from useDailyScheduleEditForm hook */
-  formBag: ReturnType<
+  /**
+   * The edit form API with state and actions.
+   *
+   */
+  editBag: ReturnType<
     typeof import('@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm').useDailyScheduleEditForm
   >;
 };

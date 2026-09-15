@@ -492,10 +492,33 @@ describe('DailySchedule', () => {
 
       const dialog = screen.getByRole('dialog');
 
-      // Type invalid time in Monday (unchecked)
+      // Check Monday (to enable its inputs)
+      await user.click(
+        within(dialog).getByRole('checkbox', { name: 'Monday' }),
+      );
+
+      // Type invalid time in Monday (now checked and editable)
       const mondayStartInput = within(dialog).getAllByRole('textbox')[0];
       await user.clear(mondayStartInput);
       await user.type(mondayStartInput, '25:00');
+      await user.tab(); // Trigger validation
+
+      // Error should appear for Monday
+      expect(
+        await within(dialog).findByText(/Please check the form for errors/),
+      ).toBeInTheDocument();
+
+      // Uncheck Monday - this should clear the error (invalid data stays but doesn't block save)
+      await user.click(
+        within(dialog).getByRole('checkbox', { name: 'Monday' }),
+      );
+
+      // Error should be cleared
+      await waitFor(() => {
+        expect(
+          within(dialog).queryByText(/Please check the form for errors/),
+        ).not.toBeInTheDocument();
+      });
 
       // Tuesday is checked and valid, should save successfully
       await user.click(
@@ -533,7 +556,7 @@ describe('DailySchedule', () => {
         await within(dialog).findByText(/Please check the form for errors/),
       ).toBeInTheDocument();
 
-      // Uncheck Monday - this should reset the field values and clear errors
+      // Uncheck Monday - this should clear errors (but keep the invalid value in the disabled field)
       await user.click(
         within(dialog).getByRole('checkbox', { name: 'Monday' }),
       );
@@ -590,10 +613,14 @@ describe('DailySchedule', () => {
       });
 
       // Add invalid time to Friday (which is now checked)
+      // Query textboxes after the DOM has stabilized from the reset
       const allTextboxes = within(dialog).getAllByRole('textbox');
-      // Friday is index 4, each row has 3 inputs: start (0), end (1), break (2)
-      // Friday start time is at 4*3 = 12
-      const fridayStartInput = allTextboxes[12];
+      // getAllByRole('textbox') returns only text inputs (start_time, end_time), not number inputs (break)
+      // Each day has 2 textboxes: start (even index), end (odd index)
+      // Friday is day index 4: start_time is at textbox index 4*2 = 8
+      const fridayStartInput = allTextboxes[8];
+
+      // Clear and type invalid time
       await user.clear(fridayStartInput);
       await user.type(fridayStartInput, '99:99');
       await user.tab();
@@ -737,6 +764,57 @@ describe('DailySchedule', () => {
   });
 
   describe('Row hours display', () => {
+    it('shows "-" instead of NaN when typing incomplete time format', async () => {
+      const user = userEvent.setup();
+      renderWithForm(
+        [
+          createDailyScheduleField({
+            metadata: {
+              ...germanyDailyScheduleMetadata,
+              default_schedule: [
+                {
+                  day: 'monday',
+                  start_time: '09:00',
+                  end_time: '18:00',
+                  break_duration_minutes: 60,
+                },
+              ],
+              work_days: ['monday'],
+            },
+          }),
+        ],
+        { daily_schedule: undefined },
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+      const dialog = screen.getByRole('dialog');
+
+      // Initially shows valid hours (09:00-18:00 with 60min break = 8h)
+      expect(within(dialog).getByText('8h')).toBeInTheDocument();
+
+      // Clear and type incomplete time "09" (missing ":00")
+      const mondayStartInput = within(dialog).getAllByRole('textbox')[0];
+      await user.clear(mondayStartInput);
+      await user.type(mondayStartInput, '09');
+
+      // Should show "-" not "NaNh" while typing - the hours cell should not contain NaN
+      await waitFor(() => {
+        expect(within(dialog).queryByText(/NaN/)).not.toBeInTheDocument();
+        // With incomplete time, hours should be 0, which displays as "-"
+        const rows = within(dialog).getAllByText('-');
+        expect(rows.length).toBeGreaterThan(0); // At least one "-" for the incomplete time
+      });
+
+      // Complete the time to valid "09:00"
+      await user.type(mondayStartInput, ':00');
+
+      // Should now show valid hours again (09:00-18:00 with 60min break = 8h)
+      await waitFor(() => {
+        expect(within(dialog).getByText('8h')).toBeInTheDocument();
+      });
+    });
+
     it('row hours match summary hours when subtractBreaksFromWorkHours is false', async () => {
       const user = userEvent.setup();
       renderWithForm(
