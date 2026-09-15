@@ -17,16 +17,6 @@ import {
   resolveDailyScheduleValue,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
 
-/**
- * Owns the `daily_schedule` edit-modal's validation and save mapping (PAY-2868
- * Phase 3 restructure): what counts as a valid schedule is decided here, once,
- * by the library — not left for every consumer swapping in their own UI to
- * reimplement with their own react-hook-form + schema-validation setup.
- * `DailySchedule.tsx` (the shipped default) calls this hook; a consumer
- * building a fully custom UI for `daily_schedule` should call it too, rather
- * than hand-rolling the same rules. See plans/daily-schedule-field.md.
- */
-
 const TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 export type DailyScheduleEditFormRow = {

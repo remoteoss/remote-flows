@@ -24,7 +24,6 @@ export const DailyScheduleContainer = ({
   const { watch } = useFormContext();
   const watchedScheduleType = watch('schedule_type');
   const watchedWorkSchedule = watch('work_schedule');
-  const resolvedWorkSchedule = watchedWorkSchedule;
 
   const defaults = getDefaultsFromSchema(metadata);
   const workHoursBounds = getWorkHoursBounds(defaults.workHoursPerWeekConfig, {
@@ -44,7 +43,7 @@ export const DailyScheduleContainer = ({
     totalWeeklyHours,
     workHoursBounds,
     countryName: defaults.countryName,
-    workSchedule: resolvedWorkSchedule,
+    workSchedule: watchedWorkSchedule,
   });
 
   const formBag = useDailyScheduleEditForm({
@@ -55,7 +54,7 @@ export const DailyScheduleContainer = ({
     defaultBreakDurationMinutes: defaults.defaultBreakDurationMinutes,
     subtractBreaksFromWorkHours: defaults.subtractBreaksFromWorkHours,
     workHoursBounds,
-    workSchedule: resolvedWorkSchedule,
+    workSchedule: watchedWorkSchedule,
     countryName: defaults.countryName,
     value,
     setValue: fieldProps.setValue,
