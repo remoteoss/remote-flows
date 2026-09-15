@@ -10,6 +10,8 @@ import {
   Weekday,
   DailyScheduleDefaultDay,
   WorkHoursRange,
+  DailyScheduleEditBag,
+  DailyScheduleEditFormRow,
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import {
   calculateTotalWeeklyHours,
@@ -19,21 +21,11 @@ import {
   TIME_PATTERN,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
 
-export type DailyScheduleEditFormRow = {
-  day: Weekday;
-  checked: boolean;
-  start_time: string;
-  end_time: string;
-  break_duration_minutes: string;
-};
-
-/** Public API row type with calculated hours */
-export type DailyScheduleEditFormRowWithHours = DailyScheduleEditFormRow & {
-  hours: number;
-};
+/** Internal form data type - rows without calculated hours */
+type DailyScheduleEditFormRowInternal = Omit<DailyScheduleEditFormRow, 'hours'>;
 
 export type DailyScheduleEditFormData = {
-  schedule: DailyScheduleEditFormRow[];
+  schedule: DailyScheduleEditFormRowInternal[];
 };
 
 const dayRowSchema = z
@@ -103,7 +95,7 @@ export function buildDailyScheduleEditFormDefaultValues({
   defaultEndTime,
   defaultBreakDurationMinutes,
   value,
-}: BuildDailyScheduleEditFormDefaultValuesOptions): DailyScheduleEditFormRow[] {
+}: BuildDailyScheduleEditFormDefaultValuesOptions): DailyScheduleEditFormRowInternal[] {
   const { schedule, selected_days: selectedDays } = resolveDailyScheduleValue({
     value,
     defaultSchedule,
@@ -131,8 +123,8 @@ export function buildDailyScheduleEditFormDefaultValues({
  * deviates from the default, rather than showing it unconditionally.
  */
 function isDefaultSchedule(
-  rows: DailyScheduleEditFormRow[],
-  defaultRows: DailyScheduleEditFormRow[],
+  rows: DailyScheduleEditFormRowInternal[],
+  defaultRows: DailyScheduleEditFormRowInternal[],
 ): boolean {
   return rows.every((row, index) => {
     const defaultRow = defaultRows[index];
@@ -203,7 +195,9 @@ type ValidationResult =
  * Framework-agnostic validation using the Zod schema directly.
  * Returns validation result that both RHF and custom implementations can use.
  */
-function validateSchedule(rows: DailyScheduleEditFormRow[]): ValidationResult {
+function validateSchedule(
+  rows: DailyScheduleEditFormRowInternal[],
+): ValidationResult {
   const result = dailyScheduleEditFormSchema.safeParse({ schedule: rows });
 
   if (result.success) {
@@ -251,7 +245,7 @@ export function useDailyScheduleEditForm({
   countryName,
   value,
   setValue,
-}: UseDailyScheduleEditFormOptions) {
+}: UseDailyScheduleEditFormOptions): DailyScheduleEditBag {
   // Memoize to prevent rebuilding on every render, which would cause
   const savedScheduleRows = useMemo(
     () =>
@@ -371,8 +365,8 @@ export function useDailyScheduleEditForm({
   }, [watchedSchedule]);
 
   const formError = validationResult.valid
-    ? undefined
-    : validationResult.formError;
+    ? null
+    : (validationResult.formError ?? null);
   const hasFieldErrors = validationResult.valid
     ? false
     : validationResult.hasFieldErrors;
@@ -381,8 +375,8 @@ export function useDailyScheduleEditForm({
     : validationResult.fieldErrors;
 
   // Enrich rows with calculated hours for display
-  const rowsWithHours: DailyScheduleEditFormRowWithHours[] =
-    watchedSchedule.map((row) => {
+  const rowsWithHours: DailyScheduleEditFormRow[] = watchedSchedule.map(
+    (row) => {
       const hours = calculateWorkingHours(
         row.start_time,
         row.end_time,
@@ -395,12 +389,13 @@ export function useDailyScheduleEditForm({
         ...row,
         hours: Number.isNaN(hours) ? 0 : hours,
       };
-    });
+    },
+  );
 
   // Helper to check if a specific field has an error
   const getFieldError = (
     index: number,
-    field: keyof DailyScheduleEditFormRow,
+    field: keyof Omit<DailyScheduleEditFormRow, 'hours'>,
   ) => {
     return fieldErrors.get(`schedule.${index}.${field}`);
   };
@@ -419,7 +414,7 @@ export function useDailyScheduleEditForm({
     actions: {
       updateRow: (
         index: number,
-        field: keyof DailyScheduleEditFormRow,
+        field: keyof Omit<DailyScheduleEditFormRow, 'hours'>,
         value: unknown,
       ) => {
         setFormValue(`schedule.${index}.${field}` as $TSFixMe, value);
