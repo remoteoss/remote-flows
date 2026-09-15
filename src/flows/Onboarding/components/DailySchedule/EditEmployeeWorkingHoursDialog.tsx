@@ -75,7 +75,7 @@ export const EditEmployeeWorkingHoursDialog = ({
             Edit schedule
           </Button>
         </DialogTrigger>
-        <DialogContent className='max-w-5xl max-h-[90vh] overflow-y-auto px-8 py-4 RemoteFlows__DailySchedule__Content'>
+        <DialogContent className='sm:max-w-4xl max-h-[90vh] overflow-y-auto px-8 py-4 RemoteFlows__DailySchedule__Content'>
           <DialogHeader>
             <DialogTitle className='RemoteFlows__DailySchedule__Title'>
               Edit employee working hours

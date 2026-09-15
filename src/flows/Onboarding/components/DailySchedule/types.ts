@@ -98,7 +98,7 @@ export type DailyScheduleEditState = {
   /** Whether the form has unsaved changes from the default schedule */
   isDirty: boolean;
   /** Form-level validation error (e.g., "Select at least one work day") */
-  selectionError: string | null;
+  formError: string | null;
 };
 
 /**

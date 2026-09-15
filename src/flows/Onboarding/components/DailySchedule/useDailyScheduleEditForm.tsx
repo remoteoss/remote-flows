@@ -16,9 +16,8 @@ import {
   calculateWorkingHours,
   getDailyScheduleHoursError,
   resolveDailyScheduleValue,
+  TIME_PATTERN,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
-
-const TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 export type DailyScheduleEditFormRow = {
   day: Weekday;
@@ -195,7 +194,7 @@ type ValidationResult =
   | { valid: true }
   | {
       valid: false;
-      selectionError?: string;
+      formError?: string;
       hasFieldErrors: boolean;
       fieldErrors: Map<string, string>; // "schedule.0.start_time" -> error message
     };
@@ -212,7 +211,7 @@ function validateSchedule(rows: DailyScheduleEditFormRow[]): ValidationResult {
   }
 
   // Extract selection error (array-level validation)
-  const selectionError = result.error.issues.find(
+  const formError = result.error.issues.find(
     (issue) => issue.path[0] === 'schedule' && issue.path.length === 1,
   )?.message;
 
@@ -233,7 +232,7 @@ function validateSchedule(rows: DailyScheduleEditFormRow[]): ValidationResult {
 
   const hasFieldErrors = fieldErrors.size > 0;
 
-  return { valid: false, selectionError, hasFieldErrors, fieldErrors };
+  return { valid: false, formError, hasFieldErrors, fieldErrors };
 }
 
 /**
@@ -339,8 +338,13 @@ export function useDailyScheduleEditForm({
     subtractBreaksFromWorkHours,
   );
 
+  const hasIncompleteOrInvalidTimes = unsavedSummaryDays.some(
+    (day) =>
+      !TIME_PATTERN.test(day.start_time) || !TIME_PATTERN.test(day.end_time),
+  );
+
   const hoursRangeError =
-    workHoursBounds && countryName
+    workHoursBounds && countryName && !hasIncompleteOrInvalidTimes
       ? getDailyScheduleHoursError({
           totalWeeklyHours,
           workHoursBounds,
@@ -366,9 +370,9 @@ export function useDailyScheduleEditForm({
     setValidationResult(validateSchedule(watchedSchedule));
   }, [watchedSchedule]);
 
-  const selectionError = validationResult.valid
+  const formError = validationResult.valid
     ? undefined
-    : validationResult.selectionError;
+    : validationResult.formError;
   const hasFieldErrors = validationResult.valid
     ? false
     : validationResult.hasFieldErrors;
@@ -408,7 +412,7 @@ export function useDailyScheduleEditForm({
       unsavedSummaryDays,
       hoursRangeError,
       isDirty,
-      selectionError,
+      formError,
       hasFieldErrors,
       getFieldError,
     },
@@ -436,8 +440,10 @@ export function useDailyScheduleEditForm({
         const validation = validateSchedule(watchedSchedule);
         if (validation.valid) {
           saveValue({ schedule: watchedSchedule });
+        } else {
+          // Update state so errors become visible
+          setValidationResult(validation);
         }
-        // Note: If invalid, errors are already visible via state.selectionError / state.hasFieldErrors
       },
       reset: handleReset,
       close: handleClose,
