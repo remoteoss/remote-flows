@@ -436,8 +436,10 @@ export function useDailyScheduleEditForm({
         const validation = validateSchedule(watchedSchedule);
         if (validation.valid) {
           saveValue({ schedule: watchedSchedule });
+        } else {
+          // Update state so errors become visible
+          setValidationResult(validation);
         }
-        // Note: If invalid, errors are already visible via state.selectionError / state.hasFieldErrors
       },
       reset: handleReset,
       close: handleClose,
