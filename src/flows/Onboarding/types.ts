@@ -114,8 +114,7 @@ export type OnboardingFlowProps = {
    */
   externalId?: string;
   /**
-   * A reference code for the employment record in the calling integration's own system.
-   * Private to that integration — no other integration can read or overwrite it.
+   * A reference code for the employment record, private to your own integration.
    * If not provided, it defaults to null.
    */
   partnerExternalId?: string;
