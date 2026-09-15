@@ -815,6 +815,45 @@ describe('DailySchedule', () => {
       });
     });
 
+    it('does not show a false weekly hours-range error while a time field is mid-edit (regression: NaN from incomplete time)', async () => {
+      const user = userEvent.setup();
+      renderWithForm([createDailyScheduleField()], {
+        work_schedule: 'full_time',
+        daily_schedule: undefined,
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+      const dialog = screen.getByRole('dialog');
+
+      // Default Mon-Fri schedule is 40h, within the full-time range (31-48h)
+      expect(
+        within(dialog).queryByText('Work hours outside of weekly range'),
+      ).not.toBeInTheDocument();
+
+      // Clear and type an incomplete time - previously this turned
+      // totalWeeklyHours into NaN, which fails every range comparison and
+      // incorrectly showed "Work hours outside of weekly range"
+      const mondayStartInput = within(dialog).getAllByRole('textbox')[0];
+      await user.clear(mondayStartInput);
+      await user.type(mondayStartInput, '09');
+
+      await waitFor(() => {
+        expect(
+          within(dialog).queryByText('Work hours outside of weekly range'),
+        ).not.toBeInTheDocument();
+      });
+
+      // Completing the time restores a valid, in-range schedule
+      await user.type(mondayStartInput, ':00');
+
+      await waitFor(() => {
+        expect(
+          within(dialog).queryByText('Work hours outside of weekly range'),
+        ).not.toBeInTheDocument();
+      });
+    });
+
     it('row hours match summary hours when subtractBreaksFromWorkHours is false', async () => {
       const user = userEvent.setup();
       renderWithForm(

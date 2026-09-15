@@ -339,8 +339,13 @@ export function useDailyScheduleEditForm({
     subtractBreaksFromWorkHours,
   );
 
+  const hasIncompleteOrInvalidTimes = unsavedSummaryDays.some(
+    (day) =>
+      !TIME_PATTERN.test(day.start_time) || !TIME_PATTERN.test(day.end_time),
+  );
+
   const hoursRangeError =
-    workHoursBounds && countryName
+    workHoursBounds && countryName && !hasIncompleteOrInvalidTimes
       ? getDailyScheduleHoursError({
           totalWeeklyHours,
           workHoursBounds,
