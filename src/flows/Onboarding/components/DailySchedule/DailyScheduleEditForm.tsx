@@ -125,7 +125,7 @@ export const DailyScheduleEditForm = ({
               />
             </div>
             <div className='col-span-1 text-center text-sm text-gray-500 RemoteFlows__DailyScheduleForm__Row__Hours'>
-              {row.checked ? `${row.hours}h` : '-'}
+              {row.checked ? (row.hours > 0 ? `${row.hours}h` : '-') : '-'}
             </div>
           </div>
         ))}

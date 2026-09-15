@@ -401,16 +401,21 @@ export function useDailyScheduleEditForm({
 
   // Enrich rows with calculated hours for display
   const rowsWithHours: DailyScheduleEditFormRowWithHours[] =
-    watchedSchedule.map((row) => ({
-      ...row,
-      hours: calculateWorkingHours(
+    watchedSchedule.map((row) => {
+      const hours = calculateWorkingHours(
         row.start_time,
         row.end_time,
         subtractBreaksFromWorkHours
           ? Number(row.break_duration_minutes) || 0
           : 0,
-      ),
-    }));
+      );
+
+      return {
+        ...row,
+        // Guard against NaN from incomplete times during typing (e.g., "09" without ":00" yet)
+        hours: Number.isNaN(hours) ? 0 : hours,
+      };
+    });
 
   // Helper to check if a specific field has an error
   const getFieldError = (

@@ -53,7 +53,11 @@ export function DailyScheduleSummaryBody({
         </p>
       ))}
       <p className='RemoteFlows__DailySchedule__Summary__Total'>
-        Total of <strong>{totalWeeklyHours} hours</strong> per week
+        Total of{' '}
+        <strong>
+          {Number.isNaN(totalWeeklyHours) ? '—' : `${totalWeeklyHours} hours`}
+        </strong>{' '}
+        per week
       </p>
     </div>
   );

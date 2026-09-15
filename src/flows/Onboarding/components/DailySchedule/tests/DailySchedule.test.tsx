@@ -764,6 +764,57 @@ describe('DailySchedule', () => {
   });
 
   describe('Row hours display', () => {
+    it('shows "-" instead of NaN when typing incomplete time format', async () => {
+      const user = userEvent.setup();
+      renderWithForm(
+        [
+          createDailyScheduleField({
+            metadata: {
+              ...germanyDailyScheduleMetadata,
+              default_schedule: [
+                {
+                  day: 'monday',
+                  start_time: '09:00',
+                  end_time: '18:00',
+                  break_duration_minutes: 60,
+                },
+              ],
+              work_days: ['monday'],
+            },
+          }),
+        ],
+        { daily_schedule: undefined },
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+
+      const dialog = screen.getByRole('dialog');
+
+      // Initially shows valid hours (09:00-18:00 with 60min break = 8h)
+      expect(within(dialog).getByText('8h')).toBeInTheDocument();
+
+      // Clear and type incomplete time "09" (missing ":00")
+      const mondayStartInput = within(dialog).getAllByRole('textbox')[0];
+      await user.clear(mondayStartInput);
+      await user.type(mondayStartInput, '09');
+
+      // Should show "-" not "NaNh" while typing - the hours cell should not contain NaN
+      await waitFor(() => {
+        expect(within(dialog).queryByText(/NaN/)).not.toBeInTheDocument();
+        // With incomplete time, hours should be 0, which displays as "-"
+        const rows = within(dialog).getAllByText('-');
+        expect(rows.length).toBeGreaterThan(0); // At least one "-" for the incomplete time
+      });
+
+      // Complete the time to valid "09:00"
+      await user.type(mondayStartInput, ':00');
+
+      // Should now show valid hours again (09:00-18:00 with 60min break = 8h)
+      await waitFor(() => {
+        expect(within(dialog).getByText('8h')).toBeInTheDocument();
+      });
+    });
+
     it('row hours match summary hours when subtractBreaksFromWorkHours is false', async () => {
       const user = userEvent.setup();
       renderWithForm(
