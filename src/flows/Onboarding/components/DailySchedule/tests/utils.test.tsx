@@ -111,6 +111,11 @@ describe('DailySchedule utils', () => {
     it('clamps to 0 when end time is before start time', () => {
       expect(calculateWorkingHours('18:00', '09:00', 0)).toBe(0);
     });
+
+    it('returns 0 for an incomplete (mid-typing) time rather than parsing it', () => {
+      expect(calculateWorkingHours('09:0', '18:00', 60)).toBe(0);
+      expect(calculateWorkingHours('09:00', '18:0', 60)).toBe(0);
+    });
   });
 
   describe('buildDailyScheduleSummary', () => {
@@ -214,6 +219,34 @@ describe('DailySchedule utils', () => {
       expect(segmentsToText(workHoursLines[1].segments)).toBe(
         'Tuesday, from 10h00 to 16h00',
       );
+    });
+
+    it('omits the work-hours line and hours for a day with an incomplete time', () => {
+      const { workHoursLines, totalWeeklyHours } = buildDailyScheduleSummary(
+        [
+          {
+            day: 'monday',
+            start_time: '09:0',
+            end_time: '18:00',
+            break_duration_minutes: 60,
+          },
+          {
+            day: 'tuesday',
+            start_time: '10:00',
+            end_time: '16:00',
+            break_duration_minutes: 30,
+          },
+        ],
+        true,
+      );
+
+      expect(workHoursLines).toHaveLength(1);
+      expect(segmentsToText(workHoursLines[0].segments)).toBe(
+        'Tuesday, from 10h00 to 16h00',
+      );
+      // Monday contributes 0 hours (incomplete time), not the ~9h it would
+      // parse to if `09:0` were misread as `09:00`.
+      expect(totalWeeklyHours).toBe(5.5);
     });
 
     it('describes per-day breaks when they differ across days', () => {
