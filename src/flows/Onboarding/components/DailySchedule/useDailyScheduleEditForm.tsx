@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -287,15 +286,11 @@ export function useDailyScheduleEditForm({
   useFieldArray({ name: 'schedule', control });
   const { watch, setValue: setFormValue } = form;
   const watchedSchedule = watch('schedule');
-  const prevCheckedRef = useRef<boolean[]>(
-    watchedSchedule.map((row) => row.checked),
-  );
 
   // Export a manual save function that form components can call with their own onSuccess
   const saveValue = (data: DailyScheduleEditFormData) => {
     setValue(mapDailyScheduleEditFormDataToValue(data));
     form.reset(data);
-    prevCheckedRef.current = data.schedule.map((row) => row.checked);
   };
 
   // Discards any unsaved edits by resetting the form back to the last saved
@@ -304,7 +299,6 @@ export function useDailyScheduleEditForm({
   // dialog never shows stale, discarded edits.
   const handleClose = () => {
     form.reset({ schedule: savedScheduleRows });
-    prevCheckedRef.current = savedScheduleRows.map((row) => row.checked);
   };
 
   const defaultScheduleRows = buildDailyScheduleEditFormDefaultValues({
@@ -320,8 +314,6 @@ export function useDailyScheduleEditForm({
   // the saved `value` and any unsaved edits.
   const handleReset = () => {
     form.reset({ schedule: defaultScheduleRows });
-    // Sync the ref to match the reset state so uncheck detection works correctly
-    prevCheckedRef.current = defaultScheduleRows.map((row) => row.checked);
   };
 
   const formValues = watch('schedule');
