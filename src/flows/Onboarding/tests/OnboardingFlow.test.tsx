@@ -374,6 +374,22 @@ describe('OnboardingFlow', () => {
     expect(screen.getByText(/Step: Select Country/i)).toBeInTheDocument();
   });
 
+  it('should still offer the countries after a failed select country submission', async () => {
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
+
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await screen.findByText(/Step: Select Country/i);
+
+    screen.getByText(/Continue/i).click();
+
+    await waitFor(() => {
+      expect(screen.getByText(/required/i)).toBeInTheDocument();
+    });
+
+    await fillCountry('PRT');
+  });
+
   it('should select a country and advance to the next step', async () => {
     render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
     await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));

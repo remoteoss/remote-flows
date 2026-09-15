@@ -54,7 +54,10 @@ import {
 } from '@/src/common/api/files';
 import { convertFromCents } from '@/src/components/form/utils';
 import { countriesOptions } from '@/src/common/api/countries';
-import { selectCountryStepSchema } from '@/src/flows/Onboarding/json-schemas/selectCountryStep';
+import {
+  buildSelectCountryJsfModify,
+  selectCountryStepSchema,
+} from '@/src/common/selectCountryStep';
 import { shouldIncludeProduct } from '@/src/flows/ContractorOnboarding/utils';
 import { useCompanyPricingPlans, hasCompany } from '@/src/common/api/companies';
 import { useIdentity } from '@/src/common/api/identity';
@@ -808,20 +811,17 @@ export const useCountriesSchemaField = (
     enabled: options?.queryOptions?.enabled,
   });
 
-  const selectCountryForm = createHeadlessForm(
-    selectCountryStepSchema.data.schema,
-    {},
-    options,
+  const selectCountryForm = useMemo(
+    () =>
+      createHeadlessForm(
+        selectCountryStepSchema.data.schema,
+        {},
+        {
+          jsfModify: buildSelectCountryJsfModify(countries, options?.jsfModify),
+        },
+      ),
+    [countries, options?.jsfModify],
   );
-
-  if (countries) {
-    const countryField = selectCountryForm.fields.find(
-      (field) => field.name === 'country',
-    );
-    if (countryField) {
-      countryField.options = countries;
-    }
-  }
 
   return {
     isLoading,

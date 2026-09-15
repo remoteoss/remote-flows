@@ -577,6 +577,24 @@ describe('ContractorOnboardingFlow', () => {
     await fillCountry('PRT');
   });
 
+  it('should require a country and still offer the countries after a failed submission', async () => {
+    render(<ContractorOnboardingFlow {...defaultProps} />, {
+      wrapper: TestProviders,
+    });
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await screen.findByText(/Step: Select Country/i);
+
+    screen.getByText(/Continue/i).click();
+
+    await waitFor(() => {
+      expect(screen.getByText(/required/i)).toBeInTheDocument();
+    });
+    expect(screen.getByText(/Step: Select Country/i)).toBeInTheDocument();
+
+    await fillCountry('PRT');
+  });
+
   it('should set provisional_start_date in the statement of work when using the form for the first time', async () => {
     render(<ContractorOnboardingFlow {...defaultProps} />, {
       wrapper: TestProviders,
