@@ -18,6 +18,8 @@ import {
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import { getSingularPluralUnit } from '@/src/lib/i18n';
 
+export const TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
 export const DAYS_OF_THE_WEEK: Weekday[] = [
   'monday',
   'tuesday',
@@ -120,7 +122,12 @@ export function calculateWorkingHours(
   endTime: string | undefined,
   breakDurationMinutes?: number | null,
 ): number {
-  if (!startTime || !endTime) {
+  if (
+    !startTime ||
+    !endTime ||
+    !TIME_PATTERN.test(startTime) ||
+    !TIME_PATTERN.test(endTime)
+  ) {
     return 0;
   }
 
@@ -336,8 +343,13 @@ export function buildDailyScheduleSummary(
     subtractBreaksFromWorkHours,
   );
 
+  const daysWithCompleteTimes = orderedDays.filter(
+    (day) =>
+      TIME_PATTERN.test(day.start_time) && TIME_PATTERN.test(day.end_time),
+  );
+
   const groupedByTime = groupBy(
-    orderedDays,
+    daysWithCompleteTimes,
     (day) => `${day.start_time}|${day.end_time}`,
   );
   const workHoursLines = Object.entries(groupedByTime).map(

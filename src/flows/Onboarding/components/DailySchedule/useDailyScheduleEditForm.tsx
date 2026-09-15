@@ -16,9 +16,8 @@ import {
   calculateWorkingHours,
   getDailyScheduleHoursError,
   resolveDailyScheduleValue,
+  TIME_PATTERN,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
-
-const TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 export type DailyScheduleEditFormRow = {
   day: Weekday;
