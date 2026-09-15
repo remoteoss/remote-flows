@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -253,17 +253,26 @@ export function useDailyScheduleEditForm({
   value,
   setValue,
 }: UseDailyScheduleEditFormOptions) {
-  // Recomputed on every render from the latest saved `value`, so a later
-  // `handleClose()` call always discards-to the current saved schedule
-  // rather than whatever `value` looked like when the form first mounted.
-  const savedScheduleRows = buildDailyScheduleEditFormDefaultValues({
-    availableWorkDays,
-    defaultSchedule,
-    defaultStartTime,
-    defaultEndTime,
-    defaultBreakDurationMinutes,
-    value,
-  });
+  // Memoize to prevent rebuilding on every render, which would cause
+  const savedScheduleRows = useMemo(
+    () =>
+      buildDailyScheduleEditFormDefaultValues({
+        availableWorkDays,
+        defaultSchedule,
+        defaultStartTime,
+        defaultEndTime,
+        defaultBreakDurationMinutes,
+        value,
+      }),
+    [
+      availableWorkDays,
+      defaultSchedule,
+      defaultStartTime,
+      defaultEndTime,
+      defaultBreakDurationMinutes,
+      value,
+    ],
+  );
 
   const form = useForm<DailyScheduleEditFormData>({
     mode: 'onBlur',
@@ -346,9 +355,11 @@ export function useDailyScheduleEditForm({
   );
 
   // Validate when external value prop changes
+  // Now that savedScheduleRows is memoized, this effect only runs when
+  // savedScheduleRows actually changes (not on every render)
   useEffect(() => {
     setValidationResult(validateSchedule(savedScheduleRows));
-  }, [value, savedScheduleRows]);
+  }, [savedScheduleRows]);
 
   // Validate onBlur - consumers call this from field onBlur handlers
   const handleBlur = useCallback(() => {
