@@ -93,3 +93,8 @@ export type {
   JsonSchemaPlaygroundRenderProps,
   SampleSchema,
 } from '@/src/flows/JsonSchemaPlayground';
+
+// DailySchedule components for custom implementations
+export { DailyScheduleSummaryBody } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleSummaryBody';
+export { DailyScheduleHoursErrorBanner } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleHoursErrorBanner';
+export { EditEmployeeWorkingHoursDialog } from '@/src/flows/Onboarding/components/DailySchedule/EditEmployeeWorkingHoursDialog';
