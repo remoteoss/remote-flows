@@ -196,6 +196,7 @@ Each flow handles a specific Remote employment operation. For detailed API docum
 - [**Contract Amendment**](./src/flows/ContractAmendment/README.md) - Modify existing employment contracts
 - [**Termination**](./src/flows/Termination/README.md) - Handle employee terminations
 - [**Invoice Schedule**](./src/flows/InvoiceSchedule/README.md) - Standalone screen to create a contractor invoice schedule
+- [**Contract Document**](./src/flows/ContractDocument/README.md) - Standalone flow to create a contractor's contract document
 
 ## Authentication
 
