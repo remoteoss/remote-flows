@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -289,6 +290,7 @@ export function useDailyScheduleEditForm({
   // dialog never shows stale, discarded edits.
   const handleClose = () => {
     form.reset({ schedule: savedScheduleRows });
+    setValidationResult(validateSchedule(savedScheduleRows));
   };
 
   const defaultScheduleRows = buildDailyScheduleEditFormDefaultValues({
@@ -304,6 +306,7 @@ export function useDailyScheduleEditForm({
   // the saved `value` and any unsaved edits.
   const handleReset = () => {
     form.reset({ schedule: defaultScheduleRows });
+    setValidationResult(validateSchedule(defaultScheduleRows));
   };
 
   const formValues = watch('schedule');
@@ -337,8 +340,21 @@ export function useDailyScheduleEditForm({
         })
       : null;
 
-  // Framework-agnostic validation - computed from current state
-  const validationResult = validateSchedule(watchedSchedule);
+  // Framework-agnostic validation - stored in state and only updated onBlur or when external values change
+  const [validationResult, setValidationResult] = useState<ValidationResult>(
+    () => validateSchedule(savedScheduleRows),
+  );
+
+  // Validate when external value prop changes
+  useEffect(() => {
+    setValidationResult(validateSchedule(savedScheduleRows));
+  }, [value, savedScheduleRows]);
+
+  // Validate onBlur - consumers call this from field onBlur handlers
+  const handleBlur = useCallback(() => {
+    setValidationResult(validateSchedule(watchedSchedule));
+  }, [watchedSchedule]);
+
   const selectionError = validationResult.valid
     ? undefined
     : validationResult.selectionError;
@@ -396,6 +412,13 @@ export function useDailyScheduleEditForm({
       toggleDay: (index: number) => {
         const currentValue = watchedSchedule[index]?.checked;
         setFormValue(`schedule.${index}.checked`, !currentValue);
+        // Validate immediately after toggling to update error state
+        // This ensures errors are cleared/shown when checking/unchecking days
+        // Compute the next schedule state with the toggled value
+        const nextSchedule = watchedSchedule.map((row, i) =>
+          i === index ? { ...row, checked: !currentValue } : row,
+        );
+        setValidationResult(validateSchedule(nextSchedule));
       },
       save: async () => {
         // Framework-agnostic validation
@@ -412,6 +435,7 @@ export function useDailyScheduleEditForm({
         const validation = validateSchedule(watchedSchedule);
         return validation.valid;
       },
+      handleBlur,
     },
   };
 }

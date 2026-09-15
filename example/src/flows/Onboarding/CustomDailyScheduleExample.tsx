@@ -52,6 +52,7 @@ function CustomDailyScheduleEditForm({
               onChange={(e) =>
                 actions.updateRow(index, 'start_time', e.target.value)
               }
+              onBlur={actions.handleBlur}
               disabled={!row.checked}
               className={cn(
                 'border rounded px-2 py-1',
@@ -70,6 +71,7 @@ function CustomDailyScheduleEditForm({
               onChange={(e) =>
                 actions.updateRow(index, 'end_time', e.target.value)
               }
+              onBlur={actions.handleBlur}
               disabled={!row.checked}
               className={cn(
                 'border rounded px-2 py-1',
@@ -91,6 +93,7 @@ function CustomDailyScheduleEditForm({
                   e.target.value,
                 )
               }
+              onBlur={actions.handleBlur}
               disabled={!row.checked}
               className={cn(
                 'border rounded px-2 py-1 w-20',
