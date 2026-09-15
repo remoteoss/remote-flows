@@ -544,6 +544,128 @@ describe('DailySchedule', () => {
     });
   });
 
+  describe('Dialog close behavior', () => {
+    it('keeps dialog open when validation fails on save (regression: stale formState.errors)', async () => {
+      const user = userEvent.setup();
+      renderWithForm([createDailyScheduleField()], {
+        daily_schedule: undefined,
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+      const dialog = screen.getByRole('dialog');
+
+      // Enter invalid time format in a checked day
+      const mondayStartInput = within(dialog).getAllByRole('textbox')[0];
+      await user.clear(mondayStartInput);
+      await user.type(mondayStartInput, '99:99'); // Invalid time
+
+      // Click save - validation should fail
+      await user.click(
+        within(dialog).getByRole('button', { name: 'Save schedule' }),
+      );
+
+      // Dialog must stay open because validation failed
+      // The bug was: dialog would close because formState.errors was stale
+      await waitFor(() => {
+        expect(
+          within(dialog).getByText(/Please check the form for errors/),
+        ).toBeInTheDocument();
+      });
+
+      // Verify dialog is still open
+      expect(screen.getByRole('dialog', { hidden: false })).toBeInTheDocument();
+    });
+
+    it('closes dialog when validation succeeds after prior blur errors (regression: stale formState.errors)', async () => {
+      const user = userEvent.setup();
+      const { getFormValues } = renderWithForm([createDailyScheduleField()], {
+        daily_schedule: undefined,
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+      let dialog = screen.getByRole('dialog');
+
+      // Step 1: Enter invalid time and blur to trigger error
+      const mondayStartInput = within(dialog).getAllByRole('textbox')[0];
+      await user.clear(mondayStartInput);
+      await user.type(mondayStartInput, '99:99');
+      await user.tab(); // Blur to trigger validation
+
+      // Error should appear
+      expect(
+        await within(dialog).findByText(/Please check the form for errors/),
+      ).toBeInTheDocument();
+
+      // Step 2: Fix the error
+      await user.clear(mondayStartInput);
+      await user.type(mondayStartInput, '09:00'); // Valid time
+
+      // Step 3: Save - validation should now pass
+      await user.click(
+        within(dialog).getByRole('button', { name: 'Save schedule' }),
+      );
+
+      // Dialog must close because validation passed
+      // The bug was: dialog would stay open because formState.errors still had old errors
+      await waitFor(() => {
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      });
+
+      // Verify the form was saved
+      await waitFor(() => {
+        const value = getFormValues().daily_schedule as {
+          selected_days: string[];
+          schedule: Record<string, unknown>;
+        };
+        expect(value.selected_days).toEqual([
+          'monday',
+          'tuesday',
+          'wednesday',
+          'thursday',
+          'friday',
+        ]);
+      });
+    });
+
+    it('closes dialog immediately on successful save with no prior errors', async () => {
+      const user = userEvent.setup();
+      const { getFormValues } = renderWithForm([createDailyScheduleField()], {
+        daily_schedule: undefined,
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+      const dialog = screen.getByRole('dialog');
+
+      // Make a valid change (uncheck Friday)
+      await user.click(
+        within(dialog).getByRole('checkbox', { name: 'Friday' }),
+      );
+
+      // Save - should succeed and close immediately
+      await user.click(
+        within(dialog).getByRole('button', { name: 'Save schedule' }),
+      );
+
+      // Dialog should close
+      await waitFor(() => {
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      });
+
+      // Verify save completed
+      await waitFor(() => {
+        const value = getFormValues().daily_schedule as {
+          selected_days: string[];
+        };
+        expect(value.selected_days).toEqual([
+          'monday',
+          'tuesday',
+          'wednesday',
+          'thursday',
+        ]);
+      });
+    });
+  });
+
   describe('Row hours display', () => {
     it('row hours match summary hours when subtractBreaksFromWorkHours is false', async () => {
       const user = userEvent.setup();

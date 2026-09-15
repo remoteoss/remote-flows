@@ -226,14 +226,7 @@ export function useDailyScheduleEditForm({
     resolver: zodResolver(dailyScheduleEditFormSchema) as $TSFixMe,
   });
 
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState,
-    setValue: setFormValue,
-    trigger,
-  } = form;
+  const { control, watch, formState, setValue: setFormValue, trigger } = form;
   const { fields } = useFieldArray({ name: 'schedule', control });
   const watchedSchedule = watch('schedule');
   const prevCheckedRef = useRef<boolean[]>(
@@ -279,9 +272,10 @@ export function useDailyScheduleEditForm({
     trigger,
   ]);
 
-  const handleSave = handleSubmit((data) => {
+  // Export a manual save function that form components can call with their own onSuccess
+  const saveValue = (data: DailyScheduleEditFormData) => {
     setValue(mapDailyScheduleEditFormDataToValue(data));
-  });
+  };
 
   const defaultScheduleRows = buildDailyScheduleEditFormDefaultValues({
     availableWorkDays,
@@ -343,7 +337,7 @@ export function useDailyScheduleEditForm({
     watchedSchedule,
     unsavedSummaryDays,
     hoursRangeError,
-    handleSave,
+    saveValue,
     handleReset,
     isDirty,
     selectionError,

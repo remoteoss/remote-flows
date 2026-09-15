@@ -32,7 +32,7 @@ export const DailyScheduleEditForm = ({
   watchedSchedule,
   unsavedSummaryDays,
   hoursRangeError,
-  handleSave: hookHandleSave,
+  saveValue,
   handleReset,
   isDirty,
   selectionError,
@@ -40,13 +40,12 @@ export const DailyScheduleEditForm = ({
 }: DailyScheduleEditFormProps) => {
   const { close } = useDialogControl();
 
-  const handleSave = async () => {
-    await hookHandleSave();
-    // Only close if there are no validation errors
-    if (Object.keys(form.formState.errors).length === 0) {
-      close();
-    }
-  };
+  // Use form.handleSubmit directly with saveValue to ensure close() only runs on validation success
+  // The callback inside handleSubmit only executes if validation passes
+  const handleSave = form.handleSubmit((data) => {
+    saveValue(data);
+    close();
+  });
 
   const hasFieldErrors = Object.keys(form.formState.errors).length > 0;
 
