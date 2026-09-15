@@ -412,7 +412,6 @@ export function useDailyScheduleEditForm({
 
       return {
         ...row,
-        // Guard against NaN from incomplete times during typing (e.g., "09" without ":00" yet)
         hours: Number.isNaN(hours) ? 0 : hours,
       };
     });
@@ -453,7 +452,7 @@ export function useDailyScheduleEditForm({
         field: keyof DailyScheduleEditFormRow,
       ) => {
         // Trigger React Hook Form validation for the native implementation
-        trigger(`schedule.${index}.${field}` as $TSFixMe);
+        trigger(`schedule.${index}.${field}`);
       },
       save: async () => {
         // Framework-agnostic validation
