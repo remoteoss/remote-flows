@@ -128,12 +128,12 @@ function CustomDailyScheduleEditForm({
       {state.hoursRangeError && (
         <DailyScheduleHoursErrorBanner error={state.hoursRangeError} />
       )}
-      {state.selectionError && (
-        <p className='text-red-600 text-sm'>{state.selectionError}</p>
+      {state.formError && (
+        <p className='text-red-600 text-sm'>{state.formError}</p>
       )}
 
       {/* Field-level validation errors */}
-      {!state.selectionError && state.hasFieldErrors && (
+      {!state.formError && state.hasFieldErrors && (
         <p className='text-red-600 text-sm'>
           Please check the form for errors. Time fields must use HH:mm format
           (e.g., 09:00), and all checked days must have start time, end time,
