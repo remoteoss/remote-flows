@@ -741,6 +741,57 @@ describe('ContractorOnboardingFlow', () => {
     await screen.findByText(/Step: Pricing Plan/i);
   });
 
+  it('should send external_id and partner_external_id when resubmitting basic information', async () => {
+    const patchSpy = vi.fn();
+    const testExternalId = 'test-contractor-external-id-123';
+    const testPartnerExternalId = 'test-contractor-partner-external-id-123';
+
+    server.use(
+      http.patch('*/v1/employments/*', async ({ request }) => {
+        const requestBody = await request.json();
+        patchSpy(requestBody);
+        return HttpResponse.json(employmentUpdatedResponse);
+      }),
+    );
+
+    mockRender.mockImplementation(
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        {...defaultProps}
+        employmentId={generateUniqueEmploymentId()}
+        skipSteps={['select_country']}
+        externalId={testExternalId}
+        partnerExternalId={testPartnerExternalId}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
+    });
+
+    const nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await waitFor(() => {
+      expect(patchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    expect(patchSpy.mock.calls[0][0]).toMatchObject({
+      basic_information: expect.any(Object),
+      external_id: testExternalId,
+      partner_external_id: testPartnerExternalId,
+    });
+
+    await screen.findByText(/Step: Pricing Plan/i);
+  });
+
   it('should create contract document when submitting contract details', async () => {
     const postContractDocumentSpy = vi.fn();
 
@@ -1169,6 +1220,54 @@ describe('ContractorOnboardingFlow', () => {
       type: 'contractor',
       country_code: 'PRT',
       external_id: testExternalId,
+    });
+  });
+
+  it('should send partner_external_id when creating employment for the first time', async () => {
+    const postSpy = vi.fn();
+    const testPartnerExternalId = 'test-contractor-partner-external-id-123';
+
+    server.use(
+      http.post('*/v1/employments', async ({ request }) => {
+        const requestBody = await request.json();
+        postSpy(requestBody);
+        return HttpResponse.json(mockContractorEmploymentResponse);
+      }),
+    );
+
+    mockRender.mockImplementation(
+      createMockRenderImplementation(MultiStepFormWithoutCountry),
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        {...defaultProps}
+        countryCode='PRT'
+        skipSteps={['select_country']}
+        partnerExternalId={testPartnerExternalId}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+    await fillBasicInformation();
+
+    const nextButton = screen.getByText(/Next Step/i);
+    nextButton.click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+
+    // Verify POST was called with partner_external_id
+    expect(postSpy).toHaveBeenCalledTimes(1);
+    const requestPayload = postSpy.mock.calls[0][0];
+
+    expect(requestPayload).toMatchObject({
+      basic_information: expect.any(Object),
+      type: 'contractor',
+      country_code: 'PRT',
+      partner_external_id: testPartnerExternalId,
     });
   });
 

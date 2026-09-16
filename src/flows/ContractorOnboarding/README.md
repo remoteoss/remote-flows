@@ -45,15 +45,16 @@ import { ContractorOnboardingFlow } from '@remoteoss/remote-flows';
 
 #### `ContractorOnboardingFlowProps`
 
-| Prop            | Type                                                          | Required | Description                                                                                                                  |
-| --------------- | ------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `render`        | `(props: ContractorOnboardingRenderProps) => React.ReactNode` | Yes      | Render prop function that receives the contractor onboarding bag and available components                                    |
-| `countryCode`   | `string`                                                      | No       | Pre-selected country code for the contractor                                                                                 |
-| `employmentId`  | `string`                                                      | No       | ID of existing employment to update. When provided, fetches existing data from the server                                    |
-| `externalId`    | `string`                                                      | No       | Unique reference code for the employment in external systems (non-Remote). Links to external data sources                    |
-| `skipSteps`     | `['select_country']`                                          | No       | Steps to skip. Also supports skipping the `contract_origin` step                                                             |
-| `initialValues` | `Record<string, unknown>`                                     | No       | Pre-populate form fields. Flat field values are automatically mapped to the correct step. Server data overrides these values |
-| `options`       | `FlowOptions`                                                 | No       | Configuration options for the flow, including `jsfModify` for customizing specific steps                                     |
+| Prop                | Type                                                          | Required | Description                                                                                                                  |
+| ------------------- | ------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `render`            | `(props: ContractorOnboardingRenderProps) => React.ReactNode` | Yes      | Render prop function that receives the contractor onboarding bag and available components                                    |
+| `countryCode`       | `string`                                                      | No       | Pre-selected country code for the contractor                                                                                 |
+| `employmentId`      | `string`                                                      | No       | ID of existing employment to update. When provided, fetches existing data from the server                                    |
+| `externalId`        | `string`                                                      | No       | Unique reference code for the employment in external systems (non-Remote). Links to external data sources                    |
+| `partnerExternalId` | `string`                                                      | No       | A reference code for the employment record, private to your own integration                                                  |
+| `skipSteps`         | `['select_country']`                                          | No       | Steps to skip. Also supports skipping the `contract_origin` step                                                             |
+| `initialValues`     | `Record<string, unknown>`                                     | No       | Pre-populate form fields. Flat field values are automatically mapped to the correct step. Server data overrides these values |
+| `options`           | `FlowOptions`                                                 | No       | Configuration options for the flow, including `jsfModify` for customizing specific steps                                     |
 
 ### Render Props
 
