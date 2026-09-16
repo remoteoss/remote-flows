@@ -7,12 +7,12 @@ how it's expected to extend to other custom JSF fields in the future.
 ## Where it lives today
 
 The `daily_schedule` field is a JSON Schema Form (JSF) field with a custom `Component`,
-wired up **only** inside [`src/flows/Onboarding/hooks.tsx`](../src/flows/Onboarding/hooks.tsx),
+wired up **only** inside `[src/flows/Onboarding/hooks.tsx](../src/flows/Onboarding/hooks.tsx)`,
 as part of `contractDetailsCustomFields` (alongside `annual_gross_salary` and
 `equity_compensation`). It is gated behind the `daily_schedule` feature flag
 (`options.features`) and is not currently generalized to other flows.
 
-```
+```markdown
 hooks.tsx (useOnboarding)
   contractDetailsCustomFields.fields.daily_schedule.presentation.Component
     -> DailyScheduleContainer          (headless, owns derived state)
@@ -23,7 +23,7 @@ hooks.tsx (useOnboarding)
 
 Consumers override the field's presentation via `options.jsfModify.contract_details.fields.daily_schedule`,
 exactly like any other JSF field override — see
-[`example/src/flows/Onboarding/constants.ts`](../example/src/flows/Onboarding/constants.ts):
+`[example/src/flows/Onboarding/constants.ts](../example/src/flows/Onboarding/constants.ts)`:
 
 ```ts
 jsfModify: {
@@ -45,7 +45,7 @@ not) re-wrap itself in the container.
 
 ## The core decision: headless container + render prop
 
-`DailyScheduleContainer` ([`components/DailySchedule/DailyScheduleContainer.tsx`](../src/flows/Onboarding/components/DailySchedule/DailyScheduleContainer.tsx))
+`DailyScheduleContainer` (`[components/DailySchedule/DailyScheduleContainer.tsx](../src/flows/Onboarding/components/DailySchedule/DailyScheduleContainer.tsx)`)
 follows the same pattern as `PaidTimeOffContainer`: it owns all schema-derived and
 form-derived state, and calls `render(renderProps)` with a plain data payload. It does not
 render any markup itself — presentation is entirely up to whoever consumes `render`.
@@ -65,16 +65,16 @@ type DailyScheduleRenderProps = {
 ```
 
 - `summaryDays` / `subtractBreaksFromWorkHours` — enough to render a read-only summary of
-  the *saved* schedule. We deliberately don't hand back pre-rendered text or JSX; consumers
-  decide how to lay out and word the summary themselves. `buildDailyScheduleSummary()`
-  (exported from the main package) turns this into line-based segments if a consumer wants
-  our exact copy without our exact markup — see
-  [`DailyScheduleSummaryBody.tsx`](../src/flows/Onboarding/components/DailySchedule/DailyScheduleSummaryBody.tsx),
-  which is itself just a reference/default implementation over that same utility.
+the *saved* schedule. We deliberately don't hand back pre-rendered text or JSX; consumers
+decide how to lay out and word the summary themselves. `buildDailyScheduleSummary()`
+(exported from the main package) turns this into line-based segments if a consumer wants
+our exact copy without our exact markup — see
+`[DailyScheduleSummaryBody.tsx](../src/flows/Onboarding/components/DailySchedule/DailyScheduleSummaryBody.tsx)`,
+which is itself just a reference/default implementation over that same utility.
 - `savedScheduleHoursError` — validation state for the *saved* schedule (e.g. weekly hours
-  outside the country's allowed range), so consumers can decide how to surface it (banner,
-  inline text, toast, etc). `DailyScheduleHoursErrorBanner` is our default presentation of
-  this, exported from internals to showcase in demo, customers can build their own.
+outside the country's allowed range), so consumers can decide how to surface it (banner,
+inline text, toast, etc). `DailyScheduleHoursErrorBanner` is our default presentation of
+this, exported from internals to showcase in demo, customers can build their own.
 - `editBag` — everything needed to build an edit UI (see below).
 
 Both the error banner and the summary body are exported from `@remoteoss/remote-flows/internals`
@@ -90,16 +90,16 @@ implementation detail of how the field's value round-trips into the JSF form —
 `control`/`register`/`formState` shape to consumers would mean:
 
 - any future change to how we manage the edit form's internal state becomes a breaking
-  change for every custom implementation, and
+change for every custom implementation, and
 - consumers would need to know RHF conventions instead of a small, purpose-built API.
 
 Instead, `DailyScheduleEditState` / `DailyScheduleEditActions`
-([`components/DailySchedule/types.ts`](../src/flows/Onboarding/components/DailySchedule/types.ts))
+(`[components/DailySchedule/types.ts](../src/flows/Onboarding/components/DailySchedule/types.ts)`)
 are a **framework-agnostic** surface:
 
 ```ts
 type DailyScheduleEditState = {
-  rows: DailyScheduleEditFormRow[];          // one row per weekday, plain values
+  rows: DailyScheduleEditFormRow[]; // one row per weekday, plain values
   unsavedSummaryDays: DailyScheduleSummaryDay[]; // live preview while editing
   hoursRangeError: DailyScheduleHoursError | null;
   isDirty: boolean;
@@ -138,14 +138,38 @@ change the internal validation/JSF wiring during iteration without breaking the 
 Both the default UI and the example custom UI consume the exact same
 `DailyScheduleRenderProps` / `DailyScheduleEditBag` contract:
 
-| | Default | Custom example |
-|---|---|---|
-| Component | [`DailySchedule.tsx`](../src/flows/Onboarding/components/DailySchedule/DailySchedule.tsx) | [`CustomDailyScheduleExample.tsx`](../example/src/flows/Onboarding/CustomDailyScheduleExample.tsx) |
-| Summary | `DailyScheduleSummaryBody` (used directly) | `DailyScheduleSummaryBody` (reused from `internals`) |
-| Error display | `DailyScheduleHoursErrorBanner` (used directly) | `DailyScheduleHoursErrorBanner` (reused from `internals`) |
-| Edit form | `DailyScheduleEditForm` + `EditEmployeeWorkingHoursDialog` (dialog-based) | Inline custom markup driven entirely by `editBag.state`/`editBag.actions` |
+
+|               | Default                                                                                   | Custom example                                                                                     |
+| ------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Component     | `[DailySchedule.tsx](../src/flows/Onboarding/components/DailySchedule/DailySchedule.tsx)` | `[CustomDailyScheduleExample.tsx](../example/src/flows/Onboarding/CustomDailyScheduleExample.tsx)` |
+| Summary       | `DailyScheduleSummaryBody` (used directly)                                                | `DailyScheduleSummaryBody` (reused from `internals`)                                               |
+| Error display | `DailyScheduleHoursErrorBanner` (used directly)                                           | `DailyScheduleHoursErrorBanner` (reused from `internals`)                                          |
+| Edit form     | `DailyScheduleEditForm` + `EditEmployeeWorkingHoursDialog` (dialog-based)                 | Inline custom markup driven entirely by `editBag.state`/`editBag.actions`                          |
+
 
 Neither implementation reaches past the render props / edit bag to touch JSF internals,
 RHF, or `DailyScheduleContainer` directly — which is what makes it possible to swap one for
 the other via `jsfModify` alone, and why both are covered by the same test expectations in
 `src/flows/Onboarding/tests/`.
+
+## PRs involved
+
+- [#1296](https://github.com/remoteoss/remote-flows/pull/1296)
+- [#1301](https://github.com/remoteoss/remote-flows/pull/1301)
+- [#1302](https://github.com/remoteoss/remote-flows/pull/1302)
+- [#1304](https://github.com/remoteoss/remote-flows/pull/1304)
+- [#1305](https://github.com/remoteoss/remote-flows/pull/1305)
+- [#1306](https://github.com/remoteoss/remote-flows/pull/1306)
+- [#1313](https://github.com/remoteoss/remote-flows/pull/1313)
+- [#1314](https://github.com/remoteoss/remote-flows/pull/1314)
+- [#1315](https://github.com/remoteoss/remote-flows/pull/1315)
+- [#1317](https://github.com/remoteoss/remote-flows/pull/1317)
+- [#1318](https://github.com/remoteoss/remote-flows/pull/1318)
+
+*Note*: Discarded [API](https://github.com/remoteoss/remote-flows/blob/f2cacbe36c059b96f7e20339bdcd01d69132ca67/example/src/flows/Onboarding/CustomDailySchedule.tsx) where we leaked RHF (react-hook-form) details
+
+## Walkthrough Video
+
+For outsiders of the repo / or anyone wanted to know how the whole feature works this is the next video
+
+[https://www.loom.com/share/e1bc6d44eb2140689992ef4a1c546eb1](https://www.loom.com/share/e1bc6d44eb2140689992ef4a1c546eb1) -> Remoters only access
