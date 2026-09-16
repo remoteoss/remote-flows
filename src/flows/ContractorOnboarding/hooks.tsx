@@ -1378,6 +1378,8 @@ export const useContractorOnboarding = ({
           return updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: basicInformationParsedValues,
+            external_id: externalId,
+            partner_external_id: partnerExternalId,
           });
         }
 
