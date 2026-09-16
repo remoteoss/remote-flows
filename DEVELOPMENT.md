@@ -15,7 +15,7 @@ This guide is for internal developers working on the `@remoteoss/remote-flows` p
 
 ### Prerequisites
 
-- Node.js 22.12+, 24+, or 26+ (CI uses 24 to have 2FA) — required by vitest 5
+- Node.js 24.15
 - npm
 
 ### Setup
