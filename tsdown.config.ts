@@ -37,8 +37,10 @@ export default defineConfig({
       env === 'production' ? ENVIRONMENTS.production : ENVIRONMENTS.staging,
     RF_INTERNAL_DEV: env === 'production' ? 'false' : 'true',
   },
-  external: ['react', 'react-dom'],
-  noExternal: ['react-hook-form', '@hookform/resolvers'],
+  deps: {
+    neverBundle: ['react', 'react-dom'],
+    alwaysBundle: ['react-hook-form', '@hookform/resolvers'],
+  },
   onSuccess: async () => {
     await copyFile('dist/index.css', 'dist/styles.css');
     await copyFile('dist/index.css.map', 'dist/styles.css.map').catch(() => {});
