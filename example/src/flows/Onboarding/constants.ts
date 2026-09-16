@@ -144,7 +144,7 @@ export const ONBOARDING_OPTIONS = {
       fields: {
         daily_schedule: {
           presentation: {
-            //Component: CustomDailySchedule,
+            Component: CustomDailySchedule,
           },
         },
       },
