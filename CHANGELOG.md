@@ -1,5 +1,17 @@
 # @remoteoss/remote-flows
 
+## 1.54.0
+
+### Minor Changes
+
+#### Features
+
+- support partnerExternalId (#1326) [#1326](https://github.com/remoteoss/remote-flows/pull/1326)
+
+#### Chores
+
+- update dependency tsx to v4.23.13 (#1276) [#1276](https://github.com/remoteoss/remote-flows/pull/1276)
+
 ## 1.53.0
 
 ### Minor Changes
