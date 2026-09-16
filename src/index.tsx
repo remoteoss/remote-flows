@@ -32,6 +32,16 @@ export type {
 } from '@/src/flows/InvoiceSchedule';
 
 export {
+  ContractDocumentFlow,
+  useContractDocument,
+} from '@/src/flows/ContractDocument';
+
+export type {
+  ContractDocumentFlowProps,
+  ContractDocumentStepKeys,
+} from '@/src/flows/ContractDocument';
+
+export {
   ContractAmendmentConfirmationForm,
   ContractAmendmentFlow,
   ContractAmendmentForm,
