@@ -114,6 +114,12 @@ export type ContractorOnboardingFlowProps = {
   externalId?: string;
 
   /**
+   * A reference code for the employment record, private to your own integration.
+   * If not provided, it defaults to null.
+   */
+  partnerExternalId?: string;
+
+  /**
    * The steps to skip for the onboarding.
    */
   skipSteps?: Array<'select_country' | 'contract_origin'>;

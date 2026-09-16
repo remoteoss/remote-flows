@@ -132,6 +132,7 @@ const contractOriginToBackend: Record<string, string> = {
 export const useContractorOnboarding = ({
   countryCode,
   externalId,
+  partnerExternalId,
   employmentId,
   skipSteps,
   options,
@@ -1344,6 +1345,7 @@ export const useContractorOnboarding = ({
             type: 'contractor',
             country_code: internalCountryCode,
             external_id: externalId,
+            partner_external_id: partnerExternalId,
           };
           const response = await createEmploymentMutationAsync(
             basicInformationPayload,

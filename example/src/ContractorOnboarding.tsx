@@ -735,11 +735,13 @@ type ContractorOnboardingFormData = {
   countryCode?: string;
   employmentId?: string;
   externalId?: string;
+  partnerExternalId?: string;
 };
 
 export const ContractorOnboardingWithProps = ({
   employmentId,
   externalId,
+  partnerExternalId,
 }: ContractorOnboardingFormData) => {
   return (
     <div className='contractor-onboarding-container'>
@@ -752,6 +754,7 @@ export const ContractorOnboardingWithProps = ({
             render={OnBoardingRender}
             employmentId={employmentId}
             externalId={externalId}
+            partnerExternalId={partnerExternalId}
             options={{
               features: ['create_invoice_schedule'],
               jsonSchemaVersion: {
@@ -823,6 +826,7 @@ export const ContractorOnboardingForm = () => {
     employmentId:
       import.meta.env.VITE_CONTRACTOR_MANAGEMENT_EMPLOYMENT_ID || '', // use your own employment ID
     externalId: '',
+    partnerExternalId: '',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
@@ -864,6 +868,24 @@ export const ContractorOnboardingForm = () => {
             setFormData((prev) => ({ ...prev, externalId: e.target.value }))
           }
           placeholder='Enter External ID'
+          className='onboarding-form-input'
+        />
+      </div>
+      <div className='onboarding-form-group'>
+        <label htmlFor='partnerExternalId' className='onboarding-form-label'>
+          Partner External ID:
+        </label>
+        <input
+          id='partnerExternalId'
+          type='text'
+          value={formData.partnerExternalId}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              partnerExternalId: e.target.value,
+            }))
+          }
+          placeholder='Enter Partner External ID'
           className='onboarding-form-input'
         />
       </div>
