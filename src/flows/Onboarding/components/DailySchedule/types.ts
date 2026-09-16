@@ -77,11 +77,18 @@ export type DailyScheduleDefaults = {
  * This is the framework-agnostic representation that customers work with.
  */
 export type DailyScheduleEditFormRow = {
+  /** The day of the week */
   day: Weekday;
+  /** Whether this day is selected for editing */
   checked: boolean;
+  /** Start time in HH:MM format */
   start_time: string;
+  /** End time in HH:MM format */
   end_time: string;
+  /** Break duration in minutes */
   break_duration_minutes: string;
+  /** Calculated working hours for this day (read-only) */
+  hours: number;
 };
 
 /**
@@ -99,6 +106,13 @@ export type DailyScheduleEditState = {
   isDirty: boolean;
   /** Form-level validation error (e.g., "Select at least one work day") */
   formError: string | null;
+  /** Whether any fields have validation errors */
+  hasFieldErrors: boolean;
+  /** Get the validation error message for a specific field */
+  getFieldError: (
+    index: number,
+    field: keyof Omit<DailyScheduleEditFormRow, 'hours'>,
+  ) => string | undefined;
 };
 
 /**
@@ -109,7 +123,7 @@ export type DailyScheduleEditActions = {
   /** Update a specific field in a specific row */
   updateRow: (
     index: number,
-    field: keyof DailyScheduleEditFormRow,
+    field: keyof Omit<DailyScheduleEditFormRow, 'hours'>,
     value: unknown,
   ) => void;
   /** Toggle a day's checked state */
@@ -122,6 +136,8 @@ export type DailyScheduleEditActions = {
   close: () => void;
   /** Check if the current form state is valid */
   validate: () => boolean;
+  /** Trigger blur validation (call from field onBlur handlers) */
+  handleBlur: () => void;
 };
 
 /**
@@ -142,11 +158,8 @@ export type DailyScheduleRenderProps = {
   savedScheduleHoursError: DailyScheduleHoursError | null;
   /**
    * The edit form API with state and actions.
-   *
    */
-  editBag: ReturnType<
-    typeof import('@/src/flows/Onboarding/components/DailySchedule/useDailyScheduleEditForm').useDailyScheduleEditForm
-  >;
+  editBag: DailyScheduleEditBag;
 };
 
 export type DailyScheduleContainerProps = DailyScheduleFieldProps & {
