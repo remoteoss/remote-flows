@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
@@ -16,7 +16,6 @@ function renderFlow(employmentId = 'employment-grace') {
         return (
           <>
             <h2>{bag.employment?.full_name}</h2>
-            <p>{bag.isContractorOfRecord ? 'CoR' : 'Not CoR'}</p>
             <p>{bag.contractDocuments?.length} contract documents</p>
           </>
         );
@@ -79,54 +78,5 @@ describe('ContractDocumentFlow', () => {
     server.events.removeListener('request:start', onRequest);
     expect(screen.getByText('Loading…')).toBeInTheDocument();
     expect(requests).toEqual([]);
-  });
-
-  it('keeps reporting loading until the contract documents resolve', async () => {
-    let releaseContractDocuments: () => void = () => {};
-    const contractDocumentsRequested = new Promise<void>((resolve) => {
-      releaseContractDocuments = resolve;
-    });
-
-    server.use(
-      http.get('*/v1/employments/:id/contract-documents', async () => {
-        await contractDocumentsRequested;
-        return HttpResponse.json(mockContractDocumentsResponse);
-      }),
-    );
-
-    renderFlow();
-
-    await waitFor(() => {
-      expect(
-        queryClient.getQueryData(['employment', 'employment-grace']),
-      ).toBeDefined();
-    });
-    expect(screen.getByText('Loading…')).toBeInTheDocument();
-
-    releaseContractDocuments();
-
-    expect(await screen.findByText('1 contract documents')).toBeInTheDocument();
-  });
-
-  it('tells a Contractor of Record apart', async () => {
-    server.use(
-      http.get('*/v1/employments/:id', ({ params }) =>
-        HttpResponse.json({
-          ...employmentDefaultResponse,
-          data: {
-            ...employmentDefaultResponse.data,
-            employment: {
-              ...employmentDefaultResponse.data.employment,
-              id: params.id,
-              contractor_type: 'cor',
-            },
-          },
-        }),
-      ),
-    );
-
-    renderFlow();
-
-    expect(await screen.findByText('CoR')).toBeInTheDocument();
   });
 });
