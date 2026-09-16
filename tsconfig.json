@@ -27,5 +27,11 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["src", "vitest-setup.ts", "scripts", "tsup.config.ts", "tsdown.config.ts"]
+  "include": [
+    "src",
+    "vitest-setup.ts",
+    "scripts",
+    "tsup.config.ts",
+    "tsdown.config.ts"
+  ]
 }
