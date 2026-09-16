@@ -34,7 +34,7 @@ export const useContractDocument = ({
     useQuery({
       ...contractDocumentsOptions(client as Client, employmentId),
       enabled: Boolean(employmentId),
-      select: ({ data }) => data?.data?.contract_documents ?? [],
+      select: ({ data }) => data.data.contract_documents,
     });
 
   return {
@@ -75,7 +75,8 @@ export const useContractDocument = ({
      */
     isContractorOfRecord: employment?.contractor_type === 'cor',
     /**
-     * The contract documents the contractor already has.
+     * The contract documents the contractor already has. `undefined` until they have
+     * loaded, or when loading them failed.
      */
     contractDocuments,
     /**

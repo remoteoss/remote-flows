@@ -231,7 +231,7 @@ export const TerminationWithProps = ({
 export const TerminationForm = () => {
   const [employmentId, setEmploymentId] = useState<string | null>(null);
 
-  if (employmentId !== null) {
+  if (employmentId) {
     return <TerminationWithProps employmentId={employmentId} />;
   }
 

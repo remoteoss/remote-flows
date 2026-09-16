@@ -16,6 +16,7 @@ export const mockContractDocumentsResponse = {
         type: 'contractor_services_agreement',
         status: 'pending_signature',
         inserted_at: '2026-09-16T09:00:00Z',
+        updated_at: '2026-09-16T09:00:00Z',
         signatories: [],
       },
     ],

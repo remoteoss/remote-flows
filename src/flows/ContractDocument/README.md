@@ -13,7 +13,8 @@ If you want these screens **inside** contractor onboarding, that is part of the
 [Contractor Onboarding](../ContractorOnboarding/README.md) flow instead.
 
 > **Work in progress.** This release loads the contractor and their existing contract documents
-> and exposes them on the bag, but no form is rendered yet.
+> and exposes them on the bag, but no form is rendered yet. Until the flow is complete, its props
+> and bag may change between minor versions without a major bump.
 
 # Table of Contents
 
@@ -83,7 +84,7 @@ fully custom UIs. Both surfaces expose the same bag:
 | `employmentId`         | The contractor the contract document will be created for.                                                 |
 | `employment`           | The contractor's employment.                                                                              |
 | `isContractorOfRecord` | Whether the contractor is a Contractor of Record.                                                         |
-| `contractDocuments`    | The contract documents the contractor already has.                                                        |
+| `contractDocuments`    | The contract documents the contractor already has. `undefined` until loaded, or when loading failed.      |
 | `isLoading`            | True until the contractor is known: no `employmentId`, or the employment and its documents still loading. |
 | `isSubmitting`         | True while a submission is in flight. Always `false` for now.                                             |
 

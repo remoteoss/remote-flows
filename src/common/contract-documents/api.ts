@@ -13,11 +13,19 @@ export const contractDocumentsOptions = (
 ) =>
   queryOptions({
     queryKey: ['contract-documents', employmentId] as const,
-    queryFn: () =>
-      getV1EmploymentsEmploymentIdContractDocuments({
+    retry: false,
+    queryFn: async () => {
+      const response = await getV1EmploymentsEmploymentIdContractDocuments({
         client,
         path: { employment_id: employmentId },
-      }),
+      });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch contract documents');
+      }
+
+      return response;
+    },
   });
 
 export const useGetContractDocuments = (
