@@ -1,5 +1,22 @@
 # @remoteoss/remote-flows
 
+## 1.53.0
+
+### Minor Changes
+
+- close radiogroup re-query race in fillRadio helper (#1312) [#1312](https://github.com/remoteoss/remote-flows/pull/1312)
+- API-first onboarding seed script (#1303) [#1303](https://github.com/remoteoss/remote-flows/pull/1303)
+- add edit dialog (#1304) [#1304](https://github.com/remoteoss/remote-flows/pull/1304)
+- extract-weekly-hours utility (#1305) [#1305](https://github.com/remoteoss/remote-flows/pull/1305)
+- refactor daily schedule api (#1306) [#1306](https://github.com/remoteoss/remote-flows/pull/1306)
+- fix validation bug (#1314) [#1314](https://github.com/remoteoss/remote-flows/pull/1314)
+- discard unsaved edits when the edit dialog closes (#1313) [#1313](https://github.com/remoteoss/remote-flows/pull/1313)
+- replace formBag with headless editBag API (#1317) [#1317](https://github.com/remoteoss/remote-flows/pull/1317)
+- run the select country step on the jsf v1 engine (#1310) [#1310](https://github.com/remoteoss/remote-flows/pull/1310)
+- scaffold the standalone ContractDocument flow (#1319) [#1319](https://github.com/remoteoss/remote-flows/pull/1319)
+- support partnerExternalId on Onboarding flow (#1320) [#1320](https://github.com/remoteoss/remote-flows/pull/1320)
+- export public API and add custom example (#1318) [#1318](https://github.com/remoteoss/remote-flows/pull/1318)
+
 ## 1.52.0
 
 ### Minor Changes
