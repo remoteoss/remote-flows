@@ -15,8 +15,6 @@ export default defineConfig({
     'src/default-components.ts',
     'src/flows/*/index.ts',
   ],
-  // NOTE: tsdown/rolldown has no `keepNames` equivalent to tsup's esbuild-backed
-  // option (which prevents the minifier from renaming functions/classes) as of 0.23.0.
   minify: true,
   sourcemap: true,
   format: ['esm'],

@@ -4,7 +4,7 @@
     {
       "name": "lib-watch",
       "command": "npm run dev",
-      "description": "tsup watch build for the main package"
+      "description": "tsdown watch build for the main package"
     },
     {
       "name": "example-app",
