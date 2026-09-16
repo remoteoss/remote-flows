@@ -163,5 +163,10 @@
     "typescript": "7.0.2",
     "unrun": "0.3.1",
     "vitest": "4.1.10"
+  },
+  "overrides": {
+    "@remoteoss/remote-json-schema-form-kit": {
+      "@remoteoss/json-schema-form-v0-deprecated": "npm:@remoteoss/json-schema-form@0.12.5-dev.20260916142420"
+    }
   }
 }
