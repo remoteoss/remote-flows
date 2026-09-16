@@ -388,6 +388,7 @@ type OnboardingFormData = {
   type: 'employee' | 'contractor';
   employmentId: string;
   externalId?: string;
+  partnerExternalId?: string;
 };
 
 const OnboardingWithProps = ({
@@ -395,6 +396,7 @@ const OnboardingWithProps = ({
   type,
   employmentId,
   externalId,
+  partnerExternalId,
 }: OnboardingFormData) => (
   <RemoteFlows
     proxy={{ url: window.location.origin }}
@@ -406,6 +408,7 @@ const OnboardingWithProps = ({
       render={OnBoardingRender}
       employmentId={employmentId}
       externalId={externalId}
+      partnerExternalId={partnerExternalId}
       options={ONBOARDING_OPTIONS as $TSFixMe}
     />
   </RemoteFlows>
@@ -418,6 +421,7 @@ export const OnboardingForm = () => {
     companyId:
       import.meta.env.VITE_COMPANY_ID || 'c3c22940-e118-425c-9e31-f2fd4d43c6d8', // use your own company ID
     externalId: '',
+    partnerExternalId: '',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
@@ -495,6 +499,24 @@ export const OnboardingForm = () => {
             setFormData((prev) => ({ ...prev, externalId: e.target.value }))
           }
           placeholder='Enter External ID'
+          className='onboarding-form-input'
+        />
+      </div>
+      <div data-field='partnerExternalId' className='onboarding-form-group'>
+        <label htmlFor='partnerExternalId' className='onboarding-form-label'>
+          Partner External ID:
+        </label>
+        <input
+          id='partnerExternalId'
+          type='text'
+          value={formData.partnerExternalId}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              partnerExternalId: e.target.value,
+            }))
+          }
+          placeholder='Enter Partner External ID'
           className='onboarding-form-input'
         />
       </div>

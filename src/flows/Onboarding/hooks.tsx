@@ -210,6 +210,7 @@ export const useOnboarding = ({
   options,
   skipSteps,
   externalId,
+  partnerExternalId,
   initialValues: onboardingInitialValues,
 }: OnboardingHookProps) => {
   const { updateErrorContext } = useErrorReporting({
@@ -1159,6 +1160,7 @@ export const useOnboarding = ({
             type: type,
             country_code: internalCountryCode,
             external_id: externalId,
+            partner_external_id: partnerExternalId,
           };
           try {
             const response = await createEmploymentMutationAsync(payload);
@@ -1193,6 +1195,7 @@ export const useOnboarding = ({
               frequency: 'monthly',
             },
             external_id: externalId,
+            partner_external_id: partnerExternalId,
           });
         }
 
@@ -1214,6 +1217,7 @@ export const useOnboarding = ({
         return updateEmploymentMutationAsync({
           employmentId: internalEmploymentId as string,
           external_id: externalId,
+          partner_external_id: partnerExternalId,
           ...payload,
         });
       }

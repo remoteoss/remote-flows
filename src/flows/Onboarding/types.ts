@@ -114,6 +114,11 @@ export type OnboardingFlowProps = {
    */
   externalId?: string;
   /**
+   * A reference code for the employment record, private to your own integration.
+   * If not provided, it defaults to null.
+   */
+  partnerExternalId?: string;
+  /**
    * Initial values to pre-populate the form fields.
    * These are flat field values that will be automatically mapped to the correct step.
    * Server data will override these values. This happens when you pass employmentId and the server returns an employment object.
