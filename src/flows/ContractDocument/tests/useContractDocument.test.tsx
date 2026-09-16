@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 import { useContractDocument } from '@/src/flows/ContractDocument/hooks';
 
@@ -7,11 +7,21 @@ describe('useContractDocument', () => {
     queryClient.clear();
   });
 
-  it('exposes the two-step shell', () => {
-    const { result } = renderHook(() => useContractDocument(), {
-      wrapper: TestProviders,
+  it('exposes the two-step shell for the given contractor', async () => {
+    const { result } = renderHook(
+      () => useContractDocument({ employmentId: 'employment-grace' }),
+      { wrapper: TestProviders },
+    );
+
+    expect(result.current.isLoading).toBe(true);
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
     });
 
+    expect(result.current.employmentId).toBe('employment-grace');
+    expect(result.current.employment?.id).toBe('employment-grace');
+    expect(result.current.isContractorOfRecord).toBe(false);
+    expect(result.current.contractDocuments).toEqual([]);
     expect(result.current.stepState.currentStep.name).toBe('contract_details');
     expect(result.current.stepState.totalSteps).toBe(2);
     expect(result.current.steps).toEqual([
@@ -19,14 +29,14 @@ describe('useContractDocument', () => {
       { index: 1, name: 'contract_preview', label: 'Contract Preview' },
     ]);
     expect(result.current.fields).toEqual([]);
-    expect(result.current.isLoading).toBe(false);
     expect(result.current.isSubmitting).toBe(false);
   });
 
   it('moves between steps with next, back and goTo', () => {
-    const { result } = renderHook(() => useContractDocument(), {
-      wrapper: TestProviders,
-    });
+    const { result } = renderHook(
+      () => useContractDocument({ employmentId: 'employment-grace' }),
+      { wrapper: TestProviders },
+    );
 
     act(() => result.current.next());
     expect(result.current.stepState.currentStep.name).toBe('contract_preview');

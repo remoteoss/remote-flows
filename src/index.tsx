@@ -39,6 +39,7 @@ export {
 export type {
   ContractDocumentFlowProps,
   ContractDocumentStepKeys,
+  UseContractDocumentOptions,
 } from '@/src/flows/ContractDocument';
 
 export {
