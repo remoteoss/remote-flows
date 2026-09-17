@@ -21,7 +21,6 @@ import {
   useSignContractDocument,
   useUpdateUKandSaudiFields,
   useGetIR35File,
-  useGetContractDocuments,
   useGetEligibilityQuestionnaire,
   usePostCreateEligibilityQuestionnaire,
   usePostManageContractorCorSubscription,
@@ -41,6 +40,7 @@ import {
   useGetExistingInvoiceSchedule,
 } from '@/src/flows/ContractorOnboarding/api';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
+import { useGetContractDocuments } from '@/src/common/contract-documents/api';
 import {
   ContractorOnboardingFlowProps,
   ContractorOnboardingHookOptions,

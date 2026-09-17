@@ -19,6 +19,7 @@ import {
   mockCompanyResponse,
 } from '@/src/common/api/fixtures/companies';
 import { mockBaseResponse } from '@/src/common/api/fixtures/base';
+import { mockEmptyContractDocumentsResponse } from '@/src/common/api/fixtures/contract-documents';
 import {
   mockBasicInformationResponse,
   mockBenefitOffersResponse,
@@ -189,6 +190,13 @@ const employmentHandler = http.get('*/v1/employments/:id', ({ params }) => {
   });
 });
 
+const contractDocumentsHandler = http.get(
+  '*/v1/employments/*/contract-documents',
+  () => {
+    return HttpResponse.json(mockEmptyContractDocumentsResponse);
+  },
+);
+
 const createEmploymentHandler = http.post('*/v1/employments', () => {
   return HttpResponse.json(employmentCreatedResponse);
 });
@@ -325,6 +333,7 @@ export const defaultHandlers = [
   contractorCurrenciesHandler,
   companyPricingPlansHandler,
   contractorBasicInformationHandler,
+  contractDocumentsHandler,
   companyHandler,
   benefitOffersHandler,
   benefitOffersSchemaHandler,

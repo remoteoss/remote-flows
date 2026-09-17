@@ -9,6 +9,7 @@ import type {
 } from '@remoteoss/remote-flows';
 import { useState } from 'react';
 import { TerminationReasonsDialog } from './TerminationReasonsDialog';
+import { EmploymentIdForm } from './components/EmploymentIdForm';
 import { RemoteFlows } from './RemoteFlows';
 import { ZendeskTriggerButton } from '@remoteoss/remote-flows';
 import { OffboardingRequestModal } from './OffboardingRequestModal';
@@ -228,42 +229,17 @@ export const TerminationWithProps = ({
 };
 
 export const TerminationForm = () => {
-  const TERMINATION_EMPLOYMENT_ID = import.meta.env
-    .VITE_TERMINATION_EMPLOYMENT_ID;
-  const [formData, setFormData] = useState<{ employmentId: string }>({
-    employmentId: TERMINATION_EMPLOYMENT_ID, // use your own employment ID
-  });
-  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [employmentId, setEmploymentId] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setShowOnboarding(true);
-  };
-
-  if (showOnboarding) {
-    return <TerminationWithProps {...formData} />;
+  if (employmentId) {
+    return <TerminationWithProps employmentId={employmentId} />;
   }
 
   return (
-    <form onSubmit={handleSubmit} className='onboarding-form-container'>
-      <div className='onboarding-form-group'>
-        <label htmlFor='employmentId' className='onboarding-form-label'>
-          Employment ID:
-        </label>
-        <input
-          id='employmentId'
-          type='text'
-          value={formData.employmentId}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, employmentId: e.target.value }))
-          }
-          placeholder='Enter employment ID'
-          className='onboarding-form-input'
-        />
-      </div>
-      <button type='submit' className='onboarding-form-button'>
-        Start Termination
-      </button>
-    </form>
+    <EmploymentIdForm
+      defaultValue={import.meta.env.VITE_TERMINATION_EMPLOYMENT_ID}
+      submitLabel='Start Termination'
+      onSubmit={setEmploymentId}
+    />
   );
 };

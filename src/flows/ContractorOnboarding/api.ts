@@ -10,7 +10,6 @@ import {
   postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription,
   postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign,
   SignContractDocument,
-  getV1EmploymentsEmploymentIdContractDocuments,
   EligibilityQuestionnaireJsonSchemaResponse,
   getV1ContractorsSchemasEligibilityQuestionnaire,
   SubmitEligibilityQuestionnaireRequest,
@@ -588,32 +587,6 @@ export const useGetIR35File = (
     ...downloadQuery,
     isLoading: isLoadingFiles || downloadQuery.isLoading,
   };
-};
-
-/**
- * Get the contract documents for a given employment
- * @param employmentId - The employment ID
- * @param options - The options
- * @returns The contract documents
- */
-export const useGetContractDocuments = (
-  employmentId: string,
-  options?: { enabled?: boolean },
-) => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['contract-documents', employmentId],
-    queryFn: async () => {
-      return getV1EmploymentsEmploymentIdContractDocuments({
-        client: client as Client,
-        path: { employment_id: employmentId },
-      });
-    },
-    enabled: options?.enabled,
-    select: ({ data }) => {
-      return data?.data?.contract_documents;
-    },
-  });
 };
 
 export const useGetEligibilityQuestionnaire = ({
