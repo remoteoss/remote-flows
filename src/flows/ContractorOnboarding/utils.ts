@@ -1,11 +1,7 @@
 import { Step } from '@/src/flows/useStepState';
 import {
-  contractorStandardProductIdentifier,
-  contractorPlusProductIdentifier,
   ProductType,
   PRODUCT_IDENTIFIER_MAP,
-  REMOTE_AI_SERVICES_AND_DELIVERABLES_ERROR_MESSAGE,
-  REMOTE_AI_SERVICES_AND_DELIVERABLES_COR_ERROR_MESSAGE,
 } from '@/src/flows/ContractorOnboarding/constants';
 import { Employment } from '@/src/flows/Onboarding/types';
 
@@ -115,34 +111,6 @@ export function buildSteps(config: StepConfig = {}) {
  * Calculates the description for the provisional start date field
  * based on whether the dates match between basic information and contract details steps
  */
-export const calculateProvisionalStartDateDescription = (
-  employmentProvisionalStartDate: string | undefined,
-  fieldProvisionalStartDate: string | undefined,
-): string | undefined => {
-  const datesNotMatching =
-    employmentProvisionalStartDate &&
-    fieldProvisionalStartDate &&
-    employmentProvisionalStartDate !== fieldProvisionalStartDate;
-
-  if (datesNotMatching) {
-    const datesDontMatchWarning = `This date does not match the date you provided in the Basic Information step - ${
-      employmentProvisionalStartDate
-    } - and will override it only when both parties have signed the contract.`;
-    return `When the contractor will start providing service to your company. ${datesDontMatchWarning}`;
-  }
-  return undefined;
-};
-
-/**
- * Checks if the selected pricing plan is CM (standard) or CM+ (plus)
- */
-export const isCMOrCMPlus = (subscription: string | undefined): boolean => {
-  return (
-    subscription === contractorStandardProductIdentifier ||
-    subscription === contractorPlusProductIdentifier
-  );
-};
-
 const NATIONALITY_COUNTRY_CODES = ['SAU', 'KWT', 'OMN', 'QAT', 'BHR'];
 
 /**
@@ -198,15 +166,6 @@ export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
  * @param errors - Array of error messages from the API
  * @returns Array containing the appropriate default error message
  */
-export function transformAiErrorResponse(
-  isContractorOfRecord: boolean,
-): string {
-  const remoteAiErrorMessage = isContractorOfRecord
-    ? REMOTE_AI_SERVICES_AND_DELIVERABLES_COR_ERROR_MESSAGE
-    : REMOTE_AI_SERVICES_AND_DELIVERABLES_ERROR_MESSAGE;
-  return remoteAiErrorMessage;
-}
-
 const DEFAULT_VERSION = 1;
 
 /**
