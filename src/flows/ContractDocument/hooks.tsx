@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import {
@@ -36,7 +36,8 @@ import {
 } from '@/src/flows/ContractDocument/utils';
 import { useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
-import { createStructuredError } from '@/src/lib/utils';
+import { createStructuredError, prettifyFormValues } from '@/src/lib/utils';
+import { NestedMeta } from '@/src/types/remoteFlows';
 
 /**
  * Headless hook powering the standalone contract-document flow: the contract details and
@@ -59,6 +60,7 @@ export const useContractDocument = ({
   const [contractDocumentId, setContractDocumentId] = useState<
     string | undefined
   >(undefined);
+  const fieldsMetaRef = useRef<NestedMeta>({});
 
   const { data: employment, isLoading: isLoadingEmployment } =
     useEmploymentQuery({
@@ -152,17 +154,21 @@ export const useContractDocument = ({
     [contractDetailsForm],
   );
 
-  const parseFormValues = useCallback(
-    async (
-      values: FieldValues,
-    ): Promise<ContractDocumentContractDetailsPayload> => {
+  const parseContractDetails = useCallback(
+    (values: FieldValues) =>
+      parseJSFToValidate(values, contractDetailsFields, {
+        isPartialValidation: false,
+      }),
+    [contractDetailsFields],
+  );
+
+  const buildPayload = useCallback(
+    (parsedValues: FieldValues): ContractDocumentContractDetailsPayload => {
       const {
         services_and_deliverables_ai_warning: _aiWarning,
         services_and_deliverables_error_skippable: _errorSkippable,
         ...contractDetails
-      } = await parseJSFToValidate(values, contractDetailsFields, {
-        isPartialValidation: false,
-      });
+      } = parsedValues;
 
       return {
         contract_document: contractDetails,
@@ -170,10 +176,13 @@ export const useContractDocument = ({
           fieldValues.services_and_deliverables_error_skippable === true,
       };
     },
-    [
-      contractDetailsFields,
-      fieldValues.services_and_deliverables_error_skippable,
-    ],
+    [fieldValues.services_and_deliverables_error_skippable],
+  );
+
+  const parseFormValues = useCallback(
+    async (values: FieldValues) =>
+      buildPayload(await parseContractDetails(values)),
+    [buildPayload, parseContractDetails],
   );
 
   const onSubmit = useCallback(
@@ -184,7 +193,12 @@ export const useContractDocument = ({
         );
       }
 
-      const payload = await parseFormValues(values);
+      const parsedValues = await parseContractDetails(values);
+      fieldsMetaRef.current = prettifyFormValues(
+        parsedValues,
+        contractDetailsFields,
+      );
+      const payload = buildPayload(parsedValues);
 
       try {
         const response = await createContractDocument({
@@ -214,7 +228,9 @@ export const useContractDocument = ({
     },
     [
       employmentId,
-      parseFormValues,
+      parseContractDetails,
+      contractDetailsFields,
+      buildPayload,
       createContractDocument,
       setFieldValues,
       isContractorOfRecord,
@@ -279,6 +295,7 @@ export const useContractDocument = ({
      * Field metadata per step, for building error messages and rendering fieldsets.
      */
     meta: {
+      fields: fieldsMetaRef.current,
       fieldsets: isContractDetailsStep
         ? contractDetailsForm?.meta?.['x-jsf-fieldsets']
         : undefined,
