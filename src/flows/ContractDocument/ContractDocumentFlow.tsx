@@ -7,9 +7,12 @@ import { ContractDocumentFlowProps } from '@/src/flows/ContractDocument/types';
  * Standalone contract-document flow: contract details, then contract preview. Mount it
  * anywhere — it does not depend on the contractor onboarding flow.
  */
-export const ContractDocumentFlow = ({ render }: ContractDocumentFlowProps) => {
+export const ContractDocumentFlow = ({
+  employmentId,
+  render,
+}: ContractDocumentFlowProps) => {
   const formId = useId();
-  const contractDocumentBag = useContractDocument();
+  const contractDocumentBag = useContractDocument({ employmentId });
 
   return (
     <ContractDocumentContext.Provider value={{ formId, contractDocumentBag }}>

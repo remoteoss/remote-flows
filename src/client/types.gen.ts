@@ -684,6 +684,57 @@ export type EmploymentCustomField = {
 };
 
 /**
+ * PayItemProviderDataParams
+ */
+export type PayItemProviderDataParams = {
+  /**
+   * **Deprecated — renamed to `correction_effective_date`**, which this value backfills. `correction_effective_date` wins when both are sent.
+   *
+   * @deprecated
+   */
+  adjustment_effective_date?: string;
+  /**
+   * Set this only on a correction: the original working day being corrected (YYYY-MM-DD). Its presence is what marks the pay item as a correction rather than an original submission.
+   */
+  correction_effective_date?: string;
+  /**
+   * Hourly rate in cents
+   */
+  hourly_rate?: number;
+  hourly_rate_currency_code?: CurrencyCode;
+  /**
+   * **Deprecated — accepted and ignored.** Express a deduction as a negative `amount`.
+   *
+   * @deprecated
+   */
+  is_deduction?: boolean;
+  /**
+   * Overtime rate multiplier (e.g. 1.5)
+   */
+  pay_rate?: number;
+  /**
+   * **Deprecated — accepted and ignored.** The payout value belongs in the pay item's own `amount`.
+   *
+   * @deprecated
+   */
+  payout_amount?: number;
+  /**
+   * **Deprecated — accepted and ignored.** The payout currency belongs in the pay item's own `currency`.
+   *
+   * @deprecated
+   */
+  payout_currency_code?: string;
+  /**
+   * Shift identifier from partner system
+   */
+  shift_code?: string;
+  /**
+   * Expected work day duration in seconds
+   */
+  work_day_duration?: number;
+};
+
+/**
  * UpdateEmploymentCustomFieldValueParams
  *
  * Schema for updating a custom field value.
@@ -691,6 +742,11 @@ export type EmploymentCustomField = {
 export type UpdateEmploymentCustomFieldValueParams = {
   value: string | number | string | boolean | string;
 };
+
+/**
+ * ProjectStatus
+ */
+export type ProjectStatus = 'active' | 'archived' | 'completed';
 
 /**
  * CompanyDepartmentCreatedResponse
@@ -1533,6 +1589,13 @@ export type CostCalculatorEstimatePdfResponse = {
 };
 
 /**
+ * ProjectID
+ *
+ * Project identifier.
+ */
+export type ProjectId = string;
+
+/**
  * IdentityVerificationResponse
  *
  * Identity Verification response
@@ -1688,13 +1751,17 @@ export type PayItem = {
    */
   code: string;
   /**
-   * Working day date (YYYY-MM-DD)
+   * Date the pay item is applied on (YYYY-MM-DD) — the day worked, the day a correction was submitted, or the first day of a leave period.
    */
   effective_date: string;
   /**
    * Employment UUID
    */
   employment_id: string;
+  /**
+   * Last day of a leave period, inclusive (YYYY-MM-DD). Only for Leave-of-absence pay codes; Leave empty for other pay codes.
+   */
+  end_date: string | null;
   /**
    * Pay item's unique identifier
    */
@@ -1903,6 +1970,29 @@ export type EmployeeDetails = {
 };
 
 /**
+ * ListProjectsResponse
+ *
+ * Paginated response schema listing company projects.
+ */
+export type ListProjectsResponse = {
+  data?: {
+    /**
+     * The current page among all of the total_pages
+     */
+    current_page?: number;
+    projects?: Array<Project>;
+    /**
+     * The total number of records in the result
+     */
+    total_count?: number;
+    /**
+     * The total number of pages the user can go through
+     */
+    total_pages?: number;
+  };
+};
+
+/**
  * Variance
  */
 export type Variance = {
@@ -2016,6 +2106,17 @@ export type TypeOfDayBreakdown = {
 };
 
 export type MaybeBenefitTier = BenefitTier | null;
+
+/**
+ * ProjectResponse
+ *
+ * Response schema for a single company project.
+ */
+export type ProjectResponse = {
+  data: {
+    project?: Project;
+  };
+};
 
 /**
  * EmployeeFileParams
@@ -2491,6 +2592,15 @@ export type PayProcessingFeatureResponse = {
  * Contractor Invoice identifier.
  */
 export type ContractorInvoiceId = string;
+
+/**
+ * JobTitleEligibilityCheckResponse
+ */
+export type JobTitleEligibilityCheckResponse = {
+  data: {
+    job_title_eligibility_check: JobTitleEligibilityCheck;
+  };
+};
 
 /**
  * AccountsLoginSyncedWith
@@ -3833,12 +3943,12 @@ export type AccountsAssignedRoles = Array<{
     | 'rps'
     | 'secondary_reports'
     | 'direct_reports'
-    | 'assigned_billing_legal_entities'
-    | 'employment_countries'
     | 'direct_and_indirect_reports'
+    | 'employment_countries'
     | 'employment_departments'
     | 'employment_company_structure_nodes'
-    | 'onboarding_reports';
+    | 'onboarding_reports'
+    | 'assigned_billing_legal_entities';
   name: string;
   slug: string;
   type?: 'default' | 'custom' | 'template' | 'owner';
@@ -3902,6 +4012,10 @@ export type CreateWebhookCallbackParams = {
     | 'employment.cor_hiring.proof_of_payment_submitted'
     | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.eor_hiring.proof_of_payment_submitted'
+    | 'employment.hard_deleted'
+    | 'employment.job_title_review.approved'
+    | 'employment.job_title_review.rejected'
+    | 'employment.job_title_review.started'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
@@ -4976,6 +5090,10 @@ export type WebhookTriggerEmploymentParams = {
     | 'employment.cor_hiring.proof_of_payment_submitted'
     | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.eor_hiring.proof_of_payment_submitted'
+    | 'employment.hard_deleted'
+    | 'employment.job_title_review.approved'
+    | 'employment.job_title_review.rejected'
+    | 'employment.job_title_review.started'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
@@ -5098,6 +5216,19 @@ export type IntegrationsScimErrorResponse = {
    */
   status: string;
 };
+
+/**
+ * ProjectBudget
+ *
+ * A project's budget: amount and its currency.
+ */
+export type ProjectBudget = {
+  /**
+   * Budget amount, in cents.
+   */
+  amount: number;
+  currency: CurrencyCode;
+} | null;
 
 /**
  * TimeoffDaysParams
@@ -6485,8 +6616,8 @@ export type ResourceErrorResponse = {
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_one_of_required_missing'
       | 'parameter_required_missing'
+      | 'parameter_one_of_required_missing'
       | 'parameter_too_many'
       | 'parameter_unknown'
       | 'parameter_map_empty'
@@ -6662,27 +6793,18 @@ export type ContractAmendment = {
  */
 export type PayItemProviderData = {
   /**
-   * Correction date for a previously submitted day (YYYY-MM-DD)
+   * Set this only on a correction: the original working day being corrected (YYYY-MM-DD). Its presence is what marks the pay item as a correction rather than an original submission.
    */
-  adjustment_effective_date?: string;
+  correction_effective_date?: string;
   /**
    * Hourly rate in cents
    */
   hourly_rate?: number;
   hourly_rate_currency_code?: CurrencyCode;
   /**
-   * Whether payout_amount should be considered a deduction
-   */
-  is_deduction?: boolean;
-  /**
    * Overtime rate multiplier (e.g. 1.5)
    */
   pay_rate?: number;
-  /**
-   * Associated payout or deduction in cents
-   */
-  payout_amount?: number;
-  payout_currency_code?: CurrencyCode;
   /**
    * Shift identifier from partner system
    */
@@ -7070,6 +7192,45 @@ export type ResignationAfterStartDateRequestParams = {
 };
 
 /**
+ * UpdateProjectParams
+ *
+ * Fields to update on a company project. Every field is optional; omitted fields are left
+ * unchanged.
+ *
+ * `lead_ids` and `team_member_ids` are replaced wholesale when present, so send the complete
+ * desired list rather than only the additions. Send an empty list to remove everyone. Fetch
+ * the project first to read its current membership.
+ *
+ */
+export type UpdateProjectParams = {
+  /**
+   * Description of the project.
+   */
+  description?: string | null;
+  /**
+   * Date when the project ends.
+   */
+  end_date?: string | null;
+  /**
+   * User IDs of the company admins to assign as the project's leads, replacing the current set. These are user IDs, unlike `team_member_ids`, which are employment IDs.
+   */
+  lead_ids?: Array<UuidSlug>;
+  /**
+   * Name of the project.
+   */
+  name?: string;
+  /**
+   * Date when the project starts.
+   */
+  start_date?: string | null;
+  status?: ProjectStatus;
+  /**
+   * Employment IDs of the contractors to assign as the project's team members, replacing the current set. These are employment IDs, unlike `lead_ids`, which are user IDs. Each must be an active contractor of the project's company.
+   */
+  team_member_ids?: Array<UuidSlug>;
+};
+
+/**
  * UpdateApprovedTimeoffParams
  *
  * Update timeoff params
@@ -7204,6 +7365,10 @@ export type AccountUserIntegrationUser = {
    * Whether this mapping represents a synced employee or a company admin
    */
   role: 'employee' | 'employer';
+  /**
+   * Whether the employee should be synced to Remote based on the sync_to_remote flag in the external HRIS
+   */
+  sync_to_remote_status?: 'enabled' | 'disabled';
 };
 
 /**
@@ -7667,19 +7832,23 @@ export type NullableCountry = {
 /**
  * UpdatePayItemParams
  *
- * Partial update — only the fields provided are changed. Editing `amount` or `effective_date` archives the existing pay item and creates a new one with a new `id`; use the response's `replaced_ids` to reconcile. Editing `provider_data` alone updates the pay item in place and keeps the same `id`.
+ * Partial update — only the fields provided are changed. Editing `amount` or `effective_date` archives the existing pay item and creates a new one with a new `id`; use the response's `replaced_ids` to reconcile. Editing `end_date` or `provider_data` alone updates the pay item in place and keeps the same `id`.
  *
  */
 export type UpdatePayItemParams = {
   /**
-   * Value of the pay item. See PayItemParams.amount for unit details. Must be non-zero; negative values are allowed for corrections.
+   * Value of the pay item. See PayItemParams.amount for unit details. Must not be zero. Negative values are supported: send a negative `amount` to submit a deduction or to correct an earlier submission downwards — for any pay code, including hours-based ones such as `working_hours`.
    */
   amount?: number;
   /**
-   * Working day date (YYYY-MM-DD)
+   * Date the pay item is applied on (YYYY-MM-DD) — the day worked, the day a correction was submitted, or the first day of a leave period.
    */
   effective_date?: string;
-  provider_data?: PayItemProviderData;
+  /**
+   * Last day of a leave period, inclusive (YYYY-MM-DD). Leave-of-absence pay codes only; send `null` to clear it.
+   */
+  end_date?: string | null;
+  provider_data?: PayItemProviderDataParams;
 };
 
 /**
@@ -7877,6 +8046,28 @@ export type ParamsToCreateEmployeeExpense = {
    * A short description of the expense (e.g., "New keyboard", "Team dinner").
    */
   title: string;
+};
+
+/**
+ * CreateJobTitleEligibilityCheckParams
+ */
+export type CreateJobTitleEligibilityCheckParams = {
+  /**
+   * The job title to check. Defaults to the employment's current job title when omitted.
+   */
+  job_title?: string;
+  /**
+   * A description of the role. Required when the job title alone is inconclusive; the response says so.
+   */
+  role_description?: string;
+  /**
+   * Whether the role requires working onsite.
+   */
+  role_is_onsite?: 'yes' | 'no' | 'not_applicable';
+  /**
+   * Whether the role requires a professional license.
+   */
+  role_requires_license?: 'yes' | 'no' | 'not_applicable';
 };
 
 /**
@@ -8515,7 +8706,16 @@ export type EmployeeStats = {
  */
 export type PayItemParams = {
   /**
-   * Value of the pay item. Its unit depends on the `type` of the pay code (see GET /v1/companies/:company_id/legal-entities/:legal_entity_id/pay-codes): `amount` in cents, `percentage` in basis points, `unit` as a raw count, `hours` as a whole number of hours, `duration` in seconds. Must be non-zero; negative values are allowed for corrections.
+   * Value of the pay item. Its unit depends on the `type` of the pay code (see GET /v1/companies/:company_id/legal-entities/:legal_entity_id/pay-codes): `amount` in cents, `percentage` in basis points, `unit` as a raw count, `hours` as a whole number of hours, `duration` in seconds.
+   *
+   * Must not be zero.
+   *
+   * **Negative values are supported.** A positive `amount` adds value; a negative `amount` takes value away. Send a negative `amount` to submit a deduction, or to correct an earlier submission downwards.
+   *
+   * This applies to every pay code, whatever its unit — including hours-based codes such as `working_hours`. For example:
+   *
+   * - `-5000` on an `amount` code (cents) deducts 50.00 from pay.
+   * - `-3` on an hours-based code such as `working_hours` removes 3 hours reported in error.
    *
    */
   amount: number;
@@ -8525,7 +8725,7 @@ export type PayItemParams = {
   code?: string;
   currency?: CurrencyCode;
   /**
-   * Working day date (YYYY-MM-DD)
+   * Date the pay item is applied on (YYYY-MM-DD). For an original submission this is the day worked; for a correction it is the day the correction is submitted, so the pay item lands in the right payroll run. The day being corrected goes in `provider_data.correction_effective_date`. On a leave-of-absence pay item this is the first day of the leave period, whose last day goes in `end_date`.
    */
   effective_date: string;
   /**
@@ -8533,10 +8733,14 @@ export type PayItemParams = {
    */
   employment_id: string;
   /**
+   * Last day of a leave period, inclusive (YYYY-MM-DD). Set this only on leave-of-absence pay codes — parental, sick, maternity, unpaid leave and similar — where the pay item covers a period rather than a single day, and `effective_date` is the first day of that period. Leave it off ordinary time & attendance items such as worked hours, overtime or allowances, which apply to a single day.
+   */
+  end_date?: string | null;
+  /**
    * Partner-defined pay element identifier, as configured on the legal entity pay element. Mutually exclusive with `code` — provide exactly one.
    */
   external_import_code?: string;
-  provider_data?: PayItemProviderData;
+  provider_data?: PayItemProviderDataParams;
 };
 
 /**
@@ -9531,6 +9735,25 @@ export type EmployeesProcessed = {
 };
 
 /**
+ * JobTitleEligibilityCheck
+ */
+export type JobTitleEligibilityCheck = {
+  /**
+   * The identifier of the recorded check. When present it is **required**: send it back as `additional_job_title_eligibility_check_slug` when submitting contract details, or the submission is rejected. Run this check again if the job title or any role answer changes, since the identifier only vouches for the answers it was given. `null` when the job title alone settled the verdict and there is nothing to send.
+   */
+  check_id?: string | null;
+  /**
+   * The eligibility verdict for the submitted job title and role. `eligible` means contract details can be submitted as normal. `not_eligible` means Remote cannot employ this role: the title has to change. `needs_review` means submitting will place the employment in a human review before the employee can be invited. `eligible_with_risk_acknowledgement` means the submission must carry `employer_acknowledges_risk` set to `acknowledged`. `not_assessed` means the check did not run for this employment and no verdict was formed, so treat it as unknown rather than as a pass: submitting is not blocked, but nothing has screened the title.
+   */
+  verdict:
+    | 'eligible'
+    | 'not_eligible'
+    | 'needs_review'
+    | 'eligible_with_risk_acknowledgement'
+    | 'not_assessed';
+};
+
+/**
  * IdentityCompanyAccessTokenResponse
  *
  * Returned when the current token was obtained via the OAuth2 Authorization Code flow and is scoped to a specific company managed by an integration partner. Contains the full context: the integration's credentials, the company being accessed, and the user who authorized access.
@@ -9672,6 +9895,57 @@ export type PayItemBulkCreateFailures = {
    */
   error?: string | UnprocessableEntityResponse;
   row_number?: number;
+};
+
+/**
+ * Project
+ *
+ * Company project
+ */
+export type Project = {
+  /**
+   * ProjectBudget
+   *
+   * A project's budget: amount and its currency.
+   */
+  budget: {
+    /**
+     * Budget amount, in cents.
+     */
+    amount: number;
+    currency: CurrencyCode;
+  } | null;
+  /**
+   * Code/identifier of the project.
+   */
+  code: string;
+  /**
+   * Date when the project ends.
+   */
+  end_date?: string | null;
+  /**
+   * ProjectID
+   *
+   * Project identifier.
+   */
+  id: string;
+  /**
+   * User IDs of the company admins assigned as the project's leads. These are user IDs, unlike `team_member_ids`, which are employment IDs.
+   */
+  lead_ids: Array<UuidSlug>;
+  /**
+   * Name of the project.
+   */
+  name: string;
+  /**
+   * Date when the project starts.
+   */
+  start_date?: string | null;
+  status: ProjectStatus;
+  /**
+   * Employment IDs of the contractors assigned to the project as team members. These are employment IDs, unlike `lead_ids`, which are user IDs.
+   */
+  team_member_ids: Array<UuidSlug>;
 };
 
 /**
@@ -10213,6 +10487,10 @@ export type WebhookCallback = {
     | 'employment.cor_hiring.proof_of_payment_submitted'
     | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.eor_hiring.proof_of_payment_submitted'
+    | 'employment.hard_deleted'
+    | 'employment.job_title_review.approved'
+    | 'employment.job_title_review.rejected'
+    | 'employment.job_title_review.started'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
@@ -12129,6 +12407,10 @@ export type UpdateWebhookCallbackParams = {
     | 'employment.cor_hiring.proof_of_payment_submitted'
     | 'employment.eor_hiring.proof_of_payment_accepted'
     | 'employment.eor_hiring.proof_of_payment_submitted'
+    | 'employment.hard_deleted'
+    | 'employment.job_title_review.approved'
+    | 'employment.job_title_review.rejected'
+    | 'employment.job_title_review.started'
     | 'employment.no_longer_eligible_for_onboarding_cancellation'
     | 'employment.onboarding_task.completed'
     | 'employment.onboarding.cancelled'
@@ -12213,29 +12495,6 @@ export type EmploymentBankAccountDetailsParams = {
    */
   bank_account_details: {
     [key: string]: unknown;
-  };
-};
-
-/**
- * EngagementAgreementDetailsResponse
- *
- * Response for engagement agreement details
- */
-export type EngagementAgreementDetailsResponse = {
-  /**
-   * Engagement agreement details response data
-   */
-  data?: {
-    /**
-     * Engagement agreement details schema object with variable fields based on country
-     */
-    schema: {
-      [key: string]: unknown;
-    };
-    /**
-     * JSON schema version number
-     */
-    version: number;
   };
 };
 
@@ -13026,8 +13285,8 @@ export type EmploymentEngagementAgreementDetailsParams = {
    * EngagementAgreementDetailsParamsDEU
    *
    * Engagement agreement details params. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_engagement_agreement_details_country) endpoint
-   * passing the country code.
+   * you must query the [Show form schema](#tag/Countries/operation/get_v1_countries_country_code_form) endpoint
+   * passing the country code and the `engagement_agreement_details` form name.
    *
    */
   engagement_agreement_details: {
@@ -14612,7 +14871,7 @@ export type GetV1CountriesCountryCodeContractorContractDetailsData = {
   };
   query?: {
     /**
-     * Employment ID
+     * Employment ID. Tailors the schema to the employment (e.g. Contractor of Record fields) and, for a caller permitted to read the contractor's compensation, sets `default` values on its fields from the contractor's current contract.
      */
     employment_id?: string;
     /**
@@ -15222,6 +15481,57 @@ export type GetV1EmployeeDocumentsIdResponses = {
 
 export type GetV1EmployeeDocumentsIdResponse =
   GetV1EmployeeDocumentsIdResponses[keyof GetV1EmployeeDocumentsIdResponses];
+
+export type GetV1ProjectsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Filters projects by status.
+     */
+    status?: ProjectStatus;
+    /**
+     * Starts fetching records after the given page
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    page_size?: number;
+  };
+  url: '/v1/projects';
+};
+
+export type GetV1ProjectsErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetV1ProjectsError = GetV1ProjectsErrors[keyof GetV1ProjectsErrors];
+
+export type GetV1ProjectsResponses = {
+  /**
+   * Success
+   */
+  200: ListProjectsResponse;
+};
+
+export type GetV1ProjectsResponse =
+  GetV1ProjectsResponses[keyof GetV1ProjectsResponses];
 
 export type GetV1ContractorInvoicesData = {
   body?: never;
@@ -17248,6 +17558,97 @@ export type GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesResponses
 
 export type GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesResponse =
   GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesResponses[keyof GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesResponses];
+
+export type GetV1ProjectsIdData = {
+  body?: never;
+  path: {
+    /**
+     * Project identifier
+     */
+    id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/projects/{id}';
+};
+
+export type GetV1ProjectsIdErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type GetV1ProjectsIdError =
+  GetV1ProjectsIdErrors[keyof GetV1ProjectsIdErrors];
+
+export type GetV1ProjectsIdResponses = {
+  /**
+   * Success
+   */
+  200: ProjectResponse;
+};
+
+export type GetV1ProjectsIdResponse =
+  GetV1ProjectsIdResponses[keyof GetV1ProjectsIdResponses];
+
+export type PatchV1ProjectsIdData = {
+  /**
+   * Project fields to update
+   */
+  body: UpdateProjectParams;
+  path: {
+    /**
+     * Project identifier
+     */
+    id: UuidSlug;
+  };
+  query?: never;
+  url: '/v1/projects/{id}';
+};
+
+export type PatchV1ProjectsIdErrors = {
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PatchV1ProjectsIdError =
+  PatchV1ProjectsIdErrors[keyof PatchV1ProjectsIdErrors];
+
+export type PatchV1ProjectsIdResponses = {
+  /**
+   * Success
+   */
+  200: ProjectResponse;
+};
+
+export type PatchV1ProjectsIdResponse =
+  PatchV1ProjectsIdResponses[keyof PatchV1ProjectsIdResponses];
 
 export type PostV1WebhookEventsReplayData = {
   /**
@@ -20106,54 +20507,6 @@ export type GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdRespon
 
 export type GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdResponse =
   GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdResponses[keyof GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdResponses];
-
-export type GetV1CountriesCountryCodeEngagementAgreementDetailsData = {
-  body?: never;
-  path: {
-    /**
-     * Country code according to ISO 3-digit alphabetic codes
-     */
-    country_code: string;
-  };
-  query?: never;
-  url: '/v1/countries/{country_code}/engagement-agreement-details';
-};
-
-export type GetV1CountriesCountryCodeEngagementAgreementDetailsErrors = {
-  /**
-   * Bad Request
-   */
-  400: BadRequestResponse;
-  /**
-   * Unauthorized
-   */
-  401: UnauthorizedResponse;
-  /**
-   * Not Found
-   */
-  404: NotFoundResponse;
-  /**
-   * Unprocessable Entity
-   */
-  422: UnprocessableEntityResponse;
-  /**
-   * Unprocessable Entity
-   */
-  429: TooManyRequestsResponse;
-};
-
-export type GetV1CountriesCountryCodeEngagementAgreementDetailsError =
-  GetV1CountriesCountryCodeEngagementAgreementDetailsErrors[keyof GetV1CountriesCountryCodeEngagementAgreementDetailsErrors];
-
-export type GetV1CountriesCountryCodeEngagementAgreementDetailsResponses = {
-  /**
-   * Success
-   */
-  200: EngagementAgreementDetailsResponse;
-};
-
-export type GetV1CountriesCountryCodeEngagementAgreementDetailsResponse =
-  GetV1CountriesCountryCodeEngagementAgreementDetailsResponses[keyof GetV1CountriesCountryCodeEngagementAgreementDetailsResponses];
 
 export type GetV1BillingDocumentsData = {
   body?: never;
@@ -27428,6 +27781,61 @@ export type PostV1TimesheetsTimesheetIdSendBackResponses = {
 
 export type PostV1TimesheetsTimesheetIdSendBackResponse =
   PostV1TimesheetsTimesheetIdSendBackResponses[keyof PostV1TimesheetsTimesheetIdSendBackResponses];
+
+export type PostV2EmploymentsEmploymentIdJobTitleEligibilityCheckData = {
+  /**
+   * Job title eligibility check params
+   */
+  body?: CreateJobTitleEligibilityCheckParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v2/employments/{employment_id}/job-title-eligibility-check';
+};
+
+export type PostV2EmploymentsEmploymentIdJobTitleEligibilityCheckErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Unprocessable Entity
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostV2EmploymentsEmploymentIdJobTitleEligibilityCheckError =
+  PostV2EmploymentsEmploymentIdJobTitleEligibilityCheckErrors[keyof PostV2EmploymentsEmploymentIdJobTitleEligibilityCheckErrors];
+
+export type PostV2EmploymentsEmploymentIdJobTitleEligibilityCheckResponses = {
+  /**
+   * Success
+   */
+  200: JobTitleEligibilityCheckResponse;
+};
+
+export type PostV2EmploymentsEmploymentIdJobTitleEligibilityCheckResponse =
+  PostV2EmploymentsEmploymentIdJobTitleEligibilityCheckResponses[keyof PostV2EmploymentsEmploymentIdJobTitleEligibilityCheckResponses];
 
 export type DeleteV1CompanyManagersUserIdData = {
   body?: never;

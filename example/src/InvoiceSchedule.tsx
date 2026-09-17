@@ -5,6 +5,7 @@ import {
   InvoiceScheduleSubmitButton,
 } from '@remoteoss/remote-flows';
 import { useState } from 'react';
+import { EmploymentIdForm } from './components/EmploymentIdForm';
 import { RemoteFlows } from './RemoteFlows';
 import './css/main.css';
 
@@ -81,41 +82,19 @@ function CreateInvoiceSchedule({ employmentId }: { employmentId: string }) {
 export function InvoiceSchedule() {
   // The flow is told which contractor it is acting on; sourcing that id is the consumer's
   // job. This demo asks for it, the way the Termination demo does.
-  const [employmentId, setEmploymentId] = useState<string>(
-    import.meta.env.VITE_INVOICE_SCHEDULE_EMPLOYMENT_ID ?? '',
-  );
-  const [startedFor, setStartedFor] = useState<string | null>(null);
+  const [employmentId, setEmploymentId] = useState<string | null>(null);
 
   return (
     <RemoteFlows proxy={{ url: window.location.origin }}>
       <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
-        {startedFor ? (
-          <CreateInvoiceSchedule employmentId={startedFor} />
+        {employmentId ? (
+          <CreateInvoiceSchedule employmentId={employmentId} />
         ) : (
-          <form
-            className='onboarding-form-container'
-            onSubmit={(event) => {
-              event.preventDefault();
-              setStartedFor(employmentId);
-            }}
-          >
-            <div className='onboarding-form-group'>
-              <label htmlFor='employmentId' className='onboarding-form-label'>
-                Employment ID:
-              </label>
-              <input
-                id='employmentId'
-                type='text'
-                value={employmentId}
-                onChange={(event) => setEmploymentId(event.target.value)}
-                placeholder='Enter employment ID'
-                className='onboarding-form-input'
-              />
-            </div>
-            <button type='submit' className='onboarding-form-button'>
-              Create invoice schedule
-            </button>
-          </form>
+          <EmploymentIdForm
+            defaultValue={import.meta.env.VITE_INVOICE_SCHEDULE_EMPLOYMENT_ID}
+            submitLabel='Create invoice schedule'
+            onSubmit={setEmploymentId}
+          />
         )}
       </div>
     </RemoteFlows>

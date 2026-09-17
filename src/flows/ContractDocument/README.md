@@ -6,11 +6,15 @@ A standalone flow for creating a contractor's contract document — the contract
 contract preview screens of contractor onboarding, mountable on their own. It does not depend
 on the onboarding flow.
 
+The flow acts on one contractor, which you name with the required `employmentId` prop. How you
+source that id — a picker of your own, a route param, the row the user clicked — is up to you.
+
 If you want these screens **inside** contractor onboarding, that is part of the
 [Contractor Onboarding](../ContractorOnboarding/README.md) flow instead.
 
-> **Work in progress.** This release ships the two-step shell only: the steps exist and can
-> be navigated, but no form is rendered and no request is made yet.
+> **Work in progress.** This release loads the contractor and their existing contract documents
+> and exposes them on the bag, but no form is rendered yet. Until the flow is complete, its props
+> and bag may change between minor versions without a major bump.
 
 # Table of Contents
 
@@ -33,24 +37,21 @@ After installation, import the main CSS file in your application:
 ```tsx
 import { ContractDocumentFlow, RemoteFlows } from '@remoteoss/remote-flows';
 
-export function CreateContractDocument() {
+export function CreateContractDocument({
+  employmentId,
+}: {
+  employmentId: string;
+}) {
   return (
     <RemoteFlows auth={/* your token fetcher */}>
       <ContractDocumentFlow
+        employmentId={employmentId}
         render={(contractDocumentBag) => {
-          const { stepState, back, next } = contractDocumentBag;
+          if (contractDocumentBag.isLoading) {
+            return <div>Loading…</div>;
+          }
 
-          return (
-            <>
-              <h2>{stepState.currentStep.name}</h2>
-              <button type='button' onClick={back}>
-                Back
-              </button>
-              <button type='button' onClick={next}>
-                Next
-              </button>
-            </>
-          );
+          return <h2>{contractDocumentBag.employment?.full_name}</h2>;
         }}
       />
     </RemoteFlows>
@@ -62,22 +63,37 @@ export function CreateContractDocument() {
 
 ### ContractDocumentFlow
 
-| Prop     | Type                 | Required | Description                         |
-| -------- | -------------------- | -------- | ----------------------------------- |
-| `render` | `(bag) => ReactNode` | Yes      | Render prop receiving the flow bag. |
+| Prop           | Type                 | Required | Description                                          |
+| -------------- | -------------------- | -------- | ---------------------------------------------------- |
+| `employmentId` | `string`             | Yes      | The contractor the contract document is created for. |
+| `render`       | `(bag) => ReactNode` | Yes      | Render prop receiving the flow bag.                  |
 
 ## The bag
 
-`useContractDocument()` is the headless equivalent of the render prop, for fully custom UIs.
-Both surfaces expose the same bag:
+`useContractDocument({ employmentId })` is the headless equivalent of the render prop, for
+fully custom UIs. Both surfaces expose the same bag:
 
-| Key            | Description                                                             |
-| -------------- | ----------------------------------------------------------------------- |
-| `stepState`    | Current step (`contract_details` or `contract_preview`) and step count. |
-| `steps`        | Every step of the flow, in order, with its label.                       |
-| `next`         | Moves to the next step.                                                 |
-| `back`         | Moves to the previous step.                                             |
-| `goTo`         | Moves to a specific step.                                               |
-| `fields`       | Form fields for the current step. Empty for now.                        |
-| `isLoading`    | True while the flow is loading data. Always `false` for now.            |
-| `isSubmitting` | True while a submission is in flight. Always `false` for now.           |
+| Key                    | Description                                                                                               |
+| ---------------------- | --------------------------------------------------------------------------------------------------------- |
+| `stepState`            | Current step (`contract_details` or `contract_preview`) and step count.                                   |
+| `steps`                | Every step of the flow, in order, with its label.                                                         |
+| `next`                 | Moves to the next step.                                                                                   |
+| `back`                 | Moves to the previous step.                                                                               |
+| `goTo`                 | Moves to a specific step.                                                                                 |
+| `fields`               | Form fields for the current step. Empty for now.                                                          |
+| `employmentId`         | The contractor the contract document will be created for.                                                 |
+| `employment`           | The contractor's employment.                                                                              |
+| `isContractorOfRecord` | Whether the contractor is a Contractor of Record.                                                         |
+| `contractDocuments`    | The contract documents the contractor already has. `undefined` until loaded, or when loading failed.      |
+| `isLoading`            | True until the contractor is known: no `employmentId`, or the employment and its documents still loading. |
+| `isSubmitting`         | True while a submission is in flight. Always `false` for now.                                             |
+
+## Requests
+
+| Request                                                  | Purpose                                               |
+| -------------------------------------------------------- | ----------------------------------------------------- |
+| `GET /v1/employments/{employment_id}`                    | The contractor, to tell a Contractor of Record apart. |
+| `GET /v1/employments/{employment_id}/contract-documents` | The contract documents the contractor already has.    |
+
+Both are scoped to an employment, so nothing is requested while `employmentId` is empty and
+`isLoading` stays `true`.
