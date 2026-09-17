@@ -16,7 +16,6 @@ import {
 import { corProductIdentifier } from '@/src/common/contract-documents/constants';
 import { buildContractDetailsJsfModify } from '@/src/common/contract-documents/jsfModify';
 import {
-  calculateProvisionalStartDateDescription,
   extractAiValidationError,
   transformAiErrorResponse,
 } from '@/src/common/contract-documents/utils';
@@ -83,15 +82,6 @@ export const useContractDocument = ({
   const productIdentifier = getProductIdentifier(employment?.contractor_type);
   const isContractorOfRecord = productIdentifier === corProductIdentifier;
 
-  const provisionalStartDateDescription =
-    calculateProvisionalStartDateDescription(
-      employment?.basic_information?.provisional_start_date as
-        | string
-        | undefined,
-      fieldValues?.service_duration?.provisional_start_date,
-      "the contractor's current start date",
-    );
-
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
     useContractorContractDetailsSchema({
       countryCode: countryCode as string,
@@ -101,7 +91,7 @@ export const useContractDocument = ({
         queryOptions: { enabled: Boolean(countryCode) },
         jsfModify: buildContractDetailsJsfModify(
           options?.jsfModify?.contract_details,
-          provisionalStartDateDescription,
+          undefined,
           productIdentifier,
           fieldValues,
           isContractorOfRecord,
