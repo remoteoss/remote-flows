@@ -1,9 +1,6 @@
 import React from 'react';
 import { CreateContractDocument } from '@/src/client/types.gen';
-import {
-  ContractorContractDetailsFormPayload,
-  ContractorContractDetailsResponse,
-} from '@/src/common/contract-documents/types';
+import { ContractorContractDetailsResponse } from '@/src/common/contract-documents/types';
 import { useContractDocument } from '@/src/flows/ContractDocument/hooks';
 import { JSFModify } from '@/src/flows/types';
 
@@ -37,12 +34,6 @@ export type ContractDocumentFlowProps = {
     contractDocumentBag: ReturnType<typeof useContractDocument>,
   ) => React.ReactNode;
 };
-
-/**
- * Values the contract details form collects.
- */
-export type ContractDocumentContractDetailsFormValues =
-  ContractorContractDetailsFormPayload;
 
 /**
  * The payload sent to `POST /v1/contractors/employments/{employment_id}/contract-documents`.

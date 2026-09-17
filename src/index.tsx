@@ -39,7 +39,6 @@ export {
 } from '@/src/flows/ContractDocument';
 
 export type {
-  ContractDocumentContractDetailsFormValues,
   ContractDocumentContractDetailsPayload,
   ContractDocumentContractDetailsResponse,
   ContractDocumentFlowProps,

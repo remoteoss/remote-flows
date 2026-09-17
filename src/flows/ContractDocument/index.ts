@@ -3,7 +3,6 @@ export { ContractDocumentForm } from './ContractDocumentForm';
 export { ContractDocumentSubmitButton } from './ContractDocumentSubmitButton';
 export { useContractDocument } from './hooks';
 export type {
-  ContractDocumentContractDetailsFormValues,
   ContractDocumentContractDetailsPayload,
   ContractDocumentContractDetailsResponse,
   ContractDocumentFlowProps,
