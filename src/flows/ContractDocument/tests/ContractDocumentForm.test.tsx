@@ -7,7 +7,6 @@ import { ContractDocumentForm } from '@/src/flows/ContractDocument/ContractDocum
 import { ContractDocumentSubmitButton } from '@/src/flows/ContractDocument/ContractDocumentSubmitButton';
 import {
   mockContractDocumentCreatedResponse,
-  mockContractorContractDetailsSchema,
   mockContractorEmploymentResponse,
 } from '@/src/flows/ContractorOnboarding/tests/fixtures';
 import { fillContractDetails } from '@/src/flows/ContractorOnboarding/tests/helpers';
@@ -34,7 +33,14 @@ function renderFlow() {
         if (bag.isLoading) return <p>Loading…</p>;
 
         if (bag.stepState.currentStep.name === 'contract_preview') {
-          return <p>Preview of {bag.contractDocumentId}</p>;
+          return (
+            <>
+              <p>Preview of {bag.contractDocumentId}</p>
+              <button type='button' onClick={bag.back}>
+                Back
+              </button>
+            </>
+          );
         }
 
         return (
@@ -51,6 +57,24 @@ function renderFlow() {
   );
 }
 
+function mockEmployment(contractorType?: 'standard' | 'plus' | 'cor') {
+  server.use(
+    http.get('*/v1/employments/:id', ({ params }) =>
+      HttpResponse.json({
+        ...mockContractorEmploymentResponse,
+        data: {
+          ...mockContractorEmploymentResponse.data,
+          employment: {
+            ...mockContractorEmploymentResponse.data.employment,
+            id: params.id,
+            contractor_type: contractorType,
+          },
+        },
+      }),
+    ),
+  );
+}
+
 describe('ContractDocumentForm', () => {
   const createdDocuments: $TSFixMe[] = [];
 
@@ -58,23 +82,7 @@ describe('ContractDocumentForm', () => {
     queryClient.clear();
     createdDocuments.length = 0;
 
-    server.use(
-      http.get('*/v1/employments/:id', ({ params }) =>
-        HttpResponse.json({
-          ...mockContractorEmploymentResponse,
-          data: {
-            ...mockContractorEmploymentResponse.data,
-            employment: {
-              ...mockContractorEmploymentResponse.data.employment,
-              id: params.id,
-            },
-          },
-        }),
-      ),
-      http.get('*/v1/countries/*/contractor-contract-details*', () =>
-        HttpResponse.json(mockContractorContractDetailsSchema),
-      ),
-    );
+    mockEmployment();
   });
 
   it('creates the contract document from the contract details and moves to the preview', async () => {
@@ -103,6 +111,38 @@ describe('ContractDocumentForm', () => {
     expect(
       createdDocuments[0].contract_document.services_and_deliverables,
     ).toBe('Service and Deliverables project manager role');
+  });
+
+  it('restores the entered contract details when coming back from the preview', async () => {
+    server.use(
+      http.post(
+        '*/v1/contractors/employments/employment-grace/contract-documents',
+        () => HttpResponse.json(mockContractDocumentCreatedResponse),
+      ),
+    );
+
+    renderFlow();
+    await fillContractDetails({ serviceAndDeliverables: 'Design work' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+    await screen.findByText(/Preview of/);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+
+    expect(
+      await screen.findByLabelText(/Services and Deliverables/i),
+    ).toHaveValue('Design work');
+  });
+
+  it('leaves out the Contractor Services Agreement disclaimer for a Contractor of Record', async () => {
+    mockEmployment('cor');
+
+    renderFlow();
+    await screen.findByLabelText(/Services and Deliverables/i);
+
+    expect(
+      screen.queryByText('Contractor Services Agreement'),
+    ).not.toBeInTheDocument();
   });
 
   it('shows the AI misclassification warning and retries with skip_ai_checks', async () => {
