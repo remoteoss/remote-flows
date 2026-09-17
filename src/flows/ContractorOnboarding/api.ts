@@ -1,12 +1,10 @@
 import { useMemo } from 'react';
 import {
   CompanyAction,
-  CreateContractDocument,
   getV1CompaniesCompanyIdActions,
   getV1ContractorsEmploymentsEmploymentIdContractDocumentsId,
   getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions,
   ManageContractorPlusSubscriptionOperationsParams,
-  postV1ContractorsEmploymentsEmploymentIdContractDocuments,
   postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription,
   postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign,
   SignContractDocument,
@@ -21,6 +19,7 @@ import {
   PostV1EmploymentsEmploymentIdContractOriginData,
 } from '@/src/client';
 import { useClient } from '@/src/context';
+import { useCreateContractorContractDocument } from '@/src/common/contract-documents/api';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
 import { contractOriginSchema } from '@/src/flows/ContractorOnboarding/json-schemas/contractOrigin';
 import { invoiceScheduleSchema } from '@/src/flows/ContractorOnboarding/json-schemas/invoiceSchedule';
@@ -39,6 +38,8 @@ import {
   contractorPlusProductIdentifier,
   contractorStandardProductIdentifier,
   corProductIdentifier,
+} from '@/src/common/contract-documents/constants';
+import {
   eorProductIdentifier,
   FEATURES_BY_IDENTIFIER,
   IR35_FILE_SUBTYPE,
@@ -240,33 +241,6 @@ export const usePostManageContractorSubscriptions = () => {
           },
         },
       );
-    },
-  });
-};
-
-/**
- * Saves the contractor details data
- * @param employmentId - The employment ID
- * @param payload - The payload
- * @returns The contractor contract document
- */
-export const useCreateContractorContractDocument = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({
-      employmentId,
-      payload,
-    }: {
-      employmentId: string;
-      payload: CreateContractDocument;
-    }) => {
-      return postV1ContractorsEmploymentsEmploymentIdContractDocuments({
-        client: client as Client,
-        body: payload,
-        path: {
-          employment_id: employmentId,
-        },
-      });
     },
   });
 };
