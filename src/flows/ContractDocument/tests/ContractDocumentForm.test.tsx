@@ -98,6 +98,9 @@ describe('ContractDocumentForm', () => {
 
     renderFlow();
     await fillContractDetails();
+    expect(
+      screen.getByText('Contractor Services Agreement'),
+    ).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
 
