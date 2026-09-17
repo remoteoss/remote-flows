@@ -133,7 +133,7 @@ prop, for fully custom UIs. Both surfaces expose the same bag:
 | `handleValidation`     | Validation handler for the current step's form.                                                               |
 | `parseFormValues`      | Turns the contract details values into the API payload without submitting.                                    |
 | `onSubmit`             | Creates the contract document.                                                                                |
-| `initialValues`        | Initial form values per step, prefilled from the employment and the schema defaults.                          |
+| `initialValues`        | Initial form values per step: today as the start date, the current contract details, the schema defaults.     |
 | `meta`                 | Field metadata for the current step: labels for error messages, and fieldsets.                                |
 | `employmentId`         | The contractor the contract document will be created for.                                                     |
 | `employment`           | The contractor's employment.                                                                                  |
@@ -163,6 +163,7 @@ values sourced from their current contract — payment terms from the stored con
 absent those, the contractor's rate. Those defaults are compensation data and require one of
 `documents-management:create`, `people-contracts:create` or `hiring:update`; without them the
 schema comes back without `default` values and the form renders blank rather than failing.
+The service start date is prefilled with today's date, as on the Remote platform.
 
 **Product.** The standalone flow has no pricing-plan step. The product is read off the
 employment's `contractor_type`: it decides whether the Contractor Services Agreement disclaimer

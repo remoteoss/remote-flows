@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { format } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import {
@@ -117,16 +118,11 @@ export const useContractDocument = ({
     () =>
       getInitialValues(contractDetailsFields, {
         service_duration: {
-          provisional_start_date:
-            employment?.basic_information?.provisional_start_date,
+          provisional_start_date: format(new Date(), 'yyyy-MM-dd'),
         },
         ...employment?.contract_details,
       }),
-    [
-      contractDetailsFields,
-      employment?.basic_information?.provisional_start_date,
-      employment?.contract_details,
-    ],
+    [contractDetailsFields, employment?.contract_details],
   );
 
   const createContractDocumentMutation = useCreateContractorContractDocument();
