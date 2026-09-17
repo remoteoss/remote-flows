@@ -73,7 +73,13 @@ export function ContractDocumentForm({
       }
       contractDocumentBag.next();
     } catch (error: unknown) {
-      onError?.(handleStepError(error, contractDocumentBag.meta.fields, form));
+      onError?.(
+        handleStepError(
+          error,
+          contractDocumentBag.meta.fields.contract_details,
+          form,
+        ),
+      );
     }
   };
 
