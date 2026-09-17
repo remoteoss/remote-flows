@@ -52,7 +52,9 @@ export function ContractDocumentForm({
   const form = useJSONSchemaForm({
     handleValidation: contractDocumentBag.handleValidation,
     checkFieldUpdates: contractDocumentBag.checkFieldUpdates,
-    defaultValues: contractDocumentBag.initialValues.contract_details,
+    defaultValues:
+      contractDocumentBag.stepState.values?.contract_details ??
+      contractDocumentBag.initialValues.contract_details,
   });
 
   useEffect(() => {
