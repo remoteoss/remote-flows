@@ -11,7 +11,6 @@ import { isMutationError } from '@/src/lib/mutations';
 export const calculateProvisionalStartDateDescription = (
   employmentProvisionalStartDate: string | undefined,
   fieldProvisionalStartDate: string | undefined,
-  currentDateLabel = 'the date you provided in the Basic Information step',
 ): string | undefined => {
   const datesNotMatching =
     employmentProvisionalStartDate &&
@@ -19,7 +18,7 @@ export const calculateProvisionalStartDateDescription = (
     employmentProvisionalStartDate !== fieldProvisionalStartDate;
 
   if (datesNotMatching) {
-    const datesDontMatchWarning = `This date does not match ${currentDateLabel} - ${
+    const datesDontMatchWarning = `This date does not match the date you provided in the Basic Information step - ${
       employmentProvisionalStartDate
     } - and will override it only when both parties have signed the contract.`;
     return `When the contractor will start providing service to your company. ${datesDontMatchWarning}`;
