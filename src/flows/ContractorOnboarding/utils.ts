@@ -107,10 +107,6 @@ export function buildSteps(config: StepConfig = {}) {
   return { steps, stepsArray };
 }
 
-/**
- * Calculates the description for the provisional start date field
- * based on whether the dates match between basic information and contract details steps
- */
 const NATIONALITY_COUNTRY_CODES = ['SAU', 'KWT', 'OMN', 'QAT', 'BHR'];
 
 /**
@@ -160,12 +156,6 @@ export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
   'active',
 ];
 
-/**
- * Transforms AI error messages to use default localized messages
- * @param isContractorOfRecord - Whether the contractor is a Contractor of Record
- * @param errors - Array of error messages from the API
- * @returns Array containing the appropriate default error message
- */
 const DEFAULT_VERSION = 1;
 
 /**
