@@ -60,7 +60,9 @@ export const useContractDocument = ({
   const [contractDocumentId, setContractDocumentId] = useState<
     string | undefined
   >(undefined);
-  const fieldsMetaRef = useRef<NestedMeta>({});
+  const fieldsMetaRef = useRef<{ contract_details: NestedMeta }>({
+    contract_details: {},
+  });
 
   const { data: employment, isLoading: isLoadingEmployment } =
     useEmploymentQuery({
@@ -194,7 +196,7 @@ export const useContractDocument = ({
       }
 
       const parsedValues = await parseContractDetails(values);
-      fieldsMetaRef.current = prettifyFormValues(
+      fieldsMetaRef.current.contract_details = prettifyFormValues(
         parsedValues,
         contractDetailsFields,
       );
