@@ -28,7 +28,8 @@ export function ContractDocumentSubmitButton({
       disabled={
         props.disabled ||
         contractDocumentBag.isSubmitting ||
-        !contractDocumentBag.employmentId
+        !contractDocumentBag.employmentId ||
+        Boolean(contractDocumentBag.error)
       }
     >
       {children}
