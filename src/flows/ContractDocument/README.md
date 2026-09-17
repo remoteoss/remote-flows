@@ -113,7 +113,8 @@ contract document and moves the flow to `contract_preview`.
 ### ContractDocumentSubmitButton
 
 Must be rendered inside the flow's `render` prop. Accepts any button props; disables itself
-while the contract document is being created, and while the flow has no contractor to act on.
+while the contract document is being created, while the flow has no contractor to act on, and
+when the flow failed to load (`error` is set on the bag).
 
 ## The bag
 
@@ -144,6 +145,7 @@ prop, for fully custom UIs. Both surfaces expose the same bag:
 | `canSkipAiValidation`  | True when the last submission was rejected by the AI check and submitting again continues at the user's risk. |
 | `isLoading`            | True until the contractor and the current step's form are known.                                              |
 | `isSubmitting`         | True while the contract document is being created.                                                            |
+| `error`                | The error that stopped the flow from loading (employment, contract documents or schema), or `null`.           |
 
 ## Requests
 
@@ -168,6 +170,8 @@ The service start date is prefilled with today's date, as on the Remote platform
 **Product.** The standalone flow has no pricing-plan step. The product is read off the
 employment's `contractor_type`: it decides whether the Contractor Services Agreement disclaimer
 is shown, whether the start date can be backdated, and which misclassification wording is used.
+An employment without a `contractor_type` is treated as a standard contractor, as in contractor
+onboarding.
 
 ## AI misclassification check
 
