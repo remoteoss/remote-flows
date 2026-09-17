@@ -64,40 +64,49 @@ export const useContractDocument = ({
     contract_details: {},
   });
 
-  const { data: employment, isLoading: isLoadingEmployment } =
-    useEmploymentQuery({
-      employmentId,
-      queryParams: { exclude_files: true },
-      enabled: Boolean(employmentId),
-    });
+  const {
+    data: employment,
+    isLoading: isLoadingEmployment,
+    error: employmentError,
+  } = useEmploymentQuery({
+    employmentId,
+    queryParams: { exclude_files: true },
+    enabled: Boolean(employmentId),
+  });
 
-  const { data: contractDocuments, isLoading: isLoadingContractDocuments } =
-    useQuery({
-      ...contractDocumentsOptions(client as Client, employmentId),
-      enabled: Boolean(employmentId),
-      select: ({ data }) => data.data.contract_documents,
-    });
+  const {
+    data: contractDocuments,
+    isLoading: isLoadingContractDocuments,
+    error: contractDocumentsError,
+  } = useQuery({
+    ...contractDocumentsOptions(client as Client, employmentId),
+    enabled: Boolean(employmentId),
+    select: ({ data }) => data.data.contract_documents,
+  });
 
   const countryCode = employment?.country?.code;
   const productIdentifier = getProductIdentifier(employment?.contractor_type);
   const isContractorOfRecord = productIdentifier === corProductIdentifier;
 
-  const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
-    useContractorContractDetailsSchema({
-      countryCode: countryCode as string,
-      employmentId,
-      fieldValues,
-      options: {
-        queryOptions: { enabled: Boolean(countryCode) },
-        jsfModify: buildContractDetailsJsfModify(
-          options?.jsfModify?.contract_details,
-          undefined,
-          productIdentifier,
-          fieldValues,
-          isContractorOfRecord,
-        ),
-      },
-    });
+  const {
+    data: contractDetailsForm,
+    isLoading: isLoadingContractDetailsForm,
+    error: contractDetailsFormError,
+  } = useContractorContractDetailsSchema({
+    countryCode: countryCode as string,
+    employmentId,
+    fieldValues,
+    options: {
+      queryOptions: { enabled: Boolean(countryCode) },
+      jsfModify: buildContractDetailsJsfModify(
+        options?.jsfModify?.contract_details,
+        undefined,
+        productIdentifier,
+        fieldValues,
+        isContractorOfRecord,
+      ),
+    },
+  });
 
   const contractDetailsFields = useMemo(
     () => (contractDetailsForm?.fields ?? []) as Fields,
@@ -332,5 +341,14 @@ export const useContractDocument = ({
      * True while the contract document is being created.
      */
     isSubmitting: createContractDocumentMutation.isPending,
+    /**
+     * The error that stopped the flow from loading, if any: the employment, its contract
+     * documents or the contract details schema could not be fetched.
+     */
+    error:
+      employmentError ??
+      contractDocumentsError ??
+      contractDetailsFormError ??
+      null,
   };
 };
