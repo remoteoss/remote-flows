@@ -134,7 +134,7 @@ prop, for fully custom UIs. Both surfaces expose the same bag:
 | `parseFormValues`      | Turns the contract details values into the API payload without submitting.                                    |
 | `onSubmit`             | Creates the contract document.                                                                                |
 | `initialValues`        | Initial form values per step, prefilled from the employment and the schema defaults.                          |
-| `meta`                 | Fieldset metadata for the current step.                                                                       |
+| `meta`                 | Field metadata for the current step: labels for error messages, and fieldsets.                                |
 | `employmentId`         | The contractor the contract document will be created for.                                                     |
 | `employment`           | The contractor's employment.                                                                                  |
 | `isContractorOfRecord` | Whether the contractor is a Contractor of Record.                                                             |
