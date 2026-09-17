@@ -589,10 +589,6 @@ export const useGetIR35File = (
   };
 };
 
-// Shared with the standalone ContractDocument flow; lives in src/common/contract-documents.
-// Re-exported here so existing imports keep resolving.
-export { useGetContractDocuments } from '@/src/common/contract-documents/api';
-
 export const useGetEligibilityQuestionnaire = ({
   options,
   fieldValues,
