@@ -29,6 +29,7 @@ interface MultiSelectProps {
   selected: Option[];
   onChange: (options: Option[]) => void;
   placeholder?: string;
+  multiple?: boolean;
 }
 
 export function MultiSelect({
@@ -36,6 +37,7 @@ export function MultiSelect({
   selected,
   onChange,
   placeholder,
+  multiple = true,
   ...props
 }: MultiSelectProps) {
   const [open, setOpen] = useState(false);
@@ -122,6 +124,12 @@ export function MultiSelect({
                         <CommandItem
                           key={option.label}
                           onSelect={() => {
+                            if (!multiple) {
+                              onChange(isSelected ? [] : [option]);
+                              setOpen(false);
+                              return;
+                            }
+
                             let options = [option];
 
                             if (Array.isArray(option.value)) {

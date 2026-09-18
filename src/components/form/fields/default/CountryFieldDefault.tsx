@@ -18,40 +18,55 @@ export function CountryFieldDefault({
   fieldData,
 }: CountryComponentProps) {
   const [selected, setSelected] = useState<$TSFixMe[]>([]);
+  const isMultiple =
+    fieldData.multiple === true || fieldData.jsonType === 'array';
   const handleChange = (rawValues: $TSFixMe[]) => {
     const values = rawValues.map(({ value }) => value);
-    field.onChange(values);
+    field.onChange(isMultiple ? values : (values[0] ?? ''));
     setSelected(rawValues);
   };
 
   useEffect(() => {
-    if (field.value && fieldData.options) {
-      // WE NEED TO FIX: react-hooks/set-state-in-effect - Calling setState synchronously within an effect can trigger cascading renders
-      // oxlint-disable-next-line react-hooks/set-state-in-effect
-      setSelected(
-        field.value.map(
-          (value: $TSFixMe) =>
-            fieldData?.options?.find(
-              (option) => option.value === value,
-            ) as $TSFixMe,
-        ),
-      );
+    if (!fieldData.options) {
+      return;
     }
+    const values: $TSFixMe[] = Array.isArray(field.value)
+      ? field.value
+      : field.value
+        ? [field.value]
+        : [];
+    // WE NEED TO FIX: react-hooks/set-state-in-effect - Calling setState synchronously within an effect can trigger cascading renders
+    // oxlint-disable-next-line react-hooks/set-state-in-effect
+    setSelected(
+      values
+        .map((value) =>
+          fieldData.options?.find((option) => option.value === value),
+        )
+        .filter(Boolean) as $TSFixMe[],
+    );
   }, [field.value, fieldData.options]);
 
+  const groupOptions = isMultiple
+    ? [
+        ...Object.entries(fieldData.$meta?.regions || {}).map(
+          ([key, value]) => ({
+            value,
+            label: key,
+            category: 'Regions',
+          }),
+        ),
+        ...Object.entries(fieldData.$meta?.subregions || {}).map(
+          ([key, value]) => ({
+            value,
+            label: key,
+            category: 'Subregions',
+          }),
+        ),
+      ]
+    : [];
+
   const countryOptions = [
-    ...Object.entries(fieldData.$meta?.regions || {}).map(([key, value]) => ({
-      value,
-      label: key,
-      category: 'Regions',
-    })),
-    ...Object.entries(fieldData.$meta?.subregions || {}).map(
-      ([key, value]) => ({
-        value,
-        label: key,
-        category: 'Subregions',
-      }),
-    ),
+    ...groupOptions,
     ...(fieldData.options?.map((option) => ({
       ...option,
       value: option.value,
@@ -72,6 +87,7 @@ export function CountryFieldDefault({
           options={countryOptions}
           selected={selected}
           onChange={handleChange}
+          multiple={isMultiple}
         />
       </FormControl>
       {fieldData.description && (
