@@ -4,14 +4,23 @@
 
 ### Minor Changes
 
+#### Features
+
+- take an employmentId and load the contractor (#1327) [#1327](https://github.com/remoteoss/remote-flows/pull/1327)
+
+#### Fixes
+
+- emit a string from the default country field for single-valued schemas (#1333) [#1333](https://github.com/remoteoss/remote-flows/pull/1333)
+- use the user token for address_details when employment_id is set (PBYR-4836) (#1334) [#1334](https://github.com/remoteoss/remote-flows/pull/1334)
+
+#### Chores
+
 - upgrade vitest to v5 (#1324) [#1324](https://github.com/remoteoss/remote-flows/pull/1324)
 - add docs about the architecture (#1322) [#1322](https://github.com/remoteoss/remote-flows/pull/1322)
-- take an employmentId and load the contractor (#1327) [#1327](https://github.com/remoteoss/remote-flows/pull/1327)
 - update country contract schema versions and add Italy onboarding step (#1331) [#1331](https://github.com/remoteoss/remote-flows/pull/1331)
 - add seed:onboarding npm script to CLAUDE.md commands (#1330) [#1330](https://github.com/remoteoss/remote-flows/pull/1330)
-- emit a string from the default country field for single-valued schemas (#1333) [#1333](https://github.com/remoteoss/remote-flows/pull/1333)
 - bump @remoteoss/remote-json-schema-form-kit to 1.1.1 (#1332) [#1332](https://github.com/remoteoss/remote-flows/pull/1332)
-- use the user token for address_details when employment_id is set (PBYR-4836) (#1334) [#1334](https://github.com/remoteoss/remote-flows/pull/1334)
+
 
 ## 1.54.0
 
