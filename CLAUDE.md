@@ -11,8 +11,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev            # tsup watch build (link this package into example/ for live dev)
-npm run build          # production bundle (tsup)
+npm run dev            # tsdown watch build (link this package into example/ for live dev)
+npm run build          # production bundle (tsdown)
 npm test               # vitest (jsdom). Single test: npx vitest run path/to/file.test.tsx
 npm run test:coverage  # coverage with thresholds from scripts/coverage-utils
 npm run type-check     # tsc --noEmit
@@ -89,7 +89,7 @@ Tailwind v4 (`@tailwindcss/postcss`) + CSS variables. Public component classes a
 
 ### Package exports & bundle
 
-[package.json](package.json) ships **multiple ESM entry points** — `.`, `./internals`, `./default-components`, `./flows/*`, `./styles`, `./styles.css`, `./index.css`. Tsup builds each as a separate chunk ([tsup.config.ts](tsup.config.ts)), `react`/`react-dom` are externals, `react-hook-form` + `@hookform/resolvers` are bundled (`noExternal`). Bundle limits in [.sizelimit.json](.sizelimit.json) are enforced in CI by `.github/workflows/size-check.yml`. The `internals` entry point has **no semver guarantees**.
+[package.json](package.json) ships **multiple ESM entry points** — `.`, `./internals`, `./default-components`, `./flows/*`, `./styles`, `./styles.css`, `./index.css`. Tsup builds each as a separate chunk ([tsdown.config.ts](tsdown.config.ts)), `react`/`react-dom` are externals, `react-hook-form` + `@hookform/resolvers` are bundled (`noExternal`). Bundle limits in [.sizelimit.json](.sizelimit.json) are enforced in CI by `.github/workflows/size-check.yml`. The `internals` entry point has **no semver guarantees**.
 
 ## Conventions worth knowing
 

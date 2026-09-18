@@ -40,7 +40,7 @@ export const createHeadlessForm = (
       // onboarding contract details schema even though not every country's schema defines
       // that field. Only surface the warning types that do indicate a real
       // misconfiguration, and only in this repo's own dev build (see
-      // RF_INTERNAL_DEV in tsup.config.ts) — never to consumers of the
+      // RF_INTERNAL_DEV in tsdown.config.ts) — never to consumers of the
       // published package.
       const actionableWarnings = warnings.filter(
         (warning) => warning?.type !== 'FIELD_TO_CHANGE_NOT_FOUND',

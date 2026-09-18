@@ -535,7 +535,7 @@ This will:
 
 - **Documentation**: Check `README.md` and flow-specific READMEs
 - **Architecture questions**: Review this document and `src/` structure
-- **Build issues**: Check `tsup.config.ts` and `package.json` scripts
+- **Build issues**: Check `tsdown.config.ts` and `package.json` scripts
 - **Test issues**: See `vitest.config.ts` and `vitest-setup.ts`
 - **CI issues**: Review `.github/workflows/ci.yml`
 - **Ask the team**: When in doubt, ask for clarification before merging
