@@ -1,6 +1,5 @@
-import path from 'path';
 import { defineConfig } from 'vitest/config';
-import { COVERAGE_THRESHOLDS } from './scripts/coverage-utils';
+import { COVERAGE_THRESHOLDS } from './scripts/coverage-utils.ts';
 
 export default defineConfig({
   test: {
@@ -33,7 +32,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './'),
+      '@': import.meta.dirname,
     },
   },
 });
