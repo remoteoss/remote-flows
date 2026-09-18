@@ -53,6 +53,10 @@ export const ONBOARDING_OPTIONS = {
       // Iceland
       contract_details: 2,
     },
+    ITA: {
+      // Italy
+      contract_details: 2,
+    },
     JAM: {
       // Jamaica
       contract_details: 2,
