@@ -33,11 +33,16 @@ export type {
 
 export {
   ContractDocumentFlow,
+  ContractDocumentForm,
+  ContractDocumentSubmitButton,
   useContractDocument,
 } from '@/src/flows/ContractDocument';
 
 export type {
+  ContractDocumentContractDetailsPayload,
+  ContractDocumentContractDetailsResponse,
   ContractDocumentFlowProps,
+  ContractDocumentOptions,
   ContractDocumentStepKeys,
   UseContractDocumentOptions,
 } from '@/src/flows/ContractDocument';

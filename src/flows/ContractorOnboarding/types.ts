@@ -1,8 +1,8 @@
+import { SignContractDocument, SuccessResponse } from '@/src/client/types.gen';
 import {
-  CreateContractDocumentResponse,
-  SignContractDocument,
-  SuccessResponse,
-} from '@/src/client/types.gen';
+  ContractorContractDetailsFormPayload,
+  ContractorContractDetailsResponse,
+} from '@/src/common/contract-documents/types';
 import { OnboardingBack } from '@/src/flows/ContractorOnboarding/components/OnboardingBack';
 import { OnboardingSubmit } from '@/src/flows/ContractorOnboarding/components/OnboardingSubmit';
 import { PricingPlanStep } from '@/src/flows/ContractorOnboarding/components/PricingPlan';
@@ -161,33 +161,11 @@ export type PricingPlanResponse = {
   subscription: string;
 };
 
-export type ContractorOnboardingContractDetailsFormPayload = {
-  services_and_deliverables: string;
-  service_duration: {
-    expiration_date?: string;
-    provisional_start_date: string;
-  };
-  termination: {
-    contractor_notice_period_amount: number;
-    company_notice_period_amount: number;
-  };
-  payment_terms: {
-    payment_terms_type: string;
-    invoicing_frequency: string;
-    compensation_gross_amount: string;
-    compensation_currency_code?: string;
-    period_unit: string;
-  };
-};
+export type ContractorOnboardingContractDetailsFormPayload =
+  ContractorContractDetailsFormPayload;
 
 export type ContractorOnboardingContractDetailsResponse =
-  CreateContractDocumentResponse;
-
-export type AiValidationError = {
-  error: string[];
-  source: string;
-  skippable: boolean;
-};
+  ContractorContractDetailsResponse;
 
 export type ContractPreviewFormPayload = SignContractDocument;
 

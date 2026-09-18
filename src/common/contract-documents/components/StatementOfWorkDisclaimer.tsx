@@ -2,7 +2,7 @@ import { Statement } from '@/src/components/form/Statement';
 import {
   contractorPlusProductIdentifier,
   contractorStandardProductIdentifier,
-} from '@/src/flows/ContractorOnboarding/constants';
+} from '@/src/common/contract-documents/constants';
 
 const CSA_DISCLAIMER = {
   [contractorStandardProductIdentifier]:
