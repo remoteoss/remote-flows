@@ -19,7 +19,10 @@ export function CountryFieldDefault({
 }: CountryComponentProps) {
   const [selected, setSelected] = useState<$TSFixMe[]>([]);
   const isMultiple =
-    fieldData.multiple === true || fieldData.jsonType === 'array';
+    fieldData.multiple === true ||
+    (Array.isArray(fieldData.jsonType)
+      ? fieldData.jsonType.includes('array')
+      : fieldData.jsonType === 'array');
   const handleChange = (rawValues: $TSFixMe[]) => {
     const values = rawValues.map(({ value }) => value);
     field.onChange(isMultiple ? values : (values[0] ?? ''));

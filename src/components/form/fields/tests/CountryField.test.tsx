@@ -342,6 +342,29 @@ describe('CountryField Component', () => {
     ).toHaveLength(1);
   });
 
+  it('treats a nullable array field as multi-valued even without the multiple flag', async () => {
+    renderWithFormContext({
+      ...defaultProps,
+      onChange: mockOnChange,
+      jsonType: ['array', 'null'] as $TSFixMe,
+      multiple: undefined,
+    });
+
+    fireEvent.click(screen.getByRole('combobox'));
+    await waitFor(() => {
+      expect(screen.getByRole('listbox')).toBeInTheDocument();
+    });
+    expect(
+      screen.getByRole('option', { name: 'North America' }),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('option', { name: 'United States' }));
+
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalledWith(['US']);
+    });
+  });
+
   describe('single-valued country field', () => {
     const singleProps: CountryFieldProps = {
       ...defaultProps,
