@@ -15,7 +15,9 @@ const { buildGatewayURL } = require('./utils.js');
 function getTokenType(method, path) {
   const normalizedMethod = method.toUpperCase();
   // Extract pathname without query parameters
-  const pathname = path.split('?')[0].toLowerCase();
+  const [rawPathname, queryString = ''] = path.split('?');
+  const pathname = rawPathname.toLowerCase();
+  const query = new URLSearchParams(queryString);
 
   // GET /v1/countries or /v2/countries — these don't require a user identity;
   // use client_credentials so the call works in CI where no user token is
@@ -29,7 +31,8 @@ function getTokenType(method, path) {
   // data; also use client credentials.
   if (
     normalizedMethod === 'GET' &&
-    /^\/v[12]\/countries\/[^/]+\/address_details$/.test(pathname)
+    /^\/v[12]\/countries\/[^/]+\/address_details$/.test(pathname) &&
+    !query.has('employment_id')
   ) {
     return 'client-credentials';
   }

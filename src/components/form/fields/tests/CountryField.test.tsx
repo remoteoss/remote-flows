@@ -7,7 +7,7 @@ import {
   waitFor,
 } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { string } from 'yup';
+import { array, string } from 'yup';
 import { CountryField } from '../CountryField';
 import { JSFField, $TSFixMe } from '@/src/types/remoteFlows';
 import { CountryFieldDefault } from '@/src/components/form/fields/default/CountryFieldDefault';
@@ -38,16 +38,17 @@ describe('CountryField Component', () => {
     name: 'testField',
     label: 'Test Field',
     description: 'This is a test field',
-    type: 'string',
+    type: 'countries',
     computedAttributes: {},
     errorMessage: {
       required: 'This field is required',
     },
-    inputType: 'select' as const,
+    inputType: 'countries' as const,
     isVisible: true,
-    jsonType: 'string',
+    jsonType: 'array',
+    multiple: true,
     required: true,
-    schema: string(),
+    schema: array(),
     scopedJsonSchema: {},
     options: [
       { value: 'US', label: 'United States' },
@@ -64,9 +65,12 @@ describe('CountryField Component', () => {
   };
 
   // Helper function to render the component with a form context
-  const renderWithFormContext = (props: CountryFieldProps) => {
+  const renderWithFormContext = (
+    props: CountryFieldProps,
+    defaultValues?: Record<string, unknown>,
+  ) => {
     const TestComponent = () => {
-      const methods = useForm();
+      const methods = useForm({ defaultValues });
       return (
         <FormProvider {...methods}>
           <CountryField {...props} />
@@ -336,5 +340,107 @@ describe('CountryField Component', () => {
     expect(
       screen.getAllByRole('button', { name: /remove Canada/i }),
     ).toHaveLength(1);
+  });
+
+  it('treats a nullable array field as multi-valued even without the multiple flag', async () => {
+    renderWithFormContext({
+      ...defaultProps,
+      onChange: mockOnChange,
+      jsonType: ['array', 'null'] as $TSFixMe,
+      multiple: undefined,
+    });
+
+    fireEvent.click(screen.getByRole('combobox'));
+    await waitFor(() => {
+      expect(screen.getByRole('listbox')).toBeInTheDocument();
+    });
+    expect(
+      screen.getByRole('option', { name: 'North America' }),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('option', { name: 'United States' }));
+
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalledWith(['US']);
+    });
+  });
+
+  describe('single-valued country field', () => {
+    const singleProps: CountryFieldProps = {
+      ...defaultProps,
+      jsonType: 'string',
+      multiple: undefined,
+      schema: string(),
+    };
+
+    const openAndPick = async (label: string) => {
+      fireEvent.click(screen.getByRole('combobox'));
+      await waitFor(() => {
+        expect(screen.getByRole('listbox')).toBeInTheDocument();
+      });
+      fireEvent.click(screen.getByRole('option', { name: label }));
+    };
+
+    it('emits the selected country as a string', async () => {
+      renderWithFormContext({ ...singleProps, onChange: mockOnChange });
+
+      await openAndPick('United States');
+
+      await waitFor(() => {
+        expect(mockOnChange).toHaveBeenCalledWith('US');
+      });
+    });
+
+    it('replaces the previous selection instead of accumulating', async () => {
+      renderWithFormContext({ ...singleProps, onChange: mockOnChange });
+
+      await openAndPick('United States');
+      await openAndPick('Canada');
+
+      await waitFor(() => {
+        expect(mockOnChange).toHaveBeenLastCalledWith('CA');
+      });
+      expect(
+        screen.getByRole('button', { name: /remove Canada/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /remove United States/i }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('does not offer region shortcuts', async () => {
+      renderWithFormContext(singleProps);
+
+      fireEvent.click(screen.getByRole('combobox'));
+      await waitFor(() => {
+        expect(screen.getByRole('listbox')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.queryByRole('option', { name: 'North America' }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('option', { name: 'Northern America' }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByRole('option', { name: 'United States' }),
+      ).toBeInTheDocument();
+    });
+
+    it('shows a string default value and clears it to an empty string', async () => {
+      renderWithFormContext(
+        { ...singleProps, onChange: mockOnChange },
+        { testField: 'CA' },
+      );
+
+      const removeButton = await screen.findByRole('button', {
+        name: /remove Canada/i,
+      });
+      fireEvent.click(removeButton);
+
+      await waitFor(() => {
+        expect(mockOnChange).toHaveBeenCalledWith('');
+      });
+    });
   });
 });
