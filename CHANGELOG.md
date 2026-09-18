@@ -1,8 +1,8 @@
 # @remoteoss/remote-flows
 
-## 1.55.1
+## 1.56.0
 
-### Patch Changes
+### Minor Changes
 
 - migrate to typescript v7 && tsdown (#1325) [#1325](https://github.com/remoteoss/remote-flows/pull/1325)
 
