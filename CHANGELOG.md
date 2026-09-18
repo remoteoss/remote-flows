@@ -21,7 +21,6 @@
 - add seed:onboarding npm script to CLAUDE.md commands (#1330) [#1330](https://github.com/remoteoss/remote-flows/pull/1330)
 - bump @remoteoss/remote-json-schema-form-kit to 1.1.1 (#1332) [#1332](https://github.com/remoteoss/remote-flows/pull/1332)
 
-
 ## 1.54.0
 
 ### Minor Changes
