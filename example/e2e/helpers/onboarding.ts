@@ -147,7 +147,7 @@ interface fillOnboardingStep3GermanyFormOptions {
   contract_end_date?: string;
   work_schedule?: string;
   probation_length_choice?: string;
-  notice_period_choice?: string;
+  notice_period?: string;
   available_pto_type?: string;
   required_qualifications?: string;
   role_description?: string;
@@ -176,9 +176,14 @@ interface fillOnboardingStep3GermanyFormOptions {
  * - work_schedule ('full_time') drives a custom "Daily Schedule" widget (the daily_schedule
  *   feature) that defaults to Mon-Fri 09h00-18h00 with a 1h break = 40h/week already, so
  *   there's no separate work_hours_per_week input left to fill.
- * - probation_length and notice_period are not plain number fields here; they're
- *   probation_length_recommended / notice_period_choice, each a "recommended vs. choose your
- *   own length" radio. Picking "recommended" avoids the follow-up number input.
+ * - probation_length has the "recommended vs. choose your own length" radio
+ *   (probation_length_recommended); picking "recommended" avoids the follow-up number input.
+ *   notice_period has NOT gotten the same treatment (yet) - it's still a plain number field
+ *   (1-3 months). Its grouping metadata (x-rmt-flatFieldsets.notice_period_fieldset) lists a
+ *   "notice_period_choice" property alongside it, but that name is only a UI-grouping hint -
+ *   there's no such property in the actual schema, and no [data-field="notice_period_choice"]
+ *   ever renders. See __reference__/germany-contract-details-schema.json for the raw schema
+ *   this was checked against.
  * - available_pto_type: 'unlimited' turns available_pto into a computed statement ("20
  *   vacation days per year, automatically calculated..."), so there's no separate amount to
  *   fill, unlike Spain's always-editable available_pto.
@@ -209,9 +214,9 @@ export async function fillOnboardingStep3GermanyForm(
       name: 'probation_length_recommended',
     },
     {
-      type: 'radio',
-      value: options.notice_period_choice,
-      name: 'notice_period_choice',
+      type: 'textField',
+      value: options.notice_period,
+      name: 'notice_period',
     },
     {
       type: 'radio',

@@ -62,7 +62,7 @@ test.describe('Onboard Germany employee', () => {
       contract_end_date: 'auto',
       work_schedule: 'full_time',
       probation_length_choice: 'recommended',
-      notice_period_choice: 'recommended',
+      notice_period: '1',
       available_pto_type: 'unlimited',
       required_qualifications: "Bachelor's degree",
       role_description:

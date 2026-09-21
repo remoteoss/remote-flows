@@ -1,0 +1,902 @@
+{
+    "data": {
+        "additionalProperties": false,
+        "allOf": [
+            {
+                "else": {
+                    "properties": {
+                        "daily_schedule": false
+                    }
+                },
+                "if": {
+                    "properties": {
+                        "schedule_type": {
+                            "enum": [
+                                "core_business_hours",
+                                "fixed_hours"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "schedule_type"
+                    ]
+                },
+                "then": {
+                    "required": [
+                        "daily_schedule"
+                    ]
+                }
+            },
+            {
+                "if": {
+                    "properties": {
+                        "work_schedule": {
+                            "const": "part_time"
+                        }
+                    },
+                    "required": [
+                        "work_schedule"
+                    ]
+                },
+                "then": {
+                    "properties": {
+                        "work_hours_per_week": {
+                            "maximum": 30,
+                            "minimum": 1
+                        }
+                    }
+                }
+            },
+            {
+                "if": {
+                    "properties": {
+                        "work_schedule": {
+                            "const": "full_time"
+                        }
+                    },
+                    "required": [
+                        "work_schedule"
+                    ]
+                },
+                "then": {
+                    "properties": {
+                        "work_hours_per_week": {
+                            "maximum": 48,
+                            "minimum": 31
+                        }
+                    }
+                }
+            },
+            {
+                "else": {
+                    "properties": {
+                        "professional_licenses": false
+                    }
+                },
+                "if": {
+                    "properties": {
+                        "role_requires_license": {
+                            "const": "yes"
+                        }
+                    },
+                    "required": [
+                        "role_requires_license"
+                    ]
+                },
+                "then": {
+                    "required": [
+                        "professional_licenses"
+                    ]
+                }
+            },
+            {
+                "else": {
+                    "properties": {
+                        "non_compete_clause_compensation_amount": false
+                    }
+                },
+                "if": {
+                    "properties": {
+                        "annual_gross_salary": {
+                            "type": "integer"
+                        },
+                        "non_compete_clause_apply": {
+                            "const": "yes"
+                        },
+                        "non_compete_clause_compensation_percentage": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "non_compete_clause_apply",
+                        "annual_gross_salary",
+                        "non_compete_clause_compensation_percentage"
+                    ]
+                },
+                "then": {
+                    "properties": {
+                        "non_compete_clause_compensation_amount": {
+                            "x-jsf-logic-computedAttrs": {
+                                "const": "computed_non_compete_clause_compensation_amount_in_cents",
+                                "default": "computed_non_compete_clause_compensation_amount_in_cents",
+                                "x-jsf-presentation": {
+                                    "statement": {
+                                        "description": "The employee will receive this monthly compensation after termination for the entire non-compete period.",
+                                        "title": "{{computed_non_compete_clause_compensation_amount}} EUR non-compete compensation amount"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "non_compete_clause_compensation_amount"
+                    ]
+                }
+            },
+            {
+                "else": {
+                    "properties": {
+                        "non_compete_clause_compensation_amount": false,
+                        "non_compete_clause_compensation_percentage": false,
+                        "non_compete_clause_halt_period_months": false
+                    }
+                },
+                "if": {
+                    "properties": {
+                        "non_compete_clause_apply": {
+                            "const": "yes"
+                        }
+                    },
+                    "required": [
+                        "non_compete_clause_apply"
+                    ]
+                },
+                "then": {
+                    "required": [
+                        "non_compete_clause_compensation_percentage",
+                        "non_compete_clause_halt_period_months"
+                    ]
+                }
+            },
+            {
+                "else": {
+                    "properties": {
+                        "additional_pto": false
+                    }
+                },
+                "if": {
+                    "properties": {
+                        "additional_holiday_days": {
+                            "const": "yes"
+                        }
+                    },
+                    "required": [
+                        "additional_holiday_days"
+                    ]
+                },
+                "then": {
+                    "required": [
+                        "additional_pto"
+                    ]
+                }
+            },
+            {
+                "else": {
+                    "properties": {
+                        "additional_holiday_days": false
+                    }
+                },
+                "if": {
+                    "properties": {
+                        "available_pto_type": {
+                            "const": "fixed"
+                        }
+                    },
+                    "required": [
+                        "available_pto_type"
+                    ]
+                },
+                "then": {
+                    "required": [
+                        "additional_holiday_days"
+                    ]
+                }
+            },
+            {
+                "else": {
+                    "properties": {
+                        "probation_length": {
+                            "description": "",
+                            "x-jsf-logic-computedAttrs": {
+                                "const": "maximum_probation",
+                                "default": "maximum_probation"
+                            }
+                        }
+                    }
+                },
+                "if": {
+                    "properties": {
+                        "probation_length_recommended": {
+                            "const": "custom"
+                        }
+                    },
+                    "required": [
+                        "probation_length_recommended"
+                    ]
+                },
+                "then": {
+                    "else": {
+                        "properties": {
+                            "probation_length": {
+                                "x-jsf-logic-computedAttrs": {
+                                    "maximum": "maximum_probation"
+                                },
+                                "x-jsf-presentation": {
+                                    "inputType": "number"
+                                }
+                            }
+                        }
+                    },
+                    "if": {
+                        "properties": {
+                            "probation_length": {
+                                "const": 0
+                            }
+                        },
+                        "required": [
+                            "probation_length"
+                        ]
+                    },
+                    "then": {
+                        "properties": {
+                            "probation_length": {
+                                "x-jsf-logic-computedAttrs": {
+                                    "maximum": "maximum_probation"
+                                },
+                                "x-jsf-presentation": {
+                                    "inputType": "number",
+                                    "statement": {
+                                        "description": "Waiving the probation period is possible but discouraged",
+                                        "severity": "warning"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "else": {
+                    "properties": {
+                        "contract_end_date": false
+                    }
+                },
+                "if": {
+                    "properties": {
+                        "contract_duration_type": {
+                            "const": "fixed_term"
+                        }
+                    },
+                    "required": [
+                        "contract_duration_type"
+                    ]
+                },
+                "then": {
+                    "properties": {
+                        "contract_end_date": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "contract_end_date"
+                    ]
+                }
+            },
+            {
+                "else": {
+                    "properties": {
+                        "work_equipment": false
+                    }
+                },
+                "if": {
+                    "properties": {
+                        "work_equipment_provided": {
+                            "const": "yes"
+                        }
+                    },
+                    "required": [
+                        "work_equipment_provided"
+                    ]
+                },
+                "then": {
+                    "required": [
+                        "work_equipment"
+                    ]
+                }
+            },
+            {
+                "else": {
+                    "properties": {
+                        "bonus_amount": false,
+                        "bonus_details": false
+                    }
+                },
+                "if": {
+                    "properties": {
+                        "has_bonus": {
+                            "const": "yes"
+                        }
+                    },
+                    "required": [
+                        "has_bonus"
+                    ]
+                },
+                "then": {
+                    "properties": {
+                        "bonus_details": {
+                            "type": [
+                                "string"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "bonus_details"
+                    ]
+                }
+            },
+            {
+                "else": {
+                    "properties": {
+                        "signing_bonus_amount": false
+                    }
+                },
+                "if": {
+                    "properties": {
+                        "has_signing_bonus": {
+                            "const": "yes"
+                        }
+                    },
+                    "required": [
+                        "has_signing_bonus"
+                    ]
+                },
+                "then": {
+                    "properties": {
+                        "signing_bonus_amount": {
+                            "type": [
+                                "integer"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "signing_bonus_amount"
+                    ]
+                }
+            },
+            {
+                "else": {
+                    "properties": {
+                        "commissions_ack": false,
+                        "commissions_details": false
+                    }
+                },
+                "if": {
+                    "properties": {
+                        "has_commissions": {
+                            "const": "yes"
+                        }
+                    },
+                    "required": [
+                        "has_commissions"
+                    ]
+                },
+                "then": {
+                    "properties": {
+                        "commissions_ack": {
+                            "type": [
+                                "string"
+                            ]
+                        },
+                        "commissions_details": {
+                            "type": [
+                                "string"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "commissions_details",
+                        "commissions_ack"
+                    ]
+                }
+            },
+            {
+                "else": {
+                    "properties": {
+                        "part_time_salary_confirmation": false
+                    }
+                },
+                "if": {
+                    "properties": {
+                        "work_schedule": {
+                            "const": "part_time"
+                        }
+                    },
+                    "required": [
+                        "work_schedule"
+                    ]
+                },
+                "then": {
+                    "properties": {
+                        "part_time_salary_confirmation": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "part_time_salary_confirmation"
+                    ]
+                }
+            }
+        ],
+        "properties": {
+            "non_compete_clause_apply": {
+                "description": "Prevents the employee from joining or starting a competing business. Not allowed during employment. Post-termination only, with limits and required compensation.",
+                "oneOf": [
+                    {
+                        "const": "yes",
+                        "title": "Yes"
+                    },
+                    {
+                        "const": "no",
+                        "title": "No"
+                    }
+                ],
+                "title": "Do you want to apply post-termination restrictions (non-compete)?",
+                "type": "string",
+                "x-jsf-presentation": {
+                    "direction": "row",
+                    "inputType": "radio"
+                }
+            },
+            "professional_licenses": {
+                "description": "If this role requires any specific licenses, please list them here so we can confirm whether Remote can legally and operationally support this position under AUG.",
+                "maxLength": 5000,
+                "minLength": 3,
+                "title": "Employee required license(s)",
+                "type": "string",
+                "x-jsf-presentation": {
+                    "inputType": "textarea"
+                }
+            },
+            "probation_length_recommended": {
+                "description": "A probation period is a set time to assess a new employee. After probation, terminating an employee needs a formal reason and can be challenged. The recommended value is the longest probation allowed for a fixed-term contract of this length.",
+                "oneOf": [
+                    {
+                        "const": "recommended",
+                        "title": "Longest probation period",
+                        "x-jsf-logic-computedAttrs": {
+                            "title": "{{maximum_probation_pluralized}}"
+                        },
+                        "x-jsf-presentation": {
+                            "recommended": true
+                        }
+                    },
+                    {
+                        "const": "custom",
+                        "nested_fields": [
+                            "probation_length"
+                        ],
+                        "title": "Choose your own length"
+                    }
+                ],
+                "title": "Probation period",
+                "type": "string",
+                "x-jsf-presentation": {
+                    "direction": "column",
+                    "inputType": "radio"
+                }
+            },
+            "notice_period": {
+                "default": 1,
+                "description": "In Germany, the notice period can last between 1 and 3 months.",
+                "maximum": 3,
+                "minimum": 1,
+                "readOnly": false,
+                "title": "Notice period in months",
+                "type": "number",
+                "x-jsf-presentation": {
+                    "inputType": "number"
+                }
+            },
+            "contract_end_date": {
+                "description": "Please note that fixed-term contracts are limited to 18 months.",
+                "format": "date",
+                "maxLength": 255,
+                "title": "Contract end date",
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "x-jsf-presentation": {
+                    "inputType": "date"
+                }
+            },
+            "work_equipment": {
+                "description": "List the equipment you will provide to the employee.",
+                "maxLength": 1000,
+                "title": "Employee equipment list",
+                "type": "string",
+                "x-jsf-presentation": {
+                    "inputType": "textarea"
+                }
+            },
+            "work_hours_per_week": {
+                "maximum": 48,
+                "minimum": 1,
+                "title": "Work hours per week",
+                "type": "number",
+                "x-jsf-presentation": {
+                    "inputType": "number"
+                }
+            },
+            "non_compete_clause_compensation_percentage": {
+                "minimum": 1,
+                "title": "Non-compete salary percentage",
+                "type": "number",
+                "x-jsf-presentation": {
+                    "inputType": "number",
+                    "percentage": true
+                }
+            },
+            "has_commissions": {
+                "title": "Offer commission?",
+                "type": "string",
+                "oneOf": [
+                    { "const": "yes", "title": "Yes" },
+                    { "const": "no", "title": "No" }
+                ],
+                "x-jsf-presentation": { "direction": "row", "inputType": "radio" }
+            },
+            "has_bonus": {
+                "title": "Offer other bonuses?",
+                "type": "string",
+                "oneOf": [
+                    { "const": "yes", "title": "Yes" },
+                    { "const": "no", "title": "No" }
+                ],
+                "x-jsf-presentation": { "direction": "row", "inputType": "radio" }
+            },
+            "part_time_salary_confirmation": {
+                "const": "acknowledged",
+                "title": "I confirm that this amount is the full annual salary for this part-time employee.",
+                "type": [ "string", "null" ],
+                "x-jsf-presentation": { "inputType": "checkbox" }
+            },
+            "equity_compensation": {
+                "properties": {
+                    "offer_equity_compensation": {
+                        "title": "Will this employee receive equity?",
+                        "type": "string",
+                        "oneOf": [
+                            { "const": "yes", "title": "Yes" },
+                            { "const": "no", "title": "No" }
+                        ],
+                        "x-jsf-presentation": { "direction": "row", "inputType": "radio" }
+                    }
+                },
+                "required": [ "offer_equity_compensation" ],
+                "title": "Equity management",
+                "type": "object",
+                "x-jsf-presentation": { "inputType": "fieldset" }
+            },
+            "annual_gross_salary": {
+                "title": "Annual gross salary",
+                "type": "integer",
+                "x-jsf-presentation": {
+                    "currency": "EUR",
+                    "inputType": "money"
+                }
+            },
+            "notice_period_statement": {
+                "const": null,
+                "default": null,
+                "title": "Notice period information",
+                "type": "null",
+                "x-jsf-presentation": {
+                    "inputType": "text",
+                    "meta": { "ignoreValue": true },
+                    "statement": {
+                        "title": "The statutory notice period for the <strong>employer is defined at termination</strong>"
+                    }
+                }
+            },
+            "contract_duration_type": {
+                "const": "fixed_term",
+                "default": "fixed_term",
+                "title": "Contract duration",
+                "type": "string",
+                "oneOf": [ { "const": "fixed_term", "title": "Fixed Term" } ],
+                "x-jsf-presentation": {
+                    "direction": "row",
+                    "inputType": "radio",
+                    "statement": {
+                        "title": "<strong>Fixed-term contract duration</strong> for Germany."
+                    }
+                }
+            },
+            "available_pto": {
+                "title": "Minimum paid time off days",
+                "type": "number",
+                "x-jsf-logic-computedAttrs": {
+                    "const": "minimum_days_computed",
+                    "default": "minimum_days_computed",
+                    "statement": {
+                        "title": "<strong>{{minimum_days_computed}} vacation days per year</strong>, automatically calculated to match similar roles."
+                    }
+                },
+                "x-jsf-presentation": { "inputType": "number" }
+            },
+            "probation_length": {
+                "description": "In Germany, the maximum length of probation is based on the contract duration.<br />If you enter a value of ‘0’, the employee will not have a probation period.",
+                "minimum": 0,
+                "title": "Probation period in months",
+                "type": "number",
+                "x-jsf-presentation": { "inputType": "number" }
+            },
+            "experience_level": {
+                "title": "Experience level",
+                "type": "string",
+                "oneOf": [
+                    { "const": "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy", "title": "Level 2 - Entry Level" },
+                    { "const": "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions", "title": "Level 3 - Associate" },
+                    { "const": "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them", "title": "Level 4 - Mid-Senior level" },
+                    { "const": "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives", "title": "Level 5 - Director" },
+                    { "const": "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow", "title": "Level 6 - Executive" }
+                ],
+                "x-jsf-presentation": { "inputType": "radio" }
+            },
+            "bonus_details": {
+                "title": "Other bonus details",
+                "type": [ "string", "null" ],
+                "x-jsf-presentation": { "inputType": "textarea" }
+            },
+            "role_description": {
+                "maxLength": 10000,
+                "minLength": 100,
+                "title": "Project description and tasks",
+                "type": "string",
+                "x-jsf-presentation": { "inputType": "textarea" }
+            },
+            "available_pto_type": {
+                "title": "Paid time off policy",
+                "type": "string",
+                "oneOf": [
+                    { "const": "unlimited", "title": "Unlimited paid time off" },
+                    { "const": "fixed", "title": "Fixed paid time off" }
+                ],
+                "x-jsf-presentation": { "direction": "column", "inputType": "radio" }
+            },
+            "schedule_type": {
+                "const": "fixed_hours",
+                "default": "fixed_hours",
+                "title": "Employee work schedule",
+                "type": "string",
+                "x-jsf-presentation": { "inputType": "hidden" }
+            },
+            "signing_bonus_amount": {
+                "title": "Signing bonus amount",
+                "type": [ "integer", "null" ],
+                "x-jsf-presentation": { "currency": "EUR", "inputType": "money" }
+            },
+            "non_compete_clause_compensation_amount": {
+                "title": "Non-compete compensation amount",
+                "type": "integer",
+                "x-jsf-presentation": { "currency": "EUR", "inputType": "money" }
+            },
+            "commissions_details": {
+                "title": "Commission details",
+                "type": [ "string", "null" ],
+                "x-jsf-presentation": { "inputType": "textarea" }
+            },
+            "additional_holiday_days": {
+                "title": "Offer additional paid time off?",
+                "type": "string",
+                "oneOf": [
+                    { "const": "yes", "title": "Yes" },
+                    { "const": "no", "title": "No" }
+                ],
+                "x-jsf-presentation": { "direction": "row", "inputType": "radio" }
+            },
+            "non_compete_clause_halt_period_months": {
+                "maximum": 24,
+                "minimum": 1,
+                "title": "Duration in months",
+                "type": "number",
+                "x-jsf-presentation": { "inputType": "number" }
+            },
+            "daily_schedule": {
+                "title": "Daily schedule",
+                "type": "object",
+                "x-jsf-presentation": {
+                    "inputType": "fieldset",
+                    "variant": "focused",
+                    "metadata": {
+                        "country_name": "Germany",
+                        "default_break_duration_minutes": 60,
+                        "default_end_time": "18:00",
+                        "default_start_time": "09:00",
+                        "subtract_breaks_in_work_hours": true,
+                        "work_days": [ "monday", "tuesday", "wednesday", "thursday", "friday", "saturday" ],
+                        "work_hours_per_week": {
+                            "baseline": { "maximum": 48, "minimum": 1 },
+                            "full_time": { "maximum": 48, "minimum": 31 },
+                            "part_time": { "maximum": 30, "minimum": 1 }
+                        }
+                    }
+                }
+            },
+            "work_schedule": {
+                "title": "Type of employee",
+                "type": "string",
+                "oneOf": [
+                    { "const": "full_time", "title": "Full-time" },
+                    { "const": "part_time", "title": "Part-time" }
+                ],
+                "x-jsf-presentation": { "direction": "row", "inputType": "radio" }
+            },
+            "work_address": {
+                "properties": {
+                    "is_home_address": {
+                        "title": "Local",
+                        "type": "string",
+                        "oneOf": [
+                            { "const": "yes", "title": "Same as the employee's residential address" },
+                            { "const": "no", "title": "Different than the employee's residential address" }
+                        ],
+                        "x-jsf-presentation": { "direction": "column", "inputType": "radio" }
+                    }
+                },
+                "required": [ "is_home_address" ],
+                "title": "Work Address",
+                "type": "object",
+                "x-jsf-presentation": { "inputType": "fieldset" }
+            },
+            "required_qualifications": {
+                "title": "What are the employee required qualifications for this role?",
+                "type": "string",
+                "oneOf": [
+                    { "const": "bachelors_degree", "title": "Bachelor's degree" },
+                    { "const": "masters_degree", "title": "Master's degree" }
+                ],
+                "x-jsf-presentation": { "inputType": "select" }
+            },
+            "work_equipment_provided": {
+                "title": "Will you provide the required equipment for the employee to perform their duties?",
+                "type": "string",
+                "oneOf": [
+                    { "const": "yes", "title": "Yes" },
+                    { "const": "no", "title": "No" }
+                ],
+                "x-jsf-presentation": { "direction": "row", "inputType": "radio" }
+            },
+            "has_signing_bonus": {
+                "title": "Offer a signing bonus?",
+                "type": "string",
+                "oneOf": [
+                    { "const": "yes", "title": "Yes" },
+                    { "const": "no", "title": "No" }
+                ],
+                "x-jsf-presentation": { "direction": "row", "inputType": "radio" }
+            },
+            "additional_pto": {
+                "minimum": 1,
+                "title": "Additional days",
+                "type": "number",
+                "x-jsf-presentation": { "inputType": "number" }
+            },
+            "ancillary_positions_clause_apply": {
+                "title": "Do you want to prohibit the employee from holding ancillary positions during employment?",
+                "type": "string",
+                "oneOf": [
+                    { "const": "yes", "title": "Yes" },
+                    { "const": "no", "title": "No" }
+                ],
+                "x-jsf-presentation": { "direction": "row", "inputType": "radio" }
+            },
+            "commissions_ack": {
+                "const": "acknowledged",
+                "title": "Confirm commission plan details",
+                "type": "string",
+                "x-jsf-presentation": { "inputType": "checkbox" }
+            }
+        },
+        "required": [
+            "notice_period",
+            "work_address",
+            "work_hours_per_week",
+            "schedule_type",
+            "required_qualifications",
+            "non_compete_clause_apply",
+            "probation_length",
+            "probation_length_recommended",
+            "contract_duration_type",
+            "annual_gross_salary",
+            "ancillary_positions_clause_apply",
+            "work_equipment_provided",
+            "equity_compensation",
+            "experience_level",
+            "has_signing_bonus",
+            "has_bonus",
+            "has_commissions",
+            "role_description"
+        ],
+        "type": "object",
+        "x-jsf-order": [
+            "business_model",
+            "contract_duration",
+            "contract_duration_type",
+            "contract_end_date",
+            "work_schedule",
+            "schedule_type",
+            "daily_schedule",
+            "work_hours_per_week",
+            "probation_length_recommended",
+            "probation_length",
+            "notice_period",
+            "notice_period_statement",
+            "available_pto_type",
+            "available_pto",
+            "additional_holiday_days",
+            "additional_pto",
+            "required_qualifications",
+            "professional_licenses",
+            "role_description",
+            "experience_level",
+            "work_address_is_home_address",
+            "work_address",
+            "annual_gross_salary",
+            "part_time_salary_confirmation",
+            "overtime_statement",
+            "has_signing_bonus",
+            "signing_bonus_amount",
+            "has_bonus",
+            "bonus_amount",
+            "bonus_details",
+            "has_commissions",
+            "commissions_details",
+            "commissions_ack",
+            "equity_compensation",
+            "non_compete_clause_apply",
+            "non_compete_clause_halt_period_months",
+            "non_compete_clause_compensation_amount",
+            "non_compete_clause_compensation_percentage",
+            "ancillary_positions_clause_apply",
+            "work_equipment_provided",
+            "work_equipment"
+        ],
+        "x-rmt-flatFieldsets": {
+            "employee_schedule_fieldset": {
+                "propertiesByName": [ "schedule_type", "daily_schedule", "work_hours_per_week" ],
+                "title": "Employee schedule"
+            },
+            "equipment_fieldset": {
+                "propertiesByName": [ "work_equipment_provided", "work_equipment" ],
+                "title": "Laptop/mobile equipment"
+            },
+            "non_compete_fieldset": {
+                "propertiesByName": [ "non_compete_clause_apply", "non_compete_clause_halt_period_months", "non_compete_clause_compensation_percentage", "non_compete_clause_compensation_amount" ],
+                "title": "Non-compete"
+            },
+            "notice_period_fieldset": {
+                "propertiesByName": [ "notice_period_statement", "notice_period_choice", "notice_period" ],
+                "title": "Notice period"
+            },
+            "paid_time_off": {
+                "propertiesByName": [ "available_pto_type", "available_pto", "additional_holiday_days", "additional_pto" ],
+                "title": "Paid time off"
+            }
+        },
+        "x-rmt-meta": {
+            "jsfVersion": "1"
+        }
+    }
+}
