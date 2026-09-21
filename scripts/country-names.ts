@@ -1,6 +1,6 @@
 // Alpha3 -> country name for the gap report in sync-country-contract-versions.ts.
-// Sourced from the BE repo's vendored ISO-3166 dataset (apps/tiger/deps/countries),
-// plus FRA_SAS/ITA_APL/XKX which the BE repo uses but ISO 3166 doesn't define.
+// Sourced from the BE repo's vendored ISO-3166 dataset, plus FRA_SAS/ITA_APL/XKX
+// which the BE repo uses but ISO 3166 doesn't define.
 export const COUNTRY_NAMES: Record<string, string> = {
   ALB: 'Albania',
   ARE: 'United Arab Emirates',
@@ -102,7 +102,7 @@ export const COUNTRY_NAMES: Record<string, string> = {
   ZWE: 'Zimbabwe',
 };
 
-/** "Portugal (PRT)", or just the code if it's not in COUNTRY_NAMES (e.g. tiger added a new one). */
+/** "Portugal (PRT)", or just the code if it's not in COUNTRY_NAMES (e.g. the BE repo added a new one). */
 export function countryLabel(code: string): string {
   const name = COUNTRY_NAMES[code];
   return name ? `${name} (${code})` : code;

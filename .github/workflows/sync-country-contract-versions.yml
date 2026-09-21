@@ -43,8 +43,7 @@ jobs:
             echo "has_token=true" >> "$GITHUB_OUTPUT"
           fi
 
-      # The BE repo is tiger (gitlab.com/remote-com/employ-starbase/tiger);
-      # only its contract_details schemas are needed here.
+      # Only the BE repo's contract_details schemas are needed here.
       - name: Sparse-checkout BE repo contract_details schemas
         if: steps.check-token.outputs.has_token == 'true'
         env:

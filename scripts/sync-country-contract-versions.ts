@@ -1,12 +1,12 @@
 #!/usr/bin/env tsx
 /**
- * Regenerates COUNTRY_CONTRACT_VERSIONS in schemaVersions.ts from the BE repo
- * (tiger), and reports the gap vs. the version example/ pins in
+ * Regenerates COUNTRY_CONTRACT_VERSIONS in schemaVersions.ts from the BE
+ * repo, and reports the gap vs. the version example/ pins in
  * jsonSchemaVersionByCountry. Replaces the old manual "run an LLM prompt
- * against a tiger checkout, paste the result back" step.
+ * against a BE repo checkout, paste the result back" step.
  *
  * Usage:
- *   npm run sync:contract-versions -- [--be-repo-path=../tiger] [--write] [--report-file=path.md]
+ *   npm run sync:contract-versions -- [--be-repo-path=<path>] [--write] [--report-file=path.md]
  *
  * Dry run by default; --write updates schemaVersions.ts, --report-file writes
  * the gap report as markdown (used by CI as the PR body).
@@ -58,7 +58,7 @@ function computeCountryContractVersions(
   );
   if (!fs.existsSync(contractDetailsDir)) {
     throw new Error(
-      `Could not find ${contractDetailsDir}. Pass --be-repo-path=<path to a tiger checkout>.`,
+      `Could not find ${contractDetailsDir}. Pass --be-repo-path=<path to a BE repo checkout>.`,
     );
   }
 
