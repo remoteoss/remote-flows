@@ -69,6 +69,7 @@ test.describe('Onboard Germany employee', () => {
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim.',
       experience_level:
         'Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy',
+      role_requires_license: 'no',
       work_address_is_home_address: 'yes',
       annual_gross_salary: '50000',
       has_signing_bonus: 'no',

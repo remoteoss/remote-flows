@@ -152,6 +152,7 @@ interface fillOnboardingStep3GermanyFormOptions {
   required_qualifications?: string;
   role_description?: string;
   experience_level?: string;
+  role_requires_license?: string;
   work_address_is_home_address?: string;
   annual_gross_salary?: string;
   has_signing_bonus?: string;
@@ -213,6 +214,11 @@ export async function fillOnboardingStep3GermanyForm(
       type: 'radio',
       value: options.experience_level,
       name: 'experience_level',
+    },
+    {
+      type: 'radio',
+      value: options.role_requires_license,
+      name: 'role_requires_license',
     },
     {
       type: 'radio',
