@@ -2,9 +2,6 @@ name: PR Checks
 
 on:
   pull_request:
-    branches:
-      - main
-      - release/*
 
 jobs:
   lint-and-format:
