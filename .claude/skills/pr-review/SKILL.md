@@ -12,7 +12,9 @@ Diff-scoped review of a remote-flows GitHub PR. Scale depth to the actual change
 
 - Resolve the PR number and repository from the input; pass `--repo <owner/repo>` to every `gh` command when a URL or non-current repository was supplied.
 - Fetch metadata with `gh pr view <number> --repo <owner/repo> --json title,body,baseRefName,headRefName,files` and the diff with `gh pr diff <number> --repo <owner/repo>`.
-- Before using local Git, verify the PR's repository matches the current checkout. For the same repository, fetch the head branch (`git fetch origin <headRefName>`) before `git show`. For a different repository, inspect through `gh` or an isolated temporary clone instead of the current `origin`.
+- Before using local Git, verify the PR's repository matches the current checkout. If it doesn't, inspect through `gh` or an isolated temporary clone instead of the current `origin`.
+- For the same repository, fetch the PR's merge ref rather than the head branch name — `git fetch origin refs/pull/<number>/head` — since this works even when the PR comes from a fork (whose branch isn't on `origin`). This leaves the fetched commit at `FETCH_HEAD`; it does **not** update the working tree.
+- Check whether `FETCH_HEAD` is already what's checked out (`git rev-parse HEAD` vs `FETCH_HEAD`). If it isn't, don't use the `Read` tool for file contents in Step 3 — it opens local disk paths and would silently show the wrong branch's content. Use `git show FETCH_HEAD:<path>` instead for full-file reads.
 - If CI is failing, check it: `gh pr checks <number> --repo <owner/repo>`.
 
 ## Step 2: Read the rules
@@ -21,7 +23,7 @@ Read [CLAUDE.md](../../../CLAUDE.md), [ARCHITECTURE.md](../../../ARCHITECTURE.md
 
 ## Step 3: Analyze the diff — code quality review
 
-Read each changed file in full, not just the diff hunks. Then review the diff for:
+Read each changed file in full, not just the diff hunks — via `Read` when the PR's head is the current checkout, otherwise via `git show FETCH_HEAD:<path>` as established in Step 1. Then review the diff for:
 
 **Logic and correctness**
 
