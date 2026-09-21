@@ -8,13 +8,14 @@
  * Usage:
  *   npm run sync:contract-versions -- [--be-repo-path=<path>] [--write] [--report-file=path.md]
  *
- * Dry run by default; --write updates schemaVersions.ts, --report-file writes
- * the gap report as markdown (used by CI as the PR body).
+ * Dry run by default; --write updates schemaVersions.ts and the committed
+ * gap-report JSON below, --report-file additionally writes the gap report
+ * as markdown (used by CI as the PR body).
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { countryLabel } from './country-names';
+import { COUNTRY_NAMES, countryLabel } from './country-names';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -25,6 +26,13 @@ const SCHEMA_VERSIONS_PATH = path.join(
 const ONBOARDING_CONSTANTS_PATH = path.join(
   __dirname,
   '../example/src/flows/Onboarding/constants.ts',
+);
+// Committed (not /tmp) so it's a durable, machine-readable record of the gap
+// over time -- e.g. to later correlate against which countries matter most
+// to partners, rather than living only in a PR body.
+const GAP_REPORT_JSON_PATH = path.join(
+  __dirname,
+  'reports/country-contract-version-gap.json',
 );
 
 interface VersionOption {
@@ -141,7 +149,8 @@ function extractInUseVersions(source: string): Record<string, number> {
   return result;
 }
 
-function buildGapReport(
+/** Every country the BE repo has contract_details schemas for, gap included even when it's 0. */
+function buildVersionComparison(
   latestVersions: Record<string, VersionOption[]>,
   inUseVersions: Record<string, number>,
 ): { country: string; inUse: number; latest: number; gap: number }[] {
@@ -151,7 +160,6 @@ function buildGapReport(
       const inUse = inUseVersions[country] ?? 1; // undefined => flow uses v1
       return { country, inUse, latest, gap: latest - inUse };
     })
-    .filter((row) => row.gap > 0)
     .sort((a, b) => b.gap - a.gap || a.country.localeCompare(b.country));
 }
 
@@ -174,6 +182,26 @@ function generateMarkdownGapReport(
   ].join('\n');
 }
 
+/**
+ * Structured version of the same comparison, for every country (not just
+ * ones behind), so it can be read back by tooling later -- e.g. joined
+ * against a partner-importance list to prioritize which countries to bump.
+ */
+function generateJsonGapReport(
+  comparison: { country: string; inUse: number; latest: number; gap: number }[],
+) {
+  return {
+    generatedAt: new Date().toISOString().slice(0, 10),
+    countries: comparison.map((row) => ({
+      country: row.country,
+      countryName: COUNTRY_NAMES[row.country] ?? null,
+      inUseVersion: row.inUse,
+      latestVersion: row.latest,
+      gap: row.gap,
+    })),
+  };
+}
+
 function main() {
   const { beRepoPath, write, reportFile } = parseArgs();
 
@@ -184,7 +212,8 @@ function main() {
   );
   const inUseVersions = extractInUseVersions(onboardingConstants);
 
-  const gapReport = buildGapReport(latestVersions, inUseVersions);
+  const comparison = buildVersionComparison(latestVersions, inUseVersions);
+  const gapReport = comparison.filter((row) => row.gap > 0);
 
   console.log(
     `\nContract details schema gap (${Object.keys(latestVersions).length} countries in the BE repo, ${gapReport.length} behind latest):\n`,
@@ -227,6 +256,15 @@ function main() {
     console.log(`Wrote ${SCHEMA_VERSIONS_PATH}`);
   } else if (changed) {
     console.log('Re-run with --write to update schemaVersions.ts.');
+  }
+
+  if (write) {
+    fs.mkdirSync(path.dirname(GAP_REPORT_JSON_PATH), { recursive: true });
+    fs.writeFileSync(
+      GAP_REPORT_JSON_PATH,
+      `${JSON.stringify(generateJsonGapReport(comparison), null, 2)}\n`,
+    );
+    console.log(`Wrote ${GAP_REPORT_JSON_PATH}`);
   }
 
   if (reportFile) {
