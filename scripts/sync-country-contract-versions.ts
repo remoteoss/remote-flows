@@ -9,10 +9,11 @@
  * paste the result back" step: counting snapshot files is fully mechanical.
  *
  * Usage:
- *   npm run sync:contract-versions -- [--tiger-path=../tiger] [--write]
+ *   npm run sync:contract-versions -- [--tiger-path=../tiger] [--write] [--report-file=path.md]
  *
  * By default this only prints a report (dry run). Pass --write to update
- * schemaVersions.ts on disk.
+ * schemaVersions.ts on disk, and --report-file to also write the gap report
+ * as a markdown table (used by CI to fill in a PR body).
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -37,11 +38,13 @@ interface VersionOption {
 function parseArgs() {
   const args = process.argv.slice(2);
   const tigerPathArg = args.find((a) => a.startsWith('--tiger-path='));
+  const reportFileArg = args.find((a) => a.startsWith('--report-file='));
   return {
     tigerPath: tigerPathArg
       ? tigerPathArg.split('=')[1]
       : path.join(__dirname, '../../tiger'),
     write: args.includes('--write'),
+    reportFile: reportFileArg ? reportFileArg.split('=')[1] : undefined,
   };
 }
 
@@ -155,8 +158,24 @@ function buildGapReport(
     .sort((a, b) => b.gap - a.gap || a.country.localeCompare(b.country));
 }
 
+function generateMarkdownGapReport(
+  gapReport: { country: string; inUse: number; latest: number; gap: number }[],
+  totalCountries: number,
+): string {
+  const rows = gapReport
+    .map((r) => `| ${r.country} | v${r.inUse} | v${r.latest} | ${r.gap} |`)
+    .join('\n');
+  return [
+    `Contract details schema gap: ${gapReport.length}/${totalCountries} countries in \`example/\` are behind the latest version available in tiger.`,
+    '',
+    '| Country | In use | Latest | Gap |',
+    '| --- | --- | --- | --- |',
+    rows,
+  ].join('\n');
+}
+
 function main() {
-  const { tigerPath, write } = parseArgs();
+  const { tigerPath, write, reportFile } = parseArgs();
 
   const latestVersions = computeCountryContractVersions(tigerPath);
   const onboardingConstants = fs.readFileSync(
@@ -203,6 +222,14 @@ function main() {
     console.log(`Wrote ${SCHEMA_VERSIONS_PATH}`);
   } else if (changed) {
     console.log('Re-run with --write to update schemaVersions.ts.');
+  }
+
+  if (reportFile) {
+    fs.writeFileSync(
+      reportFile,
+      generateMarkdownGapReport(gapReport, Object.keys(latestVersions).length),
+    );
+    console.log(`Wrote gap report to ${reportFile}`);
   }
 }
 
