@@ -101,6 +101,10 @@ export const ONBOARDING_OPTIONS = {
       // Pakistan
       contract_details: 2,
     },
+    PHL: {
+      // Philippines
+      contract_details: 5,
+    },
     PRT: {
       // Portugal
       contract_details: 3,
