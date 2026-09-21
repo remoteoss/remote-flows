@@ -143,6 +143,147 @@ export async function fillOnboardingEngagementAgreementDetailsGermanyForm(
   await page.getByText('Loading...').waitFor({ state: 'hidden' });
 }
 
+interface fillOnboardingStep3GermanyFormOptions {
+  contract_end_date?: string;
+  work_schedule?: string;
+  probation_length_choice?: string;
+  notice_period_choice?: string;
+  available_pto_type?: string;
+  required_qualifications?: string;
+  role_description?: string;
+  experience_level?: string;
+  work_address_is_home_address?: string;
+  annual_gross_salary?: string;
+  has_signing_bonus?: string;
+  has_bonus?: string;
+  has_commissions?: string;
+  equity_compensation?: string;
+  non_compete_clause_apply?: string;
+  ancillary_positions_clause_apply?: string;
+  work_equipment_provided?: string;
+}
+
+/**
+ * Germany's contract_details, verified against the real rendered form (its live schema
+ * differs from src/flows/Onboarding/tests/fixtures/contractDetails/v1-germany.ts in several
+ * ways not reflected there, confirmed by dumping `[data-field]` names from the actual DOM
+ * rather than reading the schema alone):
+ *
+ * - contract_duration_type is forced to the single "fixed_term" option and rendered as a
+ *   static statement ("Fixed-term contract duration for Germany"), not an interactive radio -
+ *   same pattern as basic_information's has_seniority_date. contract_end_date is the only
+ *   interactive part of that pairing.
+ * - work_schedule ('full_time') drives a custom "Daily Schedule" widget (the daily_schedule
+ *   feature) that defaults to Mon-Fri 09h00-18h00 with a 1h break = 40h/week already, so
+ *   there's no separate work_hours_per_week input left to fill.
+ * - probation_length and notice_period are not plain number fields here; they're
+ *   probation_length_recommended / notice_period_choice, each a "recommended vs. choose your
+ *   own length" radio. Picking "recommended" avoids the follow-up number input.
+ * - available_pto_type: 'unlimited' turns available_pto into a computed statement ("20
+ *   vacation days per year, automatically calculated..."), so there's no separate amount to
+ *   fill, unlike Spain's always-editable available_pto.
+ * - required_qualifications (a minimum-education combobox) and
+ *   ancillary_positions_clause_apply are both new fields Spain's schema has no equivalent of.
+ * - non_compete_clause_apply is active and required here, unlike the deprecated field of the
+ *   same name in the raw schema fixture (Germany's engagement_agreement_details/AUG context
+ *   resolves a different schema branch than a plain country-level fetch does).
+ */
+export async function fillOnboardingStep3GermanyForm(
+  page: Page,
+  options: Partial<fillOnboardingStep3GermanyFormOptions>,
+) {
+  await fillForm(page, [
+    {
+      type: 'datepicker',
+      value: options.contract_end_date,
+      testId: 'date-picker-button-contract_end_date',
+    },
+    {
+      type: 'radio',
+      value: options.work_schedule,
+      name: 'work_schedule',
+    },
+    {
+      type: 'radio',
+      value: options.probation_length_choice,
+      name: 'probation_length_recommended',
+    },
+    {
+      type: 'radio',
+      value: options.notice_period_choice,
+      name: 'notice_period_choice',
+    },
+    {
+      type: 'radio',
+      value: options.available_pto_type,
+      name: 'available_pto_type',
+    },
+    {
+      type: 'comboBox',
+      value: options.required_qualifications,
+      name: 'required_qualifications',
+    },
+    {
+      type: 'textField',
+      value: options.role_description,
+      name: 'role_description',
+    },
+    {
+      type: 'radio',
+      value: options.experience_level,
+      name: 'experience_level',
+    },
+    {
+      type: 'radio',
+      value: options.work_address_is_home_address,
+      name: 'work_address.is_home_address',
+    },
+    {
+      type: 'textField',
+      value: options.annual_gross_salary,
+      name: 'annual_gross_salary',
+    },
+    {
+      type: 'radio',
+      value: options.has_signing_bonus,
+      name: 'has_signing_bonus',
+    },
+    {
+      type: 'radio',
+      value: options.has_bonus,
+      name: 'has_bonus',
+    },
+    {
+      type: 'radio',
+      value: options.has_commissions,
+      name: 'has_commissions',
+    },
+    {
+      type: 'radio',
+      value: options.equity_compensation,
+      name: 'equity_compensation.offer_equity_compensation',
+    },
+    {
+      type: 'radio',
+      value: options.non_compete_clause_apply,
+      name: 'non_compete_clause_apply',
+    },
+    {
+      type: 'radio',
+      value: options.ancillary_positions_clause_apply,
+      name: 'ancillary_positions_clause_apply',
+    },
+    {
+      type: 'radio',
+      value: options.work_equipment_provided,
+      name: 'work_equipment_provided',
+    },
+  ]);
+
+  await page.click('.submit-button');
+  await page.getByText('Loading...').waitFor({ state: 'hidden' });
+}
+
 interface fillOnboardingStep3SpainFormOptions {
   contract_duration_type?: string;
   work_schedule?: string;
