@@ -1,18 +1,6 @@
-/**
- * ISO 3166-1 alpha-3 code -> common English country name, scoped to the
- * countries tiger currently has a contract_details schema for. Sourced from
- * tiger's vendored `countries` dataset (apps/tiger/deps/countries), with a
- * few overly formal ISO short names swapped for the common name (e.g. "United
- * Kingdom" instead of "United Kingdom of Great Britain and Northern
- * Ireland"), plus Remote-specific pseudo-country codes that aren't in ISO
- * 3166 at all (FRA_SAS, ITA_APL) and Kosovo (XKX has no official ISO-3166-1
- * entry but is the widely used user-assigned code Remote and others use).
- *
- * Only used to make scripts/sync-country-contract-versions.ts's report
- * readable — not a source of truth for anything shipped in the library.
- * When tiger adds a schema for a country not listed here, the report falls
- * back to printing the bare code.
- */
+// Alpha3 -> country name for the gap report in sync-country-contract-versions.ts.
+// Sourced from tiger's vendored ISO-3166 dataset (apps/tiger/deps/countries),
+// plus FRA_SAS/ITA_APL/XKX which tiger uses but ISO 3166 doesn't define.
 export const COUNTRY_NAMES: Record<string, string> = {
   ALB: 'Albania',
   ARE: 'United Arab Emirates',

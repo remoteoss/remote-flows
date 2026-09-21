@@ -1,19 +1,14 @@
 #!/usr/bin/env tsx
 /**
- * Regenerates COUNTRY_CONTRACT_VERSIONS in
- * src/components/JsonSchemaComparison/schemaVersions.ts from the tiger repo,
- * and reports the gap between the latest version available per country and
- * the version example/ actually pins in ONBOARDING_OPTIONS.jsonSchemaVersionByCountry.
- *
- * This replaces the manual "run promptTiger.txt against an LLM in tiger,
- * paste the result back" step: counting snapshot files is fully mechanical.
+ * Regenerates COUNTRY_CONTRACT_VERSIONS in schemaVersions.ts from tiger, and
+ * reports the gap vs. the version example/ pins in jsonSchemaVersionByCountry.
+ * Replaces the old manual "run promptTiger.txt against an LLM" step.
  *
  * Usage:
  *   npm run sync:contract-versions -- [--tiger-path=../tiger] [--write] [--report-file=path.md]
  *
- * By default this only prints a report (dry run). Pass --write to update
- * schemaVersions.ts on disk, and --report-file to also write the gap report
- * as a markdown table (used by CI to fill in a PR body).
+ * Dry run by default; --write updates schemaVersions.ts, --report-file writes
+ * the gap report as markdown (used by CI as the PR body).
  */
 import fs from 'node:fs';
 import path from 'node:path';
