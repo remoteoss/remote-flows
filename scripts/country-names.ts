@@ -1,0 +1,121 @@
+/**
+ * ISO 3166-1 alpha-3 code -> common English country name, scoped to the
+ * countries tiger currently has a contract_details schema for. Sourced from
+ * tiger's vendored `countries` dataset (apps/tiger/deps/countries), with a
+ * few overly formal ISO short names swapped for the common name (e.g. "United
+ * Kingdom" instead of "United Kingdom of Great Britain and Northern
+ * Ireland"), plus Remote-specific pseudo-country codes that aren't in ISO
+ * 3166 at all (FRA_SAS, ITA_APL) and Kosovo (XKX has no official ISO-3166-1
+ * entry but is the widely used user-assigned code Remote and others use).
+ *
+ * Only used to make scripts/sync-country-contract-versions.ts's report
+ * readable — not a source of truth for anything shipped in the library.
+ * When tiger adds a schema for a country not listed here, the report falls
+ * back to printing the bare code.
+ */
+export const COUNTRY_NAMES: Record<string, string> = {
+  ALB: 'Albania',
+  ARE: 'United Arab Emirates',
+  ARG: 'Argentina',
+  ARM: 'Armenia',
+  AUS: 'Australia',
+  AUT: 'Austria',
+  BEL: 'Belgium',
+  BGD: 'Bangladesh',
+  BGR: 'Bulgaria',
+  BIH: 'Bosnia and Herzegovina',
+  BLR: 'Belarus',
+  BOL: 'Bolivia',
+  BRA: 'Brazil',
+  CAN: 'Canada',
+  CHE: 'Switzerland',
+  CHL: 'Chile',
+  CHN: 'China',
+  COL: 'Colombia',
+  CRI: 'Costa Rica',
+  CYP: 'Cyprus',
+  CZE: 'Czech Republic',
+  DEU: 'Germany',
+  DNK: 'Denmark',
+  DOM: 'Dominican Republic',
+  ECU: 'Ecuador',
+  EGY: 'Egypt',
+  ESP: 'Spain',
+  EST: 'Estonia',
+  FIN: 'Finland',
+  FRA: 'France',
+  FRA_SAS: 'France (SAS)',
+  GBR: 'United Kingdom',
+  GEO: 'Georgia',
+  GRC: 'Greece',
+  GTM: 'Guatemala',
+  HKG: 'Hong Kong',
+  HND: 'Honduras',
+  HRV: 'Croatia',
+  HUN: 'Hungary',
+  IDN: 'Indonesia',
+  IND: 'India',
+  IRL: 'Ireland',
+  ISL: 'Iceland',
+  ISR: 'Israel',
+  ITA: 'Italy',
+  ITA_APL: 'Italy (APL)',
+  JAM: 'Jamaica',
+  JPN: 'Japan',
+  KEN: 'Kenya',
+  KGZ: 'Kyrgyzstan',
+  KHM: 'Cambodia',
+  KOR: 'South Korea',
+  LBN: 'Lebanon',
+  LKA: 'Sri Lanka',
+  LTU: 'Lithuania',
+  LUX: 'Luxembourg',
+  LVA: 'Latvia',
+  MAR: 'Morocco',
+  MDA: 'Moldova',
+  MEX: 'Mexico',
+  MKD: 'North Macedonia',
+  MLT: 'Malta',
+  MNG: 'Mongolia',
+  MUS: 'Mauritius',
+  MYS: 'Malaysia',
+  NGA: 'Nigeria',
+  NIC: 'Nicaragua',
+  NLD: 'Netherlands',
+  NOR: 'Norway',
+  NZL: 'New Zealand',
+  PAK: 'Pakistan',
+  PAN: 'Panama',
+  PER: 'Peru',
+  PHL: 'Philippines',
+  POL: 'Poland',
+  PRI: 'Puerto Rico',
+  PRT: 'Portugal',
+  PRY: 'Paraguay',
+  ROU: 'Romania',
+  SAU: 'Saudi Arabia',
+  SGP: 'Singapore',
+  SLV: 'El Salvador',
+  SRB: 'Serbia',
+  SVK: 'Slovakia',
+  SVN: 'Slovenia',
+  SWE: 'Sweden',
+  THA: 'Thailand',
+  TUN: 'Tunisia',
+  TUR: 'Turkey',
+  TWN: 'Taiwan',
+  UGA: 'Uganda',
+  UKR: 'Ukraine',
+  URY: 'Uruguay',
+  USA: 'United States',
+  VNM: 'Vietnam',
+  XKX: 'Kosovo',
+  ZAF: 'South Africa',
+  ZWE: 'Zimbabwe',
+};
+
+/** "Portugal (PRT)", or just the code if it's not in COUNTRY_NAMES (e.g. tiger added a new one). */
+export function countryLabel(code: string): string {
+  const name = COUNTRY_NAMES[code];
+  return name ? `${name} (${code})` : code;
+}

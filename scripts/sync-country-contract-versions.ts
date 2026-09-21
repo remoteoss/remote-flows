@@ -18,6 +18,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { countryLabel } from './country-names';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -163,7 +164,10 @@ function generateMarkdownGapReport(
   totalCountries: number,
 ): string {
   const rows = gapReport
-    .map((r) => `| ${r.country} | v${r.inUse} | v${r.latest} | ${r.gap} |`)
+    .map(
+      (r) =>
+        `| ${countryLabel(r.country)} | v${r.inUse} | v${r.latest} | ${r.gap} |`,
+    )
     .join('\n');
   return [
     `Contract details schema gap: ${gapReport.length}/${totalCountries} countries in \`example/\` are behind the latest version available in tiger.`,
@@ -189,12 +193,17 @@ function main() {
   console.log(
     `\nContract details schema gap (${Object.keys(latestVersions).length} countries in tiger, ${gapReport.length} behind latest):\n`,
   );
+  const countryColumnWidth =
+    Math.max(...gapReport.map((r) => countryLabel(r.country).length), 7) + 2;
   console.log(
-    'COUNTRY'.padEnd(10) + 'IN USE'.padEnd(10) + 'LATEST'.padEnd(10) + 'GAP',
+    'COUNTRY'.padEnd(countryColumnWidth) +
+      'IN USE'.padEnd(10) +
+      'LATEST'.padEnd(10) +
+      'GAP',
   );
   for (const row of gapReport) {
     console.log(
-      row.country.padEnd(10) +
+      countryLabel(row.country).padEnd(countryColumnWidth) +
         `v${row.inUse}`.padEnd(10) +
         `v${row.latest}`.padEnd(10) +
         row.gap,
