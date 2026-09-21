@@ -10,6 +10,8 @@
 
   "postUpdateOptions": ["npmDedupe"],
 
+  "ignoreScripts": true,
+
   "vulnerabilityAlerts": {
     "enabled": true,
     "groupName": null,
