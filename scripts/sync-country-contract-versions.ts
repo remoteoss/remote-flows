@@ -1,11 +1,12 @@
 #!/usr/bin/env tsx
 /**
- * Regenerates COUNTRY_CONTRACT_VERSIONS in schemaVersions.ts from tiger, and
- * reports the gap vs. the version example/ pins in jsonSchemaVersionByCountry.
- * Replaces the old manual "run promptTiger.txt against an LLM" step.
+ * Regenerates COUNTRY_CONTRACT_VERSIONS in schemaVersions.ts from the BE repo
+ * (tiger), and reports the gap vs. the version example/ pins in
+ * jsonSchemaVersionByCountry. Replaces the old manual "run an LLM prompt
+ * against a tiger checkout, paste the result back" step.
  *
  * Usage:
- *   npm run sync:contract-versions -- [--tiger-path=../tiger] [--write] [--report-file=path.md]
+ *   npm run sync:contract-versions -- [--be-repo-path=../tiger] [--write] [--report-file=path.md]
  *
  * Dry run by default; --write updates schemaVersions.ts, --report-file writes
  * the gap report as markdown (used by CI as the PR body).
@@ -33,11 +34,11 @@ interface VersionOption {
 
 function parseArgs() {
   const args = process.argv.slice(2);
-  const tigerPathArg = args.find((a) => a.startsWith('--tiger-path='));
+  const beRepoPathArg = args.find((a) => a.startsWith('--be-repo-path='));
   const reportFileArg = args.find((a) => a.startsWith('--report-file='));
   return {
-    tigerPath: tigerPathArg
-      ? tigerPathArg.split('=')[1]
+    beRepoPath: beRepoPathArg
+      ? beRepoPathArg.split('=')[1]
       : path.join(__dirname, '../../tiger'),
     write: args.includes('--write'),
     reportFile: reportFileArg ? reportFileArg.split('=')[1] : undefined,
@@ -49,15 +50,15 @@ function parseArgs() {
  * snapshots/{COUNTRY}/ (historical versions) + 1 (the current root file).
  */
 function computeCountryContractVersions(
-  tigerPath: string,
+  beRepoPath: string,
 ): Record<string, VersionOption[]> {
   const contractDetailsDir = path.join(
-    tigerPath,
+    beRepoPath,
     'apps/tiger/priv/json_schemas/contract_details',
   );
   if (!fs.existsSync(contractDetailsDir)) {
     throw new Error(
-      `Could not find ${contractDetailsDir}. Pass --tiger-path=<path to tiger checkout>.`,
+      `Could not find ${contractDetailsDir}. Pass --be-repo-path=<path to a tiger checkout>.`,
     );
   }
 
@@ -107,7 +108,7 @@ function generateSchemaVersionsFile(
     .join('\n');
 
   const newBlock = [
-    '// AI generated from tiger',
+    '// Generated from the BE repo',
     `// Last updated: ${today}`,
     'export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {',
     entries,
@@ -115,7 +116,7 @@ function generateSchemaVersionsFile(
   ].join('\n');
 
   return currentContent.replace(
-    /\/\/ AI generated from tiger\n\/\/ Last updated: \d{4}-\d{2}-\d{2}\nexport const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption\[\]> = \{[\s\S]*?\n\};/,
+    /\/\/ .*\n\/\/ Last updated: \d{4}-\d{2}-\d{2}\nexport const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption\[\]> = \{[\s\S]*?\n\};/,
     newBlock,
   );
 }
@@ -165,7 +166,7 @@ function generateMarkdownGapReport(
     )
     .join('\n');
   return [
-    `Contract details schema gap: ${gapReport.length}/${totalCountries} countries in \`example/\` are behind the latest version available in tiger.`,
+    `Contract details schema gap: ${gapReport.length}/${totalCountries} countries in \`example/\` are behind the latest version available in the BE repo.`,
     '',
     '| Country | In use | Latest | Gap |',
     '| --- | --- | --- | --- |',
@@ -174,9 +175,9 @@ function generateMarkdownGapReport(
 }
 
 function main() {
-  const { tigerPath, write, reportFile } = parseArgs();
+  const { beRepoPath, write, reportFile } = parseArgs();
 
-  const latestVersions = computeCountryContractVersions(tigerPath);
+  const latestVersions = computeCountryContractVersions(beRepoPath);
   const onboardingConstants = fs.readFileSync(
     ONBOARDING_CONSTANTS_PATH,
     'utf-8',
@@ -186,7 +187,7 @@ function main() {
   const gapReport = buildGapReport(latestVersions, inUseVersions);
 
   console.log(
-    `\nContract details schema gap (${Object.keys(latestVersions).length} countries in tiger, ${gapReport.length} behind latest):\n`,
+    `\nContract details schema gap (${Object.keys(latestVersions).length} countries in the BE repo, ${gapReport.length} behind latest):\n`,
   );
   const countryColumnWidth =
     Math.max(...gapReport.map((r) => countryLabel(r.country).length), 7) + 2;
@@ -217,8 +218,8 @@ function main() {
   const changed = currentSchemaVersionsContent !== newSchemaVersionsContent;
   console.log(
     changed
-      ? '\nschemaVersions.ts is stale relative to tiger.'
-      : '\nschemaVersions.ts already matches tiger.',
+      ? '\nschemaVersions.ts is stale relative to the BE repo.'
+      : '\nschemaVersions.ts already matches the BE repo.',
   );
 
   if (write && changed) {

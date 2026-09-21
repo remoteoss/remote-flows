@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   sync:
-    name: Sync COUNTRY_CONTRACT_VERSIONS from tiger
+    name: Sync COUNTRY_CONTRACT_VERSIONS from the BE repo
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -31,33 +31,35 @@ jobs:
       - name: Install dependencies
         run: npm ci --include=optional --ignore-scripts
 
-      - name: Check for tiger GitLab token
+      - name: Check for BE repo GitLab token
         id: check-token
         env:
-          TIGER_TOKEN: ${{ secrets.TIGER_GITLAB_READ_TOKEN }}
+          BE_REPO_TOKEN: ${{ secrets.BE_REPO_GITLAB_READ_TOKEN }}
         run: |
-          if [ -z "$TIGER_TOKEN" ]; then
-            echo "::warning::TIGER_GITLAB_READ_TOKEN is not configured. Skipping sync. See scripts/sync-country-contract-versions.ts for what this needs."
+          if [ -z "$BE_REPO_TOKEN" ]; then
+            echo "::warning::BE_REPO_GITLAB_READ_TOKEN is not configured. Skipping sync. See scripts/sync-country-contract-versions.ts for what this needs."
             echo "has_token=false" >> "$GITHUB_OUTPUT"
           else
             echo "has_token=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Sparse-checkout tiger's contract_details schemas
+      # The BE repo is tiger (gitlab.com/remote-com/employ-starbase/tiger);
+      # only its contract_details schemas are needed here.
+      - name: Sparse-checkout BE repo contract_details schemas
         if: steps.check-token.outputs.has_token == 'true'
         env:
-          TIGER_TOKEN: ${{ secrets.TIGER_GITLAB_READ_TOKEN }}
+          BE_REPO_TOKEN: ${{ secrets.BE_REPO_GITLAB_READ_TOKEN }}
         run: |
           git clone --depth 1 --filter=blob:none --sparse \
-            "https://oauth2:${TIGER_TOKEN}@gitlab.com/remote-com/employ-starbase/tiger.git" \
-            tiger-schemas
-          git -C tiger-schemas sparse-checkout set apps/tiger/priv/json_schemas/contract_details
+            "https://oauth2:${BE_REPO_TOKEN}@gitlab.com/remote-com/employ-starbase/tiger.git" \
+            be-repo-schemas
+          git -C be-repo-schemas sparse-checkout set apps/tiger/priv/json_schemas/contract_details
 
       - name: Run sync script
         if: steps.check-token.outputs.has_token == 'true'
         run: |
           npm run sync:contract-versions -- \
-            --tiger-path=./tiger-schemas \
+            --be-repo-path=./be-repo-schemas \
             --write \
             --report-file=/tmp/gap-report.md
 
@@ -65,10 +67,10 @@ jobs:
         if: steps.check-token.outputs.has_token == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
-          commit-message: 'chore(JsonSchemaComparison): sync COUNTRY_CONTRACT_VERSIONS from tiger'
+          commit-message: 'chore(JsonSchemaComparison): sync COUNTRY_CONTRACT_VERSIONS from the BE repo'
           branch: chore/sync-country-contract-versions-auto
           delete-branch: true
-          title: 'chore(JsonSchemaComparison): sync COUNTRY_CONTRACT_VERSIONS from tiger'
+          title: 'chore(JsonSchemaComparison): sync COUNTRY_CONTRACT_VERSIONS from the BE repo'
           body-path: /tmp/gap-report.md
           add-paths: |
             src/components/JsonSchemaComparison/schemaVersions.ts

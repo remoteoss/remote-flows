@@ -11,7 +11,7 @@ export const BASIC_INFO_VERSIONS: VersionOption[] = [
   { value: 4, label: 'v4 (Recommended)' },
 ];
 
-// AI generated from tiger
+// Generated from the BE repo
 // Last updated: 2026-09-21
 export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   ALB: [
