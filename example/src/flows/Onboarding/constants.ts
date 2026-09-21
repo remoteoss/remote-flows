@@ -39,7 +39,7 @@ export const ONBOARDING_OPTIONS = {
     },
     GBR: {
       // United Kingdom
-      contract_details: 3,
+      contract_details: 6,
     },
     HKG: {
       // Hong Kong
