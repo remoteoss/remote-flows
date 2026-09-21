@@ -25,6 +25,10 @@ export const ONBOARDING_OPTIONS = {
       // Belarus
       contract_details: 2,
     },
+    CAN: {
+      // Canada
+      contract_details: 5,
+    },
     CHN: {
       // China
       contract_details: 3,
