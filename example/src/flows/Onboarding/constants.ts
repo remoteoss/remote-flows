@@ -47,7 +47,7 @@ export const ONBOARDING_OPTIONS = {
     },
     IND: {
       // India
-      contract_details: 2,
+      contract_details: 5,
     },
     ISL: {
       // Iceland
