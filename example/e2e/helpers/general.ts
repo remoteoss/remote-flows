@@ -204,7 +204,10 @@ export async function fillTel(
   countryLabel: string,
   value: string = '',
 ) {
-  await page.locator(`[data-field="${dataField}"]`).getByRole('combobox').click();
+  await page
+    .locator(`[data-field="${dataField}"]`)
+    .getByRole('combobox')
+    .click();
   const option = page.getByRole('option', { name: countryLabel });
   await option.waitFor({ state: 'visible' });
   await option.click();
