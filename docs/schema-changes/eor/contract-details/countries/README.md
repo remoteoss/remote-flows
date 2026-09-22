@@ -71,7 +71,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Portugal             | PRT  | v3               | March 2026     |
 | Saudi Arabia         | SAU  | v2               | March 2026     |
 | Singapore            | SGP  | v2               | March 2026     |
-| Spain                | ESP  | v5               | September 2026 |
+| Spain                | ESP  | v7               | September 2026 |
 | Serbia               | SRB  | v2               | March 2026     |
 | Sweden               | SWE  | v2               | March 2026     |
 | United Kingdom       | GBR  | v2               | March 2026     |
