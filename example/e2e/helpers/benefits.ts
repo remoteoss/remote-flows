@@ -16,7 +16,10 @@ type JsfField = {
 type CreateHeadlessForm = (
   schema: Record<string, unknown>,
   options?: { initialValues?: Record<string, unknown> },
-) => { fields: JsfField[] };
+) => {
+  fields: JsfField[];
+  handleValidation: (values: Record<string, unknown>) => unknown;
+};
 
 let createHeadlessFormFn: CreateHeadlessForm | undefined;
 
@@ -127,10 +130,15 @@ const MAX_ITERATIONS = 20;
 
 /**
  * Fills the Benefits step generically instead of hardcoding a country's benefit-group UUIDs
- * (as the Spain-only helper does): re-derives the visible fields from the intercepted schema via
+ * (as the Spain-only helper did): derives the visible fields from the intercepted schema via
  * the same createHeadlessForm engine the app uses, picks each radio/select's first option, and
  * repeats — since some fields (e.g. a benefit's "value") only become visible once a sibling
  * field, like "filter", has a value.
+ *
+ * createHeadlessForm is called once; `handleValidation` re-evaluates the schema's conditionals
+ * against the accumulated values and mutates the same `fields` array in place (it does not
+ * return a new one), so each round just re-reads `fields` rather than re-deriving the form from
+ * scratch.
  */
 export async function fillOnboardingBenefitsStepDynamically(
   page: Page,
@@ -144,9 +152,11 @@ export async function fillOnboardingBenefitsStepDynamically(
 
     const values: Record<string, unknown> = {};
     const handled = new Set<string>();
+    const { fields, handleValidation } = createHeadlessForm(schema, {
+      initialValues: values,
+    });
 
     for (let i = 0; i < MAX_ITERATIONS; i++) {
-      const { fields } = createHeadlessForm(schema, { initialValues: values });
       const pending = collectFillableFields(fields, '', []).filter(
         (field) => !handled.has(field.domKey),
       );
@@ -174,6 +184,8 @@ export async function fillOnboardingBenefitsStepDynamically(
 
         setNestedValue(values, field.valuePath, choice.value);
       }
+
+      handleValidation(values);
     }
   }
 
