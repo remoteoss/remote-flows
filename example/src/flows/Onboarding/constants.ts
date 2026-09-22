@@ -124,7 +124,7 @@ export const ONBOARDING_OPTIONS = {
 
     USA: {
       // United States
-      contract_details: 3,
+      contract_details: 7,
     },
   },
   jsfModify: {
