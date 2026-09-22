@@ -67,12 +67,18 @@ export const useContractDocument = ({
   const {
     data: employment,
     isLoading: isLoadingEmployment,
-    error: employmentError,
+    isSuccess: hasEmploymentResponse,
+    error: employmentQueryError,
   } = useEmploymentQuery({
     employmentId,
     queryParams: { exclude_files: true },
     enabled: Boolean(employmentId),
   });
+  const employmentError =
+    employmentQueryError ??
+    (hasEmploymentResponse && !employment
+      ? new Error('Failed to fetch employment')
+      : null);
 
   const {
     data: contractDocuments,
@@ -116,10 +122,11 @@ export const useContractDocument = ({
   const contractDetailsInitialValues = useMemo(
     () =>
       getInitialValues(contractDetailsFields, {
+        ...employment?.contract_details,
         service_duration: {
+          ...(employment?.contract_details?.service_duration as object),
           provisional_start_date: format(new Date(), 'yyyy-MM-dd'),
         },
-        ...employment?.contract_details,
       }),
     [contractDetailsFields, employment?.contract_details],
   );
