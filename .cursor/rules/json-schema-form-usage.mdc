@@ -1,0 +1,57 @@
+---
+alwaysApply: true
+description: Call createHeadlessForm once and recompute via handleValidation, not by re-calling createHeadlessForm on every value change
+glob: '{src,example/e2e}/**/*.{ts,tsx}'
+---
+
+# createHeadlessForm / handleValidation Rule
+
+## Philosophy: Recompute Incrementally, Don't Re-Derive From Scratch
+
+`createHeadlessForm` (from `@remoteoss/remote-json-schema-form-kit`, wrapping either
+`@remoteoss/json-schema-form` or the deprecated v0 package) is designed to be called **once**
+per schema. When values change and conditional fields (`if`/`then`, visibility, available
+`options`) need to be re-evaluated, call the `handleValidation` function it returns instead of
+calling `createHeadlessForm` again.
+
+**Both jsf versions implement `handleValidation` by mutating the same `fields` array `createHeadlessForm`
+returned, in place** — it does not return a new one. Re-invoking `createHeadlessForm` from scratch every
+time values change throws away that array and re-derives the entire form (types, options, conditionals)
+from the raw JSON Schema for no reason.
+
+## Pattern to Follow
+
+### ❌ DON'T: Re-call createHeadlessForm on every value change
+
+```typescript
+function recompute(values: Record<string, unknown>) {
+  // Wasteful: re-parses the schema and rebuilds every field from scratch each time.
+  const { fields } = createHeadlessForm(schema, { initialValues: values });
+  return fields;
+}
+```
+
+### ✅ DO: Call createHeadlessForm once, then drive updates through handleValidation
+
+```typescript
+const { fields, handleValidation } = createHeadlessForm(schema, {
+  initialValues: values,
+});
+
+function recompute(values: Record<string, unknown>) {
+  handleValidation(values); // mutates `fields` in place — re-read it, don't re-derive it
+  return fields;
+}
+```
+
+**Reference:** `example/e2e/helpers/benefits.ts` (`fillOnboardingBenefitsStepDynamically`) calls
+`createHeadlessForm` once and loops on `handleValidation(values)` to discover fields that only
+become visible once a sibling field (e.g. a benefit's "value" after its "filter") has a value.
+
+## Known Exception: Legacy Call Sites
+
+Some existing code (e.g. `useBenefitOffersSchema` and similar hooks in `src/flows/*/api.ts`) calls
+`createHeadlessForm` fresh inside a React Query `select` that re-runs whenever `fieldValues`
+changes, instead of using `handleValidation`. This is accepted technical debt, not the pattern to
+copy — new code and refactors of these call sites should move to the `handleValidation` pattern
+above.
