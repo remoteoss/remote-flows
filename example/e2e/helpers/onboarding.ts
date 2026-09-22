@@ -48,6 +48,8 @@ interface fillOnboardingStep2FormOptions {
   login_email?: string;
   personal_email?: string;
   work_email?: string;
+  mobile_number_country?: string;
+  mobile_number?: string;
   job_title?: string;
   country_id?: string;
   tax_job_category?: string;
@@ -72,6 +74,14 @@ export async function fillOnboardingStep2Form(
       name: 'personal_email',
     },
     { type: 'textField', value: options.work_email, name: 'work_email' },
+    {
+      // Required for at least Germany; absent from Spain's schema entirely.
+      type: 'tel',
+      value: options.mobile_number,
+      countryLabel: options.mobile_number_country,
+      name: 'mobile_number',
+      optional: true,
+    },
     { type: 'textField', value: options.job_title, name: 'job_title' },
     {
       type: 'comboBox',
@@ -89,9 +99,43 @@ export async function fillOnboardingStep2Form(
       testId: 'date-picker-button-provisional_start_date',
     },
     {
+      // Absent for at least Germany, where seniority is forced to "no" server-side and the
+      // form shows a static "Previous seniority cannot be recognized" notice instead of an
+      // interactive radio.
       type: 'radio',
       value: options.has_seniority_date,
       name: 'has_seniority_date',
+      optional: true,
+    },
+  ]);
+
+  await page.click('.submit-button');
+  await page.getByText('Loading...').waitFor({ state: 'hidden' });
+}
+
+interface fillOnboardingEngagementAgreementDetailsGermanyFormOptions {
+  has_business_presence?: string;
+  has_similar_roles?: string;
+}
+
+/** Germany-specific: shown between Basic Information and Contract Details whenever the API
+ * returns a non-empty engagement_agreement_details schema (gated by the `dynamic_steps`
+ * feature in hooks.tsx). Its rendered step title is "Labor leasing in Germany", not the
+ * generic "Engagement Agreement Details" label. Spain has no equivalent step. */
+export async function fillOnboardingEngagementAgreementDetailsGermanyForm(
+  page: Page,
+  options: Partial<fillOnboardingEngagementAgreementDetailsGermanyFormOptions>,
+) {
+  await fillForm(page, [
+    {
+      type: 'radio',
+      value: options.has_business_presence,
+      name: 'has_business_presence',
+    },
+    {
+      type: 'radio',
+      value: options.has_similar_roles,
+      name: 'has_similar_roles',
     },
   ]);
 
