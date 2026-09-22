@@ -5,6 +5,7 @@ import {
   fillOnboardingStep1Form,
   fillOnboardingStep2Form,
   fillOnboardingEngagementAgreementDetailsGermanyForm,
+  fillOnboardingStep3GermanyForm,
 } from './helpers/onboarding';
 
 test.describe('Onboard Germany employee', () => {
@@ -56,5 +57,31 @@ test.describe('Onboard Germany employee', () => {
 
     stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Contract Details');
+
+    await fillOnboardingStep3GermanyForm(page, {
+      contract_end_date: 'auto',
+      work_schedule: 'full_time',
+      probation_length_choice: 'recommended',
+      notice_period: '1',
+      available_pto_type: 'unlimited',
+      required_qualifications: "Bachelor's degree",
+      role_description:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim.',
+      experience_level:
+        'Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy',
+      role_requires_license: 'no',
+      work_address_is_home_address: 'yes',
+      annual_gross_salary: '50000',
+      has_signing_bonus: 'no',
+      has_bonus: 'no',
+      has_commissions: 'no',
+      equity_compensation: 'no',
+      non_compete_clause_apply: 'no',
+      ancillary_positions_clause_apply: 'no',
+      work_equipment_provided: 'no',
+    });
+
+    stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Benefits');
   });
 });

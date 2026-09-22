@@ -143,6 +143,134 @@ export async function fillOnboardingEngagementAgreementDetailsGermanyForm(
   await page.getByText('Loading...').waitFor({ state: 'hidden' });
 }
 
+interface fillOnboardingStep3GermanyFormOptions {
+  contract_end_date?: string;
+  work_schedule?: string;
+  probation_length_choice?: string;
+  notice_period?: string;
+  available_pto_type?: string;
+  required_qualifications?: string;
+  role_description?: string;
+  experience_level?: string;
+  role_requires_license?: string;
+  work_address_is_home_address?: string;
+  annual_gross_salary?: string;
+  has_signing_bonus?: string;
+  has_bonus?: string;
+  has_commissions?: string;
+  equity_compensation?: string;
+  non_compete_clause_apply?: string;
+  ancillary_positions_clause_apply?: string;
+  work_equipment_provided?: string;
+}
+
+/**
+ * Germany's contract_details, verified against the real rendered form - it differs from the
+ * static schema fixture in a few places. Notably: work_schedule fills the "Daily Schedule"
+ * widget's defaults rather than a separate work_hours_per_week input, and notice_period is a
+ * plain number field (not a "recommended vs. custom" radio like probation_length_recommended).
+ */
+export async function fillOnboardingStep3GermanyForm(
+  page: Page,
+  options: Partial<fillOnboardingStep3GermanyFormOptions>,
+) {
+  await fillForm(page, [
+    {
+      type: 'datepicker',
+      value: options.contract_end_date,
+      testId: 'date-picker-button-contract_end_date',
+    },
+    {
+      type: 'radio',
+      value: options.work_schedule,
+      name: 'work_schedule',
+    },
+    {
+      type: 'radio',
+      value: options.probation_length_choice,
+      name: 'probation_length_recommended',
+    },
+    {
+      type: 'textField',
+      value: options.notice_period,
+      name: 'notice_period',
+    },
+    {
+      type: 'radio',
+      value: options.available_pto_type,
+      name: 'available_pto_type',
+    },
+    {
+      type: 'comboBox',
+      value: options.required_qualifications,
+      name: 'required_qualifications',
+    },
+    {
+      type: 'textField',
+      value: options.role_description,
+      name: 'role_description',
+    },
+    {
+      type: 'radio',
+      value: options.experience_level,
+      name: 'experience_level',
+    },
+    {
+      type: 'radio',
+      value: options.role_requires_license,
+      name: 'role_requires_license',
+    },
+    {
+      type: 'radio',
+      value: options.work_address_is_home_address,
+      name: 'work_address.is_home_address',
+    },
+    {
+      type: 'textField',
+      value: options.annual_gross_salary,
+      name: 'annual_gross_salary',
+    },
+    {
+      type: 'radio',
+      value: options.has_signing_bonus,
+      name: 'has_signing_bonus',
+    },
+    {
+      type: 'radio',
+      value: options.has_bonus,
+      name: 'has_bonus',
+    },
+    {
+      type: 'radio',
+      value: options.has_commissions,
+      name: 'has_commissions',
+    },
+    {
+      type: 'radio',
+      value: options.equity_compensation,
+      name: 'equity_compensation.offer_equity_compensation',
+    },
+    {
+      type: 'radio',
+      value: options.non_compete_clause_apply,
+      name: 'non_compete_clause_apply',
+    },
+    {
+      type: 'radio',
+      value: options.ancillary_positions_clause_apply,
+      name: 'ancillary_positions_clause_apply',
+    },
+    {
+      type: 'radio',
+      value: options.work_equipment_provided,
+      name: 'work_equipment_provided',
+    },
+  ]);
+
+  await page.click('.submit-button');
+  await page.getByText('Loading...').waitFor({ state: 'hidden' });
+}
+
 interface fillOnboardingStep3SpainFormOptions {
   contract_duration_type?: string;
   work_schedule?: string;
