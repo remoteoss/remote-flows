@@ -26,7 +26,8 @@ export type inputType =
   | 'comboBox'
   | 'radio'
   | 'checkbox'
-  | 'datepicker';
+  | 'datepicker'
+  | 'tel';
 
 export type FillFormOptions = {
   type: inputType;
@@ -34,6 +35,8 @@ export type FillFormOptions = {
   name?: string;
   testId?: string;
   options?: { nativeSelect?: boolean };
+  /** Only used for type: 'tel' — the country-code combobox's visible option text, e.g. "Germany +49". */
+  countryLabel?: string;
   /**
    * The field may legitimately not be rendered, so skip it instead of failing when it is
    * absent. For fields the backend adds or drops behind a feature flag — the form is built
@@ -124,6 +127,13 @@ export async function fillForm(page: Page, values: FillFormOptions[]) {
           throw new Error('DatePicker need testId to be located');
         }
         break;
+      case 'tel':
+        if (option.name && option.countryLabel) {
+          await fillTel(page, option.name, option.countryLabel, option.value);
+        } else {
+          throw new Error('tel needs both name and countryLabel to be located');
+        }
+        break;
       default:
         throw new Error(`Unsupported input type: ${option.type}`);
     }
@@ -183,6 +193,25 @@ export async function fillRadio(
   );
   await locator.waitFor({ state: 'visible' });
   await locator.click();
+}
+
+/** TelFieldDefault renders a country-code combobox (e.g. "Germany +49") plus a plain phone
+ * number input, both under one [data-field]. Picking the country code sets the dial code; the
+ * number itself is entered separately and combined with it by the form. */
+export async function fillTel(
+  page: Page,
+  dataField: string,
+  countryLabel: string,
+  value: string = '',
+) {
+  await page
+    .locator(`[data-field="${dataField}"]`)
+    .getByRole('combobox')
+    .click();
+  const option = page.getByRole('option', { name: countryLabel });
+  await option.waitFor({ state: 'visible' });
+  await option.click();
+  await page.locator(`[data-field="${dataField}"] input`).fill(value);
 }
 
 export async function fillCheckbox(

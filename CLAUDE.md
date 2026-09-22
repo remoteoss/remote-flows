@@ -104,6 +104,7 @@ Tailwind v4 (`@tailwindcss/postcss`) + CSS variables. Public component classes a
 - **HTML from API responses is unsafe** — sanitize with `sanitizeHtml()` from `src/lib/utils.ts` (or DOMPurify) before rendering. The consumer-supplied `transformHtmlToComponents` receives **unsanitized** HTML; that's the consumer's responsibility per the README.
 - **Conventional commits** drive the automated release (`npm run release` → `scripts/release.ts`). `feat:` → minor, `fix:` → patch, `BREAKING CHANGE:` footer → major. Hotfix releases go through `npm run release:fix` from a version tag (see [DEVELOPMENT.md](DEVELOPMENT.md)).
 - **CHANGELOG.md and `package.json` version** are updated by the release scripts — do not bump them by hand on feature branches.
+- **PR descriptions follow [.github/pull_request_template.md](.github/pull_request_template.md)** (Summary, Why, What changed, Screenshots, Related Resources, Testing). `gh pr create` only picks it up as the default body without `--body`/`--body-file`/`--fill`; when scripting a PR body, read the template and fill it in rather than writing free-form text.
 
 ## Things that look broken but aren't
 
