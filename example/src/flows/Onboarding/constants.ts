@@ -39,7 +39,7 @@ export const ONBOARDING_OPTIONS = {
     },
     ESP: {
       // Spain
-      contract_details: 7,
+      contract_details: 5,
     },
     GBR: {
       // United Kingdom
