@@ -35,15 +35,21 @@ async function getCreateHeadlessForm(): Promise<CreateHeadlessForm> {
  * step transition that will request it (e.g. before submitting Contract Details) — Playwright
  * only observes responses that happen after the listener is registered.
  */
-export function watchForBenefitsSchema(
+export async function watchForBenefitsSchema(
   page: Page,
 ): Promise<Record<string, unknown>> {
-  return page
-    .waitForResponse((response) =>
-      /\/benefit-offers\/schema(\?|$)/.test(response.url()),
-    )
-    .then((response) => response.json())
-    .then((body) => (body?.data?.schema ?? {}) as Record<string, unknown>);
+  const response = await page.waitForResponse((response) =>
+    /\/benefit-offers\/schema(\?|$)/.test(response.url()),
+  );
+
+  if (!response.ok()) {
+    throw new Error(
+      `Fetching the benefit-offers schema failed with status ${response.status()}`,
+    );
+  }
+
+  const body = await response.json();
+  return (body?.data?.schema ?? {}) as Record<string, unknown>;
 }
 
 type CollectedField = {
