@@ -149,7 +149,7 @@
     "@vitest/coverage-istanbul": "5.0.0",
     "chalk": "5.6.2",
     "dotenv": "17.4.2",
-    "filesize": "11.0.22",
+    "filesize": "11.0.24",
     "glob": "13.0.6",
     "gzip-size": "7.0.0",
     "jsdom": "30.0.1",
