@@ -178,5 +178,5 @@ onboarding.
 Remote checks the services and deliverables for misclassification risk when the contract
 document is created. When the check rejects the text with a skippable error, the form shows a
 warning under the field and `canSkipAiValidation` turns `true`; submitting again sends
-`skip_ai_checks: true` and continues at the user's own risk. Editing the field clears the
-warning and the next submission is checked again.
+`skip_ai_checks: true` and continues at the user's own risk. Editing any field of the form
+clears the warning and the next submission is checked again.
