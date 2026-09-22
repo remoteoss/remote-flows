@@ -19,7 +19,7 @@ export const ONBOARDING_OPTIONS = {
     },
     DEU: {
       // Germany
-      contract_details: 4,
+      contract_details: 7,
     },
     BLR: {
       // Belarus
