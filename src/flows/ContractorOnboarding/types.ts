@@ -3,6 +3,7 @@ import {
   ContractorContractDetailsFormPayload,
   ContractorContractDetailsResponse,
 } from '@/src/common/contract-documents/types';
+export type { AiValidationError } from '@/src/common/contract-documents/types';
 import { OnboardingBack } from '@/src/flows/ContractorOnboarding/components/OnboardingBack';
 import { OnboardingSubmit } from '@/src/flows/ContractorOnboarding/components/OnboardingSubmit';
 import { PricingPlanStep } from '@/src/flows/ContractorOnboarding/components/PricingPlan';

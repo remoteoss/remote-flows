@@ -9,6 +9,8 @@ import { isNationalityCountryCode } from '@/src/flows/ContractorOnboarding/utils
 import { FILE_TYPES, MAX_FILE_SIZE } from '@/src/lib/uploadConfig';
 import { JSFCustomComponentProps } from '@/src/types/remoteFlows';
 
+export { buildContractDetailsJsfModify } from '@/src/common/contract-documents/jsfModify';
+
 /**
  * Builds the basic information jsf modify for the contractor onboarding flow
  * @param countryCode - The country code to use for the onboarding.

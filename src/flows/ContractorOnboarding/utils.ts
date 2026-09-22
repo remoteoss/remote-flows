@@ -5,6 +5,12 @@ import {
 } from '@/src/flows/ContractorOnboarding/constants';
 import { Employment } from '@/src/flows/Onboarding/types';
 
+export {
+  calculateProvisionalStartDateDescription,
+  isCMOrCMPlus,
+  transformAiErrorResponse,
+} from '@/src/common/contract-documents/utils';
+
 export type StepKeys =
   | 'select_country'
   | 'basic_information'

@@ -20,6 +20,7 @@ import {
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { useCreateContractorContractDocument } from '@/src/common/contract-documents/api';
+export { useCreateContractorContractDocument } from '@/src/common/contract-documents/api';
 import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
 import { contractOriginSchema } from '@/src/flows/ContractorOnboarding/json-schemas/contractOrigin';
 import { invoiceScheduleSchema } from '@/src/flows/ContractorOnboarding/json-schemas/invoiceSchedule';

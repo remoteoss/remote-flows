@@ -17,12 +17,10 @@ export type {
 export type { ProductType } from './constants';
 export {
   onboardingWorkflows,
+  contractorPlusProductIdentifier,
+  contractorStandardProductIdentifier,
+  corProductIdentifier,
   eorProductIdentifier,
   pricingPlanDetails,
   PRODUCT_IDENTIFIER_MAP,
 } from './constants';
-export {
-  contractorPlusProductIdentifier,
-  contractorStandardProductIdentifier,
-  corProductIdentifier,
-} from '@/src/common/contract-documents/constants';

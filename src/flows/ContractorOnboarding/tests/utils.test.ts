@@ -3,8 +3,7 @@ import {
   getBasicInformationSchemaVersion,
   buildInvoicePreviewPayload,
 } from '../utils';
-import { eorProductIdentifier } from '../constants';
-import { corProductIdentifier } from '@/src/common/contract-documents/constants';
+import { corProductIdentifier, eorProductIdentifier } from '../constants';
 
 describe('shouldIncludeProduct', () => {
   it('should return true when excludeProducts is empty', () => {
