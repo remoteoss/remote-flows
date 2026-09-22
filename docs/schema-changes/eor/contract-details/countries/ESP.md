@@ -4,7 +4,7 @@ Schema versions for employee onboarding in Spain.
 
 ## Current Version
 
-**Contract Details:** v7
+**Contract Details:** v7 works with v.1.57.0
 
 ## Contract Details
 
