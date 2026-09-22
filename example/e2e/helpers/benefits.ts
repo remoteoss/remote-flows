@@ -53,17 +53,27 @@ export async function watchForBenefitsSchema(
 }
 
 type CollectedField = {
-  key: string;
+  /** Dot-joined, matches the `data-field` attribute the form renders (DOM lookup only). */
+  domKey: string;
+  /** Segments for writing into the nested `initialValues` object the schema engine reads. */
+  valuePath: string[];
   inputType: string;
   options: JsfOption[];
 };
 
 /** Walks the fields returned by createHeadlessForm, mirroring the name-joining rule the real
  * form components use (FieldSetField / JSONSchemaFormFields): nested under a fieldset's own
- * name, unless the fieldset is `fieldset-flat`, whose children are named at the root. */
+ * name, unless the fieldset is `fieldset-flat`, whose children are named at the root.
+ *
+ * `domKey` and `valuePath` describe the same nesting but serve different consumers: the DOM only
+ * understands the dot-joined string form (`data-field="uuid.filter"`), while createHeadlessForm's
+ * conditional (if/then) evaluation reads a real nested object (`{ uuid: { filter: ... } }`) —
+ * feeding it a flat object keyed by the dotted string instead leaves siblings unresolved and
+ * conditionally-revealed fields (e.g. "value" after "filter") never appear. */
 function collectFillableFields(
   fields: JsfField[] | undefined,
-  prefix: string,
+  domPrefix: string,
+  valuePath: string[],
 ): CollectedField[] {
   const result: CollectedField[] = [];
 
@@ -71,18 +81,46 @@ function collectFillableFields(
     if (field.isVisible === false || field.deprecated) continue;
 
     const inputType = field.type ?? field.inputType ?? '';
-    const key = prefix ? `${prefix}.${field.name}` : field.name;
+    const domKey = domPrefix ? `${domPrefix}.${field.name}` : field.name;
 
     if (inputType === 'fieldset') {
-      result.push(...collectFillableFields(field.fields, key));
+      result.push(
+        ...collectFillableFields(field.fields, domKey, [
+          ...valuePath,
+          field.name,
+        ]),
+      );
     } else if (inputType === 'fieldset-flat') {
-      result.push(...collectFillableFields(field.fields, ''));
+      result.push(...collectFillableFields(field.fields, '', []));
     } else if (inputType === 'radio' || inputType === 'select') {
-      result.push({ key, inputType, options: field.options ?? [] });
+      result.push({
+        domKey,
+        valuePath: [...valuePath, field.name],
+        inputType,
+        options: field.options ?? [],
+      });
     }
   }
 
   return result;
+}
+
+function setNestedValue(
+  target: Record<string, unknown>,
+  path: string[],
+  value: unknown,
+): void {
+  let cursor = target;
+
+  for (const segment of path.slice(0, -1)) {
+    const existing = cursor[segment];
+    if (typeof existing !== 'object' || existing === null) {
+      cursor[segment] = {};
+    }
+    cursor = cursor[segment] as Record<string, unknown>;
+  }
+
+  cursor[path[path.length - 1]] = value;
 }
 
 const MAX_ITERATIONS = 20;
@@ -105,22 +143,23 @@ export async function fillOnboardingBenefitsStepDynamically(
     const createHeadlessForm = await getCreateHeadlessForm();
 
     const values: Record<string, unknown> = {};
-    const skipped = new Set<string>();
+    const handled = new Set<string>();
 
     for (let i = 0; i < MAX_ITERATIONS; i++) {
       const { fields } = createHeadlessForm(schema, { initialValues: values });
-      const pending = collectFillableFields(fields, '').filter(
-        (field) => !(field.key in values) && !skipped.has(field.key),
+      const pending = collectFillableFields(fields, '', []).filter(
+        (field) => !handled.has(field.domKey),
       );
 
       if (pending.length === 0) break;
 
       for (const field of pending) {
+        handled.add(field.domKey);
+
         if (field.options.length === 0) {
-          skipped.add(field.key);
           test.info().annotations.push({
             type: 'benefits-field-skipped',
-            description: `${field.key} (${field.inputType}) has no options; left unfilled.`,
+            description: `${field.domKey} (${field.inputType}) has no options; left unfilled.`,
           });
           continue;
         }
@@ -128,12 +167,12 @@ export async function fillOnboardingBenefitsStepDynamically(
         const [choice] = field.options;
 
         if (field.inputType === 'radio') {
-          await fillRadio(page, String(choice.value), field.key);
+          await fillRadio(page, String(choice.value), field.domKey);
         } else {
-          await fillSelect(page, choice.label, field.key);
+          await fillSelect(page, choice.label, field.domKey);
         }
 
-        values[field.key] = choice.value;
+        setNestedValue(values, field.valuePath, choice.value);
       }
     }
   }

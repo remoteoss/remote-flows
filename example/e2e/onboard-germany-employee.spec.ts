@@ -22,6 +22,10 @@ test.describe('Onboard Germany employee', () => {
     const headerAmount = page.getByText(/Standard onboarding flow/);
     await expect(headerAmount).toBeVisible();
 
+    // Registered before Introduction submits: the benefit-offers schema request fires as soon
+    // as the employment is created there, not when the user reaches the Benefits step.
+    const benefitsSchemaPromise = watchForBenefitsSchema(page);
+
     await fillOnboardingIntroductionForm(page, {
       company_id: '460201ed-a8c0-4e75-89dc-6d5eae35f65e',
     });
@@ -61,10 +65,6 @@ test.describe('Onboard Germany employee', () => {
 
     stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Contract Details');
-
-    // Registered before submitting Contract Details so it catches the Benefits step's schema
-    // request as soon as the step transition triggers it.
-    const benefitsSchemaPromise = watchForBenefitsSchema(page);
 
     await fillOnboardingStep3GermanyForm(page, {
       contract_end_date: 'auto',
