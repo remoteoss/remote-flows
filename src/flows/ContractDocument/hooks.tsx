@@ -80,15 +80,12 @@ export const useContractDocument = ({
       ? new Error('Failed to fetch employment')
       : null);
 
-  const {
-    data: contractDocuments,
-    isLoading: isLoadingContractDocuments,
-    error: contractDocumentsError,
-  } = useQuery({
-    ...contractDocumentsOptions(client as Client, employmentId),
-    enabled: Boolean(employmentId),
-    select: ({ data }) => data.data.contract_documents,
-  });
+  const { data: contractDocuments, isLoading: isLoadingContractDocuments } =
+    useQuery({
+      ...contractDocumentsOptions(client as Client, employmentId),
+      enabled: Boolean(employmentId),
+      select: ({ data }) => data.data.contract_documents,
+    });
 
   const countryCode = employment?.country?.code;
   const productIdentifier = getProductIdentifier(employment?.contractor_type);
@@ -349,13 +346,9 @@ export const useContractDocument = ({
      */
     isSubmitting: createContractDocumentMutation.isPending,
     /**
-     * The error that stopped the flow from loading, if any: the employment, its contract
-     * documents or the contract details schema could not be fetched.
+     * The error that stopped the flow from loading, if any: the employment or the contract
+     * details schema could not be fetched.
      */
-    error:
-      employmentError ??
-      contractDocumentsError ??
-      contractDetailsFormError ??
-      null,
+    error: employmentError ?? contractDetailsFormError ?? null,
   };
 };
