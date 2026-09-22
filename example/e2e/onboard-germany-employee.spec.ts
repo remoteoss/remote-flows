@@ -7,6 +7,10 @@ import {
   fillOnboardingEngagementAgreementDetailsGermanyForm,
   fillOnboardingStep3GermanyForm,
 } from './helpers/onboarding';
+import {
+  fillOnboardingBenefitsStepDynamically,
+  watchForBenefitsSchema,
+} from './helpers/benefits';
 
 test.describe('Onboard Germany employee', () => {
   test.beforeEach(async ({ page }) => {
@@ -58,6 +62,10 @@ test.describe('Onboard Germany employee', () => {
     stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Contract Details');
 
+    // Registered before submitting Contract Details so it catches the Benefits step's schema
+    // request as soon as the step transition triggers it.
+    const benefitsSchemaPromise = watchForBenefitsSchema(page);
+
     await fillOnboardingStep3GermanyForm(page, {
       contract_end_date: 'auto',
       work_schedule: 'full_time',
@@ -83,5 +91,10 @@ test.describe('Onboard Germany employee', () => {
 
     stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Benefits');
+
+    await fillOnboardingBenefitsStepDynamically(page, benefitsSchemaPromise);
+
+    stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Review');
   });
 });
