@@ -16,6 +16,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [China (CHN)](./CHN.md)
 - [Switzerland (CHE)](./CHE.md)
 - [Czech Republic (CZE)](./CZE.md)
+- [Germany (DEU)](./DEU.md)
 - [Hong Kong (HKG)](./HKG.md)
 - [Iceland (ISL)](./ISL.md)
 - [India (IND)](./IND.md)
@@ -25,6 +26,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Mauritius (MUS)](./MUS.md)
 - [Malaysia (MYS)](./MYS.md)
 - [Mexico (MEX)](./MEX.md)
+- [Netherlands (NLD)](./NLD.md)
 - [Nigeria (NGA)](./NGA.md)
 - [Norway (NOR)](./NOR.md)
 - [New Zealand (NZL)](./NZL.md)
@@ -44,34 +46,35 @@ These countries have upgraded to different versions, check each guide to know ho
 
 ## Version Matrix
 
-| Country              | Code | Contract Details | Last Updated |
-| -------------------- | ---- | ---------------- | ------------ |
-| Belarus              | BLR  | v2               | March 2026   |
-| China                | CHN  | v3               | March 2026   |
-| Switzerland          | CHE  | v2               | March 2026   |
-| Czech Republic       | CZE  | v2               | March 2026   |
-| Hong Kong            | HKG  | v2               | March 2026   |
-| Iceland              | ISL  | v2               | March 2026   |
-| India                | IND  | v2               | March 2026   |
-| Jamaica              | JAM  | v2               | March 2026   |
-| Kenya                | KEN  | v2               | March 2026   |
-| Lebanon              | LBN  | v2               | March 2026   |
-| Mauritius            | MUS  | v2               | March 2026   |
-| Malaysia             | MYS  | v2               | March 2026   |
-| Mexico               | MEX  | v2               | March 2026   |
-| Netherlands          | NLD  | v2               | May 2026     |
-| Nigeria              | NGA  | v2               | March 2026   |
-| Norway               | NOR  | v2               | March 2026   |
-| New Zealand          | NZL  | v2               | March 2026   |
-| Pakistan             | PAK  | v2               | March 2026   |
-| Portugal             | PRT  | v3               | March 2026   |
-| Saudi Arabia         | SAU  | v2               | March 2026   |
-| Singapore            | SGP  | v2               | March 2026   |
-| Serbia               | SRB  | v2               | March 2026   |
-| Sweden               | SWE  | v2               | March 2026   |
-| United Kingdom       | GBR  | v2               | March 2026   |
-| United Arab Emirates | ARE  | v3               | March 2026   |
-| United States        | USA  | v3               | August 2026  |
+| Country              | Code | Contract Details | Last Updated   |
+| -------------------- | ---- | ---------------- | -------------- |
+| Belarus              | BLR  | v2               | March 2026     |
+| China                | CHN  | v3               | March 2026     |
+| Switzerland          | CHE  | v2               | March 2026     |
+| Czech Republic       | CZE  | v2               | March 2026     |
+| Germany              | DEU  | v7               | September 2026 |
+| Hong Kong            | HKG  | v2               | March 2026     |
+| Iceland              | ISL  | v2               | March 2026     |
+| India                | IND  | v2               | March 2026     |
+| Jamaica              | JAM  | v2               | March 2026     |
+| Kenya                | KEN  | v2               | March 2026     |
+| Lebanon              | LBN  | v2               | March 2026     |
+| Mauritius            | MUS  | v2               | March 2026     |
+| Malaysia             | MYS  | v2               | March 2026     |
+| Mexico               | MEX  | v2               | March 2026     |
+| Netherlands          | NLD  | v2               | May 2026       |
+| Nigeria              | NGA  | v2               | March 2026     |
+| Norway               | NOR  | v2               | March 2026     |
+| New Zealand          | NZL  | v2               | March 2026     |
+| Pakistan             | PAK  | v2               | March 2026     |
+| Portugal             | PRT  | v3               | March 2026     |
+| Saudi Arabia         | SAU  | v2               | March 2026     |
+| Singapore            | SGP  | v2               | March 2026     |
+| Serbia               | SRB  | v2               | March 2026     |
+| Sweden               | SWE  | v2               | March 2026     |
+| United Kingdom       | GBR  | v2               | March 2026     |
+| United Arab Emirates | ARE  | v3               | March 2026     |
+| United States        | USA  | v3               | August 2026    |
 
 ## How to Use
 
