@@ -68,7 +68,7 @@ async function fetchLiveSchema(
       `GET /v1/countries/${country}/contract_details?json_schema_version=${version} failed`,
     );
   }
-  return response.data.data as Record<string, unknown>;
+  return response.data.data ?? null;
 }
 
 async function runLive(): Promise<SchemaCanaryRow[]> {
