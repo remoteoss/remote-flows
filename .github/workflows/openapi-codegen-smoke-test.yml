@@ -1,0 +1,36 @@
+name: OpenAPI Codegen Smoke Test
+
+on:
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+
+permissions:
+  contents: read
+
+jobs:
+  openapi-codegen-smoke-test:
+    name: Verify openapi-ts codegen still runs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.15.0'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --include=optional --ignore-scripts
+
+      # Deliberately not diffing the regenerated src/client against what's committed:
+      # the production schema drifts independently of this PR, so a diff here is
+      # expected and not a failure. Only a nonzero exit (the generator itself
+      # crashing, e.g. from a toolchain incompatibility) should fail this job.
+      - name: Run openapi-ts against the production gateway
+        run: npm run openapi-ts
