@@ -5,8 +5,11 @@ import {
   fillOnboardingStep1Form,
   fillOnboardingStep2Form,
   fillOnboardingStep3SpainForm,
-  fillOnboardingStep4SpainForm,
 } from './helpers/onboarding';
+import {
+  fillOnboardingBenefitsStepDynamically,
+  watchForBenefitsSchema,
+} from './helpers/benefits';
 
 test.describe('Onboard basic employee', () => {
   test.beforeEach(async ({ page }) => {
@@ -18,6 +21,10 @@ test.describe('Onboard basic employee', () => {
     const headerAmount = page.getByText(/Standard onboarding flow/);
 
     await expect(headerAmount).toBeVisible();
+
+    // Registered before Introduction submits: the benefit-offers schema request fires as soon
+    // as the employment is created there, not when the user reaches the Benefits step.
+    const benefitsSchemaPromise = watchForBenefitsSchema(page);
 
     await fillOnboardingIntroductionForm(page, {
       company_id: '460201ed-a8c0-4e75-89dc-6d5eae35f65e',
@@ -84,16 +91,7 @@ test.describe('Onboard basic employee', () => {
     stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Benefits');
 
-    await fillOnboardingStep4SpainForm(page, {
-      life_insurance_type: 'Basic',
-      life_insurance: 'Life Insurance - $50K',
-      health_insurance_coverage: 'Single',
-      health_insurance: 'Sanitas Standard Medical (Employee Only)',
-      retirement: 'Basic Retirement',
-      mental_health: 'Basic Mental Health Program',
-      wellness: '$25 Wellness Plan',
-      business_travel: 'Basic Business Travel',
-    });
+    await fillOnboardingBenefitsStepDynamically(page, benefitsSchemaPromise);
 
     stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Review');
