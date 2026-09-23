@@ -8,8 +8,8 @@ Get an early signal when a live contract-details JSON schema served by tiger can
 
 ### The France incident
 
-- tiger shipped a new France `contract_details` schema **without versioning it** (it replaced what `latest` returns).
-- France is not pinned in `example/src/flows/Onboarding/constants.ts` → `jsonSchemaVersionByCountry`, so the SDK requests `latest` and picked up the change immediately.
+- tiger shipped a new France `contract_details` schema **without versioning it**: it changed an existing version in place instead of publishing a new one.
+- France is not pinned in `example/src/flows/Onboarding/constants.ts` → `jsonSchemaVersionByCountry`, so the SDK fell back to its default (`DEFAULT_VERSION = 1` in `src/flows/Onboarding/utils.ts`). Because v1 itself changed, every SDK requesting v1 got the new schema immediately. Pinning would not have helped.
 - The new schema relied on behaviour only available in a newer `@remoteoss/remote-json-schema-form-kit` / json-schema-form. A customer on an older released SDK blew up **as soon as contract details loaded** (form creation, not a specific interaction).
 - Fix was bumping the kit in the SDK. Nothing in our test suite could have caught it:
   - `OnboardingFlowFrance.test.tsx` runs against a frozen MSW fixture, never the live schema.
@@ -39,10 +39,10 @@ Out (for now):
 
 ### What gets checked, per country
 
-| Check  | Schema version fetched                                 | Meaning if it fails                                                        |
-| ------ | ------------------------------------------------------ | -------------------------------------------------------------------------- |
-| Pinned | Version from `constants.ts`, or `latest` if not pinned | Broken **now** for the demo and for partners with the same config. Urgent. |
-| Latest | `latest` (even when a version is pinned)               | Will break when we bump the pin. Early warning.                            |
+| Check  | Schema version fetched                                          | Meaning if it fails                                                        |
+| ------ | --------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Pinned | Version from `constants.ts`, or SDK default (`1`) if not pinned | Broken **now** for the demo and for partners with the same config. Urgent. |
+| Latest | `latest` (even when a version is pinned)                        | Will break when we bump the pin. Early warning.                            |
 
 ### Against which engine
 
@@ -55,7 +55,7 @@ Out (for now):
 
 Reuse the exact code path the Onboarding flow uses, not a reimplementation:
 
-1. Fetch `GET /v1/countries/{code}/contract_details?skip_benefits=true[&json_schema_version=N]` from the sandbox gateway (same query as `useJSONSchemaForm` in `src/flows/Onboarding/api.ts`).
+1. Fetch `GET /v1/countries/{code}/contract_details?skip_benefits=true&json_schema_version=N` from the sandbox gateway (same query as `useJSONSchemaForm` in `src/flows/Onboarding/api.ts`).
 2. Select the engine the flow would use for that country (`usesJsfV1ContractDetails` in `src/flows/Onboarding/utils.ts` — FRA, ITA, DEU, ESP are on jsf v1).
 3. Build the form via the SDK's `createHeadlessForm` (`src/common/createHeadlessForm.tsx`) with the example's `jsfModify.contract_details` applied, then run `handleValidation({})` once.
 4. Anything that throws = failure. Record country, version, engine, error message + first stack frame.
