@@ -30,15 +30,31 @@
  * Usage (from repo root):
  *   npm run seed:onboarding -- --country=DEU
  *   npm run seed:onboarding -- --country=ESP --basic-info-version=4
+ *
+ * By default this proxies through a locally running `example` dev server
+ * (BASE_URL, `example/.env`'s VITE_REMOTE_GATEWAY decides which gateway that
+ * is - easy to lose track of).
+ *
+ * Pass --env=sandbox|production|staging|partners to instead talk to that
+ * gateway directly, with no dev server required: credentials come from
+ * .env.<env> at the repo root (VITE_CLIENT_ID, VITE_CLIENT_SECRET,
+ * VITE_REMOTE_GATEWAY=<env>, VITE_REFRESH_TOKEN - same shape as
+ * example/.env), and auth reuses example/api/{utils,get_token,proxy}.js
+ * verbatim so there's one source of truth for how tokens get minted. Optional
+ * VITE_APP_URL=<deployed app URL> in that same file gets you a ready-to-click
+ * link (with ?employmentId= prefilled) in the final output.
+ *
+ *   npm run seed:onboarding -- --country=DEU --env=sandbox
  */
 import { createHeadlessForm } from '@remoteoss/remote-json-schema-form-kit';
 import { faker } from '@faker-js/faker';
 import dotenv from 'dotenv';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, '..', 'example', '.env') });
+const require = createRequire(import.meta.url);
 
 function parseArgs(argv) {
   const args = {};
@@ -52,8 +68,41 @@ function parseArgs(argv) {
 const args = parseArgs(process.argv.slice(2));
 const COUNTRY = (args.country || 'DEU').toUpperCase();
 const BASIC_INFO_VERSION = Number(args['basic-info-version'] || 4);
-const PORT = process.env.PORT || 3001;
-const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+const ENV = args.env;
+
+let BASE_URL;
+let getAuthHeaders = async () => ({});
+
+if (ENV) {
+  const envFile = path.resolve(__dirname, '..', `.env.${ENV}`);
+  dotenv.config({ path: envFile });
+  const { buildGatewayURL } = require('../example/api/utils.js');
+  const {
+    fetchAccessToken,
+    fetchClientCredentialsAccessToken,
+  } = require('../example/api/get_token.js');
+  const { getTokenType } = require('../example/api/proxy.js');
+
+  BASE_URL = buildGatewayURL();
+  if (!BASE_URL) {
+    throw new Error(
+      `Unknown --env=${ENV}, or ${envFile} is missing/doesn't set VITE_REMOTE_GATEWAY.`,
+    );
+  }
+  console.log(`Environment: ${ENV} -> ${BASE_URL} (from ${envFile})`);
+
+  getAuthHeaders = async (method, urlPath) => {
+    const { accessToken } =
+      getTokenType(method, urlPath) === 'client-credentials'
+        ? await fetchClientCredentialsAccessToken()
+        : await fetchAccessToken();
+    return { Authorization: `Bearer ${accessToken}` };
+  };
+} else {
+  dotenv.config({ path: path.resolve(__dirname, '..', 'example', '.env') });
+  const PORT = process.env.PORT || 3001;
+  BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+}
 
 async function api(method, urlPath, { query, body } = {}) {
   const url = new URL(BASE_URL + urlPath);
@@ -62,7 +111,10 @@ async function api(method, urlPath, { query, body } = {}) {
   }
   const res = await fetch(url, {
     method,
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(await getAuthHeaders(method, urlPath)),
+    },
     body: body ? JSON.stringify(body) : undefined,
   });
   const text = await res.text();
@@ -250,11 +302,21 @@ async function main() {
   console.log(
     `\nDone. Employment ${employmentId} for ${COUNTRY} is now sitting at contract_details.`,
   );
-  console.log(
-    `Open ${BASE_URL}/?demo=onboarding-basic , enter this Employment ID (with the usual\n` +
-      'company id) on the intro form, and click Continue through Select Country and Basic\n' +
-      'Information (both already prefilled from what this script created) to land on Contract Details.',
-  );
+  const appUrl = process.env.VITE_APP_URL || (ENV ? undefined : BASE_URL);
+  if (appUrl) {
+    console.log(
+      `\nOpen this link (Employment ID is prefilled via ?employmentId=) - just fill in the\n` +
+        `company id and click Continue through Select Country and Basic Information to land\n` +
+        `on Contract Details:\n\n  ${appUrl}/?demo=onboarding-basic&employmentId=${employmentId}\n`,
+    );
+  } else {
+    console.log(
+      `\nOpen your app's onboarding demo, enter this Employment ID (?employmentId=${employmentId}\n` +
+        'also works as a query param) with the usual company id, and click Continue through\n' +
+        'Select Country and Basic Information to land on Contract Details.\n' +
+        `Tip: set VITE_APP_URL=<your deployed app URL> in .env.${ENV} to get a ready-to-click link next time.`,
+    );
+  }
 }
 
 main().catch((err) => {
