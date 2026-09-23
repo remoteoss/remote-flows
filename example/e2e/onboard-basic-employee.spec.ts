@@ -49,7 +49,6 @@ test.describe('Onboard basic employee', () => {
     await expect(stepTitle).toHaveText('Contract Details');
 
     await fillOnboardingStep3SpainForm(page, {
-      contract_duration_type: 'indefinite',
       work_schedule: 'full_time',
       probation_length: '3',
       probation_length_ack: true,

@@ -272,7 +272,6 @@ export async function fillOnboardingStep3GermanyForm(
 }
 
 interface fillOnboardingStep3SpainFormOptions {
-  contract_duration_type?: string;
   work_schedule?: string;
   probation_length?: string;
   probation_length_ack?: boolean;
@@ -303,11 +302,8 @@ export async function fillOnboardingStep3SpainForm(
   options: Partial<fillOnboardingStep3SpainFormOptions>,
 ) {
   await fillForm(page, [
-    {
-      type: 'radio',
-      value: options.contract_duration_type,
-      name: 'contract_duration_type',
-    },
+    // contract_duration_type was removed from the v5 schema: Spain now only supports
+    // indefinite contracts (Royal Decree-Law 32/2021), shown as static copy instead of a field.
     {
       type: 'radio',
       value: options.work_schedule,
