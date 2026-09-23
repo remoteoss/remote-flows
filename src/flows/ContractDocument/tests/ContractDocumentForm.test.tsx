@@ -1,9 +1,16 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
+import {
+  mockContractDocumentResponse,
+  mockContractDocumentsResponse,
+} from '@/src/common/api/fixtures/contract-documents';
 import { ContractDocumentFlow } from '@/src/flows/ContractDocument/ContractDocumentFlow';
 import { ContractDocumentForm } from '@/src/flows/ContractDocument/ContractDocumentForm';
+import { ContractDocumentPreviewForm } from '@/src/flows/ContractDocument/ContractDocumentPreviewForm';
+import { ContractDocumentReviewButton } from '@/src/flows/ContractDocument/ContractDocumentReviewButton';
 import { ContractDocumentSubmitButton } from '@/src/flows/ContractDocument/ContractDocumentSubmitButton';
 import {
   mockContractDocumentCreatedResponse,
@@ -36,9 +43,13 @@ function renderFlow() {
           return (
             <>
               <p>Preview of {bag.contractDocumentId}</p>
+              <ContractDocumentPreviewForm />
               <button type='button' onClick={bag.back}>
                 Back
               </button>
+              <ContractDocumentReviewButton>
+                {bag.isContractReviewed ? 'Review again' : 'Review contract'}
+              </ContractDocumentReviewButton>
             </>
           );
         }
@@ -135,6 +146,58 @@ describe('ContractDocumentForm', () => {
     expect(
       await screen.findByLabelText(/Services and Deliverables/i),
     ).toHaveValue('Design work');
+  });
+
+  it('opens the created contract document for review and then asks for the signature', async () => {
+    server.use(
+      http.post(
+        '*/v1/contractors/employments/employment-grace/contract-documents',
+        () => HttpResponse.json(mockContractDocumentCreatedResponse),
+      ),
+    );
+
+    renderFlow();
+    await fillContractDetails();
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+    await screen.findByText(/Preview of/);
+
+    expect(screen.queryByLabelText(/Enter full name/i)).not.toBeInTheDocument();
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: 'Review contract' }),
+    );
+    await screen.findByText('Contract Document');
+    await userEvent.keyboard('{Escape}');
+
+    expect(
+      await screen.findByLabelText(/Enter full name/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Review again')).toBeInTheDocument();
+  });
+
+  it('opens straight on the preview of an existing contract document', async () => {
+    const requested: string[] = [];
+    server.use(
+      http.get('*/v1/employments/:id/contract-documents', () =>
+        HttpResponse.json(mockContractDocumentsResponse),
+      ),
+      http.get(
+        '*/v1/contractors/employments/:employmentId/contract-documents/:id',
+        ({ request }) => {
+          requested.push(new URL(request.url).pathname);
+          return HttpResponse.json(mockContractDocumentResponse);
+        },
+      ),
+    );
+
+    renderFlow();
+
+    expect(
+      await screen.findByText('Preview of contract-document-1'),
+    ).toBeInTheDocument();
+    expect(requested).toEqual([
+      '/v1/contractors/employments/employment-grace/contract-documents/contract-document-1',
+    ]);
   });
 
   it('leaves out the Contractor Services Agreement disclaimer for a Contractor of Record', async () => {
