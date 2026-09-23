@@ -1,4 +1,4 @@
-import { Page, Route, test } from '@playwright/test';
+import { Locator, Page, Route, expect, test } from '@playwright/test';
 
 export async function setupVercelBypass(page: Page) {
   await page.route('**/*', async (route: Route) => {
@@ -253,4 +253,36 @@ export async function fillDatepicker(
     await dateButton.waitFor({ state: 'visible' });
     await dateButton.click();
   }
+}
+
+export async function clickAndWaitForSave(
+  page: Page,
+  trigger: Locator,
+  method: string,
+  pathname: RegExp,
+) {
+  const response = page.waitForResponse(
+    (res) =>
+      res.request().method() === method &&
+      pathname.test(new URL(res.url()).pathname),
+  );
+  await trigger.click();
+  const saved = await response;
+  expect(
+    saved.ok(),
+    `${method} ${new URL(saved.url()).pathname} returned ${saved.status()}`,
+  ).toBe(true);
+}
+
+export async function submitAndWaitForSave(
+  page: Page,
+  method: string,
+  pathname: RegExp,
+) {
+  await clickAndWaitForSave(
+    page,
+    page.locator('.submit-button'),
+    method,
+    pathname,
+  );
 }

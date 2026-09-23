@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { setupVercelBypass } from './helpers/general';
 import {
-  expectOnboardingStep,
   fillOnboardingIntroductionForm,
   fillOnboardingStep1Form,
   fillOnboardingStep2Form,
@@ -21,8 +20,6 @@ test.describe('Onboard Germany employee', () => {
   });
 
   test('Fill Germany employee flow form', async ({ page }) => {
-    test.slow();
-
     const headerAmount = page.getByText(/Standard onboarding flow/);
     await expect(headerAmount).toBeVisible();
 
@@ -34,13 +31,15 @@ test.describe('Onboard Germany employee', () => {
       company_id: '460201ed-a8c0-4e75-89dc-6d5eae35f65e',
     });
 
-    await expectOnboardingStep(page, 'Select Country');
+    let stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Select Country');
 
     await fillOnboardingStep1Form(page, {
       country_id: 'Germany',
     });
 
-    await expectOnboardingStep(page, 'Basic Information');
+    stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Basic Information');
 
     const fullname = `John Doe${Date.now()}`;
 
@@ -59,14 +58,16 @@ test.describe('Onboard Germany employee', () => {
     });
 
     // Germany-only: shown whenever the API returns engagement_agreement_details fields.
-    await expectOnboardingStep(page, 'Labor leasing in Germany');
+    stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Labor leasing in Germany');
 
     await fillOnboardingEngagementAgreementDetailsGermanyForm(page, {
       has_business_presence: 'no',
       has_similar_roles: 'no',
     });
 
-    await expectOnboardingStep(page, 'Contract Details');
+    stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Contract Details');
 
     await fillOnboardingStep3GermanyForm(page, {
       contract_end_date: 'auto',
@@ -91,11 +92,13 @@ test.describe('Onboard Germany employee', () => {
       work_equipment_provided: 'no',
     });
 
-    await expectOnboardingStep(page, 'Benefits');
+    stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Benefits');
 
     await fillOnboardingBenefitsStepDynamically(page, benefitsSchemaPromise);
 
-    await expectOnboardingStep(page, 'Review');
+    stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Review');
 
     const inviteButton = page.locator('.submit-button');
     await expect(inviteButton).toBeDisabled();

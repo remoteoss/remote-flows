@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { setupVercelBypass } from './helpers/general';
 import {
-  expectOnboardingStep,
   fillOnboardingIntroductionForm,
   fillOnboardingStep1Form,
   fillOnboardingStep2Form,
@@ -19,8 +18,6 @@ test.describe('Onboard basic employee', () => {
   });
 
   test('Fill basic employee flow form', async ({ page }) => {
-    test.slow();
-
     const headerAmount = page.getByText(/Standard onboarding flow/);
 
     await expect(headerAmount).toBeVisible();
@@ -33,13 +30,15 @@ test.describe('Onboard basic employee', () => {
       company_id: '460201ed-a8c0-4e75-89dc-6d5eae35f65e',
     });
 
-    await expectOnboardingStep(page, 'Select Country');
+    let stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Select Country');
 
     await fillOnboardingStep1Form(page, {
       country_id: 'Spain',
     });
 
-    await expectOnboardingStep(page, 'Basic Information');
+    stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Basic Information');
 
     await fillOnboardingStep2Form(page, {
       fullname: `John Doe${Date.now()}`,
@@ -53,7 +52,8 @@ test.describe('Onboard basic employee', () => {
       has_seniority_date: 'no',
     });
 
-    await expectOnboardingStep(page, 'Contract Details');
+    stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Contract Details');
 
     await fillOnboardingStep3SpainForm(page, {
       work_schedule: 'full_time',
@@ -88,11 +88,13 @@ test.describe('Onboard basic employee', () => {
       role_requires_license: 'no',
     });
 
-    await expectOnboardingStep(page, 'Benefits');
+    stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Benefits');
 
     await fillOnboardingBenefitsStepDynamically(page, benefitsSchemaPromise);
 
-    await expectOnboardingStep(page, 'Review');
+    stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Review');
     await page.click('.submit-button');
   });
 });
