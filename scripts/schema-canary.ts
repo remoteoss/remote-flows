@@ -18,6 +18,7 @@ import {
   SchemaCheckType,
 } from './schema-canary/lib';
 import { resolvePinnedVersion } from './schema-canary/pinned-versions';
+import { seedEmploymentForCountry } from './schema-canary/seed-employment';
 import { SCHEMA_CANARY_SKIP_LIST } from './schema-canary/skip-list';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -60,16 +61,21 @@ async function fetchLiveSchema(
   client: Client,
   country: string,
   version: number | 'latest',
+  employmentId: string,
 ): Promise<Record<string, unknown> | null> {
   const response = await getV1CountriesCountryCodeForm({
     client,
     headers: { Authorization: '' },
     path: { country_code: country, form: 'contract_details' },
-    query: { skip_benefits: true, json_schema_version: version },
+    query: {
+      skip_benefits: true,
+      employment_id: employmentId,
+      json_schema_version: version,
+    },
   });
   if (response.error || !response.data) {
     throw new Error(
-      `GET /v1/countries/${country}/contract_details?json_schema_version=${version} failed`,
+      `GET /v1/countries/${country}/contract_details?employment_id=${employmentId}&json_schema_version=${version} failed`,
     );
   }
   return response.data.data ?? null;
@@ -91,6 +97,30 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
 
   for (const country of countries) {
     const engine = resolveEngine(country);
+
+    let employmentId: string;
+    try {
+      employmentId = await seedEmploymentForCountry(client, country);
+      console.log(`[${country}] seeded employment ${employmentId}`);
+    } catch (error) {
+      const reason = `employment seeding failed: ${error instanceof Error ? error.message : String(error)}`;
+      console.log(`[${country}] ${reason}`);
+      for (const check of CHECK_TYPES) {
+        rows.push({
+          country,
+          version:
+            check === 'pinned'
+              ? resolvePinnedVersion(country, DEFAULT_VERSION)
+              : 'latest',
+          engine,
+          check,
+          outcome: 'skip',
+          error: reason,
+        });
+      }
+      continue;
+    }
+
     for (const check of CHECK_TYPES) {
       const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
       const version =
@@ -111,8 +141,16 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
       }
 
       try {
-        const schema = await fetchLiveSchema(client, country, version);
+        const schema = await fetchLiveSchema(
+          client,
+          country,
+          version,
+          employmentId,
+        );
         const result = await checkSchemaBuildsAndValidates(schema);
+        console.log(
+          `[${country}] ${check}@${version} -> ${result.ok ? 'pass' : `fail: ${result.error}`}`,
+        );
         rows.push({
           country,
           version,

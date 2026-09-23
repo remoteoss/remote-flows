@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 /**
  * Creates a fresh onboarding employment, up to (but not including)
  * contract_details, purely through the API - no browser involved.
@@ -31,17 +31,17 @@
  *   npm run seed:onboarding -- --country=DEU
  *   npm run seed:onboarding -- --country=ESP --basic-info-version=4
  */
-import { createHeadlessForm } from '@remoteoss/remote-json-schema-form-kit';
-import { faker } from '@faker-js/faker';
 import dotenv from 'dotenv';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { fillSchema, pickSafeDate, safeStartDateYears } from './fill-schema';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '..', 'example', '.env') });
 
-function parseArgs(argv) {
-  const args = {};
+function parseArgs(argv: string[]) {
+  const args: Record<string, string | true> = {};
   for (const raw of argv) {
     const match = raw.match(/^--([^=]+)(?:=(.*))?$/);
     if (match) args[match[1]] = match[2] ?? true;
@@ -50,12 +50,28 @@ function parseArgs(argv) {
 }
 
 const args = parseArgs(process.argv.slice(2));
-const COUNTRY = (args.country || 'DEU').toUpperCase();
+const COUNTRY = (
+  typeof args.country === 'string' ? args.country : 'DEU'
+).toUpperCase();
 const BASIC_INFO_VERSION = Number(args['basic-info-version'] || 4);
 const PORT = process.env.PORT || 3001;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
-async function api(method, urlPath, { query, body } = {}) {
+class ApiError extends Error {
+  status: number;
+  body: $TSFixMe;
+  constructor(message: string, status: number, body: $TSFixMe) {
+    super(message);
+    this.status = status;
+    this.body = body;
+  }
+}
+
+async function api(
+  method: string,
+  urlPath: string,
+  { query, body }: { query?: Record<string, unknown>; body?: unknown } = {},
+): Promise<$TSFixMe> {
   const url = new URL(BASE_URL + urlPath);
   for (const [key, value] of Object.entries(query || {})) {
     if (value !== undefined) url.searchParams.set(key, String(value));
@@ -73,102 +89,44 @@ async function api(method, urlPath, { query, body } = {}) {
     json = text;
   }
   if (!res.ok) {
-    const err = new Error(`${method} ${urlPath} -> ${res.status}`);
-    err.status = res.status;
-    err.body = json;
-    throw err;
+    throw new ApiError(
+      `${method} ${urlPath} -> ${res.status}`,
+      res.status,
+      json,
+    );
   }
   return json;
 }
 
-async function fetchSchema(form, jsonSchemaVersion) {
+async function fetchSchema(
+  form: string,
+  jsonSchemaVersion?: number,
+): Promise<Record<string, unknown>> {
   return api('GET', `/v1/countries/${COUNTRY}/${form}`, {
     query: { skip_benefits: true, json_schema_version: jsonSchemaVersion },
   }).then((res) => res.data);
 }
 
-/** First option whose value/label reads as "no" - collapses conditional sub-fields (file
- * uploads, free-text detail boxes) that a generic filler can't produce plausible data for. */
-function preferNoOption(options) {
-  return (
-    options.find((o) => String(o.value).toLowerCase() === 'no') || options[0]
-  );
-}
-
-function fakeValueFor(field) {
-  const { inputType, options, multiple, name, const: constValue } = field;
-
-  if (options?.length) {
-    if (inputType === 'radio' || inputType === 'select') {
-      return preferNoOption(options).value;
-    }
-    if (inputType === 'countries' || multiple) {
-      return [faker.helpers.arrayElement(options).value];
-    }
-    if (inputType === 'tel') {
-      // options here are per-country dialing patterns (e.g. pattern:
-      // '^(+49)[0-9]{6,}$', meta.countryCode: '49'), not user-facing choices -
-      // any one produces a validly-formatted number, regardless of the
-      // employment's own country.
-      const option = options.find((o) => o.meta?.countryCode) || options[0];
-      return `+${option.meta.countryCode}${faker.string.numeric(9)}`;
-    }
-    return preferNoOption(options).value;
-  }
-
-  switch (inputType) {
-    case 'email':
-      return name === 'work_email'
-        ? faker.internet.email({ provider: 'remote-e2e-test.com' })
-        : faker.internet.email();
-    case 'tel':
-      return `+1${faker.string.numeric(9)}`;
-    case 'date': {
-      const d = new Date();
-      d.setDate(d.getDate() + 21);
-      return d.toISOString().slice(0, 10);
-    }
-    case 'number':
-      return faker.number.int({ min: 5, max: 30 });
-    case 'money':
-      return faker.number.int({ min: 3_000_000, max: 8_000_000 });
-    case 'textarea':
-      return faker.lorem.sentence();
-    case 'checkbox':
-      // No enumerated options: this is a single acknowledgement toggle. RHF
-      // holds a plain `true` here, which parseFormValuesToAPI (src/components/
-      // form/utils.ts) swaps for `field.const` (e.g. "acknowledged") at submit
-      // time when the schema is const-based - mirror that instead of sending
-      // the raw RHF value, or the API rejects it as a type mismatch.
-      return constValue ?? true;
-    case 'file':
-      return null;
-    default:
-      return faker.lorem.words({ min: 2, max: 4 });
-  }
-}
-
-/** Progressively fills a JSF schema: fill whatever's required+visible, recompute (new
- * conditionally-required fields may appear), repeat until stable. Mirrors what the real
- * multi-step form does field-by-field, but against the schema directly instead of the DOM. */
-function fillSchema(schema, seedValues = {}) {
-  let values = { ...seedValues };
-  const skipped = [];
-  for (let round = 0; round < 8; round++) {
-    const { fields } = createHeadlessForm(schema, { initialValues: values });
-    const missing = fields.filter(
-      (f) => f.required && f.isVisible && values[f.name] === undefined,
-    );
-    if (missing.length === 0) break;
-    for (const field of missing) {
-      if (field.inputType === 'file') {
-        skipped.push(field.name);
-        continue;
+/** See pickSafeDate in fill-schema.ts for why a fixed offset alone isn't
+ * enough - falls back to the unchecked minimum-lead date if the holidays
+ * lookup itself fails. */
+async function findSafeStartDate(): Promise<string> {
+  const holidayDates = new Set<string>();
+  try {
+    for (const year of safeStartDateYears()) {
+      const holidays = await api(
+        'GET',
+        `/v1/countries/${COUNTRY}/holidays/${year}`,
+      );
+      for (const holiday of holidays.data ?? []) {
+        holidayDates.add(holiday.day);
+        if (holiday.observed_day) holidayDates.add(holiday.observed_day);
       }
-      values[field.name] = fakeValueFor(field);
     }
+  } catch {
+    return pickSafeDate(new Set());
   }
-  return { values, skipped };
+  return pickSafeDate(holidayDates);
 }
 
 async function main() {
@@ -177,8 +135,11 @@ async function main() {
     'employment_basic_information',
     BASIC_INFO_VERSION,
   );
-  const { values: basicInformation, skipped: basicSkipped } =
-    fillSchema(basicInfoSchema);
+  const startDate = await findSafeStartDate();
+  const { values: basicInformation, skipped: basicSkipped } = fillSchema(
+    basicInfoSchema,
+    { provisional_start_date: startDate },
+  );
   console.log(
     'basic_information payload:',
     JSON.stringify(basicInformation, null, 2),
@@ -213,11 +174,11 @@ async function main() {
   });
 
   console.log('\nChecking for an engagement_agreement_details step...');
-  let engagementSchema;
+  let engagementSchema: Record<string, unknown> | undefined;
   try {
     engagementSchema = await fetchSchema('engagement_agreement_details');
   } catch (err) {
-    if (err.status === 404) {
+    if (err instanceof ApiError && err.status === 404) {
       console.log(
         `No engagement_agreement_details schema for ${COUNTRY} - skipping.`,
       );
@@ -228,7 +189,8 @@ async function main() {
 
   if (
     engagementSchema &&
-    Object.keys(engagementSchema.properties || {}).length > 0
+    Object.keys((engagementSchema.properties as Record<string, unknown>) || {})
+      .length > 0
   ) {
     const { values: engagementDetails, skipped } = fillSchema(engagementSchema);
     console.log(
@@ -260,6 +222,8 @@ async function main() {
 
 main().catch((err) => {
   console.error('\nFailed:', err.message);
-  if (err.body) console.error(JSON.stringify(err.body, null, 2));
+  if (err instanceof ApiError && err.body) {
+    console.error(JSON.stringify(err.body, null, 2));
+  }
   process.exit(1);
 });
