@@ -345,8 +345,8 @@ export type PayCode = {
  * Unified.Employment.UpsertBenefitOffersRequest
  *
  * Upsert benefit offers request. As its properties may vary depending on the employment,
- * you must query the [Show benefit offers schema](#tag/benefits/operation/get_show_benefit_offer) endpoint
- * passing the employment id
+ *           you must query the [Show benefit offers schema](#tag/benefits/operation/get_show_benefit_offer) endpoint
+ *           passing the employment id
  */
 export type UnifiedEmploymentUpsertBenefitOffersRequest = {
   [key: string]: unknown;
@@ -2146,11 +2146,11 @@ export type EmployeeFileParams = {
 export type EmploymentBasicResponse = {
   /**
    * Employment basic information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `basic_information` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `basic_information` as path parameters.
    *
-   * When present, `login_email` indicates which address the employee logs in with: `"personal"` or
-   * `"work"`.
+   *             When present, `login_email` indicates which address the employee logs in with: `"personal"` or
+   *             `"work"`.
    */
   basic_information?: {
     [key: string]: unknown;
@@ -3781,40 +3781,40 @@ export type CustomFieldLinkable =
 export type EmploymentFullParams = {
   /**
    * Home address information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `address_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `address_details` as path parameters.
    */
   address_details?: {
     [key: string]: unknown;
   };
   /**
    * Administrative information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `administrative_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `administrative_details` as path parameters.
    */
   administrative_details?: {
     [key: string]: unknown;
   };
   /**
    * Bank account information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `bank_account_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `bank_account_details` as path parameters.
    */
   bank_account_details?: {
     [key: string]: unknown;
   };
   /**
    * Employment basic information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `employment_basic_information` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `employment_basic_information` as path parameters.
    */
   basic_information?: {
     [key: string]: unknown;
   };
   /**
    * Billing address information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `billing_address_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `billing_address_details` as path parameters.
    */
   billing_address_details?: {
     [key: string]: unknown;
@@ -3825,8 +3825,8 @@ export type EmploymentFullParams = {
   company_id?: string;
   /**
    * Contract information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `contract_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `contract_details` as path parameters.
    */
   contract_details?: {
     [key: string]: unknown;
@@ -3844,8 +3844,8 @@ export type EmploymentFullParams = {
   department_id?: string | null;
   /**
    * Emergency contact information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `emergency_contact_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `emergency_contact_details` as path parameters.
    */
   emergency_contact_details?: {
     [key: string]: unknown;
@@ -3872,16 +3872,16 @@ export type EmploymentFullParams = {
   partner_external_id?: string | null;
   /**
    * Personal details information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `personal_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `personal_details` as path parameters.
    */
   personal_details?: {
     [key: string]: unknown;
   };
   /**
    * Pricing plan details information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `pricing_plan_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `pricing_plan_details` as path parameters.
    */
   pricing_plan_details?: {
     [key: string]: unknown;
@@ -4222,9 +4222,9 @@ export type CountriesResponse = {
  * The assertion token is a JWT token that contains the following claims:
  *
  * - `sub`: The subject of the token, in one of the following formats:
- * - `urn:remote-api:employment:<employment_id>` — mints an **employee-role** access token whose `sub` is the employment owner's user slug. Scopes are restricted to those valid for the employee role (e.g. `personal_detail:read`, `timeoff:write`).
- * - `urn:remote-api:employee:employment:<employment_id>` — same as above; the recommended format for new integrations. Use this when issuing a token on behalf of an employee so they can submit their own onboarding data (e.g. `PUT /v1/employee/address`).
- * - `urn:remote-api:company-manager:user:<user_id>` — mints a **company_manager-role** access token. Scopes are restricted to those valid for the company-manager role.
+ *   - `urn:remote-api:employment:<employment_id>` — mints an **employee-role** access token whose `sub` is the employment owner's user slug. Scopes are restricted to those valid for the employee role (e.g. `personal_detail:read`, `timeoff:write`).
+ *   - `urn:remote-api:employee:employment:<employment_id>` — same as above; the recommended format for new integrations. Use this when issuing a token on behalf of an employee so they can submit their own onboarding data (e.g. `PUT /v1/employee/address`).
+ *   - `urn:remote-api:company-manager:user:<user_id>` — mints a **company_manager-role** access token. Scopes are restricted to those valid for the company-manager role.
  *
  * - `iss`: The issuer of the token, which is the client ID
  * - `aud`: The audience of the token, which is the OAuth audience
@@ -4606,10 +4606,10 @@ export type BulkEmploymentImportJob = {
    * BulkImport.ImportJobStage
    *
    *   The stage of the import job.
-   * * `creation` - The import job is in the creation stage, which means the rows are being created.
-   * * `column_mapping` - The import job is in the column mapping stage, which means the CSV headers are being mapped to JSON schema fields.
-   * * `validation` - The import job is in the validation stage, which means the rows are being validated.
-   * * `submission` - The import job is in the submission stage, which means the rows are being submitted.
+   *   * `creation` - The import job is in the creation stage, which means the rows are being created.
+   *   * `column_mapping` - The import job is in the column mapping stage, which means the CSV headers are being mapped to JSON schema fields.
+   *   * `validation` - The import job is in the validation stage, which means the rows are being validated.
+   *   * `submission` - The import job is in the submission stage, which means the rows are being submitted.
    *
    */
   stage: 'creation' | 'column_mapping' | 'validation' | 'submission';
@@ -4617,10 +4617,10 @@ export type BulkEmploymentImportJob = {
    * BulkImport.ImportJobStatus
    *
    *   * `draft` - **Deprecated**, the import job data has been uploaded and the job created, but not yet started
-   * * `uploaded` - **Deprecated**, replaced by the `draft` status
-   * * `in_progress` - Data is actively being imported
-   * * `finished` - The import job has finished processing
-   * * `failed` - The import job has failed completely, nothing has been imported
+   *   * `uploaded` - **Deprecated**, replaced by the `draft` status
+   *   * `in_progress` - Data is actively being imported
+   *   * `finished` - The import job has finished processing
+   *   * `failed` - The import job has failed completely, nothing has been imported
    *
    */
   status: 'draft' | 'uploaded' | 'in_progress' | 'finished' | 'failed';
@@ -6748,12 +6748,12 @@ export type TimeoffBalance = {
  *
  *   Whether the amount given accounts for taxes or not.
  *
- * `gross` indicates that the amount given is the amount to be paid before taxes
- * are subtracted.
+ *   `gross` indicates that the amount given is the amount to be paid before taxes
+ *   are subtracted.
  *
- * `net` indicates that the amount given is the amount which will be paid to the
- * employee after taxes. Remote will gross this up to ensure the taxes are
- * included and employee receives the amount requested without further reduction.
+ *   `net` indicates that the amount given is the amount which will be paid to the
+ *   employee after taxes. Remote will gross this up to ensure the taxes are
+ *   included and employee receives the amount requested without further reduction.
  *
  */
 export type AmountTaxType = 'gross' | 'net';
@@ -8017,11 +8017,11 @@ export type ContractAmendmentFormResponse = {
  *
  *   Params for creating an expense as the authenticated employee.
  *
- * The employment is implied by the access token, so `employment_id` is not accepted.
- * `reviewer_id` and `reviewed_at` are also omitted — they only apply to manager-created expenses.
+ *   The employment is implied by the access token, so `employment_id` is not accepted.
+ *   `reviewer_id` and `reviewed_at` are also omitted — they only apply to manager-created expenses.
  *
- * Category selection mirrors the company endpoint: use either `category` (legacy enum, deprecated but supported)
- * or `expense_category_slug` (recommended). When both are provided, `expense_category_slug` wins.
+ *   Category selection mirrors the company endpoint: use either `category` (legacy enum, deprecated but supported)
+ *   or `expense_category_slug` (recommended). When both are provided, `expense_category_slug` wins.
  *
  */
 export type ParamsToCreateEmployeeExpense = {
@@ -8063,7 +8063,7 @@ export type ParamsToCreateEmployeeExpense = {
     | 'travel';
   /**
    *   The three-letter code for the expense currency.<br/>
-   * Examples: `"USD"`, `"EUR"`, `"CAD"`
+   *   Examples: `"USD"`, `"EUR"`, `"CAD"`
    *
    */
   currency: string;
@@ -9403,19 +9403,19 @@ export type MagicLinkParams =
        * Query values are optional, the actual value may be empty and the equals sign (`=`) may be missing too.
        *
        * Some **Valid** examples for `path`:
-       * - o `/dashboard`
-       * - o `/dashboard/people/new/full_time/663e0b79-c893-45ff-a1b2-f6dcabc098b5`
-       * - o `/dashboard/people/hiring?filters%5B0%5D%5Bid%5D=status&filters%5B0%5D%5Bvalue%5D=active`
-       * - o `/dashboard?key=value&foo=bar`
+       *   - o `/dashboard`
+       *   - o `/dashboard/people/new/full_time/663e0b79-c893-45ff-a1b2-f6dcabc098b5`
+       *   - o `/dashboard/people/hiring?filters%5B0%5D%5Bid%5D=status&filters%5B0%5D%5Bvalue%5D=active`
+       *   - o `/dashboard?key=value&foo=bar`
        *
        * Some **Invalid** examples for `path`:
-       * - x `missing_forward_slash`
-       * - x `/invalid//path`
-       * - x `//some`
-       * - x `/?key=value`
-       * - x `/some/i.n:valid*`
-       * - x `/invalid/end/slash/`
-       * - x `/some?malformed_percent_encoded_key%1=value`
+       *   - x `missing_forward_slash`
+       *   - x `/invalid//path`
+       *   - x `//some`
+       *   - x `/?key=value`
+       *   - x `/some/i.n:valid*`
+       *   - x `/invalid/end/slash/`
+       *   - x `/some?malformed_percent_encoded_key%1=value`
        *
        */
       path?: string;
@@ -9440,19 +9440,19 @@ export type MagicLinkParams =
        * Query values are optional, the actual value may be empty and the equals sign (`=`) may be missing too.
        *
        * Some **Valid** examples for `path`:
-       * - o `/dashboard`
-       * - o `/dashboard/people/new/full_time/663e0b79-c893-45ff-a1b2-f6dcabc098b5`
-       * - o `/dashboard/people/hiring?filters%5B0%5D%5Bid%5D=status&filters%5B0%5D%5Bvalue%5D=active`
-       * - o `/dashboard?key=value&foo=bar`
+       *   - o `/dashboard`
+       *   - o `/dashboard/people/new/full_time/663e0b79-c893-45ff-a1b2-f6dcabc098b5`
+       *   - o `/dashboard/people/hiring?filters%5B0%5D%5Bid%5D=status&filters%5B0%5D%5Bvalue%5D=active`
+       *   - o `/dashboard?key=value&foo=bar`
        *
        * Some **Invalid** examples for `path`:
-       * - x `missing_forward_slash`
-       * - x `/invalid//path`
-       * - x `//some`
-       * - x `/?key=value`
-       * - x `/some/i.n:valid*`
-       * - x `/invalid/end/slash/`
-       * - x `/some?malformed_percent_encoded_key%1=value`
+       *   - x `missing_forward_slash`
+       *   - x `/invalid//path`
+       *   - x `//some`
+       *   - x `/?key=value`
+       *   - x `/some/i.n:valid*`
+       *   - x `/invalid/end/slash/`
+       *   - x `/some?malformed_percent_encoded_key%1=value`
        *
        */
       path?: string;
@@ -9752,8 +9752,8 @@ export type Company = {
    * The company status determines what a company is allowed to do:
    * - `pending`: The company has been created and the company owner invited. Remote is waiting for the company owner to complete onboarding.
    * - `review`: The company is under review. In rare occasions, a company may not automatically get created in `active` status because Remote needs to
-   * manually review the company that was created. The company will become `active` once the review is completed and no further action is necessary
-   * through the Remote API.
+   *   manually review the company that was created. The company will become `active` once the review is completed and no further action is necessary
+   *   through the Remote API.
    * - `active`: The company owner has completed onboarding and the company is ready to employ.
    * - `archived`: The company is no longer active on the Remote platform and no changes can be made to the company.
    *
@@ -10170,10 +10170,10 @@ export type CompanyActionsResponse = {
  * BulkImport.ImportJobStatus
  *
  *   * `draft` - **Deprecated**, the import job data has been uploaded and the job created, but not yet started
- * * `uploaded` - **Deprecated**, replaced by the `draft` status
- * * `in_progress` - Data is actively being imported
- * * `finished` - The import job has finished processing
- * * `failed` - The import job has failed completely, nothing has been imported
+ *   * `uploaded` - **Deprecated**, replaced by the `draft` status
+ *   * `in_progress` - Data is actively being imported
+ *   * `finished` - The import job has finished processing
+ *   * `failed` - The import job has failed completely, nothing has been imported
  *
  */
 export type BulkImportImportJobStatus =
@@ -10936,8 +10936,8 @@ export type PricingPlanDetails = {
 export type EmploymentPricingPlanDetailsParams = {
   /**
    * Pricing plan details information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `pricing_plan_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `pricing_plan_details` as path parameters.
    */
   pricing_plan_details: {
     [key: string]: unknown;
@@ -11008,7 +11008,7 @@ export type UpdateCompanyParams = {
   /**
    *   The tax identifier of the company. This field or registration_number (but not both) should be submitted.
    *
-   * This field is only accepted if company is in status `pending`.
+   *   This field is only accepted if company is in status `pending`.
    *
    */
   tax_number?: string;
@@ -11190,10 +11190,10 @@ export type BulkContractorInvoiceScheduleCreateResponse = {
  * BulkImport.ImportJobStage
  *
  *   The stage of the import job.
- * * `creation` - The import job is in the creation stage, which means the rows are being created.
- * * `column_mapping` - The import job is in the column mapping stage, which means the CSV headers are being mapped to JSON schema fields.
- * * `validation` - The import job is in the validation stage, which means the rows are being validated.
- * * `submission` - The import job is in the submission stage, which means the rows are being submitted.
+ *   * `creation` - The import job is in the creation stage, which means the rows are being created.
+ *   * `column_mapping` - The import job is in the column mapping stage, which means the CSV headers are being mapped to JSON schema fields.
+ *   * `validation` - The import job is in the validation stage, which means the rows are being validated.
+ *   * `submission` - The import job is in the submission stage, which means the rows are being submitted.
  *
  */
 export type BulkImportImportJobStage =
@@ -11507,7 +11507,7 @@ export type ContractAmendmentStatus =
  * - `bi_weekly`: Invoices will be generated every other week, on the given day of the week based on the start date.
  * - `monthly`: Invoices will be generated once a month.
  * - `semi_monthly`: Invoices will be generated at fixed dates twice a month (with 14 days of difference between each other), depending on the start date.
- * In months with just 30 days, if `start_date` is set to the 31st day, then generation occurs in the last of day of the month.
+ *    In months with just 30 days, if `start_date` is set to the 31st day, then generation occurs in the last of day of the month.
  * - `weekly`: Invoices will be generated each week.
  *
  */
@@ -11557,13 +11557,13 @@ export type ListEmploymentCustomFieldValueResponse = {
  *
  *   All the params needed to create an expense.
  *
- * An expense can be created using the `receipt` or `receipts` fields; however, these fields are not allowed together within the same object.
+ *   An expense can be created using the `receipt` or `receipts` fields; however, these fields are not allowed together within the same object.
  *
- * For category selection, you can use either:
- * - `category` (legacy enum values, deprecated but supported)
- * - `expense_category_slug` (new hierarchical categories, recommended)
+ *   For category selection, you can use either:
+ *   - `category` (legacy enum values, deprecated but supported)
+ *   - `expense_category_slug` (new hierarchical categories, recommended)
  *
- * If both are provided, `expense_category_slug` takes precedence.
+ *   If both are provided, `expense_category_slug` takes precedence.
  *
  */
 export type ParamsToCreateExpense = {
@@ -11605,7 +11605,7 @@ export type ParamsToCreateExpense = {
     | 'travel';
   /**
    *   The three-letter code for the expense currency.<br/>
-   * Examples: `"USD"`, `"EUR"`, `"CAD"`
+   *   Examples: `"USD"`, `"EUR"`, `"CAD"`
    *
    */
   currency: string;
@@ -11880,8 +11880,8 @@ export type CostCalculatorBenefitParam = {
 export type EmploymentFederalTaxesParams = {
   /**
    * Federal taxes params. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `global_payroll_federal_taxes` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `global_payroll_federal_taxes` as path parameters.
    */
   federal_taxes: {
     [key: string]: unknown;
@@ -12840,8 +12840,8 @@ export type CreateContractAmendmentParams = {
   amendment_contract_id: string;
   /**
    * Contract amendment informations. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Contract-Amendments/operation/post_show_form_contract_amendment_schema) endpoint
-   * passing the country code, `contract_amendment` and the employment ID as request body.
+   *                 you must query the [Show form schema](#tag/Contract-Amendments/operation/post_show_form_contract_amendment_schema) endpoint
+   *             passing the country code, `contract_amendment` and the employment ID as request body.
    */
   contract_amendment: {
     [key: string]: unknown;
@@ -12902,9 +12902,9 @@ export type CompanyNotEligibleForCreationErrorResponse = {
 export type EmploymentStateTaxesParams = {
   /**
    * State taxes params for the jurisdiction in the path. As its properties vary depending
-   * on the country and jurisdiction, you must query the
-   * [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint passing the country code
-   * and `global_payroll_state_taxes` as path parameters.
+   *                on the country and jurisdiction, you must query the
+   *                [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint passing the country code
+   *                and `global_payroll_state_taxes` as path parameters.
    */
   state_taxes: {
     [key: string]: unknown;
@@ -13319,8 +13319,8 @@ export type SandboxCreateContractorRateParams = {
 export type EmploymentCreateParams = {
   /**
    * Employment basic information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `employment_basic_information` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `employment_basic_information` as path parameters.
    */
   basic_information: {
     [key: string]: unknown;

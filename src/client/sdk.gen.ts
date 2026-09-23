@@ -1640,7 +1640,7 @@ export const getV1ContractorInvoicesId = <ThrowOnError extends boolean = false>(
  * Convert currency using flat rates
  *
  * Convert currency using FX rates used in Remote’s estimation tools.
- * These rates are not guaranteed to match final onboarding or contract rates.
+ *       These rates are not guaranteed to match final onboarding or contract rates.
  *
  * ## Authentication
  *
@@ -6696,7 +6696,7 @@ export const getV1PayrollRunsPayrollRunId = <
  *
  *   Downloads an expense receipt.
  *
- * Deprecated since late February 2024 in favour of **[Download a receipt by id](#tag/Expenses/operation/get_download_by_id_expense_receipt)** endpoint.
+ *   Deprecated since late February 2024 in favour of **[Download a receipt by id](#tag/Expenses/operation/get_download_by_id_expense_receipt)** endpoint.
  *
  * ## Authentication
  *
@@ -9275,8 +9275,8 @@ export const putV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDeta
  * Show region fields
  *
  * Returns required fields JSON Schema for a given region. These are required in order to calculate
- * the cost of employment for the region. These fields are based on employer contributions that are associated
- * with the region or any of it's parent regions.
+ *       the cost of employment for the region. These fields are based on employer contributions that are associated
+ *       with the region or any of it's parent regions.
  *
  * ## Authentication
  *
@@ -9585,9 +9585,9 @@ export const putV1EmployeeEmergencyContact = <
  *
  * This endpoint is only available in Sandbox and allows creating employments which
  * `provisional_start_date` is in the past. This is especially helpful for:
- * * Testing the Timeoff Balance endpoints
- * * Testing the Offboarding endpoints
- * * Testing features around probation periods
+ *   * Testing the Timeoff Balance endpoints
+ *   * Testing the Offboarding endpoints
+ *   * Testing features around probation periods
  *
  * This endpoint will respond with a 404 outside of the Sandbox environment.
  *
@@ -10249,9 +10249,9 @@ export const postV1CostCalculatorEstimationCsv = <
  * Enables the Global Payroll product on a legal entity so that GP employees can be created against it.
  *
  * Performs three idempotent steps:
- * * Adds the Global Payroll product to the company.
- * * Flips `global_payroll_enabled` on the legal entity's settings.
- * * Ensures a Global Payroll pricing plan exists for the legal entity's country.
+ *   * Adds the Global Payroll product to the company.
+ *   * Flips `global_payroll_enabled` on the legal entity's settings.
+ *   * Ensures a Global Payroll pricing plan exists for the legal entity's country.
  *
  * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
  *
@@ -14573,36 +14573,36 @@ export const getV1Companies = <ThrowOnError extends boolean = false>(
  *
  *   Creates a new company.
  *
- * ### Creating a company with only the required request body parameters
- * When you call this endpoint and omit all the optional parameters in the request body,
- * the following resources get created upon a successful response:
- * * A new company with status `pending`.
- * * A company owner for the new company with status `initiated`.
+ *   ### Creating a company with only the required request body parameters
+ *   When you call this endpoint and omit all the optional parameters in the request body,
+ *   the following resources get created upon a successful response:
+ *   * A new company with status `pending`.
+ *   * A company owner for the new company with status `initiated`.
  *
- * See the [update a company endpoint](#tag/Companies/operation/patch_update_company) for
- * more details on how to get your company and its owner to `active` status.
+ *   See the [update a company endpoint](#tag/Companies/operation/patch_update_company) for
+ *   more details on how to get your company and its owner to `active` status.
  *
- * If you'd like to create a company and its owner with `active` status in a single request,
- * please provide the optional `address_details` parameter as well.
+ *   If you'd like to create a company and its owner with `active` status in a single request,
+ *   please provide the optional `address_details` parameter as well.
  *
- * ### Accepting the Terms of Service
+ *   ### Accepting the Terms of Service
  *
- * A required step for creating a company in Remote is to accept our Terms of Service (ToS).
+ *   A required step for creating a company in Remote is to accept our Terms of Service (ToS).
  *
- * Company managers need to be aware of our Terms of Service and Privacy Policy,
- * hence **it's the responsibility of our partners to advise and ensure company managers read
- * and accept the ToS**. The terms have to be accepted only once, before creating a company,
- * and the Remote API will collect the acceptance timestamp as its confirmation.
+ *   Company managers need to be aware of our Terms of Service and Privacy Policy,
+ *   hence **it's the responsibility of our partners to advise and ensure company managers read
+ *   and accept the ToS**. The terms have to be accepted only once, before creating a company,
+ *   and the Remote API will collect the acceptance timestamp as its confirmation.
  *
- * To ensure users read the most recent version of Remote's Terms of Service, their **acceptance
- * must be done within the last fifteen minutes prior the company creation action**.
+ *   To ensure users read the most recent version of Remote's Terms of Service, their **acceptance
+ *   must be done within the last fifteen minutes prior the company creation action**.
  *
- * To retrieve this information, partners can provide an element with any text and a description
- * explaining that by performing that action they are accepting Remote's Term of Service. For
- * instance, the partner can add a checkbox or a "Create Remote Account" button followed by a
- * description saying "By creating an account, you agree to
- * [Remote's Terms of Service](https://remote.com/terms-of-service). Also see Remote's
- * [Privacy Policy](https://remote.com/privacy-policy)".
+ *   To retrieve this information, partners can provide an element with any text and a description
+ *   explaining that by performing that action they are accepting Remote's Term of Service. For
+ *   instance, the partner can add a checkbox or a "Create Remote Account" button followed by a
+ *   description saying "By creating an account, you agree to
+ *   [Remote's Terms of Service](https://remote.com/terms-of-service). Also see Remote's
+ *   [Privacy Policy](https://remote.com/privacy-policy)".
  *
  * ## Authentication
  *
