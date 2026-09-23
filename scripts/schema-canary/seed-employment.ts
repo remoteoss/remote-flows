@@ -1,4 +1,5 @@
 import {
+  deleteV1SandboxEmploymentsEmploymentId,
   getV1CountriesCountryCodeForm,
   getV1CountriesCountryCodeHolidaysYear,
   postV1Employments,
@@ -170,4 +171,25 @@ export async function seedEmploymentForCountry(
   }
 
   return employmentId;
+}
+
+/**
+ * Archives a sandbox-created employment. Only works in Sandbox
+ * (deleteV1SandboxEmploymentsEmploymentId 404s elsewhere). Best-effort:
+ * a cleanup failure shouldn't fail the country's checks, which already ran.
+ */
+export async function archiveEmployment(
+  client: Client,
+  employmentId: string,
+): Promise<void> {
+  const response = await deleteV1SandboxEmploymentsEmploymentId({
+    client,
+    headers: { Authorization: '' },
+    path: { employment_id: employmentId },
+  });
+  if (response.error) {
+    throw new Error(
+      `DELETE /v1/sandbox/employments/${employmentId} -> ${JSON.stringify(response.error)}`,
+    );
+  }
 }

@@ -18,7 +18,10 @@ import {
   SchemaCheckType,
 } from './schema-canary/lib';
 import { resolvePinnedVersion } from './schema-canary/pinned-versions';
-import { seedEmploymentForCountry } from './schema-canary/seed-employment';
+import {
+  archiveEmployment,
+  seedEmploymentForCountry,
+} from './schema-canary/seed-employment';
 import { SCHEMA_CANARY_SKIP_LIST } from './schema-canary/skip-list';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -121,53 +124,64 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
       continue;
     }
 
-    for (const check of CHECK_TYPES) {
-      const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
-      const version =
-        check === 'pinned'
-          ? resolvePinnedVersion(country, DEFAULT_VERSION)
-          : 'latest';
+    try {
+      for (const check of CHECK_TYPES) {
+        const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
+        const version =
+          check === 'pinned'
+            ? resolvePinnedVersion(country, DEFAULT_VERSION)
+            : 'latest';
 
-      if (skipEntry) {
-        rows.push({
-          country,
-          version,
-          engine,
-          check,
-          outcome: 'skip',
-          error: skipEntry.reason,
-        });
-        continue;
+        if (skipEntry) {
+          rows.push({
+            country,
+            version,
+            engine,
+            check,
+            outcome: 'skip',
+            error: skipEntry.reason,
+          });
+          continue;
+        }
+
+        try {
+          const schema = await fetchLiveSchema(
+            client,
+            country,
+            version,
+            employmentId,
+          );
+          const result = await checkSchemaBuildsAndValidates(schema);
+          console.log(
+            `[${country}] ${check}@${version} -> ${result.ok ? 'pass' : `fail: ${result.error}`}`,
+          );
+          rows.push({
+            country,
+            version,
+            engine,
+            check,
+            outcome: result.ok ? 'pass' : 'fail',
+            error: result.ok ? undefined : result.error,
+          });
+        } catch (error) {
+          rows.push({
+            country,
+            version,
+            engine,
+            check,
+            outcome: 'fail',
+            error: error instanceof Error ? error.message : String(error),
+          });
+        }
       }
-
+    } finally {
       try {
-        const schema = await fetchLiveSchema(
-          client,
-          country,
-          version,
-          employmentId,
-        );
-        const result = await checkSchemaBuildsAndValidates(schema);
-        console.log(
-          `[${country}] ${check}@${version} -> ${result.ok ? 'pass' : `fail: ${result.error}`}`,
-        );
-        rows.push({
-          country,
-          version,
-          engine,
-          check,
-          outcome: result.ok ? 'pass' : 'fail',
-          error: result.ok ? undefined : result.error,
-        });
+        await archiveEmployment(client, employmentId);
+        console.log(`[${country}] archived employment ${employmentId}`);
       } catch (error) {
-        rows.push({
-          country,
-          version,
-          engine,
-          check,
-          outcome: 'fail',
-          error: error instanceof Error ? error.message : String(error),
-        });
+        console.warn(
+          `[${country}] failed to archive employment ${employmentId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
       }
     }
   }
