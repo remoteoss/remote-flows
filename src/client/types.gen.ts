@@ -2848,8 +2848,10 @@ export type EmploymentFile = {
    * The broad category of the file. Contractor Services Agreements (CSAs) are reported here with type "contract" — see the /contract-documents endpoint for contract-document-specific types.
    */
   type:
+    | 'annual_leave'
     | 'background_check'
     | 'bank_account_holder_name'
+    | 'bereavement_leave'
     | 'contractor_invoice'
     | 'direct_offboarding'
     | 'document_scan'
@@ -2861,14 +2863,21 @@ export type EmploymentFile = {
     | 'id'
     | 'job'
     | 'leave_of_absence'
+    | 'marriage_leave'
+    | 'maternity_leave'
     | 'occupational_risk'
     | 'offboarding'
     | 'other'
+    | 'parental_leave'
+    | 'paternity_leave'
     | 'performance_review'
     | 'personal'
     | 'safety_training'
+    | 'sick_leave'
     | 'time_attendance'
     | 'timeoff'
+    | 'unpaid_leave'
+    | 'vehicle_document'
     | 'work_confirmation'
     | 'contract'
     | 'document'
@@ -3076,6 +3085,10 @@ export type ImportJobRow = {
     [key: string]: unknown;
   };
   row_number: number;
+  /**
+   * The id of the schema variant this row's fields follow, a key of `row_schema_variants` on the job-scoped json-schema response. `null` when the row uses the job-level schema. Only present for job types with per-row schema variants.
+   */
+  schema_variant_id?: string | null;
   status?:
     | 'successful'
     | 'imported'
@@ -3943,12 +3956,12 @@ export type AccountsAssignedRoles = Array<{
     | 'rps'
     | 'secondary_reports'
     | 'direct_reports'
-    | 'direct_and_indirect_reports'
     | 'employment_countries'
+    | 'assigned_billing_legal_entities'
+    | 'direct_and_indirect_reports'
     | 'employment_departments'
     | 'employment_company_structure_nodes'
-    | 'onboarding_reports'
-    | 'assigned_billing_legal_entities';
+    | 'onboarding_reports';
   name: string;
   slug: string;
   type?: 'default' | 'custom' | 'template' | 'owner';
@@ -3974,6 +3987,7 @@ export type CreateWebhookCallbackParams = {
     | 'company.manager_updated'
     | 'company.owner_changed'
     | 'company.archived'
+    | 'company.hard_deleted'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
     | 'company.eor_hiring.no_reserve_payment_requested'
@@ -4838,6 +4852,20 @@ export type MinimalUser = {
 };
 
 /**
+ * JobTitleReviewDecisionResponse
+ */
+export type JobTitleReviewDecisionResponse = {
+  data: {
+    job_title_review: {
+      /**
+       * The employment's status after the decision. An approval restores the status the employment held before it entered review.
+       */
+      employment_status: string;
+    };
+  };
+};
+
+/**
  * CostCalculatorCost
  *
  * A single cost line item within a cost breakdown (e.g., a specific employer contribution, benefit, or statutory payment).
@@ -4920,6 +4948,7 @@ export type MinimalPayrollRun = {
     | 'one_off'
     | 'pro_forma'
     | 'tax_documents'
+    | 'year_end_reports'
     | 'expenses'
     | 'parallel';
 };
@@ -5052,6 +5081,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'company.manager_updated'
     | 'company.owner_changed'
     | 'company.archived'
+    | 'company.hard_deleted'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
     | 'company.eor_hiring.no_reserve_payment_requested'
@@ -5994,6 +6024,7 @@ export type PayrollRun = {
     | 'one_off'
     | 'pro_forma'
     | 'tax_documents'
+    | 'year_end_reports'
     | 'expenses'
     | 'parallel';
 };
@@ -6031,7 +6062,16 @@ export type BillingDocumentsResponse = {
         | 'reconciliation_invoice'
         | 'prefunding_invoice'
         | 'supplemental_service_invoice'
-        | 'reconciliation_credit_note';
+        | 'reconciliation_credit_note'
+        | 'peo_payroll_invoice'
+        | 'contractor_management_invoice'
+        | 'remote_plan_invoice'
+        | 'credit_note'
+        | 'eor_reserve_invoice'
+        | 'eor_reserve_credit_note'
+        | 'peo_service_invoice'
+        | 'payroll_service_invoice'
+        | 'cor_service_invoice';
       /**
        * The unique identifier (UUID) of the billing document.
        */
@@ -8057,7 +8097,7 @@ export type CreateJobTitleEligibilityCheckParams = {
    */
   job_title?: string;
   /**
-   * A description of the role. Required when the job title alone is inconclusive; the response says so.
+   * A description of the role. Required when the job title alone is inconclusive; the response says so. The minimum acceptable length is country-dependent: the contract-details schema for the employment's country is the authority, and some countries (the USA among them) require a substantially longer description than others.
    */
   role_description?: string;
   /**
@@ -8626,6 +8666,28 @@ export type BulkEmploymentCreateParams = {
    * Batch default for onboarding invitations. Each employee can override it with their own `send_invitation` value. Defaults to `false` when omitted.
    */
   send_invitation?: boolean;
+};
+
+/**
+ * SetJobTitleEligibilityVerdictParams
+ */
+export type SetJobTitleEligibilityVerdictParams = {
+  /**
+   * The job title to record the verdict against. Defaults to the employment's current one.
+   */
+  job_title?: string;
+  /**
+   * The role description the submission will carry. A submission carrying a different one is rejected, because the recorded verdict no longer describes what was sent.
+   */
+  role_description: string;
+  /**
+   * The verdict the employment's next contract-details submission should act on.
+   */
+  verdict:
+    | 'eligible'
+    | 'not_eligible'
+    | 'needs_review'
+    | 'eligible_with_risk_acknowledgement';
 };
 
 /**
@@ -9744,6 +9806,8 @@ export type JobTitleEligibilityCheck = {
   check_id?: string | null;
   /**
    * The eligibility verdict for the submitted job title and role. `eligible` means contract details can be submitted as normal. `not_eligible` means Remote cannot employ this role: the title has to change. `needs_review` means submitting will place the employment in a human review before the employee can be invited. `eligible_with_risk_acknowledgement` means the submission must carry `employer_acknowledges_risk` set to `acknowledged`. `not_assessed` means the check did not run for this employment and no verdict was formed, so treat it as unknown rather than as a pass: submitting is not blocked, but nothing has screened the title.
+   *
+   * When the verdict is `eligible_with_risk_acknowledgement`, present Remote's responsibility statement to the employer and obtain their acceptance before sending `employer_acknowledges_risk`. Sending it asserts that the employer was informed of, and accepted, responsibility for, as applicable, employee safety, training, health checks, any incidents connected to the employee's work environment, and the employee holding the licensing the role requires.
    */
   verdict:
     | 'eligible'
@@ -10165,8 +10229,27 @@ export type WebhookTriggerBillingParams = {
     | 'reconciliation_invoice'
     | 'supplemental_service_credit_note'
     | 'prefunding_credit_note'
-    | 'reconciliation_credit_note';
+    | 'reconciliation_credit_note'
+    | 'credit_note'
+    | 'eor_reserve_credit_note'
+    | 'contractor_management_invoice'
+    | 'cor_service_invoice'
+    | 'eor_reserve_invoice'
+    | 'payroll_service_invoice'
+    | 'remote_plan_invoice'
+    | 'peo_payroll_invoice'
+    | 'peo_service_invoice';
   event_type: 'billing_document.issued';
+};
+
+/**
+ * JobTitleReviewDecisionParams
+ */
+export type JobTitleReviewDecisionParams = {
+  /**
+   * The reviewer's notes, recorded on the employment as a Remote admin's would be.
+   */
+  notes?: string;
 };
 
 /**
@@ -10449,6 +10532,7 @@ export type WebhookCallback = {
     | 'company.manager_updated'
     | 'company.owner_changed'
     | 'company.archived'
+    | 'company.hard_deleted'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
     | 'company.eor_hiring.no_reserve_payment_requested'
@@ -12369,6 +12453,7 @@ export type UpdateWebhookCallbackParams = {
     | 'company.manager_updated'
     | 'company.owner_changed'
     | 'company.archived'
+    | 'company.hard_deleted'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
     | 'company.eor_hiring.no_reserve_payment_requested'
@@ -12948,6 +13033,13 @@ export type EmploymentContractDetailsParams = {
    * Contract information. As its properties may vary depending on the country,
    * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
    * passing the country code and `contract_details` as path parameters.
+   *
+   * When the job title eligibility check requires an acknowledgement, present Remote's
+   * responsibility statement to the employer and obtain their acceptance before sending
+   * `employer_acknowledges_risk` as `acknowledged`. Sending it asserts that the employer
+   * was informed of, and accepted, responsibility for, as applicable, employee safety,
+   * training, health checks, any incidents connected to the employee's work environment,
+   * and the employee holding the licensing the role requires.
    *
    */
   contract_details: {
@@ -18069,6 +18161,58 @@ export type PostV1IncentivesResponses = {
 export type PostV1IncentivesResponse =
   PostV1IncentivesResponses[keyof PostV1IncentivesResponses];
 
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectData = {
+  /**
+   * Job title review decision params
+   */
+  body?: JobTitleReviewDecisionParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/employments/{employment_id}/job-title-review/reject';
+};
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectError =
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectErrors[keyof PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectErrors];
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectResponses =
+  {
+    /**
+     * Success
+     */
+    200: JobTitleReviewDecisionResponse;
+  };
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectResponse =
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectResponses[keyof PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectResponses];
+
 export type PostV1ProbationCompletionLetterData = {
   /**
    * Work Authorization Request
@@ -18354,6 +18498,10 @@ export type GetV1BillingDocumentsBillingDocumentIdData = {
     billing_document_id: string;
   };
   query?: {
+    /**
+     * The company the accessed resource belongs to. Send it whenever you know which one you mean. Requests that don't resolve to a company fail with "Company not found".
+     */
+    company_id?: string;
     /**
      * When true, includes billing document items whose type is not part of the standard set for the invoice type.
      */
@@ -24149,7 +24297,7 @@ export type GetV1CustomFieldsData = {
   path?: never;
   query?: {
     /**
-     * The company to list definitions for. Send it whenever you know which company you mean. Requests that don't resolve to a company fail with "Company not found".
+     * The company the accessed resource belongs to. Send it whenever you know which one you mean. Requests that don't resolve to a company fail with "Company not found".
      */
     company_id?: string;
     /**
@@ -26819,6 +26967,111 @@ export type GetV1PayslipsResponses = {
 export type GetV1PayslipsResponse =
   GetV1PayslipsResponses[keyof GetV1PayslipsResponses];
 
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveData = {
+  /**
+   * Job title review decision params
+   */
+  body?: JobTitleReviewDecisionParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/employments/{employment_id}/job-title-review/approve';
+};
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveError =
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveErrors[keyof PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveErrors];
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveResponses =
+  {
+    /**
+     * Success
+     */
+    200: JobTitleReviewDecisionResponse;
+  };
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveResponse =
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveResponses[keyof PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveResponses];
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckData = {
+  /**
+   * Job title eligibility verdict params
+   */
+  body?: SetJobTitleEligibilityVerdictParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/employments/{employment_id}/job-title-eligibility-check';
+};
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckErrors =
+  {
+    /**
+     * Bad Request
+     */
+    400: BadRequestResponse;
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+    /**
+     * Too many requests
+     */
+    429: TooManyRequestsResponse;
+  };
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckError =
+  PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckErrors[keyof PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckErrors];
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckResponses =
+  {
+    /**
+     * Success
+     */
+    200: JobTitleEligibilityCheckResponse;
+  };
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckResponse =
+  PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckResponses[keyof PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckResponses];
+
 export type GetV1ExpensesExpenseIdReceiptsReceiptIdData = {
   body?: never;
   path: {
@@ -28679,7 +28932,9 @@ export type GetV1BillingDocumentsBillingDocumentIdBreakdownData = {
     /**
      * Filters the results by the type of the billing breakdown item. Matched exactly against the `type` field of
      * the returned items, so unrecognised values yield an empty list. Card spend is reported as `Card expenses`,
-     * separately from payroll-reimbursed `Expenses`.
+     * separately from payroll-reimbursed `Expenses`. Other Compensation is reported as `Other compensation`,
+     * separately from `Base salary`. Payslip benefits can be returned as `Payslip benefits` for existing
+     * breakdown items, or as `Payslip Benefit Cash` and `Payslip Benefit Non-Cash` for newly generated items.
      *
      */
     type?: string;

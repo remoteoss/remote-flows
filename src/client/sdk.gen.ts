@@ -2,8 +2,10 @@
 
 import {
   type Client,
+  type ClientMeta,
   formDataBodySerializer,
   type Options as Options2,
+  type RequestResult,
   type TDataShape,
 } from './client';
 import { client } from './client.gen';
@@ -769,6 +771,15 @@ import type {
   PostV1SandboxContractorsEmploymentsEmploymentIdRatesErrors,
   PostV1SandboxContractorsEmploymentsEmploymentIdRatesResponses,
   PostV1SandboxEmploymentsData,
+  PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckData,
+  PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckErrors,
+  PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckResponses,
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveData,
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveErrors,
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveResponses,
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectData,
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectErrors,
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectResponses,
   PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveData,
   PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveErrors,
   PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveResponses,
@@ -911,7 +922,7 @@ export type Options<
    * You can pass arbitrary values through the `meta` object. This can be
    * used to access values that aren't defined as part of the SDK function.
    */
-  meta?: Record<string, unknown>;
+  meta?: keyof ClientMeta extends never ? Record<string, unknown> : ClientMeta;
 };
 
 /**
@@ -934,15 +945,27 @@ export type Options<
  */
 export const getV1Offboardings = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1OffboardingsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1OffboardingsResponses,
+  GetV1OffboardingsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1OffboardingsResponses,
     GetV1OffboardingsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/offboardings',
     ...options,
@@ -968,15 +991,27 @@ export const getV1Offboardings = <ThrowOnError extends boolean = false>(
  */
 export const postV1Offboardings = <ThrowOnError extends boolean = false>(
   options?: Options<PostV1OffboardingsData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1OffboardingsResponses,
+  PostV1OffboardingsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).post<
     PostV1OffboardingsResponses,
     PostV1OffboardingsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/offboardings',
     ...options,
@@ -1006,15 +1041,27 @@ export const postV1Offboardings = <ThrowOnError extends boolean = false>(
  */
 export const getV2Offboardings = <ThrowOnError extends boolean = false>(
   options?: Options<GetV2OffboardingsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV2OffboardingsResponses,
+  GetV2OffboardingsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV2OffboardingsResponses,
     GetV2OffboardingsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/offboardings',
     ...options,
@@ -1046,15 +1093,27 @@ export const putV2EmploymentsEmploymentIdPricingPlanDetails = <
     PutV2EmploymentsEmploymentIdPricingPlanDetailsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PutV2EmploymentsEmploymentIdPricingPlanDetailsResponses,
+  PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV2EmploymentsEmploymentIdPricingPlanDetailsResponses,
     PutV2EmploymentsEmploymentIdPricingPlanDetailsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}/pricing-plan-details',
     ...options,
@@ -1084,15 +1143,27 @@ export const putV2EmploymentsEmploymentIdPricingPlanDetails = <
  */
 export const getV1TimesheetsId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1TimesheetsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1TimesheetsIdResponses,
+  GetV1TimesheetsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1TimesheetsIdResponses,
     GetV1TimesheetsIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timesheets/{id}',
     ...options,
@@ -1125,15 +1196,27 @@ export const postV1CancelOnboardingEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1CancelOnboardingEmploymentIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1CancelOnboardingEmploymentIdResponses,
+  PostV1CancelOnboardingEmploymentIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1CancelOnboardingEmploymentIdResponses,
     PostV1CancelOnboardingEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/cancel-onboarding/{employment_id}',
     ...options,
@@ -1163,15 +1246,27 @@ export const getV1ContractAmendmentsSchema = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1ContractAmendmentsSchemaData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ContractAmendmentsSchemaResponses,
+  GetV1ContractAmendmentsSchemaErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ContractAmendmentsSchemaResponses,
     GetV1ContractAmendmentsSchemaErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contract-amendments/schema',
     ...options,
@@ -1200,15 +1295,27 @@ export const getV1ContractAmendmentsSchema = <
  */
 export const postV1PayItemsBulk = <ThrowOnError extends boolean = false>(
   options: Options<PostV1PayItemsBulkData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1PayItemsBulkResponses,
+  PostV1PayItemsBulkErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1PayItemsBulkResponses,
     PostV1PayItemsBulkErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/pay-items/bulk',
     ...options,
@@ -1238,15 +1345,27 @@ export const postV1PayItemsBulk = <ThrowOnError extends boolean = false>(
  */
 export const getV2OffboardingsId = <ThrowOnError extends boolean = false>(
   options: Options<GetV2OffboardingsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV2OffboardingsIdResponses,
+  GetV2OffboardingsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV2OffboardingsIdResponses,
     GetV2OffboardingsIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/offboardings/{id}',
     ...options,
@@ -1293,15 +1412,27 @@ export const putV2EmploymentsEmploymentIdAddressDetails = <
     PutV2EmploymentsEmploymentIdAddressDetailsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PutV2EmploymentsEmploymentIdAddressDetailsResponses,
+  PutV2EmploymentsEmploymentIdAddressDetailsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV2EmploymentsEmploymentIdAddressDetailsResponses,
     PutV2EmploymentsEmploymentIdAddressDetailsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}/address-details',
     ...options,
@@ -1334,15 +1465,27 @@ export const getV1CompaniesCompanyIdPricingPlans = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1CompaniesCompanyIdPricingPlansData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CompaniesCompanyIdPricingPlansResponses,
+  GetV1CompaniesCompanyIdPricingPlansErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CompaniesCompanyIdPricingPlansResponses,
     GetV1CompaniesCompanyIdPricingPlansErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/companies/{company_id}/pricing-plans',
     ...options,
@@ -1374,13 +1517,23 @@ export const postV1CompaniesCompanyIdPricingPlans = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1CompaniesCompanyIdPricingPlansData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1CompaniesCompanyIdPricingPlansResponses,
+  PostV1CompaniesCompanyIdPricingPlansErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1CompaniesCompanyIdPricingPlansResponses,
     PostV1CompaniesCompanyIdPricingPlansErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/companies/{company_id}/pricing-plans',
     ...options,
     headers: {
@@ -1411,15 +1564,27 @@ export const getV1ProbationCompletionLetterId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1ProbationCompletionLetterIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ProbationCompletionLetterIdResponses,
+  GetV1ProbationCompletionLetterIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ProbationCompletionLetterIdResponses,
     GetV1ProbationCompletionLetterIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/probation-completion-letter/{id}',
     ...options,
@@ -1445,15 +1610,27 @@ export const getV1ProbationCompletionLetterId = <
  */
 export const getV1ContractorInvoicesId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1ContractorInvoicesIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ContractorInvoicesIdResponses,
+  GetV1ContractorInvoicesIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ContractorInvoicesIdResponses,
     GetV1ContractorInvoicesIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractor-invoices/{id}',
     ...options,
@@ -1483,16 +1660,32 @@ export const postV1CurrencyConverterRaw = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1CurrencyConverterRawData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1CurrencyConverterRawResponses,
+  PostV1CurrencyConverterRawErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1CurrencyConverterRawResponses,
     PostV1CurrencyConverterRawErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'ClientToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/currency-converter/raw',
     ...options,
@@ -1536,15 +1729,27 @@ export const getV1CountriesCountryCodeContractorContractDetails = <
     GetV1CountriesCountryCodeContractorContractDetailsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1CountriesCountryCodeContractorContractDetailsResponses,
+  GetV1CountriesCountryCodeContractorContractDetailsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CountriesCountryCodeContractorContractDetailsResponses,
     GetV1CountriesCountryCodeContractorContractDetailsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/countries/{country_code}/contractor-contract-details',
     ...options,
@@ -1569,13 +1774,23 @@ export const getV1CountriesCountryCodeContractorContractDetails = <
  */
 export const getV1EmployeeIncentives = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1EmployeeIncentivesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeeIncentivesResponses,
+  GetV1EmployeeIncentivesErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeeIncentivesResponses,
     GetV1EmployeeIncentivesErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/incentives',
     ...options,
   });
@@ -1616,15 +1831,27 @@ export const getV1EmployeeIncentives = <ThrowOnError extends boolean = false>(
  */
 export const getV1Employments = <ThrowOnError extends boolean = false>(
   options: Options<GetV1EmploymentsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmploymentsResponses,
+  GetV1EmploymentsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentsResponses,
     GetV1EmploymentsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments',
     ...options,
@@ -1675,15 +1902,27 @@ export const getV1Employments = <ThrowOnError extends boolean = false>(
  */
 export const postV1Employments = <ThrowOnError extends boolean = false>(
   options: Options<PostV1EmploymentsData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1EmploymentsResponses,
+  PostV1EmploymentsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1EmploymentsResponses,
     PostV1EmploymentsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments',
     ...options,
@@ -1719,15 +1958,27 @@ export const getV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesSta
       GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusResponses,
+    GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).get<
       GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusResponses,
       GetV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesStatusErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2ClientCredentials',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/companies/{company_id}/employments/{employment_id}/onboarding-reserves-status',
       ...options,
@@ -1757,13 +2008,23 @@ export const getV1CompaniesCompanyIdEmploymentsEmploymentIdOnboardingReservesSta
  */
 export const getV1EmployeeBankAccount = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1EmployeeBankAccountData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeeBankAccountResponses,
+  GetV1EmployeeBankAccountErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeeBankAccountResponses,
     GetV1EmployeeBankAccountErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/bank-account',
     ...options,
   });
@@ -1792,13 +2053,23 @@ export const getV1EmployeeBankAccount = <ThrowOnError extends boolean = false>(
  */
 export const putV1EmployeeBankAccount = <ThrowOnError extends boolean = false>(
   options?: Options<PutV1EmployeeBankAccountData, ThrowOnError>,
-) =>
+): RequestResult<
+  PutV1EmployeeBankAccountResponses,
+  PutV1EmployeeBankAccountErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).put<
     PutV1EmployeeBankAccountResponses,
     PutV1EmployeeBankAccountErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/bank-account',
     ...options,
     headers: {
@@ -1827,15 +2098,27 @@ export const putV1EmployeeBankAccount = <ThrowOnError extends boolean = false>(
  */
 export const getV1HelpCenterArticlesId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1HelpCenterArticlesIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1HelpCenterArticlesIdResponses,
+  GetV1HelpCenterArticlesIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1HelpCenterArticlesIdResponses,
     GetV1HelpCenterArticlesIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/help-center-articles/{id}',
     ...options,
@@ -1856,16 +2139,32 @@ export const getV1HelpCenterArticlesId = <ThrowOnError extends boolean = false>(
  */
 export const getV1ScimV2UsersId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1ScimV2UsersIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ScimV2UsersIdResponses,
+  GetV1ScimV2UsersIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ScimV2UsersIdResponses,
     GetV1ScimV2UsersIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/scim/v2/Users/{id}',
     ...options,
@@ -1896,15 +2195,27 @@ export const getV2EmploymentsEmploymentIdEngagementAgreementDetails = <
     GetV2EmploymentsEmploymentIdEngagementAgreementDetailsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
+  GetV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
     GetV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}/engagement-agreement-details',
     ...options,
@@ -1943,15 +2254,27 @@ export const postV2EmploymentsEmploymentIdEngagementAgreementDetails = <
     PostV2EmploymentsEmploymentIdEngagementAgreementDetailsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
+  PostV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV2EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
     PostV2EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}/engagement-agreement-details',
     ...options,
@@ -1978,13 +2301,23 @@ export const postV2EmploymentsEmploymentIdEngagementAgreementDetails = <
  */
 export const getV1EmployeeDocumentsId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1EmployeeDocumentsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeeDocumentsIdResponses,
+  GetV1EmployeeDocumentsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmployeeDocumentsIdResponses,
     GetV1EmployeeDocumentsIdErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/documents/{id}',
     ...options,
   });
@@ -2008,13 +2341,19 @@ export const getV1EmployeeDocumentsId = <ThrowOnError extends boolean = false>(
  */
 export const getV1Projects = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1ProjectsData, ThrowOnError>,
-) =>
+): RequestResult<GetV1ProjectsResponses, GetV1ProjectsErrors, ThrowOnError> =>
   (options?.client ?? client).get<
     GetV1ProjectsResponses,
     GetV1ProjectsErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/projects',
     ...options,
   });
@@ -2039,15 +2378,27 @@ export const getV1Projects = <ThrowOnError extends boolean = false>(
  */
 export const getV1ContractorInvoices = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1ContractorInvoicesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ContractorInvoicesResponses,
+  GetV1ContractorInvoicesErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1ContractorInvoicesResponses,
     GetV1ContractorInvoicesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractor-invoices',
     ...options,
@@ -2068,15 +2419,27 @@ export const getV1ContractorInvoices = <ThrowOnError extends boolean = false>(
  */
 export const postV1SdkTelemetryErrors = <ThrowOnError extends boolean = false>(
   options: Options<PostV1SdkTelemetryErrorsData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1SdkTelemetryErrorsResponses,
+  PostV1SdkTelemetryErrorsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1SdkTelemetryErrorsResponses,
     PostV1SdkTelemetryErrorsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'ClientToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sdk/telemetry-errors',
     ...options,
@@ -2108,15 +2471,27 @@ export const getV1SsoConfigurationDetails = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1SsoConfigurationDetailsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1SsoConfigurationDetailsResponses,
+  GetV1SsoConfigurationDetailsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1SsoConfigurationDetailsResponses,
     GetV1SsoConfigurationDetailsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sso-configuration/details',
     ...options,
@@ -2138,17 +2513,37 @@ export const postV1CostCalculatorEstimation = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1CostCalculatorEstimationData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1CostCalculatorEstimationResponses,
+  PostV1CostCalculatorEstimationErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1CostCalculatorEstimationResponses,
     PostV1CostCalculatorEstimationErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'ClientToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/cost-calculator/estimation',
     ...options,
@@ -2178,13 +2573,23 @@ export const postV1CostCalculatorEstimation = <
  */
 export const getV1CompaniesSchema = <ThrowOnError extends boolean = false>(
   options: Options<GetV1CompaniesSchemaData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CompaniesSchemaResponses,
+  GetV1CompaniesSchemaErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CompaniesSchemaResponses,
     GetV1CompaniesSchemaErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/companies/schema',
     ...options,
   });
@@ -2214,15 +2619,27 @@ export const postV1SandboxContractorsEmploymentsEmploymentIdRates = <
     PostV1SandboxContractorsEmploymentsEmploymentIdRatesData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1SandboxContractorsEmploymentsEmploymentIdRatesResponses,
+  PostV1SandboxContractorsEmploymentsEmploymentIdRatesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1SandboxContractorsEmploymentsEmploymentIdRatesResponses,
     PostV1SandboxContractorsEmploymentsEmploymentIdRatesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sandbox/contractors/employments/{employment_id}/rates',
     ...options,
@@ -2252,15 +2669,27 @@ export const getV1EmploymentsEmploymentIdBenefitOffers = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1EmploymentsEmploymentIdBenefitOffersData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmploymentsEmploymentIdBenefitOffersResponses,
+  GetV1EmploymentsEmploymentIdBenefitOffersErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentsEmploymentIdBenefitOffersResponses,
     GetV1EmploymentsEmploymentIdBenefitOffersErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/benefit-offers',
     ...options,
@@ -2286,15 +2715,27 @@ export const putV1EmploymentsEmploymentIdBenefitOffers = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PutV1EmploymentsEmploymentIdBenefitOffersData, ThrowOnError>,
-) =>
+): RequestResult<
+  PutV1EmploymentsEmploymentIdBenefitOffersResponses,
+  PutV1EmploymentsEmploymentIdBenefitOffersErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV1EmploymentsEmploymentIdBenefitOffersResponses,
     PutV1EmploymentsEmploymentIdBenefitOffersErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/benefit-offers',
     ...options,
@@ -2326,15 +2767,27 @@ export const getV1IdentityVerificationEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1IdentityVerificationEmploymentIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1IdentityVerificationEmploymentIdResponses,
+  GetV1IdentityVerificationEmploymentIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1IdentityVerificationEmploymentIdResponses,
     GetV1IdentityVerificationEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/identity-verification/{employment_id}',
     ...options,
@@ -2365,15 +2818,27 @@ export const getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions = <
     GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsResponses,
+  GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsResponses,
     GetV1ContractorsEmploymentsEmploymentIdContractorSubscriptionsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractors/employments/{employment_id}/contractor-subscriptions',
     ...options,
@@ -2398,13 +2863,23 @@ export const getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions = <
  */
 export const getV1EmployeePayslips = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1EmployeePayslipsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeePayslipsResponses,
+  GetV1EmployeePayslipsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeePayslipsResponses,
     GetV1EmployeePayslipsErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/payslips',
     ...options,
   });
@@ -2448,15 +2923,27 @@ export const getV1ContractorsEmploymentsEmploymentIdRates = <
     GetV1ContractorsEmploymentsEmploymentIdRatesData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1ContractorsEmploymentsEmploymentIdRatesResponses,
+  GetV1ContractorsEmploymentsEmploymentIdRatesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ContractorsEmploymentsEmploymentIdRatesResponses,
     GetV1ContractorsEmploymentsEmploymentIdRatesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractors/employments/{employment_id}/rates',
     ...options,
@@ -2485,15 +2972,27 @@ export const getV1ContractorsCorTerminationRequests = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1ContractorsCorTerminationRequestsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ContractorsCorTerminationRequestsResponses,
+  GetV1ContractorsCorTerminationRequestsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1ContractorsCorTerminationRequestsResponses,
     GetV1ContractorsCorTerminationRequestsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractors/cor-termination-requests',
     ...options,
@@ -2518,13 +3017,23 @@ export const getV1ContractorsCorTerminationRequests = <
  */
 export const getV1WebhookEvents = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1WebhookEventsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1WebhookEventsResponses,
+  GetV1WebhookEventsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1WebhookEventsResponses,
     GetV1WebhookEventsErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/webhook-events',
     ...options,
   });
@@ -2550,15 +3059,27 @@ export const postV1SandboxCompaniesCompanyIdBypassEligibilityChecks = <
     PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksResponses,
+  PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksResponses,
     PostV1SandboxCompaniesCompanyIdBypassEligibilityChecksErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sandbox/companies/{company_id}/bypass-eligibility-checks',
     ...options,
@@ -2586,15 +3107,27 @@ export const postV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsAppro
       PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveResponses,
+    PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).post<
       PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveResponses,
       PostV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsApproveErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'CustomerAPIToken',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/sandbox/employments/{employment_id}/risk-reserve-proof-of-payments/approve',
       ...options,
@@ -2613,13 +3146,19 @@ export const postV1SandboxEmploymentsEmploymentIdRiskReserveProofOfPaymentsAppro
  */
 export const getV1TestSchema = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1TestSchemaData, ThrowOnError>,
-) =>
+): RequestResult<GetV1TestSchemaResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).get<
     GetV1TestSchemaResponses,
     unknown,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/test-schema',
     ...options,
   });
@@ -2647,16 +3186,32 @@ export const getV1CountriesCountryCodeHolidaysYear = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1CountriesCountryCodeHolidaysYearData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CountriesCountryCodeHolidaysYearResponses,
+  GetV1CountriesCountryCodeHolidaysYearErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CountriesCountryCodeHolidaysYearResponses,
     GetV1CountriesCountryCodeHolidaysYearErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/countries/{country_code}/holidays/{year}',
     ...options,
@@ -2684,15 +3239,27 @@ export const postV1TimeoffTimeoffIdCancel = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1TimeoffTimeoffIdCancelData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1TimeoffTimeoffIdCancelResponses,
+  PostV1TimeoffTimeoffIdCancelErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1TimeoffTimeoffIdCancelResponses,
     PostV1TimeoffTimeoffIdCancelErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff/{timeoff_id}/cancel',
     ...options,
@@ -2724,15 +3291,27 @@ export const getV1EmploymentsEmploymentIdJob = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1EmploymentsEmploymentIdJobData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmploymentsEmploymentIdJobResponses,
+  GetV1EmploymentsEmploymentIdJobErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentsEmploymentIdJobResponses,
     GetV1EmploymentsEmploymentIdJobErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/job',
     ...options,
@@ -2759,13 +3338,23 @@ export const getV1PricingPlanPartnerTemplates = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1PricingPlanPartnerTemplatesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1PricingPlanPartnerTemplatesResponses,
+  GetV1PricingPlanPartnerTemplatesErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1PricingPlanPartnerTemplatesResponses,
     GetV1PricingPlanPartnerTemplatesErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/pricing-plan-partner-templates',
     ...options,
   });
@@ -2789,13 +3378,23 @@ export const getV1PricingPlanPartnerTemplates = <
  */
 export const getV1PayrollCalendars = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1PayrollCalendarsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1PayrollCalendarsResponses,
+  GetV1PayrollCalendarsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1PayrollCalendarsResponses,
     GetV1PayrollCalendarsErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/payroll-calendars',
     ...options,
   });
@@ -2819,13 +3418,23 @@ export const getV1PayrollCalendars = <ThrowOnError extends boolean = false>(
  */
 export const patchV1EmployeeTimeoffId2 = <ThrowOnError extends boolean = false>(
   options: Options<PatchV1EmployeeTimeoffId2Data, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1EmployeeTimeoffId2Responses,
+  PatchV1EmployeeTimeoffId2Errors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV1EmployeeTimeoffId2Responses,
     PatchV1EmployeeTimeoffId2Errors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/timeoff/{id}',
     ...options,
     headers: {
@@ -2853,13 +3462,23 @@ export const patchV1EmployeeTimeoffId2 = <ThrowOnError extends boolean = false>(
  */
 export const patchV1EmployeeTimeoffId = <ThrowOnError extends boolean = false>(
   options: Options<PatchV1EmployeeTimeoffIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1EmployeeTimeoffIdResponses,
+  PatchV1EmployeeTimeoffIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PatchV1EmployeeTimeoffIdResponses,
     PatchV1EmployeeTimeoffIdErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/timeoff/{id}',
     ...options,
     headers: {
@@ -2888,15 +3507,27 @@ export const patchV1EmployeeTimeoffId = <ThrowOnError extends boolean = false>(
  */
 export const getV1IncentivesRecurring = <ThrowOnError extends boolean = false>(
   options: Options<GetV1IncentivesRecurringData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1IncentivesRecurringResponses,
+  GetV1IncentivesRecurringErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1IncentivesRecurringResponses,
     GetV1IncentivesRecurringErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/incentives/recurring',
     ...options,
@@ -2924,15 +3555,27 @@ export const getV1IncentivesRecurring = <ThrowOnError extends boolean = false>(
  */
 export const postV1IncentivesRecurring = <ThrowOnError extends boolean = false>(
   options: Options<PostV1IncentivesRecurringData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1IncentivesRecurringResponses,
+  PostV1IncentivesRecurringErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1IncentivesRecurringResponses,
     PostV1IncentivesRecurringErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/incentives/recurring',
     ...options,
@@ -2959,15 +3602,27 @@ export const postV1SandboxBenefitRenewalRequests = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1SandboxBenefitRenewalRequestsData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1SandboxBenefitRenewalRequestsResponses,
+  PostV1SandboxBenefitRenewalRequestsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1SandboxBenefitRenewalRequestsResponses,
     PostV1SandboxBenefitRenewalRequestsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sandbox/benefit-renewal-requests',
     ...options,
@@ -3000,15 +3655,27 @@ export const getV1ContractorsEmploymentsEmploymentIdContractDocumentsId = <
     GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdResponses,
+  GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdResponses,
     GetV1ContractorsEmploymentsEmploymentIdContractDocumentsIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractors/employments/{employment_id}/contract-documents/{id}',
     ...options,
@@ -3039,15 +3706,27 @@ export const getV1EmploymentsEmploymentIdContractDocuments = <
     GetV1EmploymentsEmploymentIdContractDocumentsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1EmploymentsEmploymentIdContractDocumentsResponses,
+  GetV1EmploymentsEmploymentIdContractDocumentsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentsEmploymentIdContractDocumentsResponses,
     GetV1EmploymentsEmploymentIdContractDocumentsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/contract-documents',
     ...options,
@@ -3078,15 +3757,27 @@ export const deleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsR
       DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponses,
+    DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).delete<
       DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponses,
       DeleteV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'CustomerAPIToken',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-requirements/{requirement_slug}/acknowledge',
       ...options,
@@ -3117,15 +3808,27 @@ export const postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsReq
       PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponses,
+    PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).post<
       PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeResponses,
       PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugAcknowledgeErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'CustomerAPIToken',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-requirements/{requirement_slug}/acknowledge',
       ...options,
@@ -3151,15 +3854,23 @@ export const postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsReq
  */
 export const getV1Expenses = <ThrowOnError extends boolean = false>(
   options: Options<GetV1ExpensesData, ThrowOnError>,
-) =>
+): RequestResult<GetV1ExpensesResponses, GetV1ExpensesErrors, ThrowOnError> =>
   (options.client ?? client).get<
     GetV1ExpensesResponses,
     GetV1ExpensesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/expenses',
     ...options,
@@ -3185,15 +3896,23 @@ export const getV1Expenses = <ThrowOnError extends boolean = false>(
  */
 export const postV1Expenses = <ThrowOnError extends boolean = false>(
   options: Options<PostV1ExpensesData, ThrowOnError>,
-) =>
+): RequestResult<PostV1ExpensesResponses, PostV1ExpensesErrors, ThrowOnError> =>
   (options.client ?? client).post<
     PostV1ExpensesResponses,
     PostV1ExpensesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/expenses',
     ...options,
@@ -3223,15 +3942,27 @@ export const postV1Expenses = <ThrowOnError extends boolean = false>(
  */
 export const getV1SsoConfiguration = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1SsoConfigurationData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1SsoConfigurationResponses,
+  GetV1SsoConfigurationErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1SsoConfigurationResponses,
     GetV1SsoConfigurationErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sso-configuration',
     ...options,
@@ -3257,15 +3988,27 @@ export const getV1SsoConfiguration = <ThrowOnError extends boolean = false>(
  */
 export const postV1SsoConfiguration = <ThrowOnError extends boolean = false>(
   options: Options<PostV1SsoConfigurationData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1SsoConfigurationResponses,
+  PostV1SsoConfigurationErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1SsoConfigurationResponses,
     PostV1SsoConfigurationErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sso-configuration',
     ...options,
@@ -3306,15 +4049,27 @@ export const postV1ContractorsEmploymentsEmploymentIdTimesheets = <
     PostV1ContractorsEmploymentsEmploymentIdTimesheetsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1ContractorsEmploymentsEmploymentIdTimesheetsResponses,
+  PostV1ContractorsEmploymentsEmploymentIdTimesheetsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1ContractorsEmploymentsEmploymentIdTimesheetsResponses,
     PostV1ContractorsEmploymentsEmploymentIdTimesheetsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractors/employments/{employment_id}/timesheets',
     ...options,
@@ -3347,15 +4102,27 @@ export const putV1SandboxContractAmendmentsContractAmendmentRequestIdApprove = <
     PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveResponses,
+  PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveResponses,
     PutV1SandboxContractAmendmentsContractAmendmentRequestIdApproveErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/approve',
     ...options,
@@ -3374,13 +4141,23 @@ export const putV1SandboxContractAmendmentsContractAmendmentRequestIdApprove = <
  */
 export const getV1AdpUserAssignments = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1AdpUserAssignmentsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1AdpUserAssignmentsResponses,
+  GetV1AdpUserAssignmentsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1AdpUserAssignmentsResponses,
     GetV1AdpUserAssignmentsErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/adp/user-assignments',
     ...options,
   });
@@ -3409,15 +4186,27 @@ export const postV1PayrollRunsPayrollRunIdGlReports = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1PayrollRunsPayrollRunIdGlReportsData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1PayrollRunsPayrollRunIdGlReportsResponses,
+  PostV1PayrollRunsPayrollRunIdGlReportsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1PayrollRunsPayrollRunIdGlReportsResponses,
     PostV1PayrollRunsPayrollRunIdGlReportsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/payroll-runs/{payroll_run_id}/gl-reports',
     ...options,
@@ -3448,13 +4237,23 @@ export const getV1EmployeeLeavePolicies = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1EmployeeLeavePoliciesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeeLeavePoliciesResponses,
+  GetV1EmployeeLeavePoliciesErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeeLeavePoliciesResponses,
     GetV1EmployeeLeavePoliciesErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/leave-policies',
     ...options,
   });
@@ -3488,15 +4287,27 @@ export const getV1ContractorsEmploymentsEmploymentIdContractorCurrencies = <
     GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesResponses,
+  GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesResponses,
     GetV1ContractorsEmploymentsEmploymentIdContractorCurrenciesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractors/employments/{employment_id}/contractor-currencies',
     ...options,
@@ -3521,13 +4332,23 @@ export const getV1ContractorsEmploymentsEmploymentIdContractorCurrencies = <
  */
 export const getV1ProjectsId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1ProjectsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ProjectsIdResponses,
+  GetV1ProjectsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ProjectsIdResponses,
     GetV1ProjectsIdErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/projects/{id}',
     ...options,
   });
@@ -3555,13 +4376,23 @@ export const getV1ProjectsId = <ThrowOnError extends boolean = false>(
  */
 export const patchV1ProjectsId = <ThrowOnError extends boolean = false>(
   options: Options<PatchV1ProjectsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1ProjectsIdResponses,
+  PatchV1ProjectsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV1ProjectsIdResponses,
     PatchV1ProjectsIdErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/projects/{id}',
     ...options,
     headers: {
@@ -3589,13 +4420,23 @@ export const patchV1ProjectsId = <ThrowOnError extends boolean = false>(
  */
 export const postV1WebhookEventsReplay = <ThrowOnError extends boolean = false>(
   options: Options<PostV1WebhookEventsReplayData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1WebhookEventsReplayResponses,
+  PostV1WebhookEventsReplayErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1WebhookEventsReplayResponses,
     PostV1WebhookEventsReplayErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/webhook-events/replay',
     ...options,
     headers: {
@@ -3631,15 +4472,27 @@ export const postV1ContractorsEmploymentsEmploymentIdCorTerminationRequests = <
     PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsResponses,
+  PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsResponses,
     PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractors/employments/{employment_id}/cor-termination-requests',
     ...options,
@@ -3669,13 +4522,23 @@ export const getV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckId = <
     GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdResponses,
+  GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdResponses,
     GetV1EmploymentsEmploymentIdBackgroundChecksBackgroundCheckIdErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employments/{employment_id}/background-checks/{background_check_id}',
     ...options,
   });
@@ -3707,15 +4570,27 @@ export const getV1BenefitRenewalRequestsBenefitRenewalRequestIdSchema = <
     GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaResponses,
+  GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaResponses,
     GetV1BenefitRenewalRequestsBenefitRenewalRequestIdSchemaErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}/schema',
     ...options,
@@ -3742,13 +4617,23 @@ export const getV1BenefitRenewalRequestsBenefitRenewalRequestIdSchema = <
  */
 export const postV1MagicLink = <ThrowOnError extends boolean = false>(
   options: Options<PostV1MagicLinkData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1MagicLinkResponses,
+  PostV1MagicLinkErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1MagicLinkResponses,
     PostV1MagicLinkErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/magic-link',
     ...options,
     headers: {
@@ -3786,15 +4671,27 @@ export const deleteV1IncentivesRecurringId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<DeleteV1IncentivesRecurringIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  DeleteV1IncentivesRecurringIdResponses,
+  DeleteV1IncentivesRecurringIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).delete<
     DeleteV1IncentivesRecurringIdResponses,
     DeleteV1IncentivesRecurringIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/incentives/recurring/{id}',
     ...options,
@@ -3820,15 +4717,27 @@ export const deleteV1IncentivesRecurringId = <
  */
 export const getV1Incentives = <ThrowOnError extends boolean = false>(
   options: Options<GetV1IncentivesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1IncentivesResponses,
+  GetV1IncentivesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1IncentivesResponses,
     GetV1IncentivesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/incentives',
     ...options,
@@ -3856,17 +4765,86 @@ export const getV1Incentives = <ThrowOnError extends boolean = false>(
  */
 export const postV1Incentives = <ThrowOnError extends boolean = false>(
   options: Options<PostV1IncentivesData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1IncentivesResponses,
+  PostV1IncentivesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1IncentivesResponses,
     PostV1IncentivesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/incentives',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Reject job title review
+ *
+ * Rejects the job title review an employment is in, without the intervention of a Remote
+ * admin, so the integration can be tested against the decision it will see in production.
+ *
+ * The employment is archived, and an `employment.job_title_review.rejected` webhook event is
+ * emitted.
+ *
+ * Responds with 422 when the employment is not in a job title review.
+ *
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ * ## Authentication
+ *
+ * This endpoint accepts any one of the following token types:
+ *
+ * - **Company-scoped access token** (`OAuth2AuthorizationCode`) — obtained through the Authorization Code flow or the Refresh Token flow. See [Authentication for partners](https://developer.remote.com/docs/authentication-for-partners).
+ * - **Customer API token** (`CustomerAPIToken`) — generated by the customer on their Integration Settings page. See [Authorization for customers](https://developer.remote.com/docs/authorization-for-customers).
+ */
+export const postV1SandboxEmploymentsEmploymentIdJobTitleReviewReject = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectData,
+    ThrowOnError
+  >,
+): RequestResult<
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectResponses,
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectResponses,
+    PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/sandbox/employments/{employment_id}/job-title-review/reject',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -3896,15 +4874,27 @@ export const postV1ProbationCompletionLetter = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1ProbationCompletionLetterData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1ProbationCompletionLetterResponses,
+  PostV1ProbationCompletionLetterErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1ProbationCompletionLetterResponses,
     PostV1ProbationCompletionLetterErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/probation-completion-letter',
     ...options,
@@ -3936,15 +4926,27 @@ export const getV1ContractorInvoiceSchedulesId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1ContractorInvoiceSchedulesIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ContractorInvoiceSchedulesIdResponses,
+  GetV1ContractorInvoiceSchedulesIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ContractorInvoiceSchedulesIdResponses,
     GetV1ContractorInvoiceSchedulesIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractor-invoice-schedules/{id}',
     ...options,
@@ -3972,15 +4974,27 @@ export const patchV1ContractorInvoiceSchedulesId2 = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PatchV1ContractorInvoiceSchedulesId2Data, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1ContractorInvoiceSchedulesId2Responses,
+  PatchV1ContractorInvoiceSchedulesId2Errors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV1ContractorInvoiceSchedulesId2Responses,
     PatchV1ContractorInvoiceSchedulesId2Errors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractor-invoice-schedules/{id}',
     ...options,
@@ -4012,15 +5026,27 @@ export const patchV1ContractorInvoiceSchedulesId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PatchV1ContractorInvoiceSchedulesIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1ContractorInvoiceSchedulesIdResponses,
+  PatchV1ContractorInvoiceSchedulesIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PatchV1ContractorInvoiceSchedulesIdResponses,
     PatchV1ContractorInvoiceSchedulesIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractor-invoice-schedules/{id}',
     ...options,
@@ -4060,15 +5086,27 @@ export const getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirem
       GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirementsData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirementsResponses,
+    GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirementsErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).get<
       GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirementsResponses,
       GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentRequirementsErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'CustomerAPIToken',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-document-requirements',
       ...options,
@@ -4099,22 +5137,34 @@ export const getV1PayrollRunsPayrollRunIdGlReportsGlReportId = <
     GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdResponses,
+  GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdResponses,
     GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/payroll-runs/{payroll_run_id}/gl-reports/{gl_report_id}',
     ...options,
   });
 
 /**
- * Show Billing Document
+ * Show Billing Document. Requires a token issued via the authorization_code grant (company_manager role) — not usable with a client_credentials (integration) token.
  *
  * Shows a billing document details.
  *
@@ -4137,15 +5187,27 @@ export const getV1BillingDocumentsBillingDocumentId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1BillingDocumentsBillingDocumentIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1BillingDocumentsBillingDocumentIdResponses,
+  GetV1BillingDocumentsBillingDocumentIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1BillingDocumentsBillingDocumentIdResponses,
     GetV1BillingDocumentsBillingDocumentIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/billing-documents/{billing_document_id}',
     ...options,
@@ -4169,17 +5231,37 @@ export const postV1CostCalculatorEstimationPdf = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<PostV1CostCalculatorEstimationPdfData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1CostCalculatorEstimationPdfResponses,
+  PostV1CostCalculatorEstimationPdfErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).post<
     PostV1CostCalculatorEstimationPdfResponses,
     PostV1CostCalculatorEstimationPdfErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'ClientToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/cost-calculator/estimation-pdf',
     ...options,
@@ -4216,16 +5298,32 @@ export const postV1CostCalculatorEstimationPdf = <
  */
 export const getV1EmploymentsBulk = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1EmploymentsBulkData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmploymentsBulkResponses,
+  GetV1EmploymentsBulkErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmploymentsBulkResponses,
     GetV1EmploymentsBulkErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/bulk',
     ...options,
@@ -4261,15 +5359,27 @@ export const getV1EmploymentsEmploymentIdCostCenterAllocations = <
     GetV1EmploymentsEmploymentIdCostCenterAllocationsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1EmploymentsEmploymentIdCostCenterAllocationsResponses,
+  GetV1EmploymentsEmploymentIdCostCenterAllocationsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentsEmploymentIdCostCenterAllocationsResponses,
     GetV1EmploymentsEmploymentIdCostCenterAllocationsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/cost-center-allocations',
     ...options,
@@ -4297,15 +5407,27 @@ export const getV1WorkAuthorizationRequestsId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1WorkAuthorizationRequestsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1WorkAuthorizationRequestsIdResponses,
+  GetV1WorkAuthorizationRequestsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1WorkAuthorizationRequestsIdResponses,
     GetV1WorkAuthorizationRequestsIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/work-authorization-requests/{id}',
     ...options,
@@ -4333,15 +5455,27 @@ export const patchV1WorkAuthorizationRequestsId2 = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PatchV1WorkAuthorizationRequestsId2Data, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1WorkAuthorizationRequestsId2Responses,
+  PatchV1WorkAuthorizationRequestsId2Errors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV1WorkAuthorizationRequestsId2Responses,
     PatchV1WorkAuthorizationRequestsId2Errors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/work-authorization-requests/{id}',
     ...options,
@@ -4373,15 +5507,27 @@ export const patchV1WorkAuthorizationRequestsId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PatchV1WorkAuthorizationRequestsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1WorkAuthorizationRequestsIdResponses,
+  PatchV1WorkAuthorizationRequestsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PatchV1WorkAuthorizationRequestsIdResponses,
     PatchV1WorkAuthorizationRequestsIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/work-authorization-requests/{id}',
     ...options,
@@ -4412,13 +5558,23 @@ export const getV1EmployeeLeavePoliciesSummary = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1EmployeeLeavePoliciesSummaryData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeeLeavePoliciesSummaryResponses,
+  GetV1EmployeeLeavePoliciesSummaryErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeeLeavePoliciesSummaryResponses,
     GetV1EmployeeLeavePoliciesSummaryErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/leave-policies/summary',
     ...options,
   });
@@ -4466,15 +5622,27 @@ export const putV2EmploymentsEmploymentIdFederalTaxes = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PutV2EmploymentsEmploymentIdFederalTaxesData, ThrowOnError>,
-) =>
+): RequestResult<
+  PutV2EmploymentsEmploymentIdFederalTaxesResponses,
+  PutV2EmploymentsEmploymentIdFederalTaxesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV2EmploymentsEmploymentIdFederalTaxesResponses,
     PutV2EmploymentsEmploymentIdFederalTaxesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}/federal-taxes',
     ...options,
@@ -4504,15 +5672,27 @@ export const putV2EmploymentsEmploymentIdFederalTaxes = <
  */
 export const postV1ProbationExtensions = <ThrowOnError extends boolean = false>(
   options: Options<PostV1ProbationExtensionsData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1ProbationExtensionsResponses,
+  PostV1ProbationExtensionsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1ProbationExtensionsResponses,
     PostV1ProbationExtensionsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/probation-extensions',
     ...options,
@@ -4542,15 +5722,27 @@ export const postV1ProbationExtensions = <ThrowOnError extends boolean = false>(
  */
 export const postV1RiskReserve = <ThrowOnError extends boolean = false>(
   options: Options<PostV1RiskReserveData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1RiskReserveResponses,
+  PostV1RiskReserveErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1RiskReserveResponses,
     PostV1RiskReserveErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/risk-reserve',
     ...options,
@@ -4587,7 +5779,11 @@ export const postV1EmploymentsEmploymentIdRiskReserveProofOfPayments = <
     PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsResponses,
+  PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsResponses,
     PostV1EmploymentsEmploymentIdRiskReserveProofOfPaymentsErrors,
@@ -4595,8 +5791,16 @@ export const postV1EmploymentsEmploymentIdRiskReserveProofOfPayments = <
   >({
     ...formDataBodySerializer,
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/risk-reserve-proof-of-payments',
     ...options,
@@ -4628,15 +5832,27 @@ export const getV1CompaniesCompanyIdComplianceProfile = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1CompaniesCompanyIdComplianceProfileData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CompaniesCompanyIdComplianceProfileResponses,
+  GetV1CompaniesCompanyIdComplianceProfileErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CompaniesCompanyIdComplianceProfileResponses,
     GetV1CompaniesCompanyIdComplianceProfileErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/companies/{company_id}/compliance-profile',
     ...options,
@@ -4665,13 +5881,23 @@ export const getV1CompaniesCompanyIdProductPrices = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1CompaniesCompanyIdProductPricesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CompaniesCompanyIdProductPricesResponses,
+  GetV1CompaniesCompanyIdProductPricesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CompaniesCompanyIdProductPricesResponses,
     GetV1CompaniesCompanyIdProductPricesErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/companies/{company_id}/product-prices',
     ...options,
   });
@@ -4699,15 +5925,27 @@ export const getV1CompaniesCompanyIdProductPrices = <
  */
 export const getV1CompaniesCompanyId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1CompaniesCompanyIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CompaniesCompanyIdResponses,
+  GetV1CompaniesCompanyIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CompaniesCompanyIdResponses,
     GetV1CompaniesCompanyIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/companies/{company_id}',
     ...options,
@@ -4750,13 +5988,23 @@ export const patchV1CompaniesCompanyId2 = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PatchV1CompaniesCompanyId2Data, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1CompaniesCompanyId2Responses,
+  PatchV1CompaniesCompanyId2Errors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV1CompaniesCompanyId2Responses,
     PatchV1CompaniesCompanyId2Errors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/companies/{company_id}',
     ...options,
     headers: {
@@ -4800,13 +6048,23 @@ export const patchV1CompaniesCompanyId2 = <
  */
 export const patchV1CompaniesCompanyId = <ThrowOnError extends boolean = false>(
   options: Options<PatchV1CompaniesCompanyIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1CompaniesCompanyIdResponses,
+  PatchV1CompaniesCompanyIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PatchV1CompaniesCompanyIdResponses,
     PatchV1CompaniesCompanyIdErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/companies/{company_id}',
     ...options,
     headers: {
@@ -4842,13 +6100,23 @@ export const patchV1CompaniesCompanyId = <ThrowOnError extends boolean = false>(
  */
 export const getV1EmployeeAddress = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1EmployeeAddressData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeeAddressResponses,
+  GetV1EmployeeAddressErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeeAddressResponses,
     GetV1EmployeeAddressErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/address',
     ...options,
   });
@@ -4882,13 +6150,23 @@ export const getV1EmployeeAddress = <ThrowOnError extends boolean = false>(
  */
 export const putV1EmployeeAddress = <ThrowOnError extends boolean = false>(
   options?: Options<PutV1EmployeeAddressData, ThrowOnError>,
-) =>
+): RequestResult<
+  PutV1EmployeeAddressResponses,
+  PutV1EmployeeAddressErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).put<
     PutV1EmployeeAddressResponses,
     PutV1EmployeeAddressErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/address',
     ...options,
     headers: {
@@ -4922,15 +6200,27 @@ export const getV1ResignationsOffboardingRequestIdResignationLetter = <
     GetV1ResignationsOffboardingRequestIdResignationLetterData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1ResignationsOffboardingRequestIdResignationLetterResponses,
+  GetV1ResignationsOffboardingRequestIdResignationLetterErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ResignationsOffboardingRequestIdResignationLetterResponses,
     GetV1ResignationsOffboardingRequestIdResignationLetterErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/resignations/{offboarding_request_id}/resignation-letter',
     ...options,
@@ -4977,15 +6267,27 @@ export const getV2EmploymentsEmploymentIdBasicInformation = <
     GetV2EmploymentsEmploymentIdBasicInformationData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV2EmploymentsEmploymentIdBasicInformationResponses,
+  GetV2EmploymentsEmploymentIdBasicInformationErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV2EmploymentsEmploymentIdBasicInformationResponses,
     GetV2EmploymentsEmploymentIdBasicInformationErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}/basic-information',
     ...options,
@@ -5034,15 +6336,27 @@ export const putV2EmploymentsEmploymentIdBasicInformation = <
     PutV2EmploymentsEmploymentIdBasicInformationData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PutV2EmploymentsEmploymentIdBasicInformationResponses,
+  PutV2EmploymentsEmploymentIdBasicInformationErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV2EmploymentsEmploymentIdBasicInformationResponses,
     PutV2EmploymentsEmploymentIdBasicInformationErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}/basic-information',
     ...options,
@@ -5095,15 +6409,27 @@ export const putV1EmploymentsEmploymentIdFederalTaxes = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PutV1EmploymentsEmploymentIdFederalTaxesData, ThrowOnError>,
-) =>
+): RequestResult<
+  PutV1EmploymentsEmploymentIdFederalTaxesResponses,
+  PutV1EmploymentsEmploymentIdFederalTaxesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV1EmploymentsEmploymentIdFederalTaxesResponses,
     PutV1EmploymentsEmploymentIdFederalTaxesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/federal-taxes',
     ...options,
@@ -5128,13 +6454,23 @@ export const getV1AdpSubscriptionChanges = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1AdpSubscriptionChangesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1AdpSubscriptionChangesResponses,
+  GetV1AdpSubscriptionChangesErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1AdpSubscriptionChangesResponses,
     GetV1AdpSubscriptionChangesErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/adp/subscription-changes',
     ...options,
   });
@@ -5159,15 +6495,27 @@ export const getV1AdpSubscriptionChanges = <
  */
 export const getV1ContractAmendments = <ThrowOnError extends boolean = false>(
   options: Options<GetV1ContractAmendmentsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ContractAmendmentsResponses,
+  GetV1ContractAmendmentsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ContractAmendmentsResponses,
     GetV1ContractAmendmentsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contract-amendments',
     ...options,
@@ -5209,15 +6557,27 @@ export const getV1ContractAmendments = <ThrowOnError extends boolean = false>(
  */
 export const postV1ContractAmendments = <ThrowOnError extends boolean = false>(
   options: Options<PostV1ContractAmendmentsData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1ContractAmendmentsResponses,
+  PostV1ContractAmendmentsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1ContractAmendmentsResponses,
     PostV1ContractAmendmentsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contract-amendments',
     ...options,
@@ -5256,15 +6616,27 @@ export const getV1EmploymentsEmploymentIdEmploymentAgreementDownload = <
     GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadResponses,
+  GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadResponses,
     GetV1EmploymentsEmploymentIdEmploymentAgreementDownloadErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/employment-agreement/download',
     ...options,
@@ -5293,15 +6665,27 @@ export const getV1PayrollRunsPayrollRunId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1PayrollRunsPayrollRunIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1PayrollRunsPayrollRunIdResponses,
+  GetV1PayrollRunsPayrollRunIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1PayrollRunsPayrollRunIdResponses,
     GetV1PayrollRunsPayrollRunIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/payroll-runs/{payroll_run_id}',
     ...options,
@@ -5333,15 +6717,27 @@ export const getV1ExpensesExpenseIdReceipt = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1ExpensesExpenseIdReceiptData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ExpensesExpenseIdReceiptResponses,
+  GetV1ExpensesExpenseIdReceiptErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ExpensesExpenseIdReceiptResponses,
     GetV1ExpensesExpenseIdReceiptErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/expenses/{expense_id}/receipt',
     ...options,
@@ -5369,15 +6765,27 @@ export const getV1TravelLetterRequestsId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1TravelLetterRequestsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1TravelLetterRequestsIdResponses,
+  GetV1TravelLetterRequestsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1TravelLetterRequestsIdResponses,
     GetV1TravelLetterRequestsIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/travel-letter-requests/{id}',
     ...options,
@@ -5405,15 +6813,27 @@ export const patchV1TravelLetterRequestsId2 = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PatchV1TravelLetterRequestsId2Data, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1TravelLetterRequestsId2Responses,
+  PatchV1TravelLetterRequestsId2Errors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV1TravelLetterRequestsId2Responses,
     PatchV1TravelLetterRequestsId2Errors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/travel-letter-requests/{id}',
     ...options,
@@ -5445,15 +6865,27 @@ export const patchV1TravelLetterRequestsId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PatchV1TravelLetterRequestsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1TravelLetterRequestsIdResponses,
+  PatchV1TravelLetterRequestsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PatchV1TravelLetterRequestsIdResponses,
     PatchV1TravelLetterRequestsIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/travel-letter-requests/{id}',
     ...options,
@@ -5489,15 +6921,27 @@ export const getV1TimeoffBalancesEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1TimeoffBalancesEmploymentIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1TimeoffBalancesEmploymentIdResponses,
+  GetV1TimeoffBalancesEmploymentIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1TimeoffBalancesEmploymentIdResponses,
     GetV1TimeoffBalancesEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff-balances/{employment_id}',
     ...options,
@@ -5528,15 +6972,27 @@ export const postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsReq
       PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsResponses,
+    PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).post<
       PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsResponses,
       PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'CustomerAPIToken',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-requirements/{requirement_slug}/documents',
       ...options,
@@ -5556,15 +7012,27 @@ export const postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsReq
  */
 export const getV1ExpensesCategories = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1ExpensesCategoriesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ExpensesCategoriesResponses,
+  GetV1ExpensesCategoriesErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1ExpensesCategoriesResponses,
     GetV1ExpensesCategoriesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/expenses/categories',
     ...options,
@@ -5591,13 +7059,23 @@ export const postV1EmployeeTimeoffIdCancel = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1EmployeeTimeoffIdCancelData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1EmployeeTimeoffIdCancelResponses,
+  PostV1EmployeeTimeoffIdCancelErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1EmployeeTimeoffIdCancelResponses,
     PostV1EmployeeTimeoffIdCancelErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/timeoff/{id}/cancel',
     ...options,
     headers: {
@@ -5661,16 +7139,32 @@ export const getV1CountriesCountryCodeForm = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1CountriesCountryCodeFormData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CountriesCountryCodeFormResponses,
+  GetV1CountriesCountryCodeFormErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CountriesCountryCodeFormResponses,
     GetV1CountriesCountryCodeFormErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/countries/{country_code}/{form}',
     ...options,
@@ -5696,15 +7190,23 @@ export const getV1CountriesCountryCodeForm = <
  */
 export const getV1FilesId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1FilesIdData, ThrowOnError>,
-) =>
+): RequestResult<GetV1FilesIdResponses, GetV1FilesIdErrors, ThrowOnError> =>
   (options.client ?? client).get<
     GetV1FilesIdResponses,
     GetV1FilesIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/files/{id}',
     ...options,
@@ -5730,15 +7232,27 @@ export const getV1FilesId = <ThrowOnError extends boolean = false>(
  */
 export const getV1ContractAmendmentsId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1ContractAmendmentsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ContractAmendmentsIdResponses,
+  GetV1ContractAmendmentsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ContractAmendmentsIdResponses,
     GetV1ContractAmendmentsIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contract-amendments/{id}',
     ...options,
@@ -5765,15 +7279,27 @@ export const getV1ContractAmendmentsId = <ThrowOnError extends boolean = false>(
  */
 export const getV1CompanyManagers = <ThrowOnError extends boolean = false>(
   options: Options<GetV1CompanyManagersData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CompanyManagersResponses,
+  GetV1CompanyManagersErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CompanyManagersResponses,
     GetV1CompanyManagersErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/company-managers',
     ...options,
@@ -5799,15 +7325,27 @@ export const getV1CompanyManagers = <ThrowOnError extends boolean = false>(
  */
 export const postV1CompanyManagers = <ThrowOnError extends boolean = false>(
   options: Options<PostV1CompanyManagersData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1CompanyManagersResponses,
+  PostV1CompanyManagersErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1CompanyManagersResponses,
     PostV1CompanyManagersErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/company-managers',
     ...options,
@@ -5835,17 +7373,37 @@ export const getV1CostCalculatorCountries = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1CostCalculatorCountriesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CostCalculatorCountriesResponses,
+  unknown,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1CostCalculatorCountriesResponses,
     unknown,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'ClientToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/cost-calculator/countries',
     ...options,
@@ -5876,15 +7434,27 @@ export const postV1IdentityVerificationEmploymentIdDecline = <
     PostV1IdentityVerificationEmploymentIdDeclineData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1IdentityVerificationEmploymentIdDeclineResponses,
+  PostV1IdentityVerificationEmploymentIdDeclineErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1IdentityVerificationEmploymentIdDeclineResponses,
     PostV1IdentityVerificationEmploymentIdDeclineErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/identity-verification/{employment_id}/decline',
     ...options,
@@ -5917,15 +7487,27 @@ export const getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId = <
     GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdResponses,
+  GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdResponses,
     GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/{id}',
     ...options,
@@ -5951,15 +7533,27 @@ export const getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId = <
  */
 export const getV1BillingDocuments = <ThrowOnError extends boolean = false>(
   options: Options<GetV1BillingDocumentsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1BillingDocumentsResponses,
+  GetV1BillingDocumentsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1BillingDocumentsResponses,
     GetV1BillingDocumentsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/billing-documents',
     ...options,
@@ -5987,15 +7581,27 @@ export const deleteV1WebhookCallbacksId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<DeleteV1WebhookCallbacksIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  DeleteV1WebhookCallbacksIdResponses,
+  DeleteV1WebhookCallbacksIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).delete<
     DeleteV1WebhookCallbacksIdResponses,
     DeleteV1WebhookCallbacksIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/webhook-callbacks/{id}',
     ...options,
@@ -6021,15 +7627,27 @@ export const deleteV1WebhookCallbacksId = <
  */
 export const patchV1WebhookCallbacksId = <ThrowOnError extends boolean = false>(
   options: Options<PatchV1WebhookCallbacksIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1WebhookCallbacksIdResponses,
+  PatchV1WebhookCallbacksIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV1WebhookCallbacksIdResponses,
     PatchV1WebhookCallbacksIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/webhook-callbacks/{id}',
     ...options,
@@ -6065,13 +7683,23 @@ export const patchV1WebhookCallbacksId = <ThrowOnError extends boolean = false>(
  */
 export const putV1EmployeeFederalTaxes = <ThrowOnError extends boolean = false>(
   options?: Options<PutV1EmployeeFederalTaxesData, ThrowOnError>,
-) =>
+): RequestResult<
+  PutV1EmployeeFederalTaxesResponses,
+  PutV1EmployeeFederalTaxesErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).put<
     PutV1EmployeeFederalTaxesResponses,
     PutV1EmployeeFederalTaxesErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/federal-taxes',
     ...options,
     headers: {
@@ -6099,13 +7727,23 @@ export const putV1EmployeeFederalTaxes = <ThrowOnError extends boolean = false>(
  */
 export const getV1EmployeeTimesheets = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1EmployeeTimesheetsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeeTimesheetsResponses,
+  GetV1EmployeeTimesheetsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeeTimesheetsResponses,
     GetV1EmployeeTimesheetsErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/timesheets',
     ...options,
   });
@@ -6136,15 +7774,27 @@ export const getV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodes = <
     GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesResponses,
+  GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesResponses,
     GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdPayCodesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/pay-codes',
     ...options,
@@ -6179,15 +7829,27 @@ export const putV2EmploymentsEmploymentIdEmergencyContact = <
     PutV2EmploymentsEmploymentIdEmergencyContactData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PutV2EmploymentsEmploymentIdEmergencyContactResponses,
+  PutV2EmploymentsEmploymentIdEmergencyContactErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV2EmploymentsEmploymentIdEmergencyContactResponses,
     PutV2EmploymentsEmploymentIdEmergencyContactErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}/emergency-contact',
     ...options,
@@ -6217,15 +7879,27 @@ export const putV2EmploymentsEmploymentIdEmergencyContact = <
  */
 export const getV1TravelLetterRequests = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1TravelLetterRequestsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1TravelLetterRequestsResponses,
+  GetV1TravelLetterRequestsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1TravelLetterRequestsResponses,
     GetV1TravelLetterRequestsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/travel-letter-requests',
     ...options,
@@ -6253,15 +7927,27 @@ export const getV1BenefitRenewalRequests = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1BenefitRenewalRequestsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1BenefitRenewalRequestsResponses,
+  GetV1BenefitRenewalRequestsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1BenefitRenewalRequestsResponses,
     GetV1BenefitRenewalRequestsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/benefit-renewal-requests',
     ...options,
@@ -6288,16 +7974,32 @@ export const getV1BenefitRenewalRequests = <
  */
 export const postV1WebhookCallbacks = <ThrowOnError extends boolean = false>(
   options: Options<PostV1WebhookCallbacksData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1WebhookCallbacksResponses,
+  PostV1WebhookCallbacksErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1WebhookCallbacksResponses,
     PostV1WebhookCallbacksErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/webhook-callbacks',
     ...options,
@@ -6329,15 +8031,27 @@ export const postV1TimesheetsTimesheetIdApprove = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1TimesheetsTimesheetIdApproveData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1TimesheetsTimesheetIdApproveResponses,
+  PostV1TimesheetsTimesheetIdApproveErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1TimesheetsTimesheetIdApproveResponses,
     PostV1TimesheetsTimesheetIdApproveErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timesheets/{timesheet_id}/approve',
     ...options,
@@ -6365,15 +8079,27 @@ export const getV1LeavePoliciesSummaryEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1LeavePoliciesSummaryEmploymentIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1LeavePoliciesSummaryEmploymentIdResponses,
+  GetV1LeavePoliciesSummaryEmploymentIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1LeavePoliciesSummaryEmploymentIdResponses,
     GetV1LeavePoliciesSummaryEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/leave-policies/summary/{employment_id}',
     ...options,
@@ -6400,13 +8126,23 @@ export const getV1EmployeeExpenseCategories = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1EmployeeExpenseCategoriesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeeExpenseCategoriesResponses,
+  GetV1EmployeeExpenseCategoriesErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeeExpenseCategoriesResponses,
     GetV1EmployeeExpenseCategoriesErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/expense-categories',
     ...options,
   });
@@ -6431,15 +8167,27 @@ export const getV1EmployeeExpenseCategories = <
  */
 export const getV1CompanyDepartments = <ThrowOnError extends boolean = false>(
   options: Options<GetV1CompanyDepartmentsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CompanyDepartmentsResponses,
+  GetV1CompanyDepartmentsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CompanyDepartmentsResponses,
     GetV1CompanyDepartmentsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/company-departments',
     ...options,
@@ -6465,15 +8213,27 @@ export const getV1CompanyDepartments = <ThrowOnError extends boolean = false>(
  */
 export const postV1CompanyDepartments = <ThrowOnError extends boolean = false>(
   options: Options<PostV1CompanyDepartmentsData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1CompanyDepartmentsResponses,
+  PostV1CompanyDepartmentsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1CompanyDepartmentsResponses,
     PostV1CompanyDepartmentsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/company-departments',
     ...options,
@@ -6505,15 +8265,27 @@ export const getV1OffboardingsEmploymentsEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1OffboardingsEmploymentsEmploymentIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1OffboardingsEmploymentsEmploymentIdResponses,
+  GetV1OffboardingsEmploymentsEmploymentIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1OffboardingsEmploymentsEmploymentIdResponses,
     GetV1OffboardingsEmploymentsEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/offboardings/employments/{employment_id}',
     ...options,
@@ -6544,15 +8316,27 @@ export const postV1TimeoffTimeoffIdCancelRequestDecline = <
     PostV1TimeoffTimeoffIdCancelRequestDeclineData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1TimeoffTimeoffIdCancelRequestDeclineResponses,
+  PostV1TimeoffTimeoffIdCancelRequestDeclineErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1TimeoffTimeoffIdCancelRequestDeclineResponses,
     PostV1TimeoffTimeoffIdCancelRequestDeclineErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff/{timeoff_id}/cancel-request/decline',
     ...options,
@@ -6605,15 +8389,27 @@ export const putV1EmploymentsEmploymentIdBasicInformation = <
     PutV1EmploymentsEmploymentIdBasicInformationData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PutV1EmploymentsEmploymentIdBasicInformationResponses,
+  PutV1EmploymentsEmploymentIdBasicInformationErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV1EmploymentsEmploymentIdBasicInformationResponses,
     PutV1EmploymentsEmploymentIdBasicInformationErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/basic-information',
     ...options,
@@ -6646,15 +8442,27 @@ export const getV1EmploymentsEmploymentIdBenefitOffersSchema = <
     GetV1EmploymentsEmploymentIdBenefitOffersSchemaData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1EmploymentsEmploymentIdBenefitOffersSchemaResponses,
+  GetV1EmploymentsEmploymentIdBenefitOffersSchemaErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentsEmploymentIdBenefitOffersSchemaResponses,
     GetV1EmploymentsEmploymentIdBenefitOffersSchemaErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/benefit-offers/schema',
     ...options,
@@ -6681,15 +8489,27 @@ export const getV1EmploymentsEmploymentIdBenefitOffersSchema = <
  */
 export const postV1JobTitleScreenings = <ThrowOnError extends boolean = false>(
   options?: Options<PostV1JobTitleScreeningsData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1JobTitleScreeningsResponses,
+  PostV1JobTitleScreeningsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).post<
     PostV1JobTitleScreeningsResponses,
     PostV1JobTitleScreeningsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/job-title-screenings',
     ...options,
@@ -6713,15 +8533,27 @@ export const postV1JobTitleScreenings = <ThrowOnError extends boolean = false>(
  */
 export const getV1JobTitleScreeningsId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1JobTitleScreeningsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1JobTitleScreeningsIdResponses,
+  GetV1JobTitleScreeningsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1JobTitleScreeningsIdResponses,
     GetV1JobTitleScreeningsIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/job-title-screenings/{id}',
     ...options,
@@ -6757,15 +8589,27 @@ export const postV1ContractorsEligibilityQuestionnaire = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1ContractorsEligibilityQuestionnaireData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1ContractorsEligibilityQuestionnaireResponses,
+  PostV1ContractorsEligibilityQuestionnaireErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1ContractorsEligibilityQuestionnaireResponses,
     PostV1ContractorsEligibilityQuestionnaireErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractors/eligibility-questionnaire',
     ...options,
@@ -6796,13 +8640,23 @@ export const getV1EmployeePersonalInformation = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1EmployeePersonalInformationData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeePersonalInformationResponses,
+  GetV1EmployeePersonalInformationErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeePersonalInformationResponses,
     GetV1EmployeePersonalInformationErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/personal-information',
     ...options,
   });
@@ -6827,15 +8681,27 @@ export const getV1EmployeePersonalInformation = <
  */
 export const getV1Timesheets = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1TimesheetsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1TimesheetsResponses,
+  GetV1TimesheetsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1TimesheetsResponses,
     GetV1TimesheetsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timesheets',
     ...options,
@@ -6864,15 +8730,27 @@ export const postV1SandboxCompaniesCompanyIdLegalEntities = <
     PostV1SandboxCompaniesCompanyIdLegalEntitiesData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesResponses,
+  PostV1SandboxCompaniesCompanyIdLegalEntitiesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1SandboxCompaniesCompanyIdLegalEntitiesResponses,
     PostV1SandboxCompaniesCompanyIdLegalEntitiesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sandbox/companies/{company_id}/legal-entities',
     ...options,
@@ -6920,15 +8798,27 @@ export const getV1EmploymentsEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1EmploymentsEmploymentIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmploymentsEmploymentIdResponses,
+  GetV1EmploymentsEmploymentIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentsEmploymentIdResponses,
     GetV1EmploymentsEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}',
     ...options,
@@ -7000,15 +8890,27 @@ export const patchV1EmploymentsEmploymentId2 = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PatchV1EmploymentsEmploymentId2Data, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1EmploymentsEmploymentId2Responses,
+  PatchV1EmploymentsEmploymentId2Errors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV1EmploymentsEmploymentId2Responses,
     PatchV1EmploymentsEmploymentId2Errors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}',
     ...options,
@@ -7084,15 +8986,27 @@ export const patchV1EmploymentsEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PatchV1EmploymentsEmploymentIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1EmploymentsEmploymentIdResponses,
+  PatchV1EmploymentsEmploymentIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PatchV1EmploymentsEmploymentIdResponses,
     PatchV1EmploymentsEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}',
     ...options,
@@ -7117,16 +9031,32 @@ export const patchV1EmploymentsEmploymentId = <
  */
 export const getV1ScimV2Users = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1ScimV2UsersData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ScimV2UsersResponses,
+  GetV1ScimV2UsersErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1ScimV2UsersResponses,
     GetV1ScimV2UsersErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/scim/v2/Users',
     ...options,
@@ -7154,15 +9084,27 @@ export const getV1PayrollCalendarsCycle = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1PayrollCalendarsCycleData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1PayrollCalendarsCycleResponses,
+  GetV1PayrollCalendarsCycleErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1PayrollCalendarsCycleResponses,
     GetV1PayrollCalendarsCycleErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/payroll-calendars/{cycle}',
     ...options,
@@ -7199,15 +9141,27 @@ export const getV1CompanyCompanyIdCostCenterAllocations = <
     GetV1CompanyCompanyIdCostCenterAllocationsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1CompanyCompanyIdCostCenterAllocationsResponses,
+  GetV1CompanyCompanyIdCostCenterAllocationsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CompanyCompanyIdCostCenterAllocationsResponses,
     GetV1CompanyCompanyIdCostCenterAllocationsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/company/{company_id}/cost-center-allocations',
     ...options,
@@ -7237,15 +9191,27 @@ export const getV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDeta
       GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses,
+    GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).get<
       GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses,
       GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2ClientCredentials',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
       ...options,
@@ -7275,15 +9241,27 @@ export const putV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDeta
       PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses,
+    PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).put<
       PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsResponses,
       PutV1CompaniesCompanyIdLegalEntitiesLegalEntityIdAdministrativeDetailsErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2ClientCredentials',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/administrative-details',
       ...options,
@@ -7313,17 +9291,37 @@ export const getV1CostCalculatorRegionsSlugFields = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1CostCalculatorRegionsSlugFieldsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CostCalculatorRegionsSlugFieldsResponses,
+  GetV1CostCalculatorRegionsSlugFieldsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CostCalculatorRegionsSlugFieldsResponses,
     GetV1CostCalculatorRegionsSlugFieldsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'ClientToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/cost-calculator/regions/{slug}/fields',
     ...options,
@@ -7349,15 +9347,27 @@ export const getV1CostCalculatorRegionsSlugFields = <
  */
 export const getV1OffboardingsId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1OffboardingsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1OffboardingsIdResponses,
+  GetV1OffboardingsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1OffboardingsIdResponses,
     GetV1OffboardingsIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/offboardings/{id}',
     ...options,
@@ -7388,15 +9398,27 @@ export const getV1PayrollRunsPayrollRunIdEmployeeDetails = <
     GetV1PayrollRunsPayrollRunIdEmployeeDetailsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1PayrollRunsPayrollRunIdEmployeeDetailsResponses,
+  GetV1PayrollRunsPayrollRunIdEmployeeDetailsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1PayrollRunsPayrollRunIdEmployeeDetailsResponses,
     GetV1PayrollRunsPayrollRunIdEmployeeDetailsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/payroll-runs/{payroll_run_id}/employee-details',
     ...options,
@@ -7424,15 +9446,27 @@ export const getV1BulkEmploymentJobsJobIdRows = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1BulkEmploymentJobsJobIdRowsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1BulkEmploymentJobsJobIdRowsResponses,
+  GetV1BulkEmploymentJobsJobIdRowsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1BulkEmploymentJobsJobIdRowsResponses,
     GetV1BulkEmploymentJobsJobIdRowsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/bulk-employment-jobs/{job_id}/rows',
     ...options,
@@ -7467,13 +9501,23 @@ export const getV1EmployeeEmergencyContact = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1EmployeeEmergencyContactData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeeEmergencyContactResponses,
+  GetV1EmployeeEmergencyContactErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeeEmergencyContactResponses,
     GetV1EmployeeEmergencyContactErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/emergency-contact',
     ...options,
   });
@@ -7509,13 +9553,23 @@ export const putV1EmployeeEmergencyContact = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<PutV1EmployeeEmergencyContactData, ThrowOnError>,
-) =>
+): RequestResult<
+  PutV1EmployeeEmergencyContactResponses,
+  PutV1EmployeeEmergencyContactErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).put<
     PutV1EmployeeEmergencyContactResponses,
     PutV1EmployeeEmergencyContactErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/emergency-contact',
     ...options,
     headers: {
@@ -7549,15 +9603,27 @@ export const putV1EmployeeEmergencyContact = <
  */
 export const postV1SandboxEmployments = <ThrowOnError extends boolean = false>(
   options: Options<PostV1SandboxEmploymentsData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1SandboxEmploymentsResponses,
+  PostV1SandboxEmploymentsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1SandboxEmploymentsResponses,
     PostV1SandboxEmploymentsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sandbox/employments',
     ...options,
@@ -7594,15 +9660,27 @@ export const postV1EmploymentsEmploymentIdContractEligibility = <
     PostV1EmploymentsEmploymentIdContractEligibilityData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1EmploymentsEmploymentIdContractEligibilityResponses,
+  PostV1EmploymentsEmploymentIdContractEligibilityErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1EmploymentsEmploymentIdContractEligibilityResponses,
     PostV1EmploymentsEmploymentIdContractEligibilityErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/contract-eligibility',
     ...options,
@@ -7635,16 +9713,28 @@ export const postV1EmploymentsEmploymentIdContractEligibility = <
  */
 export const getV1Countries = <ThrowOnError extends boolean = false>(
   options: Options<GetV1CountriesData, ThrowOnError>,
-) =>
+): RequestResult<GetV1CountriesResponses, GetV1CountriesErrors, ThrowOnError> =>
   (options.client ?? client).get<
     GetV1CountriesResponses,
     GetV1CountriesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/countries',
     ...options,
@@ -7697,15 +9787,27 @@ export const putV2EmploymentsEmploymentIdContractDetails = <
     PutV2EmploymentsEmploymentIdContractDetailsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PutV2EmploymentsEmploymentIdContractDetailsResponses,
+  PutV2EmploymentsEmploymentIdContractDetailsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV2EmploymentsEmploymentIdContractDetailsResponses,
     PutV2EmploymentsEmploymentIdContractDetailsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}/contract-details',
     ...options,
@@ -7734,13 +9836,23 @@ export const putV2EmploymentsEmploymentIdContractDetails = <
  */
 export const getV1EmployeePayslipFiles = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1EmployeePayslipFilesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeePayslipFilesResponses,
+  GetV1EmployeePayslipFilesErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeePayslipFilesResponses,
     GetV1EmployeePayslipFilesErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/payslip-files',
     ...options,
   });
@@ -7760,13 +9872,23 @@ export const postV1CompaniesCompanyIdCreateToken = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1CompaniesCompanyIdCreateTokenData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1CompaniesCompanyIdCreateTokenResponses,
+  PostV1CompaniesCompanyIdCreateTokenErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1CompaniesCompanyIdCreateTokenResponses,
     PostV1CompaniesCompanyIdCreateTokenErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/companies/{company_id}/create-token',
     ...options,
   });
@@ -7793,15 +9915,27 @@ export const getV1CompaniesCompanyIdLegalEntities = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1CompaniesCompanyIdLegalEntitiesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CompaniesCompanyIdLegalEntitiesResponses,
+  GetV1CompaniesCompanyIdLegalEntitiesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CompaniesCompanyIdLegalEntitiesResponses,
     GetV1CompaniesCompanyIdLegalEntitiesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/companies/{company_id}/legal-entities',
     ...options,
@@ -7829,15 +9963,23 @@ export const getV1CompaniesCompanyIdLegalEntities = <
  */
 export const postV1Ready = <ThrowOnError extends boolean = false>(
   options: Options<PostV1ReadyData, ThrowOnError>,
-) =>
+): RequestResult<PostV1ReadyResponses, PostV1ReadyErrors, ThrowOnError> =>
   (options.client ?? client).post<
     PostV1ReadyResponses,
     PostV1ReadyErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/ready',
     ...options,
@@ -7869,15 +10011,27 @@ export const getV1LeavePoliciesDetailsEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1LeavePoliciesDetailsEmploymentIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1LeavePoliciesDetailsEmploymentIdResponses,
+  GetV1LeavePoliciesDetailsEmploymentIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1LeavePoliciesDetailsEmploymentIdResponses,
     GetV1LeavePoliciesDetailsEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/leave-policies/details/{employment_id}',
     ...options,
@@ -7915,15 +10069,27 @@ export const postV1EmploymentsEmploymentIdContractOrigin = <
     PostV1EmploymentsEmploymentIdContractOriginData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1EmploymentsEmploymentIdContractOriginResponses,
+  PostV1EmploymentsEmploymentIdContractOriginErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1EmploymentsEmploymentIdContractOriginResponses,
     PostV1EmploymentsEmploymentIdContractOriginErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/contract-origin',
     ...options,
@@ -7948,13 +10114,23 @@ export const getV1AdpSubscriptionOrders = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1AdpSubscriptionOrdersData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1AdpSubscriptionOrdersResponses,
+  GetV1AdpSubscriptionOrdersErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1AdpSubscriptionOrdersResponses,
     GetV1AdpSubscriptionOrdersErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/adp/subscription-orders',
     ...options,
   });
@@ -7983,15 +10159,27 @@ export const getV1AdpSubscriptionOrders = <
  */
 export const getV1TimeoffTypes = <ThrowOnError extends boolean = false>(
   options: Options<GetV1TimeoffTypesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1TimeoffTypesResponses,
+  GetV1TimeoffTypesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1TimeoffTypesResponses,
     GetV1TimeoffTypesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff/types',
     ...options,
@@ -8015,17 +10203,37 @@ export const postV1CostCalculatorEstimationCsv = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<PostV1CostCalculatorEstimationCsvData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1CostCalculatorEstimationCsvResponses,
+  PostV1CostCalculatorEstimationCsvErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).post<
     PostV1CostCalculatorEstimationCsvResponses,
     PostV1CostCalculatorEstimationCsvErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'ClientToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/cost-calculator/estimation-csv',
     ...options,
@@ -8060,15 +10268,27 @@ export const postV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGl
       PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollResponses,
+    PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).post<
       PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollResponses,
       PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdActivateGlobalPayrollErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'CustomerAPIToken',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/sandbox/companies/{company_id}/legal-entities/{legal_entity_id}/activate-global-payroll',
       ...options,
@@ -8099,13 +10319,23 @@ export const getV1EmployeePersonalDetails = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1EmployeePersonalDetailsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeePersonalDetailsResponses,
+  GetV1EmployeePersonalDetailsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeePersonalDetailsResponses,
     GetV1EmployeePersonalDetailsErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/personal-details',
     ...options,
   });
@@ -8136,13 +10366,23 @@ export const putV1EmployeePersonalDetails = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<PutV1EmployeePersonalDetailsData, ThrowOnError>,
-) =>
+): RequestResult<
+  PutV1EmployeePersonalDetailsResponses,
+  PutV1EmployeePersonalDetailsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).put<
     PutV1EmployeePersonalDetailsResponses,
     PutV1EmployeePersonalDetailsErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/personal-details',
     ...options,
     headers: {
@@ -8166,16 +10406,32 @@ export const putV1EmployeePersonalDetails = <
  */
 export const getV1ScimV2Groups = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1ScimV2GroupsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ScimV2GroupsResponses,
+  GetV1ScimV2GroupsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1ScimV2GroupsResponses,
     GetV1ScimV2GroupsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/scim/v2/Groups',
     ...options,
@@ -8206,15 +10462,27 @@ export const postV1ContractorsEmploymentsEmploymentIdContractDocuments = <
     PostV1ContractorsEmploymentsEmploymentIdContractDocumentsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1ContractorsEmploymentsEmploymentIdContractDocumentsResponses,
+  PostV1ContractorsEmploymentsEmploymentIdContractDocumentsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1ContractorsEmploymentsEmploymentIdContractDocumentsResponses,
     PostV1ContractorsEmploymentsEmploymentIdContractDocumentsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractors/employments/{employment_id}/contract-documents',
     ...options,
@@ -8242,15 +10510,27 @@ export const postV1SandboxWebhookCallbacksTrigger = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<PostV1SandboxWebhookCallbacksTriggerData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1SandboxWebhookCallbacksTriggerResponses,
+  PostV1SandboxWebhookCallbacksTriggerErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).post<
     PostV1SandboxWebhookCallbacksTriggerResponses,
     PostV1SandboxWebhookCallbacksTriggerErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sandbox/webhook-callbacks/trigger',
     ...options,
@@ -8281,15 +10561,27 @@ export const postV1SandboxWebhookCallbacksTrigger = <
  */
 export const getV1PayslipsPayslipIdPdf = <ThrowOnError extends boolean = false>(
   options: Options<GetV1PayslipsPayslipIdPdfData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1PayslipsPayslipIdPdfResponses,
+  GetV1PayslipsPayslipIdPdfErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1PayslipsPayslipIdPdfResponses,
     GetV1PayslipsPayslipIdPdfErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/payslips/{payslip_id}/pdf',
     ...options,
@@ -8315,15 +10607,27 @@ export const getV1PayslipsPayslipIdPdf = <ThrowOnError extends boolean = false>(
  */
 export const deleteV1PayItemsId = <ThrowOnError extends boolean = false>(
   options: Options<DeleteV1PayItemsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  DeleteV1PayItemsIdResponses,
+  DeleteV1PayItemsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).delete<
     DeleteV1PayItemsIdResponses,
     DeleteV1PayItemsIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/pay-items/{id}',
     ...options,
@@ -8350,15 +10654,27 @@ export const deleteV1PayItemsId = <ThrowOnError extends boolean = false>(
  */
 export const patchV1PayItemsId = <ThrowOnError extends boolean = false>(
   options: Options<PatchV1PayItemsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1PayItemsIdResponses,
+  PatchV1PayItemsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV1PayItemsIdResponses,
     PatchV1PayItemsIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/pay-items/{id}',
     ...options,
@@ -8391,16 +10707,32 @@ export const postV1CurrencyConverterEffective = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1CurrencyConverterEffectiveData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1CurrencyConverterEffectiveResponses,
+  PostV1CurrencyConverterEffectiveErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1CurrencyConverterEffectiveResponses,
     PostV1CurrencyConverterEffectiveErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'ClientToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/currency-converter/effective',
     ...options,
@@ -8435,15 +10767,27 @@ export const getV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownload = <
     GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadResponses,
+  GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadResponses,
     GetV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownloadErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/payroll-runs/{payroll_run_id}/gl-reports/{gl_report_id}/download',
     ...options,
@@ -8469,15 +10813,23 @@ export const getV1PayrollRunsPayrollRunIdGlReportsGlReportIdDownload = <
  */
 export const getV1TimeoffId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1TimeoffIdData, ThrowOnError>,
-) =>
+): RequestResult<GetV1TimeoffIdResponses, GetV1TimeoffIdErrors, ThrowOnError> =>
   (options.client ?? client).get<
     GetV1TimeoffIdResponses,
     GetV1TimeoffIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff/{id}',
     ...options,
@@ -8505,15 +10857,27 @@ export const getV1TimeoffId = <ThrowOnError extends boolean = false>(
  */
 export const patchV1TimeoffId2 = <ThrowOnError extends boolean = false>(
   options: Options<PatchV1TimeoffId2Data, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1TimeoffId2Responses,
+  PatchV1TimeoffId2Errors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV1TimeoffId2Responses,
     PatchV1TimeoffId2Errors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff/{id}',
     ...options,
@@ -8545,15 +10909,27 @@ export const patchV1TimeoffId2 = <ThrowOnError extends boolean = false>(
  */
 export const patchV1TimeoffId = <ThrowOnError extends boolean = false>(
   options: Options<PatchV1TimeoffIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1TimeoffIdResponses,
+  PatchV1TimeoffIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PatchV1TimeoffIdResponses,
     PatchV1TimeoffIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff/{id}',
     ...options,
@@ -8585,15 +10961,27 @@ export const postV1TimeoffTimeoffIdDecline = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1TimeoffTimeoffIdDeclineData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1TimeoffTimeoffIdDeclineResponses,
+  PostV1TimeoffTimeoffIdDeclineErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1TimeoffTimeoffIdDeclineResponses,
     PostV1TimeoffTimeoffIdDeclineErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff/{timeoff_id}/decline',
     ...options,
@@ -8643,15 +11031,27 @@ export const postV1ContractAmendmentsAutomatable = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1ContractAmendmentsAutomatableData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1ContractAmendmentsAutomatableResponses,
+  PostV1ContractAmendmentsAutomatableErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1ContractAmendmentsAutomatableResponses,
     PostV1ContractAmendmentsAutomatableErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contract-amendments/automatable',
     ...options,
@@ -8683,15 +11083,27 @@ export const postV1TimeoffTimeoffIdApprove = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1TimeoffTimeoffIdApproveData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1TimeoffTimeoffIdApproveResponses,
+  PostV1TimeoffTimeoffIdApproveErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1TimeoffTimeoffIdApproveResponses,
     PostV1TimeoffTimeoffIdApproveErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff/{timeoff_id}/approve',
     ...options,
@@ -8725,15 +11137,27 @@ export const getV1EmploymentsEmploymentIdFiles = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1EmploymentsEmploymentIdFilesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmploymentsEmploymentIdFilesResponses,
+  GetV1EmploymentsEmploymentIdFilesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentsEmploymentIdFilesResponses,
     GetV1EmploymentsEmploymentIdFilesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/files',
     ...options,
@@ -8759,15 +11183,27 @@ export const getV1EmploymentsEmploymentIdFiles = <
  */
 export const getV1CustomFields = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1CustomFieldsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CustomFieldsResponses,
+  GetV1CustomFieldsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1CustomFieldsResponses,
     GetV1CustomFieldsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/custom-fields',
     ...options,
@@ -8793,15 +11229,27 @@ export const getV1CustomFields = <ThrowOnError extends boolean = false>(
  */
 export const postV1CustomFields = <ThrowOnError extends boolean = false>(
   options: Options<PostV1CustomFieldsData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1CustomFieldsResponses,
+  PostV1CustomFieldsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1CustomFieldsResponses,
     PostV1CustomFieldsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/custom-fields',
     ...options,
@@ -8832,16 +11280,32 @@ export const postV1CustomFields = <ThrowOnError extends boolean = false>(
  */
 export const getV1CompanyCurrencies = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1CompanyCurrenciesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CompanyCurrenciesResponses,
+  GetV1CompanyCurrenciesErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1CompanyCurrenciesResponses,
     GetV1CompanyCurrenciesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'ClientToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/company-currencies',
     ...options,
@@ -8868,15 +11332,27 @@ export const deleteV1SandboxEmploymentsEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<DeleteV1SandboxEmploymentsEmploymentIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  DeleteV1SandboxEmploymentsEmploymentIdResponses,
+  DeleteV1SandboxEmploymentsEmploymentIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).delete<
     DeleteV1SandboxEmploymentsEmploymentIdResponses,
     DeleteV1SandboxEmploymentsEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sandbox/employments/{employment_id}',
     ...options,
@@ -8907,15 +11383,27 @@ export const patchV1SandboxEmploymentsEmploymentId2 = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PatchV1SandboxEmploymentsEmploymentId2Data, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1SandboxEmploymentsEmploymentId2Responses,
+  PatchV1SandboxEmploymentsEmploymentId2Errors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV1SandboxEmploymentsEmploymentId2Responses,
     PatchV1SandboxEmploymentsEmploymentId2Errors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sandbox/employments/{employment_id}',
     ...options,
@@ -8950,15 +11438,27 @@ export const patchV1SandboxEmploymentsEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PatchV1SandboxEmploymentsEmploymentIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1SandboxEmploymentsEmploymentIdResponses,
+  PatchV1SandboxEmploymentsEmploymentIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PatchV1SandboxEmploymentsEmploymentIdResponses,
     PatchV1SandboxEmploymentsEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sandbox/employments/{employment_id}',
     ...options,
@@ -8993,15 +11493,27 @@ export const getV1EmploymentContractsEmploymentIdPendingChanges = <
     GetV1EmploymentContractsEmploymentIdPendingChangesData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1EmploymentContractsEmploymentIdPendingChangesResponses,
+  GetV1EmploymentContractsEmploymentIdPendingChangesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentContractsEmploymentIdPendingChangesResponses,
     GetV1EmploymentContractsEmploymentIdPendingChangesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employment-contracts/{employment_id}/pending-changes',
     ...options,
@@ -9029,15 +11541,27 @@ export const getV1ResignationsOffboardingRequestId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1ResignationsOffboardingRequestIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ResignationsOffboardingRequestIdResponses,
+  GetV1ResignationsOffboardingRequestIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ResignationsOffboardingRequestIdResponses,
     GetV1ResignationsOffboardingRequestIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/resignations/{offboarding_request_id}',
     ...options,
@@ -9065,7 +11589,11 @@ export const getV1ResignationsOffboardingRequestId = <
  */
 export const postV1Documents = <ThrowOnError extends boolean = false>(
   options: Options<PostV1DocumentsData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1DocumentsResponses,
+  PostV1DocumentsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1DocumentsResponses,
     PostV1DocumentsErrors,
@@ -9073,8 +11601,16 @@ export const postV1Documents = <ThrowOnError extends boolean = false>(
   >({
     ...formDataBodySerializer,
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/documents',
     ...options,
@@ -9120,15 +11656,27 @@ export const postV1EmploymentsEmploymentIdInvite = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1EmploymentsEmploymentIdInviteData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1EmploymentsEmploymentIdInviteResponses,
+  PostV1EmploymentsEmploymentIdInviteErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1EmploymentsEmploymentIdInviteResponses,
     PostV1EmploymentsEmploymentIdInviteErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/invite',
     ...options,
@@ -9154,15 +11702,27 @@ export const postV1EmploymentsEmploymentIdInvite = <
  */
 export const getV1ExpensesId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1ExpensesIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ExpensesIdResponses,
+  GetV1ExpensesIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ExpensesIdResponses,
     GetV1ExpensesIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/expenses/{id}',
     ...options,
@@ -9188,15 +11748,27 @@ export const getV1ExpensesId = <ThrowOnError extends boolean = false>(
  */
 export const patchV1ExpensesId2 = <ThrowOnError extends boolean = false>(
   options: Options<PatchV1ExpensesId2Data, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1ExpensesId2Responses,
+  PatchV1ExpensesId2Errors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV1ExpensesId2Responses,
     PatchV1ExpensesId2Errors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/expenses/{id}',
     ...options,
@@ -9226,15 +11798,27 @@ export const patchV1ExpensesId2 = <ThrowOnError extends boolean = false>(
  */
 export const patchV1ExpensesId = <ThrowOnError extends boolean = false>(
   options: Options<PatchV1ExpensesIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1ExpensesIdResponses,
+  PatchV1ExpensesIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PatchV1ExpensesIdResponses,
     PatchV1ExpensesIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/expenses/{id}',
     ...options,
@@ -9285,15 +11869,27 @@ export const putV2EmploymentsEmploymentIdBankAccountDetails = <
     PutV2EmploymentsEmploymentIdBankAccountDetailsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PutV2EmploymentsEmploymentIdBankAccountDetailsResponses,
+  PutV2EmploymentsEmploymentIdBankAccountDetailsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV2EmploymentsEmploymentIdBankAccountDetailsResponses,
     PutV2EmploymentsEmploymentIdBankAccountDetailsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}/bank-account-details',
     ...options,
@@ -9328,15 +11924,27 @@ export const getV1BenefitRenewalRequestsBenefitRenewalRequestId = <
     GetV1BenefitRenewalRequestsBenefitRenewalRequestIdData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1BenefitRenewalRequestsBenefitRenewalRequestIdResponses,
+  GetV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1BenefitRenewalRequestsBenefitRenewalRequestIdResponses,
     GetV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}',
     ...options,
@@ -9367,15 +11975,27 @@ export const postV1BenefitRenewalRequestsBenefitRenewalRequestId = <
     PostV1BenefitRenewalRequestsBenefitRenewalRequestIdData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1BenefitRenewalRequestsBenefitRenewalRequestIdResponses,
+  PostV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1BenefitRenewalRequestsBenefitRenewalRequestIdResponses,
     PostV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/benefit-renewal-requests/{benefit_renewal_request_id}',
     ...options,
@@ -9410,15 +12030,27 @@ export const getV1EmploymentsEmploymentIdOnboardingSteps = <
     GetV1EmploymentsEmploymentIdOnboardingStepsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1EmploymentsEmploymentIdOnboardingStepsResponses,
+  GetV1EmploymentsEmploymentIdOnboardingStepsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentsEmploymentIdOnboardingStepsResponses,
     GetV1EmploymentsEmploymentIdOnboardingStepsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/onboarding-steps',
     ...options,
@@ -9439,13 +12071,23 @@ export const getV1AdpSubscriptionStatus = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1AdpSubscriptionStatusData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1AdpSubscriptionStatusResponses,
+  GetV1AdpSubscriptionStatusErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1AdpSubscriptionStatusResponses,
     GetV1AdpSubscriptionStatusErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/adp/subscription-status',
     ...options,
   });
@@ -9463,13 +12105,23 @@ export const getV1AdpSubscriptionStatus = <
  */
 export const getV1EmployeeCurrent = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1EmployeeCurrentData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeeCurrentResponses,
+  GetV1EmployeeCurrentErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeeCurrentResponses,
     GetV1EmployeeCurrentErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/current',
     ...options,
   });
@@ -9499,15 +12151,27 @@ export const getV1EmploymentsEmploymentIdCompanyStructureNodes = <
     GetV1EmploymentsEmploymentIdCompanyStructureNodesData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1EmploymentsEmploymentIdCompanyStructureNodesResponses,
+  GetV1EmploymentsEmploymentIdCompanyStructureNodesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentsEmploymentIdCompanyStructureNodesResponses,
     GetV1EmploymentsEmploymentIdCompanyStructureNodesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/company-structure-nodes',
     ...options,
@@ -9535,15 +12199,27 @@ export const postV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditR
       PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusResponses,
+    PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).post<
       PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusResponses,
       PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'CustomerAPIToken',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/sandbox/companies/{company_id}/legal-entities/{legal_entity_id}/set-credit-risk-status',
       ...options,
@@ -9575,15 +12251,27 @@ export const getV1EmploymentsEmploymentIdCustomFields = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1EmploymentsEmploymentIdCustomFieldsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmploymentsEmploymentIdCustomFieldsResponses,
+  GetV1EmploymentsEmploymentIdCustomFieldsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentsEmploymentIdCustomFieldsResponses,
     GetV1EmploymentsEmploymentIdCustomFieldsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/custom-fields',
     ...options,
@@ -9614,15 +12302,27 @@ export const putV1ResignationsOffboardingRequestIdValidate = <
     PutV1ResignationsOffboardingRequestIdValidateData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PutV1ResignationsOffboardingRequestIdValidateResponses,
+  PutV1ResignationsOffboardingRequestIdValidateErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV1ResignationsOffboardingRequestIdValidateResponses,
     PutV1ResignationsOffboardingRequestIdValidateErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/resignations/{offboarding_request_id}/validate',
     ...options,
@@ -9654,15 +12354,27 @@ export const putV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityId = <
     PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdResponses,
+  PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdResponses,
     PutV1SandboxCompaniesCompanyIdDefaultLegalEntityLegalEntityIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sandbox/companies/{company_id}/default-legal-entity/{legal_entity_id}',
     ...options,
@@ -9690,15 +12402,27 @@ export const getV1CompaniesCompanyIdWebhookCallbacks = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1CompaniesCompanyIdWebhookCallbacksData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CompaniesCompanyIdWebhookCallbacksResponses,
+  GetV1CompaniesCompanyIdWebhookCallbacksErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CompaniesCompanyIdWebhookCallbacksResponses,
     GetV1CompaniesCompanyIdWebhookCallbacksErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/companies/{company_id}/webhook-callbacks',
     ...options,
@@ -9731,15 +12455,27 @@ export const getV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibil
       GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityResponses,
+    GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).get<
       GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityResponses,
       GetV1CompaniesCompanyIdLegalEntitiesLegalEntityIdContractorEligibilityErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2ClientCredentials',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/companies/{company_id}/legal-entities/{legal_entity_id}/contractor-eligibility',
       ...options,
@@ -9770,15 +12506,27 @@ export const getV1CustomFieldsCustomFieldIdValuesEmploymentId = <
     GetV1CustomFieldsCustomFieldIdValuesEmploymentIdData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1CustomFieldsCustomFieldIdValuesEmploymentIdResponses,
+  GetV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CustomFieldsCustomFieldIdValuesEmploymentIdResponses,
     GetV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}',
     ...options,
@@ -9809,15 +12557,27 @@ export const patchV1CustomFieldsCustomFieldIdValuesEmploymentId2 = <
     PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Data,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Responses,
+  PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Errors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Responses,
     PatchV1CustomFieldsCustomFieldIdValuesEmploymentId2Errors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}',
     ...options,
@@ -9852,15 +12612,27 @@ export const patchV1CustomFieldsCustomFieldIdValuesEmploymentId = <
     PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdResponses,
+  PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdResponses,
     PatchV1CustomFieldsCustomFieldIdValuesEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/custom-fields/{custom_field_id}/values/{employment_id}',
     ...options,
@@ -9894,15 +12666,27 @@ export const getV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTermin
       GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdResponses,
+    GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).get<
       GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdResponses,
       GetV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsTerminationRequestIdErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'CustomerAPIToken',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/contractors/employments/{employment_id}/cor-termination-requests/{termination_request_id}',
       ...options,
@@ -9939,15 +12723,27 @@ export const postV1ContractorsEmploymentsEmploymentIdTerminateCorEmployment = <
     PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentResponses,
+  PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentResponses,
     PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractors/employments/{employment_id}/terminate-cor-employment',
     ...options,
@@ -9975,15 +12771,27 @@ export const postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDo
       PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignResponses,
+    PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).post<
       PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignResponses,
       PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'CustomerAPIToken',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/contractors/employments/{employment_id}/contract-documents/{contract_document_id}/sign',
       ...options,
@@ -10008,16 +12816,32 @@ export const postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDo
  */
 export const getV1IdentityCurrent = <ThrowOnError extends boolean = false>(
   options: Options<GetV1IdentityCurrentData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1IdentityCurrentResponses,
+  GetV1IdentityCurrentErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1IdentityCurrentResponses,
     GetV1IdentityCurrentErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/identity/current',
     ...options,
@@ -10047,15 +12871,27 @@ export const getV1IdentityCurrent = <ThrowOnError extends boolean = false>(
  */
 export const deleteV1IncentivesId = <ThrowOnError extends boolean = false>(
   options: Options<DeleteV1IncentivesIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  DeleteV1IncentivesIdResponses,
+  DeleteV1IncentivesIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).delete<
     DeleteV1IncentivesIdResponses,
     DeleteV1IncentivesIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/incentives/{id}',
     ...options,
@@ -10081,15 +12917,27 @@ export const deleteV1IncentivesId = <ThrowOnError extends boolean = false>(
  */
 export const getV1IncentivesId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1IncentivesIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1IncentivesIdResponses,
+  GetV1IncentivesIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1IncentivesIdResponses,
     GetV1IncentivesIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/incentives/{id}',
     ...options,
@@ -10119,15 +12967,27 @@ export const getV1IncentivesId = <ThrowOnError extends boolean = false>(
  */
 export const patchV1IncentivesId2 = <ThrowOnError extends boolean = false>(
   options: Options<PatchV1IncentivesId2Data, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1IncentivesId2Responses,
+  PatchV1IncentivesId2Errors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV1IncentivesId2Responses,
     PatchV1IncentivesId2Errors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/incentives/{id}',
     ...options,
@@ -10161,15 +13021,27 @@ export const patchV1IncentivesId2 = <ThrowOnError extends boolean = false>(
  */
 export const patchV1IncentivesId = <ThrowOnError extends boolean = false>(
   options: Options<PatchV1IncentivesIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1IncentivesIdResponses,
+  PatchV1IncentivesIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PatchV1IncentivesIdResponses,
     PatchV1IncentivesIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/incentives/{id}',
     ...options,
@@ -10207,15 +13079,27 @@ export const getV1ContractorsSchemasEligibilityQuestionnaire = <
     GetV1ContractorsSchemasEligibilityQuestionnaireData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1ContractorsSchemasEligibilityQuestionnaireResponses,
+  GetV1ContractorsSchemasEligibilityQuestionnaireErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ContractorsSchemasEligibilityQuestionnaireResponses,
     GetV1ContractorsSchemasEligibilityQuestionnaireErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractors/schemas/eligibility-questionnaire',
     ...options,
@@ -10243,15 +13127,27 @@ export const getV1WorkAuthorizationRequests = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1WorkAuthorizationRequestsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1WorkAuthorizationRequestsResponses,
+  GetV1WorkAuthorizationRequestsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1WorkAuthorizationRequestsResponses,
     GetV1WorkAuthorizationRequestsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/work-authorization-requests',
     ...options,
@@ -10270,13 +13166,23 @@ export const getV1WorkAuthorizationRequests = <
  */
 export const getV1AdpUserUnassignments = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1AdpUserUnassignmentsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1AdpUserUnassignmentsResponses,
+  GetV1AdpUserUnassignmentsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1AdpUserUnassignmentsResponses,
     GetV1AdpUserUnassignmentsErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/adp/user-unassignments',
     ...options,
   });
@@ -10301,15 +13207,27 @@ export const getV1BulkEmploymentJobsJobId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1BulkEmploymentJobsJobIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1BulkEmploymentJobsJobIdResponses,
+  GetV1BulkEmploymentJobsJobIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1BulkEmploymentJobsJobIdResponses,
     GetV1BulkEmploymentJobsJobIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/bulk-employment-jobs/{job_id}',
     ...options,
@@ -10335,15 +13253,23 @@ export const getV1BulkEmploymentJobsJobId = <
  */
 export const getV1PayItems = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1PayItemsData, ThrowOnError>,
-) =>
+): RequestResult<GetV1PayItemsResponses, GetV1PayItemsErrors, ThrowOnError> =>
   (options?.client ?? client).get<
     GetV1PayItemsResponses,
     GetV1PayItemsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/pay-items',
     ...options,
@@ -10369,15 +13295,27 @@ export const getV1PayItems = <ThrowOnError extends boolean = false>(
  */
 export const getV1DirectOffboardings = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1DirectOffboardingsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1DirectOffboardingsResponses,
+  GetV1DirectOffboardingsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1DirectOffboardingsResponses,
     GetV1DirectOffboardingsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/direct-offboardings',
     ...options,
@@ -10405,15 +13343,27 @@ export const getV1BenefitOffersCountrySummaries = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1BenefitOffersCountrySummariesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1BenefitOffersCountrySummariesResponses,
+  GetV1BenefitOffersCountrySummariesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1BenefitOffersCountrySummariesResponses,
     GetV1BenefitOffersCountrySummariesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/benefit-offers/country-summaries',
     ...options,
@@ -10439,15 +13389,27 @@ export const getV1BenefitOffersCountrySummaries = <
  */
 export const getV1BenefitOffers = <ThrowOnError extends boolean = false>(
   options: Options<GetV1BenefitOffersData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1BenefitOffersResponses,
+  GetV1BenefitOffersErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1BenefitOffersResponses,
     GetV1BenefitOffersErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/benefit-offers',
     ...options,
@@ -10474,15 +13436,27 @@ export const putV1SandboxContractAmendmentsContractAmendmentRequestIdCancel = <
     PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelResponses,
+  PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelResponses,
     PutV1SandboxContractAmendmentsContractAmendmentRequestIdCancelErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/sandbox/contract-amendments/{contract_amendment_request_id}/cancel',
     ...options,
@@ -10507,13 +13481,23 @@ export const putV1SandboxContractAmendmentsContractAmendmentRequestIdCancel = <
  */
 export const getV1EmployeeTimeoff = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1EmployeeTimeoffData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeeTimeoffResponses,
+  GetV1EmployeeTimeoffErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeeTimeoffResponses,
     GetV1EmployeeTimeoffErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/timeoff',
     ...options,
   });
@@ -10537,13 +13521,23 @@ export const getV1EmployeeTimeoff = <ThrowOnError extends boolean = false>(
  */
 export const postV1EmployeeTimeoff = <ThrowOnError extends boolean = false>(
   options: Options<PostV1EmployeeTimeoffData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1EmployeeTimeoffResponses,
+  PostV1EmployeeTimeoffErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1EmployeeTimeoffResponses,
     PostV1EmployeeTimeoffErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/timeoff',
     ...options,
     headers: {
@@ -10572,15 +13566,27 @@ export const patchV2EmploymentsEmploymentId2 = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PatchV2EmploymentsEmploymentId2Data, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV2EmploymentsEmploymentId2Responses,
+  PatchV2EmploymentsEmploymentId2Errors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV2EmploymentsEmploymentId2Responses,
     PatchV2EmploymentsEmploymentId2Errors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}',
     ...options,
@@ -10610,15 +13616,27 @@ export const patchV2EmploymentsEmploymentId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PatchV2EmploymentsEmploymentIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV2EmploymentsEmploymentIdResponses,
+  PatchV2EmploymentsEmploymentIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PatchV2EmploymentsEmploymentIdResponses,
     PatchV2EmploymentsEmploymentIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}',
     ...options,
@@ -10669,15 +13687,27 @@ export const putV2EmploymentsEmploymentIdPersonalDetails = <
     PutV2EmploymentsEmploymentIdPersonalDetailsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PutV2EmploymentsEmploymentIdPersonalDetailsResponses,
+  PutV2EmploymentsEmploymentIdPersonalDetailsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV2EmploymentsEmploymentIdPersonalDetailsResponses,
     PutV2EmploymentsEmploymentIdPersonalDetailsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}/personal-details',
     ...options,
@@ -10709,15 +13739,27 @@ export const getV1ProbationExtensionsId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1ProbationExtensionsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ProbationExtensionsIdResponses,
+  GetV1ProbationExtensionsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ProbationExtensionsIdResponses,
     GetV1ProbationExtensionsIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/probation-extensions/{id}',
     ...options,
@@ -10744,18 +13786,155 @@ export const getV1ProbationExtensionsId = <
  */
 export const getV1Payslips = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1PayslipsData, ThrowOnError>,
-) =>
+): RequestResult<GetV1PayslipsResponses, GetV1PayslipsErrors, ThrowOnError> =>
   (options?.client ?? client).get<
     GetV1PayslipsResponses,
     GetV1PayslipsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/payslips',
     ...options,
+  });
+
+/**
+ * Approve job title review
+ *
+ * Approves the job title review an employment is in, without the intervention of a Remote
+ * admin, so the integration can be tested against the decision it will see in production.
+ *
+ * The employment returns to the status it held before it entered review, and an
+ * `employment.job_title_review.approved` webhook event is emitted.
+ *
+ * Responds with 422 when the employment is not in a job title review.
+ *
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ * ## Authentication
+ *
+ * This endpoint accepts any one of the following token types:
+ *
+ * - **Company-scoped access token** (`OAuth2AuthorizationCode`) — obtained through the Authorization Code flow or the Refresh Token flow. See [Authentication for partners](https://developer.remote.com/docs/authentication-for-partners).
+ * - **Customer API token** (`CustomerAPIToken`) — generated by the customer on their Integration Settings page. See [Authorization for customers](https://developer.remote.com/docs/authorization-for-customers).
+ */
+export const postV1SandboxEmploymentsEmploymentIdJobTitleReviewApprove = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveData,
+    ThrowOnError
+  >,
+): RequestResult<
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveResponses,
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveResponses,
+    PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/sandbox/employments/{employment_id}/job-title-review/approve',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Set job title eligibility verdict
+ *
+ * Sets the job title eligibility verdict the employment's next contract-details submission
+ * will act on, so the flow that verdict drives can be tested without an AI call deciding
+ * the outcome.
+ *
+ * Use it to reach an outcome on demand: a submission that passes, one rejected as not
+ * eligible, one that must carry `employer_acknowledges_risk`, or one that places the
+ * employment into a human review and emits the review webhooks.
+ *
+ * The response is the same as the real [job title eligibility check
+ * endpoint](#operation/post_create_employment_job_title_eligibility_check). Send the
+ * returned `check_id` back as `additional_job_title_eligibility_check_slug` when submitting
+ * contract details, exactly as you would in production.
+ *
+ * `role_description` must be the one the submission will carry, since the submission
+ * verifies that the recorded verdict still describes what was sent.
+ *
+ * A `not_assessed` verdict means the check does not apply to this employment at all — not a
+ * draft, a PEO employment, a country or hiring model that does not screen job titles, or an
+ * integration that bypasses the check — and nothing was recorded.
+ *
+ * The stage of the check that screens the job title alone is shared by every company in the
+ * environment, so setting a verdict takes over that job title's screen for all of them.
+ *
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404.
+ *
+ * ## Authentication
+ *
+ * This endpoint accepts any one of the following token types:
+ *
+ * - **Company-scoped access token** (`OAuth2AuthorizationCode`) — obtained through the Authorization Code flow or the Refresh Token flow. See [Authentication for partners](https://developer.remote.com/docs/authentication-for-partners).
+ * - **Customer API token** (`CustomerAPIToken`) — generated by the customer on their Integration Settings page. See [Authorization for customers](https://developer.remote.com/docs/authorization-for-customers).
+ */
+export const postV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheck = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckData,
+    ThrowOnError
+  >,
+): RequestResult<
+  PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckResponses,
+  PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckResponses,
+    PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/sandbox/employments/{employment_id}/job-title-eligibility-check',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 
 /**
@@ -10780,15 +13959,27 @@ export const getV1ExpensesExpenseIdReceiptsReceiptId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1ExpensesExpenseIdReceiptsReceiptIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ExpensesExpenseIdReceiptsReceiptIdResponses,
+  GetV1ExpensesExpenseIdReceiptsReceiptIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ExpensesExpenseIdReceiptsReceiptIdResponses,
     GetV1ExpensesExpenseIdReceiptsReceiptIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/expenses/{expense_id}/receipts/{receipt_id}',
     ...options,
@@ -10807,7 +13998,11 @@ export const getV1ExpensesExpenseIdReceiptsReceiptId = <
  */
 export const postAuthOauth2Token = <ThrowOnError extends boolean = false>(
   options?: Options<PostAuthOauth2TokenData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostAuthOauth2TokenResponses,
+  PostAuthOauth2TokenErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).post<
     PostAuthOauth2TokenResponses,
     PostAuthOauth2TokenErrors,
@@ -10854,16 +14049,32 @@ export const getV1CountriesCountryCodeLegalEntityFormsForm = <
     GetV1CountriesCountryCodeLegalEntityFormsFormData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1CountriesCountryCodeLegalEntityFormsFormResponses,
+  GetV1CountriesCountryCodeLegalEntityFormsFormErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CountriesCountryCodeLegalEntityFormsFormResponses,
     GetV1CountriesCountryCodeLegalEntityFormsFormErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/countries/{country_code}/legal_entity_forms/{form}',
     ...options,
@@ -10895,15 +14106,27 @@ export const postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription 
       PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionResponses,
+    PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).post<
       PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionResponses,
       PostV1ContractorsEmploymentsEmploymentIdContractorPlusSubscriptionErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'CustomerAPIToken',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/contractors/employments/{employment_id}/contractor-plus-subscription',
       ...options,
@@ -10933,15 +14156,23 @@ export const postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription 
  */
 export const getV1Timeoff = <ThrowOnError extends boolean = false>(
   options: Options<GetV1TimeoffData, ThrowOnError>,
-) =>
+): RequestResult<GetV1TimeoffResponses, GetV1TimeoffErrors, ThrowOnError> =>
   (options.client ?? client).get<
     GetV1TimeoffResponses,
     GetV1TimeoffErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff',
     ...options,
@@ -10967,15 +14198,23 @@ export const getV1Timeoff = <ThrowOnError extends boolean = false>(
  */
 export const postV1Timeoff = <ThrowOnError extends boolean = false>(
   options: Options<PostV1TimeoffData, ThrowOnError>,
-) =>
+): RequestResult<PostV1TimeoffResponses, PostV1TimeoffErrors, ThrowOnError> =>
   (options.client ?? client).post<
     PostV1TimeoffResponses,
     PostV1TimeoffErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff',
     ...options,
@@ -11005,15 +14244,27 @@ export const postV1Timeoff = <ThrowOnError extends boolean = false>(
  */
 export const getV1PayrollRuns = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1PayrollRunsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1PayrollRunsResponses,
+  GetV1PayrollRunsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1PayrollRunsResponses,
     GetV1PayrollRunsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/payroll-runs',
     ...options,
@@ -11051,15 +14302,27 @@ export const postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocuments = <
     PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsResponses,
+  PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsResponses,
     PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-documents',
     ...options,
@@ -11093,15 +14356,27 @@ export const getV1CompaniesCompanyIdActions = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1CompaniesCompanyIdActionsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CompaniesCompanyIdActionsResponses,
+  GetV1CompaniesCompanyIdActionsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CompaniesCompanyIdActionsResponses,
     GetV1CompaniesCompanyIdActionsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/companies/{company_id}/actions',
     ...options,
@@ -11122,16 +14397,32 @@ export const getV1CompaniesCompanyIdActions = <
  */
 export const getV1ScimV2GroupsId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1ScimV2GroupsIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ScimV2GroupsIdResponses,
+  GetV1ScimV2GroupsIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1ScimV2GroupsIdResponses,
     GetV1ScimV2GroupsIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/scim/v2/Groups/{id}',
     ...options,
@@ -11157,15 +14448,27 @@ export const getV1ScimV2GroupsId = <ThrowOnError extends boolean = false>(
  */
 export const getV1EmploymentContracts = <ThrowOnError extends boolean = false>(
   options: Options<GetV1EmploymentContractsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmploymentContractsResponses,
+  GetV1EmploymentContractsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentContractsResponses,
     GetV1EmploymentContractsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employment-contracts',
     ...options,
@@ -11194,16 +14497,32 @@ export const postV1CurrencyConverterEffective2 = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1CurrencyConverterEffective2Data, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1CurrencyConverterEffective2Responses,
+  PostV1CurrencyConverterEffective2Errors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1CurrencyConverterEffective2Responses,
     PostV1CurrencyConverterEffective2Errors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'ClientToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/currency-converter',
     ...options,
@@ -11232,13 +14551,19 @@ export const postV1CurrencyConverterEffective2 = <
  */
 export const getV1Companies = <ThrowOnError extends boolean = false>(
   options: Options<GetV1CompaniesData, ThrowOnError>,
-) =>
+): RequestResult<GetV1CompaniesResponses, GetV1CompaniesErrors, ThrowOnError> =>
   (options.client ?? client).get<
     GetV1CompaniesResponses,
     GetV1CompaniesErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/companies',
     ...options,
   });
@@ -11293,13 +14618,23 @@ export const getV1Companies = <ThrowOnError extends boolean = false>(
  */
 export const postV1Companies = <ThrowOnError extends boolean = false>(
   options: Options<PostV1CompaniesData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1CompaniesResponses,
+  PostV1CompaniesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1CompaniesResponses,
     PostV1CompaniesErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/companies',
     ...options,
     headers: {
@@ -11349,15 +14684,27 @@ export const putV2EmploymentsEmploymentIdBillingAddressDetails = <
     PutV2EmploymentsEmploymentIdBillingAddressDetailsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PutV2EmploymentsEmploymentIdBillingAddressDetailsResponses,
+  PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV2EmploymentsEmploymentIdBillingAddressDetailsResponses,
     PutV2EmploymentsEmploymentIdBillingAddressDetailsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}/billing-address-details',
     ...options,
@@ -11387,15 +14734,27 @@ export const putV2EmploymentsEmploymentIdBillingAddressDetails = <
  */
 export const postV1BulkEmploymentJobs = <ThrowOnError extends boolean = false>(
   options?: Options<PostV1BulkEmploymentJobsData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1BulkEmploymentJobsResponses,
+  PostV1BulkEmploymentJobsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).post<
     PostV1BulkEmploymentJobsResponses,
     PostV1BulkEmploymentJobsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/bulk-employment-jobs',
     ...options,
@@ -11432,15 +14791,27 @@ export const postV1EmploymentsEmploymentIdContractorInvoicesPreview = <
     PostV1EmploymentsEmploymentIdContractorInvoicesPreviewData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponses,
+  PostV1EmploymentsEmploymentIdContractorInvoicesPreviewErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1EmploymentsEmploymentIdContractorInvoicesPreviewResponses,
     PostV1EmploymentsEmploymentIdContractorInvoicesPreviewErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/contractor-invoices/preview',
     ...options,
@@ -11472,15 +14843,27 @@ export const postV1TimesheetsTimesheetIdSendBack = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1TimesheetsTimesheetIdSendBackData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1TimesheetsTimesheetIdSendBackResponses,
+  PostV1TimesheetsTimesheetIdSendBackErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1TimesheetsTimesheetIdSendBackResponses,
     PostV1TimesheetsTimesheetIdSendBackErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timesheets/{timesheet_id}/send-back',
     ...options,
@@ -11504,6 +14887,10 @@ export const postV1TimesheetsTimesheetIdSendBack = <
  * Calling this repeatedly with the same job title and role answers is cheap: the recorded
  * check is reused. Changing any of them produces a fresh verdict.
  *
+ * `role_is_onsite` and `role_requires_license` are answered here rather than in the
+ * contract-details submission, which no longer asks for them and takes the returned
+ * `check_id` instead. `role_description` stays part of contract details in its own right.
+ *
  * ## Authentication
  *
  * This endpoint accepts any one of the following token types:
@@ -11524,15 +14911,27 @@ export const postV2EmploymentsEmploymentIdJobTitleEligibilityCheck = <
     PostV2EmploymentsEmploymentIdJobTitleEligibilityCheckData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV2EmploymentsEmploymentIdJobTitleEligibilityCheckResponses,
+  PostV2EmploymentsEmploymentIdJobTitleEligibilityCheckErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV2EmploymentsEmploymentIdJobTitleEligibilityCheckResponses,
     PostV2EmploymentsEmploymentIdJobTitleEligibilityCheckErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}/job-title-eligibility-check',
     ...options,
@@ -11564,15 +14963,27 @@ export const deleteV1CompanyManagersUserId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<DeleteV1CompanyManagersUserIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  DeleteV1CompanyManagersUserIdResponses,
+  DeleteV1CompanyManagersUserIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).delete<
     DeleteV1CompanyManagersUserIdResponses,
     DeleteV1CompanyManagersUserIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/company-managers/{user_id}',
     ...options,
@@ -11600,15 +15011,27 @@ export const getV1CompanyManagersUserId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1CompanyManagersUserIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1CompanyManagersUserIdResponses,
+  GetV1CompanyManagersUserIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1CompanyManagersUserIdResponses,
     GetV1CompanyManagersUserIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/company-managers/{user_id}',
     ...options,
@@ -11637,15 +15060,27 @@ export const patchV1CompanyManagersUserId2 = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PatchV1CompanyManagersUserId2Data, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1CompanyManagersUserId2Responses,
+  PatchV1CompanyManagersUserId2Errors,
+  ThrowOnError
+> =>
   (options.client ?? client).patch<
     PatchV1CompanyManagersUserId2Responses,
     PatchV1CompanyManagersUserId2Errors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/company-managers/{user_id}',
     ...options,
@@ -11678,15 +15113,27 @@ export const patchV1CompanyManagersUserId = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PatchV1CompanyManagersUserIdData, ThrowOnError>,
-) =>
+): RequestResult<
+  PatchV1CompanyManagersUserIdResponses,
+  PatchV1CompanyManagersUserIdErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PatchV1CompanyManagersUserIdResponses,
     PatchV1CompanyManagersUserIdErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/company-managers/{user_id}',
     ...options,
@@ -11737,15 +15184,27 @@ export const putV1EmploymentsEmploymentIdPersonalDetails = <
     PutV1EmploymentsEmploymentIdPersonalDetailsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PutV1EmploymentsEmploymentIdPersonalDetailsResponses,
+  PutV1EmploymentsEmploymentIdPersonalDetailsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV1EmploymentsEmploymentIdPersonalDetailsResponses,
     PutV1EmploymentsEmploymentIdPersonalDetailsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/personal-details',
     ...options,
@@ -11774,13 +15233,23 @@ export const putV1EmploymentsEmploymentIdPersonalDetails = <
  */
 export const getV1EmployeeExpenses = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1EmployeeExpensesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeeExpensesResponses,
+  GetV1EmployeeExpensesErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeeExpensesResponses,
     GetV1EmployeeExpensesErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/expenses',
     ...options,
   });
@@ -11804,13 +15273,23 @@ export const getV1EmployeeExpenses = <ThrowOnError extends boolean = false>(
  */
 export const postV1EmployeeExpenses = <ThrowOnError extends boolean = false>(
   options?: Options<PostV1EmployeeExpensesData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1EmployeeExpensesResponses,
+  PostV1EmployeeExpensesErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).post<
     PostV1EmployeeExpensesResponses,
     PostV1EmployeeExpensesErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/expenses',
     ...options,
     headers: {
@@ -11834,13 +15313,23 @@ export const getV1AdpSubscriptionCancellations = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1AdpSubscriptionCancellationsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1AdpSubscriptionCancellationsResponses,
+  GetV1AdpSubscriptionCancellationsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1AdpSubscriptionCancellationsResponses,
     GetV1AdpSubscriptionCancellationsErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2ClientCredentials',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/adp/subscription-cancellations',
     ...options,
   });
@@ -11869,15 +15358,27 @@ export const deleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscription
       DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses,
+    DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).delete<
       DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses,
       DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'CustomerAPIToken',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription',
       ...options,
@@ -11911,15 +15412,27 @@ export const postV1ContractorsEmploymentsEmploymentIdContractorCorSubscription =
       PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses,
+    PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).post<
       PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses,
       PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'CustomerAPIToken',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/contractors/employments/{employment_id}/contractor-cor-subscription',
       ...options,
@@ -11950,15 +15463,27 @@ export const postV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSign
       PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignData,
       ThrowOnError
     >,
-  ) =>
+  ): RequestResult<
+    PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignResponses,
+    PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignErrors,
+    ThrowOnError
+  > =>
     (options.client ?? client).post<
       PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignResponses,
       PostV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdSignErrors,
       ThrowOnError
     >({
       security: [
-        { scheme: 'bearer', type: 'http' },
-        { scheme: 'bearer', type: 'http' },
+        {
+          key: 'CustomerAPIToken',
+          scheme: 'bearer',
+          type: 'http',
+        },
+        {
+          key: 'OAuth2AuthorizationCode',
+          scheme: 'bearer',
+          type: 'http',
+        },
       ],
       url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-documents/{id}/sign',
       ...options,
@@ -11990,15 +15515,27 @@ export const getV1ContractorInvoiceSchedules = <
   ThrowOnError extends boolean = false,
 >(
   options?: Options<GetV1ContractorInvoiceSchedulesData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1ContractorInvoiceSchedulesResponses,
+  GetV1ContractorInvoiceSchedulesErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1ContractorInvoiceSchedulesResponses,
     GetV1ContractorInvoiceSchedulesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractor-invoice-schedules',
     ...options,
@@ -12027,15 +15564,27 @@ export const postV1ContractorInvoiceSchedules = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PostV1ContractorInvoiceSchedulesData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1ContractorInvoiceSchedulesResponses,
+  PostV1ContractorInvoiceSchedulesErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1ContractorInvoiceSchedulesResponses,
     PostV1ContractorInvoiceSchedulesErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/contractor-invoice-schedules',
     ...options,
@@ -12074,13 +15623,23 @@ export const putV1EmployeeStateTaxesJurisdiction = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<PutV1EmployeeStateTaxesJurisdictionData, ThrowOnError>,
-) =>
+): RequestResult<
+  PutV1EmployeeStateTaxesJurisdictionResponses,
+  PutV1EmployeeStateTaxesJurisdictionErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV1EmployeeStateTaxesJurisdictionResponses,
     PutV1EmployeeStateTaxesJurisdictionErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/state-taxes/{jurisdiction}',
     ...options,
     headers: {
@@ -12114,15 +15673,27 @@ export const getV1EmploymentsEmploymentIdEngagementAgreementDetails = <
     GetV1EmploymentsEmploymentIdEngagementAgreementDetailsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
+  GetV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
     GetV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/engagement-agreement-details',
     ...options,
@@ -12161,15 +15732,27 @@ export const postV1EmploymentsEmploymentIdEngagementAgreementDetails = <
     PostV1EmploymentsEmploymentIdEngagementAgreementDetailsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
+  PostV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1EmploymentsEmploymentIdEngagementAgreementDetailsResponses,
     PostV1EmploymentsEmploymentIdEngagementAgreementDetailsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/engagement-agreement-details',
     ...options,
@@ -12204,15 +15787,27 @@ export const getV1BillingDocumentsBillingDocumentIdBreakdown = <
     GetV1BillingDocumentsBillingDocumentIdBreakdownData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1BillingDocumentsBillingDocumentIdBreakdownResponses,
+  GetV1BillingDocumentsBillingDocumentIdBreakdownErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1BillingDocumentsBillingDocumentIdBreakdownResponses,
     GetV1BillingDocumentsBillingDocumentIdBreakdownErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/billing-documents/{billing_document_id}/breakdown',
     ...options,
@@ -12247,15 +15842,27 @@ export const getV1EmploymentsEmploymentIdEmploymentAgreementPreview = <
     GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewResponses,
+  GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewResponses,
     GetV1EmploymentsEmploymentIdEmploymentAgreementPreviewErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/employments/{employment_id}/employment-agreement/preview',
     ...options,
@@ -12302,15 +15909,27 @@ export const putV2EmploymentsEmploymentIdAdministrativeDetails = <
     PutV2EmploymentsEmploymentIdAdministrativeDetailsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PutV2EmploymentsEmploymentIdAdministrativeDetailsResponses,
+  PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).put<
     PutV2EmploymentsEmploymentIdAdministrativeDetailsResponses,
     PutV2EmploymentsEmploymentIdAdministrativeDetailsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v2/employments/{employment_id}/administrative-details',
     ...options,
@@ -12337,13 +15956,23 @@ export const putV2EmploymentsEmploymentIdAdministrativeDetails = <
  */
 export const getV1EmployeeDocuments = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1EmployeeDocumentsData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1EmployeeDocumentsResponses,
+  GetV1EmployeeDocumentsErrors,
+  ThrowOnError
+> =>
   (options?.client ?? client).get<
     GetV1EmployeeDocumentsResponses,
     GetV1EmployeeDocumentsErrors,
     ThrowOnError
   >({
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/documents',
     ...options,
   });
@@ -12368,14 +15997,24 @@ export const getV1EmployeeDocuments = <ThrowOnError extends boolean = false>(
  */
 export const postV1EmployeeDocuments = <ThrowOnError extends boolean = false>(
   options: Options<PostV1EmployeeDocumentsData, ThrowOnError>,
-) =>
+): RequestResult<
+  PostV1EmployeeDocumentsResponses,
+  PostV1EmployeeDocumentsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1EmployeeDocumentsResponses,
     PostV1EmployeeDocumentsErrors,
     ThrowOnError
   >({
     ...formDataBodySerializer,
-    security: [{ scheme: 'bearer', type: 'http' }],
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
     url: '/v1/employee/documents',
     ...options,
     headers: {
@@ -12410,15 +16049,27 @@ export const postV1TimeoffTimeoffIdCancelRequestApprove = <
     PostV1TimeoffTimeoffIdCancelRequestApproveData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1TimeoffTimeoffIdCancelRequestApproveResponses,
+  PostV1TimeoffTimeoffIdCancelRequestApproveErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1TimeoffTimeoffIdCancelRequestApproveResponses,
     PostV1TimeoffTimeoffIdCancelRequestApproveErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/timeoff/{timeoff_id}/cancel-request/approve',
     ...options,
@@ -12449,15 +16100,27 @@ export const postV1IdentityVerificationEmploymentIdVerify = <
     PostV1IdentityVerificationEmploymentIdVerifyData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  PostV1IdentityVerificationEmploymentIdVerifyResponses,
+  PostV1IdentityVerificationEmploymentIdVerifyErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).post<
     PostV1IdentityVerificationEmploymentIdVerifyResponses,
     PostV1IdentityVerificationEmploymentIdVerifyErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/identity-verification/{employment_id}/verify',
     ...options,
@@ -12485,15 +16148,27 @@ export const getV1BillingDocumentsBillingDocumentIdPdf = <
   ThrowOnError extends boolean = false,
 >(
   options: Options<GetV1BillingDocumentsBillingDocumentIdPdfData, ThrowOnError>,
-) =>
+): RequestResult<
+  GetV1BillingDocumentsBillingDocumentIdPdfResponses,
+  GetV1BillingDocumentsBillingDocumentIdPdfErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1BillingDocumentsBillingDocumentIdPdfResponses,
     GetV1BillingDocumentsBillingDocumentIdPdfErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/billing-documents/{billing_document_id}/pdf',
     ...options,
@@ -12527,15 +16202,27 @@ export const getV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirements = <
     GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsData,
     ThrowOnError
   >,
-) =>
+): RequestResult<
+  GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsResponses,
+  GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsErrors,
+  ThrowOnError
+> =>
   (options.client ?? client).get<
     GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsResponses,
     GetV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsErrors,
     ThrowOnError
   >({
     security: [
-      { scheme: 'bearer', type: 'http' },
-      { scheme: 'bearer', type: 'http' },
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
     ],
     url: '/v1/onboarding/employments/{employment_id}/pre-onboarding-requirements',
     ...options,
