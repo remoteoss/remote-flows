@@ -27,6 +27,6 @@ jobs:
 
       - name: Run schema canary against sandbox
         env:
-          SANDBOX_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_SANDBOX_CLIENT_ID }}
-          SANDBOX_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_SANDBOX_CLIENT_SECRET }}
+          VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
+          VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
         run: npm run schema-canary

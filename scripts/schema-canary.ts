@@ -18,7 +18,6 @@ import {
 } from './schema-canary/lib';
 import { resolvePinnedVersion } from './schema-canary/pinned-versions';
 import { SCHEMA_CANARY_SKIP_LIST } from './schema-canary/skip-list';
-import { DRY_RUN_FIXTURES } from './schema-canary/dry-run-fixtures';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '..', '.env.sandbox') });
@@ -35,7 +34,6 @@ function parseArgs(argv: string[]) {
 const args = parseArgs(process.argv.slice(2));
 const COUNTRY_FILTER =
   typeof args.country === 'string' ? args.country.toUpperCase() : undefined;
-const DRY_RUN = args['dry-run'] === true;
 const CHECK_TYPES: SchemaCheckType[] = ['pinned', 'latest'];
 
 async function fetchLiveCountries(client: Client): Promise<string[]> {
@@ -72,11 +70,11 @@ async function fetchLiveSchema(
 }
 
 async function runLive(): Promise<SchemaCanaryRow[]> {
-  const clientId = process.env.SANDBOX_CLIENT_ID;
-  const clientSecret = process.env.SANDBOX_CLIENT_SECRET;
+  const clientId = process.env.VITE_CLIENT_ID;
+  const clientSecret = process.env.VITE_CLIENT_SECRET;
   if (!clientId || !clientSecret) {
     throw new Error(
-      'Missing SANDBOX_CLIENT_ID or SANDBOX_CLIENT_SECRET (set them in .env.sandbox at the repo root, or as env vars)',
+      'Missing VITE_CLIENT_ID or VITE_CLIENT_SECRET (set them in .env.sandbox at the repo root, or as env vars)',
     );
   }
 
@@ -132,30 +130,6 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
   return rows;
 }
 
-function runDryRun(): SchemaCanaryRow[] {
-  const rows: SchemaCanaryRow[] = [];
-  const fixtures = DRY_RUN_FIXTURES.filter(
-    (fixture) => !COUNTRY_FILTER || fixture.country === COUNTRY_FILTER,
-  );
-
-  for (const fixture of fixtures) {
-    const engine = resolveEngine(fixture.country);
-    for (const check of CHECK_TYPES) {
-      const result = checkSchemaBuildsAndValidates(fixture.schema);
-      rows.push({
-        country: fixture.country,
-        version: fixture.version,
-        engine,
-        check,
-        outcome: result.ok ? 'pass' : 'fail',
-        error: result.ok ? undefined : result.error,
-      });
-    }
-  }
-
-  return rows;
-}
-
 function report(rows: SchemaCanaryRow[]) {
   const table = formatSummaryTable(rows);
   console.log(table);
@@ -177,7 +151,7 @@ function report(rows: SchemaCanaryRow[]) {
 }
 
 async function main() {
-  const rows = DRY_RUN ? runDryRun() : await runLive();
+  const rows = await runLive();
   report(rows);
 
   const failedPinned = rows.filter(
