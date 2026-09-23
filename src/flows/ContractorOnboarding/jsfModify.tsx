@@ -1,15 +1,13 @@
-import { FieldValues } from 'react-hook-form';
-
 import { zendeskArticles } from '@/src/components/shared/zendesk-drawer/utils';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
-import { ContractPreviewHeader } from '@/src/flows/ContractorOnboarding/components/ContractPreviewHeader';
-import { ContractPreviewStatement } from '@/src/flows/ContractorOnboarding/components/ContractPreviewStatement';
 import { ContractorOnboardingFlowProps } from '@/src/flows/ContractorOnboarding/types';
 import { isNationalityCountryCode } from '@/src/flows/ContractorOnboarding/utils';
 import { FILE_TYPES, MAX_FILE_SIZE } from '@/src/lib/uploadConfig';
-import { JSFCustomComponentProps } from '@/src/types/remoteFlows';
 
-export { buildContractDetailsJsfModify } from '@/src/common/contract-documents/jsfModify';
+export {
+  buildContractDetailsJsfModify,
+  buildContractPreviewJsfModify,
+} from '@/src/common/contract-documents/jsfModify';
 
 /**
  * Builds the basic information jsf modify for the contractor onboarding flow
@@ -146,60 +144,6 @@ export const buildBasicInformationJsfModify = (
     required: ['nationality_status'],
     orderRoot: (originalOrder: string[]) => {
       return [...originalOrder, 'nationality_status'];
-    },
-  };
-};
-
-export const buildContractPreviewJsfModify = (
-  options: ContractorOnboardingFlowProps['options'] | undefined,
-  fieldValues: FieldValues,
-) => {
-  const userFields = options?.jsfModify?.contract_preview?.fields;
-
-  return {
-    fields: {
-      contract_preview_header: {
-        ...userFields?.contract_preview_header,
-        'x-jsf-presentation': {
-          Component: (props: JSFCustomComponentProps) => {
-            const CustomComponent =
-              userFields?.contract_preview_header?.['x-jsf-presentation']
-                ?.Component || ContractPreviewHeader;
-            return <CustomComponent {...props} />;
-          },
-        },
-      },
-      contract_preview_statement: {
-        ...userFields?.contract_preview_statement,
-        'x-jsf-presentation': {
-          Component: (props: JSFCustomComponentProps) => {
-            const CustomComponent =
-              userFields?.contract_preview_statement?.['x-jsf-presentation']
-                ?.Component || ContractPreviewStatement;
-
-            return (
-              <CustomComponent
-                reviewCompleted={Boolean(fieldValues?.review_completed)}
-                {...props}
-              />
-            );
-          },
-        },
-      },
-      signature: {
-        ...userFields?.signature,
-        'x-jsf-presentation': {
-          calculateDynamicProperties: (
-            fieldValuesDynamicProperties: Record<string, unknown>,
-          ) => {
-            return {
-              isVisible: Boolean(fieldValuesDynamicProperties.review_completed),
-            };
-          },
-          // Merge any user-provided signature customizations
-          ...userFields?.signature?.['x-jsf-presentation'],
-        },
-      },
     },
   };
 };

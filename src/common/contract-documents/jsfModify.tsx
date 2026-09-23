@@ -3,6 +3,8 @@ import { FieldValues } from 'react-hook-form';
 import { ChangeEvent } from 'react';
 
 import { parseLocalDate } from '@/src/common/dates';
+import { ContractPreviewHeader } from '@/src/common/contract-documents/components/ContractPreviewHeader';
+import { ContractPreviewStatement } from '@/src/common/contract-documents/components/ContractPreviewStatement';
 import { createStatementProperty } from '@/src/components/form/jsf-utils/createFields';
 import {
   contractorStandardProductIdentifier,
@@ -11,6 +13,7 @@ import {
 } from '@/src/common/contract-documents/constants';
 import { ContractorContractDetailsFormPayload } from '@/src/common/contract-documents/types';
 import { JSFModify } from '@/src/flows/types';
+import { JSFCustomComponentProps } from '@/src/types/remoteFlows';
 
 const isStandardPricingPlan = (pricingPlan: string | undefined) => {
   return pricingPlan === contractorStandardProductIdentifier;
@@ -145,6 +148,59 @@ export const buildContractDetailsJsfModify = (
                 : undefined,
             }),
           },
+        },
+      },
+    },
+  };
+};
+
+export const buildContractPreviewJsfModify = (
+  userJsfModify: JSFModify | undefined,
+  fieldValues: FieldValues,
+) => {
+  const userFields = userJsfModify?.fields;
+
+  return {
+    fields: {
+      contract_preview_header: {
+        ...userFields?.contract_preview_header,
+        'x-jsf-presentation': {
+          Component: (props: JSFCustomComponentProps) => {
+            const CustomComponent =
+              userFields?.contract_preview_header?.['x-jsf-presentation']
+                ?.Component || ContractPreviewHeader;
+            return <CustomComponent {...props} />;
+          },
+        },
+      },
+      contract_preview_statement: {
+        ...userFields?.contract_preview_statement,
+        'x-jsf-presentation': {
+          Component: (props: JSFCustomComponentProps) => {
+            const CustomComponent =
+              userFields?.contract_preview_statement?.['x-jsf-presentation']
+                ?.Component || ContractPreviewStatement;
+
+            return (
+              <CustomComponent
+                reviewCompleted={Boolean(fieldValues?.review_completed)}
+                {...props}
+              />
+            );
+          },
+        },
+      },
+      signature: {
+        ...userFields?.signature,
+        'x-jsf-presentation': {
+          calculateDynamicProperties: (
+            fieldValuesDynamicProperties: Record<string, unknown>,
+          ) => {
+            return {
+              isVisible: Boolean(fieldValuesDynamicProperties.review_completed),
+            };
+          },
+          ...userFields?.signature?.['x-jsf-presentation'],
         },
       },
     },
