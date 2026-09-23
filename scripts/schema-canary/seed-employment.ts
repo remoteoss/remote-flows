@@ -42,6 +42,14 @@ async function findSafeStartDate(
   return pickSafeDate(holidayDates);
 }
 
+class FetchSchemaError extends Error {
+  status?: number;
+  constructor(message: string, status?: number) {
+    super(message);
+    this.status = status;
+  }
+}
+
 async function fetchSchema(
   client: Client,
   country: string,
@@ -58,8 +66,9 @@ async function fetchSchema(
     },
   });
   if (response.error) {
-    throw new Error(
+    throw new FetchSchemaError(
       `GET /v1/countries/${country}/${form} -> ${JSON.stringify(response.error)}`,
+      (response as $TSFixMe).response?.status,
     );
   }
   return response.data?.data ?? null;
@@ -133,7 +142,10 @@ export async function seedEmploymentForCountry(
       country,
       'engagement_agreement_details',
     );
-  } catch {
+  } catch (error) {
+    if (!(error instanceof FetchSchemaError) || error.status !== 404) {
+      throw error;
+    }
     // No engagement_agreement_details form for this country - fine, skip.
   }
 
