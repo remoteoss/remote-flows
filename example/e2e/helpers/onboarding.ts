@@ -292,6 +292,11 @@ interface fillOnboardingStep3SpainFormOptions {
   has_commissions?: string;
   equity_compensation?: string;
   non_compete_clause_apply?: string;
+  // Required from contract_details v6: previously admin-only, cba_categories is now surfaced
+  // to clients and enforced. cba_group and cba_level only render once the prior field is set.
+  cba_area?: string;
+  cba_group?: string;
+  cba_level?: string;
   has_social_security_number?: string;
   work_equipment?: string;
   compensation_expenses_ack?: boolean;
@@ -409,6 +414,21 @@ export async function fillOnboardingStep3SpainForm(
       type: 'radio',
       value: options.non_compete_clause_apply,
       name: 'non_compete_clause_apply',
+    },
+    {
+      type: 'radio',
+      value: options.cba_area,
+      name: 'cba_categories.cba_area',
+    },
+    {
+      type: 'radio',
+      value: options.cba_group,
+      name: 'cba_categories.cba_group',
+    },
+    {
+      type: 'radio',
+      value: options.cba_level,
+      name: 'cba_categories.cba_level',
     },
     {
       type: 'radio',

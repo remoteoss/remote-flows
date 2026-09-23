@@ -139,9 +139,9 @@ export const DEFAULT_VERSION = 1;
  * Countries whose contract details schema is served as jsfVersion 1.
  * Those forms keep their own field state, so they go through
  * useContractDetailsSchema instead of useJSONSchemaForm.
- * FRA = wage portage, ITA = APL.
+ * FRA = wage portage, ITA = APL, ESP = CBA categories fieldset.
  */
-const JSF_V1_CONTRACT_DETAILS_COUNTRIES = ['FRA', 'ITA', 'DEU'];
+const JSF_V1_CONTRACT_DETAILS_COUNTRIES = ['FRA', 'ITA', 'DEU', 'ESP'];
 
 /**
  * Checks if a country's contract details schema is served as jsfVersion 1
