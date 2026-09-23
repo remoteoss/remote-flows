@@ -163,16 +163,15 @@ export async function fillOnboardingBenefitsStepDynamically(
 
       if (pending.length === 0) break;
 
-      for (const field of pending) {
-        handled.add(field.domKey);
+      let filledAny = false;
 
+      for (const field of pending) {
         if (field.options.length === 0) {
-          test.info().annotations.push({
-            type: 'benefits-field-skipped',
-            description: `${field.domKey} (${field.inputType}) has no options; left unfilled.`,
-          });
           continue;
         }
+
+        handled.add(field.domKey);
+        filledAny = true;
 
         const [choice] = field.options;
 
@@ -183,6 +182,16 @@ export async function fillOnboardingBenefitsStepDynamically(
         }
 
         setNestedValue(values, field.valuePath, choice.value);
+      }
+
+      if (!filledAny) {
+        for (const field of pending) {
+          test.info().annotations.push({
+            type: 'benefits-field-skipped',
+            description: `${field.domKey} (${field.inputType}) has no options; left unfilled.`,
+          });
+        }
+        break;
       }
 
       handleValidation(values);
