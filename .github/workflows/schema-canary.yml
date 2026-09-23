@@ -1,0 +1,32 @@
+name: Schema Canary
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  contract-details-schema-canary:
+    name: Contract Details Schema Canary
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Use Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.15.0'
+
+      - name: Install dependencies
+        run: npm ci --include=optional --ignore-scripts
+
+      - name: Run schema canary against sandbox
+        env:
+          SANDBOX_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_SANDBOX_CLIENT_ID }}
+          SANDBOX_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_SANDBOX_CLIENT_SECRET }}
+        run: npm run schema-canary

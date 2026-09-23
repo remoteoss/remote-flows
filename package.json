@@ -25,6 +25,7 @@
     "prepare": "npm run build",
     "release": "tsx scripts/release.ts",
     "release:fix": "tsx scripts/release-hotfix.ts",
+    "schema-canary": "tsx scripts/schema-canary.ts",
     "seed:onboarding": "node scripts/seed-onboarding.mjs",
     "size": "tsx scripts/analyze-bundle-size.ts",
     "size:check": "tsx scripts/check-size-limits.ts",
