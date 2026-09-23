@@ -97,16 +97,6 @@ test.describe('Onboard Germany employee', () => {
 
     await fillOnboardingBenefitsStepDynamically(page, benefitsSchemaPromise);
 
-    // Whether this step is shown depends on the company's account configuration, not on the
-    // country: skip it when the environment doesn't have it enabled for this sandbox company.
-    stepTitle = page.getByTestId('onboarding-step-title');
-    await expect(stepTitle).toHaveText(/Preview Employment Agreement|Review/);
-
-    if ((await stepTitle.textContent()) === 'Preview Employment Agreement') {
-      await page.click('.submit-button');
-      await page.getByText('Loading...').waitFor({ state: 'hidden' });
-    }
-
     stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Review');
 
