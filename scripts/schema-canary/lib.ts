@@ -32,12 +32,12 @@ export function describeError(error: unknown): string {
   return frame ? `${message} (${frame})` : message;
 }
 
-export function checkSchemaBuildsAndValidates(
+export async function checkSchemaBuildsAndValidates(
   schema: Record<string, unknown> | null,
-): { ok: true } | { ok: false; error: string } {
+): Promise<{ ok: true } | { ok: false; error: string }> {
   try {
     const form = createHeadlessForm(schema as Record<string, unknown>, {});
-    form.handleValidation({});
+    await form.handleValidation({});
     return { ok: true };
   } catch (error) {
     return { ok: false, error: describeError(error) };

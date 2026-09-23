@@ -20,8 +20,8 @@ describe('resolveEngine', () => {
 });
 
 describe('checkSchemaBuildsAndValidates', () => {
-  it('passes for a valid schema', () => {
-    const result = checkSchemaBuildsAndValidates({
+  it('passes for a valid schema', async () => {
+    const result = await checkSchemaBuildsAndValidates({
       type: 'object',
       properties: {
         name: {
@@ -35,8 +35,8 @@ describe('checkSchemaBuildsAndValidates', () => {
     expect(result.ok).toBe(true);
   });
 
-  it('fails and captures the error for an unusable schema', () => {
-    const result = checkSchemaBuildsAndValidates(null);
+  it('fails and captures the error for an unusable schema', async () => {
+    const result = await checkSchemaBuildsAndValidates(null);
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.error).toContain('properties');

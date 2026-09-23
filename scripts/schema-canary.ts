@@ -105,7 +105,7 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
 
       try {
         const schema = await fetchLiveSchema(client, country, version);
-        const result = checkSchemaBuildsAndValidates(schema);
+        const result = await checkSchemaBuildsAndValidates(schema);
         rows.push({
           country,
           version,
