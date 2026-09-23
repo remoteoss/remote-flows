@@ -67,14 +67,22 @@ const useContractorOnboardingDetailsSchema = ({
     ],
     retry: false,
     queryFn: async () => {
-      return getV1CountriesCountryCodeContractorContractDetails({
-        client: client as Client,
-        path: { country_code: countryCode },
-        query: {
-          json_schema_version: 1,
-          employment_id: employmentId,
+      const response = await getV1CountriesCountryCodeContractorContractDetails(
+        {
+          client: client as Client,
+          path: { country_code: countryCode },
+          query: {
+            json_schema_version: 1,
+            employment_id: employmentId,
+          },
         },
-      });
+      );
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch contractor contract details schema');
+      }
+
+      return response;
     },
     enabled: options?.queryOptions?.enabled,
     select: ({ data }) => {
