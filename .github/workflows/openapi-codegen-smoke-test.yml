@@ -28,9 +28,5 @@ jobs:
       - name: Install dependencies
         run: npm ci --include=optional --ignore-scripts
 
-      # Deliberately not diffing the regenerated src/client against what's committed:
-      # the production schema drifts independently of this PR, so a diff here is
-      # expected and not a failure. Only a nonzero exit (the generator itself
-      # crashing, e.g. from a toolchain incompatibility) should fail this job.
       - name: Run openapi-ts against the production gateway
         run: npm run openapi-ts
