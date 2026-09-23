@@ -7,6 +7,11 @@ import {
   fillOnboardingEngagementAgreementDetailsGermanyForm,
   fillOnboardingStep3GermanyForm,
 } from './helpers/onboarding';
+import {
+  fillOnboardingBenefitsStepDynamically,
+  watchForBenefitsSchema,
+} from './helpers/benefits';
+import { completePreOnboardingRequirements } from './helpers/preOnboardingRequirements';
 
 test.describe('Onboard Germany employee', () => {
   test.beforeEach(async ({ page }) => {
@@ -17,6 +22,10 @@ test.describe('Onboard Germany employee', () => {
   test('Fill Germany employee flow form', async ({ page }) => {
     const headerAmount = page.getByText(/Standard onboarding flow/);
     await expect(headerAmount).toBeVisible();
+
+    // Registered before Introduction submits: the benefit-offers schema request fires as soon
+    // as the employment is created there, not when the user reaches the Benefits step.
+    const benefitsSchemaPromise = watchForBenefitsSchema(page);
 
     await fillOnboardingIntroductionForm(page, {
       company_id: '460201ed-a8c0-4e75-89dc-6d5eae35f65e',
@@ -32,8 +41,10 @@ test.describe('Onboard Germany employee', () => {
     stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Basic Information');
 
+    const fullname = `John Doe${Date.now()}`;
+
     await fillOnboardingStep2Form(page, {
-      fullname: `John Doe${Date.now()}`,
+      fullname,
       login_email: 'personal',
       personal_email: `john.doe${Date.now()}@example.com`,
       work_email: `john.doe${Date.now()}@pro.com`,
@@ -83,5 +94,24 @@ test.describe('Onboard Germany employee', () => {
 
     stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Benefits');
+
+    await fillOnboardingBenefitsStepDynamically(page, benefitsSchemaPromise);
+
+    stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Review');
+
+    const inviteButton = page.locator('.submit-button');
+    await expect(inviteButton).toBeDisabled();
+
+    await completePreOnboardingRequirements(page, fullname);
+
+    const editButtons = page.locator('.back-button');
+    const editButtonsCount = await editButtons.count();
+    for (let i = 0; i < editButtonsCount; i++) {
+      await expect(editButtons.nth(i)).toBeDisabled();
+    }
+
+    await expect(inviteButton).toBeEnabled();
+    await expect(inviteButton).toHaveText('Invite Employee');
   });
 });

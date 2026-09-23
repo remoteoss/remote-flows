@@ -272,7 +272,6 @@ export async function fillOnboardingStep3GermanyForm(
 }
 
 interface fillOnboardingStep3SpainFormOptions {
-  contract_duration_type?: string;
   work_schedule?: string;
   probation_length?: string;
   probation_length_ack?: boolean;
@@ -293,6 +292,11 @@ interface fillOnboardingStep3SpainFormOptions {
   has_commissions?: string;
   equity_compensation?: string;
   non_compete_clause_apply?: string;
+  // Required from contract_details v6: previously admin-only, cba_categories is now surfaced
+  // to clients and enforced. cba_group and cba_level only render once the prior field is set.
+  cba_area?: string;
+  cba_group?: string;
+  cba_level?: string;
   has_social_security_number?: string;
   work_equipment?: string;
   compensation_expenses_ack?: boolean;
@@ -303,11 +307,8 @@ export async function fillOnboardingStep3SpainForm(
   options: Partial<fillOnboardingStep3SpainFormOptions>,
 ) {
   await fillForm(page, [
-    {
-      type: 'radio',
-      value: options.contract_duration_type,
-      name: 'contract_duration_type',
-    },
+    // contract_duration_type was removed from the v5 schema: Spain now only supports
+    // indefinite contracts (Royal Decree-Law 32/2021), shown as static copy instead of a field.
     {
       type: 'radio',
       value: options.work_schedule,
@@ -416,6 +417,21 @@ export async function fillOnboardingStep3SpainForm(
     },
     {
       type: 'radio',
+      value: options.cba_area,
+      name: 'cba_categories.cba_area',
+    },
+    {
+      type: 'radio',
+      value: options.cba_group,
+      name: 'cba_categories.cba_group',
+    },
+    {
+      type: 'radio',
+      value: options.cba_level,
+      name: 'cba_categories.cba_level',
+    },
+    {
+      type: 'radio',
       value: options.has_social_security_number,
       name: 'has_social_security_number',
     },
@@ -430,72 +446,6 @@ export async function fillOnboardingStep3SpainForm(
       name: 'compensation_expenses_ack',
     },
   ]);
-
-  await page.click('.submit-button');
-  await page.getByText('Loading...').waitFor({ state: 'hidden' });
-}
-
-interface fillOnboardingStep4SpainFormOptions {
-  life_insurance_type?: string;
-  life_insurance?: string;
-  health_insurance_coverage?: string;
-  health_insurance?: string;
-  retirement?: string;
-  mental_health?: string;
-  wellness?: string;
-  business_travel?: string;
-}
-
-export async function fillOnboardingStep4SpainForm(
-  page: Page,
-  options: Partial<fillOnboardingStep4SpainFormOptions>,
-) {
-  const isLocked = await page.getByText('Locked Benefit').first().isVisible();
-
-  if (!isLocked) {
-    await fillForm(page, [
-      {
-        type: 'radio',
-        value: options.life_insurance_type,
-        name: 'f90cb339-172d-4d24-9ee6-da2e2ccc954e.filter',
-      },
-      {
-        type: 'radio',
-        value: options.life_insurance,
-        name: 'f90cb339-172d-4d24-9ee6-da2e2ccc954e.value',
-      },
-      {
-        type: 'radio',
-        value: options.health_insurance_coverage,
-        name: '88081a16-882a-42b8-8cd5-6abb30585e4e.filter',
-      },
-      {
-        type: 'radio',
-        value: options.health_insurance,
-        name: '88081a16-882a-42b8-8cd5-6abb30585e4e.value',
-      },
-      {
-        type: 'radio',
-        value: options.retirement,
-        name: '57b4108b-74d4-4830-ad11-68a46679f88c.value',
-      },
-      {
-        type: 'radio',
-        value: options.mental_health,
-        name: '4a2d0edb-ebd9-49af-ad79-7390deb7ee71.value',
-      },
-      {
-        type: 'radio',
-        value: options.wellness,
-        name: '5ffc8e84-1304-4abb-91c2-4d43b1fece5d.value',
-      },
-      {
-        type: 'radio',
-        value: options.business_travel,
-        name: '91dd5796-5ed7-449e-9a75-15c07c288970.value',
-      },
-    ]);
-  }
 
   await page.click('.submit-button');
   await page.getByText('Loading...').waitFor({ state: 'hidden' });

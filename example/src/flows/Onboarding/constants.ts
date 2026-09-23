@@ -17,10 +17,6 @@ export const ONBOARDING_OPTIONS = {
       // United Arab Emirates
       contract_details: 3,
     },
-    DEU: {
-      // Germany
-      contract_details: 7,
-    },
     BLR: {
       // Belarus
       contract_details: 2,
@@ -36,6 +32,14 @@ export const ONBOARDING_OPTIONS = {
     CZE: {
       // Czech Republic
       contract_details: 2,
+    },
+    DEU: {
+      // Germany
+      contract_details: 7,
+    },
+    ESP: {
+      // Spain
+      contract_details: 7,
     },
     GBR: {
       // United Kingdom

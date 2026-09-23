@@ -1,9 +1,18 @@
-export const contractorStandardProductIdentifier =
-  'urn:remotecom:resource:product:contractor:standard:monthly';
-export const contractorPlusProductIdentifier =
-  'urn:remotecom:resource:product:contractor:plus:monthly';
-export const corProductIdentifier =
-  'urn:remotecom:resource:product:contractor:aor:monthly';
+import {
+  contractorPlusProductIdentifier,
+  contractorStandardProductIdentifier,
+  corProductIdentifier,
+} from '@/src/common/contract-documents/constants';
+
+export {
+  contractorPlusProductIdentifier,
+  contractorStandardProductIdentifier,
+  corProductIdentifier,
+  REMOTE_AI_ERROR_SOURCE,
+  REMOTE_AI_SERVICES_AND_DELIVERABLES_COR_ERROR_MESSAGE,
+  REMOTE_AI_SERVICES_AND_DELIVERABLES_ERROR_MESSAGE,
+} from '@/src/common/contract-documents/constants';
+
 export const eorProductIdentifier =
   'urn:remotecom:resource:product:eor:monthly';
 
@@ -17,14 +26,6 @@ export const PRODUCT_IDENTIFIER_MAP: Record<ProductType, string> = {
 };
 
 export const IR35_FILE_SUBTYPE = 'ir_35';
-
-export const REMOTE_AI_ERROR_SOURCE = 'REMOTE_AI';
-
-export const REMOTE_AI_SERVICES_AND_DELIVERABLES_ERROR_MESSAGE =
-  "You cannot control how a contractor completes the Services and Deliverables. This means, for example, that you can't specify their working hours or use of subcontractors. Please make sure this field includes only project names, descriptions, and deliverables. We do not allow hyperlinks.";
-
-export const REMOTE_AI_SERVICES_AND_DELIVERABLES_COR_ERROR_MESSAGE =
-  'The content You have entered may not be consistent with the Contractor of Record terms. You are responsible before proceeding for ensuring that the language entered herein accurately reflects those terms and your relationship with Subcontractors.';
 
 const standardOnboardingWorkflow = [
   {
