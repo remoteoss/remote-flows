@@ -42,7 +42,14 @@ async function signPreOnboardingDocument(page: Page, signature: string) {
   await signatureDialog
     .getByLabel('Your full name (signature)')
     .fill(signature);
+
+  const signResponse = page.waitForResponse(
+    (response) =>
+      /\/pre-onboarding-documents\/[^/]+\/sign/.test(response.url()) &&
+      response.request().method() === 'POST',
+  );
   await signatureDialog.getByRole('button', { name: 'Sign Document' }).click();
+  expect((await signResponse).ok()).toBe(true);
 
   await documentDialog.waitFor({ state: 'hidden' });
 }

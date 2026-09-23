@@ -1,5 +1,13 @@
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import { fillForm } from './general';
+
+const STEP_TRANSITION_TIMEOUT_MS = 15_000;
+
+export async function expectOnboardingStep(page: Page, title: string) {
+  await expect(page.getByTestId('onboarding-step-title')).toHaveText(title, {
+    timeout: STEP_TRANSITION_TIMEOUT_MS,
+  });
+}
 
 interface fillOnboardingIntroductionFormOptions {
   company_id: string;

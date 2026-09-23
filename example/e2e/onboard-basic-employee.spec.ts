@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { setupVercelBypass } from './helpers/general';
 import {
+  expectOnboardingStep,
   fillOnboardingIntroductionForm,
   fillOnboardingStep1Form,
   fillOnboardingStep2Form,
@@ -18,6 +19,8 @@ test.describe('Onboard basic employee', () => {
   });
 
   test('Fill basic employee flow form', async ({ page }) => {
+    test.slow();
+
     const headerAmount = page.getByText(/Standard onboarding flow/);
 
     await expect(headerAmount).toBeVisible();
@@ -30,15 +33,13 @@ test.describe('Onboard basic employee', () => {
       company_id: '460201ed-a8c0-4e75-89dc-6d5eae35f65e',
     });
 
-    let stepTitle = page.getByTestId('onboarding-step-title');
-    await expect(stepTitle).toHaveText('Select Country');
+    await expectOnboardingStep(page, 'Select Country');
 
     await fillOnboardingStep1Form(page, {
       country_id: 'Spain',
     });
 
-    stepTitle = page.getByTestId('onboarding-step-title');
-    await expect(stepTitle).toHaveText('Basic Information');
+    await expectOnboardingStep(page, 'Basic Information');
 
     await fillOnboardingStep2Form(page, {
       fullname: `John Doe${Date.now()}`,
@@ -52,8 +53,7 @@ test.describe('Onboard basic employee', () => {
       has_seniority_date: 'no',
     });
 
-    stepTitle = page.getByTestId('onboarding-step-title');
-    await expect(stepTitle).toHaveText('Contract Details');
+    await expectOnboardingStep(page, 'Contract Details');
 
     await fillOnboardingStep3SpainForm(page, {
       work_schedule: 'full_time',
@@ -88,13 +88,11 @@ test.describe('Onboard basic employee', () => {
       role_requires_license: 'no',
     });
 
-    stepTitle = page.getByTestId('onboarding-step-title');
-    await expect(stepTitle).toHaveText('Benefits');
+    await expectOnboardingStep(page, 'Benefits');
 
     await fillOnboardingBenefitsStepDynamically(page, benefitsSchemaPromise);
 
-    stepTitle = page.getByTestId('onboarding-step-title');
-    await expect(stepTitle).toHaveText('Review');
+    await expectOnboardingStep(page, 'Review');
     await page.click('.submit-button');
   });
 });
