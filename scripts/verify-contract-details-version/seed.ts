@@ -31,13 +31,12 @@ async function sandboxApi(
   });
 
   const text = await response.text();
-  const json = text ? JSON.parse(text) : undefined;
 
   if (!response.ok) {
     throw new Error(`${method} ${urlPath} -> ${response.status}: ${text}`);
   }
 
-  return json;
+  return text ? JSON.parse(text) : undefined;
 }
 
 async function fetchCountrySchema(

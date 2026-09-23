@@ -76,6 +76,21 @@ export async function runContractDetailsPass({
   const values: Record<string, unknown> = { ...override };
   const skipped: string[] = [];
 
+  if (Object.keys(values).length > 0) {
+    await act(async () => {
+      await result.current.checkFieldUpdates(values);
+    });
+
+    await waitFor(
+      () => {
+        if (result.current.isLoading) {
+          throw new Error('still loading after checkFieldUpdates');
+        }
+      },
+      { timeout: WAIT_TIMEOUT_MS },
+    );
+  }
+
   for (let round = 0; round < MAX_FILL_ROUNDS; round++) {
     const changed = fillVisibleFields(
       result.current.fields as $TSFixMe,
