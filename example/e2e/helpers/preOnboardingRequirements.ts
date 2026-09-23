@@ -1,13 +1,9 @@
-import { Locator, Page, expect, test } from '@playwright/test';
-
-const MAX_ROUNDS = 5;
+import { Page, expect, test } from '@playwright/test';
 
 /**
- * Completes every Pre-Onboarding Requirement shown in the Review step (e.g. acknowledging the
- * Time Tracking Policy, then reviewing and signing the ILA). Requirements can depend on each
- * other — the ILA document is blocked until the acknowledgement is checked — so this repeats a
- * few rounds, each round checking whichever unblocked item is available, until nothing is left
- * to do.
+ * Completes the Pre-Onboarding Requirements shown in the Review step for this sandbox company:
+ * acknowledges the Time Tracking Policy checkbox, then reviews and signs the ILA (blocked until
+ * the acknowledgement is checked).
  */
 export async function completePreOnboardingRequirements(
   page: Page,
@@ -25,44 +21,15 @@ export async function completePreOnboardingRequirements(
     return;
   }
 
-  for (let round = 0; round < MAX_ROUNDS; round++) {
-    let didSomething = false;
+  const checkbox = page.locator('[data-testid^="acknowledgement-checkbox-"]');
+  await checkbox.click();
+  await expect(checkbox).toHaveAttribute('data-state', 'checked');
 
-    const uncheckedBox = page
-      .locator(
-        '[data-testid^="acknowledgement-checkbox-"][data-state="unchecked"]:not([disabled])',
-      )
-      .first();
-
-    if (await uncheckedBox.count()) {
-      const testId = await uncheckedBox.getAttribute('data-testid');
-      await uncheckedBox.click();
-      await expect(page.getByTestId(testId as string)).toHaveAttribute(
-        'data-state',
-        'checked',
-      );
-      didSomething = true;
-    }
-
-    const reviewButton = page
-      .getByRole('button', { name: 'Review document', disabled: false })
-      .first();
-
-    if (await reviewButton.count()) {
-      await signPreOnboardingDocument(page, reviewButton, signature);
-      didSomething = true;
-    }
-
-    if (!didSomething) break;
-  }
+  await signPreOnboardingDocument(page, signature);
 }
 
-async function signPreOnboardingDocument(
-  page: Page,
-  reviewButton: Locator,
-  signature: string,
-) {
-  await reviewButton.click();
+async function signPreOnboardingDocument(page: Page, signature: string) {
+  await page.getByRole('button', { name: 'Review document' }).click();
 
   const documentDialog = page.locator(
     '[data-slot="full-screen-dialog-content"]',
