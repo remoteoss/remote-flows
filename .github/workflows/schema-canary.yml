@@ -37,6 +37,7 @@ jobs:
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
         run: npm run schema-canary -- --write
 
       - name: Create pull request with the updated report
@@ -74,4 +75,5 @@ jobs:
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
         run: npm run schema-canary -- --checks=pinned

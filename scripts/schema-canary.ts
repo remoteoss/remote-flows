@@ -78,13 +78,14 @@ async function fetchLiveSchema(
 async function runLive(): Promise<SchemaCanaryRow[]> {
   const clientId = process.env.VITE_CLIENT_ID;
   const clientSecret = process.env.VITE_CLIENT_SECRET;
-  if (!clientId || !clientSecret) {
+  const refreshToken = process.env.VITE_REFRESH_TOKEN;
+  if (!clientId || !clientSecret || !refreshToken) {
     throw new Error(
-      'Missing VITE_CLIENT_ID or VITE_CLIENT_SECRET (set them in .env.sandbox at the repo root, or as env vars)',
+      'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, or VITE_REFRESH_TOKEN (set them in .env.sandbox at the repo root, or as env vars)',
     );
   }
 
-  const client = createSandboxClient(clientId, clientSecret);
+  const client = createSandboxClient(clientId, clientSecret, refreshToken);
   const countries = await fetchLiveCountries(client);
   const rows: SchemaCanaryRow[] = [];
 

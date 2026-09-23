@@ -7,6 +7,7 @@ export const SANDBOX_GATEWAY_URL = ENVIRONMENTS.sandbox;
 export async function fetchSandboxAccessToken(
   clientId: string,
   clientSecret: string,
+  refreshToken: string,
 ): Promise<{ accessToken: string; expiresIn: number }> {
   const encodedCredentials = Buffer.from(
     `${clientId}:${clientSecret}`,
@@ -18,7 +19,10 @@ export async function fetchSandboxAccessToken(
       'Content-Type': 'application/x-www-form-urlencoded',
       Authorization: `Basic ${encodedCredentials}`,
     },
-    body: new URLSearchParams({ grant_type: 'client_credentials' }),
+    body: new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    }),
   });
 
   if (!response.ok) {
@@ -38,7 +42,10 @@ export async function fetchSandboxAccessToken(
 export function createSandboxClient(
   clientId: string,
   clientSecret: string,
+  refreshToken: string,
 ): Client {
   process.env.REMOTE_GATEWAY_URL = SANDBOX_GATEWAY_URL;
-  return createClient(() => fetchSandboxAccessToken(clientId, clientSecret));
+  return createClient(() =>
+    fetchSandboxAccessToken(clientId, clientSecret, refreshToken),
+  );
 }
