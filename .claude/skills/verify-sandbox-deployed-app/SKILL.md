@@ -42,7 +42,7 @@ npm run seed:onboarding -- --country=<COUNTRY> --env=sandbox
 
 (default `COUNTRY=DEU` unless the user's ask implies another country — e.g. a
 question about Germany's labor-leasing step). This lands the employment at
-`contract_details`. If what needs verifying is a *later* step (Benefits,
+`contract_details`. If what needs verifying is a _later_ step (Benefits,
 Review, engagement_agreement_details, etc.), you'll need to drive the form
 through those steps yourself in Step 4 — seeding doesn't go past
 `contract_details`.
