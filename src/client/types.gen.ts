@@ -2435,8 +2435,7 @@ export type AuthorizationCodeResponse = BaseTokenResponse & {
   user_id?: string;
 };
 
-export type MaybeBenefitRenewalRequestsMinimalBenefitRenewalResponse =
-  BenefitRenewalRequestsMinimalBenefitRenewalResponse | null;
+export type MaybeBenefitRenewalRequestsMinimalBenefitRenewalResponse = BenefitRenewalRequestsMinimalBenefitRenewalResponse | null;
 
 /**
  * CompanyAlreadyExistsErrorResponse
@@ -7075,8 +7074,7 @@ export type Costs = {
   employer_cost: number;
 } | null;
 
-export type MaybeUnifiedEmploymentBenefitTier =
-  UnifiedEmploymentBenefitTier | null;
+export type MaybeUnifiedEmploymentBenefitTier = UnifiedEmploymentBenefitTier | null;
 
 /**
  * CountrySubdivision
@@ -7380,8 +7378,7 @@ export type MagicLinkResponse = {
   };
 };
 
-export type MaybeAccountsMinimalCompanyAdmin =
-  AccountsMinimalCompanyAdmin | null;
+export type MaybeAccountsMinimalCompanyAdmin = AccountsMinimalCompanyAdmin | null;
 
 /**
  * EmploymentLifecycleStage
