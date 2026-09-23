@@ -4,14 +4,22 @@ on:
   schedule:
     - cron: '0 4 * * *'
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'example/src/flows/Onboarding/jsonSchemaVersions.ts'
+      - 'scripts/schema-canary.ts'
+      - 'scripts/schema-canary/**'
+      - '.github/workflows/schema-canary.yml'
 
 jobs:
-  contract-details-schema-canary:
-    name: Contract Details Schema Canary
+  nightly-canary:
+    if: github.event_name != 'pull_request'
+    name: Contract Details Schema Canary (nightly)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      contents: read
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -29,4 +37,41 @@ jobs:
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
-        run: npm run schema-canary
+        run: npm run schema-canary -- --write
+
+      - name: Create pull request with the updated report
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          commit-message: 'chore(schema-canary): update contract details schema canary report'
+          branch: chore/schema-canary-report-auto
+          delete-branch: true
+          title: 'chore(schema-canary): update contract details schema canary report'
+          body: 'Automated nightly run of `npm run schema-canary`. See the workflow run summary for the full pass/fail table.'
+          add-paths: |
+            scripts/reports/schema-canary.json
+
+  pr-canary:
+    if: github.event_name == 'pull_request'
+    name: Contract Details Schema Canary (pinned, PR)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Use Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.15.0'
+
+      - name: Install dependencies
+        run: npm ci --include=optional --ignore-scripts
+
+      - name: Run schema canary (pinned check only) against sandbox
+        env:
+          VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
+          VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+        run: npm run schema-canary -- --checks=pinned

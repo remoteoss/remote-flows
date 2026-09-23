@@ -1,4 +1,5 @@
 import {
+  buildReport,
   checkSchemaBuildsAndValidates,
   decideExitCode,
   formatSummaryTable,
@@ -96,6 +97,26 @@ describe('decideExitCode', () => {
       { ...passingRow, outcome: 'fail', error: 'boom' },
     ];
     expect(decideExitCode(rows)).toBe(1);
+  });
+});
+
+describe('buildReport', () => {
+  it('wraps the rows with report metadata', () => {
+    const rows: SchemaCanaryRow[] = [
+      {
+        country: 'DEU',
+        version: 7,
+        engine: 'jsf-v1',
+        check: 'pinned',
+        outcome: 'pass',
+      },
+    ];
+
+    const report = buildReport(rows);
+
+    expect(report.checks).toBe(rows);
+    expect(report._meta.title).toBe('Contract details schema canary');
+    expect(report._meta.generated_at).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 });
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-import { appendFileSync } from 'node:fs';
+import { appendFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
@@ -8,6 +8,7 @@ import { Client } from '@/src/client/client';
 import { DEFAULT_VERSION } from '@/src/flows/Onboarding/utils';
 import { createSandboxClient } from './schema-canary/auth';
 import {
+  buildReport,
   checkSchemaBuildsAndValidates,
   decideExitCode,
   formatSummaryTable,
@@ -34,7 +35,12 @@ function parseArgs(argv: string[]) {
 const args = parseArgs(process.argv.slice(2));
 const COUNTRY_FILTER =
   typeof args.country === 'string' ? args.country.toUpperCase() : undefined;
-const CHECK_TYPES: SchemaCheckType[] = ['pinned', 'latest'];
+const CHECK_TYPES: SchemaCheckType[] =
+  typeof args.checks === 'string'
+    ? (args.checks.split(',') as SchemaCheckType[])
+    : ['pinned', 'latest'];
+const WRITE_REPORT = args.write === true;
+const REPORT_PATH = path.resolve(__dirname, 'reports', 'schema-canary.json');
 
 async function fetchLiveCountries(client: Client): Promise<string[]> {
   const response = await getV1Countries({
@@ -150,9 +156,17 @@ function report(rows: SchemaCanaryRow[]) {
   }
 }
 
+function writeReport(rows: SchemaCanaryRow[]) {
+  writeFileSync(REPORT_PATH, `${JSON.stringify(buildReport(rows), null, 2)}\n`);
+}
+
 async function main() {
   const rows = await runLive();
   report(rows);
+
+  if (WRITE_REPORT) {
+    writeReport(rows);
+  }
 
   const failedPinned = rows.filter(
     (row) => row.check === 'pinned' && row.outcome === 'fail',

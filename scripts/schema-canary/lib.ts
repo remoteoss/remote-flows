@@ -65,6 +65,30 @@ const OUTCOME_LABEL: Record<SchemaCheckOutcome, string> = {
   skip: '⏭️ skip',
 };
 
+export type SchemaCanaryReport = {
+  _meta: {
+    title: string;
+    description: string;
+    source: string;
+    generated_at: string;
+  };
+  checks: SchemaCanaryRow[];
+};
+
+export function buildReport(rows: SchemaCanaryRow[]): SchemaCanaryReport {
+  return {
+    _meta: {
+      title: 'Contract details schema canary',
+      description:
+        'Per-country contract_details schema checks against the sandbox gateway. "pinned" is the version this library currently ships against (see example/src/flows/Onboarding/jsonSchemaVersions.ts); "latest" is whatever version the gateway currently serves as newest. Both run createHeadlessForm(schema, {}) + handleValidation({}) and record whether it throws.',
+      source:
+        'scripts/schema-canary.ts, run nightly against the sandbox gateway',
+      generated_at: new Date().toISOString().slice(0, 10),
+    },
+    checks: rows,
+  };
+}
+
 export function formatSummaryTable(rows: SchemaCanaryRow[]): string {
   const header = '| Country | Version | Engine | Check | Result | Error |';
   const divider = '| --- | --- | --- | --- | --- | --- |';
