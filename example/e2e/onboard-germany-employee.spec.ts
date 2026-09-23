@@ -11,6 +11,7 @@ import {
   fillOnboardingBenefitsStepDynamically,
   watchForBenefitsSchema,
 } from './helpers/benefits';
+import { completePreOnboardingRequirements } from './helpers/preOnboardingRequirements';
 
 test.describe('Onboard Germany employee', () => {
   test.beforeEach(async ({ page }) => {
@@ -40,8 +41,10 @@ test.describe('Onboard Germany employee', () => {
     stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Basic Information');
 
+    const fullname = `John Doe${Date.now()}`;
+
     await fillOnboardingStep2Form(page, {
-      fullname: `John Doe${Date.now()}`,
+      fullname,
       login_email: 'personal',
       personal_email: `john.doe${Date.now()}@example.com`,
       work_email: `john.doe${Date.now()}@pro.com`,
@@ -95,6 +98,29 @@ test.describe('Onboard Germany employee', () => {
     await fillOnboardingBenefitsStepDynamically(page, benefitsSchemaPromise);
 
     stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Preview Employment Agreement');
+
+    await page.click('.submit-button');
+    await page.getByText('Loading...').waitFor({ state: 'hidden' });
+
+    stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Review');
+
+    const inviteButton = page.locator('.submit-button');
+    await expect(inviteButton).toBeDisabled();
+
+    await completePreOnboardingRequirements(page, fullname);
+
+    // Signing the ILA freezes the employment data: the review step's "Edit ..." buttons must no
+    // longer be usable, and — with every requirement now finished — the invite button must no
+    // longer be blocked.
+    const editButtons = page.locator('.back-button');
+    const editButtonsCount = await editButtons.count();
+    for (let i = 0; i < editButtonsCount; i++) {
+      await expect(editButtons.nth(i)).toBeDisabled();
+    }
+
+    await expect(inviteButton).toBeEnabled();
+    await expect(inviteButton).toHaveText('Invite Employee');
   });
 });
