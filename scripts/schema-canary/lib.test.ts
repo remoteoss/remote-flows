@@ -116,7 +116,27 @@ describe('buildReport', () => {
 
     expect(report.checks).toBe(rows);
     expect(report._meta.title).toBe('Contract details schema canary');
-    expect(report._meta.generated_at).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it('produces byte-identical output for identical rows on different days', () => {
+    const rows: SchemaCanaryRow[] = [
+      {
+        country: 'DEU',
+        version: 7,
+        engine: 'jsf-v1',
+        check: 'pinned',
+        outcome: 'pass',
+      },
+    ];
+
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01'));
+    const first = buildReport(rows);
+    vi.setSystemTime(new Date('2026-01-02'));
+    const second = buildReport(rows);
+    vi.useRealTimers();
+
+    expect(JSON.stringify(first)).toBe(JSON.stringify(second));
   });
 });
 
