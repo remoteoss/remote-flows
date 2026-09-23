@@ -70,6 +70,8 @@ Flows are exposed two ways: the prebuilt `<FlowNameFlow render={...}>` component
 
 Forms use **React Hook Form + Yup + `@remoteoss/remote-json-schema-form-kit`**. Field rendering is delegated to the `FormFieldsContext` component map; consumers override per-type renderers via the `<RemoteFlows components={...}>` prop, and built-ins come from [src/lazy-default-components.ts](src/lazy-default-components.ts) (lazy-loaded to keep the bundle small). The `flowBag` exposes `handleValidation` and `parseFormValues` — both are **async** (changed in v1.0.0, see [MIGRATION.md](MIGRATION.md)).
 
+Call `createHeadlessForm` once per schema and recompute conditionals via the `handleValidation` it returns (both jsf v0 and v1 mutate the same `fields` array in place) rather than calling `createHeadlessForm` again on every value change — some existing `src/flows/*/api.ts` hooks do the latter, which is accepted technical debt, not the pattern to copy. Detailed guidance lives in [.cursor/rules/json-schema-form-usage.mdc](.cursor/rules/json-schema-form-usage.mdc).
+
 ### React Query patterns
 
 Two patterns coexist; pick deliberately:
