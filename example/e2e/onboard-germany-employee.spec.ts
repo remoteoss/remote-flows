@@ -111,9 +111,6 @@ test.describe('Onboard Germany employee', () => {
 
     await completePreOnboardingRequirements(page, fullname);
 
-    // Signing the ILA freezes the employment data: the review step's "Edit ..." buttons must no
-    // longer be usable, and — with every requirement now finished — the invite button must no
-    // longer be blocked.
     const editButtons = page.locator('.back-button');
     const editButtonsCount = await editButtons.count();
     for (let i = 0; i < editButtonsCount; i++) {
