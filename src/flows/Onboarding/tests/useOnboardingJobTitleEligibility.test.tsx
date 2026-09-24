@@ -184,6 +184,25 @@ describe.each(['ESP', 'PRT'])(
       ]);
     });
 
+    it('checks again when contract details is entered again, as the job title may have changed', async () => {
+      employmentContractDetails = roleValues;
+      const { result } = renderOnboarding(['job_title_eligibility']);
+
+      await goToContractDetails(result);
+      await waitFor(() => {
+        expect(eligibilityRequests).toEqual([roleValues]);
+      });
+
+      act(() => {
+        result.current.goTo('basic_information');
+      });
+      await goToContractDetails(result);
+
+      await waitFor(() => {
+        expect(eligibilityRequests).toEqual([roleValues, roleValues]);
+      });
+    });
+
     it('reports isSubmitting while the check is in flight', async () => {
       let resolveCheck: () => void = () => {};
       server.use(

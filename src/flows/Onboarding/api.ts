@@ -1,4 +1,9 @@
-import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
+import {
+  queryOptions,
+  useMutation,
+  useQuery,
+  UseQueryResult,
+} from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import { Client } from '@/src/client/client';
 import {
@@ -58,6 +63,11 @@ import {
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { countriesOptions } from '@/src/common/api/countries';
 import { useMemo } from 'react';
+import {
+  extractFieldErrors,
+  MutationErrorStructure,
+} from '@/src/lib/mutations';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 export const useCompany = (companyId: string) => {
   const { client } = useClient();
@@ -423,32 +433,55 @@ export const useUpdateEmployment = (
   });
 };
 
-export const useJobTitleEligibilityCheck = () => {
-  const { client } = useClient();
-
-  return useMutation({
-    mutationFn: ({
+export const jobTitleEligibilityCheckOptions = (
+  client: Client,
+  employmentId: string,
+  visit: number,
+  params: CreateJobTitleEligibilityCheckParams,
+) =>
+  queryOptions({
+    queryKey: [
+      'job-title-eligibility-check',
       employmentId,
-      signal,
-      ...payload
-    }: CreateJobTitleEligibilityCheckParams & {
-      employmentId: string;
-      signal?: AbortSignal;
-    }) => {
-      return postV2EmploymentsEmploymentIdJobTitleEligibilityCheck({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        body: payload,
-        path: {
-          employment_id: employmentId,
-        },
-        signal,
-      });
+      visit,
+      params,
+    ] as const,
+    retry: false,
+    staleTime: Infinity,
+    queryFn: async ({ signal }) => {
+      const response =
+        await postV2EmploymentsEmploymentIdJobTitleEligibilityCheck({
+          client,
+          headers: {
+            Authorization: ``,
+          },
+          body: params,
+          path: {
+            employment_id: employmentId,
+          },
+          signal,
+        });
+
+      if (response.error || !response.data) {
+        const errorData =
+          (response.error as $TSFixMe)?.error || response.error || {};
+        const error: MutationErrorStructure = {
+          error: new Error(
+            typeof errorData.message === 'string'
+              ? errorData.message
+              : 'Something went wrong. Please try again later.',
+          ),
+          rawError: response.error as Record<string, unknown>,
+          normalizedErrors: errorData.errors || {},
+          fieldErrors: extractFieldErrors(response.error),
+          response: response.response,
+        };
+        throw error;
+      }
+
+      return response.data.data.job_title_eligibility_check;
     },
   });
-};
 
 export const useUpdateEmploymentEngagementAgreementDetails = () => {
   const { client } = useClient();

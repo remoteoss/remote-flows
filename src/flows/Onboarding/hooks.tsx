@@ -30,6 +30,9 @@ import { isMutationError, mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useClient } from '@/src/context';
+import { Client } from '@/src/client/client';
 import mergeWith from 'lodash.mergewith';
 import equal from 'fast-deep-equal';
 import {
@@ -44,7 +47,7 @@ import {
   useEmploymentOnboardingReservesStatus,
   useEngagementAgreementDetailsSchema,
   useGetPreOnboardingRequirements,
-  useJobTitleEligibilityCheck,
+  jobTitleEligibilityCheckOptions,
   useJSONSchemaForm,
   useUpdateBenefitsOffers,
   useUpdateEmployment,
@@ -490,7 +493,6 @@ export const useOnboarding = ({
   const updateEngagementAgreementMutation =
     useUpdateEmploymentEngagementAgreementDetails();
   const updateContractEligibilityMutation = useUpsertContractEligibility();
-  const jobTitleEligibilityCheckMutation = useJobTitleEligibilityCheck();
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
   );
@@ -505,19 +507,33 @@ export const useOnboarding = ({
     mutationToPromise(updateEngagementAgreementMutation);
   const { mutateAsync: updateContractEligibilityMutationAsync } =
     mutationToPromise(updateContractEligibilityMutation);
-  const { mutateAsyncOrThrow: jobTitleEligibilityCheckMutationAsync } =
-    mutationToPromise(jobTitleEligibilityCheckMutation);
 
   const isJobTitleEligibilityEnabled = Boolean(
     options?.features?.includes('job_title_eligibility'),
   );
-  const jobTitleEligibilityChecksRef = useRef(
-    new Map<string, Promise<JobTitleEligibilityCheck | undefined>>(),
-  );
-  const latestJobTitleEligibilityCheckRef = useRef<Promise<
-    JobTitleEligibilityCheck | undefined
-  > | null>(null);
-  const jobTitleEligibilityAbortRef = useRef(new AbortController());
+  const { client } = useClient();
+  const queryClient = useQueryClient();
+  const jobTitleEligibilityVisitRef = useRef(0);
+  const [jobTitleEligibilityParams, setJobTitleEligibilityParams] =
+    useState<CreateJobTitleEligibilityCheckParams | null>(null);
+  const getJobTitleEligibilityCheckOptions = (
+    params: CreateJobTitleEligibilityCheckParams,
+  ) =>
+    jobTitleEligibilityCheckOptions(
+      client as Client,
+      internalEmploymentId as string,
+      jobTitleEligibilityVisitRef.current,
+      params,
+    );
+  const jobTitleEligibilityQuery = useQuery({
+    ...getJobTitleEligibilityCheckOptions(jobTitleEligibilityParams ?? {}),
+    enabled: Boolean(
+      isJobTitleEligibilityEnabled &&
+      internalEmploymentId &&
+      stepState.currentStep.name === 'contract_details' &&
+      jobTitleEligibilityParams,
+    ),
+  });
   const jobTitleEligibilityValuesRef = useRef<Record<
     string,
     string | null
@@ -529,51 +545,6 @@ export const useOnboarding = ({
   ) => {
     jobTitleEligibilityValuesRef.current = values;
     setJobTitleEligibilityValues(values);
-  };
-  const jobTitleEligibilityQueueRef = useRef<Promise<unknown>>(
-    Promise.resolve(),
-  );
-
-  const runJobTitleEligibilityCheck = (
-    params: CreateJobTitleEligibilityCheckParams,
-  ) => {
-    const key = JSON.stringify(params);
-    const checks = jobTitleEligibilityChecksRef.current;
-    const cachedCheck = checks.get(key);
-    if (cachedCheck) {
-      latestJobTitleEligibilityCheckRef.current = cachedCheck;
-      return cachedCheck;
-    }
-
-    const { signal } = jobTitleEligibilityAbortRef.current;
-    const check = jobTitleEligibilityQueueRef.current
-      .catch(() => undefined)
-      .then(() =>
-        jobTitleEligibilityCheckMutationAsync({
-          employmentId: internalEmploymentId as string,
-          signal,
-          ...params,
-        }),
-      )
-      .then((response) => response?.data.job_title_eligibility_check);
-    jobTitleEligibilityQueueRef.current = check;
-    latestJobTitleEligibilityCheckRef.current = check;
-    checks.set(key, check);
-    check.catch(() => {
-      if (checks.get(key) === check) {
-        checks.delete(key);
-      }
-    });
-    return check;
-  };
-
-  const resetJobTitleEligibility = () => {
-    jobTitleEligibilityAbortRef.current.abort();
-    jobTitleEligibilityAbortRef.current = new AbortController();
-    jobTitleEligibilityChecksRef.current.clear();
-    jobTitleEligibilityQueueRef.current = Promise.resolve();
-    latestJobTitleEligibilityCheckRef.current = null;
-    updateJobTitleEligibilityValues(null);
   };
 
   const formType =
@@ -1288,17 +1259,20 @@ export const useOnboarding = ({
         });
       }
       case 'contract_details': {
-        const jobTitleEligibilityParams = isJobTitleEligibilityEnabled
+        const submittedJobTitleEligibilityParams = isJobTitleEligibilityEnabled
           ? getJobTitleEligibilityParams(
               stepFields.contract_details,
               parsedValues,
             )
           : null;
-        if (jobTitleEligibilityParams) {
+        if (submittedJobTitleEligibilityParams) {
           let check: JobTitleEligibilityCheck | undefined;
+          setJobTitleEligibilityParams(submittedJobTitleEligibilityParams);
           try {
-            check = await runJobTitleEligibilityCheck(
-              jobTitleEligibilityParams,
+            check = await queryClient.fetchQuery(
+              getJobTitleEligibilityCheckOptions(
+                submittedJobTitleEligibilityParams,
+              ),
             );
           } catch (error) {
             if (isMutationError(error)) {
@@ -1486,25 +1460,13 @@ export const useOnboarding = ({
       parsedValues,
       validation?.formErrors,
     );
-    if (!params) {
-      if (jobTitleEligibilityValuesRef.current) {
-        latestJobTitleEligibilityCheckRef.current = null;
-        updateJobTitleEligibilityValues(null);
-        await handleValidation(values);
-      }
-      return;
-    }
-    const check = runJobTitleEligibilityCheck(params);
-    const checkResult = await check.catch(() => null);
-    if (latestJobTitleEligibilityCheckRef.current !== check) {
-      return;
-    }
-    const checkValues = checkResult
-      ? getJobTitleEligibilityValues(stepFields.contract_details, checkResult)
-      : null;
-    if (!equal(checkValues, jobTitleEligibilityValuesRef.current)) {
-      updateJobTitleEligibilityValues(checkValues);
-      await handleValidation(values);
+    setJobTitleEligibilityParams((current) =>
+      equal(current, params) ? current : params,
+    );
+    if (params) {
+      await queryClient
+        .fetchQuery(getJobTitleEligibilityCheckOptions(params))
+        .catch(() => undefined);
     }
   };
 
@@ -1514,12 +1476,10 @@ export const useOnboarding = ({
     if (!isJobTitleEligibilityEnabled) {
       return;
     }
-    if (currentStepName !== 'contract_details') {
-      resetJobTitleEligibility();
-      return;
-    }
-    if (hasContractDetailsFields) {
-      resetJobTitleEligibility();
+    setJobTitleEligibilityParams(null);
+    updateJobTitleEligibilityValues(null);
+    if (currentStepName === 'contract_details' && hasContractDetailsFields) {
+      jobTitleEligibilityVisitRef.current += 1;
       checkJobTitleEligibility(
         stepState.values?.contract_details || initialValues.contract_details,
       );
@@ -1527,7 +1487,25 @@ export const useOnboarding = ({
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isJobTitleEligibilityEnabled, currentStepName, hasContractDetailsFields]);
 
-  useEffect(() => () => jobTitleEligibilityAbortRef.current.abort(), []);
+  const jobTitleEligibilityCheck = jobTitleEligibilityParams
+    ? jobTitleEligibilityQuery.data
+    : undefined;
+
+  useEffect(() => {
+    const checkValues = jobTitleEligibilityCheck
+      ? getJobTitleEligibilityValues(
+          stepFields.contract_details,
+          jobTitleEligibilityCheck,
+        )
+      : null;
+    if (!equal(checkValues, jobTitleEligibilityValuesRef.current)) {
+      updateJobTitleEligibilityValues(checkValues);
+      if (stepState.currentStep.name === 'contract_details') {
+        handleValidation(fieldValues);
+      }
+    }
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobTitleEligibilityCheck]);
 
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
@@ -1604,7 +1582,7 @@ export const useOnboarding = ({
       updateBenefitsOffersMutation.isPending ||
       updateEngagementAgreementMutation.isPending ||
       updateContractEligibilityMutation.isPending ||
-      jobTitleEligibilityCheckMutation.isPending,
+      jobTitleEligibilityQuery.isFetching,
     /**
      * Initial form values
      */
