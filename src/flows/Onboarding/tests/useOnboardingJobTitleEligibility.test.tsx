@@ -418,6 +418,52 @@ describe.each(['ESP', 'PRT'])(
         });
       });
 
+      it('asks for the risk acknowledgement instead of submitting when the submit check is the first to flag it', async () => {
+        const { result } = renderOnboarding(['job_title_eligibility']);
+
+        await goToContractDetails(result);
+
+        let response: Awaited<ReturnType<typeof result.current.onSubmit>>;
+        await act(async () => {
+          response = await result.current.onSubmit(roleValues);
+        });
+
+        expect(updateRequests).toEqual([]);
+        expect(response!).toEqual({
+          data: null,
+          error: new Error(
+            'The job title eligibility check requires changes to the contract details',
+          ),
+          rawError: {
+            employer_acknowledges_risk: 'Please acknowledge this field',
+          },
+          fieldErrors: [
+            {
+              field: 'employer_acknowledges_risk',
+              messages: ['Please acknowledge this field'],
+            },
+          ],
+        });
+        expect(
+          findField(result.current.fields, 'employer_acknowledges_risk'),
+        ).toMatchObject({ isVisible: true, required: true });
+
+        await act(async () => {
+          await result.current.onSubmit({
+            ...roleValues,
+            employer_acknowledges_risk: 'acknowledged',
+          });
+        });
+
+        expect(eligibilityRequests).toEqual([roleValues]);
+        expect(updateRequests[0].contract_details).toEqual({
+          ...roleValues,
+          employer_acknowledges_risk: 'acknowledged',
+          additional_job_title_eligibility_check_slug: 'check-id-risky',
+          additional_job_title_eligibility_check_result: 'yes_with_ack',
+        });
+      });
+
       it('hides the risk acknowledgement again when the role answers are no longer complete', async () => {
         const { result } = renderOnboarding(['job_title_eligibility']);
 

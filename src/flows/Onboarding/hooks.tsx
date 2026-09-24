@@ -31,6 +31,7 @@ import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
+import equal from 'fast-deep-equal';
 import {
   useBenefitOffers,
   useBenefitOffersSchema,
@@ -1281,13 +1282,35 @@ export const useOnboarding = ({
               jobTitleEligibilityParams,
             );
             if (check) {
-              Object.assign(
-                parsedValues,
-                getJobTitleEligibilityValues(
-                  stepFields.contract_details,
-                  check,
-                ),
+              const checkValues = getJobTitleEligibilityValues(
+                stepFields.contract_details,
+                check,
               );
+              if (!equal(checkValues, jobTitleEligibilityValuesRef.current)) {
+                updateJobTitleEligibilityValues(checkValues);
+                const validation = await handleValidation(values);
+                const formErrors = validation?.formErrors ?? {};
+                if (Object.keys(formErrors).length > 0) {
+                  return {
+                    data: null,
+                    error: new Error(
+                      'The job title eligibility check requires changes to the contract details',
+                    ),
+                    rawError: formErrors,
+                    fieldErrors: Object.entries(formErrors).map(
+                      ([field, message]) => ({
+                        field,
+                        messages: [
+                          typeof message === 'string'
+                            ? message
+                            : JSON.stringify(message),
+                        ],
+                      }),
+                    ),
+                  };
+                }
+              }
+              Object.assign(parsedValues, checkValues);
             }
           } catch (error) {
             if (isMutationError(error)) {
