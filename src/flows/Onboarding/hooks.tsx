@@ -511,10 +511,10 @@ export const useOnboarding = ({
   const isJobTitleEligibilityEnabled = Boolean(
     options?.features?.includes('job_title_eligibility'),
   );
-  const jobTitleEligibilityCheckRef = useRef<{
-    key: string;
-    check: Promise<JobTitleEligibilityCheck | undefined>;
-  } | null>(null);
+  const jobTitleEligibilityChecksRef = useRef(
+    new Map<string, Promise<JobTitleEligibilityCheck | undefined>>(),
+  );
+  const latestJobTitleEligibilityKeyRef = useRef<string | null>(null);
   const jobTitleEligibilityValuesRef = useRef<Record<
     string,
     string | null
@@ -535,8 +535,11 @@ export const useOnboarding = ({
     params: CreateJobTitleEligibilityCheckParams,
   ) => {
     const key = JSON.stringify(params);
-    if (jobTitleEligibilityCheckRef.current?.key === key) {
-      return jobTitleEligibilityCheckRef.current.check;
+    latestJobTitleEligibilityKeyRef.current = key;
+    const checks = jobTitleEligibilityChecksRef.current;
+    const cachedCheck = checks.get(key);
+    if (cachedCheck) {
+      return cachedCheck;
     }
 
     const check = jobTitleEligibilityQueueRef.current
@@ -549,10 +552,10 @@ export const useOnboarding = ({
       )
       .then((response) => response?.data.job_title_eligibility_check);
     jobTitleEligibilityQueueRef.current = check;
-    jobTitleEligibilityCheckRef.current = { key, check };
+    checks.set(key, check);
     check.catch(() => {
-      if (jobTitleEligibilityCheckRef.current?.check === check) {
-        jobTitleEligibilityCheckRef.current = null;
+      if (checks.get(key) === check) {
+        checks.delete(key);
       }
     });
     return check;
@@ -1277,43 +1280,14 @@ export const useOnboarding = ({
             )
           : null;
         if (jobTitleEligibilityParams) {
+          let check: JobTitleEligibilityCheck | undefined;
           try {
-            const check = await runJobTitleEligibilityCheck(
+            check = await runJobTitleEligibilityCheck(
               jobTitleEligibilityParams,
             );
-            if (check) {
-              const checkValues = getJobTitleEligibilityValues(
-                stepFields.contract_details,
-                check,
-              );
-              if (!equal(checkValues, jobTitleEligibilityValuesRef.current)) {
-                updateJobTitleEligibilityValues(checkValues);
-                const validation = await handleValidation(values);
-                const formErrors = validation?.formErrors ?? {};
-                if (Object.keys(formErrors).length > 0) {
-                  return {
-                    data: null,
-                    error: new Error(
-                      'The job title eligibility check requires changes to the contract details',
-                    ),
-                    rawError: formErrors,
-                    fieldErrors: Object.entries(formErrors).map(
-                      ([field, message]) => ({
-                        field,
-                        messages: [
-                          typeof message === 'string'
-                            ? message
-                            : JSON.stringify(message),
-                        ],
-                      }),
-                    ),
-                  };
-                }
-              }
-              Object.assign(parsedValues, checkValues);
-            }
           } catch (error) {
             if (isMutationError(error)) {
+              updateJobTitleEligibilityValues(null);
               return {
                 data: null,
                 error: error.error,
@@ -1322,6 +1296,35 @@ export const useOnboarding = ({
               };
             }
             throw error;
+          }
+          if (check) {
+            const checkValues = getJobTitleEligibilityValues(
+              stepFields.contract_details,
+              check,
+            );
+            updateJobTitleEligibilityValues(checkValues);
+            const validation = await handleValidation(values);
+            const formErrors = validation?.formErrors ?? {};
+            if (Object.keys(formErrors).length > 0) {
+              return {
+                data: null,
+                error: new Error(
+                  'The job title eligibility check requires changes to the contract details',
+                ),
+                rawError: formErrors,
+                fieldErrors: Object.entries(formErrors).map(
+                  ([field, message]) => ({
+                    field,
+                    messages: [
+                      typeof message === 'string'
+                        ? message
+                        : JSON.stringify(message),
+                    ],
+                  }),
+                ),
+              };
+            }
+            Object.assign(parsedValues, checkValues);
           }
         }
         const payload: EmploymentFullParams = {
@@ -1470,17 +1473,22 @@ export const useOnboarding = ({
     );
     if (!params) {
       if (jobTitleEligibilityValuesRef.current) {
+        latestJobTitleEligibilityKeyRef.current = null;
         updateJobTitleEligibilityValues(null);
         await handleValidation(values);
       }
       return;
     }
-    const check = runJobTitleEligibilityCheck(params);
-    const checkResult = await check.catch(() => null);
-    if (checkResult && jobTitleEligibilityCheckRef.current?.check === check) {
-      updateJobTitleEligibilityValues(
-        getJobTitleEligibilityValues(stepFields.contract_details, checkResult),
-      );
+    const key = JSON.stringify(params);
+    const check = await runJobTitleEligibilityCheck(params).catch(() => null);
+    if (latestJobTitleEligibilityKeyRef.current !== key) {
+      return;
+    }
+    const checkValues = check
+      ? getJobTitleEligibilityValues(stepFields.contract_details, check)
+      : null;
+    if (!equal(checkValues, jobTitleEligibilityValuesRef.current)) {
+      updateJobTitleEligibilityValues(checkValues);
       await handleValidation(values);
     }
   };
@@ -1493,7 +1501,8 @@ export const useOnboarding = ({
       currentStepName === 'contract_details' &&
       hasContractDetailsFields
     ) {
-      jobTitleEligibilityCheckRef.current = null;
+      jobTitleEligibilityChecksRef.current.clear();
+      latestJobTitleEligibilityKeyRef.current = null;
       updateJobTitleEligibilityValues(null);
       checkJobTitleEligibility(
         stepState.values?.contract_details || initialValues.contract_details,

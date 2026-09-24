@@ -32,6 +32,18 @@ describe.each(['ESP', 'PRT'])(
     let updateRequests: Record<string, unknown>[];
     let employmentContractDetails: Record<string, unknown> | null;
 
+    const respondToEligibilityCheck = (
+      respond: (body: Record<string, unknown>) => Response | Promise<Response>,
+    ) =>
+      http.post(
+        '*/v2/employments/:id/job-title-eligibility-check',
+        async ({ request }) => {
+          const body = (await request.json()) as Record<string, unknown>;
+          eligibilityRequests.push(body);
+          return respond(body);
+        },
+      );
+
     const renderOnboarding = (features: 'job_title_eligibility'[] = []) =>
       renderHook(
         () =>
@@ -104,14 +116,8 @@ describe.each(['ESP', 'PRT'])(
         http.get(`*/v1/countries/${countryCode}/contract_details*`, () =>
           HttpResponse.json(contractDetailsSchemaJobTitleEligibility),
         ),
-        http.post(
-          '*/v2/employments/:id/job-title-eligibility-check',
-          async ({ request }) => {
-            eligibilityRequests.push(
-              (await request.json()) as Record<string, unknown>,
-            );
-            return HttpResponse.json(jobTitleEligibilityCheckResponse);
-          },
+        respondToEligibilityCheck(() =>
+          HttpResponse.json(jobTitleEligibilityCheckResponse),
         ),
         http.patch('*/v1/employments/:id', async ({ request }) => {
           updateRequests.push(
@@ -181,15 +187,12 @@ describe.each(['ESP', 'PRT'])(
     it('reports isSubmitting while the check is in flight', async () => {
       let resolveCheck: () => void = () => {};
       server.use(
-        http.post(
-          '*/v2/employments/:id/job-title-eligibility-check',
-          async () => {
-            await new Promise<void>((resolve) => {
-              resolveCheck = resolve;
-            });
-            return HttpResponse.json(jobTitleEligibilityCheckResponse);
-          },
-        ),
+        respondToEligibilityCheck(async () => {
+          await new Promise<void>((resolve) => {
+            resolveCheck = resolve;
+          });
+          return HttpResponse.json(jobTitleEligibilityCheckResponse);
+        }),
       );
       const { result } = renderOnboarding(['job_title_eligibility']);
 
@@ -230,24 +233,19 @@ describe.each(['ESP', 'PRT'])(
     it('submits with its own check id when a newer check starts while it waits', async () => {
       const pendingChecks: (() => void)[] = [];
       server.use(
-        http.post(
-          '*/v2/employments/:id/job-title-eligibility-check',
-          async ({ request }) => {
-            const body = (await request.json()) as Record<string, unknown>;
-            eligibilityRequests.push(body);
-            await new Promise<void>((resolve) => {
-              pendingChecks.push(resolve);
-            });
-            return HttpResponse.json({
-              data: {
-                job_title_eligibility_check: {
-                  check_id: `check-onsite-${body.role_is_onsite}`,
-                  verdict: 'needs_review',
-                },
+        respondToEligibilityCheck(async (body) => {
+          await new Promise<void>((resolve) => {
+            pendingChecks.push(resolve);
+          });
+          return HttpResponse.json({
+            data: {
+              job_title_eligibility_check: {
+                check_id: `check-onsite-${body.role_is_onsite}`,
+                verdict: 'needs_review',
               },
-            });
-          },
-        ),
+            },
+          });
+        }),
       );
       const { result } = renderOnboarding(['job_title_eligibility']);
 
@@ -287,7 +285,7 @@ describe.each(['ESP', 'PRT'])(
 
     it('returns the check error instead of submitting contract details', async () => {
       server.use(
-        http.post('*/v2/employments/:id/job-title-eligibility-check', () =>
+        respondToEligibilityCheck(() =>
           HttpResponse.json(
             { message: 'Job title is invalid' },
             { status: 422 },
@@ -329,7 +327,7 @@ describe.each(['ESP', 'PRT'])(
 
     it('does not add the check result when the schema does not declare it', async () => {
       server.use(
-        http.post('*/v2/employments/:id/job-title-eligibility-check', () =>
+        respondToEligibilityCheck(() =>
           HttpResponse.json(jobTitleEligibilityCheckRiskyResponse),
         ),
       );
@@ -364,14 +362,8 @@ describe.each(['ESP', 'PRT'])(
               contractDetailsSchemaJobTitleEligibilityWithResult,
             ),
           ),
-          http.post(
-            '*/v2/employments/:id/job-title-eligibility-check',
-            async ({ request }) => {
-              eligibilityRequests.push(
-                (await request.json()) as Record<string, unknown>,
-              );
-              return HttpResponse.json(jobTitleEligibilityCheckRiskyResponse);
-            },
+          respondToEligibilityCheck(() =>
+            HttpResponse.json(jobTitleEligibilityCheckRiskyResponse),
           ),
         );
       });
@@ -429,9 +421,7 @@ describe.each(['ESP', 'PRT'])(
           asksForAcknowledgement,
         }) => {
           server.use(
-            http.post('*/v2/employments/:id/job-title-eligibility-check', () =>
-              HttpResponse.json(response),
-            ),
+            respondToEligibilityCheck(() => HttpResponse.json(response)),
           );
           const { result } = renderOnboarding(['job_title_eligibility']);
 
@@ -553,6 +543,39 @@ describe.each(['ESP', 'PRT'])(
           additional_job_title_eligibility_check_slug: 'check-id-risky',
           additional_job_title_eligibility_check_result: 'yes_with_ack',
         });
+      });
+
+      it('does not submit without the acknowledgement when an earlier check already flagged the role', async () => {
+        const { result } = renderOnboarding(['job_title_eligibility']);
+
+        await goToContractDetails(result);
+
+        await act(async () => {
+          await result.current.checkJobTitleEligibility(roleValues);
+        });
+
+        let response: Awaited<ReturnType<typeof result.current.onSubmit>>;
+        await act(async () => {
+          response = await result.current.onSubmit(roleValues);
+        });
+
+        expect(updateRequests).toEqual([]);
+        expect(response!).toEqual({
+          data: null,
+          error: new Error(
+            'The job title eligibility check requires changes to the contract details',
+          ),
+          rawError: {
+            employer_acknowledges_risk: 'Please acknowledge this field',
+          },
+          fieldErrors: [
+            {
+              field: 'employer_acknowledges_risk',
+              messages: ['Please acknowledge this field'],
+            },
+          ],
+        });
+        expect(eligibilityRequests).toEqual([roleValues]);
       });
 
       it('hides the risk acknowledgement again when the role answers are no longer complete', async () => {
