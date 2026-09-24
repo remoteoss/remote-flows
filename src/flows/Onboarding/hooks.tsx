@@ -2,6 +2,7 @@ import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
   CreateJobTitleEligibilityCheckParams,
   Employment,
+  JobTitleEligibilityCheck,
   EmploymentCreateParams,
   EmploymentFullParams,
 } from '@/src/client';
@@ -17,7 +18,7 @@ import {
   StepKeys,
   usesJsfV1ContractDetails,
   getJobTitleEligibilityParams,
-  JOB_TITLE_ELIGIBILITY_SLUG_FIELD,
+  getJobTitleEligibilityValues,
 } from '@/src/flows/Onboarding/utils';
 import { prettifyFormValues } from '@/src/lib/utils';
 import {
@@ -511,8 +512,20 @@ export const useOnboarding = ({
   );
   const jobTitleEligibilityCheckRef = useRef<{
     key: string;
-    checkId: Promise<string | null>;
+    check: Promise<JobTitleEligibilityCheck | undefined>;
   } | null>(null);
+  const jobTitleEligibilityValuesRef = useRef<Record<
+    string,
+    string | null
+  > | null>(null);
+  const [jobTitleEligibilityValues, setJobTitleEligibilityValues] =
+    useState<Record<string, string | null> | null>(null);
+  const updateJobTitleEligibilityValues = (
+    values: Record<string, string | null> | null,
+  ) => {
+    jobTitleEligibilityValuesRef.current = values;
+    setJobTitleEligibilityValues(values);
+  };
   const jobTitleEligibilityQueueRef = useRef<Promise<unknown>>(
     Promise.resolve(),
   );
@@ -522,10 +535,10 @@ export const useOnboarding = ({
   ) => {
     const key = JSON.stringify(params);
     if (jobTitleEligibilityCheckRef.current?.key === key) {
-      return jobTitleEligibilityCheckRef.current.checkId;
+      return jobTitleEligibilityCheckRef.current.check;
     }
 
-    const checkId = jobTitleEligibilityQueueRef.current
+    const check = jobTitleEligibilityQueueRef.current
       .catch(() => undefined)
       .then(() =>
         jobTitleEligibilityCheckMutationAsync({
@@ -533,18 +546,15 @@ export const useOnboarding = ({
           ...params,
         }),
       )
-      .then(
-        (response) =>
-          response?.data.job_title_eligibility_check.check_id ?? null,
-      );
-    jobTitleEligibilityQueueRef.current = checkId;
-    jobTitleEligibilityCheckRef.current = { key, checkId };
-    checkId.catch(() => {
-      if (jobTitleEligibilityCheckRef.current?.checkId === checkId) {
+      .then((response) => response?.data.job_title_eligibility_check);
+    jobTitleEligibilityQueueRef.current = check;
+    jobTitleEligibilityCheckRef.current = { key, check };
+    check.catch(() => {
+      if (jobTitleEligibilityCheckRef.current?.check === check) {
         jobTitleEligibilityCheckRef.current = null;
       }
     });
-    return checkId;
+    return check;
   };
 
   const formType =
@@ -561,6 +571,7 @@ export const useOnboarding = ({
     options: jsonSchemaOptions = {},
     query = {},
     jsonSchemaVersion,
+    additionalValues,
   }: {
     form: JSONSchemaFormType;
     options?: {
@@ -569,6 +580,7 @@ export const useOnboarding = ({
     };
     query?: Record<string, string>;
     jsonSchemaVersion?: number | 'latest';
+    additionalValues?: Record<string, unknown> | null;
   }) => {
     const hasUserEnteredAnyValues = Object.keys(fieldValues).length > 0;
     // when you write on the fields, the values are stored in the fieldValues state
@@ -588,7 +600,7 @@ export const useOnboarding = ({
     return useJSONSchemaForm({
       countryCode: internalCountryCode as string,
       form: form,
-      fieldValues: mergedFormValues,
+      fieldValues: { ...mergedFormValues, ...additionalValues },
       query,
       options: {
         ...jsonSchemaOptions,
@@ -773,6 +785,7 @@ export const useOnboarding = ({
         },
       },
       jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,
+      additionalValues: jobTitleEligibilityValues,
     });
 
   const jsfV1Modify = useMemo(
@@ -1264,8 +1277,18 @@ export const useOnboarding = ({
           : null;
         if (jobTitleEligibilityParams) {
           try {
-            parsedValues[JOB_TITLE_ELIGIBILITY_SLUG_FIELD] =
-              await runJobTitleEligibilityCheck(jobTitleEligibilityParams);
+            const check = await runJobTitleEligibilityCheck(
+              jobTitleEligibilityParams,
+            );
+            if (check) {
+              Object.assign(
+                parsedValues,
+                getJobTitleEligibilityValues(
+                  stepFields.contract_details,
+                  check,
+                ),
+              );
+            }
           } catch (error) {
             if (isMutationError(error)) {
               return {
@@ -1364,7 +1387,7 @@ export const useOnboarding = ({
         !isJsfV1ContractDetailsEnabled
       ) {
         const parsedValues = await parseJSFToValidate(
-          values,
+          { ...values, ...jobTitleEligibilityValuesRef.current },
           contractDetailsForm?.fields,
           { isPartialValidation: false },
         );
@@ -1383,7 +1406,7 @@ export const useOnboarding = ({
         // children. handleValidation resolves the visibility first and nulls
         // whatever it considers hidden afterwards, which is the right order.
         const parsedValues = await parseJSFToValidate(
-          values,
+          { ...values, ...jobTitleEligibilityValuesRef.current },
           contractDetailsFormV1?.fields,
           { isPartialValidation: true },
         );
@@ -1422,8 +1445,20 @@ export const useOnboarding = ({
       parsedValues,
       validation?.formErrors,
     );
-    if (params) {
-      await runJobTitleEligibilityCheck(params).catch(() => undefined);
+    if (!params) {
+      if (jobTitleEligibilityValuesRef.current) {
+        updateJobTitleEligibilityValues(null);
+        await handleValidation(values);
+      }
+      return;
+    }
+    const check = runJobTitleEligibilityCheck(params);
+    const checkResult = await check.catch(() => null);
+    if (checkResult && jobTitleEligibilityCheckRef.current?.check === check) {
+      updateJobTitleEligibilityValues(
+        getJobTitleEligibilityValues(stepFields.contract_details, checkResult),
+      );
+      await handleValidation(values);
     }
   };
 
@@ -1436,6 +1471,7 @@ export const useOnboarding = ({
       hasContractDetailsFields
     ) {
       jobTitleEligibilityCheckRef.current = null;
+      updateJobTitleEligibilityValues(null);
       checkJobTitleEligibility(
         stepState.values?.contract_details || initialValues.contract_details,
       );

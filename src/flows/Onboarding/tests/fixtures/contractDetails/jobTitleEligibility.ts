@@ -92,3 +92,31 @@ export const jobTitleEligibilityCheckResponse = {
     },
   },
 };
+
+export const contractDetailsSchemaJobTitleEligibilityWithResult = {
+  data: {
+    ...contractDetailsSchemaJobTitleEligibility.data,
+    properties: {
+      ...contractDetailsSchemaJobTitleEligibility.data.properties,
+      additional_job_title_eligibility_check_result: {
+        type: ['string', 'null'],
+        'x-jsf-presentation': {
+          inputType: 'hidden',
+        },
+      },
+    },
+    'x-jsf-order': [
+      ...contractDetailsSchemaJobTitleEligibility.data['x-jsf-order'],
+      'additional_job_title_eligibility_check_result',
+    ],
+  },
+};
+
+export const jobTitleEligibilityCheckRiskyResponse = {
+  data: {
+    job_title_eligibility_check: {
+      check_id: 'check-id-risky',
+      verdict: 'eligible_with_risk_acknowledgement',
+    },
+  },
+};

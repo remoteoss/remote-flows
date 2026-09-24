@@ -3,15 +3,20 @@ import { http, HttpResponse } from 'msw';
 import { useOnboarding } from '@/src/flows/Onboarding/hooks';
 import {
   contractDetailsSchemaJobTitleEligibility,
+  contractDetailsSchemaJobTitleEligibilityWithResult,
   employmentDefaultResponse,
   employmentUpdatedResponse,
   jobTitleEligibilityCheckResponse,
+  jobTitleEligibilityCheckRiskyResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import { server } from '@/src/tests/server';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
 const roleDescription =
   'Leads product discovery, owns the roadmap, partners with design and engineering, and reports on product outcomes to leadership.';
+
+const findField = (fields: Record<string, unknown>[], name: string) =>
+  fields.find((field) => field.name === name);
 
 const roleValues = {
   role_description: roleDescription,
@@ -319,6 +324,125 @@ describe.each(['ESP', 'PRT'])(
 
       expect(eligibilityRequests).toEqual([]);
       expect(updateRequests[0].contract_details).toEqual(roleValues);
+    });
+
+    it('does not add the check result when the schema does not declare it', async () => {
+      server.use(
+        http.post('*/v2/employments/:id/job-title-eligibility-check', () =>
+          HttpResponse.json(jobTitleEligibilityCheckRiskyResponse),
+        ),
+      );
+      const { result } = renderOnboarding(['job_title_eligibility']);
+
+      await goToContractDetails(result);
+
+      await act(async () => {
+        await result.current.checkJobTitleEligibility(roleValues);
+      });
+
+      expect(
+        findField(result.current.fields, 'employer_acknowledges_risk')
+          ?.isVisible,
+      ).toBe(false);
+
+      await act(async () => {
+        await result.current.onSubmit(roleValues);
+      });
+
+      expect(updateRequests[0].contract_details).toEqual({
+        ...roleValues,
+        additional_job_title_eligibility_check_slug: 'check-id-risky',
+      });
+    });
+
+    describe('when the schema declares the check result', () => {
+      beforeEach(() => {
+        server.use(
+          http.get(`*/v1/countries/${countryCode}/contract_details*`, () =>
+            HttpResponse.json(
+              contractDetailsSchemaJobTitleEligibilityWithResult,
+            ),
+          ),
+          http.post(
+            '*/v2/employments/:id/job-title-eligibility-check',
+            async ({ request }) => {
+              eligibilityRequests.push(
+                (await request.json()) as Record<string, unknown>,
+              );
+              return HttpResponse.json(jobTitleEligibilityCheckRiskyResponse);
+            },
+          ),
+        );
+      });
+
+      it('requires the risk acknowledgement once the check flags the role as risky', async () => {
+        const { result } = renderOnboarding(['job_title_eligibility']);
+
+        await goToContractDetails(result);
+
+        expect(
+          findField(result.current.fields, 'employer_acknowledges_risk')
+            ?.isVisible,
+        ).toBe(false);
+
+        await act(async () => {
+          await result.current.checkJobTitleEligibility(roleValues);
+        });
+
+        expect(
+          findField(result.current.fields, 'employer_acknowledges_risk'),
+        ).toMatchObject({ isVisible: true, required: true });
+
+        let validation: Awaited<
+          ReturnType<typeof result.current.handleValidation>
+        >;
+        await act(async () => {
+          validation = await result.current.handleValidation(roleValues);
+        });
+        expect(Object.keys(validation!?.formErrors ?? {})).toEqual([
+          'employer_acknowledges_risk',
+        ]);
+
+        await act(async () => {
+          await result.current.onSubmit({
+            ...roleValues,
+            employer_acknowledges_risk: 'acknowledged',
+          });
+        });
+
+        expect(updateRequests[0].contract_details).toEqual({
+          ...roleValues,
+          employer_acknowledges_risk: 'acknowledged',
+          additional_job_title_eligibility_check_slug: 'check-id-risky',
+          additional_job_title_eligibility_check_result: 'yes_with_ack',
+        });
+      });
+
+      it('hides the risk acknowledgement again when the role answers are no longer complete', async () => {
+        const { result } = renderOnboarding(['job_title_eligibility']);
+
+        await goToContractDetails(result);
+
+        await act(async () => {
+          await result.current.checkJobTitleEligibility(roleValues);
+        });
+        expect(
+          findField(result.current.fields, 'employer_acknowledges_risk')
+            ?.isVisible,
+        ).toBe(true);
+
+        await act(async () => {
+          await result.current.checkJobTitleEligibility({
+            ...roleValues,
+            role_description: '',
+          });
+        });
+
+        expect(
+          findField(result.current.fields, 'employer_acknowledges_risk')
+            ?.isVisible,
+        ).toBe(false);
+      });
     });
   },
 );

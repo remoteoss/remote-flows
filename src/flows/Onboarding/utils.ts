@@ -1,6 +1,9 @@
 import { Employment, OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { Step } from '@/src/flows/useStepState';
-import { CreateJobTitleEligibilityCheckParams } from '@/src/client';
+import {
+  CreateJobTitleEligibilityCheckParams,
+  JobTitleEligibilityCheck,
+} from '@/src/client';
 import { JSFField, JSFFields } from '@/src/types/remoteFlows';
 
 export type StepKeys =
@@ -227,6 +230,18 @@ export const getEngagementAgreementDetailsSchemaVersion = (
 export const JOB_TITLE_ELIGIBILITY_SLUG_FIELD =
   'additional_job_title_eligibility_check_slug';
 
+export const JOB_TITLE_ELIGIBILITY_RESULT_FIELD =
+  'additional_job_title_eligibility_check_result';
+
+const JOB_TITLE_ELIGIBILITY_VERDICT_RESULTS: Partial<
+  Record<JobTitleEligibilityCheck['verdict'], string>
+> = {
+  eligible: 'yes',
+  not_eligible: 'no',
+  needs_review: 'maybe',
+  eligible_with_risk_acknowledgement: 'yes_with_ack',
+};
+
 const JOB_TITLE_ELIGIBILITY_PARAM_FIELDS = [
   'role_description',
   'role_is_onsite',
@@ -267,4 +282,23 @@ export const getJobTitleEligibilityParams = (
   return Object.fromEntries(
     paramFields.map((field) => [field.name, values[field.name]]),
   ) as CreateJobTitleEligibilityCheckParams;
+};
+
+export const getJobTitleEligibilityValues = (
+  fields: JSFFields,
+  check: JobTitleEligibilityCheck,
+): Record<string, string | null> => {
+  const hasResultField = (fields as JSFField[]).some(
+    (field) => field.name === JOB_TITLE_ELIGIBILITY_RESULT_FIELD,
+  );
+
+  return {
+    [JOB_TITLE_ELIGIBILITY_SLUG_FIELD]: check.check_id ?? null,
+    ...(hasResultField
+      ? {
+          [JOB_TITLE_ELIGIBILITY_RESULT_FIELD]:
+            JOB_TITLE_ELIGIBILITY_VERDICT_RESULTS[check.verdict] ?? null,
+        }
+      : {}),
+  };
 };

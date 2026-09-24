@@ -4,9 +4,11 @@ import { http, HttpResponse } from 'msw';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
   contractDetailsSchemaJobTitleEligibility,
+  contractDetailsSchemaJobTitleEligibilityWithResult,
   employmentDefaultResponse,
   employmentUpdatedResponse,
   jobTitleEligibilityCheckResponse,
+  jobTitleEligibilityCheckRiskyResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
 import { server } from '@/src/tests/server';
@@ -158,5 +160,62 @@ describe('OnboardingFlow job title eligibility', () => {
       additional_job_title_eligibility_check_slug: 'check-id-123',
     });
     expect(eligibilityRequests).toHaveLength(1);
+  });
+
+  it('asks for the risk acknowledgement when the check flags the role as risky', async () => {
+    server.use(
+      http.get('*/v1/countries/ESP/contract_details*', () =>
+        HttpResponse.json(contractDetailsSchemaJobTitleEligibilityWithResult),
+      ),
+      http.post('*/v2/employments/:id/job-title-eligibility-check', () =>
+        HttpResponse.json(jobTitleEligibilityCheckRiskyResponse),
+      ),
+    );
+    const user = userEvent.setup();
+
+    render(
+      <OnboardingFlow
+        companyId='test-company-id'
+        countryCode='ESP'
+        employmentId='test-employment-id'
+        skipSteps={['select_country']}
+        options={{ features: ['job_title_eligibility'] }}
+        render={renderFlow}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await user.click(await screen.findByText('Go to contract details'));
+
+    await user.click(await screen.findByLabelText(/Role description/i));
+    await user.paste(roleDescription);
+    await fillRadio('Will this role require working onsite?', 'Yes');
+    await fillRadio('Does this role require a professional license?', 'Yes');
+
+    expect(
+      screen.queryByLabelText(/I acknowledge the risks/i),
+    ).not.toBeInTheDocument();
+
+    await user.click(document.body);
+
+    await user.click(await screen.findByLabelText(/I acknowledge the risks/i));
+
+    const submitButton = screen.getByRole('button', { name: 'Next Step' });
+    await waitFor(() => {
+      expect(submitButton).toBeEnabled();
+    });
+    submitButton.click();
+
+    await waitFor(() => {
+      expect(updateRequests).toHaveLength(1);
+    });
+    expect(updateRequests[0].contract_details).toEqual({
+      role_description: roleDescription,
+      role_is_onsite: 'yes',
+      role_requires_license: 'yes',
+      employer_acknowledges_risk: 'acknowledged',
+      additional_job_title_eligibility_check_slug: 'check-id-risky',
+      additional_job_title_eligibility_check_result: 'yes_with_ack',
+    });
   });
 });
