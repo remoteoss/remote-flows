@@ -360,6 +360,7 @@ export const useOnboarding = ({
   const {
     data: employment,
     isLoading: isLoadingEmployment,
+    isFetching: isFetchingEmployment,
     refetch: refetchEmployment,
   } = useEmploymentQuery({
     employmentId: internalEmploymentId as string,
@@ -1466,7 +1467,8 @@ export const useOnboarding = ({
       updateBenefitsOffersMutation.isPending ||
       updateEngagementAgreementMutation.isPending ||
       updateContractEligibilityMutation.isPending ||
-      jobTitleEligibility.isFetching,
+      jobTitleEligibility.isFetching ||
+      isFetchingEmployment,
     /**
      * Initial form values
      */
