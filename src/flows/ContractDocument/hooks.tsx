@@ -65,7 +65,10 @@ export const useContractDocument = ({
   const [createdContractDocumentId, setCreatedContractDocumentId] = useState<
     string | undefined
   >(undefined);
-  const hasOpenedExistingContractDocument = useRef(false);
+  const [
+    hasOpenedExistingContractDocument,
+    setHasOpenedExistingContractDocument,
+  ] = useState(false);
   const fieldsMetaRef = useRef<{ contract_details: NestedMeta }>({
     contract_details: {},
   });
@@ -101,15 +104,15 @@ export const useContractDocument = ({
   const contractDocumentId =
     createdContractDocumentId ?? existingContractDocumentId;
 
+  const isOpeningExistingContractDocument =
+    Boolean(existingContractDocumentId) && !hasOpenedExistingContractDocument;
+
   useEffect(() => {
-    if (
-      existingContractDocumentId &&
-      !hasOpenedExistingContractDocument.current
-    ) {
-      hasOpenedExistingContractDocument.current = true;
+    if (isOpeningExistingContractDocument) {
+      setHasOpenedExistingContractDocument(true);
       goToStep('contract_preview');
     }
-  }, [existingContractDocumentId, goToStep]);
+  }, [isOpeningExistingContractDocument, goToStep]);
 
   const {
     data: documentPreviewPdf,
@@ -414,6 +417,7 @@ export const useContractDocument = ({
       !employmentId ||
       isLoadingEmployment ||
       isLoadingContractDocuments ||
+      isOpeningExistingContractDocument ||
       (isContractDetailsStep && isLoadingContractDetailsForm) ||
       (isContractPreviewStep && isLoadingDocumentPreviewPdf),
     /**

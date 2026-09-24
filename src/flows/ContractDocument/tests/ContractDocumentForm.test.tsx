@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 import {
@@ -32,12 +32,13 @@ const aiValidationErrorResponse = {
   message: 'Unprocessable Entity',
 };
 
-function renderFlow() {
+function renderFlow(onStepRendered?: (step: string) => void) {
   return render(
     <ContractDocumentFlow
       employmentId='employment-grace'
       render={(bag) => {
         if (bag.isLoading) return <p>Loading…</p>;
+        onStepRendered?.(bag.stepState.currentStep.name);
 
         if (bag.stepState.currentStep.name === 'contract_preview') {
           return (
@@ -180,9 +181,10 @@ describe('ContractDocumentForm', () => {
   it('opens straight on the preview of an existing contract document', async () => {
     const requested: string[] = [];
     server.use(
-      http.get('*/v1/employments/:id/contract-documents', () =>
-        HttpResponse.json(mockContractDocumentsResponse),
-      ),
+      http.get('*/v1/employments/:id/contract-documents', async () => {
+        await delay(200);
+        return HttpResponse.json(mockContractDocumentsResponse);
+      }),
       http.get(
         '*/v1/contractors/employments/:employmentId/contract-documents/:id',
         ({ request }) => {
@@ -192,7 +194,8 @@ describe('ContractDocumentForm', () => {
       ),
     );
 
-    renderFlow();
+    const renderedSteps: string[] = [];
+    renderFlow((step) => renderedSteps.push(step));
 
     expect(
       await screen.findByText('Preview of contract-document-1'),
@@ -200,6 +203,7 @@ describe('ContractDocumentForm', () => {
     expect(requested).toEqual([
       '/v1/contractors/employments/employment-grace/contract-documents/contract-document-1',
     ]);
+    expect(renderedSteps).not.toContain('contract_details');
   });
 
   it('leaves out the Contractor Services Agreement disclaimer for a Contractor of Record', async () => {
