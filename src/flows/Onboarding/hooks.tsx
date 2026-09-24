@@ -1,8 +1,6 @@
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
-  CreateJobTitleEligibilityCheckParams,
   Employment,
-  JobTitleEligibilityCheck,
   EmploymentCreateParams,
   EmploymentFullParams,
 } from '@/src/client';
@@ -17,8 +15,6 @@ import {
   buildSteps,
   StepKeys,
   usesJsfV1ContractDetails,
-  getJobTitleEligibilityParams,
-  getJobTitleEligibilityValues,
 } from '@/src/flows/Onboarding/utils';
 import { prettifyFormValues } from '@/src/lib/utils';
 import {
@@ -26,15 +22,15 @@ import {
   enableAckFields,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
-import { isMutationError, mutationToPromise } from '@/src/lib/mutations';
+import { mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useClient } from '@/src/context';
-import { Client } from '@/src/client/client';
 import mergeWith from 'lodash.mergewith';
-import equal from 'fast-deep-equal';
+import {
+  useJobTitleEligibilityState,
+  useJobTitleEligibilityCheck,
+} from '@/src/flows/Onboarding/useJobTitleEligibilityCheck';
 import {
   useBenefitOffers,
   useBenefitOffersSchema,
@@ -47,7 +43,6 @@ import {
   useEmploymentOnboardingReservesStatus,
   useEngagementAgreementDetailsSchema,
   useGetPreOnboardingRequirements,
-  jobTitleEligibilityCheckOptions,
   useJSONSchemaForm,
   useUpdateBenefitsOffers,
   useUpdateEmployment,
@@ -511,41 +506,11 @@ export const useOnboarding = ({
   const isJobTitleEligibilityEnabled = Boolean(
     options?.features?.includes('job_title_eligibility'),
   );
-  const { client } = useClient();
-  const queryClient = useQueryClient();
-  const jobTitleEligibilityVisitRef = useRef(0);
-  const [jobTitleEligibilityParams, setJobTitleEligibilityParams] =
-    useState<CreateJobTitleEligibilityCheckParams | null>(null);
-  const getJobTitleEligibilityCheckOptions = (
-    params: CreateJobTitleEligibilityCheckParams,
-  ) =>
-    jobTitleEligibilityCheckOptions(
-      client as Client,
-      internalEmploymentId as string,
-      jobTitleEligibilityVisitRef.current,
-      params,
-    );
-  const jobTitleEligibilityQuery = useQuery({
-    ...getJobTitleEligibilityCheckOptions(jobTitleEligibilityParams ?? {}),
-    enabled: Boolean(
-      isJobTitleEligibilityEnabled &&
-      internalEmploymentId &&
-      stepState.currentStep.name === 'contract_details' &&
-      jobTitleEligibilityParams,
-    ),
+  const jobTitleEligibilityState = useJobTitleEligibilityState({
+    employmentId: internalEmploymentId,
+    enabled: isJobTitleEligibilityEnabled,
+    currentStepName: stepState.currentStep.name,
   });
-  const jobTitleEligibilityValuesRef = useRef<Record<
-    string,
-    string | null
-  > | null>(null);
-  const [jobTitleEligibilityValues, setJobTitleEligibilityValues] =
-    useState<Record<string, string | null> | null>(null);
-  const updateJobTitleEligibilityValues = (
-    values: Record<string, string | null> | null,
-  ) => {
-    jobTitleEligibilityValuesRef.current = values;
-    setJobTitleEligibilityValues(values);
-  };
 
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
@@ -775,7 +740,7 @@ export const useOnboarding = ({
         },
       },
       jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,
-      additionalValues: jobTitleEligibilityValues,
+      additionalValues: jobTitleEligibilityState.values,
     });
 
   const jsfV1Modify = useMemo(
@@ -1259,62 +1224,20 @@ export const useOnboarding = ({
         });
       }
       case 'contract_details': {
-        const submittedJobTitleEligibilityParams = isJobTitleEligibilityEnabled
-          ? getJobTitleEligibilityParams(
-              stepFields.contract_details,
-              parsedValues,
-            )
-          : null;
-        if (submittedJobTitleEligibilityParams) {
-          let check: JobTitleEligibilityCheck | undefined;
-          setJobTitleEligibilityParams(submittedJobTitleEligibilityParams);
-          try {
-            check = await queryClient.fetchQuery(
-              getJobTitleEligibilityCheckOptions(
-                submittedJobTitleEligibilityParams,
-              ),
-            );
-          } catch (error) {
-            if (isMutationError(error)) {
-              updateJobTitleEligibilityValues(null);
-              return {
-                data: null,
-                error: error.error,
-                rawError: error.rawError,
-                fieldErrors: error.fieldErrors,
-              };
-            }
-            throw error;
-          }
-          if (check) {
-            const checkValues = getJobTitleEligibilityValues(
-              stepFields.contract_details,
-              check,
-            );
-            updateJobTitleEligibilityValues(checkValues);
-            const validation = await handleValidation(values);
-            const formErrors = validation?.formErrors ?? {};
-            if (Object.keys(formErrors).length > 0) {
-              return {
-                data: null,
-                error: new Error(
-                  'The job title eligibility check requires changes to the contract details',
-                ),
-                rawError: formErrors,
-                fieldErrors: Object.entries(formErrors).map(
-                  ([field, message]) => ({
-                    field,
-                    messages: [
-                      typeof message === 'string'
-                        ? message
-                        : JSON.stringify(message),
-                    ],
-                  }),
-                ),
-              };
-            }
-            Object.assign(parsedValues, checkValues);
-          }
+        const eligibilityResult = await jobTitleEligibility.checkForSubmit(
+          values,
+          parsedValues,
+        );
+        if (eligibilityResult && !eligibilityResult.ok) {
+          return {
+            data: null,
+            error: eligibilityResult.error,
+            rawError: eligibilityResult.rawError,
+            fieldErrors: eligibilityResult.fieldErrors,
+          };
+        }
+        if (eligibilityResult?.ok) {
+          Object.assign(parsedValues, eligibilityResult.checkValues);
         }
         const payload: EmploymentFullParams = {
           contract_details: parsedValues,
@@ -1402,7 +1325,7 @@ export const useOnboarding = ({
         !isJsfV1ContractDetailsEnabled
       ) {
         const parsedValues = await parseJSFToValidate(
-          { ...values, ...jobTitleEligibilityValuesRef.current },
+          { ...values, ...jobTitleEligibilityState.valuesRef.current },
           contractDetailsForm?.fields,
           { isPartialValidation: false },
         );
@@ -1421,7 +1344,7 @@ export const useOnboarding = ({
         // children. handleValidation resolves the visibility first and nulls
         // whatever it considers hidden afterwards, which is the right order.
         const parsedValues = await parseJSFToValidate(
-          { ...values, ...jobTitleEligibilityValuesRef.current },
+          { ...values, ...jobTitleEligibilityState.valuesRef.current },
           contractDetailsFormV1?.fields,
           { isPartialValidation: true },
         );
@@ -1442,70 +1365,31 @@ export const useOnboarding = ({
       contractDetailsFormV1,
       isJsfV1ContractDetailsEnabled,
       setFieldsCount,
+      jobTitleEligibilityState.valuesRef,
     ],
   );
 
-  const checkJobTitleEligibility = async (values: FieldValues) => {
-    if (
-      !isJobTitleEligibilityEnabled ||
-      !internalEmploymentId ||
-      stepState.currentStep.name !== 'contract_details'
-    ) {
-      return;
-    }
-    const validation = await handleValidation(values);
-    const parsedValues = await parseFormValues(values);
-    const params = getJobTitleEligibilityParams(
-      stepFields.contract_details,
-      parsedValues,
-      validation?.formErrors,
-    );
-    setJobTitleEligibilityParams((current) =>
-      equal(current, params) ? current : params,
-    );
-    if (params) {
-      await queryClient
-        .fetchQuery(getJobTitleEligibilityCheckOptions(params))
-        .catch(() => undefined);
-    }
-  };
+  // The freshest known job title: what the user submitted for basic_information this session
+  // (already persisted, since advancing past that step requires the mutation to succeed) takes
+  // precedence over the initial value, which can be stale once `employment` isn't refetched
+  // after that submission.
+  const jobTitle =
+    (stepState.values?.basic_information?.job_title as string | undefined) ??
+    (basicInformationInitialValues.job_title as string | undefined);
 
-  const hasContractDetailsFields = stepFields.contract_details.length > 0;
-
-  useEffect(() => {
-    if (!isJobTitleEligibilityEnabled) {
-      return;
-    }
-    setJobTitleEligibilityParams(null);
-    updateJobTitleEligibilityValues(null);
-    if (currentStepName === 'contract_details' && hasContractDetailsFields) {
-      jobTitleEligibilityVisitRef.current += 1;
-      checkJobTitleEligibility(
-        stepState.values?.contract_details || initialValues.contract_details,
-      );
-    }
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [isJobTitleEligibilityEnabled, currentStepName, hasContractDetailsFields]);
-
-  const jobTitleEligibilityCheck = jobTitleEligibilityParams
-    ? jobTitleEligibilityQuery.data
-    : undefined;
-
-  useEffect(() => {
-    const checkValues = jobTitleEligibilityCheck
-      ? getJobTitleEligibilityValues(
-          stepFields.contract_details,
-          jobTitleEligibilityCheck,
-        )
-      : null;
-    if (!equal(checkValues, jobTitleEligibilityValuesRef.current)) {
-      updateJobTitleEligibilityValues(checkValues);
-      if (stepState.currentStep.name === 'contract_details') {
-        handleValidation(fieldValues);
-      }
-    }
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [jobTitleEligibilityCheck]);
+  const jobTitleEligibility = useJobTitleEligibilityCheck({
+    state: jobTitleEligibilityState,
+    enabled: isJobTitleEligibilityEnabled,
+    employmentId: internalEmploymentId,
+    currentStepName,
+    contractDetailsFields: stepFields.contract_details,
+    stepValues: stepState.values?.contract_details,
+    initialContractDetailsValues: initialValues.contract_details,
+    fieldValues,
+    jobTitle,
+    parseFormValues,
+    handleValidation,
+  });
 
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
@@ -1582,7 +1466,7 @@ export const useOnboarding = ({
       updateBenefitsOffersMutation.isPending ||
       updateEngagementAgreementMutation.isPending ||
       updateContractEligibilityMutation.isPending ||
-      jobTitleEligibilityQuery.isFetching,
+      jobTitleEligibility.isFetching,
     /**
      * Initial form values
      */
@@ -1605,7 +1489,7 @@ export const useOnboarding = ({
      * on blur; the check also runs when entering the contract details step and before submitting it.
      * @param values - Current form values
      */
-    checkJobTitleEligibility,
+    checkJobTitleEligibility: jobTitleEligibility.check,
 
     /**
      * Function to parse form values before submission

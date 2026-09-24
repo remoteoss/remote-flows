@@ -139,6 +139,58 @@ describe.each(['ESP', 'PRT'])(
       });
     });
 
+    it("includes the employment's current job title in the eligibility check", async () => {
+      employmentContractDetails = roleValues;
+      server.use(
+        http.get(
+          `*/v1/countries/${countryCode}/employment_basic_information*`,
+          () =>
+            HttpResponse.json({
+              data: {
+                properties: {
+                  name: { type: 'string', title: 'Name' },
+                  job_title: { type: 'string', title: 'Job title' },
+                },
+              },
+            }),
+        ),
+        http.get('*/v1/employments/:id', ({ params }) =>
+          HttpResponse.json({
+            ...employmentDefaultResponse,
+            data: {
+              ...employmentDefaultResponse.data,
+              employment: {
+                ...employmentDefaultResponse.data.employment,
+                id: params?.id,
+                status: 'created',
+                contract_details: employmentContractDetails,
+                basic_information: {
+                  ...employmentDefaultResponse.data.employment
+                    .basic_information,
+                  job_title: 'Product Manager',
+                },
+                country: {
+                  code: countryCode,
+                  name: countryCode,
+                  alpha_2_code: countryCode.slice(0, 2),
+                  supported_json_schemas: ['employment_basic_information'],
+                },
+              },
+            },
+          }),
+        ),
+      );
+      const { result } = renderOnboarding(['job_title_eligibility']);
+
+      await goToContractDetails(result);
+
+      await waitFor(() => {
+        expect(eligibilityRequests).toEqual([
+          { ...roleValues, job_title: 'Product Manager' },
+        ]);
+      });
+    });
+
     it('does not check eligibility until every role field is filled and valid', async () => {
       const { result } = renderOnboarding(['job_title_eligibility']);
 

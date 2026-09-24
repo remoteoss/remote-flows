@@ -255,6 +255,7 @@ export const getJobTitleEligibilityParams = (
   fields: JSFFields,
   values: Record<string, unknown>,
   formErrors?: Record<string, unknown> | null,
+  jobTitle?: string,
 ): CreateJobTitleEligibilityCheckParams | null => {
   const jsfFields = fields as JSFField[];
   if (
@@ -279,9 +280,12 @@ export const getJobTitleEligibilityParams = (
     return null;
   }
 
-  return Object.fromEntries(
-    paramFields.map((field) => [field.name, values[field.name]]),
-  ) as CreateJobTitleEligibilityCheckParams;
+  return {
+    ...(isFilled(jobTitle) ? { job_title: jobTitle } : {}),
+    ...Object.fromEntries(
+      paramFields.map((field) => [field.name, values[field.name]]),
+    ),
+  } as CreateJobTitleEligibilityCheckParams;
 };
 
 export const getJobTitleEligibilityValues = (
