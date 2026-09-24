@@ -217,6 +217,36 @@ describe('useStepState', () => {
     expect(result.current.stepState.currentStep).toEqual(mockSteps.step2);
   });
 
+  it('should reset the field values when going to another step', () => {
+    const { result } = renderHook(() => useStepState(mockSteps));
+
+    act(() => {
+      result.current.setFieldValues({ name: 'John' });
+    });
+
+    act(() => {
+      result.current.goToStep('step3');
+    });
+
+    expect(result.current.stepState.currentStep).toEqual(mockSteps.step3);
+    expect(result.current.fieldValues).toEqual({});
+  });
+
+  it('should keep the field values when going to the current step', () => {
+    const { result } = renderHook(() => useStepState(mockSteps));
+
+    act(() => {
+      result.current.setFieldValues({ name: 'John' });
+    });
+
+    act(() => {
+      result.current.goToStep('step1');
+    });
+
+    expect(result.current.stepState.currentStep).toEqual(mockSteps.step1);
+    expect(result.current.fieldValues).toEqual({ name: 'John' });
+  });
+
   it('should set all step values at once with setStepValues', () => {
     const { result } = renderHook(() => useStepState(mockSteps));
 

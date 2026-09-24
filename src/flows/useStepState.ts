@@ -124,11 +124,15 @@ export const useStepState = <T extends string, Fields = FieldValues>(
   }
 
   function goToStep(step: T) {
+    const isCurrentStep = stepState.currentStep.name === step;
     setStepState((previousState) => ({
       ...previousState,
       currentStep: stepsRef.current[step],
     }));
     onStepChange?.(stepsRef.current[step]);
+    if (!isCurrentStep) {
+      setFieldValues({} as Fields);
+    }
   }
 
   function setStepValues(values: Record<T, Fields>) {
@@ -161,6 +165,7 @@ export const useStepState = <T extends string, Fields = FieldValues>(
     stepState,
     /**
      * Goes to a specific step in the step state.
+     * It resets the field values when the step changes, as they belong to the step being left.
      * @param step The step to go to.
      * @returns {void}
      */
