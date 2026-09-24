@@ -112,15 +112,14 @@ export const useContractDocument = ({
   }, [existingContractDocumentId, goToStep]);
 
   const {
-    data: contractDocumentResponse,
-    isLoading: isLoadingContractDocument,
-    error: contractDocumentError,
+    data: documentPreviewPdf,
+    isLoading: isLoadingDocumentPreviewPdf,
+    error: documentPreviewPdfError,
   } = useGetShowContractDocument({
     employmentId,
     contractDocumentId: contractDocumentId as string,
     options: { queryOptions: { enabled: Boolean(contractDocumentId) } },
   });
-  const contractDocument = contractDocumentResponse?.contract_document;
 
   const countryCode = employment?.country?.code;
   const productIdentifier = getProductIdentifier(employment?.contractor_type);
@@ -184,13 +183,14 @@ export const useContractDocument = ({
   );
 
   const contractPreviewInitialValues = useMemo(() => {
-    const companySignatory = contractDocument?.signatories.find(
-      (signatory) => signatory.type === 'company',
-    );
+    const companySignatory =
+      documentPreviewPdf?.contract_document?.signatories?.find(
+        (signatory) => signatory.type === 'company',
+      );
     return getInitialValues(signatureFields, {
       signature: companySignatory?.signature,
     });
-  }, [signatureFields, contractDocument?.signatories]);
+  }, [signatureFields, documentPreviewPdf]);
 
   const createContractDocumentMutation = useCreateContractorContractDocument();
   const { mutateAsyncOrThrow: createContractDocument } = mutationToPromise(
@@ -392,19 +392,13 @@ export const useContractDocument = ({
      */
     contractDocumentId,
     /**
-     * That contract document with its PDF as a `data:application/pdf;base64,…` URI, once
-     * loaded.
+     * Document preview PDF data
      */
-    contractDocument,
+    documentPreviewPdf,
     /**
-     * Records that the user has opened the contract document; this reveals the signature
-     * field.
+     * Function to mark the contract as reviewed
      */
     markContractAsReviewed,
-    /**
-     * True once the user has opened the contract document.
-     */
-    isContractReviewed: fieldValues.review_completed === true,
     /**
      * True when the last submission was rejected by the AI misclassification check and the
      * user may submit again to continue at their own risk.
@@ -421,7 +415,7 @@ export const useContractDocument = ({
       isLoadingEmployment ||
       isLoadingContractDocuments ||
       (isContractDetailsStep && isLoadingContractDetailsForm) ||
-      (isContractPreviewStep && isLoadingContractDocument),
+      (isContractPreviewStep && isLoadingDocumentPreviewPdf),
     /**
      * True while the contract document is being created.
      */
@@ -433,7 +427,7 @@ export const useContractDocument = ({
     error:
       employmentError ??
       contractDetailsFormError ??
-      contractDocumentError ??
+      documentPreviewPdfError ??
       null,
   };
 };

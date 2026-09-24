@@ -74,11 +74,11 @@ export function CreateContractDocument({
                 <button type='button' onClick={contractDocumentBag.back}>
                   Back
                 </button>
-                <ContractDocumentReviewButton>
-                  {contractDocumentBag.isContractReviewed
-                    ? 'Review again'
-                    : 'Review contract'}
-                </ContractDocumentReviewButton>
+                <ContractDocumentReviewButton
+                  render={({ reviewCompleted }) =>
+                    reviewCompleted ? 'Review again' : 'Review contract'
+                  }
+                />
               </>
             );
           }
@@ -134,7 +134,8 @@ when the flow failed to load (`error` is set on the bag).
 
 Renders the `contract_preview` step: a header, a statement inviting the user to review the
 document, and the signature field. The signature field only appears once the document has
-been reviewed. Signing is not wired yet; the form has no submission in this release.
+been reviewed (`fieldValues.review_completed`). Signing is not wired yet; the form has no
+submission in this release.
 
 | Prop         | Type         | Description                                     |
 | ------------ | ------------ | ----------------------------------------------- |
@@ -147,8 +148,9 @@ The header and statement fields can be customized through
 ### ContractDocumentReviewButton
 
 Must be rendered inside the flow's `render` prop. Opens the contract document PDF in a drawer
-through the `pdfViewer` component, and marks the document as reviewed. Accepts any button
-props; disables itself until the document has loaded.
+through the `pdfViewer` component; closing the drawer marks the document as reviewed. Same API
+as the onboarding `ContractReviewButton`: a `render({ reviewCompleted })` prop for the label,
+plus any button props.
 
 ## The bag
 
@@ -176,9 +178,8 @@ prop, for fully custom UIs. Both surfaces expose the same bag:
 | `productIdentifier`      | The product the contractor is on, read off the employment.                                                                                                                                                |
 | `contractDocuments`      | The contract documents the contractor already has. `undefined` until loaded, or when loading failed.                                                                                                      |
 | `contractDocumentId`     | The contract document being previewed: the one created in this flow, or the contractor's existing one.                                                                                                    |
-| `contractDocument`       | That document once loaded: name, status, signatories and its PDF as a `data:application/pdf;base64,…` URI.                                                                                                |
-| `markContractAsReviewed` | Records that the user has opened the document, which reveals the signature field.                                                                                                                         |
-| `isContractReviewed`     | True once the user has opened the document.                                                                                                                                                               |
+| `documentPreviewPdf`     | The previewed document once loaded: its PDF as a `data:application/pdf;base64,…` URI, name, status and signatories.                                                                                       |
+| `markContractAsReviewed` | Marks the document as reviewed, which reveals the signature field.                                                                                                                                        |
 | `canSkipAiValidation`    | True when the last submission was rejected by the AI check and submitting again continues at the user's risk.                                                                                             |
 | `isLoading`              | True until the contractor and the current step's form are known.                                                                                                                                          |
 | `isSubmitting`           | True while the contract document is being created.                                                                                                                                                        |

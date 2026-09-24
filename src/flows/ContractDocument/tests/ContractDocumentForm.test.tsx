@@ -47,9 +47,11 @@ function renderFlow() {
               <button type='button' onClick={bag.back}>
                 Back
               </button>
-              <ContractDocumentReviewButton>
-                {bag.isContractReviewed ? 'Review again' : 'Review contract'}
-              </ContractDocumentReviewButton>
+              <ContractDocumentReviewButton
+                render={({ reviewCompleted }) =>
+                  reviewCompleted ? 'Review again' : 'Review contract'
+                }
+              />
             </>
           );
         }
