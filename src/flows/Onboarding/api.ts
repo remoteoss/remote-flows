@@ -429,8 +429,12 @@ export const useJobTitleEligibilityCheck = () => {
   return useMutation({
     mutationFn: ({
       employmentId,
+      signal,
       ...payload
-    }: CreateJobTitleEligibilityCheckParams & { employmentId: string }) => {
+    }: CreateJobTitleEligibilityCheckParams & {
+      employmentId: string;
+      signal?: AbortSignal;
+    }) => {
       return postV2EmploymentsEmploymentIdJobTitleEligibilityCheck({
         client: client as Client,
         headers: {
@@ -440,6 +444,7 @@ export const useJobTitleEligibilityCheck = () => {
         path: {
           employment_id: employmentId,
         },
+        signal,
       });
     },
   });

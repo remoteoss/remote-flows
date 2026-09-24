@@ -514,7 +514,10 @@ export const useOnboarding = ({
   const jobTitleEligibilityChecksRef = useRef(
     new Map<string, Promise<JobTitleEligibilityCheck | undefined>>(),
   );
-  const latestJobTitleEligibilityKeyRef = useRef<string | null>(null);
+  const latestJobTitleEligibilityCheckRef = useRef<Promise<
+    JobTitleEligibilityCheck | undefined
+  > | null>(null);
+  const jobTitleEligibilityAbortRef = useRef(new AbortController());
   const jobTitleEligibilityValuesRef = useRef<Record<
     string,
     string | null
@@ -535,23 +538,26 @@ export const useOnboarding = ({
     params: CreateJobTitleEligibilityCheckParams,
   ) => {
     const key = JSON.stringify(params);
-    latestJobTitleEligibilityKeyRef.current = key;
     const checks = jobTitleEligibilityChecksRef.current;
     const cachedCheck = checks.get(key);
     if (cachedCheck) {
+      latestJobTitleEligibilityCheckRef.current = cachedCheck;
       return cachedCheck;
     }
 
+    const { signal } = jobTitleEligibilityAbortRef.current;
     const check = jobTitleEligibilityQueueRef.current
       .catch(() => undefined)
       .then(() =>
         jobTitleEligibilityCheckMutationAsync({
           employmentId: internalEmploymentId as string,
+          signal,
           ...params,
         }),
       )
       .then((response) => response?.data.job_title_eligibility_check);
     jobTitleEligibilityQueueRef.current = check;
+    latestJobTitleEligibilityCheckRef.current = check;
     checks.set(key, check);
     check.catch(() => {
       if (checks.get(key) === check) {
@@ -559,6 +565,15 @@ export const useOnboarding = ({
       }
     });
     return check;
+  };
+
+  const resetJobTitleEligibility = () => {
+    jobTitleEligibilityAbortRef.current.abort();
+    jobTitleEligibilityAbortRef.current = new AbortController();
+    jobTitleEligibilityChecksRef.current.clear();
+    jobTitleEligibilityQueueRef.current = Promise.resolve();
+    latestJobTitleEligibilityCheckRef.current = null;
+    updateJobTitleEligibilityValues(null);
   };
 
   const formType =
@@ -1473,19 +1488,19 @@ export const useOnboarding = ({
     );
     if (!params) {
       if (jobTitleEligibilityValuesRef.current) {
-        latestJobTitleEligibilityKeyRef.current = null;
+        latestJobTitleEligibilityCheckRef.current = null;
         updateJobTitleEligibilityValues(null);
         await handleValidation(values);
       }
       return;
     }
-    const key = JSON.stringify(params);
-    const check = await runJobTitleEligibilityCheck(params).catch(() => null);
-    if (latestJobTitleEligibilityKeyRef.current !== key) {
+    const check = runJobTitleEligibilityCheck(params);
+    const checkResult = await check.catch(() => null);
+    if (latestJobTitleEligibilityCheckRef.current !== check) {
       return;
     }
-    const checkValues = check
-      ? getJobTitleEligibilityValues(stepFields.contract_details, check)
+    const checkValues = checkResult
+      ? getJobTitleEligibilityValues(stepFields.contract_details, checkResult)
       : null;
     if (!equal(checkValues, jobTitleEligibilityValuesRef.current)) {
       updateJobTitleEligibilityValues(checkValues);
@@ -1496,20 +1511,23 @@ export const useOnboarding = ({
   const hasContractDetailsFields = stepFields.contract_details.length > 0;
 
   useEffect(() => {
-    if (
-      isJobTitleEligibilityEnabled &&
-      currentStepName === 'contract_details' &&
-      hasContractDetailsFields
-    ) {
-      jobTitleEligibilityChecksRef.current.clear();
-      latestJobTitleEligibilityKeyRef.current = null;
-      updateJobTitleEligibilityValues(null);
+    if (!isJobTitleEligibilityEnabled) {
+      return;
+    }
+    if (currentStepName !== 'contract_details') {
+      resetJobTitleEligibility();
+      return;
+    }
+    if (hasContractDetailsFields) {
+      resetJobTitleEligibility();
       checkJobTitleEligibility(
         stepState.values?.contract_details || initialValues.contract_details,
       );
     }
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isJobTitleEligibilityEnabled, currentStepName, hasContractDetailsFields]);
+
+  useEffect(() => () => jobTitleEligibilityAbortRef.current.abort(), []);
 
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {

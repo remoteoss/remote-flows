@@ -578,6 +578,76 @@ describe.each(['ESP', 'PRT'])(
         expect(eligibilityRequests).toEqual([roleValues]);
       });
 
+      it('drops the check from an earlier visit when contract details is left and entered again', async () => {
+        employmentContractDetails = roleValues;
+        let releaseFirstCheck: () => void = () => {};
+        let firstCheckAborted = false;
+        server.use(
+          http.post(
+            '*/v2/employments/:id/job-title-eligibility-check',
+            async ({ request }) => {
+              eligibilityRequests.push(
+                (await request.json()) as Record<string, unknown>,
+              );
+              if (eligibilityRequests.length > 1) {
+                return HttpResponse.json(jobTitleEligibilityCheckRiskyResponse);
+              }
+              request.signal.addEventListener('abort', () => {
+                firstCheckAborted = true;
+              });
+              await new Promise<void>((resolve) => {
+                releaseFirstCheck = resolve;
+              });
+              return HttpResponse.json(
+                jobTitleEligibilityCheckResponses.eligibleByRoleAnswers,
+              );
+            },
+          ),
+        );
+        const { result } = renderOnboarding(['job_title_eligibility']);
+
+        await goToContractDetails(result);
+        await waitFor(() => {
+          expect(eligibilityRequests).toHaveLength(1);
+        });
+
+        act(() => {
+          result.current.goTo('basic_information');
+        });
+        await waitFor(() => {
+          expect(firstCheckAborted).toBe(true);
+        });
+
+        await goToContractDetails(result);
+        await waitFor(() => {
+          expect(
+            findField(result.current.fields, 'employer_acknowledges_risk')
+              ?.isVisible,
+          ).toBe(true);
+        });
+
+        releaseFirstCheck();
+
+        await act(async () => {
+          await result.current.onSubmit({
+            ...roleValues,
+            employer_acknowledges_risk: 'acknowledged',
+          });
+        });
+
+        expect(eligibilityRequests).toEqual([roleValues, roleValues]);
+        expect(
+          findField(result.current.fields, 'employer_acknowledges_risk')
+            ?.isVisible,
+        ).toBe(true);
+        expect(updateRequests[0].contract_details).toEqual({
+          ...roleValues,
+          employer_acknowledges_risk: 'acknowledged',
+          additional_job_title_eligibility_check_slug: 'check-id-risky',
+          additional_job_title_eligibility_check_result: 'yes_with_ack',
+        });
+      });
+
       it('hides the risk acknowledgement again when the role answers are no longer complete', async () => {
         const { result } = renderOnboarding(['job_title_eligibility']);
 
