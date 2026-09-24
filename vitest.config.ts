@@ -3,8 +3,17 @@ import { COVERAGE_THRESHOLDS } from './scripts/coverage-utils.ts';
 
 export default defineConfig({
   test: {
-    include: ['example/**/*.test.{ts,tsx}', 'src/**/*.test.{ts,tsx}'],
-    exclude: ['node_modules/**', 'example/node_modules/**', 'example/e2e/**'],
+    include: [
+      'example/**/*.test.{ts,tsx}',
+      'src/**/*.test.{ts,tsx}',
+      'scripts/**/*.test.{ts,tsx}',
+    ],
+    exclude: [
+      'node_modules/**',
+      'example/node_modules/**',
+      'example/e2e/**',
+      'scripts/verify-contract-details-version/verify.test.ts',
+    ],
     coverage: {
       provider: 'istanbul',
       reporter: ['text', 'json', 'html', 'lcov'],
