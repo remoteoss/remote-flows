@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { fillForm } from './general';
+import { fillForm, submitAndWaitForSave } from './general';
 
 interface fillOnboardingIntroductionFormOptions {
   company_id: string;
@@ -109,8 +109,7 @@ export async function fillOnboardingStep2Form(
     },
   ]);
 
-  await page.click('.submit-button');
-  await page.getByText('Loading...').waitFor({ state: 'hidden' });
+  await submitAndWaitForSave(page, 'POST', /^\/v1\/employments$/);
 }
 
 interface fillOnboardingEngagementAgreementDetailsGermanyFormOptions {
@@ -139,8 +138,11 @@ export async function fillOnboardingEngagementAgreementDetailsGermanyForm(
     },
   ]);
 
-  await page.click('.submit-button');
-  await page.getByText('Loading...').waitFor({ state: 'hidden' });
+  await submitAndWaitForSave(
+    page,
+    'POST',
+    /^\/v2\/employments\/[^/]+\/engagement-agreement-details$/,
+  );
 }
 
 interface fillOnboardingStep3GermanyFormOptions {
@@ -267,8 +269,7 @@ export async function fillOnboardingStep3GermanyForm(
     },
   ]);
 
-  await page.click('.submit-button');
-  await page.getByText('Loading...').waitFor({ state: 'hidden' });
+  await submitAndWaitForSave(page, 'PATCH', /^\/v1\/employments\/[^/]+$/);
 }
 
 interface fillOnboardingStep3SpainFormOptions {
@@ -447,6 +448,5 @@ export async function fillOnboardingStep3SpainForm(
     },
   ]);
 
-  await page.click('.submit-button');
-  await page.getByText('Loading...').waitFor({ state: 'hidden' });
+  await submitAndWaitForSave(page, 'PATCH', /^\/v1\/employments\/[^/]+$/);
 }
