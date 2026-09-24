@@ -1204,7 +1204,7 @@ export const useOnboarding = ({
             throw error;
           }
         } else if (internalEmploymentId) {
-          return updateEmploymentMutationAsync({
+          const response = await updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: parsedValues,
             pricing_plan_details: {
@@ -1213,6 +1213,10 @@ export const useOnboarding = ({
             external_id: externalId,
             partner_external_id: partnerExternalId,
           });
+          if (!response.error) {
+            await refetchEmployment();
+          }
+          return response;
         }
 
         return;
@@ -1369,13 +1373,9 @@ export const useOnboarding = ({
     ],
   );
 
-  // The freshest known job title: what the user submitted for basic_information this session
-  // (already persisted, since advancing past that step requires the mutation to succeed) takes
-  // precedence over the initial value, which can be stale once `employment` isn't refetched
-  // after that submission.
-  const jobTitle =
-    (stepState.values?.basic_information?.job_title as string | undefined) ??
-    (basicInformationInitialValues.job_title as string | undefined);
+  const jobTitle = basicInformationInitialValues.job_title as
+    | string
+    | undefined;
 
   const jobTitleEligibility = useJobTitleEligibilityCheck({
     state: jobTitleEligibilityState,
