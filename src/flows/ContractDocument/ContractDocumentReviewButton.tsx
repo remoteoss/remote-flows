@@ -1,14 +1,17 @@
-import { ButtonHTMLAttributes, PropsWithChildren, useState } from 'react';
+import { ButtonHTMLAttributes, useState } from 'react';
 import { Drawer } from '@/src/components/shared/drawer/Drawer';
 import { useFormFields } from '@/src/context';
 import { useContractDocumentContext } from '@/src/flows/ContractDocument/context';
 import { cn } from '@/src/lib/utils';
 
+type ContractDocumentReviewButtonProps = {
+  render: (props: { reviewCompleted: boolean }) => React.ReactNode;
+} & ButtonHTMLAttributes<HTMLButtonElement>;
+
 export function ContractDocumentReviewButton({
-  children,
+  render,
   ...props
-}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> &
-  Record<string, unknown>) {
+}: ContractDocumentReviewButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { contractDocumentBag } = useContractDocumentContext();
   const { components } = useFormFields();
@@ -23,17 +26,23 @@ export function ContractDocumentReviewButton({
     throw new Error(`PDFViewer component not found`);
   }
 
-  const { contractDocument } = contractDocumentBag;
+  const reviewCompleted = Boolean(
+    contractDocumentBag.fieldValues?.review_completed,
+  );
+  const contractDocument =
+    contractDocumentBag.documentPreviewPdf?.contract_document;
 
-  const openContractDocument = () => {
-    setIsOpen(true);
-    contractDocumentBag.markContractAsReviewed();
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      contractDocumentBag.markContractAsReviewed();
+    }
   };
 
   return (
     <Drawer
       open={isOpen}
-      onOpenChange={setIsOpen}
+      onOpenChange={handleOpenChange}
       title='Contract Document'
       className='top-0 bottom-0 left-auto right-0 h-full max-h-none w-full max-w-[900px] rounded-t-none flex flex-col'
       trigger={
@@ -44,14 +53,13 @@ export function ContractDocumentReviewButton({
             'RemoteFlows__ContractDocumentPreviewForm__ReviewButton',
             props.className,
           )}
-          onClick={openContractDocument}
-          disabled={props.disabled || !contractDocument}
+          onClick={() => setIsOpen(true)}
         >
-          {children}
+          {render({ reviewCompleted })}
         </CustomButton>
       }
     >
-      {contractDocument && (
+      {contractDocument?.content && (
         <CustomPdfViewer
           base64Data={contractDocument.content}
           fileName={contractDocument.name}

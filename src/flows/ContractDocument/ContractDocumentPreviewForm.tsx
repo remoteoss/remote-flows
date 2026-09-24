@@ -30,11 +30,14 @@ export function ContractDocumentPreviewForm({
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const reviewCompleted = Boolean(
+    contractDocumentBag.fieldValues?.review_completed,
+  );
   useEffect(() => {
-    if (contractDocumentBag.isContractReviewed) {
+    if (reviewCompleted) {
       form.setValue('review_completed', true);
     }
-  }, [contractDocumentBag.isContractReviewed, form]);
+  }, [reviewCompleted, form]);
 
   return (
     <Form {...form}>

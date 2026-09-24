@@ -83,11 +83,12 @@ function CreateContractDocument({ employmentId }: { employmentId: string }) {
                     >
                       Back
                     </button>
-                    <ContractDocumentReviewButton className='submit-button'>
-                      {contractDocumentBag.isContractReviewed
-                        ? 'Review again'
-                        : 'Review contract'}
-                    </ContractDocumentReviewButton>
+                    <ContractDocumentReviewButton
+                      className='submit-button'
+                      render={({ reviewCompleted }) =>
+                        reviewCompleted ? 'Review again' : 'Review contract'
+                      }
+                    />
                   </div>
                   <p className='mt-3'>Signing: to be continued…</p>
                 </>
