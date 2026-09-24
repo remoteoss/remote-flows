@@ -1,5 +1,7 @@
 import { Employment, OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { Step } from '@/src/flows/useStepState';
+import { CreateJobTitleEligibilityCheckParams } from '@/src/client';
+import { JSFField, JSFFields } from '@/src/types/remoteFlows';
 
 export type StepKeys =
   | 'select_country'
@@ -220,4 +222,49 @@ export const getEngagementAgreementDetailsSchemaVersion = (
   return (
     options?.jsonSchemaVersion?.engagement_agreement_details || DEFAULT_VERSION
   );
+};
+
+export const JOB_TITLE_ELIGIBILITY_SLUG_FIELD =
+  'additional_job_title_eligibility_check_slug';
+
+const JOB_TITLE_ELIGIBILITY_PARAM_FIELDS = [
+  'role_description',
+  'role_is_onsite',
+  'role_requires_license',
+];
+
+const isFilled = (value: unknown) =>
+  value !== undefined && value !== null && value !== '';
+
+export const getJobTitleEligibilityParams = (
+  fields: JSFFields,
+  values: Record<string, unknown>,
+  formErrors?: Record<string, unknown> | null,
+): CreateJobTitleEligibilityCheckParams | null => {
+  const jsfFields = fields as JSFField[];
+  if (
+    !jsfFields.some((field) => field.name === JOB_TITLE_ELIGIBILITY_SLUG_FIELD)
+  ) {
+    return null;
+  }
+
+  const paramFields = jsfFields.filter(
+    (field) =>
+      JOB_TITLE_ELIGIBILITY_PARAM_FIELDS.includes(field.name) &&
+      field.isVisible !== false,
+  );
+
+  const isComplete =
+    paramFields.length > 0 &&
+    paramFields.every(
+      (field) => isFilled(values[field.name]) && !formErrors?.[field.name],
+    );
+
+  if (!isComplete) {
+    return null;
+  }
+
+  return Object.fromEntries(
+    paramFields.map((field) => [field.name, values[field.name]]),
+  ) as CreateJobTitleEligibilityCheckParams;
 };

@@ -4,6 +4,7 @@ import { Client } from '@/src/client/client';
 import {
   ConvertCurrencyParams,
   CreateContractEligibilityParams,
+  CreateJobTitleEligibilityCheckParams,
   EmploymentCreateParams,
   EmploymentEngagementAgreementDetailsParams,
   EmploymentFullParams,
@@ -20,6 +21,7 @@ import {
   postV1Employments,
   postV1EmploymentsEmploymentIdContractEligibility,
   postV2EmploymentsEmploymentIdEngagementAgreementDetails,
+  postV2EmploymentsEmploymentIdJobTitleEligibilityCheck,
   postV1EmploymentsEmploymentIdInvite,
   PostV1EmploymentsEmploymentIdInviteData,
   postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocuments,
@@ -415,6 +417,28 @@ export const useUpdateEmployment = (
         query: {
           skip_benefits: true,
           ...jsonSchemaQueryParams,
+        },
+      });
+    },
+  });
+};
+
+export const useJobTitleEligibilityCheck = () => {
+  const { client } = useClient();
+
+  return useMutation({
+    mutationFn: ({
+      employmentId,
+      ...payload
+    }: CreateJobTitleEligibilityCheckParams & { employmentId: string }) => {
+      return postV2EmploymentsEmploymentIdJobTitleEligibilityCheck({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        body: payload,
+        path: {
+          employment_id: employmentId,
         },
       });
     },

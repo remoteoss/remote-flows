@@ -1,5 +1,6 @@
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
+  CreateJobTitleEligibilityCheckParams,
   Employment,
   EmploymentCreateParams,
   EmploymentFullParams,
@@ -15,6 +16,8 @@ import {
   buildSteps,
   StepKeys,
   usesJsfV1ContractDetails,
+  getJobTitleEligibilityParams,
+  JOB_TITLE_ELIGIBILITY_SLUG_FIELD,
 } from '@/src/flows/Onboarding/utils';
 import { prettifyFormValues } from '@/src/lib/utils';
 import {
@@ -22,7 +25,7 @@ import {
   enableAckFields,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
-import { mutationToPromise } from '@/src/lib/mutations';
+import { isMutationError, mutationToPromise } from '@/src/lib/mutations';
 import { FieldValues } from 'react-hook-form';
 import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -39,6 +42,7 @@ import {
   useEmploymentOnboardingReservesStatus,
   useEngagementAgreementDetailsSchema,
   useGetPreOnboardingRequirements,
+  useJobTitleEligibilityCheck,
   useJSONSchemaForm,
   useUpdateBenefitsOffers,
   useUpdateEmployment,
@@ -484,6 +488,7 @@ export const useOnboarding = ({
   const updateEngagementAgreementMutation =
     useUpdateEmploymentEngagementAgreementDetails();
   const updateContractEligibilityMutation = useUpsertContractEligibility();
+  const jobTitleEligibilityCheckMutation = useJobTitleEligibilityCheck();
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
   );
@@ -498,6 +503,39 @@ export const useOnboarding = ({
     mutationToPromise(updateEngagementAgreementMutation);
   const { mutateAsync: updateContractEligibilityMutationAsync } =
     mutationToPromise(updateContractEligibilityMutation);
+  const { mutateAsyncOrThrow: jobTitleEligibilityCheckMutationAsync } =
+    mutationToPromise(jobTitleEligibilityCheckMutation);
+
+  const isJobTitleEligibilityEnabled = Boolean(
+    options?.features?.includes('job_title_eligibility'),
+  );
+  const jobTitleEligibilityCheckRef = useRef<{
+    key: string;
+    checkId: Promise<string | null>;
+  } | null>(null);
+
+  const runJobTitleEligibilityCheck = (
+    params: CreateJobTitleEligibilityCheckParams,
+  ) => {
+    const key = JSON.stringify(params);
+    if (jobTitleEligibilityCheckRef.current?.key === key) {
+      return jobTitleEligibilityCheckRef.current.checkId;
+    }
+
+    const checkId = jobTitleEligibilityCheckMutationAsync({
+      employmentId: internalEmploymentId as string,
+      ...params,
+    }).then(
+      (response) => response?.data.job_title_eligibility_check.check_id ?? null,
+    );
+    jobTitleEligibilityCheckRef.current = { key, checkId };
+    checkId.catch(() => {
+      if (jobTitleEligibilityCheckRef.current?.checkId === checkId) {
+        jobTitleEligibilityCheckRef.current = null;
+      }
+    });
+    return checkId;
+  };
 
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
@@ -1208,6 +1246,28 @@ export const useOnboarding = ({
         });
       }
       case 'contract_details': {
+        const jobTitleEligibilityParams = isJobTitleEligibilityEnabled
+          ? getJobTitleEligibilityParams(
+              stepFields.contract_details,
+              parsedValues,
+            )
+          : null;
+        if (jobTitleEligibilityParams) {
+          try {
+            parsedValues[JOB_TITLE_ELIGIBILITY_SLUG_FIELD] =
+              await runJobTitleEligibilityCheck(jobTitleEligibilityParams);
+          } catch (error) {
+            if (isMutationError(error)) {
+              return {
+                data: null,
+                error: error.error,
+                rawError: error.rawError,
+                fieldErrors: error.fieldErrors,
+              };
+            }
+            throw error;
+          }
+        }
         const payload: EmploymentFullParams = {
           contract_details: parsedValues,
           pricing_plan_details: {
@@ -1337,6 +1397,42 @@ export const useOnboarding = ({
     ],
   );
 
+  const checkJobTitleEligibility = async (values: FieldValues) => {
+    if (
+      !isJobTitleEligibilityEnabled ||
+      !internalEmploymentId ||
+      stepState.currentStep.name !== 'contract_details'
+    ) {
+      return;
+    }
+    const validation = await handleValidation(values);
+    const parsedValues = await parseFormValues(values);
+    const params = getJobTitleEligibilityParams(
+      stepFields.contract_details,
+      parsedValues,
+      validation?.formErrors,
+    );
+    if (params) {
+      await runJobTitleEligibilityCheck(params).catch(() => undefined);
+    }
+  };
+
+  const hasContractDetailsFields = stepFields.contract_details.length > 0;
+
+  useEffect(() => {
+    if (
+      isJobTitleEligibilityEnabled &&
+      currentStepName === 'contract_details' &&
+      hasContractDetailsFields
+    ) {
+      jobTitleEligibilityCheckRef.current = null;
+      checkJobTitleEligibility(
+        stepState.values?.contract_details || initialValues.contract_details,
+      );
+    }
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [isJobTitleEligibilityEnabled, currentStepName, hasContractDetailsFields]);
+
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
       setFieldValues(values);
@@ -1411,7 +1507,8 @@ export const useOnboarding = ({
       updateEmploymentMutation.isPending ||
       updateBenefitsOffersMutation.isPending ||
       updateEngagementAgreementMutation.isPending ||
-      updateContractEligibilityMutation.isPending,
+      updateContractEligibilityMutation.isPending ||
+      jobTitleEligibilityCheckMutation.isPending,
     /**
      * Initial form values
      */
@@ -1427,6 +1524,14 @@ export const useOnboarding = ({
      * @param values - New form values to set
      */
     checkFieldUpdates,
+
+    /**
+     * Runs the job title eligibility check with the current contract details values when the
+     * 'job_title_eligibility' feature is enabled and the role fields are filled. The prebuilt form calls it
+     * on blur; the check also runs when entering the contract details step and before submitting it.
+     * @param values - Current form values
+     */
+    checkJobTitleEligibility,
 
     /**
      * Function to parse form values before submission

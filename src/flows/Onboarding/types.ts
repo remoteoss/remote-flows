@@ -65,7 +65,8 @@ type OnboardingFeatures =
   | 'ea_preview'
   | 'pre_onboarding_requirements'
   | 'split_salary_description'
-  | 'daily_schedule';
+  | 'daily_schedule'
+  | 'job_title_eligibility';
 
 /**
  * JSON schema version configuration for a specific country
@@ -180,6 +181,9 @@ export type OnboardingFlowProps = {
      *   currency conversion toggle to the text component as three separate slots (`description`,
      *   `meta.helpCenter`, `descriptionSuffix`) instead of packing them into `description`.
      *   Custom text components must render `fieldData.descriptionSuffix` to keep the conversion toggle.
+     * - 'job_title_eligibility': Run the job title eligibility check on the contract details step once
+     *   the role fields are filled, and send the returned check id as
+     *   `additional_job_title_eligibility_check_slug` when submitting contract details.
      */
     features?: OnboardingFeatures[];
   };
