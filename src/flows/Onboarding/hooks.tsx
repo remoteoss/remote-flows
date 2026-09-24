@@ -513,6 +513,9 @@ export const useOnboarding = ({
     key: string;
     checkId: Promise<string | null>;
   } | null>(null);
+  const jobTitleEligibilityQueueRef = useRef<Promise<unknown>>(
+    Promise.resolve(),
+  );
 
   const runJobTitleEligibilityCheck = (
     params: CreateJobTitleEligibilityCheckParams,
@@ -522,12 +525,19 @@ export const useOnboarding = ({
       return jobTitleEligibilityCheckRef.current.checkId;
     }
 
-    const checkId = jobTitleEligibilityCheckMutationAsync({
-      employmentId: internalEmploymentId as string,
-      ...params,
-    }).then(
-      (response) => response?.data.job_title_eligibility_check.check_id ?? null,
-    );
+    const checkId = jobTitleEligibilityQueueRef.current
+      .catch(() => undefined)
+      .then(() =>
+        jobTitleEligibilityCheckMutationAsync({
+          employmentId: internalEmploymentId as string,
+          ...params,
+        }),
+      )
+      .then(
+        (response) =>
+          response?.data.job_title_eligibility_check.check_id ?? null,
+      );
+    jobTitleEligibilityQueueRef.current = checkId;
     jobTitleEligibilityCheckRef.current = { key, checkId };
     checkId.catch(() => {
       if (jobTitleEligibilityCheckRef.current?.checkId === checkId) {

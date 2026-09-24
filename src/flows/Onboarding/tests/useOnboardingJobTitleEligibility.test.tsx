@@ -221,6 +221,64 @@ describe.each(['ESP', 'PRT'])(
       });
     });
 
+    it('submits with its own check id when a newer check starts while it waits', async () => {
+      const pendingChecks: (() => void)[] = [];
+      server.use(
+        http.post(
+          '*/v2/employments/:id/job-title-eligibility-check',
+          async ({ request }) => {
+            const body = (await request.json()) as Record<string, unknown>;
+            eligibilityRequests.push(body);
+            await new Promise<void>((resolve) => {
+              pendingChecks.push(resolve);
+            });
+            return HttpResponse.json({
+              data: {
+                job_title_eligibility_check: {
+                  check_id: `check-onsite-${body.role_is_onsite}`,
+                  verdict: 'needs_review',
+                },
+              },
+            });
+          },
+        ),
+      );
+      const { result } = renderOnboarding(['job_title_eligibility']);
+
+      await goToContractDetails(result);
+
+      let submission: ReturnType<typeof result.current.onSubmit>;
+      act(() => {
+        submission = result.current.onSubmit(roleValues);
+      });
+      await waitFor(() => {
+        expect(pendingChecks).toHaveLength(1);
+      });
+
+      act(() => {
+        result.current.checkJobTitleEligibility({
+          ...roleValues,
+          role_is_onsite: 'yes',
+        });
+      });
+
+      pendingChecks[0]();
+      await waitFor(() => {
+        expect(pendingChecks).toHaveLength(2);
+      });
+      pendingChecks[1]();
+
+      await act(async () => {
+        await submission;
+      });
+
+      expect(updateRequests).toHaveLength(1);
+      expect(updateRequests[0].contract_details).toEqual({
+        ...roleValues,
+        additional_job_title_eligibility_check_slug: 'check-onsite-no',
+      });
+    });
+
     it('returns the check error instead of submitting contract details', async () => {
       server.use(
         http.post('*/v2/employments/:id/job-title-eligibility-check', () =>
