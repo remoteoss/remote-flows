@@ -44,6 +44,9 @@ export const useJobTitleEligibilityState = ({
   const visitRef = useRef(0);
   const [params, setParams] =
     useState<CreateJobTitleEligibilityCheckParams | null>(null);
+  const [submittedJobTitle, setSubmittedJobTitle] = useState<
+    string | undefined
+  >(undefined);
 
   const getOptions = (checkParams: CreateJobTitleEligibilityCheckParams) =>
     jobTitleEligibilityCheckOptions(
@@ -82,6 +85,8 @@ export const useJobTitleEligibilityState = ({
     startNewVisit: () => {
       visitRef.current += 1;
     },
+    submittedJobTitle,
+    setSubmittedJobTitle,
   };
 };
 
@@ -113,7 +118,7 @@ export const useJobTitleEligibilityCheck = ({
   stepValues,
   initialContractDetailsValues,
   fieldValues,
-  jobTitle,
+  fallbackJobTitle,
   parseFormValues,
   handleValidation,
 }: {
@@ -125,7 +130,11 @@ export const useJobTitleEligibilityCheck = ({
   stepValues: Record<string, unknown> | undefined;
   initialContractDetailsValues: Record<string, unknown>;
   fieldValues: FieldValues;
-  jobTitle: string | undefined;
+  /**
+   * Used when basic_information hasn't been (re)submitted this session yet — e.g. resuming
+   * an existing employment straight into contract_details.
+   */
+  fallbackJobTitle: string | undefined;
   parseFormValues: (values: FieldValues) => Promise<Record<string, unknown>>;
   handleValidation: (
     values: FieldValues,
@@ -141,7 +150,11 @@ export const useJobTitleEligibilityCheck = ({
     valuesRef,
     updateValues,
     startNewVisit,
+    submittedJobTitle,
   } = state;
+  // The job title just confirmed by a successful basic_information submit this session takes
+  // precedence — it's already known to be persisted — over the fallback, which can be stale.
+  const jobTitle = submittedJobTitle ?? fallbackJobTitle;
 
   const check = async (values: FieldValues) => {
     if (!enabled || !employmentId || currentStepName !== 'contract_details') {

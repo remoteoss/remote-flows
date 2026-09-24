@@ -360,7 +360,6 @@ export const useOnboarding = ({
   const {
     data: employment,
     isLoading: isLoadingEmployment,
-    isFetching: isFetchingEmployment,
     refetch: refetchEmployment,
   } = useEmploymentQuery({
     employmentId: internalEmploymentId as string,
@@ -1197,6 +1196,9 @@ export const useOnboarding = ({
                   employer_or_work_restrictions: false,
                 });
               }
+              jobTitleEligibilityState.setSubmittedJobTitle(
+                parsedValues.job_title as string | undefined,
+              );
 
               return response;
             }
@@ -1215,7 +1217,9 @@ export const useOnboarding = ({
             partner_external_id: partnerExternalId,
           });
           if (!response.error) {
-            await refetchEmployment();
+            jobTitleEligibilityState.setSubmittedJobTitle(
+              parsedValues.job_title as string | undefined,
+            );
           }
           return response;
         }
@@ -1374,10 +1378,6 @@ export const useOnboarding = ({
     ],
   );
 
-  const jobTitle = basicInformationInitialValues.job_title as
-    | string
-    | undefined;
-
   const jobTitleEligibility = useJobTitleEligibilityCheck({
     state: jobTitleEligibilityState,
     enabled: isJobTitleEligibilityEnabled,
@@ -1387,7 +1387,9 @@ export const useOnboarding = ({
     stepValues: stepState.values?.contract_details,
     initialContractDetailsValues: initialValues.contract_details,
     fieldValues,
-    jobTitle,
+    fallbackJobTitle: basicInformationInitialValues.job_title as
+      | string
+      | undefined,
     parseFormValues,
     handleValidation,
   });
@@ -1467,8 +1469,7 @@ export const useOnboarding = ({
       updateBenefitsOffersMutation.isPending ||
       updateEngagementAgreementMutation.isPending ||
       updateContractEligibilityMutation.isPending ||
-      jobTitleEligibility.isFetching ||
-      isFetchingEmployment,
+      jobTitleEligibility.isFetching,
     /**
      * Initial form values
      */

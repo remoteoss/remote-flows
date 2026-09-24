@@ -191,6 +191,58 @@ describe.each(['ESP', 'PRT'])(
       });
     });
 
+    it('sends the job title just submitted for basic information, not a stale server value', async () => {
+      employmentContractDetails = roleValues;
+      server.use(
+        http.get(
+          `*/v1/countries/${countryCode}/employment_basic_information*`,
+          () =>
+            HttpResponse.json({
+              data: {
+                properties: {
+                  name: { type: 'string', title: 'Name' },
+                  job_title: { type: 'string', title: 'Job title' },
+                },
+              },
+            }),
+        ),
+      );
+      const { result } = renderOnboarding(['job_title_eligibility']);
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+      expect(result.current.stepState.currentStep.name).toBe(
+        'basic_information',
+      );
+      // employmentDefaultResponse's basic_information.job_title is 'pm' — the submitted
+      // value below must win over that stale, already-fetched server value.
+
+      await act(async () => {
+        await result.current.onSubmit({
+          name: 'Jane Doe',
+          job_title: 'Staff Engineer',
+        });
+      });
+
+      act(() => {
+        result.current.goTo('contract_details');
+      });
+      await waitFor(() => {
+        expect(
+          result.current.fields.some(
+            (field) => field.name === 'role_description',
+          ),
+        ).toBe(true);
+      });
+
+      await waitFor(() => {
+        expect(eligibilityRequests).toEqual([
+          { ...roleValues, job_title: 'Staff Engineer' },
+        ]);
+      });
+    });
+
     it('does not check eligibility until every role field is filled and valid', async () => {
       const { result } = renderOnboarding(['job_title_eligibility']);
 
