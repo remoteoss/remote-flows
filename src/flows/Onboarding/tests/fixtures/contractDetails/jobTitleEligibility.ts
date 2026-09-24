@@ -112,11 +112,32 @@ export const contractDetailsSchemaJobTitleEligibilityWithResult = {
   },
 };
 
-export const jobTitleEligibilityCheckRiskyResponse = {
+const jobTitleEligibilityCheck = (
+  check_id: string | null,
+  verdict: string,
+) => ({
   data: {
     job_title_eligibility_check: {
-      check_id: 'check-id-risky',
-      verdict: 'eligible_with_risk_acknowledgement',
+      check_id,
+      verdict,
     },
   },
+});
+
+export const jobTitleEligibilityCheckResponses = {
+  eligibleByJobTitle: jobTitleEligibilityCheck(null, 'eligible'),
+  eligibleByRoleAnswers: jobTitleEligibilityCheck(
+    'check-id-eligible',
+    'eligible',
+  ),
+  notEligible: jobTitleEligibilityCheck(null, 'not_eligible'),
+  needsReview: jobTitleEligibilityCheck('check-id-review', 'needs_review'),
+  eligibleWithRiskAcknowledgement: jobTitleEligibilityCheck(
+    'check-id-risky',
+    'eligible_with_risk_acknowledgement',
+  ),
+  notAssessed: jobTitleEligibilityCheck(null, 'not_assessed'),
 };
+
+export const jobTitleEligibilityCheckRiskyResponse =
+  jobTitleEligibilityCheckResponses.eligibleWithRiskAcknowledgement;

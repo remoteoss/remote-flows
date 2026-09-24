@@ -7,6 +7,7 @@ import {
   employmentDefaultResponse,
   employmentUpdatedResponse,
   jobTitleEligibilityCheckResponse,
+  jobTitleEligibilityCheckResponses,
   jobTitleEligibilityCheckRiskyResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
 import { server } from '@/src/tests/server';
@@ -374,6 +375,96 @@ describe.each(['ESP', 'PRT'])(
           ),
         );
       });
+
+      it.each([
+        {
+          name: 'eligible from the job title alone',
+          response: jobTitleEligibilityCheckResponses.eligibleByJobTitle,
+          slug: null,
+          result: 'yes',
+          asksForAcknowledgement: false,
+        },
+        {
+          name: 'eligible from the role answers',
+          response: jobTitleEligibilityCheckResponses.eligibleByRoleAnswers,
+          slug: 'check-id-eligible',
+          result: 'yes',
+          asksForAcknowledgement: false,
+        },
+        {
+          name: 'not eligible',
+          response: jobTitleEligibilityCheckResponses.notEligible,
+          slug: null,
+          result: 'no',
+          asksForAcknowledgement: false,
+        },
+        {
+          name: 'needs review',
+          response: jobTitleEligibilityCheckResponses.needsReview,
+          slug: 'check-id-review',
+          result: 'maybe',
+          asksForAcknowledgement: false,
+        },
+        {
+          name: 'eligible with risk acknowledgement',
+          response:
+            jobTitleEligibilityCheckResponses.eligibleWithRiskAcknowledgement,
+          slug: 'check-id-risky',
+          result: 'yes_with_ack',
+          asksForAcknowledgement: true,
+        },
+        {
+          name: 'not assessed',
+          response: jobTitleEligibilityCheckResponses.notAssessed,
+          slug: null,
+          result: null,
+          asksForAcknowledgement: false,
+        },
+      ])(
+        'reacts to a $name verdict',
+        async ({
+          response,
+          slug,
+          result: checkResult,
+          asksForAcknowledgement,
+        }) => {
+          server.use(
+            http.post('*/v2/employments/:id/job-title-eligibility-check', () =>
+              HttpResponse.json(response),
+            ),
+          );
+          const { result } = renderOnboarding(['job_title_eligibility']);
+
+          await goToContractDetails(result);
+
+          await act(async () => {
+            await result.current.checkJobTitleEligibility(roleValues);
+          });
+
+          expect(
+            findField(result.current.fields, 'employer_acknowledges_risk')
+              ?.isVisible,
+          ).toBe(asksForAcknowledgement);
+
+          const acknowledgement = asksForAcknowledgement
+            ? { employer_acknowledges_risk: 'acknowledged' }
+            : {};
+
+          await act(async () => {
+            await result.current.onSubmit({
+              ...roleValues,
+              ...acknowledgement,
+            });
+          });
+
+          expect(updateRequests[0].contract_details).toEqual({
+            ...roleValues,
+            ...acknowledgement,
+            additional_job_title_eligibility_check_slug: slug,
+            additional_job_title_eligibility_check_result: checkResult,
+          });
+        },
+      );
 
       it('requires the risk acknowledgement once the check flags the role as risky', async () => {
         const { result } = renderOnboarding(['job_title_eligibility']);
