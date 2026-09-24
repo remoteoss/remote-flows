@@ -57,6 +57,27 @@ This project is a React component library (`@remoteoss/remote-flows`) that provi
 - Keep functions small and focused (ideally under 50 lines)
 - Add JSDoc comments for all public APIs with `@param`, `@returns`, and description
 
+**Inline Comments (implementation code, config, tests — not public-API JSDoc above):**
+
+- Default to no comments. Only add one when the WHY is genuinely non-obvious (a hidden constraint, a workaround for a specific bug, behavior that would surprise a reader) — never to restate WHAT the code does.
+- One short line max. No multi-line comment blocks or paragraphs.
+- Never reference the current task, PR, fix, or caller (e.g. "used by X", "added for the Y flow", "fixes #123") — that belongs in the commit message or PR description, not the file.
+
+**❌ INCORRECT: multi-line comment explaining a design decision**
+
+```yaml
+# Deliberately not diffing the regenerated output against what's committed:
+# the schema drifts independently of this PR, so a diff here isn't a
+# failure. Only a nonzero exit should fail this job.
+- name: Run codegen
+```
+
+**✅ CORRECT: no comment — rationale lives in the PR description**
+
+```yaml
+- name: Run codegen
+```
+
 ### Import Conventions
 
 Imports should be organized in this order:
@@ -495,6 +516,7 @@ Before approving a PR, verify:
 - [ ] **No breaking changes** - Or properly documented with `BREAKING CHANGE:`
 - [ ] **New tests added** - All new features/fixes have tests
 - [ ] **JSDoc added** - Public APIs have documentation
+- [ ] **No unnecessary comments** - Implementation/config code has no comments restating WHAT it does, no multi-line comment blocks, and no task/PR/fix references; only genuinely non-obvious WHY, one line max
 - [ ] **Bundle size checked** - No unexpected size increases
 - [ ] **Accessibility maintained** - Keyboard navigation and ARIA work
 - [ ] **Error handling present** - All async operations handle errors
