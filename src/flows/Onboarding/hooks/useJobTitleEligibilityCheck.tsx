@@ -78,9 +78,8 @@ export const useJobTitleEligibilityCheck = ({
   ) => Promise<ValidationResult | null | undefined>;
   submittedJobTitle: string | undefined;
 }) => {
-  console.log('useJobTitleEligibilityCheck hook');
   const queryClient = useQueryClient();
-  const { setParams, getOptions, query } = useJobTitleEligibilityState({
+  const { params, setParams, getOptions, query } = useJobTitleEligibilityState({
     employmentId,
     enabled,
     currentStepName,
@@ -90,30 +89,21 @@ export const useJobTitleEligibilityCheck = ({
 
   const check = async (values: FieldValues) => {
     if (!enabled || !employmentId || currentStepName !== 'contract_details') {
-      console.log('Job title eligibility check not running yet');
       return;
     }
-    // check validation to see if form is valid
     const validation = await handleValidation(values);
-    console.log('Validation result', validation);
-    // parse form values to get the values for the job title eligibility check
     const parsedValues = await parseFormValues(values);
-    console.log('Parsed values', parsedValues);
-    // get the parameters for the job title eligibility check
     const nextParams = getJobTitleEligibilityParams(
       contractDetailsFields,
       parsedValues,
       validation?.formErrors,
       jobTitle,
     );
-    console.log('Next params', nextParams);
-    let paramsChanged = false;
-    setParams((current) => {
-      paramsChanged = !equal(current, nextParams);
-      return paramsChanged ? nextParams : current;
-    });
+    const paramsChanged = !equal(params, nextParams);
+    if (paramsChanged) {
+      setParams(nextParams);
+    }
     if (nextParams && paramsChanged) {
-      console.log('Fetching job title eligibility check', nextParams);
       await queryClient
         .query(getOptions(nextParams))
         .catch(() =>
