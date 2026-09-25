@@ -13,7 +13,7 @@ dist
 .idea
 .DS_Store
 .env
-.env.sandbox
+.env.*
 coverage
 example/public/
 out

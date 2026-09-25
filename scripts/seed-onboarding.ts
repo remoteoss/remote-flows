@@ -30,17 +30,51 @@
  * Usage (from repo root):
  *   npm run seed:onboarding -- --country=DEU
  *   npm run seed:onboarding -- --country=ESP --basic-info-version=4
+ *
+ * By default this proxies through a locally running `example` dev server
+ * (BASE_URL, `example/.env`'s VITE_REMOTE_GATEWAY decides which gateway that
+ * is - easy to lose track of).
+ *
+ * Pass --env=sandbox|production|staging|partners to instead talk to that
+ * gateway directly, with no dev server required: credentials come from
+ * .env.<env> at the repo root (VITE_CLIENT_ID, VITE_CLIENT_SECRET,
+ * VITE_REMOTE_GATEWAY=<env>, VITE_REFRESH_TOKEN - same shape as
+ * example/.env), and auth reuses example/api/{utils,get_token,proxy}.js
+ * verbatim so there's one source of truth for how tokens get minted. Optional
+ * VITE_APP_URL=<deployed app URL> in that same file gets you a ready-to-click
+ * link (with ?employmentId= prefilled) in the final output.
+ *
+ *   npm run seed:onboarding -- --country=DEU --env=sandbox
  */
 import dotenv from 'dotenv';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fillSchema, pickSafeDate, safeStartDateYears } from './fill-schema';
-import { $TSFixMe } from '@/src/types/remoteFlows';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, '..', 'example', '.env') });
+const require = createRequire(import.meta.url);
 
-function parseArgs(argv: string[]) {
+type FormSchema = Record<string, unknown>;
+type HttpMethod = 'GET' | 'POST';
+type AuthHeaders = Record<string, string>;
+
+interface ApiOptions {
+  query?: Record<string, string | number | boolean | undefined>;
+  body?: unknown;
+}
+
+class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly body: unknown,
+  ) {
+    super(message);
+  }
+}
+
+function parseArgs(argv: string[]): Record<string, string | true> {
   const args: Record<string, string | true> = {};
   for (const raw of argv) {
     const match = raw.match(/^--([^=]+)(?:=(.*))?$/);
@@ -50,39 +84,78 @@ function parseArgs(argv: string[]) {
 }
 
 const args = parseArgs(process.argv.slice(2));
-const COUNTRY = (
-  typeof args.country === 'string' ? args.country : 'DEU'
-).toUpperCase();
-const BASIC_INFO_VERSION = Number(args['basic-info-version'] || 4);
-const PORT = process.env.PORT || 3001;
-const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+const stringArg = (key: string): string | undefined => {
+  const value = args[key];
+  return typeof value === 'string' ? value : undefined;
+};
+const COUNTRY = (stringArg('country') || 'DEU').toUpperCase();
+const BASIC_INFO_VERSION = Number(stringArg('basic-info-version') || 4);
+const ENV = stringArg('env');
 
-class ApiError extends Error {
-  status: number;
-  body: $TSFixMe;
-  constructor(message: string, status: number, body: $TSFixMe) {
-    super(message);
-    this.status = status;
-    this.body = body;
+let BASE_URL: string;
+let getAuthHeaders = async (
+  _method: HttpMethod,
+  _urlPath: string,
+): Promise<AuthHeaders> => ({});
+
+if (ENV) {
+  const envFile = path.resolve(__dirname, '..', `.env.${ENV}`);
+  dotenv.config({ path: envFile });
+  const { buildGatewayURL } = require('../example/api/utils.js') as {
+    buildGatewayURL: () => string | undefined;
+  };
+  const { fetchAccessToken, fetchClientCredentialsAccessToken } =
+    require('../example/api/get_token.js') as {
+      fetchAccessToken: () => Promise<{ accessToken: string }>;
+      fetchClientCredentialsAccessToken: () => Promise<{
+        accessToken: string;
+      }>;
+    };
+  const { getTokenType } = require('../example/api/proxy.js') as {
+    getTokenType: (method: string, path: string) => string;
+  };
+
+  const gatewayURL = buildGatewayURL();
+  if (!gatewayURL) {
+    throw new Error(
+      `Unknown --env=${ENV}, or ${envFile} is missing/doesn't set VITE_REMOTE_GATEWAY.`,
+    );
   }
+  BASE_URL = gatewayURL;
+  console.log(`Environment: ${ENV} -> ${BASE_URL} (from ${envFile})`);
+
+  getAuthHeaders = async (method, urlPath) => {
+    const { accessToken } =
+      getTokenType(method, urlPath) === 'client-credentials'
+        ? await fetchClientCredentialsAccessToken()
+        : await fetchAccessToken();
+    return { Authorization: `Bearer ${accessToken}` };
+  };
+} else {
+  dotenv.config({ path: path.resolve(__dirname, '..', 'example', '.env') });
+  const PORT = process.env.PORT || 3001;
+  BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 }
 
-async function api(
-  method: string,
+async function api<T = unknown>(
+  method: HttpMethod,
   urlPath: string,
-  { query, body }: { query?: Record<string, unknown>; body?: unknown } = {},
-): Promise<$TSFixMe> {
+  { query, body }: ApiOptions = {},
+): Promise<T> {
   const url = new URL(BASE_URL + urlPath);
   for (const [key, value] of Object.entries(query || {})) {
     if (value !== undefined) url.searchParams.set(key, String(value));
   }
   const res = await fetch(url, {
     method,
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(await getAuthHeaders(method, urlPath)),
+    },
     body: body ? JSON.stringify(body) : undefined,
   });
   const text = await res.text();
-  let json;
+  let json: unknown;
   try {
     json = text ? JSON.parse(text) : undefined;
   } catch {
@@ -95,14 +168,14 @@ async function api(
       json,
     );
   }
-  return json;
+  return json as T;
 }
 
 async function fetchSchema(
   form: string,
   jsonSchemaVersion?: number,
-): Promise<Record<string, unknown>> {
-  return api('GET', `/v1/countries/${COUNTRY}/${form}`, {
+): Promise<FormSchema> {
+  return api<{ data: FormSchema }>('GET', `/v1/countries/${COUNTRY}/${form}`, {
     query: { skip_benefits: true, json_schema_version: jsonSchemaVersion },
   }).then((res) => res.data);
 }
@@ -114,10 +187,9 @@ async function findSafeStartDate(): Promise<string> {
   const holidayDates = new Set<string>();
   try {
     for (const year of safeStartDateYears()) {
-      const holidays = await api(
-        'GET',
-        `/v1/countries/${COUNTRY}/holidays/${year}`,
-      );
+      const holidays = await api<{
+        data?: { day: string; observed_day?: string }[];
+      }>('GET', `/v1/countries/${COUNTRY}/holidays/${year}`);
       for (const holiday of holidays.data ?? []) {
         holidayDates.add(holiday.day);
         if (holiday.observed_day) holidayDates.add(holiday.observed_day);
@@ -149,14 +221,18 @@ async function main() {
   }
 
   console.log('\nCreating employment...');
-  const created = await api('POST', '/v1/employments', {
-    query: { json_schema_version: BASIC_INFO_VERSION },
-    body: {
-      basic_information: basicInformation,
-      type: 'employee',
-      country_code: COUNTRY,
+  const created = await api<{ data?: { employment?: { id?: string } } }>(
+    'POST',
+    '/v1/employments',
+    {
+      query: { json_schema_version: BASIC_INFO_VERSION },
+      body: {
+        basic_information: basicInformation,
+        type: 'employee',
+        country_code: COUNTRY,
+      },
     },
-  });
+  );
   const employmentId = created?.data?.employment?.id;
   if (!employmentId) {
     throw new Error(
@@ -174,7 +250,7 @@ async function main() {
   });
 
   console.log('\nChecking for an engagement_agreement_details step...');
-  let engagementSchema: Record<string, unknown> | undefined;
+  let engagementSchema: FormSchema | undefined;
   try {
     engagementSchema = await fetchSchema('engagement_agreement_details');
   } catch (err) {
@@ -189,7 +265,7 @@ async function main() {
 
   if (
     engagementSchema &&
-    Object.keys((engagementSchema.properties as Record<string, unknown>) || {})
+    Object.keys((engagementSchema as { properties?: object }).properties || {})
       .length > 0
   ) {
     const { values: engagementDetails, skipped } = fillSchema(engagementSchema);
@@ -213,15 +289,25 @@ async function main() {
   console.log(
     `\nDone. Employment ${employmentId} for ${COUNTRY} is now sitting at contract_details.`,
   );
-  console.log(
-    `Open ${BASE_URL}/?demo=onboarding-basic , enter this Employment ID (with the usual\n` +
-      'company id) on the intro form, and click Continue through Select Country and Basic\n' +
-      'Information (both already prefilled from what this script created) to land on Contract Details.',
-  );
+  const appUrl = process.env.VITE_APP_URL || (ENV ? undefined : BASE_URL);
+  if (appUrl) {
+    console.log(
+      `\nOpen this link (Employment ID is prefilled via ?employmentId=) - just fill in the\n` +
+        `company id and click Continue through Select Country and Basic Information to land\n` +
+        `on Contract Details:\n\n  ${appUrl}/?demo=onboarding-basic&employmentId=${employmentId}\n`,
+    );
+  } else {
+    console.log(
+      `\nOpen your app's onboarding demo, enter this Employment ID (?employmentId=${employmentId}\n` +
+        'also works as a query param) with the usual company id, and click Continue through\n' +
+        'Select Country and Basic Information to land on Contract Details.\n' +
+        `Tip: set VITE_APP_URL=<your deployed app URL> in .env.${ENV} to get a ready-to-click link next time.`,
+    );
+  }
 }
 
-main().catch((err) => {
-  console.error('\nFailed:', err.message);
+main().catch((err: unknown) => {
+  console.error('\nFailed:', err instanceof Error ? err.message : err);
   if (err instanceof ApiError && err.body) {
     console.error(JSON.stringify(err.body, null, 2));
   }
