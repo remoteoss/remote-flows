@@ -53,6 +53,7 @@ import { useErrorReporting } from '@/src/components/error-handling/useErrorRepor
 import { useEmploymentQuery } from '@/src/common/api/employment';
 import { DailyScheduleContainer } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleContainer';
 import { DailySchedule } from '@/src/flows/Onboarding/components/DailySchedule/DailySchedule';
+import { useJobTitleEligibilityCheck } from '@/src/flows/Onboarding/hooks/useJobTitleEligibilityCheck';
 
 type OnboardingHookProps = Omit<OnboardingFlowProps, 'render'>;
 
@@ -569,6 +570,10 @@ export const useOnboarding = ({
     usesJsfV1ContractDetails(internalCountryCode) &&
     (stepState.currentStep.name === 'contract_details' ||
       Boolean(employmentId)),
+  );
+
+  const isJobTitleEligibilityEnabled = Boolean(
+    options?.features?.includes('job_title_eligibility'),
   );
 
   const {
@@ -1355,6 +1360,21 @@ export const useOnboarding = ({
     ],
   );
 
+  const jobTitleEligibility = useJobTitleEligibilityCheck({
+    enabled: isJobTitleEligibilityEnabled,
+    employmentId: internalEmploymentId,
+    currentStepName,
+    contractDetailsFields: stepFields.contract_details,
+    submittedJobTitle: employment?.basic_information?.job_title as
+      | string
+      | undefined,
+    fallbackJobTitle: basicInformationInitialValues.job_title as
+      | string
+      | undefined,
+    parseFormValues,
+    handleValidation,
+  });
+
   return {
     /**
      * Employment id passed useful to be used between components
@@ -1434,6 +1454,15 @@ export const useOnboarding = ({
      * @returns Parsed form values
      */
     parseFormValues,
+
+    /**
+     * Runs the job title eligibility check with the given contract details values when the
+     * 'job_title_eligibility' feature is enabled, the current step is contract_details, and the
+     * role fields are filled. The prebuilt form calls it on blur; call it yourself from a custom
+     * UI to trigger the same check at another point (e.g. on step entry or before submitting).
+     * @param values - Current form values
+     */
+    checkJobTitleEligibility: jobTitleEligibility.check,
 
     /**
      * Function to handle form submission

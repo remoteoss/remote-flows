@@ -1,4 +1,9 @@
-import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
+import {
+  queryOptions,
+  useMutation,
+  useQuery,
+  UseQueryResult,
+} from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import { Client } from '@/src/client/client';
 import {
@@ -32,6 +37,8 @@ import {
   getV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirements,
   getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId,
   PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsData,
+  CreateJobTitleEligibilityCheckParams,
+  postV2EmploymentsEmploymentIdJobTitleEligibilityCheck,
 } from '@/src/client';
 
 import { useClient } from '@/src/context';
@@ -56,6 +63,11 @@ import {
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { countriesOptions } from '@/src/common/api/countries';
 import { useMemo } from 'react';
+import { $TSFixMe } from '@/scripts/types';
+import {
+  extractFieldErrors,
+  MutationErrorStructure,
+} from '@/src/lib/mutations';
 
 export const useCompany = (companyId: string) => {
   const { client } = useClient();
@@ -861,3 +873,47 @@ export const useEmploymentAgreementPreview = (
     select: (response) => response.data?.data.employment_agreement,
   });
 };
+
+export const jobTitleEligibilityCheckOptions = (
+  client: Client,
+  employmentId: string,
+  params: CreateJobTitleEligibilityCheckParams,
+) =>
+  queryOptions({
+    queryKey: ['job-title-eligibility-check', employmentId, params] as const,
+    retry: false,
+    staleTime: Infinity,
+    queryFn: async ({ signal }) => {
+      const response =
+        await postV2EmploymentsEmploymentIdJobTitleEligibilityCheck({
+          client,
+          headers: {
+            Authorization: ``,
+          },
+          body: params,
+          path: {
+            employment_id: employmentId,
+          },
+          signal,
+        });
+
+      if (response.error || !response.data) {
+        const errorData =
+          (response.error as $TSFixMe)?.error || response.error || {};
+        const error: MutationErrorStructure = {
+          error: new Error(
+            typeof errorData.message === 'string'
+              ? errorData.message
+              : 'Something went wrong. Please try again later.',
+          ),
+          rawError: response.error as Record<string, unknown>,
+          normalizedErrors: errorData.errors || {},
+          fieldErrors: extractFieldErrors(response.error),
+          response: response.response,
+        };
+        throw error;
+      }
+
+      return response.data.data.job_title_eligibility_check;
+    },
+  });
