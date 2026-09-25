@@ -1,7 +1,7 @@
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import equal from 'fast-deep-equal';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { CreateJobTitleEligibilityCheckParams } from '@/src/client';
 import { Client } from '@/src/client/client';
@@ -26,8 +26,14 @@ export const useJobTitleEligibilityState = ({
   currentStepName: StepKeys;
 }) => {
   const { client } = useClient();
-  const [params, setParams] =
+  const [params, setParamsState] =
     useState<CreateJobTitleEligibilityCheckParams | null>(null);
+  const paramsRef = useRef(params);
+
+  const setParams = (next: CreateJobTitleEligibilityCheckParams | null) => {
+    paramsRef.current = next;
+    setParamsState(next);
+  };
 
   const getOptions = (checkParams: CreateJobTitleEligibilityCheckParams) =>
     jobTitleEligibilityCheckOptions(
@@ -47,7 +53,7 @@ export const useJobTitleEligibilityState = ({
   });
 
   return {
-    params,
+    paramsRef,
     setParams,
     getOptions,
     query,
@@ -76,11 +82,12 @@ export const useJobTitleEligibilityCheck = ({
   submittedJobTitle: string | undefined;
 }) => {
   const queryClient = useQueryClient();
-  const { params, setParams, getOptions, query } = useJobTitleEligibilityState({
-    employmentId,
-    enabled,
-    currentStepName,
-  });
+  const { paramsRef, setParams, getOptions, query } =
+    useJobTitleEligibilityState({
+      employmentId,
+      enabled,
+      currentStepName,
+    });
 
   const jobTitle = submittedJobTitle ?? fallbackJobTitle;
 
@@ -96,7 +103,7 @@ export const useJobTitleEligibilityCheck = ({
       validation?.formErrors,
       jobTitle,
     );
-    const paramsChanged = !equal(params, nextParams);
+    const paramsChanged = !equal(paramsRef.current, nextParams);
     if (paramsChanged) {
       setParams(nextParams);
     }
