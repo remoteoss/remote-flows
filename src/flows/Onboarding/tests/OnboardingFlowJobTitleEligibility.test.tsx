@@ -141,6 +141,15 @@ describe('OnboardingFlow - job title eligibility check on blur', () => {
     await user.click(roleDescription);
     await user.tab();
 
+    await waitFor(
+      () => {
+        expect(jobTitleEligibilityCheckSpy.mock.calls.length).toBeGreaterThan(
+          1,
+        );
+      },
+      { timeout: 200 },
+    ).catch(() => undefined);
+
     expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1);
   });
 });
