@@ -611,6 +611,29 @@ describe('OnboardingInvite', () => {
     expect(button).toBeDisabled();
   });
 
+  it('should disable button when employment status is "job_title_review"', async () => {
+    server.use(
+      http.get('*/v1/employments/*', () => {
+        return HttpResponse.json({
+          ...employmentDefaultResponse,
+          data: {
+            ...employmentDefaultResponse.data,
+            employment: {
+              ...employmentDefaultResponse.data.employment,
+              status: 'job_title_review',
+            },
+          },
+        });
+      }),
+    );
+
+    render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
+
+    const button = await screen.findByText(/Invite Employee/i);
+    expect(button).toBeInTheDocument();
+    expect(button).toBeDisabled();
+  });
+
   it('should call onSuccess with "created_awaiting_reserve" status when creating a reserve invoice', async () => {
     server.use(
       http.get('*/v1/companies/:companyId', () => {
