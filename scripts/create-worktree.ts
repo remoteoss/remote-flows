@@ -10,7 +10,13 @@
  *   npm run worktree -- --pr <number>                    Create a worktree for a PR's branch
  */
 import { execSync } from 'child_process';
-import { existsSync, copyFileSync, readFileSync, writeFileSync } from 'fs';
+import {
+  existsSync,
+  copyFileSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'fs';
 import path from 'path';
 import { parseArgs } from 'util';
 
@@ -196,6 +202,14 @@ async function main() {
   if (existsSync(claudeLocalMd)) {
     copyFileSync(claudeLocalMd, path.join(worktreePath, 'CLAUDE.local.md'));
     log.info('Copied CLAUDE.local.md');
+  }
+
+  const gatewayEnvFiles = readdirSync(root).filter((name) =>
+    name.startsWith('.env.'),
+  );
+  for (const name of gatewayEnvFiles) {
+    copyFileSync(path.join(root, name), path.join(worktreePath, name));
+    log.info(`Copied ${name}`);
   }
 
   seedNodeModules(root, worktreePath, '');
