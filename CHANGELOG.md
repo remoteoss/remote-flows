@@ -10,11 +10,7 @@
 
 #### Fixes
 
-- disable lifecycle scripts during artifact updates (#1341) [#1341](https://github.com/remoteoss/remote-flows/pull/1341)
-- upload playwright-report from example/'s working directory (#1349) [#1349](https://github.com/remoteoss/remote-flows/pull/1349)
-- allow remote tarball fetches during artifact updates (#1346) [#1346](https://github.com/remoteoss/remote-flows/pull/1346)
 - fix CBA categories fieldset in contract details (#1366) [#1366](https://github.com/remoteoss/remote-flows/pull/1366)
-- send checkbox const value, not [true], in seed-onboarding (#1389) [#1389](https://github.com/remoteoss/remote-flows/pull/1389)
 
 #### Docs
 
@@ -27,6 +23,10 @@
 - extract onboarding json-schema versioning into its own file (#1386) [#1386](https://github.com/remoteoss/remote-flows/pull/1386)
 - extend Germany onboarding flow through Pre-Onboarding Requirements (#1370) [#1370](https://github.com/remoteoss/remote-flows/pull/1370)
 - seed onboarding directly against a gateway env (#1371) [#1371](https://github.com/remoteoss/remote-flows/pull/1371)
+- upload playwright-report from example/'s working directory (#1349) [#1349](https://github.com/remoteoss/remote-flows/pull/1349)
+- allow remote tarball fetches during artifact updates (#1346) [#1346](https://github.com/remoteoss/remote-flows/pull/1346)
+- disable lifecycle scripts during artifact updates (#1341) [#1341](https://github.com/remoteoss/remote-flows/pull/1341)
+- send checkbox const value, not [true], in seed-onboarding (#1389) [#1389](https://github.com/remoteoss/remote-flows/pull/1389)
 
 #### Chores
 
