@@ -13,12 +13,51 @@ allow() {
 
 if [[ "$cmd" =~ ^git\ fetch\ origin$ ]]; then
   allow "fetch origin, no refspec/flags"
-elif [[ "$cmd" =~ ^git\ fetch\ origin\ refs/pull/[0-9]+/head$ ]]; then
+  exit 0
+fi
+
+if [[ "$cmd" =~ ^git\ fetch\ origin\ refs/pull/[0-9]+/head$ ]]; then
   allow "fetch a PR ref for review"
-elif [[ "$cmd" =~ ^mkdir\ -p\ /tmp/[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
+  exit 0
+fi
+
+if [[ "$cmd" =~ ^mkdir\ -p\ /tmp/[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
   allow "scratch dir under /tmp"
-elif [[ "$cmd" =~ ^cat\ \>\ /tmp/[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
-  allow "scratch file write under /tmp"
+  exit 0
+fi
+
+if [[ "$cmd" =~ ^cat\ \>\ /tmp/[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
+  allow "scratch file write (no payload) under /tmp"
+  exit 0
+fi
+
+# cat > /tmp/<name> <<'DELIM' / <<"DELIM"  (heredoc payload).
+# The delimiter must be quoted (blocks $()/`` expansion in the body) and must
+# occur as a whole line exactly once, on the final line of the command — that
+# guarantees real bash's heredoc ends exactly where we think it does, so no
+# later line can smuggle in a second command after an early terminator.
+first_line="${cmd%%$'\n'*}"
+if [[ "$first_line" != "$cmd" ]]; then
+  header_re="^cat > /tmp/[A-Za-z0-9][A-Za-z0-9._-]*[[:space:]]<<[[:space:]]*('[A-Za-z_][A-Za-z0-9_]*'|\"[A-Za-z_][A-Za-z0-9_]*\")\$"
+  if [[ "$first_line" =~ $header_re ]]; then
+    delim="${BASH_REMATCH[1]}"
+    delim="${delim#[\'\"]}"
+    delim="${delim%[\'\"]}"
+    body="${cmd#*$'\n'}"
+    n=0
+    delim_count=0
+    delim_last_pos=0
+    while IFS= read -r line || [[ -n "$line" ]]; do
+      n=$((n + 1))
+      if [[ "$line" == "$delim" ]]; then
+        delim_count=$((delim_count + 1))
+        delim_last_pos=$n
+      fi
+    done <<<"$body"
+    if [[ "$delim_count" -eq 1 && "$delim_last_pos" -eq "$n" ]]; then
+      allow "scratch file heredoc write under /tmp"
+    fi
+  fi
 fi
 
 exit 0
