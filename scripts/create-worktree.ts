@@ -192,6 +192,12 @@ async function main() {
   setEnvPort(worktreeEnv, port);
   log.info(`Assigned example dev server port ${port}`);
 
+  const claudeLocalMd = path.join(root, 'CLAUDE.local.md');
+  if (existsSync(claudeLocalMd)) {
+    copyFileSync(claudeLocalMd, path.join(worktreePath, 'CLAUDE.local.md'));
+    log.info('Copied CLAUDE.local.md');
+  }
+
   seedNodeModules(root, worktreePath, '');
   seedNodeModules(root, worktreePath, 'example');
 
