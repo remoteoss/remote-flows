@@ -60,7 +60,7 @@ This project is a React component library (`@remoteoss/remote-flows`) that provi
 **Inline Comments (implementation code, config, tests — not public-API JSDoc above):**
 
 - Default to no comments. Only add one when the WHY is genuinely non-obvious (a hidden constraint, a workaround for a specific bug, behavior that would surprise a reader) — never to restate WHAT the code does.
-- One short line max. No multi-line comment blocks or paragraphs.
+- One short line max. No multi-line comment blocks or paragraphs. Exception: when a human explicitly asked for the comment, favor a clear plain-language explanation over compressing it to fit one line. This exception doesn't cover a comment added on the AI's own initiative for the non-obvious-why case above — keep those to one line, and skip them entirely if the code is actually simple.
 - Never reference the current task, PR, fix, or caller (e.g. "used by X", "added for the Y flow", "fixes #123") — that belongs in the commit message or PR description, not the file.
 
 **❌ INCORRECT: multi-line comment explaining a design decision**
