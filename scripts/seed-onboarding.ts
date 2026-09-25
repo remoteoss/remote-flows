@@ -110,6 +110,11 @@ const stringArg = (key: string): string | undefined => {
 };
 const COUNTRY = (stringArg('country') || 'DEU').toUpperCase();
 const BASIC_INFO_VERSION = Number(stringArg('basic-info-version') || 4);
+if ('env' in args && stringArg('env') === undefined) {
+  throw new Error(
+    '--env requires a value, e.g. --env=sandbox (got a bare --env flag).',
+  );
+}
 const ENV = stringArg('env');
 
 let BASE_URL: string;
