@@ -1,8 +1,11 @@
+import { $TSFixMe } from '@/src/types/remoteFlows';
 import {
   buildSteps,
   getBasicInformationSchemaVersion,
   getBenefitOffersSchemaVersion,
   getContractDetailsSchemaVersion,
+  getJobTitleEligibilityParams,
+  JOB_TITLE_ELIGIBILITY_SLUG_FIELD,
   usesJsfV1ContractDetails,
 } from '../utils';
 
@@ -265,5 +268,90 @@ describe('buildSteps', () => {
 
       expect(stepAtIndex?.name).toBe('contract_details');
     });
+  });
+});
+
+describe('getJobTitleEligibilityParams', () => {
+  const buildField = (name: string, isVisible = true): $TSFixMe => ({
+    name,
+    isVisible,
+  });
+
+  const roleFields = [
+    buildField(JOB_TITLE_ELIGIBILITY_SLUG_FIELD),
+    buildField('role_description'),
+    buildField('role_is_onsite'),
+    buildField('role_requires_license'),
+  ];
+
+  const filledValues = {
+    role_description: 'Backend engineer',
+    role_is_onsite: 'no',
+    role_requires_license: 'no',
+  };
+
+  it('returns null when the slug field is not part of the schema', () => {
+    const fields = roleFields.filter(
+      (field) => field.name !== JOB_TITLE_ELIGIBILITY_SLUG_FIELD,
+    );
+
+    const result = getJobTitleEligibilityParams(fields, filledValues);
+
+    expect(result).toBeNull();
+  });
+
+  it('returns null when a role field is missing a value', () => {
+    const result = getJobTitleEligibilityParams(roleFields, {
+      ...filledValues,
+      role_description: '',
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it('returns null when a role field has a validation error', () => {
+    const result = getJobTitleEligibilityParams(roleFields, filledValues, {
+      role_description: 'Too short',
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it('ignores a role field that is hidden by conditional logic', () => {
+    const fields = [
+      buildField(JOB_TITLE_ELIGIBILITY_SLUG_FIELD),
+      buildField('role_description'),
+      buildField('role_is_onsite', false),
+      buildField('role_requires_license'),
+    ];
+
+    const result = getJobTitleEligibilityParams(fields, filledValues);
+
+    expect(result).toEqual({
+      role_description: 'Backend engineer',
+      role_requires_license: 'no',
+    });
+  });
+
+  it('returns the params with job_title when all role fields are filled and valid', () => {
+    const result = getJobTitleEligibilityParams(
+      roleFields,
+      filledValues,
+      null,
+      'Software Engineer',
+    );
+
+    expect(result).toEqual({
+      job_title: 'Software Engineer',
+      role_description: 'Backend engineer',
+      role_is_onsite: 'no',
+      role_requires_license: 'no',
+    });
+  });
+
+  it('omits job_title when none is available', () => {
+    const result = getJobTitleEligibilityParams(roleFields, filledValues);
+
+    expect(result).toEqual(filledValues);
   });
 });
