@@ -13,29 +13,21 @@ allow() {
 
 if [[ "$cmd" =~ ^git\ fetch\ origin$ ]]; then
   allow "fetch origin, no refspec/flags"
-  exit 0
 fi
 
 if [[ "$cmd" =~ ^git\ fetch\ origin\ refs/pull/[0-9]+/head$ ]]; then
   allow "fetch a PR ref for review"
-  exit 0
 fi
 
 if [[ "$cmd" =~ ^mkdir\ -p\ /tmp/[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
   allow "scratch dir under /tmp"
-  exit 0
 fi
 
 if [[ "$cmd" =~ ^cat\ \>\ /tmp/[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
   allow "scratch file write (no payload) under /tmp"
-  exit 0
 fi
 
-# cat > /tmp/<name> <<'DELIM' / <<"DELIM"  (heredoc payload).
-# The delimiter must be quoted (blocks $()/`` expansion in the body) and must
-# occur as a whole line exactly once, on the final line of the command — that
-# guarantees real bash's heredoc ends exactly where we think it does, so no
-# later line can smuggle in a second command after an early terminator.
+# the delimiter must be the sole match and the final line, or bash would end the heredoc early and run whatever follows as a second command
 first_line="${cmd%%$'\n'*}"
 if [[ "$first_line" != "$cmd" ]]; then
   header_re="^cat > /tmp/[A-Za-z0-9][A-Za-z0-9._-]*[[:space:]]<<[[:space:]]*('[A-Za-z_][A-Za-z0-9_]*'|\"[A-Za-z_][A-Za-z0-9_]*\")\$"
