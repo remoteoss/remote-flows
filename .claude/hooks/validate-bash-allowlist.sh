@@ -23,16 +23,20 @@ if [[ "$cmd" =~ ^mkdir\ -p\ /tmp/[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
   allow "scratch dir under /tmp"
 fi
 
-if [[ "$cmd" =~ ^cat\ \>\ /tmp/[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
-  allow "scratch file write (no payload) under /tmp"
+if [[ "$cmd" =~ ^cat\ \>\ /tmp/([A-Za-z0-9][A-Za-z0-9._-]*)$ ]]; then
+  target="/tmp/${BASH_REMATCH[1]}"
+  if [[ ! -L "$target" ]]; then
+    allow "scratch file write (no payload) under /tmp"
+  fi
 fi
 
 # the delimiter must be the sole match and the final line, or bash would end the heredoc early and run whatever follows as a second command
 first_line="${cmd%%$'\n'*}"
 if [[ "$first_line" != "$cmd" ]]; then
-  header_re="^cat > /tmp/[A-Za-z0-9][A-Za-z0-9._-]*[[:space:]]<<[[:space:]]*('[A-Za-z_][A-Za-z0-9_]*'|\"[A-Za-z_][A-Za-z0-9_]*\")\$"
+  header_re="^cat > /tmp/([A-Za-z0-9][A-Za-z0-9._-]*)[[:space:]]<<[[:space:]]*('[A-Za-z_][A-Za-z0-9_]*'|\"[A-Za-z_][A-Za-z0-9_]*\")\$"
   if [[ "$first_line" =~ $header_re ]]; then
-    delim="${BASH_REMATCH[1]}"
+    target="/tmp/${BASH_REMATCH[1]}"
+    delim="${BASH_REMATCH[2]}"
     delim="${delim#[\'\"]}"
     delim="${delim%[\'\"]}"
     body="${cmd#*$'\n'}"
@@ -46,7 +50,7 @@ if [[ "$first_line" != "$cmd" ]]; then
         delim_last_pos=$n
       fi
     done <<<"$body"
-    if [[ "$delim_count" -eq 1 && "$delim_last_pos" -eq "$n" ]]; then
+    if [[ "$delim_count" -eq 1 && "$delim_last_pos" -eq "$n" && ! -L "$target" ]]; then
       allow "scratch file heredoc write under /tmp"
     fi
   fi
