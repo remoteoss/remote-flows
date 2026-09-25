@@ -345,8 +345,8 @@ export type PayCode = {
  * Unified.Employment.UpsertBenefitOffersRequest
  *
  * Upsert benefit offers request. As its properties may vary depending on the employment,
- * you must query the [Show benefit offers schema](#tag/benefits/operation/get_show_benefit_offer) endpoint
- * passing the employment id
+ *           you must query the [Show benefit offers schema](#tag/benefits/operation/get_show_benefit_offer) endpoint
+ *           passing the employment id
  */
 export type UnifiedEmploymentUpsertBenefitOffersRequest = {
   [key: string]: unknown;
@@ -2146,11 +2146,11 @@ export type EmployeeFileParams = {
 export type EmploymentBasicResponse = {
   /**
    * Employment basic information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `basic_information` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `basic_information` as path parameters.
    *
-   * When present, `login_email` indicates which address the employee logs in with: `"personal"` or
-   * `"work"`.
+   *             When present, `login_email` indicates which address the employee logs in with: `"personal"` or
+   *             `"work"`.
    */
   basic_information?: {
     [key: string]: unknown;
@@ -2847,8 +2847,10 @@ export type EmploymentFile = {
    * The broad category of the file. Contractor Services Agreements (CSAs) are reported here with type "contract" — see the /contract-documents endpoint for contract-document-specific types.
    */
   type:
+    | 'annual_leave'
     | 'background_check'
     | 'bank_account_holder_name'
+    | 'bereavement_leave'
     | 'contractor_invoice'
     | 'direct_offboarding'
     | 'document_scan'
@@ -2860,14 +2862,21 @@ export type EmploymentFile = {
     | 'id'
     | 'job'
     | 'leave_of_absence'
+    | 'marriage_leave'
+    | 'maternity_leave'
     | 'occupational_risk'
     | 'offboarding'
     | 'other'
+    | 'parental_leave'
+    | 'paternity_leave'
     | 'performance_review'
     | 'personal'
     | 'safety_training'
+    | 'sick_leave'
     | 'time_attendance'
     | 'timeoff'
+    | 'unpaid_leave'
+    | 'vehicle_document'
     | 'work_confirmation'
     | 'contract'
     | 'document'
@@ -3075,6 +3084,10 @@ export type ImportJobRow = {
     [key: string]: unknown;
   };
   row_number: number;
+  /**
+   * The id of the schema variant this row's fields follow, a key of `row_schema_variants` on the job-scoped json-schema response. `null` when the row uses the job-level schema. Only present for job types with per-row schema variants.
+   */
+  schema_variant_id?: string | null;
   status?:
     | 'successful'
     | 'imported'
@@ -3767,40 +3780,40 @@ export type CustomFieldLinkable =
 export type EmploymentFullParams = {
   /**
    * Home address information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `address_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `address_details` as path parameters.
    */
   address_details?: {
     [key: string]: unknown;
   };
   /**
    * Administrative information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `administrative_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `administrative_details` as path parameters.
    */
   administrative_details?: {
     [key: string]: unknown;
   };
   /**
    * Bank account information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `bank_account_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `bank_account_details` as path parameters.
    */
   bank_account_details?: {
     [key: string]: unknown;
   };
   /**
    * Employment basic information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `employment_basic_information` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `employment_basic_information` as path parameters.
    */
   basic_information?: {
     [key: string]: unknown;
   };
   /**
    * Billing address information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `billing_address_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `billing_address_details` as path parameters.
    */
   billing_address_details?: {
     [key: string]: unknown;
@@ -3811,8 +3824,8 @@ export type EmploymentFullParams = {
   company_id?: string;
   /**
    * Contract information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `contract_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `contract_details` as path parameters.
    */
   contract_details?: {
     [key: string]: unknown;
@@ -3830,8 +3843,8 @@ export type EmploymentFullParams = {
   department_id?: string | null;
   /**
    * Emergency contact information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `emergency_contact_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `emergency_contact_details` as path parameters.
    */
   emergency_contact_details?: {
     [key: string]: unknown;
@@ -3858,16 +3871,16 @@ export type EmploymentFullParams = {
   partner_external_id?: string | null;
   /**
    * Personal details information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `personal_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `personal_details` as path parameters.
    */
   personal_details?: {
     [key: string]: unknown;
   };
   /**
    * Pricing plan details information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `pricing_plan_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `pricing_plan_details` as path parameters.
    */
   pricing_plan_details?: {
     [key: string]: unknown;
@@ -3942,12 +3955,12 @@ export type AccountsAssignedRoles = Array<{
     | 'rps'
     | 'secondary_reports'
     | 'direct_reports'
-    | 'direct_and_indirect_reports'
     | 'employment_countries'
+    | 'assigned_billing_legal_entities'
+    | 'direct_and_indirect_reports'
     | 'employment_departments'
     | 'employment_company_structure_nodes'
-    | 'onboarding_reports'
-    | 'assigned_billing_legal_entities';
+    | 'onboarding_reports';
   name: string;
   slug: string;
   type?: 'default' | 'custom' | 'template' | 'owner';
@@ -3973,6 +3986,7 @@ export type CreateWebhookCallbackParams = {
     | 'company.manager_updated'
     | 'company.owner_changed'
     | 'company.archived'
+    | 'company.hard_deleted'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
     | 'company.eor_hiring.no_reserve_payment_requested'
@@ -4207,9 +4221,9 @@ export type CountriesResponse = {
  * The assertion token is a JWT token that contains the following claims:
  *
  * - `sub`: The subject of the token, in one of the following formats:
- * - `urn:remote-api:employment:<employment_id>` — mints an **employee-role** access token whose `sub` is the employment owner's user slug. Scopes are restricted to those valid for the employee role (e.g. `personal_detail:read`, `timeoff:write`).
- * - `urn:remote-api:employee:employment:<employment_id>` — same as above; the recommended format for new integrations. Use this when issuing a token on behalf of an employee so they can submit their own onboarding data (e.g. `PUT /v1/employee/address`).
- * - `urn:remote-api:company-manager:user:<user_id>` — mints a **company_manager-role** access token. Scopes are restricted to those valid for the company-manager role.
+ *   - `urn:remote-api:employment:<employment_id>` — mints an **employee-role** access token whose `sub` is the employment owner's user slug. Scopes are restricted to those valid for the employee role (e.g. `personal_detail:read`, `timeoff:write`).
+ *   - `urn:remote-api:employee:employment:<employment_id>` — same as above; the recommended format for new integrations. Use this when issuing a token on behalf of an employee so they can submit their own onboarding data (e.g. `PUT /v1/employee/address`).
+ *   - `urn:remote-api:company-manager:user:<user_id>` — mints a **company_manager-role** access token. Scopes are restricted to those valid for the company-manager role.
  *
  * - `iss`: The issuer of the token, which is the client ID
  * - `aud`: The audience of the token, which is the OAuth audience
@@ -4591,10 +4605,10 @@ export type BulkEmploymentImportJob = {
    * BulkImport.ImportJobStage
    *
    *   The stage of the import job.
-   * * `creation` - The import job is in the creation stage, which means the rows are being created.
-   * * `column_mapping` - The import job is in the column mapping stage, which means the CSV headers are being mapped to JSON schema fields.
-   * * `validation` - The import job is in the validation stage, which means the rows are being validated.
-   * * `submission` - The import job is in the submission stage, which means the rows are being submitted.
+   *   * `creation` - The import job is in the creation stage, which means the rows are being created.
+   *   * `column_mapping` - The import job is in the column mapping stage, which means the CSV headers are being mapped to JSON schema fields.
+   *   * `validation` - The import job is in the validation stage, which means the rows are being validated.
+   *   * `submission` - The import job is in the submission stage, which means the rows are being submitted.
    *
    */
   stage: 'creation' | 'column_mapping' | 'validation' | 'submission';
@@ -4602,10 +4616,10 @@ export type BulkEmploymentImportJob = {
    * BulkImport.ImportJobStatus
    *
    *   * `draft` - **Deprecated**, the import job data has been uploaded and the job created, but not yet started
-   * * `uploaded` - **Deprecated**, replaced by the `draft` status
-   * * `in_progress` - Data is actively being imported
-   * * `finished` - The import job has finished processing
-   * * `failed` - The import job has failed completely, nothing has been imported
+   *   * `uploaded` - **Deprecated**, replaced by the `draft` status
+   *   * `in_progress` - Data is actively being imported
+   *   * `finished` - The import job has finished processing
+   *   * `failed` - The import job has failed completely, nothing has been imported
    *
    */
   status: 'draft' | 'uploaded' | 'in_progress' | 'finished' | 'failed';
@@ -4837,6 +4851,20 @@ export type MinimalUser = {
 };
 
 /**
+ * JobTitleReviewDecisionResponse
+ */
+export type JobTitleReviewDecisionResponse = {
+  data: {
+    job_title_review: {
+      /**
+       * The employment's status after the decision. An approval restores the status the employment held before it entered review.
+       */
+      employment_status: string;
+    };
+  };
+};
+
+/**
  * CostCalculatorCost
  *
  * A single cost line item within a cost breakdown (e.g., a specific employer contribution, benefit, or statutory payment).
@@ -4919,6 +4947,7 @@ export type MinimalPayrollRun = {
     | 'one_off'
     | 'pro_forma'
     | 'tax_documents'
+    | 'year_end_reports'
     | 'expenses'
     | 'parallel';
 };
@@ -5051,6 +5080,7 @@ export type WebhookTriggerEmploymentParams = {
     | 'company.manager_updated'
     | 'company.owner_changed'
     | 'company.archived'
+    | 'company.hard_deleted'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
     | 'company.eor_hiring.no_reserve_payment_requested'
@@ -5993,6 +6023,7 @@ export type PayrollRun = {
     | 'one_off'
     | 'pro_forma'
     | 'tax_documents'
+    | 'year_end_reports'
     | 'expenses'
     | 'parallel';
 };
@@ -6030,7 +6061,16 @@ export type BillingDocumentsResponse = {
         | 'reconciliation_invoice'
         | 'prefunding_invoice'
         | 'supplemental_service_invoice'
-        | 'reconciliation_credit_note';
+        | 'reconciliation_credit_note'
+        | 'peo_payroll_invoice'
+        | 'contractor_management_invoice'
+        | 'remote_plan_invoice'
+        | 'credit_note'
+        | 'eor_reserve_invoice'
+        | 'eor_reserve_credit_note'
+        | 'peo_service_invoice'
+        | 'payroll_service_invoice'
+        | 'cor_service_invoice';
       /**
        * The unique identifier (UUID) of the billing document.
        */
@@ -6707,12 +6747,12 @@ export type TimeoffBalance = {
  *
  *   Whether the amount given accounts for taxes or not.
  *
- * `gross` indicates that the amount given is the amount to be paid before taxes
- * are subtracted.
+ *   `gross` indicates that the amount given is the amount to be paid before taxes
+ *   are subtracted.
  *
- * `net` indicates that the amount given is the amount which will be paid to the
- * employee after taxes. Remote will gross this up to ensure the taxes are
- * included and employee receives the amount requested without further reduction.
+ *   `net` indicates that the amount given is the amount which will be paid to the
+ *   employee after taxes. Remote will gross this up to ensure the taxes are
+ *   included and employee receives the amount requested without further reduction.
  *
  */
 export type AmountTaxType = 'gross' | 'net';
@@ -7974,11 +8014,11 @@ export type ContractAmendmentFormResponse = {
  *
  *   Params for creating an expense as the authenticated employee.
  *
- * The employment is implied by the access token, so `employment_id` is not accepted.
- * `reviewer_id` and `reviewed_at` are also omitted — they only apply to manager-created expenses.
+ *   The employment is implied by the access token, so `employment_id` is not accepted.
+ *   `reviewer_id` and `reviewed_at` are also omitted — they only apply to manager-created expenses.
  *
- * Category selection mirrors the company endpoint: use either `category` (legacy enum, deprecated but supported)
- * or `expense_category_slug` (recommended). When both are provided, `expense_category_slug` wins.
+ *   Category selection mirrors the company endpoint: use either `category` (legacy enum, deprecated but supported)
+ *   or `expense_category_slug` (recommended). When both are provided, `expense_category_slug` wins.
  *
  */
 export type ParamsToCreateEmployeeExpense = {
@@ -8020,7 +8060,7 @@ export type ParamsToCreateEmployeeExpense = {
     | 'travel';
   /**
    *   The three-letter code for the expense currency.<br/>
-   * Examples: `"USD"`, `"EUR"`, `"CAD"`
+   *   Examples: `"USD"`, `"EUR"`, `"CAD"`
    *
    */
   currency: string;
@@ -8054,7 +8094,7 @@ export type CreateJobTitleEligibilityCheckParams = {
    */
   job_title?: string;
   /**
-   * A description of the role. Required when the job title alone is inconclusive; the response says so.
+   * A description of the role. Required when the job title alone is inconclusive; the response says so. The minimum acceptable length is country-dependent: the contract-details schema for the employment's country is the authority, and some countries (the USA among them) require a substantially longer description than others.
    */
   role_description?: string;
   /**
@@ -8623,6 +8663,28 @@ export type BulkEmploymentCreateParams = {
    * Batch default for onboarding invitations. Each employee can override it with their own `send_invitation` value. Defaults to `false` when omitted.
    */
   send_invitation?: boolean;
+};
+
+/**
+ * SetJobTitleEligibilityVerdictParams
+ */
+export type SetJobTitleEligibilityVerdictParams = {
+  /**
+   * The job title to record the verdict against. Defaults to the employment's current one.
+   */
+  job_title?: string;
+  /**
+   * The role description the submission will carry. A submission carrying a different one is rejected, because the recorded verdict no longer describes what was sent.
+   */
+  role_description: string;
+  /**
+   * The verdict the employment's next contract-details submission should act on.
+   */
+  verdict:
+    | 'eligible'
+    | 'not_eligible'
+    | 'needs_review'
+    | 'eligible_with_risk_acknowledgement';
 };
 
 /**
@@ -9338,19 +9400,19 @@ export type MagicLinkParams =
        * Query values are optional, the actual value may be empty and the equals sign (`=`) may be missing too.
        *
        * Some **Valid** examples for `path`:
-       * - o `/dashboard`
-       * - o `/dashboard/people/new/full_time/663e0b79-c893-45ff-a1b2-f6dcabc098b5`
-       * - o `/dashboard/people/hiring?filters%5B0%5D%5Bid%5D=status&filters%5B0%5D%5Bvalue%5D=active`
-       * - o `/dashboard?key=value&foo=bar`
+       *   - o `/dashboard`
+       *   - o `/dashboard/people/new/full_time/663e0b79-c893-45ff-a1b2-f6dcabc098b5`
+       *   - o `/dashboard/people/hiring?filters%5B0%5D%5Bid%5D=status&filters%5B0%5D%5Bvalue%5D=active`
+       *   - o `/dashboard?key=value&foo=bar`
        *
        * Some **Invalid** examples for `path`:
-       * - x `missing_forward_slash`
-       * - x `/invalid//path`
-       * - x `//some`
-       * - x `/?key=value`
-       * - x `/some/i.n:valid*`
-       * - x `/invalid/end/slash/`
-       * - x `/some?malformed_percent_encoded_key%1=value`
+       *   - x `missing_forward_slash`
+       *   - x `/invalid//path`
+       *   - x `//some`
+       *   - x `/?key=value`
+       *   - x `/some/i.n:valid*`
+       *   - x `/invalid/end/slash/`
+       *   - x `/some?malformed_percent_encoded_key%1=value`
        *
        */
       path?: string;
@@ -9375,19 +9437,19 @@ export type MagicLinkParams =
        * Query values are optional, the actual value may be empty and the equals sign (`=`) may be missing too.
        *
        * Some **Valid** examples for `path`:
-       * - o `/dashboard`
-       * - o `/dashboard/people/new/full_time/663e0b79-c893-45ff-a1b2-f6dcabc098b5`
-       * - o `/dashboard/people/hiring?filters%5B0%5D%5Bid%5D=status&filters%5B0%5D%5Bvalue%5D=active`
-       * - o `/dashboard?key=value&foo=bar`
+       *   - o `/dashboard`
+       *   - o `/dashboard/people/new/full_time/663e0b79-c893-45ff-a1b2-f6dcabc098b5`
+       *   - o `/dashboard/people/hiring?filters%5B0%5D%5Bid%5D=status&filters%5B0%5D%5Bvalue%5D=active`
+       *   - o `/dashboard?key=value&foo=bar`
        *
        * Some **Invalid** examples for `path`:
-       * - x `missing_forward_slash`
-       * - x `/invalid//path`
-       * - x `//some`
-       * - x `/?key=value`
-       * - x `/some/i.n:valid*`
-       * - x `/invalid/end/slash/`
-       * - x `/some?malformed_percent_encoded_key%1=value`
+       *   - x `missing_forward_slash`
+       *   - x `/invalid//path`
+       *   - x `//some`
+       *   - x `/?key=value`
+       *   - x `/some/i.n:valid*`
+       *   - x `/invalid/end/slash/`
+       *   - x `/some?malformed_percent_encoded_key%1=value`
        *
        */
       path?: string;
@@ -9687,8 +9749,8 @@ export type Company = {
    * The company status determines what a company is allowed to do:
    * - `pending`: The company has been created and the company owner invited. Remote is waiting for the company owner to complete onboarding.
    * - `review`: The company is under review. In rare occasions, a company may not automatically get created in `active` status because Remote needs to
-   * manually review the company that was created. The company will become `active` once the review is completed and no further action is necessary
-   * through the Remote API.
+   *   manually review the company that was created. The company will become `active` once the review is completed and no further action is necessary
+   *   through the Remote API.
    * - `active`: The company owner has completed onboarding and the company is ready to employ.
    * - `archived`: The company is no longer active on the Remote platform and no changes can be made to the company.
    *
@@ -9741,6 +9803,8 @@ export type JobTitleEligibilityCheck = {
   check_id?: string | null;
   /**
    * The eligibility verdict for the submitted job title and role. `eligible` means contract details can be submitted as normal. `not_eligible` means Remote cannot employ this role: the title has to change. `needs_review` means submitting will place the employment in a human review before the employee can be invited. `eligible_with_risk_acknowledgement` means the submission must carry `employer_acknowledges_risk` set to `acknowledged`. `not_assessed` means the check did not run for this employment and no verdict was formed, so treat it as unknown rather than as a pass: submitting is not blocked, but nothing has screened the title.
+   *
+   * When the verdict is `eligible_with_risk_acknowledgement`, present Remote's responsibility statement to the employer and obtain their acceptance before sending `employer_acknowledges_risk`. Sending it asserts that the employer was informed of, and accepted, responsibility for, as applicable, employee safety, training, health checks, any incidents connected to the employee's work environment, and the employee holding the licensing the role requires.
    */
   verdict:
     | 'eligible'
@@ -10103,10 +10167,10 @@ export type CompanyActionsResponse = {
  * BulkImport.ImportJobStatus
  *
  *   * `draft` - **Deprecated**, the import job data has been uploaded and the job created, but not yet started
- * * `uploaded` - **Deprecated**, replaced by the `draft` status
- * * `in_progress` - Data is actively being imported
- * * `finished` - The import job has finished processing
- * * `failed` - The import job has failed completely, nothing has been imported
+ *   * `uploaded` - **Deprecated**, replaced by the `draft` status
+ *   * `in_progress` - Data is actively being imported
+ *   * `finished` - The import job has finished processing
+ *   * `failed` - The import job has failed completely, nothing has been imported
  *
  */
 export type BulkImportImportJobStatus =
@@ -10162,8 +10226,27 @@ export type WebhookTriggerBillingParams = {
     | 'reconciliation_invoice'
     | 'supplemental_service_credit_note'
     | 'prefunding_credit_note'
-    | 'reconciliation_credit_note';
+    | 'reconciliation_credit_note'
+    | 'credit_note'
+    | 'eor_reserve_credit_note'
+    | 'contractor_management_invoice'
+    | 'cor_service_invoice'
+    | 'eor_reserve_invoice'
+    | 'payroll_service_invoice'
+    | 'remote_plan_invoice'
+    | 'peo_payroll_invoice'
+    | 'peo_service_invoice';
   event_type: 'billing_document.issued';
+};
+
+/**
+ * JobTitleReviewDecisionParams
+ */
+export type JobTitleReviewDecisionParams = {
+  /**
+   * The reviewer's notes, recorded on the employment as a Remote admin's would be.
+   */
+  notes?: string;
 };
 
 /**
@@ -10446,6 +10529,7 @@ export type WebhookCallback = {
     | 'company.manager_updated'
     | 'company.owner_changed'
     | 'company.archived'
+    | 'company.hard_deleted'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
     | 'company.eor_hiring.no_reserve_payment_requested'
@@ -10849,8 +10933,8 @@ export type PricingPlanDetails = {
 export type EmploymentPricingPlanDetailsParams = {
   /**
    * Pricing plan details information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `pricing_plan_details` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `pricing_plan_details` as path parameters.
    */
   pricing_plan_details: {
     [key: string]: unknown;
@@ -10921,7 +11005,7 @@ export type UpdateCompanyParams = {
   /**
    *   The tax identifier of the company. This field or registration_number (but not both) should be submitted.
    *
-   * This field is only accepted if company is in status `pending`.
+   *   This field is only accepted if company is in status `pending`.
    *
    */
   tax_number?: string;
@@ -11103,10 +11187,10 @@ export type BulkContractorInvoiceScheduleCreateResponse = {
  * BulkImport.ImportJobStage
  *
  *   The stage of the import job.
- * * `creation` - The import job is in the creation stage, which means the rows are being created.
- * * `column_mapping` - The import job is in the column mapping stage, which means the CSV headers are being mapped to JSON schema fields.
- * * `validation` - The import job is in the validation stage, which means the rows are being validated.
- * * `submission` - The import job is in the submission stage, which means the rows are being submitted.
+ *   * `creation` - The import job is in the creation stage, which means the rows are being created.
+ *   * `column_mapping` - The import job is in the column mapping stage, which means the CSV headers are being mapped to JSON schema fields.
+ *   * `validation` - The import job is in the validation stage, which means the rows are being validated.
+ *   * `submission` - The import job is in the submission stage, which means the rows are being submitted.
  *
  */
 export type BulkImportImportJobStage =
@@ -11420,7 +11504,7 @@ export type ContractAmendmentStatus =
  * - `bi_weekly`: Invoices will be generated every other week, on the given day of the week based on the start date.
  * - `monthly`: Invoices will be generated once a month.
  * - `semi_monthly`: Invoices will be generated at fixed dates twice a month (with 14 days of difference between each other), depending on the start date.
- * In months with just 30 days, if `start_date` is set to the 31st day, then generation occurs in the last of day of the month.
+ *    In months with just 30 days, if `start_date` is set to the 31st day, then generation occurs in the last of day of the month.
  * - `weekly`: Invoices will be generated each week.
  *
  */
@@ -11470,13 +11554,13 @@ export type ListEmploymentCustomFieldValueResponse = {
  *
  *   All the params needed to create an expense.
  *
- * An expense can be created using the `receipt` or `receipts` fields; however, these fields are not allowed together within the same object.
+ *   An expense can be created using the `receipt` or `receipts` fields; however, these fields are not allowed together within the same object.
  *
- * For category selection, you can use either:
- * - `category` (legacy enum values, deprecated but supported)
- * - `expense_category_slug` (new hierarchical categories, recommended)
+ *   For category selection, you can use either:
+ *   - `category` (legacy enum values, deprecated but supported)
+ *   - `expense_category_slug` (new hierarchical categories, recommended)
  *
- * If both are provided, `expense_category_slug` takes precedence.
+ *   If both are provided, `expense_category_slug` takes precedence.
  *
  */
 export type ParamsToCreateExpense = {
@@ -11518,7 +11602,7 @@ export type ParamsToCreateExpense = {
     | 'travel';
   /**
    *   The three-letter code for the expense currency.<br/>
-   * Examples: `"USD"`, `"EUR"`, `"CAD"`
+   *   Examples: `"USD"`, `"EUR"`, `"CAD"`
    *
    */
   currency: string;
@@ -11793,8 +11877,8 @@ export type CostCalculatorBenefitParam = {
 export type EmploymentFederalTaxesParams = {
   /**
    * Federal taxes params. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `global_payroll_federal_taxes` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `global_payroll_federal_taxes` as path parameters.
    */
   federal_taxes: {
     [key: string]: unknown;
@@ -12366,6 +12450,7 @@ export type UpdateWebhookCallbackParams = {
     | 'company.manager_updated'
     | 'company.owner_changed'
     | 'company.archived'
+    | 'company.hard_deleted'
     | 'company.eor_hiring.additional_information_required'
     | 'company.eor_hiring.reserve_payment_requested'
     | 'company.eor_hiring.no_reserve_payment_requested'
@@ -12752,8 +12837,8 @@ export type CreateContractAmendmentParams = {
   amendment_contract_id: string;
   /**
    * Contract amendment informations. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Contract-Amendments/operation/post_show_form_contract_amendment_schema) endpoint
-   * passing the country code, `contract_amendment` and the employment ID as request body.
+   *                 you must query the [Show form schema](#tag/Contract-Amendments/operation/post_show_form_contract_amendment_schema) endpoint
+   *             passing the country code, `contract_amendment` and the employment ID as request body.
    */
   contract_amendment: {
     [key: string]: unknown;
@@ -12814,9 +12899,9 @@ export type CompanyNotEligibleForCreationErrorResponse = {
 export type EmploymentStateTaxesParams = {
   /**
    * State taxes params for the jurisdiction in the path. As its properties vary depending
-   * on the country and jurisdiction, you must query the
-   * [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint passing the country code
-   * and `global_payroll_state_taxes` as path parameters.
+   *                on the country and jurisdiction, you must query the
+   *                [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint passing the country code
+   *                and `global_payroll_state_taxes` as path parameters.
    */
   state_taxes: {
     [key: string]: unknown;
@@ -12945,6 +13030,13 @@ export type EmploymentContractDetailsParams = {
    * Contract information. As its properties may vary depending on the country,
    * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
    * passing the country code and `contract_details` as path parameters.
+   *
+   * When the job title eligibility check requires an acknowledgement, present Remote's
+   * responsibility statement to the employer and obtain their acceptance before sending
+   * `employer_acknowledges_risk` as `acknowledged`. Sending it asserts that the employer
+   * was informed of, and accepted, responsibility for, as applicable, employee safety,
+   * training, health checks, any incidents connected to the employee's work environment,
+   * and the employee holding the licensing the role requires.
    *
    */
   contract_details: {
@@ -13224,8 +13316,8 @@ export type SandboxCreateContractorRateParams = {
 export type EmploymentCreateParams = {
   /**
    * Employment basic information. As its properties may vary depending on the country,
-   * you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
-   * passing the country code and `employment_basic_information` as path parameters.
+   *                you must query the [Show form schema](#tag/Countries/operation/get_show_form_country) endpoint
+   *             passing the country code and `employment_basic_information` as path parameters.
    */
   basic_information: {
     [key: string]: unknown;
@@ -18066,6 +18158,58 @@ export type PostV1IncentivesResponses = {
 export type PostV1IncentivesResponse =
   PostV1IncentivesResponses[keyof PostV1IncentivesResponses];
 
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectData = {
+  /**
+   * Job title review decision params
+   */
+  body?: JobTitleReviewDecisionParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/employments/{employment_id}/job-title-review/reject';
+};
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectError =
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectErrors[keyof PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectErrors];
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectResponses =
+  {
+    /**
+     * Success
+     */
+    200: JobTitleReviewDecisionResponse;
+  };
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectResponse =
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectResponses[keyof PostV1SandboxEmploymentsEmploymentIdJobTitleReviewRejectResponses];
+
 export type PostV1ProbationCompletionLetterData = {
   /**
    * Work Authorization Request
@@ -18351,6 +18495,10 @@ export type GetV1BillingDocumentsBillingDocumentIdData = {
     billing_document_id: string;
   };
   query?: {
+    /**
+     * The company the accessed resource belongs to. Send it whenever you know which one you mean. Requests that don't resolve to a company fail with "Company not found".
+     */
+    company_id?: string;
     /**
      * When true, includes billing document items whose type is not part of the standard set for the invoice type.
      */
@@ -24146,7 +24294,7 @@ export type GetV1CustomFieldsData = {
   path?: never;
   query?: {
     /**
-     * The company to list definitions for. Send it whenever you know which company you mean. Requests that don't resolve to a company fail with "Company not found".
+     * The company the accessed resource belongs to. Send it whenever you know which one you mean. Requests that don't resolve to a company fail with "Company not found".
      */
     company_id?: string;
     /**
@@ -26816,6 +26964,111 @@ export type GetV1PayslipsResponses = {
 export type GetV1PayslipsResponse =
   GetV1PayslipsResponses[keyof GetV1PayslipsResponses];
 
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveData = {
+  /**
+   * Job title review decision params
+   */
+  body?: JobTitleReviewDecisionParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/employments/{employment_id}/job-title-review/approve';
+};
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Unauthorized
+   */
+  401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+  /**
+   * Too many requests
+   */
+  429: TooManyRequestsResponse;
+};
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveError =
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveErrors[keyof PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveErrors];
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveResponses =
+  {
+    /**
+     * Success
+     */
+    200: JobTitleReviewDecisionResponse;
+  };
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveResponse =
+  PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveResponses[keyof PostV1SandboxEmploymentsEmploymentIdJobTitleReviewApproveResponses];
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckData = {
+  /**
+   * Job title eligibility verdict params
+   */
+  body?: SetJobTitleEligibilityVerdictParams;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/sandbox/employments/{employment_id}/job-title-eligibility-check';
+};
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckErrors =
+  {
+    /**
+     * Bad Request
+     */
+    400: BadRequestResponse;
+    /**
+     * Unauthorized
+     */
+    401: UnauthorizedResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
+    /**
+     * Unprocessable Entity
+     */
+    422: UnprocessableEntityResponse;
+    /**
+     * Too many requests
+     */
+    429: TooManyRequestsResponse;
+  };
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckError =
+  PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckErrors[keyof PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckErrors];
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckResponses =
+  {
+    /**
+     * Success
+     */
+    200: JobTitleEligibilityCheckResponse;
+  };
+
+export type PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckResponse =
+  PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckResponses[keyof PostV1SandboxEmploymentsEmploymentIdJobTitleEligibilityCheckResponses];
+
 export type GetV1ExpensesExpenseIdReceiptsReceiptIdData = {
   body?: never;
   path: {
@@ -28676,7 +28929,9 @@ export type GetV1BillingDocumentsBillingDocumentIdBreakdownData = {
     /**
      * Filters the results by the type of the billing breakdown item. Matched exactly against the `type` field of
      * the returned items, so unrecognised values yield an empty list. Card spend is reported as `Card expenses`,
-     * separately from payroll-reimbursed `Expenses`.
+     * separately from payroll-reimbursed `Expenses`. Other Compensation is reported as `Other compensation`,
+     * separately from `Base salary`. Payslip benefits can be returned as `Payslip benefits` for existing
+     * breakdown items, or as `Payslip Benefit Cash` and `Payslip Benefit Non-Cash` for newly generated items.
      *
      */
     type?: string;
