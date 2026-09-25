@@ -96,7 +96,7 @@ function preferNoOption(options) {
 }
 
 function fakeValueFor(field) {
-  const { inputType, options, multiple, name } = field;
+  const { inputType, options, multiple, name, const: constValue } = field;
 
   if (options?.length) {
     if (inputType === 'radio' || inputType === 'select') {
@@ -135,11 +135,12 @@ function fakeValueFor(field) {
     case 'textarea':
       return faker.lorem.sentence();
     case 'checkbox':
-      // No enumerated options: this is a single acknowledgement toggle
-      // (jsonType array, items usually `{const: true}`) - an empty array
-      // reads as "filled" to our missing-field check but is actually an
-      // unchecked/invalid value for a required field, so mark it checked.
-      return [true];
+      // No enumerated options: this is a single acknowledgement toggle. RHF
+      // holds a plain `true` here, which parseFormValuesToAPI (src/components/
+      // form/utils.ts) swaps for `field.const` (e.g. "acknowledged") at submit
+      // time when the schema is const-based - mirror that instead of sending
+      // the raw RHF value, or the API rejects it as a type mismatch.
+      return constValue ?? true;
     case 'file':
       return null;
     default:
