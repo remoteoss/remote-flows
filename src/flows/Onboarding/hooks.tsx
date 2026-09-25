@@ -1365,9 +1365,6 @@ export const useOnboarding = ({
     employmentId: internalEmploymentId,
     currentStepName,
     contractDetailsFields: stepFields.contract_details,
-    stepValues: stepState.values?.contract_details,
-    initialContractDetailsValues: initialValues.contract_details,
-    fieldValues,
     submittedJobTitle: employment?.basic_information?.job_title as
       | string
       | undefined,
@@ -1459,9 +1456,10 @@ export const useOnboarding = ({
     parseFormValues,
 
     /**
-     * Runs the job title eligibility check with the current contract details values when the
-     * 'job_title_eligibility' feature is enabled and the role fields are filled. The prebuilt form calls it
-     * on blur; the check also runs when entering the contract details step and before submitting it.
+     * Runs the job title eligibility check with the given contract details values when the
+     * 'job_title_eligibility' feature is enabled, the current step is contract_details, and the
+     * role fields are filled. The prebuilt form calls it on blur; call it yourself from a custom
+     * UI to trigger the same check at another point (e.g. on step entry or before submitting).
      * @param values - Current form values
      */
     checkJobTitleEligibility: jobTitleEligibility.check,

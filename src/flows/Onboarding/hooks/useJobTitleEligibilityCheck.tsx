@@ -68,9 +68,6 @@ export const useJobTitleEligibilityCheck = ({
   employmentId: string | undefined;
   currentStepName: StepKeys;
   contractDetailsFields: JSFFields;
-  stepValues: Record<string, unknown> | undefined;
-  initialContractDetailsValues: Record<string, unknown>;
-  fieldValues: FieldValues;
   fallbackJobTitle: string | undefined;
   parseFormValues: (values: FieldValues) => Promise<Record<string, unknown>>;
   handleValidation: (
