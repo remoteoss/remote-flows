@@ -6,6 +6,7 @@ npm-debug.log*
 node_modules
 dist
 *.local
+.claude/settings.local.json
 
 # Editor directories and files
 .vscode/*
