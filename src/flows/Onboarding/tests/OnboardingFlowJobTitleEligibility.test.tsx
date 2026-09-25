@@ -141,6 +141,11 @@ describe('OnboardingFlow - job title eligibility check on blur', () => {
     await user.click(roleDescription);
     await user.tab();
 
+    // checkJobTitleEligibility is fire-and-forget from onBlur, so a broken dedup
+    // wouldn't reach the spy by the time user.tab() resolves. Give it a bounded
+    // window to (wrongly) fire a second request before asserting it didn't -
+    // the .catch turns the expected "nothing happened" timeout into a no-op so
+    // the real assertion below is what decides pass/fail either way.
     await waitFor(
       () => {
         expect(jobTitleEligibilityCheckSpy.mock.calls.length).toBeGreaterThan(
