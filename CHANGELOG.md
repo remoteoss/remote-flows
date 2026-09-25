@@ -1,5 +1,53 @@
 # @remoteoss/remote-flows
 
+## 1.57.0
+
+### Minor Changes
+
+- fix native config-loader compatibility warnings (#1338) [#1338](https://github.com/remoteoss/remote-flows/pull/1338)
+- disable lifecycle scripts during artifact updates (#1341) [#1341](https://github.com/remoteoss/remote-flows/pull/1341)
+- add PR description template (#1342) [#1342](https://github.com/remoteoss/remote-flows/pull/1342)
+- add pr-review skill (#1343) [#1343](https://github.com/remoteoss/remote-flows/pull/1343)
+- add Germany onboarding flow through Contract Details (#1345) [#1345](https://github.com/remoteoss/remote-flows/pull/1345)
+- upload playwright-report from example/'s working directory (#1349) [#1349](https://github.com/remoteoss/remote-flows/pull/1349)
+- add embedded-integration country importance tiers (#1348) [#1348](https://github.com/remoteoss/remote-flows/pull/1348)
+- allow remote tarball fetches during artifact updates (#1346) [#1346](https://github.com/remoteoss/remote-flows/pull/1346)
+- run PR checks on stacked PRs too (#1355) [#1355](https://github.com/remoteoss/remote-flows/pull/1355)
+- extend Germany onboarding flow through Contract Details (#1347) [#1347](https://github.com/remoteoss/remote-flows/pull/1347)
+- update dependency jsdom to v30.0.1 (#1340) [#1340](https://github.com/remoteoss/remote-flows/pull/1340)
+- update dependency filesize to v11.0.24 (#1339) [#1339](https://github.com/remoteoss/remote-flows/pull/1339)
+- update vitest monorepo to v5.0.1 (#1357) [#1357](https://github.com/remoteoss/remote-flows/pull/1357)
+- update dependency dompurify to v3.4.15 (#1358) [#1358](https://github.com/remoteoss/remote-flows/pull/1358)
+- bump DEU contract_details schema version to 7 (#1356) [#1356](https://github.com/remoteoss/remote-flows/pull/1356)
+- render the contract details and create the contract document (#1329) [#1329](https://github.com/remoteoss/remote-flows/pull/1329)
+- replace clsx + tailwind-merge with shadcn-ui/cn (#1359) [#1359](https://github.com/remoteoss/remote-flows/pull/1359)
+- bump ESP onboarding contract_details schema to v5 (#1365) [#1365](https://github.com/remoteoss/remote-flows/pull/1365)
+- fill onboarding Benefits step dynamically (#1361) [#1361](https://github.com/remoteoss/remote-flows/pull/1361)
+- update dependency @vitejs/plugin-react to v6.1.1 (#1372) [#1372](https://github.com/remoteoss/remote-flows/pull/1372)
+- update dependency @playwright/test to v1.63.0 (#1363) [#1363](https://github.com/remoteoss/remote-flows/pull/1363)
+- update dependency oxfmt to v0.68.0 (#1373) [#1373](https://github.com/remoteoss/remote-flows/pull/1373)
+- update dependency oxlint to v1.83.0 (#1375) [#1375](https://github.com/remoteoss/remote-flows/pull/1375)
+- fix CBA categories fieldset in contract details (#1366) [#1366](https://github.com/remoteoss/remote-flows/pull/1366)
+- extend Germany onboarding flow through Pre-Onboarding Requirements (#1370) [#1370](https://github.com/remoteoss/remote-flows/pull/1370)
+- update dependency vite to v8.3.0 (#1376) [#1376](https://github.com/remoteoss/remote-flows/pull/1376)
+- update dependency @tanstack/react-query to v5.103.0 (#1378) [#1378](https://github.com/remoteoss/remote-flows/pull/1378)
+- update dependency axios to v1.20.0 (#1383) [#1383](https://github.com/remoteoss/remote-flows/pull/1383)
+- update dependency zod to v4.6.5 (#1384) [#1384](https://github.com/remoteoss/remote-flows/pull/1384)
+- update actions/cache action to v6 (#1388) [#1388](https://github.com/remoteoss/remote-flows/pull/1388)
+- update dependency chalk to v6 (#1387) [#1387](https://github.com/remoteoss/remote-flows/pull/1387)
+- update actions/setup-node action to v7 (#1390) [#1390](https://github.com/remoteoss/remote-flows/pull/1390)
+- update dependency @tanstack/react-query to v5.103.1 (#1391) [#1391](https://github.com/remoteoss/remote-flows/pull/1391)
+- gate onboarding steps on save responses, set timeouts globally (#1381) [#1381](https://github.com/remoteoss/remote-flows/pull/1381)
+- extract onboarding json-schema versioning into its own file (#1386) [#1386](https://github.com/remoteoss/remote-flows/pull/1386)
+- update @hey-api/openapi-ts and regenerate client (TS7-compatible) (#1367) [#1367](https://github.com/remoteoss/remote-flows/pull/1367)
+- add rule to catch unnecessary/excessive comments (#1369) [#1369](https://github.com/remoteoss/remote-flows/pull/1369)
+- smoke-test that npm run openapi-ts still works on dependency bumps (#1368) [#1368](https://github.com/remoteoss/remote-flows/pull/1368)
+- update actions/setup-node action to v7 (#1398) [#1398](https://github.com/remoteoss/remote-flows/pull/1398)
+- update dependency dotenv to v18 (#1399) [#1399](https://github.com/remoteoss/remote-flows/pull/1399)
+- rename vite config to .mts to silence native config loader warning (#1394) [#1394](https://github.com/remoteoss/remote-flows/pull/1394)
+- send checkbox const value, not [true], in seed-onboarding (#1389) [#1389](https://github.com/remoteoss/remote-flows/pull/1389)
+- seed onboarding directly against a gateway env (#1371) [#1371](https://github.com/remoteoss/remote-flows/pull/1371)
+
 ## 1.56.0
 
 ### Minor Changes
