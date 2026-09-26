@@ -26,6 +26,7 @@
     "release": "tsx scripts/release.ts",
     "release:fix": "tsx scripts/release-hotfix.ts",
     "seed:onboarding": "node scripts/seed-onboarding.mjs",
+    "sync:contract-versions": "tsx scripts/sync-country-contract-versions.ts",
     "size": "tsx scripts/analyze-bundle-size.ts",
     "size:check": "tsx scripts/check-size-limits.ts",
     "size:badge": "tsx scripts/update-size-badge.ts",
