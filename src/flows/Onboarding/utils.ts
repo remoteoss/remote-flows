@@ -1,5 +1,10 @@
 import { Employment, OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { Step } from '@/src/flows/useStepState';
+import {
+  CreateJobTitleEligibilityCheckParams,
+  JobTitleEligibilityCheck,
+} from '@/src/client';
+import { JSFField, JSFFields } from '@/src/types/remoteFlows';
 
 export type StepKeys =
   | 'select_country'
@@ -220,4 +225,84 @@ export const getEngagementAgreementDetailsSchemaVersion = (
   return (
     options?.jsonSchemaVersion?.engagement_agreement_details || DEFAULT_VERSION
   );
+};
+
+export const JOB_TITLE_ELIGIBILITY_SLUG_FIELD =
+  'additional_job_title_eligibility_check_slug';
+
+export const JOB_TITLE_ELIGIBILITY_RESULT_FIELD =
+  'additional_job_title_eligibility_check_result';
+
+const JOB_TITLE_ELIGIBILITY_VERDICT_RESULTS: Partial<
+  Record<JobTitleEligibilityCheck['verdict'], string>
+> = {
+  eligible: 'yes',
+  not_eligible: 'no',
+  needs_review: 'maybe',
+  eligible_with_risk_acknowledgement: 'yes_with_ack',
+};
+
+const JOB_TITLE_ELIGIBILITY_PARAM_FIELDS = [
+  'role_description',
+  'role_is_onsite',
+  'role_requires_license',
+];
+
+const isFilled = (value: unknown) =>
+  value !== undefined && value !== null && value !== '';
+
+export const getJobTitleEligibilityParams = (
+  fields: JSFFields,
+  values: Record<string, unknown>,
+  formErrors?: Record<string, unknown> | null,
+  jobTitle?: string,
+): CreateJobTitleEligibilityCheckParams | null => {
+  const jsfFields = fields as JSFField[];
+  if (
+    !jsfFields.some((field) => field.name === JOB_TITLE_ELIGIBILITY_SLUG_FIELD)
+  ) {
+    return null;
+  }
+
+  const paramFields = jsfFields.filter(
+    (field) =>
+      JOB_TITLE_ELIGIBILITY_PARAM_FIELDS.includes(field.name) &&
+      field.isVisible !== false,
+  );
+
+  const isComplete =
+    paramFields.length > 0 &&
+    paramFields.every(
+      (field) => isFilled(values[field.name]) && !formErrors?.[field.name],
+    );
+
+  if (!isComplete) {
+    return null;
+  }
+
+  return {
+    ...(isFilled(jobTitle) ? { job_title: jobTitle } : {}),
+    ...Object.fromEntries(
+      paramFields.map((field) => [field.name, values[field.name]]),
+    ),
+  } as CreateJobTitleEligibilityCheckParams;
+};
+
+export const getJobTitleEligibilityValues = (
+  fields: JSFFields,
+  check: JobTitleEligibilityCheck,
+): Record<string, string | null> => {
+  const hasResultField = (fields as JSFField[]).some(
+    (field) => field.name === JOB_TITLE_ELIGIBILITY_RESULT_FIELD,
+  );
+
+  return {
+    [JOB_TITLE_ELIGIBILITY_SLUG_FIELD]: check.check_id ?? null,
+    ...(hasResultField
+      ? {
+          [JOB_TITLE_ELIGIBILITY_RESULT_FIELD]:
+            JOB_TITLE_ELIGIBILITY_VERDICT_RESULTS[check.verdict] ?? null,
+        }
+      : {}),
+  };
 };

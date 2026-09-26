@@ -101,6 +101,7 @@ export function OnboardingForm({
       <form
         id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}
+        onBlur={() => onboardingBag.checkJobTitleEligibility(form.getValues())}
         className='space-y-4 RemoteFlows__OnboardingForm'
       >
         <JSONSchemaFormFields

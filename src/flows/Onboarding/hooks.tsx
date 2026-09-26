@@ -28,6 +28,10 @@ import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
+  useJobTitleEligibilityState,
+  useJobTitleEligibilityCheck,
+} from '@/src/flows/Onboarding/useJobTitleEligibilityCheck';
+import {
   useBenefitOffers,
   useBenefitOffersSchema,
   useCompany,
@@ -499,6 +503,15 @@ export const useOnboarding = ({
   const { mutateAsync: updateContractEligibilityMutationAsync } =
     mutationToPromise(updateContractEligibilityMutation);
 
+  const isJobTitleEligibilityEnabled = Boolean(
+    options?.features?.includes('job_title_eligibility'),
+  );
+  const jobTitleEligibilityState = useJobTitleEligibilityState({
+    employmentId: internalEmploymentId,
+    enabled: isJobTitleEligibilityEnabled,
+    currentStepName: stepState.currentStep.name,
+  });
+
   const formType =
     stepToFormSchemaMap[stepState.currentStep.name] ||
     'employment_basic_information';
@@ -513,6 +526,7 @@ export const useOnboarding = ({
     options: jsonSchemaOptions = {},
     query = {},
     jsonSchemaVersion,
+    additionalValues,
   }: {
     form: JSONSchemaFormType;
     options?: {
@@ -521,6 +535,7 @@ export const useOnboarding = ({
     };
     query?: Record<string, string>;
     jsonSchemaVersion?: number | 'latest';
+    additionalValues?: Record<string, unknown> | null;
   }) => {
     const hasUserEnteredAnyValues = Object.keys(fieldValues).length > 0;
     // when you write on the fields, the values are stored in the fieldValues state
@@ -540,7 +555,7 @@ export const useOnboarding = ({
     return useJSONSchemaForm({
       countryCode: internalCountryCode as string,
       form: form,
-      fieldValues: mergedFormValues,
+      fieldValues: { ...mergedFormValues, ...additionalValues },
       query,
       options: {
         ...jsonSchemaOptions,
@@ -725,6 +740,7 @@ export const useOnboarding = ({
         },
       },
       jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,
+      additionalValues: jobTitleEligibilityState.values,
     });
 
   const jsfV1Modify = useMemo(
@@ -1180,6 +1196,9 @@ export const useOnboarding = ({
                   employer_or_work_restrictions: false,
                 });
               }
+              jobTitleEligibilityState.setSubmittedJobTitle(
+                parsedValues.job_title as string | undefined,
+              );
 
               return response;
             }
@@ -1188,7 +1207,7 @@ export const useOnboarding = ({
             throw error;
           }
         } else if (internalEmploymentId) {
-          return updateEmploymentMutationAsync({
+          const response = await updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: parsedValues,
             pricing_plan_details: {
@@ -1197,6 +1216,12 @@ export const useOnboarding = ({
             external_id: externalId,
             partner_external_id: partnerExternalId,
           });
+          if (!response.error) {
+            jobTitleEligibilityState.setSubmittedJobTitle(
+              parsedValues.job_title as string | undefined,
+            );
+          }
+          return response;
         }
 
         return;
@@ -1208,6 +1233,21 @@ export const useOnboarding = ({
         });
       }
       case 'contract_details': {
+        const eligibilityResult = await jobTitleEligibility.checkForSubmit(
+          values,
+          parsedValues,
+        );
+        if (eligibilityResult && !eligibilityResult.ok) {
+          return {
+            data: null,
+            error: eligibilityResult.error,
+            rawError: eligibilityResult.rawError,
+            fieldErrors: eligibilityResult.fieldErrors,
+          };
+        }
+        if (eligibilityResult?.ok) {
+          Object.assign(parsedValues, eligibilityResult.checkValues);
+        }
         const payload: EmploymentFullParams = {
           contract_details: parsedValues,
           pricing_plan_details: {
@@ -1294,7 +1334,7 @@ export const useOnboarding = ({
         !isJsfV1ContractDetailsEnabled
       ) {
         const parsedValues = await parseJSFToValidate(
-          values,
+          { ...values, ...jobTitleEligibilityState.valuesRef.current },
           contractDetailsForm?.fields,
           { isPartialValidation: false },
         );
@@ -1313,7 +1353,7 @@ export const useOnboarding = ({
         // children. handleValidation resolves the visibility first and nulls
         // whatever it considers hidden afterwards, which is the right order.
         const parsedValues = await parseJSFToValidate(
-          values,
+          { ...values, ...jobTitleEligibilityState.valuesRef.current },
           contractDetailsFormV1?.fields,
           { isPartialValidation: true },
         );
@@ -1334,8 +1374,25 @@ export const useOnboarding = ({
       contractDetailsFormV1,
       isJsfV1ContractDetailsEnabled,
       setFieldsCount,
+      jobTitleEligibilityState.valuesRef,
     ],
   );
+
+  const jobTitleEligibility = useJobTitleEligibilityCheck({
+    state: jobTitleEligibilityState,
+    enabled: isJobTitleEligibilityEnabled,
+    employmentId: internalEmploymentId,
+    currentStepName,
+    contractDetailsFields: stepFields.contract_details,
+    stepValues: stepState.values?.contract_details,
+    initialContractDetailsValues: initialValues.contract_details,
+    fieldValues,
+    fallbackJobTitle: basicInformationInitialValues.job_title as
+      | string
+      | undefined,
+    parseFormValues,
+    handleValidation,
+  });
 
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
@@ -1411,7 +1468,8 @@ export const useOnboarding = ({
       updateEmploymentMutation.isPending ||
       updateBenefitsOffersMutation.isPending ||
       updateEngagementAgreementMutation.isPending ||
-      updateContractEligibilityMutation.isPending,
+      updateContractEligibilityMutation.isPending ||
+      jobTitleEligibility.isFetching,
     /**
      * Initial form values
      */
@@ -1427,6 +1485,14 @@ export const useOnboarding = ({
      * @param values - New form values to set
      */
     checkFieldUpdates,
+
+    /**
+     * Runs the job title eligibility check with the current contract details values when the
+     * 'job_title_eligibility' feature is enabled and the role fields are filled. The prebuilt form calls it
+     * on blur; the check also runs when entering the contract details step and before submitting it.
+     * @param values - Current form values
+     */
+    checkJobTitleEligibility: jobTitleEligibility.check,
 
     /**
      * Function to parse form values before submission
