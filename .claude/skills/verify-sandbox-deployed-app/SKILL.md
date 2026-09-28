@@ -8,7 +8,7 @@ allowed-tools: Bash(npm run seed:onboarding:*), Bash(node:*), Bash(op read:*), B
 
 Drives `https://remote-flows-eight.vercel.app` the same way the user does by hand
 (1Password credential → log in → onboarding route → fill/navigate → verify), but
-scripted end to end via Playwright. See `scripts/seed-onboarding.mjs` for the
+scripted end to end via Playwright. See `scripts/seed-onboarding.ts` for the
 seeding half of this and `CLAUDE.md` for repo conventions.
 
 ## Step 1: Confirm the config exists
@@ -16,7 +16,7 @@ seeding half of this and `CLAUDE.md` for repo conventions.
 Read `.env.sandbox` at the repo root (not `example/.env`). It must have:
 
 - `VITE_REMOTE_GATEWAY=sandbox` + the client credentials (used by
-  `seed-onboarding.mjs --env=sandbox`)
+  `seed-onboarding.ts --env=sandbox`)
 - `VITE_APP_URL` — the deployed app's URL (`https://remote-flows-eight.vercel.app`)
 - `VITE_APP_PASSWORD` — the Vercel deployment-protection password
 
