@@ -17,13 +17,18 @@ describe('OnboardingFlow - job title eligibility check on blur', () => {
   const mockRender = vi.fn(
     ({ onboardingBag, components }: OnboardingRenderProps) => {
       latestOnboardingBag = onboardingBag;
-      const { ContractDetailsStep } = components;
+      const { ContractDetailsStep, SubmitButton } = components;
 
       if (onboardingBag.stepState.currentStep.name !== 'contract_details') {
         return null;
       }
 
-      return <ContractDetailsStep />;
+      return (
+        <>
+          <ContractDetailsStep />
+          <SubmitButton>Continue</SubmitButton>
+        </>
+      );
     },
   );
 
@@ -203,5 +208,64 @@ describe('OnboardingFlow - job title eligibility check on blur', () => {
     await user.tab();
 
     await waitFor(() => expect(successSpy).toHaveBeenCalledTimes(1));
+  });
+
+  it('disables the submit button while the check is running and re-enables it once it settles', async () => {
+    let resolveCheck: () => void = () => {};
+    const checkReleased = new Promise<void>((resolve) => {
+      resolveCheck = resolve;
+    });
+    server.use(
+      http.post(
+        '*/v2/employments/:id/job-title-eligibility-check',
+        async () => {
+          await checkReleased;
+          return HttpResponse.json({
+            data: {
+              job_title_eligibility_check: {
+                slug: 'job-title-eligibility-check-slug',
+                result: 'yes',
+              },
+            },
+          });
+        },
+      ),
+    );
+
+    await renderContractDetailsStep();
+    const submitButton = screen.getByRole('button', { name: 'Continue' });
+    expect(submitButton).toBeEnabled();
+
+    await fillRoleFields();
+
+    await waitFor(() => expect(submitButton).toBeDisabled());
+    expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(true);
+
+    resolveCheck();
+
+    await waitFor(() => expect(submitButton).toBeEnabled());
+    expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
+  });
+
+  it('re-enables the submit button when the check fails', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    server.use(
+      http.post('*/v2/employments/:id/job-title-eligibility-check', () =>
+        HttpResponse.json({ message: 'Internal error' }, { status: 500 }),
+      ),
+    );
+
+    await renderContractDetailsStep();
+    const submitButton = screen.getByRole('button', { name: 'Continue' });
+
+    await fillRoleFields();
+
+    await waitFor(() =>
+      expect(console.error).toHaveBeenCalledWith(
+        'Failed to fetch job title eligibility check',
+      ),
+    );
+    await waitFor(() => expect(submitButton).toBeEnabled());
+    expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
   });
 });

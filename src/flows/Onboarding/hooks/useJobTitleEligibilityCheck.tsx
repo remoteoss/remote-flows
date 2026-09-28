@@ -89,34 +89,41 @@ export const useJobTitleEligibilityCheck = ({
       currentStepName,
     });
 
+  const [pendingChecks, setPendingChecks] = useState(0);
+
   const jobTitle = submittedJobTitle ?? fallbackJobTitle;
 
   const check = async (values: FieldValues) => {
     if (!enabled || !employmentId || currentStepName !== 'contract_details') {
       return;
     }
-    const validation = await handleValidation(values);
-    const parsedValues = await parseFormValues(values);
-    const nextParams = getJobTitleEligibilityParams(
-      contractDetailsFields,
-      parsedValues,
-      validation?.formErrors,
-      jobTitle,
-    );
-    if (!equal(paramsRef.current, nextParams)) {
-      setParams(nextParams);
-    }
-    if (nextParams) {
-      await queryClient
-        .query(getOptions(nextParams))
-        .catch(() =>
-          console.error('Failed to fetch job title eligibility check'),
-        );
+    setPendingChecks((count) => count + 1);
+    try {
+      const validation = await handleValidation(values);
+      const parsedValues = await parseFormValues(values);
+      const nextParams = getJobTitleEligibilityParams(
+        contractDetailsFields,
+        parsedValues,
+        validation?.formErrors,
+        jobTitle,
+      );
+      if (!equal(paramsRef.current, nextParams)) {
+        setParams(nextParams);
+      }
+      if (nextParams) {
+        await queryClient
+          .query(getOptions(nextParams))
+          .catch(() =>
+            console.error('Failed to fetch job title eligibility check'),
+          );
+      }
+    } finally {
+      setPendingChecks((count) => count - 1);
     }
   };
 
   return {
-    isFetching: query.isFetching,
+    isChecking: pendingChecks > 0 || query.isFetching,
     check,
   };
 };
