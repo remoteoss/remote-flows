@@ -89,7 +89,7 @@ export function ContractDocument() {
 
   if (employmentId) {
     return (
-      <RemoteFlows proxy={{ url: window.location.origin }}>
+      <RemoteFlows proxy={{ url: window.location.origin }} authType='none'>
         <CreateContractDocument employmentId={employmentId} />
       </RemoteFlows>
     );
