@@ -78,6 +78,10 @@ describe('OnboardingFlow - job title eligibility check on blur', () => {
     );
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   const renderContractDetailsStep = async () => {
     render(
       <OnboardingFlow
@@ -157,5 +161,47 @@ describe('OnboardingFlow - job title eligibility check on blur', () => {
     ).catch(() => undefined);
 
     expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('retries the check on a later blur when the previous request failed', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    let failing = true;
+    const successSpy = vi.fn();
+    server.use(
+      http.post('*/v2/employments/:id/job-title-eligibility-check', () => {
+        if (failing) {
+          return HttpResponse.json(
+            { message: 'Internal error' },
+            { status: 500 },
+          );
+        }
+        successSpy();
+        return HttpResponse.json({
+          data: {
+            job_title_eligibility_check: {
+              slug: 'job-title-eligibility-check-slug',
+              result: 'yes',
+            },
+          },
+        });
+      }),
+    );
+
+    await renderContractDetailsStep();
+
+    await fillRoleFields();
+    await waitFor(() =>
+      expect(console.error).toHaveBeenCalledWith(
+        'Failed to fetch job title eligibility check',
+      ),
+    );
+    expect(successSpy).not.toHaveBeenCalled();
+
+    failing = false;
+    const user = userEvent.setup();
+    await user.click(screen.getByLabelText(/Role description/i));
+    await user.tab();
+
+    await waitFor(() => expect(successSpy).toHaveBeenCalledTimes(1));
   });
 });
