@@ -14,6 +14,7 @@ CLAUDE.local.md
 .idea
 .DS_Store
 .env
+.env.*
 coverage
 example/public/
 out

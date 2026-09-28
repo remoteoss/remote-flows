@@ -18,7 +18,7 @@
     "@remoteoss/remote-flows": "file://..",
     "axios": "1.20.0",
     "dompurify": "3.4.15",
-    "dotenv": "18.0.0",
+    "dotenv": "18.0.1",
     "express": "5.2.1",
     "html-react-parser": "6.1.5",
     "jsonwebtoken": "9.0.3",
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
-    "@remoteoss/remote-json-schema-form-kit": "1.1.1",
+    "@remoteoss/remote-json-schema-form-kit": "1.1.2",
     "@types/node": "24.12.4",
     "@types/react-dom": "19.2.3",
     "@types/react-syntax-highlighter": "15.5.13",
