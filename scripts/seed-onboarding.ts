@@ -43,9 +43,10 @@
  * sandbox client) and .env.review (the deployed demo app's sandbox client)
  * both point at sandbox but create employments under different companies -
  * seed with --env=review for anything you'll open on the deployed app. Auth
- * reuses example/api/{utils,get_token,proxy}.js verbatim so there's one source of truth for how tokens get minted. Optional
- * VITE_APP_URL=<deployed app URL> in that same file gets you a ready-to-click
- * link (with ?employmentId= prefilled) in the final output.
+ * reuses example/api/{utils,get_token,proxy}.js verbatim so there's one
+ * source of truth for how tokens get minted. Optional VITE_APP_URL=<deployed
+ * app URL> in that same file gets you a ready-to-click link (with
+ * ?employmentId= prefilled) in the final output.
  *
  *   npm run seed:onboarding -- --country=DEU --env=sandbox
  *   npm run seed:onboarding -- --country=DEU --env=review
