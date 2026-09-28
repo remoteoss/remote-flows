@@ -12,6 +12,7 @@ export const ONBOARDING_OPTIONS = {
     'ea_preview',
     'pre_onboarding_requirements',
     'daily_schedule',
+    'job_title_eligibility',
   ] as const,
   jsonSchemaVersion: ONBOARDING_JSON_SCHEMA_VERSION,
   jsonSchemaVersionByCountry: ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY,
