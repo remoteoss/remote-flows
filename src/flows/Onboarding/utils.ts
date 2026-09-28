@@ -119,6 +119,7 @@ export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
   'created_awaiting_reserve',
   'invited',
   'active',
+  'job_title_review',
 ];
 
 /**
