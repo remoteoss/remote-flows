@@ -1465,6 +1465,12 @@ export const useOnboarding = ({
     checkJobTitleEligibility: jobTitleEligibility.check,
 
     /**
+     * True while the job title eligibility request is in flight. The prebuilt submit button is
+     * disabled meanwhile; use it to do the same in a custom UI.
+     */
+    isCheckingJobTitleEligibility: jobTitleEligibility.isFetching,
+
+    /**
      * Function to handle form submission
      * @param values - Form values to submit
      * @returns Promise resolving to the mutation result
