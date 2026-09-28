@@ -1465,11 +1465,10 @@ export const useOnboarding = ({
     checkJobTitleEligibility: jobTitleEligibility.check,
 
     /**
-     * True while a job title eligibility check is running, from validating the role fields
-     * until the request settles. The prebuilt submit button is disabled meanwhile; use it
-     * to do the same in a custom UI.
+     * True while the job title eligibility request is in flight. The prebuilt submit button is
+     * disabled meanwhile; use it to do the same in a custom UI.
      */
-    isCheckingJobTitleEligibility: jobTitleEligibility.isChecking,
+    isCheckingJobTitleEligibility: jobTitleEligibility.isFetching,
 
     /**
      * Function to handle form submission
