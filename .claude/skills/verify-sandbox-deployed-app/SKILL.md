@@ -27,8 +27,12 @@ plaintext file gets blocked by the auto-mode credential-materialization guard
 via a `!`-prefixed command:
 
 ```
-op read "op://Remote API and Partnerships/RemoteFlows SDK Demo/password" | xargs -I{} printf 'VITE_APP_PASSWORD={}\n' >> .env.sandbox
+printf '\nVITE_APP_PASSWORD=%s\n' "$(op read 'op://Remote API and Partnerships/RemoteFlows SDK Demo/password')" >> .env.sandbox
 ```
+
+The password goes through `%s` rather than into the format string, so `%` or
+`\` characters in it are written literally, and the leading `\n` keeps it off
+the previous line if `.env.sandbox` doesn't end with a newline.
 
 Then stop and wait for them, rather than guessing or asking for the password in chat.
 
