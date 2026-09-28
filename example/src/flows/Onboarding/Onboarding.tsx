@@ -26,6 +26,7 @@ import { sanitizeHtml } from '@remoteoss/remote-flows/internals';
 import { ONBOARDING_OPTIONS } from './constants';
 import { StepsNavigation } from './StepsNavigation';
 import { PreviewEmploymentAgreementStep } from './PreviewEmploymentAgreementStep';
+import { getUrlParam } from '../../utils/urlState';
 import '../../css/main.css';
 
 const BenefitsAboutSection = ({
@@ -417,7 +418,10 @@ const OnboardingWithProps = ({
 export const OnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
     type: 'employee',
-    employmentId: import.meta.env.VITE_ONBOARDING_EMPLOYMENT_ID || '', // use your own employment ID
+    employmentId:
+      getUrlParam('employmentId') ||
+      import.meta.env.VITE_ONBOARDING_EMPLOYMENT_ID ||
+      '', // use your own employment ID
     companyId:
       import.meta.env.VITE_COMPANY_ID || 'c3c22940-e118-425c-9e31-f2fd4d43c6d8', // use your own company ID
     externalId: '',
