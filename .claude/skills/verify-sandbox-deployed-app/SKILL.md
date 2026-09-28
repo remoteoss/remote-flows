@@ -13,12 +13,26 @@ seeding half of this and `CLAUDE.md` for repo conventions.
 
 ## Step 1: Confirm the config exists
 
-Read `.env.sandbox` at the repo root (not `example/.env`). It must have:
+Use `.env.review` at the repo root — not `.env.sandbox` and not `example/.env`.
+It holds the **same credentials the deployed app has in its Vercel env vars**.
+`.env.sandbox` is a different sandbox API client used for local dev, tied to a
+different company: an employment seeded with it makes the deployed app's calls
+return 404 `Company not found`, because the app's server gets its own token
+for its own company.
 
-- `VITE_REMOTE_GATEWAY=sandbox` + the client credentials (used by
-  `seed-onboarding.ts --env=sandbox`)
+`.env.review` must have:
+
+- `VITE_REMOTE_GATEWAY=sandbox` + the deployed app's `VITE_CLIENT_ID`,
+  `VITE_CLIENT_SECRET`, `VITE_REFRESH_TOKEN` (used by
+  `seed-onboarding.ts --env=review`)
 - `VITE_APP_URL` — the deployed app's URL (`https://remote-flows-eight.vercel.app`)
 - `VITE_APP_PASSWORD` — the Vercel deployment-protection password
+
+Reading `.env*` files directly is denied by permission settings, so check which
+keys are set with a `node -e` one-liner that loads the file with `dotenv` and
+prints only `true`/`false` for each key — never the values. If
+`.env.review` is missing, ask the user to create it from the deployed app's
+Vercel env vars, then stop and wait.
 
 If `VITE_APP_PASSWORD` is missing: **do not** try to fetch it from 1Password and
 write it into the file yourself — writing a secret straight from `op` into a
@@ -27,12 +41,12 @@ plaintext file gets blocked by the auto-mode credential-materialization guard
 via a `!`-prefixed command:
 
 ```
-pw=$(op read 'op://Remote API and Partnerships/RemoteFlows SDK Demo/password') && printf '\nVITE_APP_PASSWORD=%s\n' "$pw" >> .env.sandbox
+pw=$(op read 'op://Remote API and Partnerships/RemoteFlows SDK Demo/password') && printf '\nVITE_APP_PASSWORD=%s\n' "$pw" >> .env.review
 ```
 
 The password goes through `%s` rather than into the format string, so `%` or
 `\` characters in it are written literally, and the leading `\n` keeps it off
-the previous line if `.env.sandbox` doesn't end with a newline. The `&&` means
+the previous line if `.env.review` doesn't end with a newline. The `&&` means
 nothing is written if `op read` fails (e.g. the 1Password desktop app isn't
 running or its CLI integration is off), instead of an empty `VITE_APP_PASSWORD=`.
 
@@ -43,7 +57,7 @@ Then stop and wait for them, rather than guessing or asking for the password in 
 If the user gave you an existing employment ID, use it. Otherwise seed one:
 
 ```
-npm run seed:onboarding -- --country=<COUNTRY> --env=sandbox
+npm run seed:onboarding -- --country=<COUNTRY> --env=review
 ```
 
 (default `COUNTRY=DEU` unless the user's ask implies another country — e.g. a
@@ -59,7 +73,7 @@ There's no persistent verification script — write a small Node script per
 task (Playwright is already a dependency under `example/node_modules`, so run
 it with `node` from the `example/` directory) that:
 
-1. Loads `.env.sandbox` (`dotenv.config({ path: '<repo root>/.env.sandbox' })`).
+1. Loads `.env.review` (`dotenv.config({ path: '<repo root>/.env.review' })`).
 2. Launches a headless Chromium browser (`playwright`'s `chromium.launch()`).
 3. Navigates to `VITE_APP_URL`. If it lands on the "Password Protected" page
    (title check, or presence of `input[name=_vercel_password]`), fill that
