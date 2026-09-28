@@ -113,7 +113,7 @@ function AmendmentFlow({
 export function ContractAmendment() {
   const EMPLOYMENT_ID = import.meta.env.VITE_CONTRACT_AMENDMENT_EMPLOYMENT_ID; // set another employment ID here as it will probably fail for you
   return (
-    <RemoteFlows proxy={{ url: window.location.origin }} authType='none'>
+    <RemoteFlows proxy={{ url: window.location.origin }}>
       <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
         <ContractAmendmentFlow
           countryCode='PRT'

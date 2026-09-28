@@ -401,7 +401,6 @@ const OnboardingWithProps = ({
 }: OnboardingFormData) => (
   <RemoteFlows
     proxy={{ url: window.location.origin }}
-    authType='none'
     transformHtmlToComponents={transformHtmlToComponents}
   >
     <OnboardingFlow

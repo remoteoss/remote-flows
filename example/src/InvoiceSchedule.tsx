@@ -85,7 +85,7 @@ export function InvoiceSchedule() {
   const [employmentId, setEmploymentId] = useState<string | null>(null);
 
   return (
-    <RemoteFlows proxy={{ url: window.location.origin }} authType='none'>
+    <RemoteFlows proxy={{ url: window.location.origin }}>
       <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
         {employmentId ? (
           <CreateInvoiceSchedule employmentId={employmentId} />
