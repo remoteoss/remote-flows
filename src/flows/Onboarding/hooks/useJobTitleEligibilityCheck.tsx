@@ -1,5 +1,9 @@
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  isCancelledError,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import equal from 'fast-deep-equal';
 import { useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
@@ -107,11 +111,11 @@ export const useJobTitleEligibilityCheck = ({
       setParams(nextParams);
     }
     if (nextParams) {
-      await queryClient
-        .query(getOptions(nextParams))
-        .catch(() =>
-          console.error('Failed to fetch job title eligibility check'),
-        );
+      await queryClient.query(getOptions(nextParams)).catch((error) => {
+        if (!isCancelledError(error)) {
+          console.error('Failed to fetch job title eligibility check');
+        }
+      });
     }
   };
 
