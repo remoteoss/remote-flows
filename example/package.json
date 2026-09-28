@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
-    "@remoteoss/remote-json-schema-form-kit": "1.1.1",
+    "@remoteoss/remote-json-schema-form-kit": "1.1.2",
     "@types/node": "24.12.4",
     "@types/react-dom": "19.2.3",
     "@types/react-syntax-highlighter": "15.5.13",
