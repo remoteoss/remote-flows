@@ -7,6 +7,7 @@ node_modules
 dist
 *.local
 .claude/settings.local.json
+CLAUDE.local.md
 
 # Editor directories and files
 .vscode/*
@@ -14,6 +15,7 @@ dist
 .idea
 .DS_Store
 .env
+.env.*
 coverage
 example/public/
 out
