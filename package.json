@@ -13,7 +13,7 @@
     "check-format": "oxfmt --check",
     "dev": "NODE_ENV=development tsdown --config-loader unrun --watch",
     "build:reset": "postcss src/styles/reset.css -o ./example/src/css/reset.css",
-    "lint": "oxlint --type-aware .",
+    "lint": "oxlint --type-aware --ignore-pattern 'example/**' .",
     "lint:workflows": "zizmor .github/workflows/",
     "lint:workflows:fix": "zizmor --fix .github/workflows/",
     "format": "oxfmt",

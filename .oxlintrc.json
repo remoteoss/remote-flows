@@ -6,7 +6,12 @@
   "ignorePatterns": ["dist", "src/client/**/*.gen.ts"],
   "plugins": ["react", "react-hooks", "typescript"],
   "rules": {
-    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "typescript/no-explicit-any": "error",
@@ -14,25 +19,7 @@
   },
   "overrides": [
     {
-      "files": [
-        "src/client/**",
-        "example/src/ContractorOnboarding.tsx",
-        "example/src/CreateCompany.tsx",
-        "example/src/flows/Onboarding/Onboarding.tsx",
-        "example/src/flows/Onboarding/OnboardingWithCustomBenefits.tsx",
-        "example/src/flows/Onboarding/OnboardingWithoutSelectCountryStep.tsx",
-        "src/components/form/fields/TextField.tsx",
-        "src/flows/ContractAmendment/hooks.ts",
-        "src/flows/CostCalculator/hooks.tsx",
-        "src/flows/CreateCompany/api.ts",
-        "src/flows/CreateCompany/hooks.ts",
-        "src/flows/Onboarding/components/OnboardingInvite.tsx",
-        "src/flows/Onboarding/hooks.tsx",
-        "src/flows/PayrollAdminOnboarding/api.ts",
-        "src/flows/Termination/hooks.tsx",
-        "src/index.tsx",
-        "src/lib/__tests__/mutations.test.ts"
-      ],
+      "files": ["src/client/**"],
       "rules": {
         "typescript/no-deprecated": "off"
       }
