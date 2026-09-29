@@ -128,11 +128,19 @@ export const useJobTitleEligibilityCheck = ({
     if (!nextParams) {
       return CLEARED_JOB_TITLE_ELIGIBILITY_VALUES;
     }
+    // Another check can start while this request is in flight. If it has changed
+    // the params by the time this one settles, this result is out of date, so
+    // return nothing and let the newer check's values stand.
+    const isSuperseded = () => !equal(paramsRef.current, nextParams);
+
     try {
       const result = await queryClient.query(getOptions(nextParams));
+      if (isSuperseded()) {
+        return;
+      }
       return getJobTitleEligibilityValues(result);
     } catch (error) {
-      if (error instanceof CancelledError) {
+      if (error instanceof CancelledError || isSuperseded()) {
         return;
       }
       console.error('Failed to fetch job title eligibility check');
