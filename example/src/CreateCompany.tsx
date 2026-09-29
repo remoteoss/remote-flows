@@ -206,6 +206,7 @@ export const CreateCompanyForm = () => {
   const [formData] = useState<CreateCompanyFormData>({});
   const [showOnboarding, setShowOnboarding] = useState(false);
 
+  // oxlint-disable-next-line typescript/no-deprecated
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     setShowOnboarding(true);
