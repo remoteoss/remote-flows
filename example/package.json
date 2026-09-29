@@ -6,6 +6,7 @@
   "scripts": {
     "audit": "npm audit --audit-level=high",
     "dev": "nodemon ./dev_server.js",
+    "dev:env": "node ./dev_server.js",
     "build": "tsc -b && vite build",
     "lint": "oxlint --type-aware .",
     "preview": "vite preview",

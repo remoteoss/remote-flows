@@ -1,6 +1,6 @@
 ---
 name: verify-sandbox-deployed-app
-description: Manually verify onboarding behavior on the deployed sandbox demo (https://remote-flows-eight.vercel.app) instead of the user doing it by hand — seeds a fresh employment via the sandbox gateway, logs past the Vercel password gate, drives the flow to the right step, and checks whatever the user asked about. Use when the user asks to "verify X on sandbox/the deployed app", "check the deployed demo", or similar — not for local dev (`example/`'s own dev server) or unit/e2e tests.
+description: Manually verify onboarding behavior on the deployed sandbox demo (https://remote-flows-eight.vercel.app) instead of the user doing it by hand — seeds a fresh employment via the sandbox gateway, logs past the Vercel password gate, drives the flow to the right step, and checks whatever the user asked about. Use when the user asks to "verify X on sandbox/the deployed app", "check the deployed demo", or similar — not for local dev (use verify-local-app for that) or unit/e2e tests.
 allowed-tools: Bash(npm run seed:onboarding:*), Bash(node:*), Bash(cat:*), Bash(grep:*), Read, Write
 ---
 
