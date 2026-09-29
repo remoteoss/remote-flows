@@ -871,16 +871,3 @@ export function checkFieldHasForcedValue(field: $TSFixMe) {
     field.type !== 'hidden' // Because hidden inputs shouldn't be visible
   );
 }
-
-/**
- * The value a forced value field should hold in the form state.
- * The schema's `const` is in API units, but money fields are kept in major units in the
- * form and converted to cents on submit, so a money `const` has to be converted back.
- */
-export function getForcedValue(field: $TSFixMe) {
-  if (field.type === supportedTypes.MONEY) {
-    return convertFromCents(field.const);
-  }
-
-  return field.const;
-}
