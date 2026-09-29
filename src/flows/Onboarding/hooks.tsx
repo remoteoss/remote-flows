@@ -599,8 +599,7 @@ export const useOnboarding = ({
 
   const lastBasicInformationValuesRef = useRef<FieldValues | null>(null);
 
-  // A new jsfModify reference rebuilds the form with every field back in its
-  // default visibility, so the last validated values are replayed onto it.
+  // A rebuilt form resets field visibility, so replay the last validated values.
   const basicInformationForm = useMemo(() => {
     if (freshBasicInformationForm && lastBasicInformationValuesRef.current) {
       freshBasicInformationForm.handleValidation(
