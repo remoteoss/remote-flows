@@ -830,6 +830,7 @@ export const ContractorOnboardingForm = () => {
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
+  // oxlint-disable-next-line typescript/no-deprecated
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setShowOnboarding(true);
