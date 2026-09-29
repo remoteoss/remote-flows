@@ -1,6 +1,6 @@
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
-  isCancelledError,
+  CancelledError,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
@@ -112,7 +112,7 @@ export const useJobTitleEligibilityCheck = ({
     }
     if (nextParams) {
       await queryClient.query(getOptions(nextParams)).catch((error) => {
-        if (!isCancelledError(error)) {
+        if (!(error instanceof CancelledError)) {
           console.error('Failed to fetch job title eligibility check');
         }
       });
