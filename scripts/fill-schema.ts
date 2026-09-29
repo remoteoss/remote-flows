@@ -1,21 +1,36 @@
 import { createHeadlessForm } from '@remoteoss/remote-json-schema-form-kit';
 import { faker } from '@faker-js/faker';
-import { $TSFixMe } from '@/src/types/remoteFlows';
+
+type FormValues = Record<string, unknown>;
+type HeadlessFormOptions = NonNullable<
+  Parameters<typeof createHeadlessForm>[1]
+>;
+
+export interface FieldOption {
+  value: unknown;
+  meta?: { countryCode?: string };
+}
+
+export interface SeedField {
+  name: string;
+  inputType?: string;
+  required?: boolean;
+  isVisible?: boolean;
+  multiple?: boolean;
+  options?: FieldOption[];
+  const?: unknown;
+}
 
 /** First option whose value/label reads as "no" - collapses conditional sub-fields (file
  * uploads, free-text detail boxes) that a generic filler can't produce plausible data for. */
-export function preferNoOption(options: $TSFixMe[]) {
+export function preferNoOption(options: FieldOption[]): FieldOption {
   return (
     options.find((o) => String(o.value).toLowerCase() === 'no') || options[0]
   );
 }
 
-export function fakeValueFor(field: $TSFixMe) {
-  const inputType = field.inputType;
-  const options: $TSFixMe[] | undefined = field.options;
-  const multiple = field.multiple;
-  const name = field.name;
-  const constValue = field.const;
+export function fakeValueFor(field: SeedField): unknown {
+  const { inputType, options, multiple, name, const: constValue } = field;
 
   if (options?.length) {
     if (inputType === 'radio' || inputType === 'select') {
@@ -30,7 +45,7 @@ export function fakeValueFor(field: $TSFixMe) {
       // any one produces a validly-formatted number, regardless of the
       // employment's own country.
       const option = options.find((o) => o.meta?.countryCode) || options[0];
-      return `+${option.meta.countryCode}${faker.string.numeric(9)}`;
+      return `+${option.meta?.countryCode}${faker.string.numeric(9)}`;
     }
     return preferNoOption(options).value;
   }
@@ -46,7 +61,7 @@ export function fakeValueFor(field: $TSFixMe) {
       // Some countries require more lead time than a fixed short offset
       // covers (e.g. Iceland: 20 working days, ~28 calendar days) - 35
       // calendar days clears that with margin. Doesn't dodge country-specific
-      // holidays (e.g. Georgia) on its own; seed-employment.ts's
+      // holidays (e.g. Georgia) on its own; seed-onboarding.ts's
       // findSafeStartDate seeds provisional_start_date directly for that.
       const d = new Date();
       d.setDate(d.getDate() + 35);
@@ -68,20 +83,13 @@ export function fakeValueFor(field: $TSFixMe) {
     case 'file':
       return null;
     default:
-      // job_title is screened by some countries against an eligibility list
-      // that appears to gate on regulated/restricted categories rather than
-      // "does this look like a real title" - lorem-ipsum gibberish and even
-      // faker.person.jobTitle() (e.g. "Business Systems Officer") both got
-      // rejected. "Software Engineer" is a common, unregulated role that
-      // clears eligibility checks broadly.
-      return name === 'job_title'
-        ? 'Software Engineer'
-        : faker.lorem.words({ min: 2, max: 4 });
+      return faker.lorem.words({ min: 2, max: 4 });
   }
 }
 
 export const SAFE_START_DATE_MIN_LEAD_DAYS = 35;
 export const SAFE_START_DATE_SEARCH_WINDOW_DAYS = 60;
+const START_WEEKDAYS = new Set([1, 2, 3, 4]);
 
 function toIsoDate(date: Date): string {
   return date.toISOString().slice(0, 10);
@@ -98,9 +106,9 @@ export function safeStartDateYears(
   const latest = new Date();
   latest.setDate(latest.getDate() + minLeadDays + windowDays);
   return [
-    String(earliest.getFullYear()),
-    ...(latest.getFullYear() !== earliest.getFullYear()
-      ? [String(latest.getFullYear())]
+    String(earliest.getUTCFullYear()),
+    ...(latest.getUTCFullYear() !== earliest.getUTCFullYear()
+      ? [String(latest.getUTCFullYear())]
       : []),
   ];
 }
@@ -110,8 +118,11 @@ export function safeStartDateYears(
  * `holidayDates` - a fixed offset alone isn't enough: with ~90 countries
  * checked nightly, some will always land on one of their own holidays by
  * chance (real data: CYP/CZE/GRC/GEO all hit "cannot be in a holiday" in a
- * single schema-canary run). Falls back to the unchecked minimum-lead date
- * if nothing in the search window is holiday-free.
+ * single schema-canary run). Only Monday-Thursday is considered because
+ * Tiger blocks some weekdays per country (ISL: Friday/Saturday, much of
+ * LATAM: Saturday/Sunday) and the public API doesn't expose that table.
+ * Falls back to the unchecked minimum-lead date if nothing in the search
+ * window qualifies.
  */
 export function pickSafeDate(
   holidayDates: ReadonlySet<string>,
@@ -126,7 +137,9 @@ export function pickSafeDate(
   const candidate = new Date(earliest);
   while (candidate <= latest) {
     const iso = toIsoDate(candidate);
-    if (!holidayDates.has(iso)) return iso;
+    if (START_WEEKDAYS.has(candidate.getUTCDay()) && !holidayDates.has(iso)) {
+      return iso;
+    }
     candidate.setDate(candidate.getDate() + 1);
   }
   return toIsoDate(earliest);
@@ -136,16 +149,16 @@ export function pickSafeDate(
  * conditionally-required fields may appear), repeat until stable. Mirrors what the real
  * multi-step form does field-by-field, but against the schema directly instead of the DOM. */
 export function fillSchema(
-  schema: Record<string, unknown>,
-  seedValues: Record<string, unknown> = {},
-): { values: Record<string, unknown>; skipped: string[] } {
-  const values: Record<string, unknown> = { ...seedValues };
+  schema: Parameters<typeof createHeadlessForm>[0],
+  seedValues: FormValues = {},
+): { values: FormValues; skipped: string[] } {
+  const values: FormValues = { ...seedValues };
   const skipped: string[] = [];
   for (let round = 0; round < 8; round++) {
     const { fields } = createHeadlessForm(schema, {
-      initialValues: values as $TSFixMe,
+      initialValues: values as HeadlessFormOptions['initialValues'],
     });
-    const missing = (fields as $TSFixMe[]).filter(
+    const missing = (fields as unknown as SeedField[]).filter(
       (f) => f.required && f.isVisible && values[f.name] === undefined,
     );
     if (missing.length === 0) break;
