@@ -83,15 +83,7 @@ export function fakeValueFor(field: SeedField): unknown {
     case 'file':
       return null;
     default:
-      // job_title is screened by some countries against an eligibility list
-      // that appears to gate on regulated/restricted categories rather than
-      // "does this look like a real title" - lorem-ipsum gibberish and even
-      // faker.person.jobTitle() (e.g. "Business Systems Officer") both got
-      // rejected. "Software Engineer" is a common, unregulated role that
-      // clears eligibility checks broadly.
-      return name === 'job_title'
-        ? 'Software Engineer'
-        : faker.lorem.words({ min: 2, max: 4 });
+      return faker.lorem.words({ min: 2, max: 4 });
   }
 }
 
