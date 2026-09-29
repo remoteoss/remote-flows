@@ -726,7 +726,7 @@ export const useOnboarding = ({
           },
         },
         queryOptions: {
-          enabled: isContractDetailsEnabled,
+          enabled: isContractDetailsEnabled && !isJsfV1ContractDetailsEnabled,
         },
       },
       jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,
