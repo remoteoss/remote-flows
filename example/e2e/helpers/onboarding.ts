@@ -450,3 +450,136 @@ export async function fillOnboardingStep3SpainForm(
 
   await submitAndWaitForSave(page, 'PATCH', /^\/v1\/employments\/[^/]+$/);
 }
+
+interface fillOnboardingStep3PortugalFormOptions {
+  contract_duration_type?: boolean;
+  work_schedule?: string;
+  working_hours_exemption?: string;
+  has_probation_period?: string;
+  available_pto_type?: string;
+  available_pto?: string;
+  role_description?: string;
+  experience_level?: string;
+  role_is_onsite?: string;
+  role_requires_license?: string;
+  work_address_is_home_address?: string;
+  annual_gross_salary?: string;
+  has_signing_bonus?: string;
+  has_bonus?: string;
+  has_commissions?: string;
+  equity_compensation?: string;
+  work_from_home_allowance_ack?: boolean;
+  annual_training_hours_ack?: boolean;
+  salary_installments_confirmation?: boolean;
+  offboarding_allowances_ack?: boolean;
+}
+
+export async function fillOnboardingStep3PortugalForm(
+  page: Page,
+  options: Partial<fillOnboardingStep3PortugalFormOptions>,
+) {
+  await fillForm(page, [
+    {
+      type: 'checkbox',
+      value: options.contract_duration_type ? 'yes' : '',
+      name: 'contract_duration_type',
+    },
+    {
+      type: 'radio',
+      value: options.work_schedule,
+      name: 'work_schedule',
+    },
+    {
+      type: 'radio',
+      value: options.working_hours_exemption,
+      name: 'working_hours_exemption',
+    },
+    {
+      type: 'radio',
+      value: options.has_probation_period,
+      name: 'has_probation_period',
+    },
+    {
+      type: 'radio',
+      value: options.available_pto_type,
+      name: 'available_pto_type',
+    },
+    {
+      type: 'textField',
+      value: options.available_pto,
+      name: 'available_pto',
+    },
+    {
+      type: 'textField',
+      value: options.role_description,
+      name: 'role_description',
+    },
+    {
+      type: 'radio',
+      value: options.experience_level,
+      name: 'experience_level',
+    },
+    {
+      type: 'radio',
+      value: options.role_is_onsite,
+      name: 'role_is_onsite',
+    },
+    {
+      type: 'radio',
+      value: options.role_requires_license,
+      name: 'role_requires_license',
+    },
+    {
+      type: 'radio',
+      value: options.work_address_is_home_address,
+      name: 'work_address.is_home_address',
+    },
+    {
+      type: 'textField',
+      value: options.annual_gross_salary,
+      name: 'annual_gross_salary',
+    },
+    {
+      type: 'radio',
+      value: options.has_signing_bonus,
+      name: 'has_signing_bonus',
+    },
+    {
+      type: 'radio',
+      value: options.has_bonus,
+      name: 'has_bonus',
+    },
+    {
+      type: 'radio',
+      value: options.has_commissions,
+      name: 'has_commissions',
+    },
+    {
+      type: 'radio',
+      value: options.equity_compensation,
+      name: 'equity_compensation.offer_equity_compensation',
+    },
+    {
+      type: 'checkbox',
+      value: options.work_from_home_allowance_ack ? 'yes' : '',
+      name: 'work_from_home_allowance_ack',
+    },
+    {
+      type: 'checkbox',
+      value: options.annual_training_hours_ack ? 'yes' : '',
+      name: 'annual_training_hours_ack',
+    },
+    {
+      type: 'checkbox',
+      value: options.salary_installments_confirmation ? 'yes' : '',
+      name: 'salary_installments_confirmation',
+    },
+    {
+      type: 'checkbox',
+      value: options.offboarding_allowances_ack ? 'yes' : '',
+      name: 'offboarding_allowances_ack',
+    },
+  ]);
+
+  await submitAndWaitForSave(page, 'PATCH', /^\/v1\/employments\/[^/]+$/);
+}
