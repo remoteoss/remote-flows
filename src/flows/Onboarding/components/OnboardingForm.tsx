@@ -102,7 +102,13 @@ export function OnboardingForm({
         id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}
         className='space-y-4 RemoteFlows__OnboardingForm'
-        onBlur={() => onboardingBag.checkJobTitleEligibility(form.getValues())}
+        onBlur={async () => {
+          const eligibilityValues =
+            await onboardingBag.checkJobTitleEligibility(form.getValues());
+          Object.entries(eligibilityValues ?? {}).forEach(([name, value]) =>
+            form.setValue(name, value),
+          );
+        }}
       >
         <JSONSchemaFormFields
           components={components}

@@ -182,9 +182,9 @@ export type OnboardingFlowProps = {
      *   `meta.helpCenter`, `descriptionSuffix`) instead of packing them into `description`.
      *   Custom text components must render `fieldData.descriptionSuffix` to keep the conversion toggle.
      * - 'job_title_eligibility': Run the job title eligibility check on the contract details step once
-     *   the role fields are filled. Its outcome fills `additional_job_title_eligibility_check_slug` and,
-     *   when the schema declares it, `additional_job_title_eligibility_check_result`, so fields that
-     *   depend on the verdict (such as `employer_acknowledges_risk`) react to it.
+     *   the role fields are filled. Its outcome fills `additional_job_title_eligibility_check_slug` and
+     *   `additional_job_title_eligibility_check_result`, so fields that depend on the verdict (such as
+     *   `employer_acknowledges_risk`) react to it, and both are sent when the contract details are submitted.
      */
     features?: OnboardingFeatures[];
   };
