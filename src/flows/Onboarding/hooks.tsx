@@ -726,7 +726,7 @@ export const useOnboarding = ({
           },
         },
         queryOptions: {
-          enabled: isContractDetailsEnabled,
+          enabled: isContractDetailsEnabled && !isJsfV1ContractDetailsEnabled,
         },
       },
       jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,
@@ -1458,8 +1458,15 @@ export const useOnboarding = ({
     /**
      * Runs the job title eligibility check with the given contract details values when the
      * 'job_title_eligibility' feature is enabled, the current step is contract_details, and the
-     * role fields are filled. The prebuilt form calls it on blur; call it yourself from a custom
-     * UI to trigger the same check at another point (e.g. on step entry or before submitting).
+     * role fields are filled. It is meant to run from the contract details form's blur handler, as
+     * the prebuilt form does; a custom UI should call it the same way rather than at other points.
+     *
+     * Resolves with the values to write into the form's hidden
+     * `additional_job_title_eligibility_check_slug` and `additional_job_title_eligibility_check_result`
+     * fields, which drive the verdict's conditional fields and are submitted with the contract details.
+     * Both are `null` when the role fields are incomplete or the check failed, clearing a previous verdict.
+     * Resolves with `undefined` when there is nothing to write: the check doesn't apply, or a newer
+     * check superseded it.
      * @param values - Current form values
      */
     checkJobTitleEligibility: jobTitleEligibility.check,

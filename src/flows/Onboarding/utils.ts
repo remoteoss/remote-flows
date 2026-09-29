@@ -1,4 +1,7 @@
-import { CreateJobTitleEligibilityCheckParams } from '@/src/client';
+import {
+  CreateJobTitleEligibilityCheckParams,
+  JobTitleEligibilityCheck,
+} from '@/src/client';
 import { Employment, OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { Step } from '@/src/flows/useStepState';
 import { JSFField, JSFFields } from '@/src/types/remoteFlows';
@@ -276,3 +279,22 @@ export const getJobTitleEligibilityParams = (
     ),
   } as CreateJobTitleEligibilityCheckParams;
 };
+
+const JOB_TITLE_ELIGIBILITY_VERDICT_RESULTS: Record<
+  JobTitleEligibilityCheck['verdict'],
+  string | null
+> = {
+  eligible: 'yes',
+  not_eligible: 'no',
+  needs_review: 'maybe',
+  eligible_with_risk_acknowledgement: 'yes_with_ack',
+  not_assessed: null,
+};
+
+export const getJobTitleEligibilityValues = (
+  check: JobTitleEligibilityCheck,
+) => ({
+  [JOB_TITLE_ELIGIBILITY_SLUG_FIELD]: check.check_id ?? null,
+  [JOB_TITLE_ELIGIBILITY_RESULT_FIELD]:
+    JOB_TITLE_ELIGIBILITY_VERDICT_RESULTS[check.verdict] ?? null,
+});
