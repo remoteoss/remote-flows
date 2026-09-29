@@ -128,15 +128,11 @@ export const useJobTitleEligibilityCheck = ({
     if (!nextParams) {
       return CLEARED_JOB_TITLE_ELIGIBILITY_VALUES;
     }
-    const isSuperseded = () => !equal(paramsRef.current, nextParams);
     try {
       const result = await queryClient.query(getOptions(nextParams));
-      if (isSuperseded()) {
-        return;
-      }
       return getJobTitleEligibilityValues(result);
     } catch (error) {
-      if (error instanceof CancelledError || isSuperseded()) {
+      if (error instanceof CancelledError) {
         return;
       }
       console.error('Failed to fetch job title eligibility check');
