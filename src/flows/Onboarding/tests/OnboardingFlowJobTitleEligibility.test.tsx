@@ -247,6 +247,67 @@ describe('OnboardingFlow - job title eligibility check on blur', () => {
     expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
   });
 
+  it('aborts the in-flight check when the values change, without logging an error for it', async () => {
+    const errorSpy = vi.spyOn(console, 'error');
+    const requests: {
+      roleDescription: string;
+      signal: AbortSignal;
+      release: () => void;
+    }[] = [];
+    server.use(
+      http.post(
+        '*/v2/employments/:id/job-title-eligibility-check',
+        async ({ request }) => {
+          const body = (await request.json()) as { role_description: string };
+          let release: () => void = () => {};
+          const released = new Promise<void>((resolve) => {
+            release = resolve;
+          });
+          requests.push({
+            roleDescription: body.role_description,
+            signal: request.signal,
+            release,
+          });
+          await released;
+          return HttpResponse.json({
+            data: {
+              job_title_eligibility_check: {
+                slug: 'job-title-eligibility-check-slug',
+                result: 'yes',
+              },
+            },
+          });
+        },
+      ),
+    );
+
+    await renderContractDetailsStep();
+    const submitButton = screen.getByRole('button', { name: 'Continue' });
+
+    await fillRoleFields();
+    await waitFor(() => expect(requests).toHaveLength(1));
+
+    const user = userEvent.setup();
+    const roleDescription = screen.getByLabelText(/Role description/i);
+    await user.clear(roleDescription);
+    await user.type(roleDescription, 'Frontend engineer responsibilities');
+    await user.tab();
+
+    await waitFor(() => expect(requests).toHaveLength(2));
+    expect(requests[0].signal.aborted).toBe(true);
+    expect(requests[1].roleDescription).toBe(
+      'Frontend engineer responsibilities',
+    );
+    expect(submitButton).toBeDisabled();
+
+    requests[1].release();
+
+    await waitFor(() => expect(submitButton).toBeEnabled());
+    expect(errorSpy).not.toHaveBeenCalledWith(
+      'Failed to fetch job title eligibility check',
+    );
+  });
+
   it('re-enables the submit button when the check fails', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     server.use(
