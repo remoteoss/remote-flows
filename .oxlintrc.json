@@ -6,9 +6,23 @@
   "ignorePatterns": ["dist", "src/client/**/*.gen.ts"],
   "plugins": ["react", "react-hooks", "typescript"],
   "rules": {
-    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
-    "typescript/no-explicit-any": "error"
-  }
+    "typescript/no-explicit-any": "error",
+    "typescript/no-deprecated": "error"
+  },
+  "overrides": [
+    {
+      "files": ["src/client/**"],
+      "rules": {
+        "typescript/no-deprecated": "off"
+      }
+    }
+  ]
 }

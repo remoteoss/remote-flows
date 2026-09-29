@@ -1,6 +1,6 @@
 {
   "name": "@remoteoss/remote-flows",
-  "version": "1.56.0",
+  "version": "1.57.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/remoteoss/remote-flows.git"
@@ -13,7 +13,7 @@
     "check-format": "oxfmt --check",
     "dev": "NODE_ENV=development tsdown --config-loader unrun --watch",
     "build:reset": "postcss src/styles/reset.css -o ./example/src/css/reset.css",
-    "lint": "oxlint .",
+    "lint": "oxlint --type-aware --ignore-pattern 'example/**' .",
     "lint:workflows": "zizmor .github/workflows/",
     "lint:workflows:fix": "zizmor --fix .github/workflows/",
     "format": "oxfmt",
@@ -102,7 +102,7 @@
     "@radix-ui/react-scroll-area": "1.2.11",
     "@radix-ui/react-select": "2.3.0",
     "@radix-ui/react-tabs": "1.1.14",
-    "@remoteoss/remote-json-schema-form-kit": "1.1.1",
+    "@remoteoss/remote-json-schema-form-kit": "1.1.2",
     "@tailwindcss/cli": "4.2.4",
     "@tailwindcss/postcss": "4.2.4",
     "@tanstack/react-query": "5.103.1",
@@ -148,7 +148,7 @@
     "@types/react": "19.2.17",
     "@vitest/coverage-istanbul": "5.0.1",
     "chalk": "6.0.0",
-    "dotenv": "18.0.0",
+    "dotenv": "18.0.1",
     "filesize": "11.0.24",
     "glob": "13.0.6",
     "gzip-size": "7.0.0",
@@ -156,9 +156,10 @@
     "msw": "2.15.0",
     "oxfmt": "0.68.0",
     "oxlint": "1.83.0",
+    "oxlint-tsgolint": "7.0.2003",
     "postcss-import": "17.0.0",
     "tsdown": "0.23.0",
-    "tsx": "4.23.13",
+    "tsx": "4.23.15",
     "typescript": "7.0.2",
     "unrun": "0.3.1",
     "vitest": "5.0.1"
