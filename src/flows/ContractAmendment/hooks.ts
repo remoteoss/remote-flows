@@ -182,6 +182,7 @@ export const useContractAmendment = ({
 
     switch (stepState.currentStep.name) {
       case STEPS.form.name: {
+        // oxlint-disable-next-line typescript/no-deprecated
         const { mutateAsync } = mutationToPromise(
           automatableContractAmendmentMutation,
         );
@@ -193,6 +194,7 @@ export const useContractAmendment = ({
         return automatableContractAmendment;
       }
       case STEPS.confirmation_form.name: {
+        // oxlint-disable-next-line typescript/no-deprecated
         const { mutateAsync } = mutationToPromise(
           createContractAmendmentMutation,
         );

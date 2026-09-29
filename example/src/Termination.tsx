@@ -192,7 +192,7 @@ export const TerminationWithProps = ({
 }) => {
   const proxyURL = window.location.origin;
   return (
-    <RemoteFlows proxy={{ url: proxyURL }} authType='company-manager'>
+    <RemoteFlows proxy={{ url: proxyURL }}>
       <TerminationFlow
         employmentId={employmentId}
         render={TerminationRender}
