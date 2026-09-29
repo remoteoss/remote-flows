@@ -1,21 +1,36 @@
 import { createHeadlessForm } from '@remoteoss/remote-json-schema-form-kit';
 import { faker } from '@faker-js/faker';
-import { $TSFixMe } from '@/src/types/remoteFlows';
+
+type FormValues = Record<string, unknown>;
+type HeadlessFormOptions = NonNullable<
+  Parameters<typeof createHeadlessForm>[1]
+>;
+
+export interface FieldOption {
+  value: unknown;
+  meta?: { countryCode?: string };
+}
+
+export interface SeedField {
+  name: string;
+  inputType?: string;
+  required?: boolean;
+  isVisible?: boolean;
+  multiple?: boolean;
+  options?: FieldOption[];
+  const?: unknown;
+}
 
 /** First option whose value/label reads as "no" - collapses conditional sub-fields (file
  * uploads, free-text detail boxes) that a generic filler can't produce plausible data for. */
-export function preferNoOption(options: $TSFixMe[]) {
+export function preferNoOption(options: FieldOption[]): FieldOption {
   return (
     options.find((o) => String(o.value).toLowerCase() === 'no') || options[0]
   );
 }
 
-export function fakeValueFor(field: $TSFixMe) {
-  const inputType = field.inputType;
-  const options: $TSFixMe[] | undefined = field.options;
-  const multiple = field.multiple;
-  const name = field.name;
-  const constValue = field.const;
+export function fakeValueFor(field: SeedField): unknown {
+  const { inputType, options, multiple, name, const: constValue } = field;
 
   if (options?.length) {
     if (inputType === 'radio' || inputType === 'select') {
@@ -30,7 +45,7 @@ export function fakeValueFor(field: $TSFixMe) {
       // any one produces a validly-formatted number, regardless of the
       // employment's own country.
       const option = options.find((o) => o.meta?.countryCode) || options[0];
-      return `+${option.meta.countryCode}${faker.string.numeric(9)}`;
+      return `+${option.meta?.countryCode}${faker.string.numeric(9)}`;
     }
     return preferNoOption(options).value;
   }
@@ -46,7 +61,7 @@ export function fakeValueFor(field: $TSFixMe) {
       // Some countries require more lead time than a fixed short offset
       // covers (e.g. Iceland: 20 working days, ~28 calendar days) - 35
       // calendar days clears that with margin. Doesn't dodge country-specific
-      // holidays (e.g. Georgia) on its own; seed-employment.ts's
+      // holidays (e.g. Georgia) on its own; seed-onboarding.ts's
       // findSafeStartDate seeds provisional_start_date directly for that.
       const d = new Date();
       d.setDate(d.getDate() + 35);
@@ -99,9 +114,9 @@ export function safeStartDateYears(
   const latest = new Date();
   latest.setDate(latest.getDate() + minLeadDays + windowDays);
   return [
-    String(earliest.getFullYear()),
-    ...(latest.getFullYear() !== earliest.getFullYear()
-      ? [String(latest.getFullYear())]
+    String(earliest.getUTCFullYear()),
+    ...(latest.getUTCFullYear() !== earliest.getUTCFullYear()
+      ? [String(latest.getUTCFullYear())]
       : []),
   ];
 }
@@ -142,16 +157,16 @@ export function pickSafeDate(
  * conditionally-required fields may appear), repeat until stable. Mirrors what the real
  * multi-step form does field-by-field, but against the schema directly instead of the DOM. */
 export function fillSchema(
-  schema: Record<string, unknown>,
-  seedValues: Record<string, unknown> = {},
-): { values: Record<string, unknown>; skipped: string[] } {
-  const values: Record<string, unknown> = { ...seedValues };
+  schema: Parameters<typeof createHeadlessForm>[0],
+  seedValues: FormValues = {},
+): { values: FormValues; skipped: string[] } {
+  const values: FormValues = { ...seedValues };
   const skipped: string[] = [];
   for (let round = 0; round < 8; round++) {
     const { fields } = createHeadlessForm(schema, {
-      initialValues: values as $TSFixMe,
+      initialValues: values as HeadlessFormOptions['initialValues'],
     });
-    const missing = (fields as $TSFixMe[]).filter(
+    const missing = (fields as unknown as SeedField[]).filter(
       (f) => f.required && f.isVisible && values[f.name] === undefined,
     );
     if (missing.length === 0) break;
