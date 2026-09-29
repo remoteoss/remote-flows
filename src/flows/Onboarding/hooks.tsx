@@ -589,13 +589,26 @@ export const useOnboarding = ({
   );
 
   const {
-    data: basicInformationForm,
+    data: freshBasicInformationForm,
     isLoading: isLoadingBasicInformationForm,
   } = useBasicInformationSchema({
     countryCode: internalCountryCode as string,
     options: basicInformationSchemaOptions,
     jsonSchemaVersion: getBasicInformationSchemaVersion(options),
   });
+
+  const lastBasicInformationValuesRef = useRef<FieldValues | null>(null);
+
+  // A new jsfModify reference rebuilds the form with every field back in its
+  // default visibility, so the last validated values are replayed onto it.
+  const basicInformationForm = useMemo(() => {
+    if (freshBasicInformationForm && lastBasicInformationValuesRef.current) {
+      freshBasicInformationForm.handleValidation(
+        lastBasicInformationValuesRef.current,
+      );
+    }
+    return freshBasicInformationForm;
+  }, [freshBasicInformationForm]);
 
   const annualGrossSalaryField =
     options?.jsfModify?.contract_details?.fields?.annual_gross_salary;
@@ -1037,6 +1050,7 @@ export const useOnboarding = ({
           basicInformationForm.fields,
           { isPartialValidation: true },
         );
+        lastBasicInformationValuesRef.current = parsedBasicInformation;
         basicInformationForm.handleValidation(parsedBasicInformation);
       }
       if (cancelled) return;
@@ -1305,6 +1319,7 @@ export const useOnboarding = ({
           basicInformationForm?.fields,
           { isPartialValidation: false },
         );
+        lastBasicInformationValuesRef.current = parsedValues;
         const result = basicInformationForm?.handleValidation(parsedValues);
         setFieldsCount((prev) => prev + 1);
         return result;

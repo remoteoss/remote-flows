@@ -2987,6 +2987,31 @@ describe('OnboardingFlow', () => {
       expect(await screen.findByTestId('seniority_date')).toBeInTheDocument();
     });
 
+    it('should keep seniority_date visible when the parent re-renders with a new inline options object', async () => {
+      const renderFlow = () => (
+        <OnboardingFlow
+          {...defaultProps}
+          options={{ jsfModify: { basic_information: { fields: {} } } }}
+          skipSteps={['select_country']}
+          countryCode='PRT'
+          initialValues={{
+            has_seniority_date: 'yes',
+            seniority_date: '2024-03-15',
+          }}
+        />
+      );
+
+      const { rerender } = render(renderFlow(), { wrapper: TestProviders });
+
+      expect(await screen.findByTestId('seniority_date')).toBeInTheDocument();
+
+      rerender(renderFlow());
+
+      await waitFor(() => {
+        expect(screen.getByTestId('seniority_date')).toBeInTheDocument();
+      });
+    });
+
     it('should show seniority_date from the employment when employmentId is provided', async () => {
       const uniqueEmploymentId = generateUniqueEmploymentId();
       mockEmploymentWithSeniority(uniqueEmploymentId, 'created');
