@@ -130,6 +130,9 @@ export const useJobTitleEligibilityCheck = ({
     }
     try {
       const result = await queryClient.query(getOptions(nextParams));
+      if (!equal(paramsRef.current, nextParams)) {
+        return;
+      }
       return getJobTitleEligibilityValues(result);
     } catch (error) {
       if (error instanceof CancelledError) {
