@@ -1,5 +1,11 @@
 # @remoteoss/remote-flows
 
+## 1.55.1
+
+### Patch Changes
+
+- Fix onboarding computed money forced values (e.g. Portugal's extended work hours allowance) being computed and set in the wrong unit, which showed an allowance 100x too small and blocked submitting contract details
+
 ## 1.55.0
 
 ### Minor Changes
