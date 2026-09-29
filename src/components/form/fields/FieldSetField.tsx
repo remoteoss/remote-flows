@@ -10,7 +10,10 @@ import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/Zen
 import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
 import { BaseTypes, SupportedTypes } from './types';
 import { StatementComponentProps } from '@/src/types/fields';
-import { checkFieldHasForcedValue } from '@/src/components/form/utils';
+import {
+  checkFieldHasForcedValue,
+  getForcedValue,
+} from '@/src/components/form/utils';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
 import { BaseFormDescription } from '@/src/components/ui/form';
 
@@ -278,7 +281,7 @@ export function FieldSetField({
                   <ForcedValueField
                     name={fieldKey}
                     description={fieldProps.description}
-                    value={fieldProps.const}
+                    value={getForcedValue(fieldProps)}
                     statement={fieldProps.statement}
                     label={fieldProps.label}
                     helpCenter={fieldProps.meta?.helpCenter}
