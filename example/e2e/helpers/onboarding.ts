@@ -523,11 +523,13 @@ export async function fillOnboardingStep3PortugalForm(
       type: 'radio',
       value: options.role_is_onsite,
       name: 'role_is_onsite',
+      optional: true,
     },
     {
       type: 'radio',
       value: options.role_requires_license,
       name: 'role_requires_license',
+      optional: true,
     },
     {
       type: 'radio',
