@@ -586,6 +586,64 @@ describe.each(schemaPaths)(
         });
         await expect(staleCheck).resolves.toBeUndefined();
       });
+
+      it('resolves a superseded headless check that fails with nothing to write', async () => {
+        const errorSpy = vi.spyOn(console, 'error');
+        const pending: { release: () => void }[] = [];
+        server.use(
+          http.post(
+            '*/v2/employments/:id/job-title-eligibility-check',
+            async ({ request }) => {
+              const body = (await request.json()) as {
+                role_description: string;
+              };
+              if (body.role_description === 'Frontend engineer') {
+                return HttpResponse.json({
+                  data: {
+                    job_title_eligibility_check: {
+                      check_id: 'latest-check-id',
+                      verdict: 'eligible',
+                    },
+                  },
+                });
+              }
+              await new Promise<void>((resolve) => {
+                pending.push({ release: resolve });
+              });
+              return HttpResponse.json(
+                { message: 'Internal error' },
+                { status: 500 },
+              );
+            },
+          ),
+        );
+
+        await renderContractDetailsStep();
+
+        const filledValues = {
+          role_description: 'Backend engineer',
+          role_is_onsite: 'no',
+          role_requires_license: 'no',
+        };
+        const staleCheck =
+          latestOnboardingBag.checkJobTitleEligibility(filledValues);
+        const latestCheck = latestOnboardingBag.checkJobTitleEligibility({
+          ...filledValues,
+          role_description: 'Frontend engineer',
+        });
+
+        await expect(latestCheck).resolves.toEqual({
+          additional_job_title_eligibility_check_slug: 'latest-check-id',
+          additional_job_title_eligibility_check_result: 'yes',
+        });
+        await waitFor(() => expect(pending).toHaveLength(1));
+        pending[0].release();
+
+        await expect(staleCheck).resolves.toBeUndefined();
+        expect(errorSpy).not.toHaveBeenCalledWith(
+          'Failed to fetch job title eligibility check',
+        );
+      });
     });
   },
 );
