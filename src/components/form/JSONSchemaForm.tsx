@@ -12,7 +12,11 @@ import {
   $TSFixMe,
 } from '@/src/types/remoteFlows';
 import { StatementComponentProps } from '@/src/types/fields';
-import { checkFieldHasForcedValue, getFieldsWithFlatFieldsets } from './utils';
+import {
+  checkFieldHasForcedValue,
+  getFieldsWithFlatFieldsets,
+  getForcedValue,
+} from './utils';
 
 type JSONSchemaFormFieldsProps = {
   fields: JSFFields;
@@ -75,7 +79,7 @@ export const JSONSchemaFormFields = ({
             <ForcedValueField
               name={fieldProps.name as string}
               description={fieldProps.description as string}
-              value={fieldProps.const as string}
+              value={getForcedValue(fieldProps) as string}
               statement={fieldProps.statement as $TSFixMe}
               label={fieldProps.label as string}
               helpCenter={fieldProps.meta?.helpCenter}

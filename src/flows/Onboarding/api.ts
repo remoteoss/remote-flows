@@ -247,7 +247,14 @@ export const useJSONSchemaForm = ({
     enabled: options?.queryOptions?.enabled,
     select: ({ data }) => {
       const jsfSchema = data?.data || {};
-      return createHeadlessForm(jsfSchema, fieldValues, options);
+      // `transformMoneyFields` has to be explicit: `createHeadlessForm` only defaults it on
+      // when no options object is passed at all. Without it the schema's conditionals and
+      // computed values see money fields in major units instead of the cents they are written
+      // for, e.g. PRT's extended work hours allowance came out 100x too small.
+      return createHeadlessForm(jsfSchema, fieldValues, {
+        ...options,
+        transformMoneyFields: true,
+      });
     },
   });
 };
