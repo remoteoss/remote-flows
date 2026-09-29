@@ -186,12 +186,12 @@ async function fetchSchema(
 }
 
 /** See pickSafeDate in fill-schema.ts for why a fixed offset alone isn't
- * enough - falls back to the unchecked minimum-lead date if the holidays
- * lookup itself fails. */
+ * enough - a year whose holidays lookup fails is skipped rather than
+ * discarding the years that did load. */
 async function findSafeStartDate(): Promise<string> {
   const holidayDates = new Set<string>();
-  try {
-    for (const year of safeStartDateYears()) {
+  for (const year of safeStartDateYears()) {
+    try {
       const holidays = await api<{
         data?: { day: string; observed_day?: string }[];
       }>('GET', `/v1/countries/${COUNTRY}/holidays/${year}`);
@@ -199,9 +199,9 @@ async function findSafeStartDate(): Promise<string> {
         holidayDates.add(holiday.day);
         if (holiday.observed_day) holidayDates.add(holiday.observed_day);
       }
+    } catch (error) {
+      console.warn(`Could not load ${year} holidays for ${COUNTRY}:`, error);
     }
-  } catch {
-    return pickSafeDate(new Set());
   }
   return pickSafeDate(holidayDates);
 }

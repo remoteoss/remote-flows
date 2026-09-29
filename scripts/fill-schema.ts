@@ -82,6 +82,7 @@ export function fakeValueFor(field: $TSFixMe) {
 
 export const SAFE_START_DATE_MIN_LEAD_DAYS = 35;
 export const SAFE_START_DATE_SEARCH_WINDOW_DAYS = 60;
+const START_WEEKDAYS = new Set([1, 2, 3, 4]);
 
 function toIsoDate(date: Date): string {
   return date.toISOString().slice(0, 10);
@@ -110,8 +111,11 @@ export function safeStartDateYears(
  * `holidayDates` - a fixed offset alone isn't enough: with ~90 countries
  * checked nightly, some will always land on one of their own holidays by
  * chance (real data: CYP/CZE/GRC/GEO all hit "cannot be in a holiday" in a
- * single schema-canary run). Falls back to the unchecked minimum-lead date
- * if nothing in the search window is holiday-free.
+ * single schema-canary run). Only Monday-Thursday is considered because
+ * Tiger blocks some weekdays per country (ISL: Friday/Saturday, much of
+ * LATAM: Saturday/Sunday) and the public API doesn't expose that table.
+ * Falls back to the unchecked minimum-lead date if nothing in the search
+ * window qualifies.
  */
 export function pickSafeDate(
   holidayDates: ReadonlySet<string>,
@@ -126,7 +130,9 @@ export function pickSafeDate(
   const candidate = new Date(earliest);
   while (candidate <= latest) {
     const iso = toIsoDate(candidate);
-    if (!holidayDates.has(iso)) return iso;
+    if (START_WEEKDAYS.has(candidate.getUTCDay()) && !holidayDates.has(iso)) {
+      return iso;
+    }
     candidate.setDate(candidate.getDate() + 1);
   }
   return toIsoDate(earliest);
