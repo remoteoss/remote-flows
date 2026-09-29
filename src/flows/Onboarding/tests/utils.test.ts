@@ -29,13 +29,14 @@ describe('getContractDetailsSchemaVersion', () => {
 });
 
 describe('usesJsfV1ContractDetails', () => {
-  it('should return true for France and Italy', () => {
+  it('should return true for France, Italy and Portugal', () => {
     expect(usesJsfV1ContractDetails('FRA')).toBe(true);
     expect(usesJsfV1ContractDetails('ITA')).toBe(true);
+    expect(usesJsfV1ContractDetails('PRT')).toBe(true);
   });
 
   it('should return false for the other countries', () => {
-    expect(usesJsfV1ContractDetails('PRT')).toBe(false);
+    expect(usesJsfV1ContractDetails('GBR')).toBe(false);
     expect(usesJsfV1ContractDetails(null)).toBe(false);
   });
 });
