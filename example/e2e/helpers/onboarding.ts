@@ -54,6 +54,7 @@ interface fillOnboardingStep2FormOptions {
   country_id?: string;
   tax_job_category?: string;
   provisional_start_date?: string;
+  excluded_start_dates?: string[];
   has_seniority_date?: string;
 }
 
@@ -97,6 +98,7 @@ export async function fillOnboardingStep2Form(
       type: 'datepicker',
       value: options.provisional_start_date,
       testId: 'date-picker-button-provisional_start_date',
+      excludedDates: options.excluded_start_dates,
     },
     {
       // Absent for at least Germany, where seniority is forced to "no" server-side and the
