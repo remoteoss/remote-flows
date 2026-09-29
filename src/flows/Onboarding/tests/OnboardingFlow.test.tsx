@@ -2898,6 +2898,132 @@ describe('OnboardingFlow', () => {
     });
   });
 
+  describe('basic information conditional fields from pre-filled values', () => {
+    const seniorityBasicInformation = {
+      ...employmentDefaultResponse.data.employment.basic_information,
+      has_seniority_date: 'yes',
+      seniority_date: '2024-03-15',
+    };
+
+    const mockEmploymentWithSeniority = (
+      employmentId: string,
+      status: string,
+    ) => {
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () => {
+          return HttpResponse.json({
+            ...employmentDefaultResponse,
+            data: {
+              ...employmentDefaultResponse.data,
+              employment: {
+                ...employmentDefaultResponse.data.employment,
+                id: employmentId,
+                status,
+                basic_information: seniorityBasicInformation,
+              },
+            },
+          });
+        }),
+      );
+    };
+
+    beforeEach(() => {
+      mockRender.mockImplementation(
+        ({ onboardingBag, components }: OnboardingRenderProps) => {
+          const steps: Record<number, string> = {
+            [0]: 'Basic Information',
+            [1]: 'Contract Details',
+            [2]: 'Benefits',
+            [3]: 'Review',
+          };
+          if (onboardingBag.isLoading) {
+            return <div data-testid='spinner'>Loading...</div>;
+          }
+          return (
+            <>
+              <h1>Step: {steps[onboardingBag.stepState.currentStep.index]}</h1>
+              <MultiStepFormWithoutCountry
+                onboardingBag={onboardingBag}
+                components={components}
+              />
+            </>
+          );
+        },
+      );
+    });
+
+    it('should hide seniority_date when starting from scratch without pre-filled values', async () => {
+      render(
+        <OnboardingFlow
+          {...defaultProps}
+          skipSteps={['select_country']}
+          countryCode='PRT'
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+      await screen.findByLabelText(/Does the employee have a seniority date?/i);
+
+      expect(screen.queryByTestId('seniority_date')).not.toBeInTheDocument();
+    });
+
+    it('should show seniority_date from the initialValues prop without the user typing', async () => {
+      render(
+        <OnboardingFlow
+          {...defaultProps}
+          skipSteps={['select_country']}
+          countryCode='PRT'
+          initialValues={{
+            has_seniority_date: 'yes',
+            seniority_date: '2024-03-15',
+          }}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+
+      expect(await screen.findByTestId('seniority_date')).toBeInTheDocument();
+    });
+
+    it('should show seniority_date from the employment when employmentId is provided', async () => {
+      const uniqueEmploymentId = generateUniqueEmploymentId();
+      mockEmploymentWithSeniority(uniqueEmploymentId, 'created');
+
+      render(
+        <OnboardingFlow
+          {...defaultProps}
+          employmentId={uniqueEmploymentId}
+          skipSteps={['select_country']}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Basic Information/i);
+
+      expect(await screen.findByTestId('seniority_date')).toBeInTheDocument();
+    });
+
+    it('should show seniority_date in the review when a read-only employment skips straight to review', async () => {
+      const uniqueEmploymentId = generateUniqueEmploymentId();
+      mockEmploymentWithSeniority(uniqueEmploymentId, 'invited');
+
+      render(
+        <OnboardingFlow
+          {...defaultProps}
+          employmentId={uniqueEmploymentId}
+          skipSteps={['select_country']}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText(/Step: Review/i);
+
+      expect(await screen.findByText(/^seniority_date: /)).toBeInTheDocument();
+    });
+  });
+
   it('should include description, fine_print, and benefits_service_fee in benefits presentation', async () => {
     let capturedPresentation: Record<string, unknown> | null | undefined = null;
 

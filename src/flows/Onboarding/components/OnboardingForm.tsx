@@ -40,11 +40,9 @@ export function OnboardingForm({
   });
 
   useEffect(() => {
-    // When the employmentId is set,
-    // we need to run the checkFieldUpdates to update fieldValues in useStepState
-    if (onboardingBag.employmentId) {
-      onboardingBag?.checkFieldUpdates(form.getValues());
-    }
+    // Pre-filled values need to reach useStepState and be validated so conditional
+    // fields show before the user types.
+    onboardingBag?.checkFieldUpdates(form.getValues());
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

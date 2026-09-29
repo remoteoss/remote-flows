@@ -319,6 +319,69 @@ export const useContractDetailsSchema = ({
   };
 };
 
+export const useBasicInformationSchema = ({
+  countryCode,
+  options,
+  jsonSchemaVersion,
+}: {
+  countryCode: string;
+  options?: FlowOptions & {
+    queryOptions?: { enabled?: boolean };
+    transformMoneyFields?: boolean;
+  };
+  jsonSchemaVersion?: number | 'latest';
+}): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
+  const { client } = useClient();
+  const jsonSchemaQueryParam = jsonSchemaVersion
+    ? {
+        json_schema_version: jsonSchemaVersion,
+      }
+    : {};
+  const { data: response, ...reactQueryResult } = useQuery({
+    queryKey: [
+      'onboarding-basic-information-schema',
+      countryCode,
+      jsonSchemaVersion,
+    ],
+    retry: false,
+    queryFn: async () => {
+      const response = await getV1CountriesCountryCodeForm({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          country_code: countryCode,
+          form: 'employment_basic_information',
+        },
+        query: {
+          skip_benefits: true,
+          ...jsonSchemaQueryParam,
+        },
+      });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch onboarding schema');
+      }
+
+      return response;
+    },
+    enabled: options?.queryOptions?.enabled,
+  });
+
+  const basicInformationForm: JSONSchemaFormResultWithFieldsets | null =
+    useMemo(() => {
+      const schemaData = response?.data.data;
+      if (!schemaData) return null;
+      return createHeadlessForm(schemaData, {}, options);
+    }, [options, response?.data]);
+
+  return {
+    data: basicInformationForm,
+    isLoading: reactQueryResult.isLoading,
+  };
+};
+
 export const useBenefitOffersSchema = (
   employmentId: string,
   fieldValues: FieldValues,

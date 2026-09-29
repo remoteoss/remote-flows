@@ -28,6 +28,7 @@ import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
+  useBasicInformationSchema,
   useBenefitOffers,
   useBenefitOffersSchema,
   useCompany,
@@ -576,17 +577,23 @@ export const useOnboarding = ({
       Boolean(employmentId)),
   );
 
-  const {
-    data: basicInformationForm,
-    isLoading: isLoadingBasicInformationForm,
-  } = useJSONSchema({
-    form: 'employment_basic_information',
-    options: {
-      jsfModify: options?.jsfModify?.basic_information,
+  const basicInformationSchemaOptions = useMemo(
+    () => ({
       queryOptions: {
         enabled: isBasicInformationDetailsEnabled,
       },
-    },
+      transformMoneyFields: false,
+      jsfModify: options?.jsfModify?.basic_information,
+    }),
+    [isBasicInformationDetailsEnabled, options?.jsfModify?.basic_information],
+  );
+
+  const {
+    data: basicInformationForm,
+    isLoading: isLoadingBasicInformationForm,
+  } = useBasicInformationSchema({
+    countryCode: internalCountryCode as string,
+    options: basicInformationSchemaOptions,
     jsonSchemaVersion: getBasicInformationSchemaVersion(options),
   });
 
@@ -1020,7 +1027,20 @@ export const useOnboarding = ({
     );
 
   useEffect(() => {
-    if (isNavigatingToReview) {
+    if (!isNavigatingToReview) return;
+    let cancelled = false;
+
+    const navigateToReview = async () => {
+      if (basicInformationForm) {
+        const parsedBasicInformation = await parseJSFToValidate(
+          basicInformationInitialValues,
+          basicInformationForm.fields,
+          { isPartialValidation: true },
+        );
+        basicInformationForm.handleValidation(parsedBasicInformation);
+      }
+      if (cancelled) return;
+
       fieldsMetaRef.current = {
         select_country: prettifyFormValues(
           selectCountryInitialValues,
@@ -1061,8 +1081,15 @@ export const useOnboarding = ({
       });
 
       goToStep('review');
-    }
+    };
+
+    navigateToReview();
+
+    return () => {
+      cancelled = true;
+    };
   }, [
+    basicInformationForm,
     basicInformationInitialValues,
     benefitsInitialValues,
     contractDetailsInitialValues,
@@ -1278,7 +1305,9 @@ export const useOnboarding = ({
           basicInformationForm?.fields,
           { isPartialValidation: false },
         );
-        return basicInformationForm?.handleValidation(parsedValues);
+        const result = basicInformationForm?.handleValidation(parsedValues);
+        setFieldsCount((prev) => prev + 1);
+        return result;
       }
 
       if (
@@ -1346,8 +1375,9 @@ export const useOnboarding = ({
     async (values: FieldValues) => {
       setFieldValues(values);
       if (
-        isJsfV1ContractDetailsEnabled &&
-        stepState.currentStep.name === 'contract_details'
+        stepState.currentStep.name === 'basic_information' ||
+        (isJsfV1ContractDetailsEnabled &&
+          stepState.currentStep.name === 'contract_details')
       ) {
         await handleValidation(values);
       }
