@@ -40,6 +40,7 @@ import {
   useEngagementAgreementDetailsSchema,
   useGetPreOnboardingRequirements,
   useJSONSchemaForm,
+  useLegacyContractDetailsSchema,
   useUpdateBenefitsOffers,
   useUpdateEmployment,
   useUpdateEmploymentEngagementAgreementDetails,
@@ -513,6 +514,21 @@ export const useOnboarding = ({
     unknown
   >;
 
+  const hasUserEnteredAnyValues = Object.keys(fieldValues).length > 0;
+  // when you write on the fields, the values are stored in the fieldValues state
+  // when values are stored in the stepState is when the user has navigated to the step
+  // and then we have the values from the server and the onboardingInitialValues that the user can inject,
+  const mergedFormValues = hasUserEnteredAnyValues
+    ? {
+        ...onboardingInitialValues,
+        ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
+        ...fieldValues,
+      }
+    : {
+        ...onboardingInitialValues,
+        ...serverEmploymentData,
+      };
+
   const useJSONSchema = ({
     form,
     options: jsonSchemaOptions = {},
@@ -527,21 +543,6 @@ export const useOnboarding = ({
     query?: Record<string, string>;
     jsonSchemaVersion?: number | 'latest';
   }) => {
-    const hasUserEnteredAnyValues = Object.keys(fieldValues).length > 0;
-    // when you write on the fields, the values are stored in the fieldValues state
-    // when values are stored in the stepState is when the user has navigated to the step
-    // and then we have the values from the server and the onboardingInitialValues that the user can inject,
-    const mergedFormValues = hasUserEnteredAnyValues
-      ? {
-          ...onboardingInitialValues,
-          ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
-          ...fieldValues,
-        }
-      : {
-          ...onboardingInitialValues,
-          ...serverEmploymentData,
-        };
-
     return useJSONSchemaForm({
       countryCode: internalCountryCode as string,
       form: form,
@@ -712,8 +713,9 @@ export const useOnboarding = ({
     getContractDetailsSchemaVersion(options, internalCountryCode);
 
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
-    useJSONSchema({
-      form: 'contract_details',
+    useLegacyContractDetailsSchema({
+      countryCode: internalCountryCode as string,
+      fieldValues: mergedFormValues,
       query: {
         employment_id: internalEmploymentId as string,
       },

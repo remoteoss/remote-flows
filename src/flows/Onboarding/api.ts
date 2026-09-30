@@ -54,6 +54,7 @@ import {
   getBenefitOffersSchemaVersion,
 } from '@/src/flows/Onboarding/utils';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
+import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { countriesOptions } from '@/src/common/api/countries';
 import { useMemo } from 'react';
 
@@ -250,6 +251,69 @@ export const useJSONSchemaForm = ({
       return createHeadlessForm(jsfSchema, fieldValues, options);
     },
   });
+};
+
+export const useLegacyContractDetailsSchema = ({
+  countryCode,
+  fieldValues,
+  options,
+  query = {},
+  jsonSchemaVersion,
+}: {
+  countryCode: string;
+  fieldValues: FieldValues;
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
+  query?: Record<string, unknown>;
+  jsonSchemaVersion?: number | 'latest';
+}): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
+  const { client } = useClient();
+  const jsonSchemaQueryParam = jsonSchemaVersion
+    ? {
+        json_schema_version: jsonSchemaVersion,
+      }
+    : {};
+  const { data: schema, isLoading } = useQuery({
+    queryKey: [
+      'onboarding-legacy-contract-details-schema',
+      countryCode,
+      jsonSchemaVersion,
+    ],
+    retry: false,
+    queryFn: async () => {
+      const response = await getV1CountriesCountryCodeForm({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          country_code: countryCode,
+          form: 'contract_details',
+        },
+        query: {
+          skip_benefits: true,
+          ...query,
+          ...jsonSchemaQueryParam,
+        },
+      });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch onboarding schema');
+      }
+
+      return response;
+    },
+    enabled: options?.queryOptions?.enabled,
+    select: ({ data }) => data?.data || {},
+  });
+
+  const { form } = useHeadlessForm({
+    schema,
+    values: fieldValues,
+    options: { jsfModify: options?.jsfModify },
+    strategy: 'rebuild',
+  });
+
+  return { data: form, isLoading };
 };
 
 export const useContractDetailsSchema = ({
