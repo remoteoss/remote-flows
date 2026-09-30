@@ -4,6 +4,39 @@ import { execSync } from 'child_process';
 import { globSync } from 'glob';
 import chalk from 'chalk';
 
+const PARTNER_SUBPATHS: Record<string, string[]> = {
+  'flows/CostCalculator/api': ['useCostCalculatorCountries'],
+  'flows/CostCalculator/context': ['useCostCalculatorContext'],
+  'flows/ContractAmendment/utils': ['STEPS'],
+};
+
+async function checkPartnerSubpaths(): Promise<void> {
+  const failures: string[] = [];
+  for (const [subpath, names] of Object.entries(PARTNER_SUBPATHS)) {
+    const specifier = `@remoteoss/remote-flows/${subpath}`;
+    try {
+      const mod: Record<string, unknown> = await import(specifier);
+      names
+        .filter((name) => mod[name] === undefined)
+        .forEach((name) => failures.push(`${specifier} has no export ${name}`));
+    } catch (error) {
+      failures.push(`${specifier}: ${(error as Error).message}`);
+    }
+  }
+
+  if (failures.length > 0) {
+    console.error(chalk.red.bold('❌ Partner subpath imports failed:\n'));
+    failures.forEach((failure) => console.error(chalk.red(`  ${failure}`)));
+    process.exit(1);
+  }
+
+  console.log(
+    chalk.green(
+      `✅ ${Object.keys(PARTNER_SUBPATHS).length} partner subpaths resolve and export what they used to\n`,
+    ),
+  );
+}
+
 function checkFlowSubpaths(): void {
   console.log(
     chalk.blue.bold(
@@ -46,3 +79,4 @@ function checkFlowSubpaths(): void {
 }
 
 checkFlowSubpaths();
+await checkPartnerSubpaths();
