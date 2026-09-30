@@ -54,7 +54,7 @@ import {
   getBenefitOffersSchemaVersion,
 } from '@/src/flows/Onboarding/utils';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
-import { useHeadlessForm } from '@/src/common/useHeadlessForm';
+import { HeadlessForm, useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { countriesOptions } from '@/src/common/api/countries';
 import { useMemo } from 'react';
 
@@ -318,25 +318,27 @@ export const useLegacyContractDetailsSchema = ({
 
 export const useContractDetailsSchema = ({
   countryCode,
+  fieldValues,
   options,
   query = {},
   jsonSchemaVersion,
 }: {
   countryCode: string;
-  options?: FlowOptions & {
-    queryOptions?: { enabled?: boolean };
-    transformMoneyFields?: boolean;
-  };
+  fieldValues: FieldValues;
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
   jsonSchemaVersion?: number | 'latest';
-}): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
+}): Omit<HeadlessForm, 'form' | 'onValuesChange'> & {
+  data: JSONSchemaFormResultWithFieldsets | null;
+  isLoading: boolean;
+} => {
   const { client } = useClient();
   const jsonSchemaQueryParam = jsonSchemaVersion
     ? {
         json_schema_version: jsonSchemaVersion,
       }
     : {};
-  const { data: response, ...reactQueryResult } = useQuery({
+  const { data: schema, isLoading } = useQuery({
     queryKey: [
       'onboarding-contract-details-schema',
       countryCode,
@@ -368,19 +370,17 @@ export const useContractDetailsSchema = ({
       return response;
     },
     enabled: options?.queryOptions?.enabled,
+    select: ({ data }) => data?.data,
   });
 
-  const contractDetailsFormFrance: JSONSchemaFormResultWithFieldsets | null =
-    useMemo(() => {
-      const schemaData = response?.data.data;
-      if (!schemaData) return null;
-      return createHeadlessForm(schemaData, {}, options);
-    }, [options, response?.data]);
+  const { form, handleValidation, parseFormValues } = useHeadlessForm({
+    schema,
+    values: fieldValues,
+    options: { jsfModify: options?.jsfModify },
+    strategy: 'buildOnce',
+  });
 
-  return {
-    data: contractDetailsFormFrance,
-    isLoading: reactQueryResult.isLoading,
-  };
+  return { data: form, isLoading, handleValidation, parseFormValues };
 };
 
 export const useBenefitOffersSchema = (

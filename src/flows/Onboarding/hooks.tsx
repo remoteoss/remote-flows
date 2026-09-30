@@ -168,39 +168,33 @@ const getLoadingStates = ({
 
 const useJsfV1ContractDetails = ({
   countryCode,
+  fieldValues,
   query,
   enabled,
   jsonSchemaVersion,
   jsfModify,
 }: {
   countryCode: string;
+  fieldValues: FieldValues;
   query: Record<string, string>;
   enabled: boolean;
   jsonSchemaVersion: number | 'latest';
   jsfModify?: JSFModify;
 }) => {
-  const options = useMemo(
-    () => ({
-      queryOptions: {
-        enabled,
-      },
-      transformMoneyFields: false,
-      jsfModify,
-    }),
-    [enabled, jsfModify],
-  );
-  const { data: form, isLoading: isLoadingContractDetails } =
-    useContractDetailsSchema({
-      countryCode,
-      query,
-      options,
-      jsonSchemaVersion,
-    });
+  const {
+    data: form,
+    isLoading,
+    handleValidation,
+    parseFormValues,
+  } = useContractDetailsSchema({
+    countryCode,
+    fieldValues,
+    query,
+    options: { queryOptions: { enabled }, jsfModify },
+    jsonSchemaVersion,
+  });
 
-  return {
-    form,
-    isLoading: isLoadingContractDetails,
-  };
+  return { form, isLoading, handleValidation, parseFormValues };
 };
 
 export const useOnboarding = ({
@@ -223,7 +217,6 @@ export const useOnboarding = ({
     },
   });
 
-  const [, setFieldsCount] = useState<number>(0);
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
@@ -748,8 +741,11 @@ export const useOnboarding = ({
   const {
     form: contractDetailsFormV1,
     isLoading: isLoadingContractDetailsFormV1,
+    handleValidation: handleContractDetailsV1Validation,
+    parseFormValues: parseContractDetailsV1Values,
   } = useJsfV1ContractDetails({
     countryCode: internalCountryCode as string,
+    fieldValues,
     query: {
       employment_id: internalEmploymentId as string,
     },
@@ -1123,9 +1119,7 @@ export const useOnboarding = ({
       stepState.currentStep.name === 'contract_details' &&
       isJsfV1ContractDetailsEnabled
     ) {
-      return await parseJSFToValidate(values, contractDetailsFormV1?.fields, {
-        isPartialValidation: false,
-      });
+      return await parseContractDetailsV1Values(values);
     }
 
     if (benefitOffersSchema && stepState.currentStep.name === 'benefits') {
@@ -1313,20 +1307,7 @@ export const useOnboarding = ({
         stepState.currentStep.name === 'contract_details' &&
         isJsfV1ContractDetailsEnabled
       ) {
-        // Invisible values are kept on purpose here. The fields still hold the
-        // visibility of the previous change, so dropping their values would hide
-        // what a field that is about to become visible needs to compute itself:
-        // a hidden fieldset coming back would lose the values driving its own
-        // children. handleValidation resolves the visibility first and nulls
-        // whatever it considers hidden afterwards, which is the right order.
-        const parsedValues = await parseJSFToValidate(
-          values,
-          contractDetailsFormV1?.fields,
-          { isPartialValidation: true },
-        );
-        const result = contractDetailsFormV1?.handleValidation(parsedValues);
-        setFieldsCount((prev) => prev + 1);
-        return result;
+        return handleContractDetailsV1Validation(values);
       }
 
       return null;
@@ -1339,8 +1320,8 @@ export const useOnboarding = ({
       engagementAgreementDetailsSchema,
       contractDetailsForm,
       contractDetailsFormV1,
+      handleContractDetailsV1Validation,
       isJsfV1ContractDetailsEnabled,
-      setFieldsCount,
     ],
   );
 
