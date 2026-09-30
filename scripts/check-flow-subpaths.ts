@@ -18,7 +18,7 @@ function checkFlowSubpaths(): void {
   const [pack] = JSON.parse(
     execSync('npm pack --dry-run --json --ignore-scripts', {
       encoding: 'utf-8',
-      stdio: ['ignore', 'pipe', 'ignore'],
+      stdio: ['ignore', 'pipe', 'inherit'],
     }),
   ) as Array<{ files: Array<{ path: string }> }>;
   const packed = new Set(pack.files.map((file) => file.path));
