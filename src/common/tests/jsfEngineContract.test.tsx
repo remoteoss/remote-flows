@@ -9,6 +9,7 @@ import {
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
+import { JSFModify } from '@/src/flows/types';
 import { contractDetailsSchemaV1Portugal } from '@/src/flows/Onboarding/tests/fixtures';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
@@ -30,6 +31,25 @@ const ENGINES = [
 const STRATEGIES: { strategy: HeadlessFormStrategy }[] = [
   { strategy: 'rebuild' },
   { strategy: 'buildOnce' },
+];
+
+const OPTIONS: {
+  options: string;
+  value: { jsfModify?: JSFModify } | undefined;
+  assertApplied?: () => void;
+}[] = [
+  { options: 'no options', value: undefined },
+  { options: 'no jsfModify', value: { jsfModify: undefined } },
+  {
+    options: 'a jsfModify',
+    value: {
+      jsfModify: {
+        fields: { annual_gross_salary: { description: 'Gross, per year' } },
+      },
+    },
+    assertApplied: () =>
+      expect(screen.getByText('Gross, per year')).toBeInTheDocument(),
+  },
 ];
 
 const withoutMeta = ({ 'x-rmt-meta': _meta, ...schema }: Schema) => schema;
@@ -85,14 +105,16 @@ const SITUATIONS: Situation[] = [
 function Harness({
   schema,
   strategy,
+  options,
   onCapture,
 }: {
   schema: Schema;
   strategy: HeadlessFormStrategy;
+  options: { jsfModify?: JSFModify } | undefined;
   onCapture: (submitted: FieldValues) => void;
 }) {
   const [values, setValues] = useState<FieldValues>({});
-  const headless = useHeadlessForm({ schema, values, strategy });
+  const headless = useHeadlessForm({ schema, values, options, strategy });
   const form = useJSONSchemaForm({
     handleValidation: headless.handleValidation,
     defaultValues: {},
@@ -131,25 +153,32 @@ beforeEach(() => {
 
 describe.each(ENGINES)('jsf engine contract on $engine', ({ meta }) => {
   describe.each(STRATEGIES)('$strategy', ({ strategy }) => {
-    it.each(SITUATIONS)('$situation', async ({ schema, fill, assert }) => {
-      const user = userEvent.setup();
-      const onCapture = vi.fn();
-      render(
-        <Harness
-          schema={structuredClone(
-            meta ? { ...schema, 'x-rmt-meta': meta } : schema,
-          )}
-          strategy={strategy}
-          onCapture={onCapture}
-        />,
-        { wrapper: TestProviders },
-      );
+    describe.each(OPTIONS)(
+      'with $options',
+      ({ value: options, assertApplied }) => {
+        it.each(SITUATIONS)('$situation', async ({ schema, fill, assert }) => {
+          const user = userEvent.setup();
+          const onCapture = vi.fn();
+          render(
+            <Harness
+              schema={structuredClone(
+                meta ? { ...schema, 'x-rmt-meta': meta } : schema,
+              )}
+              strategy={strategy}
+              options={options}
+              onCapture={onCapture}
+            />,
+            { wrapper: TestProviders },
+          );
 
-      await fill(user);
-      await user.click(screen.getByRole('button', { name: 'Capture' }));
-      await waitFor(() => expect(onCapture).toHaveBeenCalled());
+          await fill(user);
+          await user.click(screen.getByRole('button', { name: 'Capture' }));
+          await waitFor(() => expect(onCapture).toHaveBeenCalled());
 
-      await assert(onCapture.mock.lastCall?.[0]);
-    });
+          await assert(onCapture.mock.lastCall?.[0]);
+          assertApplied?.();
+        });
+      },
+    );
   });
 });
