@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import equal from 'fast-deep-equal';
 import { FieldValues } from 'react-hook-form';
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
@@ -32,6 +33,10 @@ export function useHeadlessForm({
 }: UseHeadlessFormArgs): HeadlessForm {
   const isBuildOnce = strategy === 'buildOnce';
   const [, setRevision] = useState(0);
+  const [stableOptions, setStableOptions] = useState(options);
+  if (!equal(stableOptions, options)) {
+    setStableOptions(options);
+  }
   const latestValues = useRef(values);
   useEffect(() => {
     latestValues.current = values;
@@ -45,14 +50,20 @@ export function useHeadlessForm({
       ? createHeadlessForm(
           schema,
           {},
-          { ...options, transformMoneyFields: false },
+          { ...stableOptions, transformMoneyFields: false },
         )
-      : createHeadlessForm(schema, buildValues, options);
-  }, [schema, buildValues, options, isBuildOnce]);
+      : createHeadlessForm(schema, buildValues, stableOptions);
+  }, [schema, buildValues, stableOptions, isBuildOnce]);
 
   const validate = useCallback(
     async (nextValues: FieldValues, isCancelled: () => boolean) => {
       if (!form) return null;
+      // buildOnce keeps invisible values on purpose. The fields still hold the
+      // visibility of the previous change, so dropping their values would hide
+      // what a field that is about to become visible needs to compute itself:
+      // a hidden fieldset coming back would lose the values driving its own
+      // children. handleValidation resolves the visibility first and nulls
+      // whatever it considers hidden afterwards, which is the right order.
       const parsedValues = await parseJSFToValidate(nextValues, form.fields, {
         isPartialValidation: isBuildOnce,
       });
