@@ -103,11 +103,10 @@ export const useJobTitleEligibilityCheck = ({
       validation?.formErrors,
       jobTitle,
     );
-    const paramsChanged = !equal(paramsRef.current, nextParams);
-    if (paramsChanged) {
+    if (!equal(paramsRef.current, nextParams)) {
       setParams(nextParams);
     }
-    if (nextParams && paramsChanged) {
+    if (nextParams) {
       await queryClient
         .query(getOptions(nextParams))
         .catch(() =>
