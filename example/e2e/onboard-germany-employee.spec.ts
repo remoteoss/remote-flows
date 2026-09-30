@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupVercelBypass } from './helpers/general';
+import { getPublicHolidays, setupVercelBypass } from './helpers/general';
 import {
   fillOnboardingIntroductionForm,
   fillOnboardingStep1Form,
@@ -54,6 +54,7 @@ test.describe('Onboard Germany employee', () => {
       country_id: 'Portugal',
       tax_job_category: 'Finance',
       provisional_start_date: 'auto',
+      excluded_start_dates: await getPublicHolidays(page, 'DEU'),
       has_seniority_date: 'no',
     });
 
