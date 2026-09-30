@@ -277,6 +277,7 @@ export const useLegacyContractDetailsSchema = ({
       'onboarding-legacy-contract-details-schema',
       countryCode,
       jsonSchemaVersion,
+      query,
     ],
     retry: false,
     queryFn: async () => {
@@ -343,6 +344,7 @@ export const useContractDetailsSchema = ({
       'onboarding-contract-details-schema',
       countryCode,
       jsonSchemaVersion,
+      query,
     ],
     retry: false,
     queryFn: async () => {
