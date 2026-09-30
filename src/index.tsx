@@ -12,6 +12,8 @@ export {
   useCostCalculatorEstimationCsv,
   EstimationResults,
   SummaryResults,
+  useCostCalculatorCountries,
+  useCostCalculatorContext,
 } from '@/src/flows/CostCalculator';
 
 export type { CostCalculatorFlowProps } from '@/src/flows/CostCalculator';
@@ -53,6 +55,7 @@ export {
   ContractAmendmentForm,
   ContractAmendmentSubmit,
   useContractAmendment,
+  CONTRACT_AMENDMENT_STEPS,
 } from '@/src/flows/ContractAmendment';
 
 export type { ContractAmendmentRenderProps } from '@/src/flows/ContractAmendment';
