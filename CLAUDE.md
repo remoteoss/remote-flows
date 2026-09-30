@@ -26,7 +26,7 @@ npm run openapi-ts     # regenerate src/client/* from production gateway OpenAPI
 npm run openapi-ts:local  # regenerate from local gateway (openapi-ts.config.local.ts)
 npm run ci             # full local CI: build + check-format + check-exports + lint + type-check + test
 npm run seed:onboarding -- --country=XXX  # create an onboarding via API up to (not including) contract_details; needs example dev server + example/.env
-npm run seed:onboarding -- --country=XXX --env=sandbox  # same, but talks to the gateway directly using .env.sandbox at repo root (see scripts/seed-onboarding.mjs) - no dev server needed
+npm run seed:onboarding -- --country=XXX --env=sandbox  # same, but talks to the gateway directly using .env.sandbox at repo root (see scripts/seed-onboarding.ts) - no dev server needed
 ```
 
 The `example/` app is a separate workspace (its own `package.json`, Vite + Express dev server on `:3001` by default, overridable via `PORT` — `scripts/create-worktree.ts` assigns each worktree its own free port so several can run their example apps at once). To work against local changes: `npm link` in repo root, then `npm link @remoteoss/remote-flows` inside `example/`, then run `npm run dev` in both. E2E lives in [example/e2e/](example/e2e/) and is run with `npm run test:e2e` from `example/` (Playwright). E2E is excluded from the root vitest run.

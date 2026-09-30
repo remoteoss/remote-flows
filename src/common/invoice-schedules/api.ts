@@ -86,15 +86,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
       includeCustomDays,
     });
 
-    // `transformMoneyFields` has to be explicit: `createHeadlessForm` only defaults it on
-    // when no options object is passed at all, so passing `jsfModify` alone silently opted
-    // out. Without it the item amounts stay in the money input's major units — a decimal as
-    // soon as an amount has cents — and never satisfy the `integer` the row-reveal
-    // conditional matches on, which froze the form at a single item for any such amount.
-    return createHeadlessForm(schema, fieldValues, {
-      jsfModify,
-      transformMoneyFields: true,
-    });
+    return createHeadlessForm(schema, fieldValues, { jsfModify });
   }, [
     enabled,
     currencies,

@@ -4,27 +4,27 @@ import {
   fillOnboardingIntroductionForm,
   fillOnboardingStep1Form,
   fillOnboardingStep2Form,
-  fillOnboardingStep3SpainForm,
+  fillOnboardingStep3PortugalForm,
 } from './helpers/onboarding';
 import {
   fillOnboardingBenefitsStepDynamically,
   watchForBenefitsSchema,
 } from './helpers/benefits';
 
-test.describe('Onboard basic employee', () => {
+test.describe('Onboard Portugal employee', () => {
   test.beforeEach(async ({ page }) => {
     await setupVercelBypass(page);
     await page.goto('?demo=onboarding-basic');
   });
 
-  test('Fill basic employee flow form', async ({ page }) => {
+  test('Fill Portugal employee flow form', async ({ page }) => {
     const headerAmount = page.getByText(/Standard onboarding flow/);
-
     await expect(headerAmount).toBeVisible();
 
-    // Registered before Introduction submits: the benefit-offers schema request fires as soon
-    // as the employment is created there, not when the user reaches the Benefits step.
     const benefitsSchemaPromise = watchForBenefitsSchema(page);
+    const contractDetailsSchemaPromise = page.waitForResponse((response) =>
+      /\/v1\/countries\/PRT\/contract_details(\?|$)/.test(response.url()),
+    );
 
     await fillOnboardingIntroductionForm(page, {
       company_id: '460201ed-a8c0-4e75-89dc-6d5eae35f65e',
@@ -34,7 +34,7 @@ test.describe('Onboard basic employee', () => {
     await expect(stepTitle).toHaveText('Select Country');
 
     await fillOnboardingStep1Form(page, {
-      country_id: 'Spain',
+      country_id: 'Portugal',
     });
 
     stepTitle = page.getByTestId('onboarding-step-title');
@@ -49,44 +49,44 @@ test.describe('Onboard basic employee', () => {
       country_id: 'Portugal',
       tax_job_category: 'Finance',
       provisional_start_date: 'auto',
-      excluded_start_dates: await getPublicHolidays(page, 'ESP'),
+      excluded_start_dates: await getPublicHolidays(page, 'PRT'),
       has_seniority_date: 'no',
     });
 
     stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Contract Details');
 
-    await fillOnboardingStep3SpainForm(page, {
+    const contractDetailsSchema = await (
+      await contractDetailsSchemaPromise
+    ).json();
+    expect(
+      contractDetailsSchema.data['x-rmt-meta']?.jsfVersion,
+      'Portugal must stay on a jsf v0 contract_details schema for this spec to cover the v0 path',
+    ).toBeUndefined();
+
+    await fillOnboardingStep3PortugalForm(page, {
+      contract_duration_type: true,
       work_schedule: 'full_time',
-      probation_length: '3',
-      probation_length_ack: true,
+      working_hours_exemption: 'no',
+      has_probation_period: 'no',
       available_pto_type: 'fixed',
-      available_pto: '25',
-      overtime_compensation_method: 'payout',
+      available_pto: '22',
       role_description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim.',
       experience_level:
-        'Group Level A - Workers who thanks to their professional knowledge and experience, coordinate, plan and manage the resources available to them, ensuring the achievement of the objectives pursued. They carry out these activities with autonomy and supervision. (probation period - 6 months)',
+        'Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy',
+      role_is_onsite: 'no',
+      role_requires_license: 'no',
       work_address_is_home_address: 'yes',
       annual_gross_salary: '50000',
-      annual_bonus_ack: true,
-      salary_installments: '12 months',
-      allowances: '',
       has_signing_bonus: 'no',
       has_bonus: 'no',
       has_commissions: 'no',
       equity_compensation: 'no',
-      non_compete_clause_apply: 'no',
-      cba_area: '1',
-      cba_group: 'A',
-      cba_level: '1',
-      has_social_security_number: 'yes',
-      work_equipment: '200',
-      compensation_expenses_ack: true,
-      // Only rendered when the job-title eligibility check applies; the helper skips them
-      // when it does not.
-      role_is_onsite: 'yes',
-      role_requires_license: 'no',
+      work_from_home_allowance_ack: true,
+      annual_training_hours_ack: true,
+      salary_installments_confirmation: true,
+      offboarding_allowances_ack: true,
     });
 
     stepTitle = page.getByTestId('onboarding-step-title');
@@ -96,6 +96,5 @@ test.describe('Onboard basic employee', () => {
 
     stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Review');
-    await page.click('.submit-button');
   });
 });

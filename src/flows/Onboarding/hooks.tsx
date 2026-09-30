@@ -485,18 +485,23 @@ export const useOnboarding = ({
   const updateEngagementAgreementMutation =
     useUpdateEmploymentEngagementAgreementDetails();
   const updateContractEligibilityMutation = useUpsertContractEligibility();
+  // oxlint-disable-next-line typescript/no-deprecated
   const { mutateAsync: createEmploymentMutationAsync } = mutationToPromise(
     createEmploymentMutation,
   );
+  // oxlint-disable-next-line typescript/no-deprecated
   const { mutateAsync: updateEmploymentMutationAsync } = mutationToPromise(
     updateEmploymentMutation,
   );
+  // oxlint-disable-next-line typescript/no-deprecated
   const { mutateAsync: updateBenefitsOffersMutationAsync } = mutationToPromise(
     updateBenefitsOffersMutation,
   );
   // TODO: refactor all uses in onboarding together to avoid having mixed behaviour
+  // oxlint-disable-next-line typescript/no-deprecated
   const { mutateAsync: updateEngagementAgreementMutationAsync } =
     mutationToPromise(updateEngagementAgreementMutation);
+  // oxlint-disable-next-line typescript/no-deprecated
   const { mutateAsync: updateContractEligibilityMutationAsync } =
     mutationToPromise(updateContractEligibilityMutation);
 
@@ -726,7 +731,7 @@ export const useOnboarding = ({
           },
         },
         queryOptions: {
-          enabled: isContractDetailsEnabled,
+          enabled: isContractDetailsEnabled && !isJsfV1ContractDetailsEnabled,
         },
       },
       jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,

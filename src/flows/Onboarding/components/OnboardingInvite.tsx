@@ -45,10 +45,12 @@ export function OnboardingInvite({
   const employmentInviteMutation = useEmploymentInvite();
   const useCreateReserveInvoiceMutation = useCreateReserveInvoice();
 
+  // oxlint-disable-next-line typescript/no-deprecated
   const { mutateAsync: employmentInviteMutationAsync } = mutationToPromise(
     employmentInviteMutation,
   );
 
+  // oxlint-disable-next-line typescript/no-deprecated
   const { mutateAsync: createReserveInvoiceMutationAsync } = mutationToPromise(
     useCreateReserveInvoiceMutation,
   );
