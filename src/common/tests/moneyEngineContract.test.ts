@@ -216,11 +216,11 @@ describe.each(ENGINES)('money contract on $engine', ({ meta }) => {
       expect(empty.submitted).not.toHaveProperty('signing_bonus_amount');
     });
 
-    it('submits forced acknowledgement strings as their const', async () => {
+    it('submits checked acknowledgement checkboxes as their const', async () => {
       const { submitted } = await fillForm(start(schema()), {
         ...extendedHours,
-        salary_installments_confirmation: 'acknowledged',
-        contract_duration_type: 'indefinite',
+        salary_installments_confirmation: true,
+        contract_duration_type: true,
       });
 
       expect(submitted.salary_installments_confirmation).toBe('acknowledged');
