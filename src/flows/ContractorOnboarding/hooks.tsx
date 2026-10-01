@@ -13,7 +13,6 @@ import {
 } from '@/src/components/form/utils';
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
-  useCreateContractorContractDocument,
   useGetContractDocumentSignatureSchema,
   usePostManageContractorSubscriptions,
   useContractorSubscriptionSchemaField,
@@ -40,14 +39,27 @@ import {
   useGetExistingInvoiceSchedule,
 } from '@/src/flows/ContractorOnboarding/api';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
-import { useGetContractDocuments } from '@/src/common/contract-documents/api';
+import {
+  useCreateContractorContractDocument,
+  useGetContractDocuments,
+} from '@/src/common/contract-documents/api';
+import {
+  contractorStandardProductIdentifier,
+  contractorPlusProductIdentifier,
+  corProductIdentifier,
+} from '@/src/common/contract-documents/constants';
+import { buildContractDetailsJsfModify } from '@/src/common/contract-documents/jsfModify';
+import {
+  calculateProvisionalStartDateDescription,
+  extractAiValidationError,
+  transformAiErrorResponse,
+} from '@/src/common/contract-documents/utils';
 import {
   ContractorOnboardingFlowProps,
   ContractorOnboardingHookOptions,
 } from '@/src/flows/ContractorOnboarding/types';
 import {
   buildSteps,
-  calculateProvisionalStartDateDescription,
   reviewStepAllowedEmploymentStatus,
   disabledInviteButtonEmploymentStatus,
   StepKeys,
@@ -60,30 +72,19 @@ import {
 } from '@/src/flows/Onboarding/api';
 import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { useStepState } from '@/src/flows/useStepState';
-import { mutationToPromise, isMutationError } from '@/src/lib/mutations';
+import { mutationToPromise } from '@/src/lib/mutations';
 import {
   clearBase64Data,
   createStructuredError,
   prettifyFormValues,
 } from '@/src/lib/utils';
 import { JSFFieldset } from '@/src/types/remoteFlows';
-import {
-  contractorStandardProductIdentifier,
-  contractorPlusProductIdentifier,
-  corProductIdentifier,
-  eorProductIdentifier,
-  REMOTE_AI_ERROR_SOURCE,
-} from '@/src/flows/ContractorOnboarding/constants';
+import { eorProductIdentifier } from '@/src/flows/ContractorOnboarding/constants';
 import {
   buildBasicInformationJsfModify,
-  buildContractDetailsJsfModify,
   buildContractPreviewJsfModify,
 } from '@/src/flows/ContractorOnboarding/jsfModify';
-import { transformAiErrorResponse } from '@/src/flows/ContractorOnboarding/utils';
-import {
-  AiValidationError,
-  ContractorInvoicePreview,
-} from '@/src/flows/ContractorOnboarding/types';
+import { ContractorInvoicePreview } from '@/src/flows/ContractorOnboarding/types';
 import { useUploadFile } from '@/src/common/api/files';
 import { dataURLtoFile } from '@/src/lib/files';
 import {
@@ -1272,42 +1273,6 @@ export const useContractorOnboarding = ({
     }
 
     return {};
-  };
-
-  /**
-   * Extracts AI validation error from the error response
-   * @param error - The error object from the API call
-   * @returns The AI validation error if found, null otherwise
-   */
-  const extractAiValidationError = (
-    error: unknown,
-  ): AiValidationError | null => {
-    if (!isMutationError(error)) {
-      return null;
-    }
-
-    const rawError = error.normalizedErrors.services_and_deliverables;
-
-    // The backend's normalize_errors wraps non-list values in an array,
-    // so the AI validation error object arrives as a single-element array.
-    const servicesAndDeliverablesError = (
-      Array.isArray(rawError) ? rawError[0] : rawError
-    ) as
-      | {
-          error: string[];
-          source: string;
-          skippable: boolean;
-        }
-      | undefined;
-
-    if (servicesAndDeliverablesError?.source === REMOTE_AI_ERROR_SOURCE) {
-      return {
-        error: servicesAndDeliverablesError.error,
-        source: servicesAndDeliverablesError.source,
-        skippable: servicesAndDeliverablesError.skippable,
-      };
-    }
-    return null;
   };
 
   async function onSubmit(values: FieldValues) {

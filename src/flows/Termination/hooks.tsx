@@ -322,6 +322,7 @@ export const useTermination = ({
   const entireTerminationSchema = createHeadlessForm(jsonSchema.data.schema);
 
   const createTermination = useCreateTermination();
+  // oxlint-disable-next-line typescript/no-deprecated
   const { mutateAsync } = mutationToPromise(createTermination);
 
   async function onSubmit(values: TerminationFormValues) {

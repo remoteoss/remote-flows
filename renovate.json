@@ -6,9 +6,11 @@
   "minimumReleaseAge": "7 days",
   "internalChecksFilter": "strict",
 
-  "npmrc": "optional=true\ninclude=optional",
+  "npmrc": "optional=true\ninclude=optional\nallow-remote=all",
 
   "postUpdateOptions": ["npmDedupe"],
+
+  "ignoreScripts": true,
 
   "vulnerabilityAlerts": {
     "enabled": true,

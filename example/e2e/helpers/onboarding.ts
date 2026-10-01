@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { fillForm } from './general';
+import { fillForm, submitAndWaitForSave } from './general';
 
 interface fillOnboardingIntroductionFormOptions {
   company_id: string;
@@ -48,10 +48,13 @@ interface fillOnboardingStep2FormOptions {
   login_email?: string;
   personal_email?: string;
   work_email?: string;
+  mobile_number_country?: string;
+  mobile_number?: string;
   job_title?: string;
   country_id?: string;
   tax_job_category?: string;
   provisional_start_date?: string;
+  excluded_start_dates?: string[];
   has_seniority_date?: string;
 }
 
@@ -72,6 +75,14 @@ export async function fillOnboardingStep2Form(
       name: 'personal_email',
     },
     { type: 'textField', value: options.work_email, name: 'work_email' },
+    {
+      // Required for at least Germany; absent from Spain's schema entirely.
+      type: 'tel',
+      value: options.mobile_number,
+      countryLabel: options.mobile_number_country,
+      name: 'mobile_number',
+      optional: true,
+    },
     { type: 'textField', value: options.job_title, name: 'job_title' },
     {
       type: 'comboBox',
@@ -87,20 +98,183 @@ export async function fillOnboardingStep2Form(
       type: 'datepicker',
       value: options.provisional_start_date,
       testId: 'date-picker-button-provisional_start_date',
+      excludedDates: options.excluded_start_dates,
     },
     {
+      // Absent for at least Germany, where seniority is forced to "no" server-side and the
+      // form shows a static "Previous seniority cannot be recognized" notice instead of an
+      // interactive radio.
       type: 'radio',
       value: options.has_seniority_date,
       name: 'has_seniority_date',
+      optional: true,
     },
   ]);
 
-  await page.click('.submit-button');
-  await page.getByText('Loading...').waitFor({ state: 'hidden' });
+  await submitAndWaitForSave(page, 'POST', /^\/v1\/employments$/);
+}
+
+interface fillOnboardingEngagementAgreementDetailsGermanyFormOptions {
+  has_business_presence?: string;
+  has_similar_roles?: string;
+}
+
+/** Germany-specific: shown between Basic Information and Contract Details whenever the API
+ * returns a non-empty engagement_agreement_details schema (gated by the `dynamic_steps`
+ * feature in hooks.tsx). Its rendered step title is "Labor leasing in Germany", not the
+ * generic "Engagement Agreement Details" label. Spain has no equivalent step. */
+export async function fillOnboardingEngagementAgreementDetailsGermanyForm(
+  page: Page,
+  options: Partial<fillOnboardingEngagementAgreementDetailsGermanyFormOptions>,
+) {
+  await fillForm(page, [
+    {
+      type: 'radio',
+      value: options.has_business_presence,
+      name: 'has_business_presence',
+    },
+    {
+      type: 'radio',
+      value: options.has_similar_roles,
+      name: 'has_similar_roles',
+    },
+  ]);
+
+  await submitAndWaitForSave(
+    page,
+    'POST',
+    /^\/v2\/employments\/[^/]+\/engagement-agreement-details$/,
+  );
+}
+
+interface fillOnboardingStep3GermanyFormOptions {
+  contract_end_date?: string;
+  work_schedule?: string;
+  probation_length_choice?: string;
+  notice_period?: string;
+  available_pto_type?: string;
+  required_qualifications?: string;
+  role_description?: string;
+  experience_level?: string;
+  role_requires_license?: string;
+  work_address_is_home_address?: string;
+  annual_gross_salary?: string;
+  has_signing_bonus?: string;
+  has_bonus?: string;
+  has_commissions?: string;
+  equity_compensation?: string;
+  non_compete_clause_apply?: string;
+  ancillary_positions_clause_apply?: string;
+  work_equipment_provided?: string;
+}
+
+/**
+ * Germany's contract_details, verified against the real rendered form - it differs from the
+ * static schema fixture in a few places. Notably: work_schedule fills the "Daily Schedule"
+ * widget's defaults rather than a separate work_hours_per_week input, and notice_period is a
+ * plain number field (not a "recommended vs. custom" radio like probation_length_recommended).
+ */
+export async function fillOnboardingStep3GermanyForm(
+  page: Page,
+  options: Partial<fillOnboardingStep3GermanyFormOptions>,
+) {
+  await fillForm(page, [
+    {
+      type: 'datepicker',
+      value: options.contract_end_date,
+      testId: 'date-picker-button-contract_end_date',
+    },
+    {
+      type: 'radio',
+      value: options.work_schedule,
+      name: 'work_schedule',
+    },
+    {
+      type: 'radio',
+      value: options.probation_length_choice,
+      name: 'probation_length_recommended',
+    },
+    {
+      type: 'textField',
+      value: options.notice_period,
+      name: 'notice_period',
+    },
+    {
+      type: 'radio',
+      value: options.available_pto_type,
+      name: 'available_pto_type',
+    },
+    {
+      type: 'comboBox',
+      value: options.required_qualifications,
+      name: 'required_qualifications',
+    },
+    {
+      type: 'textField',
+      value: options.role_description,
+      name: 'role_description',
+    },
+    {
+      type: 'radio',
+      value: options.experience_level,
+      name: 'experience_level',
+    },
+    {
+      type: 'radio',
+      value: options.role_requires_license,
+      name: 'role_requires_license',
+    },
+    {
+      type: 'radio',
+      value: options.work_address_is_home_address,
+      name: 'work_address.is_home_address',
+    },
+    {
+      type: 'textField',
+      value: options.annual_gross_salary,
+      name: 'annual_gross_salary',
+    },
+    {
+      type: 'radio',
+      value: options.has_signing_bonus,
+      name: 'has_signing_bonus',
+    },
+    {
+      type: 'radio',
+      value: options.has_bonus,
+      name: 'has_bonus',
+    },
+    {
+      type: 'radio',
+      value: options.has_commissions,
+      name: 'has_commissions',
+    },
+    {
+      type: 'radio',
+      value: options.equity_compensation,
+      name: 'equity_compensation.offer_equity_compensation',
+    },
+    {
+      type: 'radio',
+      value: options.non_compete_clause_apply,
+      name: 'non_compete_clause_apply',
+    },
+    {
+      type: 'radio',
+      value: options.ancillary_positions_clause_apply,
+      name: 'ancillary_positions_clause_apply',
+    },
+    {
+      type: 'radio',
+      value: options.work_equipment_provided,
+      name: 'work_equipment_provided',
+    },
+  ]);
+
+  await submitAndWaitForSave(page, 'PATCH', /^\/v1\/employments\/[^/]+$/);
 }
 
 interface fillOnboardingStep3SpainFormOptions {
-  contract_duration_type?: string;
   work_schedule?: string;
   probation_length?: string;
   probation_length_ack?: boolean;
@@ -121,6 +295,11 @@ interface fillOnboardingStep3SpainFormOptions {
   has_commissions?: string;
   equity_compensation?: string;
   non_compete_clause_apply?: string;
+  // Required from contract_details v6: previously admin-only, cba_categories is now surfaced
+  // to clients and enforced. cba_group and cba_level only render once the prior field is set.
+  cba_area?: string;
+  cba_group?: string;
+  cba_level?: string;
   has_social_security_number?: string;
   work_equipment?: string;
   compensation_expenses_ack?: boolean;
@@ -131,11 +310,8 @@ export async function fillOnboardingStep3SpainForm(
   options: Partial<fillOnboardingStep3SpainFormOptions>,
 ) {
   await fillForm(page, [
-    {
-      type: 'radio',
-      value: options.contract_duration_type,
-      name: 'contract_duration_type',
-    },
+    // contract_duration_type was removed from the v5 schema: Spain now only supports
+    // indefinite contracts (Royal Decree-Law 32/2021), shown as static copy instead of a field.
     {
       type: 'radio',
       value: options.work_schedule,
@@ -244,6 +420,21 @@ export async function fillOnboardingStep3SpainForm(
     },
     {
       type: 'radio',
+      value: options.cba_area,
+      name: 'cba_categories.cba_area',
+    },
+    {
+      type: 'radio',
+      value: options.cba_group,
+      name: 'cba_categories.cba_group',
+    },
+    {
+      type: 'radio',
+      value: options.cba_level,
+      name: 'cba_categories.cba_level',
+    },
+    {
+      type: 'radio',
       value: options.has_social_security_number,
       name: 'has_social_security_number',
     },
@@ -259,72 +450,140 @@ export async function fillOnboardingStep3SpainForm(
     },
   ]);
 
-  await page.click('.submit-button');
-  await page.getByText('Loading...').waitFor({ state: 'hidden' });
+  await submitAndWaitForSave(page, 'PATCH', /^\/v1\/employments\/[^/]+$/);
 }
 
-interface fillOnboardingStep4SpainFormOptions {
-  life_insurance_type?: string;
-  life_insurance?: string;
-  health_insurance_coverage?: string;
-  health_insurance?: string;
-  retirement?: string;
-  mental_health?: string;
-  wellness?: string;
-  business_travel?: string;
+interface fillOnboardingStep3PortugalFormOptions {
+  contract_duration_type?: boolean;
+  work_schedule?: string;
+  working_hours_exemption?: string;
+  has_probation_period?: string;
+  available_pto_type?: string;
+  available_pto?: string;
+  role_description?: string;
+  experience_level?: string;
+  role_is_onsite?: string;
+  role_requires_license?: string;
+  work_address_is_home_address?: string;
+  annual_gross_salary?: string;
+  has_signing_bonus?: string;
+  has_bonus?: string;
+  has_commissions?: string;
+  equity_compensation?: string;
+  work_from_home_allowance_ack?: boolean;
+  annual_training_hours_ack?: boolean;
+  salary_installments_confirmation?: boolean;
+  offboarding_allowances_ack?: boolean;
 }
 
-export async function fillOnboardingStep4SpainForm(
+export async function fillOnboardingStep3PortugalForm(
   page: Page,
-  options: Partial<fillOnboardingStep4SpainFormOptions>,
+  options: Partial<fillOnboardingStep3PortugalFormOptions>,
 ) {
-  const isLocked = await page.getByText('Locked Benefit').first().isVisible();
+  await fillForm(page, [
+    {
+      type: 'checkbox',
+      value: options.contract_duration_type ? 'yes' : '',
+      name: 'contract_duration_type',
+    },
+    {
+      type: 'radio',
+      value: options.work_schedule,
+      name: 'work_schedule',
+    },
+    {
+      type: 'radio',
+      value: options.working_hours_exemption,
+      name: 'working_hours_exemption',
+    },
+    {
+      type: 'radio',
+      value: options.has_probation_period,
+      name: 'has_probation_period',
+    },
+    {
+      type: 'radio',
+      value: options.available_pto_type,
+      name: 'available_pto_type',
+    },
+    {
+      type: 'textField',
+      value: options.available_pto,
+      name: 'available_pto',
+    },
+    {
+      type: 'textField',
+      value: options.role_description,
+      name: 'role_description',
+    },
+    {
+      type: 'radio',
+      value: options.experience_level,
+      name: 'experience_level',
+    },
+    {
+      type: 'radio',
+      value: options.role_is_onsite,
+      name: 'role_is_onsite',
+      optional: true,
+    },
+    {
+      type: 'radio',
+      value: options.role_requires_license,
+      name: 'role_requires_license',
+      optional: true,
+    },
+    {
+      type: 'radio',
+      value: options.work_address_is_home_address,
+      name: 'work_address.is_home_address',
+    },
+    {
+      type: 'textField',
+      value: options.annual_gross_salary,
+      name: 'annual_gross_salary',
+    },
+    {
+      type: 'radio',
+      value: options.has_signing_bonus,
+      name: 'has_signing_bonus',
+    },
+    {
+      type: 'radio',
+      value: options.has_bonus,
+      name: 'has_bonus',
+    },
+    {
+      type: 'radio',
+      value: options.has_commissions,
+      name: 'has_commissions',
+    },
+    {
+      type: 'radio',
+      value: options.equity_compensation,
+      name: 'equity_compensation.offer_equity_compensation',
+    },
+    {
+      type: 'checkbox',
+      value: options.work_from_home_allowance_ack ? 'yes' : '',
+      name: 'work_from_home_allowance_ack',
+    },
+    {
+      type: 'checkbox',
+      value: options.annual_training_hours_ack ? 'yes' : '',
+      name: 'annual_training_hours_ack',
+    },
+    {
+      type: 'checkbox',
+      value: options.salary_installments_confirmation ? 'yes' : '',
+      name: 'salary_installments_confirmation',
+    },
+    {
+      type: 'checkbox',
+      value: options.offboarding_allowances_ack ? 'yes' : '',
+      name: 'offboarding_allowances_ack',
+    },
+  ]);
 
-  if (!isLocked) {
-    await fillForm(page, [
-      {
-        type: 'radio',
-        value: options.life_insurance_type,
-        name: 'f90cb339-172d-4d24-9ee6-da2e2ccc954e.filter',
-      },
-      {
-        type: 'radio',
-        value: options.life_insurance,
-        name: 'f90cb339-172d-4d24-9ee6-da2e2ccc954e.value',
-      },
-      {
-        type: 'radio',
-        value: options.health_insurance_coverage,
-        name: '88081a16-882a-42b8-8cd5-6abb30585e4e.filter',
-      },
-      {
-        type: 'radio',
-        value: options.health_insurance,
-        name: '88081a16-882a-42b8-8cd5-6abb30585e4e.value',
-      },
-      {
-        type: 'radio',
-        value: options.retirement,
-        name: '57b4108b-74d4-4830-ad11-68a46679f88c.value',
-      },
-      {
-        type: 'radio',
-        value: options.mental_health,
-        name: '4a2d0edb-ebd9-49af-ad79-7390deb7ee71.value',
-      },
-      {
-        type: 'radio',
-        value: options.wellness,
-        name: '5ffc8e84-1304-4abb-91c2-4d43b1fece5d.value',
-      },
-      {
-        type: 'radio',
-        value: options.business_travel,
-        name: '91dd5796-5ed7-449e-9a75-15c07c288970.value',
-      },
-    ]);
-  }
-
-  await page.click('.submit-button');
-  await page.getByText('Loading...').waitFor({ state: 'hidden' });
+  await submitAndWaitForSave(page, 'PATCH', /^\/v1\/employments\/[^/]+$/);
 }

@@ -1,5 +1,4 @@
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { cn as mergeClasses, type ClassValue } from 'cn';
 import { ValidationError } from 'yup';
 import DOMPurify from 'dompurify';
 import { JSFFields, NestedMeta } from '@/src/types/remoteFlows';
@@ -10,7 +9,7 @@ import {
 import { convertFromCents } from '@/src/components/form/utils';
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return mergeClasses(...inputs);
 }
 
 export function formatCurrency(

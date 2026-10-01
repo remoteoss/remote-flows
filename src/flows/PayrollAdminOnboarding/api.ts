@@ -103,6 +103,7 @@ export const useGPCreateEmployment = () => {
         body: {
           type: 'global_payroll_employee',
           country_code: countryCode,
+          // oxlint-disable-next-line typescript/no-deprecated
           engaged_by_entity_slug: legalEntityId,
           basic_information: basicInformation,
           external_id: externalId,

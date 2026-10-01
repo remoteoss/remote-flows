@@ -12,6 +12,10 @@ export {
   useCostCalculatorEstimationCsv,
   EstimationResults,
   SummaryResults,
+  useCostCalculatorCountries,
+  // useCostCalculatorContext is deprecated but partners already use it, offering them a export for now to avoid breaking changes
+  // oxlint-disable-next-line typescript/no-deprecated
+  useCostCalculatorContext,
 } from '@/src/flows/CostCalculator';
 
 export type { CostCalculatorFlowProps } from '@/src/flows/CostCalculator';
@@ -33,11 +37,16 @@ export type {
 
 export {
   ContractDocumentFlow,
+  ContractDocumentForm,
+  ContractDocumentSubmitButton,
   useContractDocument,
 } from '@/src/flows/ContractDocument';
 
 export type {
+  ContractDocumentContractDetailsPayload,
+  ContractDocumentContractDetailsResponse,
   ContractDocumentFlowProps,
+  ContractDocumentOptions,
   ContractDocumentStepKeys,
   UseContractDocumentOptions,
 } from '@/src/flows/ContractDocument';
@@ -48,6 +57,7 @@ export {
   ContractAmendmentForm,
   ContractAmendmentSubmit,
   useContractAmendment,
+  CONTRACT_AMENDMENT_STEPS,
 } from '@/src/flows/ContractAmendment';
 
 export type { ContractAmendmentRenderProps } from '@/src/flows/ContractAmendment';
@@ -182,6 +192,7 @@ export type {
   ZendeskTriggerButtonComponentProps,
   DrawerComponentProps,
   PDFPreviewComponentProps,
+  // oxlint-disable-next-line typescript/no-deprecated
   Meta,
   NestedMeta,
   MetaValues,

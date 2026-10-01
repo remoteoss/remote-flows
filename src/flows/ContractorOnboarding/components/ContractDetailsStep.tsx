@@ -6,8 +6,8 @@ import {
   ContractorOnboardingContractDetailsFormPayload,
   ContractorOnboardingContractDetailsResponse,
 } from '@/src/flows/ContractorOnboarding/types';
-import { StatementOfWorkDisclaimer } from '@/src/flows/ContractorOnboarding/components/StatementOfWorkDisclaimer';
-import { isCMOrCMPlus } from '@/src/flows/ContractorOnboarding/utils';
+import { StatementOfWorkDisclaimer } from '@/src/common/contract-documents/components/StatementOfWorkDisclaimer';
+import { isCMOrCMPlus } from '@/src/common/contract-documents/utils';
 import { handleStepError } from '@/src/lib/utils';
 import { UseFormReturn } from 'react-hook-form';
 

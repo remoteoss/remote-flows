@@ -120,6 +120,7 @@ export const useCostCalculator = (
   },
 ) => {
   const fieldsMetaRef = useRef<{
+    // oxlint-disable-next-line typescript/no-deprecated
     fields: Meta;
   }>({
     fields: {},
@@ -148,6 +149,7 @@ export const useCostCalculator = (
       options,
     });
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
+  // oxlint-disable-next-line typescript/no-deprecated
   const { mutateAsync: costCalculatorEstimationMutationAsync } =
     mutationToPromise(costCalculatorEstimationMutation);
   const employeeBillingCurrency = selectedCountry?.currency;

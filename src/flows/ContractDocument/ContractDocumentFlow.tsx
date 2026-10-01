@@ -9,10 +9,11 @@ import { ContractDocumentFlowProps } from '@/src/flows/ContractDocument/types';
  */
 export const ContractDocumentFlow = ({
   employmentId,
+  options,
   render,
 }: ContractDocumentFlowProps) => {
   const formId = useId();
-  const contractDocumentBag = useContractDocument({ employmentId });
+  const contractDocumentBag = useContractDocument({ employmentId, options });
 
   return (
     <ContractDocumentContext.Provider value={{ formId, contractDocumentBag }}>

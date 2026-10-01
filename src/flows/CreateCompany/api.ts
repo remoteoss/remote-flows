@@ -197,6 +197,7 @@ export const useAddressDetailsSchema = ({
         },
         query: {
           json_schema_version:
+            // oxlint-disable-next-line typescript/no-deprecated
             options?.jsonSchemaVersion?.form_schema?.address_details ||
             'latest',
         },

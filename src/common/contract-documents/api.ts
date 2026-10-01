@@ -1,5 +1,9 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import { getV1EmploymentsEmploymentIdContractDocuments } from '@/src/client';
+import { queryOptions, useMutation, useQuery } from '@tanstack/react-query';
+import {
+  CreateContractDocument,
+  getV1EmploymentsEmploymentIdContractDocuments,
+  postV1ContractorsEmploymentsEmploymentIdContractDocuments,
+} from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 
@@ -37,5 +41,32 @@ export const useGetContractDocuments = (
     ...contractDocumentsOptions(client as Client, employmentId),
     enabled: options?.enabled,
     select: ({ data }) => data?.data?.contract_documents,
+  });
+};
+
+/**
+ * Saves the contractor details data
+ * @param employmentId - The employment ID
+ * @param payload - The payload
+ * @returns The contractor contract document
+ */
+export const useCreateContractorContractDocument = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: async ({
+      employmentId,
+      payload,
+    }: {
+      employmentId: string;
+      payload: CreateContractDocument;
+    }) => {
+      return postV1ContractorsEmploymentsEmploymentIdContractDocuments({
+        client: client as Client,
+        body: payload,
+        path: {
+          employment_id: employmentId,
+        },
+      });
+    },
   });
 };

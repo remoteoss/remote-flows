@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 /**
  * Creates a fresh onboarding employment, up to (but not including)
  * contract_details, purely through the API - no browser involved.
@@ -30,18 +30,72 @@
  * Usage (from repo root):
  *   npm run seed:onboarding -- --country=DEU
  *   npm run seed:onboarding -- --country=ESP --basic-info-version=4
+ *
+ * By default this proxies through a locally running `example` dev server
+ * (BASE_URL, `example/.env`'s VITE_REMOTE_GATEWAY decides which gateway that
+ * is - easy to lose track of).
+ *
+ * Pass --env=sandbox|production|staging|partners to instead talk to that
+ * gateway directly, with no dev server required: credentials come from
+ * .env.<env> at the repo root (VITE_CLIENT_ID, VITE_CLIENT_SECRET,
+ * VITE_REMOTE_GATEWAY=<env>, VITE_REFRESH_TOKEN - same shape as
+ * example/.env), and auth reuses example/api/{utils,get_token,proxy}.js
+ * verbatim so there's one source of truth for how tokens get minted. Optional
+ * VITE_APP_URL=<deployed app URL> in that same file gets you a ready-to-click
+ * link (with ?employmentId= prefilled) in the final output.
+ *
+ *   npm run seed:onboarding -- --country=DEU --env=sandbox
  */
 import { createHeadlessForm } from '@remoteoss/remote-json-schema-form-kit';
 import { faker } from '@faker-js/faker';
 import dotenv from 'dotenv';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, '..', 'example', '.env') });
+const require = createRequire(import.meta.url);
 
-function parseArgs(argv) {
-  const args = {};
+type FormSchema = Parameters<typeof createHeadlessForm>[0];
+type HeadlessFormOptions = NonNullable<
+  Parameters<typeof createHeadlessForm>[1]
+>;
+type FormValues = Record<string, unknown>;
+type HttpMethod = 'GET' | 'POST';
+type AuthHeaders = Record<string, string>;
+
+interface FieldOption {
+  value: unknown;
+  meta?: { countryCode?: string };
+}
+
+interface SeedField {
+  name: string;
+  inputType?: string;
+  required?: boolean;
+  isVisible?: boolean;
+  multiple?: boolean;
+  options?: FieldOption[];
+  const?: unknown;
+}
+
+interface ApiOptions {
+  query?: Record<string, string | number | boolean | undefined>;
+  body?: unknown;
+}
+
+class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly body: unknown,
+  ) {
+    super(message);
+  }
+}
+
+function parseArgs(argv: string[]): Record<string, string | true> {
+  const args: Record<string, string | true> = {};
   for (const raw of argv) {
     const match = raw.match(/^--([^=]+)(?:=(.*))?$/);
     if (match) args[match[1]] = match[2] ?? true;
@@ -50,53 +104,117 @@ function parseArgs(argv) {
 }
 
 const args = parseArgs(process.argv.slice(2));
-const COUNTRY = (args.country || 'DEU').toUpperCase();
-const BASIC_INFO_VERSION = Number(args['basic-info-version'] || 4);
-const PORT = process.env.PORT || 3001;
-const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+const stringArg = (key: string): string | undefined => {
+  const value = args[key];
+  return typeof value === 'string' ? value : undefined;
+};
+const COUNTRY = (stringArg('country') || 'DEU').toUpperCase();
+const BASIC_INFO_VERSION = Number(stringArg('basic-info-version') || 4);
+if ('env' in args && stringArg('env') === undefined) {
+  throw new Error(
+    '--env requires a value, e.g. --env=sandbox (got a bare --env flag).',
+  );
+}
+const ENV = stringArg('env');
 
-async function api(method, urlPath, { query, body } = {}) {
+let BASE_URL: string;
+let getAuthHeaders = async (
+  _method: HttpMethod,
+  _urlPath: string,
+): Promise<AuthHeaders> => ({});
+
+if (ENV) {
+  const envFile = path.resolve(__dirname, '..', `.env.${ENV}`);
+  dotenv.config({ path: envFile });
+  const { buildGatewayURL } = require('../example/api/utils.js') as {
+    buildGatewayURL: () => string | undefined;
+  };
+  const { fetchAccessToken, fetchClientCredentialsAccessToken } =
+    require('../example/api/get_token.js') as {
+      fetchAccessToken: () => Promise<{ accessToken: string }>;
+      fetchClientCredentialsAccessToken: () => Promise<{
+        accessToken: string;
+      }>;
+    };
+  const { getTokenType } = require('../example/api/proxy.js') as {
+    getTokenType: (method: string, path: string) => string;
+  };
+
+  const gatewayURL = buildGatewayURL();
+  if (!gatewayURL) {
+    throw new Error(
+      `Unknown --env=${ENV}, or ${envFile} is missing/doesn't set VITE_REMOTE_GATEWAY.`,
+    );
+  }
+  BASE_URL = gatewayURL;
+  console.log(`Environment: ${ENV} -> ${BASE_URL} (from ${envFile})`);
+
+  getAuthHeaders = async (method, urlPath) => {
+    const { accessToken } =
+      getTokenType(method, urlPath) === 'client-credentials'
+        ? await fetchClientCredentialsAccessToken()
+        : await fetchAccessToken();
+    return { Authorization: `Bearer ${accessToken}` };
+  };
+} else {
+  dotenv.config({ path: path.resolve(__dirname, '..', 'example', '.env') });
+  const PORT = process.env.PORT || 3001;
+  BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+}
+
+async function api<T = unknown>(
+  method: HttpMethod,
+  urlPath: string,
+  { query, body }: ApiOptions = {},
+): Promise<T> {
   const url = new URL(BASE_URL + urlPath);
   for (const [key, value] of Object.entries(query || {})) {
     if (value !== undefined) url.searchParams.set(key, String(value));
   }
   const res = await fetch(url, {
     method,
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(await getAuthHeaders(method, urlPath)),
+    },
     body: body ? JSON.stringify(body) : undefined,
   });
   const text = await res.text();
-  let json;
+  let json: unknown;
   try {
     json = text ? JSON.parse(text) : undefined;
   } catch {
     json = text;
   }
   if (!res.ok) {
-    const err = new Error(`${method} ${urlPath} -> ${res.status}`);
-    err.status = res.status;
-    err.body = json;
-    throw err;
+    throw new ApiError(
+      `${method} ${urlPath} -> ${res.status}`,
+      res.status,
+      json,
+    );
   }
-  return json;
+  return json as T;
 }
 
-async function fetchSchema(form, jsonSchemaVersion) {
-  return api('GET', `/v1/countries/${COUNTRY}/${form}`, {
+async function fetchSchema(
+  form: string,
+  jsonSchemaVersion?: number,
+): Promise<FormSchema> {
+  return api<{ data: FormSchema }>('GET', `/v1/countries/${COUNTRY}/${form}`, {
     query: { skip_benefits: true, json_schema_version: jsonSchemaVersion },
   }).then((res) => res.data);
 }
 
 /** First option whose value/label reads as "no" - collapses conditional sub-fields (file
  * uploads, free-text detail boxes) that a generic filler can't produce plausible data for. */
-function preferNoOption(options) {
+function preferNoOption(options: FieldOption[]): FieldOption {
   return (
     options.find((o) => String(o.value).toLowerCase() === 'no') || options[0]
   );
 }
 
-function fakeValueFor(field) {
-  const { inputType, options, multiple, name } = field;
+function fakeValueFor(field: SeedField): unknown {
+  const { inputType, options, multiple, name, const: constValue } = field;
 
   if (options?.length) {
     if (inputType === 'radio' || inputType === 'select') {
@@ -111,7 +229,7 @@ function fakeValueFor(field) {
       // any one produces a validly-formatted number, regardless of the
       // employment's own country.
       const option = options.find((o) => o.meta?.countryCode) || options[0];
-      return `+${option.meta.countryCode}${faker.string.numeric(9)}`;
+      return `+${option.meta?.countryCode}${faker.string.numeric(9)}`;
     }
     return preferNoOption(options).value;
   }
@@ -135,11 +253,12 @@ function fakeValueFor(field) {
     case 'textarea':
       return faker.lorem.sentence();
     case 'checkbox':
-      // No enumerated options: this is a single acknowledgement toggle
-      // (jsonType array, items usually `{const: true}`) - an empty array
-      // reads as "filled" to our missing-field check but is actually an
-      // unchecked/invalid value for a required field, so mark it checked.
-      return [true];
+      // No enumerated options: this is a single acknowledgement toggle. RHF
+      // holds a plain `true` here, which parseFormValuesToAPI (src/components/
+      // form/utils.ts) swaps for `field.const` (e.g. "acknowledged") at submit
+      // time when the schema is const-based - mirror that instead of sending
+      // the raw RHF value, or the API rejects it as a type mismatch.
+      return constValue ?? true;
     case 'file':
       return null;
     default:
@@ -150,12 +269,17 @@ function fakeValueFor(field) {
 /** Progressively fills a JSF schema: fill whatever's required+visible, recompute (new
  * conditionally-required fields may appear), repeat until stable. Mirrors what the real
  * multi-step form does field-by-field, but against the schema directly instead of the DOM. */
-function fillSchema(schema, seedValues = {}) {
-  let values = { ...seedValues };
-  const skipped = [];
+function fillSchema(
+  schema: FormSchema,
+  seedValues: FormValues = {},
+): { values: FormValues; skipped: string[] } {
+  const values: FormValues = { ...seedValues };
+  const skipped: string[] = [];
   for (let round = 0; round < 8; round++) {
-    const { fields } = createHeadlessForm(schema, { initialValues: values });
-    const missing = fields.filter(
+    const { fields } = createHeadlessForm(schema, {
+      initialValues: values as HeadlessFormOptions['initialValues'],
+    });
+    const missing = (fields as unknown as SeedField[]).filter(
       (f) => f.required && f.isVisible && values[f.name] === undefined,
     );
     if (missing.length === 0) break;
@@ -187,14 +311,18 @@ async function main() {
   }
 
   console.log('\nCreating employment...');
-  const created = await api('POST', '/v1/employments', {
-    query: { json_schema_version: BASIC_INFO_VERSION },
-    body: {
-      basic_information: basicInformation,
-      type: 'employee',
-      country_code: COUNTRY,
+  const created = await api<{ data?: { employment?: { id?: string } } }>(
+    'POST',
+    '/v1/employments',
+    {
+      query: { json_schema_version: BASIC_INFO_VERSION },
+      body: {
+        basic_information: basicInformation,
+        type: 'employee',
+        country_code: COUNTRY,
+      },
     },
-  });
+  );
   const employmentId = created?.data?.employment?.id;
   if (!employmentId) {
     throw new Error(
@@ -212,11 +340,11 @@ async function main() {
   });
 
   console.log('\nChecking for an engagement_agreement_details step...');
-  let engagementSchema;
+  let engagementSchema: FormSchema | undefined;
   try {
     engagementSchema = await fetchSchema('engagement_agreement_details');
   } catch (err) {
-    if (err.status === 404) {
+    if (err instanceof ApiError && err.status === 404) {
       console.log(
         `No engagement_agreement_details schema for ${COUNTRY} - skipping.`,
       );
@@ -227,7 +355,8 @@ async function main() {
 
   if (
     engagementSchema &&
-    Object.keys(engagementSchema.properties || {}).length > 0
+    Object.keys((engagementSchema as { properties?: object }).properties || {})
+      .length > 0
   ) {
     const { values: engagementDetails, skipped } = fillSchema(engagementSchema);
     console.log(
@@ -250,15 +379,27 @@ async function main() {
   console.log(
     `\nDone. Employment ${employmentId} for ${COUNTRY} is now sitting at contract_details.`,
   );
-  console.log(
-    `Open ${BASE_URL}/?demo=onboarding-basic , enter this Employment ID (with the usual\n` +
-      'company id) on the intro form, and click Continue through Select Country and Basic\n' +
-      'Information (both already prefilled from what this script created) to land on Contract Details.',
-  );
+  const appUrl = process.env.VITE_APP_URL || (ENV ? undefined : BASE_URL);
+  if (appUrl) {
+    console.log(
+      `\nOpen this link (Employment ID is prefilled via ?employmentId=) - just fill in the\n` +
+        `company id and click Continue through Select Country and Basic Information to land\n` +
+        `on Contract Details:\n\n  ${appUrl}/?demo=onboarding-basic&employmentId=${employmentId}\n`,
+    );
+  } else {
+    console.log(
+      `\nOpen your app's onboarding demo, enter this Employment ID (?employmentId=${employmentId}\n` +
+        'also works as a query param) with the usual company id, and click Continue through\n' +
+        'Select Country and Basic Information to land on Contract Details.\n' +
+        `Tip: set VITE_APP_URL=<your deployed app URL> in .env.${ENV} to get a ready-to-click link next time.`,
+    );
+  }
 }
 
-main().catch((err) => {
-  console.error('\nFailed:', err.message);
-  if (err.body) console.error(JSON.stringify(err.body, null, 2));
+main().catch((err: unknown) => {
+  console.error('\nFailed:', err instanceof Error ? err.message : err);
+  if (err instanceof ApiError && err.body) {
+    console.error(JSON.stringify(err.body, null, 2));
+  }
   process.exit(1);
 });
