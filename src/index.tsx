@@ -47,6 +47,8 @@ export {
 export type {
   ContractDocumentContractDetailsPayload,
   ContractDocumentContractDetailsResponse,
+  ContractDocumentContractPreviewPayload,
+  ContractDocumentContractPreviewResponse,
   ContractDocumentFlowProps,
   ContractDocumentOptions,
   ContractDocumentStepKeys,
