@@ -1,6 +1,11 @@
 import { Page } from '@playwright/test';
 import { fillForm, submitAndWaitForSave } from './general';
 
+// Must be the company the example app's API token is bound to, otherwise
+// GET /v1/companies/:id 404s and the flow runs without company data.
+const E2E_COMPANY_ID =
+  process.env.E2E_COMPANY_ID || '178ec896-4b1b-499d-9b19-d2490e3f5249';
+
 interface fillOnboardingIntroductionFormOptions {
   company_id: string;
   employment_id?: string;
@@ -12,7 +17,11 @@ export async function fillOnboardingIntroductionForm(
   options: Partial<fillOnboardingIntroductionFormOptions>,
 ) {
   await fillForm(page, [
-    { type: 'textField', value: options.company_id, name: 'companyId' },
+    {
+      type: 'textField',
+      value: options.company_id ?? E2E_COMPANY_ID,
+      name: 'companyId',
+    },
     {
       type: 'select',
       value: 'employee',

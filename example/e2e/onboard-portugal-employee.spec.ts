@@ -26,9 +26,7 @@ test.describe('Onboard Portugal employee', () => {
       /\/v1\/countries\/PRT\/contract_details(\?|$)/.test(response.url()),
     );
 
-    await fillOnboardingIntroductionForm(page, {
-      company_id: '460201ed-a8c0-4e75-89dc-6d5eae35f65e',
-    });
+    await fillOnboardingIntroductionForm(page, {});
 
     let stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Select Country');
