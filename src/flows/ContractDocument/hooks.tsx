@@ -425,13 +425,13 @@ export const useContractDocument = ({
      */
     isSubmitting: createContractDocumentMutation.isPending,
     /**
-     * The error that stopped the flow from loading, if any: the employment, the contract
-     * details schema or the previewed contract document could not be fetched.
+     * The error that stopped the current step from loading, if any: the employment, the
+     * contract details schema, or on the preview step the previewed contract document.
      */
     error:
       employmentError ??
       contractDetailsFormError ??
-      documentPreviewPdfError ??
+      (isContractPreviewStep ? documentPreviewPdfError : null) ??
       null,
   };
 };

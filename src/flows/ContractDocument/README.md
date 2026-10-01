@@ -183,7 +183,7 @@ prop, for fully custom UIs. Both surfaces expose the same bag:
 | `canSkipAiValidation`    | True when the last submission was rejected by the AI check and submitting again continues at the user's risk.                                                                                             |
 | `isLoading`              | True until the contractor and the current step's form are known.                                                                                                                                          |
 | `isSubmitting`           | True while the contract document is being created.                                                                                                                                                        |
-| `error`                  | The error that stopped the flow from loading (employment or schema), or `null`.                                                                                                                           |
+| `error`                  | The error that stopped the current step from loading (employment, schema, or the previewed document on the preview step), or `null`.                                                                      |
 
 ## Requests
 
