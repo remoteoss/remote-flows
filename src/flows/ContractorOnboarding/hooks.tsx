@@ -644,11 +644,20 @@ export const useContractorOnboarding = ({
     );
   }, [skipSteps, selectedPricingPlan]);
 
+  // As in the Remote platform, invoice schedules are only offered during onboarding for CM and CM+: Contractor of
+  // Record invoice schedules can only be created once the contractor is active.
   useEffect(() => {
+    const isContractorOfRecord = selectedPricingPlan === corProductIdentifier;
+
     setIncludeInvoiceSchedule(
-      options?.features?.includes('create_invoice_schedule') ?? false,
+      !isContractorOfRecord &&
+        (options?.features?.includes('create_invoice_schedule') ?? false),
     );
-  }, [options?.features]);
+
+    if (isContractorOfRecord) {
+      setIncludeCreateInvoiceSchedule(false);
+    }
+  }, [options?.features, selectedPricingPlan]);
 
   const eligibilityFields = useMemo(() => {
     return {
