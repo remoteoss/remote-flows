@@ -76,7 +76,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Sweden               | SWE  | v2               | March 2026     |
 | United Kingdom       | GBR  | v2               | March 2026     |
 | United Arab Emirates | ARE  | v3               | March 2026     |
-| United States        | USA  | v3               | August 2026    |
+| United States        | USA  | v7               | October 2026   |
 
 ## How to Use
 
