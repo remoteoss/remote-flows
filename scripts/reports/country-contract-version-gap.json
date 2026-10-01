@@ -1,0 +1,691 @@
+{
+  "generatedAt": "2026-09-21",
+  "countries": [
+    {
+      "country": "AUT",
+      "countryName": "Austria",
+      "inUseVersion": 1,
+      "latestVersion": 8,
+      "gap": 7
+    },
+    {
+      "country": "BGD",
+      "countryName": "Bangladesh",
+      "inUseVersion": 1,
+      "latestVersion": 8,
+      "gap": 7
+    },
+    {
+      "country": "TUN",
+      "countryName": "Tunisia",
+      "inUseVersion": 1,
+      "latestVersion": 8,
+      "gap": 7
+    },
+    {
+      "country": "BEL",
+      "countryName": "Belgium",
+      "inUseVersion": 1,
+      "latestVersion": 7,
+      "gap": 6
+    },
+    {
+      "country": "BGR",
+      "countryName": "Bulgaria",
+      "inUseVersion": 1,
+      "latestVersion": 7,
+      "gap": 6
+    },
+    {
+      "country": "ESP",
+      "countryName": "Spain",
+      "inUseVersion": 1,
+      "latestVersion": 7,
+      "gap": 6
+    },
+    {
+      "country": "ISR",
+      "countryName": "Israel",
+      "inUseVersion": 1,
+      "latestVersion": 7,
+      "gap": 6
+    },
+    {
+      "country": "LKA",
+      "countryName": "Sri Lanka",
+      "inUseVersion": 1,
+      "latestVersion": 7,
+      "gap": 6
+    },
+    {
+      "country": "MAR",
+      "countryName": "Morocco",
+      "inUseVersion": 1,
+      "latestVersion": 7,
+      "gap": 6
+    },
+    {
+      "country": "MEX",
+      "countryName": "Mexico",
+      "inUseVersion": 2,
+      "latestVersion": 8,
+      "gap": 6
+    },
+    {
+      "country": "TUR",
+      "countryName": "Turkey",
+      "inUseVersion": 1,
+      "latestVersion": 7,
+      "gap": 6
+    },
+    {
+      "country": "AUS",
+      "countryName": "Australia",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "BIH",
+      "countryName": "Bosnia and Herzegovina",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "CHE",
+      "countryName": "Switzerland",
+      "inUseVersion": 2,
+      "latestVersion": 7,
+      "gap": 5
+    },
+    {
+      "country": "CHL",
+      "countryName": "Chile",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "CHN",
+      "countryName": "China",
+      "inUseVersion": 3,
+      "latestVersion": 8,
+      "gap": 5
+    },
+    {
+      "country": "COL",
+      "countryName": "Colombia",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "CYP",
+      "countryName": "Cyprus",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "DOM",
+      "countryName": "Dominican Republic",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "ECU",
+      "countryName": "Ecuador",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "KEN",
+      "countryName": "Kenya",
+      "inUseVersion": 2,
+      "latestVersion": 7,
+      "gap": 5
+    },
+    {
+      "country": "KOR",
+      "countryName": "South Korea",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "LVA",
+      "countryName": "Latvia",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "MKD",
+      "countryName": "North Macedonia",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "NZL",
+      "countryName": "New Zealand",
+      "inUseVersion": 2,
+      "latestVersion": 7,
+      "gap": 5
+    },
+    {
+      "country": "PAN",
+      "countryName": "Panama",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "PRT",
+      "countryName": "Portugal",
+      "inUseVersion": 3,
+      "latestVersion": 8,
+      "gap": 5
+    },
+    {
+      "country": "PRY",
+      "countryName": "Paraguay",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "ROU",
+      "countryName": "Romania",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "SRB",
+      "countryName": "Serbia",
+      "inUseVersion": 2,
+      "latestVersion": 7,
+      "gap": 5
+    },
+    {
+      "country": "SVN",
+      "countryName": "Slovenia",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "UKR",
+      "countryName": "Ukraine",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "VNM",
+      "countryName": "Vietnam",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "ZWE",
+      "countryName": "Zimbabwe",
+      "inUseVersion": 1,
+      "latestVersion": 6,
+      "gap": 5
+    },
+    {
+      "country": "ARG",
+      "countryName": "Argentina",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "CAN",
+      "countryName": "Canada",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "CRI",
+      "countryName": "Costa Rica",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "CZE",
+      "countryName": "Czech Republic",
+      "inUseVersion": 2,
+      "latestVersion": 6,
+      "gap": 4
+    },
+    {
+      "country": "DNK",
+      "countryName": "Denmark",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "FRA",
+      "countryName": "France",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "GEO",
+      "countryName": "Georgia",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "GRC",
+      "countryName": "Greece",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "GTM",
+      "countryName": "Guatemala",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "HND",
+      "countryName": "Honduras",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "HRV",
+      "countryName": "Croatia",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "JPN",
+      "countryName": "Japan",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "LTU",
+      "countryName": "Lithuania",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "MDA",
+      "countryName": "Moldova",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "NOR",
+      "countryName": "Norway",
+      "inUseVersion": 2,
+      "latestVersion": 6,
+      "gap": 4
+    },
+    {
+      "country": "PHL",
+      "countryName": "Philippines",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "PRI",
+      "countryName": "Puerto Rico",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "SVK",
+      "countryName": "Slovakia",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "THA",
+      "countryName": "Thailand",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "URY",
+      "countryName": "Uruguay",
+      "inUseVersion": 1,
+      "latestVersion": 5,
+      "gap": 4
+    },
+    {
+      "country": "USA",
+      "countryName": "United States",
+      "inUseVersion": 3,
+      "latestVersion": 7,
+      "gap": 4
+    },
+    {
+      "country": "ALB",
+      "countryName": "Albania",
+      "inUseVersion": 1,
+      "latestVersion": 4,
+      "gap": 3
+    },
+    {
+      "country": "ARE",
+      "countryName": "United Arab Emirates",
+      "inUseVersion": 3,
+      "latestVersion": 6,
+      "gap": 3
+    },
+    {
+      "country": "BLR",
+      "countryName": "Belarus",
+      "inUseVersion": 2,
+      "latestVersion": 5,
+      "gap": 3
+    },
+    {
+      "country": "BOL",
+      "countryName": "Bolivia",
+      "inUseVersion": 1,
+      "latestVersion": 4,
+      "gap": 3
+    },
+    {
+      "country": "BRA",
+      "countryName": "Brazil",
+      "inUseVersion": 1,
+      "latestVersion": 4,
+      "gap": 3
+    },
+    {
+      "country": "EGY",
+      "countryName": "Egypt",
+      "inUseVersion": 1,
+      "latestVersion": 4,
+      "gap": 3
+    },
+    {
+      "country": "EST",
+      "countryName": "Estonia",
+      "inUseVersion": 1,
+      "latestVersion": 4,
+      "gap": 3
+    },
+    {
+      "country": "FIN",
+      "countryName": "Finland",
+      "inUseVersion": 1,
+      "latestVersion": 4,
+      "gap": 3
+    },
+    {
+      "country": "GBR",
+      "countryName": "United Kingdom",
+      "inUseVersion": 3,
+      "latestVersion": 6,
+      "gap": 3
+    },
+    {
+      "country": "HKG",
+      "countryName": "Hong Kong",
+      "inUseVersion": 2,
+      "latestVersion": 5,
+      "gap": 3
+    },
+    {
+      "country": "HUN",
+      "countryName": "Hungary",
+      "inUseVersion": 1,
+      "latestVersion": 4,
+      "gap": 3
+    },
+    {
+      "country": "IND",
+      "countryName": "India",
+      "inUseVersion": 2,
+      "latestVersion": 5,
+      "gap": 3
+    },
+    {
+      "country": "ITA",
+      "countryName": "Italy",
+      "inUseVersion": 2,
+      "latestVersion": 5,
+      "gap": 3
+    },
+    {
+      "country": "LUX",
+      "countryName": "Luxembourg",
+      "inUseVersion": 1,
+      "latestVersion": 4,
+      "gap": 3
+    },
+    {
+      "country": "MLT",
+      "countryName": "Malta",
+      "inUseVersion": 1,
+      "latestVersion": 4,
+      "gap": 3
+    },
+    {
+      "country": "MNG",
+      "countryName": "Mongolia",
+      "inUseVersion": 1,
+      "latestVersion": 4,
+      "gap": 3
+    },
+    {
+      "country": "NLD",
+      "countryName": "Netherlands",
+      "inUseVersion": 2,
+      "latestVersion": 5,
+      "gap": 3
+    },
+    {
+      "country": "POL",
+      "countryName": "Poland",
+      "inUseVersion": 1,
+      "latestVersion": 4,
+      "gap": 3
+    },
+    {
+      "country": "SAU",
+      "countryName": "Saudi Arabia",
+      "inUseVersion": 2,
+      "latestVersion": 5,
+      "gap": 3
+    },
+    {
+      "country": "SWE",
+      "countryName": "Sweden",
+      "inUseVersion": 2,
+      "latestVersion": 5,
+      "gap": 3
+    },
+    {
+      "country": "TWN",
+      "countryName": "Taiwan",
+      "inUseVersion": 1,
+      "latestVersion": 4,
+      "gap": 3
+    },
+    {
+      "country": "ARM",
+      "countryName": "Armenia",
+      "inUseVersion": 1,
+      "latestVersion": 3,
+      "gap": 2
+    },
+    {
+      "country": "DEU",
+      "countryName": "Germany",
+      "inUseVersion": 4,
+      "latestVersion": 6,
+      "gap": 2
+    },
+    {
+      "country": "IDN",
+      "countryName": "Indonesia",
+      "inUseVersion": 1,
+      "latestVersion": 3,
+      "gap": 2
+    },
+    {
+      "country": "IRL",
+      "countryName": "Ireland",
+      "inUseVersion": 1,
+      "latestVersion": 3,
+      "gap": 2
+    },
+    {
+      "country": "ISL",
+      "countryName": "Iceland",
+      "inUseVersion": 2,
+      "latestVersion": 4,
+      "gap": 2
+    },
+    {
+      "country": "JAM",
+      "countryName": "Jamaica",
+      "inUseVersion": 2,
+      "latestVersion": 4,
+      "gap": 2
+    },
+    {
+      "country": "KGZ",
+      "countryName": "Kyrgyzstan",
+      "inUseVersion": 1,
+      "latestVersion": 3,
+      "gap": 2
+    },
+    {
+      "country": "KHM",
+      "countryName": "Cambodia",
+      "inUseVersion": 1,
+      "latestVersion": 3,
+      "gap": 2
+    },
+    {
+      "country": "LBN",
+      "countryName": "Lebanon",
+      "inUseVersion": 2,
+      "latestVersion": 4,
+      "gap": 2
+    },
+    {
+      "country": "MUS",
+      "countryName": "Mauritius",
+      "inUseVersion": 2,
+      "latestVersion": 4,
+      "gap": 2
+    },
+    {
+      "country": "MYS",
+      "countryName": "Malaysia",
+      "inUseVersion": 2,
+      "latestVersion": 4,
+      "gap": 2
+    },
+    {
+      "country": "NGA",
+      "countryName": "Nigeria",
+      "inUseVersion": 2,
+      "latestVersion": 4,
+      "gap": 2
+    },
+    {
+      "country": "NIC",
+      "countryName": "Nicaragua",
+      "inUseVersion": 1,
+      "latestVersion": 3,
+      "gap": 2
+    },
+    {
+      "country": "PER",
+      "countryName": "Peru",
+      "inUseVersion": 1,
+      "latestVersion": 3,
+      "gap": 2
+    },
+    {
+      "country": "SGP",
+      "countryName": "Singapore",
+      "inUseVersion": 2,
+      "latestVersion": 4,
+      "gap": 2
+    },
+    {
+      "country": "SLV",
+      "countryName": "El Salvador",
+      "inUseVersion": 1,
+      "latestVersion": 3,
+      "gap": 2
+    },
+    {
+      "country": "UGA",
+      "countryName": "Uganda",
+      "inUseVersion": 1,
+      "latestVersion": 3,
+      "gap": 2
+    },
+    {
+      "country": "XKX",
+      "countryName": "Kosovo",
+      "inUseVersion": 1,
+      "latestVersion": 3,
+      "gap": 2
+    },
+    {
+      "country": "ZAF",
+      "countryName": "South Africa",
+      "inUseVersion": 1,
+      "latestVersion": 3,
+      "gap": 2
+    },
+    {
+      "country": "FRA_SAS",
+      "countryName": "France (SAS)",
+      "inUseVersion": 1,
+      "latestVersion": 2,
+      "gap": 1
+    },
+    {
+      "country": "ITA_APL",
+      "countryName": "Italy (APL)",
+      "inUseVersion": 1,
+      "latestVersion": 2,
+      "gap": 1
+    },
+    {
+      "country": "PAK",
+      "countryName": "Pakistan",
+      "inUseVersion": 2,
+      "latestVersion": 3,
+      "gap": 1
+    }
+  ]
+}

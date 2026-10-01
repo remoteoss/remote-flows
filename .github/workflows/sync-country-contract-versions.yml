@@ -1,0 +1,76 @@
+name: Sync Country Contract Versions
+
+on:
+  schedule:
+    # Weekly, Monday ~06:20 UTC (off the round hour on purpose).
+    - cron: '23 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    name: Sync COUNTRY_CONTRACT_VERSIONS from the BE repo
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout remote-flows
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Use Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.15.0'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --include=optional --ignore-scripts
+
+      - name: Check for BE repo GitLab token
+        id: check-token
+        env:
+          BE_REPO_TOKEN: ${{ secrets.BE_REPO_GITLAB_READ_TOKEN }}
+        run: |
+          if [ -z "$BE_REPO_TOKEN" ]; then
+            echo "::warning::BE_REPO_GITLAB_READ_TOKEN is not configured. Skipping sync. See scripts/sync-country-contract-versions.ts for what this needs."
+            echo "has_token=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_token=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Only the BE repo's contract_details schemas are needed here.
+      - name: Sparse-checkout BE repo contract_details schemas
+        if: steps.check-token.outputs.has_token == 'true'
+        env:
+          BE_REPO_TOKEN: ${{ secrets.BE_REPO_GITLAB_READ_TOKEN }}
+        run: |
+          git clone --depth 1 --filter=blob:none --sparse \
+            "https://oauth2:${BE_REPO_TOKEN}@gitlab.com/remote-com/employ-starbase/tiger.git" \
+            be-repo-schemas
+          git -C be-repo-schemas sparse-checkout set apps/tiger/priv/json_schemas/contract_details
+
+      - name: Run sync script
+        if: steps.check-token.outputs.has_token == 'true'
+        run: |
+          npm run sync:contract-versions -- \
+            --be-repo-path=./be-repo-schemas \
+            --write \
+            --report-file=/tmp/gap-report.md
+
+      - name: Create pull request
+        if: steps.check-token.outputs.has_token == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          commit-message: 'chore(JsonSchemaComparison): sync COUNTRY_CONTRACT_VERSIONS from the BE repo'
+          branch: chore/sync-country-contract-versions-auto
+          delete-branch: true
+          title: 'chore(JsonSchemaComparison): sync COUNTRY_CONTRACT_VERSIONS from the BE repo'
+          body-path: /tmp/gap-report.md
+          add-paths: |
+            src/components/JsonSchemaComparison/schemaVersions.ts
+            scripts/reports/country-contract-version-gap.json
