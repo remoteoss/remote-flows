@@ -14,7 +14,7 @@ export function ContractDocumentReviewButton({
   ...props
 }: ContractDocumentReviewButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { contractDocumentBag } = useContractDocumentContext();
+  const { formId, contractDocumentBag } = useContractDocumentContext();
   const { components } = useFormFields();
 
   const CustomButton = components?.button;
@@ -33,9 +33,17 @@ export function ContractDocumentReviewButton({
   const contractDocument =
     contractDocumentBag.documentPreviewPdf?.contract_document;
 
+  const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!reviewCompleted) {
+      event.preventDefault();
+      setIsOpen(true);
+      onClick?.(event);
+    }
+  };
+
   const handleOpenChange = (open: boolean) => {
-    setIsOpen(open);
     if (!open) {
+      setIsOpen(false);
       contractDocumentBag.markContractAsReviewed();
     }
   };
@@ -49,15 +57,14 @@ export function ContractDocumentReviewButton({
       trigger={
         <CustomButton
           {...props}
-          type='button'
+          type={reviewCompleted ? 'submit' : 'button'}
+          form={formId}
           className={cn(
             'RemoteFlows__ContractDocumentPreviewForm__ReviewButton',
             props.className,
           )}
-          onClick={(event) => {
-            setIsOpen(true);
-            onClick?.(event);
-          }}
+          onClick={handleOpen}
+          disabled={props.disabled || contractDocumentBag.isSubmitting}
         >
           {render({ reviewCompleted })}
         </CustomButton>

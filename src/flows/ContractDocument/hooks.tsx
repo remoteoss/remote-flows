@@ -14,6 +14,8 @@ import {
   useCreateContractorContractDocument,
   useGetContractDocumentSignatureSchema,
   useGetShowContractDocument,
+  useHasCompanySignedContract,
+  useSignContractDocument,
 } from '@/src/common/contract-documents/api';
 import { corProductIdentifier } from '@/src/common/contract-documents/constants';
 import {
@@ -31,6 +33,7 @@ import {
 import { useClient } from '@/src/context';
 import {
   ContractDocumentContractDetailsPayload,
+  ContractDocumentContractPreviewPayload,
   ContractDocumentStepKeys,
   UseContractDocumentOptions,
 } from '@/src/flows/ContractDocument/types';
@@ -69,8 +72,12 @@ export const useContractDocument = ({
     hasOpenedExistingContractDocument,
     setHasOpenedExistingContractDocument,
   ] = useState(false);
-  const fieldsMetaRef = useRef<{ contract_details: NestedMeta }>({
+  const fieldsMetaRef = useRef<{
+    contract_details: NestedMeta;
+    contract_preview: NestedMeta;
+  }>({
     contract_details: {},
+    contract_preview: {},
   });
   const isContractDetailsStep =
     stepState.currentStep.name === 'contract_details';
@@ -107,18 +114,18 @@ export const useContractDocument = ({
   const isOpeningExistingContractDocument =
     Boolean(existingContractDocumentId) && !hasOpenedExistingContractDocument;
 
-  useEffect(() => {
-    if (isOpeningExistingContractDocument) {
-      setHasOpenedExistingContractDocument(true);
-      goToStep('contract_preview');
-    }
-  }, [isOpeningExistingContractDocument, goToStep]);
-
   const {
     data: documentPreviewPdf,
     isLoading: isLoadingDocumentPreviewPdf,
     error: documentPreviewPdfError,
+    refetch: refetchDocumentPreviewPdf,
   } = useGetShowContractDocument({
+    employmentId,
+    contractDocumentId: contractDocumentId as string,
+    options: { queryOptions: { enabled: Boolean(contractDocumentId) } },
+  });
+
+  const { hasCompanySignedContract } = useHasCompanySignedContract({
     employmentId,
     contractDocumentId: contractDocumentId as string,
     options: { queryOptions: { enabled: Boolean(contractDocumentId) } },
@@ -156,7 +163,9 @@ export const useContractDocument = ({
   const { data: signatureForm } = useGetContractDocumentSignatureSchema({
     fieldValues,
     options: {
-      queryOptions: { enabled: isContractPreviewStep },
+      queryOptions: {
+        enabled: isContractPreviewStep || isOpeningExistingContractDocument,
+      },
       jsfModify: buildContractPreviewJsfModify(
         options?.jsfModify?.contract_preview,
         fieldValues,
@@ -168,6 +177,21 @@ export const useContractDocument = ({
     () => (signatureForm?.fields ?? []) as Fields,
     [signatureForm?.fields],
   );
+
+  const isExistingContractDocumentReady =
+    signatureFields.length > 0 &&
+    Boolean(documentPreviewPdf || documentPreviewPdfError);
+
+  useEffect(() => {
+    if (isOpeningExistingContractDocument && isExistingContractDocumentReady) {
+      setHasOpenedExistingContractDocument(true);
+      goToStep('contract_preview');
+    }
+  }, [
+    isOpeningExistingContractDocument,
+    isExistingContractDocumentReady,
+    goToStep,
+  ]);
 
   const currentForm = isContractDetailsStep
     ? contractDetailsForm
@@ -198,6 +222,10 @@ export const useContractDocument = ({
   const createContractDocumentMutation = useCreateContractorContractDocument();
   const { mutateAsyncOrThrow: createContractDocument } = mutationToPromise(
     createContractDocumentMutation,
+  );
+  const signContractDocumentMutation = useSignContractDocument();
+  const { mutateAsyncOrThrow: signContractDocument } = mutationToPromise(
+    signContractDocumentMutation,
   );
 
   const checkFieldUpdates = useCallback(
@@ -249,20 +277,68 @@ export const useContractDocument = ({
     [fieldValues.services_and_deliverables_error_skippable],
   );
 
-  const parseFormValues = useCallback(
-    async (values: FieldValues) =>
-      buildPayload(await parseContractDetails(values)),
-    [buildPayload, parseContractDetails],
+  const parseContractPreview = useCallback(
+    (values: FieldValues) =>
+      parseJSFToValidate(values, signatureFields, {
+        isPartialValidation: false,
+      }),
+    [signatureFields],
   );
 
-  const onSubmit = useCallback(
+  const parseFormValues = useCallback(
+    async (
+      values: FieldValues,
+    ): Promise<
+      | ContractDocumentContractDetailsPayload
+      | ContractDocumentContractPreviewPayload
+    > => {
+      if (isContractPreviewStep) {
+        const { signature } = await parseContractPreview(values);
+        return { signature };
+      }
+      return buildPayload(await parseContractDetails(values));
+    },
+    [
+      isContractPreviewStep,
+      parseContractPreview,
+      buildPayload,
+      parseContractDetails,
+    ],
+  );
+
+  const signContract = useCallback(
     async (values: FieldValues) => {
-      if (!employmentId) {
-        throw createStructuredError(
-          'No contractor to act on. Pass a non-empty `employmentId` to the flow.',
-        );
+      const parsedValues = await parseContractPreview(values);
+      fieldsMetaRef.current.contract_preview = prettifyFormValues(
+        parsedValues,
+        signatureFields,
+      );
+
+      if (hasCompanySignedContract) {
+        return { data: { contract_document: { id: contractDocumentId } } };
       }
 
+      const response = await signContractDocument({
+        employmentId,
+        contractDocumentId: contractDocumentId as string,
+        payload: { signature: parsedValues.signature },
+      });
+      await refetchDocumentPreviewPdf();
+      return response;
+    },
+    [
+      parseContractPreview,
+      signatureFields,
+      hasCompanySignedContract,
+      contractDocumentId,
+      signContractDocument,
+      employmentId,
+      refetchDocumentPreviewPdf,
+    ],
+  );
+
+  const createContract = useCallback(
+    async (values: FieldValues) => {
       const parsedValues = await parseContractDetails(values);
       fieldsMetaRef.current.contract_details = prettifyFormValues(
         parsedValues,
@@ -307,6 +383,20 @@ export const useContractDocument = ({
     ],
   );
 
+  const onSubmit = useCallback(
+    async (values: FieldValues) => {
+      if (!employmentId) {
+        throw createStructuredError(
+          'No contractor to act on. Pass a non-empty `employmentId` to the flow.',
+        );
+      }
+      return isContractPreviewStep
+        ? signContract(values)
+        : createContract(values);
+    },
+    [employmentId, isContractPreviewStep, signContract, createContract],
+  );
+
   return {
     /**
      * Current step state containing the current step and total number of steps.
@@ -345,11 +435,12 @@ export const useContractDocument = ({
      */
     handleValidation,
     /**
-     * Turns the contract details form values into the API payload without submitting.
+     * Turns the current step's form values into the API payload without submitting.
      */
     parseFormValues,
     /**
-     * Creates the contract document from the contract details form values.
+     * Submits the current step: creates the contract document from the contract details, or
+     * signs it on the preview step unless the company has already signed.
      */
     onSubmit,
     /**
@@ -410,8 +501,8 @@ export const useContractDocument = ({
       fieldValues.services_and_deliverables_error_skippable === true,
     /**
      * True until the contractor and the current step are known: `employmentId` is empty, or
-     * the employment, its contract documents, the schema or the previewed document are still
-     * loading.
+     * the employment, its contract documents, the current step's schema or the previewed
+     * document are still loading.
      */
     isLoading:
       !employmentId ||
@@ -421,9 +512,11 @@ export const useContractDocument = ({
       (isContractDetailsStep && isLoadingContractDetailsForm) ||
       (isContractPreviewStep && isLoadingDocumentPreviewPdf),
     /**
-     * True while the contract document is being created.
+     * True while the contract document is being created or signed.
      */
-    isSubmitting: createContractDocumentMutation.isPending,
+    isSubmitting:
+      createContractDocumentMutation.isPending ||
+      signContractDocumentMutation.isPending,
     /**
      * The error that stopped the current step from loading, if any: the employment, the
      * contract details schema, or on the preview step the previewed contract document.
