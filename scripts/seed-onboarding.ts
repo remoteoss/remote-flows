@@ -46,38 +46,18 @@
  *
  *   npm run seed:onboarding -- --country=DEU --env=sandbox
  */
-import { createHeadlessForm } from '@remoteoss/remote-json-schema-form-kit';
-import { faker } from '@faker-js/faker';
 import dotenv from 'dotenv';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { fillSchema, pickSafeDate, safeStartDateYears } from './fill-schema';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 
-type FormSchema = Parameters<typeof createHeadlessForm>[0];
-type HeadlessFormOptions = NonNullable<
-  Parameters<typeof createHeadlessForm>[1]
->;
-type FormValues = Record<string, unknown>;
+type FormSchema = Record<string, unknown>;
 type HttpMethod = 'GET' | 'POST';
 type AuthHeaders = Record<string, string>;
-
-interface FieldOption {
-  value: unknown;
-  meta?: { countryCode?: string };
-}
-
-interface SeedField {
-  name: string;
-  inputType?: string;
-  required?: boolean;
-  isVisible?: boolean;
-  multiple?: boolean;
-  options?: FieldOption[];
-  const?: unknown;
-}
 
 interface ApiOptions {
   query?: Record<string, string | number | boolean | undefined>;
@@ -205,93 +185,25 @@ async function fetchSchema(
   }).then((res) => res.data);
 }
 
-/** First option whose value/label reads as "no" - collapses conditional sub-fields (file
- * uploads, free-text detail boxes) that a generic filler can't produce plausible data for. */
-function preferNoOption(options: FieldOption[]): FieldOption {
-  return (
-    options.find((o) => String(o.value).toLowerCase() === 'no') || options[0]
-  );
-}
-
-function fakeValueFor(field: SeedField): unknown {
-  const { inputType, options, multiple, name, const: constValue } = field;
-
-  if (options?.length) {
-    if (inputType === 'radio' || inputType === 'select') {
-      return preferNoOption(options).value;
-    }
-    if (inputType === 'countries' || multiple) {
-      return [faker.helpers.arrayElement(options).value];
-    }
-    if (inputType === 'tel') {
-      // options here are per-country dialing patterns (e.g. pattern:
-      // '^(+49)[0-9]{6,}$', meta.countryCode: '49'), not user-facing choices -
-      // any one produces a validly-formatted number, regardless of the
-      // employment's own country.
-      const option = options.find((o) => o.meta?.countryCode) || options[0];
-      return `+${option.meta?.countryCode}${faker.string.numeric(9)}`;
-    }
-    return preferNoOption(options).value;
-  }
-
-  switch (inputType) {
-    case 'email':
-      return name === 'work_email'
-        ? faker.internet.email({ provider: 'remote-e2e-test.com' })
-        : faker.internet.email();
-    case 'tel':
-      return `+1${faker.string.numeric(9)}`;
-    case 'date': {
-      const d = new Date();
-      d.setDate(d.getDate() + 21);
-      return d.toISOString().slice(0, 10);
-    }
-    case 'number':
-      return faker.number.int({ min: 5, max: 30 });
-    case 'money':
-      return faker.number.int({ min: 3_000_000, max: 8_000_000 });
-    case 'textarea':
-      return faker.lorem.sentence();
-    case 'checkbox':
-      // No enumerated options: this is a single acknowledgement toggle. RHF
-      // holds a plain `true` here, which parseFormValuesToAPI (src/components/
-      // form/utils.ts) swaps for `field.const` (e.g. "acknowledged") at submit
-      // time when the schema is const-based - mirror that instead of sending
-      // the raw RHF value, or the API rejects it as a type mismatch.
-      return constValue ?? true;
-    case 'file':
-      return null;
-    default:
-      return faker.lorem.words({ min: 2, max: 4 });
-  }
-}
-
-/** Progressively fills a JSF schema: fill whatever's required+visible, recompute (new
- * conditionally-required fields may appear), repeat until stable. Mirrors what the real
- * multi-step form does field-by-field, but against the schema directly instead of the DOM. */
-function fillSchema(
-  schema: FormSchema,
-  seedValues: FormValues = {},
-): { values: FormValues; skipped: string[] } {
-  const values: FormValues = { ...seedValues };
-  const skipped: string[] = [];
-  for (let round = 0; round < 8; round++) {
-    const { fields } = createHeadlessForm(schema, {
-      initialValues: values as HeadlessFormOptions['initialValues'],
-    });
-    const missing = (fields as unknown as SeedField[]).filter(
-      (f) => f.required && f.isVisible && values[f.name] === undefined,
-    );
-    if (missing.length === 0) break;
-    for (const field of missing) {
-      if (field.inputType === 'file') {
-        skipped.push(field.name);
-        continue;
+/** See pickSafeDate in fill-schema.ts for why a fixed offset alone isn't
+ * enough - a year whose holidays lookup fails is skipped rather than
+ * discarding the years that did load. */
+async function findSafeStartDate(): Promise<string> {
+  const holidayDates = new Set<string>();
+  for (const year of safeStartDateYears()) {
+    try {
+      const holidays = await api<{
+        data?: { day: string; observed_day?: string }[];
+      }>('GET', `/v1/countries/${COUNTRY}/holidays/${year}`);
+      for (const holiday of holidays.data ?? []) {
+        holidayDates.add(holiday.day);
+        if (holiday.observed_day) holidayDates.add(holiday.observed_day);
       }
-      values[field.name] = fakeValueFor(field);
+    } catch (error) {
+      console.warn(`Could not load ${year} holidays for ${COUNTRY}:`, error);
     }
   }
-  return { values, skipped };
+  return pickSafeDate(holidayDates);
 }
 
 async function main() {
@@ -300,8 +212,11 @@ async function main() {
     'employment_basic_information',
     BASIC_INFO_VERSION,
   );
-  const { values: basicInformation, skipped: basicSkipped } =
-    fillSchema(basicInfoSchema);
+  const startDate = await findSafeStartDate();
+  const { values: basicInformation, skipped: basicSkipped } = fillSchema(
+    basicInfoSchema,
+    { provisional_start_date: startDate },
+  );
   console.log(
     'basic_information payload:',
     JSON.stringify(basicInformation, null, 2),

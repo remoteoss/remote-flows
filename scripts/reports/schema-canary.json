@@ -1,0 +1,1283 @@
+{
+  "_meta": {
+    "title": "Contract details schema canary",
+    "description": "Per-country contract_details schema checks against the sandbox gateway. \"pinned\" is the version this library currently ships against (see example/src/flows/Onboarding/jsonSchemaVersions.ts); \"latest\" is whatever version the gateway currently serves as newest. Both run createHeadlessForm(schema, {}) + handleValidation({}) and record whether it throws.",
+    "source": "scripts/schema-canary.ts, run nightly against the sandbox gateway"
+  },
+  "checks": [
+    {
+      "country": "ALB",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "ALB",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "ARG",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "ARG",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "ARM",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "ARM",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "AUS",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "AUS",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "AUT",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "AUT",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "BGD",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "BGD",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "BEL",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "BEL",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "BIH",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "BIH",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "BRA",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "BRA",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "BGR",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "BGR",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "CAN",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "CAN",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "CHL",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "CHL",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "CHN",
+      "version": 3,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "CHN",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "COL",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "COL",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "CRI",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "CRI",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "HRV",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "HRV",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "CYP",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "CYP",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "CZE",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "CZE",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "DNK",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "DNK",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "DOM",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "DOM",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "ECU",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "ECU",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "EGY",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "EGY",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "SLV",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "SLV",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "EST",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "EST",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "FIN",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "FIN",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "FRA",
+      "version": 1,
+      "engine": "jsf-v1",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "FRA",
+      "version": "latest",
+      "engine": "jsf-v1",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "GEO",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "GEO",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "DEU",
+      "version": 7,
+      "engine": "jsf-v1",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "DEU",
+      "version": "latest",
+      "engine": "jsf-v1",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "GRC",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "GRC",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "GTM",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "GTM",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "HND",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "HND",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "HKG",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "HKG",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "HUN",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "HUN",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "ISL",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "ISL",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "IND",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "IND",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "IDN",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "IDN",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "IRL",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "IRL",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "ISR",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "ISR",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "ITA",
+      "version": 2,
+      "engine": "jsf-v1",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "ITA",
+      "version": "latest",
+      "engine": "jsf-v1",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "JAM",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "JAM",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "JPN",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "JPN",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "KEN",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "KEN",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "XKX",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "XKX",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "LVA",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "LVA",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "LBN",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "LBN",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "LTU",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "LTU",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "LUX",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "LUX",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "MYS",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "MYS",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "MLT",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "MLT",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "MUS",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "MUS",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "MEX",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "MEX",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "MDA",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "MDA",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "MAR",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "MAR",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "NLD",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "NLD",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "NZL",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "NZL",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "NIC",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "NIC",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "NGA",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "NGA",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "MKD",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "MKD",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "NOR",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "NOR",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "PAK",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "PAK",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "PAN",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "PAN",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "PRY",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "PRY",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "PER",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "PER",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "PHL",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "PHL",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "POL",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "POL",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "PRT",
+      "version": 3,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "PRT",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "PRI",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "PRI",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "ROU",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "ROU",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "SAU",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "SAU",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "SRB",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "SRB",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "SGP",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "SGP",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "SVK",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "SVK",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "SVN",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "SVN",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "ZAF",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "ZAF",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "KOR",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "KOR",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "ESP",
+      "version": 7,
+      "engine": "jsf-v1",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "ESP",
+      "version": "latest",
+      "engine": "jsf-v1",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "LKA",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "LKA",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "SWE",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "SWE",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "CHE",
+      "version": 2,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "CHE",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "TWN",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "TWN",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "THA",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "THA",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "TUN",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "TUN",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "TUR",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "TUR",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "UGA",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "UGA",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "UKR",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "UKR",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "ARE",
+      "version": 3,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "ARE",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "GBR",
+      "version": 3,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "GBR",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "USA",
+      "version": 3,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "USA",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "URY",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "URY",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "VNM",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "VNM",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "ZWE",
+      "version": 1,
+      "engine": "jsf-v0",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "ZWE",
+      "version": "latest",
+      "engine": "jsf-v0",
+      "check": "latest",
+      "outcome": "pass"
+    }
+  ]
+}
