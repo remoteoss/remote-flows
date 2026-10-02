@@ -741,7 +741,10 @@ export const useContractorOnboarding = ({
       queryOptions: {
         enabled: isSignatureSchemaEnabled,
       },
-      jsfModify: buildContractPreviewJsfModify(options, fieldValues),
+      jsfModify: buildContractPreviewJsfModify(
+        options?.jsfModify?.contract_preview,
+        fieldValues,
+      ),
     },
   });
 

@@ -38,6 +38,8 @@ export type {
 export {
   ContractDocumentFlow,
   ContractDocumentForm,
+  ContractDocumentPreviewForm,
+  ContractDocumentReviewButton,
   ContractDocumentSubmitButton,
   useContractDocument,
 } from '@/src/flows/ContractDocument';

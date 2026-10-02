@@ -1,9 +1,16 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { http, HttpResponse } from 'msw';
+import userEvent from '@testing-library/user-event';
+import { delay, http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
+import {
+  mockContractDocumentResponse,
+  mockContractDocumentsResponse,
+} from '@/src/common/api/fixtures/contract-documents';
 import { ContractDocumentFlow } from '@/src/flows/ContractDocument/ContractDocumentFlow';
 import { ContractDocumentForm } from '@/src/flows/ContractDocument/ContractDocumentForm';
+import { ContractDocumentPreviewForm } from '@/src/flows/ContractDocument/ContractDocumentPreviewForm';
+import { ContractDocumentReviewButton } from '@/src/flows/ContractDocument/ContractDocumentReviewButton';
 import { ContractDocumentSubmitButton } from '@/src/flows/ContractDocument/ContractDocumentSubmitButton';
 import {
   mockContractDocumentCreatedResponse,
@@ -25,20 +32,27 @@ const aiValidationErrorResponse = {
   message: 'Unprocessable Entity',
 };
 
-function renderFlow() {
+function renderFlow(onStepRendered?: (step: string) => void) {
   return render(
     <ContractDocumentFlow
       employmentId='employment-grace'
       render={(bag) => {
         if (bag.isLoading) return <p>Loading…</p>;
+        onStepRendered?.(bag.stepState.currentStep.name);
 
         if (bag.stepState.currentStep.name === 'contract_preview') {
           return (
             <>
               <p>Preview of {bag.contractDocumentId}</p>
+              <ContractDocumentPreviewForm />
               <button type='button' onClick={bag.back}>
                 Back
               </button>
+              <ContractDocumentReviewButton
+                render={({ reviewCompleted }) =>
+                  reviewCompleted ? 'Review again' : 'Review contract'
+                }
+              />
             </>
           );
         }
@@ -135,6 +149,61 @@ describe('ContractDocumentForm', () => {
     expect(
       await screen.findByLabelText(/Services and Deliverables/i),
     ).toHaveValue('Design work');
+  });
+
+  it('opens the created contract document for review and then asks for the signature', async () => {
+    server.use(
+      http.post(
+        '*/v1/contractors/employments/employment-grace/contract-documents',
+        () => HttpResponse.json(mockContractDocumentCreatedResponse),
+      ),
+    );
+
+    renderFlow();
+    await fillContractDetails();
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+    await screen.findByText(/Preview of/);
+
+    expect(screen.queryByLabelText(/Enter full name/i)).not.toBeInTheDocument();
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: 'Review contract' }),
+    );
+    await screen.findByText('Contract Document');
+    await userEvent.keyboard('{Escape}');
+
+    expect(
+      await screen.findByLabelText(/Enter full name/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Review again')).toBeInTheDocument();
+  });
+
+  it('opens straight on the preview of an existing contract document', async () => {
+    const requested: string[] = [];
+    server.use(
+      http.get('*/v1/employments/:id/contract-documents', async () => {
+        await delay(200);
+        return HttpResponse.json(mockContractDocumentsResponse);
+      }),
+      http.get(
+        '*/v1/contractors/employments/:employmentId/contract-documents/:id',
+        ({ request }) => {
+          requested.push(new URL(request.url).pathname);
+          return HttpResponse.json(mockContractDocumentResponse);
+        },
+      ),
+    );
+
+    const renderedSteps: string[] = [];
+    renderFlow((step) => renderedSteps.push(step));
+
+    expect(
+      await screen.findByText('Preview of contract-document-1'),
+    ).toBeInTheDocument();
+    expect(requested).toEqual([
+      '/v1/contractors/employments/employment-grace/contract-documents/contract-document-1',
+    ]);
+    expect(renderedSteps).not.toContain('contract_details');
   });
 
   it('leaves out the Contractor Services Agreement disclaimer for a Contractor of Record', async () => {

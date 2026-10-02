@@ -9,6 +9,7 @@ export type ContractDocumentStepKeys = 'contract_details' | 'contract_preview';
 export type ContractDocumentOptions = {
   jsfModify?: {
     contract_details?: JSFModify;
+    contract_preview?: JSFModify;
   };
 };
 
