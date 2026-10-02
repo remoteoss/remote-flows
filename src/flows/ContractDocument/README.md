@@ -2,19 +2,15 @@
 
 Welcome to the Contract Document flow docs.
 
-A standalone flow for creating a contractor's contract document — the contract details and
-contract preview screens of contractor onboarding, mountable on their own. It does not depend
-on the onboarding flow.
+A standalone flow for creating and signing a contractor's contract document — the contract
+details and contract preview screens of contractor onboarding, mountable on their own. It does
+not depend on the onboarding flow.
 
 The flow acts on one contractor, which you name with the required `employmentId` prop. How you
 source that id — a picker of your own, a route param, the row the user clicked — is up to you.
 
 If you want these screens **inside** contractor onboarding, that is part of the
 [Contractor Onboarding](../ContractorOnboarding/README.md) flow instead.
-
-> **Work in progress.** This release creates the contract document, opens its PDF for review
-> and renders the signature form. No signing request is sent yet. Until the flow is complete,
-> its props and bag may change between minor versions without a major bump.
 
 # Table of Contents
 
@@ -29,6 +25,7 @@ If you want these screens **inside** contractor onboarding, that is part of the
 - [The bag](#the-bag)
 - [Requests](#requests)
 - [AI misclassification check](#ai-misclassification-check)
+- [Current limitations](#current-limitations)
 
 ## Getting Started
 
@@ -49,12 +46,15 @@ import {
   ContractDocumentSubmitButton,
   RemoteFlows,
 } from '@remoteoss/remote-flows';
+import { useState } from 'react';
 
 export function CreateContractDocument({
   employmentId,
 }: {
   employmentId: string;
 }) {
+  const [isSigned, setIsSigned] = useState(false);
+
   return (
     <RemoteFlows auth={/* your token fetcher */}>
       <ContractDocumentFlow
@@ -64,19 +64,26 @@ export function CreateContractDocument({
             return <div>Loading…</div>;
           }
 
+          if (isSigned) {
+            return <p>Contract signed.</p>;
+          }
+
           if (
             contractDocumentBag.stepState.currentStep.name ===
             'contract_preview'
           ) {
             return (
               <>
-                <ContractDocumentPreviewForm />
+                <ContractDocumentPreviewForm
+                  onSuccess={() => setIsSigned(true)}
+                  onError={({ error }) => console.error(error)}
+                />
                 <button type='button' onClick={contractDocumentBag.back}>
                   Back
                 </button>
                 <ContractDocumentReviewButton
                   render={({ reviewCompleted }) =>
-                    reviewCompleted ? 'Review again' : 'Review contract'
+                    reviewCompleted ? 'Sign contract' : 'Review contract'
                   }
                 />
               </>
@@ -134,12 +141,16 @@ when the flow failed to load (`error` is set on the bag).
 
 Renders the `contract_preview` step: a header, a statement inviting the user to review the
 document, and the signature field. The signature field only appears once the document has
-been reviewed (`fieldValues.review_completed`). Signing is not wired yet; the form has no
-submission in this release.
+been reviewed (`fieldValues.review_completed`). Submitting it signs the contract document on
+behalf of the company, then reloads the document. When the company has already signed, nothing
+is sent and the submission succeeds with the document id.
 
-| Prop         | Type         | Description                                     |
-| ------------ | ------------ | ----------------------------------------------- |
-| `components` | `Components` | Override the field components used in the form. |
+| Prop         | Type                                         | Description                                                                      |
+| ------------ | -------------------------------------------- | -------------------------------------------------------------------------------- |
+| `components` | `Components`                                 | Override the field components used in the form.                                  |
+| `onSubmit`   | `(payload) => void \| Promise<void>`         | Receives `{ signature }` before it is sent. Throwing aborts the submission.      |
+| `onSuccess`  | `(data) => void \| Promise<void>`            | Called once the contract document has been signed. The flow has no further step. |
+| `onError`    | `({ error, rawError, fieldErrors }) => void` | Called when signing fails. Field errors are also set on the form.                |
 
 The header and statement fields can be customized through
 `options.jsfModify.contract_preview` (`contract_preview_header`, `contract_preview_statement`,
@@ -147,10 +158,11 @@ The header and statement fields can be customized through
 
 ### ContractDocumentReviewButton
 
-Must be rendered inside the flow's `render` prop. Opens the contract document PDF in a drawer
-through the `pdfViewer` component; closing the drawer marks the document as reviewed. Same API
-as the onboarding `ContractReviewButton`: a `render({ reviewCompleted })` prop for the label,
-plus any button props.
+Must be rendered inside the flow's `render` prop. Until the document is reviewed, it opens the
+contract document PDF in a drawer through the `pdfViewer` component; closing the drawer marks
+the document as reviewed. From then on it submits the preview form, which signs the document.
+Same API as the onboarding `ContractReviewButton`: a `render({ reviewCompleted })` prop for the
+label, plus any button props. `ContractDocumentSubmitButton` also submits the preview form.
 
 ## The bag
 
@@ -168,8 +180,8 @@ prop, for fully custom UIs. Both surfaces expose the same bag:
 | `fieldValues`            | Current values of the form fields for the current step.                                                                                                                                                   |
 | `checkFieldUpdates`      | Feed the latest form values back in so conditional fields re-evaluate.                                                                                                                                    |
 | `handleValidation`       | Validation handler for the current step's form.                                                                                                                                                           |
-| `parseFormValues`        | Turns the contract details values into the API payload without submitting.                                                                                                                                |
-| `onSubmit`               | Creates the contract document.                                                                                                                                                                            |
+| `parseFormValues`        | Turns the current step's values into the API payload without submitting.                                                                                                                                  |
+| `onSubmit`               | Submits the current step: creates the contract document from the details, or signs it on the preview step.                                                                                                |
 | `initialValues`          | Initial form values per step. Contract details: today as the start date, the current contract details, the schema defaults. Contract preview: the company signature, if the document already carries one. |
 | `meta`                   | Field metadata for the current step: labels for error messages, and fieldsets.                                                                                                                            |
 | `employmentId`           | The contractor the contract document will be created for.                                                                                                                                                 |
@@ -182,19 +194,20 @@ prop, for fully custom UIs. Both surfaces expose the same bag:
 | `markContractAsReviewed` | Marks the document as reviewed, which reveals the signature field.                                                                                                                                        |
 | `canSkipAiValidation`    | True when the last submission was rejected by the AI check and submitting again continues at the user's risk.                                                                                             |
 | `isLoading`              | True until the contractor and the current step's form are known.                                                                                                                                          |
-| `isSubmitting`           | True while the contract document is being created.                                                                                                                                                        |
+| `isSubmitting`           | True while the contract document is being created or signed.                                                                                                                                              |
 | `error`                  | The error that stopped the current step from loading (employment, schema, or the previewed document on the preview step), or `null`.                                                                      |
 
 ## Requests
 
-| Request                                                                        | Purpose                                                                         |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
-| `GET /v1/employments/{employment_id}`                                          | The contractor: country, product, current contract details.                     |
-| `GET /v1/employments/{employment_id}/contract-documents`                       | The contract documents the contractor already has.                              |
-| `GET /v1/countries/{country_code}/contractor-contract-details?employment_id=…` | The contract details schema. Its `default` values prefill the form (see below). |
-| `GET /v1/contractors/employments/{employment_id}/contractor-currencies`        | The currencies offered for the compensation.                                    |
-| `POST /v1/contractors/employments/{employment_id}/contract-documents`          | Creates the contract document from the parsed form values.                      |
-| `GET /v1/contractors/employments/{employment_id}/contract-documents/{id}`      | The previewed contract document, with its PDF.                                  |
+| Request                                                                         | Purpose                                                                         |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `GET /v1/employments/{employment_id}`                                           | The contractor: country, product, current contract details.                     |
+| `GET /v1/employments/{employment_id}/contract-documents`                        | The contract documents the contractor already has.                              |
+| `GET /v1/countries/{country_code}/contractor-contract-details?employment_id=…`  | The contract details schema. Its `default` values prefill the form (see below). |
+| `GET /v1/contractors/employments/{employment_id}/contractor-currencies`         | The currencies offered for the compensation.                                    |
+| `POST /v1/contractors/employments/{employment_id}/contract-documents`           | Creates the contract document from the parsed form values.                      |
+| `GET /v1/contractors/employments/{employment_id}/contract-documents/{id}`       | The previewed contract document, with its PDF.                                  |
+| `POST /v1/contractors/employments/{employment_id}/contract-documents/{id}/sign` | Signs the contract document on behalf of the company.                           |
 
 All are scoped to an employment, so nothing is requested while `employmentId` is empty and
 `isLoading` stays `true`.
@@ -223,3 +236,16 @@ document is created. When the check rejects the text with a skippable error, the
 warning under the field and `canSkipAiValidation` turns `true`; submitting again sends
 `skip_ai_checks: true` and continues at the user's own risk. Editing any field of the form
 clears the warning and the next submission is checked again.
+
+## Current limitations
+
+- **No update endpoint.** The public API creates, reads and signs contract documents, but does
+  not update them. Changing the contract details after the preview, through `back`, creates a
+  new contract document; the previous one is not edited.
+- **Existing document.** The flow previews the first contract document the list returns,
+  whatever its status.
+- **Review state on `back`.** Going back from a reviewed preview and creating a new document
+  keeps the review state, so the signature field shows without the new PDF being opened. This
+  matches contractor onboarding.
+- **Company signature only.** The flow signs on behalf of the company. Remote then sends the
+  document to the contractor for their signature.

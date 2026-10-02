@@ -14,6 +14,7 @@ import { ContractDocumentReviewButton } from '@/src/flows/ContractDocument/Contr
 import { ContractDocumentSubmitButton } from '@/src/flows/ContractDocument/ContractDocumentSubmitButton';
 import {
   mockContractDocumentCreatedResponse,
+  mockContractDocumentSignedResponse,
   mockContractorEmploymentResponse,
 } from '@/src/flows/ContractorOnboarding/tests/fixtures';
 import { fillContractDetails } from '@/src/flows/ContractorOnboarding/tests/helpers';
@@ -32,6 +33,9 @@ const aiValidationErrorResponse = {
   message: 'Unprocessable Entity',
 };
 
+const onSigned = vi.fn();
+const onSignError = vi.fn();
+
 function renderFlow(onStepRendered?: (step: string) => void) {
   return render(
     <ContractDocumentFlow
@@ -44,13 +48,16 @@ function renderFlow(onStepRendered?: (step: string) => void) {
           return (
             <>
               <p>Preview of {bag.contractDocumentId}</p>
-              <ContractDocumentPreviewForm />
+              <ContractDocumentPreviewForm
+                onSuccess={onSigned}
+                onError={onSignError}
+              />
               <button type='button' onClick={bag.back}>
                 Back
               </button>
               <ContractDocumentReviewButton
                 render={({ reviewCompleted }) =>
-                  reviewCompleted ? 'Review again' : 'Review contract'
+                  reviewCompleted ? 'Sign contract' : 'Review contract'
                 }
               />
             </>
@@ -94,6 +101,8 @@ describe('ContractDocumentForm', () => {
 
   beforeEach(() => {
     queryClient.clear();
+    onSigned.mockReset();
+    onSignError.mockReset();
     createdDocuments.length = 0;
 
     mockEmployment();
@@ -175,7 +184,7 @@ describe('ContractDocumentForm', () => {
     expect(
       await screen.findByLabelText(/Enter full name/i),
     ).toBeInTheDocument();
-    expect(screen.getByText('Review again')).toBeInTheDocument();
+    expect(screen.getByText('Sign contract')).toBeInTheDocument();
   });
 
   it('opens straight on the preview of an existing contract document', async () => {
@@ -204,6 +213,116 @@ describe('ContractDocumentForm', () => {
       '/v1/contractors/employments/employment-grace/contract-documents/contract-document-1',
     ]);
     expect(renderedSteps).not.toContain('contract_details');
+  });
+
+  describe('signing an existing contract document', () => {
+    const signRequests: $TSFixMe[] = [];
+
+    function mockExistingContractDocument(
+      contractDocument = mockContractDocumentResponse,
+    ) {
+      server.use(
+        http.get('*/v1/employments/:id/contract-documents', () =>
+          HttpResponse.json(mockContractDocumentsResponse),
+        ),
+        http.get(
+          '*/v1/contractors/employments/:employmentId/contract-documents/:id',
+          () => HttpResponse.json(contractDocument),
+        ),
+      );
+    }
+
+    function mockSign(response: Response) {
+      server.use(
+        http.post(
+          '*/v1/contractors/employments/employment-grace/contract-documents/contract-document-1/sign',
+          async ({ request }) => {
+            signRequests.push(await request.json());
+            return response;
+          },
+        ),
+      );
+    }
+
+    async function reviewContract() {
+      fireEvent.click(
+        await screen.findByRole('button', { name: 'Review contract' }),
+      );
+      await screen.findByText('Contract Document');
+      await userEvent.keyboard('{Escape}');
+      return screen.findByLabelText(/Enter full name/i);
+    }
+
+    beforeEach(() => {
+      signRequests.length = 0;
+    });
+
+    it('signs the contract document with the entered signature', async () => {
+      mockExistingContractDocument();
+      mockSign(HttpResponse.json(mockContractDocumentSignedResponse));
+
+      renderFlow();
+      fireEvent.change(await reviewContract(), {
+        target: { value: 'Grace Hopper' },
+      });
+      fireEvent.click(screen.getByText('Sign contract'));
+
+      await waitFor(() => {
+        expect(onSigned).toHaveBeenCalledWith(
+          mockContractDocumentSignedResponse.data,
+        );
+      });
+      expect(signRequests).toEqual([{ signature: 'Grace Hopper' }]);
+    });
+
+    it('reports a failed signature', async () => {
+      mockExistingContractDocument();
+      mockSign(
+        HttpResponse.json(
+          {
+            message: 'Unprocessable Entity',
+            errors: { signature: ['is invalid'] },
+          },
+          { status: 422 },
+        ),
+      );
+
+      renderFlow();
+      fireEvent.change(await reviewContract(), {
+        target: { value: 'Grace Hopper' },
+      });
+      fireEvent.click(screen.getByText('Sign contract'));
+
+      await waitFor(() => {
+        expect(onSignError).toHaveBeenCalled();
+      });
+      expect(onSigned).not.toHaveBeenCalled();
+    });
+
+    it('does not sign again a contract document the company has already signed', async () => {
+      mockExistingContractDocument({
+        data: {
+          contract_document: {
+            ...mockContractDocumentResponse.data.contract_document,
+            signatories: [
+              { type: 'company', status: 'signed', signature: 'Grace Hopper' },
+            ],
+          },
+        },
+      } as $TSFixMe);
+      mockSign(HttpResponse.json(mockContractDocumentSignedResponse));
+
+      renderFlow();
+      expect(await reviewContract()).toHaveValue('Grace Hopper');
+      fireEvent.click(screen.getByText('Sign contract'));
+
+      await waitFor(() => {
+        expect(onSigned).toHaveBeenCalledWith({
+          contract_document: { id: 'contract-document-1' },
+        });
+      });
+      expect(signRequests).toEqual([]);
+    });
   });
 
   it('leaves out the Contractor Services Agreement disclaimer for a Contractor of Record', async () => {
