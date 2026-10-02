@@ -35,16 +35,21 @@
  * (BASE_URL, `example/.env`'s VITE_REMOTE_GATEWAY decides which gateway that
  * is - easy to lose track of).
  *
- * Pass --env=sandbox|production|staging|partners to instead talk to that
- * gateway directly, with no dev server required: credentials come from
- * .env.<env> at the repo root (VITE_CLIENT_ID, VITE_CLIENT_SECRET,
- * VITE_REMOTE_GATEWAY=<env>, VITE_REFRESH_TOKEN - same shape as
- * example/.env), and auth reuses example/api/{utils,get_token,proxy}.js
- * verbatim so there's one source of truth for how tokens get minted. Optional
- * VITE_APP_URL=<deployed app URL> in that same file gets you a ready-to-click
- * link (with ?employmentId= prefilled) in the final output.
+ * Pass --env=<name> to instead talk to a gateway directly, with no dev server
+ * required: credentials come from .env.<name> at the repo root
+ * (VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, VITE_REFRESH_TOKEN
+ * - same shape as example/.env). The file name only picks the credentials;
+ * VITE_REMOTE_GATEWAY inside it picks the gateway. So .env.sandbox (local-dev
+ * sandbox client) and .env.review (the deployed demo app's sandbox client)
+ * both point at sandbox but create employments under different companies -
+ * seed with --env=review for anything you'll open on the deployed app. Auth
+ * reuses example/api/{utils,get_token,proxy}.js verbatim so there's one
+ * source of truth for how tokens get minted. Optional VITE_APP_URL=<deployed
+ * app URL> in that same file gets you a ready-to-click link (with
+ * ?employmentId= prefilled) in the final output.
  *
  *   npm run seed:onboarding -- --country=DEU --env=sandbox
+ *   npm run seed:onboarding -- --country=DEU --env=review
  */
 import { createHeadlessForm } from '@remoteoss/remote-json-schema-form-kit';
 import { faker } from '@faker-js/faker';
