@@ -104,7 +104,9 @@ test.describe('Contract document', () => {
 
     await page.getByRole('button', { name: 'Review contract' }).click();
     await expect(
-      page.getByText('Contract Document', { exact: true }),
+      page
+        .getByRole('dialog')
+        .getByRole('heading', { name: 'Contract Document' }),
     ).toBeVisible();
     await page.keyboard.press('Escape');
 
