@@ -40,6 +40,7 @@ import {
   useEngagementAgreementDetailsSchema,
   useGetPreOnboardingRequirements,
   useJSONSchemaForm,
+  useLegacyContractDetailsSchema,
   useUpdateBenefitsOffers,
   useUpdateEmployment,
   useUpdateEmploymentEngagementAgreementDetails,
@@ -167,39 +168,33 @@ const getLoadingStates = ({
 
 const useJsfV1ContractDetails = ({
   countryCode,
+  fieldValues,
   query,
   enabled,
   jsonSchemaVersion,
   jsfModify,
 }: {
   countryCode: string;
+  fieldValues: FieldValues;
   query: Record<string, string>;
   enabled: boolean;
   jsonSchemaVersion: number | 'latest';
   jsfModify?: JSFModify;
 }) => {
-  const options = useMemo(
-    () => ({
-      queryOptions: {
-        enabled,
-      },
-      transformMoneyFields: false,
-      jsfModify,
-    }),
-    [enabled, jsfModify],
-  );
-  const { data: form, isLoading: isLoadingContractDetails } =
-    useContractDetailsSchema({
-      countryCode,
-      query,
-      options,
-      jsonSchemaVersion,
-    });
+  const {
+    data: form,
+    isLoading,
+    handleValidation,
+    parseFormValues,
+  } = useContractDetailsSchema({
+    countryCode,
+    fieldValues,
+    query,
+    options: { queryOptions: { enabled }, jsfModify },
+    jsonSchemaVersion,
+  });
 
-  return {
-    form,
-    isLoading: isLoadingContractDetails,
-  };
+  return { form, isLoading, handleValidation, parseFormValues };
 };
 
 export const useOnboarding = ({
@@ -222,7 +217,6 @@ export const useOnboarding = ({
     },
   });
 
-  const [, setFieldsCount] = useState<number>(0);
   const [internalEmploymentId, setInternalEmploymentId] = useState<
     string | undefined
   >(employmentId);
@@ -513,6 +507,21 @@ export const useOnboarding = ({
     unknown
   >;
 
+  const hasUserEnteredAnyValues = Object.keys(fieldValues).length > 0;
+  // when you write on the fields, the values are stored in the fieldValues state
+  // when values are stored in the stepState is when the user has navigated to the step
+  // and then we have the values from the server and the onboardingInitialValues that the user can inject,
+  const mergedFormValues = hasUserEnteredAnyValues
+    ? {
+        ...onboardingInitialValues,
+        ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
+        ...fieldValues,
+      }
+    : {
+        ...onboardingInitialValues,
+        ...serverEmploymentData,
+      };
+
   const useJSONSchema = ({
     form,
     options: jsonSchemaOptions = {},
@@ -527,21 +536,6 @@ export const useOnboarding = ({
     query?: Record<string, string>;
     jsonSchemaVersion?: number | 'latest';
   }) => {
-    const hasUserEnteredAnyValues = Object.keys(fieldValues).length > 0;
-    // when you write on the fields, the values are stored in the fieldValues state
-    // when values are stored in the stepState is when the user has navigated to the step
-    // and then we have the values from the server and the onboardingInitialValues that the user can inject,
-    const mergedFormValues = hasUserEnteredAnyValues
-      ? {
-          ...onboardingInitialValues,
-          ...stepState.values?.[stepState.currentStep.name], // Restore values for the current step
-          ...fieldValues,
-        }
-      : {
-          ...onboardingInitialValues,
-          ...serverEmploymentData,
-        };
-
     return useJSONSchemaForm({
       countryCode: internalCountryCode as string,
       form: form,
@@ -712,8 +706,9 @@ export const useOnboarding = ({
     getContractDetailsSchemaVersion(options, internalCountryCode);
 
   const { data: contractDetailsForm, isLoading: isLoadingContractDetailsForm } =
-    useJSONSchema({
-      form: 'contract_details',
+    useLegacyContractDetailsSchema({
+      countryCode: internalCountryCode as string,
+      fieldValues: mergedFormValues,
       query: {
         employment_id: internalEmploymentId as string,
       },
@@ -746,8 +741,11 @@ export const useOnboarding = ({
   const {
     form: contractDetailsFormV1,
     isLoading: isLoadingContractDetailsFormV1,
+    handleValidation: handleContractDetailsV1Validation,
+    parseFormValues: parseContractDetailsV1Values,
   } = useJsfV1ContractDetails({
     countryCode: internalCountryCode as string,
+    fieldValues,
     query: {
       employment_id: internalEmploymentId as string,
     },
@@ -1121,9 +1119,7 @@ export const useOnboarding = ({
       stepState.currentStep.name === 'contract_details' &&
       isJsfV1ContractDetailsEnabled
     ) {
-      return await parseJSFToValidate(values, contractDetailsFormV1?.fields, {
-        isPartialValidation: false,
-      });
+      return await parseContractDetailsV1Values(values);
     }
 
     if (benefitOffersSchema && stepState.currentStep.name === 'benefits') {
@@ -1311,20 +1307,7 @@ export const useOnboarding = ({
         stepState.currentStep.name === 'contract_details' &&
         isJsfV1ContractDetailsEnabled
       ) {
-        // Invisible values are kept on purpose here. The fields still hold the
-        // visibility of the previous change, so dropping their values would hide
-        // what a field that is about to become visible needs to compute itself:
-        // a hidden fieldset coming back would lose the values driving its own
-        // children. handleValidation resolves the visibility first and nulls
-        // whatever it considers hidden afterwards, which is the right order.
-        const parsedValues = await parseJSFToValidate(
-          values,
-          contractDetailsFormV1?.fields,
-          { isPartialValidation: true },
-        );
-        const result = contractDetailsFormV1?.handleValidation(parsedValues);
-        setFieldsCount((prev) => prev + 1);
-        return result;
+        return handleContractDetailsV1Validation(values);
       }
 
       return null;
@@ -1337,8 +1320,8 @@ export const useOnboarding = ({
       engagementAgreementDetailsSchema,
       contractDetailsForm,
       contractDetailsFormV1,
+      handleContractDetailsV1Validation,
       isJsfV1ContractDetailsEnabled,
-      setFieldsCount,
     ],
   );
 
