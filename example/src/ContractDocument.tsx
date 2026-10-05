@@ -1,4 +1,5 @@
 import {
+  ContractDocumentBackButton,
   ContractDocumentFlow,
   ContractDocumentForm,
   ContractDocumentPreviewForm,
@@ -76,13 +77,9 @@ function CreateContractDocument({ employmentId }: { employmentId: string }) {
                 <>
                   <ContractDocumentPreviewForm />
                   <div className='buttons-container'>
-                    <button
-                      type='button'
-                      className='back-button'
-                      onClick={contractDocumentBag.back}
-                    >
+                    <ContractDocumentBackButton className='back-button'>
                       Back
-                    </button>
+                    </ContractDocumentBackButton>
                     <ContractDocumentReviewButton
                       className='submit-button'
                       render={({ reviewCompleted }) =>

@@ -26,6 +26,7 @@ If you want these screens **inside** contractor onboarding, that is part of the
   - [ContractDocumentSubmitButton](#contractdocumentsubmitbutton)
   - [ContractDocumentPreviewForm](#contractdocumentpreviewform)
   - [ContractDocumentReviewButton](#contractdocumentreviewbutton)
+  - [ContractDocumentBackButton](#contractdocumentbackbutton)
 - [The bag](#the-bag)
 - [Requests](#requests)
 - [AI misclassification check](#ai-misclassification-check)
@@ -42,6 +43,7 @@ After installation, import the main CSS file in your application:
 
 ```tsx
 import {
+  ContractDocumentBackButton,
   ContractDocumentFlow,
   ContractDocumentForm,
   ContractDocumentPreviewForm,
@@ -71,9 +73,7 @@ export function CreateContractDocument({
             return (
               <>
                 <ContractDocumentPreviewForm />
-                <button type='button' onClick={contractDocumentBag.back}>
-                  Back
-                </button>
+                <ContractDocumentBackButton>Back</ContractDocumentBackButton>
                 <ContractDocumentReviewButton
                   render={({ reviewCompleted }) =>
                     reviewCompleted ? 'Review again' : 'Review contract'
@@ -151,6 +151,11 @@ Must be rendered inside the flow's `render` prop. Opens the contract document PD
 through the `pdfViewer` component; closing the drawer marks the document as reviewed. Same API
 as the onboarding `ContractReviewButton`: a `render({ reviewCompleted })` prop for the label,
 plus any button props.
+
+### ContractDocumentBackButton
+
+Must be rendered inside the flow's `render` prop. Moves the flow to the previous step, then calls
+your `onClick` if you pass one. Accepts any button props.
 
 ## The bag
 

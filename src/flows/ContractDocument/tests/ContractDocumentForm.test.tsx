@@ -7,6 +7,7 @@ import {
   mockContractDocumentResponse,
   mockContractDocumentsResponse,
 } from '@/src/common/api/fixtures/contract-documents';
+import { ContractDocumentBackButton } from '@/src/flows/ContractDocument/ContractDocumentBackButton';
 import { ContractDocumentFlow } from '@/src/flows/ContractDocument/ContractDocumentFlow';
 import { ContractDocumentForm } from '@/src/flows/ContractDocument/ContractDocumentForm';
 import { ContractDocumentPreviewForm } from '@/src/flows/ContractDocument/ContractDocumentPreviewForm';
@@ -45,9 +46,7 @@ function renderFlow(onStepRendered?: (step: string) => void) {
             <>
               <p>Preview of {bag.contractDocumentId}</p>
               <ContractDocumentPreviewForm />
-              <button type='button' onClick={bag.back}>
-                Back
-              </button>
+              <ContractDocumentBackButton>Back</ContractDocumentBackButton>
               <ContractDocumentReviewButton
                 render={({ reviewCompleted }) =>
                   reviewCompleted ? 'Review again' : 'Review contract'

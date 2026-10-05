@@ -36,6 +36,7 @@ export type {
 } from '@/src/flows/InvoiceSchedule';
 
 export {
+  ContractDocumentBackButton,
   ContractDocumentFlow,
   ContractDocumentForm,
   ContractDocumentPreviewForm,
