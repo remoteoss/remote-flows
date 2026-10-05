@@ -13,6 +13,7 @@ import {
 } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
+// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
 import { INVOICE_SCHEDULE_STATUS } from '@/src/common/invoice-schedules/constants';

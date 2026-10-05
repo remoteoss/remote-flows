@@ -36,6 +36,7 @@ import {
   JSFModify,
 } from '@/src/flows/types';
 import { Client } from '@/src/client/client';
+// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';

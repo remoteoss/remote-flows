@@ -8,6 +8,7 @@ import {
 } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { signatureSchema } from '@/src/common/contract-documents/json-schemas/signature';
+// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useClient } from '@/src/context';
 import { JSFModify } from '@/src/flows/types';
