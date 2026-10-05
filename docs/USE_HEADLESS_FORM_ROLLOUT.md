@@ -21,7 +21,7 @@ Pure refactor. Each call site keeps the strategy it effectively has today, so no
 
 Call sites that don't pass values already behave like `buildOnce`, so they go straight onto it.
 
-Importing `createHeadlessForm` is banned by `no-restricted-imports` in `.oxlintrc.json`. The call sites below that haven't moved yet are listed in that rule's `overrides` allowlist. A PR that moves a file onto the hook also removes the file from the allowlist.
+Importing `createHeadlessForm` is banned by `no-restricted-imports` in `.oxlintrc.json`. Call sites that haven't moved yet carry a `// oxlint-disable-next-line no-restricted-imports -- TODO` comment on the import, so `grep -rn "no-restricted-imports -- TODO" src` lists what's left. Lint also fails on unused disable comments, so a PR that moves a file onto the hook has to delete that file's comment too.
 
 ### Phase 2: switch `rebuild` steps to `buildOnce`, one step per PR
 
@@ -39,7 +39,7 @@ For each step, test all of these before switching (they come from #1430):
 - [ ] Remove the `rebuild` strategy from `useHeadlessForm`
 - [ ] Remove `transformMoneyFields` and the pre-fill money conversion from `createHeadlessForm`
 - [x] Add an oxlint `no-restricted-imports` rule that bans importing `createHeadlessForm`
-- [ ] Empty the rule's allowlist down to `createHeadlessForm.tsx`, `useHeadlessForm.ts`, tests and `scripts/`
+- [ ] Remove the last `no-restricted-imports -- TODO` disable comment
 
 ## Call sites
 

@@ -52,6 +52,6 @@ Expose `handleValidation` and `parseFormValues` from the hook on the flow bag ra
 
 ## Known Exception: Legacy Call Sites
 
-Files that still call `createHeadlessForm` directly are listed in the `overrides` allowlist of the lint rule and tracked in `docs/USE_HEADLESS_FORM_ROLLOUT.md`. That's debt, not a pattern to copy. Moving a file onto the hook removes it from the allowlist, and new files never get added to it.
+Files that still call `createHeadlessForm` directly carry a `// oxlint-disable-next-line no-restricted-imports -- TODO` comment on the import and are tracked in `docs/USE_HEADLESS_FORM_ROLLOUT.md`. That's debt, not a pattern to copy. Moving a file onto the hook removes its comment (lint fails on unused ones). New code never adds one.
 
 Tests, `scripts/`, and `example/e2e` helpers (e.g. `fillOnboardingBenefitsStepDynamically` in `example/e2e/helpers/benefits.ts`) may still use the engine directly.

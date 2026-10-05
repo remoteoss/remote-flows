@@ -10,6 +10,7 @@ import {
 } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
+// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { JSONSchemaFormResultWithFieldsets } from '@/src/flows/types';
 import { countriesOptions } from '@/src/common/api/countries';
