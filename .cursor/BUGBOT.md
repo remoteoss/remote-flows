@@ -236,8 +236,6 @@ Forms are central to this library - ensure consistency:
 
 **Check:** Are validation errors user-friendly? Do they display with proper field labels?
 
-**Flag:** New `oxlint-disable` comments for `no-restricted-imports`, files added to that rule's `overrides` in `.oxlintrc.json`, new `strategy: 'rebuild'` usage, `createHeadlessForm` reached through a re-export or a wrapper that gets around the lint rule, and `transformMoneyFields` passed in new code.
-
 ### 5. API Client Management
 
 OpenAPI-driven development - never manually write client code:
