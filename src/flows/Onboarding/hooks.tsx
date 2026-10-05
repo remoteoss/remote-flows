@@ -28,6 +28,7 @@ import { OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import mergeWith from 'lodash.mergewith';
 import {
+  useBasicInformationSchema,
   useBenefitOffers,
   useBenefitOffersSchema,
   useCompany,
@@ -39,7 +40,6 @@ import {
   useEmploymentOnboardingReservesStatus,
   useEngagementAgreementDetailsSchema,
   useGetPreOnboardingRequirements,
-  useJSONSchemaForm,
   useLegacyContractDetailsSchema,
   useUpdateBenefitsOffers,
   useUpdateEmployment,
@@ -168,14 +168,14 @@ const getLoadingStates = ({
 
 const useJsfV1ContractDetails = ({
   countryCode,
-  fieldValues,
+  initialValues,
   query,
   enabled,
   jsonSchemaVersion,
   jsfModify,
 }: {
   countryCode: string;
-  fieldValues: FieldValues;
+  initialValues: FieldValues;
   query: Record<string, string>;
   enabled: boolean;
   jsonSchemaVersion: number | 'latest';
@@ -188,7 +188,7 @@ const useJsfV1ContractDetails = ({
     parseFormValues,
   } = useContractDetailsSchema({
     countryCode,
-    fieldValues,
+    initialValues,
     query,
     options: { queryOptions: { enabled }, jsfModify },
     jsonSchemaVersion,
@@ -522,35 +522,6 @@ export const useOnboarding = ({
         ...serverEmploymentData,
       };
 
-  const useJSONSchema = ({
-    form,
-    options: jsonSchemaOptions = {},
-    query = {},
-    jsonSchemaVersion,
-  }: {
-    form: JSONSchemaFormType;
-    options?: {
-      jsfModify?: JSFModify;
-      queryOptions?: { enabled?: boolean };
-    };
-    query?: Record<string, string>;
-    jsonSchemaVersion?: number | 'latest';
-  }) => {
-    return useJSONSchemaForm({
-      countryCode: internalCountryCode as string,
-      form: form,
-      fieldValues: mergedFormValues,
-      query,
-      options: {
-        ...jsonSchemaOptions,
-        queryOptions: {
-          enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
-        },
-      },
-      jsonSchemaVersion,
-    });
-  };
-
   const isBasicInformationDetailsEnabled = Boolean(
     internalCountryCode &&
     (stepState.currentStep.name === 'basic_information' ||
@@ -570,11 +541,23 @@ export const useOnboarding = ({
       Boolean(employmentId)),
   );
 
+  const basicInformationSavedValues = useMemo(
+    () => ({
+      ...onboardingInitialValues,
+      ...employment?.basic_information,
+    }),
+    [onboardingInitialValues, employment?.basic_information],
+  );
+
   const {
     data: basicInformationForm,
     isLoading: isLoadingBasicInformationForm,
-  } = useJSONSchema({
-    form: 'employment_basic_information',
+    handleValidation: handleBasicInformationValidation,
+    onValuesChange: onBasicInformationValuesChange,
+    parseFormValues: parseBasicInformationValues,
+  } = useBasicInformationSchema({
+    countryCode: internalCountryCode as string,
+    initialValues: basicInformationSavedValues,
     options: {
       jsfModify: options?.jsfModify?.basic_information,
       queryOptions: {
@@ -727,6 +710,14 @@ export const useOnboarding = ({
       jsonSchemaVersion: effectiveContractDetailsJsonSchemaVersion,
     });
 
+  const contractDetailsSavedValues = useMemo(
+    () => ({
+      ...onboardingInitialValues,
+      ...employment?.contract_details,
+    }),
+    [onboardingInitialValues, employment?.contract_details],
+  );
+
   const jsfV1Modify = useMemo(
     () => ({
       ...options?.jsfModify?.contract_details,
@@ -745,7 +736,7 @@ export const useOnboarding = ({
     parseFormValues: parseContractDetailsV1Values,
   } = useJsfV1ContractDetails({
     countryCode: internalCountryCode as string,
-    fieldValues,
+    initialValues: contractDetailsSavedValues,
     query: {
       employment_id: internalEmploymentId as string,
     },
@@ -855,12 +846,7 @@ export const useOnboarding = ({
     ],
   );
 
-  const {
-    country,
-    basic_information: employmentBasicInformation = {},
-    contract_details: employmentContractDetails = {},
-    status: employmentStatus,
-  } = employment || {};
+  const { country, status: employmentStatus } = employment || {};
 
   const employmentCountryCode = country?.code;
   const currentStepName = stepState.currentStep.name;
@@ -873,18 +859,14 @@ export const useOnboarding = ({
     [stepFields.select_country, internalCountryCode, employmentCountryCode],
   );
 
-  const basicInformationInitialValues = useMemo(() => {
-    const initialValues = {
-      ...onboardingInitialValues,
-      ...employmentBasicInformation,
-    };
-
-    return getInitialValues(stepFields.basic_information, initialValues);
-  }, [
-    stepFields.basic_information,
-    employmentBasicInformation,
-    onboardingInitialValues,
-  ]);
+  const basicInformationInitialValues = useMemo(
+    () =>
+      getInitialValues(
+        stepFields.basic_information,
+        basicInformationSavedValues,
+      ),
+    [stepFields.basic_information, basicInformationSavedValues],
+  );
 
   const engagementAgreementDetailsInitialValues = useMemo(() => {
     const initialValues = {
@@ -902,18 +884,11 @@ export const useOnboarding = ({
     employmentEngagementAgreementDetails,
   ]);
 
-  const contractDetailsInitialValues = useMemo(() => {
-    const initialValues = {
-      ...onboardingInitialValues,
-      ...employmentContractDetails,
-    };
-
-    return getInitialValues(stepFields.contract_details, initialValues);
-  }, [
-    stepFields.contract_details,
-    employmentContractDetails,
-    onboardingInitialValues,
-  ]);
+  const contractDetailsInitialValues = useMemo(
+    () =>
+      getInitialValues(stepFields.contract_details, contractDetailsSavedValues),
+    [stepFields.contract_details, contractDetailsSavedValues],
+  );
 
   const benefitsInitialValues = useMemo(() => {
     const initialValues = {
@@ -1086,9 +1061,7 @@ export const useOnboarding = ({
       basicInformationForm &&
       stepState.currentStep.name === 'basic_information'
     ) {
-      return await parseJSFToValidate(values, basicInformationForm?.fields, {
-        isPartialValidation: false,
-      });
+      return await parseBasicInformationValues(values);
     }
 
     if (
@@ -1269,12 +1242,7 @@ export const useOnboarding = ({
         basicInformationForm &&
         stepState.currentStep.name === 'basic_information'
       ) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          basicInformationForm?.fields,
-          { isPartialValidation: false },
-        );
-        return basicInformationForm?.handleValidation(parsedValues);
+        return handleBasicInformationValidation(values);
       }
 
       if (
@@ -1317,6 +1285,7 @@ export const useOnboarding = ({
       selectCountryForm,
       benefitOffersSchema,
       basicInformationForm,
+      handleBasicInformationValidation,
       engagementAgreementDetailsSchema,
       contractDetailsForm,
       contractDetailsFormV1,
@@ -1328,6 +1297,9 @@ export const useOnboarding = ({
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
       setFieldValues(values);
+      if (stepState.currentStep.name === 'basic_information') {
+        await onBasicInformationValuesChange(values);
+      }
       if (
         isJsfV1ContractDetailsEnabled &&
         stepState.currentStep.name === 'contract_details'
@@ -1340,6 +1312,7 @@ export const useOnboarding = ({
       isJsfV1ContractDetailsEnabled,
       stepState,
       handleValidation,
+      onBasicInformationValuesChange,
     ],
   );
 
