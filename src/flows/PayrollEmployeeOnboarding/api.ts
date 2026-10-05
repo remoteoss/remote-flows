@@ -82,16 +82,12 @@ export const useGPEmployeeFormSchema = (
 export const useGPUpdatePersonalDetails = (employmentId: string) => {
   const { client } = useClient();
   return useMutation({
-    mutationFn: (personalDetails: Record<string, unknown>) => {
-      // 'name' is a computed read-only display field in the schema (additionalProperties: false
-      // on the PUT endpoint rejects it). Strip it before sending.
-      const { name: _name, ...payload } = personalDetails;
-      return putV1EmployeePersonalDetails({
+    mutationFn: (personalDetails: Record<string, unknown>) =>
+      putV1EmployeePersonalDetails({
         client: client as Client,
         headers: { Authorization: ``, 'x-rf-employment-id': employmentId },
-        body: { personal_details: payload },
-      });
-    },
+        body: { personal_details: personalDetails },
+      }),
   });
 };
 

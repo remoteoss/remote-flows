@@ -468,6 +468,7 @@ flows/[FlowName]/
 - Missing `waitFor` for async assertions
 - Not cleaning up React Query cache between tests
 - Testing implementation details instead of behavior
+- A fix for JSON Schema form behaviour (conditional visibility, computed or forced values, money conversion, `initialValues`, `jsfModify`) without a new situation in `src/common/tests/jsfEngineSituations.ts`, or reproduced only through a flow integration test. The situation must fail without the fix
 
 ### 9. Build and Release Issues
 

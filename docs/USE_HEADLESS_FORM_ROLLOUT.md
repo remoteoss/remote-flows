@@ -13,6 +13,23 @@ Every flow builds its JSON Schema forms through one shared hook, [`src/common/us
 - **`rebuild`** (old): `createHeadlessForm(schema, values, options)` again whenever values change. Money values are converted to cents at build time.
 - **`buildOnce`** (new): built once per `schema`/`options`, with `transformMoneyFields: false`. Conditionals are resolved by `handleValidation` with `isPartialValidation: true`. The first build is seeded with `initialValues` (saved values in API units), so visibility is right without a mounted step. When `jsfModify` changes, the form is rebuilt from the last validated values; a new schema starts again from `initialValues`.
 
+## Adding a situation
+
+When a form misbehaves because of the schema or the hook (a field doesn't appear, a computed value is wrong, money is converted twice, `initialValues` or `jsfModify` are lost), reproduce it as a situation before fixing it. A situation runs against every engine and strategy in [`jsfEngineContract.test.tsx`](../src/common/tests/jsfEngineContract.test.tsx), so one entry covers what would otherwise take an integration test per flow and country.
+
+Add an entry to `SITUATIONS` in [`jsfEngineSituations.ts`](../src/common/tests/jsfEngineSituations.ts):
+
+- `situation`: the behaviour, e.g. "fieldset hidden by a radio keeps its children's values". Not the country, the flow or the ticket.
+- `schema`: the smallest schema that shows the bug, written inline. Use a country fixture only when the bug depends on that country's schema. Leave out `x-rmt-meta`; the test adds one per engine.
+- `fill`: what the user does, with `userEvent` and `chooseInGroup`.
+- `assert`: what the user sees and what `parseFormValues` returns.
+
+Run it before the fix and check that it fails. A situation that passes either way doesn't protect anything.
+
+Behaviour that only exists in one strategy (rebuilding when `initialValues` or `jsfModify` change, falling back when the schema changes) goes in the `buildOnce lifecycle` block of the test instead.
+
+Keep integration tests for flow wiring: steps, API calls and submit payloads.
+
 ## Phases
 
 ### Phase 1: move every call site onto the hook, same behaviour
@@ -57,7 +74,7 @@ Status: `todo`, `phase 1` (on the hook, old behaviour), `done` (on the hook with
 | Onboarding `useBenefitOffersSchema`                                | done    | #1442. Went straight to `buildOnce`, seeded with the saved benefit offers                                                      |
 | Onboarding `useEngagementAgreementDetailsSchema`                   | done    | #1442. Went straight to `buildOnce`, seeded with the saved engagement agreement details                                        |
 | Contractor contract details `useContractorOnboardingDetailsSchema` | todo    | Money-sensitive                                                                                                                |
-| ContractorOnboarding `useGetContractDocumentSignatureSchema`       | todo    |                                                                                                                                |
+| Contract documents `useGetContractDocumentSignatureSchema`         | todo    |                                                                                                                                |
 | ContractorOnboarding `useGetEligibilityQuestionnaire`              | todo    |                                                                                                                                |
 | ContractorOnboarding `useGetContractOriginSchema`                  | todo    |                                                                                                                                |
 | Invoice schedules `useGetCreateInvoiceScheduleSchema`              | todo    | Money-sensitive                                                                                                                |

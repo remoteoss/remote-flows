@@ -1,6 +1,9 @@
 import {
+  ContractDocumentBackButton,
   ContractDocumentFlow,
   ContractDocumentForm,
+  ContractDocumentPreviewForm,
+  ContractDocumentReviewButton,
   ContractDocumentSubmitButton,
   NormalizedFieldError,
 } from '@remoteoss/remote-flows';
@@ -71,10 +74,21 @@ function CreateContractDocument({ employmentId }: { employmentId: string }) {
                   </ContractDocumentSubmitButton>
                 </>
               ) : (
-                <p>
-                  Contract document {contractDocumentBag.contractDocumentId}. To
-                  be continued…
-                </p>
+                <>
+                  <ContractDocumentPreviewForm />
+                  <div className='buttons-container'>
+                    <ContractDocumentBackButton className='back-button'>
+                      Back
+                    </ContractDocumentBackButton>
+                    <ContractDocumentReviewButton
+                      className='submit-button'
+                      render={({ reviewCompleted }) =>
+                        reviewCompleted ? 'Review again' : 'Review contract'
+                      }
+                    />
+                  </div>
+                  <p className='mt-3'>Signing: to be continued…</p>
+                </>
               )}
             </div>
           </>
