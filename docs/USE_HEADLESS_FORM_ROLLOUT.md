@@ -21,7 +21,7 @@ Pure refactor. Each call site keeps the strategy it effectively has today, so no
 
 Call sites that don't pass values already behave like `buildOnce`, so they go straight onto it.
 
-A `rebuild` step can also skip this phase and go straight onto `buildOnce` when it passes the phase 2 checklist. Basic information did this in #1433.
+A `rebuild` step can also skip this phase and go straight onto `buildOnce` when it passes the phase 2 checklist. Basic information did this in #1433, benefits and engagement agreement details in #1442.
 
 Importing `createHeadlessForm` is banned by `no-restricted-imports` in `.oxlintrc.json`. Call sites that haven't moved yet carry a `// oxlint-disable-next-line no-restricted-imports -- TODO` comment on the import, so `grep -rn "no-restricted-imports -- TODO" src` lists what's left. Lint also fails on unused disable comments, so a PR that moves a file onto the hook has to delete that file's comment too.
 
@@ -54,8 +54,8 @@ Status: `todo`, `phase 1` (on the hook, old behaviour), `done` (on the hook with
 | Onboarding `useLegacyContractDetailsSchema`                        | phase 1 | #1433. Only building moved; validation and submit parsing still go through the hand-written branches in `Onboarding/hooks.tsx` |
 | Onboarding basic information `useBasicInformationSchema`           | done    | #1433. Went straight to `buildOnce`; building, validation and submit parsing all go through the hook                           |
 | Onboarding `useJSONSchemaForm`                                     | todo    | No Onboarding step uses it anymore; only `JsonSchemaComparison` does                                                           |
-| Onboarding `useBenefitOffersSchema`                                | todo    |                                                                                                                                |
-| Onboarding `useEngagementAgreementDetailsSchema`                   | todo    |                                                                                                                                |
+| Onboarding `useBenefitOffersSchema`                                | done    | #1442. Went straight to `buildOnce`, seeded with the saved benefit offers                                                      |
+| Onboarding `useEngagementAgreementDetailsSchema`                   | done    | #1442. Went straight to `buildOnce`, seeded with the saved engagement agreement details                                        |
 | Contractor contract details `useContractorOnboardingDetailsSchema` | todo    | Money-sensitive                                                                                                                |
 | ContractorOnboarding `useGetContractDocumentSignatureSchema`       | todo    |                                                                                                                                |
 | ContractorOnboarding `useGetEligibilityQuestionnaire`              | todo    |                                                                                                                                |

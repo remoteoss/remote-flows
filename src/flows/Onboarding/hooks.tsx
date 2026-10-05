@@ -286,26 +286,23 @@ export const useOnboarding = ({
     ),
   });
 
-  const engagementAgreementDetailsFieldValues = useMemo(() => {
-    return {
+  const engagementAgreementDetailsSavedValues = useMemo(
+    () => ({
       ...onboardingInitialValues,
       ...employmentEngagementAgreementDetails,
-      ...stepState.values?.engagement_agreement_details,
-      ...fieldValues,
-    };
-  }, [
-    employmentEngagementAgreementDetails,
-    onboardingInitialValues,
-    stepState.values?.engagement_agreement_details,
-    fieldValues,
-  ]);
+    }),
+    [onboardingInitialValues, employmentEngagementAgreementDetails],
+  );
 
   const {
     data: engagementAgreementDetailsSchema,
     isLoading: isLoadingEngagementAgreementDetails,
+    handleValidation: handleEngagementAgreementDetailsValidation,
+    onValuesChange: onEngagementAgreementDetailsValuesChange,
+    parseFormValues: parseEngagementAgreementDetailsValues,
   } = useEngagementAgreementDetailsSchema(
     internalCountryCode as string,
-    engagementAgreementDetailsFieldValues,
+    engagementAgreementDetailsSavedValues,
     {
       jsfModify: options?.jsfModify,
       queryOptions: {
@@ -745,12 +742,23 @@ export const useOnboarding = ({
     jsfModify: jsfV1Modify,
   });
 
+  const benefitsSavedValues = useMemo(
+    () => ({
+      ...onboardingInitialValues,
+      ...benefitOffers,
+    }),
+    [onboardingInitialValues, benefitOffers],
+  );
+
   const {
     data: benefitOffersSchema,
     isLoading: isLoadingBenefitsOffersSchema,
+    handleValidation: handleBenefitsValidation,
+    onValuesChange: onBenefitsValuesChange,
+    parseFormValues: parseBenefitsValues,
   } = useBenefitOffersSchema(
     internalEmploymentId as string,
-    fieldValues,
+    benefitsSavedValues,
     options,
   );
 
@@ -868,21 +876,17 @@ export const useOnboarding = ({
     [stepFields.basic_information, basicInformationSavedValues],
   );
 
-  const engagementAgreementDetailsInitialValues = useMemo(() => {
-    const initialValues = {
-      ...onboardingInitialValues,
-      ...employmentEngagementAgreementDetails,
-    };
-
-    return getInitialValues(
+  const engagementAgreementDetailsInitialValues = useMemo(
+    () =>
+      getInitialValues(
+        stepFields.engagement_agreement_details,
+        engagementAgreementDetailsSavedValues,
+      ),
+    [
       stepFields.engagement_agreement_details,
-      initialValues,
-    );
-  }, [
-    stepFields.engagement_agreement_details,
-    onboardingInitialValues,
-    employmentEngagementAgreementDetails,
-  ]);
+      engagementAgreementDetailsSavedValues,
+    ],
+  );
 
   const contractDetailsInitialValues = useMemo(
     () =>
@@ -1068,13 +1072,7 @@ export const useOnboarding = ({
       engagementAgreementDetailsSchema &&
       stepState.currentStep.name === 'engagement_agreement_details'
     ) {
-      return await parseJSFToValidate(
-        values,
-        engagementAgreementDetailsSchema?.fields,
-        {
-          isPartialValidation: false,
-        },
-      );
+      return await parseEngagementAgreementDetailsValues(values);
     }
 
     if (
@@ -1096,9 +1094,7 @@ export const useOnboarding = ({
     }
 
     if (benefitOffersSchema && stepState.currentStep.name === 'benefits') {
-      return await parseJSFToValidate(values, benefitOffersSchema?.fields, {
-        isPartialValidation: false,
-      });
+      return await parseBenefitsValues(values);
     }
 
     return {};
@@ -1230,13 +1226,7 @@ export const useOnboarding = ({
         return selectCountryForm.handleValidation(parsedValues);
       }
       if (stepState.currentStep.name === 'benefits' && benefitOffersSchema) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          benefitOffersSchema?.fields,
-          { isPartialValidation: false },
-        );
-
-        return benefitOffersSchema?.handleValidation(parsedValues);
+        return handleBenefitsValidation(values);
       }
       if (
         basicInformationForm &&
@@ -1249,12 +1239,7 @@ export const useOnboarding = ({
         engagementAgreementDetailsSchema &&
         stepState.currentStep.name === 'engagement_agreement_details'
       ) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          engagementAgreementDetailsSchema?.fields,
-          { isPartialValidation: false },
-        );
-        return engagementAgreementDetailsSchema?.handleValidation(parsedValues);
+        return handleEngagementAgreementDetailsValidation(values);
       }
 
       if (
@@ -1284,9 +1269,11 @@ export const useOnboarding = ({
       stepState,
       selectCountryForm,
       benefitOffersSchema,
+      handleBenefitsValidation,
       basicInformationForm,
       handleBasicInformationValidation,
       engagementAgreementDetailsSchema,
+      handleEngagementAgreementDetailsValidation,
       contractDetailsForm,
       contractDetailsFormV1,
       handleContractDetailsV1Validation,
@@ -1299,6 +1286,12 @@ export const useOnboarding = ({
       setFieldValues(values);
       if (stepState.currentStep.name === 'basic_information') {
         await onBasicInformationValuesChange(values);
+      }
+      if (stepState.currentStep.name === 'engagement_agreement_details') {
+        await onEngagementAgreementDetailsValuesChange(values);
+      }
+      if (stepState.currentStep.name === 'benefits') {
+        await onBenefitsValuesChange(values);
       }
       if (
         isJsfV1ContractDetailsEnabled &&
@@ -1313,6 +1306,8 @@ export const useOnboarding = ({
       stepState,
       handleValidation,
       onBasicInformationValuesChange,
+      onEngagementAgreementDetailsValuesChange,
+      onBenefitsValuesChange,
     ],
   );
 
