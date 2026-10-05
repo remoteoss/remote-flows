@@ -151,9 +151,8 @@ const itemFieldOrder = Array.from(
  * nothing else — matching the Remote platform. See the "How invoice scheduling works for
  * Contractor of Record" help centre article.
  *
- * Note this is a client-side restriction only: the public API does not currently reject a
- * recurring schedule for a CoR employment on the single-create path (the bulk CSV importer
- * does). Surfacing it here matches the platform; it is not a substitute for the API check.
+ * The public API rejects a recurring schedule for a CoR employment too; offering only one-off
+ * here keeps the form from suggesting something the API will refuse.
  */
 function periodicityOptions({
   includeOneTime,

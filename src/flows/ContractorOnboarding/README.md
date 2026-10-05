@@ -15,7 +15,7 @@ The contractor onboarding process consists of the following steps in order:
 3. **Contract Details** - Define contract terms including services, duration, compensation, and notice periods
 4. **Pricing Plan** - Select and configure subscription/pricing tier
 5. **Contract Origin** - Choose where the contract comes from
-6. **Invoice Schedule** - Choose whether to set up a recurring invoice schedule now or skip it for later (shown when `options.features` includes `'create_invoice_schedule'`)
+6. **Invoice Schedule** - Choose whether to set up a recurring invoice schedule now or skip it for later (shown when `options.features` includes `'create_invoice_schedule'`, for Contractor Management and Contractor Management Plus only: Contractor of Record invoice schedules can only be created once the contractor is active, with the `InvoiceSchedule` flow)
 7. **Create Invoice Schedule** - Fill in the invoice schedule details (currency, periodicity, items, etc.); also used to edit an already-created schedule
 8. **Contract Preview** - Review and electronically sign the generated contract
 9. **Review** - Final review step (internal)
@@ -148,7 +148,7 @@ Rendered as a radio group.
 
 ### InvoiceScheduleStep
 
-Lets the employer choose whether to set up a recurring invoice schedule now (`schedule`) or skip it for now (`manual`). Only rendered when `options.features` includes `'create_invoice_schedule'`.
+Lets the employer choose whether to set up a recurring invoice schedule now (`schedule`) or skip it for now (`manual`). Only rendered when `options.features` includes `'create_invoice_schedule'` and the selected plan isn't Contractor of Record.
 
 **Props:**
 

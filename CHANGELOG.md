@@ -1,5 +1,33 @@
 # @remoteoss/remote-flows
 
+## 1.58.0
+
+### Minor Changes
+
+#### Features
+
+- block invite while employment is in job_title_review (#1403) [#1403](https://github.com/remoteoss/remote-flows/pull/1403)
+- add job_title_eligibility feature flag (#1401) [#1401](https://github.com/remoteoss/remote-flows/pull/1401)
+
+#### Fixes
+
+- skip legacy contract details schema fetch for jsf v1 countries (#1419) [#1419](https://github.com/remoteoss/remote-flows/pull/1419)
+- restore per-file ./flows/* subpath modules (#1431) [#1431](https://github.com/remoteoss/remote-flows/pull/1431)
+- restore money conversion in createHeadlessForm when options are passed (#1429) [#1429](https://github.com/remoteoss/remote-flows/pull/1429)
+- cover onboarding a Portugal employee through the jsf v0 contract details path (#1421) [#1421](https://github.com/remoteoss/remote-flows/pull/1421)
+
+#### Chores
+
+- surface the inline-comment convention in CLAUDE.md (#1405) [#1405](https://github.com/remoteoss/remote-flows/pull/1405)
+- document import order convention (#1404) [#1404](https://github.com/remoteoss/remote-flows/pull/1404)
+- update dependency @remoteoss/remote-json-schema-form-kit to v1.1.2 (#1409) [#1409](https://github.com/remoteoss/remote-flows/pull/1409)
+- ignore CLAUDE.local.md (#1400) [#1400](https://github.com/remoteoss/remote-flows/pull/1400)
+- update dependency dotenv to v18.0.1 (#1410) [#1410](https://github.com/remoteoss/remote-flows/pull/1410)
+- update dependency tsx to v4.23.15 (#1411) [#1411](https://github.com/remoteoss/remote-flows/pull/1411)
+- fail CI on deprecated API usage (#1418) [#1418](https://github.com/remoteoss/remote-flows/pull/1418)
+- skip browser auth callback when proxy is passed (#1416) [#1416](https://github.com/remoteoss/remote-flows/pull/1416)
+- combine seed-onboarding PRs and port to TypeScript (#1393) [#1393](https://github.com/remoteoss/remote-flows/pull/1393)
+
 ## 1.57.0
 
 ### Minor Changes
