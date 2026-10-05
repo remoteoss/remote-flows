@@ -105,7 +105,7 @@ export function useHeadlessForm({
   useEffect(() => {
     if (!isBuildOnce || !schema || !builtForm) return;
     let cancelled = false;
-    void validateForm(builtForm, latestValues.current, () => cancelled).then(
+    void validateForm(builtForm, latestValues.current, () => cancelled).finally(
       () => {
         if (!cancelled) setResolved({ schema, form: builtForm });
       },
