@@ -106,18 +106,26 @@ function Harness({
   schema,
   strategy,
   options,
-  onCapture,
+  initialValues,
+  onCapture = () => {},
 }: {
   schema: Schema;
   strategy: HeadlessFormStrategy;
   options: { jsfModify?: JSFModify } | undefined;
-  onCapture: (submitted: FieldValues) => void;
+  initialValues?: FieldValues;
+  onCapture?: (submitted: FieldValues) => void;
 }) {
   const [values, setValues] = useState<FieldValues>({});
+  const inlineOptions = options && structuredClone(options);
   const headless = useHeadlessForm(
     strategy === 'rebuild'
-      ? { schema, options, strategy, values }
-      : { schema, options, strategy },
+      ? { schema, options: inlineOptions, strategy, values }
+      : {
+          schema,
+          options: inlineOptions,
+          strategy,
+          initialValues: initialValues && structuredClone(initialValues),
+        },
   );
   const form = useJSONSchemaForm({
     handleValidation: headless.handleValidation,
@@ -183,6 +191,94 @@ describe.each(ENGINES)('jsf engine contract on $engine', ({ meta }) => {
           assertApplied?.();
         });
       },
+    );
+  });
+});
+
+const renamedBonus = (title: string) => ({
+  jsfModify: { fields: { signing_bonus_amount: { title } } },
+});
+
+describe.each(ENGINES)('buildOnce lifecycle on $engine', ({ meta }) => {
+  const withMeta = (schema: Schema) =>
+    structuredClone(meta ? { ...schema, 'x-rmt-meta': meta } : schema);
+
+  const renderHarness = (
+    props: Partial<Parameters<typeof Harness>[0]> = {},
+  ) => {
+    const schema = withMeta(portugal);
+    const harnessProps = {
+      schema,
+      strategy: 'buildOnce' as const,
+      options: undefined,
+      ...props,
+    };
+    const view = render(<Harness {...harnessProps} />, {
+      wrapper: TestProviders,
+    });
+    return {
+      ...view,
+      rerenderWith: (next: Partial<Parameters<typeof Harness>[0]>) =>
+        view.rerender(<Harness {...harnessProps} {...next} />),
+    };
+  };
+
+  it('shows fields revealed by initialValues on the first render', async () => {
+    renderHarness({ initialValues: { has_signing_bonus: 'yes' } });
+
+    expect(
+      await screen.findByLabelText('Signing bonus amount'),
+    ).toBeInTheDocument();
+  });
+
+  it('shows fields revealed by initialValues that arrive after the schema', async () => {
+    const { rerenderWith } = renderHarness({ initialValues: {} });
+    await screen.findByLabelText('Annual gross salary');
+    expect(screen.queryByLabelText('Signing bonus amount')).toBeNull();
+
+    rerenderWith({ initialValues: { has_signing_bonus: 'yes' } });
+
+    expect(
+      await screen.findByLabelText('Signing bonus amount'),
+    ).toBeInTheDocument();
+  });
+
+  it('keeps fields the user revealed when jsfModify changes', async () => {
+    const user = userEvent.setup();
+    const { rerenderWith } = renderHarness({ options: renamedBonus('Bonus') });
+    await chooseInGroup(user, /Offer a signing bonus/i, 'Yes');
+    await screen.findByLabelText('Bonus');
+
+    rerenderWith({ options: renamedBonus('Welcome bonus') });
+
+    expect(await screen.findByLabelText('Welcome bonus')).toBeInTheDocument();
+  });
+
+  it('keeps fields the user hid hidden when jsfModify changes, over initialValues', async () => {
+    const user = userEvent.setup();
+    const { rerenderWith } = renderHarness({
+      initialValues: { has_signing_bonus: 'yes' },
+      options: renamedBonus('Bonus'),
+    });
+    await chooseInGroup(user, /Offer a signing bonus/i, 'No');
+    await waitFor(() => expect(screen.queryByLabelText('Bonus')).toBeNull());
+
+    rerenderWith({ options: renamedBonus('Welcome bonus') });
+
+    await screen.findByText(/Offer a signing bonus/i);
+    expect(screen.queryByLabelText('Welcome bonus')).toBeNull();
+  });
+
+  it('builds a new schema from initialValues, not the previous schema values', async () => {
+    const user = userEvent.setup();
+    const { rerenderWith } = renderHarness({ initialValues: {} });
+    await chooseInGroup(user, /Offer a signing bonus/i, 'Yes');
+    await screen.findByLabelText('Signing bonus amount');
+
+    rerenderWith({ schema: withMeta(portugal) });
+
+    await waitFor(() =>
+      expect(screen.queryByLabelText('Signing bonus amount')).toBeNull(),
     );
   });
 });
