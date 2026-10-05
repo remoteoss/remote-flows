@@ -1099,7 +1099,43 @@ Consumers can override text in JSON schemas without code changes:
 
 ## 7. Testing Philosophy
 
-### 7.1 Vitest Globals
+### 7.1 Test Layers
+
+Four layers, each catching a kind of failure the others can't. A layer earns its place only if it does.
+
+| Layer                        | Catches                                                                                                                       | Runs against                               | When              |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | ----------------- |
+| **Unit (schema situations)** | How a JSON Schema form behaves: conditional fields, computed or forced values, money conversion, `initialValues`, `jsfModify` | Minimal inline schemas                     | Every PR          |
+| **Integration**              | Flow wiring: submitting, going back, moving between steps, error handling                                                     | Fixture schemas, endpoints mocked with MSW | Every PR          |
+| **E2E**                      | Whether the SDK and the backend still work together on the happy path                                                         | Sandbox                                    | Every PR, nightly |
+| **Smoke** (planned)          | Real country schemas using something no situation covers yet                                                                  | Every country's real schema, in sandbox    | Scheduled         |
+
+**Unit.** [`jsfEngineSituations.ts`](src/common/tests/jsfEngineSituations.ts) lists situations: a small schema, what the user does, and what they should see and submit. [`jsfEngineContract.test.tsx`](src/common/tests/jsfEngineContract.test.tsx) runs each one against every jsf engine and every `useHeadlessForm` strategy. The idea comes from json-schema-form's own tests: schema in, behaviour out, no flow around it. How to add one: [Adding a situation](docs/USE_HEADLESS_FORM_ROLLOUT.md#adding-a-situation). Plain helper tests, such as [`dates.test.ts`](src/common/tests/dates.test.ts), sit at this layer too.
+
+**Integration.** Full flows rendered with the endpoints mocked (see [7.3](#73-msw-for-api-mocking)). This is where several things are tested together: a step submits, the next one loads, going back keeps the values.
+
+**E2E.** Playwright in [`example/e2e/`](example/e2e/), driving the deployed example app against the sandbox environment, on every PR and nightly ([`e2e-nightly.yml`](.github/workflows/e2e-nightly.yml)). Few tests, happy paths only. When a PR's own unit and integration tests pass but E2E fails, the backend has usually changed.
+
+**Smoke (planned, not built yet).** Every country's contract details schema, fetched from sandbox. For each one: generate values the schema accepts, run them through `useHeadlessForm` and `parseFormValues`, and check that sandbox accepts the payload. Headless, no UI. It runs on a schedule rather than on PRs: running every country is too slow for each PR, and one country's schema changing in sandbox shouldn't block unrelated work. A green run means sandbox schemas work with the SDK; sandbox can differ from production.
+
+Platform's FE already has smoke tests: Playwright, one test per country, run on merge requests against a real backend in CI. Ours would differ in running headless and on a schedule, but three things are worth copying:
+
+- Values are generated from the schema, not written per country: fill the fields, validate, and repeat until the schema accepts them.
+- Each country is its own test, so one broken schema doesn't hide the others.
+- On failure, the generator is re-run on the saved schema to tell an SDK regression apart from a backend schema regression.
+
+One thing to avoid: about 41 of the ~91 countries in Platform's FE smoke list are commented out, many with "flaky for some reason that is unknown". Skipped countries here should each have a reason and a ticket, so the list shrinks instead of growing.
+
+#### Where a bug's test goes
+
+- Reproducible with a schema alone → a unit situation.
+- Needs steps, navigation or API calls → an integration test.
+- Needs the real backend → E2E.
+- Only some countries break and you don't know which → smoke finds it.
+
+Failures move down the layers. When E2E or smoke finds a schema bug, the fix comes with a situation that reproduces it on a minimal schema. That keeps the slow layers finding new problems instead of guarding old ones.
+
+### 7.2 Vitest Globals
 
 Vitest globals are **enabled** in `vitest.config.ts`:
 
@@ -1132,7 +1168,7 @@ describe('MyComponent', () => {
 
 **Why:** Globals reduce boilerplate. This is a project convention - follow it.
 
-### 7.2 MSW for API Mocking
+### 7.3 MSW for API Mocking
 
 All API calls are mocked using MSW (Mock Service Worker):
 
@@ -1184,7 +1220,7 @@ export const mockEmployment = {
 };
 ```
 
-### 7.3 Strict Equality Assertions
+### 7.4 Strict Equality Assertions
 
 Always use **exact object matching**, never `expect.objectContaining()`:
 
@@ -1204,7 +1240,7 @@ expect(mockApiCall).toHaveBeenCalledWith({
 
 **Why:** `objectContaining` lets tests pass even if we're passing extra unexpected fields. Strict equality catches bugs.
 
-### 7.4 QueryClient Management
+### 7.5 QueryClient Management
 
 React Query tests must wrap components in a provider:
 
