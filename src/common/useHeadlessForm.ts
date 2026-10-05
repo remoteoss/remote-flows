@@ -20,6 +20,7 @@ type UseHeadlessFormArgs = {
 
 export type HeadlessForm = {
   form: JSONSchemaFormResultWithFieldsets | null;
+  isBuilding: boolean;
   handleValidation: (values: FieldValues) => Promise<ValidationResult | null>;
   onValuesChange: (values: FieldValues) => Promise<void>;
   parseFormValues: (values: FieldValues) => Promise<FieldValues>;
@@ -33,6 +34,10 @@ export function useHeadlessForm({
 }: UseHeadlessFormArgs): HeadlessForm {
   const isBuildOnce = strategy === 'buildOnce';
   const [, setRevision] = useState(0);
+  const [resolved, setResolved] = useState<{
+    schema: Record<string, unknown>;
+    form: JSONSchemaFormResultWithFieldsets;
+  } | null>(null);
   const [stableOptions, setStableOptions] = useState(options);
   if (!equal(stableOptions, options)) {
     setStableOptions(options);
@@ -44,7 +49,7 @@ export function useHeadlessForm({
 
   const buildValues = isBuildOnce ? undefined : values;
 
-  const form = useMemo(() => {
+  const builtForm = useMemo(() => {
     if (!schema) return null;
     return isBuildOnce
       ? createHeadlessForm(
@@ -55,29 +60,39 @@ export function useHeadlessForm({
       : createHeadlessForm(schema, buildValues, stableOptions);
   }, [schema, buildValues, stableOptions, isBuildOnce]);
 
-  const validate = useCallback(
-    async (nextValues: FieldValues, isCancelled: () => boolean) => {
-      if (!form) return null;
+  const form = !isBuildOnce
+    ? builtForm
+    : resolved && resolved.schema === schema
+      ? resolved.form
+      : null;
+
+  const validateForm = useCallback(
+    async (
+      target: JSONSchemaFormResultWithFieldsets | null,
+      nextValues: FieldValues,
+      isCancelled: () => boolean,
+    ) => {
+      if (!target) return null;
       // buildOnce keeps invisible values on purpose. The fields still hold the
       // visibility of the previous change, so dropping their values would hide
       // what a field that is about to become visible needs to compute itself:
       // a hidden fieldset coming back would lose the values driving its own
       // children. handleValidation resolves the visibility first and nulls
       // whatever it considers hidden afterwards, which is the right order.
-      const parsedValues = await parseJSFToValidate(nextValues, form.fields, {
+      const parsedValues = await parseJSFToValidate(nextValues, target.fields, {
         isPartialValidation: isBuildOnce,
       });
       if (isCancelled()) return null;
-      const result = form.handleValidation(parsedValues);
+      const result = target.handleValidation(parsedValues);
       if (isBuildOnce) setRevision((revision) => revision + 1);
       return result;
     },
-    [form, isBuildOnce],
+    [isBuildOnce],
   );
 
   const handleValidation = useCallback(
-    (nextValues: FieldValues) => validate(nextValues, () => false),
-    [validate],
+    (nextValues: FieldValues) => validateForm(form, nextValues, () => false),
+    [validateForm, form],
   );
 
   const onValuesChange = useCallback(
@@ -88,13 +103,17 @@ export function useHeadlessForm({
   );
 
   useEffect(() => {
-    if (!isBuildOnce) return;
+    if (!isBuildOnce || !schema || !builtForm) return;
     let cancelled = false;
-    void validate(latestValues.current, () => cancelled);
+    void validateForm(builtForm, latestValues.current, () => cancelled).then(
+      () => {
+        if (!cancelled) setResolved({ schema, form: builtForm });
+      },
+    );
     return () => {
       cancelled = true;
     };
-  }, [validate, isBuildOnce]);
+  }, [validateForm, builtForm, schema, isBuildOnce]);
 
   const parseFormValues = useCallback(
     async (nextValues: FieldValues) =>
@@ -102,5 +121,13 @@ export function useHeadlessForm({
     [form],
   );
 
-  return { form, handleValidation, onValuesChange, parseFormValues };
+  const isBuilding = Boolean(schema) && !form;
+
+  return {
+    form,
+    isBuilding,
+    handleValidation,
+    onValuesChange,
+    parseFormValues,
+  };
 }

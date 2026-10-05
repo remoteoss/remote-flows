@@ -11,7 +11,13 @@ Every flow builds its JSON Schema forms through one shared hook, [`src/common/us
 ## Strategies
 
 - **`rebuild`** (old): `createHeadlessForm(schema, values, options)` again whenever values change. Money values are converted to cents at build time.
-- **`buildOnce`** (new): built once per `schema`/`options`. Conditionals are resolved by `handleValidation` with `isPartialValidation: true`, and the latest values are replayed after each build so visibility is right without a mounted step.
+- **`buildOnce`** (new): built once per `schema`/`options`. Conditionals are resolved by `handleValidation` with `isPartialValidation: true`, and the latest values are replayed after each build so visibility is right without a mounted step. `form` stays `null` (`isBuilding: true`) until that first replay finishes, so nothing ever reads a form with default visibility. After a `jsfModify` rebuild the previous form is kept until the new one is ready; a new `schema` goes back to `null`.
+
+### Adopting `buildOnce` in a step
+
+1. Pass `values` holding only that step's values, in form units: partner `initialValues`, then the saved employment's data for that step, then `stepState.values` for the step, then the live `fieldValues` while the step is mounted. Values from another step change visibility in the wrong form. Saved values in API units (money in cents) have to be converted to form units first.
+2. Add `isBuilding` to the step's loading state, so the step never mounts with an unresolved form (its `defaultValues` would be computed from empty fields).
+3. Route the step's `handleValidation` and `parseFormValues` through the hook, and call `onValuesChange` from `checkFieldUpdates` while the step is current.
 
 ## Phases
 
@@ -47,7 +53,6 @@ Status: `todo`, `phase 1` (on the hook, old behaviour), `done` (on the hook with
 | Call site                                                          | Status  | Notes                                                                                                                          |
 | ------------------------------------------------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | Onboarding `useLegacyContractDetailsSchema`                        | phase 1 | #1433. Only building moved; validation and submit parsing still go through the hand-written branches in `Onboarding/hooks.tsx` |
-| Onboarding `useJSONSchemaForm` (basic information and other steps) | todo    | #1430 tried `buildOnce` here and was closed                                                                                    |
 | Onboarding `useBenefitOffersSchema`                                | todo    |                                                                                                                                |
 | Onboarding `useEngagementAgreementDetailsSchema`                   | todo    |                                                                                                                                |
 | Contractor contract details `useContractorOnboardingDetailsSchema` | todo    | Money-sensitive                                                                                                                |
@@ -65,16 +70,17 @@ Status: `todo`, `phase 1` (on the hook, old behaviour), `done` (on the hook with
 
 ### Already build once (no values)
 
-| Call site                                                   | Status | Notes                                                     |
-| ----------------------------------------------------------- | ------ | --------------------------------------------------------- |
-| Onboarding `useContractDetailsSchema` (jsf v1)              | done   | #1433                                                     |
-| Onboarding `useCountriesSchemaField`                        | todo   |                                                           |
-| ContractorOnboarding `useCountriesSchemaField`              | todo   |                                                           |
-| ContractorOnboarding `useContractorSubscriptionSchemaField` | todo   |                                                           |
-| ContractorOnboarding `useGetInvoiceScheduleSchema`          | todo   |                                                           |
-| CreateCompany `useCountriesSchemaField` (basic information) | todo   |                                                           |
-| CostCalculator `useStaticSchema` + `useRegionFields`        | todo   | Combines several forms; needs a design per sub-form first |
-| Termination full schema in `useTermination`                 | todo   | Combines several forms; needs a design per sub-form first |
+| Call site                                                   | Status | Notes                                                                                                                                          |
+| ----------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Onboarding `useContractDetailsSchema` (jsf v1)              | done   | #1433. Replays only the mounted step's `fieldValues`, so a read-only review doesn't see saved values yet (needs cents converted to form units) |
+| Onboarding `useBasicInformationSchema`                      | done   | Was `rebuild` through `useJSONSchemaForm`; #1430 was the first attempt                                                                         |
+| Onboarding `useCountriesSchemaField`                        | todo   |                                                                                                                                                |
+| ContractorOnboarding `useCountriesSchemaField`              | todo   |                                                                                                                                                |
+| ContractorOnboarding `useContractorSubscriptionSchemaField` | todo   |                                                                                                                                                |
+| ContractorOnboarding `useGetInvoiceScheduleSchema`          | todo   |                                                                                                                                                |
+| CreateCompany `useCountriesSchemaField` (basic information) | todo   |                                                                                                                                                |
+| CostCalculator `useStaticSchema` + `useRegionFields`        | todo   | Combines several forms; needs a design per sub-form first                                                                                      |
+| Termination full schema in `useTermination`                 | todo   | Combines several forms; needs a design per sub-form first                                                                                      |
 
 ## Known behaviour until phase 2
 

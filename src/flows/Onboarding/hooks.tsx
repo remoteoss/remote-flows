@@ -31,6 +31,7 @@ import {
   useBenefitOffers,
   useBenefitOffersSchema,
   useCompany,
+  useBasicInformationSchema,
   useContractDetailsSchema,
   useCountriesSchemaField,
   useCreateEmployment,
@@ -39,7 +40,6 @@ import {
   useEmploymentOnboardingReservesStatus,
   useEngagementAgreementDetailsSchema,
   useGetPreOnboardingRequirements,
-  useJSONSchemaForm,
   useLegacyContractDetailsSchema,
   useUpdateBenefitsOffers,
   useUpdateEmployment,
@@ -522,35 +522,6 @@ export const useOnboarding = ({
         ...serverEmploymentData,
       };
 
-  const useJSONSchema = ({
-    form,
-    options: jsonSchemaOptions = {},
-    query = {},
-    jsonSchemaVersion,
-  }: {
-    form: JSONSchemaFormType;
-    options?: {
-      jsfModify?: JSFModify;
-      queryOptions?: { enabled?: boolean };
-    };
-    query?: Record<string, string>;
-    jsonSchemaVersion?: number | 'latest';
-  }) => {
-    return useJSONSchemaForm({
-      countryCode: internalCountryCode as string,
-      form: form,
-      fieldValues: mergedFormValues,
-      query,
-      options: {
-        ...jsonSchemaOptions,
-        queryOptions: {
-          enabled: jsonSchemaOptions.queryOptions?.enabled ?? true,
-        },
-      },
-      jsonSchemaVersion,
-    });
-  };
-
   const isBasicInformationDetailsEnabled = Boolean(
     internalCountryCode &&
     (stepState.currentStep.name === 'basic_information' ||
@@ -570,11 +541,33 @@ export const useOnboarding = ({
       Boolean(employmentId)),
   );
 
+  const basicInformationFormValues = useMemo(
+    () => ({
+      ...onboardingInitialValues,
+      ...employment?.basic_information,
+      ...stepState.values?.basic_information,
+      ...(stepState.currentStep.name === 'basic_information'
+        ? fieldValues
+        : {}),
+    }),
+    [
+      onboardingInitialValues,
+      employment?.basic_information,
+      stepState.values?.basic_information,
+      stepState.currentStep.name,
+      fieldValues,
+    ],
+  );
+
   const {
     data: basicInformationForm,
     isLoading: isLoadingBasicInformationForm,
-  } = useJSONSchema({
-    form: 'employment_basic_information',
+    handleValidation: handleBasicInformationValidation,
+    onValuesChange: onBasicInformationValuesChange,
+    parseFormValues: parseBasicInformationValues,
+  } = useBasicInformationSchema({
+    countryCode: internalCountryCode as string,
+    fieldValues: basicInformationFormValues,
     options: {
       jsfModify: options?.jsfModify?.basic_information,
       queryOptions: {
@@ -1086,9 +1079,7 @@ export const useOnboarding = ({
       basicInformationForm &&
       stepState.currentStep.name === 'basic_information'
     ) {
-      return await parseJSFToValidate(values, basicInformationForm?.fields, {
-        isPartialValidation: false,
-      });
+      return await parseBasicInformationValues(values);
     }
 
     if (
@@ -1269,12 +1260,7 @@ export const useOnboarding = ({
         basicInformationForm &&
         stepState.currentStep.name === 'basic_information'
       ) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          basicInformationForm?.fields,
-          { isPartialValidation: false },
-        );
-        return basicInformationForm?.handleValidation(parsedValues);
+        return handleBasicInformationValidation(values);
       }
 
       if (
@@ -1317,6 +1303,7 @@ export const useOnboarding = ({
       selectCountryForm,
       benefitOffersSchema,
       basicInformationForm,
+      handleBasicInformationValidation,
       engagementAgreementDetailsSchema,
       contractDetailsForm,
       contractDetailsFormV1,
@@ -1328,6 +1315,9 @@ export const useOnboarding = ({
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
       setFieldValues(values);
+      if (stepState.currentStep.name === 'basic_information') {
+        await onBasicInformationValuesChange(values);
+      }
       if (
         isJsfV1ContractDetailsEnabled &&
         stepState.currentStep.name === 'contract_details'
@@ -1340,6 +1330,7 @@ export const useOnboarding = ({
       isJsfV1ContractDetailsEnabled,
       stepState,
       handleValidation,
+      onBasicInformationValuesChange,
     ],
   );
 
