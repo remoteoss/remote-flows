@@ -28,7 +28,7 @@
         ],
         "patterns": [
           {
-            "group": ["**/common/createHeadlessForm"],
+            "group": ["**/createHeadlessForm"],
             "importNames": ["createHeadlessForm"],
             "message": "Build JSON Schema forms with useHeadlessForm from @/src/common/useHeadlessForm instead of calling createHeadlessForm directly. See docs/USE_HEADLESS_FORM_ROLLOUT.md."
           }
