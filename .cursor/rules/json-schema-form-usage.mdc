@@ -35,15 +35,17 @@ const { data: schema, isLoading } = useQuery({
 const { form, handleValidation, parseFormValues, onValuesChange } =
   useHeadlessForm({
     schema,
-    values: fieldValues,
+    initialValues: savedValues,
     options: { jsfModify: options?.jsfModify },
     strategy: 'buildOnce',
   });
 ```
 
+`initialValues` are the saved values in API units (partner initial values merged with the employment's saved step data), not the live form values. They seed the first build so conditional fields are visible before the step mounts; after that, visibility follows `handleValidation`, and a rebuild caused by a `jsfModify` change keeps the last validated values.
+
 Expose `handleValidation` and `parseFormValues` from the hook on the flow bag rather than calling `parseJSFToValidate` by hand, and call `onValuesChange` when the form values change.
 
-**Reference:** `useContractDetailsSchema` in `src/flows/Onboarding/api.ts`.
+**Reference:** `useBasicInformationSchema` and `useContractDetailsSchema` in `src/flows/Onboarding/api.ts`.
 
 ## Strategies
 
