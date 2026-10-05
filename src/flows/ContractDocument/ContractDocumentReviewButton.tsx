@@ -10,6 +10,7 @@ type ContractDocumentReviewButtonProps = {
 
 export function ContractDocumentReviewButton({
   render,
+  onClick,
   ...props
 }: ContractDocumentReviewButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,7 +54,10 @@ export function ContractDocumentReviewButton({
             'RemoteFlows__ContractDocumentPreviewForm__ReviewButton',
             props.className,
           )}
-          onClick={() => setIsOpen(true)}
+          onClick={(event) => {
+            setIsOpen(true);
+            onClick?.(event);
+          }}
         >
           {render({ reviewCompleted })}
         </CustomButton>
