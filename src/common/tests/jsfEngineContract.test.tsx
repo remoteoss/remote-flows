@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import { FieldValues } from 'react-hook-form';
-import { render, screen, waitFor, within } from '@testing-library/react';
-import userEvent, { UserEvent } from '@testing-library/user-event';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import {
+  chooseInGroup,
+  portugal,
+  Schema,
+  SITUATIONS,
+} from '@/src/common/tests/jsfEngineSituations';
 import {
   HeadlessFormStrategy,
   useHeadlessForm,
@@ -10,17 +16,7 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { JSFModify } from '@/src/flows/types';
-import { contractDetailsSchemaV1Portugal } from '@/src/flows/Onboarding/tests/fixtures';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
-
-type Schema = Record<string, unknown>;
-
-type Situation = {
-  situation: string;
-  schema: Schema;
-  fill: (user: UserEvent) => Promise<void>;
-  assert: (submitted: FieldValues) => Promise<void>;
-};
 
 const ENGINES = [
   { engine: 'jsf v0', meta: { jsfOldVersion: true } },
@@ -49,56 +45,6 @@ const OPTIONS: {
     },
     assertApplied: () =>
       expect(screen.getByText('Gross, per year')).toBeInTheDocument(),
-  },
-];
-
-const withoutMeta = ({ 'x-rmt-meta': _meta, ...schema }: Schema) => schema;
-
-const portugal = withoutMeta(contractDetailsSchemaV1Portugal.data);
-
-const chooseInGroup = async (
-  user: UserEvent,
-  group: RegExp,
-  option: string,
-) => {
-  const radioGroup = await screen.findByRole('radiogroup', { name: group });
-  await user.click(within(radioGroup).getByRole('radio', { name: option }));
-};
-
-const SITUATIONS: Situation[] = [
-  {
-    situation: 'forced money value computed from another money field',
-    schema: portugal,
-    fill: async (user) => {
-      await user.type(
-        await screen.findByLabelText('Annual gross salary'),
-        '71703.77',
-      );
-      await chooseInGroup(user, /Type of employee/i, 'Full-time');
-      await chooseInGroup(user, /work outside regular work hours/i, 'Yes');
-      await chooseInGroup(user, /more than 8 hours a day/i, 'Yes');
-    },
-    assert: async (submitted) => {
-      expect(
-        await screen.findByText(/additional 812.57 EUR monthly/),
-      ).toBeInTheDocument();
-      expect(submitted.working_hours_exemption_allowance).toBe(81257);
-    },
-  },
-  {
-    situation: 'radio reveals a conditional money field',
-    schema: portugal,
-    fill: async (user) => {
-      await chooseInGroup(user, /Offer a signing bonus/i, 'Yes');
-      await user.type(
-        await screen.findByLabelText('Signing bonus amount'),
-        '1000.50',
-      );
-    },
-    assert: async (submitted) => {
-      expect(screen.getByLabelText('Signing bonus amount')).toBeVisible();
-      expect(submitted.signing_bonus_amount).toBe(100050);
-    },
   },
 ];
 
