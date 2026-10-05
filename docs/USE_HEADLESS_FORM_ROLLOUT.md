@@ -21,6 +21,8 @@ Pure refactor. Each call site keeps the strategy it effectively has today, so no
 
 Call sites that don't pass values already behave like `buildOnce`, so they go straight onto it.
 
+Importing `createHeadlessForm` is banned by `no-restricted-imports` in `.oxlintrc.json`. The call sites below that haven't moved yet are listed in that rule's `overrides` allowlist. A PR that moves a file onto the hook also removes the file from the allowlist.
+
 ### Phase 2: switch `rebuild` steps to `buildOnce`, one step per PR
 
 For each step, test all of these before switching (they come from #1430):
@@ -36,7 +38,8 @@ For each step, test all of these before switching (they come from #1430):
 
 - [ ] Remove the `rebuild` strategy from `useHeadlessForm`
 - [ ] Remove `transformMoneyFields` and the pre-fill money conversion from `createHeadlessForm`
-- [ ] Add an oxlint `no-restricted-imports` rule that bans importing `createHeadlessForm` in `src/flows/**`
+- [x] Add an oxlint `no-restricted-imports` rule that bans importing `createHeadlessForm`
+- [ ] Empty the rule's allowlist down to `createHeadlessForm.tsx`, `useHeadlessForm.ts`, tests and `scripts/`
 
 ## Call sites
 

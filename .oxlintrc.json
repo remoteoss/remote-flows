@@ -15,13 +15,56 @@
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "typescript/no-explicit-any": "error",
-    "typescript/no-deprecated": "error"
+    "typescript/no-deprecated": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "@remoteoss/remote-json-schema-form-kit",
+            "importNames": ["createHeadlessForm"],
+            "message": "Build JSON Schema forms with useHeadlessForm from @/src/common/useHeadlessForm instead of calling createHeadlessForm directly. See docs/USE_HEADLESS_FORM_ROLLOUT.md."
+          }
+        ],
+        "patterns": [
+          {
+            "group": ["**/common/createHeadlessForm"],
+            "importNames": ["createHeadlessForm"],
+            "message": "Build JSON Schema forms with useHeadlessForm from @/src/common/useHeadlessForm instead of calling createHeadlessForm directly. See docs/USE_HEADLESS_FORM_ROLLOUT.md."
+          }
+        ]
+      }
+    ]
   },
   "overrides": [
     {
       "files": ["src/client/**"],
       "rules": {
         "typescript/no-deprecated": "off"
+      }
+    },
+    {
+      "files": [
+        "scripts/**",
+        "src/common/createHeadlessForm.tsx",
+        "src/common/useHeadlessForm.ts",
+        "src/**/tests/**",
+        "src/common/api/contractor-contract-details.ts",
+        "src/common/invoice-schedules/api.ts",
+        "src/flows/ContractAmendment/hooks.ts",
+        "src/flows/ContractorOnboarding/api.ts",
+        "src/flows/CostCalculator/api.ts",
+        "src/flows/CostCalculator/hooks.tsx",
+        "src/flows/CreateCompany/api.ts",
+        "src/flows/JsonSchemaPlayground/hooks.ts",
+        "src/flows/Onboarding/api.ts",
+        "src/flows/PayrollAdminOnboarding/api.ts",
+        "src/flows/PayrollEmployeeOnboarding/api.ts",
+        "src/flows/Termination/api.ts",
+        "src/flows/Termination/hooks.tsx"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
       }
     }
   ]

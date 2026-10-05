@@ -230,11 +230,13 @@ Forms are central to this library - ensure consistency:
 - **Yup schemas** - Validation schemas defined with Yup
 - **JSON Schema Form** - Dynamic fields use `@remoteoss/json-schema-form`
 - **Field mapping** - Custom field components mapped in `src/components/form/fields/fieldsMapping.tsx`
-- **Validation timing** - Use `handleValidation` for combined static + dynamic validation
-- **Parse before submit** - Use `parseJSFToValidate()` to transform form values
+- **useHeadlessForm** - Schema-backed forms are built with `useHeadlessForm` (`src/common/useHeadlessForm.ts`): fetch the schema, then pass `schema`, `values`, `options` and `strategy: 'buildOnce'`
+- **Validation and parsing** - Use the hook's `handleValidation` / `parseFormValues` instead of calling `parseJSFToValidate()` by hand
 - **Required vs optional** - Match field requirements to JSON schema
 
 **Check:** Are validation errors user-friendly? Do they display with proper field labels?
+
+**Flag:** Files added to the `no-restricted-imports` allowlist in `.oxlintrc.json`, new `strategy: 'rebuild'` usage, `createHeadlessForm` reached through a re-export or a wrapper that gets around the lint rule, and `transformMoneyFields` passed in new code.
 
 ### 5. API Client Management
 
