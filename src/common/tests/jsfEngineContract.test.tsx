@@ -114,7 +114,11 @@ function Harness({
   onCapture: (submitted: FieldValues) => void;
 }) {
   const [values, setValues] = useState<FieldValues>({});
-  const headless = useHeadlessForm({ schema, values, options, strategy });
+  const headless = useHeadlessForm(
+    strategy === 'rebuild'
+      ? { schema, options, strategy, values }
+      : { schema, options, strategy },
+  );
   const form = useJSONSchemaForm({
     handleValidation: headless.handleValidation,
     defaultValues: {},

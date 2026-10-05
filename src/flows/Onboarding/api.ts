@@ -319,13 +319,13 @@ export const useLegacyContractDetailsSchema = ({
 
 export const useContractDetailsSchema = ({
   countryCode,
-  fieldValues,
+  initialValues,
   options,
   query = {},
   jsonSchemaVersion,
 }: {
   countryCode: string;
-  fieldValues: FieldValues;
+  initialValues?: FieldValues;
   options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
   jsonSchemaVersion?: number | 'latest';
@@ -377,12 +377,82 @@ export const useContractDetailsSchema = ({
 
   const { form, handleValidation, parseFormValues } = useHeadlessForm({
     schema,
-    values: fieldValues,
+    initialValues,
     options: { jsfModify: options?.jsfModify },
     strategy: 'buildOnce',
   });
 
   return { data: form, isLoading, handleValidation, parseFormValues };
+};
+
+export const useBasicInformationSchema = ({
+  countryCode,
+  initialValues,
+  options,
+  jsonSchemaVersion,
+}: {
+  countryCode: string;
+  initialValues?: FieldValues;
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
+  jsonSchemaVersion?: number | 'latest';
+}): Omit<HeadlessForm, 'form'> & {
+  data: JSONSchemaFormResultWithFieldsets | null;
+  isLoading: boolean;
+} => {
+  const { client } = useClient();
+  const jsonSchemaQueryParam = jsonSchemaVersion
+    ? {
+        json_schema_version: jsonSchemaVersion,
+      }
+    : {};
+  const { data: schema, isLoading } = useQuery({
+    queryKey: [
+      'onboarding-basic-information-schema',
+      countryCode,
+      jsonSchemaVersion,
+    ],
+    retry: false,
+    queryFn: async () => {
+      const response = await getV1CountriesCountryCodeForm({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          country_code: countryCode,
+          form: 'employment_basic_information',
+        },
+        query: {
+          skip_benefits: true,
+          ...jsonSchemaQueryParam,
+        },
+      });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch onboarding schema');
+      }
+
+      return response;
+    },
+    enabled: options?.queryOptions?.enabled,
+    select: ({ data }) => data?.data,
+  });
+
+  const { form, handleValidation, onValuesChange, parseFormValues } =
+    useHeadlessForm({
+      schema,
+      initialValues,
+      options: { jsfModify: options?.jsfModify },
+      strategy: 'buildOnce',
+    });
+
+  return {
+    data: form,
+    isLoading,
+    handleValidation,
+    onValuesChange,
+    parseFormValues,
+  };
 };
 
 export const useBenefitOffersSchema = (
