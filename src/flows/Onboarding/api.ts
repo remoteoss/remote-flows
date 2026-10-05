@@ -458,15 +458,18 @@ export const useBasicInformationSchema = ({
 
 export const useBenefitOffersSchema = (
   employmentId: string,
-  fieldValues: FieldValues,
+  initialValues: FieldValues | undefined,
   options: OnboardingFlowProps['options'],
-) => {
+): Omit<HeadlessForm, 'form'> & {
+  data: JSONSchemaFormResultWithFieldsets | null;
+  isLoading: boolean;
+} => {
   const { client } = useClient();
   const jsonSchemaQueryParam = {
     json_schema_version: getBenefitOffersSchemaVersion(options),
   };
 
-  return useQuery({
+  const { data: schema, isLoading } = useQuery({
     queryKey: ['benefit-offers-schema', employmentId],
     retry: false,
     enabled: !!employmentId,
@@ -486,14 +489,24 @@ export const useBenefitOffersSchema = (
 
       return response;
     },
-    select: ({ data }) => {
-      const jsfSchema = data?.data?.schema || {};
-
-      return createHeadlessForm(jsfSchema, fieldValues, {
-        jsfModify: options?.jsfModify?.benefits,
-      });
-    },
+    select: ({ data }) => data?.data?.schema || {},
   });
+
+  const { form, handleValidation, onValuesChange, parseFormValues } =
+    useHeadlessForm({
+      schema,
+      initialValues,
+      options: { jsfModify: options?.jsfModify?.benefits },
+      strategy: 'buildOnce',
+    });
+
+  return {
+    data: form,
+    isLoading,
+    handleValidation,
+    onValuesChange,
+    parseFormValues,
+  };
 };
 
 /**
@@ -741,13 +754,16 @@ export const useEmploymentOnboardingReservesStatus = (
 
 export const useEngagementAgreementDetailsSchema = (
   countryCode: string,
-  fieldValues: FieldValues,
+  initialValues: FieldValues | undefined,
   options?: {
     jsfModify?: OnboardingJsfModify;
     queryOptions?: { enabled?: boolean };
     jsonSchemaVersion?: number | 'latest';
   },
-) => {
+): Omit<HeadlessForm, 'form'> & {
+  data: JSONSchemaFormResultWithFieldsets | null;
+  isLoading: boolean;
+} => {
   const { client } = useClient();
   const jsonSchemaQueryParam = options?.jsonSchemaVersion
     ? {
@@ -755,7 +771,7 @@ export const useEngagementAgreementDetailsSchema = (
       }
     : {};
 
-  return useQuery({
+  const { data: schema, isLoading } = useQuery({
     queryKey: [
       'engagement-agreement-details',
       countryCode,
@@ -782,14 +798,26 @@ export const useEngagementAgreementDetailsSchema = (
 
       return response;
     },
-    select: ({ data }) => {
-      const jsfSchema = data?.data || {};
-
-      return createHeadlessForm(jsfSchema, fieldValues, {
-        jsfModify: options?.jsfModify?.engagement_agreement_details,
-      });
-    },
+    select: ({ data }) => data?.data || {},
   });
+
+  const { form, handleValidation, onValuesChange, parseFormValues } =
+    useHeadlessForm({
+      schema,
+      initialValues,
+      options: {
+        jsfModify: options?.jsfModify?.engagement_agreement_details,
+      },
+      strategy: 'buildOnce',
+    });
+
+  return {
+    data: form,
+    isLoading,
+    handleValidation,
+    onValuesChange,
+    parseFormValues,
+  };
 };
 
 /**
