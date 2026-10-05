@@ -4,8 +4,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
   chooseInGroup,
-  portugal,
   Schema,
+  signingBonusSchema,
   SITUATIONS,
 } from '@/src/common/tests/jsfEngineSituations';
 import {
@@ -152,7 +152,7 @@ describe.each(ENGINES)('buildOnce lifecycle on $engine', ({ meta }) => {
   const renderHarness = (
     props: Partial<Parameters<typeof Harness>[0]> = {},
   ) => {
-    const schema = withMeta(portugal);
+    const schema = withMeta(signingBonusSchema);
     const harnessProps = {
       schema,
       strategy: 'buildOnce' as const,
@@ -221,7 +221,7 @@ describe.each(ENGINES)('buildOnce lifecycle on $engine', ({ meta }) => {
     await chooseInGroup(user, /Offer a signing bonus/i, 'Yes');
     await screen.findByLabelText('Signing bonus amount');
 
-    rerenderWith({ schema: withMeta(portugal) });
+    rerenderWith({ schema: withMeta(signingBonusSchema) });
 
     await waitFor(() =>
       expect(screen.queryByLabelText('Signing bonus amount')).toBeNull(),
