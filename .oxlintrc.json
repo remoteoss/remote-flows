@@ -48,7 +48,9 @@
         "scripts/**",
         "src/common/createHeadlessForm.tsx",
         "src/common/useHeadlessForm.ts",
-        "src/**/tests/**"
+        "src/**/tests/**",
+        "src/**/__tests__/**",
+        "src/**/*.test.{ts,tsx}"
       ],
       "rules": {
         "no-restricted-imports": "off"
