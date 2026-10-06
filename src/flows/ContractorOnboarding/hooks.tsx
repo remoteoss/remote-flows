@@ -382,6 +382,9 @@ export const useContractorOnboarding = ({
 
   const {
     form: selectContractorSubscriptionForm,
+    handleValidation: handleSubscriptionValidation,
+    onValuesChange: onSubscriptionValuesChange,
+    parseFormValues: parseSubscriptionFormValues,
     isLoading: isLoadingContractorSubscriptions,
     contractorSubscriptions,
     filteredContractorSubscriptions,
@@ -1231,13 +1234,7 @@ export const useContractorOnboarding = ({
       selectContractorSubscriptionForm &&
       stepState.currentStep.name === 'pricing_plan'
     ) {
-      return await parseJSFToValidate(
-        values,
-        selectContractorSubscriptionForm?.fields,
-        {
-          isPartialValidation: false,
-        },
-      );
+      return await parseSubscriptionFormValues(values);
     }
 
     if (
@@ -1725,12 +1722,7 @@ export const useContractorOnboarding = ({
         selectContractorSubscriptionForm &&
         stepState.currentStep.name === 'pricing_plan'
       ) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          selectContractorSubscriptionForm?.fields,
-          { isPartialValidation: false },
-        );
-        return selectContractorSubscriptionForm?.handleValidation(parsedValues);
+        return handleSubscriptionValidation(values);
       }
 
       if (
@@ -1790,6 +1782,7 @@ export const useContractorOnboarding = ({
       contractorOnboardingDetailsForm,
       signatureSchemaForm,
       selectContractorSubscriptionForm,
+      handleSubscriptionValidation,
       eligibilityQuestionnaireForm,
       contractOriginForm,
       invoiceScheduleForm,
@@ -1800,6 +1793,9 @@ export const useContractorOnboarding = ({
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
       setFieldValues(values);
+      if (stepState.currentStep.name === 'pricing_plan') {
+        await onSubscriptionValuesChange(values);
+      }
       // new steps or refactor ones should rely on json-schema-form-mutability
       // instead of passing fieldValues
       const stepsUsingHandleValidation = [
@@ -1814,7 +1810,13 @@ export const useContractorOnboarding = ({
         await handleValidation(values);
       }
     },
-    [setFieldValues, includeInvoiceSchedule, stepState, handleValidation],
+    [
+      setFieldValues,
+      includeInvoiceSchedule,
+      stepState,
+      handleValidation,
+      onSubscriptionValuesChange,
+    ],
   );
 
   const isLoading = initialLoading || shouldHandleReadOnlyEmployment;
