@@ -59,6 +59,7 @@ export function TextField({
           descriptionSuffix,
           label,
           type,
+          // oxlint-disable-next-line typescript/no-deprecated
           onChange,
           metadata: additionalProps,
           maxLength,

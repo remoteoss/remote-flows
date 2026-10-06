@@ -1,11 +1,21 @@
 import { queryOptions, useMutation, useQuery } from '@tanstack/react-query';
+import { FieldValues } from 'react-hook-form';
 import {
   CreateContractDocument,
+  getV1ContractorsEmploymentsEmploymentIdContractDocumentsId,
   getV1EmploymentsEmploymentIdContractDocuments,
   postV1ContractorsEmploymentsEmploymentIdContractDocuments,
+  postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign,
+  SignContractDocument,
 } from '@/src/client';
 import { Client } from '@/src/client/client';
+import { signatureSchema } from '@/src/common/contract-documents/json-schemas/signature';
+// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
+import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useClient } from '@/src/context';
+import { JSFModify } from '@/src/flows/types';
+import { clearBase64Data } from '@/src/lib/utils';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 /**
  * The contract documents of an employment, from
@@ -45,6 +55,84 @@ export const useGetContractDocuments = (
 };
 
 /**
+ * One contract document with its PDF, from
+ * `GET /v1/contractors/employments/{employment_id}/contract-documents/{id}`.
+ */
+export const contractDocumentOptions = (
+  client: Client,
+  employmentId: string,
+  contractDocumentId: string,
+) =>
+  queryOptions({
+    queryKey: ['contract-document', employmentId, contractDocumentId] as const,
+    retry: false,
+    queryFn: async () => {
+      const response =
+        await getV1ContractorsEmploymentsEmploymentIdContractDocumentsId({
+          client,
+          path: { employment_id: employmentId, id: contractDocumentId },
+        });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch contract document');
+      }
+
+      return response;
+    },
+  });
+
+export const useGetShowContractDocument = ({
+  employmentId,
+  contractDocumentId,
+  options,
+}: {
+  employmentId: string;
+  contractDocumentId: string;
+  options?: { queryOptions?: { enabled?: boolean } };
+}) => {
+  const { client } = useClient();
+  return useQuery({
+    ...contractDocumentOptions(
+      client as Client,
+      employmentId,
+      contractDocumentId,
+    ),
+    enabled: options?.queryOptions?.enabled,
+    select: ({ data }) => ({
+      ...data.data,
+      contract_document: {
+        ...data.data.contract_document,
+        content: clearBase64Data(
+          data.data.contract_document.content as $TSFixMe,
+        ),
+      },
+    }),
+  });
+};
+
+export const useGetContractDocumentSignatureSchema = ({
+  fieldValues,
+  options,
+}: {
+  fieldValues: FieldValues;
+  options?: { queryOptions?: { enabled?: boolean }; jsfModify?: JSFModify };
+}) => {
+  return useQuery({
+    queryKey: [
+      'contract-document-signature',
+      fieldValues.review_completed,
+      options?.jsfModify,
+    ],
+    queryFn: async () => {
+      return createHeadlessForm(signatureSchema, fieldValues, {
+        jsfModify: options?.jsfModify,
+      });
+    },
+    enabled: options?.queryOptions?.enabled,
+  });
+};
+
+/**
  * Saves the contractor details data
  * @param employmentId - The employment ID
  * @param payload - The payload
@@ -69,4 +157,67 @@ export const useCreateContractorContractDocument = () => {
       });
     },
   });
+};
+
+/**
+ * Signs the contract document
+ * @param employmentId - The employment ID
+ * @param contractDocumentId - The contract document ID
+ * @param payload - The payload
+ * @returns The signed contract document
+ */
+export const useSignContractDocument = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: async ({
+      employmentId,
+      contractDocumentId,
+      payload,
+    }: {
+      employmentId: string;
+      contractDocumentId: string;
+      payload: SignContractDocument;
+    }) => {
+      return postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign(
+        {
+          client: client as Client,
+          body: payload,
+          path: {
+            employment_id: employmentId,
+            contract_document_id: contractDocumentId,
+          },
+        },
+      );
+    },
+  });
+};
+
+export const useHasCompanySignedContract = ({
+  employmentId,
+  contractDocumentId,
+  options,
+}: {
+  employmentId: string;
+  contractDocumentId: string;
+  options?: { queryOptions?: { enabled?: boolean } };
+}) => {
+  const { data: documentPreviewPdf } = useGetShowContractDocument({
+    employmentId,
+    contractDocumentId,
+    options: {
+      queryOptions: {
+        enabled: options?.queryOptions?.enabled,
+      },
+    },
+  });
+
+  const hasCompanySignedContract =
+    documentPreviewPdf?.contract_document?.signatories?.some(
+      (signatory) =>
+        signatory.type === 'company' && signatory.status === 'signed',
+    );
+
+  return {
+    hasCompanySignedContract,
+  };
 };

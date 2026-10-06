@@ -177,10 +177,7 @@ export const CreateCompanyWithProps = ({
 }: CreateCompanyWithPropsData) => {
   return (
     <div className='contractor-onboarding-container'>
-      <RemoteFlows
-        authType='company-manager'
-        proxy={{ url: window.location.origin }}
-      >
+      <RemoteFlows proxy={{ url: window.location.origin }}>
         <div className='contractor-onboarding-content'>
           <Header />
           <Card className='px-0 py-0'>
@@ -206,6 +203,7 @@ export const CreateCompanyForm = () => {
   const [formData] = useState<CreateCompanyFormData>({});
   const [showOnboarding, setShowOnboarding] = useState(false);
 
+  // oxlint-disable-next-line typescript/no-deprecated
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     setShowOnboarding(true);

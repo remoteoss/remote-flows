@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 /**
  * Creates a fresh onboarding employment, up to (but not including)
  * contract_details, purely through the API - no browser involved.
@@ -56,8 +56,46 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 
-function parseArgs(argv) {
-  const args = {};
+type FormSchema = Parameters<typeof createHeadlessForm>[0];
+type HeadlessFormOptions = NonNullable<
+  Parameters<typeof createHeadlessForm>[1]
+>;
+type FormValues = Record<string, unknown>;
+type HttpMethod = 'GET' | 'POST';
+type AuthHeaders = Record<string, string>;
+
+interface FieldOption {
+  value: unknown;
+  meta?: { countryCode?: string };
+}
+
+interface SeedField {
+  name: string;
+  inputType?: string;
+  required?: boolean;
+  isVisible?: boolean;
+  multiple?: boolean;
+  options?: FieldOption[];
+  const?: unknown;
+}
+
+interface ApiOptions {
+  query?: Record<string, string | number | boolean | undefined>;
+  body?: unknown;
+}
+
+class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly body: unknown,
+  ) {
+    super(message);
+  }
+}
+
+function parseArgs(argv: string[]): Record<string, string | true> {
+  const args: Record<string, string | true> = {};
   for (const raw of argv) {
     const match = raw.match(/^--([^=]+)(?:=(.*))?$/);
     if (match) args[match[1]] = match[2] ?? true;
@@ -66,29 +104,49 @@ function parseArgs(argv) {
 }
 
 const args = parseArgs(process.argv.slice(2));
-const COUNTRY = (args.country || 'DEU').toUpperCase();
-const BASIC_INFO_VERSION = Number(args['basic-info-version'] || 4);
-const ENV = args.env;
+const stringArg = (key: string): string | undefined => {
+  const value = args[key];
+  return typeof value === 'string' ? value : undefined;
+};
+const COUNTRY = (stringArg('country') || 'DEU').toUpperCase();
+const BASIC_INFO_VERSION = Number(stringArg('basic-info-version') || 4);
+if ('env' in args && stringArg('env') === undefined) {
+  throw new Error(
+    '--env requires a value, e.g. --env=sandbox (got a bare --env flag).',
+  );
+}
+const ENV = stringArg('env');
 
-let BASE_URL;
-let getAuthHeaders = async () => ({});
+let BASE_URL: string;
+let getAuthHeaders = async (
+  _method: HttpMethod,
+  _urlPath: string,
+): Promise<AuthHeaders> => ({});
 
 if (ENV) {
   const envFile = path.resolve(__dirname, '..', `.env.${ENV}`);
   dotenv.config({ path: envFile });
-  const { buildGatewayURL } = require('../example/api/utils.js');
-  const {
-    fetchAccessToken,
-    fetchClientCredentialsAccessToken,
-  } = require('../example/api/get_token.js');
-  const { getTokenType } = require('../example/api/proxy.js');
+  const { buildGatewayURL } = require('../example/api/utils.js') as {
+    buildGatewayURL: () => string | undefined;
+  };
+  const { fetchAccessToken, fetchClientCredentialsAccessToken } =
+    require('../example/api/get_token.js') as {
+      fetchAccessToken: () => Promise<{ accessToken: string }>;
+      fetchClientCredentialsAccessToken: () => Promise<{
+        accessToken: string;
+      }>;
+    };
+  const { getTokenType } = require('../example/api/proxy.js') as {
+    getTokenType: (method: string, path: string) => string;
+  };
 
-  BASE_URL = buildGatewayURL();
-  if (!BASE_URL) {
+  const gatewayURL = buildGatewayURL();
+  if (!gatewayURL) {
     throw new Error(
       `Unknown --env=${ENV}, or ${envFile} is missing/doesn't set VITE_REMOTE_GATEWAY.`,
     );
   }
+  BASE_URL = gatewayURL;
   console.log(`Environment: ${ENV} -> ${BASE_URL} (from ${envFile})`);
 
   getAuthHeaders = async (method, urlPath) => {
@@ -104,7 +162,11 @@ if (ENV) {
   BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 }
 
-async function api(method, urlPath, { query, body } = {}) {
+async function api<T = unknown>(
+  method: HttpMethod,
+  urlPath: string,
+  { query, body }: ApiOptions = {},
+): Promise<T> {
   const url = new URL(BASE_URL + urlPath);
   for (const [key, value] of Object.entries(query || {})) {
     if (value !== undefined) url.searchParams.set(key, String(value));
@@ -118,36 +180,40 @@ async function api(method, urlPath, { query, body } = {}) {
     body: body ? JSON.stringify(body) : undefined,
   });
   const text = await res.text();
-  let json;
+  let json: unknown;
   try {
     json = text ? JSON.parse(text) : undefined;
   } catch {
     json = text;
   }
   if (!res.ok) {
-    const err = new Error(`${method} ${urlPath} -> ${res.status}`);
-    err.status = res.status;
-    err.body = json;
-    throw err;
+    throw new ApiError(
+      `${method} ${urlPath} -> ${res.status}`,
+      res.status,
+      json,
+    );
   }
-  return json;
+  return json as T;
 }
 
-async function fetchSchema(form, jsonSchemaVersion) {
-  return api('GET', `/v1/countries/${COUNTRY}/${form}`, {
+async function fetchSchema(
+  form: string,
+  jsonSchemaVersion?: number,
+): Promise<FormSchema> {
+  return api<{ data: FormSchema }>('GET', `/v1/countries/${COUNTRY}/${form}`, {
     query: { skip_benefits: true, json_schema_version: jsonSchemaVersion },
   }).then((res) => res.data);
 }
 
 /** First option whose value/label reads as "no" - collapses conditional sub-fields (file
  * uploads, free-text detail boxes) that a generic filler can't produce plausible data for. */
-function preferNoOption(options) {
+function preferNoOption(options: FieldOption[]): FieldOption {
   return (
     options.find((o) => String(o.value).toLowerCase() === 'no') || options[0]
   );
 }
 
-function fakeValueFor(field) {
+function fakeValueFor(field: SeedField): unknown {
   const { inputType, options, multiple, name, const: constValue } = field;
 
   if (options?.length) {
@@ -163,7 +229,7 @@ function fakeValueFor(field) {
       // any one produces a validly-formatted number, regardless of the
       // employment's own country.
       const option = options.find((o) => o.meta?.countryCode) || options[0];
-      return `+${option.meta.countryCode}${faker.string.numeric(9)}`;
+      return `+${option.meta?.countryCode}${faker.string.numeric(9)}`;
     }
     return preferNoOption(options).value;
   }
@@ -203,12 +269,17 @@ function fakeValueFor(field) {
 /** Progressively fills a JSF schema: fill whatever's required+visible, recompute (new
  * conditionally-required fields may appear), repeat until stable. Mirrors what the real
  * multi-step form does field-by-field, but against the schema directly instead of the DOM. */
-function fillSchema(schema, seedValues = {}) {
-  let values = { ...seedValues };
-  const skipped = [];
+function fillSchema(
+  schema: FormSchema,
+  seedValues: FormValues = {},
+): { values: FormValues; skipped: string[] } {
+  const values: FormValues = { ...seedValues };
+  const skipped: string[] = [];
   for (let round = 0; round < 8; round++) {
-    const { fields } = createHeadlessForm(schema, { initialValues: values });
-    const missing = fields.filter(
+    const { fields } = createHeadlessForm(schema, {
+      initialValues: values as HeadlessFormOptions['initialValues'],
+    });
+    const missing = (fields as unknown as SeedField[]).filter(
       (f) => f.required && f.isVisible && values[f.name] === undefined,
     );
     if (missing.length === 0) break;
@@ -240,14 +311,18 @@ async function main() {
   }
 
   console.log('\nCreating employment...');
-  const created = await api('POST', '/v1/employments', {
-    query: { json_schema_version: BASIC_INFO_VERSION },
-    body: {
-      basic_information: basicInformation,
-      type: 'employee',
-      country_code: COUNTRY,
+  const created = await api<{ data?: { employment?: { id?: string } } }>(
+    'POST',
+    '/v1/employments',
+    {
+      query: { json_schema_version: BASIC_INFO_VERSION },
+      body: {
+        basic_information: basicInformation,
+        type: 'employee',
+        country_code: COUNTRY,
+      },
     },
-  });
+  );
   const employmentId = created?.data?.employment?.id;
   if (!employmentId) {
     throw new Error(
@@ -265,11 +340,11 @@ async function main() {
   });
 
   console.log('\nChecking for an engagement_agreement_details step...');
-  let engagementSchema;
+  let engagementSchema: FormSchema | undefined;
   try {
     engagementSchema = await fetchSchema('engagement_agreement_details');
   } catch (err) {
-    if (err.status === 404) {
+    if (err instanceof ApiError && err.status === 404) {
       console.log(
         `No engagement_agreement_details schema for ${COUNTRY} - skipping.`,
       );
@@ -280,7 +355,8 @@ async function main() {
 
   if (
     engagementSchema &&
-    Object.keys(engagementSchema.properties || {}).length > 0
+    Object.keys((engagementSchema as { properties?: object }).properties || {})
+      .length > 0
   ) {
     const { values: engagementDetails, skipped } = fillSchema(engagementSchema);
     console.log(
@@ -320,8 +396,10 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.error('\nFailed:', err.message);
-  if (err.body) console.error(JSON.stringify(err.body, null, 2));
+main().catch((err: unknown) => {
+  console.error('\nFailed:', err instanceof Error ? err.message : err);
+  if (err instanceof ApiError && err.body) {
+    console.error(JSON.stringify(err.body, null, 2));
+  }
   process.exit(1);
 });

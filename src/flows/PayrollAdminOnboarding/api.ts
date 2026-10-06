@@ -10,6 +10,7 @@ import {
 } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
+// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { JSONSchemaFormResultWithFieldsets } from '@/src/flows/types';
 import { countriesOptions } from '@/src/common/api/countries';
@@ -103,6 +104,7 @@ export const useGPCreateEmployment = () => {
         body: {
           type: 'global_payroll_employee',
           country_code: countryCode,
+          // oxlint-disable-next-line typescript/no-deprecated
           engaged_by_entity_slug: legalEntityId,
           basic_information: basicInformation,
           external_id: externalId,

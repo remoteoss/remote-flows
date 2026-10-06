@@ -7,7 +7,7 @@
     "audit": "npm audit --audit-level=high",
     "dev": "nodemon ./dev_server.js",
     "build": "tsc -b && vite build",
-    "lint": "oxlint .",
+    "lint": "oxlint --type-aware --report-unused-disable-directives-severity=error .",
     "preview": "vite preview",
     "postinstall": "react-flagpack",
     "test:e2e": "playwright test",
@@ -37,6 +37,7 @@
     "@vitejs/plugin-react": "6.1.1",
     "nodemon": "3.1.14",
     "oxlint": "1.83.0",
+    "oxlint-tsgolint": "7.0.2003",
     "vite": "8.3.0"
   }
 }
