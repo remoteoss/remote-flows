@@ -10,6 +10,7 @@ import {
 } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
+// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import type {
   JSONSchemaFormResultWithFieldsets,
@@ -81,16 +82,12 @@ export const useGPEmployeeFormSchema = (
 export const useGPUpdatePersonalDetails = (employmentId: string) => {
   const { client } = useClient();
   return useMutation({
-    mutationFn: (personalDetails: Record<string, unknown>) => {
-      // 'name' is a computed read-only display field in the schema (additionalProperties: false
-      // on the PUT endpoint rejects it). Strip it before sending.
-      const { name: _name, ...payload } = personalDetails;
-      return putV1EmployeePersonalDetails({
+    mutationFn: (personalDetails: Record<string, unknown>) =>
+      putV1EmployeePersonalDetails({
         client: client as Client,
         headers: { Authorization: ``, 'x-rf-employment-id': employmentId },
-        body: { personal_details: payload },
-      });
-    },
+        body: { personal_details: personalDetails },
+      }),
   });
 };
 

@@ -41,9 +41,11 @@ export const useCreateCompany = ({
   const createCompanyMutation = useCreateCompanyRequest();
   const updateCompanyMutation = useUpdateCompanyRequest();
 
+  // oxlint-disable-next-line typescript/no-deprecated
   const { mutateAsync: createCompanyMutationAsync } = mutationToPromise(
     createCompanyMutation,
   );
+  // oxlint-disable-next-line typescript/no-deprecated
   const { mutateAsync: updateCompanyMutationAsync } = mutationToPromise(
     updateCompanyMutation,
   );
@@ -53,7 +55,9 @@ export const useCreateCompany = ({
   );
   const [createdCompanyId, setCreatedCompanyId] = useState<string | null>(null);
   const fieldsMetaRef = useRef<{
+    // oxlint-disable-next-line typescript/no-deprecated
     company_basic_information: Meta;
+    // oxlint-disable-next-line typescript/no-deprecated
     address_details: Meta;
   }>({
     company_basic_information: {},
@@ -292,6 +296,7 @@ export const useCreateCompany = ({
           companyId: createdCompanyId,
           payload,
           jsonSchemaVersion:
+            // oxlint-disable-next-line typescript/no-deprecated
             options?.jsonSchemaVersion?.form_schema?.address_details,
         });
 

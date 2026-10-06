@@ -123,6 +123,7 @@ describe('normalizeFieldErrors', () => {
     const fieldErrors: FieldError[] = [
       { field: 'email', messages: ['Email is required'] },
     ];
+    // oxlint-disable-next-line typescript/no-deprecated
     const meta: Meta = { email: { label: 'Email Address' } };
 
     const result = normalizeFieldErrors(fieldErrors, meta);
@@ -203,6 +204,7 @@ describe('mutationToPromise', () => {
 
       const result = await mutationToPromise(
         mockMutation as $TSFixMe,
+        // oxlint-disable-next-line typescript/no-deprecated
       ).mutateAsync({});
       expect((result as ErrorResponse<{ message: string }>).error.message).toBe(
         'Nested error message',
@@ -221,6 +223,7 @@ describe('mutationToPromise', () => {
 
       const result = await mutationToPromise(
         mockMutation as $TSFixMe,
+        // oxlint-disable-next-line typescript/no-deprecated
       ).mutateAsync({});
       expect((result as ErrorResponse<{ message: string }>).error.message).toBe(
         'Flat error message',
