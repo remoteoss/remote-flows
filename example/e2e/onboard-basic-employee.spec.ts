@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupVercelBypass } from './helpers/general';
+import { getPublicHolidays, setupVercelBypass } from './helpers/general';
 import {
   fillOnboardingIntroductionForm,
   fillOnboardingStep1Form,
@@ -26,9 +26,7 @@ test.describe('Onboard basic employee', () => {
     // as the employment is created there, not when the user reaches the Benefits step.
     const benefitsSchemaPromise = watchForBenefitsSchema(page);
 
-    await fillOnboardingIntroductionForm(page, {
-      company_id: '460201ed-a8c0-4e75-89dc-6d5eae35f65e',
-    });
+    await fillOnboardingIntroductionForm(page, {});
 
     let stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Select Country');
@@ -49,6 +47,7 @@ test.describe('Onboard basic employee', () => {
       country_id: 'Portugal',
       tax_job_category: 'Finance',
       provisional_start_date: 'auto',
+      excluded_start_dates: await getPublicHolidays(page, 'ESP'),
       has_seniority_date: 'no',
     });
 
