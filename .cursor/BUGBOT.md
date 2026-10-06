@@ -230,8 +230,8 @@ Forms are central to this library - ensure consistency:
 - **Yup schemas** - Validation schemas defined with Yup
 - **JSON Schema Form** - Dynamic fields use `@remoteoss/json-schema-form`
 - **Field mapping** - Custom field components mapped in `src/components/form/fields/fieldsMapping.tsx`
-- **Validation timing** - Use `handleValidation` for combined static + dynamic validation
-- **Parse before submit** - Use `parseJSFToValidate()` to transform form values
+- **useHeadlessForm** - Schema-backed forms are built with `useHeadlessForm` (`src/common/useHeadlessForm.ts`): fetch the schema, then pass `schema`, saved `initialValues` (not the live form values), `options` and `strategy: 'buildOnce'`
+- **Validation and parsing** - Use the hook's `handleValidation` / `parseFormValues` instead of calling `parseJSFToValidate()` by hand
 - **Required vs optional** - Match field requirements to JSON schema
 
 **Check:** Are validation errors user-friendly? Do they display with proper field labels?
@@ -468,6 +468,7 @@ flows/[FlowName]/
 - Missing `waitFor` for async assertions
 - Not cleaning up React Query cache between tests
 - Testing implementation details instead of behavior
+- A fix for JSON Schema form behaviour (conditional visibility, computed or forced values, money conversion, `initialValues`, `jsfModify`) without a new situation in `src/common/tests/jsfEngineSituations.ts`, or reproduced only through a flow integration test. The situation must fail without the fix
 
 ### 9. Build and Release Issues
 

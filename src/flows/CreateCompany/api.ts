@@ -3,6 +3,7 @@ import { useClient } from '@/src/context';
 import { Client } from '@/src/client/client';
 import { FieldValues } from 'react-hook-form';
 import { FlowOptions } from '@/src/flows/types';
+// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { companyBasicInformationStepSchema } from '@/src/flows/CreateCompany/json-schemas/companyBasicInformationStep';
 import { useQuery } from '@tanstack/react-query';

@@ -47,7 +47,6 @@ export const createHeadlessForm = (
         actionableWarnings.length > 0 &&
         process.env.RF_INTERNAL_DEV === 'true'
       ) {
-        // eslint-disable-next-line no-console
         console.warn('jsfModify warnings:', actionableWarnings);
       }
     }

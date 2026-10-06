@@ -36,8 +36,11 @@ export type {
 } from '@/src/flows/InvoiceSchedule';
 
 export {
+  ContractDocumentBackButton,
   ContractDocumentFlow,
   ContractDocumentForm,
+  ContractDocumentPreviewForm,
+  ContractDocumentReviewButton,
   ContractDocumentSubmitButton,
   useContractDocument,
 } from '@/src/flows/ContractDocument';
@@ -45,6 +48,8 @@ export {
 export type {
   ContractDocumentContractDetailsPayload,
   ContractDocumentContractDetailsResponse,
+  ContractDocumentContractPreviewPayload,
+  ContractDocumentContractPreviewResponse,
   ContractDocumentFlowProps,
   ContractDocumentOptions,
   ContractDocumentStepKeys,
