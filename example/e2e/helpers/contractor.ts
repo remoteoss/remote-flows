@@ -1,4 +1,5 @@
 import { Page, expect } from '@playwright/test';
+import { randomBytes } from 'crypto';
 
 const COUNTRY_CODE = 'PRT';
 
@@ -18,7 +19,7 @@ export async function createContractorEmployment(page: Page, fullName: string) {
     name: fullName,
     job_title: 'Software Engineer',
     login_email: 'personal',
-    personal_email: `contractor.${Date.now()}@example.com`,
+    personal_email: `contractor.${randomBytes(8).toString('hex')}@example.com`,
     provisional_start_date: new Date().toISOString().slice(0, 10),
   };
   expect(
