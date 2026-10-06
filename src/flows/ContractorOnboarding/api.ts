@@ -2,12 +2,9 @@ import { useMemo } from 'react';
 import {
   CompanyAction,
   getV1CompaniesCompanyIdActions,
-  getV1ContractorsEmploymentsEmploymentIdContractDocumentsId,
   getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions,
   ManageContractorPlusSubscriptionOperationsParams,
   postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription,
-  postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign,
-  SignContractDocument,
   EligibilityQuestionnaireJsonSchemaResponse,
   getV1ContractorsSchemasEligibilityQuestionnaire,
   SubmitEligibilityQuestionnaireRequest,
@@ -20,8 +17,13 @@ import {
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { useCreateContractorContractDocument } from '@/src/common/contract-documents/api';
-export { useCreateContractorContractDocument } from '@/src/common/contract-documents/api';
-import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
+export {
+  useCreateContractorContractDocument,
+  useGetContractDocumentSignatureSchema,
+  useGetShowContractDocument,
+  useHasCompanySignedContract,
+  useSignContractDocument,
+} from '@/src/common/contract-documents/api';
 import { contractOriginSchema } from '@/src/flows/ContractorOnboarding/json-schemas/contractOrigin';
 import { invoiceScheduleSchema } from '@/src/flows/ContractorOnboarding/json-schemas/invoiceSchedule';
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
@@ -30,8 +32,8 @@ import {
   FlowOptions,
   JSFModify,
 } from '@/src/flows/types';
-import { clearBase64Data } from '@/src/lib/utils';
 import { Client } from '@/src/client/client';
+// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
@@ -63,135 +65,6 @@ import { shouldIncludeProduct } from '@/src/flows/ContractorOnboarding/utils';
 import { useCompanyPricingPlans, hasCompany } from '@/src/common/api/companies';
 import { useIdentity } from '@/src/common/api/identity';
 
-/**
- * Get the contract document signature schema
- * @param fieldValues - The field values
- * @param options - The options
- * @returns The contract document signature schema
- */
-export const useGetContractDocumentSignatureSchema = ({
-  fieldValues,
-  options,
-}: {
-  fieldValues: FieldValues;
-  options?: { queryOptions?: { enabled?: boolean }; jsfModify?: JSFModify };
-}) => {
-  return useQuery({
-    queryKey: [
-      'contract-document-signature',
-      fieldValues.review_completed,
-      options?.jsfModify,
-    ],
-    queryFn: async () => {
-      return createHeadlessForm(signatureSchema, fieldValues, {
-        jsfModify: options?.jsfModify,
-      });
-    },
-    enabled: options?.queryOptions?.enabled,
-  });
-};
-
-/**
- * Signs the contract document
- * @param employmentId - The employment ID
- * @param contractDocumentId - The contract document ID
- * @param payload - The payload
- * @returns The signed contract document
- */
-export const useSignContractDocument = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({
-      employmentId,
-      contractDocumentId,
-      payload,
-    }: {
-      employmentId: string;
-      contractDocumentId: string;
-      payload: SignContractDocument;
-    }) => {
-      return postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign(
-        {
-          client: client as Client,
-          body: payload,
-          path: {
-            employment_id: employmentId,
-            contract_document_id: contractDocumentId,
-          },
-        },
-      );
-    },
-  });
-};
-
-/**
- * Get the contract document for a given employment and contract document ID
- * @param employmentId - The employment ID
- * @param contractDocumentId - The contract document ID
- * @returns The contract document
- */
-export const useGetShowContractDocument = ({
-  employmentId,
-  contractDocumentId,
-  options,
-}: {
-  employmentId: string;
-  contractDocumentId: string;
-  options?: { queryOptions?: { enabled?: boolean }; jsfModify?: JSFModify };
-}) => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['contract-document', employmentId, contractDocumentId],
-    queryFn: async () => {
-      return getV1ContractorsEmploymentsEmploymentIdContractDocumentsId({
-        client: client as Client,
-        path: { employment_id: employmentId, id: contractDocumentId },
-      });
-    },
-    enabled: options?.queryOptions?.enabled,
-    select: ({ data }) => {
-      return {
-        ...data?.data,
-        contract_document: {
-          ...data?.data?.contract_document,
-          content: clearBase64Data(
-            data?.data?.contract_document?.content as $TSFixMe,
-          ),
-        },
-      };
-    },
-  });
-};
-
-export const useHasCompanySignedContract = ({
-  employmentId,
-  contractDocumentId,
-  options,
-}: {
-  employmentId: string;
-  contractDocumentId: string;
-  options?: { queryOptions?: { enabled?: boolean } };
-}) => {
-  const { data: documentPreviewPdf } = useGetShowContractDocument({
-    employmentId,
-    contractDocumentId,
-    options: {
-      queryOptions: {
-        enabled: options?.queryOptions?.enabled,
-      },
-    },
-  });
-
-  const hasCompanySignedContract =
-    documentPreviewPdf?.contract_document?.signatories?.some(
-      (signatory) =>
-        signatory.type === 'company' && signatory.status === 'signed',
-    );
-
-  return {
-    hasCompanySignedContract,
-  };
-};
 /**
  * Get the contractor subscriptions for the given employment id
  * @param employmentId - The employment ID

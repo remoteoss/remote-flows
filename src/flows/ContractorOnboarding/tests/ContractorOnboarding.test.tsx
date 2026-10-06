@@ -4332,6 +4332,60 @@ describe('ContractorOnboardingFlow', () => {
       await fillCreateInvoiceSchedule(values);
     };
 
+    // The Remote platform only offers invoice schedules during contractor onboarding for CM and CM+: Contractor of Record
+    // invoice schedules can only be created once the contractor is active.
+    it('offers the invoice schedule step for Contractor Management but not for Contractor of Record', async () => {
+      const recordVisibleSteps = vi.fn();
+      const visibleSteps = (): string[] =>
+        recordVisibleSteps.mock.lastCall?.[0] ?? [];
+
+      const MultiStepFormWithVisibleSteps = (props: $TSFixMe) => {
+        recordVisibleSteps(
+          (props.contractorOnboardingBag.steps ?? [])
+            .filter((step: $TSFixMe) => step.visible)
+            .map((step: $TSFixMe) => step.name),
+        );
+
+        return <MultiStepFormWithoutCountry {...props} />;
+      };
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithVisibleSteps),
+      );
+
+      render(
+        <RemoteFlowContext.Provider value={{ client: apiClient }}>
+          <ContractorOnboardingFlow
+            employmentId={generateUniqueEmploymentId()}
+            skipSteps={['select_country']}
+            options={{
+              features: ['create_invoice_schedule'],
+            }}
+            {...defaultProps}
+          />
+        </RemoteFlowContext.Provider>,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText('Step: Basic Information');
+      await fillBasicInformation();
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Pricing Plan');
+
+      await fillContractorSubscription('Contractor Management');
+      await waitFor(() => expect(visibleSteps()).toContain('invoice_schedule'));
+
+      await fillContractorSubscription('Contractor of Record');
+      await waitFor(() => {
+        expect(visibleSteps()).not.toContain('invoice_schedule');
+        expect(visibleSteps()).not.toContain('create_invoice_schedule');
+      });
+
+      await fillContractorSubscription('Contractor Management');
+      await waitFor(() => expect(visibleSteps()).toContain('invoice_schedule'));
+    });
+
     it('reveals the second item row once the first has a description and an amount', async () => {
       const employmentId = generateUniqueEmploymentId();
       await goToFilledCreateInvoiceSchedule(employmentId);

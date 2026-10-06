@@ -1,57 +1,59 @@
 ---
 alwaysApply: true
-description: Call createHeadlessForm once and recompute via handleValidation, not by re-calling createHeadlessForm on every value change
+description: Build JSON Schema forms with useHeadlessForm, never by calling createHeadlessForm directly
 glob: '{src,example/e2e}/**/*.{ts,tsx}'
 ---
 
-# createHeadlessForm / handleValidation Rule
+# useHeadlessForm Rule
 
-## Philosophy: Recompute Incrementally, Don't Re-Derive From Scratch
+## Philosophy: One Hook Owns the Form Engine
 
-`createHeadlessForm` (from `@remoteoss/remote-json-schema-form-kit`, wrapping either
-`@remoteoss/json-schema-form` or the deprecated v0 package) is designed to be called **once**
-per schema. When values change and conditional fields (`if`/`then`, visibility, available
-`options`) need to be re-evaluated, call the `handleValidation` function it returns instead of
-calling `createHeadlessForm` again.
+`useHeadlessForm` (`src/common/useHeadlessForm.ts`) is the only place app code builds a form from a JSON Schema. It builds the form once per schema and options, then recomputes conditionals through `handleValidation`, which mutates the same `fields` array in place. Calling `createHeadlessForm` again on every value change throws that array away and rebuilds the whole form from the raw schema.
 
-**Both jsf versions implement `handleValidation` by mutating the same `fields` array `createHeadlessForm`
-returned, in place** — it does not return a new one. Re-invoking `createHeadlessForm` from scratch every
-time values change throws away that array and re-derives the entire form (types, options, conditionals)
-from the raw JSON Schema for no reason.
+Importing `createHeadlessForm` is an oxlint error (`no-restricted-imports` in `.oxlintrc.json`).
 
 ## Pattern to Follow
 
-### ❌ DON'T: Re-call createHeadlessForm on every value change
+### ❌ DON'T: Call createHeadlessForm yourself
 
 ```typescript
-function recompute(values: Record<string, unknown>) {
-  // Wasteful: re-parses the schema and rebuilds every field from scratch each time.
-  const { fields } = createHeadlessForm(schema, { initialValues: values });
-  return fields;
-}
+const form = useMemo(
+  () => (schema ? createHeadlessForm(schema, fieldValues, options) : null),
+  [schema, fieldValues, options],
+);
 ```
 
-### ✅ DO: Call createHeadlessForm once, then drive updates through handleValidation
+### ✅ DO: Fetch the schema, hand it to useHeadlessForm
 
 ```typescript
-const { fields, handleValidation } = createHeadlessForm(schema, {
-  initialValues: values,
+const { data: schema, isLoading } = useQuery({
+  queryKey: ['my-form-schema', countryCode],
+  queryFn: fetchMySchema,
+  select: ({ data }) => data?.data,
 });
 
-function recompute(values: Record<string, unknown>) {
-  handleValidation(values); // mutates `fields` in place — re-read it, don't re-derive it
-  return fields;
-}
+const { form, handleValidation, parseFormValues, onValuesChange } =
+  useHeadlessForm({
+    schema,
+    initialValues: savedValues,
+    options: { jsfModify: options?.jsfModify },
+    strategy: 'buildOnce',
+  });
 ```
 
-**Reference:** `example/e2e/helpers/benefits.ts` (`fillOnboardingBenefitsStepDynamically`) calls
-`createHeadlessForm` once and loops on `handleValidation(values)` to discover fields that only
-become visible once a sibling field (e.g. a benefit's "value" after its "filter") has a value.
+`initialValues` are the saved values in API units (partner initial values merged with the employment's saved step data), not the live form values. They seed the first build so conditional fields are visible before the step mounts; after that, visibility follows `handleValidation`, and a rebuild caused by a `jsfModify` change keeps the last validated values.
+
+Expose `handleValidation` and `parseFormValues` from the hook on the flow bag rather than calling `parseJSFToValidate` by hand, and call `onValuesChange` when the form values change.
+
+**Reference:** `useBasicInformationSchema` and `useContractDetailsSchema` in `src/flows/Onboarding/api.ts`.
+
+## Strategies
+
+- **`buildOnce`**: use this for all new code.
+- **`rebuild`**: only for moving a legacy call site onto the hook without changing behaviour. It will be removed (see `docs/USE_HEADLESS_FORM_ROLLOUT.md`).
 
 ## Known Exception: Legacy Call Sites
 
-Some existing code (e.g. `useBenefitOffersSchema` and similar hooks in `src/flows/*/api.ts`) calls
-`createHeadlessForm` fresh inside a React Query `select` that re-runs whenever `fieldValues`
-changes, instead of using `handleValidation`. This is accepted technical debt, not the pattern to
-copy — new code and refactors of these call sites should move to the `handleValidation` pattern
-above.
+Files that still call `createHeadlessForm` directly carry a `// oxlint-disable-next-line no-restricted-imports -- TODO` comment on the import and are tracked in `docs/USE_HEADLESS_FORM_ROLLOUT.md`. That's debt, not a pattern to copy. Moving a file onto the hook removes its comment (lint fails on unused ones). New code never adds one.
+
+Tests, `scripts/`, and `example/e2e` helpers (e.g. `fillOnboardingBenefitsStepDynamically` in `example/e2e/helpers/benefits.ts`) may still use the engine directly.

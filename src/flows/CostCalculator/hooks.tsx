@@ -10,6 +10,7 @@ import type { JSFModify } from '@/src/flows/types';
 
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { iterateErrors } from '@/src/components/form/validationResolver';
+// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { string, ValidationError } from 'yup';
@@ -120,6 +121,7 @@ export const useCostCalculator = (
   },
 ) => {
   const fieldsMetaRef = useRef<{
+    // oxlint-disable-next-line typescript/no-deprecated
     fields: Meta;
   }>({
     fields: {},
@@ -148,6 +150,7 @@ export const useCostCalculator = (
       options,
     });
   const costCalculatorEstimationMutation = useCostCalculatorEstimation();
+  // oxlint-disable-next-line typescript/no-deprecated
   const { mutateAsync: costCalculatorEstimationMutationAsync } =
     mutationToPromise(costCalculatorEstimationMutation);
   const employeeBillingCurrency = selectedCountry?.currency;
