@@ -8,7 +8,7 @@
     "dev": "nodemon ./dev_server.js",
     "dev:env": "node ./dev_server.js",
     "build": "tsc -b && vite build",
-    "lint": "oxlint --type-aware .",
+    "lint": "oxlint --type-aware --report-unused-disable-directives-severity=error .",
     "preview": "vite preview",
     "postinstall": "react-flagpack",
     "test:e2e": "playwright test",

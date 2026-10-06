@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { format } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
@@ -12,9 +12,16 @@ import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-
 import {
   contractDocumentsOptions,
   useCreateContractorContractDocument,
+  useGetContractDocumentSignatureSchema,
+  useGetShowContractDocument,
+  useHasCompanySignedContract,
+  useSignContractDocument,
 } from '@/src/common/contract-documents/api';
 import { corProductIdentifier } from '@/src/common/contract-documents/constants';
-import { buildContractDetailsJsfModify } from '@/src/common/contract-documents/jsfModify';
+import {
+  buildContractDetailsJsfModify,
+  buildContractPreviewJsfModify,
+} from '@/src/common/contract-documents/jsfModify';
 import {
   extractAiValidationError,
   transformAiErrorResponse,
@@ -26,6 +33,7 @@ import {
 import { useClient } from '@/src/context';
 import {
   ContractDocumentContractDetailsPayload,
+  ContractDocumentContractPreviewPayload,
   ContractDocumentStepKeys,
   UseContractDocumentOptions,
 } from '@/src/flows/ContractDocument/types';
@@ -57,12 +65,24 @@ export const useContractDocument = ({
     previousStep,
     goToStep,
   } = useStepState<ContractDocumentStepKeys>(STEPS);
-  const [contractDocumentId, setContractDocumentId] = useState<
+  const [createdContractDocumentId, setCreatedContractDocumentId] = useState<
     string | undefined
   >(undefined);
-  const fieldsMetaRef = useRef<{ contract_details: NestedMeta }>({
+  const [
+    hasOpenedExistingContractDocument,
+    setHasOpenedExistingContractDocument,
+  ] = useState(false);
+  const fieldsMetaRef = useRef<{
+    contract_details: NestedMeta;
+    contract_preview: NestedMeta;
+  }>({
     contract_details: {},
+    contract_preview: {},
   });
+  const isContractDetailsStep =
+    stepState.currentStep.name === 'contract_details';
+  const isContractPreviewStep =
+    stepState.currentStep.name === 'contract_preview';
 
   const {
     data: employment,
@@ -86,6 +106,30 @@ export const useContractDocument = ({
       enabled: Boolean(employmentId),
       select: ({ data }) => data.data.contract_documents,
     });
+
+  const existingContractDocumentId = contractDocuments?.[0]?.id;
+  const contractDocumentId =
+    createdContractDocumentId ?? existingContractDocumentId;
+
+  const isOpeningExistingContractDocument =
+    Boolean(existingContractDocumentId) && !hasOpenedExistingContractDocument;
+
+  const {
+    data: documentPreviewPdf,
+    isLoading: isLoadingDocumentPreviewPdf,
+    error: documentPreviewPdfError,
+    refetch: refetchDocumentPreviewPdf,
+  } = useGetShowContractDocument({
+    employmentId,
+    contractDocumentId: contractDocumentId as string,
+    options: { queryOptions: { enabled: Boolean(contractDocumentId) } },
+  });
+
+  const { hasCompanySignedContract } = useHasCompanySignedContract({
+    employmentId,
+    contractDocumentId: contractDocumentId as string,
+    options: { queryOptions: { enabled: Boolean(contractDocumentId) } },
+  });
 
   const countryCode = employment?.country?.code;
   const productIdentifier = getProductIdentifier(employment?.contractor_type);
@@ -116,6 +160,43 @@ export const useContractDocument = ({
     [contractDetailsForm?.fields],
   );
 
+  const { data: signatureForm } = useGetContractDocumentSignatureSchema({
+    fieldValues,
+    options: {
+      queryOptions: {
+        enabled: isContractPreviewStep || isOpeningExistingContractDocument,
+      },
+      jsfModify: buildContractPreviewJsfModify(
+        options?.jsfModify?.contract_preview,
+        fieldValues,
+      ),
+    },
+  });
+
+  const signatureFields = useMemo(
+    () => (signatureForm?.fields ?? []) as Fields,
+    [signatureForm?.fields],
+  );
+
+  const isExistingContractDocumentReady =
+    signatureFields.length > 0 &&
+    Boolean(documentPreviewPdf || documentPreviewPdfError);
+
+  useEffect(() => {
+    if (isOpeningExistingContractDocument && isExistingContractDocumentReady) {
+      setHasOpenedExistingContractDocument(true);
+      goToStep('contract_preview');
+    }
+  }, [
+    isOpeningExistingContractDocument,
+    isExistingContractDocumentReady,
+    goToStep,
+  ]);
+
+  const currentForm = isContractDetailsStep
+    ? contractDetailsForm
+    : signatureForm;
+
   const contractDetailsInitialValues = useMemo(
     () =>
       getInitialValues(contractDetailsFields, {
@@ -128,9 +209,23 @@ export const useContractDocument = ({
     [contractDetailsFields, employment?.contract_details],
   );
 
+  const contractPreviewInitialValues = useMemo(() => {
+    const companySignatory =
+      documentPreviewPdf?.contract_document?.signatories?.find(
+        (signatory) => signatory.type === 'company',
+      );
+    return getInitialValues(signatureFields, {
+      signature: companySignatory?.signature,
+    });
+  }, [signatureFields, documentPreviewPdf]);
+
   const createContractDocumentMutation = useCreateContractorContractDocument();
   const { mutateAsyncOrThrow: createContractDocument } = mutationToPromise(
     createContractDocumentMutation,
+  );
+  const signContractDocumentMutation = useSignContractDocument();
+  const { mutateAsyncOrThrow: signContractDocument } = mutationToPromise(
+    signContractDocumentMutation,
   );
 
   const checkFieldUpdates = useCallback(
@@ -140,19 +235,21 @@ export const useContractDocument = ({
     [setFieldValues],
   );
 
+  const markContractAsReviewed = useCallback(() => {
+    setFieldValues((values) => ({ ...values, review_completed: true }));
+  }, [setFieldValues]);
+
   const handleValidation = useCallback(
     async (values: FieldValues): Promise<ValidationResult | null> => {
-      if (!contractDetailsForm) return null;
+      if (!currentForm) return null;
 
-      const parsed = await parseJSFToValidate(
-        values,
-        contractDetailsForm.fields,
-        { isPartialValidation: false },
-      );
+      const parsed = await parseJSFToValidate(values, currentForm.fields, {
+        isPartialValidation: false,
+      });
 
-      return contractDetailsForm.handleValidation(parsed) ?? null;
+      return currentForm.handleValidation(parsed) ?? null;
     },
-    [contractDetailsForm],
+    [currentForm],
   );
 
   const parseContractDetails = useCallback(
@@ -180,20 +277,68 @@ export const useContractDocument = ({
     [fieldValues.services_and_deliverables_error_skippable],
   );
 
-  const parseFormValues = useCallback(
-    async (values: FieldValues) =>
-      buildPayload(await parseContractDetails(values)),
-    [buildPayload, parseContractDetails],
+  const parseContractPreview = useCallback(
+    (values: FieldValues) =>
+      parseJSFToValidate(values, signatureFields, {
+        isPartialValidation: false,
+      }),
+    [signatureFields],
   );
 
-  const onSubmit = useCallback(
+  const parseFormValues = useCallback(
+    async (
+      values: FieldValues,
+    ): Promise<
+      | ContractDocumentContractDetailsPayload
+      | ContractDocumentContractPreviewPayload
+    > => {
+      if (isContractPreviewStep) {
+        const { signature } = await parseContractPreview(values);
+        return { signature };
+      }
+      return buildPayload(await parseContractDetails(values));
+    },
+    [
+      isContractPreviewStep,
+      parseContractPreview,
+      buildPayload,
+      parseContractDetails,
+    ],
+  );
+
+  const signContract = useCallback(
     async (values: FieldValues) => {
-      if (!employmentId) {
-        throw createStructuredError(
-          'No contractor to act on. Pass a non-empty `employmentId` to the flow.',
-        );
+      const parsedValues = await parseContractPreview(values);
+      fieldsMetaRef.current.contract_preview = prettifyFormValues(
+        parsedValues,
+        signatureFields,
+      );
+
+      if (hasCompanySignedContract) {
+        return { data: { contract_document: { id: contractDocumentId } } };
       }
 
+      const response = await signContractDocument({
+        employmentId,
+        contractDocumentId: contractDocumentId as string,
+        payload: { signature: parsedValues.signature },
+      });
+      await refetchDocumentPreviewPdf();
+      return response;
+    },
+    [
+      parseContractPreview,
+      signatureFields,
+      hasCompanySignedContract,
+      contractDocumentId,
+      signContractDocument,
+      employmentId,
+      refetchDocumentPreviewPdf,
+    ],
+  );
+
+  const createContract = useCallback(
+    async (values: FieldValues) => {
       const parsedValues = await parseContractDetails(values);
       fieldsMetaRef.current.contract_details = prettifyFormValues(
         parsedValues,
@@ -210,7 +355,7 @@ export const useContractDocument = ({
         if (!createdId) {
           throw createStructuredError('Contract document ID not found');
         }
-        setContractDocumentId(createdId);
+        setCreatedContractDocumentId(createdId);
 
         return response;
       } catch (error) {
@@ -238,8 +383,19 @@ export const useContractDocument = ({
     ],
   );
 
-  const isContractDetailsStep =
-    stepState.currentStep.name === 'contract_details';
+  const onSubmit = useCallback(
+    async (values: FieldValues) => {
+      if (!employmentId) {
+        throw createStructuredError(
+          'No contractor to act on. Pass a non-empty `employmentId` to the flow.',
+        );
+      }
+      return isContractPreviewStep
+        ? signContract(values)
+        : createContract(values);
+    },
+    [employmentId, isContractPreviewStep, signContract, createContract],
+  );
 
   return {
     /**
@@ -265,7 +421,7 @@ export const useContractDocument = ({
     /**
      * Form fields for the current step.
      */
-    fields: isContractDetailsStep ? contractDetailsFields : ([] as Fields),
+    fields: isContractDetailsStep ? contractDetailsFields : signatureFields,
     /**
      * Current values of the form fields for the current step.
      */
@@ -279,11 +435,12 @@ export const useContractDocument = ({
      */
     handleValidation,
     /**
-     * Turns the contract details form values into the API payload without submitting.
+     * Turns the current step's form values into the API payload without submitting.
      */
     parseFormValues,
     /**
-     * Creates the contract document from the contract details form values.
+     * Submits the current step: creates the contract document from the contract details, or
+     * signs it on the preview step unless the company has already signed.
      */
     onSubmit,
     /**
@@ -291,6 +448,7 @@ export const useContractDocument = ({
      */
     initialValues: {
       contract_details: contractDetailsInitialValues,
+      contract_preview: contractPreviewInitialValues,
     },
     /**
      * Field metadata per step, for building error messages and rendering fieldsets.
@@ -323,9 +481,18 @@ export const useContractDocument = ({
      */
     contractDocuments,
     /**
-     * The contract document created in this flow, once there is one.
+     * The contract document being previewed: the one created in this flow, or the
+     * contractor's existing one.
      */
     contractDocumentId,
+    /**
+     * Document preview PDF data
+     */
+    documentPreviewPdf,
+    /**
+     * Function to mark the contract as reviewed
+     */
+    markContractAsReviewed,
     /**
      * True when the last submission was rejected by the AI misclassification check and the
      * user may submit again to continue at their own risk.
@@ -333,22 +500,31 @@ export const useContractDocument = ({
     canSkipAiValidation:
       fieldValues.services_and_deliverables_error_skippable === true,
     /**
-     * True until the contractor and the current step's form are known: `employmentId` is
-     * empty, or the employment, its contract documents or the schema are still loading.
+     * True until the contractor and the current step are known: `employmentId` is empty, or
+     * the employment, its contract documents, the current step's schema or the previewed
+     * document are still loading.
      */
     isLoading:
       !employmentId ||
       isLoadingEmployment ||
       isLoadingContractDocuments ||
-      (isContractDetailsStep && isLoadingContractDetailsForm),
+      isOpeningExistingContractDocument ||
+      (isContractDetailsStep && isLoadingContractDetailsForm) ||
+      (isContractPreviewStep && isLoadingDocumentPreviewPdf),
     /**
-     * True while the contract document is being created.
+     * True while the contract document is being created or signed.
      */
-    isSubmitting: createContractDocumentMutation.isPending,
+    isSubmitting:
+      createContractDocumentMutation.isPending ||
+      signContractDocumentMutation.isPending,
     /**
-     * The error that stopped the flow from loading, if any: the employment or the contract
-     * details schema could not be fetched.
+     * The error that stopped the current step from loading, if any: the employment, the
+     * contract details schema, or on the preview step the previewed contract document.
      */
-    error: employmentError ?? contractDetailsFormError ?? null,
+    error:
+      employmentError ??
+      contractDetailsFormError ??
+      (isContractPreviewStep ? documentPreviewPdfError : null) ??
+      null,
   };
 };
