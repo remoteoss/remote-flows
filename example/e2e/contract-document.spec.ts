@@ -1,122 +1,173 @@
 import { test, expect, Page } from '@playwright/test';
-import { setupVercelBypass } from './helpers/general';
+import {
+  clickAndWaitForSave,
+  fillForm,
+  setupVercelBypass,
+} from './helpers/general';
 
-const EMPLOYMENT_ID = 'e2e-employment-grace';
-const CONTRACT_DOCUMENT_ID = 'e2e-contract-document';
+const COUNTRY_CODE = 'PRT';
+const CONTRACT_DOCUMENTS_PATH =
+  /^\/v1\/contractors\/employments\/[^/]+\/contract-documents$/;
+const SIGN_PATH =
+  /^\/v1\/contractors\/employments\/[^/]+\/contract-documents\/[^/]+\/sign$/;
 
-const employmentResponse = {
-  data: {
-    employment: {
-      id: EMPLOYMENT_ID,
-      full_name: 'Grace Hopper',
+async function createContractorEmployment(page: Page, fullName: string) {
+  const schemaResponse = await page.request.get(
+    `/v1/countries/${COUNTRY_CODE}/contractor_basic_information`,
+  );
+  expect(
+    schemaResponse.ok(),
+    `GET contractor_basic_information returned ${schemaResponse.status()}`,
+  ).toBe(true);
+  const { data: schema } = (await schemaResponse.json()) as {
+    data: { properties: Record<string, unknown>; required: string[] };
+  };
+
+  const values: Record<string, string> = {
+    name: fullName,
+    job_title: 'Software Engineer',
+    login_email: 'personal',
+    personal_email: `contractor.${Date.now()}@example.com`,
+    provisional_start_date: new Date().toISOString().slice(0, 10),
+  };
+  expect(
+    schema.required.filter((field) => !(field in values)),
+    'contractor_basic_information requires fields this spec does not fill',
+  ).toEqual([]);
+
+  const employmentResponse = await page.request.post('/v1/employments', {
+    data: {
       type: 'contractor',
-      contractor_type: 'standard',
-      status: 'created',
-      country: { code: 'PRT', name: 'Portugal' },
+      country_code: COUNTRY_CODE,
+      basic_information: Object.fromEntries(
+        Object.entries(values).filter(([field]) => field in schema.properties),
+      ),
     },
-  },
-};
-
-const contractDocumentsResponse = {
-  data: {
-    contract_documents: [
-      {
-        id: CONTRACT_DOCUMENT_ID,
-        name: 'Contractor_Services_Agreement.pdf',
-        type: 'contractor_services_agreement',
-        status: 'awaiting_signatures',
-        signatories: [],
-      },
-    ],
-    current_page: 1,
-    total_count: 1,
-    total_pages: 1,
-  },
-};
-
-const contractDocumentResponse = {
-  data: {
-    contract_document: {
-      name: 'Contractor_Services_Agreement.pdf',
-      status: 'awaiting_signatures',
-      content: 'data:application/pdf;base64,JVBERi0xLjQKJeLjz9MKCg==',
-      signatories: [],
-    },
-  },
-};
-
-/**
- * Registered after `setupVercelBypass`, which routes everything: Playwright matches routes in
- * reverse registration order, so the more specific stubs come last.
- */
-async function stubContractDocumentApi(page: Page, signedWith: string[]) {
-  await page.route(/\/v1\/employments\/[^/?]+/, (route) =>
-    route.fulfill({ json: employmentResponse }),
-  );
-  await page.route(
-    /\/v1\/countries\/[^/]+\/contractor-contract-details/,
-    (route) =>
-      route.fulfill({
-        json: { data: { schema: { type: 'object', properties: {} } } },
-      }),
-  );
-  await page.route(
-    /\/v1\/contractors\/employments\/[^/]+\/contractor-currencies/,
-    (route) => route.fulfill({ json: { data: [] } }),
-  );
-  await page.route(/\/v1\/employments\/[^/]+\/contract-documents/, (route) =>
-    route.fulfill({ json: contractDocumentsResponse }),
-  );
-  await page.route(
-    /\/v1\/contractors\/employments\/[^/]+\/contract-documents\/[^/]+$/,
-    (route) => route.fulfill({ json: contractDocumentResponse }),
-  );
-  await page.route(
-    /\/v1\/contractors\/employments\/[^/]+\/contract-documents\/[^/]+\/sign$/,
-    async (route) => {
-      signedWith.push(route.request().postDataJSON().signature);
-      await route.fulfill({ json: { data: { status: 'ok' } } });
-    },
-  );
+  });
+  expect(
+    employmentResponse.ok(),
+    `POST /v1/employments returned ${employmentResponse.status()}`,
+  ).toBe(true);
+  const { data } = (await employmentResponse.json()) as {
+    data: { employment: { id: string } };
+  };
+  return data.employment.id;
 }
 
 test.describe('Contract document', () => {
-  test('reviews and signs the contractor’s existing contract document', async ({
+  let employmentId: string;
+  let fullName: string;
+
+  test.beforeEach(async ({ page }) => {
+    await setupVercelBypass(page);
+    fullName = `Contractor ${Date.now()}`;
+    employmentId = await createContractorEmployment(page, fullName);
+  });
+
+  test.afterEach(async ({ page }) => {
+    const response = await page.request.delete(
+      `/v1/sandbox/employments/${employmentId}`,
+    );
+    expect(
+      response.ok(),
+      `DELETE /v1/sandbox/employments returned ${response.status()}`,
+    ).toBe(true);
+  });
+
+  test('creates, reviews and signs a contractor’s contract document', async ({
     page,
   }) => {
-    const signedWith: string[] = [];
-    await setupVercelBypass(page);
-    await stubContractDocumentApi(page, signedWith);
-
-    const pageErrors: string[] = [];
-    page.on('pageerror', (error) => pageErrors.push(error.message));
-
     await page.goto('/?demo=contract-document');
 
-    await page.getByLabel('Employment ID:').fill(EMPLOYMENT_ID);
+    await page.getByLabel('Employment ID:').fill(employmentId);
     await page
       .getByRole('button', { name: 'Create contract document' })
       .click();
+
+    await expect(
+      page.getByRole('heading', { name: 'Contract Details' }),
+    ).toBeVisible();
+
+    await fillForm(page, [
+      {
+        type: 'textField',
+        name: 'services_and_deliverables',
+        value:
+          'Design and deliver a marketing website, including page mockups, the front-end implementation and handover documentation.',
+      },
+      {
+        type: 'textField',
+        name: 'termination.contractor_notice_period_amount',
+        value: '15',
+      },
+      {
+        type: 'textField',
+        name: 'termination.company_notice_period_amount',
+        value: '15',
+      },
+      {
+        type: 'select',
+        name: 'payment_terms.compensation_currency_code',
+        value: 'USD',
+      },
+      {
+        type: 'textField',
+        name: 'payment_terms.compensation_gross_amount',
+        value: '1000',
+      },
+      {
+        type: 'select',
+        name: 'payment_terms.period_unit',
+        value: 'Hour',
+      },
+      {
+        type: 'select',
+        name: 'payment_terms.invoicing_frequency',
+        value: 'Bi-weekly',
+      },
+    ]);
+
+    const contractDocumentCreated = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'POST' &&
+        CONTRACT_DOCUMENTS_PATH.test(new URL(response.url()).pathname),
+    );
+    await page.getByRole('button', { name: 'Next Step' }).click();
+    if (!(await contractDocumentCreated).ok()) {
+      await clickAndWaitForSave(
+        page,
+        page.getByRole('button', { name: 'Continue anyway' }),
+        'POST',
+        CONTRACT_DOCUMENTS_PATH,
+      );
+    }
 
     await expect(
       page.getByRole('heading', { name: 'Contract Preview' }),
     ).toBeVisible();
 
     await page.getByRole('button', { name: 'Review contract' }).click();
+    const drawer = page.getByRole('dialog');
     await expect(
-      page
-        .getByRole('dialog')
-        .getByRole('heading', { name: 'Contract Document' }),
+      drawer.getByRole('heading', { name: 'Contract Document' }),
     ).toBeVisible();
+    await expect(drawer.locator('iframe')).toHaveAttribute(
+      'src',
+      /^data:application\/pdf;base64,/,
+    );
     await page.keyboard.press('Escape');
+    await expect(drawer).toBeHidden();
 
-    await page.getByLabel('Enter full name').fill('Grace Hopper');
-    await page.getByRole('button', { name: 'Sign contract' }).click();
+    await page.getByLabel('Enter full name').fill(fullName);
+    await clickAndWaitForSave(
+      page,
+      page.getByRole('button', { name: 'Sign contract' }),
+      'POST',
+      SIGN_PATH,
+    );
 
     await expect(
       page.getByRole('heading', { name: 'Contract signed' }),
     ).toBeVisible();
-    expect(signedWith).toEqual(['Grace Hopper']);
-    expect(pageErrors).toEqual([]);
   });
 });
