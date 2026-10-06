@@ -22,6 +22,7 @@ test.describe('Invoice schedule', () => {
   let employmentId: string;
 
   test.beforeEach(async ({ page }) => {
+    employmentId = '';
     await setupVercelBypass(page);
     employmentId = await createContractorEmployment(
       page,
@@ -30,6 +31,8 @@ test.describe('Invoice schedule', () => {
   });
 
   test.afterEach(async ({ page }) => {
+    if (!employmentId) return;
+
     await archiveEmployment(page, employmentId);
   });
 
