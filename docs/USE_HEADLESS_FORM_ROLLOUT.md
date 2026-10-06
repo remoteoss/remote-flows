@@ -93,7 +93,7 @@ Status: `todo`, `phase 1` (on the hook, old behaviour), `done` (on the hook with
 | Onboarding `useContractDetailsSchema` (jsf v1)              | done   | #1433                                                     |
 | Onboarding `useCountriesSchemaField`                        | todo   |                                                           |
 | ContractorOnboarding `useCountriesSchemaField`              | todo   |                                                           |
-| ContractorOnboarding `useContractorSubscriptionSchemaField` | todo   |                                                           |
+| ContractorOnboarding `useContractorSubscriptionSchemaField` | done   |                                                           |
 | ContractorOnboarding `useGetInvoiceScheduleSchema`          | todo   |                                                           |
 | CreateCompany `useCountriesSchemaField` (basic information) | done   |                                                           |
 | CostCalculator `useStaticSchema` + `useRegionFields`        | todo   | Combines several forms; needs a design per sub-form first |
