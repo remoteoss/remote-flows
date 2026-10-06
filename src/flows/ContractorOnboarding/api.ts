@@ -5,8 +5,6 @@ import {
   getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions,
   ManageContractorPlusSubscriptionOperationsParams,
   postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription,
-  postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign,
-  SignContractDocument,
   EligibilityQuestionnaireJsonSchemaResponse,
   getV1ContractorsSchemasEligibilityQuestionnaire,
   SubmitEligibilityQuestionnaireRequest,
@@ -18,14 +16,13 @@ import {
   PostV1EmploymentsEmploymentIdContractOriginData,
 } from '@/src/client';
 import { useClient } from '@/src/context';
-import {
-  useCreateContractorContractDocument,
-  useGetShowContractDocument,
-} from '@/src/common/contract-documents/api';
+import { useCreateContractorContractDocument } from '@/src/common/contract-documents/api';
 export {
   useCreateContractorContractDocument,
   useGetContractDocumentSignatureSchema,
   useGetShowContractDocument,
+  useHasCompanySignedContract,
+  useSignContractDocument,
 } from '@/src/common/contract-documents/api';
 import { contractOriginSchema } from '@/src/flows/ContractorOnboarding/json-schemas/contractOrigin';
 import { invoiceScheduleSchema } from '@/src/flows/ContractorOnboarding/json-schemas/invoiceSchedule';
@@ -68,68 +65,6 @@ import { shouldIncludeProduct } from '@/src/flows/ContractorOnboarding/utils';
 import { useCompanyPricingPlans, hasCompany } from '@/src/common/api/companies';
 import { useIdentity } from '@/src/common/api/identity';
 
-/**
- * Signs the contract document
- * @param employmentId - The employment ID
- * @param contractDocumentId - The contract document ID
- * @param payload - The payload
- * @returns The signed contract document
- */
-export const useSignContractDocument = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({
-      employmentId,
-      contractDocumentId,
-      payload,
-    }: {
-      employmentId: string;
-      contractDocumentId: string;
-      payload: SignContractDocument;
-    }) => {
-      return postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign(
-        {
-          client: client as Client,
-          body: payload,
-          path: {
-            employment_id: employmentId,
-            contract_document_id: contractDocumentId,
-          },
-        },
-      );
-    },
-  });
-};
-
-export const useHasCompanySignedContract = ({
-  employmentId,
-  contractDocumentId,
-  options,
-}: {
-  employmentId: string;
-  contractDocumentId: string;
-  options?: { queryOptions?: { enabled?: boolean } };
-}) => {
-  const { data: documentPreviewPdf } = useGetShowContractDocument({
-    employmentId,
-    contractDocumentId,
-    options: {
-      queryOptions: {
-        enabled: options?.queryOptions?.enabled,
-      },
-    },
-  });
-
-  const hasCompanySignedContract =
-    documentPreviewPdf?.contract_document?.signatories?.some(
-      (signatory) =>
-        signatory.type === 'company' && signatory.status === 'signed',
-    );
-
-  return {
-    hasCompanySignedContract,
-  };
-};
 /**
  * Get the contractor subscriptions for the given employment id
  * @param employmentId - The employment ID

@@ -1,5 +1,9 @@
 import React from 'react';
-import { CreateContractDocument } from '@/src/client/types.gen';
+import {
+  CreateContractDocument,
+  SignContractDocument,
+  SuccessResponse,
+} from '@/src/client/types.gen';
 import { ContractorContractDetailsResponse } from '@/src/common/contract-documents/types';
 import { useContractDocument } from '@/src/flows/ContractDocument/hooks';
 import { JSFModify } from '@/src/flows/types';
@@ -43,3 +47,7 @@ export type ContractDocumentContractDetailsPayload = CreateContractDocument;
 
 export type ContractDocumentContractDetailsResponse =
   ContractorContractDetailsResponse['data'];
+
+export type ContractDocumentContractPreviewPayload = SignContractDocument;
+
+export type ContractDocumentContractPreviewResponse = SuccessResponse;

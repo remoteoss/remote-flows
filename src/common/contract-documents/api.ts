@@ -5,6 +5,8 @@ import {
   getV1ContractorsEmploymentsEmploymentIdContractDocumentsId,
   getV1EmploymentsEmploymentIdContractDocuments,
   postV1ContractorsEmploymentsEmploymentIdContractDocuments,
+  postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign,
+  SignContractDocument,
 } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { signatureSchema } from '@/src/common/contract-documents/json-schemas/signature';
@@ -155,4 +157,67 @@ export const useCreateContractorContractDocument = () => {
       });
     },
   });
+};
+
+/**
+ * Signs the contract document
+ * @param employmentId - The employment ID
+ * @param contractDocumentId - The contract document ID
+ * @param payload - The payload
+ * @returns The signed contract document
+ */
+export const useSignContractDocument = () => {
+  const { client } = useClient();
+  return useMutation({
+    mutationFn: async ({
+      employmentId,
+      contractDocumentId,
+      payload,
+    }: {
+      employmentId: string;
+      contractDocumentId: string;
+      payload: SignContractDocument;
+    }) => {
+      return postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign(
+        {
+          client: client as Client,
+          body: payload,
+          path: {
+            employment_id: employmentId,
+            contract_document_id: contractDocumentId,
+          },
+        },
+      );
+    },
+  });
+};
+
+export const useHasCompanySignedContract = ({
+  employmentId,
+  contractDocumentId,
+  options,
+}: {
+  employmentId: string;
+  contractDocumentId: string;
+  options?: { queryOptions?: { enabled?: boolean } };
+}) => {
+  const { data: documentPreviewPdf } = useGetShowContractDocument({
+    employmentId,
+    contractDocumentId,
+    options: {
+      queryOptions: {
+        enabled: options?.queryOptions?.enabled,
+      },
+    },
+  });
+
+  const hasCompanySignedContract =
+    documentPreviewPdf?.contract_document?.signatories?.some(
+      (signatory) =>
+        signatory.type === 'company' && signatory.status === 'signed',
+    );
+
+  return {
+    hasCompanySignedContract,
+  };
 };
