@@ -59,12 +59,15 @@ test.describe('Contract document', () => {
   let fullName: string;
 
   test.beforeEach(async ({ page }) => {
+    employmentId = '';
     await setupVercelBypass(page);
     fullName = `Contractor ${Date.now()}`;
     employmentId = await createContractorEmployment(page, fullName);
   });
 
   test.afterEach(async ({ page }) => {
+    if (!employmentId) return;
+
     const response = await page.request.delete(
       `/v1/sandbox/employments/${employmentId}`,
     );
