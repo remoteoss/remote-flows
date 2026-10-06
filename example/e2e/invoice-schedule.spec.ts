@@ -1,3 +1,4 @@
+/* oxlint-disable no-restricted-properties -- TODO: tech debt, this spec fakes the API instead of running against the sandbox. Move it to a vitest + MSW test in src/flows/InvoiceSchedule/tests/ that renders the real Radix select, then delete it. */
 import { test, expect, Page } from '@playwright/test';
 import { setupVercelBypass } from './helpers/general';
 

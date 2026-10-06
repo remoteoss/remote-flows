@@ -55,6 +55,30 @@
       "rules": {
         "no-restricted-imports": "off"
       }
+    },
+    {
+      "files": ["example/e2e/**"],
+      "rules": {
+        "no-restricted-properties": [
+          "error",
+          {
+            "property": "fulfill",
+            "message": "E2E runs against the real API. Fake responses belong in a vitest + MSW test under src/, reusing src/tests/handlers.ts and the existing fixtures."
+          },
+          {
+            "property": "abort",
+            "message": "E2E runs against the real API. Fake responses belong in a vitest + MSW test under src/, reusing src/tests/handlers.ts and the existing fixtures."
+          },
+          {
+            "property": "routeFromHAR",
+            "message": "E2E runs against the real API. Fake responses belong in a vitest + MSW test under src/, reusing src/tests/handlers.ts and the existing fixtures."
+          },
+          {
+            "property": "routeWebSocket",
+            "message": "E2E runs against the real API. Fake responses belong in a vitest + MSW test under src/, reusing src/tests/handlers.ts and the existing fixtures."
+          }
+        ]
+      }
     }
   ]
 }
