@@ -23,7 +23,6 @@
 
 - sync COUNTRY_CONTRACT_VERSIONS with backend (#1435) [#1435](https://github.com/remoteoss/remote-flows/pull/1435)
 
-
 ## 1.58.0
 
 ### Minor Changes
