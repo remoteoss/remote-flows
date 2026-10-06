@@ -37,12 +37,6 @@ const currenciesResponse = {
  * reverse registration order, so the specific stubs below take precedence over it.
  */
 async function stubInvoiceScheduleApi(page: Page) {
-  await page.route('**/api/fetch-refresh-token', (route) =>
-    route.fulfill({
-      json: { access_token: 'e2e-access-token', expires_in: 3600 },
-    }),
-  );
-
   await page.route(
     /\/v1\/contractors\/employments\/[^/]+\/contractor-currencies/,
     (route) => route.fulfill({ json: currenciesResponse }),

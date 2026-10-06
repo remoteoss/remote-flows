@@ -39,16 +39,8 @@ export type EmployeeStepKey =
 //   patterns. Force `inputType: 'tel'` so TelField renders a country picker +
 //   national-number input. Without this it falls back to a plain text input
 //   that silently fails the anyOf validation.
-//
-// Both variants hide `name` (a computed display-only field that the PUT
-// endpoint rejects via `additionalProperties: false`).
-const PERSONAL_DETAILS_HIDE_NAME = {
-  name: { 'x-jsf-presentation': { inputType: 'hidden' } },
-};
-
 const PERSONAL_DETAILS_JSF_MODIFY_USA: JSFModify = {
   fields: {
-    ...PERSONAL_DETAILS_HIDE_NAME,
     mobile_number: {
       description: 'Enter 10 digits, no country code (e.g. 5389274785)',
     },
@@ -57,7 +49,6 @@ const PERSONAL_DETAILS_JSF_MODIFY_USA: JSFModify = {
 
 const PERSONAL_DETAILS_JSF_MODIFY_INTL: JSFModify = {
   fields: {
-    ...PERSONAL_DETAILS_HIDE_NAME,
     mobile_number: { 'x-jsf-presentation': { inputType: 'tel' } },
   },
 };

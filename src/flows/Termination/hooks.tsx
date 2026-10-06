@@ -1,4 +1,5 @@
 import { $TSFixMe } from '@/src/types/remoteFlows';
+// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import omitBy from 'lodash.omitby';
 import isNull from 'lodash.isnull';
@@ -322,6 +323,7 @@ export const useTermination = ({
   const entireTerminationSchema = createHeadlessForm(jsonSchema.data.schema);
 
   const createTermination = useCreateTermination();
+  // oxlint-disable-next-line typescript/no-deprecated
   const { mutateAsync } = mutationToPromise(createTermination);
 
   async function onSubmit(values: TerminationFormValues) {
