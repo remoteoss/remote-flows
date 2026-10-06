@@ -59,6 +59,7 @@ function renderStep(props: ContractorOnboardingRenderProps) {
         <>
           <h1>Step: Pricing Plan</h1>
           <PricingPlanWithModal {...props} />
+          <SubmitButton>Next Step</SubmitButton>
         </>
       );
     default:
@@ -113,5 +114,59 @@ describe('ContractorOnboarding pricing plan options', () => {
     expect(
       screen.getByText(`Plans offered: ${radiosBefore}`),
     ).toBeInTheDocument();
+  });
+
+  it('blocks submitting a preselected plan that excludeProducts hides', async () => {
+    const corSubscriptionSpy = vi.fn();
+    server.use(
+      http.get('*/v1/employments/:id', () =>
+        HttpResponse.json({
+          ...mockContractorEmploymentResponse,
+          data: {
+            ...mockContractorEmploymentResponse.data,
+            employment: {
+              ...mockContractorEmploymentResponse.data.employment,
+              contractor_type: 'cor',
+            },
+          },
+        }),
+      ),
+      http.post(
+        '*/v1/contractors/employments/*/contractor-cor-subscription',
+        () => {
+          corSubscriptionSpy();
+          return HttpResponse.json({});
+        },
+      ),
+    );
+
+    render(
+      <ContractorOnboardingFlow
+        countryCode='PRT'
+        skipSteps={['select_country']}
+        options={{ excludeProducts: ['cor'] }}
+        render={renderStep}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitFor(() =>
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument(),
+    );
+    await fillBasicInformation();
+    screen.getByText(/Next Step/i).click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+    await screen.findAllByRole('radio');
+    expect(
+      screen.queryByRole('radio', { name: /^Contractor of Record$/ }),
+    ).not.toBeInTheDocument();
+
+    screen.getByText(/Next Step/i).click();
+
+    expect(await screen.findByText(/is not valid/i)).toBeInTheDocument();
+    expect(screen.getByText(/Step: Pricing Plan/i)).toBeInTheDocument();
+    expect(corSubscriptionSpy).not.toHaveBeenCalled();
   });
 });
