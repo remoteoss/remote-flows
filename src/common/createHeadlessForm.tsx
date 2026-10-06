@@ -23,9 +23,7 @@ export const createHeadlessForm = (
   fieldValues?: FieldValues,
   options?: { jsfModify?: JSFModify; transformMoneyFields?: boolean },
 ): JSONSchemaFormResultWithFieldsets => {
-  const { transformMoneyFields } = options || {
-    transformMoneyFields: true,
-  };
+  const transformMoneyFields = options?.transformMoneyFields ?? true;
   if (options && options.jsfModify) {
     const { required, allOf, ...modifyConfig } = options.jsfModify;
     // muteLogging: true suppresses the generic library log; we surface the
@@ -49,7 +47,6 @@ export const createHeadlessForm = (
         actionableWarnings.length > 0 &&
         process.env.RF_INTERNAL_DEV === 'true'
       ) {
-        // eslint-disable-next-line no-console
         console.warn('jsfModify warnings:', actionableWarnings);
       }
     }

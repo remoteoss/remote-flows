@@ -15,13 +15,45 @@
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "typescript/no-explicit-any": "error",
-    "typescript/no-deprecated": "error"
+    "typescript/no-deprecated": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "@remoteoss/remote-json-schema-form-kit",
+            "importNames": ["createHeadlessForm"],
+            "message": "Build JSON Schema forms with useHeadlessForm from @/src/common/useHeadlessForm instead of calling createHeadlessForm directly. See docs/USE_HEADLESS_FORM_ROLLOUT.md."
+          }
+        ],
+        "patterns": [
+          {
+            "group": ["**/createHeadlessForm"],
+            "importNames": ["createHeadlessForm"],
+            "message": "Build JSON Schema forms with useHeadlessForm from @/src/common/useHeadlessForm instead of calling createHeadlessForm directly. See docs/USE_HEADLESS_FORM_ROLLOUT.md."
+          }
+        ]
+      }
+    ]
   },
   "overrides": [
     {
       "files": ["src/client/**"],
       "rules": {
         "typescript/no-deprecated": "off"
+      }
+    },
+    {
+      "files": [
+        "scripts/**",
+        "src/common/createHeadlessForm.tsx",
+        "src/common/useHeadlessForm.ts",
+        "src/**/tests/**",
+        "src/**/__tests__/**",
+        "src/**/*.test.{ts,tsx}"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
       }
     }
   ]
