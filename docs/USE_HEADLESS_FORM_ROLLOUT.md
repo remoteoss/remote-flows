@@ -95,7 +95,7 @@ Status: `todo`, `phase 1` (on the hook, old behaviour), `done` (on the hook with
 | ContractorOnboarding `useCountriesSchemaField`              | todo   |                                                           |
 | ContractorOnboarding `useContractorSubscriptionSchemaField` | todo   |                                                           |
 | ContractorOnboarding `useGetInvoiceScheduleSchema`          | todo   |                                                           |
-| CreateCompany `useCountriesSchemaField` (basic information) | todo   |                                                           |
+| CreateCompany `useCountriesSchemaField` (basic information) | done   |                                                           |
 | CostCalculator `useStaticSchema` + `useRegionFields`        | todo   | Combines several forms; needs a design per sub-form first |
 | Termination full schema in `useTermination`                 | todo   | Combines several forms; needs a design per sub-form first |
 
