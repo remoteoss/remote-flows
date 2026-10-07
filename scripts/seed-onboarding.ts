@@ -66,13 +66,14 @@ import dotenv from 'dotenv';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY } from '../example/src/flows/Onboarding/jsonSchemaVersions';
 import { fillSchema, findSafeStartDate, HolidayDate } from './fill-schema';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 
 type FormSchema = Record<string, unknown>;
-type HttpMethod = 'GET' | 'POST';
+type HttpMethod = 'GET' | 'POST' | 'PATCH';
 type AuthHeaders = Record<string, string>;
 
 interface ApiOptions {
@@ -118,6 +119,7 @@ if ('env' in args && stringArg('env') === undefined) {
   );
 }
 const ENV = stringArg('env');
+const FILL_CONTRACT_DETAILS = args['contract-details'] === true;
 
 let BASE_URL: string;
 let getAuthHeaders = async (
@@ -378,8 +380,12 @@ async function seedEmployee() {
     console.log('engagement_agreement_details submitted.');
   }
 
+  if (FILL_CONTRACT_DETAILS) {
+    await submitContractDetails(employmentId);
+  }
+
   console.log(
-    `\nDone. Employment ${employmentId} for ${COUNTRY} is now sitting at contract_details.`,
+    `\nDone. Employment ${employmentId} for ${COUNTRY} is now ${FILL_CONTRACT_DETAILS ? 'past' : 'sitting at'} contract_details.`,
   );
   const appUrl = process.env.VITE_APP_URL || (ENV ? undefined : BASE_URL);
   if (appUrl) {
@@ -396,6 +402,48 @@ async function seedEmployee() {
         `Tip: set VITE_APP_URL=<your deployed app URL> in .env.${ENV} to get a ready-to-click link next time.`,
     );
   }
+}
+
+async function submitContractDetails(employmentId: string) {
+  const version =
+    ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY[
+      COUNTRY as keyof typeof ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY
+    ]?.contract_details ?? 1;
+  console.log(`\nFetching contract_details v${version} schema for ${COUNTRY}...`);
+  const schema = await api<{ data: FormSchema }>(
+    'GET',
+    `/v1/countries/${COUNTRY}/contract_details`,
+    {
+      query: {
+        skip_benefits: true,
+        employment_id: employmentId,
+        json_schema_version: version,
+      },
+    },
+  ).then((res) => res.data);
+  const { values, skipped, errors } = fillSchema(schema);
+  console.log('contract_details payload:', JSON.stringify(values, null, 2));
+  if (skipped.length) {
+    console.log('Skipped (unfillable) fields:', skipped.join(', '));
+  }
+  if (Object.keys(errors).length) {
+    throw new Error(
+      `Could not fill contract_details values that pass validation: ${JSON.stringify(errors)}`,
+    );
+  }
+
+  await api('PATCH', `/v1/employments/${employmentId}`, {
+    query: {
+      skip_benefits: true,
+      employment_basic_information_json_schema_version: BASIC_INFO_VERSION,
+      contract_details_json_schema_version: version,
+    },
+    body: {
+      contract_details: values,
+      pricing_plan_details: { frequency: 'monthly' },
+    },
+  });
+  console.log('contract_details submitted.');
 }
 
 function main() {
