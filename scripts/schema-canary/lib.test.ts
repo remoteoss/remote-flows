@@ -4,46 +4,40 @@ import {
   decideExitCode,
   formatSummaryTable,
   isSkipped,
-  resolveEngine,
   SchemaCanaryRow,
 } from './lib';
 import { SchemaCanarySkipEntry } from './skip-list';
 
-describe('resolveEngine', () => {
-  it('returns jsf-v1 for countries on the jsf v1 contract details engine', () => {
-    expect(resolveEngine('DEU')).toBe('jsf-v1');
-    expect(resolveEngine('FRA')).toBe('jsf-v1');
-  });
-
-  it('returns jsf-v0 for every other country', () => {
-    expect(resolveEngine('GBR')).toBe('jsf-v0');
-  });
-});
-
-describe('checkSchemaBuildsAndValidates', () => {
-  it('passes for a valid schema', async () => {
-    const result = await checkSchemaBuildsAndValidates({
-      type: 'object',
-      properties: {
-        name: {
-          type: 'string',
-          title: 'Name',
-          'x-jsf-presentation': { inputType: 'text' },
+describe.each(['buildOnce', 'rebuild'] as const)(
+  'checkSchemaBuildsAndValidates with %s',
+  (strategy) => {
+    it('passes for a valid schema', async () => {
+      const result = await checkSchemaBuildsAndValidates(
+        {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              title: 'Name',
+              'x-jsf-presentation': { inputType: 'text' },
+            },
+          },
+          required: ['name'],
         },
-      },
-      required: ['name'],
+        strategy,
+      );
+      expect(result.ok).toBe(true);
     });
-    expect(result.ok).toBe(true);
-  });
 
-  it('fails and captures the error for an unusable schema', async () => {
-    const result = await checkSchemaBuildsAndValidates(null);
-    expect(result.ok).toBe(false);
-    if (!result.ok) {
-      expect(result.error).toContain('properties');
-    }
-  });
-});
+    it('fails and captures the error for an unusable schema', async () => {
+      const result = await checkSchemaBuildsAndValidates(null, strategy);
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.error).toContain('properties');
+      }
+    });
+  },
+);
 
 describe('isSkipped', () => {
   const skipList: SchemaCanarySkipEntry[] = [
@@ -74,7 +68,7 @@ describe('decideExitCode', () => {
   const passingRow: SchemaCanaryRow = {
     country: 'DEU',
     version: 7,
-    engine: 'jsf-v1',
+    strategy: 'buildOnce',
     check: 'pinned',
     outcome: 'pass',
   };
@@ -122,7 +116,7 @@ describe('buildReport', () => {
       {
         country: 'DEU',
         version: 7,
-        engine: 'jsf-v1',
+        strategy: 'buildOnce',
         check: 'pinned',
         outcome: 'pass',
       },
@@ -139,7 +133,7 @@ describe('buildReport', () => {
       {
         country: 'DEU',
         version: 7,
-        engine: 'jsf-v1',
+        strategy: 'buildOnce',
         check: 'pinned',
         outcome: 'pass',
       },
@@ -162,14 +156,14 @@ describe('formatSummaryTable', () => {
       {
         country: 'DEU',
         version: 7,
-        engine: 'jsf-v1',
+        strategy: 'buildOnce',
         check: 'pinned',
         outcome: 'pass',
       },
       {
         country: 'FRA',
         version: 'latest',
-        engine: 'jsf-v1',
+        strategy: 'buildOnce',
         check: 'latest',
         outcome: 'fail',
         error: 'Cannot read properties of null',
@@ -177,7 +171,7 @@ describe('formatSummaryTable', () => {
       {
         country: 'ISL',
         version: 3,
-        engine: 'jsf-v0',
+        strategy: 'rebuild',
         check: 'pinned',
         outcome: 'seed-error',
         error: 'employment seeding failed: POST /v1/employments -> 422',
@@ -188,11 +182,11 @@ describe('formatSummaryTable', () => {
 
     expect(table).toBe(
       [
-        '| Country | Version | Engine | Check | Result | Error |',
+        '| Country | Version | Strategy | Check | Result | Error |',
         '| --- | --- | --- | --- | --- | --- |',
-        '| DEU | 7 | jsf-v1 | pinned | ✅ pass |  |',
-        '| FRA | latest | jsf-v1 | latest | ❌ fail | Cannot read properties of null |',
-        '| ISL | 3 | jsf-v0 | pinned | ⚠️ seed error | employment seeding failed: POST /v1/employments -> 422 |',
+        '| DEU | 7 | buildOnce | pinned | ✅ pass |  |',
+        '| FRA | latest | buildOnce | latest | ❌ fail | Cannot read properties of null |',
+        '| ISL | 3 | rebuild | pinned | ⚠️ seed error | employment seeding failed: POST /v1/employments -> 422 |',
       ].join('\n'),
     );
   });

@@ -1,23 +1,21 @@
-import { createHeadlessForm } from '@/src/common/createHeadlessForm';
-import { usesJsfV1ContractDetails } from '@/src/flows/Onboarding/utils';
+import {
+  buildHeadlessForm,
+  HeadlessFormStrategy,
+  parseValuesForValidation,
+} from '@/src/common/headlessForm';
 import { findSkipEntry, SchemaCanarySkipEntry } from './skip-list';
 
-export type SchemaEngine = 'jsf-v0' | 'jsf-v1';
 export type SchemaCheckType = 'pinned' | 'latest';
 export type SchemaCheckOutcome = 'pass' | 'fail' | 'seed-error' | 'skip';
 
 export type SchemaCanaryRow = {
   country: string;
   version: number | 'latest';
-  engine: SchemaEngine;
+  strategy: HeadlessFormStrategy;
   check: SchemaCheckType;
   outcome: SchemaCheckOutcome;
   error?: string;
 };
-
-export function resolveEngine(countryCode: string): SchemaEngine {
-  return usesJsfV1ContractDetails(countryCode) ? 'jsf-v1' : 'jsf-v0';
-}
 
 export function firstStackFrame(error: unknown): string | undefined {
   if (!(error instanceof Error) || !error.stack) {
@@ -34,10 +32,17 @@ export function describeError(error: unknown): string {
 
 export async function checkSchemaBuildsAndValidates(
   schema: Record<string, unknown> | null,
+  strategy: HeadlessFormStrategy,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   try {
-    const form = createHeadlessForm(schema as Record<string, unknown>, {});
-    await form.handleValidation({});
+    const form = buildHeadlessForm(
+      schema as Record<string, unknown>,
+      strategy,
+      {},
+    );
+    await form.handleValidation(
+      await parseValuesForValidation(form, strategy, {}),
+    );
     return { ok: true };
   } catch (error) {
     return { ok: false, error: describeError(error) };
@@ -81,7 +86,7 @@ export function buildReport(rows: SchemaCanaryRow[]): SchemaCanaryReport {
     _meta: {
       title: 'Contract details schema canary',
       description:
-        'Per-country contract_details schema checks against the sandbox gateway. "pinned" is the version this library currently ships against (see example/src/flows/Onboarding/jsonSchemaVersions.ts); "latest" is whatever version the gateway currently serves as newest. Both run createHeadlessForm(schema, {}) + handleValidation({}) and record whether it throws. "seed-error" means the sandbox employment for that country could not be created, so its schemas were not checked.',
+        'Per-country contract_details schema checks against the sandbox gateway. "pinned" is the version this library currently ships against (see example/src/flows/Onboarding/jsonSchemaVersions.ts); "latest" is whatever version the gateway currently serves as newest. Both build the schema with the useHeadlessForm strategy the Onboarding flow uses for that country (buildOnce for jsf v1 contract details countries, rebuild otherwise), validate empty values the same way the hook does, and record whether it throws. "seed-error" means the sandbox employment for that country could not be created, so its schemas were not checked.',
       source:
         'scripts/schema-canary.ts, run nightly against the sandbox gateway',
     },
@@ -90,11 +95,11 @@ export function buildReport(rows: SchemaCanaryRow[]): SchemaCanaryReport {
 }
 
 export function formatSummaryTable(rows: SchemaCanaryRow[]): string {
-  const header = '| Country | Version | Engine | Check | Result | Error |';
+  const header = '| Country | Version | Strategy | Check | Result | Error |';
   const divider = '| --- | --- | --- | --- | --- | --- |';
   const body = rows.map((row) => {
     const error = (row.error ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ');
-    return `| ${row.country} | ${row.version} | ${row.engine} | ${row.check} | ${OUTCOME_LABEL[row.outcome]} | ${error} |`;
+    return `| ${row.country} | ${row.version} | ${row.strategy} | ${row.check} | ${OUTCOME_LABEL[row.outcome]} | ${error} |`;
   });
   return [header, divider, ...body].join('\n');
 }
