@@ -409,7 +409,9 @@ async function submitContractDetails(employmentId: string) {
     ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY[
       COUNTRY as keyof typeof ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY
     ]?.contract_details ?? 1;
-  console.log(`\nFetching contract_details v${version} schema for ${COUNTRY}...`);
+  console.log(
+    `\nFetching contract_details v${version} schema for ${COUNTRY}...`,
+  );
   const schema = await api<{ data: FormSchema }>(
     'GET',
     `/v1/countries/${COUNTRY}/contract_details`,
