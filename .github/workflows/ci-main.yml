@@ -14,22 +14,26 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run format check
-        run: npm run check-format
+        run: pnpm run check-format
 
       - name: Run lint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Run type check
-        run: npm run type-check
+        run: pnpm run type-check
 
   build-and-exports:
     name: Build and Check Exports
@@ -39,19 +43,23 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
       - name: Check exports
-        run: npm run check-exports
+        run: pnpm run check-exports
 
   tests:
     name: Unit Tests
@@ -61,16 +69,20 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run tests
-        run: npm run test
+        run: pnpm run test
 
   example-checks:
     name: Example App Checks
@@ -80,16 +92,20 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install main package dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build main package
-        run: npm run build
+        run: pnpm run build
 
       - name: Install example dependencies
         working-directory: ./example
@@ -171,13 +187,17 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install main package dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Install example/ dependencies
         working-directory: ./example

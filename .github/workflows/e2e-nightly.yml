@@ -55,13 +55,17 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install main package dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Install example/ dependencies
         working-directory: ./example

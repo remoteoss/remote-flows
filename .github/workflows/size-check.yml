@@ -5,7 +5,7 @@ on:
     paths:
       - 'src/**'
       - 'package.json'
-      - 'package-lock.json'
+      - 'pnpm-lock.yaml'
       - 'tsdown.config.ts'
       - '.sizelimit.json'
 
@@ -24,20 +24,23 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Setup Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: '24.15.0'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build current branch
-        run: npm run build
+        run: pnpm run build
 
       - name: Analyze current bundle size
-        run: npm run size -- --output out/current-bundle.json
+        run: pnpm run size --output out/current-bundle.json
 
       - name: Checkout base branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -59,17 +62,22 @@ jobs:
       - name: Install dependencies (base)
         if: steps.check_script.outputs.exists == 'true'
         working-directory: base
-        run: npm ci --include=optional --ignore-scripts
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile --ignore-scripts
+          else
+            npm ci --include=optional --ignore-scripts
+          fi
 
       - name: Build base branch
         if: steps.check_script.outputs.exists == 'true'
         working-directory: base
-        run: npm run build
+        run: pnpm run build
 
       - name: Analyze base bundle size
         if: steps.check_script.outputs.exists == 'true'
         working-directory: base
-        run: npm run size -- --output ../out/base-bundle.json
+        run: pnpm run size --output ../out/base-bundle.json
 
       - name: Compare bundle sizes
         id: compare
@@ -77,10 +85,10 @@ jobs:
           # Check if we have comparison data
           if [ "${STEPS_CHECK_SCRIPT_OUTPUTS_EXISTS}" != "true" ]; then
             echo "⚠️ Comparison script not found in base branch. Showing current bundle size only."
-            npm exec tsx scripts/format-current-size.ts out/current-bundle.json > out/size-report.md
+            pnpm exec tsx scripts/format-current-size.ts out/current-bundle.json > out/size-report.md
           else
             # Run comparison and capture output
-            npm exec tsx scripts/compare-sizes.ts out/base-bundle.json out/current-bundle.json > out/size-report.md 2>&1 || true
+            pnpm exec tsx scripts/compare-sizes.ts out/base-bundle.json out/current-bundle.json > out/size-report.md 2>&1 || true
           fi
 
           # Read the report for the PR comment
@@ -135,7 +143,7 @@ jobs:
           SIZE_REPORT: ${{ steps.compare.outputs.report }}
 
       - name: Check size limits
-        run: npm run size:check
+        run: pnpm run size:check
 
       - name: Upload bundle analysis
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
