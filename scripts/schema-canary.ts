@@ -5,7 +5,10 @@ import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 import { getV1Countries, getV1CountriesCountryCodeForm } from '@/src/client';
 import { Client } from '@/src/client/client';
-import { DEFAULT_VERSION } from '@/src/flows/Onboarding/utils';
+import {
+  DEFAULT_VERSION,
+  getContractDetailsStrategy,
+} from '@/src/flows/Onboarding/utils';
 import { createSandboxClient } from './schema-canary/auth';
 import {
   buildReport,
@@ -13,7 +16,6 @@ import {
   decideExitCode,
   formatSummaryTable,
   isSkipped,
-  resolveStrategy,
   SchemaCanaryRow,
   SchemaCheckType,
 } from './schema-canary/lib';
@@ -99,7 +101,7 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
   const rows: SchemaCanaryRow[] = [];
 
   for (const country of countries) {
-    const strategy = resolveStrategy(country);
+    const strategy = getContractDetailsStrategy(country);
 
     let employmentId: string;
     try {

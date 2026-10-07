@@ -3,7 +3,6 @@ import {
   HeadlessFormStrategy,
   parseValuesForValidation,
 } from '@/src/common/headlessForm';
-import { usesJsfV1ContractDetails } from '@/src/flows/Onboarding/utils';
 import { findSkipEntry, SchemaCanarySkipEntry } from './skip-list';
 
 export type SchemaCheckType = 'pinned' | 'latest';
@@ -17,10 +16,6 @@ export type SchemaCanaryRow = {
   outcome: SchemaCheckOutcome;
   error?: string;
 };
-
-export function resolveStrategy(countryCode: string): HeadlessFormStrategy {
-  return usesJsfV1ContractDetails(countryCode) ? 'buildOnce' : 'rebuild';
-}
 
 export function firstStackFrame(error: unknown): string | undefined {
   if (!(error instanceof Error) || !error.stack) {

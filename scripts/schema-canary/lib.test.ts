@@ -4,21 +4,9 @@ import {
   decideExitCode,
   formatSummaryTable,
   isSkipped,
-  resolveStrategy,
   SchemaCanaryRow,
 } from './lib';
 import { SchemaCanarySkipEntry } from './skip-list';
-
-describe('resolveStrategy', () => {
-  it('returns buildOnce for countries on the jsf v1 contract details path', () => {
-    expect(resolveStrategy('DEU')).toBe('buildOnce');
-    expect(resolveStrategy('FRA')).toBe('buildOnce');
-  });
-
-  it('returns jsf-v0 for every other country', () => {
-    expect(resolveStrategy('GBR')).toBe('rebuild');
-  });
-});
 
 describe.each(['buildOnce', 'rebuild'] as const)(
   'checkSchemaBuildsAndValidates with %s',

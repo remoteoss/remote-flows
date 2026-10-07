@@ -1,3 +1,4 @@
+import { HeadlessFormStrategy } from '@/src/common/headlessForm';
 import { Employment, OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { Step } from '@/src/flows/useStepState';
 
@@ -153,6 +154,23 @@ export const usesJsfV1ContractDetails = (countryCode: string | null) =>
   Boolean(
     countryCode && JSF_V1_CONTRACT_DETAILS_COUNTRIES.includes(countryCode),
   );
+
+export const CONTRACT_DETAILS_STRATEGY = {
+  legacy: 'rebuild',
+  jsfV1: 'buildOnce',
+} as const;
+
+/**
+ * Gets the useHeadlessForm strategy the contract details step uses for a country
+ *
+ * @param countryCode - The country code to check
+ */
+export const getContractDetailsStrategy = (
+  countryCode: string | null,
+): HeadlessFormStrategy =>
+  usesJsfV1ContractDetails(countryCode)
+    ? CONTRACT_DETAILS_STRATEGY.jsfV1
+    : CONTRACT_DETAILS_STRATEGY.legacy;
 
 /**
  * Gets the default (recommended) contract details schema version for a country
