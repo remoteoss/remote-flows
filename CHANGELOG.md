@@ -1,5 +1,15 @@
 # @remoteoss/remote-flows
 
+## 1.59.1
+
+### Patch Changes
+
+- declare lodash and @remoteoss/json-schema-form explicitly (#1454) [#1454](https://github.com/remoteoss/remote-flows/pull/1454)
+- sign a contract document against the sandbox (#1450) [#1450](https://github.com/remoteoss/remote-flows/pull/1450)
+- extract seed-onboarding's schema filler and pick holiday-free start dates (#1423) [#1423](https://github.com/remoteoss/remote-flows/pull/1423)
+- add verify-sandbox-deployed-app skill (#1379) [#1379](https://github.com/remoteoss/remote-flows/pull/1379)
+- stable plan schema (#1457) [#1457](https://github.com/remoteoss/remote-flows/pull/1457)
+
 ## 1.59.0
 
 ### Minor Changes
