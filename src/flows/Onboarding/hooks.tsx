@@ -587,6 +587,8 @@ export const useOnboarding = ({
 
   const dailyScheduleField =
     options?.jsfModify?.contract_details?.fields?.daily_schedule;
+  const employerAcknowledgesRiskField =
+    options?.jsfModify?.contract_details?.fields?.employer_acknowledges_risk;
   const isDailyScheduleEnabled = Boolean(
     options?.features?.includes('daily_schedule'),
   );
@@ -639,6 +641,13 @@ export const useOnboarding = ({
             },
           },
         },
+        employer_acknowledges_risk: {
+          ...(employerAcknowledgesRiskField as $TSFixMe),
+          presentation: {
+            hidden: true,
+            ...(employerAcknowledgesRiskField as $TSFixMe)?.presentation,
+          },
+        },
         ...(isDailyScheduleEnabled
           ? {
               daily_schedule: {
@@ -679,6 +688,7 @@ export const useOnboarding = ({
       useSplitSalaryDescription,
       isDailyScheduleEnabled,
       dailyScheduleField,
+      employerAcknowledgesRiskField,
     ],
   );
 
