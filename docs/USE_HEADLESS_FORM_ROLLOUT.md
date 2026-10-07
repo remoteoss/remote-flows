@@ -38,6 +38,8 @@ Pure refactor. Each call site keeps the strategy it effectively has today, so no
 
 Call sites that don't pass values already behave like `buildOnce`, so they go straight onto it.
 
+Before moving a call site, check whether it writes onto `form.fields` after building (`grep -rnE "\.(options|isVisible|required)\s*=[^=]" src`). Move that data into the schema as part of the move. See "Dynamic Data Goes in the Schema" in [`json-schema-form-usage.mdc`](../.cursor/rules/json-schema-form-usage.mdc). On jsf v1 those writes are wiped by the next `handleValidation`.
+
 A `rebuild` step can also skip this phase and go straight onto `buildOnce` when it passes the phase 2 checklist. Basic information did this in #1433, benefits and engagement agreement details in #1442.
 
 Importing `createHeadlessForm` is banned by `no-restricted-imports` in `.oxlintrc.json`. Call sites that haven't moved yet carry a `// oxlint-disable-next-line no-restricted-imports -- TODO` comment on the import, so `grep -rn "no-restricted-imports -- TODO" src` lists what's left. Lint also fails on unused disable comments, so a PR that moves a file onto the hook has to delete that file's comment too.
@@ -52,6 +54,7 @@ For each step, test all of these before switching (they come from #1430):
 - [ ] Read-only employment that jumps straight to review without mounting the step (`prettifyFormValues` drops invisible fields)
 - [ ] Partner passes `options` inline, which creates a new `jsfModify` reference on every render
 - [ ] Headless `use<Flow>()` consumers with a custom UI, which don't mount our step components
+- [ ] Partner calls `flowBag.handleValidation` and then re-renders through their own state: options and other API data are still on the fields
 
 ### Phase 3: cleanup
 
@@ -88,16 +91,16 @@ Status: `todo`, `phase 1` (on the hook, old behaviour), `done` (on the hook with
 
 ### Already build once (no values)
 
-| Call site                                                   | Status | Notes                                                     |
-| ----------------------------------------------------------- | ------ | --------------------------------------------------------- |
-| Onboarding `useContractDetailsSchema` (jsf v1)              | done   | #1433                                                     |
-| Onboarding `useCountriesSchemaField`                        | todo   |                                                           |
-| ContractorOnboarding `useCountriesSchemaField`              | todo   |                                                           |
-| ContractorOnboarding `useContractorSubscriptionSchemaField` | todo   |                                                           |
-| ContractorOnboarding `useGetInvoiceScheduleSchema`          | todo   |                                                           |
-| CreateCompany `useCountriesSchemaField` (basic information) | todo   |                                                           |
-| CostCalculator `useStaticSchema` + `useRegionFields`        | todo   | Combines several forms; needs a design per sub-form first |
-| Termination full schema in `useTermination`                 | todo   | Combines several forms; needs a design per sub-form first |
+| Call site                                                   | Status | Notes                                                                                                                                                                                                                                                                                 |
+| ----------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Onboarding `useContractDetailsSchema` (jsf v1)              | done   | #1433                                                                                                                                                                                                                                                                                 |
+| Onboarding `useCountriesSchemaField`                        | todo   |                                                                                                                                                                                                                                                                                       |
+| ContractorOnboarding `useCountriesSchemaField`              | todo   |                                                                                                                                                                                                                                                                                       |
+| ContractorOnboarding `useContractorSubscriptionSchemaField` | done   |                                                                                                                                                                                                                                                                                       |
+| ContractorOnboarding `useGetInvoiceScheduleSchema`          | todo   |                                                                                                                                                                                                                                                                                       |
+| CreateCompany `useCountriesSchemaField` (basic information) | done   |                                                                                                                                                                                                                                                                                       |
+| CostCalculator `useStaticSchema` + `useRegionFields`        | todo   | Combines several forms; needs a design per sub-form first. Writes `options`, `isVisible`, `required` and `onChange` onto the static fields after building. That only holds on jsf v0 with Yup validation; move them into the schema before it changes engine or validates through jsf |
+| Termination full schema in `useTermination`                 | todo   | Combines several forms; needs a design per sub-form first                                                                                                                                                                                                                             |
 
 ## Known behaviour until phase 2
 
