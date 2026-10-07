@@ -13,7 +13,7 @@ import {
   decideExitCode,
   formatSummaryTable,
   isSkipped,
-  resolveEngine,
+  resolveStrategy,
   SchemaCanaryRow,
   SchemaCheckType,
 } from './schema-canary/lib';
@@ -99,7 +99,7 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
   const rows: SchemaCanaryRow[] = [];
 
   for (const country of countries) {
-    const engine = resolveEngine(country);
+    const strategy = resolveStrategy(country);
 
     let employmentId: string;
     try {
@@ -116,7 +116,7 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
             check === 'pinned'
               ? resolvePinnedVersion(country, DEFAULT_VERSION)
               : 'latest',
-          engine,
+          strategy,
           check,
           outcome: skipEntry ? 'skip' : 'seed-error',
           error: skipEntry?.reason ?? reason,
@@ -137,7 +137,7 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
           rows.push({
             country,
             version,
-            engine,
+            strategy,
             check,
             outcome: 'skip',
             error: skipEntry.reason,
@@ -152,14 +152,14 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
             version,
             employmentId,
           );
-          const result = await checkSchemaBuildsAndValidates(schema);
+          const result = await checkSchemaBuildsAndValidates(schema, strategy);
           console.log(
             `[${country}] ${check}@${version} -> ${result.ok ? 'pass' : `fail: ${result.error}`}`,
           );
           rows.push({
             country,
             version,
-            engine,
+            strategy,
             check,
             outcome: result.ok ? 'pass' : 'fail',
             error: result.ok ? undefined : result.error,
@@ -168,7 +168,7 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
           rows.push({
             country,
             version,
-            engine,
+            strategy,
             check,
             outcome: 'fail',
             error: error instanceof Error ? error.message : String(error),
