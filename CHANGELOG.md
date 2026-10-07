@@ -9,7 +9,6 @@
 - sign a contract document against the sandbox (#1450) [#1450](https://github.com/remoteoss/remote-flows/pull/1450)
 - stable pricing plan schema (#1457) [#1457](https://github.com/remoteoss/remote-flows/pull/1457)
 
-
 #### Chores
 
 - declare lodash and @remoteoss/json-schema-form explicitly (#1454) [#1454](https://github.com/remoteoss/remote-flows/pull/1454)
