@@ -46,7 +46,7 @@ function withFieldsetObjects(
   if (!Array.isArray(fields)) return values;
   return (fields as FieldNode[]).reduce<FieldValues>((acc, field) => {
     if (field.isVisible === false) return acc;
-    if (field.type === 'fieldset-flat' || field.valueGroupingDisabled) {
+    if (field.valueGroupingDisabled) {
       return withFieldsetObjects(acc, field.fields);
     }
     if (field.type !== 'fieldset') return acc;
