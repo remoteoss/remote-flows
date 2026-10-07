@@ -1,5 +1,43 @@
 # @remoteoss/remote-flows
 
+## 1.59.1
+
+### Patch Changes
+
+#### Fixes
+
+- sign a contract document against the sandbox (#1450) [#1450](https://github.com/remoteoss/remote-flows/pull/1450)
+- stable pricing plan schema (#1457) [#1457](https://github.com/remoteoss/remote-flows/pull/1457)
+
+#### Chores
+
+- declare lodash and @remoteoss/json-schema-form explicitly (#1454) [#1454](https://github.com/remoteoss/remote-flows/pull/1454)
+- extract seed-onboarding's schema filler and pick holiday-free start dates (#1423) [#1423](https://github.com/remoteoss/remote-flows/pull/1423)
+- add verify-sandbox-deployed-app skill (#1379) [#1379](https://github.com/remoteoss/remote-flows/pull/1379)
+
+## 1.59.0
+
+### Minor Changes
+
+#### Features
+
+- preview the contract document and render the signature form (#1374) [#1374](https://github.com/remoteoss/remote-flows/pull/1374)
+- sign the contract document (#1438) [#1438](https://github.com/remoteoss/remote-flows/pull/1438)
+
+#### Fixes
+
+- don't offer invoice schedules for Contractor of Record (#1436) [#1436](https://github.com/remoteoss/remote-flows/pull/1436)
+- use the API token's company in onboarding specs (#1437) [#1437](https://github.com/remoteoss/remote-flows/pull/1437)
+- stop stripping the required `name` field from personal details (#1441) [#1441](https://github.com/remoteoss/remote-flows/pull/1441)
+- add useHeadlessForm and move contract details and basic information onto it (#1433) [#1433](https://github.com/remoteoss/remote-flows/pull/1433)
+- enforce useHeadlessForm over direct createHeadlessForm imports (#1439) [#1439](https://github.com/remoteoss/remote-flows/pull/1439)
+- keep plan options on validate (#1446) [#1446](https://github.com/remoteoss/remote-flows/pull/1446)
+- keep select options on validate (#1447) [#1447](https://github.com/remoteoss/remote-flows/pull/1447)
+
+#### Chores
+
+- sync COUNTRY_CONTRACT_VERSIONS with backend (#1435) [#1435](https://github.com/remoteoss/remote-flows/pull/1435)
+
 ## 1.58.0
 
 ### Minor Changes
