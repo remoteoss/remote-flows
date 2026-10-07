@@ -14,10 +14,19 @@ export { EstimationResults } from './EstimationResults/EstimationResults';
 export { SummaryResults } from './SummaryResults/SummaryResults';
 export { buildPayload as buildCostCalculatorEstimationPayload } from './utils';
 export type { EstimationError } from './types';
-export type { CostCalculatorFlowProps } from './CostCalculatorFlow';
+export type {
+  CostCalculatorFlowProps,
+  CostCalculatorRenderBag,
+} from './CostCalculatorFlow';
+export { useCostCalculatorFormValues } from './formController';
+export type {
+  CostCalculatorFormController,
+  CostCalculatorSubmitResult,
+} from './formController';
 
 /**
  * @deprecated Relies on the flow's internal form state and will be removed in v2.
- * Use the `costCalculatorBag` passed to the `render` prop instead, and open an issue if it's missing something you need.
+ * Use `costCalculatorBag.form` (passed to the `render` prop) to read, watch and set values instead,
+ * and open an issue if it's missing something you need.
  */
 export const useCostCalculatorContext = useCostCalculatorContextInternal;

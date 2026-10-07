@@ -3,6 +3,10 @@ import { useForm } from 'react-hook-form';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
 import { CostCalculatorContext } from '@/src/flows/CostCalculator/context';
 import {
+  CostCalculatorFormController,
+  createCostCalculatorFormController,
+} from '@/src/flows/CostCalculator/formController';
+import {
   CostCalculatorVersion,
   defaultEstimationOptions,
   useCostCalculator,
@@ -13,6 +17,14 @@ import {
   UseCostCalculatorOptions,
 } from '@/src/flows/CostCalculator/types';
 import { BASE_RATES } from '@/src/flows/CostCalculator/constants';
+
+export type CostCalculatorRenderBag = ReturnType<typeof useCostCalculator> & {
+  /**
+   * Reads and writes the form values programmatically, e.g. to drive a field from your own control
+   * or to request an estimation every time a value changes.
+   */
+  form: CostCalculatorFormController;
+};
 
 export type CostCalculatorFlowProps = {
   /**
@@ -65,9 +77,7 @@ export type CostCalculatorFlowProps = {
     } & Record<string, unknown>
   >;
   options?: UseCostCalculatorOptions;
-  render: (
-    costCalculatorBag: ReturnType<typeof useCostCalculator>,
-  ) => React.ReactNode;
+  render: (costCalculatorBag: CostCalculatorRenderBag) => React.ReactNode;
   /**
    * Whether to include annual_gross_salary in the estimation payload
    */
@@ -175,7 +185,7 @@ export const CostCalculatorFlow = ({
       region: regionSlug,
       salary: salary,
       salary_conversion: '',
-      salary_converted: undefined,
+      salary_converted: 'salary',
       hiring_budget: hiringBudget || 'employee_annual_salary',
       age: age,
       contract_duration_type: contractDurationType,
@@ -225,15 +235,28 @@ export const CostCalculatorFlow = ({
     form,
   ]);
 
+  const [formController] = useState(() =>
+    createCostCalculatorFormController(form, costCalculatorBag),
+  );
+  useEffect(() => {
+    formController.setBag(costCalculatorBag);
+  });
+  useEffect(() => formController.connect(), [formController]);
+
+  const renderBag: CostCalculatorRenderBag = {
+    ...costCalculatorBag,
+    form: formController.controller,
+  };
+
   return (
     <CostCalculatorContext.Provider
       value={{
         form,
         formId: formId,
-        costCalculatorBag,
+        costCalculatorBag: renderBag,
       }}
     >
-      {render(costCalculatorBag)}
+      {render(renderBag)}
     </CostCalculatorContext.Provider>
   );
 };

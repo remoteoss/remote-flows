@@ -25,6 +25,7 @@ import { BasicCostCalculator } from './BasicCostCalculator';
 import { BasicCostCalculatorWithDefaultValues } from './BasicCostCalculatorDefaultValues';
 import { BasicCostCalculatorLabels } from './BasicCostCalculatorLabels';
 import { CostCalculatorWithResults } from './CostCalculatorWithResults';
+import { CostCalculatorLiveSlider } from './CostCalculatorLiveSlider';
 import { CostCalculatorWithExportPdf } from './CostCalculatorWithExportPdf';
 import { CostCalculatorWithPremiumBenefits } from './CostCalculatorWithPremiumBenefits';
 import { TerminationForm } from './Termination';
@@ -41,6 +42,7 @@ import BasicCostCalculatorCode from './BasicCostCalculator?raw';
 import BasicCostCalculatorDefaultValuesCode from './BasicCostCalculatorDefaultValues?raw';
 import BasicCostCalculatorLabelsCode from './BasicCostCalculatorLabels?raw';
 import CostCalculatorWithResultsCode from './CostCalculatorWithResults?raw';
+import CostCalculatorLiveSliderCode from './CostCalculatorLiveSlider?raw';
 import CostCalculatorWithExportPdfCode from './CostCalculatorWithExportPdf?raw';
 import CostCalculatorWithPremiumBenefitsCode from './CostCalculatorWithPremiumBenefits?raw';
 import CostCalculatorWithReplaceableComponentsCode from './CostCalculatorWithReplaceableComponents?raw';
@@ -112,6 +114,14 @@ const costCalculatorDemos = [
     description: 'Cost Calculator with replacable components',
     component: CostCalculatorWithReplaceableComponents,
     sourceCode: CostCalculatorWithReplaceableComponentsCode,
+  },
+  {
+    id: 'live-slider-cost-calculator',
+    title: 'Live Salary Slider',
+    description:
+      'Fully custom UI driven by costCalculatorBag.form: salary slider with a live estimate',
+    component: CostCalculatorLiveSlider,
+    sourceCode: CostCalculatorLiveSliderCode,
   },
 ];
 
