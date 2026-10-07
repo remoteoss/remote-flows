@@ -52,7 +52,6 @@ export function OnboardingForm({
   const syncJobTitleEligibility = async (values: Record<string, unknown>) => {
     const eligibilityValues =
       await onboardingBag.checkJobTitleEligibility(values);
-    console.log('eligibilityValues', eligibilityValues);
     Object.entries(eligibilityValues ?? {}).forEach(([name, value]) =>
       form.setValue(name, value),
     );
