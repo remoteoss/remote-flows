@@ -98,6 +98,22 @@ describe('decideExitCode', () => {
     ];
     expect(decideExitCode(rows)).toBe(1);
   });
+
+  it.each(['pinned', 'latest'] as const)(
+    'returns 1 when seeding failed for a "%s" check',
+    (check) => {
+      const rows: SchemaCanaryRow[] = [
+        passingRow,
+        {
+          ...passingRow,
+          check,
+          outcome: 'seed-error',
+          error: 'employment seeding failed: boom',
+        },
+      ];
+      expect(decideExitCode(rows)).toBe(1);
+    },
+  );
 });
 
 describe('buildReport', () => {
@@ -158,6 +174,14 @@ describe('formatSummaryTable', () => {
         outcome: 'fail',
         error: 'Cannot read properties of null',
       },
+      {
+        country: 'ISL',
+        version: 3,
+        engine: 'jsf-v0',
+        check: 'pinned',
+        outcome: 'seed-error',
+        error: 'employment seeding failed: POST /v1/employments -> 422',
+      },
     ];
 
     const table = formatSummaryTable(rows);
@@ -168,6 +192,7 @@ describe('formatSummaryTable', () => {
         '| --- | --- | --- | --- | --- | --- |',
         '| DEU | 7 | jsf-v1 | pinned | ✅ pass |  |',
         '| FRA | latest | jsf-v1 | latest | ❌ fail | Cannot read properties of null |',
+        '| ISL | 3 | jsf-v0 | pinned | ⚠️ seed error | employment seeding failed: POST /v1/employments -> 422 |',
       ].join('\n'),
     );
   });

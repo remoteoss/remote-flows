@@ -4,7 +4,7 @@ import { findSkipEntry, SchemaCanarySkipEntry } from './skip-list';
 
 export type SchemaEngine = 'jsf-v0' | 'jsf-v1';
 export type SchemaCheckType = 'pinned' | 'latest';
-export type SchemaCheckOutcome = 'pass' | 'fail' | 'skip';
+export type SchemaCheckOutcome = 'pass' | 'fail' | 'seed-error' | 'skip';
 
 export type SchemaCanaryRow = {
   country: string;
@@ -56,12 +56,14 @@ export function decideExitCode(rows: SchemaCanaryRow[]): 0 | 1 {
   const hasPinnedFailure = rows.some(
     (row) => row.check === 'pinned' && row.outcome === 'fail',
   );
-  return hasPinnedFailure ? 1 : 0;
+  const hasSeedError = rows.some((row) => row.outcome === 'seed-error');
+  return hasPinnedFailure || hasSeedError ? 1 : 0;
 }
 
 const OUTCOME_LABEL: Record<SchemaCheckOutcome, string> = {
   pass: '✅ pass',
   fail: '❌ fail',
+  'seed-error': '⚠️ seed error',
   skip: '⏭️ skip',
 };
 
@@ -79,7 +81,7 @@ export function buildReport(rows: SchemaCanaryRow[]): SchemaCanaryReport {
     _meta: {
       title: 'Contract details schema canary',
       description:
-        'Per-country contract_details schema checks against the sandbox gateway. "pinned" is the version this library currently ships against (see example/src/flows/Onboarding/jsonSchemaVersions.ts); "latest" is whatever version the gateway currently serves as newest. Both run createHeadlessForm(schema, {}) + handleValidation({}) and record whether it throws.',
+        'Per-country contract_details schema checks against the sandbox gateway. "pinned" is the version this library currently ships against (see example/src/flows/Onboarding/jsonSchemaVersions.ts); "latest" is whatever version the gateway currently serves as newest. Both run createHeadlessForm(schema, {}) + handleValidation({}) and record whether it throws. "seed-error" means the sandbox employment for that country could not be created, so its schemas were not checked.',
       source:
         'scripts/schema-canary.ts, run nightly against the sandbox gateway',
     },

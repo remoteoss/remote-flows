@@ -118,7 +118,7 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
               : 'latest',
           engine,
           check,
-          outcome: skipEntry ? 'skip' : 'fail',
+          outcome: skipEntry ? 'skip' : 'seed-error',
           error: skipEntry?.reason ?? reason,
         });
       }
@@ -196,9 +196,12 @@ function report(rows: SchemaCanaryRow[]) {
 
   const passCount = rows.filter((row) => row.outcome === 'pass').length;
   const failCount = rows.filter((row) => row.outcome === 'fail').length;
+  const seedErrorCount = rows.filter(
+    (row) => row.outcome === 'seed-error',
+  ).length;
   const skipCount = rows.filter((row) => row.outcome === 'skip').length;
   console.log(
-    `\n${passCount} passed, ${failCount} failed, ${skipCount} skipped (${rows.length} checks total)`,
+    `\n${passCount} passed, ${failCount} failed, ${seedErrorCount} seed errors, ${skipCount} skipped (${rows.length} checks total)`,
   );
 
   const summaryPath = process.env.GITHUB_STEP_SUMMARY;
@@ -234,6 +237,21 @@ async function main() {
     );
     for (const row of failedLatest) {
       console.warn(`  - ${row.country}: ${row.error}`);
+    }
+  }
+  const seedErrorCountries = [
+    ...new Map(
+      rows
+        .filter((row) => row.outcome === 'seed-error')
+        .map((row) => [row.country, row.error]),
+    ),
+  ];
+  if (seedErrorCountries.length > 0) {
+    console.error(
+      `\n${seedErrorCountries.length} country(ies) could not be seeded, so their schemas were not checked:`,
+    );
+    for (const [country, error] of seedErrorCountries) {
+      console.error(`  - ${country}: ${error}`);
     }
   }
   if (failedPinned.length > 0) {
