@@ -8,39 +8,24 @@ import {
 } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { fillSchema, pickSafeDate, safeStartDateYears } from '../fill-schema';
+import { fillSchema, findSafeStartDate, HolidayDate } from '../fill-schema';
 
 const BASIC_INFO_VERSION = 4;
 
-/** Fetches public holidays directly from the sandbox gateway and picks a
- * holiday-free provisional_start_date - see pickSafeDate in fill-schema.ts
- * for why a fixed offset alone isn't enough. Falls back to the unchecked
- * minimum-lead date if the holidays lookup itself fails, rather than
- * blocking seeding on it. */
-async function findSafeStartDate(
+async function fetchHolidays(
   client: Client,
   country: string,
-): Promise<string> {
-  const holidayDates = new Set<string>();
-  try {
-    for (const year of safeStartDateYears()) {
-      const response = await getV1CountriesCountryCodeHolidaysYear({
-        client,
-        headers: { Authorization: '' },
-        path: { country_code: country, year },
-      });
-      if (response.error) {
-        throw new Error(JSON.stringify(response.error));
-      }
-      for (const holiday of response.data?.data ?? []) {
-        holidayDates.add(holiday.day);
-        if (holiday.observed_day) holidayDates.add(holiday.observed_day);
-      }
-    }
-  } catch {
-    return pickSafeDate(new Set());
+  year: string,
+): Promise<HolidayDate[]> {
+  const response = await getV1CountriesCountryCodeHolidaysYear({
+    client,
+    headers: { Authorization: '' },
+    path: { country_code: country, year },
+  });
+  if (response.error) {
+    throw new Error(JSON.stringify(response.error));
   }
-  return pickSafeDate(holidayDates);
+  return response.data?.data ?? [];
 }
 
 class FetchSchemaError extends Error {
@@ -96,7 +81,9 @@ export async function seedEmploymentForCountry(
   if (!basicInfoSchema) {
     throw new Error(`No employment_basic_information schema for ${country}`);
   }
-  const startDate = await findSafeStartDate(client, country);
+  const startDate = await findSafeStartDate(country, (code, year) =>
+    fetchHolidays(client, code, year),
+  );
   const { values: basicInformation } = fillSchema(basicInfoSchema, {
     provisional_start_date: startDate,
   });
@@ -121,6 +108,27 @@ export async function seedEmploymentForCountry(
     );
   }
 
+  try {
+    await completePreContractSteps(client, country, employmentId);
+  } catch (error) {
+    try {
+      await archiveEmployment(client, employmentId);
+    } catch (archiveError) {
+      console.warn(
+        `[${country}] failed to archive employment ${employmentId}: ${archiveError instanceof Error ? archiveError.message : String(archiveError)}`,
+      );
+    }
+    throw error;
+  }
+
+  return employmentId;
+}
+
+async function completePreContractSteps(
+  client: Client,
+  country: string,
+  employmentId: string,
+): Promise<void> {
   const eligibility = await postV1EmploymentsEmploymentIdContractEligibility({
     client,
     headers: { Authorization: '' },
@@ -169,8 +177,6 @@ export async function seedEmploymentForCountry(
       );
     }
   }
-
-  return employmentId;
 }
 
 /**

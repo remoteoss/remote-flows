@@ -61,8 +61,8 @@ export function fakeValueFor(field: SeedField): unknown {
       // Some countries require more lead time than a fixed short offset
       // covers (e.g. Iceland: 20 working days, ~28 calendar days) - 35
       // calendar days clears that with margin. Doesn't dodge country-specific
-      // holidays (e.g. Georgia) on its own; seed-onboarding.ts's
-      // findSafeStartDate seeds provisional_start_date directly for that.
+      // holidays (e.g. Georgia) on its own; findSafeStartDate below seeds
+      // provisional_start_date directly for that.
       const d = new Date();
       d.setDate(d.getDate() + 35);
       return d.toISOString().slice(0, 10);
@@ -143,6 +143,29 @@ export function pickSafeDate(
     candidate.setDate(candidate.getDate() + 1);
   }
   return toIsoDate(earliest);
+}
+
+export type HolidayDate = { day: string; observed_day?: string | null };
+
+/** Picks a holiday-free provisional_start_date for `country` with
+ * pickSafeDate. A year whose holidays lookup fails is skipped rather than
+ * discarding the years that did load. */
+export async function findSafeStartDate(
+  country: string,
+  fetchHolidays: (country: string, year: string) => Promise<HolidayDate[]>,
+): Promise<string> {
+  const holidayDates = new Set<string>();
+  for (const year of safeStartDateYears()) {
+    try {
+      for (const holiday of await fetchHolidays(country, year)) {
+        holidayDates.add(holiday.day);
+        if (holiday.observed_day) holidayDates.add(holiday.observed_day);
+      }
+    } catch (error) {
+      console.warn(`Could not load ${year} holidays for ${country}:`, error);
+    }
+  }
+  return pickSafeDate(holidayDates);
 }
 
 /** Progressively fills a JSF schema: fill whatever's required+visible, recompute (new

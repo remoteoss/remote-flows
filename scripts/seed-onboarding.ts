@@ -66,7 +66,7 @@ import dotenv from 'dotenv';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { fillSchema, pickSafeDate, safeStartDateYears } from './fill-schema';
+import { fillSchema, findSafeStartDate, HolidayDate } from './fill-schema';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
@@ -207,25 +207,11 @@ async function fetchSchema(
   }).then((res) => res.data);
 }
 
-/** See pickSafeDate in fill-schema.ts for why a fixed offset alone isn't
- * enough - a year whose holidays lookup fails is skipped rather than
- * discarding the years that did load. */
-async function findSafeStartDate(): Promise<string> {
-  const holidayDates = new Set<string>();
-  for (const year of safeStartDateYears()) {
-    try {
-      const holidays = await api<{
-        data?: { day: string; observed_day?: string }[];
-      }>('GET', `/v1/countries/${COUNTRY}/holidays/${year}`);
-      for (const holiday of holidays.data ?? []) {
-        holidayDates.add(holiday.day);
-        if (holiday.observed_day) holidayDates.add(holiday.observed_day);
-      }
-    } catch (error) {
-      console.warn(`Could not load ${year} holidays for ${COUNTRY}:`, error);
-    }
-  }
-  return pickSafeDate(holidayDates);
+function fetchHolidays(country: string, year: string): Promise<HolidayDate[]> {
+  return api<{ data?: HolidayDate[] }>(
+    'GET',
+    `/v1/countries/${country}/holidays/${year}`,
+  ).then((res) => res.data ?? []);
 }
 
 const CONTRACTOR_NATIONALITY_COUNTRIES = ['SAU', 'KWT', 'OMN', 'QAT', 'BHR'];
@@ -244,7 +230,7 @@ async function seedContractor() {
     'contractor_basic_information',
     BASIC_INFO_VERSION,
   );
-  const startDate = await findSafeStartDate();
+  const startDate = await findSafeStartDate(COUNTRY, fetchHolidays);
   const { values: basicInformation, skipped } = fillSchema(basicInfoSchema, {
     provisional_start_date: startDate,
   });
@@ -313,7 +299,7 @@ async function seedEmployee() {
     'employment_basic_information',
     BASIC_INFO_VERSION,
   );
-  const startDate = await findSafeStartDate();
+  const startDate = await findSafeStartDate(COUNTRY, fetchHolidays);
   const { values: basicInformation, skipped: basicSkipped } = fillSchema(
     basicInfoSchema,
     { provisional_start_date: startDate },
