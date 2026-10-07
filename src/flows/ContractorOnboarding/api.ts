@@ -35,6 +35,7 @@ import {
 import { Client } from '@/src/client/client';
 // oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
+import { useDeepStable } from '@/src/common/hooks';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
@@ -219,15 +220,17 @@ export const useContractorSubscriptionSchemaField = (
     },
   });
 
+  const excludeProducts = useDeepStable(options?.excludeProducts);
+
   const filteredContractorSubscriptions = useMemo(
     () =>
       contractorSubscriptions?.filter((subscription) =>
         shouldIncludeProduct(
           subscription.product.identifier ?? '',
-          options?.excludeProducts,
+          excludeProducts,
         ),
       ) ?? [],
-    [contractorSubscriptions, options?.excludeProducts],
+    [contractorSubscriptions, excludeProducts],
   );
 
   // maximum number of subscriptions
@@ -247,7 +250,7 @@ export const useContractorSubscriptionSchemaField = (
   const showEorSubscription =
     (isMissingSubscriptions || isEligibilityQuestionnaireBlocked) &&
     selectedCountry?.eor_onboarding &&
-    !options?.excludeProducts?.includes('eor');
+    !excludeProducts?.includes('eor');
 
   const { eorSubscription, isLoading: isLoadingEorSubscription } =
     useEorSubscription({
@@ -309,7 +312,7 @@ export const useContractorSubscriptionSchemaField = (
       addEorToFieldOptions(
         otherOptions as unknown as $TSFixMe[],
         eorSubscription,
-        options?.excludeProducts,
+        excludeProducts,
       );
 
       // Add separator metadata to first "other" option
@@ -330,7 +333,7 @@ export const useContractorSubscriptionSchemaField = (
     isEligibilityQuestionnaireBlocked,
     showEorSubscription,
     eorSubscription,
-    options?.excludeProducts,
+    excludeProducts,
   ]);
 
   const schema = useMemo(() => {

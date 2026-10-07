@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import equal from 'fast-deep-equal';
 import { FieldValues } from 'react-hook-form';
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import {
@@ -7,6 +6,7 @@ import {
   HeadlessFormOptions,
   parseValuesForValidation,
 } from '@/src/common/headlessForm';
+import { useDeepStable } from '@/src/common/hooks';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { JSONSchemaFormResultWithFieldsets } from '@/src/flows/types';
 
@@ -27,14 +27,6 @@ export type HeadlessForm = {
   handleValidation: (values: FieldValues) => Promise<ValidationResult | null>;
   onValuesChange: (values: FieldValues) => Promise<void>;
   parseFormValues: (values: FieldValues) => Promise<FieldValues>;
-};
-
-const useDeepStable = <T>(value: T): T => {
-  const [stable, setStable] = useState(value);
-  if (!equal(stable, value)) {
-    setStable(value);
-  }
-  return stable;
 };
 
 export function useHeadlessForm(args: UseHeadlessFormArgs): HeadlessForm {
