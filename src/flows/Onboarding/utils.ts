@@ -234,6 +234,61 @@ export const JOB_TITLE_ELIGIBILITY_SLUG_FIELD =
 export const JOB_TITLE_ELIGIBILITY_RESULT_FIELD =
   'additional_job_title_eligibility_check_result';
 
+const EMPLOYER_ACKNOWLEDGES_RISK_FIELD = 'employer_acknowledges_risk';
+
+type ContractDetailsJsonSchema = {
+  properties?: Record<string, unknown>;
+  allOf?: unknown[];
+  'x-jsf-order'?: string[];
+};
+
+export const withJobTitleEligibilityRiskAcknowledgement = <
+  T extends ContractDetailsJsonSchema,
+>(
+  schema: T,
+): T => {
+  const properties = schema.properties ?? {};
+  if (
+    !properties[JOB_TITLE_ELIGIBILITY_SLUG_FIELD] ||
+    !properties[EMPLOYER_ACKNOWLEDGES_RISK_FIELD] ||
+    properties[JOB_TITLE_ELIGIBILITY_RESULT_FIELD]
+  ) {
+    return schema;
+  }
+
+  return {
+    ...schema,
+    properties: {
+      ...properties,
+      [JOB_TITLE_ELIGIBILITY_RESULT_FIELD]: {
+        type: ['string', 'null'],
+        'x-jsf-presentation': { inputType: 'hidden' },
+      },
+    },
+    allOf: [
+      ...(schema.allOf ?? []),
+      {
+        if: {
+          properties: {
+            [JOB_TITLE_ELIGIBILITY_RESULT_FIELD]: { const: 'yes_with_ack' },
+          },
+          required: [JOB_TITLE_ELIGIBILITY_RESULT_FIELD],
+        },
+        then: { required: [EMPLOYER_ACKNOWLEDGES_RISK_FIELD] },
+        else: { properties: { [EMPLOYER_ACKNOWLEDGES_RISK_FIELD]: false } },
+      },
+    ],
+    ...(schema['x-jsf-order']
+      ? {
+          'x-jsf-order': [
+            ...schema['x-jsf-order'],
+            JOB_TITLE_ELIGIBILITY_RESULT_FIELD,
+          ],
+        }
+      : {}),
+  };
+};
+
 const JOB_TITLE_ELIGIBILITY_PARAM_FIELDS = [
   'role_description',
   'role_is_onsite',

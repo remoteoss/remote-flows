@@ -1,8 +1,11 @@
 /**
- * Trimmed down contract details schema exposing only the fields the job title
- * eligibility check cares about: the role fields sent to the check, the hidden
- * slug/result fields it fills, and the risk acknowledgement that the
- * yes_with_ack result reveals. Served as jsf v1 and as jsf v0.
+ * Trimmed down contract details schema exposing only the Role Requirements
+ * fieldset, as the gateway serves it to API partners for DEU, ITA and PRT: the
+ * role fields sent to the job title eligibility check, the hidden slug field,
+ * and the risk acknowledgement. The server-owned check result field and the
+ * yes_with_ack conditional are withheld from the served schema, so the SDK has
+ * to add them. role_description drops its minLength to keep the tests short.
+ * Served as jsf v1 and as jsf v0.
  */
 const jobTitleEligibilitySchema = {
   additionalProperties: false,
@@ -64,34 +67,28 @@ const jobTitleEligibilitySchema = {
         inputType: 'hidden',
       },
     },
-    additional_job_title_eligibility_check_result: {
-      type: ['string', 'null'],
-      'x-jsf-presentation': {
-        inputType: 'hidden',
-      },
+  },
+  required: ['role_description'],
+  type: 'object',
+  'x-jsf-order': [
+    'role_description',
+    'role_is_onsite',
+    'role_requires_license',
+    'employer_acknowledges_risk',
+    'additional_job_title_eligibility_check_slug',
+  ],
+  'x-rmt-flatFieldsets': {
+    additional_job_title_eligibility_check: {
+      propertiesByName: [
+        'additional_job_title_eligibility_check_slug',
+        'role_description',
+        'role_is_onsite',
+        'role_requires_license',
+        'employer_acknowledges_risk',
+      ],
+      title: 'Role Requirements',
     },
   },
-  allOf: [
-    {
-      if: {
-        properties: {
-          additional_job_title_eligibility_check_result: {
-            const: 'yes_with_ack',
-          },
-        },
-        required: ['additional_job_title_eligibility_check_result'],
-      },
-      then: {
-        required: ['employer_acknowledges_risk'],
-      },
-      else: {
-        properties: {
-          employer_acknowledges_risk: false,
-        },
-      },
-    },
-  ],
-  type: 'object',
 };
 
 export const contractDetailsSchemaV1JobTitleEligibility = {
