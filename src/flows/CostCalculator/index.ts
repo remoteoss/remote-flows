@@ -16,9 +16,6 @@ export { buildPayload as buildCostCalculatorEstimationPayload } from './utils';
 export type { EstimationError } from './types';
 export type { CostCalculatorFlowProps } from './CostCalculatorFlow';
 
-/**
- * Partners are using this already, we should keep it for now as I don't want to break the functionality for them.
- * Currently they use it to watch, get/setValues from the form context.
- * Not ideal, but we don't want rework at the moment.
- */
+// Partners already use this to watch, get and set values on the form, so we keep it exported to avoid breaking them.
+// It's not ideal, but replacing it isn't worth the rework right now.
 export const useCostCalculatorContext = useCostCalculatorContextInternal;
