@@ -109,6 +109,7 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
       const reason = `employment seeding failed: ${error instanceof Error ? error.message : String(error)}`;
       console.log(`[${country}] ${reason}`);
       for (const check of CHECK_TYPES) {
+        const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
         rows.push({
           country,
           version:
@@ -117,8 +118,8 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
               : 'latest',
           engine,
           check,
-          outcome: 'skip',
-          error: reason,
+          outcome: skipEntry ? 'skip' : 'fail',
+          error: skipEntry?.reason ?? reason,
         });
       }
       continue;
