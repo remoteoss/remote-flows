@@ -44,8 +44,16 @@ describe('useOnboarding jsonSchemaVersion', () => {
       data: {
         data: {
           properties: {
-            name: { type: 'string', title: 'Name' },
-            email: { type: 'string', title: 'Email' },
+            name: {
+              type: 'string',
+              title: 'Name',
+              'x-jsf-presentation': { inputType: 'text' },
+            },
+            email: {
+              type: 'string',
+              title: 'Email',
+              'x-jsf-presentation': { inputType: 'email' },
+            },
           },
         },
       },

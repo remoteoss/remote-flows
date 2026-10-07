@@ -369,7 +369,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   USA: {
     // United States
-    contract_details: 3,
+    contract_details: 7,
   },
   VNM: {
     // Vietnam
