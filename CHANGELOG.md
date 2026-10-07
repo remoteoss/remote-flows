@@ -1,5 +1,28 @@
 # @remoteoss/remote-flows
 
+## 1.59.0
+
+### Minor Changes
+
+#### Features
+
+- preview the contract document and render the signature form (#1374) [#1374](https://github.com/remoteoss/remote-flows/pull/1374)
+- sign the contract document (#1438) [#1438](https://github.com/remoteoss/remote-flows/pull/1438)
+
+#### Fixes
+
+- don't offer invoice schedules for Contractor of Record (#1436) [#1436](https://github.com/remoteoss/remote-flows/pull/1436)
+- use the API token's company in onboarding specs (#1437) [#1437](https://github.com/remoteoss/remote-flows/pull/1437)
+- stop stripping the required `name` field from personal details (#1441) [#1441](https://github.com/remoteoss/remote-flows/pull/1441)
+- add useHeadlessForm and move contract details and basic information onto it (#1433) [#1433](https://github.com/remoteoss/remote-flows/pull/1433)
+- enforce useHeadlessForm over direct createHeadlessForm imports (#1439) [#1439](https://github.com/remoteoss/remote-flows/pull/1439)
+- keep plan options on validate (#1446) [#1446](https://github.com/remoteoss/remote-flows/pull/1446)
+- keep select options on validate (#1447) [#1447](https://github.com/remoteoss/remote-flows/pull/1447)
+
+#### Chores
+
+- sync COUNTRY_CONTRACT_VERSIONS with backend (#1435) [#1435](https://github.com/remoteoss/remote-flows/pull/1435)
+
 ## 1.58.0
 
 ### Minor Changes
