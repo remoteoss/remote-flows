@@ -17,7 +17,8 @@ export type { EstimationError } from './types';
 export type { CostCalculatorFlowProps } from './CostCalculatorFlow';
 
 /**
- * @deprecated Relies on the flow's internal form state and will be removed in v2.
- * Use the `costCalculatorBag` passed to the `render` prop instead, and open an issue if it's missing something you need.
+ * Partners are using this already, we should keep it for now as I don't want to break the functionality for them.
+ * Currently they use it to watch, get/setValues from the form context.
+ * Not ideal, but we don't want rework at the moment.
  */
 export const useCostCalculatorContext = useCostCalculatorContextInternal;
