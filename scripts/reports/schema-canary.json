@@ -1,7 +1,7 @@
 {
   "_meta": {
     "title": "Contract details schema canary",
-    "description": "Per-country contract_details schema checks against the sandbox gateway. \"pinned\" is the version this library currently ships against (see example/src/flows/Onboarding/jsonSchemaVersions.ts); \"latest\" is whatever version the gateway currently serves as newest. Both run createHeadlessForm(schema, {}) + handleValidation({}) and record whether it throws. "seed-error" means the sandbox employment for that country could not be created, so its schemas were not checked.",
+    "description": "Per-country contract_details schema checks against the sandbox gateway. \"pinned\" is the version this library currently ships against (see example/src/flows/Onboarding/jsonSchemaVersions.ts); \"latest\" is whatever version the gateway currently serves as newest. Both run createHeadlessForm(schema, {}) + handleValidation({}) and record whether it throws. \"seed-error\" means the sandbox employment for that country could not be created, so its schemas were not checked.",
     "source": "scripts/schema-canary.ts, run nightly against the sandbox gateway"
   },
   "checks": [
