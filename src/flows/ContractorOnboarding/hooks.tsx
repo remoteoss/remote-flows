@@ -139,8 +139,6 @@ export const useContractorOnboarding = ({
   options,
   initialValues: onboardingInitialValues,
 }: useContractorOnboardingProps) => {
-  const excludeProducts = options?.excludeProducts || [];
-
   const onContractReviewedRef = useRef(options?.onContractReviewed);
 
   useEffect(() => {
@@ -398,7 +396,7 @@ export const useContractorOnboarding = ({
       queryOptions: {
         enabled: isPricingPlanEnabled,
       },
-      excludeProducts: excludeProducts,
+      excludeProducts: options?.excludeProducts,
       jsfModify: options?.jsfModify?.pricing_plan,
     },
   );

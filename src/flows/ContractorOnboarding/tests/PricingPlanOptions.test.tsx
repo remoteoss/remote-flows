@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { mockContractorBasicInformationSchema } from '@/src/common/api/fixtures/contractors';
+import { mockContractorSubscriptionResponse } from '@/src/common/api/fixtures/contractors-subscriptions';
 import { ContractorOnboardingFlow } from '@/src/flows/ContractorOnboarding/ContractorOnboarding';
 import { fillBasicInformation } from '@/src/flows/ContractorOnboarding/tests/helpers';
 import { mockContractorEmploymentResponse } from '@/src/flows/ContractorOnboarding/tests/fixtures';
@@ -168,5 +169,69 @@ describe('ContractorOnboarding pricing plan options', () => {
     expect(await screen.findByText(/is not valid/i)).toBeInTheDocument();
     expect(screen.getByText(/Step: Pricing Plan/i)).toBeInTheDocument();
     expect(corSubscriptionSpy).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['without excludeProducts', undefined],
+    ['with an inline excludeProducts', () => ['eor' as const]],
+  ])('settles the pricing plan step %s', async (_, excludeProducts) => {
+    const missingDescriptionLog = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    server.use(
+      http.get('*/v1/contractors/employments/*/contractor-subscriptions', () =>
+        HttpResponse.json({
+          ...mockContractorSubscriptionResponse,
+          data: mockContractorSubscriptionResponse.data.map((subscription) => ({
+            ...subscription,
+            product: { ...subscription.product, description: undefined },
+          })),
+        }),
+      ),
+    );
+
+    function Consumer() {
+      const [, setTick] = useState(0);
+      return (
+        <>
+          <button type='button' onClick={() => setTick((t) => t + 1)}>
+            Re-render
+          </button>
+          <ContractorOnboardingFlow
+            countryCode='PRT'
+            skipSteps={['select_country']}
+            options={
+              excludeProducts
+                ? { excludeProducts: excludeProducts() }
+                : undefined
+            }
+            render={renderStep}
+          />
+        </>
+      );
+    }
+
+    render(<Consumer />, { wrapper: TestProviders });
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitFor(() =>
+      expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument(),
+    );
+    await fillBasicInformation();
+    screen.getByText(/Next Step/i).click();
+
+    await screen.findByText(/Step: Pricing Plan/i);
+    await screen.findAllByRole('radio');
+    screen.getByText('Re-render').click();
+    screen.getByText('Re-render').click();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const dataIntegrityLogs = () =>
+      missingDescriptionLog.mock.calls.filter(([message]) =>
+        String(message).startsWith('[Data Integrity]'),
+      ).length;
+    expect(dataIntegrityLogs()).toBe(
+      mockContractorSubscriptionResponse.data.length,
+    );
   });
 });

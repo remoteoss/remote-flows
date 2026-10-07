@@ -219,15 +219,24 @@ export const useContractorSubscriptionSchemaField = (
     },
   });
 
+  const excludeProductsKey = options?.excludeProducts?.join(',') ?? '';
+  const excludeProducts = useMemo(
+    () =>
+      excludeProductsKey
+        ? (excludeProductsKey.split(',') as ProductType[])
+        : undefined,
+    [excludeProductsKey],
+  );
+
   const filteredContractorSubscriptions = useMemo(
     () =>
       contractorSubscriptions?.filter((subscription) =>
         shouldIncludeProduct(
           subscription.product.identifier ?? '',
-          options?.excludeProducts,
+          excludeProducts,
         ),
       ) ?? [],
-    [contractorSubscriptions, options?.excludeProducts],
+    [contractorSubscriptions, excludeProducts],
   );
 
   // maximum number of subscriptions
@@ -247,7 +256,7 @@ export const useContractorSubscriptionSchemaField = (
   const showEorSubscription =
     (isMissingSubscriptions || isEligibilityQuestionnaireBlocked) &&
     selectedCountry?.eor_onboarding &&
-    !options?.excludeProducts?.includes('eor');
+    !excludeProducts?.includes('eor');
 
   const { eorSubscription, isLoading: isLoadingEorSubscription } =
     useEorSubscription({
@@ -309,7 +318,7 @@ export const useContractorSubscriptionSchemaField = (
       addEorToFieldOptions(
         otherOptions as unknown as $TSFixMe[],
         eorSubscription,
-        options?.excludeProducts,
+        excludeProducts,
       );
 
       // Add separator metadata to first "other" option
@@ -330,7 +339,7 @@ export const useContractorSubscriptionSchemaField = (
     isEligibilityQuestionnaireBlocked,
     showEorSubscription,
     eorSubscription,
-    options?.excludeProducts,
+    excludeProducts,
   ]);
 
   const schema = useMemo(() => {
