@@ -35,6 +35,8 @@ import {
 import { Client } from '@/src/client/client';
 // oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
+import { useDeepStable } from '@/src/common/hooks';
+import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import {
@@ -48,7 +50,7 @@ import {
   IR35_FILE_SUBTYPE,
   ProductType,
 } from '@/src/flows/ContractorOnboarding/constants';
-import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 import { mutationToPromise } from '@/src/lib/mutations';
 import {
   useDownloadFile,
@@ -135,27 +137,31 @@ const useEorSubscription = (options?: { enabled?: boolean }) => {
     (plan) => plan.product.name === 'EOR Monthly',
   );
 
-  const eorSubscription = eorPricingPlan
-    ? {
-        product: {
-          identifier: eorProductIdentifier,
-          short_name: 'EOR',
-        },
-        currency: eorPricingPlan.price.currency,
-        price: {
-          amount: convertFromCents(eorPricingPlan.price.amount),
-        },
-        features: [
-          'Contract between Remote and employee',
-          'Remote manages onboarding, payroll, and compliance',
-          'Manages taxes, benefits, and time-off tracking',
-          'Handles contracts, transfers, and terminations',
-        ],
-        description: 'Enables hiring in countries without a local entity',
-        label: 'Employer of Record',
-        value: eorProductIdentifier,
-      }
-    : null;
+  const eorSubscription = useMemo(
+    () =>
+      eorPricingPlan
+        ? {
+            product: {
+              identifier: eorProductIdentifier,
+              short_name: 'EOR',
+            },
+            currency: eorPricingPlan.price.currency,
+            price: {
+              amount: convertFromCents(eorPricingPlan.price.amount),
+            },
+            features: [
+              'Contract between Remote and employee',
+              'Remote manages onboarding, payroll, and compliance',
+              'Manages taxes, benefits, and time-off tracking',
+              'Handles contracts, transfers, and terminations',
+            ],
+            description: 'Enables hiring in countries without a local entity',
+            label: 'Employer of Record',
+            value: eorProductIdentifier,
+          }
+        : null,
+    [eorPricingPlan],
+  );
 
   return { eorSubscription, isLoading: isLoadingPricingPlans };
 };
@@ -192,6 +198,9 @@ const addEorToFieldOptions = (
   return fieldOptions;
 };
 
+const withoutSubscriptionRequired = (existingRequired: string[]) =>
+  existingRequired.filter((fieldName) => fieldName !== 'subscription');
+
 export const useContractorSubscriptionSchemaField = (
   employmentId: string,
   selectedCountry: SelectedCountry,
@@ -211,15 +220,17 @@ export const useContractorSubscriptionSchemaField = (
     },
   });
 
+  const excludeProducts = useDeepStable(options?.excludeProducts);
+
   const filteredContractorSubscriptions = useMemo(
     () =>
       contractorSubscriptions?.filter((subscription) =>
         shouldIncludeProduct(
           subscription.product.identifier ?? '',
-          options?.excludeProducts,
+          excludeProducts,
         ),
       ) ?? [],
-    [contractorSubscriptions, options?.excludeProducts],
+    [contractorSubscriptions, excludeProducts],
   );
 
   // maximum number of subscriptions
@@ -239,7 +250,7 @@ export const useContractorSubscriptionSchemaField = (
   const showEorSubscription =
     (isMissingSubscriptions || isEligibilityQuestionnaireBlocked) &&
     selectedCountry?.eor_onboarding &&
-    !options?.excludeProducts?.includes('eor');
+    !excludeProducts?.includes('eor');
 
   const { eorSubscription, isLoading: isLoadingEorSubscription } =
     useEorSubscription({
@@ -250,30 +261,7 @@ export const useContractorSubscriptionSchemaField = (
     filteredContractorSubscriptions.length > 0 ||
     (showEorSubscription && eorSubscription !== null);
 
-  const form = createHeadlessForm(
-    selectContractorSubscriptionStepSchema.data.schema,
-    {},
-    {
-      ...options,
-      jsfModify: {
-        ...options?.jsfModify,
-        // If no filtered subscriptions are available, make the subscription field optional
-        required: hasAvailableOptions
-          ? options?.jsfModify?.required
-          : (existingRequired: string[]) =>
-              existingRequired.filter(
-                (fieldName: string) => fieldName !== 'subscription',
-              ),
-      },
-    },
-  );
-
-  const field: JSFField | undefined = form.fields.find(
-    (field) => field.name === 'subscription',
-  ) as JSFField | undefined;
-
-  if (field) {
-    // Start with contractor management options
+  const subscriptionOptions = useMemo(() => {
     const contractorOptions = filteredContractorSubscriptions.map((opts) => {
       const product = opts.product;
       const price = opts.price.amount;
@@ -317,16 +305,14 @@ export const useContractorSubscriptionSchemaField = (
       };
     });
 
-    // Sort contractor options
     contractorOptions.sort((a, b) => a.label.localeCompare(b.label));
 
-    // Build otherSubscriptions (EOR) with separator metadata
     const otherOptions: $TSFixMe[] = [];
     if (showEorSubscription) {
       addEorToFieldOptions(
         otherOptions as unknown as $TSFixMe[],
         eorSubscription,
-        options?.excludeProducts,
+        excludeProducts,
       );
 
       // Add separator metadata to first "other" option
@@ -341,13 +327,60 @@ export const useContractorSubscriptionSchemaField = (
       }
     }
 
-    // Combine all options into the single field
-    field.options = [...contractorOptions, ...otherOptions];
-  }
+    return [...contractorOptions, ...otherOptions];
+  }, [
+    filteredContractorSubscriptions,
+    isEligibilityQuestionnaireBlocked,
+    showEorSubscription,
+    eorSubscription,
+    excludeProducts,
+  ]);
+
+  const schema = useMemo(() => {
+    const baseSchema = selectContractorSubscriptionStepSchema.data.schema;
+    return {
+      ...baseSchema,
+      properties: {
+        ...baseSchema.properties,
+        subscription: {
+          ...baseSchema.properties.subscription,
+          oneOf: subscriptionOptions.map(
+            ({ label, value, description, ...presentation }) => ({
+              const: value,
+              title: label,
+              description,
+              'x-jsf-presentation': presentation,
+            }),
+          ),
+        },
+      },
+    };
+  }, [subscriptionOptions]);
+
+  const jsfModify = useMemo(
+    () => ({
+      ...options?.jsfModify,
+      // If no filtered subscriptions are available, make the subscription field optional
+      required: hasAvailableOptions
+        ? options?.jsfModify?.required
+        : withoutSubscriptionRequired,
+    }),
+    [options?.jsfModify, hasAvailableOptions],
+  );
+
+  const { form, handleValidation, onValuesChange, parseFormValues } =
+    useHeadlessForm({
+      schema,
+      options: { jsfModify },
+      strategy: 'buildOnce',
+    });
 
   return {
     isLoading: isLoading || isLoadingEorSubscription,
     form,
+    handleValidation,
+    onValuesChange,
+    parseFormValues,
     contractorSubscriptions,
     filteredContractorSubscriptions,
     refetch,

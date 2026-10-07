@@ -47,6 +47,55 @@ Expose `handleValidation` and `parseFormValues` from the hook on the flow bag ra
 
 **Reference:** `useBasicInformationSchema` and `useContractDetailsSchema` in `src/flows/Onboarding/api.ts`.
 
+## Dynamic Data Goes in the Schema
+
+Options, defaults, `disabled` flags, and anything else that comes from an API response go into the schema before the form is built, never onto `form.fields` afterwards.
+
+jsf v1's `handleValidation` rebuilds every field from the schema and merges the result onto the same field objects. A property that isn't in the schema gets overwritten: options written after the build become `[]`. Nothing tells React, so the next render that doesn't rebuild the form shows the wiped field. The SDK's own submit usually re-renders straight afterwards and hides this. A partner who calls `flowBag.handleValidation` and then re-renders through their own state (opening a modal, say) doesn't get that re-render. That's how the contractor pricing plans (#1446) and the create company dropdowns (#1447) went empty.
+
+### ❌ DON'T: Write onto the built fields
+
+```typescript
+const form = createHeadlessForm(schema, {}, options);
+const field = form.fields.find((f) => f.name === 'country_code');
+field.options = countries;
+```
+
+### ✅ DO: Build the schema from the data, memoized
+
+```typescript
+const schema = useMemo(
+  () => ({
+    ...baseSchema,
+    properties: {
+      ...baseSchema.properties,
+      country_code: {
+        ...baseSchema.properties.country_code,
+        oneOf: countries.map(({ label, value, ...presentation }) => ({
+          const: value,
+          title: label,
+          'x-jsf-presentation': presentation,
+        })),
+      },
+    },
+  }),
+  [countries],
+);
+
+const { form, handleValidation, parseFormValues, onValuesChange } =
+  useHeadlessForm({ schema, options: { jsfModify }, strategy: 'buildOnce' });
+```
+
+- **Option shape**: `title` becomes the option's `label` and `const` its `value`. Keys in `x-jsf-presentation` (`meta`, `disabled`) and other keys such as `description` are copied onto the option, so components that render `fieldData.options` see the same shape as before.
+- **Keep the schema stable**: the form is rebuilt whenever `schema` is a new object, so memoize every input it's derived from. React Query `data` and `select` results keep their reference while the data is equal. Objects you derive yourself need their own `useMemo`.
+- **Functions in `jsfModify` need a stable reference**: the hook deep-compares `options`, and two different functions are never equal. Use a module-level function or a memoized one, never an inline arrow.
+- **Validation now checks the value**: with real `oneOf` entries, a preselected or partner-supplied value that isn't in the list fails with `The option "…" is not valid.` Check what the step preselects before migrating.
+- **Read `checkFieldUpdates` through a ref** when a `watch` subscription is created once on mount, as `useJSONSchemaForm` does. Otherwise the subscription keeps calling the first render's `onValuesChange`.
+
+**Reference:** `useCountriesSchemaField` in `src/flows/CreateCompany/api.ts`.
+
+**Test it like a partner:** in the flow's render prop, a component calls `flowBag.handleValidation(...)` and then sets its own state. Assert the options are still there afterwards. `CompanyBasicInformationOptions.test.tsx` in `src/flows/CreateCompany/tests/` does this.
+
 ## Strategies
 
 - **`buildOnce`**: use this for all new code.
