@@ -1,11 +1,33 @@
 const axios = require('axios');
 const dotenv = require('dotenv');
 const express = require('express');
+const fs = require('fs');
 const http = require('http');
+const path = require('path');
 const { setupRoutes } = require('./api/routes.js');
 const { createServer: createViteServer } = require('vite');
 
-dotenv.config();
+const envArg = process.argv.find(
+  (arg) => arg === '--env' || arg.startsWith('--env='),
+);
+const envName = envArg?.split('=')[1];
+
+if (envArg && !envName) {
+  console.error('--env requires a value, e.g. --env=partners');
+  process.exit(1);
+}
+
+if (envName) {
+  const envFile = path.resolve(__dirname, '..', `.env.${envName}`);
+  if (!fs.existsSync(envFile)) {
+    console.error(`--env=${envName}: ${envFile} does not exist.`);
+    process.exit(1);
+  }
+  dotenv.config({ path: envFile });
+  console.log(`Loaded ${envFile}; example/.env is ignored.`);
+} else {
+  dotenv.config();
+}
 
 const startServer = async () => {
   const app = express();
@@ -16,6 +38,7 @@ const startServer = async () => {
   // for HMR's WebSocket instead of letting Vite open its own on the default
   // port — otherwise every worktree's example app collides on that port.
   const vite = await createViteServer({
+    envDir: envName ? false : undefined,
     server: { middlewareMode: true, ws: { server: httpServer } },
   });
 
