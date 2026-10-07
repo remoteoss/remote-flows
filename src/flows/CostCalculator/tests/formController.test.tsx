@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import {
@@ -142,5 +142,46 @@ describe('CostCalculatorFlow form controller', () => {
 
     expect(result.status).toBe('invalid');
     expect(estimationRequest).not.toHaveBeenCalled();
+  });
+
+  it('reads values that fields set while the flow first mounts', async () => {
+    let latestBag: CostCalculatorRenderBag | undefined;
+    function SetsTitleOnMount({ bag }: { bag: CostCalculatorRenderBag }) {
+      useEffect(() => {
+        bag.form.setValue('estimation_title', 'Set on mount');
+      }, [bag.form]);
+      return null;
+    }
+    render(
+      <CostCalculatorFlow
+        defaultValues={defaultValues}
+        render={(bag) => {
+          latestBag = bag;
+          return <SetsTitleOnMount bag={bag} />;
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    expect(latestBag?.form.getValues().estimation_title).toBe('Set on mount');
+  });
+
+  it('reports a failed request instead of throwing', async () => {
+    server.use(
+      http.post('*/v1/cost-calculator/estimation', () => HttpResponse.error()),
+    );
+    const getBag = renderFlow((bag) => <SalaryReadout bag={bag} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('salary-readout')).toHaveTextContent('50000');
+    });
+
+    let result: CostCalculatorSubmitResult | undefined;
+    await waitFor(async () => {
+      result = await getBag().form.submit();
+      expect(result.status).not.toBe('invalid');
+    });
+
+    expect(result?.status).toBe('error');
   });
 });

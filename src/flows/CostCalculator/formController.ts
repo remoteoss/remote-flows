@@ -61,13 +61,18 @@ export function createCostCalculatorFormController(
 ) {
   let bag = initialBag;
   let snapshot = cloneValues(form.getValues());
+  let hasSubmitted = false;
   const listeners = new Set<(values: FormValues) => void>();
 
+  const publish = (values: unknown) => {
+    snapshot = cloneValues(values);
+    listeners.forEach((listener) => listener(snapshot));
+  };
+
   const connect = () => {
-    const subscription = form.watch((values) => {
-      snapshot = cloneValues(values);
-      listeners.forEach((listener) => listener(snapshot));
-    });
+    const subscription = form.watch(publish);
+    // Child fields write values in their own effects, which run before this one subscribes.
+    publish(form.getValues());
     return () => subscription.unsubscribe();
   };
 
@@ -75,7 +80,7 @@ export function createCostCalculatorFormController(
     form.setValue(name as string, value, {
       shouldDirty: true,
       shouldTouch: true,
-      shouldValidate: form.formState.isSubmitted,
+      shouldValidate: hasSubmitted || form.formState.isSubmitted,
     });
     const field = bag.fields.find((field) => field.name === name) as
       | { onChange?: (value: unknown) => void }
@@ -84,6 +89,7 @@ export function createCostCalculatorFormController(
   };
 
   const submit = async (): Promise<CostCalculatorSubmitResult> => {
+    hasSubmitted = true;
     const isValid = await form.trigger();
     if (!isValid) {
       const errors = Object.fromEntries(
@@ -104,14 +110,19 @@ export function createCostCalculatorFormController(
       bag.meta.fields['employer_currency_slug'] = bag.meta.fields['currency'];
     }
 
-    const result = (await bag.onSubmit(parsedValues)) as $TSFixMe;
+    const result = (await bag
+      .onSubmit(parsedValues)
+      .catch((error: unknown) => error)) as $TSFixMe;
     if (result?.data && !result.error) {
       return { status: 'success', data: result.data };
     }
 
     return {
       status: 'error',
-      error: result?.error as Error,
+      error:
+        result?.error instanceof Error
+          ? result.error
+          : new Error('Something went wrong. Please try again later.'),
       fieldErrors: normalizeFieldErrors(
         result?.fieldErrors as FieldError[],
         bag.meta?.fields,
