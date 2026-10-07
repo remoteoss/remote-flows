@@ -10,6 +10,7 @@ import {
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { Client } from '@/src/client/client';
+// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useEmploymentQuery } from '@/src/common/api/employment';
 import { useClient } from '@/src/context';
@@ -182,6 +183,7 @@ export const useContractAmendment = ({
 
     switch (stepState.currentStep.name) {
       case STEPS.form.name: {
+        // oxlint-disable-next-line typescript/no-deprecated
         const { mutateAsync } = mutationToPromise(
           automatableContractAmendmentMutation,
         );
@@ -193,6 +195,7 @@ export const useContractAmendment = ({
         return automatableContractAmendment;
       }
       case STEPS.confirmation_form.name: {
+        // oxlint-disable-next-line typescript/no-deprecated
         const { mutateAsync } = mutationToPromise(
           createContractAmendmentMutation,
         );

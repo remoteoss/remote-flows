@@ -761,6 +761,94 @@ describe('OnboardingFlow', () => {
     await screen.findByText(/Step: Benefits/i);
   });
 
+  it.each([
+    {
+      maximumWorkingHoursRegime: 'yes',
+      allowanceInCents: 81257,
+      allowanceLabel: '812.57',
+    },
+    {
+      maximumWorkingHoursRegime: 'no',
+      allowanceInCents: 29548,
+      allowanceLabel: '295.48',
+    },
+  ])(
+    'should submit the computed extended work hours allowance in cents (maximum_working_hours_regime: $maximumWorkingHoursRegime)',
+    async ({ maximumWorkingHoursRegime, allowanceInCents, allowanceLabel }) => {
+      // Served without x-rmt-meta, like PRT contract details v3, so the kit evaluates it with
+      // the jsf v1 engine. The allowance is a forced money value computed from the salary.
+      const { 'x-rmt-meta': _meta, ...schemaWithoutMeta } =
+        contractDetailsSchemaV1Portugal.data;
+
+      server.use(
+        http.get('*/v1/countries/PRT/contract_details*', () => {
+          return HttpResponse.json({ data: schemaWithoutMeta });
+        }),
+        http.get('*/v1/employments/:id', ({ params }) => {
+          return HttpResponse.json({
+            ...employmentDefaultResponse,
+            data: {
+              ...employmentDefaultResponse.data,
+              employment: {
+                ...employmentDefaultResponse.data.employment,
+                id: params.id,
+                contract_details: {
+                  ...employmentDefaultResponse.data.employment.contract_details,
+                  annual_gross_salary: 7170377,
+                  working_hours_exemption: 'yes',
+                  maximum_working_hours_regime: maximumWorkingHoursRegime,
+                },
+              },
+            },
+          });
+        }),
+      );
+
+      render(
+        <OnboardingFlow
+          employmentId={generateUniqueEmploymentId()}
+          {...defaultProps}
+        />,
+        {
+          wrapper: TestProviders,
+        },
+      );
+
+      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+
+      await fillCountry('PRT');
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Personal email/i)).toBeInTheDocument();
+      });
+
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText(/Step: Contract Details/i);
+
+      await screen.findByText(
+        new RegExp(`additional ${allowanceLabel} EUR monthly`, 'i'),
+      );
+
+      screen.getByText(/Next Step/i).click();
+
+      await waitFor(() => {
+        expect(mockOnSubmit).toHaveBeenCalledTimes(3);
+      });
+
+      expect(mockOnSubmit.mock.calls[2][0]).toEqual(
+        expect.objectContaining({
+          annual_gross_salary: 7170377,
+          working_hours_exemption: 'yes',
+          maximum_working_hours_regime: maximumWorkingHoursRegime,
+          working_hours_exemption_allowance: allowanceInCents,
+        }),
+      );
+
+      await screen.findByText(/Step: Benefits/i);
+    },
+  );
+
   it('should show validation errors when submitting benefits step without selecting any benefits', async () => {
     server.use(
       http.get('*/v1/employments/*/benefit-offers', () => {

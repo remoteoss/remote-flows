@@ -28,10 +28,7 @@ export const JsonSchemaPlayground = () => {
   }, []);
 
   return (
-    <RemoteFlows
-      authType='company-manager'
-      proxy={{ url: window.location.origin }}
-    >
+    <RemoteFlows proxy={{ url: window.location.origin }}>
       <JsonSchemaPlaygroundFlow
         defaultSchema={selectedSchema}
         schemas={SCHEMAS}

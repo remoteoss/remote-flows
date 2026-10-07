@@ -1,4 +1,8 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import {
+  archiveEmployment,
+  createContractorEmployment,
+} from './helpers/contractor';
 import { setupVercelBypass } from './helpers/general';
 
 /**
@@ -8,56 +12,28 @@ import { setupVercelBypass } from './helpers/general';
  * This spec loads the real bundle in a real browser, so that class of failure surfaces in CI
  * instead.
  *
- * The API is stubbed rather than read from the sandbox: the assertions are about rendering,
- * and a shared sandbox's data is not something a regression test should depend on.
+ * It runs against the sandbox with a contractor created for the run, so the currency options
+ * are the ones the API returns for that contractor.
  */
-const EMPLOYMENT_ID = 'e2e-employment-grace';
-
-const employmentResponse = {
-  data: {
-    employment: {
-      id: EMPLOYMENT_ID,
-      full_name: 'Grace Hopper',
-      type: 'contractor',
-      contractor_type: 'contractor',
-      status: 'active',
-    },
-  },
-};
-
-const currenciesResponse = {
-  data: [
-    { code: 'USD', source: 'default_payment_currency' },
-    { code: 'EUR', source: 'contract_country_currency' },
-  ],
-};
-
-/**
- * Registered after `setupVercelBypass`, which routes everything: Playwright matches routes in
- * reverse registration order, so the specific stubs below take precedence over it.
- */
-async function stubInvoiceScheduleApi(page: Page) {
-  await page.route('**/api/fetch-refresh-token', (route) =>
-    route.fulfill({
-      json: { access_token: 'e2e-access-token', expires_in: 3600 },
-    }),
-  );
-
-  await page.route(
-    /\/v1\/contractors\/employments\/[^/]+\/contractor-currencies/,
-    (route) => route.fulfill({ json: currenciesResponse }),
-  );
-
-  // The flow fetches the employment itself, to tell a Contractor of Record apart.
-  await page.route(/\/v1\/employments\/[^/?]+/, (route) =>
-    route.fulfill({ json: employmentResponse }),
-  );
-}
+const CONTRACTOR_CURRENCIES_PATH =
+  /^\/v1\/contractors\/employments\/[^/]+\/contractor-currencies$/;
 
 test.describe('Invoice schedule', () => {
+  let employmentId: string;
+
   test.beforeEach(async ({ page }) => {
+    employmentId = '';
     await setupVercelBypass(page);
-    await stubInvoiceScheduleApi(page);
+    employmentId = await createContractorEmployment(
+      page,
+      `Contractor ${Date.now()}`,
+    );
+  });
+
+  test.afterEach(async ({ page }) => {
+    if (!employmentId) return;
+
+    await archiveEmployment(page, employmentId);
   });
 
   test('renders the schedule form and offers the contractor’s currencies', async ({
@@ -69,9 +45,22 @@ test.describe('Invoice schedule', () => {
 
     await page.goto('/?demo=invoice-schedule');
 
-    // The demo asks for the employment id the flow now requires.
-    await page.getByLabel('Employment ID:').fill(EMPLOYMENT_ID);
+    await page.getByLabel('Employment ID:').fill(employmentId);
+    const currenciesResponse = page.waitForResponse((response) =>
+      CONTRACTOR_CURRENCIES_PATH.test(new URL(response.url()).pathname),
+    );
     await page.getByRole('button', { name: 'Create invoice schedule' }).click();
+
+    const currencies = await currenciesResponse;
+    expect(
+      currencies.ok(),
+      `GET contractor-currencies returned ${currencies.status()}`,
+    ).toBe(true);
+    const { data } = (await currencies.json()) as {
+      data: { code: string }[];
+    };
+    const currencyCodes = data.map(({ code }) => code);
+    expect(currencyCodes).not.toEqual([]);
 
     await expect(
       page.getByRole('heading', { name: 'Create invoice schedule' }),
@@ -81,10 +70,11 @@ test.describe('Invoice schedule', () => {
     await expect(currencyField).toBeVisible();
 
     await currencyField.click();
-    await expect(page.getByRole('option', { name: 'EUR' })).toBeVisible();
-    await expect(page.getByRole('option', { name: 'USD' })).toBeVisible();
-    await page.getByRole('option', { name: 'EUR' }).click();
-    await expect(currencyField).toContainText('EUR');
+    await expect(page.getByRole('option')).toHaveText(currencyCodes);
+    await page
+      .getByRole('option', { name: currencyCodes[0], exact: true })
+      .click();
+    await expect(currencyField).toContainText(currencyCodes[0]);
 
     expect(pageErrors).toEqual([]);
   });

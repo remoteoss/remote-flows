@@ -15,6 +15,8 @@ const PORT = process.env.PORT || '3001';
  */
 export default defineConfig({
   testDir: './e2e',
+  timeout: 60_000,
+  expect: { timeout: 10_000 },
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

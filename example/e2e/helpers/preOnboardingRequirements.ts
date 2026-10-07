@@ -1,4 +1,5 @@
 import { Page, expect, test } from '@playwright/test';
+import { clickAndWaitForSave } from './general';
 
 /**
  * Completes the Pre-Onboarding Requirements shown in the Review step for this sandbox company:
@@ -42,7 +43,13 @@ async function signPreOnboardingDocument(page: Page, signature: string) {
   await signatureDialog
     .getByLabel('Your full name (signature)')
     .fill(signature);
-  await signatureDialog.getByRole('button', { name: 'Sign Document' }).click();
+
+  await clickAndWaitForSave(
+    page,
+    signatureDialog.getByRole('button', { name: 'Sign Document' }),
+    'POST',
+    /\/pre-onboarding-documents\/[^/]+\/sign$/,
+  );
 
   await documentDialog.waitFor({ state: 'hidden' });
 }

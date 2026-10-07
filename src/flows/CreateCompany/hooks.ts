@@ -41,9 +41,11 @@ export const useCreateCompany = ({
   const createCompanyMutation = useCreateCompanyRequest();
   const updateCompanyMutation = useUpdateCompanyRequest();
 
+  // oxlint-disable-next-line typescript/no-deprecated
   const { mutateAsync: createCompanyMutationAsync } = mutationToPromise(
     createCompanyMutation,
   );
+  // oxlint-disable-next-line typescript/no-deprecated
   const { mutateAsync: updateCompanyMutationAsync } = mutationToPromise(
     updateCompanyMutation,
   );
@@ -53,7 +55,9 @@ export const useCreateCompany = ({
   );
   const [createdCompanyId, setCreatedCompanyId] = useState<string | null>(null);
   const fieldsMetaRef = useRef<{
+    // oxlint-disable-next-line typescript/no-deprecated
     company_basic_information: Meta;
+    // oxlint-disable-next-line typescript/no-deprecated
     address_details: Meta;
   }>({
     company_basic_information: {},
@@ -71,13 +75,18 @@ export const useCreateCompany = ({
     STEPS as Record<keyof typeof STEPS, Step<keyof typeof STEPS>>,
   );
 
-  const { companyBasicInformationForm, isLoading: isLoadingCountries } =
-    useCountriesSchemaField({
-      jsfModify: options?.jsfModify?.company_basic_information,
-      queryOptions: {
-        enabled: stepState.currentStep.name === 'company_basic_information',
-      },
-    });
+  const {
+    companyBasicInformationForm,
+    handleValidation: handleCompanyBasicInformationValidation,
+    onValuesChange: onCompanyBasicInformationValuesChange,
+    parseFormValues: parseCompanyBasicInformationFormValues,
+    isLoading: isLoadingCountries,
+  } = useCountriesSchemaField({
+    jsfModify: options?.jsfModify?.company_basic_information,
+    queryOptions: {
+      enabled: stepState.currentStep.name === 'company_basic_information',
+    },
+  });
 
   const { data: addressDetailsForm, isLoading: isLoadingAddressDetails } =
     useAddressDetailsSchema({
@@ -147,6 +156,13 @@ export const useCreateCompany = ({
     };
   }, [companyBasicInformationInitialValues, addressDetailsInitialValues]);
 
+  const checkFieldUpdates = async (values: FieldValues) => {
+    setFieldValues(values);
+    if (stepState.currentStep.name === 'company_basic_information') {
+      await onCompanyBasicInformationValuesChange(values);
+    }
+  };
+
   const goTo = (step: keyof typeof STEPS) => {
     goToStep(step);
   };
@@ -159,9 +175,7 @@ export const useCreateCompany = ({
       companyBasicInformationForm &&
       currentStepName === 'company_basic_information'
     ) {
-      return await parseJSFToValidate(values, currentStepFields, {
-        isPartialValidation: false,
-      });
+      return await parseCompanyBasicInformationFormValues(values);
     }
     if (addressDetailsForm && currentStepName === 'address_details') {
       return await parseJSFToValidate(values, currentStepFields, {
@@ -292,6 +306,7 @@ export const useCreateCompany = ({
           companyId: createdCompanyId,
           payload,
           jsonSchemaVersion:
+            // oxlint-disable-next-line typescript/no-deprecated
             options?.jsonSchemaVersion?.form_schema?.address_details,
         });
 
@@ -342,7 +357,7 @@ export const useCreateCompany = ({
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    checkFieldUpdates: setFieldValues,
+    checkFieldUpdates,
 
     /**
      * Function to handle going back to the previous step
@@ -404,12 +419,7 @@ export const useCreateCompany = ({
         stepState.currentStep.name === 'company_basic_information' &&
         companyBasicInformationForm
       ) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          companyBasicInformationForm.fields,
-          { isPartialValidation: false },
-        );
-        return companyBasicInformationForm.handleValidation(parsedValues);
+        return handleCompanyBasicInformationValidation(values);
       }
       if (
         stepState.currentStep.name === 'address_details' &&

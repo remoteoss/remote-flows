@@ -57,6 +57,27 @@ This project is a React component library (`@remoteoss/remote-flows`) that provi
 - Keep functions small and focused (ideally under 50 lines)
 - Add JSDoc comments for all public APIs with `@param`, `@returns`, and description
 
+**Inline Comments (implementation code, config, tests — not public-API JSDoc above):**
+
+- Default to no comments. Only add one when the WHY is genuinely non-obvious (a hidden constraint, a workaround for a specific bug, behavior that would surprise a reader) — never to restate WHAT the code does.
+- One short line max. No multi-line comment blocks or paragraphs. Exception: when a human explicitly asked for the comment, favor a clear plain-language explanation over compressing it to fit one line. This exception doesn't cover a comment added on the AI's own initiative for the non-obvious-why case above — keep those to one line, and skip them entirely if the code is actually simple.
+- Never reference the current task, PR, fix, or caller (e.g. "used by X", "added for the Y flow", "fixes #123") — that belongs in the commit message or PR description, not the file.
+
+**❌ INCORRECT: multi-line comment explaining a design decision**
+
+```yaml
+# Deliberately not diffing the regenerated output against what's committed:
+# the schema drifts independently of this PR, so a diff here isn't a
+# failure. Only a nonzero exit should fail this job.
+- name: Run codegen
+```
+
+**✅ CORRECT: no comment — rationale lives in the PR description**
+
+```yaml
+- name: Run codegen
+```
+
 ### Import Conventions
 
 Imports should be organized in this order:
@@ -209,8 +230,8 @@ Forms are central to this library - ensure consistency:
 - **Yup schemas** - Validation schemas defined with Yup
 - **JSON Schema Form** - Dynamic fields use `@remoteoss/json-schema-form`
 - **Field mapping** - Custom field components mapped in `src/components/form/fields/fieldsMapping.tsx`
-- **Validation timing** - Use `handleValidation` for combined static + dynamic validation
-- **Parse before submit** - Use `parseJSFToValidate()` to transform form values
+- **useHeadlessForm** - Schema-backed forms are built with `useHeadlessForm` (`src/common/useHeadlessForm.ts`): fetch the schema, then pass `schema`, saved `initialValues` (not the live form values), `options` and `strategy: 'buildOnce'`
+- **Validation and parsing** - Use the hook's `handleValidation` / `parseFormValues` instead of calling `parseJSFToValidate()` by hand
 - **Required vs optional** - Match field requirements to JSON schema
 
 **Check:** Are validation errors user-friendly? Do they display with proper field labels?
@@ -447,6 +468,7 @@ flows/[FlowName]/
 - Missing `waitFor` for async assertions
 - Not cleaning up React Query cache between tests
 - Testing implementation details instead of behavior
+- A fix for JSON Schema form behaviour (conditional visibility, computed or forced values, money conversion, `initialValues`, `jsfModify`) without a new situation in `src/common/tests/jsfEngineSituations.ts`, or reproduced only through a flow integration test. The situation must fail without the fix
 
 ### 9. Build and Release Issues
 
@@ -495,6 +517,7 @@ Before approving a PR, verify:
 - [ ] **No breaking changes** - Or properly documented with `BREAKING CHANGE:`
 - [ ] **New tests added** - All new features/fixes have tests
 - [ ] **JSDoc added** - Public APIs have documentation
+- [ ] **No unnecessary comments** - Implementation/config code has no comments restating WHAT it does, no multi-line comment blocks, and no task/PR/fix references; only genuinely non-obvious WHY, one line max
 - [ ] **Bundle size checked** - No unexpected size increases
 - [ ] **Accessibility maintained** - Keyboard navigation and ARIA work
 - [ ] **Error handling present** - All async operations handle errors

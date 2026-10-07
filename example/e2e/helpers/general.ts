@@ -1,4 +1,4 @@
-import { Page, Route, test } from '@playwright/test';
+import { Locator, Page, Route, expect, test } from '@playwright/test';
 
 export async function setupVercelBypass(page: Page) {
   await page.route('**/*', async (route: Route) => {
@@ -37,6 +37,8 @@ export type FillFormOptions = {
   options?: { nativeSelect?: boolean };
   /** Only used for type: 'tel' — the country-code combobox's visible option text, e.g. "Germany +49". */
   countryLabel?: string;
+  /** Only used for type: 'datepicker' with value 'auto' — `yyyy-MM-dd` days to skip, e.g. public holidays. */
+  excludedDates?: string[];
   /**
    * The field may legitimately not be rendered, so skip it instead of failing when it is
    * absent. For fields the backend adds or drops behind a feature flag — the form is built
@@ -122,7 +124,12 @@ export async function fillForm(page: Page, values: FillFormOptions[]) {
         break;
       case 'datepicker':
         if (option.testId) {
-          await fillDatepicker(page, option.value, option.testId);
+          await fillDatepicker(
+            page,
+            option.value,
+            option.testId,
+            option.excludedDates,
+          );
         } else {
           throw new Error('DatePicker need testId to be located');
         }
@@ -230,18 +237,35 @@ export async function fillDatepicker(
   page: Page,
   value: string = '',
   testId: string,
+  excludedDates: string[] = [],
 ) {
-  await page.getByTestId(testId).click();
+  const trigger = page.getByTestId(testId);
+  const calendar = page.locator('[role="dialog"]');
+  await trigger.click();
 
   // Wait for the calendar popup to be visible
-  await page.locator('[role="dialog"]').waitFor({ state: 'visible' });
+  await calendar.waitFor({ state: 'visible' });
 
   if (value === 'auto') {
-    const firstAvailableDate = page
-      .locator('button[role="gridcell"]:not([disabled])')
-      .first();
-    await firstAvailableDate.waitFor({ state: 'visible' });
-    await firstAvailableDate.click();
+    const availableDates = page.locator(
+      'button[role="gridcell"]:not([disabled])',
+    );
+    await availableDates.first().waitFor({ state: 'visible' });
+
+    for (let index = 0; ; index++) {
+      const count = await availableDates.count();
+      if (index >= count) {
+        throw new Error(
+          `No available date in the open month outside of: ${excludedDates.join(', ')}`,
+        );
+      }
+      await availableDates.nth(index).click();
+      const picked = (await trigger.textContent())?.trim() ?? '';
+      if (!excludedDates.includes(picked)) break;
+
+      await trigger.click();
+      await calendar.waitFor({ state: 'visible' });
+    }
   } else {
     const dateButton = page
       .getByRole('button', {
@@ -253,4 +277,63 @@ export async function fillDatepicker(
     await dateButton.waitFor({ state: 'visible' });
     await dateButton.click();
   }
+}
+
+export async function getPublicHolidays(
+  page: Page,
+  countryCode: string,
+): Promise<string[]> {
+  const year = new Date().getFullYear();
+  const holidays: string[] = [];
+
+  for (const holidayYear of [year, year + 1]) {
+    const response = await page.request.get(
+      `/v1/countries/${countryCode}/holidays/${holidayYear}`,
+    );
+    expect(
+      response.ok(),
+      `GET holidays for ${countryCode} ${holidayYear} returned ${response.status()}`,
+    ).toBe(true);
+    const body = (await response.json()) as {
+      data?: { day: string; observed_day?: string | null }[];
+    };
+    for (const holiday of body.data ?? []) {
+      holidays.push(holiday.day);
+      if (holiday.observed_day) holidays.push(holiday.observed_day);
+    }
+  }
+
+  return holidays;
+}
+
+export async function clickAndWaitForSave(
+  page: Page,
+  trigger: Locator,
+  method: string,
+  pathname: RegExp,
+) {
+  const response = page.waitForResponse(
+    (res) =>
+      res.request().method() === method &&
+      pathname.test(new URL(res.url()).pathname),
+  );
+  await trigger.click();
+  const saved = await response;
+  expect(
+    saved.ok(),
+    `${method} ${new URL(saved.url()).pathname} returned ${saved.status()}`,
+  ).toBe(true);
+}
+
+export async function submitAndWaitForSave(
+  page: Page,
+  method: string,
+  pathname: RegExp,
+) {
+  await clickAndWaitForSave(
+    page,
+    page.locator('.submit-button'),
+    method,
+    pathname,
+  );
 }

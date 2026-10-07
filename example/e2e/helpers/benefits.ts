@@ -1,5 +1,5 @@
 import { Page, test } from '@playwright/test';
-import { fillRadio, fillSelect } from './general';
+import { fillRadio, fillSelect, submitAndWaitForSave } from './general';
 
 type JsfOption = { value: unknown; label: string };
 
@@ -198,6 +198,9 @@ export async function fillOnboardingBenefitsStepDynamically(
     }
   }
 
-  await page.click('.submit-button');
-  await page.getByText('Loading...').waitFor({ state: 'hidden' });
+  await submitAndWaitForSave(
+    page,
+    'PUT',
+    /^\/v1\/employments\/[^/]+\/benefit-offers$/,
+  );
 }

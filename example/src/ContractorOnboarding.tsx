@@ -31,6 +31,7 @@ import {
 import Flag from 'react-flagpack';
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
+import { getUrlParam } from './utils/urlState';
 import { AlertError } from './AlertError';
 import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep';
 import { PricingPlanCard } from './components/PricingPlanCard';
@@ -745,10 +746,7 @@ export const ContractorOnboardingWithProps = ({
 }: ContractorOnboardingFormData) => {
   return (
     <div className='contractor-onboarding-container'>
-      <RemoteFlows
-        authType='company-manager'
-        proxy={{ url: window.location.origin }}
-      >
+      <RemoteFlows proxy={{ url: window.location.origin }}>
         <div className='contractor-onboarding-content'>
           <ContractorOnboardingFlow
             render={OnBoardingRender}
@@ -824,12 +822,15 @@ export const ContractorOnboardingWithProps = ({
 export const ContractorOnboardingForm = () => {
   const [formData, setFormData] = useState<ContractorOnboardingFormData>({
     employmentId:
-      import.meta.env.VITE_CONTRACTOR_MANAGEMENT_EMPLOYMENT_ID || '', // use your own employment ID
+      getUrlParam('employmentId') ||
+      import.meta.env.VITE_CONTRACTOR_MANAGEMENT_EMPLOYMENT_ID ||
+      '', // use your own employment ID
     externalId: '',
     partnerExternalId: '',
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
+  // oxlint-disable-next-line typescript/no-deprecated
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setShowOnboarding(true);
