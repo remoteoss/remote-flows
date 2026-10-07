@@ -84,6 +84,10 @@ describe('ContractorOnboarding pricing plan options', () => {
     );
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('keeps the plan options when the consumer re-renders after handleValidation', async () => {
     render(
       <ContractorOnboardingFlow
@@ -226,12 +230,10 @@ describe('ContractorOnboarding pricing plan options', () => {
     screen.getByText('Re-render').click();
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    const dataIntegrityLogs = () =>
+    expect(
       missingDescriptionLog.mock.calls.filter(([message]) =>
         String(message).startsWith('[Data Integrity]'),
-      ).length;
-    expect(dataIntegrityLogs()).toBe(
-      mockContractorSubscriptionResponse.data.length,
-    );
+      ),
+    ).toHaveLength(mockContractorSubscriptionResponse.data.length);
   });
 });
