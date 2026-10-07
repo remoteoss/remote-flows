@@ -83,11 +83,11 @@ export function isSkipped(
 }
 
 export function decideExitCode(rows: SchemaCanaryRow[]): 0 | 1 {
-  const hasPinnedFailure = rows.some(
-    (row) => row.check === 'pinned' && row.outcome === 'fail',
+  const hasGatingFailure = rows.some(
+    (row) => row.check !== 'latest' && row.outcome === 'fail',
   );
   const hasSeedError = rows.some((row) => row.outcome === 'seed-error');
-  return hasPinnedFailure || hasSeedError ? 1 : 0;
+  return hasGatingFailure || hasSeedError ? 1 : 0;
 }
 
 const OUTCOME_LABEL: Record<SchemaCheckOutcome, string> = {
@@ -111,7 +111,7 @@ export function buildReport(rows: SchemaCanaryRow[]): SchemaCanaryReport {
     _meta: {
       title: 'Contract details schema canary',
       description:
-        'Per-country contract_details schema checks against the sandbox gateway. "pinned" is the version this library currently ships against (see example/src/flows/Onboarding/jsonSchemaVersions.ts); "latest" is whatever version the gateway currently serves as newest. Both build the schema with the useHeadlessForm strategy the Onboarding flow uses for that country (buildOnce for jsf v1 contract details countries, rebuild otherwise), validate empty values the same way the hook does, and record whether it throws. "submit" fills the pinned schema with fake values and sends them in the same PATCH /v1/employments/{id} the Onboarding flow sends, recording whether the gateway accepts them; it only warns for now. "seed-error" means the sandbox employment for that country could not be created, so its schemas were not checked.',
+        'Per-country contract_details schema checks against the sandbox gateway. "pinned" is the version this library currently ships against (see example/src/flows/Onboarding/jsonSchemaVersions.ts); "latest" is whatever version the gateway currently serves as newest. Both build the schema with the useHeadlessForm strategy the Onboarding flow uses for that country (buildOnce for jsf v1 contract details countries, rebuild otherwise), validate empty values the same way the hook does, and record whether it throws. "submit" fills the pinned schema with fake values and sends them in the same PATCH /v1/employments/{id} the Onboarding flow sends, recording whether the gateway accepts them. "seed-error" means the sandbox employment for that country could not be created, so its schemas were not checked.',
       source:
         'scripts/schema-canary.ts, run nightly against the sandbox gateway',
     },

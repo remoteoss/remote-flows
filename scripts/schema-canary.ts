@@ -295,11 +295,9 @@ async function main() {
     (row) => row.check === 'submit' && row.outcome === 'fail',
   );
   if (failedSubmit.length > 0) {
-    console.warn(
-      `\n${failedSubmit.length} "submit" check(s) failed (warning only, does not fail the job):`,
-    );
+    console.error(`\n${failedSubmit.length} "submit" check(s) failed:`);
     for (const row of failedSubmit) {
-      console.warn(`  - ${row.country}: ${row.error}`);
+      console.error(`  - ${row.country}: ${row.error}`);
     }
   }
   if (failedLatest.length > 0) {
