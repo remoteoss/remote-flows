@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import equal from 'fast-deep-equal';
 import { FieldValues } from 'react-hook-form';
 import { ValidationResult } from '@remoteoss/remote-json-schema-form-kit';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
+import { useDeepStable } from '@/src/common/hooks';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import {
   JSFModify,
@@ -26,14 +26,6 @@ export type HeadlessForm = {
   handleValidation: (values: FieldValues) => Promise<ValidationResult | null>;
   onValuesChange: (values: FieldValues) => Promise<void>;
   parseFormValues: (values: FieldValues) => Promise<FieldValues>;
-};
-
-const useDeepStable = <T>(value: T): T => {
-  const [stable, setStable] = useState(value);
-  if (!equal(stable, value)) {
-    setStable(value);
-  }
-  return stable;
 };
 
 export function useHeadlessForm(args: UseHeadlessFormArgs): HeadlessForm {
