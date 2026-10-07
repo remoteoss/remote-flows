@@ -107,6 +107,9 @@ export function useHeadlessForm(args: UseHeadlessFormArgs): HeadlessForm {
           values: JSON.parse(JSON.stringify(parsedValues)),
         };
       }
+      // An untouched fieldset has no value, so jsf v1 reports one error for the
+      // whole fieldset, which no input can display. An empty object makes it
+      // check the fields inside, so their own errors show up.
       const result = form.handleValidation(
         withFieldsetObjects(parsedValues, form.fields),
       );
