@@ -92,6 +92,9 @@ function Harness({
           fieldsets={headless.form.meta['x-jsf-fieldsets']}
           fieldValues={values}
         />
+        <button type='button' onClick={() => form.trigger()}>
+          Validate
+        </button>
         <button
           type='button'
           onClick={async () =>

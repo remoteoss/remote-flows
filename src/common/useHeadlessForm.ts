@@ -28,6 +28,39 @@ export type HeadlessForm = {
   parseFormValues: (values: FieldValues) => Promise<FieldValues>;
 };
 
+type FieldNode = {
+  name: string;
+  type?: string;
+  isVisible?: boolean;
+  valueGroupingDisabled?: boolean;
+  fields?: unknown;
+};
+
+const isPlainObject = (value: unknown): value is FieldValues =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+function withFieldsetObjects(
+  values: FieldValues,
+  fields: unknown,
+): FieldValues {
+  if (!Array.isArray(fields)) return values;
+  return (fields as FieldNode[]).reduce<FieldValues>((acc, field) => {
+    if (field.isVisible === false) return acc;
+    if (field.type === 'fieldset-flat' || field.valueGroupingDisabled) {
+      return withFieldsetObjects(acc, field.fields);
+    }
+    if (field.type !== 'fieldset') return acc;
+    const fieldsetValue = acc[field.name];
+    return {
+      ...acc,
+      [field.name]: withFieldsetObjects(
+        isPlainObject(fieldsetValue) ? fieldsetValue : {},
+        field.fields,
+      ),
+    };
+  }, values);
+}
+
 export function useHeadlessForm(args: UseHeadlessFormArgs): HeadlessForm {
   const { schema, options, strategy } = args;
   const isBuildOnce = strategy === 'buildOnce';
@@ -74,7 +107,9 @@ export function useHeadlessForm(args: UseHeadlessFormArgs): HeadlessForm {
           values: JSON.parse(JSON.stringify(parsedValues)),
         };
       }
-      const result = form.handleValidation(parsedValues);
+      const result = form.handleValidation(
+        withFieldsetObjects(parsedValues, form.fields),
+      );
       if (isBuildOnce) setRevision((revision) => revision + 1);
       return result;
     },
