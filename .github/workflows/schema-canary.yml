@@ -7,6 +7,7 @@ on:
   pull_request:
     paths:
       - 'example/src/flows/Onboarding/jsonSchemaVersions.ts'
+      - 'scripts/fill-schema.ts'
       - 'scripts/schema-canary.ts'
       - 'scripts/schema-canary/**'
       - '.github/workflows/schema-canary.yml'
