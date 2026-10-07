@@ -31,6 +31,17 @@
  *   npm run seed:onboarding -- --country=DEU
  *   npm run seed:onboarding -- --country=ESP --basic-info-version=4
  *
+ * Pass --type=contractor to instead create a contractor employment from the
+ * contractor_basic_information schema and stop there, mirroring the
+ * basic_information step of src/flows/ContractorOnboarding/hooks.tsx.
+ * ir35 (GBR) and nationality_status (SAU/KWT/OMN/QAT/BHR) aren't in that
+ * schema - ContractorOnboarding's jsfModify adds them client-side and the
+ * hook writes them to the contractor contract document after creating the
+ * employment - so this does the same with fixed answers that avoid the IR35
+ * SDS upload and the non-national warning.
+ *
+ *   npm run seed:onboarding -- --country=GBR --type=contractor --env=sandbox
+ *
  * By default this proxies through a locally running `example` dev server
  * (BASE_URL, `example/.env`'s VITE_REMOTE_GATEWAY decides which gateway that
  * is - easy to lose track of).
@@ -46,38 +57,18 @@
  *
  *   npm run seed:onboarding -- --country=DEU --env=sandbox
  */
-import { createHeadlessForm } from '@remoteoss/remote-json-schema-form-kit';
-import { faker } from '@faker-js/faker';
 import dotenv from 'dotenv';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { fillSchema, pickSafeDate, safeStartDateYears } from './fill-schema';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 
-type FormSchema = Parameters<typeof createHeadlessForm>[0];
-type HeadlessFormOptions = NonNullable<
-  Parameters<typeof createHeadlessForm>[1]
->;
-type FormValues = Record<string, unknown>;
+type FormSchema = Record<string, unknown>;
 type HttpMethod = 'GET' | 'POST';
 type AuthHeaders = Record<string, string>;
-
-interface FieldOption {
-  value: unknown;
-  meta?: { countryCode?: string };
-}
-
-interface SeedField {
-  name: string;
-  inputType?: string;
-  required?: boolean;
-  isVisible?: boolean;
-  multiple?: boolean;
-  options?: FieldOption[];
-  const?: unknown;
-}
 
 interface ApiOptions {
   query?: Record<string, string | number | boolean | undefined>;
@@ -109,7 +100,13 @@ const stringArg = (key: string): string | undefined => {
   return typeof value === 'string' ? value : undefined;
 };
 const COUNTRY = (stringArg('country') || 'DEU').toUpperCase();
-const BASIC_INFO_VERSION = Number(stringArg('basic-info-version') || 4);
+const TYPE = stringArg('type') || 'employee';
+if (TYPE !== 'employee' && TYPE !== 'contractor') {
+  throw new Error(`--type must be employee or contractor (got ${TYPE}).`);
+}
+const BASIC_INFO_VERSION = Number(
+  stringArg('basic-info-version') || (TYPE === 'contractor' ? 1 : 4),
+);
 if ('env' in args && stringArg('env') === undefined) {
   throw new Error(
     '--env requires a value, e.g. --env=sandbox (got a bare --env flag).',
@@ -205,103 +202,117 @@ async function fetchSchema(
   }).then((res) => res.data);
 }
 
-/** First option whose value/label reads as "no" - collapses conditional sub-fields (file
- * uploads, free-text detail boxes) that a generic filler can't produce plausible data for. */
-function preferNoOption(options: FieldOption[]): FieldOption {
-  return (
-    options.find((o) => String(o.value).toLowerCase() === 'no') || options[0]
-  );
-}
-
-function fakeValueFor(field: SeedField): unknown {
-  const { inputType, options, multiple, name, const: constValue } = field;
-
-  if (options?.length) {
-    if (inputType === 'radio' || inputType === 'select') {
-      return preferNoOption(options).value;
-    }
-    if (inputType === 'countries' || multiple) {
-      return [faker.helpers.arrayElement(options).value];
-    }
-    if (inputType === 'tel') {
-      // options here are per-country dialing patterns (e.g. pattern:
-      // '^(+49)[0-9]{6,}$', meta.countryCode: '49'), not user-facing choices -
-      // any one produces a validly-formatted number, regardless of the
-      // employment's own country.
-      const option = options.find((o) => o.meta?.countryCode) || options[0];
-      return `+${option.meta?.countryCode}${faker.string.numeric(9)}`;
-    }
-    return preferNoOption(options).value;
-  }
-
-  switch (inputType) {
-    case 'email':
-      return name === 'work_email'
-        ? faker.internet.email({ provider: 'remote-e2e-test.com' })
-        : faker.internet.email();
-    case 'tel':
-      return `+1${faker.string.numeric(9)}`;
-    case 'date': {
-      const d = new Date();
-      d.setDate(d.getDate() + 21);
-      return d.toISOString().slice(0, 10);
-    }
-    case 'number':
-      return faker.number.int({ min: 5, max: 30 });
-    case 'money':
-      return faker.number.int({ min: 3_000_000, max: 8_000_000 });
-    case 'textarea':
-      return faker.lorem.sentence();
-    case 'checkbox':
-      // No enumerated options: this is a single acknowledgement toggle. RHF
-      // holds a plain `true` here, which parseFormValuesToAPI (src/components/
-      // form/utils.ts) swaps for `field.const` (e.g. "acknowledged") at submit
-      // time when the schema is const-based - mirror that instead of sending
-      // the raw RHF value, or the API rejects it as a type mismatch.
-      return constValue ?? true;
-    case 'file':
-      return null;
-    default:
-      return faker.lorem.words({ min: 2, max: 4 });
-  }
-}
-
-/** Progressively fills a JSF schema: fill whatever's required+visible, recompute (new
- * conditionally-required fields may appear), repeat until stable. Mirrors what the real
- * multi-step form does field-by-field, but against the schema directly instead of the DOM. */
-function fillSchema(
-  schema: FormSchema,
-  seedValues: FormValues = {},
-): { values: FormValues; skipped: string[] } {
-  const values: FormValues = { ...seedValues };
-  const skipped: string[] = [];
-  for (let round = 0; round < 8; round++) {
-    const { fields } = createHeadlessForm(schema, {
-      initialValues: values as HeadlessFormOptions['initialValues'],
-    });
-    const missing = (fields as unknown as SeedField[]).filter(
-      (f) => f.required && f.isVisible && values[f.name] === undefined,
-    );
-    if (missing.length === 0) break;
-    for (const field of missing) {
-      if (field.inputType === 'file') {
-        skipped.push(field.name);
-        continue;
+/** See pickSafeDate in fill-schema.ts for why a fixed offset alone isn't
+ * enough - a year whose holidays lookup fails is skipped rather than
+ * discarding the years that did load. */
+async function findSafeStartDate(): Promise<string> {
+  const holidayDates = new Set<string>();
+  for (const year of safeStartDateYears()) {
+    try {
+      const holidays = await api<{
+        data?: { day: string; observed_day?: string }[];
+      }>('GET', `/v1/countries/${COUNTRY}/holidays/${year}`);
+      for (const holiday of holidays.data ?? []) {
+        holidayDates.add(holiday.day);
+        if (holiday.observed_day) holidayDates.add(holiday.observed_day);
       }
-      values[field.name] = fakeValueFor(field);
+    } catch (error) {
+      console.warn(`Could not load ${year} holidays for ${COUNTRY}:`, error);
     }
   }
-  return { values, skipped };
+  return pickSafeDate(holidayDates);
 }
 
-async function main() {
+const CONTRACTOR_NATIONALITY_COUNTRIES = ['SAU', 'KWT', 'OMN', 'QAT', 'BHR'];
+
+function contractorContractDocumentSeed(): Record<string, string> | undefined {
+  if (COUNTRY === 'GBR') return { ir_35: 'exempt' };
+  if (CONTRACTOR_NATIONALITY_COUNTRIES.includes(COUNTRY)) {
+    return { nationality: 'national' };
+  }
+  return undefined;
+}
+
+async function seedContractor() {
+  console.log(`Fetching contractor_basic_information schema for ${COUNTRY}...`);
+  const basicInfoSchema = await fetchSchema(
+    'contractor_basic_information',
+    BASIC_INFO_VERSION,
+  );
+  const startDate = await findSafeStartDate();
+  const { values: basicInformation, skipped } = fillSchema(basicInfoSchema, {
+    provisional_start_date: startDate,
+  });
+  console.log(
+    'basic_information payload:',
+    JSON.stringify(basicInformation, null, 2),
+  );
+  if (skipped.length) {
+    console.log('Skipped (unfillable) fields:', skipped.join(', '));
+  }
+
+  console.log('\nCreating contractor employment...');
+  const created = await api<{ data?: { employment?: { id?: string } } }>(
+    'POST',
+    '/v1/employments',
+    {
+      query: { json_schema_version: BASIC_INFO_VERSION },
+      body: {
+        basic_information: basicInformation,
+        type: 'contractor',
+        country_code: COUNTRY,
+      },
+    },
+  );
+  const employmentId = created?.data?.employment?.id;
+  if (!employmentId) {
+    throw new Error(
+      `Could not find employment id in response: ${JSON.stringify(created)}`,
+    );
+  }
+  console.log(`Employment created: ${employmentId}`);
+
+  const contractDocument = contractorContractDocumentSeed();
+  if (contractDocument) {
+    console.log(
+      `\nSetting ${Object.keys(contractDocument).join(', ')} on the contract document...`,
+    );
+    await api(
+      'POST',
+      `/v1/contractors/employments/${employmentId}/contract-documents`,
+      { body: { contract_document: contractDocument } },
+    );
+  }
+
+  console.log(
+    `\nDone. Contractor employment ${employmentId} for ${COUNTRY} has basic_information filled in.`,
+  );
+  const appUrl = process.env.VITE_APP_URL || (ENV ? undefined : BASE_URL);
+  if (appUrl) {
+    console.log(
+      `\nOpen this link (Employment ID is prefilled via ?employmentId=):\n\n` +
+        `  ${appUrl}/?demo=contract-onboarding&employmentId=${employmentId}\n`,
+    );
+  } else {
+    console.log(
+      `\nOpen your app's contractor onboarding demo and enter this Employment ID ` +
+        `(?employmentId=${employmentId} also works as a query param).\n` +
+        `Tip: set VITE_APP_URL=<your deployed app URL> in .env.${ENV} to get a ready-to-click link next time.`,
+    );
+  }
+}
+
+async function seedEmployee() {
   console.log(`Fetching employment_basic_information schema for ${COUNTRY}...`);
   const basicInfoSchema = await fetchSchema(
     'employment_basic_information',
     BASIC_INFO_VERSION,
   );
-  const { values: basicInformation, skipped: basicSkipped } =
-    fillSchema(basicInfoSchema);
+  const startDate = await findSafeStartDate();
+  const { values: basicInformation, skipped: basicSkipped } = fillSchema(
+    basicInfoSchema,
+    { provisional_start_date: startDate },
+  );
   console.log(
     'basic_information payload:',
     JSON.stringify(basicInformation, null, 2),
@@ -394,6 +405,10 @@ async function main() {
         `Tip: set VITE_APP_URL=<your deployed app URL> in .env.${ENV} to get a ready-to-click link next time.`,
     );
   }
+}
+
+function main() {
+  return TYPE === 'contractor' ? seedContractor() : seedEmployee();
 }
 
 main().catch((err: unknown) => {
