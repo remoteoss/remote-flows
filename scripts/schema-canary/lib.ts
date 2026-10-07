@@ -5,7 +5,13 @@ import {
 } from '@/src/common/headlessForm';
 import { findSkipEntry, SchemaCanarySkipEntry } from './skip-list';
 
-export type SchemaCheckType = 'pinned' | 'latest';
+export type SchemaCheckType = 'pinned' | 'latest' | 'submit';
+
+export const SCHEMA_CHECK_ORDER: SchemaCheckType[] = [
+  'pinned',
+  'latest',
+  'submit',
+];
 export type SchemaCheckOutcome = 'pass' | 'fail' | 'seed-error' | 'skip';
 
 export type SchemaCanaryRow = {
@@ -49,6 +55,25 @@ export async function checkSchemaBuildsAndValidates(
   }
 }
 
+export async function mapWithConcurrency<T, R>(
+  items: T[],
+  limit: number,
+  run: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const results = new Array<R>(items.length);
+  let next = 0;
+  const worker = async () => {
+    while (next < items.length) {
+      const index = next++;
+      results[index] = await run(items[index]);
+    }
+  };
+  await Promise.all(
+    Array.from({ length: Math.min(limit, items.length) }, worker),
+  );
+  return results;
+}
+
 export function isSkipped(
   skipList: SchemaCanarySkipEntry[],
   country: string,
@@ -86,7 +111,7 @@ export function buildReport(rows: SchemaCanaryRow[]): SchemaCanaryReport {
     _meta: {
       title: 'Contract details schema canary',
       description:
-        'Per-country contract_details schema checks against the sandbox gateway. "pinned" is the version this library currently ships against (see example/src/flows/Onboarding/jsonSchemaVersions.ts); "latest" is whatever version the gateway currently serves as newest. Both build the schema with the useHeadlessForm strategy the Onboarding flow uses for that country (buildOnce for jsf v1 contract details countries, rebuild otherwise), validate empty values the same way the hook does, and record whether it throws. "seed-error" means the sandbox employment for that country could not be created, so its schemas were not checked.',
+        'Per-country contract_details schema checks against the sandbox gateway. "pinned" is the version this library currently ships against (see example/src/flows/Onboarding/jsonSchemaVersions.ts); "latest" is whatever version the gateway currently serves as newest. Both build the schema with the useHeadlessForm strategy the Onboarding flow uses for that country (buildOnce for jsf v1 contract details countries, rebuild otherwise), validate empty values the same way the hook does, and record whether it throws. "submit" fills the pinned schema with fake values and sends them in the same PATCH /v1/employments/{id} the Onboarding flow sends, recording whether the gateway accepts them; it only warns for now. "seed-error" means the sandbox employment for that country could not be created, so its schemas were not checked.',
       source:
         'scripts/schema-canary.ts, run nightly against the sandbox gateway',
     },
