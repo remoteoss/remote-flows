@@ -145,6 +145,41 @@ describe('fillSchema', () => {
     expect(values.bonus_amount).toBeGreaterThanOrEqual(100);
   });
 
+  it('leaves optional fields empty', () => {
+    const { values, errors } = fillSchema({
+      type: 'object',
+      properties: {
+        job_title: {
+          type: 'string',
+          title: 'Job title',
+          'x-jsf-presentation': { inputType: 'text' },
+        },
+        employer_ack: {
+          type: 'boolean',
+          title: 'Employer acknowledgement',
+          'x-jsf-presentation': { inputType: 'checkbox' },
+        },
+        work_address: {
+          type: 'object',
+          title: 'Work address',
+          properties: {
+            city: {
+              type: 'string',
+              title: 'City',
+              'x-jsf-presentation': { inputType: 'text' },
+            },
+          },
+          required: ['city'],
+          'x-jsf-presentation': { inputType: 'fieldset' },
+        },
+      },
+      required: ['job_title'],
+    });
+
+    expect(errors).toEqual({});
+    expect(values).toEqual({ job_title: expect.any(String) });
+  });
+
   it('regenerates a default that fails validation', () => {
     const { values, errors } = fillSchema({
       type: 'object',

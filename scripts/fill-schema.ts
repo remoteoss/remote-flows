@@ -182,6 +182,7 @@ function fillFields(
   for (const field of fields) {
     if (!field.isVisible || locked.has(field.name)) continue;
     const fieldError = errors?.[field.name];
+    if (!field.required && fieldError === undefined) continue;
 
     if (field.inputType === 'fieldset' && field.fields) {
       const current = next[field.name];
@@ -324,9 +325,10 @@ export type FillSchemaResult = {
   errors: FormErrors;
 };
 
-/** Fills every visible field, then validates and regenerates only the fields that failed,
- * until the form has no errors or `maxAttempts` runs out. Each pass rebuilds the form so
- * fields that a new value makes visible (or hidden) are picked up. Required file fields
+/** Fills every visible required field, then validates and regenerates only the fields that failed,
+ * until the form has no errors or `maxAttempts` runs out. Optional fields stay empty unless
+ * validation flags them. Each pass rebuilds the form so fields that a new value makes
+ * visible, hidden or required are picked up. Required file fields
  * can't be faked: they are reported in `skipped` and left out of `errors`. Seed values are
  * kept as given. The same `seed` always produces the same values for the same schema. */
 export function fillSchema(
