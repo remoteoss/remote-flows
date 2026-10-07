@@ -226,10 +226,11 @@ function contractorContractDocumentSeed(): Record<string, string> | undefined {
   return undefined;
 }
 
-function contractDetailsSeed(): Record<string, string> | undefined {
-  if (COUNTRY === 'CHN') return { province_of_residency: 'SH' };
-  return undefined;
-}
+const CONTRACT_DETAILS_SEEDS: Record<string, Record<string, unknown>> = {
+  CHN: { province_of_residency: 'SH' },
+  JAM: { work_hours_per_week: 40 },
+  ROU: { compensation_currency_code: 'RON' },
+};
 
 async function seedContractor() {
   console.log(`Fetching contractor_basic_information schema for ${COUNTRY}...`);
@@ -428,7 +429,10 @@ async function submitContractDetails(employmentId: string) {
       },
     },
   ).then((res) => res.data);
-  const { values, skipped, errors } = fillSchema(schema, contractDetailsSeed());
+  const { values, skipped, errors } = fillSchema(
+    schema,
+    CONTRACT_DETAILS_SEEDS[COUNTRY],
+  );
   console.log('contract_details payload:', JSON.stringify(values, null, 2));
   if (skipped.length) {
     console.log('Skipped (unfillable) fields:', skipped.join(', '));
