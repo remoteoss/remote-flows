@@ -645,6 +645,9 @@ export const useOnboarding = ({
           ...(employerAcknowledgesRiskField as $TSFixMe),
           presentation: {
             hidden: true,
+            ...(employerAcknowledgesRiskField as $TSFixMe)?.[
+              'x-jsf-presentation'
+            ],
             ...(employerAcknowledgesRiskField as $TSFixMe)?.presentation,
           },
         },
