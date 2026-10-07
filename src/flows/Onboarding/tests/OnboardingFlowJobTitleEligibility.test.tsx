@@ -522,6 +522,35 @@ describe.each(schemaPaths)(
         });
       });
 
+      it('submits without a blur when the verdict changes to one that requires nothing new', async () => {
+        mockCheckResponse([
+          { check_id: 'stale-check-id', verdict: 'eligible' },
+          { check_id: 'check-id', verdict: 'needs_review' },
+        ]);
+
+        await renderContractDetailsStep();
+        await fillRoleFieldsWithoutBlur();
+        await waitFor(() =>
+          expect(checkResponsesSent).toHaveBeenCalledTimes(1),
+        );
+
+        submitWithoutBlur();
+
+        await waitFor(() =>
+          expect(updateEmploymentSpy).toHaveBeenCalledTimes(1),
+        );
+        expect(updateEmploymentSpy).toHaveBeenCalledWith({
+          contract_details: {
+            role_description: 'Backend engineer responsibilities',
+            role_is_onsite: 'no',
+            role_requires_license: 'no',
+            additional_job_title_eligibility_check_slug: 'check-id',
+            additional_job_title_eligibility_check_result: 'maybe',
+          },
+          pricing_plan_details: { frequency: 'monthly' },
+        });
+      });
+
       it('holds a submit without a blur when the check now requires a risk acknowledgement', async () => {
         mockCheckResponse([
           { check_id: 'stale-check-id', verdict: 'eligible' },

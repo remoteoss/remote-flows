@@ -52,6 +52,7 @@ export function OnboardingForm({
   const syncJobTitleEligibility = async (values: Record<string, unknown>) => {
     const eligibilityValues =
       await onboardingBag.checkJobTitleEligibility(values);
+    console.log('eligibilityValues', eligibilityValues);
     Object.entries(eligibilityValues ?? {}).forEach(([name, value]) =>
       form.setValue(name, value),
     );
@@ -103,11 +104,11 @@ export function OnboardingForm({
     } else {
       // Handle normal form submission
       const eligibilityValues = await syncJobTitleEligibility(values);
-      if (
+      const hasVerdictChanged =
         eligibilityValues &&
         (values[JOB_TITLE_ELIGIBILITY_RESULT_FIELD] ?? null) !==
-          eligibilityValues[JOB_TITLE_ELIGIBILITY_RESULT_FIELD]
-      ) {
+          eligibilityValues[JOB_TITLE_ELIGIBILITY_RESULT_FIELD];
+      if (hasVerdictChanged && !(await form.trigger())) {
         return;
       }
       await onSubmit({ ...values, ...eligibilityValues });
