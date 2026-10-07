@@ -191,4 +191,30 @@ describe('fillSchema', () => {
     expect(skipped).toEqual(['contract']);
     expect(errors).toEqual({});
   });
+
+  it('produces the same values for the same seed', () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        hours: {
+          type: 'number',
+          title: 'Hours',
+          minimum: 1,
+          maximum: 60,
+          'x-jsf-presentation': { inputType: 'number' },
+        },
+        code: {
+          type: 'string',
+          title: 'Code',
+          pattern: '^[A-Z]{3}[0-9]{4}$',
+          'x-jsf-presentation': { inputType: 'text' },
+        },
+      },
+      required: ['hours', 'code'],
+    };
+
+    expect(fillSchema(schema, {}, { seed: 7 }).values).toEqual(
+      fillSchema(schema, {}, { seed: 7 }).values,
+    );
+  });
 });

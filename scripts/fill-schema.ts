@@ -82,7 +82,9 @@ function fakeNumber(
 
 function fakeText(field: SeedField): string {
   if (field.pattern && field.pattern !== '\\S') {
-    const generated = new RandExp(field.pattern).gen();
+    const randexp = new RandExp(field.pattern);
+    randexp.randInt = (min, max) => faker.number.int({ min, max });
+    const generated = randexp.gen();
     return field.maxLength ? generated.slice(0, field.maxLength) : generated;
   }
   let text =
@@ -326,11 +328,25 @@ export type FillSchemaResult = {
  * until the form has no errors or `maxAttempts` runs out. Each pass rebuilds the form so
  * fields that a new value makes visible (or hidden) are picked up. Required file fields
  * can't be faked: they are reported in `skipped` and left out of `errors`. Seed values are
- * kept as given. */
+ * kept as given. The same `seed` always produces the same values for the same schema. */
 export function fillSchema(
   schema: Parameters<typeof createHeadlessForm>[0],
   seedValues: FormValues = {},
-  { maxAttempts = 50 }: { maxAttempts?: number } = {},
+  { maxAttempts = 50, seed }: { maxAttempts?: number; seed?: number } = {},
+): FillSchemaResult {
+  if (seed === undefined) return fill(schema, seedValues, maxAttempts);
+  faker.seed(seed);
+  try {
+    return fill(schema, seedValues, maxAttempts);
+  } finally {
+    faker.seed();
+  }
+}
+
+function fill(
+  schema: Parameters<typeof createHeadlessForm>[0],
+  seedValues: FormValues,
+  maxAttempts: number,
 ): FillSchemaResult {
   const build = (values: FormValues) =>
     createHeadlessForm(schema, {

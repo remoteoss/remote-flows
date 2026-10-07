@@ -61,7 +61,7 @@ describe('submitContractDetails', () => {
     expect(result).toEqual({
       ok: false,
       error:
-        'PATCH /v1/employments/emp-1 -> {"message":"contract is required"} (file fields left empty: contract)',
+        'PATCH /v1/employments/{id} -> {"message":"contract is required"} (file fields left empty: contract)',
     });
   });
 

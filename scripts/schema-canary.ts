@@ -27,7 +27,10 @@ import {
   seedEmploymentForCountry,
 } from './schema-canary/seed-employment';
 import { SCHEMA_CANARY_SKIP_LIST } from './schema-canary/skip-list';
-import { submitContractDetails } from './schema-canary/submit-contract-details';
+import {
+  seedFor,
+  submitContractDetails,
+} from './schema-canary/submit-contract-details';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '..', '.env.sandbox') });
@@ -53,6 +56,11 @@ const CHECK_TYPES = SCHEMA_CHECK_ORDER.filter((check) =>
 );
 const CONCURRENCY =
   typeof args.concurrency === 'string' ? Number(args.concurrency) : 6;
+if (!Number.isInteger(CONCURRENCY) || CONCURRENCY < 1) {
+  throw new Error(
+    `--concurrency must be a positive integer, got ${args.concurrency}`,
+  );
+}
 const WRITE_REPORT = args.write === true;
 const REPORT_PATH = path.resolve(__dirname, 'reports', 'schema-canary.json');
 
@@ -181,6 +189,7 @@ async function checkCountry(
                 employmentId,
                 schema,
                 resolvePinnedVersion(country, DEFAULT_VERSION),
+                seedFor(country),
               )
             : await checkSchemaBuildsAndValidates(schema, strategy);
         if (check === 'pinned' && !result.ok) pinnedBuildFailed = true;

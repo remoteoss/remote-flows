@@ -4,16 +4,23 @@ import { fillSchema } from '../fill-schema';
 
 export type SubmitResult = { ok: true } | { ok: false; error: string };
 
+export function seedFor(country: string): number {
+  let hash = 0;
+  for (const char of country) hash = (hash * 31 + char.charCodeAt(0)) | 0;
+  return Math.abs(hash);
+}
+
 export async function submitContractDetails(
   client: Client,
   employmentId: string,
   schema: Record<string, unknown> | null,
   version: number,
+  seed?: number,
 ): Promise<SubmitResult> {
   if (!schema) {
     return { ok: false, error: 'no contract_details schema to fill' };
   }
-  const { values, skipped, errors } = fillSchema(schema);
+  const { values, skipped, errors } = fillSchema(schema, {}, { seed });
   if (Object.keys(errors).length > 0) {
     return {
       ok: false,
@@ -42,6 +49,6 @@ export async function submitContractDetails(
       : '';
   return {
     ok: false,
-    error: `PATCH /v1/employments/${employmentId} -> ${JSON.stringify(response.error)}${skippedNote}`,
+    error: `PATCH /v1/employments/{id} -> ${JSON.stringify(response.error)}${skippedNote}`,
   };
 }
