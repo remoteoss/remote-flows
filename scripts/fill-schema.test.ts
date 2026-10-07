@@ -145,6 +145,28 @@ describe('fillSchema', () => {
     expect(values.bonus_amount).toBeGreaterThanOrEqual(100);
   });
 
+  it('leaves employer_acknowledges_risk empty', () => {
+    const { values, errors } = fillSchema({
+      type: 'object',
+      properties: {
+        job_title: {
+          type: 'string',
+          title: 'Job title',
+          'x-jsf-presentation': { inputType: 'text' },
+        },
+        employer_acknowledges_risk: {
+          const: 'acknowledged',
+          type: 'string',
+          title: 'I acknowledge the risks and wish to proceed.',
+          'x-jsf-presentation': { inputType: 'checkbox' },
+        },
+      },
+    });
+
+    expect(errors).toEqual({});
+    expect(values).toEqual({ job_title: expect.any(String) });
+  });
+
   it('regenerates a default that fails validation', () => {
     const { values, errors } = fillSchema({
       type: 'object',

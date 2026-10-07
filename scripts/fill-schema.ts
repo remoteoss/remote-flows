@@ -171,6 +171,8 @@ export function fakeValueFor(field: SeedField, retry = false): unknown {
   }
 }
 
+const UNFILLED_FIELDS = new Set(['employer_acknowledges_risk']);
+
 function fillFields(
   fields: SeedField[],
   values: FormValues,
@@ -180,7 +182,12 @@ function fillFields(
 ): FormValues {
   const next = { ...values };
   for (const field of fields) {
-    if (!field.isVisible || locked.has(field.name)) continue;
+    if (
+      !field.isVisible ||
+      locked.has(field.name) ||
+      UNFILLED_FIELDS.has(field.name)
+    )
+      continue;
     const fieldError = errors?.[field.name];
 
     if (field.inputType === 'fieldset' && field.fields) {
@@ -324,7 +331,7 @@ export type FillSchemaResult = {
   errors: FormErrors;
 };
 
-/** Fills every visible field, then validates and regenerates only the fields that failed,
+/** Fills every visible field except `employer_acknowledges_risk`, then validates and regenerates only the fields that failed,
  * until the form has no errors or `maxAttempts` runs out. Each pass rebuilds the form so
  * fields that a new value makes visible (or hidden) are picked up. Required file fields
  * can't be faked: they are reported in `skipped` and left out of `errors`. Seed values are
