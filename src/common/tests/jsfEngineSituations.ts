@@ -122,6 +122,34 @@ const monthlyAllowanceSchema: Schema = {
   },
 };
 
+const paymentTermsSchema: Schema = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    annual_gross_salary: money('Annual gross salary'),
+    payment_terms: {
+      title: 'Payment terms',
+      type: 'string',
+      oneOf: [
+        {
+          const: 'standard',
+          title: 'Standard',
+          description: 'Billed monthly',
+        },
+        {
+          const: 'premium',
+          title: 'Premium',
+          description: 'Billed yearly',
+          'x-jsf-presentation': { disabled: true },
+        },
+      ],
+      'x-jsf-presentation': { inputType: 'radio' },
+    },
+  },
+  required: ['annual_gross_salary', 'payment_terms'],
+  'x-jsf-order': ['annual_gross_salary', 'payment_terms'],
+};
+
 export const chooseInGroup = async (
   user: UserEvent,
   group: RegExp,
@@ -162,6 +190,22 @@ export const SITUATIONS: Situation[] = [
     assert: async (submitted) => {
       expect(screen.getByLabelText('Signing bonus amount')).toBeVisible();
       expect(submitted.signing_bonus_amount).toBe(100050);
+    },
+  },
+  {
+    situation:
+      'radio options from oneOf keep description and disabled after validation',
+    schema: paymentTermsSchema,
+    fill: async (user) => {
+      await chooseInGroup(user, /Payment terms/i, 'Standard');
+      await user.tab();
+    },
+    assert: async (submitted) => {
+      expect(screen.getByRole('radio', { name: 'Standard' })).toBeEnabled();
+      expect(screen.getByRole('radio', { name: 'Premium' })).toBeDisabled();
+      expect(screen.getByText('Billed monthly')).toBeInTheDocument();
+      expect(screen.getByText('Billed yearly')).toBeInTheDocument();
+      expect(submitted.payment_terms).toBe('standard');
     },
   },
 ];
