@@ -107,8 +107,11 @@ export function OnboardingForm({
         eligibilityValues &&
         (values[JOB_TITLE_ELIGIBILITY_RESULT_FIELD] ?? null) !==
           eligibilityValues[JOB_TITLE_ELIGIBILITY_RESULT_FIELD];
-      if (hasVerdictChanged && !(await form.trigger())) {
-        return;
+      if (hasVerdictChanged) {
+        const isValidWithNewVerdict = await form.trigger();
+        if (!isValidWithNewVerdict) {
+          return;
+        }
       }
       await onSubmit({ ...values, ...eligibilityValues });
     }
