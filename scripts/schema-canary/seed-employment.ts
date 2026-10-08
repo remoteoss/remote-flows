@@ -183,23 +183,24 @@ async function completePreContractSteps(
   }
 }
 
-/**
- * Archives a sandbox-created employment. Only works in Sandbox
- * (deleteV1SandboxEmploymentsEmploymentId 404s elsewhere). Best-effort:
- * a cleanup failure shouldn't fail the country's checks, which already ran.
- */
+const ARCHIVE_ATTEMPTS = 4;
+
 export async function archiveEmployment(
   client: Client,
   employmentId: string,
 ): Promise<void> {
-  const response = await deleteV1SandboxEmploymentsEmploymentId({
-    client,
-    headers: { Authorization: '' },
-    path: { employment_id: employmentId },
-  });
-  if (response.error) {
-    throw new Error(
-      `DELETE /v1/sandbox/employments/${employmentId} -> ${JSON.stringify(response.error)}`,
-    );
+  for (let attempt = 1; ; attempt++) {
+    const response = await deleteV1SandboxEmploymentsEmploymentId({
+      client,
+      headers: { Authorization: '' },
+      path: { employment_id: employmentId },
+    });
+    if (!response.error) return;
+    if (attempt === ARCHIVE_ATTEMPTS) {
+      throw new Error(
+        `DELETE /v1/sandbox/employments/${employmentId} -> ${JSON.stringify(response.error)}`,
+      );
+    }
+    await new Promise((resolve) => setTimeout(resolve, 2000 * 2 ** attempt));
   }
 }

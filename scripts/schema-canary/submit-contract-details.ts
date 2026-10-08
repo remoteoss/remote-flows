@@ -32,6 +32,8 @@ export function seedFor(country: string): number {
   return Math.abs(hash);
 }
 
+const MAX_REBUILD_PASSES = 5;
+
 export async function sdkPayloadFor(
   schema: Record<string, unknown>,
   strategy: HeadlessFormStrategy,
@@ -43,11 +45,16 @@ export async function sdkPayloadFor(
     strategy,
     strategy === 'buildOnce' ? savedValues : {},
   );
-  const formValues = getInitialValues(initialForm.fields, savedValues);
-  const form =
-    strategy === 'buildOnce'
-      ? initialForm
-      : buildHeadlessForm(schema, strategy, formValues);
+  let formValues = getInitialValues(initialForm.fields, savedValues);
+  let form = initialForm;
+  if (strategy === 'rebuild') {
+    for (let pass = 0; pass < MAX_REBUILD_PASSES; pass++) {
+      form = buildHeadlessForm(schema, strategy, formValues);
+      const nextValues = getInitialValues(form.fields, savedValues);
+      if (isDeepStrictEqual(nextValues, formValues)) break;
+      formValues = nextValues;
+    }
+  }
   const parsed = await parseValuesForValidation(form, strategy, formValues);
   const formErrors = Object.fromEntries(
     Object.entries(

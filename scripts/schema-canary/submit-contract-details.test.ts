@@ -72,6 +72,53 @@ describe('sdkPayloadFor', () => {
     },
   );
 
+  it('fills a default that a condition turns on, as the rebuilt form does', async () => {
+    const result = await sdkPayloadFor(
+      {
+        type: 'object',
+        properties: {
+          work_schedule: {
+            type: 'string',
+            title: 'Work schedule',
+            oneOf: [
+              { const: 'full_time', title: 'Full time' },
+              { const: 'part_time', title: 'Part time' },
+            ],
+            'x-jsf-presentation': { inputType: 'radio' },
+          },
+          work_hours_per_week: {
+            type: 'number',
+            title: 'Work hours per week',
+            'x-jsf-presentation': { inputType: 'number' },
+          },
+        },
+        required: ['work_schedule'],
+        allOf: [
+          {
+            if: {
+              properties: { work_schedule: { const: 'full_time' } },
+              required: ['work_schedule'],
+            },
+            then: {
+              properties: {
+                work_hours_per_week: { const: 40, default: 40 },
+              },
+              required: ['work_hours_per_week'],
+            },
+          },
+        ],
+      },
+      'rebuild',
+      { work_schedule: 'full_time' },
+    );
+
+    expect(result).toEqual({
+      ok: true,
+      payload: { work_schedule: 'full_time', work_hours_per_week: 40 },
+      forcedFields: ['work_hours_per_week'],
+    });
+  });
+
   it('fails when the SDK form rejects values the schema accepts', async () => {
     const result = await sdkPayloadFor(
       {
