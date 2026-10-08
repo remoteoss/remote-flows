@@ -185,6 +185,39 @@ describe('submitContractDetails', () => {
     expect(result).toEqual({ ok: true });
   });
 
+  it('fails when a forced value is saved as something else', async () => {
+    server.use(
+      http.patch('*/v1/employments/:employmentId', () =>
+        HttpResponse.json({ data: {} }),
+      ),
+      http.get('*/v1/employments/:employmentId', () =>
+        HttpResponse.json({
+          data: {
+            employment: { contract_details: { overtime_eligible: 'no' } },
+          },
+        }),
+      ),
+    );
+
+    const result = await submitContractDetails(
+      client,
+      'emp-1',
+      overtimeSchema({
+        const: 'yes',
+        default: 'yes',
+        oneOf: [{ const: 'yes', title: 'Yes' }],
+      }),
+      3,
+      { strategy: 'buildOnce' },
+    );
+
+    expect(result).toEqual({
+      ok: false,
+      error:
+        'saved contract_details differ from what was sent: overtime_eligible: sent "yes", saved "no"',
+    });
+  });
+
   it('fails when a value the user chose is not returned after save', async () => {
     dropsOvertimeOnSave();
 
