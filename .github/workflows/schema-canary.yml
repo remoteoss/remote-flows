@@ -13,6 +13,7 @@ on:
       - 'src/common/headlessForm.ts'
       - 'src/components/form/utils.ts'
       - 'src/flows/Onboarding/utils.ts'
+      - 'scripts/contract-details-seeds.ts'
       - 'scripts/fill-schema.ts'
       - 'scripts/schema-canary.ts'
       - 'scripts/schema-canary/**'
