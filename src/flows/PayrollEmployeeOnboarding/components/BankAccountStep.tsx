@@ -2,6 +2,7 @@ import { usePayrollEmployeeOnboardingContext } from '@/src/flows/PayrollEmployee
 import { PayrollEmployeeForm } from '@/src/flows/PayrollEmployeeOnboarding/components/PayrollEmployeeForm';
 import { useEmployeeStepSubmitHandler } from '@/src/flows/PayrollEmployeeOnboarding/components/useEmployeeStepSubmitHandler';
 import type { GPStepCallbacks } from '@/src/flows/types';
+import { getEmployeeStepDefaultValues } from '@/src/flows/PayrollEmployeeOnboarding/utils';
 
 /**
  * Render only when employeeBag.selfOnboardingSubsteps includes
@@ -16,18 +17,16 @@ export function BankAccountStep(props: GPStepCallbacks) {
     (s) => s.type === 'employee_provides_bank_details',
   );
 
-  if (!isRequired) return null;
+  if (!isRequired || employeeBag.isLoadingSavedValues) return null;
 
   return (
     <PayrollEmployeeForm
       onSubmit={handleSubmit}
-      defaultValues={{
-        ...(employeeBag.initialValues?.bank_account as Record<string, unknown>),
-        ...(employeeBag.stepState.values?.bank_account as Record<
-          string,
-          unknown
-        >),
-      }}
+      defaultValues={getEmployeeStepDefaultValues('bank_account', {
+        initialValues: employeeBag.initialValues,
+        savedValues: employeeBag.savedValues,
+        stepValues: employeeBag.stepState.values,
+      })}
     />
   );
 }

@@ -1,5 +1,5 @@
 import { FieldValues } from 'react-hook-form';
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { UserEvent } from '@testing-library/user-event';
 
 export type Schema = Record<string, unknown>;
@@ -150,6 +150,26 @@ const paymentTermsSchema: Schema = {
   'x-jsf-order': ['annual_gross_salary', 'payment_terms'],
 };
 
+const equitySchema: Schema = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    annual_gross_salary: money('Annual gross salary'),
+    equity_compensation: {
+      title: 'Equity management',
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        offer_equity_compensation: yesNo('Will this employee receive equity?'),
+      },
+      required: ['offer_equity_compensation'],
+      'x-jsf-presentation': { inputType: 'fieldset' },
+    },
+  },
+  required: ['equity_compensation'],
+  'x-jsf-order': ['annual_gross_salary', 'equity_compensation'],
+};
+
 export const chooseInGroup = async (
   user: UserEvent,
   group: RegExp,
@@ -206,6 +226,23 @@ export const SITUATIONS: Situation[] = [
       expect(screen.getByText('Billed monthly')).toBeInTheDocument();
       expect(screen.getByText('Billed yearly')).toBeInTheDocument();
       expect(submitted.payment_terms).toBe('standard');
+    },
+  },
+  {
+    situation: 'required field inside an untouched fieldset shows its error',
+    schema: equitySchema,
+    fill: async (user) => {
+      await user.click(await screen.findByRole('button', { name: 'Validate' }));
+    },
+    assert: async (submitted) => {
+      const radioGroup = screen.getByRole('radiogroup', {
+        name: /Will this employee receive equity/i,
+      });
+      await waitFor(() =>
+        expect(radioGroup).toHaveAttribute('aria-invalid', 'true'),
+      );
+      expect(screen.getByText('Required field')).toBeInTheDocument();
+      expect(submitted).toEqual({});
     },
   },
 ];
