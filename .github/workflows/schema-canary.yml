@@ -9,7 +9,7 @@ on:
       - main
   pull_request:
     paths:
-      - 'example/src/flows/Onboarding/jsonSchemaVersions.ts'
+      - 'example/src/flows/Onboarding/**'
       - 'package.json'
       - 'package-lock.json'
       - 'src/common/createHeadlessForm.tsx'
@@ -20,6 +20,10 @@ on:
       - 'scripts/fill-schema.ts'
       - 'scripts/schema-canary.ts'
       - 'scripts/schema-canary/**'
+      - 'scripts/schema-canary-archive.ts'
+      - 'example/e2e/canary/**'
+      - 'example/playwright.canary.config.ts'
+      - '.github/actions/schema-canary-browser/**'
       - '.github/workflows/schema-canary.yml'
 
 concurrency:
@@ -59,7 +63,36 @@ jobs:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
           VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
-        run: npm run schema-canary -- --write --failures-out="$RUNNER_TEMP/schema-canary-failures.md"
+        run: npm run schema-canary -- --write --failures-out="$RUNNER_TEMP/schema-canary-failures.md" --keep-submitted="$RUNNER_TEMP/kept-employments.json"
+
+      - name: Check which employments were kept
+        id: kept
+        if: ${{ !cancelled() }}
+        run: |
+          if [ -s "$RUNNER_TEMP/kept-employments.json" ] && [ "$(jq length "$RUNNER_TEMP/kept-employments.json")" -gt 0 ]; then
+            echo "any=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Re-submit contract details in the browser
+        id: browser
+        if: ${{ !cancelled() && steps.kept.outputs.any == 'true' }}
+        uses: ./.github/actions/schema-canary-browser
+        with:
+          employments-file: ${{ runner.temp }}/kept-employments.json
+          client-id: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
+          client-secret: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
+
+      - name: Archive the kept employments
+        if: always()
+        env:
+          VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
+          VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
+        run: |
+          if [ -f "$RUNNER_TEMP/kept-employments.json" ]; then
+            npm run schema-canary:archive -- --from="$RUNNER_TEMP/kept-employments.json"
+          fi
 
       - name: Count failing checks in the report
         id: count
@@ -85,16 +118,21 @@ jobs:
             scripts/reports/schema-canary.json
 
       - name: Open or update the failure issue
-        if: failure() && steps.canary.outcome == 'failure'
+        if: failure() && (steps.canary.outcome == 'failure' || steps.browser.outcome == 'failure')
         env:
           GH_TOKEN: ${{ github.token }}
+          BROWSER_OUTCOME: ${{ steps.browser.outcome }}
         run: |
           {
             echo "The contract details schema canary on main is failing against sandbox."
             echo
+            if [ "$BROWSER_OUTCOME" = "failure" ]; then
+              echo "The browser stage failed: re-submitting contract details in the example app did not match what the canary saved. The Playwright report is attached to the run."
+              echo
+            fi
             if [ -s "$RUNNER_TEMP/schema-canary-failures.md" ]; then
               cat "$RUNNER_TEMP/schema-canary-failures.md"
-            else
+            elif [ "$BROWSER_OUTCOME" != "failure" ]; then
               echo "The canary stopped before it checked any country, for example because sandbox auth failed. The run log has the error."
             fi
           } > "$RUNNER_TEMP/issue-body.md"
@@ -109,7 +147,7 @@ jobs:
           fi
 
       - name: Close the failure issue
-        if: always() && steps.canary.outcome == 'success'
+        if: always() && steps.canary.outcome == 'success' && contains(fromJSON('["success", "skipped"]'), steps.browser.outcome)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -121,7 +159,10 @@ jobs:
     if: github.event_name == 'pull_request'
     name: Contract Details Schema Canary (pinned, PR)
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    concurrency:
+      group: schema-canary-pr-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    timeout-minutes: 30
     permissions:
       contents: read
     steps:
@@ -142,4 +183,33 @@ jobs:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
           VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
-        run: npm run schema-canary -- --checks=pinned,submit
+        run: npm run schema-canary -- --checks=pinned,submit --keep-submitted="$RUNNER_TEMP/kept-employments.json"
+
+      - name: Check which employments were kept
+        id: kept
+        if: ${{ !cancelled() }}
+        run: |
+          if [ -s "$RUNNER_TEMP/kept-employments.json" ] && [ "$(jq length "$RUNNER_TEMP/kept-employments.json")" -gt 0 ]; then
+            echo "any=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Re-submit contract details in the browser
+        id: browser
+        if: ${{ !cancelled() && steps.kept.outputs.any == 'true' }}
+        uses: ./.github/actions/schema-canary-browser
+        with:
+          employments-file: ${{ runner.temp }}/kept-employments.json
+          client-id: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
+          client-secret: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
+
+      - name: Archive the kept employments
+        if: always()
+        env:
+          VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
+          VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
+        run: |
+          if [ -f "$RUNNER_TEMP/kept-employments.json" ]; then
+            npm run schema-canary:archive -- --from="$RUNNER_TEMP/kept-employments.json"
+          fi
