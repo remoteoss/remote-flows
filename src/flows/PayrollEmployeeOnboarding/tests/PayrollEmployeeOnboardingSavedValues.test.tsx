@@ -416,6 +416,73 @@ describe('PayrollEmployeeOnboardingFlow saved values', () => {
     expect(await screen.findByLabelText('Given name')).toHaveValue('Janet');
   });
 
+  it('waits for the refetch on a remount after a failed read', async () => {
+    let failRead = true;
+    mockApi();
+    server.use(
+      http.get('*/v1/employee/personal-details', async () => {
+        await delay(50);
+        if (failRead) {
+          return HttpResponse.json({ message: 'boom' }, { status: 500 });
+        }
+        return HttpResponse.json(
+          employmentResponse({ personal_details: savedPersonalDetails }),
+        );
+      }),
+    );
+    const { unmount } = renderFlow();
+
+    expect(await screen.findByLabelText('Given name')).toHaveValue('');
+
+    unmount();
+    failRead = false;
+    renderFlow();
+
+    expect(await screen.findByLabelText('Given name')).toHaveValue('Jane');
+  });
+
+  it('keeps the form mounted and does not re-read while a save advances the step', async () => {
+    let personalDetailsReads = 0;
+    let stepFormUnmountedBeforeAdvancing = false;
+    mockApi({ saved: { personalDetails: savedPersonalDetails } });
+    server.use(
+      http.get('*/v1/employee/personal-details', async () => {
+        personalDetailsReads += 1;
+        await delay(50);
+        return HttpResponse.json(
+          employmentResponse({ personal_details: savedPersonalDetails }),
+        );
+      }),
+      http.put('*/v1/employee/personal-details', async ({ request }) => {
+        const body = (await request.json()) as {
+          personal_details: Record<string, unknown>;
+        };
+        return HttpResponse.json(
+          employmentResponse({ personal_details: body.personal_details }),
+        );
+      }),
+    );
+    renderFlow();
+
+    await screen.findByLabelText('Given name');
+    const observer = new MutationObserver(() => {
+      if (
+        screen.getByTestId('current-step').textContent === 'personal_details' &&
+        !screen.queryByLabelText('Given name')
+      ) {
+        stepFormUnmountedBeforeAdvancing = true;
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    await clickNext();
+    await waitForStep('home_address');
+    observer.disconnect();
+
+    expect(stepFormUnmountedBeforeAdvancing).toBe(false);
+    expect(personalDetailsReads).toBe(1);
+  });
+
   it('starts the bank account step from the default saved account without is_default', async () => {
     const { putBodies, savedReadHeaders } = mockApi({
       withBankSubstep: true,

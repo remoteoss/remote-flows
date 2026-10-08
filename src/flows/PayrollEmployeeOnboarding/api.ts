@@ -90,24 +90,28 @@ const gpEmployeeSavedValuesKey = (
   employmentId: string,
 ) => ['gp-employee-saved-values', step, employmentId];
 
-// A remounted step must not start from the pre-save read, so drop it instead
-// of merely invalidating: an invalidated query still serves its stale data.
-const useResetSavedValues = (step: SavedValuesStep, employmentId: string) => {
+// The PUT responds with the same shape as the GET, so caching it keeps a
+// remounted step from starting at the pre-save read without re-fetching or
+// flipping the current step back to loading while the save advances it.
+const useCacheSavedValues = (step: SavedValuesStep, employmentId: string) => {
   const queryClient = useQueryClient();
-  return () =>
-    queryClient.resetQueries({
-      queryKey: gpEmployeeSavedValuesKey(step, employmentId),
-    });
+  return (response: { data?: EmploymentDetailsOnlyResponse }) => {
+    if (!response.data) return;
+    queryClient.setQueryData(
+      gpEmployeeSavedValuesKey(step, employmentId),
+      response.data,
+    );
+  };
 };
 
 export const useGPUpdatePersonalDetails = (employmentId: string) => {
   const { client } = useClient();
-  const resetSavedValues = useResetSavedValues(
+  const cacheSavedValues = useCacheSavedValues(
     'personal_details',
     employmentId,
   );
   return useMutation({
-    onSuccess: resetSavedValues,
+    onSuccess: cacheSavedValues,
     mutationFn: (personalDetails: Record<string, unknown>) =>
       putV1EmployeePersonalDetails({
         client: client as Client,
@@ -119,9 +123,9 @@ export const useGPUpdatePersonalDetails = (employmentId: string) => {
 
 export const useGPUpdateHomeAddress = (employmentId: string) => {
   const { client } = useClient();
-  const resetSavedValues = useResetSavedValues('home_address', employmentId);
+  const cacheSavedValues = useCacheSavedValues('home_address', employmentId);
   return useMutation({
-    onSuccess: resetSavedValues,
+    onSuccess: cacheSavedValues,
     mutationFn: (addressDetails: Record<string, unknown>) =>
       putV1EmployeeAddress({
         client: client as Client,
@@ -133,9 +137,9 @@ export const useGPUpdateHomeAddress = (employmentId: string) => {
 
 export const useGPUpdateBankAccount = (employmentId: string) => {
   const { client } = useClient();
-  const resetSavedValues = useResetSavedValues('bank_account', employmentId);
+  const cacheSavedValues = useCacheSavedValues('bank_account', employmentId);
   return useMutation({
-    onSuccess: resetSavedValues,
+    onSuccess: cacheSavedValues,
     mutationFn: (bankAccountDetails: Record<string, unknown>) =>
       putV1EmployeeBankAccount({
         client: client as Client,
