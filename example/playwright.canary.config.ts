@@ -10,7 +10,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 3 : undefined,
-  reporter: process.env.CI ? [['html'], ['github']] : 'list',
+  reporter: process.env.CI ? [['list'], ['html'], ['github']] : 'list',
   use: {
     baseURL: process.env.BASE_URL || `http://localhost:${PORT}`,
     trace: 'retain-on-failure',
