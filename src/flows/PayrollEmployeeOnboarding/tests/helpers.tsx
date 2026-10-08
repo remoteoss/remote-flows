@@ -14,6 +14,8 @@ export function buildBag(overrides: Partial<Bag> = {}): Bag {
     isSubmitting: false,
     selfOnboardingSubsteps: [],
     initialValues: undefined,
+    savedValues: {},
+    isLoadingSavedValues: false,
     stepState: { values: null },
     back: vi.fn(),
     next: vi.fn(),
