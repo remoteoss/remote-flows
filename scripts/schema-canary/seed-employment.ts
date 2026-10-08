@@ -68,10 +68,12 @@ async function fetchSchema(
  * standalone in CI. Shares its field-filling logic with seed-onboarding.ts
  * via scripts/fill-schema.ts.
  */
+export type SeededEmployment = { employmentId: string; companyId: string };
+
 export async function seedEmploymentForCountry(
   client: Client,
   country: string,
-): Promise<string> {
+): Promise<SeededEmployment> {
   const basicInfoSchema = await fetchSchema(
     client,
     country,
@@ -101,10 +103,12 @@ export async function seedEmploymentForCountry(
   if (created.error) {
     throw new Error(`POST /v1/employments -> ${JSON.stringify(created.error)}`);
   }
-  const employmentId = (created.data as $TSFixMe)?.data?.employment?.id;
-  if (!employmentId) {
+  const employment = created.data?.data?.employment;
+  const employmentId = employment?.id;
+  const companyId = employment?.company_id;
+  if (!employmentId || !companyId) {
     throw new Error(
-      `Could not find employment id in response: ${JSON.stringify(created.data)}`,
+      `Could not find the employment and company ids in the response: ${JSON.stringify(created.data)}`,
     );
   }
 
@@ -121,7 +125,7 @@ export async function seedEmploymentForCountry(
     throw error;
   }
 
-  return employmentId;
+  return { employmentId, companyId };
 }
 
 async function completePreContractSteps(

@@ -18,7 +18,9 @@ import {
 } from '@/src/components/form/utils';
 import { fillSchema } from '../fill-schema';
 
-export type SubmitResult = { ok: true } | { ok: false; error: string };
+export type SubmitResult =
+  | { ok: true; sent: FieldValues }
+  | { ok: false; error: string };
 
 type SdkPayloadResult =
   | { ok: true; payload: FieldValues; forcedFields: string[] }
@@ -172,5 +174,5 @@ export async function submitContractDetails(
       error: `known unsaved field(s) are saved now, remove them from KNOWN_UNSAVED_FIELDS: ${nowSaved.join(', ')}`,
     };
   }
-  return { ok: true };
+  return { ok: true, sent: sdk.payload };
 }

@@ -182,7 +182,7 @@ describe('submitContractDetails', () => {
       { strategy: 'buildOnce' },
     );
 
-    expect(result).toEqual({ ok: true });
+    expect(result).toEqual({ ok: true, sent: { overtime_eligible: 'yes' } });
   });
 
   it('fails when a forced value is saved as something else', async () => {
@@ -261,7 +261,7 @@ describe('submitContractDetails', () => {
       },
     );
 
-    expect(result).toEqual({ ok: true });
+    expect(result).toEqual({ ok: true, sent: { overtime_eligible: 'no' } });
   });
 
   it('fails when a known unsaved field is saved now', async () => {
@@ -311,7 +311,7 @@ describe('submitContractDetails', () => {
       strategy: 'rebuild',
     });
 
-    expect(result).toEqual({ ok: true });
+    expect(result).toEqual({ ok: true, sent: { has_signing_bonus: 'no' } });
     const url = new URL(request!.url);
     expect(url.pathname).toBe('/v1/employments/emp-1');
     expect(Object.fromEntries(url.searchParams)).toEqual({
@@ -345,7 +345,7 @@ describe('submitContractDetails', () => {
       seedValues: { has_signing_bonus: 'yes' },
     });
 
-    expect(result).toEqual({ ok: true });
+    expect(result).toEqual({ ok: true, sent: { has_signing_bonus: 'yes' } });
     expect(body).toEqual({
       contract_details: { has_signing_bonus: 'yes' },
       pricing_plan_details: { frequency: 'monthly' },
@@ -363,7 +363,7 @@ describe('submitContractDetails', () => {
       { strategy: 'buildOnce' },
     );
 
-    expect(result).toEqual({ ok: true });
+    expect(result).toEqual({ ok: true, sent: { annual_gross_salary: 100000 } });
   });
 
   it('fails when the employment saved something else', async () => {

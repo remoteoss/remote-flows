@@ -15,6 +15,7 @@ const PORT = process.env.PORT || '3001';
  */
 export default defineConfig({
   testDir: './e2e',
+  testIgnore: '**/canary/**',
   timeout: 60_000,
   expect: { timeout: 10_000 },
   /* Run tests in files in parallel */
