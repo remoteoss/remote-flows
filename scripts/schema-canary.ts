@@ -15,6 +15,7 @@ import {
   buildReport,
   checkSchemaBuildsAndValidates,
   decideExitCode,
+  formatFailures,
   formatSummaryTable,
   isSkipped,
   mapWithConcurrency,
@@ -63,6 +64,8 @@ if (!Number.isInteger(CONCURRENCY) || CONCURRENCY < 1) {
   );
 }
 const WRITE_REPORT = args.write === true;
+const FAILURES_OUT =
+  typeof args['failures-out'] === 'string' ? args['failures-out'] : undefined;
 const REPORT_PATH = path.resolve(__dirname, 'reports', 'schema-canary.json');
 
 async function fetchLiveCountries(client: Client): Promise<string[]> {
@@ -288,6 +291,9 @@ async function main() {
 
   if (WRITE_REPORT) {
     writeReport(rows);
+  }
+  if (FAILURES_OUT) {
+    writeFileSync(FAILURES_OUT, formatFailures(rows));
   }
 
   const failedPinned = rows.filter(

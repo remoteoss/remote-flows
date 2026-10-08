@@ -119,6 +119,13 @@ export function buildReport(rows: SchemaCanaryRow[]): SchemaCanaryReport {
   };
 }
 
+export function formatFailures(rows: SchemaCanaryRow[]): string {
+  const failing = rows.filter(
+    (row) => row.outcome === 'fail' || row.outcome === 'seed-error',
+  );
+  return failing.length > 0 ? formatSummaryTable(failing) : '';
+}
+
 export function formatSummaryTable(rows: SchemaCanaryRow[]): string {
   const header = '| Country | Version | Strategy | Check | Result | Error |';
   const divider = '| --- | --- | --- | --- | --- | --- |';

@@ -2,6 +2,7 @@ import {
   buildReport,
   checkSchemaBuildsAndValidates,
   decideExitCode,
+  formatFailures,
   formatSummaryTable,
   isSkipped,
   mapWithConcurrency,
@@ -219,5 +220,47 @@ describe('mapWithConcurrency', () => {
 
     expect(results).toEqual([60, 20, 40, 0, 10]);
     expect(peak).toBe(2);
+  });
+});
+
+describe('formatFailures', () => {
+  const row: SchemaCanaryRow = {
+    country: 'FRA',
+    version: 1,
+    strategy: 'buildOnce',
+    check: 'pinned',
+    outcome: 'pass',
+  };
+
+  it('lists only failed checks and seed errors', () => {
+    expect(
+      formatFailures([
+        row,
+        {
+          ...row,
+          country: 'ESP',
+          check: 'submit',
+          outcome: 'fail',
+          error: 'boom',
+        },
+        { ...row, country: 'GBR', outcome: 'seed-error', error: 'no seed' },
+        { ...row, country: 'ITA', outcome: 'skip', error: 'known' },
+      ]),
+    ).toBe(
+      formatSummaryTable([
+        {
+          ...row,
+          country: 'ESP',
+          check: 'submit',
+          outcome: 'fail',
+          error: 'boom',
+        },
+        { ...row, country: 'GBR', outcome: 'seed-error', error: 'no seed' },
+      ]),
+    );
+  });
+
+  it('is empty when nothing failed', () => {
+    expect(formatFailures([row, { ...row, outcome: 'skip' }])).toBe('');
   });
 });

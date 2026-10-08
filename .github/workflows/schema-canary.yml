@@ -27,6 +27,10 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      issues: write
+    env:
+      GH_REPO: ${{ github.repository }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -41,11 +45,23 @@ jobs:
         run: npm ci --include=optional --ignore-scripts
 
       - name: Run schema canary against sandbox
+        id: canary
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
           VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
-        run: npm run schema-canary -- --write
+        run: npm run schema-canary -- --write --failures-out="$RUNNER_TEMP/schema-canary-failures.md"
+
+      - name: Count failing checks in the report
+        id: count
+        if: always()
+        run: |
+          failing=$(jq '[.checks[] | select(.outcome == "fail" or .outcome == "seed-error")] | length' scripts/reports/schema-canary.json)
+          if [ "$failing" -gt 0 ]; then
+            echo "title=chore(schema-canary): update contract details schema canary report ($failing failing)" >> "$GITHUB_OUTPUT"
+          else
+            echo "title=chore(schema-canary): update contract details schema canary report (all passing)" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Create pull request with the updated report
         if: always()
@@ -54,10 +70,43 @@ jobs:
           commit-message: 'chore(schema-canary): update contract details schema canary report'
           branch: chore/schema-canary-report-auto
           delete-branch: true
-          title: 'chore(schema-canary): update contract details schema canary report'
+          title: ${{ steps.count.outputs.title }}
           body: 'Automated nightly run of `npm run schema-canary`. See the workflow run summary for the full pass/fail table.'
           add-paths: |
             scripts/reports/schema-canary.json
+
+      - name: Open or update the failure issue
+        if: failure() && steps.canary.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "The nightly contract details schema canary is failing against sandbox."
+            echo
+            if [ -s "$RUNNER_TEMP/schema-canary-failures.md" ]; then
+              cat "$RUNNER_TEMP/schema-canary-failures.md"
+            else
+              echo "The canary stopped before it checked any country, for example because sandbox auth failed. The run log has the error."
+            fi
+          } > "$RUNNER_TEMP/issue-body.md"
+          gh label create schema-canary --color B60205 --description "Nightly schema canary failures" --force
+          number=$(gh issue list --label schema-canary --state open --json number --jq '.[0].number // empty')
+          if [ -z "$number" ]; then
+            number=$(gh issue create --title "Schema canary is failing" --label schema-canary --body-file "$RUNNER_TEMP/issue-body.md" | grep -oE '[0-9]+$')
+            gh issue comment "$number" --body "Failing run: $RUN_URL"
+          elif [ "$(gh issue view "$number" --json body --jq .body)" != "$(cat "$RUNNER_TEMP/issue-body.md")" ]; then
+            gh issue edit "$number" --body-file "$RUNNER_TEMP/issue-body.md"
+            gh issue comment "$number" --body "The failures changed. Failing run: $RUN_URL"
+          fi
+
+      - name: Close the failure issue
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for number in $(gh issue list --label schema-canary --state open --json number --jq '.[].number'); do
+            gh issue close "$number" --comment "Back to green: $RUN_URL"
+          done
 
   pr-canary:
     if: github.event_name == 'pull_request'
