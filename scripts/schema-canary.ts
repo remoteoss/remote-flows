@@ -9,6 +9,7 @@ import {
   DEFAULT_VERSION,
   getContractDetailsStrategy,
 } from '@/src/flows/Onboarding/utils';
+import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
 import { createSandboxClient } from './schema-canary/auth';
 import {
   buildReport,
@@ -16,6 +17,8 @@ import {
   decideExitCode,
   formatSummaryTable,
   isSkipped,
+  mapWithConcurrency,
+  SCHEMA_CHECK_ORDER,
   SchemaCanaryRow,
   SchemaCheckType,
 } from './schema-canary/lib';
@@ -25,6 +28,10 @@ import {
   seedEmploymentForCountry,
 } from './schema-canary/seed-employment';
 import { SCHEMA_CANARY_SKIP_LIST } from './schema-canary/skip-list';
+import {
+  seedFor,
+  submitContractDetails,
+} from './schema-canary/submit-contract-details';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '..', '.env.sandbox') });
@@ -41,10 +48,20 @@ function parseArgs(argv: string[]) {
 const args = parseArgs(process.argv.slice(2));
 const COUNTRY_FILTER =
   typeof args.country === 'string' ? args.country.toUpperCase() : undefined;
-const CHECK_TYPES: SchemaCheckType[] =
+const REQUESTED_CHECKS =
   typeof args.checks === 'string'
     ? (args.checks.split(',') as SchemaCheckType[])
-    : ['pinned', 'latest'];
+    : SCHEMA_CHECK_ORDER;
+const CHECK_TYPES = SCHEMA_CHECK_ORDER.filter((check) =>
+  REQUESTED_CHECKS.includes(check),
+);
+const CONCURRENCY =
+  typeof args.concurrency === 'string' ? Number(args.concurrency) : 6;
+if (!Number.isInteger(CONCURRENCY) || CONCURRENCY < 1) {
+  throw new Error(
+    `--concurrency must be a positive integer, got ${args.concurrency}`,
+  );
+}
 const WRITE_REPORT = args.write === true;
 const REPORT_PATH = path.resolve(__dirname, 'reports', 'schema-canary.json');
 
@@ -60,6 +77,12 @@ async function fetchLiveCountries(client: Client): Promise<string[]> {
     .filter((country) => country.eor_onboarding)
     .map((country) => country.code)
     .filter((code) => !COUNTRY_FILTER || code === COUNTRY_FILTER);
+}
+
+function versionFor(country: string, check: SchemaCheckType) {
+  return check === 'latest'
+    ? 'latest'
+    : resolvePinnedVersion(country, DEFAULT_VERSION);
 }
 
 async function fetchLiveSchema(
@@ -86,6 +109,131 @@ async function fetchLiveSchema(
   return response.data.data ?? null;
 }
 
+async function checkCountry(
+  client: Client,
+  country: string,
+): Promise<SchemaCanaryRow[]> {
+  const strategy = getContractDetailsStrategy(country);
+  const rows: SchemaCanaryRow[] = [];
+
+  let employmentId: string;
+  try {
+    employmentId = await seedEmploymentForCountry(client, country);
+    console.log(`[${country}] seeded employment ${employmentId}`);
+  } catch (error) {
+    const reason = `employment seeding failed: ${error instanceof Error ? error.message : String(error)}`;
+    console.log(`[${country}] ${reason}`);
+    for (const check of CHECK_TYPES) {
+      const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
+      rows.push({
+        country,
+        version: versionFor(country, check),
+        strategy,
+        check,
+        outcome: skipEntry ? 'skip' : 'seed-error',
+        error: skipEntry?.reason ?? reason,
+      });
+    }
+    return rows;
+  }
+
+  const schemas = new Map<
+    number | 'latest',
+    Promise<Record<string, unknown> | null>
+  >();
+  const schemaFor = (version: number | 'latest') => {
+    if (!schemas.has(version)) {
+      schemas.set(
+        version,
+        fetchLiveSchema(client, country, version, employmentId),
+      );
+    }
+    return schemas.get(version)!;
+  };
+
+  try {
+    let pinnedBuildFailed = false;
+    for (const check of CHECK_TYPES) {
+      const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
+      const version = versionFor(country, check);
+
+      if (skipEntry) {
+        rows.push({
+          country,
+          version,
+          strategy,
+          check,
+          outcome: 'skip',
+          error: skipEntry.reason,
+        });
+        continue;
+      }
+
+      if (check === 'submit' && pinnedBuildFailed) {
+        rows.push({
+          country,
+          version,
+          strategy,
+          check,
+          outcome: 'skip',
+          error: 'the pinned schema failed to build, so it was not submitted',
+        });
+        continue;
+      }
+
+      try {
+        const schema = await schemaFor(version);
+        const result =
+          check === 'submit'
+            ? await submitContractDetails(
+                client,
+                employmentId,
+                schema,
+                resolvePinnedVersion(country, DEFAULT_VERSION),
+                {
+                  seed: seedFor(country),
+                  seedValues: CONTRACT_DETAILS_SEEDS[country],
+                },
+              )
+            : await checkSchemaBuildsAndValidates(schema, strategy);
+        if (check === 'pinned' && !result.ok) pinnedBuildFailed = true;
+        console.log(
+          `[${country}] ${check}@${version} -> ${result.ok ? 'pass' : `fail: ${result.error}`}`,
+        );
+        rows.push({
+          country,
+          version,
+          strategy,
+          check,
+          outcome: result.ok ? 'pass' : 'fail',
+          error: result.ok ? undefined : result.error,
+        });
+      } catch (error) {
+        if (check === 'pinned') pinnedBuildFailed = true;
+        rows.push({
+          country,
+          version,
+          strategy,
+          check,
+          outcome: 'fail',
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+  } finally {
+    try {
+      await archiveEmployment(client, employmentId);
+      console.log(`[${country}] archived employment ${employmentId}`);
+    } catch (error) {
+      console.warn(
+        `[${country}] failed to archive employment ${employmentId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  return rows;
+}
+
 async function runLive(): Promise<SchemaCanaryRow[]> {
   const clientId = process.env.VITE_CLIENT_ID;
   const clientSecret = process.env.VITE_CLIENT_SECRET;
@@ -98,98 +246,12 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
 
   const client = createSandboxClient(clientId, clientSecret, refreshToken);
   const countries = await fetchLiveCountries(client);
-  const rows: SchemaCanaryRow[] = [];
-
-  for (const country of countries) {
-    const strategy = getContractDetailsStrategy(country);
-
-    let employmentId: string;
-    try {
-      employmentId = await seedEmploymentForCountry(client, country);
-      console.log(`[${country}] seeded employment ${employmentId}`);
-    } catch (error) {
-      const reason = `employment seeding failed: ${error instanceof Error ? error.message : String(error)}`;
-      console.log(`[${country}] ${reason}`);
-      for (const check of CHECK_TYPES) {
-        const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
-        rows.push({
-          country,
-          version:
-            check === 'pinned'
-              ? resolvePinnedVersion(country, DEFAULT_VERSION)
-              : 'latest',
-          strategy,
-          check,
-          outcome: skipEntry ? 'skip' : 'seed-error',
-          error: skipEntry?.reason ?? reason,
-        });
-      }
-      continue;
-    }
-
-    try {
-      for (const check of CHECK_TYPES) {
-        const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
-        const version =
-          check === 'pinned'
-            ? resolvePinnedVersion(country, DEFAULT_VERSION)
-            : 'latest';
-
-        if (skipEntry) {
-          rows.push({
-            country,
-            version,
-            strategy,
-            check,
-            outcome: 'skip',
-            error: skipEntry.reason,
-          });
-          continue;
-        }
-
-        try {
-          const schema = await fetchLiveSchema(
-            client,
-            country,
-            version,
-            employmentId,
-          );
-          const result = await checkSchemaBuildsAndValidates(schema, strategy);
-          console.log(
-            `[${country}] ${check}@${version} -> ${result.ok ? 'pass' : `fail: ${result.error}`}`,
-          );
-          rows.push({
-            country,
-            version,
-            strategy,
-            check,
-            outcome: result.ok ? 'pass' : 'fail',
-            error: result.ok ? undefined : result.error,
-          });
-        } catch (error) {
-          rows.push({
-            country,
-            version,
-            strategy,
-            check,
-            outcome: 'fail',
-            error: error instanceof Error ? error.message : String(error),
-          });
-        }
-      }
-    } finally {
-      try {
-        await archiveEmployment(client, employmentId);
-        console.log(`[${country}] archived employment ${employmentId}`);
-      } catch (error) {
-        console.warn(
-          `[${country}] failed to archive employment ${employmentId}: ${error instanceof Error ? error.message : String(error)}`,
-        );
-      }
-    }
-  }
-
-  return rows;
+  const rowsByCountry = await mapWithConcurrency(
+    countries,
+    CONCURRENCY,
+    (country) => checkCountry(client, country),
+  );
+  return rowsByCountry.flat();
 }
 
 function report(rows: SchemaCanaryRow[]) {
@@ -233,6 +295,15 @@ async function main() {
   const failedLatest = rows.filter(
     (row) => row.check === 'latest' && row.outcome === 'fail',
   );
+  const failedSubmit = rows.filter(
+    (row) => row.check === 'submit' && row.outcome === 'fail',
+  );
+  if (failedSubmit.length > 0) {
+    console.error(`\n${failedSubmit.length} "submit" check(s) failed:`);
+    for (const row of failedSubmit) {
+      console.error(`  - ${row.country}: ${row.error}`);
+    }
+  }
   if (failedLatest.length > 0) {
     console.warn(
       `\n${failedLatest.length} "latest" check(s) failed (warning only, does not fail the job):`,
