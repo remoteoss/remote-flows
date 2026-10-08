@@ -191,6 +191,7 @@ async function checkCountry(
                 schema,
                 resolvePinnedVersion(country, DEFAULT_VERSION),
                 {
+                  strategy,
                   seed: seedFor(country),
                   seedValues: CONTRACT_DETAILS_SEEDS[country],
                 },
