@@ -23,7 +23,7 @@
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "coverage:extract": "tsx scripts/extract-coverage.ts",
-    "prepare": "pnpm run build",
+    "prepare": "npm run build",
     "release": "tsx scripts/release.ts",
     "release:fix": "tsx scripts/release-hotfix.ts",
     "seed:onboarding": "tsx scripts/seed-onboarding.ts",
