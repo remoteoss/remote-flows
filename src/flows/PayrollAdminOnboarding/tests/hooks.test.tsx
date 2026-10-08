@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
 import { usePayrollAdminOnboarding } from '@/src/flows/PayrollAdminOnboarding/hooks';
@@ -114,5 +114,52 @@ describe('usePayrollAdminOnboarding — legal entities', () => {
     });
     expect(result.current.legalEntities).toEqual([]);
     expect(result.current.legalEntityId).toBeUndefined();
+  });
+});
+
+describe('usePayrollAdminOnboarding — creating the employment', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
+
+  it('fetches onboarding steps only with the created employment id', async () => {
+    const onboardingStepsPaths: string[] = [];
+    server.use(
+      http.get('*/v1/companies/*/legal-entities', () =>
+        HttpResponse.json(legalEntitiesResponse([gpEnabledLegalEntity])),
+      ),
+      http.get('*/v1/countries/*/global_payroll_basic_information', () =>
+        HttpResponse.json({ data: { type: 'object', properties: {} } }),
+      ),
+      http.post('*/v1/employments', () =>
+        HttpResponse.json({ data: { employment: { id: 'emp-1' } } }),
+      ),
+      http.get('*/v1/employments/*/onboarding-steps', ({ request }) => {
+        onboardingStepsPaths.push(new URL(request.url).pathname);
+        return HttpResponse.json({ data: { steps: [] } });
+      }),
+    );
+
+    const { result } = renderHook(
+      () =>
+        usePayrollAdminOnboarding({
+          companyId: 'company-1',
+          countryCode: 'GBR',
+        }),
+      { wrapper: TestProviders },
+    );
+
+    await waitFor(() => {
+      expect(result.current.legalEntityId).toBe('le-1');
+    });
+
+    await act(() => result.current.onSubmit({ country_code: 'GBR' }));
+
+    await waitFor(() => {
+      expect(result.current.apiSteps).toEqual([]);
+    });
+    expect(onboardingStepsPaths).toEqual([
+      '/v1/employments/emp-1/onboarding-steps',
+    ]);
   });
 });
