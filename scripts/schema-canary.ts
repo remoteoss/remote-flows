@@ -122,6 +122,13 @@ async function fetchLiveSchema(
 
 type CountryResult = { rows: SchemaCanaryRow[]; kept?: KeptEmployment };
 
+const keptSoFar: KeptEmployment[] = [];
+
+function recordKept(employment: KeptEmployment, keepFile: string) {
+  keptSoFar.push(employment);
+  writeFileSync(keepFile, `${JSON.stringify(keptSoFar, null, 2)}\n`);
+}
+
 async function checkCountry(
   client: Client,
   country: string,
@@ -258,6 +265,7 @@ async function checkCountry(
     }
   } finally {
     if (KEEP_SUBMITTED && kept) {
+      recordKept(kept, KEEP_SUBMITTED);
       console.log(`[${country}] kept employment ${employmentId}`);
     } else {
       try {
@@ -324,12 +332,8 @@ async function main() {
   report(rows);
 
   if (KEEP_SUBMITTED) {
-    const kept = results.flatMap((result) =>
-      result.kept ? [result.kept] : [],
-    );
-    writeFileSync(KEEP_SUBMITTED, `${JSON.stringify(kept, null, 2)}\n`);
     console.log(
-      `\nKept ${kept.length} submitted employment(s) in ${KEEP_SUBMITTED}`,
+      `\nKept ${keptSoFar.length} submitted employment(s) in ${KEEP_SUBMITTED}`,
     );
   }
 

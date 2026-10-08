@@ -18,6 +18,7 @@ const ALL_COUNTRIES_PATHS = [
   'scripts/schema-canary.ts',
   'scripts/schema-canary/',
   'scripts/schema-canary-archive.ts',
+  'scripts/schema-canary-affected.ts',
   'example/src/flows/Onboarding/',
   'example/e2e/canary/',
   'example/playwright.canary.config.ts',
