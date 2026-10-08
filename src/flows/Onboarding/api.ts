@@ -56,6 +56,7 @@ import {
   FlowOptions,
 } from '@/src/flows/types';
 import {
+  CONTRACT_DETAILS_STRATEGY,
   getContractDetailsSchemaVersion,
   getBasicInformationSchemaVersion,
   getBenefitOffersSchemaVersion,
@@ -324,7 +325,7 @@ export const useLegacyContractDetailsSchema = ({
     schema,
     values: fieldValues,
     options: { jsfModify: options?.jsfModify },
-    strategy: 'rebuild',
+    strategy: CONTRACT_DETAILS_STRATEGY.legacy,
   });
 
   return { data: form, isLoading };
@@ -392,7 +393,7 @@ export const useContractDetailsSchema = ({
     schema,
     initialValues,
     options: { jsfModify: options?.jsfModify },
-    strategy: 'buildOnce',
+    strategy: CONTRACT_DETAILS_STRATEGY.jsfV1,
   });
 
   return { data: form, isLoading, handleValidation, parseFormValues };

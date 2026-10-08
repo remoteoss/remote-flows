@@ -31,6 +31,11 @@
             "group": ["**/createHeadlessForm"],
             "importNames": ["createHeadlessForm"],
             "message": "Build JSON Schema forms with useHeadlessForm from @/src/common/useHeadlessForm instead of calling createHeadlessForm directly. See docs/USE_HEADLESS_FORM_ROLLOUT.md."
+          },
+          {
+            "group": ["**/common/headlessForm"],
+            "importNames": ["buildHeadlessForm", "parseValuesForValidation"],
+            "message": "Build JSON Schema forms with useHeadlessForm from @/src/common/useHeadlessForm. buildHeadlessForm and parseValuesForValidation are its internals, shared only with scripts/schema-canary. See docs/USE_HEADLESS_FORM_ROLLOUT.md."
           }
         ]
       }
@@ -47,6 +52,7 @@
       "files": [
         "scripts/**",
         "src/common/createHeadlessForm.tsx",
+        "src/common/headlessForm.ts",
         "src/common/useHeadlessForm.ts",
         "src/**/tests/**",
         "src/**/__tests__/**",

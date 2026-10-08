@@ -4,6 +4,7 @@ import {
   getBasicInformationSchemaVersion,
   getBenefitOffersSchemaVersion,
   getContractDetailsSchemaVersion,
+  getContractDetailsStrategy,
   getJobTitleEligibilityParams,
   JOB_TITLE_ELIGIBILITY_SLUG_FIELD,
   usesJsfV1ContractDetails,
@@ -40,6 +41,18 @@ describe('usesJsfV1ContractDetails', () => {
   it('should return false for the other countries', () => {
     expect(usesJsfV1ContractDetails('PRT')).toBe(false);
     expect(usesJsfV1ContractDetails(null)).toBe(false);
+  });
+});
+
+describe('getContractDetailsStrategy', () => {
+  it('returns buildOnce for countries on the jsf v1 contract details path', () => {
+    expect(getContractDetailsStrategy('DEU')).toBe('buildOnce');
+    expect(getContractDetailsStrategy('FRA')).toBe('buildOnce');
+  });
+
+  it('returns rebuild for every other country', () => {
+    expect(getContractDetailsStrategy('PRT')).toBe('rebuild');
+    expect(getContractDetailsStrategy(null)).toBe('rebuild');
   });
 });
 
