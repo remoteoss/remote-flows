@@ -9,6 +9,7 @@ import {
   DEFAULT_VERSION,
   getContractDetailsStrategy,
 } from '@/src/flows/Onboarding/utils';
+import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
 import { createSandboxClient } from './schema-canary/auth';
 import {
   buildReport,
@@ -189,7 +190,10 @@ async function checkCountry(
                 employmentId,
                 schema,
                 resolvePinnedVersion(country, DEFAULT_VERSION),
-                seedFor(country),
+                {
+                  seed: seedFor(country),
+                  seedValues: CONTRACT_DETAILS_SEEDS[country],
+                },
               )
             : await checkSchemaBuildsAndValidates(schema, strategy);
         if (check === 'pinned' && !result.ok) pinnedBuildFailed = true;

@@ -15,12 +15,15 @@ export async function submitContractDetails(
   employmentId: string,
   schema: Record<string, unknown> | null,
   version: number,
-  seed?: number,
+  {
+    seed,
+    seedValues = {},
+  }: { seed?: number; seedValues?: Record<string, unknown> } = {},
 ): Promise<SubmitResult> {
   if (!schema) {
     return { ok: false, error: 'no contract_details schema to fill' };
   }
-  const { values, skipped, errors } = fillSchema(schema, {}, { seed });
+  const { values, skipped, errors } = fillSchema(schema, seedValues, { seed });
   if (Object.keys(errors).length > 0) {
     return {
       ok: false,

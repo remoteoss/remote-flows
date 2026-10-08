@@ -49,6 +49,26 @@ describe('submitContractDetails', () => {
     });
   });
 
+  it('sends the seed values instead of filling those fields', async () => {
+    let body: unknown;
+    server.use(
+      http.patch('*/v1/employments/:employmentId', async ({ request }) => {
+        body = await request.json();
+        return HttpResponse.json({ data: {} });
+      }),
+    );
+
+    const result = await submitContractDetails(client, 'emp-1', schema, 3, {
+      seedValues: { has_signing_bonus: 'yes' },
+    });
+
+    expect(result).toEqual({ ok: true });
+    expect(body).toEqual({
+      contract_details: { has_signing_bonus: 'yes' },
+      pricing_plan_details: { frequency: 'monthly' },
+    });
+  });
+
   it('fails with the gateway error and the file fields it left empty', async () => {
     server.use(
       http.patch('*/v1/employments/:employmentId', () =>
