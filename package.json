@@ -25,7 +25,7 @@
     "test:coverage": "vitest --coverage",
     "ci:digest": "tsx scripts/ci-digest.ts",
     "coverage:extract": "tsx scripts/extract-coverage.ts",
-    "prepare": "pnpm run build",
+    "prepare": "npm run build",
     "release": "tsx scripts/release.ts",
     "release:fix": "tsx scripts/release-hotfix.ts",
     "schema-canary": "tsx scripts/schema-canary.ts",
