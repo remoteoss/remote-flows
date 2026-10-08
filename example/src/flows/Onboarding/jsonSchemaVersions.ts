@@ -65,7 +65,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CHN: {
     // China
-    contract_details: 3,
+    contract_details: 8,
   },
   COL: {
     // Colombia
