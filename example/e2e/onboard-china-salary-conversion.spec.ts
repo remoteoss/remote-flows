@@ -46,7 +46,10 @@ test.describe('Onboard China employee', () => {
     const conversionResponse = page.waitForResponse((response) =>
       /\/v1\/currency-converter/.test(new URL(response.url()).pathname),
     );
-    await page.getByRole('button', { name: /Show .+ conversion/ }).click();
+    await page
+      .locator('[data-field="annual_gross_salary"]')
+      .getByRole('button', { name: /Show .+ conversion/ })
+      .click();
 
     const response = await conversionResponse;
     expect(response.status()).toBe(200);
