@@ -72,12 +72,15 @@ describe('ZendeskTriggerButton', () => {
     });
 
     it('does not submit the surrounding form when clicked', async () => {
-      const onSubmit = vi.fn((event: React.FormEvent) =>
-        event.preventDefault(),
-      );
+      const onSubmit = vi.fn();
 
       render(
-        <form onSubmit={onSubmit}>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            onSubmit();
+          }}
+        >
           <ZendeskTriggerButton zendeskId={123456}>
             Open Article
           </ZendeskTriggerButton>
