@@ -64,7 +64,6 @@ export async function sdkPayloadFor(
   };
 }
 
-// Tiger saves these on the compensation record, and GET /v1/employments/{id} doesn't return them.
 const NOT_RETURNED_AFTER_SAVE = new Set(['overtime_eligible']);
 
 export function differencesFromSaved(
