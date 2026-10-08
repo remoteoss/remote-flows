@@ -1,0 +1,93 @@
+name: Schema canary browser stage
+description: Opens each employment the canary kept in the example app and re-submits its contract details in Chromium.
+
+inputs:
+  employments-file:
+    description: File written by npm run schema-canary -- --keep-submitted
+    required: true
+  client-id:
+    required: true
+  client-secret:
+    required: true
+  refresh-token:
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Build the library
+      shell: bash
+      run: npm run build
+
+    - name: Install example/ dependencies
+      shell: bash
+      working-directory: ./example
+      run: npm ci --include=optional --ignore-scripts
+
+    - name: Get Playwright version
+      id: playwright-version
+      shell: bash
+      working-directory: ./example
+      run: echo "version=$(node -p "require('./package.json').devDependencies['@playwright/test']")" >> "$GITHUB_OUTPUT"
+
+    - name: Cache Playwright browsers
+      id: playwright-cache
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+
+    - name: Install Playwright system dependencies
+      shell: bash
+      working-directory: ./example
+      run: |
+        for i in 1 2 3; do
+          if npx playwright install-deps chromium; then exit 0; fi
+          sleep $((i * 10))
+        done
+        exit 1
+
+    - name: Install Chromium
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      shell: bash
+      working-directory: ./example
+      run: |
+        for i in 1 2 3; do
+          if npx playwright install chromium; then exit 0; fi
+          sleep $((i * 10))
+        done
+        exit 1
+
+    - name: Start the example app against sandbox
+      shell: bash
+      working-directory: ./example
+      env:
+        PORT: '3001'
+        VITE_REMOTE_GATEWAY: sandbox
+        VITE_CLIENT_ID: ${{ inputs.client-id }}
+        VITE_CLIENT_SECRET: ${{ inputs.client-secret }}
+        VITE_REFRESH_TOKEN: ${{ inputs.refresh-token }}
+      run: |
+        nohup npm run dev:env > "$RUNNER_TEMP/example-app.log" 2>&1 &
+        for _ in $(seq 1 60); do
+          if curl -sf -o /dev/null http://localhost:3001/; then exit 0; fi
+          sleep 2
+        done
+        cat "$RUNNER_TEMP/example-app.log"
+        exit 1
+
+    - name: Re-submit contract details in the browser
+      shell: bash
+      working-directory: ./example
+      env:
+        PORT: '3001'
+        SCHEMA_CANARY_EMPLOYMENTS: ${{ inputs.employments-file }}
+      run: npx playwright test -c playwright.canary.config.ts
+
+    - name: Upload the Playwright report
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: schema-canary-browser-report
+        path: example/playwright-report/
+        retention-days: 14
