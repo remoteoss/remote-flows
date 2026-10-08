@@ -41,6 +41,7 @@ This project is a React component library (`@remoteoss/remote-flows`) that provi
 
 - React Hooks rules (exhaustive dependencies)
 - `no-console`: warn (only `console.warn` and `console.error` allowed)
+- `no-restricted-properties` in `example/e2e/**`: bans `fulfill`, `abort`, `routeFromHAR` and `routeWebSocket` so e2e never fakes the API
 
 **Naming Conventions:**
 
@@ -124,6 +125,15 @@ import { buildPayload } from './utils';
 - Hook tests: Use `renderHook` from `@testing-library/react`
 - Component tests: Use `render` and user events
 - Query client wrapper: Wrap tests that use React Query with `QueryClientProvider`
+
+**E2E tests (`example/e2e/`):**
+
+E2E runs against the real sandbox. Anything that needs fake data belongs in a vitest + MSW test under `src/`, reusing `src/tests/handlers.ts` and the existing fixtures. Lint catches the plain `route.fulfill(...)` case. Flag what it can't:
+
+- A new `oxlint-disable` for `no-restricted-properties` in any spec.
+- Fake data served from outside `example/e2e/`, where the rule doesn't apply: fake routes in `example/api/proxy.js` or `example/dev_server.js`, an MSW `setupWorker` in the example app, or a demo query flag that swaps in canned responses.
+- Calls that dodge the rule, such as a computed property (`route['ful' + 'fill']`) or handing `route` to a helper outside `example/e2e/`.
+- A new spec whose scenario needs controlled data. Suggest writing it as a vitest + MSW test instead.
 
 **Example Test Pattern:**
 

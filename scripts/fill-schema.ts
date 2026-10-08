@@ -1,5 +1,7 @@
 import { createHeadlessForm } from '@remoteoss/remote-json-schema-form-kit';
 import { faker } from '@faker-js/faker';
+import RandExp from 'randexp';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type FormValues = Record<string, unknown>;
 type HeadlessFormOptions = NonNullable<
@@ -8,37 +10,128 @@ type HeadlessFormOptions = NonNullable<
 
 export interface FieldOption {
   value: unknown;
+  disabled?: boolean;
   meta?: { countryCode?: string };
 }
 
 export interface SeedField {
   name: string;
   inputType?: string;
+  jsonType?: string | string[];
   required?: boolean;
   isVisible?: boolean;
   multiple?: boolean;
+  deprecated?: unknown;
+  readOnly?: boolean;
   options?: FieldOption[];
   const?: unknown;
+  default?: unknown;
+  minimum?: number;
+  maximum?: number;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  minDate?: string;
+  maxDate?: string;
+  fields?: SeedField[];
+}
+
+type FormErrors = Record<string, unknown>;
+
+function isPlainObject(value: unknown): value is FormValues {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function acceptsType(field: SeedField, type: string): boolean {
+  return Array.isArray(field.jsonType)
+    ? field.jsonType.includes(type)
+    : field.jsonType === type;
+}
+
+// x-jsf-logic-computedAttrs surface as a string naming the computed value, not the value.
+function isComputedBinding(field: SeedField, value: unknown): boolean {
+  return typeof value === 'string' && acceptsType(field, 'number');
+}
+
+function enabledOptions(options: FieldOption[]): FieldOption[] {
+  const enabled = options.filter((o) => !o.disabled);
+  return enabled.length > 0 ? enabled : options;
 }
 
 /** First option whose value/label reads as "no" - collapses conditional sub-fields (file
  * uploads, free-text detail boxes) that a generic filler can't produce plausible data for. */
 export function preferNoOption(options: FieldOption[]): FieldOption {
-  return (
-    options.find((o) => String(o.value).toLowerCase() === 'no') || options[0]
-  );
+  const pool = enabledOptions(options);
+  return pool.find((o) => String(o.value).toLowerCase() === 'no') || pool[0];
 }
 
-export function fakeValueFor(field: SeedField): unknown {
-  const { inputType, options, multiple, name, const: constValue } = field;
+function fakeNumber(
+  field: SeedField,
+  fallback: { min: number; max: number },
+): number {
+  const span = fallback.max - fallback.min;
+  let min = Math.max(field.minimum ?? -Infinity, fallback.min);
+  let max = Math.min(field.maximum ?? Infinity, fallback.max);
+  if (min > max) {
+    min = field.minimum ?? (field.maximum ?? fallback.max) - span;
+    max = field.maximum ?? min + span;
+  }
+  if (min > max) return min;
+  return faker.number.int({ min: Math.ceil(min), max: Math.floor(max) });
+}
+
+function fakeText(field: SeedField): string {
+  if (field.pattern && field.pattern !== '\\S') {
+    const randexp = new RandExp(field.pattern);
+    randexp.randInt = (min, max) => faker.number.int({ min, max });
+    const generated = randexp.gen();
+    return field.maxLength ? generated.slice(0, field.maxLength) : generated;
+  }
+  let text =
+    field.inputType === 'textarea'
+      ? faker.lorem.sentence()
+      : faker.lorem.words({ min: 2, max: 4 });
+  while (text.length < (field.minLength ?? 0)) {
+    text = `${text} ${faker.lorem.sentence()}`;
+  }
+  return field.maxLength ? text.slice(0, field.maxLength) : text;
+}
+
+function fakeDate(field: SeedField): string {
+  // Some countries require more lead time than a fixed short offset
+  // covers (e.g. Iceland: 20 working days, ~28 calendar days) - 35
+  // calendar days clears that with margin. Doesn't dodge country-specific
+  // holidays (e.g. Georgia) on its own; findSafeStartDate below seeds
+  // provisional_start_date directly for that.
+  const date = new Date();
+  date.setDate(date.getDate() + 35);
+  const iso = toIsoDate(date);
+  if (field.minDate && iso < field.minDate) return field.minDate;
+  if (field.maxDate && iso > field.maxDate) return field.maxDate;
+  return iso;
+}
+
+export function fakeValueFor(field: SeedField, retry = false): unknown {
+  const { inputType, options, multiple, name } = field;
+
+  if (field.const !== undefined && !isComputedBinding(field, field.const)) {
+    return field.const;
+  }
+  if (field.jsonType === 'null') return null;
+  if (inputType === 'hidden') return field.default ?? undefined;
+  if (
+    !retry &&
+    field.default !== undefined &&
+    field.default !== null &&
+    !isComputedBinding(field, field.default)
+  ) {
+    return field.default;
+  }
 
   if (options?.length) {
-    if (inputType === 'radio' || inputType === 'select') {
-      return preferNoOption(options).value;
-    }
-    if (inputType === 'countries' || multiple) {
-      return [faker.helpers.arrayElement(options).value];
-    }
+    const pick = retry
+      ? faker.helpers.arrayElement(enabledOptions(options))
+      : preferNoOption(options);
     if (inputType === 'tel') {
       // options here are per-country dialing patterns (e.g. pattern:
       // '^(+49)[0-9]{6,}$', meta.countryCode: '49'), not user-facing choices -
@@ -47,7 +140,10 @@ export function fakeValueFor(field: SeedField): unknown {
       const option = options.find((o) => o.meta?.countryCode) || options[0];
       return `+${option.meta?.countryCode}${faker.string.numeric(9)}`;
     }
-    return preferNoOption(options).value;
+    if (inputType === 'countries' || multiple || acceptsType(field, 'array')) {
+      return [pick.value];
+    }
+    return pick.value;
   }
 
   switch (inputType) {
@@ -57,34 +153,95 @@ export function fakeValueFor(field: SeedField): unknown {
         : faker.internet.email();
     case 'tel':
       return `+1${faker.string.numeric(9)}`;
-    case 'date': {
-      // Some countries require more lead time than a fixed short offset
-      // covers (e.g. Iceland: 20 working days, ~28 calendar days) - 35
-      // calendar days clears that with margin. Doesn't dodge country-specific
-      // holidays (e.g. Georgia) on its own; findSafeStartDate below seeds
-      // provisional_start_date directly for that.
-      const d = new Date();
-      d.setDate(d.getDate() + 35);
-      return d.toISOString().slice(0, 10);
-    }
+    case 'date':
+      return fakeDate(field);
     case 'number':
-      return faker.number.int({ min: 5, max: 30 });
+      return fakeNumber(
+        field,
+        retry ? { min: 1, max: 60 } : { min: 5, max: 30 },
+      );
     case 'money':
-      return faker.number.int({ min: 3_000_000, max: 8_000_000 });
-    case 'textarea':
-      return faker.lorem.sentence();
+      return fakeNumber(field, { min: 3_000_000, max: 8_000_000 });
     case 'checkbox':
-      // No enumerated options: this is a single acknowledgement toggle. RHF
-      // holds a plain `true` here, which parseFormValuesToAPI (src/components/
-      // form/utils.ts) swaps for `field.const` (e.g. "acknowledged") at submit
-      // time when the schema is const-based - mirror that instead of sending
-      // the raw RHF value, or the API rejects it as a type mismatch.
-      return constValue ?? true;
+      return true;
     case 'file':
       return null;
     default:
-      return faker.lorem.words({ min: 2, max: 4 });
+      return fakeText(field);
   }
+}
+
+const UNFILLED_FIELDS = new Set(['employer_acknowledges_risk']);
+
+function fillFields(
+  fields: SeedField[],
+  values: FormValues,
+  errors: FormErrors | undefined,
+  locked: ReadonlySet<string>,
+  skipped: Set<string>,
+): FormValues {
+  const next = { ...values };
+  for (const field of fields) {
+    if (
+      !field.isVisible ||
+      locked.has(field.name) ||
+      UNFILLED_FIELDS.has(field.name)
+    )
+      continue;
+    const fieldError = errors?.[field.name];
+
+    if (field.inputType === 'fieldset' && field.fields) {
+      const current = next[field.name];
+      next[field.name] = fillFields(
+        field.fields,
+        isPlainObject(current) && typeof fieldError !== 'string' ? current : {},
+        isPlainObject(fieldError) ? fieldError : undefined,
+        new Set(),
+        skipped,
+      );
+      continue;
+    }
+
+    if (field.inputType === 'file') {
+      if (field.required) skipped.add(field.name);
+      continue;
+    }
+    if (next[field.name] !== undefined && fieldError === undefined) continue;
+    if (
+      (field.readOnly || field.deprecated) &&
+      field.const === undefined &&
+      fieldError === undefined
+    ) {
+      if (field.default !== undefined) next[field.name] = field.default;
+      continue;
+    }
+    next[field.name] = fakeValueFor(field, fieldError !== undefined);
+  }
+  return next;
+}
+
+function keepVisibleValues(
+  fields: SeedField[],
+  values: FormValues,
+  locked: ReadonlySet<string>,
+): FormValues {
+  const visible = new Map(
+    fields.filter((f) => f.isVisible !== false).map((f) => [f.name, f]),
+  );
+  const kept: FormValues = {};
+  for (const [name, value] of Object.entries(values)) {
+    const field = visible.get(name);
+    if (locked.has(name)) {
+      kept[name] = value;
+    } else if (field?.inputType === 'fieldset' && field.fields) {
+      kept[name] = isPlainObject(value)
+        ? keepVisibleValues(field.fields, value, new Set())
+        : value;
+    } else if (field && value !== undefined) {
+      kept[name] = value;
+    }
+  }
+  return kept;
 }
 
 export const SAFE_START_DATE_MIN_LEAD_DAYS = 35;
@@ -168,30 +325,68 @@ export async function findSafeStartDate(
   return pickSafeDate(holidayDates);
 }
 
-/** Progressively fills a JSF schema: fill whatever's required+visible, recompute (new
- * conditionally-required fields may appear), repeat until stable. Mirrors what the real
- * multi-step form does field-by-field, but against the schema directly instead of the DOM. */
+export type FillSchemaResult = {
+  values: FormValues;
+  skipped: string[];
+  errors: FormErrors;
+};
+
+/** Fills every visible field except `employer_acknowledges_risk`, then validates and regenerates only the fields that failed,
+ * until the form has no errors or `maxAttempts` runs out. Each pass rebuilds the form so
+ * fields that a new value makes visible (or hidden) are picked up. Required file fields
+ * can't be faked: they are reported in `skipped` and left out of `errors`. Seed values are
+ * kept as given. The same `seed` always produces the same values for the same schema. */
 export function fillSchema(
   schema: Parameters<typeof createHeadlessForm>[0],
   seedValues: FormValues = {},
-): { values: FormValues; skipped: string[] } {
-  const values: FormValues = { ...seedValues };
-  const skipped: string[] = [];
-  for (let round = 0; round < 8; round++) {
-    const { fields } = createHeadlessForm(schema, {
+  { maxAttempts = 50, seed }: { maxAttempts?: number; seed?: number } = {},
+): FillSchemaResult {
+  if (seed === undefined) return fill(schema, seedValues, maxAttempts);
+  faker.seed(seed);
+  try {
+    return fill(schema, seedValues, maxAttempts);
+  } finally {
+    faker.seed();
+  }
+}
+
+function fill(
+  schema: Parameters<typeof createHeadlessForm>[0],
+  seedValues: FormValues,
+  maxAttempts: number,
+): FillSchemaResult {
+  const build = (values: FormValues) =>
+    createHeadlessForm(schema, {
       initialValues: values as HeadlessFormOptions['initialValues'],
     });
-    const missing = (fields as unknown as SeedField[]).filter(
-      (f) => f.required && f.isVisible && values[f.name] === undefined,
+  const locked = new Set(Object.keys(seedValues));
+  const skipped = new Set<string>();
+  let values: FormValues = { ...seedValues };
+  let errors: FormErrors | undefined;
+  let fields: SeedField[] = [];
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    values = fillFields(
+      build(values).fields as unknown as SeedField[],
+      values,
+      errors,
+      locked,
+      skipped,
     );
-    if (missing.length === 0) break;
-    for (const field of missing) {
-      if (field.inputType === 'file') {
-        skipped.push(field.name);
-        continue;
-      }
-      values[field.name] = fakeValueFor(field);
-    }
+    const form = build(values);
+    fields = form.fields as unknown as SeedField[];
+    errors = Object.fromEntries(
+      Object.entries(
+        (form.handleValidation(values as $TSFixMe).formErrors ??
+          {}) as FormErrors,
+      ).filter(([name]) => !skipped.has(name)),
+    );
+    if (Object.keys(errors).length === 0) break;
   }
-  return { values, skipped };
+
+  return {
+    values: keepVisibleValues(fields, values, locked),
+    skipped: [...skipped],
+    errors: errors ?? {},
+  };
 }
