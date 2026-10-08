@@ -270,7 +270,6 @@ export const usePayrollAdminOnboarding = ({
             );
           }
           setInternalEmploymentId(empId);
-          await refetchSteps();
           return data;
         }
 
