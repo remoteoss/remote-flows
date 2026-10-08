@@ -4,13 +4,21 @@
 
 ### Minor Changes
 
+#### Fixes
+
+- show errors inside untouched fieldsets (#1464) [#1464](https://github.com/remoteoss/remote-flows/pull/1464)
+- un-deprecate useCostCalculatorContext (#1467) [#1467](https://github.com/remoteoss/remote-flows/pull/1467)
+
+#### Docs
+
+- bump CHN contract_details schema version to 8 (#1462) [#1462](https://github.com/remoteoss/remote-flows/pull/1462)
+
+#### Chores
+
 - set type="button" on default trigger button (#1472) [#1472](https://github.com/remoteoss/remote-flows/pull/1472)
 - remove BLR, KGZ, KHM and MNG from onboarding country lists (#1468) [#1468](https://github.com/remoteoss/remote-flows/pull/1468)
-- un-deprecate useCostCalculatorContext (#1467) [#1467](https://github.com/remoteoss/remote-flows/pull/1467)
-- show errors inside untouched fieldsets (#1464) [#1464](https://github.com/remoteoss/remote-flows/pull/1464)
 - fill schema contract details (#1466) [#1466](https://github.com/remoteoss/remote-flows/pull/1466)
 - ban faked API responses in e2e specs (#1451) [#1451](https://github.com/remoteoss/remote-flows/pull/1451)
-- bump CHN contract_details schema version to 8 (#1462) [#1462](https://github.com/remoteoss/remote-flows/pull/1462)
 
 ## 1.59.1
 
