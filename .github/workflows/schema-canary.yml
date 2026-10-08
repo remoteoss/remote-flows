@@ -100,7 +100,7 @@ jobs:
           fi
 
       - name: Close the failure issue
-        if: success()
+        if: always() && steps.canary.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
