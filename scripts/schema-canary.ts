@@ -11,6 +11,7 @@ import {
 } from '@/src/flows/Onboarding/utils';
 import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
 import { createSandboxClient } from './schema-canary/auth';
+import { KNOWN_UNSAVED_FIELDS } from './schema-canary/known-unsaved-fields';
 import {
   buildReport,
   checkSchemaBuildsAndValidates,
@@ -197,6 +198,7 @@ async function checkCountry(
                   strategy,
                   seed: seedFor(country),
                   seedValues: CONTRACT_DETAILS_SEEDS[country],
+                  knownUnsavedFields: KNOWN_UNSAVED_FIELDS[country],
                 },
               )
             : await checkSchemaBuildsAndValidates(schema, strategy);

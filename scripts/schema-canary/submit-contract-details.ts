@@ -12,6 +12,7 @@ import {
   withFieldsetObjects,
 } from '@/src/common/headlessForm';
 import {
+  checkFieldHasForcedValue,
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
@@ -20,7 +21,7 @@ import { fillSchema } from '../fill-schema';
 export type SubmitResult = { ok: true } | { ok: false; error: string };
 
 type SdkPayloadResult =
-  | { ok: true; payload: FieldValues }
+  | { ok: true; payload: FieldValues; forcedFields: string[] }
   | { ok: false; error: string };
 
 export function seedFor(country: string): number {
@@ -61,17 +62,19 @@ export async function sdkPayloadFor(
   return {
     ok: true,
     payload: await parseJSFToValidate(formValues, form.fields),
+    forcedFields: form.fields
+      .filter((field) => checkFieldHasForcedValue(field))
+      .map((field) => String(field.name)),
   };
 }
-
-const NOT_RETURNED_AFTER_SAVE = new Set(['overtime_eligible']);
 
 export function differencesFromSaved(
   sent: FieldValues,
   saved: FieldValues | null | undefined,
+  ignored: string[] = [],
 ): string[] {
   return Object.keys(sent)
-    .filter((key) => !NOT_RETURNED_AFTER_SAVE.has(key))
+    .filter((key) => !ignored.includes(key))
     .filter((key) => !isDeepStrictEqual(sent[key], saved?.[key]))
     .map(
       (key) =>
@@ -88,10 +91,12 @@ export async function submitContractDetails(
     strategy,
     seed,
     seedValues = {},
+    knownUnsavedFields = {},
   }: {
     strategy: HeadlessFormStrategy;
     seed?: number;
     seedValues?: Record<string, unknown>;
+    knownUnsavedFields?: Record<string, string>;
   },
 ): Promise<SubmitResult> {
   if (!schema) {
@@ -142,14 +147,29 @@ export async function submitContractDetails(
       error: `GET /v1/employments/{id} after the PATCH -> ${JSON.stringify(saved.error)}`,
     };
   }
-  const differences = differencesFromSaved(
-    sdk.payload,
-    saved.data.data.employment?.contract_details as FieldValues | undefined,
-  );
+  const savedDetails = saved.data.data.employment?.contract_details as
+    | FieldValues
+    | undefined;
+  const knownUnsaved = Object.keys(knownUnsavedFields);
+  const differences = differencesFromSaved(sdk.payload, savedDetails, [
+    ...sdk.forcedFields,
+    ...knownUnsaved,
+  ]);
   if (differences.length > 0) {
     return {
       ok: false,
       error: `saved contract_details differ from what was sent: ${differences.join('; ')}`,
+    };
+  }
+  const nowSaved = knownUnsaved.filter(
+    (key) =>
+      key in sdk.payload &&
+      isDeepStrictEqual(sdk.payload[key], savedDetails?.[key]),
+  );
+  if (nowSaved.length > 0) {
+    return {
+      ok: false,
+      error: `known unsaved field(s) are saved now, remove them from KNOWN_UNSAVED_FIELDS: ${nowSaved.join(', ')}`,
     };
   }
   return { ok: true };

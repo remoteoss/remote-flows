@@ -67,6 +67,7 @@ describe('sdkPayloadFor', () => {
       expect(result).toEqual({
         ok: true,
         payload: { annual_gross_salary: 100000 },
+        forcedFields: [],
       });
     },
   );
@@ -130,17 +131,133 @@ describe('differencesFromSaved', () => {
     ]);
   });
 
-  it('ignores overtime_eligible, which the employment does not return', () => {
+  it('skips the ignored fields', () => {
     expect(
       differencesFromSaved(
-        { overtime_eligible: 'yes' },
+        { overtime_eligible: 'yes', bonus: 'no' },
         { wage_type: 'salary' },
+        ['overtime_eligible'],
       ),
-    ).toEqual([]);
+    ).toEqual(['bonus: sent "no", saved undefined']);
   });
 });
 
+const overtimeSchema = (overtime: Record<string, unknown>) => ({
+  type: 'object',
+  properties: {
+    overtime_eligible: {
+      type: 'string',
+      title: 'Overtime',
+      'x-jsf-presentation': { inputType: 'radio' },
+      ...overtime,
+    },
+  },
+  required: ['overtime_eligible'],
+});
+
+function dropsOvertimeOnSave() {
+  server.use(
+    http.patch('*/v1/employments/:employmentId', () =>
+      HttpResponse.json({ data: {} }),
+    ),
+    http.get('*/v1/employments/:employmentId', () =>
+      HttpResponse.json({ data: { employment: { contract_details: {} } } }),
+    ),
+  );
+}
+
 describe('submitContractDetails', () => {
+  it('passes when a forced value is not returned after save', async () => {
+    dropsOvertimeOnSave();
+
+    const result = await submitContractDetails(
+      client,
+      'emp-1',
+      overtimeSchema({
+        const: 'yes',
+        default: 'yes',
+        oneOf: [{ const: 'yes', title: 'Yes' }],
+      }),
+      3,
+      { strategy: 'buildOnce' },
+    );
+
+    expect(result).toEqual({ ok: true });
+  });
+
+  it('fails when a value the user chose is not returned after save', async () => {
+    dropsOvertimeOnSave();
+
+    const result = await submitContractDetails(
+      client,
+      'emp-1',
+      overtimeSchema({
+        oneOf: [
+          { const: 'yes', title: 'Yes' },
+          { const: 'no', title: 'No' },
+        ],
+      }),
+      3,
+      { strategy: 'rebuild', seedValues: { overtime_eligible: 'no' } },
+    );
+
+    expect(result).toEqual({
+      ok: false,
+      error:
+        'saved contract_details differ from what was sent: overtime_eligible: sent "no", saved undefined',
+    });
+  });
+
+  it('passes when a known unsaved field is not returned after save', async () => {
+    dropsOvertimeOnSave();
+
+    const result = await submitContractDetails(
+      client,
+      'emp-1',
+      overtimeSchema({
+        oneOf: [
+          { const: 'yes', title: 'Yes' },
+          { const: 'no', title: 'No' },
+        ],
+      }),
+      3,
+      {
+        strategy: 'rebuild',
+        seedValues: { overtime_eligible: 'no' },
+        knownUnsavedFields: { overtime_eligible: 'not returned' },
+      },
+    );
+
+    expect(result).toEqual({ ok: true });
+  });
+
+  it('fails when a known unsaved field is saved now', async () => {
+    savesWhatIsSent();
+
+    const result = await submitContractDetails(
+      client,
+      'emp-1',
+      overtimeSchema({
+        oneOf: [
+          { const: 'yes', title: 'Yes' },
+          { const: 'no', title: 'No' },
+        ],
+      }),
+      3,
+      {
+        strategy: 'rebuild',
+        seedValues: { overtime_eligible: 'no' },
+        knownUnsavedFields: { overtime_eligible: 'not returned' },
+      },
+    );
+
+    expect(result).toEqual({
+      ok: false,
+      error:
+        'known unsaved field(s) are saved now, remove them from KNOWN_UNSAVED_FIELDS: overtime_eligible',
+    });
+  });
+
   it('sends the filled values in the same request the Onboarding flow sends', async () => {
     let request: { url: string; body: unknown } | undefined;
     server.use(
