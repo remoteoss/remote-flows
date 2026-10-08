@@ -25,6 +25,7 @@ import {
   SchemaCheckType,
 } from './schema-canary/lib';
 import { resolvePinnedVersion } from './schema-canary/pinned-versions';
+import { KeptEmployment } from './schema-canary/kept-employments';
 import {
   archiveEmployment,
   seedEmploymentForCountry,
@@ -49,7 +50,9 @@ function parseArgs(argv: string[]) {
 
 const args = parseArgs(process.argv.slice(2));
 const COUNTRY_FILTER =
-  typeof args.country === 'string' ? args.country.toUpperCase() : undefined;
+  typeof args.country === 'string'
+    ? args.country.toUpperCase().split(',')
+    : undefined;
 const REQUESTED_CHECKS =
   typeof args.checks === 'string'
     ? (args.checks.split(',') as SchemaCheckType[])
@@ -67,6 +70,10 @@ if (!Number.isInteger(CONCURRENCY) || CONCURRENCY < 1) {
 const WRITE_REPORT = args.write === true;
 const FAILURES_OUT =
   typeof args['failures-out'] === 'string' ? args['failures-out'] : undefined;
+const KEEP_SUBMITTED =
+  typeof args['keep-submitted'] === 'string'
+    ? args['keep-submitted']
+    : undefined;
 const REPORT_PATH = path.resolve(__dirname, 'reports', 'schema-canary.json');
 
 async function fetchLiveCountries(client: Client): Promise<string[]> {
@@ -80,7 +87,7 @@ async function fetchLiveCountries(client: Client): Promise<string[]> {
   return (response.data.data ?? [])
     .filter((country) => country.eor_onboarding)
     .map((country) => country.code)
-    .filter((code) => !COUNTRY_FILTER || code === COUNTRY_FILTER);
+    .filter((code) => !COUNTRY_FILTER || COUNTRY_FILTER.includes(code));
 }
 
 function versionFor(country: string, check: SchemaCheckType) {
@@ -113,16 +120,30 @@ async function fetchLiveSchema(
   return response.data.data ?? null;
 }
 
+type CountryResult = { rows: SchemaCanaryRow[]; kept?: KeptEmployment };
+
+const keptSoFar: KeptEmployment[] = [];
+
+function recordKept(employment: KeptEmployment, keepFile: string) {
+  keptSoFar.push(employment);
+  writeFileSync(keepFile, `${JSON.stringify(keptSoFar, null, 2)}\n`);
+}
+
 async function checkCountry(
   client: Client,
   country: string,
-): Promise<SchemaCanaryRow[]> {
+): Promise<CountryResult> {
   const strategy = getContractDetailsStrategy(country);
   const rows: SchemaCanaryRow[] = [];
+  let kept: KeptEmployment | undefined;
 
   let employmentId: string;
+  let companyId: string;
   try {
-    employmentId = await seedEmploymentForCountry(client, country);
+    ({ employmentId, companyId } = await seedEmploymentForCountry(
+      client,
+      country,
+    ));
     console.log(`[${country}] seeded employment ${employmentId}`);
   } catch (error) {
     const reason = `employment seeding failed: ${error instanceof Error ? error.message : String(error)}`;
@@ -138,7 +159,7 @@ async function checkCountry(
         error: skipEntry?.reason ?? reason,
       });
     }
-    return rows;
+    return { rows };
   }
 
   const schemas = new Map<
@@ -187,22 +208,38 @@ async function checkCountry(
 
       try {
         const schema = await schemaFor(version);
-        const result =
-          check === 'submit'
-            ? await submitContractDetails(
-                client,
-                employmentId,
-                schema,
-                resolvePinnedVersion(country, DEFAULT_VERSION),
-                {
-                  strategy,
-                  seed: seedFor(country),
-                  seedValues: CONTRACT_DETAILS_SEEDS[country],
-                  knownUnsavedFields: KNOWN_UNSAVED_FIELDS[country],
-                },
-              )
-            : await checkSchemaBuildsAndValidates(schema, strategy);
-        if (check === 'pinned' && !result.ok) pinnedBuildFailed = true;
+        let result: { ok: true } | { ok: false; error: string };
+        if (check === 'submit') {
+          const submitted = await submitContractDetails(
+            client,
+            employmentId,
+            schema,
+            resolvePinnedVersion(country, DEFAULT_VERSION),
+            {
+              strategy,
+              seed: seedFor(country),
+              seedValues: CONTRACT_DETAILS_SEEDS[country],
+              knownUnsavedFields: KNOWN_UNSAVED_FIELDS[country],
+            },
+          );
+          if (submitted.ok) {
+            kept = {
+              country,
+              employmentId,
+              companyId,
+              version,
+              strategy,
+              sent: submitted.sent,
+              knownUnsavedFields: Object.keys(
+                KNOWN_UNSAVED_FIELDS[country] ?? {},
+              ),
+            };
+          }
+          result = submitted;
+        } else {
+          result = await checkSchemaBuildsAndValidates(schema, strategy);
+          if (check === 'pinned' && !result.ok) pinnedBuildFailed = true;
+        }
         console.log(
           `[${country}] ${check}@${version} -> ${result.ok ? 'pass' : `fail: ${result.error}`}`,
         );
@@ -227,20 +264,25 @@ async function checkCountry(
       }
     }
   } finally {
-    try {
-      await archiveEmployment(client, employmentId);
-      console.log(`[${country}] archived employment ${employmentId}`);
-    } catch (error) {
-      console.warn(
-        `[${country}] failed to archive employment ${employmentId}: ${error instanceof Error ? error.message : String(error)}`,
-      );
+    if (KEEP_SUBMITTED && kept) {
+      recordKept(kept, KEEP_SUBMITTED);
+      console.log(`[${country}] kept employment ${employmentId}`);
+    } else {
+      try {
+        await archiveEmployment(client, employmentId);
+        console.log(`[${country}] archived employment ${employmentId}`);
+      } catch (error) {
+        console.warn(
+          `[${country}] failed to archive employment ${employmentId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
     }
   }
 
-  return rows;
+  return { rows, kept };
 }
 
-async function runLive(): Promise<SchemaCanaryRow[]> {
+async function runLive(): Promise<CountryResult[]> {
   const clientId = process.env.VITE_CLIENT_ID;
   const clientSecret = process.env.VITE_CLIENT_SECRET;
   const refreshToken = process.env.VITE_REFRESH_TOKEN;
@@ -252,12 +294,9 @@ async function runLive(): Promise<SchemaCanaryRow[]> {
 
   const client = createSandboxClient(clientId, clientSecret, refreshToken);
   const countries = await fetchLiveCountries(client);
-  const rowsByCountry = await mapWithConcurrency(
-    countries,
-    CONCURRENCY,
-    (country) => checkCountry(client, country),
+  return mapWithConcurrency(countries, CONCURRENCY, (country) =>
+    checkCountry(client, country),
   );
-  return rowsByCountry.flat();
 }
 
 function report(rows: SchemaCanaryRow[]) {
@@ -288,8 +327,15 @@ function writeReport(rows: SchemaCanaryRow[]) {
 }
 
 async function main() {
-  const rows = await runLive();
+  const results = await runLive();
+  const rows = results.flatMap((result) => result.rows);
   report(rows);
+
+  if (KEEP_SUBMITTED) {
+    console.log(
+      `\nKept ${keptSoFar.length} submitted employment(s) in ${KEEP_SUBMITTED}`,
+    );
+  }
 
   if (WRITE_REPORT) {
     writeReport(rows);
