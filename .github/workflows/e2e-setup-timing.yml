@@ -8,14 +8,277 @@ on:
 permissions: {}
 
 jobs:
-  apt-install-deps:
-    name: apt ${{ matrix.n }}
+  wait-01:
+    name: wait until Thu 20:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-08T20:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-02:
+    name: wait until Fri 01:43 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-01
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-09T01:43:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-03:
+    name: wait until Fri 06:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-02
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-09T06:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-04:
+    name: wait until Fri 09:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-03
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-09T09:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-05:
+    name: wait until Fri 13:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-04
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-09T13:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-06:
+    name: wait until Fri 15:43 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-05
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-09T15:43:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-07:
+    name: wait until Fri 17:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-06
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-09T17:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-08:
+    name: wait until Fri 20:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-07
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-09T20:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-09:
+    name: wait until Sat 01:43 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-08
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-10T01:43:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-10:
+    name: wait until Sat 06:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-09
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-10T06:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-11:
+    name: wait until Sat 09:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-10
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-10T09:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-12:
+    name: wait until Sat 13:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-11
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-10T13:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-13:
+    name: wait until Sat 15:43 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-12
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-10T15:43:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-14:
+    name: wait until Sat 17:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-13
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-10T17:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-15:
+    name: wait until Sat 20:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-14
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-10T20:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-16:
+    name: wait until Sun 01:43 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-15
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-11T01:43:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-17:
+    name: wait until Sun 06:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-16
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-11T06:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-18:
+    name: wait until Sun 09:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-17
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-11T09:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-19:
+    name: wait until Sun 13:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-18
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-11T13:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-20:
+    name: wait until Sun 15:43 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-19
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-11T15:43:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-21:
+    name: wait until Sun 17:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-20
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-11T17:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-22:
+    name: wait until Sun 20:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-21
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-11T20:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-23:
+    name: wait until Mon 01:43 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-22
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-12T01:43:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  wait-24:
+    name: wait until Mon 06:13 UTC
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    needs: wait-23
+    steps:
+      - name: Sleep
+        run: |
+          seconds=$(( $(date -d '2026-10-12T06:13:00Z' +%s) - $(date +%s) ))
+          if [ "$seconds" -gt 0 ]; then sleep "$seconds"; fi
+
+  apt-00:
+    name: apt s00 ${{ matrix.n }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        n: [1, 2, 3, 4, 5, 6, 7, 8]
+        n: [1, 2, 3, 4]
     steps:
       - name: Install Playwright CLI
         run: npm install --global playwright@1.63.0
@@ -23,8 +286,8 @@ jobs:
       - name: Install Playwright system dependencies
         run: playwright install-deps chromium
 
-  playwright-container:
-    name: container ${{ matrix.n }}
+  container-00:
+    name: container s00 ${{ matrix.n }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     container:
@@ -33,7 +296,647 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        n: [1, 2, 3, 4, 5, 6, 7, 8]
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-01:
+    name: apt s01 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-01
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-01:
+    name: container s01 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-01
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-02:
+    name: apt s02 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-03
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-02:
+    name: container s02 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-03
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-03:
+    name: apt s03 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-04
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-03:
+    name: container s03 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-04
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-04:
+    name: apt s04 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-05
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-04:
+    name: container s04 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-05
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-05:
+    name: apt s05 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-06
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-05:
+    name: container s05 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-06
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-06:
+    name: apt s06 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-07
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-06:
+    name: container s06 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-07
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-07:
+    name: apt s07 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-08
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-07:
+    name: container s07 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-08
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-08:
+    name: apt s08 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-10
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-08:
+    name: container s08 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-10
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-09:
+    name: apt s09 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-11
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-09:
+    name: container s09 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-11
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-10:
+    name: apt s10 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-12
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-10:
+    name: container s10 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-12
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-11:
+    name: apt s11 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-13
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-11:
+    name: container s11 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-13
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-12:
+    name: apt s12 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-14
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-12:
+    name: container s12 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-14
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-13:
+    name: apt s13 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-15
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-13:
+    name: container s13 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-15
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-14:
+    name: apt s14 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-17
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-14:
+    name: container s14 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-17
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-15:
+    name: apt s15 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-18
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-15:
+    name: container s15 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-18
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-16:
+    name: apt s16 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-19
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-16:
+    name: container s16 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-19
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-17:
+    name: apt s17 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-20
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-17:
+    name: container s17 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-20
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-18:
+    name: apt s18 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-21
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-18:
+    name: container s18 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-21
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-19:
+    name: apt s19 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-22
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-19:
+    name: container s19 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-22
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Container ready
+        run: npx --version
+
+  apt-20:
+    name: apt s20 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-24
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - name: Install Playwright CLI
+        run: npm install --global playwright@1.63.0
+
+      - name: Install Playwright system dependencies
+        run: playwright install-deps chromium
+
+  container-20:
+    name: container s20 ${{ matrix.n }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: wait-24
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4]
     steps:
       - name: Container ready
         run: npx --version
