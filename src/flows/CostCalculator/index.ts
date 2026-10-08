@@ -16,8 +16,6 @@ export { buildPayload as buildCostCalculatorEstimationPayload } from './utils';
 export type { EstimationError } from './types';
 export type { CostCalculatorFlowProps } from './CostCalculatorFlow';
 
-/**
- * @deprecated Relies on the flow's internal form state and will be removed in v2.
- * Use the `costCalculatorBag` passed to the `render` prop instead, and open an issue if it's missing something you need.
- */
+// Partners already use this to watch, get and set values on the form, so we keep it exported to avoid breaking them.
+// It's not ideal, but replacing it isn't worth the rework right now.
 export const useCostCalculatorContext = useCostCalculatorContextInternal;
