@@ -27,6 +27,7 @@
     "release": "tsx scripts/release.ts",
     "release:fix": "tsx scripts/release-hotfix.ts",
     "schema-canary": "tsx scripts/schema-canary.ts",
+    "schema-canary:affected": "tsx scripts/schema-canary-affected.ts",
     "seed:onboarding": "tsx scripts/seed-onboarding.ts",
     "size": "tsx scripts/analyze-bundle-size.ts",
     "size:check": "tsx scripts/check-size-limits.ts",

@@ -17,6 +17,7 @@ on:
       - 'scripts/fill-schema.ts'
       - 'scripts/schema-canary.ts'
       - 'scripts/schema-canary/**'
+      - 'scripts/schema-canary-affected.ts'
       - '.github/workflows/schema-canary.yml'
 
 jobs:
@@ -120,6 +121,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Use Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
@@ -129,9 +131,22 @@ jobs:
       - name: Install dependencies
         run: npm ci --include=optional --ignore-scripts
 
-      - name: Run schema canary (pinned and submit checks) against sandbox
+      - name: Find the countries this PR affects
+        id: affected
         env:
+          BASE_REF: ${{ github.base_ref }}
+        run: npm run -s schema-canary:affected -- --base="origin/$BASE_REF"
+
+      - name: Run schema canary (pinned and submit checks) against sandbox
+        if: steps.affected.outputs.countries != ''
+        env:
+          COUNTRIES: ${{ steps.affected.outputs.countries }}
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
           VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
-        run: npm run schema-canary -- --checks=pinned,submit
+        run: |
+          if [ "$COUNTRIES" = "all" ]; then
+            npm run schema-canary -- --checks=pinned,submit
+          else
+            npm run schema-canary -- --checks=pinned,submit --country="$COUNTRIES"
+          fi

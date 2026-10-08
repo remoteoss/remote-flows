@@ -49,7 +49,9 @@ function parseArgs(argv: string[]) {
 
 const args = parseArgs(process.argv.slice(2));
 const COUNTRY_FILTER =
-  typeof args.country === 'string' ? args.country.toUpperCase() : undefined;
+  typeof args.country === 'string'
+    ? args.country.toUpperCase().split(',')
+    : undefined;
 const REQUESTED_CHECKS =
   typeof args.checks === 'string'
     ? (args.checks.split(',') as SchemaCheckType[])
@@ -80,7 +82,7 @@ async function fetchLiveCountries(client: Client): Promise<string[]> {
   return (response.data.data ?? [])
     .filter((country) => country.eor_onboarding)
     .map((country) => country.code)
-    .filter((code) => !COUNTRY_FILTER || code === COUNTRY_FILTER);
+    .filter((code) => !COUNTRY_FILTER || COUNTRY_FILTER.includes(code));
 }
 
 function versionFor(country: string, check: SchemaCheckType) {
