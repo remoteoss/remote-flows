@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '0 4 * * *'
   workflow_dispatch:
+  push:
+    branches:
+      - main
   pull_request:
     paths:
       - 'example/src/flows/Onboarding/jsonSchemaVersions.ts'
@@ -20,12 +23,13 @@ on:
       - '.github/workflows/schema-canary.yml'
 
 concurrency:
-  group: schema-canary-${{ github.ref }}
+  group: schema-canary
+  queue: max
 
 jobs:
-  nightly-canary:
+  main-canary:
     if: github.event_name != 'pull_request'
-    name: Contract Details Schema Canary (nightly)
+    name: Contract Details Schema Canary (main)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -50,6 +54,7 @@ jobs:
 
       - name: Run schema canary against sandbox
         id: canary
+        timeout-minutes: 25
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
@@ -75,7 +80,7 @@ jobs:
           branch: chore/schema-canary-report-auto
           delete-branch: true
           title: ${{ steps.count.outputs.title }}
-          body: 'Automated nightly run of `npm run schema-canary`. See the workflow run summary for the full pass/fail table.'
+          body: 'Automated run of `npm run schema-canary` on main. See the workflow run summary for the full pass/fail table.'
           add-paths: |
             scripts/reports/schema-canary.json
 
@@ -85,7 +90,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           {
-            echo "The nightly contract details schema canary is failing against sandbox."
+            echo "The contract details schema canary on main is failing against sandbox."
             echo
             if [ -s "$RUNNER_TEMP/schema-canary-failures.md" ]; then
               cat "$RUNNER_TEMP/schema-canary-failures.md"
@@ -93,7 +98,7 @@ jobs:
               echo "The canary stopped before it checked any country, for example because sandbox auth failed. The run log has the error."
             fi
           } > "$RUNNER_TEMP/issue-body.md"
-          gh label create schema-canary --color B60205 --description "Nightly schema canary failures" --force
+          gh label create schema-canary --color B60205 --description "Schema canary failures on main" --force
           number=$(gh issue list --label schema-canary --state open --json number --jq '.[0].number // empty')
           if [ -z "$number" ]; then
             number=$(gh issue create --title "Schema canary is failing" --label schema-canary --body-file "$RUNNER_TEMP/issue-body.md" | grep -oE '[0-9]+$')
