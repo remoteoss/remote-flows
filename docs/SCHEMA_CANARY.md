@@ -19,12 +19,13 @@ Each country and version goes through these checks in order. A check only runs i
 
 ## When it runs, and what fails
 
-| Where                                 | Versions          | Fails the check on | Latest failures go to                               |
-| ------------------------------------- | ----------------- | ------------------ | --------------------------------------------------- |
-| PRs that touch the form or the canary | pinned and latest | pinned problems    | Warnings on the PR, and the job summary             |
-| Nightly, and every push to `main`     | pinned and latest | pinned problems    | The `schema-canary-latest` issue, and the report PR |
+| Where                                 | Versions          | Fails the check on | Pinned failures go to                        | Latest failures go to                               |
+| ------------------------------------- | ----------------- | ------------------ | -------------------------------------------- | --------------------------------------------------- |
+| PRs that touch the form or the canary | pinned            | pinned problems    | The PR check                                 | Not checked                                         |
+| Every push to `main`                  | pinned            | pinned problems    | The `schema-canary` issue                    | Not checked                                         |
+| Nightly, and manual runs              | pinned and latest | pinned problems    | The `schema-canary` issue, and the report PR | The `schema-canary-latest` issue, and the report PR |
 
-A pinned failure means partners are affected now, so it fails the run and opens the `schema-canary` issue. A latest failure means something will break when a country moves to that version. It never fails the run, because a change on Tiger's side shouldn't block unrelated work.
+A pinned failure means partners are affected now, so it fails the run and opens the `schema-canary` issue. A latest failure means something will break when a country moves to that version. It never fails the run, because a change on Tiger's side shouldn't block unrelated work. Only the nightly checks latest, which keeps PR and `main` runs fast and halves their requests to sandbox. To check latest yourself, run `npm run schema-canary -- --versions=latest` locally, or start the workflow by hand.
 
 ## What to do with a failure
 

@@ -43,6 +43,7 @@ jobs:
     env:
       GH_REPO: ${{ github.repository }}
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      CHECK_LATEST: ${{ github.event_name != 'push' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -63,7 +64,7 @@ jobs:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
           VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
-        run: npm run schema-canary -- --write --failures-out="$RUNNER_TEMP/pinned-failures.md" --latest-failures-out="$RUNNER_TEMP/latest-failures.md" --keep-submitted="$RUNNER_TEMP/kept-employments.json"
+        run: npm run schema-canary -- --versions="$([ "$CHECK_LATEST" = true ] && echo pinned,latest || echo pinned)" --write --failures-out="$RUNNER_TEMP/pinned-failures.md" --latest-failures-out="$RUNNER_TEMP/latest-failures.md" --keep-submitted="$RUNNER_TEMP/kept-employments.json"
 
       - name: Check which employments were kept
         id: kept
@@ -102,7 +103,7 @@ jobs:
 
       - name: Count failing checks in the report
         id: count
-        if: always()
+        if: ${{ always() && github.event_name != 'push' }}
         run: |
           count() {
             jq "[.checks[] | select(.version $1 \"latest\" and (.outcome == \"fail\" or .outcome == \"seed-error\"))] | length" scripts/reports/schema-canary.json
@@ -116,7 +117,7 @@ jobs:
           fi
 
       - name: Create pull request with the updated report
-        if: always()
+        if: ${{ always() && github.event_name != 'push' }}
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           commit-message: 'chore(schema-canary): update contract details schema canary report'
@@ -195,18 +196,18 @@ jobs:
             echo
             cat "$RUNNER_TEMP/latest-failures.md" 2>/dev/null
           } > "$RUNNER_TEMP/latest-issue.md"
-          if [ "$BROWSER_RUN_OUTCOME" != failure ]; then
+          if [ "$CHECK_LATEST" = true ] && [ "$BROWSER_RUN_OUTCOME" != failure ]; then
             sync_issue schema-canary-latest "Schema canary is failing on the latest versions" "$latest_failing" "$RUNNER_TEMP/latest-issue.md" "$checked_latest"
           fi
 
   pr-canary:
     if: github.event_name == 'pull_request'
-    name: Contract Details Schema Canary (PR)
+    name: Contract Details Schema Canary (pinned, PR)
     runs-on: ubuntu-latest
     concurrency:
       group: schema-canary-pr-${{ github.event.pull_request.number }}
       cancel-in-progress: true
-    timeout-minutes: 45
+    timeout-minutes: 30
     permissions:
       contents: read
     steps:
@@ -222,13 +223,13 @@ jobs:
       - name: Install dependencies
         run: npm ci --include=optional --ignore-scripts
 
-      - name: Run schema canary against sandbox
-        timeout-minutes: 25
+      - name: Run schema canary (pinned versions) against sandbox
+        timeout-minutes: 15
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
           VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
-        run: npm run schema-canary -- --keep-submitted="$RUNNER_TEMP/kept-employments.json"
+        run: npm run schema-canary -- --versions=pinned --keep-submitted="$RUNNER_TEMP/kept-employments.json"
 
       - name: Check which employments were kept
         id: kept
