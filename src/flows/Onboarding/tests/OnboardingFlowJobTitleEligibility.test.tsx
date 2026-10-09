@@ -13,7 +13,10 @@ import {
   contractDetailsSchemaV1JobTitleEligibility,
   employmentDefaultResponse,
 } from '@/src/flows/Onboarding/tests/fixtures';
-import { OnboardingRenderProps } from '@/src/flows/Onboarding/types';
+import {
+  OnboardingFlowProps,
+  OnboardingRenderProps,
+} from '@/src/flows/Onboarding/types';
 import { fillRadio, queryClient, TestProviders } from '@/src/tests/testHelpers';
 import { server } from '@/src/tests/server';
 import { $TSFixMe } from '@/src/types/remoteFlows';
@@ -114,13 +117,17 @@ describe.each(schemaPaths)(
       vi.restoreAllMocks();
     });
 
-    const renderContractDetailsStep = async () => {
+    const renderContractDetailsStep = async ({
+      features = ['job_title_eligibility'],
+    }: {
+      features?: NonNullable<OnboardingFlowProps['options']>['features'];
+    } = {}) => {
       render(
         <OnboardingFlow
           companyId='test-company-id'
           employmentId='test-employment-id'
           skipSteps={['select_country']}
-          options={{ features: ['job_title_eligibility'] }}
+          options={{ features }}
           render={mockRender}
         />,
         { wrapper: TestProviders },
@@ -147,6 +154,17 @@ describe.each(schemaPaths)(
       // all three role fields already committed.
       await user.tab();
     };
+
+    it('keeps the risk acknowledgement hidden when the check is not enabled', async () => {
+      await renderContractDetailsStep({ features: [] });
+
+      await fillRoleFields();
+
+      expect(jobTitleEligibilityCheckSpy).not.toHaveBeenCalled();
+      expect(
+        screen.queryByLabelText(/I acknowledge the risks/i),
+      ).not.toBeInTheDocument();
+    });
 
     it('calls the job title eligibility check once the role fields are filled and blurred', async () => {
       await renderContractDetailsStep();
@@ -333,6 +351,33 @@ describe.each(schemaPaths)(
       expect(errorSpy).not.toHaveBeenCalledWith(
         'Failed to fetch job title eligibility check',
       );
+    });
+
+    it('stops reporting the check as running once the user leaves contract details', async () => {
+      server.use(
+        http.post(
+          '*/v2/employments/:id/job-title-eligibility-check',
+          () => new Promise<never>(() => {}),
+        ),
+      );
+
+      await renderContractDetailsStep();
+      await fillRoleFields();
+
+      await waitFor(() =>
+        expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(true),
+      );
+
+      act(() => {
+        latestOnboardingBag.goTo('basic_information');
+      });
+
+      await waitFor(() =>
+        expect(latestOnboardingBag.stepState.currentStep.name).toBe(
+          'basic_information',
+        ),
+      );
+      expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
     });
 
     it('re-enables the submit button when the check fails', async () => {
