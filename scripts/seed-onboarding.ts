@@ -28,8 +28,8 @@
  * example/e2e/ (Playwright's testDir / CI).
  *
  * Usage (from repo root):
- *   npm run seed:onboarding -- --country=DEU
- *   npm run seed:onboarding -- --country=ESP --basic-info-version=4
+ *   pnpm run seed:onboarding --country=DEU
+ *   pnpm run seed:onboarding --country=ESP --basic-info-version=4
  *
  * Pass --type=contractor to instead create a contractor employment from the
  * contractor_basic_information schema and stop there, mirroring the
@@ -40,7 +40,7 @@
  * employment - so this does the same with fixed answers that avoid the IR35
  * SDS upload and the non-national warning.
  *
- *   npm run seed:onboarding -- --country=GBR --type=contractor --env=sandbox
+ *   pnpm run seed:onboarding --country=GBR --type=contractor --env=sandbox
  *
  * By default this proxies through a locally running `example` dev server
  * (BASE_URL, `example/.env`'s VITE_REMOTE_GATEWAY decides which gateway that
@@ -59,8 +59,8 @@
  * app URL> in that same file gets you a ready-to-click link (with
  * ?employmentId= prefilled) in the final output.
  *
- *   npm run seed:onboarding -- --country=DEU --env=sandbox
- *   npm run seed:onboarding -- --country=DEU --env=review
+ *   pnpm run seed:onboarding --country=DEU --env=sandbox
+ *   pnpm run seed:onboarding --country=DEU --env=review
  */
 import dotenv from 'dotenv';
 import { createRequire } from 'node:module';

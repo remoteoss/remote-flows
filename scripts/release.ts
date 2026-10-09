@@ -347,7 +347,7 @@ ${changeset.content}
   // Format files with oxfmt before creating PR
   console.log(`🎨 Formatting files with oxfmt...`);
   try {
-    execSync('npm run format', { stdio: 'inherit' });
+    execSync('pnpm run format', { stdio: 'inherit' });
     console.log(`✅ Files formatted with oxfmt`);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -355,13 +355,13 @@ ${changeset.content}
     console.log(`Continuing with release...`);
   }
 
-  // Update package-lock.json
+  // Update pnpm-lock.yaml
   try {
-    execSync('npm install', { stdio: 'inherit' });
-    console.log('✅ Updated package-lock.json');
+    execSync('pnpm install', { stdio: 'inherit' });
+    console.log('✅ Updated pnpm-lock.yaml');
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.log(`⚠️  Failed to update package-lock.json: ${message}`);
+    console.log(`⚠️  Failed to update pnpm-lock.yaml: ${message}`);
   }
 
   // Create release branch

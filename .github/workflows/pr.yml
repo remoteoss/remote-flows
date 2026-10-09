@@ -12,22 +12,26 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run format check
-        run: npm run check-format
+        run: pnpm run check-format
 
       - name: Run lint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Run type check
-        run: npm run type-check
+        run: pnpm run type-check
 
   build-and-exports:
     name: Build and Check Exports
@@ -37,19 +41,23 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
       - name: Check exports
-        run: npm run check-exports
+        run: pnpm run check-exports
 
   tests:
     name: Tests with Coverage
@@ -59,22 +67,26 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run tests with coverage
-        run: npm run test:coverage
+        run: pnpm run test:coverage
 
       - name: Create output directory
         run: mkdir -p out
 
       - name: Extract current coverage
-        run: npm run coverage:extract -- --output out/current-coverage.json
+        run: pnpm run coverage:extract --output out/current-coverage.json
 
       - name: Upload current coverage
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -124,6 +136,10 @@ jobs:
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Enable Corepack
+        if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true' && steps.check-base-scripts.outputs.exists == 'true'
+        run: corepack enable
+
       - name: Use Node.js
         if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true' && steps.check-base-scripts.outputs.exists == 'true'
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
@@ -132,15 +148,20 @@ jobs:
 
       - name: Install dependencies
         if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        run: npm ci --include=optional --ignore-scripts
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile --ignore-scripts
+          else
+            npm ci --include=optional --ignore-scripts
+          fi
 
       - name: Run tests with coverage
         if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        run: npm run test:coverage
+        run: pnpm run test:coverage
 
       - name: Extract base coverage
         if: steps.check-scripts.outputs.exists == 'true' && steps.cache-base.outputs.cache-hit != 'true' && steps.check-base-scripts.outputs.exists == 'true'
-        run: npm run coverage:extract -- --output base-coverage.json
+        run: pnpm run coverage:extract --output base-coverage.json
 
       - name: Upload base coverage
         if: steps.check-scripts.outputs.exists == 'true'
@@ -158,16 +179,20 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install main package dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build main package
-        run: npm run build
+        run: pnpm run build
 
       - name: Install example dependencies
         working-directory: ./example
@@ -193,13 +218,17 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Create output directory
         run: mkdir -p out
@@ -221,7 +250,7 @@ jobs:
         id: compare
         run: |
           # Run comparison (handles missing base file gracefully)
-          npm exec tsx scripts/compare-coverage.ts out/current-coverage.json out/base-coverage.json > out/coverage-report.md 2>&1 || true
+          pnpm exec tsx scripts/compare-coverage.ts out/current-coverage.json out/base-coverage.json > out/coverage-report.md 2>&1 || true
 
           # Set output for PR comment
           echo "report<<EOF" >> $GITHUB_OUTPUT
@@ -349,13 +378,17 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install main package dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Install example/ dependencies
         working-directory: ./example

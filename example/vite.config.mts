@@ -10,5 +10,6 @@ export default defineConfig({
       react: path.resolve('./node_modules/react'),
     },
   },
+  css: { postcss: {} },
   server: { middlewareMode: true },
 });
