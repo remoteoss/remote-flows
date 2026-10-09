@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 
-import { execSync } from 'child_process';
+import { execFileSync, execSync } from 'child_process';
 import { readFileSync, writeFileSync } from 'fs';
 import { createInterface } from 'readline';
 import { $TSFixMe } from './types';
@@ -150,6 +150,12 @@ function parseConventionalCommit(commit: Commit): ParsedCommit | null {
   };
 }
 
+const CHANGELOG_SECTIONS: Record<string, string> = {
+  feat: 'Features',
+  fix: 'Fixes',
+  docs: 'Docs',
+};
+
 function generateChangesetContent(commits: Commit[]): Changeset | null {
   const parsedCommits = commits
     .map(parseConventionalCommit)
@@ -174,20 +180,28 @@ function generateChangesetContent(commits: Commit[]): Changeset | null {
   if (groups.major.length > 0) finalVersionBump = 'major';
   else if (groups.minor.length > 0) finalVersionBump = 'minor';
 
-  // Generate simple changeset content (no markdown headers)
-  const changesetItems: string[] = [];
+  const sections: Record<string, string[]> = {
+    Features: [],
+    Fixes: [],
+    Docs: [],
+    Chores: [],
+  };
 
-  // Add all commits as simple bullet points
   parsedCommits.forEach((commit) => {
     const prText = commit.prNumber
       ? ` [#${commit.prNumber}](https://github.com/remoteoss/remote-flows/pull/${commit.prNumber})`
       : '';
-    changesetItems.push(`- ${commit.description}${prText}`);
+    sections[CHANGELOG_SECTIONS[commit.type] ?? 'Chores'].push(
+      `- ${commit.description}${prText}`,
+    );
   });
 
   return {
     versionBump: finalVersionBump,
-    content: changesetItems.join('\n'),
+    content: Object.entries(sections)
+      .filter(([, items]) => items.length > 0)
+      .map(([title, items]) => `#### ${title}\n\n${items.join('\n')}`)
+      .join('\n\n'),
   };
 }
 
@@ -391,8 +405,20 @@ ${changeset.content}
 
 This release was automatically generated from conventional commits.`;
 
-    execSync(
-      `gh pr create --title "${newVersion}" --body "${prBody}" --base main --head ${branchName}`,
+    execFileSync(
+      'gh',
+      [
+        'pr',
+        'create',
+        '--title',
+        newVersion,
+        '--body',
+        prBody,
+        '--base',
+        'main',
+        '--head',
+        branchName,
+      ],
       { stdio: 'inherit' },
     );
     console.log(`✅ Created PR: Release v${newVersion}`);
