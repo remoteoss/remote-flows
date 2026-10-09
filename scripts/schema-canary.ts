@@ -9,7 +9,9 @@ import {
   DEFAULT_VERSION,
   getContractDetailsStrategy,
 } from '@/src/flows/Onboarding/utils';
+import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
 import { createSandboxClient } from './schema-canary/auth';
+import { KNOWN_UNSAVED_FIELDS } from './schema-canary/known-unsaved-fields';
 import {
   buildReport,
   checkSchemaBuildsAndValidates,
@@ -28,6 +30,10 @@ import {
   seedEmploymentForCountry,
 } from './schema-canary/seed-employment';
 import { SCHEMA_CANARY_SKIP_LIST } from './schema-canary/skip-list';
+import {
+  seedFor,
+  submitContractDetails,
+} from './schema-canary/submit-contract-details';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '..', '.env.sandbox') });
@@ -150,6 +156,7 @@ async function checkCountry(
   };
 
   try {
+    let pinnedBuildFailed = false;
     for (const check of CHECK_TYPES) {
       const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
       const version = versionFor(country, check);
@@ -166,9 +173,36 @@ async function checkCountry(
         continue;
       }
 
+      if (check === 'submit' && pinnedBuildFailed) {
+        rows.push({
+          country,
+          version,
+          strategy,
+          check,
+          outcome: 'skip',
+          error: 'the pinned schema failed to build, so it was not submitted',
+        });
+        continue;
+      }
+
       try {
         const schema = await schemaFor(version);
-        const result = await checkSchemaBuildsAndValidates(schema, strategy);
+        const result =
+          check === 'submit'
+            ? await submitContractDetails(
+                client,
+                employmentId,
+                schema,
+                resolvePinnedVersion(country, DEFAULT_VERSION),
+                {
+                  strategy,
+                  seed: seedFor(country),
+                  seedValues: CONTRACT_DETAILS_SEEDS[country],
+                  knownUnsavedFields: KNOWN_UNSAVED_FIELDS[country],
+                },
+              )
+            : await checkSchemaBuildsAndValidates(schema, strategy);
+        if (check === 'pinned' && !result.ok) pinnedBuildFailed = true;
         console.log(
           `[${country}] ${check}@${version} -> ${result.ok ? 'pass' : `fail: ${result.error}`}`,
         );
@@ -181,6 +215,7 @@ async function checkCountry(
           error: result.ok ? undefined : result.error,
         });
       } catch (error) {
+        if (check === 'pinned') pinnedBuildFailed = true;
         rows.push({
           country,
           version,
@@ -269,6 +304,15 @@ async function main() {
   const failedLatest = rows.filter(
     (row) => row.check === 'latest' && row.outcome === 'fail',
   );
+  const failedSubmit = rows.filter(
+    (row) => row.check === 'submit' && row.outcome === 'fail',
+  );
+  if (failedSubmit.length > 0) {
+    console.error(`\n${failedSubmit.length} "submit" check(s) failed:`);
+    for (const row of failedSubmit) {
+      console.error(`  - ${row.country}: ${row.error}`);
+    }
+  }
   if (failedLatest.length > 0) {
     console.warn(
       `\n${failedLatest.length} "latest" check(s) failed (warning only, does not fail the job):`,

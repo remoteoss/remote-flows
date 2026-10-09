@@ -67,6 +67,7 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY } from '../example/src/flows/Onboarding/jsonSchemaVersions';
+import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
 import { fillSchema, findSafeStartDate, HolidayDate } from './fill-schema';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -225,12 +226,6 @@ function contractorContractDocumentSeed(): Record<string, string> | undefined {
   }
   return undefined;
 }
-
-const CONTRACT_DETAILS_SEEDS: Record<string, Record<string, unknown>> = {
-  CHN: { province_of_residency: 'SH' },
-  JAM: { work_hours_per_week: 40 },
-  ROU: { compensation_currency_code: 'RON' },
-};
 
 async function seedContractor() {
   console.log(`Fetching contractor_basic_information schema for ${COUNTRY}...`);
