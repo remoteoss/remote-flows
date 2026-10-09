@@ -151,10 +151,13 @@ export async function submitContractDetails(
     | FieldValues
     | undefined;
   const knownUnsaved = Object.keys(knownUnsavedFields);
-  const differences = differencesFromSaved(sdk.payload, savedDetails, [
-    ...sdk.forcedFields.filter((key) => savedDetails?.[key] === undefined),
-    ...knownUnsaved,
-  ]);
+  const differences = differencesFromSaved(
+    sdk.payload,
+    savedDetails,
+    [...sdk.forcedFields, ...knownUnsaved].filter(
+      (key) => savedDetails?.[key] === undefined,
+    ),
+  );
   if (differences.length > 0) {
     return {
       ok: false,

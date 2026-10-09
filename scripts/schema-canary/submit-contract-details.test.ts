@@ -291,6 +291,44 @@ describe('submitContractDetails', () => {
     });
   });
 
+  it('fails when a known unsaved field is saved as something else', async () => {
+    server.use(
+      http.patch('*/v1/employments/:employmentId', () =>
+        HttpResponse.json({ data: {} }),
+      ),
+      http.get('*/v1/employments/:employmentId', () =>
+        HttpResponse.json({
+          data: {
+            employment: { contract_details: { overtime_eligible: 'yes' } },
+          },
+        }),
+      ),
+    );
+
+    const result = await submitContractDetails(
+      client,
+      'emp-1',
+      overtimeSchema({
+        oneOf: [
+          { const: 'yes', title: 'Yes' },
+          { const: 'no', title: 'No' },
+        ],
+      }),
+      3,
+      {
+        strategy: 'rebuild',
+        seedValues: { overtime_eligible: 'no' },
+        knownUnsavedFields: { overtime_eligible: 'not returned' },
+      },
+    );
+
+    expect(result).toEqual({
+      ok: false,
+      error:
+        'saved contract_details differ from what was sent: overtime_eligible: sent "no", saved "yes"',
+    });
+  });
+
   it('sends the filled values in the same request the Onboarding flow sends', async () => {
     let request: { url: string; body: unknown } | undefined;
     server.use(
