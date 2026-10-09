@@ -87,6 +87,16 @@ describe('decideExitCode', () => {
     expect(decideExitCode(rows)).toBe(0);
   });
 
+  it('returns 1 when no checks ran', () => {
+    expect(decideExitCode([])).toBe(1);
+  });
+
+  it('returns 1 when every check was skipped', () => {
+    expect(
+      decideExitCode([{ ...passingRow, outcome: 'skip', error: 'skipped' }]),
+    ).toBe(1);
+  });
+
   it('returns 1 when a "pinned" check failed', () => {
     const rows: SchemaCanaryRow[] = [
       passingRow,
