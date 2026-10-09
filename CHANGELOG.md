@@ -1,5 +1,20 @@
 # @remoteoss/remote-flows
 
+## 1.61.0
+
+### Minor Changes
+
+- stop requesting onboarding steps before the employment id is set (#1474) [#1474](https://github.com/remoteoss/remote-flows/pull/1474)
+- wire onBlur events to job title eligibility check (#1406) [#1406](https://github.com/remoteoss/remote-flows/pull/1406)
+- pre-fill resumed steps from the employee's saved data (#1476) [#1476](https://github.com/remoteoss/remote-flows/pull/1476)
+- hide employer_acknowledges_risk by default (#1463) [#1463](https://github.com/remoteoss/remote-flows/pull/1463)
+- pre-fill resumed tax steps from the employee's saved answers (#1498) [#1498](https://github.com/remoteoss/remote-flows/pull/1498)
+- keep public JSDoc short and written for its real caller (#1488) [#1488](https://github.com/remoteoss/remote-flows/pull/1488)
+- only surface failures in Playwright CI output (#1485) [#1485](https://github.com/remoteoss/remote-flows/pull/1485)
+- bump GBR contract_details schema version to 6 (#1478) [#1478](https://github.com/remoteoss/remote-flows/pull/1478)
+- cover the China annual gross salary conversion on contract details (#1473) [#1473](https://github.com/remoteoss/remote-flows/pull/1473)
+- disable submit while the job title eligibility check runs (#1413) [#1413](https://github.com/remoteoss/remote-flows/pull/1413)
+
 ## 1.60.0
 
 ### Minor Changes
