@@ -218,13 +218,13 @@ async function main() {
   }
 
   seedNodeModules(root, worktreePath, '', 'pnpm install');
-  seedNodeModules(root, worktreePath, 'example', 'npm install');
+  seedNodeModules(root, worktreePath, 'example', 'pnpm install');
 
   log.success(`Worktree ready at ${worktreePath}`);
   log.info(`  cd ${worktreePath}`);
   log.info('  pnpm run dev           # watch-build the library');
   log.info(
-    `  cd example && npm run dev   # run the example app at http://localhost:${port}`,
+    `  cd example && pnpm run dev   # run the example app at http://localhost:${port}`,
   );
 }
 
