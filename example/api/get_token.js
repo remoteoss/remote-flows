@@ -1,7 +1,7 @@
 const { buildGatewayURL } = require('./utils.js');
 const { fetchCompanyManagerToken } = require('./jwt_auth.js');
 
-async function fetchAccessToken() {
+async function requestAccessToken() {
   const {
     VITE_CLIENT_ID,
     VITE_CLIENT_SECRET,
@@ -56,7 +56,7 @@ async function fetchAccessToken() {
   return { accessToken: data.access_token, expiresIn: data.expires_in };
 }
 
-async function fetchClientCredentialsAccessToken() {
+async function requestClientCredentialsAccessToken() {
   const { VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY } =
     process.env;
 
@@ -97,6 +97,38 @@ async function fetchClientCredentialsAccessToken() {
   return { accessToken: data.access_token, expiresIn: data.expires_in };
 }
 
+const EXPIRY_MARGIN_SECONDS = 60;
+
+function cacheUntilExpiry(requestToken) {
+  let cached;
+  return async () => {
+    if (cached && Date.now() < cached.refreshAt) {
+      const { accessToken } = await cached.token;
+      return {
+        accessToken,
+        expiresIn: Math.floor((cached.expiresAt - Date.now()) / 1000),
+      };
+    }
+    const token = requestToken();
+    cached = { token, refreshAt: Infinity, expiresAt: Infinity };
+    try {
+      const { accessToken, expiresIn } = await token;
+      const expiresAt = Date.now() + expiresIn * 1000;
+      cached.expiresAt = expiresAt;
+      cached.refreshAt = expiresAt - EXPIRY_MARGIN_SECONDS * 1000;
+      return { accessToken, expiresIn };
+    } catch (error) {
+      cached = undefined;
+      throw error;
+    }
+  };
+}
+
+const fetchAccessToken = cacheUntilExpiry(requestAccessToken);
+const fetchClientCredentialsAccessToken = cacheUntilExpiry(
+  requestClientCredentialsAccessToken,
+);
+
 // Express route handler
 async function getToken(req, res) {
   const { NODE_ENV } = process.env;
@@ -121,6 +153,7 @@ async function getToken(req, res) {
 }
 
 module.exports = {
+  cacheUntilExpiry,
   getToken,
   fetchAccessToken,
   fetchClientCredentialsAccessToken,
