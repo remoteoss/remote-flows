@@ -107,8 +107,7 @@ export function buildSteps(config: StepConfig = {}) {
 }
 
 /**
- * Array of employment statuses that are allowed to proceed to the review step.
- * These statuses indicate that the employment is in a final state and the employment cannot be modified further.
+ * Employment statuses that open the flow read-only on the review step, because the API no longer accepts edits.
  * @type {Employment['status'][]}
  * @constant
  */
@@ -118,6 +117,7 @@ export const reviewStepAllowedEmploymentStatus: Employment['status'][] = [
   'created_awaiting_reserve',
   'created_reserve_paid',
   'active',
+  'job_title_review',
 ];
 
 export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
