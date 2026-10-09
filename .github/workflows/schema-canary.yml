@@ -179,17 +179,17 @@ jobs:
         run: npm run -s schema-canary:affected -- --base="origin/$BASE_REF"
 
       - name: Run schema canary (pinned and submit checks) against sandbox
-        if: steps.affected.outputs.countries != ''
+        if: true
         env:
           COUNTRIES: ${{ steps.affected.outputs.countries }}
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
           VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
         run: |
-          if [ "$COUNTRIES" = "all" ]; then
-            npm run schema-canary -- --checks=pinned,submit --keep-submitted="$RUNNER_TEMP/kept-employments.json"
+          if true; then
+            npm run schema-canary -- --checks=pinned,latest,submit --keep-submitted="$RUNNER_TEMP/kept-employments.json"
           else
-            npm run schema-canary -- --checks=pinned,submit --keep-submitted="$RUNNER_TEMP/kept-employments.json" --country="$COUNTRIES"
+            npm run schema-canary -- --checks=pinned,latest,submit --keep-submitted="$RUNNER_TEMP/kept-employments.json" --country="$COUNTRIES"
           fi
 
       - name: Check which employments were kept
