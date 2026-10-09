@@ -19,7 +19,7 @@ on:
       - '.github/workflows/schema-canary.yml'
 
 concurrency:
-  group: schema-canary-${{ github.ref }}
+  group: schema-canary
 
 jobs:
   nightly-canary:
