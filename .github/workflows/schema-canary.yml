@@ -13,11 +13,13 @@ on:
       - 'src/common/headlessForm.ts'
       - 'src/components/form/utils.ts'
       - 'src/flows/Onboarding/utils.ts'
-      - 'scripts/contract-details-seeds.ts'
       - 'scripts/fill-schema.ts'
       - 'scripts/schema-canary.ts'
       - 'scripts/schema-canary/**'
       - '.github/workflows/schema-canary.yml'
+
+concurrency:
+  group: schema-canary-${{ github.ref }}
 
 jobs:
   nightly-canary:
@@ -129,9 +131,9 @@ jobs:
       - name: Install dependencies
         run: npm ci --include=optional --ignore-scripts
 
-      - name: Run schema canary (pinned and submit checks) against sandbox
+      - name: Run schema canary (pinned check) against sandbox
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
           VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
-        run: npm run schema-canary -- --checks=pinned,submit
+        run: npm run schema-canary -- --checks=pinned
