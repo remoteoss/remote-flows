@@ -1,3 +1,4 @@
+import { stripVTControlCharacters } from 'node:util';
 import { KeptEmployment } from './kept-employments';
 import { SchemaCanaryRow } from './lib';
 
@@ -26,10 +27,7 @@ function collectTests(
 }
 
 function firstLine(message: string) {
-  return message
-    .replace(/\u001b\[[0-9;]*m/g, '')
-    .trim()
-    .split('\n')[0];
+  return stripVTControlCharacters(message).trim().split('\n')[0];
 }
 
 export function browserRows(
@@ -44,23 +42,34 @@ export function browserRows(
     if (employmentId) testsByEmployment.set(employmentId, test);
   }
 
-  return kept.map(({ country, employmentId, version, strategy }) => {
-    const row = { country, version, strategy, check: 'browser' as const };
-    const test = testsByEmployment.get(employmentId);
-    if (!test) {
-      return { ...row, outcome: 'fail', error: 'the browser test did not run' };
-    }
-    if (test.status === 'expected' || test.status === 'flaky') {
-      return { ...row, outcome: 'pass' };
-    }
-    if (test.status === 'skipped') {
-      return { ...row, outcome: 'skip', error: 'the browser test was skipped' };
-    }
-    const message = test.results[test.results.length - 1]?.errors?.[0]?.message;
-    return {
-      ...row,
-      outcome: 'fail',
-      error: message ? firstLine(message) : 'the browser test failed',
-    };
-  });
+  return kept.map(
+    ({ country, employmentId, version, strategy }): SchemaCanaryRow => {
+      const row = { country, version, strategy, check: 'browser' as const };
+      const test = testsByEmployment.get(employmentId);
+      if (!test) {
+        return {
+          ...row,
+          outcome: 'fail',
+          error: 'the browser test did not run',
+        };
+      }
+      if (test.status === 'expected' || test.status === 'flaky') {
+        return { ...row, outcome: 'pass' };
+      }
+      if (test.status === 'skipped') {
+        return {
+          ...row,
+          outcome: 'skip',
+          error: 'the browser test was skipped',
+        };
+      }
+      const message =
+        test.results[test.results.length - 1]?.errors?.[0]?.message;
+      return {
+        ...row,
+        outcome: 'fail',
+        error: message ? firstLine(message) : 'the browser test failed',
+      };
+    },
+  );
 }
