@@ -38,6 +38,13 @@ describe('usesJsfV1ContractDetails', () => {
     expect(usesJsfV1ContractDetails('ITA')).toBe(true);
   });
 
+  it.each(['CAN', 'GBR', 'IND', 'PHL', 'USA'])(
+    'should return true for %s',
+    (countryCode) => {
+      expect(usesJsfV1ContractDetails(countryCode)).toBe(true);
+    },
+  );
+
   it('should return false for the other countries', () => {
     expect(usesJsfV1ContractDetails('PRT')).toBe(false);
     expect(usesJsfV1ContractDetails(null)).toBe(false);
