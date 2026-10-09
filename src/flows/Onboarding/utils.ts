@@ -142,10 +142,9 @@ export const statusesWithReserveAlreadyHandled: Employment['status'][] = [
 export const DEFAULT_VERSION = 1;
 
 /**
- * Countries whose contract details schema is served as jsfVersion 1.
- * Those forms keep their own field state, so they go through
- * useContractDetailsSchema instead of useJSONSchemaForm.
- * FRA = wage portage, ITA = APL, ESP = CBA categories fieldset.
+ * Countries whose contract details are built once through
+ * useContractDetailsSchema; every other country still uses the legacy rebuild path.
+ * FRA = wage portage, ITA = APL, ESP = CBA categories fieldset; the rest move over by usage tier.
  */
 const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'FRA',
