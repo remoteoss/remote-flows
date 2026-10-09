@@ -77,8 +77,8 @@ export type PayrollEmployeeOnboardingFlowProps = {
   jurisdiction?: string;
   /**
    * Optional. Pre-populate form fields, keyed by step (e.g. `personal_details`).
-   * Values the employee already saved for personal details, home address and
-   * bank account take precedence over these.
+   * Values the employee already saved (personal details, home address, bank
+   * account, federal taxes and state taxes) take precedence over these.
    */
   initialValues?: Record<string, unknown>;
   options?: Omit<FlowOptions, 'jsfModify' | 'jsonSchemaVersion'>;
