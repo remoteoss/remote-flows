@@ -2,6 +2,7 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { useEffect } from 'react';
 import { useOnboardingContext } from '@/src/flows/Onboarding/context';
+import { JOB_TITLE_ELIGIBILITY_RESULT_FIELD } from '@/src/flows/Onboarding/utils';
 import { JSFFields } from '@/src/types/remoteFlows';
 import {
   BasicInformationFormPayload,
@@ -48,6 +49,15 @@ export function OnboardingForm({
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const syncJobTitleEligibility = async (values: Record<string, unknown>) => {
+    const eligibilityValues =
+      await onboardingBag.checkJobTitleEligibility(values);
+    Object.entries(eligibilityValues ?? {}).forEach(([name, value]) =>
+      form.setValue(name, value),
+    );
+    return eligibilityValues;
+  };
+
   const handleSubmit = async (
     values: Record<string, unknown>,
     event?: React.BaseSyntheticEvent,
@@ -92,7 +102,18 @@ export function OnboardingForm({
       }
     } else {
       // Handle normal form submission
-      await onSubmit(values);
+      const eligibilityValues = await syncJobTitleEligibility(values);
+      const hasVerdictChanged =
+        eligibilityValues &&
+        (values[JOB_TITLE_ELIGIBILITY_RESULT_FIELD] ?? null) !==
+          eligibilityValues[JOB_TITLE_ELIGIBILITY_RESULT_FIELD];
+      if (hasVerdictChanged) {
+        const isValidWithNewVerdict = await form.trigger();
+        if (!isValidWithNewVerdict) {
+          return;
+        }
+      }
+      await onSubmit({ ...values, ...eligibilityValues });
     }
   };
 
@@ -102,7 +123,7 @@ export function OnboardingForm({
         id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}
         className='space-y-4 RemoteFlows__OnboardingForm'
-        onBlur={() => onboardingBag.checkJobTitleEligibility(form.getValues())}
+        onBlur={() => syncJobTitleEligibility(form.getValues())}
       >
         <JSONSchemaFormFields
           components={components}
