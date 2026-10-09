@@ -1415,17 +1415,7 @@ export const useOnboarding = ({
      * Runs the job title eligibility check with the given contract details values when the
      * 'job_title_eligibility' feature is enabled, the current step is contract_details, and the
      * role fields are filled. The prebuilt form runs it on blur and again right before submitting,
-     * since a submit can happen without a blur (e.g. pressing Enter); a custom UI should do both. Submit
-     * the values it resolves with; if the submit-time verdict differs from the form's current one,
-     * write them and revalidate first, since the new verdict can make fields required (e.g. a risk
-     * acknowledgement) that the user hasn't filled yet.
-     *
-     * Resolves with the values to write into the form's hidden
-     * `additional_job_title_eligibility_check_slug` and `additional_job_title_eligibility_check_result`
-     * fields, which drive the verdict's conditional fields and are submitted with the contract details.
-     * Both are `null` when the role fields are incomplete or the check failed, clearing a previous verdict.
-     * Resolves with `undefined` when there is nothing to write: the check doesn't apply, or a newer
-     * check superseded it.
+     * since a submit can happen without a blur (e.g. pressing Enter); a custom UI should do both.
      * @param values - Current form values
      */
     checkJobTitleEligibility: jobTitleEligibility.check,
