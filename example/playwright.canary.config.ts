@@ -3,7 +3,7 @@ import { defineConfig, devices, ReporterDescription } from '@playwright/test';
 const PORT = process.env.PORT || '3001';
 
 const reporter: ReporterDescription[] = process.env.CI
-  ? [['list'], ['html'], ['github']]
+  ? [['list'], ['html']]
   : [['list']];
 if (process.env.SCHEMA_CANARY_RESULTS) {
   reporter.push(['json', { outputFile: process.env.SCHEMA_CANARY_RESULTS }]);
