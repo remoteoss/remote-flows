@@ -35,6 +35,7 @@ on:
 
 concurrency:
   group: schema-canary
+  queue: max
 
 jobs:
   main-canary:
@@ -64,6 +65,7 @@ jobs:
 
       - name: Run schema canary against sandbox
         id: canary
+        timeout-minutes: 25
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
