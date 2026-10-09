@@ -172,6 +172,8 @@ jobs:
           {
             echo "The nightly contract details schema canary is failing against sandbox on the pinned versions partners use today."
             echo
+            echo "What each failure means and what to do: [schema canary guide](https://github.com/remoteoss/remote-flows/blob/main/docs/SCHEMA_CANARY.md)"
+            echo
             if [ -s "$RUNNER_TEMP/pinned-failures.md" ]; then
               cat "$RUNNER_TEMP/pinned-failures.md"
             elif [ "$BROWSER_RUN_OUTCOME" = failure ]; then
@@ -189,6 +191,8 @@ jobs:
           {
             echo "These countries fail the nightly contract details schema canary on the latest version sandbox serves. Partners are not affected yet, but these countries can't move their pinned version to latest until this is fixed."
             echo
+            echo "What each failure means and what to do: [schema canary guide](https://github.com/remoteoss/remote-flows/blob/main/docs/SCHEMA_CANARY.md)"
+            echo
             cat "$RUNNER_TEMP/latest-failures.md" 2>/dev/null
           } > "$RUNNER_TEMP/latest-issue.md"
           if [ "$BROWSER_RUN_OUTCOME" != failure ]; then
@@ -197,12 +201,12 @@ jobs:
 
   pr-canary:
     if: github.event_name == 'pull_request'
-    name: Contract Details Schema Canary (pinned, PR)
+    name: Contract Details Schema Canary (PR)
     runs-on: ubuntu-latest
     concurrency:
       group: schema-canary-pr-${{ github.event.pull_request.number }}
       cancel-in-progress: true
-    timeout-minutes: 30
+    timeout-minutes: 45
     permissions:
       contents: read
     steps:
@@ -218,13 +222,13 @@ jobs:
       - name: Install dependencies
         run: npm ci --include=optional --ignore-scripts
 
-      - name: Run schema canary (pinned versions) against sandbox
-        timeout-minutes: 15
+      - name: Run schema canary against sandbox
+        timeout-minutes: 25
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
           VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
-        run: npm run schema-canary -- --versions=pinned --keep-submitted="$RUNNER_TEMP/kept-employments.json"
+        run: npm run schema-canary -- --keep-submitted="$RUNNER_TEMP/kept-employments.json"
 
       - name: Check which employments were kept
         id: kept

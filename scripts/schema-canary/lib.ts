@@ -163,3 +163,43 @@ export function formatSummaryTable(rows: SchemaCanaryRow[]): string {
   });
   return [header, divider, ...body].join('\n');
 }
+
+export const SCHEMA_CANARY_GUIDE_URL =
+  'https://github.com/remoteoss/remote-flows/blob/main/docs/SCHEMA_CANARY.md';
+
+const FAILURE_HEADINGS: Record<SchemaVersionTrack, string> = {
+  pinned: 'Pinned failures (these fail the check)',
+  latest: 'Latest failures (warning only)',
+};
+
+export function formatStepSummary(
+  heading: string,
+  rows: SchemaCanaryRow[],
+): string {
+  const failureSections = SCHEMA_VERSION_TRACKS.flatMap((track) => {
+    const failures = formatFailures(rows, track);
+    return failures ? [`### ${FAILURE_HEADINGS[track]}`, failures] : [];
+  });
+  return [
+    `## ${heading}`,
+    ...(failureSections.length > 0
+      ? [
+          ...failureSections,
+          `What each failure means and what to do: [schema canary guide](${SCHEMA_CANARY_GUIDE_URL})`,
+        ]
+      : ['No failures.']),
+    `<details><summary>All ${rows.length} checks</summary>\n\n${formatSummaryTable([...rows].sort(compareRows))}\n\n</details>`,
+  ].join('\n\n');
+}
+
+function escapeAnnotation(text: string) {
+  return text.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+}
+
+export function formatAnnotations(rows: SchemaCanaryRow[]): string[] {
+  return rows.filter(isProblem).map((row) => {
+    const level = trackOf(row.version) === 'pinned' ? 'error' : 'warning';
+    const title = `Schema canary ${row.country}@${row.version} ${row.check}`;
+    return `::${level} title=${title}::${escapeAnnotation(row.error ?? row.outcome)}`;
+  });
+}

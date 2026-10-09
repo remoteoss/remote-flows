@@ -2,10 +2,13 @@ import {
   buildReport,
   checkSchemaBuildsAndValidates,
   decideExitCode,
+  formatAnnotations,
   formatFailures,
+  formatStepSummary,
   formatSummaryTable,
   isSkipped,
   mapWithConcurrency,
+  SCHEMA_CANARY_GUIDE_URL,
   SchemaCanaryRow,
 } from './lib';
 import { SchemaCanarySkipEntry } from './skip-list';
@@ -301,5 +304,90 @@ describe('formatFailures', () => {
       '',
     );
     expect(formatFailures(rows.slice(0, 4), 'latest')).toBe('');
+  });
+});
+
+describe('formatStepSummary', () => {
+  const row: SchemaCanaryRow = {
+    country: 'FRA',
+    version: 1,
+    strategy: 'buildOnce',
+    check: 'build',
+    outcome: 'pass',
+  };
+
+  it('lists pinned and latest failures under their own headings with a link to the guide', () => {
+    const pinnedFailure: SchemaCanaryRow = {
+      ...row,
+      country: 'ESP',
+      outcome: 'fail',
+      error: 'boom',
+    };
+    const latestFailure: SchemaCanaryRow = {
+      ...row,
+      country: 'PHL',
+      version: 'latest',
+      check: 'submit',
+      outcome: 'fail',
+      error: 'not saved',
+    };
+    const summary = formatStepSummary('Canary', [
+      row,
+      pinnedFailure,
+      latestFailure,
+    ]);
+
+    expect(summary).toBe(
+      [
+        '## Canary',
+        '### Pinned failures (these fail the check)',
+        formatSummaryTable([pinnedFailure]),
+        '### Latest failures (warning only)',
+        formatSummaryTable([latestFailure]),
+        `What each failure means and what to do: [schema canary guide](${SCHEMA_CANARY_GUIDE_URL})`,
+        `<details><summary>All 3 checks</summary>\n\n${formatSummaryTable([pinnedFailure, row, latestFailure])}\n\n</details>`,
+      ].join('\n\n'),
+    );
+  });
+
+  it('says there are no failures when every check passed', () => {
+    expect(formatStepSummary('Canary', [row])).toBe(
+      [
+        '## Canary',
+        'No failures.',
+        `<details><summary>All 1 checks</summary>\n\n${formatSummaryTable([row])}\n\n</details>`,
+      ].join('\n\n'),
+    );
+  });
+});
+
+describe('formatAnnotations', () => {
+  const row: SchemaCanaryRow = {
+    country: 'FRA',
+    version: 1,
+    strategy: 'buildOnce',
+    check: 'build',
+    outcome: 'pass',
+  };
+
+  it('annotates pinned problems as errors and latest problems as warnings', () => {
+    expect(
+      formatAnnotations([
+        row,
+        { ...row, outcome: 'skip', error: 'known' },
+        { ...row, country: 'GBR', outcome: 'seed-error', error: 'no seed' },
+        {
+          ...row,
+          country: 'PHL',
+          version: 'latest',
+          check: 'submit',
+          outcome: 'fail',
+          error: '50% saved\nsecond line',
+        },
+      ]),
+    ).toEqual([
+      '::error title=Schema canary GBR@1 build::no seed',
+      '::warning title=Schema canary PHL@latest submit::50%25 saved%0Asecond line',
+    ]);
   });
 });

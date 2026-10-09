@@ -16,7 +16,9 @@ import {
   buildReport,
   checkSchemaBuildsAndValidates,
   decideExitCode,
+  formatAnnotations,
   formatFailures,
+  formatStepSummary,
   formatSummaryTable,
   isSkipped,
   mapWithConcurrency,
@@ -331,7 +333,7 @@ function report(rows: SchemaCanaryRow[]) {
   if (summaryPath) {
     appendFileSync(
       summaryPath,
-      `## Contract details schema canary\n\n${table}\n`,
+      `${formatStepSummary('Contract details schema canary', rows)}\n`,
     );
   }
 }
@@ -378,6 +380,10 @@ async function main() {
     for (const row of problems) {
       log(`  - ${row.country}@${row.version} ${row.check}: ${row.error}`);
     }
+  }
+
+  if (process.env.GITHUB_ACTIONS === 'true') {
+    for (const annotation of formatAnnotations(rows)) console.log(annotation);
   }
 
   process.exitCode = decideExitCode(rows);

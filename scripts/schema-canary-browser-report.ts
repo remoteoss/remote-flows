@@ -13,7 +13,9 @@ import { KeptEmployment } from './schema-canary/kept-employments';
 import {
   buildReport,
   decideExitCode,
+  formatAnnotations,
   formatFailures,
+  formatStepSummary,
   formatSummaryTable,
   SchemaCanaryReport,
 } from './schema-canary/lib';
@@ -46,7 +48,7 @@ console.log(table);
 if (process.env.GITHUB_STEP_SUMMARY) {
   appendFileSync(
     process.env.GITHUB_STEP_SUMMARY,
-    `\n## Browser re-submit\n\n${table}\n`,
+    `\n${formatStepSummary('Browser re-submit', rows)}\n`,
   );
 }
 
@@ -71,6 +73,9 @@ for (const [arg, track] of [
   appendFileSync(file, `${existing ? '\n\n' : ''}${failures}`);
 }
 
+if (process.env.GITHUB_ACTIONS === 'true') {
+  for (const annotation of formatAnnotations(rows)) console.log(annotation);
+}
 if (process.env.GITHUB_OUTPUT) {
   appendFileSync(process.env.GITHUB_OUTPUT, 'complete=true\n');
 }
