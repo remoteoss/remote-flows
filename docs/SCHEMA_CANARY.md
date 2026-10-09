@@ -58,7 +58,7 @@ npm run schema-canary -- --country=PHL --versions=latest --keep-submitted=/tmp/k
 cd example && PORT=3001 npm run dev:env -- --env=sandbox
 ```
 
-Open `http://localhost:3001/?demo=onboarding-basic&employmentId=<id>&contractDetailsCountry=PHL&contractDetailsVersion=latest`, using the employment ID from `/tmp/kept.json`. Leave out the last two parameters for a pinned employment. When you're done, archive the employments with `npm run schema-canary:archive -- --from=/tmp/kept.json`.
+Open `http://localhost:3001/?demo=onboarding-basic&employmentId=<id>&countryCode=PHL&contractDetailsVersion=latest`, using the employment ID from `/tmp/kept.json`. `countryCode` skips Select Country, the same way the canary does. Leave out `contractDetailsVersion` for a pinned employment. When you're done, archive the employments with `npm run schema-canary:archive -- --from=/tmp/kept.json`.
 
 ## Moving a country to a newer pinned version
 

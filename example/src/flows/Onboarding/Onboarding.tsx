@@ -393,7 +393,7 @@ type OnboardingFormData = {
 };
 
 const optionsFromUrl = () => {
-  const country = getUrlParam('contractDetailsCountry');
+  const country = getUrlParam('countryCode');
   const version = getUrlParam('contractDetailsVersion');
   if (!country || !version) return ONBOARDING_OPTIONS;
   return {
@@ -415,6 +415,7 @@ const OnboardingWithProps = ({
   partnerExternalId,
 }: OnboardingFormData) => {
   const [options] = useState(optionsFromUrl);
+  const [countryCode] = useState(() => getUrlParam('countryCode') ?? undefined);
   return (
     <RemoteFlows
       proxy={{ url: window.location.origin }}
@@ -425,6 +426,8 @@ const OnboardingWithProps = ({
         type={type}
         render={OnBoardingRender}
         employmentId={employmentId}
+        countryCode={countryCode}
+        skipSteps={countryCode ? ['select_country'] : undefined}
         externalId={externalId}
         partnerExternalId={partnerExternalId}
         options={options as $TSFixMe}

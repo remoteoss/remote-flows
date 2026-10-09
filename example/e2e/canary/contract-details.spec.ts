@@ -101,9 +101,9 @@ function onboardingUrl(
   const params = new URLSearchParams({
     demo: 'onboarding-basic',
     employmentId,
+    countryCode: country,
   });
   if (version === 'latest') {
-    params.set('contractDetailsCountry', country);
     params.set('contractDetailsVersion', version);
   }
   return `/?${params}`;
