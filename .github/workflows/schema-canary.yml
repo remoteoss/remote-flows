@@ -35,7 +35,7 @@ jobs:
     if: github.event_name != 'pull_request'
     name: Contract Details Schema Canary (main)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     permissions:
       contents: write
       pull-requests: write
@@ -179,6 +179,7 @@ jobs:
         run: npm ci --include=optional --ignore-scripts
 
       - name: Run schema canary (pinned and submit checks) against sandbox
+        timeout-minutes: 15
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
