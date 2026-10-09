@@ -43,26 +43,44 @@ describe.each(['buildOnce', 'rebuild'] as const)(
 
 describe('isSkipped', () => {
   const skipList: SchemaCanarySkipEntry[] = [
-    { country: 'XYZ', check: 'latest', reason: 'known gap' },
+    { country: 'XYZ', check: 'submit', reason: 'known gap' },
     { country: 'ABC', check: 'all', reason: 'no contract_details form' },
+    {
+      country: 'FRA',
+      check: 'build',
+      version: 'latest',
+      reason: 'latest only',
+    },
   ];
 
-  it('matches a check-specific skip entry', () => {
-    expect(isSkipped(skipList, 'XYZ', 'latest')?.reason).toBe('known gap');
-    expect(isSkipped(skipList, 'XYZ', 'pinned')).toBeUndefined();
+  it('matches a check-specific skip entry on both versions', () => {
+    expect(isSkipped(skipList, 'XYZ', 'submit', 'pinned')?.reason).toBe(
+      'known gap',
+    );
+    expect(isSkipped(skipList, 'XYZ', 'submit', 'latest')?.reason).toBe(
+      'known gap',
+    );
+    expect(isSkipped(skipList, 'XYZ', 'build', 'pinned')).toBeUndefined();
   });
 
-  it('matches an "all" skip entry for either check', () => {
-    expect(isSkipped(skipList, 'ABC', 'pinned')?.reason).toBe(
+  it('matches an "all" skip entry for every check', () => {
+    expect(isSkipped(skipList, 'ABC', 'build', 'pinned')?.reason).toBe(
       'no contract_details form',
     );
-    expect(isSkipped(skipList, 'ABC', 'latest')?.reason).toBe(
+    expect(isSkipped(skipList, 'ABC', 'submit', 'latest')?.reason).toBe(
       'no contract_details form',
     );
+  });
+
+  it('matches a version-specific skip entry only on that version', () => {
+    expect(isSkipped(skipList, 'FRA', 'build', 'latest')?.reason).toBe(
+      'latest only',
+    );
+    expect(isSkipped(skipList, 'FRA', 'build', 'pinned')).toBeUndefined();
   });
 
   it('returns undefined for a country not in the skip list', () => {
-    expect(isSkipped(skipList, 'DEU', 'pinned')).toBeUndefined();
+    expect(isSkipped(skipList, 'DEU', 'build', 'pinned')).toBeUndefined();
   });
 });
 
@@ -71,7 +89,7 @@ describe('decideExitCode', () => {
     country: 'DEU',
     version: 7,
     strategy: 'buildOnce',
-    check: 'pinned',
+    check: 'build',
     outcome: 'pass',
   };
 
@@ -79,43 +97,40 @@ describe('decideExitCode', () => {
     expect(decideExitCode([passingRow])).toBe(0);
   });
 
-  it('returns 0 when only a "latest" check failed', () => {
-    const rows: SchemaCanaryRow[] = [
-      passingRow,
-      { ...passingRow, check: 'latest', outcome: 'fail', error: 'boom' },
-    ];
-    expect(decideExitCode(rows)).toBe(0);
-  });
-
-  it('returns 1 when a "submit" check failed', () => {
-    const rows: SchemaCanaryRow[] = [
-      passingRow,
-      { ...passingRow, check: 'submit', outcome: 'fail', error: 'boom' },
-    ];
-    expect(decideExitCode(rows)).toBe(1);
-  });
-
-  it('returns 1 when a "pinned" check failed', () => {
-    const rows: SchemaCanaryRow[] = [
-      passingRow,
-      { ...passingRow, outcome: 'fail', error: 'boom' },
-    ];
-    expect(decideExitCode(rows)).toBe(1);
-  });
-
-  it.each(['pinned', 'latest'] as const)(
-    'returns 1 when seeding failed for a "%s" check',
+  it.each(['build', 'submit', 'browser'] as const)(
+    'returns 1 when a pinned "%s" check failed',
     (check) => {
       const rows: SchemaCanaryRow[] = [
         passingRow,
-        {
-          ...passingRow,
-          check,
-          outcome: 'seed-error',
-          error: 'employment seeding failed: boom',
-        },
+        { ...passingRow, check, outcome: 'fail', error: 'boom' },
       ];
       expect(decideExitCode(rows)).toBe(1);
+    },
+  );
+
+  it('returns 1 when seeding failed on the pinned version', () => {
+    const rows: SchemaCanaryRow[] = [
+      passingRow,
+      { ...passingRow, outcome: 'seed-error', error: 'seeding failed' },
+    ];
+    expect(decideExitCode(rows)).toBe(1);
+  });
+
+  it.each(['fail', 'seed-error'] as const)(
+    'returns 0 when only latest checks have outcome "%s"',
+    (outcome) => {
+      const rows: SchemaCanaryRow[] = [
+        passingRow,
+        { ...passingRow, version: 'latest', outcome, error: 'boom' },
+        {
+          ...passingRow,
+          version: 'latest',
+          check: 'browser',
+          outcome,
+          error: 'boom',
+        },
+      ];
+      expect(decideExitCode(rows)).toBe(0);
     },
   );
 });
@@ -127,15 +142,40 @@ describe('buildReport', () => {
         country: 'DEU',
         version: 7,
         strategy: 'buildOnce',
-        check: 'pinned',
+        check: 'build',
         outcome: 'pass',
       },
     ];
 
     const report = buildReport(rows);
 
-    expect(report.checks).toBe(rows);
+    expect(report.checks).toEqual(rows);
     expect(report._meta.title).toBe('Contract details schema canary');
+  });
+
+  it('sorts the rows by country, then pinned before latest, then check', () => {
+    const row: SchemaCanaryRow = {
+      country: 'FRA',
+      version: 1,
+      strategy: 'buildOnce',
+      check: 'build',
+      outcome: 'pass',
+    };
+    const rows: SchemaCanaryRow[] = [
+      { ...row, version: 'latest', check: 'browser' },
+      { ...row, country: 'DEU', check: 'submit' },
+      { ...row, version: 'latest', check: 'build' },
+      { ...row, check: 'browser' },
+      { ...row, check: 'build' },
+    ];
+
+    expect(buildReport(rows).checks).toEqual([
+      { ...row, country: 'DEU', check: 'submit' },
+      { ...row, check: 'build' },
+      { ...row, check: 'browser' },
+      { ...row, version: 'latest', check: 'build' },
+      { ...row, version: 'latest', check: 'browser' },
+    ]);
   });
 
   it('produces byte-identical output for identical rows on different days', () => {
@@ -144,7 +184,7 @@ describe('buildReport', () => {
         country: 'DEU',
         version: 7,
         strategy: 'buildOnce',
-        check: 'pinned',
+        check: 'build',
         outcome: 'pass',
       },
     ];
@@ -167,14 +207,14 @@ describe('formatSummaryTable', () => {
         country: 'DEU',
         version: 7,
         strategy: 'buildOnce',
-        check: 'pinned',
+        check: 'build',
         outcome: 'pass',
       },
       {
         country: 'FRA',
         version: 'latest',
         strategy: 'buildOnce',
-        check: 'latest',
+        check: 'build',
         outcome: 'fail',
         error: 'Cannot read properties of null',
       },
@@ -182,7 +222,7 @@ describe('formatSummaryTable', () => {
         country: 'ISL',
         version: 3,
         strategy: 'rebuild',
-        check: 'pinned',
+        check: 'build',
         outcome: 'seed-error',
         error: 'employment seeding failed: POST /v1/employments -> 422',
       },
@@ -194,9 +234,9 @@ describe('formatSummaryTable', () => {
       [
         '| Country | Version | Strategy | Check | Result | Error |',
         '| --- | --- | --- | --- | --- | --- |',
-        '| DEU | 7 | buildOnce | pinned | ✅ pass |  |',
-        '| FRA | latest | buildOnce | latest | ❌ fail | Cannot read properties of null |',
-        '| ISL | 3 | rebuild | pinned | ⚠️ seed error | employment seeding failed: POST /v1/employments -> 422 |',
+        '| DEU | 7 | buildOnce | build | ✅ pass |  |',
+        '| FRA | latest | buildOnce | build | ❌ fail | Cannot read properties of null |',
+        '| ISL | 3 | rebuild | build | ⚠️ seed error | employment seeding failed: POST /v1/employments -> 422 |',
       ].join('\n'),
     );
   });
@@ -228,39 +268,38 @@ describe('formatFailures', () => {
     country: 'FRA',
     version: 1,
     strategy: 'buildOnce',
-    check: 'pinned',
+    check: 'build',
     outcome: 'pass',
   };
+  const rows: SchemaCanaryRow[] = [
+    row,
+    { ...row, country: 'ESP', check: 'submit', outcome: 'fail', error: 'boom' },
+    { ...row, country: 'GBR', outcome: 'seed-error', error: 'no seed' },
+    { ...row, country: 'ITA', outcome: 'skip', error: 'known' },
+    {
+      ...row,
+      country: 'PHL',
+      version: 'latest',
+      check: 'browser',
+      outcome: 'fail',
+      error: 'latest boom',
+    },
+  ];
 
-  it('lists only failed checks and seed errors', () => {
-    expect(
-      formatFailures([
-        row,
-        {
-          ...row,
-          country: 'ESP',
-          check: 'submit',
-          outcome: 'fail',
-          error: 'boom',
-        },
-        { ...row, country: 'GBR', outcome: 'seed-error', error: 'no seed' },
-        { ...row, country: 'ITA', outcome: 'skip', error: 'known' },
-      ]),
-    ).toBe(
-      formatSummaryTable([
-        {
-          ...row,
-          country: 'ESP',
-          check: 'submit',
-          outcome: 'fail',
-          error: 'boom',
-        },
-        { ...row, country: 'GBR', outcome: 'seed-error', error: 'no seed' },
-      ]),
+  it('lists only the pinned failures and seed errors for "pinned"', () => {
+    expect(formatFailures(rows, 'pinned')).toBe(
+      formatSummaryTable([rows[1], rows[2]]),
     );
   });
 
-  it('is empty when nothing failed', () => {
-    expect(formatFailures([row, { ...row, outcome: 'skip' }])).toBe('');
+  it('lists only the latest failures for "latest"', () => {
+    expect(formatFailures(rows, 'latest')).toBe(formatSummaryTable([rows[4]]));
+  });
+
+  it('is empty when nothing failed on that version', () => {
+    expect(formatFailures([row, { ...row, outcome: 'skip' }], 'pinned')).toBe(
+      '',
+    );
+    expect(formatFailures(rows.slice(0, 4), 'latest')).toBe('');
   });
 });

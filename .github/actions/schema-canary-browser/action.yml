@@ -5,6 +5,9 @@ inputs:
   employments-file:
     description: File written by npm run schema-canary -- --keep-submitted
     required: true
+  results-file:
+    description: Where Playwright writes its JSON results, read by npm run schema-canary:browser-report
+    required: true
   client-id:
     required: true
   client-secret:
@@ -82,7 +85,8 @@ runs:
       env:
         PORT: '3001'
         SCHEMA_CANARY_EMPLOYMENTS: ${{ inputs.employments-file }}
-      run: npx playwright test -c playwright.canary.config.ts
+        SCHEMA_CANARY_RESULTS: ${{ inputs.results-file }}
+      run: npx playwright test -c playwright.canary.config.ts || echo "Playwright exited with $?; npm run schema-canary:browser-report decides the outcome"
 
     - name: Upload the Playwright report
       if: ${{ !cancelled() }}

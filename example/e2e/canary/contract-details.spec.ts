@@ -5,6 +5,7 @@ type KeptEmployment = {
   country: string;
   employmentId: string;
   companyId: string;
+  version: number | 'latest';
   sent: Record<string, unknown>;
   knownUnsavedFields: string[];
 };
@@ -92,56 +93,80 @@ async function answerKnownUnsavedFields(
   }
 }
 
+function onboardingUrl(
+  employmentId: string,
+  country: string,
+  version: number | 'latest',
+) {
+  const params = new URLSearchParams({
+    demo: 'onboarding-basic',
+    employmentId,
+  });
+  if (version === 'latest') {
+    params.set('contractDetailsCountry', country);
+    params.set('contractDetailsVersion', version);
+  }
+  return `/?${params}`;
+}
+
 for (const {
   country,
   employmentId,
   companyId,
+  version,
   sent,
   knownUnsavedFields,
 } of employments) {
-  test(`${country} re-submits the saved contract details unchanged`, async ({
-    page,
-  }) => {
-    await page.goto(`/?demo=onboarding-basic&employmentId=${employmentId}`);
-    await page.locator('#companyId').fill(companyId);
-    await page.locator('.onboarding-form-button').click();
+  test(
+    `${country}@${version} re-submits the saved contract details unchanged`,
+    {
+      annotation: {
+        type: 'schema-canary-employment',
+        description: employmentId,
+      },
+    },
+    async ({ page }) => {
+      await page.goto(onboardingUrl(employmentId, country, version));
+      await page.locator('#companyId').fill(companyId);
+      await page.locator('.onboarding-form-button').click();
 
-    await continueUntilContractDetails(page);
-    await expect(
-      page.locator('[data-field]').first(),
-      'the contract details form rendered no fields',
-    ).toBeVisible();
+      await continueUntilContractDetails(page);
+      await expect(
+        page.locator('[data-field]').first(),
+        'the contract details form rendered no fields',
+      ).toBeVisible();
 
-    if (knownUnsavedFields.length > 0) {
-      await page.locator('.submit-button').click();
-      await answerKnownUnsavedFields(page, knownUnsavedFields, sent);
-    }
+      if (knownUnsavedFields.length > 0) {
+        await page.locator('.submit-button').click();
+        await answerKnownUnsavedFields(page, knownUnsavedFields, sent);
+      }
 
-    const patch = page.waitForRequest(
-      (request) =>
-        request.method() === 'PATCH' &&
-        new URL(request.url()).pathname === `/v1/employments/${employmentId}`,
-      { timeout: 30_000 },
-    );
-    await page.locator('.submit-button').click();
-    const request = await patch.catch(async () => {
-      throw new Error(
-        `Continue on contract details sent no PATCH. Field errors: ${JSON.stringify(await fieldErrors(page))}`,
+      const patch = page.waitForRequest(
+        (request) =>
+          request.method() === 'PATCH' &&
+          new URL(request.url()).pathname === `/v1/employments/${employmentId}`,
+        { timeout: 30_000 },
       );
-    });
-    const response = await request.response();
+      await page.locator('.submit-button').click();
+      const request = await patch.catch(async () => {
+        throw new Error(
+          `Continue on contract details sent no PATCH. Field errors: ${JSON.stringify(await fieldErrors(page))}`,
+        );
+      });
+      const response = await request.response();
 
-    expect(
-      response?.ok(),
-      `PATCH /v1/employments/${employmentId} returned ${response?.status()}: ${await response?.text()}`,
-    ).toBe(true);
-    expect(
-      (request.postDataJSON() as { contract_details?: unknown })
-        .contract_details,
-      'the browser sent different contract_details than the canary saved',
-    ).toEqual(sent);
-    await expect(page.getByTestId('onboarding-step-title')).not.toHaveText(
-      'Contract Details',
-    );
-  });
+      expect(
+        response?.ok(),
+        `PATCH /v1/employments/${employmentId} returned ${response?.status()}: ${await response?.text()}`,
+      ).toBe(true);
+      expect(
+        (request.postDataJSON() as { contract_details?: unknown })
+          .contract_details,
+        'the browser sent different contract_details than the canary saved',
+      ).toEqual(sent);
+      await expect(page.getByTestId('onboarding-step-title')).not.toHaveText(
+        'Contract Details',
+      );
+    },
+  );
 }
