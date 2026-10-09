@@ -329,6 +329,33 @@ describe.each(schemaPaths)(
       );
     });
 
+    it('stops reporting the check as running once the user leaves contract details', async () => {
+      server.use(
+        http.post(
+          '*/v2/employments/:id/job-title-eligibility-check',
+          () => new Promise<never>(() => {}),
+        ),
+      );
+
+      await renderContractDetailsStep();
+      await fillRoleFields();
+
+      await waitFor(() =>
+        expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(true),
+      );
+
+      act(() => {
+        latestOnboardingBag.goTo('basic_information');
+      });
+
+      await waitFor(() =>
+        expect(latestOnboardingBag.stepState.currentStep.name).toBe(
+          'basic_information',
+        ),
+      );
+      expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
+    });
+
     it('re-enables the submit button when the check fails', async () => {
       vi.spyOn(console, 'error').mockImplementation(() => {});
       server.use(
