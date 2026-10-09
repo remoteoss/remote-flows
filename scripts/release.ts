@@ -3,27 +3,15 @@
 import { execFileSync, execSync } from 'child_process';
 import { readFileSync, writeFileSync } from 'fs';
 import { createInterface } from 'readline';
+import {
+  bumpVersion,
+  Commit,
+  formatReleaseNotes,
+  formatReleasePrBody,
+  generateChangesetContent,
+  VersionBump,
+} from './release-changelog';
 import { $TSFixMe } from './types';
-
-interface Commit {
-  hash: string;
-  subject: string;
-  body: string;
-}
-
-interface ParsedCommit {
-  type: string;
-  scope?: string;
-  description: string;
-  versionBump: 'patch' | 'minor' | 'major';
-  prNumber?: string;
-  hash: string;
-}
-
-interface Changeset {
-  versionBump: 'patch' | 'minor' | 'major';
-  content: string;
-}
 
 async function getLatestPublishedVersion(): Promise<string> {
   console.log('📦 Reading version from package.json...');
@@ -121,90 +109,6 @@ async function getCommitsFromGitHubAPI(): Promise<Commit[]> {
   }
 }
 
-function parseConventionalCommit(commit: Commit): ParsedCommit | null {
-  const { subject, body } = commit;
-
-  // Updated regex to handle both colon and dash separators
-  const match = subject.match(/^(\w+)(?:\(([^)]+)\))?\s*[-:]\s*(.+)$/);
-
-  if (!match) return null;
-
-  const [, type, scope, description] = match;
-  let versionBump: 'patch' | 'minor' | 'major' = 'patch';
-
-  if (type === 'feat') versionBump = 'minor';
-  if (type === 'feat' && body.includes('BREAKING CHANGE'))
-    versionBump = 'major';
-  if (type === 'fix' && body.includes('BREAKING CHANGE')) versionBump = 'major';
-
-  const prMatch = (description + ' ' + body).match(/#(\d+)/);
-  const prNumber = prMatch ? prMatch[1] : undefined;
-
-  return {
-    type,
-    scope,
-    description,
-    versionBump,
-    prNumber,
-    hash: commit.hash,
-  };
-}
-
-const CHANGELOG_SECTIONS: Record<string, string> = {
-  feat: 'Features',
-  fix: 'Fixes',
-  docs: 'Docs',
-};
-
-function generateChangesetContent(commits: Commit[]): Changeset | null {
-  const parsedCommits = commits
-    .map(parseConventionalCommit)
-    .filter((commit): commit is ParsedCommit => commit !== null);
-
-  if (parsedCommits.length === 0) {
-    console.log('No conventional commits found');
-    return null;
-  }
-
-  const groups: Record<'major' | 'minor' | 'patch', ParsedCommit[]> = {
-    major: [],
-    minor: [],
-    patch: [],
-  };
-
-  parsedCommits.forEach((commit) => {
-    groups[commit.versionBump].push(commit);
-  });
-
-  let finalVersionBump: 'patch' | 'minor' | 'major' = 'patch';
-  if (groups.major.length > 0) finalVersionBump = 'major';
-  else if (groups.minor.length > 0) finalVersionBump = 'minor';
-
-  const sections: Record<string, string[]> = {
-    Features: [],
-    Fixes: [],
-    Docs: [],
-    Chores: [],
-  };
-
-  parsedCommits.forEach((commit) => {
-    const prText = commit.prNumber
-      ? ` [#${commit.prNumber}](https://github.com/remoteoss/remote-flows/pull/${commit.prNumber})`
-      : '';
-    sections[CHANGELOG_SECTIONS[commit.type] ?? 'Chores'].push(
-      `- ${commit.description}${prText}`,
-    );
-  });
-
-  return {
-    versionBump: finalVersionBump,
-    content: Object.entries(sections)
-      .filter(([, items]) => items.length > 0)
-      .map(([title, items]) => `#### ${title}\n\n${items.join('\n')}`)
-      .join('\n\n'),
-  };
-}
-
 async function main(): Promise<void> {
   console.log('🚀 Preparing release...');
 
@@ -253,26 +157,10 @@ async function main(): Promise<void> {
 
     const validVersions = ['patch', 'minor', 'major'];
     if (validVersions.includes(userVersionBump.toLowerCase())) {
-      finalVersionBump = userVersionBump.toLowerCase() as
-        | 'patch'
-        | 'minor'
-        | 'major';
-
-      // Calculate what the new version will be
-      const [major, minor, patch] = latestPublishedVersion
-        .split('.')
-        .map(Number);
-      let newVersion: string;
-      if (finalVersionBump === 'major') {
-        newVersion = `${major + 1}.0.0`;
-      } else if (finalVersionBump === 'minor') {
-        newVersion = `${major}.${minor + 1}.0`;
-      } else {
-        newVersion = `${major}.${minor}.${patch + 1}`;
-      }
+      finalVersionBump = userVersionBump.toLowerCase() as VersionBump;
 
       console.log(
-        `📝 Using version bump: ${finalVersionBump} (${latestPublishedVersion} → ${newVersion})`,
+        `📝 Using version bump: ${finalVersionBump} (${latestPublishedVersion} → ${bumpVersion(latestPublishedVersion, finalVersionBump)})`,
       );
     } else {
       console.log('Invalid version bump. Exiting.');
@@ -297,18 +185,7 @@ async function main(): Promise<void> {
   // Manual version bumping and changelog generation
   console.log('📦 Updating version and changelog...');
 
-  // Use the latest published version as the base
-  const [major, minor, patch] = latestPublishedVersion.split('.').map(Number);
-
-  // Bump version based on changeset
-  let newVersion: string;
-  if (changeset.versionBump === 'major') {
-    newVersion = `${major + 1}.0.0`;
-  } else if (changeset.versionBump === 'minor') {
-    newVersion = `${major}.${minor + 1}.0`;
-  } else {
-    newVersion = `${major}.${minor}.${patch + 1}`;
-  }
+  const newVersion = bumpVersion(latestPublishedVersion, changeset.versionBump);
 
   console.log(`📈 Version bump: ${latestPublishedVersion} → ${newVersion}`);
 
@@ -317,20 +194,7 @@ async function main(): Promise<void> {
   packageJson.version = newVersion;
   writeFileSync('package.json', JSON.stringify(packageJson, null, 2) + '\n');
 
-  // Generate changelog entry to match existing format
-  const versionType =
-    changeset.versionBump === 'major'
-      ? 'Major'
-      : changeset.versionBump === 'minor'
-        ? 'Minor'
-        : 'Patch';
-  const changelogEntry = `## ${newVersion}
-
-### ${versionType} Changes
-
-${changeset.content}
-
-`;
+  const changelogEntry = `${formatReleaseNotes(newVersion, changeset)}\n\n`;
 
   // Read existing changelog
   let changelog = '';
@@ -394,16 +258,7 @@ ${changeset.content}
   // Auto-create PR with changelog content as body
   console.log(`🔗 Creating PR...`);
   try {
-    // Create PR with changelog content as the body
-    const prBody = `## ${newVersion}
-
-### ${versionType} Changes
-
-${changeset.content}
-
----
-
-This release was automatically generated from conventional commits.`;
+    const prBody = formatReleasePrBody(newVersion, changeset);
 
     execFileSync(
       'gh',
