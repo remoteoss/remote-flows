@@ -1,4 +1,7 @@
-import { CreateJobTitleEligibilityCheckParams } from '@/src/client';
+import {
+  CreateJobTitleEligibilityCheckParams,
+  JobTitleEligibilityCheck,
+} from '@/src/client';
 import { HeadlessFormStrategy } from '@/src/common/headlessForm';
 import { Employment, OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { Step } from '@/src/flows/useStepState';
@@ -104,8 +107,7 @@ export function buildSteps(config: StepConfig = {}) {
 }
 
 /**
- * Array of employment statuses that are allowed to proceed to the review step.
- * These statuses indicate that the employment is in a final state and the employment cannot be modified further.
+ * Employment statuses that open the flow read-only on the review step, because the API no longer accepts edits.
  * @type {Employment['status'][]}
  * @constant
  */
@@ -115,6 +117,7 @@ export const reviewStepAllowedEmploymentStatus: Employment['status'][] = [
   'created_awaiting_reserve',
   'created_reserve_paid',
   'active',
+  'job_title_review',
 ];
 
 export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
@@ -249,6 +252,61 @@ export const JOB_TITLE_ELIGIBILITY_SLUG_FIELD =
 export const JOB_TITLE_ELIGIBILITY_RESULT_FIELD =
   'additional_job_title_eligibility_check_result';
 
+const EMPLOYER_ACKNOWLEDGES_RISK_FIELD = 'employer_acknowledges_risk';
+
+type ContractDetailsJsonSchema = {
+  properties?: Record<string, unknown>;
+  allOf?: unknown[];
+  'x-jsf-order'?: string[];
+};
+
+export const withJobTitleEligibilityRiskAcknowledgement = <
+  T extends ContractDetailsJsonSchema,
+>(
+  schema: T,
+): T => {
+  const properties = schema.properties ?? {};
+  if (
+    !properties[JOB_TITLE_ELIGIBILITY_SLUG_FIELD] ||
+    !properties[EMPLOYER_ACKNOWLEDGES_RISK_FIELD] ||
+    properties[JOB_TITLE_ELIGIBILITY_RESULT_FIELD]
+  ) {
+    return schema;
+  }
+
+  return {
+    ...schema,
+    properties: {
+      ...properties,
+      [JOB_TITLE_ELIGIBILITY_RESULT_FIELD]: {
+        type: ['string', 'null'],
+        'x-jsf-presentation': { inputType: 'hidden' },
+      },
+    },
+    allOf: [
+      ...(schema.allOf ?? []),
+      {
+        if: {
+          properties: {
+            [JOB_TITLE_ELIGIBILITY_RESULT_FIELD]: { const: 'yes_with_ack' },
+          },
+          required: [JOB_TITLE_ELIGIBILITY_RESULT_FIELD],
+        },
+        then: { required: [EMPLOYER_ACKNOWLEDGES_RISK_FIELD] },
+        else: { properties: { [EMPLOYER_ACKNOWLEDGES_RISK_FIELD]: false } },
+      },
+    ],
+    ...(schema['x-jsf-order']
+      ? {
+          'x-jsf-order': [
+            ...schema['x-jsf-order'],
+            JOB_TITLE_ELIGIBILITY_RESULT_FIELD,
+          ],
+        }
+      : {}),
+  };
+};
+
 const JOB_TITLE_ELIGIBILITY_PARAM_FIELDS = [
   'role_description',
   'role_is_onsite',
@@ -294,3 +352,22 @@ export const getJobTitleEligibilityParams = (
     ),
   } as CreateJobTitleEligibilityCheckParams;
 };
+
+const JOB_TITLE_ELIGIBILITY_VERDICT_RESULTS: Record<
+  JobTitleEligibilityCheck['verdict'],
+  string | null
+> = {
+  eligible: 'yes',
+  not_eligible: 'no',
+  needs_review: 'maybe',
+  eligible_with_risk_acknowledgement: 'yes_with_ack',
+  not_assessed: null,
+};
+
+export const getJobTitleEligibilityValues = (
+  check: JobTitleEligibilityCheck,
+) => ({
+  [JOB_TITLE_ELIGIBILITY_SLUG_FIELD]: check.check_id ?? null,
+  [JOB_TITLE_ELIGIBILITY_RESULT_FIELD]:
+    JOB_TITLE_ELIGIBILITY_VERDICT_RESULTS[check.verdict] ?? null,
+});

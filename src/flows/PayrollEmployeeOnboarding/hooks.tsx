@@ -13,9 +13,11 @@ import { isMutationError, mutationToPromise } from '@/src/lib/mutations';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import {
   useGPEmployeeBankAccount,
+  useGPEmployeeFederalTaxes,
   useGPEmployeeFormSchema,
   useGPEmployeeHomeAddress,
   useGPEmployeePersonalDetails,
+  useGPEmployeeStateTaxes,
   useGPUpdateBankAccount,
   useGPUpdateFederalTaxes,
   useGPUpdateHomeAddress,
@@ -27,6 +29,7 @@ import type {
   JSFModify,
 } from '@/src/flows/types';
 import { TaxPendingEnrollmentError } from '@/src/flows/PayrollEmployeeOnboarding/taxErrors';
+import { toEmployeeFormValues } from '@/src/flows/PayrollEmployeeOnboarding/utils';
 
 export type EmployeeStepKey =
   | 'personal_details'
@@ -156,14 +159,17 @@ export const usePayrollEmployeeOnboarding = ({
     (s) => s.type === 'employee_provides_bank_details',
   );
 
+  const federalTaxesVisible = isUSA && isPostEnrollment;
+  const stateTaxesVisible = isUSA && !!jurisdiction && isPostEnrollment;
+
   const steps = useMemo(
     () =>
       buildEmployeeSteps({
         hasBankSubstep,
-        federalTaxesVisible: isUSA && isPostEnrollment,
-        stateTaxesVisible: isUSA && !!jurisdiction && isPostEnrollment,
+        federalTaxesVisible,
+        stateTaxesVisible,
       }),
-    [hasBankSubstep, isUSA, isPostEnrollment, jurisdiction],
+    [hasBankSubstep, federalTaxesVisible, stateTaxesVisible],
   );
 
   const {
@@ -183,27 +189,12 @@ export const usePayrollEmployeeOnboarding = ({
   const savedBankAccount = useGPEmployeeBankAccount(employmentId, {
     enabled: hasBankSubstep,
   });
-
-  const savedValues = useMemo<
-    Partial<Record<EmployeeStepKey, Record<string, unknown>>>
-  >(
-    () => ({
-      personal_details: savedPersonalDetails.data,
-      home_address: savedHomeAddress.data,
-      bank_account: savedBankAccount.data,
-    }),
-    [savedPersonalDetails.data, savedHomeAddress.data, savedBankAccount.data],
-  );
-
-  const savedValuesQueryByStep: Partial<
-    Record<EmployeeStepKey, { isLoading: boolean }>
-  > = {
-    personal_details: savedPersonalDetails,
-    home_address: savedHomeAddress,
-    bank_account: savedBankAccount,
-  };
-  const isLoadingSavedValues =
-    savedValuesQueryByStep[currentStep]?.isLoading ?? false;
+  const savedFederalTaxes = useGPEmployeeFederalTaxes(employmentId, {
+    enabled: federalTaxesVisible,
+  });
+  const savedStateTaxes = useGPEmployeeStateTaxes(employmentId, jurisdiction, {
+    enabled: stateTaxesVisible,
+  });
 
   // A tax step flagged `pending_enrollment` after a 404 would otherwise stay
   // flagged for the whole session, trapping the user even once the backend tax
@@ -305,6 +296,51 @@ export const usePayrollEmployeeOnboarding = ({
     federalTaxesSchema.data,
     stateTaxesSchema.data,
   ]);
+
+  // Saved tax answers come back in API units (money in cents), so they can
+  // only become form defaults once the step's schema says which fields are money.
+  const savedValues = useMemo<
+    Partial<Record<EmployeeStepKey, Record<string, unknown>>>
+  >(
+    () => ({
+      personal_details: savedPersonalDetails.data,
+      home_address: savedHomeAddress.data,
+      bank_account: savedBankAccount.data,
+      federal_taxes: toEmployeeFormValues(
+        savedFederalTaxes.data,
+        federalTaxesSchema.data?.fields,
+      ),
+      state_taxes: toEmployeeFormValues(
+        savedStateTaxes.data,
+        stateTaxesSchema.data?.fields,
+      ),
+    }),
+    [
+      savedPersonalDetails.data,
+      savedHomeAddress.data,
+      savedBankAccount.data,
+      savedFederalTaxes.data,
+      savedStateTaxes.data,
+      federalTaxesSchema.data?.fields,
+      stateTaxesSchema.data?.fields,
+    ],
+  );
+
+  const savedValuesQueryByStep: Partial<
+    Record<EmployeeStepKey, { isLoading: boolean }>
+  > = {
+    personal_details: savedPersonalDetails,
+    home_address: savedHomeAddress,
+    bank_account: savedBankAccount,
+    federal_taxes: {
+      isLoading: savedFederalTaxes.isLoading || federalTaxesSchema.isLoading,
+    },
+    state_taxes: {
+      isLoading: savedStateTaxes.isLoading || stateTaxesSchema.isLoading,
+    },
+  };
+  const isLoadingSavedValues =
+    savedValuesQueryByStep[currentStep]?.isLoading ?? false;
 
   // Availability is computed AFTER schema queries so we can fold their error
   // state (e.g. backend returns 400 for an unseeded schema) into a friendly

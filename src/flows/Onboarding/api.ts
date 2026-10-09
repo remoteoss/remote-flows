@@ -60,6 +60,7 @@ import {
   getContractDetailsSchemaVersion,
   getBasicInformationSchemaVersion,
   getBenefitOffersSchemaVersion,
+  withJobTitleEligibilityRiskAcknowledgement,
 } from '@/src/flows/Onboarding/utils';
 // oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
@@ -318,7 +319,8 @@ export const useLegacyContractDetailsSchema = ({
       return response;
     },
     enabled: options?.queryOptions?.enabled,
-    select: ({ data }) => data?.data || {},
+    select: ({ data }) =>
+      withJobTitleEligibilityRiskAcknowledgement(data?.data || {}),
   });
 
   const { form } = useHeadlessForm({
@@ -386,7 +388,8 @@ export const useContractDetailsSchema = ({
       return response;
     },
     enabled: options?.queryOptions?.enabled,
-    select: ({ data }) => data?.data,
+    select: ({ data }) =>
+      data?.data && withJobTitleEligibilityRiskAcknowledgement(data.data),
   });
 
   const { form, handleValidation, parseFormValues } = useHeadlessForm({

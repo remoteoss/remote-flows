@@ -4,14 +4,20 @@ import {
   getV1CountriesCountryCodeForm,
   getV1EmployeeAddress,
   getV1EmployeeBankAccount,
+  getV1EmployeeFederalTaxes,
   getV1EmployeePersonalDetails,
+  getV1EmployeeStateTaxesJurisdiction,
   putV1EmployeeAddress,
   putV1EmployeeBankAccount,
   putV1EmployeeFederalTaxes,
   putV1EmployeePersonalDetails,
   putV1EmployeeStateTaxesJurisdiction,
 } from '@/src/client';
-import type { EmploymentDetailsOnlyResponse } from '@/src/client';
+import type {
+  EmployeeFederalTaxesResponse,
+  EmployeeStateTaxesResponse,
+  EmploymentDetailsOnlyResponse,
+} from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 // oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
@@ -83,12 +89,23 @@ export const useGPEmployeeFormSchema = (
   });
 };
 
-type SavedValuesStep = 'personal_details' | 'home_address' | 'bank_account';
+type SavedValuesStep =
+  | 'personal_details'
+  | 'home_address'
+  | 'bank_account'
+  | 'federal_taxes'
+  | 'state_taxes';
 
 const gpEmployeeSavedValuesKey = (
   step: SavedValuesStep,
   employmentId: string,
-) => ['gp-employee-saved-values', step, employmentId];
+  jurisdiction?: string,
+) => [
+  'gp-employee-saved-values',
+  step,
+  employmentId,
+  ...(jurisdiction ? [jurisdiction] : []),
+];
 
 // The PUT responds with the same shape as the GET, so caching it keeps a
 // remounted step from starting at the pre-save read without re-fetching or
@@ -149,9 +166,19 @@ export const useGPUpdateBankAccount = (employmentId: string) => {
   });
 };
 
+// The tax PUTs only answer `{ status: 'ok' }`, so the cache gets the submitted
+// values in the GET's shape instead of the response.
 export const useGPUpdateFederalTaxes = (employmentId: string) => {
   const { client } = useClient();
+  const queryClient = useQueryClient();
   return useMutation({
+    onSuccess: (response, federalTaxes) => {
+      if (response.error) return;
+      queryClient.setQueryData<EmployeeFederalTaxesResponse>(
+        gpEmployeeSavedValuesKey('federal_taxes', employmentId),
+        { data: { federal_taxes: federalTaxes } },
+      );
+    },
     mutationFn: (federalTaxes: Record<string, unknown>) =>
       putV1EmployeeFederalTaxes({
         client: client as Client,
@@ -166,7 +193,15 @@ export const useGPUpdateStateTaxes = (
   employmentId: string,
 ) => {
   const { client } = useClient();
+  const queryClient = useQueryClient();
   return useMutation({
+    onSuccess: (response, stateTaxes) => {
+      if (response.error) return;
+      queryClient.setQueryData<EmployeeStateTaxesResponse>(
+        gpEmployeeSavedValuesKey('state_taxes', employmentId, jurisdiction),
+        { data: { state_taxes: stateTaxes } },
+      );
+    },
     mutationFn: (stateTaxes: Record<string, unknown>) => {
       if (!jurisdiction) {
         throw new Error(
@@ -200,19 +235,27 @@ const pickDefaultBankAccount = (
   return values;
 };
 
-const useGPEmployeeSavedValues = (
+const fromEmployment =
+  (
+    pickValues: (employment: SavedEmployment) => SavedValues | null | undefined,
+  ) =>
+  ({ data }: EmploymentDetailsOnlyResponse) =>
+    data.employment ? pickValues(data.employment) : undefined;
+
+const useGPEmployeeSavedValues = <TResponse>(
   step: SavedValuesStep,
+  queryKey: unknown[],
   employmentId: string,
   enabled: boolean,
   fetchSaved: (options: {
     client: Client;
     headers: Record<string, string>;
-  }) => Promise<{ data?: EmploymentDetailsOnlyResponse; error?: unknown }>,
-  pickValues: (employment: SavedEmployment) => SavedValues | null | undefined,
+  }) => Promise<{ data?: TResponse; error?: unknown }>,
+  pickValues: (response: TResponse) => SavedValues | null | undefined,
 ) => {
   const { client } = useClient();
   return useQuery({
-    queryKey: gpEmployeeSavedValuesKey(step, employmentId),
+    queryKey,
     enabled: !!employmentId && enabled,
     retry: false,
     queryFn: async () => {
@@ -225,8 +268,7 @@ const useGPEmployeeSavedValues = (
       }
       return response.data;
     },
-    select: ({ data }) =>
-      data.employment ? (pickValues(data.employment) ?? undefined) : undefined,
+    select: (response) => pickValues(response) ?? undefined,
   });
 };
 
@@ -236,10 +278,11 @@ export const useGPEmployeePersonalDetails = (
 ) =>
   useGPEmployeeSavedValues(
     'personal_details',
+    gpEmployeeSavedValuesKey('personal_details', employmentId),
     employmentId,
     enabled,
     getV1EmployeePersonalDetails,
-    (employment) => employment.personal_details,
+    fromEmployment((employment) => employment.personal_details),
   );
 
 export const useGPEmployeeHomeAddress = (
@@ -248,10 +291,11 @@ export const useGPEmployeeHomeAddress = (
 ) =>
   useGPEmployeeSavedValues(
     'home_address',
+    gpEmployeeSavedValuesKey('home_address', employmentId),
     employmentId,
     enabled,
     getV1EmployeeAddress,
-    (employment) => employment.address_details,
+    fromEmployment((employment) => employment.address_details),
   );
 
 export const useGPEmployeeBankAccount = (
@@ -260,8 +304,42 @@ export const useGPEmployeeBankAccount = (
 ) =>
   useGPEmployeeSavedValues(
     'bank_account',
+    gpEmployeeSavedValuesKey('bank_account', employmentId),
     employmentId,
     enabled,
     getV1EmployeeBankAccount,
-    (employment) => pickDefaultBankAccount(employment.bank_account_details),
+    fromEmployment((employment) =>
+      pickDefaultBankAccount(employment.bank_account_details),
+    ),
+  );
+
+export const useGPEmployeeFederalTaxes = (
+  employmentId: string,
+  { enabled = true }: { enabled?: boolean } = {},
+) =>
+  useGPEmployeeSavedValues(
+    'federal_taxes',
+    gpEmployeeSavedValuesKey('federal_taxes', employmentId),
+    employmentId,
+    enabled,
+    getV1EmployeeFederalTaxes,
+    ({ data }: EmployeeFederalTaxesResponse) => data.federal_taxes,
+  );
+
+export const useGPEmployeeStateTaxes = (
+  employmentId: string,
+  jurisdiction: string | undefined,
+  { enabled = true }: { enabled?: boolean } = {},
+) =>
+  useGPEmployeeSavedValues(
+    'state_taxes',
+    gpEmployeeSavedValuesKey('state_taxes', employmentId, jurisdiction),
+    employmentId,
+    enabled && !!jurisdiction,
+    (options) =>
+      getV1EmployeeStateTaxesJurisdiction({
+        ...options,
+        path: { jurisdiction: jurisdiction as string },
+      }),
+    ({ data }: EmployeeStateTaxesResponse) => data.state_taxes,
   );
