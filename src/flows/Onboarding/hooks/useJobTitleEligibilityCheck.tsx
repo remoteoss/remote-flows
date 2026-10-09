@@ -13,9 +13,16 @@ import { useClient } from '@/src/context';
 import { jobTitleEligibilityCheckOptions } from '@/src/flows/Onboarding/api';
 import {
   getJobTitleEligibilityParams,
+  getJobTitleEligibilityValues,
+  JOB_TITLE_ELIGIBILITY_SLUG_FIELD,
   StepKeys,
 } from '@/src/flows/Onboarding/utils';
-import { JSFFields } from '@/src/types/remoteFlows';
+import { JSFField, JSFFields } from '@/src/types/remoteFlows';
+
+const CLEARED_JOB_TITLE_ELIGIBILITY_VALUES = getJobTitleEligibilityValues({
+  check_id: null,
+  verdict: 'not_assessed',
+});
 
 /**
  * Owns the state and query for the job title eligibility check.
@@ -96,7 +103,15 @@ export const useJobTitleEligibilityCheck = ({
   const jobTitle = submittedJobTitle ?? fallbackJobTitle;
 
   const check = async (values: FieldValues) => {
-    if (!enabled || !employmentId || currentStepName !== 'contract_details') {
+    const hasSlugField = (contractDetailsFields as JSFField[]).some(
+      (field) => field.name === JOB_TITLE_ELIGIBILITY_SLUG_FIELD,
+    );
+    if (
+      !enabled ||
+      !employmentId ||
+      currentStepName !== 'contract_details' ||
+      !hasSlugField
+    ) {
       return;
     }
     const validation = await handleValidation(values);
@@ -110,12 +125,18 @@ export const useJobTitleEligibilityCheck = ({
     if (!equal(paramsRef.current, nextParams)) {
       setParams(nextParams);
     }
-    if (nextParams) {
-      await queryClient.query(getOptions(nextParams)).catch((error) => {
-        if (!(error instanceof CancelledError)) {
-          console.error('Failed to fetch job title eligibility check');
-        }
-      });
+    if (!nextParams) {
+      return CLEARED_JOB_TITLE_ELIGIBILITY_VALUES;
+    }
+    try {
+      const result = await queryClient.query(getOptions(nextParams));
+      return getJobTitleEligibilityValues(result);
+    } catch (error) {
+      if (error instanceof CancelledError) {
+        return;
+      }
+      console.error('Failed to fetch job title eligibility check');
+      return CLEARED_JOB_TITLE_ELIGIBILITY_VALUES;
     }
   };
 

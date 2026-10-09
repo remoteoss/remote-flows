@@ -644,9 +644,6 @@ export const useOnboarding = ({
             },
           },
         },
-        employer_acknowledges_risk: {
-          presentation: { hidden: true },
-        },
         ...(isDailyScheduleEnabled
           ? {
               daily_schedule: {
@@ -1417,8 +1414,8 @@ export const useOnboarding = ({
     /**
      * Runs the job title eligibility check with the given contract details values when the
      * 'job_title_eligibility' feature is enabled, the current step is contract_details, and the
-     * role fields are filled. The prebuilt form calls it on blur; call it yourself from a custom
-     * UI to trigger the same check at another point (e.g. on step entry or before submitting).
+     * role fields are filled. The prebuilt form runs it on blur and again right before submitting,
+     * since a submit can happen without a blur (e.g. pressing Enter); a custom UI should do both.
      * @param values - Current form values
      */
     checkJobTitleEligibility: jobTitleEligibility.check,
