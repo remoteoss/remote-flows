@@ -392,28 +392,49 @@ type OnboardingFormData = {
   partnerExternalId?: string;
 };
 
+const optionsFromUrl = () => {
+  const country = getUrlParam('countryCode');
+  const version = getUrlParam('contractDetailsVersion');
+  if (!country || !version) return ONBOARDING_OPTIONS;
+  return {
+    ...ONBOARDING_OPTIONS,
+    jsonSchemaVersionByCountry: {
+      ...ONBOARDING_OPTIONS.jsonSchemaVersionByCountry,
+      [country]: {
+        contract_details: version === 'latest' ? 'latest' : Number(version),
+      },
+    },
+  };
+};
+
 const OnboardingWithProps = ({
   companyId,
   type,
   employmentId,
   externalId,
   partnerExternalId,
-}: OnboardingFormData) => (
-  <RemoteFlows
-    proxy={{ url: window.location.origin }}
-    transformHtmlToComponents={transformHtmlToComponents}
-  >
-    <OnboardingFlow
-      companyId={companyId}
-      type={type}
-      render={OnBoardingRender}
-      employmentId={employmentId}
-      externalId={externalId}
-      partnerExternalId={partnerExternalId}
-      options={ONBOARDING_OPTIONS as $TSFixMe}
-    />
-  </RemoteFlows>
-);
+}: OnboardingFormData) => {
+  const [options] = useState(optionsFromUrl);
+  const [countryCode] = useState(() => getUrlParam('countryCode') ?? undefined);
+  return (
+    <RemoteFlows
+      proxy={{ url: window.location.origin }}
+      transformHtmlToComponents={transformHtmlToComponents}
+    >
+      <OnboardingFlow
+        companyId={companyId}
+        type={type}
+        render={OnBoardingRender}
+        employmentId={employmentId}
+        countryCode={countryCode}
+        skipSteps={countryCode ? ['select_country'] : undefined}
+        externalId={externalId}
+        partnerExternalId={partnerExternalId}
+        options={options as $TSFixMe}
+      />
+    </RemoteFlows>
+  );
+};
 
 export const OnboardingForm = () => {
   const [formData, setFormData] = useState<OnboardingFormData>({
