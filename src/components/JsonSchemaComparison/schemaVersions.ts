@@ -560,6 +560,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 3, label: 'v3' },
     { value: 4, label: 'v4' },
     { value: 5, label: 'v5' },
+    { value: 6, label: 'v6' },
   ],
   POL: [
     { value: 1, label: 'v1' },
@@ -585,6 +586,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 6, label: 'v6' },
     { value: 7, label: 'v7' },
     { value: 8, label: 'v8' },
+    { value: 9, label: 'v9' },
   ],
   PRY: [
     { value: 1, label: 'v1' },
@@ -593,6 +595,8 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 4, label: 'v4' },
     { value: 5, label: 'v5' },
     { value: 6, label: 'v6' },
+    { value: 7, label: 'v7' },
+    { value: 8, label: 'v8' },
   ],
   ROU: [
     { value: 1, label: 'v1' },
@@ -693,6 +697,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 2, label: 'v2' },
     { value: 3, label: 'v3' },
     { value: 4, label: 'v4' },
+    { value: 5, label: 'v5' },
   ],
   UKR: [
     { value: 1, label: 'v1' },
@@ -719,6 +724,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 5, label: 'v5' },
     { value: 6, label: 'v6' },
     { value: 7, label: 'v7' },
+    { value: 8, label: 'v8' },
   ],
   VNM: [
     { value: 1, label: 'v1' },
