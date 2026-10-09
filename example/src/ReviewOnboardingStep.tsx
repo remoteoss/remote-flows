@@ -137,12 +137,16 @@ export function ReviewMeta({
   meta: NestedMeta;
   isNested?: boolean;
 }) {
-  if (!meta) return null;
+  if (!meta) {
+    return null;
+  }
 
   return (
     <div className={isNested ? 'onboarding-values' : 'onboarding-values pl-3'}>
       {Object.entries(meta).map(([key, value]) => {
-        if (!value) return null;
+        if (!value) {
+          return null;
+        }
 
         const isLeafNode =
           typeof value === 'object' &&
@@ -245,7 +249,9 @@ const SignatureDialog = ({
   const [signature, setSignature] = useState('');
 
   const handleSign = async () => {
-    if (!signature.trim()) return;
+    if (!signature.trim()) {
+      return;
+    }
     await onSign(signature);
     setSignature('');
   };

@@ -98,7 +98,9 @@ function getSalaryTitle(
     'title' in salaryField
   ) {
     const title = (salaryField as { title?: string }).title;
-    if (title) return title;
+    if (title) {
+      return title;
+    }
   }
   return hiringBudget === 'my_hiring_budget'
     ? 'Hiring budget'

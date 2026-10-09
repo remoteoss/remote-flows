@@ -63,7 +63,9 @@ const compareOptions = (
       }>;
     }
   | undefined => {
-  if (equal(options1, options2)) return undefined;
+  if (equal(options1, options2)) {
+    return undefined;
+  }
 
   const map1 = new Map((options1 || []).map((o) => [o.value, o]));
   const map2 = new Map((options2 || []).map((o) => [o.value, o]));
@@ -113,7 +115,9 @@ const compareNestedFields = (
 
   const nestedFields2 = (field2 as $TSFixMe).fields;
 
-  if (!nestedFields1 && !nestedFields2) return undefined;
+  if (!nestedFields1 && !nestedFields2) {
+    return undefined;
+  }
 
   const nestedDiff = compareFormFields(
     nestedFields1 || [],
@@ -125,7 +129,9 @@ const compareNestedFields = (
     nestedDiff.removed.length > 0 ||
     nestedDiff.modified.length > 0;
 
-  if (!hasChanges) return undefined;
+  if (!hasChanges) {
+    return undefined;
+  }
 
   return Array.from(nestedDiff.fieldDiffs.values());
 };
@@ -156,10 +162,14 @@ const isFieldModified = (field1: JSFField, field2: JSFField): boolean => {
     const nestedFields2 = (field2 as $TSFixMe).fields;
 
     // If both undefined or null, no changes
-    if (!nestedFields1 && !nestedFields2) return false;
+    if (!nestedFields1 && !nestedFields2) {
+      return false;
+    }
 
     // If one is defined and the other isn't, there's a change
-    if (!nestedFields1 || !nestedFields2) return true;
+    if (!nestedFields1 || !nestedFields2) {
+      return true;
+    }
 
     // Recursively compare using our proper comparison logic
     const nestedDiff = compareFormFields(nestedFields1, nestedFields2);

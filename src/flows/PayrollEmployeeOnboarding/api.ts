@@ -96,7 +96,9 @@ const gpEmployeeSavedValuesKey = (
 const useCacheSavedValues = (step: SavedValuesStep, employmentId: string) => {
   const queryClient = useQueryClient();
   return (response: { data?: EmploymentDetailsOnlyResponse }) => {
-    if (!response.data) return;
+    if (!response.data) {
+      return;
+    }
     queryClient.setQueryData(
       gpEmployeeSavedValuesKey(step, employmentId),
       response.data,
@@ -195,7 +197,9 @@ const pickDefaultBankAccount = (
   const account =
     bankAccounts?.find((entry) => entry.is_default === true) ??
     bankAccounts?.[0];
-  if (!account) return undefined;
+  if (!account) {
+    return undefined;
+  }
   const { is_default: _isDefault, ...values } = account;
   return values;
 };

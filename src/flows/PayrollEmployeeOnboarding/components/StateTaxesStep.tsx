@@ -13,7 +13,9 @@ export function StateTaxesStep(props: GPStepCallbacks) {
   const { employeeBag } = usePayrollEmployeeOnboardingContext();
   const handleSubmit = useEmployeeStepSubmitHandler(props);
 
-  if (!employeeBag.taxStepsAvailability.state_taxes.isAvailable) return null;
+  if (!employeeBag.taxStepsAvailability.state_taxes.isAvailable) {
+    return null;
+  }
 
   return (
     <PayrollEmployeeForm

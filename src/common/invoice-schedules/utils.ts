@@ -74,12 +74,16 @@ export function buildRecurrence(values: Record<string, unknown>): {
 export function buildCustomDays(
   values: Record<string, unknown>,
 ): [number, number] | undefined {
-  if (values.periodicity !== SEMI_MONTHLY_PERIODICITY) return undefined;
+  if (values.periodicity !== SEMI_MONTHLY_PERIODICITY) {
+    return undefined;
+  }
 
   const first = Number(values.custom_day_1);
   const second = Number(values.custom_day_2);
 
-  if (!first || !second) return undefined;
+  if (!first || !second) {
+    return undefined;
+  }
 
   return [first, second];
 }

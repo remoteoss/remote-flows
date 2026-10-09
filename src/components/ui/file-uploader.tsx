@@ -5,7 +5,9 @@ import { cn } from '@/src/lib/utils';
 
 // Convert accept string to readable format (e.g., ".pdf, .doc" -> "PDF, DOC")
 const getAcceptedFormats = (accept?: string) => {
-  if (!accept) return null;
+  if (!accept) {
+    return null;
+  }
   return accept
     .split(',')
     .map((ext) => ext.trim().toUpperCase())

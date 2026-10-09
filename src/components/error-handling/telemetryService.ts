@@ -54,7 +54,9 @@ export const logDebugPayload = (
   payload: ErrorPayload,
   debugMode: boolean,
 ): void => {
-  if (!debugMode) return;
+  if (!debugMode) {
+    return;
+  }
 
   const severityEmoji = {
     critical: '🔴',
