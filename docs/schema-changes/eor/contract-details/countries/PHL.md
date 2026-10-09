@@ -14,6 +14,7 @@ Schema versions for employee onboarding in the Philippines.
 
 - Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `PHL`) to inspect field-level diffs between your current pin and v6. Prefer jumping straight from v1 to v6 when upgrading.
 - `contract_duration_type` no longer offers `fixed_term`, and `contract_end_date` is rejected, when the employee has a recognized seniority date (`has_seniority_date: "yes"`). Flag-gated, and employments created before the cutoff date are unaffected — no action required for existing contracts.
+- `contract_duration_type` gains a help center link, and `contract_end_date` now accepts `null`. It's still required for `fixed_term` and not allowed otherwise.
 
 **Migration:**
 
