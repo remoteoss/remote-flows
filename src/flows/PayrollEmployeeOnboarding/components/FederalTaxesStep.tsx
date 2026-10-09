@@ -2,6 +2,7 @@ import { usePayrollEmployeeOnboardingContext } from '@/src/flows/PayrollEmployee
 import { PayrollEmployeeForm } from '@/src/flows/PayrollEmployeeOnboarding/components/PayrollEmployeeForm';
 import { useEmployeeStepSubmitHandler } from '@/src/flows/PayrollEmployeeOnboarding/components/useEmployeeStepSubmitHandler';
 import type { GPStepCallbacks } from '@/src/flows/types';
+import { getEmployeeStepDefaultValues } from '@/src/flows/PayrollEmployeeOnboarding/utils';
 
 /**
  * Render only when `employeeBag.taxStepsAvailability.federal_taxes.isAvailable`
@@ -13,21 +14,20 @@ export function FederalTaxesStep(props: GPStepCallbacks) {
   const { employeeBag } = usePayrollEmployeeOnboardingContext();
   const handleSubmit = useEmployeeStepSubmitHandler(props);
 
-  if (!employeeBag.taxStepsAvailability.federal_taxes.isAvailable) return null;
+  if (
+    !employeeBag.taxStepsAvailability.federal_taxes.isAvailable ||
+    employeeBag.isLoadingSavedValues
+  )
+    return null;
 
   return (
     <PayrollEmployeeForm
       onSubmit={handleSubmit}
-      defaultValues={{
-        ...(employeeBag.initialValues?.federal_taxes as Record<
-          string,
-          unknown
-        >),
-        ...(employeeBag.stepState.values?.federal_taxes as Record<
-          string,
-          unknown
-        >),
-      }}
+      defaultValues={getEmployeeStepDefaultValues('federal_taxes', {
+        initialValues: employeeBag.initialValues,
+        savedValues: employeeBag.savedValues,
+        stepValues: employeeBag.stepState.values,
+      })}
     />
   );
 }
