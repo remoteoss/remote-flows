@@ -15,7 +15,10 @@ export const ONBOARDING_OPTIONS = {
     'job_title_eligibility',
   ] as const,
   jsonSchemaVersion: ONBOARDING_JSON_SCHEMA_VERSION,
-  jsonSchemaVersionByCountry: ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY,
+  jsonSchemaVersionByCountry: new Proxy(
+    {},
+    { get: () => ({ contract_details: 'latest' }) },
+  ) as typeof ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY,
   jsfModify: {
     basic_information: {
       fields: {

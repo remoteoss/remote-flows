@@ -91,9 +91,9 @@ async function fetchLiveCountries(client: Client): Promise<string[]> {
 }
 
 function versionFor(country: string, check: SchemaCheckType) {
-  return check === 'latest'
-    ? 'latest'
-    : resolvePinnedVersion(country, DEFAULT_VERSION);
+  return check === 'pinned'
+    ? resolvePinnedVersion(country, DEFAULT_VERSION)
+    : 'latest';
 }
 
 async function fetchLiveSchema(
@@ -214,7 +214,7 @@ async function checkCountry(
             client,
             employmentId,
             schema,
-            resolvePinnedVersion(country, DEFAULT_VERSION),
+            version,
             {
               strategy,
               seed: seedFor(country),

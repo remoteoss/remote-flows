@@ -95,7 +95,7 @@ export async function submitContractDetails(
   client: Client,
   employmentId: string,
   schema: Record<string, unknown> | null,
-  version: number,
+  version: number | 'latest',
   {
     strategy,
     seed,
