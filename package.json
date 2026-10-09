@@ -106,7 +106,7 @@
     "@remoteoss/remote-json-schema-form-kit": "1.1.2",
     "@tailwindcss/cli": "4.2.4",
     "@tailwindcss/postcss": "4.2.4",
-    "@tanstack/react-query": "5.103.1",
+    "@tanstack/react-query": "5.104.1",
     "class-variance-authority": "0.7.1",
     "cmdk": "1.1.1",
     "cn": "0.3.0",
