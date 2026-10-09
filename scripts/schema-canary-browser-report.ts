@@ -71,4 +71,7 @@ for (const [arg, track] of [
   appendFileSync(file, `${existing ? '\n\n' : ''}${failures}`);
 }
 
+if (process.env.GITHUB_OUTPUT) {
+  appendFileSync(process.env.GITHUB_OUTPUT, 'complete=true\n');
+}
 process.exitCode = decideExitCode(rows);

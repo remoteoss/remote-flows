@@ -86,7 +86,7 @@ jobs:
 
       - name: Add the browser results to the report
         id: browser
-        if: steps.kept.outputs.any == 'true'
+        if: ${{ !cancelled() && steps.kept.outputs.any == 'true' }}
         run: npm run schema-canary:browser-report -- --kept="$RUNNER_TEMP/kept-employments.json" --results="$RUNNER_TEMP/browser-results.json" --write --failures-out="$RUNNER_TEMP/pinned-failures.md" --latest-failures-out="$RUNNER_TEMP/latest-failures.md"
 
       - name: Archive the kept employments
@@ -134,15 +134,20 @@ jobs:
           CANARY_OUTCOME: ${{ steps.canary.outcome }}
           BROWSER_RUN_OUTCOME: ${{ steps.browser-run.outcome }}
           BROWSER_OUTCOME: ${{ steps.browser.outcome }}
+          BROWSER_COMPLETE: ${{ steps.browser.outputs.complete }}
         run: |
           is_success_or_skipped() { [ "$1" = success ] || [ "$1" = skipped ]; }
-          checked_everything=false
+          checked_pinned=false
           if [ "$CANARY_OUTCOME" = success ] && is_success_or_skipped "$BROWSER_RUN_OUTCOME" && is_success_or_skipped "$BROWSER_OUTCOME"; then
-            checked_everything=true
+            checked_pinned=true
+          fi
+          checked_latest=false
+          if [ "$CANARY_OUTCOME" = success ] && { [ "$BROWSER_OUTCOME" = skipped ] || [ "$BROWSER_COMPLETE" = true ]; }; then
+            checked_latest=true
           fi
 
           sync_issue() {
-            local label=$1 title=$2 failing=$3 body_file=$4 number
+            local label=$1 title=$2 failing=$3 body_file=$4 checked=$5 number
             gh label create "$label" --color B60205 --description "$title" --force
             number=$(gh issue list --label "$label" --state open --json number --jq '.[0].number // empty')
             if [ "$failing" = true ]; then
@@ -153,7 +158,7 @@ jobs:
                 gh issue edit "$number" --body-file "$body_file"
                 gh issue comment "$number" --body "The failures changed. Failing run: $RUN_URL"
               fi
-            elif [ "$checked_everything" = true ]; then
+            elif [ "$checked" = true ]; then
               for open in $(gh issue list --label "$label" --state open --json number --jq '.[].number'); do
                 gh issue close "$open" --comment "Back to green: $RUN_URL"
               done
@@ -175,7 +180,7 @@ jobs:
               echo "The canary stopped before it checked any country, for example because sandbox auth failed. The run log has the error."
             fi
           } > "$RUNNER_TEMP/pinned-issue.md"
-          sync_issue schema-canary "Schema canary is failing" "$pinned_failing" "$RUNNER_TEMP/pinned-issue.md"
+          sync_issue schema-canary "Schema canary is failing" "$pinned_failing" "$RUNNER_TEMP/pinned-issue.md" "$checked_pinned"
 
           latest_failing=false
           if [ -s "$RUNNER_TEMP/latest-failures.md" ]; then
@@ -186,7 +191,7 @@ jobs:
             echo
             cat "$RUNNER_TEMP/latest-failures.md" 2>/dev/null
           } > "$RUNNER_TEMP/latest-issue.md"
-          sync_issue schema-canary-latest "Schema canary is failing on the latest versions" "$latest_failing" "$RUNNER_TEMP/latest-issue.md"
+          sync_issue schema-canary-latest "Schema canary is failing on the latest versions" "$latest_failing" "$RUNNER_TEMP/latest-issue.md" "$checked_latest"
 
   pr-canary:
     if: github.event_name == 'pull_request'
@@ -237,7 +242,7 @@ jobs:
           refresh-token: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
 
       - name: Check the browser results
-        if: steps.kept.outputs.any == 'true'
+        if: ${{ !cancelled() && steps.kept.outputs.any == 'true' }}
         run: npm run schema-canary:browser-report -- --kept="$RUNNER_TEMP/kept-employments.json" --results="$RUNNER_TEMP/browser-results.json"
 
       - name: Archive the kept employments
