@@ -158,6 +158,9 @@ import type {
   GetV1ContractorInvoicesErrors,
   GetV1ContractorInvoicesIdData,
   GetV1ContractorInvoicesIdErrors,
+  GetV1ContractorInvoicesIdPayInDetailsData,
+  GetV1ContractorInvoicesIdPayInDetailsErrors,
+  GetV1ContractorInvoicesIdPayInDetailsResponses,
   GetV1ContractorInvoicesIdResponses,
   GetV1ContractorInvoicesResponses,
   GetV1ContractorsCorTerminationRequestsData,
@@ -234,6 +237,9 @@ import type {
   GetV1EmployeeExpensesData,
   GetV1EmployeeExpensesErrors,
   GetV1EmployeeExpensesResponses,
+  GetV1EmployeeFederalTaxesData,
+  GetV1EmployeeFederalTaxesErrors,
+  GetV1EmployeeFederalTaxesResponses,
   GetV1EmployeeIncentivesData,
   GetV1EmployeeIncentivesErrors,
   GetV1EmployeeIncentivesResponses,
@@ -255,6 +261,9 @@ import type {
   GetV1EmployeePersonalInformationData,
   GetV1EmployeePersonalInformationErrors,
   GetV1EmployeePersonalInformationResponses,
+  GetV1EmployeeStateTaxesJurisdictionData,
+  GetV1EmployeeStateTaxesJurisdictionErrors,
+  GetV1EmployeeStateTaxesJurisdictionResponses,
   GetV1EmployeeTimeoffData,
   GetV1EmployeeTimeoffErrors,
   GetV1EmployeeTimeoffResponses,
@@ -417,6 +426,9 @@ import type {
   GetV1ProbationExtensionsIdData,
   GetV1ProbationExtensionsIdErrors,
   GetV1ProbationExtensionsIdResponses,
+  GetV1ProjectEligibleLeadsData,
+  GetV1ProjectEligibleLeadsErrors,
+  GetV1ProjectEligibleLeadsResponses,
   GetV1ProjectsData,
   GetV1ProjectsErrors,
   GetV1ProjectsIdData,
@@ -746,6 +758,9 @@ import type {
   PostV1ProbationExtensionsData,
   PostV1ProbationExtensionsErrors,
   PostV1ProbationExtensionsResponses,
+  PostV1ProjectsData,
+  PostV1ProjectsErrors,
+  PostV1ProjectsResponses,
   PostV1ReadyData,
   PostV1ReadyErrors,
   PostV1ReadyResponses,
@@ -767,6 +782,9 @@ import type {
   PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusErrors,
   PostV1SandboxCompaniesCompanyIdLegalEntitiesLegalEntityIdSetCreditRiskStatusResponses,
   PostV1SandboxCompaniesCompanyIdLegalEntitiesResponses,
+  PostV1SandboxContractorInvoicesInitiatePaymentData,
+  PostV1SandboxContractorInvoicesInitiatePaymentErrors,
+  PostV1SandboxContractorInvoicesInitiatePaymentResponses,
   PostV1SandboxContractorsEmploymentsEmploymentIdRatesData,
   PostV1SandboxContractorsEmploymentsEmploymentIdRatesErrors,
   PostV1SandboxContractorsEmploymentsEmploymentIdRatesResponses,
@@ -1278,6 +1296,7 @@ export const getV1ContractAmendmentsSchema = <
  * Bulk creates pay items for employments. Supports up to 500 items per request.
  * Each item must supply exactly one of `code` or `external_import_code` to identify the pay element.
  * Integration-specific fields (shift code, currency, pay amount, etc.) go in the `provider_data` object.
+ * Pay codes that use a pay item custom configuration, such as a company car, describe it under `custom_configuration` in GET /v1/companies/:company_id/legal-entities/:legal_entity_id/pay-codes. Send its values in the pay item's `custom_configuration`, with the same `key`.
  * Only Global Payroll employments are supported. Non-GP employments are returned as `employment_not_global_payroll`.
  *
  * ## Authentication
@@ -1375,6 +1394,8 @@ export const getV2OffboardingsId = <ThrowOnError extends boolean = false>(
  * Update address details
  *
  * Updates employment's address details.
+ *
+ * The address is replaced: optional fields that aren't sent are cleared.
  *
  * This endpoint requires and returns country-specific data. The exact required and returned fields will
  * vary depending on which country the employment is in. To see the list of parameters for each country,
@@ -1871,6 +1892,13 @@ export const getV1Employments = <ThrowOnError extends boolean = false>(
  *
  * To create a HRIS employee, pass `hris` as the `type` parameter.
  *
+ * ## Job Title Eligibility
+ *
+ * When the company requires the [job title eligibility
+ * check](#operation/post_create_employment_job_title_eligibility_check), an ineligible
+ * `job_title` is rejected here, before the employment or any contract details exist — not
+ * only when contract details are later submitted.
+ *
  * This endpoint requires and returns country-specific data. The exact required and returned fields will
  * vary depending on which country the employment is in. To see the list of parameters for each country,
  * see the **Show form schema** endpoint under the [Countries](#tag/Countries) category.
@@ -2337,7 +2365,7 @@ export const getV1EmployeeDocumentsId = <ThrowOnError extends boolean = false>(
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | View projects (`project:read`) | Manage projects (`project:write`) |
+ * | Manage projects (`projects`) | View projects (`project:read`) | Manage projects (`project:write`) |
  */
 export const getV1Projects = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1ProjectsData, ThrowOnError>,
@@ -2356,6 +2384,46 @@ export const getV1Projects = <ThrowOnError extends boolean = false>(
     ],
     url: '/v1/projects',
     ...options,
+  });
+
+/**
+ * Create a company project
+ *
+ * Creates a new contractor project for your company.
+ *
+ * ## Authentication
+ *
+ * This endpoint requires the following token type:
+ *
+ * - **Company-scoped access token** (`OAuth2AuthorizationCode`) — obtained through the Authorization Code flow or the Refresh Token flow. See [Authentication for partners](https://developer.remote.com/docs/authentication-for-partners).
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage projects (`projects`) | - | Manage projects (`project:write`) |
+ */
+export const postV1Projects = <ThrowOnError extends boolean = false>(
+  options: Options<PostV1ProjectsData, ThrowOnError>,
+): RequestResult<PostV1ProjectsResponses, PostV1ProjectsErrors, ThrowOnError> =>
+  (options.client ?? client).post<
+    PostV1ProjectsResponses,
+    PostV1ProjectsErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/projects',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 
 /**
@@ -2597,8 +2665,12 @@ export const getV1CompaniesSchema = <ThrowOnError extends boolean = false>(
 /**
  * Seed a contractor rate
  *
- * Creates or replaces the contractor's rate, so that the rate endpoints can be exercised without
- * going through contract signature.
+ * Sets the contractor's main rate, the same way an employer's rate edit does. A main rate without a
+ * `service_start_date` is updated in place and keeps its `id`. A main rate with one belongs to a
+ * Statement of Work and is kept: seeding adds a new main rate beside it, and the list endpoint
+ * returns both while that Statement of Work is in force. This lets the rate endpoints be exercised
+ * without going through contract signature. Contractor Management Plus contractors cannot be
+ * seeded: the endpoint returns `422`.
  *
  * The currency is derived from the legal entity the contractor is paid in by. A rate in a
  * currency the contractor cannot be paid in is rejected with `422`.
@@ -2859,7 +2931,7 @@ export const getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage payroll runs (`payroll`) | View payslips (`payslip:read`) | - |
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
  */
 export const getV1EmployeePayslips = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1EmployeePayslipsData, ThrowOnError>,
@@ -2894,12 +2966,22 @@ export const getV1EmployeePayslips = <ThrowOnError extends boolean = false>(
  * What the response contains:
  *
  * - The **configured** rate — not amounts that were scheduled, invoiced, or paid.
- * - **Effective** rates only. Terms of a statement of work that has not been signed yet are not included.
+ * - The contractor's main rate, the one Show Employment returns as `contractor_rate`. It can belong
+ *   to a Statement of Work whose services have not started yet. When a Statement of Work established
+ *   it, its `service_start_date` says when it applies.
+ * - The rate of every signed Statement of Work that has not been replaced or ended, including one
+ *   whose services have not started. A Statement of Work past its planned end date keeps its rate
+ *   listed: the engagement continues month to month until it is replaced or ended.
+ * - Not listed: rates of replaced or ended Statements of Work other than the main rate, terms of an
+ *   unsigned Statement of Work, and a rate a later edit or signature replaced, unless a Statement of
+ *   Work still in force established it, in which case both the new and the original rate are listed.
  * - The stored rate, even when the contractor's contract has already expired.
  *
  * `contract_start_date` and `contract_expiration_date` describe the contract the rate is paid under,
- * not where the rate came from. `type` and `pay_frequency` are open enums, so treat an unrecognised
- * value as opaque rather than an error. See the field descriptions for how each is derived.
+ * not where the rate came from; `service_start_date` and `service_end_date` describe the Statement
+ * of Work that established the rate and are null when none did. `type` and `pay_frequency` list
+ * every value Remote stores; a new value is announced as an API change. See the field descriptions
+ * for how each is derived.
  *
  * A contractor with no rate, and an employment that is not a contractor, both return an empty list.
  *
@@ -3837,7 +3919,7 @@ export const postV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsReq
 /**
  * List expenses
  *
- * Lists all expenses records
+ * Lists expenses. Use `status` to list only expenses in the given statuses.
  *
  * ## Authentication
  *
@@ -3860,6 +3942,7 @@ export const getV1Expenses = <ThrowOnError extends boolean = false>(
     GetV1ExpensesErrors,
     ThrowOnError
   >({
+    querySerializer: { parameters: { status: { array: { explode: false } } } },
     security: [
       {
         key: 'CustomerAPIToken',
@@ -4328,7 +4411,7 @@ export const getV1ContractorsEmploymentsEmploymentIdContractorCurrencies = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | View projects (`project:read`) | Manage projects (`project:write`) |
+ * | Manage projects (`projects`) | View projects (`project:read`) | Manage projects (`project:write`) |
  */
 export const getV1ProjectsId = <ThrowOnError extends boolean = false>(
   options: Options<GetV1ProjectsIdData, ThrowOnError>,
@@ -4372,7 +4455,7 @@ export const getV1ProjectsId = <ThrowOnError extends boolean = false>(
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage timeoffs (`time_and_attendance`) | - | Manage projects (`project:write`) |
+ * | Manage projects (`projects`) | - | Manage projects (`project:write`) |
  */
 export const patchV1ProjectsId = <ThrowOnError extends boolean = false>(
   options: Options<PatchV1ProjectsIdData, ThrowOnError>,
@@ -6126,6 +6209,8 @@ export const getV1EmployeeAddress = <ThrowOnError extends boolean = false>(
  *
  * Updates the authenticated employee's residential address.
  *
+ * The address is replaced: optional fields that aren't sent are cleared.
+ *
  * The employment is derived from the access token's subject — there is no
  * employment id in the path. The token must be an employee-role token
  * (typically obtained via the OAuth2 assertion grant with subject
@@ -7259,6 +7344,77 @@ export const getV1ContractAmendmentsId = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Initiate a Contractor Invoice payment
+ *
+ * Approves the selected `issued` Contractor Invoices and initiates a bank-transfer payment for
+ * them on the company's behalf, as Remote would. The invoices become `pending_payment` and
+ * carry a payment reference, so the `payment` summary and the pay-in details of a real payment
+ * can be read back.
+ *
+ * Preconditions:
+ *
+ *   * Run `POST /v1/sandbox/companies/{company_id}/bypass-eligibility-checks` first, so the
+ *     legal entity has passed KYB.
+ *   * Every contractor on the selected invoices must hold a bank-account payout method, and
+ *     every contractor in one request must use the same payout method.
+ *   * The company's legal entity must be able to pay in the invoice currency — its default
+ *     currency, or one it holds an active virtual account for.
+ *   * When the contractors are paid on Remote's licensed rails, the user initiating the
+ *     payment must have completed identity verification.
+ *
+ * Calling it again for invoices that are already `pending_payment` returns the same payment,
+ * creates nothing new and does not retry the pay-in. If `pay_in_method` stays `not_selected`
+ * after initiation, Remote has not recorded the pay-in: initiate a fresh batch of invoices,
+ * or contact Remote.
+ *
+ * This endpoint is only available in Sandbox, otherwise it will respond with a 404. There is
+ * no pay action on the production API: payments are initiated in Remote.
+ *
+ * ## Authentication
+ *
+ * This endpoint accepts any one of the following token types:
+ *
+ * - **Company-scoped access token** (`OAuth2AuthorizationCode`) — obtained through the Authorization Code flow or the Refresh Token flow. See [Authentication for partners](https://developer.remote.com/docs/authentication-for-partners).
+ * - **Customer API token** (`CustomerAPIToken`) — generated by the customer on their Integration Settings page. See [Authorization for customers](https://developer.remote.com/docs/authorization-for-customers).
+ */
+export const postV1SandboxContractorInvoicesInitiatePayment = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostV1SandboxContractorInvoicesInitiatePaymentData,
+    ThrowOnError
+  >,
+): RequestResult<
+  PostV1SandboxContractorInvoicesInitiatePaymentResponses,
+  PostV1SandboxContractorInvoicesInitiatePaymentErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostV1SandboxContractorInvoicesInitiatePaymentResponses,
+    PostV1SandboxContractorInvoicesInitiatePaymentErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/sandbox/contractor-invoices/initiate-payment',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * List Company Managers
  *
  * List all company managers of an integration. If filtered by the company_id param,
@@ -7655,6 +7811,51 @@ export const patchV1WebhookCallbacksId = <ThrowOnError extends boolean = false>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * Show employee federal taxes
+ *
+ * Returns the authenticated employee's saved US federal tax (W-4) answers, keyed like the
+ * `global_payroll_federal_taxes` form so they can pre-fill it. `federal_taxes` is `null` when
+ * nothing has been saved yet.
+ *
+ * Available for US Global Payroll employees once they reach the
+ * post-enrollment state. Calls made before then return a 404.
+ *
+ * ## Authentication
+ *
+ * This endpoint requires the following token type:
+ *
+ * - **Employee-scoped access token** (`OAuth2Assertion`) — obtained through the `urn:ietf:params:oauth:grant-type:jwt-bearer` grant. See [Authentication for partners](https://developer.remote.com/docs/authentication-for-partners).
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View personal details (`personal_detail:read`) | Manage personal details (`personal_detail:write`) |
+ */
+export const getV1EmployeeFederalTaxes = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1EmployeeFederalTaxesData, ThrowOnError>,
+): RequestResult<
+  GetV1EmployeeFederalTaxesResponses,
+  GetV1EmployeeFederalTaxesErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).get<
+    GetV1EmployeeFederalTaxesResponses,
+    GetV1EmployeeFederalTaxesErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/employee/federal-taxes',
+    ...options,
   });
 
 /**
@@ -9832,7 +10033,7 @@ export const putV2EmploymentsEmploymentIdContractDetails = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage payroll runs (`payroll`) | View payslips (`payslip:read`) | - |
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
  */
 export const getV1EmployeePayslipFiles = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1EmployeePayslipFilesData, ThrowOnError>,
@@ -10557,7 +10758,7 @@ export const postV1SandboxWebhookCallbacksTrigger = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage payroll runs (`payroll`) | View payslips (`payslip:read`) | - |
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
  */
 export const getV1PayslipsPayslipIdPdf = <ThrowOnError extends boolean = false>(
   options: Options<GetV1PayslipsPayslipIdPdfData, ThrowOnError>,
@@ -10638,6 +10839,7 @@ export const deleteV1PayItemsId = <ThrowOnError extends boolean = false>(
  *
  * Updates a pay item. Editing a pay item archives the existing one and creates a new one with a new `id` — use the response's `replaced_ids` to reconcile with the id you had stored. Only the fields provided are changed.
  * Cannot update pay items linked to a payroll adjustment, salary pay items, pay items automatically created from an external source, or pay items whose payroll run is no longer in preparation.
+ * When `custom_configuration` doesn't match the pay code's custom configuration, the 422 response is a parameter error with the same `code` bulk create returns: `custom_configuration_not_used`, `custom_configuration_required` or `invalid_custom_configuration`, and the `param` at fault.
  *
  * ## Authentication
  *
@@ -13236,7 +13438,7 @@ export const getV1BulkEmploymentJobsJobId = <
 /**
  * List Pay Items
  *
- * Lists pay items for a company with optional filtering by employment, date range, and pagination.
+ * Lists pay items for a company with optional filtering by employment, legal entity, date range, and pagination.
  *
  * ## Authentication
  *
@@ -13782,7 +13984,7 @@ export const getV1ProbationExtensionsId = <
  *
  * | Category | Read only Scope | Write only Scope (read access implicit) |
  * |---|---|---|
- * | Manage payroll runs (`payroll`) | View payslips (`payslip:read`) | - |
+ * | Manage employment documents (`employment_documents`) | View payslips (`payslip:read`) | - |
  */
 export const getV1Payslips = <ThrowOnError extends boolean = false>(
   options?: Options<GetV1PayslipsData, ThrowOnError>,
@@ -13881,8 +14083,10 @@ export const postV1SandboxEmploymentsEmploymentIdJobTitleReviewApprove = <
  * returned `check_id` back as `additional_job_title_eligibility_check_slug` when submitting
  * contract details, exactly as you would in production.
  *
- * `role_description` must be the one the submission will carry, since the submission
- * verifies that the recorded verdict still describes what was sent.
+ * `role_description`, `role_is_onsite` and `role_requires_license` must be the answers the
+ * job title eligibility check and the submission will carry, since both reuse the recorded
+ * verdict only while it still describes what was sent. A role question the employment's
+ * country does not ask is ignored.
  *
  * A `not_assessed` verdict means the check does not apply to this employment at all — not a
  * draft, a PEO employment, a country or hiring model that does not screen job titles, or an
@@ -13988,7 +14192,12 @@ export const getV1ExpensesExpenseIdReceiptsReceiptId = <
 /**
  * Token
  *
- * Endpoint to exchange tokens in the Authorization Code, Assertion Flow, Client Credentials and Refresh Token flows
+ * Endpoint to exchange tokens in the Authorization Code, Assertion Flow, Client Credentials and Refresh Token flows.
+ *
+ * For backward compatibility, this endpoint returns `400` with `invalid_grant` in some cases where
+ * RFC 6749 would use `invalid_client` (invalid client credentials) or `unauthorized_client`
+ * (the integration is not allowed to use the grant type). Use `error_description` to tell these
+ * cases apart.
  *
  * ## Authentication
  *
@@ -14647,6 +14856,8 @@ export const postV1Companies = <ThrowOnError extends boolean = false>(
  * Update billing address details
  *
  * Updates employment's billing address details.
+ *
+ * The billing address is replaced: optional fields that aren't sent are cleared.
  *
  * This endpoint requires and returns country-specific data. The exact required and returned fields will
  * vary depending on which country the employment is in. To see the list of parameters for each country,
@@ -15595,6 +15806,53 @@ export const postV1ContractorInvoiceSchedules = <
   });
 
 /**
+ * Show employee state taxes
+ *
+ * Returns the authenticated employee's saved US state tax withholding answers for a
+ * single jurisdiction (e.g. `NY`), keyed like that jurisdiction's
+ * `global_payroll_state_taxes` form so they can pre-fill it. `state_taxes` is `null`
+ * when nothing has been saved yet.
+ *
+ * Returns a 404 when the employment has no state tax form for the jurisdiction.
+ *
+ * ## Authentication
+ *
+ * This endpoint requires the following token type:
+ *
+ * - **Employee-scoped access token** (`OAuth2Assertion`) — obtained through the `urn:ietf:params:oauth:grant-type:jwt-bearer` grant. See [Authentication for partners](https://developer.remote.com/docs/authentication-for-partners).
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | View personal details (`personal_detail:read`) | Manage personal details (`personal_detail:write`) |
+ */
+export const getV1EmployeeStateTaxesJurisdiction = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1EmployeeStateTaxesJurisdictionData, ThrowOnError>,
+): RequestResult<
+  GetV1EmployeeStateTaxesJurisdictionResponses,
+  GetV1EmployeeStateTaxesJurisdictionErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetV1EmployeeStateTaxesJurisdictionResponses,
+    GetV1EmployeeStateTaxesJurisdictionErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        key: 'OAuth2Assertion',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/employee/state-taxes/{jurisdiction}',
+    ...options,
+  });
+
+/**
  * Submit employee state taxes
  *
  * Submits the authenticated employee's US state tax withholding answers for a
@@ -15869,6 +16127,46 @@ export const getV1EmploymentsEmploymentIdEmploymentAgreementPreview = <
   });
 
 /**
+ * List eligible project leads
+ *
+ * Lists the users eligible to be assigned as a lead for a company's projects.
+ *
+ * ## Authentication
+ *
+ * This endpoint requires the following token type:
+ *
+ * - **Company-scoped access token** (`OAuth2AuthorizationCode`) — obtained through the Authorization Code flow or the Refresh Token flow. See [Authentication for partners](https://developer.remote.com/docs/authentication-for-partners).
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage projects (`projects`) | View projects (`project:read`) | Manage projects (`project:write`) |
+ */
+export const getV1ProjectEligibleLeads = <ThrowOnError extends boolean = false>(
+  options?: Options<GetV1ProjectEligibleLeadsData, ThrowOnError>,
+): RequestResult<
+  GetV1ProjectEligibleLeadsResponses,
+  GetV1ProjectEligibleLeadsErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).get<
+    GetV1ProjectEligibleLeadsResponses,
+    GetV1ProjectEligibleLeadsErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/project-eligible-leads',
+    ...options,
+  });
+
+/**
  * Update administrative details
  *
  * Updates employment's administrative details.
@@ -15937,6 +16235,71 @@ export const putV2EmploymentsEmploymentIdAdministrativeDetails = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * Show Contractor Invoice pay-in details
+ *
+ * Shows how the payment that collects a Contractor Invoice is paid in, and where to send it.
+ *
+ * `bank_accounts` carries Remote's receiving accounts while `status` is `awaiting_payment`.
+ * It is null once the funds are in flight or received, while the payment sits on a compliance
+ * hold (`blocked`) or is partly paid (`partially_paid`, where `amount_due` overstates what
+ * remains and Remote follows up with the balance directly), and whenever Remote has no
+ * account to publish.
+ *
+ * `pay_in_method` says whether a transfer is yours to send at all: Remote collects
+ * `direct_debit`, `card` and `prefunding_credit` payments itself, and a transfer would pay the
+ * same invoices twice. That holds after a failed or disputed collection too: the payment reads
+ * `awaiting_payment` with its method unchanged until the company retries it in Remote, so a
+ * failed debit is not an invitation to wire, even when accounts are present. Accounts can
+ * differ from one payment to the next, so read them before every transfer rather than storing
+ * them.
+ *
+ * The endpoint answers 404 only while no payment stands behind the invoice. A passing
+ * database fault surfaces as a 504 or a 500; retry either.
+ *
+ * ## Authentication
+ *
+ * This endpoint accepts any one of the following token types:
+ *
+ * - **Company-scoped access token** (`OAuth2AuthorizationCode`) — obtained through the Authorization Code flow or the Refresh Token flow. See [Authentication for partners](https://developer.remote.com/docs/authentication-for-partners).
+ * - **Customer API token** (`CustomerAPIToken`) — generated by the customer on their Integration Settings page. See [Authorization for customers](https://developer.remote.com/docs/authorization-for-customers).
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | View pay-in bank details (`pay_in_details`) | View pay-in details (`pay_in_details:read`) | - |
+ */
+export const getV1ContractorInvoicesIdPayInDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetV1ContractorInvoicesIdPayInDetailsData, ThrowOnError>,
+): RequestResult<
+  GetV1ContractorInvoicesIdPayInDetailsResponses,
+  GetV1ContractorInvoicesIdPayInDetailsErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetV1ContractorInvoicesIdPayInDetailsResponses,
+    GetV1ContractorInvoicesIdPayInDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/contractor-invoices/{id}/pay-in-details',
+    ...options,
   });
 
 /**

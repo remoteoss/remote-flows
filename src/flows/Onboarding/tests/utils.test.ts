@@ -6,6 +6,7 @@ import {
   getContractDetailsSchemaVersion,
   getContractDetailsStrategy,
   getJobTitleEligibilityParams,
+  getJobTitleEligibilityValues,
   JOB_TITLE_ELIGIBILITY_SLUG_FIELD,
   usesJsfV1ContractDetails,
 } from '../utils';
@@ -366,5 +367,31 @@ describe('getJobTitleEligibilityParams', () => {
     const result = getJobTitleEligibilityParams(roleFields, filledValues);
 
     expect(result).toEqual(filledValues);
+  });
+});
+
+describe('getJobTitleEligibilityValues', () => {
+  it.each([
+    ['eligible', 'yes'],
+    ['not_eligible', 'no'],
+    ['needs_review', 'maybe'],
+    ['eligible_with_risk_acknowledgement', 'yes_with_ack'],
+    ['not_assessed', null],
+  ] as const)('maps the %s verdict to the %s result', (verdict, result) => {
+    expect(
+      getJobTitleEligibilityValues({ check_id: 'check-id', verdict }),
+    ).toEqual({
+      additional_job_title_eligibility_check_slug: 'check-id',
+      additional_job_title_eligibility_check_result: result,
+    });
+  });
+
+  it('sets the slug to null when the check has no identifier', () => {
+    expect(
+      getJobTitleEligibilityValues({ check_id: null, verdict: 'eligible' }),
+    ).toEqual({
+      additional_job_title_eligibility_check_slug: null,
+      additional_job_title_eligibility_check_result: 'yes',
+    });
   });
 });
