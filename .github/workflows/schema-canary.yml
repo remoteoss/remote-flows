@@ -191,7 +191,9 @@ jobs:
             echo
             cat "$RUNNER_TEMP/latest-failures.md" 2>/dev/null
           } > "$RUNNER_TEMP/latest-issue.md"
-          sync_issue schema-canary-latest "Schema canary is failing on the latest versions" "$latest_failing" "$RUNNER_TEMP/latest-issue.md" "$checked_latest"
+          if [ "$BROWSER_RUN_OUTCOME" != failure ]; then
+            sync_issue schema-canary-latest "Schema canary is failing on the latest versions" "$latest_failing" "$RUNNER_TEMP/latest-issue.md" "$checked_latest"
+          fi
 
   pr-canary:
     if: github.event_name == 'pull_request'
