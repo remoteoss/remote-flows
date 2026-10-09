@@ -8,19 +8,19 @@ const DEFAULT_SCOPES = 'all:write';
 async function generateJWTToken() {
   const {
     VITE_CLIENT_ID,
-    VITE_CLIENT_SECRET,
+    REMOTE_CLIENT_SECRET,
     VITE_REMOTE_GATEWAY,
     VITE_USER_ID,
   } = process.env;
 
   if (
     !VITE_CLIENT_ID ||
-    (!VITE_CLIENT_SECRET && VITE_REMOTE_GATEWAY !== 'local') ||
+    (!REMOTE_CLIENT_SECRET && VITE_REMOTE_GATEWAY !== 'local') ||
     !VITE_REMOTE_GATEWAY ||
     !VITE_USER_ID
   ) {
     throw new Error(
-      'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, or VITE_USER_ID',
+      'Missing VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, or VITE_USER_ID',
     );
   }
 
@@ -38,7 +38,7 @@ async function generateJWTToken() {
   };
 
   try {
-    const jwtToken = jwt.sign(payload, VITE_CLIENT_SECRET, {
+    const jwtToken = jwt.sign(payload, REMOTE_CLIENT_SECRET, {
       algorithm: 'HS256',
     });
     return jwtToken;
@@ -48,13 +48,15 @@ async function generateJWTToken() {
 }
 
 async function fetchCompanyManagerToken() {
-  const { VITE_REMOTE_GATEWAY, VITE_CLIENT_ID, VITE_CLIENT_SECRET } =
+  const { VITE_REMOTE_GATEWAY, VITE_CLIENT_ID, REMOTE_CLIENT_SECRET } =
     process.env;
   const gatewayUrl = buildGatewayURL();
 
   try {
     const jwtToken = await generateJWTToken();
-    const encodedCredentials = btoa(`${VITE_CLIENT_ID}:${VITE_CLIENT_SECRET}`);
+    const encodedCredentials = btoa(
+      `${VITE_CLIENT_ID}:${REMOTE_CLIENT_SECRET}`,
+    );
 
     const body = new URLSearchParams({
       grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
@@ -108,17 +110,17 @@ async function getCompanyManagerToken(req, res) {
 const EMPLOYEE_SCOPES = 'all:write';
 
 async function fetchEmployeeToken(employmentId) {
-  const { VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY } =
+  const { VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, VITE_REMOTE_GATEWAY } =
     process.env;
 
   if (
     !VITE_CLIENT_ID ||
-    (!VITE_CLIENT_SECRET && VITE_REMOTE_GATEWAY !== 'local') ||
+    (!REMOTE_CLIENT_SECRET && VITE_REMOTE_GATEWAY !== 'local') ||
     !VITE_REMOTE_GATEWAY ||
     !employmentId
   ) {
     throw new Error(
-      'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, or employmentId',
+      'Missing VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, or employmentId',
     );
   }
 
@@ -135,12 +137,12 @@ async function fetchEmployeeToken(employmentId) {
     iat: now,
   };
 
-  const jwtToken = jwt.sign(payload, VITE_CLIENT_SECRET, {
+  const jwtToken = jwt.sign(payload, REMOTE_CLIENT_SECRET, {
     algorithm: 'HS256',
   });
 
   const encodedCredentials = Buffer.from(
-    `${VITE_CLIENT_ID}:${VITE_CLIENT_SECRET}`,
+    `${VITE_CLIENT_ID}:${REMOTE_CLIENT_SECRET}`,
   ).toString('base64');
 
   const response = await fetch(`${gatewayUrl}/auth/oauth2/token`, {

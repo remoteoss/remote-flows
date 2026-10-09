@@ -4,35 +4,39 @@ const { fetchCompanyManagerToken } = require('./jwt_auth.js');
 async function fetchAccessToken() {
   const {
     VITE_CLIENT_ID,
-    VITE_CLIENT_SECRET,
+    REMOTE_CLIENT_SECRET,
     VITE_REMOTE_GATEWAY,
-    VITE_REFRESH_TOKEN,
+    REMOTE_REFRESH_TOKEN,
     VITE_USER_ID,
   } = process.env;
 
   // Local dev has no interactively-obtained refresh token; fall back to the
   // JWT-bearer assertion flow (same as fetchCompanyManagerToken) using
   // VITE_USER_ID instead.
-  if (VITE_REMOTE_GATEWAY === 'local' && !VITE_REFRESH_TOKEN && VITE_USER_ID) {
+  if (
+    VITE_REMOTE_GATEWAY === 'local' &&
+    !REMOTE_REFRESH_TOKEN &&
+    VITE_USER_ID
+  ) {
     return fetchCompanyManagerToken();
   }
 
   // for local development, we don't need a client secret
   if (
     !VITE_CLIENT_ID ||
-    (!VITE_CLIENT_SECRET && VITE_REMOTE_GATEWAY !== 'local') ||
+    (!REMOTE_CLIENT_SECRET && VITE_REMOTE_GATEWAY !== 'local') ||
     !VITE_REMOTE_GATEWAY ||
-    !VITE_REFRESH_TOKEN
+    !REMOTE_REFRESH_TOKEN
   ) {
     throw new Error(
-      'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, or VITE_REFRESH_TOKEN',
+      'Missing VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, or REMOTE_REFRESH_TOKEN',
     );
   }
 
   const gatewayUrl = buildGatewayURL();
 
   const encodedCredentials = Buffer.from(
-    `${VITE_CLIENT_ID}:${VITE_CLIENT_SECRET}`,
+    `${VITE_CLIENT_ID}:${REMOTE_CLIENT_SECRET}`,
   ).toString('base64');
 
   const response = await fetch(`${gatewayUrl}/auth/oauth2/token`, {
@@ -43,7 +47,7 @@ async function fetchAccessToken() {
     },
     body: new URLSearchParams({
       grant_type: 'refresh_token',
-      refresh_token: VITE_REFRESH_TOKEN,
+      refresh_token: REMOTE_REFRESH_TOKEN,
     }),
   });
 
@@ -57,24 +61,24 @@ async function fetchAccessToken() {
 }
 
 async function fetchClientCredentialsAccessToken() {
-  const { VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY } =
+  const { VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, VITE_REMOTE_GATEWAY } =
     process.env;
 
   // for local development, we don't need a client secret
   if (
     !VITE_CLIENT_ID ||
-    (!VITE_CLIENT_SECRET && VITE_REMOTE_GATEWAY !== 'local') ||
+    (!REMOTE_CLIENT_SECRET && VITE_REMOTE_GATEWAY !== 'local') ||
     !VITE_REMOTE_GATEWAY
   ) {
     throw new Error(
-      'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, or VITE_REMOTE_GATEWAY',
+      'Missing VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, or VITE_REMOTE_GATEWAY',
     );
   }
 
   const gatewayUrl = buildGatewayURL();
 
   const encodedCredentials = Buffer.from(
-    `${VITE_CLIENT_ID}:${VITE_CLIENT_SECRET}`,
+    `${VITE_CLIENT_ID}:${REMOTE_CLIENT_SECRET}`,
   ).toString('base64');
 
   const response = await fetch(`${gatewayUrl}/auth/oauth2/token`, {
