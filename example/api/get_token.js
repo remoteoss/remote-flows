@@ -153,7 +153,6 @@ async function getToken(req, res) {
 }
 
 module.exports = {
-  cacheUntilExpiry,
   getToken,
   fetchAccessToken,
   fetchClientCredentialsAccessToken,
