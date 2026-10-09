@@ -157,7 +157,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   IND: {
     // India
-    contract_details: 2,
+    contract_details: 6,
   },
   IRL: {
     // Ireland
