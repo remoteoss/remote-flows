@@ -7,18 +7,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'example/src/flows/Onboarding/jsonSchemaVersions.ts'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'src/common/createHeadlessForm.tsx'
-      - 'src/common/headlessForm.ts'
-      - 'src/components/form/utils.ts'
-      - 'src/flows/Onboarding/utils.ts'
-      - 'scripts/fill-schema.ts'
-      - 'scripts/schema-canary.ts'
-      - 'scripts/schema-canary/**'
-      - '.github/workflows/schema-canary.yml'
   pull_request:
     paths:
       - 'example/src/flows/Onboarding/jsonSchemaVersions.ts'
