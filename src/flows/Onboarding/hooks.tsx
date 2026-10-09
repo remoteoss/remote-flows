@@ -644,6 +644,9 @@ export const useOnboarding = ({
             },
           },
         },
+        employer_acknowledges_risk: {
+          presentation: { hidden: true },
+        },
         ...(isDailyScheduleEnabled
           ? {
               daily_schedule: {
