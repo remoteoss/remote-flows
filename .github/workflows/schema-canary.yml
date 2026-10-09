@@ -27,15 +27,14 @@ on:
       - '.github/actions/schema-canary-browser/**'
       - '.github/workflows/schema-canary.yml'
 
-concurrency:
-  group: schema-canary
-  queue: max
-
 jobs:
   main-canary:
     if: github.event_name != 'pull_request'
     name: Contract Details Schema Canary (main)
     runs-on: ubuntu-latest
+    concurrency:
+      group: schema-canary
+      queue: max
     timeout-minutes: 45
     permissions:
       contents: write
