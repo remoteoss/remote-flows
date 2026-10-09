@@ -12,7 +12,10 @@ import { useErrorReporting } from '@/src/components/error-handling/useErrorRepor
 import { isMutationError, mutationToPromise } from '@/src/lib/mutations';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import {
+  useGPEmployeeBankAccount,
   useGPEmployeeFormSchema,
+  useGPEmployeeHomeAddress,
+  useGPEmployeePersonalDetails,
   useGPUpdateBankAccount,
   useGPUpdateFederalTaxes,
   useGPUpdateHomeAddress,
@@ -174,6 +177,33 @@ export const usePayrollEmployeeOnboarding = ({
   } = useStepState<EmployeeStepKey>(steps, onStepChange);
 
   const currentStep = stepState.currentStep.name;
+
+  const savedPersonalDetails = useGPEmployeePersonalDetails(employmentId);
+  const savedHomeAddress = useGPEmployeeHomeAddress(employmentId);
+  const savedBankAccount = useGPEmployeeBankAccount(employmentId, {
+    enabled: hasBankSubstep,
+  });
+
+  const savedValues = useMemo<
+    Partial<Record<EmployeeStepKey, Record<string, unknown>>>
+  >(
+    () => ({
+      personal_details: savedPersonalDetails.data,
+      home_address: savedHomeAddress.data,
+      bank_account: savedBankAccount.data,
+    }),
+    [savedPersonalDetails.data, savedHomeAddress.data, savedBankAccount.data],
+  );
+
+  const savedValuesQueryByStep: Partial<
+    Record<EmployeeStepKey, { isLoading: boolean }>
+  > = {
+    personal_details: savedPersonalDetails,
+    home_address: savedHomeAddress,
+    bank_account: savedBankAccount,
+  };
+  const isLoadingSavedValues =
+    savedValuesQueryByStep[currentStep]?.isLoading ?? false;
 
   // A tax step flagged `pending_enrollment` after a 404 would otherwise stay
   // flagged for the whole session, trapping the user even once the backend tax
@@ -478,13 +508,19 @@ export const usePayrollEmployeeOnboarding = ({
 
   return {
     stepState,
-    isLoading: isLoadingEmployment || isLoadingSteps || isLoadingSchema,
+    isLoading:
+      isLoadingEmployment ||
+      isLoadingSteps ||
+      isLoadingSchema ||
+      isLoadingSavedValues,
     isSubmitting,
     isComplete: isComplete ?? false,
     employmentId,
     countryCode,
     jurisdiction,
     initialValues,
+    savedValues,
+    isLoadingSavedValues,
     options,
     apiSteps,
     selfOnboardingSubsteps,

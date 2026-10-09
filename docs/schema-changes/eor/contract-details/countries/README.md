@@ -50,7 +50,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Country              | Code | Contract Details | Last Updated   |
 | -------------------- | ---- | ---------------- | -------------- |
 | Belarus              | BLR  | v2               | March 2026     |
-| China                | CHN  | v3               | March 2026     |
+| China                | CHN  | v8               | October 2026   |
 | Switzerland          | CHE  | v2               | March 2026     |
 | Czech Republic       | CZE  | v2               | March 2026     |
 | Germany              | DEU  | v7               | September 2026 |

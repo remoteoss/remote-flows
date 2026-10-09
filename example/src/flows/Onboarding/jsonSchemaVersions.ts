@@ -43,10 +43,6 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
     // Bosnia and Herzegovina
     contract_details: 1,
   },
-  BLR: {
-    // Belarus
-    contract_details: 2,
-  },
   BOL: {
     // Bolivia
     contract_details: 1,
@@ -69,7 +65,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CHN: {
     // China
-    contract_details: 3,
+    contract_details: 8,
   },
   COL: {
     // Colombia
@@ -191,14 +187,6 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
     // Kenya
     contract_details: 2,
   },
-  KGZ: {
-    // Kyrgyzstan
-    contract_details: 1,
-  },
-  KHM: {
-    // Cambodia
-    contract_details: 1,
-  },
   KOR: {
     // South Korea
     contract_details: 1,
@@ -241,10 +229,6 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   MLT: {
     // Malta
-    contract_details: 1,
-  },
-  MNG: {
-    // Mongolia
     contract_details: 1,
   },
   MUS: {

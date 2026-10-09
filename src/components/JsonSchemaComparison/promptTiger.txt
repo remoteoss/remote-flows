@@ -3,6 +3,11 @@ For each country in apps/tiger/priv/json_schemas/contract_details/ (excluding ba
 1. Count the number of snapshot files in snapshots/{COUNTRY}/ (these are historical versions)
 2. Add 1 for the current version in the root directory ({COUNTRY}.json)
 3. Create an array of version objects from 1 to the total count
+Skip these countries even if tiger has a schema for them. The API rejects creating employments there with "Country not supported":
+- BLR (Belarus)
+- KGZ (Kyrgyzstan)
+- KHM (Cambodia)
+- MNG (Mongolia)
 Output format:
 ```typescript
 export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {

@@ -95,14 +95,6 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 5, label: 'v5' },
     { value: 6, label: 'v6' },
   ],
-  BLR: [
-    { value: 1, label: 'v1' },
-    { value: 2, label: 'v2' },
-    { value: 3, label: 'v3' },
-    { value: 4, label: 'v4' },
-    { value: 5, label: 'v5' },
-    { value: 6, label: 'v6' },
-  ],
   BOL: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
@@ -397,18 +389,6 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 7, label: 'v7' },
     { value: 8, label: 'v8' },
   ],
-  KGZ: [
-    { value: 1, label: 'v1' },
-    { value: 2, label: 'v2' },
-    { value: 3, label: 'v3' },
-    { value: 4, label: 'v4' },
-  ],
-  KHM: [
-    { value: 1, label: 'v1' },
-    { value: 2, label: 'v2' },
-    { value: 3, label: 'v3' },
-    { value: 4, label: 'v4' },
-  ],
   KOR: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
@@ -493,13 +473,6 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 6, label: 'v6' },
   ],
   MLT: [
-    { value: 1, label: 'v1' },
-    { value: 2, label: 'v2' },
-    { value: 3, label: 'v3' },
-    { value: 4, label: 'v4' },
-    { value: 5, label: 'v5' },
-  ],
-  MNG: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
     { value: 3, label: 'v3' },

@@ -120,7 +120,7 @@ export const useJobTitleEligibilityCheck = ({
   };
 
   return {
-    isFetching: query.isFetching,
+    isFetching: currentStepName === 'contract_details' && query.isFetching,
     check,
   };
 };
