@@ -44,6 +44,7 @@ jobs:
       GH_REPO: ${{ github.repository }}
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       CHECK_LATEST: ${{ github.event_name != 'push' }}
+      NOTIFY: '@gabrielseco'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -147,6 +148,14 @@ jobs:
             checked_latest=true
           fi
 
+          table_rows() { grep '^| ' "$1" | grep -v -e '^| Country |' -e '^| --- |' | sort -u; }
+          table_diff() {
+            local heading=$1 side=$2 rows
+            rows=$(comm "$side" <(table_rows "$3") <(table_rows "$4"))
+            [ -z "$rows" ] && return
+            printf '\n### %s\n\n| Country | Version | Strategy | Check | Result | Error |\n| --- | --- | --- | --- | --- | --- |\n%s\n' "$heading" "$rows"
+          }
+
           sync_issue() {
             local label=$1 title=$2 failing=$3 body_file=$4 checked=$5 number
             gh label create "$label" --color B60205 --description "$title" --force
@@ -154,14 +163,22 @@ jobs:
             if [ "$failing" = true ]; then
               if [ -z "$number" ]; then
                 number=$(gh issue create --title "$title" --label "$label" --body-file "$body_file" | grep -oE '[0-9]+$')
-                gh issue comment "$number" --body "Failing run: $RUN_URL"
-              elif [ "$(gh issue view "$number" --json body --jq .body)" != "$(cat "$body_file")" ]; then
-                gh issue edit "$number" --body-file "$body_file"
-                gh issue comment "$number" --body "The failures changed. Failing run: $RUN_URL"
+                gh issue comment "$number" --body "$NOTIFY this started failing. Failing run: $RUN_URL"
+              else
+                gh issue view "$number" --json body --jq .body > "$RUNNER_TEMP/old-body.md"
+                if [ "$(cat "$RUNNER_TEMP/old-body.md")" != "$(cat "$body_file")" ]; then
+                  gh issue edit "$number" --body-file "$body_file"
+                  {
+                    echo "$NOTIFY the failures changed. Failing run: $RUN_URL"
+                    table_diff "Started failing" -13 "$RUNNER_TEMP/old-body.md" "$body_file"
+                    table_diff "Fixed" -23 "$RUNNER_TEMP/old-body.md" "$body_file"
+                  } > "$RUNNER_TEMP/change-comment.md"
+                  gh issue comment "$number" --body-file "$RUNNER_TEMP/change-comment.md"
+                fi
               fi
             elif [ "$checked" = true ]; then
               for open in $(gh issue list --label "$label" --state open --json number --jq '.[].number'); do
-                gh issue close "$open" --comment "Back to green: $RUN_URL"
+                gh issue close "$open" --comment "$NOTIFY back to green: $RUN_URL"
               done
             fi
           }

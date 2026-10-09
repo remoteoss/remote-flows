@@ -27,6 +27,8 @@ Each country and version goes through these checks in order. A check only runs i
 
 A pinned failure means partners are affected now, so it fails the run and opens the `schema-canary` issue. A latest failure means something will break when a country moves to that version. It never fails the run, because a change on Tiger's side shouldn't block unrelated work. Only the nightly checks latest, which keeps PR and `main` runs fast and halves their requests to sandbox. To check latest yourself, run `npm run schema-canary -- --versions=latest` locally, or start the workflow by hand.
 
+Both issues tag whoever is set in `NOTIFY` in [schema-canary.yml](../.github/workflows/schema-canary.yml) when they open, when the failures change and when they close. The change comment lists which rows started failing and which were fixed. Subscribe to an issue to get the same notifications.
+
 ## What to do with a failure
 
 Find the check and the error in the job summary or the issue, then:
