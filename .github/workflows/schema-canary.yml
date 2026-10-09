@@ -20,6 +20,9 @@ on:
       - 'scripts/schema-canary-affected.ts'
       - '.github/workflows/schema-canary.yml'
 
+concurrency:
+  group: schema-canary-${{ github.ref }}
+
 jobs:
   nightly-canary:
     if: github.event_name != 'pull_request'
