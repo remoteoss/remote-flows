@@ -130,39 +130,7 @@ async function createProxyRequest(path, method = 'GET', options = {}) {
     delete requestConfig.headers['x-rf-employment-id'];
   }
 
-  return requestWithRetry(requestConfig);
-}
-
-const RETRYABLE_STATUSES = [429, 502, 503, 504];
-const MAX_ATTEMPTS = 3;
-const MAX_RETRY_DELAY_MS = 5000;
-
-function retryDelayMs(error, attempt) {
-  const retryAfterSeconds = Number(error.response?.headers?.['retry-after']);
-  const delay = Number.isFinite(retryAfterSeconds)
-    ? retryAfterSeconds * 1000
-    : 500 * 2 ** attempt;
-  return Math.min(delay, MAX_RETRY_DELAY_MS);
-}
-
-async function requestWithRetry(requestConfig) {
-  for (let attempt = 1; ; attempt++) {
-    try {
-      return await axios(requestConfig);
-    } catch (error) {
-      const status = error.response?.status;
-      const timedOut = ['ECONNABORTED', 'ETIMEDOUT'].includes(error.code);
-      const retryable =
-        requestConfig.method.toUpperCase() === 'GET' &&
-        (status === undefined
-          ? !timedOut
-          : RETRYABLE_STATUSES.includes(status));
-      if (!retryable || attempt === MAX_ATTEMPTS) throw error;
-      await new Promise((resolve) =>
-        setTimeout(resolve, retryDelayMs(error, attempt)),
-      );
-    }
-  }
+  return axios(requestConfig);
 }
 
 /**
