@@ -1,4 +1,10 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
@@ -511,6 +517,121 @@ describe.each(schemaPaths)(
             role_description: 'Backend engineer responsibilities',
             role_is_onsite: 'no',
             role_requires_license: 'no',
+          },
+          pricing_plan_details: { frequency: 'monthly' },
+        });
+      });
+
+      const fillRoleFieldsWithoutBlur = async () => {
+        await fillRadio('Will this role require working onsite', 'no');
+        await fillRadio('Does this role require a professional license', 'no');
+        const roleDescription = screen.getByLabelText(/Role description/i);
+        const user = userEvent.setup();
+        await user.clear(roleDescription);
+        await user.type(roleDescription, 'Backend engineer responsibilities');
+      };
+
+      const submitWithoutBlur = () => {
+        fireEvent.submit(
+          document.querySelector('.RemoteFlows__OnboardingForm') as Element,
+        );
+      };
+
+      it('runs the check on a submit that happens without a blur and submits its slug and result', async () => {
+        mockCheckResponse([
+          { check_id: 'stale-check-id', verdict: 'eligible' },
+          { check_id: 'check-id', verdict: 'eligible' },
+        ]);
+
+        await renderContractDetailsStep();
+        await fillRoleFieldsWithoutBlur();
+        await waitFor(() =>
+          expect(checkResponsesSent).toHaveBeenCalledTimes(1),
+        );
+
+        submitWithoutBlur();
+
+        await waitFor(() =>
+          expect(updateEmploymentSpy).toHaveBeenCalledTimes(1),
+        );
+        expect(checkResponsesSent).toHaveBeenCalledTimes(2);
+        expect(updateEmploymentSpy).toHaveBeenCalledWith({
+          contract_details: {
+            role_description: 'Backend engineer responsibilities',
+            role_is_onsite: 'no',
+            role_requires_license: 'no',
+            additional_job_title_eligibility_check_slug: 'check-id',
+            additional_job_title_eligibility_check_result: 'yes',
+          },
+          pricing_plan_details: { frequency: 'monthly' },
+        });
+      });
+
+      it('submits without a blur when the verdict changes to one that requires nothing new', async () => {
+        mockCheckResponse([
+          { check_id: 'stale-check-id', verdict: 'eligible' },
+          { check_id: 'check-id', verdict: 'needs_review' },
+        ]);
+
+        await renderContractDetailsStep();
+        await fillRoleFieldsWithoutBlur();
+        await waitFor(() =>
+          expect(checkResponsesSent).toHaveBeenCalledTimes(1),
+        );
+
+        submitWithoutBlur();
+
+        await waitFor(() =>
+          expect(updateEmploymentSpy).toHaveBeenCalledTimes(1),
+        );
+        expect(updateEmploymentSpy).toHaveBeenCalledWith({
+          contract_details: {
+            role_description: 'Backend engineer responsibilities',
+            role_is_onsite: 'no',
+            role_requires_license: 'no',
+            additional_job_title_eligibility_check_slug: 'check-id',
+            additional_job_title_eligibility_check_result: 'maybe',
+          },
+          pricing_plan_details: { frequency: 'monthly' },
+        });
+      });
+
+      it('holds a submit without a blur when the check now requires a risk acknowledgement', async () => {
+        mockCheckResponse([
+          { check_id: 'stale-check-id', verdict: 'eligible' },
+          {
+            check_id: 'check-id',
+            verdict: 'eligible_with_risk_acknowledgement',
+          },
+        ]);
+
+        await renderContractDetailsStep();
+        await fillRoleFieldsWithoutBlur();
+        await waitFor(() =>
+          expect(checkResponsesSent).toHaveBeenCalledTimes(1),
+        );
+
+        submitWithoutBlur();
+
+        const acknowledgement = await screen.findByLabelText(
+          /I acknowledge the risks/i,
+        );
+        expect(updateEmploymentSpy).not.toHaveBeenCalled();
+
+        await userEvent.setup().click(acknowledgement);
+        await submitAfterCheck(2);
+
+        await waitFor(() =>
+          expect(updateEmploymentSpy).toHaveBeenCalledTimes(1),
+        );
+        expect(updateEmploymentSpy).toHaveBeenCalledWith({
+          contract_details: {
+            role_description: 'Backend engineer responsibilities',
+            role_is_onsite: 'no',
+            role_requires_license: 'no',
+            employer_acknowledges_risk: 'acknowledged',
+            additional_job_title_eligibility_check_slug: 'check-id',
+            additional_job_title_eligibility_check_result: 'yes_with_ack',
           },
           pricing_plan_details: { frequency: 'monthly' },
         });
