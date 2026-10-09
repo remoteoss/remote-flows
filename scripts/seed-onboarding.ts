@@ -95,7 +95,9 @@ function parseArgs(argv: string[]): Record<string, string | true> {
   const args: Record<string, string | true> = {};
   for (const raw of argv) {
     const match = raw.match(/^--([^=]+)(?:=(.*))?$/);
-    if (match) args[match[1]] = match[2] ?? true;
+    if (match) {
+      args[match[1]] = match[2] ?? true;
+    }
   }
   return args;
 }
@@ -173,7 +175,9 @@ async function api<T = unknown>(
 ): Promise<T> {
   const url = new URL(BASE_URL + urlPath);
   for (const [key, value] of Object.entries(query || {})) {
-    if (value !== undefined) url.searchParams.set(key, String(value));
+    if (value !== undefined) {
+      url.searchParams.set(key, String(value));
+    }
   }
   const res = await fetch(url, {
     method,
@@ -219,7 +223,9 @@ function fetchHolidays(country: string, year: string): Promise<HolidayDate[]> {
 const CONTRACTOR_NATIONALITY_COUNTRIES = ['SAU', 'KWT', 'OMN', 'QAT', 'BHR'];
 
 function contractorContractDocumentSeed(): Record<string, string> | undefined {
-  if (COUNTRY === 'GBR') return { ir_35: 'exempt' };
+  if (COUNTRY === 'GBR') {
+    return { ir_35: 'exempt' };
+  }
   if (CONTRACTOR_NATIONALITY_COUNTRIES.includes(COUNTRY)) {
     return { nationality: 'national' };
   }
@@ -373,8 +379,9 @@ async function seedEmployee() {
       'engagement_agreement_details payload:',
       JSON.stringify(engagementDetails, null, 2),
     );
-    if (skipped.length)
+    if (skipped.length) {
       console.log('Skipped (unfillable) fields:', skipped.join(', '));
+    }
 
     await api(
       'POST',

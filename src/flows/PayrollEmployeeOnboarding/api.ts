@@ -113,7 +113,9 @@ const gpEmployeeSavedValuesKey = (
 const useCacheSavedValues = (step: SavedValuesStep, employmentId: string) => {
   const queryClient = useQueryClient();
   return (response: { data?: EmploymentDetailsOnlyResponse }) => {
-    if (!response.data) return;
+    if (!response.data) {
+      return;
+    }
     queryClient.setQueryData(
       gpEmployeeSavedValuesKey(step, employmentId),
       response.data,
@@ -173,7 +175,9 @@ export const useGPUpdateFederalTaxes = (employmentId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     onSuccess: (response, federalTaxes) => {
-      if (response.error) return;
+      if (response.error) {
+        return;
+      }
       queryClient.setQueryData<EmployeeFederalTaxesResponse>(
         gpEmployeeSavedValuesKey('federal_taxes', employmentId),
         { data: { federal_taxes: federalTaxes } },
@@ -196,7 +200,9 @@ export const useGPUpdateStateTaxes = (
   const queryClient = useQueryClient();
   return useMutation({
     onSuccess: (response, stateTaxes) => {
-      if (response.error) return;
+      if (response.error) {
+        return;
+      }
       queryClient.setQueryData<EmployeeStateTaxesResponse>(
         gpEmployeeSavedValuesKey('state_taxes', employmentId, jurisdiction),
         { data: { state_taxes: stateTaxes } },
@@ -230,7 +236,9 @@ const pickDefaultBankAccount = (
   const account =
     bankAccounts?.find((entry) => entry.is_default === true) ??
     bankAccounts?.[0];
-  if (!account) return undefined;
+  if (!account) {
+    return undefined;
+  }
   const { is_default: _isDefault, ...values } = account;
   return values;
 };

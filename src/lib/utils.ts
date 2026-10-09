@@ -148,7 +148,9 @@ export const stripHtml = (
  * @returns The base64 data with proper data URI prefix
  */
 export const clearBase64Data = (base64Data: string) => {
-  if (!base64Data) return '';
+  if (!base64Data) {
+    return '';
+  }
 
   const cleanedData = base64Data.trim();
 

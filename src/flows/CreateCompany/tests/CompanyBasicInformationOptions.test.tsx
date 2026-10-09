@@ -23,7 +23,9 @@ function CompanyBasicInformationWithModal({
         | undefined
     )?.length;
 
-  if (createCompanyBag.isLoading) return <div>Loading...</div>;
+  if (createCompanyBag.isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>

@@ -12,6 +12,7 @@
         "allow": ["warn", "error"]
       }
     ],
+    "curly": ["error", "all"],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "typescript/no-explicit-any": "error",

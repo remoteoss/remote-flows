@@ -46,9 +46,15 @@ function formatCurrentSize(currentPath: string): string {
 
   // Check for violations
   const violations: string[] = [];
-  if (totalGzipExceeded) violations.push('Total gzipped size exceeds limit');
-  if (totalRawExceeded) violations.push('Total raw size exceeds limit');
-  if (cssGzipExceeded) violations.push('CSS gzipped size exceeds limit');
+  if (totalGzipExceeded) {
+    violations.push('Total gzipped size exceeds limit');
+  }
+  if (totalRawExceeded) {
+    violations.push('Total raw size exceeds limit');
+  }
+  if (cssGzipExceeded) {
+    violations.push('CSS gzipped size exceeds limit');
+  }
 
   // Check for large chunks
   const largeChunks = current.largestFiles

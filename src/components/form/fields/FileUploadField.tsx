@@ -9,7 +9,9 @@ import { FormField } from '../../ui/form';
 import { FieldDataProps } from '@/src/types/fields';
 
 const validateFileSize = (files: File[], maxSize?: number): string | null => {
-  if (!maxSize) return null;
+  if (!maxSize) {
+    return null;
+  }
 
   for (const file of files) {
     // `file` may not be a real File at runtime (e.g. an already-uploaded reference mixed in

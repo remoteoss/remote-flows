@@ -194,7 +194,9 @@ export const usePayrollAdminOnboarding = ({
 
   const handleValidation = useCallback(
     async (values: FieldValues) => {
-      if (!currentSchema) return null;
+      if (!currentSchema) {
+        return null;
+      }
       const parsedValues = await parseJSFToValidate(
         values,
         currentSchema.fields,
@@ -207,7 +209,9 @@ export const usePayrollAdminOnboarding = ({
 
   const parseFormValues = useCallback(
     async (values: FieldValues): Promise<Record<string, unknown>> => {
-      if (!currentSchema) return values;
+      if (!currentSchema) {
+        return values;
+      }
       return parseJSFToValidate(values, currentSchema.fields, {
         isPartialValidation: false,
       });

@@ -82,7 +82,9 @@ function Harness({
     },
   });
 
-  if (!headless.form) return null;
+  if (!headless.form) {
+    return null;
+  }
 
   return (
     <Form {...form}>

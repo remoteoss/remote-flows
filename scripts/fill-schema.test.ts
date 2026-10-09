@@ -33,7 +33,9 @@ describe('findSafeStartDate', () => {
       _country: string,
       year: string,
     ): Promise<HolidayDate[]> => {
-      if (year === '2027') throw new Error('gateway down');
+      if (year === '2027') {
+        throw new Error('gateway down');
+      }
       return [{ day: '2026-12-01', observed_day: '2026-12-07' }];
     };
 

@@ -201,10 +201,13 @@ export const usePayrollEmployeeOnboarding = ({
   // task appears. Clear the flag when the user (re)enters the step so revisiting
   // it re-attempts the submit instead of showing not-available forever.
   useEffect(() => {
-    if (currentStep !== 'federal_taxes' && currentStep !== 'state_taxes')
+    if (currentStep !== 'federal_taxes' && currentStep !== 'state_taxes') {
       return;
+    }
     setTaxSubmitFailures((prev) => {
-      if (!prev[currentStep]) return prev;
+      if (!prev[currentStep]) {
+        return prev;
+      }
       const next = { ...prev };
       delete next[currentStep];
       return next;
@@ -348,20 +351,37 @@ export const usePayrollEmployeeOnboarding = ({
   // empty form.
   const taxStepsAvailability = useMemo(() => {
     const federalReason = ((): TaxStepUnavailableReason | null => {
-      if (!isUSA) return 'unsupported_country';
-      if (taxSubmitFailures.federal_taxes)
+      if (!isUSA) {
+        return 'unsupported_country';
+      }
+      if (taxSubmitFailures.federal_taxes) {
         return taxSubmitFailures.federal_taxes;
-      if (!isPostEnrollment) return 'pending_enrollment';
-      if (federalTaxesSchema.isError) return 'schema_unavailable';
+      }
+      if (!isPostEnrollment) {
+        return 'pending_enrollment';
+      }
+      if (federalTaxesSchema.isError) {
+        return 'schema_unavailable';
+      }
       return null;
     })();
 
     const stateReason = ((): TaxStepUnavailableReason | null => {
-      if (!isUSA) return 'unsupported_country';
-      if (!jurisdiction) return 'no_jurisdiction';
-      if (taxSubmitFailures.state_taxes) return taxSubmitFailures.state_taxes;
-      if (!isPostEnrollment) return 'pending_enrollment';
-      if (stateTaxesSchema.isError) return 'schema_unavailable';
+      if (!isUSA) {
+        return 'unsupported_country';
+      }
+      if (!jurisdiction) {
+        return 'no_jurisdiction';
+      }
+      if (taxSubmitFailures.state_taxes) {
+        return taxSubmitFailures.state_taxes;
+      }
+      if (!isPostEnrollment) {
+        return 'pending_enrollment';
+      }
+      if (stateTaxesSchema.isError) {
+        return 'schema_unavailable';
+      }
       return null;
     })();
 
@@ -430,7 +450,9 @@ export const usePayrollEmployeeOnboarding = ({
 
   const handleValidation = useCallback(
     async (values: FieldValues) => {
-      if (!currentSchema) return null;
+      if (!currentSchema) {
+        return null;
+      }
       const parsedValues = await parseJSFToValidate(
         values,
         currentSchema.fields,
@@ -443,7 +465,9 @@ export const usePayrollEmployeeOnboarding = ({
 
   const parseFormValues = useCallback(
     async (values: FieldValues): Promise<Record<string, unknown>> => {
-      if (!currentSchema) return values;
+      if (!currentSchema) {
+        return values;
+      }
       return parseJSFToValidate(values, currentSchema.fields, {
         isPartialValidation: false,
       });
@@ -459,7 +483,9 @@ export const usePayrollEmployeeOnboarding = ({
    */
   const handleTaxSubmitError = useCallback(
     (taxStep: TaxStepKey, error: unknown): boolean => {
-      if (!isMutationError(error)) return false;
+      if (!isMutationError(error)) {
+        return false;
+      }
       const message =
         typeof error.rawError === 'object' &&
         error.rawError !== null &&

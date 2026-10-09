@@ -80,7 +80,9 @@ export function convertToCents(
 }
 
 export function convertFromCents(amount?: number | string | null) {
-  if (amount == null || Number.isNaN(amount)) return null;
+  if (amount == null || Number.isNaN(amount)) {
+    return null;
+  }
 
   let normalizedValue: number;
 
@@ -137,8 +139,9 @@ function prefillReadOnlyFields(
     if (
       !Object.prototype.hasOwnProperty.call(values, fieldName!) &&
       !(field.type === supportedTypes.FIELDSET && field.valueGroupingDisabled)
-    )
+    ) {
       return;
+    }
 
     if (field.type === supportedTypes.FIELDSET && field.valueGroupingDisabled) {
       Object.assign(newValues, prefillReadOnlyFields(values, field.fields));

@@ -31,7 +31,9 @@ test.describe('Invoice schedule', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    if (!employmentId) return;
+    if (!employmentId) {
+      return;
+    }
 
     await archiveEmployment(page, employmentId);
   });

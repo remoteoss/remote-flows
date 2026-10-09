@@ -58,7 +58,9 @@ function extractCoverage(
         coveredBranches += branch.filter((count) => count > 0).length;
       } else {
         totalBranches += 1;
-        if (branch > 0) coveredBranches += 1;
+        if (branch > 0) {
+          coveredBranches += 1;
+        }
       }
     }
 

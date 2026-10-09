@@ -127,15 +127,22 @@ function parseConventionalCommit(commit: Commit): ParsedCommit | null {
   // Updated regex to handle both colon and dash separators
   const match = subject.match(/^(\w+)(?:\(([^)]+)\))?\s*[-:]\s*(.+)$/);
 
-  if (!match) return null;
+  if (!match) {
+    return null;
+  }
 
   const [, type, scope, description] = match;
   let versionBump: 'patch' | 'minor' | 'major' = 'patch';
 
-  if (type === 'feat') versionBump = 'minor';
-  if (type === 'feat' && body.includes('BREAKING CHANGE'))
+  if (type === 'feat') {
+    versionBump = 'minor';
+  }
+  if (type === 'feat' && body.includes('BREAKING CHANGE')) {
     versionBump = 'major';
-  if (type === 'fix' && body.includes('BREAKING CHANGE')) versionBump = 'major';
+  }
+  if (type === 'fix' && body.includes('BREAKING CHANGE')) {
+    versionBump = 'major';
+  }
 
   const prMatch = (description + ' ' + body).match(/#(\d+)/);
   const prNumber = prMatch ? prMatch[1] : undefined;
@@ -171,8 +178,11 @@ function generateChangesetContent(commits: Commit[]): Changeset | null {
   });
 
   let finalVersionBump: 'patch' | 'minor' | 'major' = 'patch';
-  if (groups.major.length > 0) finalVersionBump = 'major';
-  else if (groups.minor.length > 0) finalVersionBump = 'minor';
+  if (groups.major.length > 0) {
+    finalVersionBump = 'major';
+  } else if (groups.minor.length > 0) {
+    finalVersionBump = 'minor';
+  }
 
   // Generate simple changeset content (no markdown headers)
   const changesetItems: string[] = [];

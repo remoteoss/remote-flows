@@ -241,7 +241,9 @@ export const useContractDocument = ({
 
   const handleValidation = useCallback(
     async (values: FieldValues): Promise<ValidationResult | null> => {
-      if (!currentForm) return null;
+      if (!currentForm) {
+        return null;
+      }
 
       const parsed = await parseJSFToValidate(values, currentForm.fields, {
         isPartialValidation: false,

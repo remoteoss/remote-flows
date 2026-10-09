@@ -134,7 +134,9 @@ export const determineErrorSeverity = (
   // Find the exact pattern that matched this error
   // We need to re-match to get the correct severity for errors with multiple patterns
   for (const pattern of ERROR_PATTERNS) {
-    if (pattern.category !== category) continue;
+    if (pattern.category !== category) {
+      continue;
+    }
 
     const matchesMessage = pattern.messagePatterns.some((p) =>
       message.includes(p),

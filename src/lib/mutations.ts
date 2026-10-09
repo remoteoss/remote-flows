@@ -76,7 +76,9 @@ type PromiseResult<D, E> = SuccessResponse<D> | ErrorResponse<E>;
  */
 export function extractFieldErrors(error: $TSFixMe): FieldError[] {
   const errors = error.error || error;
-  if (!errors || !errors.errors || typeof errors.errors !== 'object') return [];
+  if (!errors || !errors.errors || typeof errors.errors !== 'object') {
+    return [];
+  }
 
   const fieldErrors: FieldError[] = [];
 

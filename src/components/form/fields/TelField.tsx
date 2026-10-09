@@ -202,7 +202,9 @@ export function TelFieldRenderer({
 
   const handleCountryCodeChange = useCallback(
     (newCountry: Country) => {
-      if (!newCountry) return;
+      if (!newCountry) {
+        return;
+      }
       const newValue = `+${newCountry.dialCode}${nationalPhoneNumber}`;
 
       // Mark as manual selection to prevent useEffect from overriding

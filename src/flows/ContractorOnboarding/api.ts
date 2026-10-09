@@ -630,7 +630,9 @@ export const useGetInvoiceScheduleSchema = ({
   jsfModify?: JSFModify;
 }) => {
   return useMemo(() => {
-    if (!enabled) return null;
+    if (!enabled) {
+      return null;
+    }
     return createHeadlessForm(
       invoiceScheduleSchema,
       {},
