@@ -20,7 +20,11 @@ export function OnboardingSubmit({
     <CustomButton
       {...props}
       form={formId}
-      disabled={props.disabled || onboardingBag.isSubmitting}
+      disabled={
+        props.disabled ||
+        onboardingBag.isSubmitting ||
+        onboardingBag.isCheckingJobTitleEligibility
+      }
     >
       {children}
     </CustomButton>

@@ -56,7 +56,7 @@ This project is a React component library (`@remoteoss/remote-flows`) that provi
 - Use arrow functions for components and utilities
 - Use regular functions for top-level exported functions with JSDoc
 - Keep functions small and focused (ideally under 50 lines)
-- Add JSDoc comments for all public APIs with `@param`, `@returns`, and description
+- Add JSDoc comments for all public APIs, written for the caller who actually uses them: 1–3 lines by default, no internal wiring, no edge cases only the prebuilt components handle
 
 **Inline Comments (implementation code, config, tests — not public-API JSDoc above):**
 

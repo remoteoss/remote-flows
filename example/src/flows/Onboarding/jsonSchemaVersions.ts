@@ -121,7 +121,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   GBR: {
     // United Kingdom
-    contract_details: 3,
+    contract_details: 6,
   },
   GEO: {
     // Georgia
