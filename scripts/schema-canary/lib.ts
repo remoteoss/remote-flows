@@ -83,7 +83,10 @@ export function decideExitCode(rows: SchemaCanaryRow[]): 0 | 1 {
     (row) => row.check !== 'latest' && row.outcome === 'fail',
   );
   const hasSeedError = rows.some((row) => row.outcome === 'seed-error');
-  return hasGatingFailure || hasSeedError ? 1 : 0;
+  const checkedAnything = rows.some(
+    (row) => row.outcome === 'pass' || row.outcome === 'fail',
+  );
+  return !checkedAnything || hasGatingFailure || hasSeedError ? 1 : 0;
 }
 
 const OUTCOME_LABEL: Record<SchemaCheckOutcome, string> = {

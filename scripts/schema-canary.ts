@@ -8,6 +8,7 @@ import { Client } from '@/src/client/client';
 import {
   DEFAULT_VERSION,
   getContractDetailsStrategy,
+  withJobTitleEligibilityRiskAcknowledgement,
 } from '@/src/flows/Onboarding/utils';
 import { createSandboxClient } from './schema-canary/auth';
 import {
@@ -48,6 +49,14 @@ const REQUESTED_CHECKS =
   typeof args.checks === 'string'
     ? (args.checks.split(',') as SchemaCheckType[])
     : SCHEMA_CHECK_ORDER;
+const unknownChecks = REQUESTED_CHECKS.filter(
+  (check) => !SCHEMA_CHECK_ORDER.includes(check),
+);
+if (unknownChecks.length > 0) {
+  throw new Error(
+    `--checks got unknown value(s) ${unknownChecks.join(', ')}; expected ${SCHEMA_CHECK_ORDER.join(', ')}`,
+  );
+}
 const CHECK_TYPES = SCHEMA_CHECK_ORDER.filter((check) =>
   REQUESTED_CHECKS.includes(check),
 );
@@ -71,10 +80,18 @@ async function fetchLiveCountries(client: Client): Promise<string[]> {
   if (response.error || !response.data) {
     throw new Error('Failed to fetch /v1/countries from the sandbox gateway');
   }
-  return (response.data.data ?? [])
+  const countries = (response.data.data ?? [])
     .filter((country) => country.eor_onboarding)
     .map((country) => country.code)
     .filter((code) => !COUNTRY_FILTER || code === COUNTRY_FILTER);
+  if (countries.length === 0) {
+    throw new Error(
+      COUNTRY_FILTER
+        ? `--country=${COUNTRY_FILTER} is not an EOR onboarding country on the sandbox gateway`
+        : '/v1/countries returned no EOR onboarding countries',
+    );
+  }
+  return countries;
 }
 
 function versionFor(country: string, check: SchemaCheckType) {
@@ -104,7 +121,9 @@ async function fetchLiveSchema(
       `GET /v1/countries/${country}/contract_details?employment_id=${employmentId}&json_schema_version=${version} failed`,
     );
   }
-  return response.data.data ?? null;
+  return response.data.data
+    ? withJobTitleEligibilityRiskAcknowledgement(response.data.data)
+    : null;
 }
 
 async function checkCountry(
