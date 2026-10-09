@@ -21,10 +21,10 @@ Each country and version goes through these checks in order. A check only runs i
 
 | Where                                 | Versions          | Fails the check on | Latest failures go to                               |
 | ------------------------------------- | ----------------- | ------------------ | --------------------------------------------------- |
-| PRs that touch the form or the canary | pinned            | pinned problems    | Not checked                                         |
+| PRs that touch the form or the canary | pinned and latest | pinned problems    | Warnings on the PR, and the job summary             |
 | Nightly, and every push to `main`     | pinned and latest | pinned problems    | The `schema-canary-latest` issue, and the report PR |
 
-A pinned failure means partners are affected now, so it fails the run and opens the `schema-canary` issue. A latest failure means something will break when a country moves to that version. It never fails the run, because a change on Tiger's side shouldn't block unrelated work. PRs only check pinned to keep them fast. To check latest on a PR, run `npm run schema-canary -- --versions=latest` locally, or wait for the nightly report.
+A pinned failure means partners are affected now, so it fails the run and opens the `schema-canary` issue. A latest failure means something will break when a country moves to that version. It never fails the run, because a change on Tiger's side shouldn't block unrelated work.
 
 ## What to do with a failure
 
