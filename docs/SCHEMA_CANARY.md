@@ -41,6 +41,8 @@ Find the check and the error in the job summary or the issue, then:
 | `browser`: `the browser sent different contract_details than the canary saved`                 | The UI changes the values on the way out, for example money conversion or a forced value.                                     | Treat it as a form behaviour bug in the SDK.                                                                                                                                                                         |
 | `browser`: `the browser test did not run`                                                      | Playwright crashed or the browser stage couldn't start.                                                                       | Check the run log and the Playwright report artifact.                                                                                                                                                                |
 
+Sandbox blocks a runner for a minute or two after too many requests, and answers every request with 403 until the block lifts. Every browser test running in that window fails, often on Select Country or Basic Information with no field errors. So when any browser test fails, the canary waits 2 minutes and reruns only the failed tests, and the report keeps the rerun's result. A browser failure in the report failed both times. The Playwright report artifact has both runs, in `playwright-report` and `playwright-report-rerun`.
+
 If a failure can't be fixed soon, add the country to the skip list in [skip-list.ts](../scripts/schema-canary/skip-list.ts) with a reason. Set `version: 'latest'` to skip it on latest only.
 
 ## Reproducing a failure locally

@@ -33,15 +33,18 @@ function parseArgs(argv: string[]) {
 const args = parseArgs(process.argv.slice(2));
 if (typeof args.kept !== 'string' || typeof args.results !== 'string') {
   throw new Error(
-    'Usage: npm run schema-canary:browser-report -- --kept=<file> --results=<playwright json> [--write] [--failures-out=<file>] [--latest-failures-out=<file>]',
+    'Usage: npm run schema-canary:browser-report -- --kept=<file> --results=<playwright json>[,<rerun json>] [--write] [--failures-out=<file>] [--latest-failures-out=<file>]',
   );
 }
 
 const kept = JSON.parse(readFileSync(args.kept, 'utf8')) as KeptEmployment[];
-const results = existsSync(args.results)
-  ? (JSON.parse(readFileSync(args.results, 'utf8')) as PlaywrightJsonReport)
-  : undefined;
-const rows = browserRows(kept, results);
+const reports = args.results
+  .split(',')
+  .filter((file) => existsSync(file))
+  .map(
+    (file) => JSON.parse(readFileSync(file, 'utf8')) as PlaywrightJsonReport,
+  );
+const rows = browserRows(kept, reports);
 
 const table = formatSummaryTable(rows);
 console.log(table);

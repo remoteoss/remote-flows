@@ -32,10 +32,10 @@ function firstLine(message: string) {
 
 export function browserRows(
   kept: KeptEmployment[],
-  report: PlaywrightJsonReport | undefined,
+  reports: PlaywrightJsonReport[],
 ): SchemaCanaryRow[] {
   const testsByEmployment = new Map<string, PlaywrightJsonTest>();
-  for (const test of collectTests(report?.suites)) {
+  for (const test of reports.flatMap((report) => collectTests(report.suites))) {
     const employmentId = test.annotations?.find(
       (annotation) => annotation.type === EMPLOYMENT_ANNOTATION,
     )?.description;

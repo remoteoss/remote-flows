@@ -64,7 +64,7 @@ describe('browserRows', () => {
           kept('MKD', 'latest'),
           kept('NOR', 1),
         ],
-        report,
+        [report],
       ),
     ).toEqual([
       {
@@ -101,7 +101,7 @@ describe('browserRows', () => {
   });
 
   it('fails every kept employment when Playwright wrote no results', () => {
-    expect(browserRows([kept('GBR', 7)], undefined)).toEqual([
+    expect(browserRows([kept('GBR', 7)], [])).toEqual([
       {
         country: 'GBR',
         version: 7,
@@ -109,6 +109,41 @@ describe('browserRows', () => {
         check: 'browser',
         outcome: 'fail',
         error: 'the browser test did not run',
+      },
+    ]);
+  });
+
+  it('takes the result of the rerun for a test that ran twice', () => {
+    const firstRun: PlaywrightJsonReport = {
+      suites: [
+        {
+          specs: [
+            { tests: [playwrightTest('GBR-7', 'unexpected', 'Error: 403')] },
+            { tests: [playwrightTest('FRA-1', 'expected')] },
+          ],
+        },
+      ],
+    };
+    const rerun: PlaywrightJsonReport = {
+      suites: [{ specs: [{ tests: [playwrightTest('GBR-7', 'expected')] }] }],
+    };
+
+    expect(
+      browserRows([kept('GBR', 7), kept('FRA', 1)], [firstRun, rerun]),
+    ).toEqual([
+      {
+        country: 'GBR',
+        version: 7,
+        strategy: 'buildOnce',
+        check: 'browser',
+        outcome: 'pass',
+      },
+      {
+        country: 'FRA',
+        version: 1,
+        strategy: 'buildOnce',
+        check: 'browser',
+        outcome: 'pass',
       },
     ]);
   });
