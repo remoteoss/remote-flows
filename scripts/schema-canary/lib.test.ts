@@ -87,14 +87,6 @@ describe('decideExitCode', () => {
     expect(decideExitCode(rows)).toBe(0);
   });
 
-  it('returns 1 when a "submit" check failed', () => {
-    const rows: SchemaCanaryRow[] = [
-      passingRow,
-      { ...passingRow, check: 'submit', outcome: 'fail', error: 'boom' },
-    ];
-    expect(decideExitCode(rows)).toBe(1);
-  });
-
   it('returns 1 when a "pinned" check failed', () => {
     const rows: SchemaCanaryRow[] = [
       passingRow,
@@ -239,7 +231,6 @@ describe('formatFailures', () => {
         {
           ...row,
           country: 'ESP',
-          check: 'submit',
           outcome: 'fail',
           error: 'boom',
         },
@@ -251,7 +242,6 @@ describe('formatFailures', () => {
         {
           ...row,
           country: 'ESP',
-          check: 'submit',
           outcome: 'fail',
           error: 'boom',
         },

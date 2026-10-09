@@ -5,8 +5,8 @@ export default defineConfig({
   test: {
     include: [
       'example/**/*.test.{ts,tsx}',
+      'scripts/**/*.test.ts',
       'src/**/*.test.{ts,tsx}',
-      'scripts/**/*.test.{ts,tsx}',
     ],
     exclude: ['node_modules/**', 'example/node_modules/**', 'example/e2e/**'],
     coverage: {

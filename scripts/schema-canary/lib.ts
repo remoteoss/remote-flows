@@ -5,13 +5,9 @@ import {
 } from '@/src/common/headlessForm';
 import { findSkipEntry, SchemaCanarySkipEntry } from './skip-list';
 
-export type SchemaCheckType = 'pinned' | 'latest' | 'submit';
+export type SchemaCheckType = 'pinned' | 'latest';
 
-export const SCHEMA_CHECK_ORDER: SchemaCheckType[] = [
-  'pinned',
-  'latest',
-  'submit',
-];
+export const SCHEMA_CHECK_ORDER: SchemaCheckType[] = ['pinned', 'latest'];
 export type SchemaCheckOutcome = 'pass' | 'fail' | 'seed-error' | 'skip';
 
 export type SchemaCanaryRow = {
@@ -111,7 +107,7 @@ export function buildReport(rows: SchemaCanaryRow[]): SchemaCanaryReport {
     _meta: {
       title: 'Contract details schema canary',
       description:
-        'Per-country contract_details schema checks against the sandbox gateway. "pinned" is the version this library currently ships against (see example/src/flows/Onboarding/jsonSchemaVersions.ts); "latest" is whatever version the gateway currently serves as newest. Both build the schema with the useHeadlessForm strategy the Onboarding flow uses for that country (buildOnce for jsf v1 contract details countries, rebuild otherwise), validate empty values the same way the hook does, and record whether it throws. "submit" fills the pinned schema with fake values (fixed per country, see scripts/contract-details-seeds.ts), runs them through the same SDK form build, validation and parsing the Onboarding flow uses, sends the result in the same PATCH /v1/employments/{id}, and then reads the employment back to check the saved contract_details match what was sent. "seed-error" means the sandbox employment for that country could not be created, so its schemas were not checked.',
+        'Per-country contract_details schema checks against the sandbox gateway. "pinned" is the version this library currently ships against (see example/src/flows/Onboarding/jsonSchemaVersions.ts); "latest" is whatever version the gateway currently serves as newest. Both build the schema with the useHeadlessForm strategy the Onboarding flow uses for that country (buildOnce for jsf v1 contract details countries, rebuild otherwise), validate empty values the same way the hook does, and record whether it throws. "seed-error" means the sandbox employment for that country could not be created, so its schemas were not checked.',
       source:
         'scripts/schema-canary.ts, run nightly against the sandbox gateway',
     },
