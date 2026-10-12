@@ -27,6 +27,7 @@ no code and create no branch until the user approves it.**
 
 Show it in chat with exactly these sections:
 
+- **Branch** — the branch the work will land on (see Storage).
 - **Goal** — one or two sentences of user-visible behaviour, not implementation.
 - **Scope** — the files that change and what changes in each. Flag anything
   that touches `src/index.tsx` or what it re-exports: that's public API and
@@ -101,9 +102,14 @@ a PR and survives removing the worktree.
 
 ```bash
 project=$(basename "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")")
-branch=$(git branch --show-current | tr / -)
 ```
 
 `<project>` is the main checkout's directory name, so all worktrees share it.
-If the work hasn't got a branch yet, name it in the goal (lowercase kebab-case
-from the task) and use that name for both the file and the worktree.
+
+`<branch>` is the goal's **Branch**, with slashes turned into dashes, never the
+branch you happen to be on. `/goal` usually runs on `main` before any branch
+exists, so use the current branch only when it's already the feature branch
+for this work. Otherwise propose a lowercase kebab-case name from the task.
+Create the worktree with that same name (`npm run worktree -- --branch
+<branch>`) so later runs on the branch find the file through
+`git branch --show-current | tr / -`.
