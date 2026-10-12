@@ -411,7 +411,9 @@ export const useContractorOnboarding = ({
   }, [contractorSubscriptions]);
 
   const shouldIncludeEligibilityQuestionnaire = useMemo(() => {
-    if (hasEligibilityQuestionnaireSubmitted) return false;
+    if (hasEligibilityQuestionnaireSubmitted) {
+      return false;
+    }
     return selectedProduct === corProductIdentifier;
   }, [hasEligibilityQuestionnaireSubmitted, selectedProduct]);
 
@@ -901,7 +903,9 @@ export const useContractorOnboarding = ({
   // memoize file conversion to avoid re-converting the file on every render
   // noticed performance issues when not doing memoizing individually
   const convertedIr35File = useMemo(() => {
-    if (!ir35File?.content) return null;
+    if (!ir35File?.content) {
+      return null;
+    }
     return dataURLtoFile(ir35File.content as unknown as string, ir35File.name);
   }, [ir35File?.content, ir35File?.name]);
 

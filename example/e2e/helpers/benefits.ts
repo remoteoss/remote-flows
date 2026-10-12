@@ -81,7 +81,9 @@ function collectFillableFields(
   const result: CollectedField[] = [];
 
   for (const field of fields ?? []) {
-    if (field.isVisible === false || field.deprecated) continue;
+    if (field.isVisible === false || field.deprecated) {
+      continue;
+    }
 
     const inputType = field.type ?? field.inputType ?? '';
     const domKey = domPrefix ? `${domPrefix}.${field.name}` : field.name;
@@ -161,7 +163,9 @@ export async function fillOnboardingBenefitsStepDynamically(
         (field) => !handled.has(field.domKey),
       );
 
-      if (pending.length === 0) break;
+      if (pending.length === 0) {
+        break;
+      }
 
       let filledAny = false;
 
