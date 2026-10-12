@@ -28,7 +28,9 @@ type SdkPayloadResult =
 
 export function seedFor(country: string): number {
   let hash = 0;
-  for (const char of country) hash = (hash * 31 + char.charCodeAt(0)) | 0;
+  for (const char of country) {
+    hash = (hash * 31 + char.charCodeAt(0)) | 0;
+  }
   return Math.abs(hash);
 }
 
@@ -51,7 +53,9 @@ export async function sdkPayloadFor(
     for (let pass = 0; pass < MAX_REBUILD_PASSES; pass++) {
       form = buildHeadlessForm(schema, strategy, formValues);
       const nextValues = getInitialValues(form.fields, savedValues);
-      if (isDeepStrictEqual(nextValues, formValues)) break;
+      if (isDeepStrictEqual(nextValues, formValues)) {
+        break;
+      }
       formValues = nextValues;
     }
   }
@@ -119,7 +123,9 @@ export async function submitContractDetails(
     };
   }
   const sdk = await sdkPayloadFor(schema, strategy, values, skipped);
-  if (!sdk.ok) return sdk;
+  if (!sdk.ok) {
+    return sdk;
+  }
 
   const response = await patchV1EmploymentsEmploymentId2({
     client,

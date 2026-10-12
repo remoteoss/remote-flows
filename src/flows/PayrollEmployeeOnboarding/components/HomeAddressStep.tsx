@@ -8,7 +8,9 @@ export function HomeAddressStep(props: GPStepCallbacks) {
   const { employeeBag } = usePayrollEmployeeOnboardingContext();
   const handleSubmit = useEmployeeStepSubmitHandler(props);
 
-  if (employeeBag.isLoadingSavedValues) return null;
+  if (employeeBag.isLoadingSavedValues) {
+    return null;
+  }
 
   return (
     <PayrollEmployeeForm

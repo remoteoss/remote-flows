@@ -11,7 +11,9 @@ function renderFlow(employmentId = 'employment-grace') {
     <ContractDocumentFlow
       employmentId={employmentId}
       render={(bag) => {
-        if (bag.isLoading) return <p>Loading…</p>;
+        if (bag.isLoading) {
+          return <p>Loading…</p>;
+        }
 
         return (
           <>
