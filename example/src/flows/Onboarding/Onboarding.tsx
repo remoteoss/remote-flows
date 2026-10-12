@@ -395,7 +395,9 @@ type OnboardingFormData = {
 const optionsFromUrl = () => {
   const country = getUrlParam('countryCode');
   const version = getUrlParam('contractDetailsVersion');
-  if (!country || !version) return ONBOARDING_OPTIONS;
+  if (!country || !version) {
+    return ONBOARDING_OPTIONS;
+  }
   return {
     ...ONBOARDING_OPTIONS,
     jsonSchemaVersionByCountry: {

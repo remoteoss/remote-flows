@@ -100,6 +100,16 @@ describe('decideExitCode', () => {
     expect(decideExitCode([passingRow])).toBe(0);
   });
 
+  it('returns 1 when no checks ran', () => {
+    expect(decideExitCode([])).toBe(1);
+  });
+
+  it('returns 1 when every check was skipped', () => {
+    expect(
+      decideExitCode([{ ...passingRow, outcome: 'skip', error: 'skipped' }]),
+    ).toBe(1);
+  });
+
   it.each(['build', 'submit', 'browser'] as const)(
     'returns 1 when a pinned "%s" check failed',
     (check) => {

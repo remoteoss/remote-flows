@@ -133,7 +133,9 @@ export const CurrencyConversionField = ({
 
   const convertCurrencyCallback = useCallback(
     async (amount: number | null, fromCurrency: string, toCurrency: string) => {
-      if (!amount || isNaN(amount) || amount <= 0) return;
+      if (!amount || isNaN(amount) || amount <= 0) {
+        return;
+      }
 
       return convertCurrency({
         source_currency: fromCurrency,

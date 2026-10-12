@@ -39,7 +39,9 @@ export function browserRows(
     const employmentId = test.annotations?.find(
       (annotation) => annotation.type === EMPLOYMENT_ANNOTATION,
     )?.description;
-    if (employmentId) testsByEmployment.set(employmentId, test);
+    if (employmentId) {
+      testsByEmployment.set(employmentId, test);
+    }
   }
 
   return kept.map(

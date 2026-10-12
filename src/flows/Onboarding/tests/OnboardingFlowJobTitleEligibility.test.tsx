@@ -637,6 +637,91 @@ describe.each(schemaPaths)(
         });
       });
 
+      it('shows an info statement when the check needs review', async () => {
+        mockCheckResponse([{ check_id: 'check-id', verdict: 'needs_review' }]);
+
+        await renderContractDetailsStep();
+        await fillRoleFields();
+
+        expect(
+          await screen.findByText(
+            `AI isn't sure if we can hire this role in ${countryName}`,
+          ),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText(
+            "Complete the add employee process and we'll let you know as soon as we can if we can hire this role.",
+          ),
+        ).toBeInTheDocument();
+      });
+
+      it('shows an error statement when the role is not eligible', async () => {
+        mockCheckResponse([{ check_id: 'check-id', verdict: 'not_eligible' }]);
+
+        await renderContractDetailsStep();
+        await fillRoleFields();
+
+        expect(
+          await screen.findByText(
+            `AI determined we can't hire this role in ${countryName}`,
+          ),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText(
+            "Based on the job title and role description entered, we can't hire this role. Update the role details to check again.",
+          ),
+        ).toBeInTheDocument();
+      });
+
+      it('does not show a statement when the role is eligible', async () => {
+        mockCheckResponse([{ check_id: 'check-id', verdict: 'eligible' }]);
+
+        await renderContractDetailsStep();
+        await fillRoleFields();
+        await waitFor(() =>
+          expect(checkResponsesSent).toHaveBeenCalledTimes(1),
+        );
+
+        expect(screen.queryByText(/^AI /)).not.toBeInTheDocument();
+      });
+
+      it('switches the statement when a new check changes the verdict and removes it once eligible', async () => {
+        mockCheckResponse([
+          { check_id: 'not-eligible-check-id', verdict: 'not_eligible' },
+          { check_id: 'needs-review-check-id', verdict: 'needs_review' },
+          { check_id: 'eligible-check-id', verdict: 'eligible' },
+        ]);
+
+        await renderContractDetailsStep();
+        await fillRoleFields();
+        await screen.findByText(
+          `AI determined we can't hire this role in ${countryName}`,
+        );
+
+        const user = userEvent.setup();
+        const changeRoleDescription = async (text: string) => {
+          const roleDescription = screen.getByLabelText(/Role description/i);
+          await user.clear(roleDescription);
+          await user.type(roleDescription, text);
+          await user.tab();
+        };
+
+        await changeRoleDescription('Frontend engineer responsibilities');
+        await screen.findByText(
+          `AI isn't sure if we can hire this role in ${countryName}`,
+        );
+        expect(
+          screen.queryByText(
+            `AI determined we can't hire this role in ${countryName}`,
+          ),
+        ).not.toBeInTheDocument();
+
+        await changeRoleDescription('Product engineer responsibilities');
+        await waitFor(() =>
+          expect(screen.queryByText(/^AI /)).not.toBeInTheDocument(),
+        );
+      });
+
       it('hides the risk acknowledgement again once the role changes and the new check is eligible', async () => {
         mockCheckResponse([
           {

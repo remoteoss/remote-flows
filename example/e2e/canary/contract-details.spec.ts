@@ -40,7 +40,9 @@ async function acknowledgeAgain(page: Page) {
     const box = page.locator(
       `[data-field="${field}"] [role="checkbox"][data-state="unchecked"]`,
     );
-    if ((await box.count()) === 0) continue;
+    if ((await box.count()) === 0) {
+      continue;
+    }
     await box.click();
     test.info().annotations.push({
       type: 'acknowledged-again',
@@ -54,7 +56,9 @@ async function continueUntilContractDetails(page: Page) {
   for (let step = 0; step < MAX_STEPS_BEFORE_CONTRACT_DETAILS; step++) {
     await expect(stepTitle).not.toBeEmpty();
     const current = await stepTitle.innerText();
-    if (current === 'Contract Details') return;
+    if (current === 'Contract Details') {
+      return;
+    }
     await test.step(`continue past ${current}`, async () => {
       await acknowledgeAgain(page);
       await page.locator('.submit-button').click();
@@ -72,7 +76,9 @@ async function answerKnownUnsavedFields(
   sent: Record<string, unknown>,
 ) {
   for (const field of fields) {
-    if (!(field in sent)) continue;
+    if (!(field in sent)) {
+      continue;
+    }
     const container = page.locator(`[data-field="${field}"]`);
     await expect(
       container.locator('[data-slot="form-message"]'),

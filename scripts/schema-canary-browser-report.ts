@@ -25,7 +25,9 @@ function parseArgs(argv: string[]) {
   const args: Record<string, string | true> = {};
   for (const raw of argv) {
     const match = raw.match(/^--([^=]+)(?:=(.*))?$/);
-    if (match) args[match[1]] = match[2] ?? true;
+    if (match) {
+      args[match[1]] = match[2] ?? true;
+    }
   }
   return args;
 }
@@ -71,13 +73,17 @@ for (const [arg, track] of [
 ] as const) {
   const file = args[arg];
   const failures = formatFailures(rows, track);
-  if (typeof file !== 'string' || !failures) continue;
+  if (typeof file !== 'string' || !failures) {
+    continue;
+  }
   const existing = existsSync(file) ? readFileSync(file, 'utf8') : '';
   appendFileSync(file, `${existing ? '\n\n' : ''}${failures}`);
 }
 
 if (process.env.GITHUB_ACTIONS === 'true') {
-  for (const annotation of formatAnnotations(rows)) console.log(annotation);
+  for (const annotation of formatAnnotations(rows)) {
+    console.log(annotation);
+  }
 }
 if (process.env.GITHUB_OUTPUT) {
   appendFileSync(process.env.GITHUB_OUTPUT, 'complete=true\n');

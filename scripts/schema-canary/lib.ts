@@ -95,9 +95,13 @@ export function isSkipped(
 }
 
 export function decideExitCode(rows: SchemaCanaryRow[]): 0 | 1 {
-  return rows.some((row) => trackOf(row.version) === 'pinned' && isProblem(row))
-    ? 1
-    : 0;
+  const hasPinnedProblem = rows.some(
+    (row) => trackOf(row.version) === 'pinned' && isProblem(row),
+  );
+  const checkedAnything = rows.some(
+    (row) => row.outcome === 'pass' || row.outcome === 'fail',
+  );
+  return !checkedAnything || hasPinnedProblem ? 1 : 0;
 }
 
 const OUTCOME_LABEL: Record<SchemaCheckOutcome, string> = {
