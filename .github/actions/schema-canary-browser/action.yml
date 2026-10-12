@@ -5,6 +5,12 @@ inputs:
   employments-file:
     description: File written by npm run schema-canary -- --keep-submitted
     required: true
+  results-file:
+    description: Where Playwright writes its JSON results, read by npm run schema-canary:browser-report
+    required: true
+  rerun-results-file:
+    description: Where the rerun of the failed tests writes its JSON results, read by npm run schema-canary:browser-report
+    required: true
   client-id:
     required: true
   client-secret:
@@ -82,12 +88,23 @@ runs:
       env:
         PORT: '3001'
         SCHEMA_CANARY_EMPLOYMENTS: ${{ inputs.employments-file }}
-      run: npx playwright test -c playwright.canary.config.ts
+        SCHEMA_CANARY_RESULTS: ${{ inputs.results-file }}
+        RERUN_RESULTS: ${{ inputs.rerun-results-file }}
+      run: |
+        if npx playwright test -c playwright.canary.config.ts; then exit 0; fi
+        echo "Some browser tests failed. Sandbox blocks a runner for a minute or two after too many requests, so wait 2 minutes and rerun only the failed tests."
+        sleep 120
+        SCHEMA_CANARY_RESULTS="$RERUN_RESULTS" PLAYWRIGHT_HTML_OUTPUT_DIR=playwright-report-rerun \
+          npx playwright test -c playwright.canary.config.ts --last-failed \
+          || echo "Playwright exited with $?; npm run schema-canary:browser-report decides the outcome"
 
     - name: Upload the Playwright report
       if: ${{ !cancelled() }}
+      continue-on-error: true
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: schema-canary-browser-report
-        path: example/playwright-report/
+        path: |
+          example/playwright-report/
+          example/playwright-report-rerun/
         retention-days: 14

@@ -17,15 +17,21 @@ import {
   buildReport,
   checkSchemaBuildsAndValidates,
   decideExitCode,
+  formatAnnotations,
   formatFailures,
+  formatStepSummary,
   formatSummaryTable,
   isSkipped,
   mapWithConcurrency,
   SCHEMA_CHECK_ORDER,
+  SCHEMA_VERSION_TRACKS,
   SchemaCanaryRow,
   SchemaCheckType,
+  SchemaVersionTrack,
+  trackOf,
 } from './schema-canary/lib';
 import { resolvePinnedVersion } from './schema-canary/pinned-versions';
+import { SCHEMA_CANARY_REPORT_PATH } from './schema-canary/report-path';
 import { KeptEmployment } from './schema-canary/kept-employments';
 import {
   archiveEmployment,
@@ -69,6 +75,13 @@ if (unknownChecks.length > 0) {
 const CHECK_TYPES = SCHEMA_CHECK_ORDER.filter((check) =>
   REQUESTED_CHECKS.includes(check),
 );
+const REQUESTED_TRACKS =
+  typeof args.versions === 'string'
+    ? (args.versions.split(',') as SchemaVersionTrack[])
+    : SCHEMA_VERSION_TRACKS;
+const TRACKS = SCHEMA_VERSION_TRACKS.filter((track) =>
+  REQUESTED_TRACKS.includes(track),
+);
 const CONCURRENCY =
   typeof args.concurrency === 'string' ? Number(args.concurrency) : 6;
 if (!Number.isInteger(CONCURRENCY) || CONCURRENCY < 1) {
@@ -79,11 +92,14 @@ if (!Number.isInteger(CONCURRENCY) || CONCURRENCY < 1) {
 const WRITE_REPORT = args.write === true;
 const FAILURES_OUT =
   typeof args['failures-out'] === 'string' ? args['failures-out'] : undefined;
+const LATEST_FAILURES_OUT =
+  typeof args['latest-failures-out'] === 'string'
+    ? args['latest-failures-out']
+    : undefined;
 const KEEP_SUBMITTED =
   typeof args['keep-submitted'] === 'string'
     ? args['keep-submitted']
     : undefined;
-const REPORT_PATH = path.resolve(__dirname, 'reports', 'schema-canary.json');
 
 async function fetchLiveCountries(client: Client): Promise<string[]> {
   const response = await getV1Countries({
@@ -107,8 +123,8 @@ async function fetchLiveCountries(client: Client): Promise<string[]> {
   return countries;
 }
 
-function versionFor(country: string, check: SchemaCheckType) {
-  return check === 'latest'
+function versionFor(country: string, track: SchemaVersionTrack) {
+  return track === 'latest'
     ? 'latest'
     : resolvePinnedVersion(country, DEFAULT_VERSION);
 }
@@ -151,8 +167,11 @@ function recordKept(employment: KeptEmployment, keepFile: string) {
 async function checkCountry(
   client: Client,
   country: string,
+  track: SchemaVersionTrack,
 ): Promise<CountryResult> {
   const strategy = getContractDetailsStrategy(country);
+  const version = versionFor(country, track);
+  const label = `${country}@${version}`;
   const rows: SchemaCanaryRow[] = [];
   let kept: KeptEmployment | undefined;
 
@@ -163,15 +182,20 @@ async function checkCountry(
       client,
       country,
     ));
-    console.log(`[${country}] seeded employment ${employmentId}`);
+    console.log(`[${label}] seeded employment ${employmentId}`);
   } catch (error) {
     const reason = `employment seeding failed: ${error instanceof Error ? error.message : String(error)}`;
-    console.log(`[${country}] ${reason}`);
+    console.log(`[${label}] ${reason}`);
     for (const check of CHECK_TYPES) {
-      const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
+      const skipEntry = isSkipped(
+        SCHEMA_CANARY_SKIP_LIST,
+        country,
+        check,
+        track,
+      );
       rows.push({
         country,
-        version: versionFor(country, check),
+        version,
         strategy,
         check,
         outcome: skipEntry ? 'skip' : 'seed-error',
@@ -181,25 +205,16 @@ async function checkCountry(
     return { rows };
   }
 
-  const schemas = new Map<
-    number | 'latest',
-    Promise<Record<string, unknown> | null>
-  >();
-  const schemaFor = (version: number | 'latest') => {
-    if (!schemas.has(version)) {
-      schemas.set(
-        version,
-        fetchLiveSchema(client, country, version, employmentId),
-      );
-    }
-    return schemas.get(version)!;
-  };
-
   try {
-    let pinnedBuildFailed = false;
+    let schema: Promise<Record<string, unknown> | null> | undefined;
+    let buildFailed = false;
     for (const check of CHECK_TYPES) {
-      const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
-      const version = versionFor(country, check);
+      const skipEntry = isSkipped(
+        SCHEMA_CANARY_SKIP_LIST,
+        country,
+        check,
+        track,
+      );
 
       if (skipEntry) {
         rows.push({
@@ -213,27 +228,27 @@ async function checkCountry(
         continue;
       }
 
-      if (check === 'submit' && pinnedBuildFailed) {
+      if (check === 'submit' && buildFailed) {
         rows.push({
           country,
           version,
           strategy,
           check,
           outcome: 'skip',
-          error: 'the pinned schema failed to build, so it was not submitted',
+          error: 'the schema failed to build, so it was not submitted',
         });
         continue;
       }
 
       try {
-        const schema = await schemaFor(version);
+        schema ??= fetchLiveSchema(client, country, version, employmentId);
         let result: { ok: true } | { ok: false; error: string };
         if (check === 'submit') {
           const submitted = await submitContractDetails(
             client,
             employmentId,
-            schema,
-            resolvePinnedVersion(country, DEFAULT_VERSION),
+            await schema,
+            version,
             {
               strategy,
               seed: seedFor(country),
@@ -256,13 +271,13 @@ async function checkCountry(
           }
           result = submitted;
         } else {
-          result = await checkSchemaBuildsAndValidates(schema, strategy);
-          if (check === 'pinned' && !result.ok) {
-            pinnedBuildFailed = true;
+          result = await checkSchemaBuildsAndValidates(await schema, strategy);
+          if (!result.ok) {
+            buildFailed = true;
           }
         }
         console.log(
-          `[${country}] ${check}@${version} -> ${result.ok ? 'pass' : `fail: ${result.error}`}`,
+          `[${label}] ${check} -> ${result.ok ? 'pass' : `fail: ${result.error}`}`,
         );
         rows.push({
           country,
@@ -273,8 +288,8 @@ async function checkCountry(
           error: result.ok ? undefined : result.error,
         });
       } catch (error) {
-        if (check === 'pinned') {
-          pinnedBuildFailed = true;
+        if (check === 'build') {
+          buildFailed = true;
         }
         rows.push({
           country,
@@ -289,14 +304,14 @@ async function checkCountry(
   } finally {
     if (KEEP_SUBMITTED && kept) {
       recordKept(kept, KEEP_SUBMITTED);
-      console.log(`[${country}] kept employment ${employmentId}`);
+      console.log(`[${label}] kept employment ${employmentId}`);
     } else {
       try {
         await archiveEmployment(client, employmentId);
-        console.log(`[${country}] archived employment ${employmentId}`);
+        console.log(`[${label}] archived employment ${employmentId}`);
       } catch (error) {
         console.warn(
-          `[${country}] failed to archive employment ${employmentId}: ${error instanceof Error ? error.message : String(error)}`,
+          `[${label}] failed to archive employment ${employmentId}: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }
@@ -317,8 +332,11 @@ async function runLive(): Promise<CountryResult[]> {
 
   const client = createSandboxClient(clientId, clientSecret, refreshToken);
   const countries = await fetchLiveCountries(client);
-  return mapWithConcurrency(countries, CONCURRENCY, (country) =>
-    checkCountry(client, country),
+  const runs = countries.flatMap((country) =>
+    TRACKS.map((track) => ({ country, track })),
+  );
+  return mapWithConcurrency(runs, CONCURRENCY, ({ country, track }) =>
+    checkCountry(client, country, track),
   );
 }
 
@@ -340,13 +358,16 @@ function report(rows: SchemaCanaryRow[]) {
   if (summaryPath) {
     appendFileSync(
       summaryPath,
-      `## Contract details schema canary\n\n${table}\n`,
+      `${formatStepSummary('Contract details schema canary', rows)}\n`,
     );
   }
 }
 
 function writeReport(rows: SchemaCanaryRow[]) {
-  writeFileSync(REPORT_PATH, `${JSON.stringify(buildReport(rows), null, 2)}\n`);
+  writeFileSync(
+    SCHEMA_CANARY_REPORT_PATH,
+    `${JSON.stringify(buildReport(rows), null, 2)}\n`,
+  );
 }
 
 async function main() {
@@ -364,51 +385,33 @@ async function main() {
     writeReport(rows);
   }
   if (FAILURES_OUT) {
-    writeFileSync(FAILURES_OUT, formatFailures(rows));
+    writeFileSync(FAILURES_OUT, formatFailures(rows, 'pinned'));
+  }
+  if (LATEST_FAILURES_OUT) {
+    writeFileSync(LATEST_FAILURES_OUT, formatFailures(rows, 'latest'));
   }
 
-  const failedPinned = rows.filter(
-    (row) => row.check === 'pinned' && row.outcome === 'fail',
-  );
-  const failedLatest = rows.filter(
-    (row) => row.check === 'latest' && row.outcome === 'fail',
-  );
-  const failedSubmit = rows.filter(
-    (row) => row.check === 'submit' && row.outcome === 'fail',
-  );
-  if (failedSubmit.length > 0) {
-    console.error(`\n${failedSubmit.length} "submit" check(s) failed:`);
-    for (const row of failedSubmit) {
-      console.error(`  - ${row.country}: ${row.error}`);
-    }
-  }
-  if (failedLatest.length > 0) {
-    console.warn(
-      `\n${failedLatest.length} "latest" check(s) failed (warning only, does not fail the job):`,
+  for (const track of TRACKS) {
+    const problems = rows.filter(
+      (row) =>
+        trackOf(row.version) === track &&
+        (row.outcome === 'fail' || row.outcome === 'seed-error'),
     );
-    for (const row of failedLatest) {
-      console.warn(`  - ${row.country}: ${row.error}`);
+    if (problems.length === 0) {
+      continue;
     }
-  }
-  const seedErrorCountries = [
-    ...new Map(
-      rows
-        .filter((row) => row.outcome === 'seed-error')
-        .map((row) => [row.country, row.error]),
-    ),
-  ];
-  if (seedErrorCountries.length > 0) {
-    console.error(
-      `\n${seedErrorCountries.length} country(ies) could not be seeded, so their schemas were not checked:`,
+    const log = track === 'pinned' ? console.error : console.warn;
+    log(
+      `\n${problems.length} ${track} check(s) failed${track === 'latest' ? ' (warning only, does not fail the job)' : ''}:`,
     );
-    for (const [country, error] of seedErrorCountries) {
-      console.error(`  - ${country}: ${error}`);
+    for (const row of problems) {
+      log(`  - ${row.country}@${row.version} ${row.check}: ${row.error}`);
     }
   }
-  if (failedPinned.length > 0) {
-    console.error(`\n${failedPinned.length} "pinned" check(s) failed:`);
-    for (const row of failedPinned) {
-      console.error(`  - ${row.country}: ${row.error}`);
+
+  if (process.env.GITHUB_ACTIONS === 'true') {
+    for (const annotation of formatAnnotations(rows)) {
+      console.log(annotation);
     }
   }
 
