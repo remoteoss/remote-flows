@@ -408,8 +408,24 @@ describe.each(schemaPaths)(
         role_is_onsite: 'yes',
         role_requires_license: 'yes',
       };
+      let mountVerdict: string;
+      let checkReleased: Promise<void>;
+
+      const expectNoFurtherChecks = async (count: number) => {
+        await waitFor(
+          () => {
+            expect(
+              jobTitleEligibilityCheckSpy.mock.calls.length,
+            ).toBeGreaterThan(count);
+          },
+          { timeout: 200 },
+        ).catch(() => undefined);
+        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(count);
+      };
 
       beforeEach(() => {
+        mountVerdict = 'not_eligible';
+        checkReleased = Promise.resolve();
         server.use(
           http.get('*/v1/employments/:id', ({ params }) => {
             const { employment } = employmentDefaultResponse.data;
@@ -435,7 +451,7 @@ describe.each(schemaPaths)(
                     ...savedRoleAnswers,
                     additional_job_title_eligibility_check_slug:
                       'saved-check-id',
-                    additional_job_title_eligibility_check_result: 'yes',
+                    additional_job_title_eligibility_check_result: 'maybe',
                   },
                 },
               },
@@ -445,11 +461,12 @@ describe.each(schemaPaths)(
             '*/v2/employments/:id/job-title-eligibility-check',
             async ({ request }) => {
               jobTitleEligibilityCheckSpy(await request.json());
+              await checkReleased;
               return HttpResponse.json({
                 data: {
                   job_title_eligibility_check: {
                     check_id: 'new-check-id',
-                    verdict: 'not_eligible',
+                    verdict: mountVerdict,
                   },
                 },
               });
@@ -458,7 +475,7 @@ describe.each(schemaPaths)(
         );
       });
 
-      it('re-checks the saved role answers against the current job title without a blur', async () => {
+      it('replaces the saved verdict with a check against the current job title, without a blur', async () => {
         await renderContractDetailsStep();
 
         expect(
@@ -466,11 +483,42 @@ describe.each(schemaPaths)(
             `AI determined we can't hire this role in ${countryName}`,
           ),
         ).toBeInTheDocument();
+        expect(
+          screen.queryByText(
+            `AI isn't sure if we can hire this role in ${countryName}`,
+          ),
+        ).not.toBeInTheDocument();
         expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1);
         expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledWith({
           job_title: 'Surgeon',
           ...savedRoleAnswers,
         });
+      });
+
+      it('asks for the risk acknowledgement on mount when the new verdict requires it', async () => {
+        mountVerdict = 'eligible_with_risk_acknowledgement';
+
+        await renderContractDetailsStep();
+
+        expect(
+          await screen.findByLabelText(/I acknowledge the risks/i),
+        ).toBeInTheDocument();
+      });
+
+      it('disables the submit button while the mount check is running', async () => {
+        let releaseCheck: () => void = () => {};
+        checkReleased = new Promise<void>((resolve) => {
+          releaseCheck = resolve;
+        });
+
+        await renderContractDetailsStep();
+        const submitButton = screen.getByRole('button', { name: 'Continue' });
+
+        await waitFor(() => expect(submitButton).toBeDisabled());
+
+        releaseCheck();
+
+        await waitFor(() => expect(submitButton).toBeEnabled());
       });
 
       it('does not call the check again when the step mounts again with nothing changed', async () => {
@@ -490,13 +538,15 @@ describe.each(schemaPaths)(
         act(() => {
           latestOnboardingBag.goTo('contract_details');
         });
+        await screen.findByLabelText(/Role description/i);
 
-        expect(
-          await screen.findByText(
-            `AI determined we can't hire this role in ${countryName}`,
-          ),
-        ).toBeInTheDocument();
-        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1);
+        await expectNoFurtherChecks(1);
+      });
+
+      it('does not call the check on mount when the feature is not enabled', async () => {
+        await renderContractDetailsStep({ features: [] });
+
+        await expectNoFurtherChecks(0);
       });
     });
 
