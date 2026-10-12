@@ -264,7 +264,6 @@ describe.each(schemaPaths)(
       screen.getByRole('button', { name: 'Continue' }).click();
 
       await waitFor(() => expect(savedJobTitle).toBe('Surgeon'));
-      await act(async () => {});
       expect(screen.getByLabelText(/Job title/i)).toBeInTheDocument();
       expect(
         screen.queryByLabelText(/Role description/i),
