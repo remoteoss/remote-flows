@@ -182,9 +182,26 @@ describe.each(schemaPaths)(
       });
     });
 
-    it('checks with the job title saved earlier in the same session', async () => {
+    it('checks with the job title the user saved earlier in the same session', async () => {
       let savedJobTitle = 'Software Engineer';
       server.use(
+        http.get(
+          `*/v1/countries/${countryCode}/employment_basic_information*`,
+          () =>
+            HttpResponse.json({
+              data: {
+                type: 'object',
+                properties: {
+                  job_title: {
+                    type: 'string',
+                    title: 'Job title',
+                    'x-jsf-presentation': { inputType: 'text' },
+                  },
+                },
+                required: ['job_title'],
+              },
+            }),
+        ),
         http.get('*/v1/employments/:id', ({ params }) => {
           const { employment } = employmentDefaultResponse.data;
           return HttpResponse.json({
@@ -208,8 +225,11 @@ describe.each(schemaPaths)(
             },
           });
         }),
-        http.patch('*/v1/employments/:id', () => {
-          savedJobTitle = 'Surgeon';
+        http.patch('*/v1/employments/:id', async ({ request }) => {
+          const body = (await request.json()) as {
+            basic_information: { job_title: string };
+          };
+          savedJobTitle = body.basic_information.job_title;
           return HttpResponse.json(employmentDefaultResponse);
         }),
       );
@@ -220,20 +240,33 @@ describe.each(schemaPaths)(
           employmentId='test-employment-id'
           skipSteps={['select_country']}
           options={{ features: ['job_title_eligibility'] }}
-          render={mockRender}
+          render={({ onboardingBag, components }) => {
+            latestOnboardingBag = onboardingBag;
+            const { BasicInformationStep, ContractDetailsStep, SubmitButton } =
+              components;
+            return (
+              <>
+                {onboardingBag.stepState.currentStep.name ===
+                'basic_information' ? (
+                  <BasicInformationStep />
+                ) : (
+                  <ContractDetailsStep />
+                )}
+                <SubmitButton>Continue</SubmitButton>
+              </>
+            );
+          }}
         />,
         { wrapper: TestProviders },
       );
-      await waitFor(() => expect(latestOnboardingBag.isLoading).toBe(false));
 
-      await act(async () => {
-        await latestOnboardingBag.onSubmit({ name: 'Jane' });
-      });
-      act(() => {
-        latestOnboardingBag.goTo('contract_details');
-      });
+      const user = userEvent.setup();
+      const jobTitle = await screen.findByLabelText(/Job title/i);
+      await user.clear(jobTitle);
+      await user.type(jobTitle, 'Surgeon');
+      screen.getByRole('button', { name: 'Continue' }).click();
+
       await screen.findByLabelText(/Role description/i);
-
       await fillRoleFields();
 
       await waitFor(() =>
