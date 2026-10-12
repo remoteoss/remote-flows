@@ -122,10 +122,17 @@ export const usePayrollAdminOnboarding = ({
   // Country-picker schema for the select_country step, before a country is chosen.
   const countrySelectSchemaQuery = useGPCountrySelectSchema(fieldValues);
 
+  const savedStepValues = {
+    ...(initialValues?.[
+      currentStep === 'select_country' ? 'basic_information' : currentStep
+    ] as FieldValues | undefined),
+    ...(stepState.values?.[currentStep] as FieldValues | undefined),
+  };
+
   const currentSchemaQuery = useGPFormSchema(
     internalCountryCode,
     schemaTypeByStep[currentStep],
-    fieldValues,
+    { ...savedStepValues, ...fieldValues },
     {
       employmentId:
         currentStep !== 'select_country' ? internalEmploymentId : undefined,
