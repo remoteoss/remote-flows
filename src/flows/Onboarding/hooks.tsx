@@ -658,18 +658,20 @@ export const useOnboarding = ({
                   calculateDynamicProperties: (
                     values: FieldValues,
                     field: JSFField,
-                  ) => ({
-                    ...(
-                      roleDescriptionField as $TSFixMe
-                    )?.presentation?.calculateDynamicProperties?.(
-                      values,
-                      field,
-                    ),
-                    ...getJobTitleEligibilityStatement(
+                  ) => {
+                    const partnerFn = (roleDescriptionField as $TSFixMe)
+                      ?.presentation?.calculateDynamicProperties;
+                    const partnerProps = partnerFn
+                      ? partnerFn(values, field)
+                      : {};
+
+                    const ourProps = getJobTitleEligibilityStatement(
                       values[JOB_TITLE_ELIGIBILITY_RESULT_FIELD],
                       employment?.country?.name,
-                    ),
-                  }),
+                    );
+
+                    return { ...partnerProps, ...ourProps };
+                  },
                 },
               },
             }
