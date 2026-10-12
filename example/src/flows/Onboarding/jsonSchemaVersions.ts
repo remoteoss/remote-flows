@@ -117,7 +117,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   FRA: {
     // France
-    contract_details: 1,
+    contract_details: 2,
   },
   GBR: {
     // United Kingdom
