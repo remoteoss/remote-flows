@@ -1214,14 +1214,6 @@ describe('OnboardingFlow', () => {
 
     await waitFor(() => expect(mockOnError).toHaveBeenCalledTimes(1));
     expect(patchSpy).toHaveBeenCalledTimes(1);
-    await waitFor(
-      () => {
-        expect(getEmploymentSpy.mock.calls.length).toBeGreaterThan(
-          getCallsBeforeSubmit,
-        );
-      },
-      { timeout: 200 },
-    ).catch(() => undefined);
     expect(getEmploymentSpy).toHaveBeenCalledTimes(getCallsBeforeSubmit);
     expect(screen.getByText(/Step: Basic Information/i)).toBeInTheDocument();
   });
