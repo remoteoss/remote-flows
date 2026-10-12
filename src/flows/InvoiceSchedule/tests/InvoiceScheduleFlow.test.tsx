@@ -86,7 +86,9 @@ describe('InvoiceScheduleFlow', () => {
       <InvoiceScheduleFlow
         employmentId=''
         render={(bag) => {
-          if (bag.isLoading) return <p>Loading…</p>;
+          if (bag.isLoading) {
+            return <p>Loading…</p>;
+          }
           sawReady = true;
           return (
             <>

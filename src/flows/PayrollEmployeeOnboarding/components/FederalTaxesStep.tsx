@@ -17,8 +17,9 @@ export function FederalTaxesStep(props: GPStepCallbacks) {
   if (
     !employeeBag.taxStepsAvailability.federal_taxes.isAvailable ||
     employeeBag.isLoadingSavedValues
-  )
+  ) {
     return null;
+  }
 
   return (
     <PayrollEmployeeForm

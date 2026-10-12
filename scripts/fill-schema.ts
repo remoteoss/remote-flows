@@ -76,7 +76,9 @@ function fakeNumber(
     min = field.minimum ?? (field.maximum ?? fallback.max) - span;
     max = field.maximum ?? min + span;
   }
-  if (min > max) return min;
+  if (min > max) {
+    return min;
+  }
   return faker.number.int({ min: Math.ceil(min), max: Math.floor(max) });
 }
 
@@ -106,8 +108,12 @@ function fakeDate(field: SeedField): string {
   const date = new Date();
   date.setDate(date.getDate() + 35);
   const iso = toIsoDate(date);
-  if (field.minDate && iso < field.minDate) return field.minDate;
-  if (field.maxDate && iso > field.maxDate) return field.maxDate;
+  if (field.minDate && iso < field.minDate) {
+    return field.minDate;
+  }
+  if (field.maxDate && iso > field.maxDate) {
+    return field.maxDate;
+  }
   return iso;
 }
 
@@ -117,8 +123,12 @@ export function fakeValueFor(field: SeedField, retry = false): unknown {
   if (field.const !== undefined && !isComputedBinding(field, field.const)) {
     return field.const;
   }
-  if (field.jsonType === 'null') return null;
-  if (inputType === 'hidden') return field.default ?? undefined;
+  if (field.jsonType === 'null') {
+    return null;
+  }
+  if (inputType === 'hidden') {
+    return field.default ?? undefined;
+  }
   if (
     !retry &&
     field.default !== undefined &&
@@ -186,8 +196,9 @@ function fillFields(
       !field.isVisible ||
       locked.has(field.name) ||
       UNFILLED_FIELDS.has(field.name)
-    )
+    ) {
       continue;
+    }
     const fieldError = errors?.[field.name];
 
     if (field.inputType === 'fieldset' && field.fields) {
@@ -203,16 +214,22 @@ function fillFields(
     }
 
     if (field.inputType === 'file') {
-      if (field.required) skipped.add(field.name);
+      if (field.required) {
+        skipped.add(field.name);
+      }
       continue;
     }
-    if (next[field.name] !== undefined && fieldError === undefined) continue;
+    if (next[field.name] !== undefined && fieldError === undefined) {
+      continue;
+    }
     if (
       (field.readOnly || field.deprecated) &&
       field.const === undefined &&
       fieldError === undefined
     ) {
-      if (field.default !== undefined) next[field.name] = field.default;
+      if (field.default !== undefined) {
+        next[field.name] = field.default;
+      }
       continue;
     }
     next[field.name] = fakeValueFor(field, fieldError !== undefined);
@@ -316,7 +333,9 @@ export async function findSafeStartDate(
     try {
       for (const holiday of await fetchHolidays(country, year)) {
         holidayDates.add(holiday.day);
-        if (holiday.observed_day) holidayDates.add(holiday.observed_day);
+        if (holiday.observed_day) {
+          holidayDates.add(holiday.observed_day);
+        }
       }
     } catch (error) {
       console.warn(`Could not load ${year} holidays for ${country}:`, error);
@@ -341,7 +360,9 @@ export function fillSchema(
   seedValues: FormValues = {},
   { maxAttempts = 50, seed }: { maxAttempts?: number; seed?: number } = {},
 ): FillSchemaResult {
-  if (seed === undefined) return fill(schema, seedValues, maxAttempts);
+  if (seed === undefined) {
+    return fill(schema, seedValues, maxAttempts);
+  }
   faker.seed(seed);
   try {
     return fill(schema, seedValues, maxAttempts);
@@ -381,7 +402,9 @@ function fill(
           {}) as FormErrors,
       ).filter(([name]) => !skipped.has(name)),
     );
-    if (Object.keys(errors).length === 0) break;
+    if (Object.keys(errors).length === 0) {
+      break;
+    }
   }
 
   return {

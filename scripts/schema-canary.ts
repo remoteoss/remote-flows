@@ -37,7 +37,9 @@ function parseArgs(argv: string[]) {
   const args: Record<string, string | true> = {};
   for (const raw of argv) {
     const match = raw.match(/^--([^=]+)(?:=(.*))?$/);
-    if (match) args[match[1]] = match[2] ?? true;
+    if (match) {
+      args[match[1]] = match[2] ?? true;
+    }
   }
   return args;
 }

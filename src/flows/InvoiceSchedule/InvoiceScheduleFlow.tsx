@@ -64,7 +64,9 @@ export const InvoiceScheduleFlow = ({
   const { isContractorOfRecord } = invoiceScheduleBag;
 
   useEffect(() => {
-    if (!isContractorOfRecord) return;
+    if (!isContractorOfRecord) {
+      return;
+    }
 
     const periodicity = form.getValues('periodicity');
     if (periodicity && periodicity !== ONE_TIME_PERIODICITY) {
