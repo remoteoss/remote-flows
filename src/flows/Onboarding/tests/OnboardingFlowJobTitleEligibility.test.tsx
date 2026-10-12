@@ -182,6 +182,71 @@ describe.each(schemaPaths)(
       });
     });
 
+    it('checks with the job title saved earlier in the same session', async () => {
+      let savedJobTitle = 'Software Engineer';
+      server.use(
+        http.get('*/v1/employments/:id', ({ params }) => {
+          const { employment } = employmentDefaultResponse.data;
+          return HttpResponse.json({
+            ...employmentDefaultResponse,
+            data: {
+              ...employmentDefaultResponse.data,
+              employment: {
+                ...employment,
+                id: params?.id,
+                country: {
+                  code: countryCode,
+                  name: countryName,
+                  alpha_2_code: countryCode.slice(0, 2),
+                  supported_json_schemas: ['employment_basic_information'],
+                },
+                basic_information: {
+                  ...employment.basic_information,
+                  job_title: savedJobTitle,
+                },
+              },
+            },
+          });
+        }),
+        http.patch('*/v1/employments/:id', () => {
+          savedJobTitle = 'Surgeon';
+          return HttpResponse.json(employmentDefaultResponse);
+        }),
+      );
+
+      render(
+        <OnboardingFlow
+          companyId='test-company-id'
+          employmentId='test-employment-id'
+          skipSteps={['select_country']}
+          options={{ features: ['job_title_eligibility'] }}
+          render={mockRender}
+        />,
+        { wrapper: TestProviders },
+      );
+      await waitFor(() => expect(latestOnboardingBag.isLoading).toBe(false));
+
+      await act(async () => {
+        await latestOnboardingBag.onSubmit({ name: 'Jane' });
+      });
+      act(() => {
+        latestOnboardingBag.goTo('contract_details');
+      });
+      await screen.findByLabelText(/Role description/i);
+
+      await fillRoleFields();
+
+      await waitFor(() =>
+        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1),
+      );
+      expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledWith({
+        job_title: 'Surgeon',
+        role_description: 'Backend engineer responsibilities',
+        role_is_onsite: 'no',
+        role_requires_license: 'no',
+      });
+    });
+
     it('does not call the check again when a later blur carries the same values', async () => {
       await renderContractDetailsStep();
 

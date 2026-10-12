@@ -1198,7 +1198,7 @@ export const useOnboarding = ({
             throw error;
           }
         } else if (internalEmploymentId) {
-          return updateEmploymentMutationAsync({
+          const response = await updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: parsedValues,
             pricing_plan_details: {
@@ -1207,6 +1207,8 @@ export const useOnboarding = ({
             external_id: externalId,
             partner_external_id: partnerExternalId,
           });
+          await refetchEmployment();
+          return response;
         }
 
         return;
