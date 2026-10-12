@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
+  basicInformationSchemaV1Portugal,
   contractDetailsSchemaV0JobTitleEligibility,
   contractDetailsSchemaV1JobTitleEligibility,
   employmentDefaultResponse,
@@ -187,20 +188,7 @@ describe.each(schemaPaths)(
       server.use(
         http.get(
           `*/v1/countries/${countryCode}/employment_basic_information*`,
-          () =>
-            HttpResponse.json({
-              data: {
-                type: 'object',
-                properties: {
-                  job_title: {
-                    type: 'string',
-                    title: 'Job title',
-                    'x-jsf-presentation': { inputType: 'text' },
-                  },
-                },
-                required: ['job_title'],
-              },
-            }),
+          () => HttpResponse.json(basicInformationSchemaV1Portugal),
         ),
         http.get('*/v1/employments/:id', ({ params }) => {
           const { employment } = employmentDefaultResponse.data;
@@ -244,6 +232,9 @@ describe.each(schemaPaths)(
             latestOnboardingBag = onboardingBag;
             const { BasicInformationStep, ContractDetailsStep, SubmitButton } =
               components;
+            if (onboardingBag.isLoading) {
+              return null;
+            }
             return (
               <>
                 {onboardingBag.stepState.currentStep.name ===
