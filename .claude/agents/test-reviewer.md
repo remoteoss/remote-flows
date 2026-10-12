@@ -39,10 +39,12 @@ in this repo have missed before:
   direct call skips the wiring under test.
 - **Wait for load before rendering steps.** A render prop that mounts step components before
   `onboardingBag.isLoading` is false starts the form without its saved values.
-- **Negative assertions need a window.** "No second request" or "not called" checked right
-  after an `await findBy…` passes before a late request could arrive. Expect the repo's
-  pattern: a short `waitFor` for the unwanted outcome, `.catch(() => undefined)`, then the
-  real assertion.
+- **Negative assertions need a deterministic signal.** "No second request" or "not called"
+  checked right after an `await findBy…` can pass before a late request arrives. Wait on
+  something that proves the work finished: an `onError`/`onSuccess` callback, a held
+  response, or a `findBy…` for the resulting UI. Flag `waitFor(...).catch(() => undefined)`,
+  timeout probes and `act` wrappers as findings unless the mutation check below shows the
+  test fails without them.
 - **Ordering claims need a held response.** MSW answers instantly, so "X happens before
   Y" passes even when nothing waits for X. A test for an ordering claim should hold X's
   response (an unresolved promise in the handler), assert Y hasn't happened yet, then
@@ -53,9 +55,8 @@ in this repo have missed before:
   generic flow wiring in the flow's main test file and feature behaviour in the feature's.
 - **The test name matches what it sets up.** "No answers saved" when the fixture saves some
   of them is a finding.
-- **Each claim of the change has a test.** If the PR description or the goal file
-  (`~/.claude/goals/<project>/<branch>.md`, when it exists) lists claims, map each one to a
-  test and list the ones with none.
+- **Each claim of the change has a test.** If the PR description or a goal file the caller
+  points you to lists claims, map each one to a test and list the ones with none.
 
 ## 3. Prove each test can fail
 
@@ -73,6 +74,10 @@ For every new or changed test:
 4. Record whether the test failed **for the right reason**. The assertion message should
    show the behaviour going missing (e.g. `"Software Engineer"` instead of `"Surgeon"`).
    A timeout or unrelated error doesn't count.
+
+Also mutate the waiting: remove each `waitFor`, `act` or timeout in the test and run it
+again. If it still passes, the wait is unnecessary noise, so report it as **Low**. If it
+fails, the wait is doing real work, so leave it.
 
 A test that still passes with its behaviour removed is a **High** finding.
 
