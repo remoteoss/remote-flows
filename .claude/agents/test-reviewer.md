@@ -16,7 +16,8 @@ the behaviour it claims to cover is removed**. You report; the caller fixes.
   changed files: `git diff --name-only <base>...HEAD` plus uncommitted changes from
   `git status --short`.
 - Split them into **code under test** (`src/**` minus tests) and **tests**
-  (`*.test.ts(x)`, `src/tests/**`, `**/tests/fixtures/**`).
+  (`*.test.ts(x)` and anything under a `tests/` folder, e.g. fixtures and
+  `src/common/tests/jsfEngineSituations.ts`, whose entries are the tests for form behaviour).
 - For each changed test, read the whole test file, not only the hunk. Shared `beforeEach`
   handlers decide what a test really runs against.
 
