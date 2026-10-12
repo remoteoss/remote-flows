@@ -45,6 +45,7 @@ export function OnboardingForm({
     // we need to run the checkFieldUpdates to update fieldValues in useStepState
     if (onboardingBag.employmentId) {
       onboardingBag?.checkFieldUpdates(form.getValues());
+      syncJobTitleEligibility(form.getValues());
     }
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);

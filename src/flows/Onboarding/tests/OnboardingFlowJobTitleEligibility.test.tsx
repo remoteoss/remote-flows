@@ -402,6 +402,117 @@ describe.each(schemaPaths)(
       expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
     });
 
+    describe('on mount with saved contract details', () => {
+      const savedRoleAnswers = {
+        role_description: 'Licensed onsite surgeon responsibilities',
+        role_is_onsite: 'yes',
+        role_requires_license: 'yes',
+      };
+
+      beforeEach(() => {
+        server.use(
+          http.get('*/v1/employments/:id', ({ params }) => {
+            const { employment } = employmentDefaultResponse.data;
+            return HttpResponse.json({
+              ...employmentDefaultResponse,
+              data: {
+                ...employmentDefaultResponse.data,
+                employment: {
+                  ...employment,
+                  id: params?.id,
+                  country: {
+                    code: countryCode,
+                    name: countryName,
+                    alpha_2_code: countryCode.slice(0, 2),
+                    supported_json_schemas: ['employment_basic_information'],
+                  },
+                  basic_information: {
+                    ...employment.basic_information,
+                    job_title: 'Surgeon',
+                  },
+                  contract_details: {
+                    ...employment.contract_details,
+                    ...savedRoleAnswers,
+                    additional_job_title_eligibility_check_slug:
+                      'saved-check-id',
+                    additional_job_title_eligibility_check_result: 'yes',
+                  },
+                },
+              },
+            });
+          }),
+          http.post(
+            '*/v2/employments/:id/job-title-eligibility-check',
+            async ({ request }) => {
+              jobTitleEligibilityCheckSpy(await request.json());
+              return HttpResponse.json({
+                data: {
+                  job_title_eligibility_check: {
+                    check_id: 'new-check-id',
+                    verdict: 'not_eligible',
+                  },
+                },
+              });
+            },
+          ),
+        );
+      });
+
+      it('re-checks the saved role answers against the current job title without a blur', async () => {
+        await renderContractDetailsStep();
+
+        expect(
+          await screen.findByText(
+            `AI determined we can't hire this role in ${countryName}`,
+          ),
+        ).toBeInTheDocument();
+        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1);
+        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledWith({
+          job_title: 'Surgeon',
+          ...savedRoleAnswers,
+        });
+      });
+
+      it('does not call the check again when the step mounts again with nothing changed', async () => {
+        await renderContractDetailsStep();
+        await waitFor(() =>
+          expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1),
+        );
+
+        act(() => {
+          latestOnboardingBag.goTo('basic_information');
+        });
+        await waitFor(() =>
+          expect(latestOnboardingBag.stepState.currentStep.name).toBe(
+            'basic_information',
+          ),
+        );
+        act(() => {
+          latestOnboardingBag.goTo('contract_details');
+        });
+
+        expect(
+          await screen.findByText(
+            `AI determined we can't hire this role in ${countryName}`,
+          ),
+        ).toBeInTheDocument();
+        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it('does not call the check on mount when no role answers are saved', async () => {
+      await renderContractDetailsStep();
+
+      await waitFor(
+        () => {
+          expect(jobTitleEligibilityCheckSpy).toHaveBeenCalled();
+        },
+        { timeout: 200 },
+      ).catch(() => undefined);
+
+      expect(jobTitleEligibilityCheckSpy).not.toHaveBeenCalled();
+    });
+
     describe('feeding the check result into the contract details schema', () => {
       const updateEmploymentSpy = vi.fn();
       const checkResponsesSent = vi.fn();
