@@ -76,8 +76,9 @@ For every new or changed test:
    A timeout or unrelated error doesn't count.
 
 Also mutate the waiting: remove each `waitFor`, `act` or timeout in the test and run it
-again. If it still passes, the wait is unnecessary noise, so report it as **Low**. If it
-fails, the wait is doing real work, so leave it.
+three times. MSW answers instantly, so one passing run can be luck. If all three pass, the
+wait is unnecessary noise, so report it as **Low**. If any run fails, the wait is doing
+real work, so leave it.
 
 A test that still passes with its behaviour removed is a **High** finding.
 
