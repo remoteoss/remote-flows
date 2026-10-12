@@ -411,18 +411,6 @@ describe.each(schemaPaths)(
       let mountVerdict: string;
       let checkReleased: Promise<void>;
 
-      const expectNoFurtherChecks = async (count: number) => {
-        await waitFor(
-          () => {
-            expect(
-              jobTitleEligibilityCheckSpy.mock.calls.length,
-            ).toBeGreaterThan(count);
-          },
-          { timeout: 200 },
-        ).catch(() => undefined);
-        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(count);
-      };
-
       beforeEach(() => {
         mountVerdict = 'not_eligible';
         checkReleased = Promise.resolve();
@@ -540,26 +528,22 @@ describe.each(schemaPaths)(
         });
         await screen.findByLabelText(/Role description/i);
 
-        await expectNoFurtherChecks(1);
+        expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
+        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1);
       });
 
       it('does not call the check on mount when the feature is not enabled', async () => {
         await renderContractDetailsStep({ features: [] });
 
-        await expectNoFurtherChecks(0);
+        expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
+        expect(jobTitleEligibilityCheckSpy).not.toHaveBeenCalled();
       });
     });
 
     it('does not call the check on mount when the saved role answers are incomplete', async () => {
       await renderContractDetailsStep();
 
-      await waitFor(
-        () => {
-          expect(jobTitleEligibilityCheckSpy).toHaveBeenCalled();
-        },
-        { timeout: 200 },
-      ).catch(() => undefined);
-
+      expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
       expect(jobTitleEligibilityCheckSpy).not.toHaveBeenCalled();
     });
 
