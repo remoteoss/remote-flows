@@ -2,9 +2,11 @@ import {
   CreateJobTitleEligibilityCheckParams,
   JobTitleEligibilityCheck,
 } from '@/src/client';
+import { HeadlessFormStrategy } from '@/src/common/headlessForm';
 import { Employment, OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { Step } from '@/src/flows/useStepState';
 import { JSFField, JSFFields } from '@/src/types/remoteFlows';
+import { createStatementProperty } from '@/src/components/form/jsf-utils/createFields';
 
 export type StepKeys =
   | 'select_country'
@@ -167,6 +169,23 @@ export const usesJsfV1ContractDetails = (countryCode: string | null) =>
   Boolean(
     countryCode && JSF_V1_CONTRACT_DETAILS_COUNTRIES.includes(countryCode),
   );
+
+export const CONTRACT_DETAILS_STRATEGY = {
+  legacy: 'rebuild',
+  jsfV1: 'buildOnce',
+} as const;
+
+/**
+ * Gets the useHeadlessForm strategy the contract details step uses for a country
+ *
+ * @param countryCode - The country code to check
+ */
+export const getContractDetailsStrategy = (
+  countryCode: string | null,
+): HeadlessFormStrategy =>
+  usesJsfV1ContractDetails(countryCode)
+    ? CONTRACT_DETAILS_STRATEGY.jsfV1
+    : CONTRACT_DETAILS_STRATEGY.legacy;
 
 /**
  * Gets the default (recommended) contract details schema version for a country
@@ -362,3 +381,30 @@ export const getJobTitleEligibilityValues = (
   [JOB_TITLE_ELIGIBILITY_RESULT_FIELD]:
     JOB_TITLE_ELIGIBILITY_VERDICT_RESULTS[check.verdict] ?? null,
 });
+
+export const getJobTitleEligibilityStatement = (
+  result: unknown,
+  countryName?: string,
+) => {
+  const inCountry = countryName ? `in ${countryName}` : 'in this country';
+
+  if (result === 'maybe') {
+    return createStatementProperty({
+      title: `AI isn't sure if we can hire this role ${inCountry}`,
+      description:
+        "Complete the add employee process and we'll let you know as soon as we can if we can hire this role.",
+      severity: 'info',
+    });
+  }
+
+  if (result === 'no') {
+    return createStatementProperty({
+      title: `AI determined we can't hire this role ${inCountry}`,
+      description:
+        "Based on the job title and role description entered, we can't hire this role. Update the role details to check again.",
+      severity: 'error',
+    });
+  }
+
+  return null;
+};

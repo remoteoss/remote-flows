@@ -215,7 +215,9 @@ function AccordionContent({
     return () => clearTimeout(timer);
   }, [isOpen, contentId]);
 
-  if (!shouldRender) return null;
+  if (!shouldRender) {
+    return null;
+  }
 
   return (
     <div

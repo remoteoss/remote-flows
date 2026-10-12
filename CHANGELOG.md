@@ -1,5 +1,31 @@
 # @remoteoss/remote-flows
 
+## 1.62.0
+
+### Minor Changes
+
+#### Features
+
+- show job title eligibility statements for maybe and not eligible roles (#1508) [#1508](https://github.com/remoteoss/remote-flows/pull/1508)
+- add a contract details schema canary (#1481) [#1481](https://github.com/remoteoss/remote-flows/pull/1481)
+
+#### Fixes
+
+- open job_title_review read-only (#1502) [#1502](https://github.com/remoteoss/remote-flows/pull/1502)
+- cache the proxy's OAuth tokens until they expire (#1494) [#1494](https://github.com/remoteoss/remote-flows/pull/1494)
+
+#### Chores
+
+- bump CAN contract_details schema version to 7 (#1506) [#1506](https://github.com/remoteoss/remote-flows/pull/1506)
+- bump IND contract_details schema version to 6 (#1505) [#1505](https://github.com/remoteoss/remote-flows/pull/1505)
+- bump USA contract_details schema version to 8 (#1504) [#1504](https://github.com/remoteoss/remote-flows/pull/1504)
+- bump PHL contract_details schema version to 6 (#1503) [#1503](https://github.com/remoteoss/remote-flows/pull/1503)
+- require braces on every control statement (#1490) [#1490](https://github.com/remoteoss/remote-flows/pull/1490)
+- group changelog entries by commit type (#1500) [#1500](https://github.com/remoteoss/remote-flows/pull/1500)
+- share the form build and validation outside React (#1480) [#1480](https://github.com/remoteoss/remote-flows/pull/1480)
+- run the contract details canary nightly and on PRs (#1493) [#1493](https://github.com/remoteoss/remote-flows/pull/1493)
+- update contract details schema canary report (#1509) [#1509](https://github.com/remoteoss/remote-flows/pull/1509)
+
 ## 1.61.0
 
 ### Minor Changes
