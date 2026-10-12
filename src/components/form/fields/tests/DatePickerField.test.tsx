@@ -88,6 +88,34 @@ describe('DatePickerField Component', () => {
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
 
+  it('does not offer to clear a required date', () => {
+    renderWithFormContext(defaultProps);
+
+    fireEvent.click(screen.getByRole('button'));
+    fireEvent.click(screen.getByText('15'));
+
+    expect(screen.queryByLabelText('Clear Test Field')).not.toBeInTheDocument();
+  });
+
+  it('clears an optional date back to empty', () => {
+    renderWithFormContext({ ...defaultProps, required: false });
+
+    expect(screen.queryByLabelText('Clear Test Field')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('date-picker-button-testField'));
+    fireEvent.click(screen.getByText('15'));
+    expect(
+      screen.getByTestId('date-picker-button-testField'),
+    ).toHaveTextContent('15');
+
+    fireEvent.click(screen.getByLabelText('Clear Test Field'));
+
+    expect(
+      screen.getByTestId('date-picker-button-testField'),
+    ).not.toHaveTextContent('15');
+    expect(screen.queryByLabelText('Clear Test Field')).not.toBeInTheDocument();
+  });
+
   it('renders custom date picker component when provided', () => {
     const CustomDatePickerField = vi
       .fn()

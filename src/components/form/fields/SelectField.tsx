@@ -51,13 +51,15 @@ export function SelectField({
           <Component
             field={{
               ...field,
-              onChange: (value: string | number) => {
+              onChange: (value: string | number | undefined) => {
                 const isNumberType = Array.isArray(rest.jsonType)
                   ? rest.jsonType.includes('number')
                   : rest.jsonType === 'number';
-                const maybeCastValue = isNumberType ? Number(value) : value;
+                const isEmpty = value === undefined || value === '';
+                const maybeCastValue =
+                  isNumberType && !isEmpty ? Number(value) : value;
                 field.onChange(maybeCastValue);
-                onChange?.(maybeCastValue);
+                onChange?.(maybeCastValue ?? '');
               },
             }}
             fieldState={fieldState}

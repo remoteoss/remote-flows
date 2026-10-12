@@ -90,6 +90,32 @@ describe('SelectField Component', () => {
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
 
+  it('does not offer to clear a required select', () => {
+    renderWithFormContext(defaultProps);
+
+    fireEvent.click(screen.getByRole('combobox'));
+    fireEvent.click(screen.getByText('Option 1'));
+
+    expect(screen.queryByLabelText('Clear Test Field')).not.toBeInTheDocument();
+  });
+
+  it('clears an optional select back to empty', () => {
+    renderWithFormContext({
+      ...defaultProps,
+      required: false,
+      onChange: mockOnChange,
+    });
+
+    expect(screen.queryByLabelText('Clear Test Field')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('combobox'));
+    fireEvent.click(screen.getByText('Option 1'));
+    fireEvent.click(screen.getByLabelText('Clear Test Field'));
+
+    expect(screen.queryByLabelText('Clear Test Field')).not.toBeInTheDocument();
+    expect(mockOnChange).toHaveBeenLastCalledWith('');
+  });
+
   it('renders custom select component when provided', () => {
     const CustomSelectField = vi
       .fn()

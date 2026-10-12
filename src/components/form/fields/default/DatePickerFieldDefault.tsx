@@ -7,7 +7,7 @@ import {
   FormMessage,
 } from '@/src/components/ui/form';
 import { DatePickerComponentProps } from '@/src/types/fields';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, XIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import {
   Popover,
@@ -24,7 +24,8 @@ export function DatePickerFieldDefault({
   fieldData,
   fieldState,
 }: DatePickerComponentProps) {
-  const { name, label, description, minDate, maxDate } = fieldData;
+  const { name, label, description, minDate, maxDate, required } = fieldData;
+  const isClearable = !required && Boolean(field.value);
   const minDateValue = minDate ? new Date(minDate) : undefined;
   const maxDateValue = maxDate ? new Date(maxDate) : undefined;
   const [open, setOpen] = useState(false);
@@ -47,7 +48,7 @@ export function DatePickerFieldDefault({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <FormControl>
-            <div>
+            <div className='relative'>
               <Button
                 type='button'
                 variant={'outline'}
@@ -60,6 +61,19 @@ export function DatePickerFieldDefault({
                 {field.value && <>{format(field.value, 'yyyy-MM-dd')}</>}
                 <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
               </Button>
+              {isClearable && (
+                <button
+                  type='button'
+                  aria-label={`Clear ${label}`}
+                  className='RemoteFlows__DatePickerField__Clear absolute right-10 top-1/2 -translate-y-1/2 text-muted-foreground'
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    field.onChange(undefined);
+                  }}
+                >
+                  <XIcon className='size-4' />
+                </button>
+              )}
             </div>
           </FormControl>
         </PopoverTrigger>
