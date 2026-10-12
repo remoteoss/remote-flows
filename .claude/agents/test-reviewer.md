@@ -77,9 +77,9 @@ For every new or changed test:
    A timeout or unrelated error doesn't count.
 
 Also mutate the waiting: copy the test file first, remove each `waitFor`, `act` or timeout
-in the test and run it three times, then restore the copy. MSW answers instantly, so one passing run can be luck. If all three pass, the
-wait is unnecessary noise, so report it as **Low**. If any run fails, the wait is doing
-real work, so leave it.
+in the test and run it three times, then restore the copy. MSW answers instantly, so one
+passing run can be luck. If all three pass, the wait is unnecessary noise, so report it as
+**Low**. If any run fails, the wait is doing real work, so leave it.
 
 A test that still passes with its behaviour removed is a **High** finding.
 
@@ -106,5 +106,5 @@ they pass, and confirm `git status --short` matches what it was when you started
 **Claims without a test:** … (or "none")
 ```
 
-Keep each finding to one or two sentences with a concrete fix. Don't edit the tests beyond the temporary mutations above (always restored), and
-don't commit, push or post anything.
+Keep each finding to one or two sentences with a concrete fix. Don't edit the tests beyond the
+temporary mutations above (always restored), and don't commit, push or post anything.
