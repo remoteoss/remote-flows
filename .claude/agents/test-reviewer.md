@@ -67,7 +67,8 @@ For every new or changed test:
    "no duplicate request" test. Negative tests need a mutation too: the one that would make
    the unwanted thing happen.
 2. Save the original first (`cp <file> <scratchpad>/`), apply the mutation, and run only
-   that test file: `npx vitest run <test file> -t "<name>"`.
+   that test file: `npx vitest run <test file> -t "<name>"`. The same goes for the waiting
+   mutation below, which edits the test file.
 3. Restore the file from the copy straight away, then check `git diff -- <file>` shows only
    the branch's own changes. Never use `git checkout -- <file>` or `git stash`: they throw
    away uncommitted work on the branch.
@@ -75,8 +76,8 @@ For every new or changed test:
    show the behaviour going missing (e.g. `"Software Engineer"` instead of `"Surgeon"`).
    A timeout or unrelated error doesn't count.
 
-Also mutate the waiting: remove each `waitFor`, `act` or timeout in the test and run it
-three times. MSW answers instantly, so one passing run can be luck. If all three pass, the
+Also mutate the waiting: copy the test file first, remove each `waitFor`, `act` or timeout
+in the test and run it three times, then restore the copy. MSW answers instantly, so one passing run can be luck. If all three pass, the
 wait is unnecessary noise, so report it as **Low**. If any run fails, the wait is doing
 real work, so leave it.
 
@@ -105,5 +106,5 @@ they pass, and confirm `git status --short` matches what it was when you started
 **Claims without a test:** … (or "none")
 ```
 
-Keep each finding to one or two sentences with a concrete fix. Don't edit the tests, and
+Keep each finding to one or two sentences with a concrete fix. Don't edit the tests beyond the temporary mutations above (always restored), and
 don't commit, push or post anything.
