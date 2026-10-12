@@ -21,9 +21,9 @@ Schema versions for employee onboarding in Poland.
 ```tsx
 <OnboardingFlow
   options={{
-    jsonSchemaVersionByCountry: {{
+    jsonSchemaVersionByCountry: {
       POL: { contract_details: 5 },
-    }},
+    },
   }}
 />
 ```
@@ -41,9 +41,9 @@ Schema versions for employee onboarding in Poland.
 ```tsx
 <OnboardingFlow
   options={{
-    jsonSchemaVersionByCountry: {{
+    jsonSchemaVersionByCountry: {
       POL: { contract_details: 4 },
-    }},
+    },
   }}
 />
 ```
@@ -62,9 +62,9 @@ Schema versions for employee onboarding in Poland.
 ```tsx
 <OnboardingFlow
   options={{
-    jsonSchemaVersionByCountry: {{
+    jsonSchemaVersionByCountry: {
       POL: { contract_details: 3 },
-    }},
+    },
   }}
 />
 ```
@@ -83,9 +83,9 @@ Schema versions for employee onboarding in Poland.
 ```tsx
 <OnboardingFlow
   options={{
-    jsonSchemaVersionByCountry: {{
+    jsonSchemaVersionByCountry: {
       POL: { contract_details: 2 },
-    }},
+    },
   }}
 />
 ```
