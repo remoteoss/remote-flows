@@ -13,6 +13,7 @@ Schema versions can have different implementations per country. Instead of gener
 These countries have upgraded to different versions, check each guide to know how to migrate or what has changed
 
 - [Belarus (BLR)](./BLR.md)
+- [Canada (CAN)](./CAN.md)
 - [China (CHN)](./CHN.md)
 - [Switzerland (CHE)](./CHE.md)
 - [Czech Republic (CZE)](./CZE.md)
@@ -50,6 +51,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Country              | Code | Contract Details | Last Updated   |
 | -------------------- | ---- | ---------------- | -------------- |
 | Belarus              | BLR  | v2               | March 2026     |
+| Canada               | CAN  | v7               | October 2026   |
 | China                | CHN  | v8               | October 2026   |
 | Switzerland          | CHE  | v2               | March 2026     |
 | Czech Republic       | CZE  | v2               | March 2026     |
