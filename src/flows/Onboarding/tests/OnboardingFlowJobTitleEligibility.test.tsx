@@ -264,9 +264,8 @@ describe.each(schemaPaths)(
       screen.getByRole('button', { name: 'Continue' }).click();
 
       await waitFor(() => expect(savedJobTitle).toBe('Surgeon'));
-      await screen
-        .findByLabelText(/Role description/i, {}, { timeout: 200 })
-        .catch(() => undefined);
+      await act(async () => {});
+      expect(screen.getByLabelText(/Job title/i)).toBeInTheDocument();
       expect(
         screen.queryByLabelText(/Role description/i),
       ).not.toBeInTheDocument();
