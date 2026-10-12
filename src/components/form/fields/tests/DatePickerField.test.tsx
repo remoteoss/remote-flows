@@ -44,9 +44,12 @@ describe('DatePickerField Component', () => {
   };
 
   // Helper function to render the component with a form context
-  const renderWithFormContext = (props: DatePickerFieldProps) => {
+  const renderWithFormContext = (
+    props: DatePickerFieldProps,
+    defaultValues?: Record<string, unknown>,
+  ) => {
     const TestComponent = () => {
-      const methods = useForm();
+      const methods = useForm({ defaultValues });
       return (
         <FormProvider {...methods}>
           <DatePickerField {...props} />
@@ -114,6 +117,23 @@ describe('DatePickerField Component', () => {
       screen.getByTestId('date-picker-button-testField'),
     ).not.toHaveTextContent('15');
     expect(screen.queryByLabelText('Clear Test Field')).not.toBeInTheDocument();
+  });
+
+  it('clears an optional date that was prefilled from saved values', () => {
+    renderWithFormContext(
+      { ...defaultProps, required: false },
+      { testField: '2024-03-15' },
+    );
+
+    expect(
+      screen.getByTestId('date-picker-button-testField'),
+    ).toHaveTextContent('2024-03-15');
+
+    fireEvent.click(screen.getByLabelText('Clear Test Field'));
+
+    expect(
+      screen.getByTestId('date-picker-button-testField'),
+    ).not.toHaveTextContent('2024-03-15');
   });
 
   it('renders custom date picker component when provided', () => {

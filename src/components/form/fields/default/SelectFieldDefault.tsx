@@ -68,7 +68,7 @@ export function SelectFieldDefault({
               type='button'
               aria-label={`Clear ${label}`}
               className='RemoteFlows__SelectField__Clear absolute right-10 top-1/2 -translate-y-1/2 text-muted-foreground'
-              onClick={() => field.onChange(undefined)}
+              onClick={() => field.onChange('')}
             >
               <XIcon className='size-4' />
             </button>
