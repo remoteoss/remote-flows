@@ -185,13 +185,20 @@ describe.each(schemaPaths)(
 
     it('checks with the job title the user saved earlier in the same session', async () => {
       let savedJobTitle = 'Software Engineer';
+      let releaseRefetch: () => void = () => {};
+      const refetchReleased = new Promise<void>((resolve) => {
+        releaseRefetch = resolve;
+      });
       server.use(
         http.get(
           `*/v1/countries/${countryCode}/employment_basic_information*`,
           () => HttpResponse.json(basicInformationSchemaV1Portugal),
         ),
-        http.get('*/v1/employments/:id', ({ params }) => {
+        http.get('*/v1/employments/:id', async ({ params }) => {
           const { employment } = employmentDefaultResponse.data;
+          if (savedJobTitle === 'Surgeon') {
+            await refetchReleased;
+          }
           return HttpResponse.json({
             ...employmentDefaultResponse,
             data: {
@@ -229,7 +236,6 @@ describe.each(schemaPaths)(
           skipSteps={['select_country']}
           options={{ features: ['job_title_eligibility'] }}
           render={({ onboardingBag, components }) => {
-            latestOnboardingBag = onboardingBag;
             const { BasicInformationStep, ContractDetailsStep, SubmitButton } =
               components;
             if (onboardingBag.isLoading) {
@@ -257,6 +263,15 @@ describe.each(schemaPaths)(
       await user.type(jobTitle, 'Surgeon');
       screen.getByRole('button', { name: 'Continue' }).click();
 
+      await waitFor(() => expect(savedJobTitle).toBe('Surgeon'));
+      await screen
+        .findByLabelText(/Role description/i, {}, { timeout: 200 })
+        .catch(() => undefined);
+      expect(
+        screen.queryByLabelText(/Role description/i),
+      ).not.toBeInTheDocument();
+
+      releaseRefetch();
       await screen.findByLabelText(/Role description/i);
       await fillRoleFields();
 

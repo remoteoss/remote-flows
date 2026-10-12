@@ -1207,7 +1207,9 @@ export const useOnboarding = ({
             external_id: externalId,
             partner_external_id: partnerExternalId,
           });
-          await refetchEmployment();
+          if (!response.error) {
+            await refetchEmployment();
+          }
           return response;
         }
 
