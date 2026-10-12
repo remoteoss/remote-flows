@@ -17,7 +17,9 @@ export function BankAccountStep(props: GPStepCallbacks) {
     (s) => s.type === 'employee_provides_bank_details',
   );
 
-  if (!isRequired || employeeBag.isLoadingSavedValues) return null;
+  if (!isRequired || employeeBag.isLoadingSavedValues) {
+    return null;
+  }
 
   return (
     <PayrollEmployeeForm

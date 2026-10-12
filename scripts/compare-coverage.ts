@@ -176,8 +176,12 @@ function generateCurrentOnlyReport(currentData: CoverageData): string {
 }
 
 function getStatusIcon(percentage: number): string {
-  if (percentage >= 80) return '🟢';
-  if (percentage >= 60) return '🟡';
+  if (percentage >= 80) {
+    return '🟢';
+  }
+  if (percentage >= 60) {
+    return '🟡';
+  }
   return '🔴';
 }
 
@@ -227,13 +231,18 @@ function main(): void {
 
   // Check for threshold violations and exit with error if any
   let hasViolations = false;
-  if (currentData.lines.pct < COVERAGE_THRESHOLDS.lines) hasViolations = true;
-  if (currentData.statements.pct < COVERAGE_THRESHOLDS.statements)
+  if (currentData.lines.pct < COVERAGE_THRESHOLDS.lines) {
     hasViolations = true;
-  if (currentData.functions.pct < COVERAGE_THRESHOLDS.functions)
+  }
+  if (currentData.statements.pct < COVERAGE_THRESHOLDS.statements) {
     hasViolations = true;
-  if (currentData.branches.pct < COVERAGE_THRESHOLDS.branches)
+  }
+  if (currentData.functions.pct < COVERAGE_THRESHOLDS.functions) {
     hasViolations = true;
+  }
+  if (currentData.branches.pct < COVERAGE_THRESHOLDS.branches) {
+    hasViolations = true;
+  }
 
   if (hasViolations) {
     console.error('\n❌ Coverage check failed due to threshold violations');

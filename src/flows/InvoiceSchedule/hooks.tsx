@@ -82,7 +82,9 @@ export const useInvoiceSchedule = ({
     async (
       values: InvoiceScheduleFormValues,
     ): Promise<ValidationResult | null> => {
-      if (!schemaForm) return null;
+      if (!schemaForm) {
+        return null;
+      }
 
       // Values must be parsed first — money inputs hold strings, and the item amounts are
       // declared `integer`, which JSF v1 enforces. Validating raw values fails on every
@@ -152,7 +154,9 @@ export const useInvoiceSchedule = ({
         | ContractorInvoicePreview
         | undefined;
 
-      if (!preview) return undefined;
+      if (!preview) {
+        return undefined;
+      }
 
       return { ...preview, content: clearBase64Data(preview.content) };
     },

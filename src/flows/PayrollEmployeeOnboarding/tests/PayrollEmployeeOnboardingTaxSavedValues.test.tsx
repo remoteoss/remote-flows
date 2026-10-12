@@ -162,7 +162,9 @@ function mockApi({
     http.get('*/v1/employee/federal-taxes', async ({ request }) => {
       logRead(federalReads, request);
       await delay(50);
-      if (federalTaxes === 'not_found') return taxTaskNotFound();
+      if (federalTaxes === 'not_found') {
+        return taxTaskNotFound();
+      }
       return HttpResponse.json({ data: { federal_taxes: federalTaxes } });
     }),
     http.get(
@@ -171,7 +173,9 @@ function mockApi({
         logRead(stateReads, request);
         stateReads.jurisdictions.push(params.jurisdiction as string);
         await delay(50);
-        if (stateTaxes === 'not_found') return taxTaskNotFound();
+        if (stateTaxes === 'not_found') {
+          return taxTaskNotFound();
+        }
         return HttpResponse.json({ data: { state_taxes: stateTaxes } });
       },
     ),

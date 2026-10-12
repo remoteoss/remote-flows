@@ -77,7 +77,9 @@ const createTelSchema = (options: TelFieldProps['options']) => {
     .matches(/^\+/, 'Must start with +')
     .matches(/^\+\d+$/, 'Phone number can only contain + and digits')
     .test('valid-phone', function (value) {
-      if (!value) return true;
+      if (!value) {
+        return true;
+      }
 
       const sortedOptions = [...options].sort(
         (a, b) => b.meta.countryCode.length - a.meta.countryCode.length,

@@ -53,7 +53,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CAN: {
     // Canada
-    contract_details: 1,
+    contract_details: 7,
   },
   CHE: {
     // Switzerland
@@ -157,7 +157,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   IND: {
     // India
-    contract_details: 2,
+    contract_details: 6,
   },
   IRL: {
     // Ireland
@@ -273,7 +273,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   PHL: {
     // Philippines
-    contract_details: 1,
+    contract_details: 6,
   },
   POL: {
     // Poland
@@ -353,7 +353,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   USA: {
     // United States
-    contract_details: 7,
+    contract_details: 8,
   },
   VNM: {
     // Vietnam
