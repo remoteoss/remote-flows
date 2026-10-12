@@ -500,7 +500,7 @@ describe.each(schemaPaths)(
       });
     });
 
-    it('does not call the check on mount when no role answers are saved', async () => {
+    it('does not call the check on mount when the saved role answers are incomplete', async () => {
       await renderContractDetailsStep();
 
       await waitFor(
