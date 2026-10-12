@@ -16,10 +16,9 @@ no code and create no branch until the user approves it.**
   ContractorOnboarding, the prebuilt flow vs the headless hook, Cost Calculator
   vs Onboarding's benefits step — ask which one **before** exploring. Don't
   pick one and start reading.
-- Then read the code around it in this repo. When the behaviour mirrors the
-  platform, read the Dragon counterpart (`~/remote/dragon`) and the Tiger
-  endpoint (`~/remote/tiger`) too. Differences from Dragon go into the goal as
-  findings, not silent fixes.
+- Then read the code around it in this repo, and the API endpoints it calls in
+  `src/client/`. If your local instructions point to other repos the feature
+  mirrors, read the counterpart there too and list any differences in the goal.
 - If there's an existing goal file for the branch (see Storage), load it and
   update it instead of starting over.
 
@@ -82,7 +81,7 @@ route: ?demo=onboarding-basic&employmentId=<seeded>
 
 gotchas:
 
-- .env.sandbox's company isn't in job_title_eligibility_check_*_remote_api; use review.
+- .env.sandbox's company doesn't have this feature enabled; use review.
 ```
 
 - **env** picks the root `.env.<name>`. `review` runs on the deployed demo
