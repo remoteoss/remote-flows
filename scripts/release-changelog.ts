@@ -32,15 +32,22 @@ export function parseConventionalCommit(commit: Commit): ParsedCommit | null {
   // Updated regex to handle both colon and dash separators
   const match = subject.match(/^(\w+)(?:\(([^)]+)\))?\s*[-:]\s*(.+)$/);
 
-  if (!match) return null;
+  if (!match) {
+    return null;
+  }
 
   const [, type, scope, description] = match;
   let versionBump: VersionBump = 'patch';
 
-  if (type === 'feat') versionBump = 'minor';
-  if (type === 'feat' && body.includes('BREAKING CHANGE'))
+  if (type === 'feat') {
+    versionBump = 'minor';
+  }
+  if (type === 'feat' && body.includes('BREAKING CHANGE')) {
     versionBump = 'major';
-  if (type === 'fix' && body.includes('BREAKING CHANGE')) versionBump = 'major';
+  }
+  if (type === 'fix' && body.includes('BREAKING CHANGE')) {
+    versionBump = 'major';
+  }
 
   const prMatch = (description + ' ' + body).match(/#(\d+)/);
   const prNumber = prMatch ? prMatch[1] : undefined;
@@ -60,13 +67,16 @@ export function generateChangesetContent(commits: Commit[]): Changeset | null {
     .map(parseConventionalCommit)
     .filter((commit): commit is ParsedCommit => commit !== null);
 
-  if (parsedCommits.length === 0) return null;
+  if (parsedCommits.length === 0) {
+    return null;
+  }
 
   let versionBump: VersionBump = 'patch';
-  if (parsedCommits.some((commit) => commit.versionBump === 'major'))
+  if (parsedCommits.some((commit) => commit.versionBump === 'major')) {
     versionBump = 'major';
-  else if (parsedCommits.some((commit) => commit.versionBump === 'minor'))
+  } else if (parsedCommits.some((commit) => commit.versionBump === 'minor')) {
     versionBump = 'minor';
+  }
 
   const sections: Record<string, string[]> = {
     Features: [],
@@ -95,8 +105,12 @@ export function generateChangesetContent(commits: Commit[]): Changeset | null {
 
 export function bumpVersion(version: string, versionBump: VersionBump): string {
   const [major, minor, patch] = version.split('.').map(Number);
-  if (versionBump === 'major') return `${major + 1}.0.0`;
-  if (versionBump === 'minor') return `${major}.${minor + 1}.0`;
+  if (versionBump === 'major') {
+    return `${major + 1}.0.0`;
+  }
+  if (versionBump === 'minor') {
+    return `${major}.${minor + 1}.0`;
+  }
   return `${major}.${minor}.${patch + 1}`;
 }
 

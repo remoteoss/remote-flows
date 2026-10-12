@@ -42,7 +42,9 @@ function renderFlow(onStepRendered?: (step: string) => void) {
     <ContractDocumentFlow
       employmentId='employment-grace'
       render={(bag) => {
-        if (bag.isLoading) return <p>Loading…</p>;
+        if (bag.isLoading) {
+          return <p>Loading…</p>;
+        }
         onStepRendered?.(bag.stepState.currentStep.name);
 
         if (bag.stepState.currentStep.name === 'contract_preview') {

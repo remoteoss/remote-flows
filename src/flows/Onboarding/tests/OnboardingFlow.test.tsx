@@ -1470,6 +1470,61 @@ describe('OnboardingFlow', () => {
     expect(hasIntermediateSteps).toBe(false);
   });
 
+  it('should open a job_title_review employment read-only on the review step with invite disabled', async () => {
+    const employmentId = generateUniqueEmploymentId();
+    let lastBag: OnboardingRenderProps['onboardingBag'] | undefined;
+    server.use(
+      http.get(`*/v1/employments/${employmentId}`, () => {
+        return HttpResponse.json({
+          ...employmentDefaultResponse,
+          data: {
+            ...employmentDefaultResponse.data,
+            employment: {
+              ...employmentDefaultResponse.data.employment,
+              employmentId: employmentId,
+              status: 'job_title_review',
+            },
+          },
+        });
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        lastBag = onboardingBag;
+        if (onboardingBag.isLoading) {
+          return <div data-testid='spinner'>Loading...</div>;
+        }
+
+        return (
+          <>
+            <h1>Step: {onboardingBag.stepState.currentStep.name}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        employmentId={employmentId}
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      {
+        wrapper: TestProviders,
+      },
+    );
+
+    await screen.findByText('Step: review');
+
+    expect(lastBag?.isEmploymentReadOnly).toBe(true);
+    expect(lastBag?.canInvite).toBe(false);
+  });
+
   it('should override field labels using jsfModify options', async () => {
     const customSigningBonusLabel = 'Custom Signing Bonus Label';
 

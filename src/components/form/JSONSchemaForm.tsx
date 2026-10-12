@@ -29,7 +29,9 @@ export const JSONSchemaFormFields = ({
 }: JSONSchemaFormFieldsProps) => {
   const { setValue, watch } = useFormContext();
 
-  if (!fields || fields.length === 0) return null;
+  if (!fields || fields.length === 0) {
+    return null;
+  }
 
   const maybeFieldWithFlatFieldsets =
     fieldsets && fieldValues

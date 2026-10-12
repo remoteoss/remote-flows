@@ -43,13 +43,19 @@ function withFieldsetObjects(
   values: FieldValues,
   fields: unknown,
 ): FieldValues {
-  if (!Array.isArray(fields)) return values;
+  if (!Array.isArray(fields)) {
+    return values;
+  }
   return (fields as FieldNode[]).reduce<FieldValues>((acc, field) => {
-    if (field.isVisible === false) return acc;
+    if (field.isVisible === false) {
+      return acc;
+    }
     if (field.valueGroupingDisabled) {
       return withFieldsetObjects(acc, field.fields);
     }
-    if (field.type !== 'fieldset') return acc;
+    if (field.type !== 'fieldset') {
+      return acc;
+    }
     const fieldsetValue = acc[field.name];
     return {
       ...acc,
@@ -75,7 +81,9 @@ export function useHeadlessForm(args: UseHeadlessFormArgs): HeadlessForm {
   );
 
   const form = useMemo(() => {
-    if (!schema) return null;
+    if (!schema) {
+      return null;
+    }
     if (!isBuildOnce) {
       return createHeadlessForm(schema, rebuildValues, stableOptions);
     }
@@ -91,7 +99,9 @@ export function useHeadlessForm(args: UseHeadlessFormArgs): HeadlessForm {
 
   const handleValidation = useCallback(
     async (nextValues: FieldValues) => {
-      if (!form || !schema) return null;
+      if (!form || !schema) {
+        return null;
+      }
       // buildOnce keeps invisible values on purpose. The fields still hold the
       // visibility of the previous change, so dropping their values would hide
       // what a field that is about to become visible needs to compute itself:
@@ -113,7 +123,9 @@ export function useHeadlessForm(args: UseHeadlessFormArgs): HeadlessForm {
       const result = form.handleValidation(
         withFieldsetObjects(parsedValues, form.fields),
       );
-      if (isBuildOnce) setRevision((revision) => revision + 1);
+      if (isBuildOnce) {
+        setRevision((revision) => revision + 1);
+      }
       return result;
     },
     [form, schema, isBuildOnce],
@@ -121,7 +133,9 @@ export function useHeadlessForm(args: UseHeadlessFormArgs): HeadlessForm {
 
   const onValuesChange = useCallback(
     async (nextValues: FieldValues) => {
-      if (isBuildOnce) await handleValidation(nextValues);
+      if (isBuildOnce) {
+        await handleValidation(nextValues);
+      }
     },
     [handleValidation, isBuildOnce],
   );
