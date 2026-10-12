@@ -4,11 +4,33 @@ Schema versions for employee onboarding in United States.
 
 ## Current Version
 
-**Contract Details:** v7
+**Contract Details:** v8
 
 ## Contract Details
 
-### v7 - Current
+### v8 - Current
+
+**What changed:**
+
+- Adds a required `work_arrangement` (`"remote"`, `"hybrid"` or `"office"`) and a required `other_work_locations` (`"yes"` / `"no"`, whether the role needs regular travel).
+- For `"hybrid"` or `"office"`, `work_address_is_headquarters_address` (`"yes"` / `"no"`) is required. If it's `"no"`, the `work_address` fieldset (`address`, `city`, `state`, `postal_code`; `address_line_2` optional) is required too.
+- `work_address_is_home_address` is deprecated and read-only. It's no longer required, and new submissions shouldn't send it.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      USA: { contract_details: 8 },
+    },
+  }}
+/>
+```
+
+---
+
+### v7
 
 **What changed:**
 

@@ -211,7 +211,9 @@ export function buildWorkScheduleSummary(dailySchedules: DailySchedule[]) {
 // Calculate hours for each day
 export function calculateHours(day: DailySchedule) {
   const { checked, start_time, end_time, break_duration_minutes } = day;
-  if (!checked) return 0;
+  if (!checked) {
+    return 0;
+  }
 
   const [startHour, startMin] = start_time.split(':').map(Number);
   const [endHour, endMin] = end_time.split(':').map(Number);

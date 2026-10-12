@@ -25,7 +25,9 @@ export const toEmployeeFormValues = (
   apiValues: StepValues | undefined,
   fields: JSFFields | undefined,
 ): StepValues | undefined => {
-  if (!apiValues || !fields) return undefined;
+  if (!apiValues || !fields) {
+    return undefined;
+  }
   const formValues = getInitialValues(fields, apiValues);
   return Object.fromEntries(
     Object.keys(apiValues)

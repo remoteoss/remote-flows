@@ -72,11 +72,15 @@ export const useGetCreateInvoiceScheduleSchema = ({
     });
 
   const schemaWithCurrencies = useMemo(() => {
-    if (!enabled) return null;
+    if (!enabled) {
+      return null;
+    }
 
     // Both callers know their employment up front, so there is always a currency list on the
     // way — render nothing until it arrives rather than a currency field with no options.
-    if (!currencies) return null;
+    if (!currencies) {
+      return null;
+    }
 
     const schema = buildCreateInvoiceScheduleSchema({
       currencies: currencies?.map(

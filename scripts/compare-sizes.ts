@@ -85,9 +85,15 @@ function generateMarkdownReport(
 
   // Check for violations
   const violations: string[] = [];
-  if (totalGzipExceeded) violations.push(`Total gzipped size exceeds limit`);
-  if (totalRawExceeded) violations.push(`Total raw size exceeds limit`);
-  if (cssGzipExceeded) violations.push(`CSS gzipped size exceeds limit`);
+  if (totalGzipExceeded) {
+    violations.push(`Total gzipped size exceeds limit`);
+  }
+  if (totalRawExceeded) {
+    violations.push(`Total raw size exceeds limit`);
+  }
+  if (cssGzipExceeded) {
+    violations.push(`CSS gzipped size exceeds limit`);
+  }
 
   // Check for large chunks
   const largeChunks = currentData.largestFiles
@@ -158,15 +164,23 @@ function main(): void {
   const limits = config.limits;
   let hasViolations = false;
 
-  if (currentData.total.gzip > limits.totalGzip) hasViolations = true;
-  if (currentData.total.raw > limits.total) hasViolations = true;
-  if (currentData.categories.css.gzip > limits.cssGzip) hasViolations = true;
+  if (currentData.total.gzip > limits.totalGzip) {
+    hasViolations = true;
+  }
+  if (currentData.total.raw > limits.total) {
+    hasViolations = true;
+  }
+  if (currentData.categories.css.gzip > limits.cssGzip) {
+    hasViolations = true;
+  }
 
   // Check for large chunks
   const largeChunks = currentData.largestFiles.filter(
     (f) => f.gzip > limits.maxChunkSizeGzip,
   );
-  if (largeChunks.length > 0) hasViolations = true;
+  if (largeChunks.length > 0) {
+    hasViolations = true;
+  }
 
   if (hasViolations) {
     console.error('\n❌ Bundle size check failed due to limit violations');

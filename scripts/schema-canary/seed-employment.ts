@@ -60,14 +60,7 @@ async function fetchSchema(
   return response.data?.data ?? null;
 }
 
-/**
- * Creates a real employment for `country`, up to (but not including)
- * contract_details, purely through the sandbox gateway - mirrors
- * scripts/seed-onboarding.ts but calls the gateway directly instead of
- * going through the example app's dev-server proxy, so it can run
- * standalone in CI. Shares its field-filling logic with seed-onboarding.ts
- * via scripts/fill-schema.ts.
- */
+/** Creates a sandbox employment for `country` up to contract_details and returns its id. */
 export async function seedEmploymentForCountry(
   client: Client,
   country: string,
