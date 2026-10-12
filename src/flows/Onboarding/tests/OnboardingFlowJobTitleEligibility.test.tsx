@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
+  basicInformationSchemaV1Portugal,
   contractDetailsSchemaV0JobTitleEligibility,
   contractDetailsSchemaV1JobTitleEligibility,
   employmentDefaultResponse,
@@ -176,6 +177,107 @@ describe.each(schemaPaths)(
       );
       expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledWith({
         job_title: 'pm',
+        role_description: 'Backend engineer responsibilities',
+        role_is_onsite: 'no',
+        role_requires_license: 'no',
+      });
+    });
+
+    it('checks with the job title the user saved earlier in the same session', async () => {
+      let savedJobTitle = 'Software Engineer';
+      let releaseRefetch: () => void = () => {};
+      const refetchReleased = new Promise<void>((resolve) => {
+        releaseRefetch = resolve;
+      });
+      server.use(
+        http.get(
+          `*/v1/countries/${countryCode}/employment_basic_information*`,
+          () => HttpResponse.json(basicInformationSchemaV1Portugal),
+        ),
+        http.get('*/v1/employments/:id', async ({ params }) => {
+          const { employment } = employmentDefaultResponse.data;
+          if (savedJobTitle === 'Surgeon') {
+            await refetchReleased;
+          }
+          return HttpResponse.json({
+            ...employmentDefaultResponse,
+            data: {
+              ...employmentDefaultResponse.data,
+              employment: {
+                ...employment,
+                id: params?.id,
+                country: {
+                  code: countryCode,
+                  name: countryName,
+                  alpha_2_code: countryCode.slice(0, 2),
+                  supported_json_schemas: ['employment_basic_information'],
+                },
+                basic_information: {
+                  ...employment.basic_information,
+                  job_title: savedJobTitle,
+                },
+              },
+            },
+          });
+        }),
+        http.patch('*/v1/employments/:id', async ({ request }) => {
+          const body = (await request.json()) as {
+            basic_information: { job_title: string };
+          };
+          savedJobTitle = body.basic_information.job_title;
+          return HttpResponse.json(employmentDefaultResponse);
+        }),
+      );
+
+      render(
+        <OnboardingFlow
+          companyId='test-company-id'
+          employmentId='test-employment-id'
+          skipSteps={['select_country']}
+          options={{ features: ['job_title_eligibility'] }}
+          render={({ onboardingBag, components }) => {
+            const { BasicInformationStep, ContractDetailsStep, SubmitButton } =
+              components;
+            if (onboardingBag.isLoading) {
+              return null;
+            }
+            return (
+              <>
+                {onboardingBag.stepState.currentStep.name ===
+                'basic_information' ? (
+                  <BasicInformationStep />
+                ) : (
+                  <ContractDetailsStep />
+                )}
+                <SubmitButton>Continue</SubmitButton>
+              </>
+            );
+          }}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      const user = userEvent.setup();
+      const jobTitle = await screen.findByLabelText(/Job title/i);
+      await user.clear(jobTitle);
+      await user.type(jobTitle, 'Surgeon');
+      screen.getByRole('button', { name: 'Continue' }).click();
+
+      await waitFor(() => expect(savedJobTitle).toBe('Surgeon'));
+      expect(screen.getByLabelText(/Job title/i)).toBeInTheDocument();
+      expect(
+        screen.queryByLabelText(/Role description/i),
+      ).not.toBeInTheDocument();
+
+      releaseRefetch();
+      await screen.findByLabelText(/Role description/i);
+      await fillRoleFields();
+
+      await waitFor(() =>
+        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1),
+      );
+      expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledWith({
+        job_title: 'Surgeon',
         role_description: 'Backend engineer responsibilities',
         role_is_onsite: 'no',
         role_requires_license: 'no',
