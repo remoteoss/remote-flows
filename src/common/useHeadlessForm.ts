@@ -44,7 +44,9 @@ export function useHeadlessForm(args: UseHeadlessFormArgs): HeadlessForm {
   );
 
   const form = useMemo(() => {
-    if (!schema) return null;
+    if (!schema) {
+      return null;
+    }
     if (!isBuildOnce) {
       return buildHeadlessForm(schema, strategy, rebuildValues, stableOptions);
     }
@@ -64,7 +66,9 @@ export function useHeadlessForm(args: UseHeadlessFormArgs): HeadlessForm {
 
   const handleValidation = useCallback(
     async (nextValues: FieldValues) => {
-      if (!form || !schema) return null;
+      if (!form || !schema) {
+        return null;
+      }
       const parsedValues = await parseValuesForValidation(
         form,
         strategy,
@@ -82,7 +86,9 @@ export function useHeadlessForm(args: UseHeadlessFormArgs): HeadlessForm {
       const result = form.handleValidation(
         withFieldsetObjects(parsedValues, form.fields),
       );
-      if (isBuildOnce) setRevision((revision) => revision + 1);
+      if (isBuildOnce) {
+        setRevision((revision) => revision + 1);
+      }
       return result;
     },
     [form, schema, strategy, isBuildOnce],
@@ -90,7 +96,9 @@ export function useHeadlessForm(args: UseHeadlessFormArgs): HeadlessForm {
 
   const onValuesChange = useCallback(
     async (nextValues: FieldValues) => {
-      if (isBuildOnce) await handleValidation(nextValues);
+      if (isBuildOnce) {
+        await handleValidation(nextValues);
+      }
     },
     [handleValidation, isBuildOnce],
   );

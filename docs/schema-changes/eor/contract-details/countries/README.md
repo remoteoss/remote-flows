@@ -13,6 +13,7 @@ Schema versions can have different implementations per country. Instead of gener
 These countries have upgraded to different versions, check each guide to know how to migrate or what has changed
 
 - [Belarus (BLR)](./BLR.md)
+- [Canada (CAN)](./CAN.md)
 - [China (CHN)](./CHN.md)
 - [Switzerland (CHE)](./CHE.md)
 - [Czech Republic (CZE)](./CZE.md)
@@ -31,6 +32,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Norway (NOR)](./NOR.md)
 - [New Zealand (NZL)](./NZL.md)
 - [Pakistan (PAK)](./PAK.md)
+- [Philippines (PHL)](./PHL.md)
 - [Portugal (PRT)](./PRT.md)
 - [Saudi Arabia (SAU)](./SAU.md)
 - [Singapore (SGP)](./SGP.md)
@@ -50,13 +52,14 @@ These countries have upgraded to different versions, check each guide to know ho
 | Country              | Code | Contract Details | Last Updated   |
 | -------------------- | ---- | ---------------- | -------------- |
 | Belarus              | BLR  | v2               | March 2026     |
+| Canada               | CAN  | v7               | October 2026   |
 | China                | CHN  | v8               | October 2026   |
 | Switzerland          | CHE  | v2               | March 2026     |
 | Czech Republic       | CZE  | v2               | March 2026     |
 | Germany              | DEU  | v7               | September 2026 |
 | Hong Kong            | HKG  | v2               | March 2026     |
 | Iceland              | ISL  | v2               | March 2026     |
-| India                | IND  | v2               | March 2026     |
+| India                | IND  | v6               | October 2026   |
 | Jamaica              | JAM  | v2               | March 2026     |
 | Kenya                | KEN  | v2               | March 2026     |
 | Lebanon              | LBN  | v2               | March 2026     |
@@ -68,6 +71,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Norway               | NOR  | v2               | March 2026     |
 | New Zealand          | NZL  | v2               | March 2026     |
 | Pakistan             | PAK  | v2               | March 2026     |
+| Philippines          | PHL  | v6               | October 2026   |
 | Portugal             | PRT  | v3               | March 2026     |
 | Saudi Arabia         | SAU  | v2               | March 2026     |
 | Singapore            | SGP  | v2               | March 2026     |
@@ -76,7 +80,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Sweden               | SWE  | v2               | March 2026     |
 | United Kingdom       | GBR  | v6               | October 2026   |
 | United Arab Emirates | ARE  | v3               | March 2026     |
-| United States        | USA  | v7               | October 2026   |
+| United States        | USA  | v8               | October 2026   |
 
 ## How to Use
 

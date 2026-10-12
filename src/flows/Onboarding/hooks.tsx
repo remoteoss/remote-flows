@@ -15,6 +15,8 @@ import {
   buildSteps,
   StepKeys,
   usesJsfV1ContractDetails,
+  getJobTitleEligibilityStatement,
+  JOB_TITLE_ELIGIBILITY_RESULT_FIELD,
 } from '@/src/flows/Onboarding/utils';
 import { prettifyFormValues } from '@/src/lib/utils';
 import {
@@ -596,6 +598,9 @@ export const useOnboarding = ({
     options?.features?.includes('daily_schedule'),
   );
 
+  const roleDescriptionField =
+    options?.jsfModify?.contract_details?.fields?.role_description;
+
   const contractDetailsCustomFields = useMemo(
     () => ({
       fields: {
@@ -644,6 +649,33 @@ export const useOnboarding = ({
             },
           },
         },
+        ...(isJobTitleEligibilityEnabled
+          ? {
+              role_description: {
+                ...(roleDescriptionField as $TSFixMe),
+                presentation: {
+                  ...(roleDescriptionField as $TSFixMe)?.presentation,
+                  calculateDynamicProperties: (
+                    values: FieldValues,
+                    field: JSFField,
+                  ) => {
+                    const partnerFn = (roleDescriptionField as $TSFixMe)
+                      ?.presentation?.calculateDynamicProperties;
+                    const partnerProps = partnerFn
+                      ? partnerFn(values, field)
+                      : {};
+
+                    const ourProps = getJobTitleEligibilityStatement(
+                      values[JOB_TITLE_ELIGIBILITY_RESULT_FIELD],
+                      employment?.country?.name,
+                    );
+
+                    return { ...partnerProps, ...ourProps };
+                  },
+                },
+              },
+            }
+          : {}),
         ...(isDailyScheduleEnabled
           ? {
               daily_schedule: {
@@ -684,6 +716,9 @@ export const useOnboarding = ({
       useSplitSalaryDescription,
       isDailyScheduleEnabled,
       dailyScheduleField,
+      isJobTitleEligibilityEnabled,
+      roleDescriptionField,
+      employment?.country?.name,
     ],
   );
 

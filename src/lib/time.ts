@@ -67,7 +67,9 @@ function formatAsHours(
 ): string {
   const roundedHours = roundToDecimals(hours);
 
-  if (suffixFormat === 'short') return `${roundedHours}h`;
+  if (suffixFormat === 'short') {
+    return `${roundedHours}h`;
+  }
 
   const hoursText = getSingularPluralUnit({
     number: hours,
@@ -104,7 +106,9 @@ function formatAsDays(
 ): string {
   const roundedDecimal = roundToDecimals(decimal);
 
-  if (suffixFormat === 'short') return `${roundedDecimal}d`;
+  if (suffixFormat === 'short') {
+    return `${roundedDecimal}d`;
+  }
 
   const daysText = getSingularPluralUnit({
     number: decimal,

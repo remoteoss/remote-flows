@@ -85,8 +85,12 @@ export function DatePickerFieldDefault({
                 : (maxDateValue ?? minDateValue)
             }
             disabled={(date: Date) => {
-              if (minDateValue && date < minDateValue) return true;
-              if (maxDateValue && date > maxDateValue) return true;
+              if (minDateValue && date < minDateValue) {
+                return true;
+              }
+              if (maxDateValue && date > maxDateValue) {
+                return true;
+              }
               return false;
             }}
           />
