@@ -28,6 +28,14 @@ describe('findSafeStartDate', () => {
     ]);
   });
 
+  it('skips days after the start of the month so a payroll cut-off cannot block the date', async () => {
+    vi.setSystemTime(new Date('2026-10-13T12:00:00Z'));
+
+    await expect(
+      findSafeStartDate('ISR', async (): Promise<HolidayDate[]> => []),
+    ).resolves.toBe('2026-12-01');
+  });
+
   it('keeps the holidays from years that loaded when another year fails', async () => {
     const fetchHolidays = async (
       _country: string,
