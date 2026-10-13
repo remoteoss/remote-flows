@@ -277,7 +277,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   POL: {
     // Poland
-    contract_details: 1,
+    contract_details: 5,
   },
   PRI: {
     // Puerto Rico

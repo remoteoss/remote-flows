@@ -33,6 +33,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [New Zealand (NZL)](./NZL.md)
 - [Pakistan (PAK)](./PAK.md)
 - [Philippines (PHL)](./PHL.md)
+- [Poland (POL)](./POL.md)
 - [Portugal (PRT)](./PRT.md)
 - [Saudi Arabia (SAU)](./SAU.md)
 - [Singapore (SGP)](./SGP.md)
@@ -72,6 +73,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | New Zealand          | NZL  | v2               | March 2026     |
 | Pakistan             | PAK  | v2               | March 2026     |
 | Philippines          | PHL  | v6               | October 2026   |
+| Poland               | POL  | v5               | October 2026   |
 | Portugal             | PRT  | v3               | March 2026     |
 | Saudi Arabia         | SAU  | v2               | March 2026     |
 | Singapore            | SGP  | v2               | March 2026     |
