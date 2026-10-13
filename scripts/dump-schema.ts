@@ -20,7 +20,15 @@ for (const raw of process.argv.slice(2)) {
 }
 const country = args.country?.toUpperCase();
 const form = args.form ?? 'contract_details';
-const version = args.version ?? 'latest';
+const version: number | 'latest' =
+  args.version === undefined || args.version === 'latest'
+    ? 'latest'
+    : Number(args.version);
+if (version !== 'latest' && !Number.isInteger(version)) {
+  throw new Error(
+    `--version must be an integer or 'latest', got ${args.version}`,
+  );
+}
 const outDir = args.out ?? path.resolve(__dirname, '..', '.schema-dumps');
 if (!country) throw new Error('--country=XXX is required');
 
@@ -66,7 +74,7 @@ try {
     query: {
       skip_benefits: true,
       ...(employmentId ? { employment_id: employmentId } : {}),
-      json_schema_version: version as never,
+      json_schema_version: version,
     },
   });
   if (response.error || !response.data) {
