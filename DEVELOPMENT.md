@@ -75,6 +75,7 @@ The example app will be available at `http://localhost:3001`.
 - `npm test` - Run tests
 - `npm run type-check` - Run TypeScript type checking
 - `npm run format` - Format code with Prettier
+- `npm run dump:schema -- --country=XXX [--form=contract_details] [--version=N|latest]` - Dump a country schema from the sandbox gateway to `.schema-dumps/`
 - `npm run size` - Analyze bundle size
 - `npm run size:check` - Check if bundle size is within limits
 - `npm run size:badge` - Generate badge and history data
