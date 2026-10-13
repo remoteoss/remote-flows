@@ -16,7 +16,9 @@ dotenv.config({ path: path.resolve(__dirname, '..', '.env.sandbox') });
 const args: Record<string, string> = {};
 for (const raw of process.argv.slice(2)) {
   const match = raw.match(/^--([^=]+)=(.*)$/);
-  if (match) args[match[1]] = match[2];
+  if (match) {
+    args[match[1]] = match[2];
+  }
 }
 const country = args.country?.toUpperCase();
 const form = args.form ?? 'contract_details';
@@ -30,7 +32,9 @@ if (version !== 'latest' && !Number.isInteger(version)) {
   );
 }
 const outDir = args.out ?? path.resolve(__dirname, '..', '.schema-dumps');
-if (!country) throw new Error('--country=XXX is required');
+if (!country) {
+  throw new Error('--country=XXX is required');
+}
 
 const HTML = /<\/?[a-z][\s\S]*?>/i;
 
@@ -89,5 +93,7 @@ try {
   console.log(`${hits.length} string(s) containing HTML:`);
   hits.forEach((hit) => console.log(`  ${hit}`));
 } finally {
-  if (employmentId) await archiveEmployment(client, employmentId);
+  if (employmentId) {
+    await archiveEmployment(client, employmentId);
+  }
 }
