@@ -70,7 +70,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Malaysia             | MYS  | v2               | March 2026     |
 | Mexico               | MEX  | v2               | March 2026     |
 | Netherlands          | NLD  | v6               | October 2026   |
-| Nigeria              | NGA  | v2               | March 2026     |
+| Nigeria              | NGA  | v5               | October 2026   |
 | Norway               | NOR  | v2               | March 2026     |
 | New Zealand          | NZL  | v2               | March 2026     |
 | Pakistan             | PAK  | v2               | March 2026     |
