@@ -1,4 +1,4 @@
-export type SchemaCanaryCheckScope = 'pinned' | 'latest' | 'all';
+export type SchemaCanaryCheckScope = 'pinned' | 'latest' | 'submit' | 'all';
 
 export type SchemaCanarySkipEntry = {
   country: string;
