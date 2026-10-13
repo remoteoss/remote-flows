@@ -158,7 +158,7 @@
     "jsdom": "30.1.2",
     "lodash": "4.18.1",
     "msw": "2.15.0",
-    "oxfmt": "0.68.0",
+    "oxfmt": "0.72.0",
     "oxlint": "1.83.0",
     "oxlint-tsgolint": "7.0.2003",
     "postcss-import": "17.0.0",
