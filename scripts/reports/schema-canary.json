@@ -1204,7 +1204,7 @@
     },
     {
       "country": "NGA",
-      "version": 2,
+      "version": 5,
       "strategy": "rebuild",
       "check": "pinned",
       "outcome": "pass"
@@ -1218,7 +1218,7 @@
     },
     {
       "country": "NGA",
-      "version": 2,
+      "version": 5,
       "strategy": "rebuild",
       "check": "submit",
       "outcome": "pass"
