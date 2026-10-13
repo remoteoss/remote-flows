@@ -1,5 +1,36 @@
 # @remoteoss/remote-flows
 
+## 1.63.0
+
+### Minor Changes
+
+#### Features
+
+- add --debug request/response logging to seed:onboarding (#1512) [#1512](https://github.com/remoteoss/remote-flows/pull/1512)
+- build high-tier contract details once (#1507) [#1507](https://github.com/remoteoss/remote-flows/pull/1507)
+- re-run job title check on mount (#1514) [#1514](https://github.com/remoteoss/remote-flows/pull/1514)
+
+#### Fixes
+
+- build the step form from saved values when returning to it (#1519) [#1519](https://github.com/remoteoss/remote-flows/pull/1519)
+- seed start dates in the first ten days of the month (#1531) [#1531](https://github.com/remoteoss/remote-flows/pull/1531)
+- refetch employment after basic information update (#1521) [#1521](https://github.com/remoteoss/remote-flows/pull/1521)
+
+#### Chores
+
+- update dependency lucide-react to v1.52.0 (#1227) [#1227](https://github.com/remoteoss/remote-flows/pull/1227)
+- update dependency @vitejs/plugin-react to v6.1.2 (#1528) [#1528](https://github.com/remoteoss/remote-flows/pull/1528)
+- update dependency dompurify to v3.4.16 [security] (#1445) [#1445](https://github.com/remoteoss/remote-flows/pull/1445)
+- update dependency @tanstack/react-query to v5.104.1 (#1414) [#1414](https://github.com/remoteoss/remote-flows/pull/1414)
+- update contract details schema canary report (#1536) [#1536](https://github.com/remoteoss/remote-flows/pull/1536)
+- update react monorepo to v19.3.0 (#1237) [#1237](https://github.com/remoteoss/remote-flows/pull/1237)
+- update dependency html-react-parser to v6.1.8 (#1362) [#1362](https://github.com/remoteoss/remote-flows/pull/1362)
+- update dependency dotenv to v18.0.5 (#1537) [#1537](https://github.com/remoteoss/remote-flows/pull/1537)
+- update vitest monorepo to v5.0.3 (#1539) [#1539](https://github.com/remoteoss/remote-flows/pull/1539)
+- update dependency filesize to v11.0.25 (#1538) [#1538](https://github.com/remoteoss/remote-flows/pull/1538)
+- update dependency chalk to v6.0.1 (#1532) [#1532](https://github.com/remoteoss/remote-flows/pull/1532)
+- update dependency jsdom to v30.1.2 (#1392) [#1392](https://github.com/remoteoss/remote-flows/pull/1392)
+
 ## 1.62.0
 
 ### Minor Changes
