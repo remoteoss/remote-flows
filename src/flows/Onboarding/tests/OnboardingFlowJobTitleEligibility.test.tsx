@@ -504,6 +504,151 @@ describe.each(schemaPaths)(
       expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
     });
 
+    describe('on mount with saved contract details', () => {
+      const savedRoleAnswers = {
+        role_description: 'Licensed onsite surgeon responsibilities',
+        role_is_onsite: 'yes',
+        role_requires_license: 'yes',
+      };
+      let mountVerdict: string;
+      let checkReleased: Promise<void>;
+
+      beforeEach(() => {
+        mountVerdict = 'not_eligible';
+        checkReleased = Promise.resolve();
+        server.use(
+          http.get('*/v1/employments/:id', ({ params }) => {
+            const { employment } = employmentDefaultResponse.data;
+            return HttpResponse.json({
+              ...employmentDefaultResponse,
+              data: {
+                ...employmentDefaultResponse.data,
+                employment: {
+                  ...employment,
+                  id: params?.id,
+                  country: {
+                    code: countryCode,
+                    name: countryName,
+                    alpha_2_code: countryCode.slice(0, 2),
+                    supported_json_schemas: ['employment_basic_information'],
+                  },
+                  basic_information: {
+                    ...employment.basic_information,
+                    job_title: 'Surgeon',
+                  },
+                  contract_details: {
+                    ...employment.contract_details,
+                    ...savedRoleAnswers,
+                    additional_job_title_eligibility_check_slug:
+                      'saved-check-id',
+                    additional_job_title_eligibility_check_result: 'maybe',
+                  },
+                },
+              },
+            });
+          }),
+          http.post(
+            '*/v2/employments/:id/job-title-eligibility-check',
+            async ({ request }) => {
+              jobTitleEligibilityCheckSpy(await request.json());
+              await checkReleased;
+              return HttpResponse.json({
+                data: {
+                  job_title_eligibility_check: {
+                    check_id: 'new-check-id',
+                    verdict: mountVerdict,
+                  },
+                },
+              });
+            },
+          ),
+        );
+      });
+
+      it('replaces the saved verdict with a check against the current job title, without a blur', async () => {
+        await renderContractDetailsStep();
+
+        expect(
+          await screen.findByText(
+            `AI determined we can't hire this role in ${countryName}`,
+          ),
+        ).toBeInTheDocument();
+        expect(
+          screen.queryByText(
+            `AI isn't sure if we can hire this role in ${countryName}`,
+          ),
+        ).not.toBeInTheDocument();
+        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1);
+        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledWith({
+          job_title: 'Surgeon',
+          ...savedRoleAnswers,
+        });
+      });
+
+      it('asks for the risk acknowledgement on mount when the new verdict requires it', async () => {
+        mountVerdict = 'eligible_with_risk_acknowledgement';
+
+        await renderContractDetailsStep();
+
+        expect(
+          await screen.findByLabelText(/I acknowledge the risks/i),
+        ).toBeInTheDocument();
+      });
+
+      it('disables the submit button while the mount check is running', async () => {
+        let releaseCheck: () => void = () => {};
+        checkReleased = new Promise<void>((resolve) => {
+          releaseCheck = resolve;
+        });
+
+        await renderContractDetailsStep();
+        const submitButton = screen.getByRole('button', { name: 'Continue' });
+
+        await waitFor(() => expect(submitButton).toBeDisabled());
+
+        releaseCheck();
+
+        await waitFor(() => expect(submitButton).toBeEnabled());
+      });
+
+      it('does not call the check again when the step mounts again with nothing changed', async () => {
+        await renderContractDetailsStep();
+        await waitFor(() =>
+          expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1),
+        );
+
+        act(() => {
+          latestOnboardingBag.goTo('basic_information');
+        });
+        await waitFor(() =>
+          expect(latestOnboardingBag.stepState.currentStep.name).toBe(
+            'basic_information',
+          ),
+        );
+        act(() => {
+          latestOnboardingBag.goTo('contract_details');
+        });
+        await screen.findByLabelText(/Role description/i);
+
+        expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
+        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1);
+      });
+
+      it('does not call the check on mount when the feature is not enabled', async () => {
+        await renderContractDetailsStep({ features: [] });
+
+        expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
+        expect(jobTitleEligibilityCheckSpy).not.toHaveBeenCalled();
+      });
+    });
+
+    it('does not call the check on mount when the saved role answers are incomplete', async () => {
+      await renderContractDetailsStep();
+
+      expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
+      expect(jobTitleEligibilityCheckSpy).not.toHaveBeenCalled();
+    });
+
     describe('feeding the check result into the contract details schema', () => {
       const updateEmploymentSpy = vi.fn();
       const checkResponsesSent = vi.fn();
