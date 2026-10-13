@@ -80,8 +80,17 @@ jobs:
           permission-contents: write
           permission-pull-requests: write
 
+      - name: Skip the pull request if main already has this report
+        id: stale
+        if: always()
+        run: |
+          git fetch --depth=1 origin main
+          if git diff --quiet origin/main -- scripts/reports/schema-canary.json; then
+            echo "same=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Create pull request with the updated report
-        if: always() && steps.app-token.outcome == 'success'
+        if: always() && steps.app-token.outcome == 'success' && steps.stale.outputs.same != 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ steps.app-token.outputs.token }}
