@@ -36,24 +36,6 @@ if (!country) {
   throw new Error('--country=XXX is required');
 }
 
-const HTML = /<\/?[a-z][\s\S]*?>/i;
-
-function findHtml(node: unknown, trail: string[], hits: string[]) {
-  if (typeof node === 'string') {
-    if (HTML.test(node)) {
-      hits.push(
-        `${trail.join('.')}: ${node.replace(/\s+/g, ' ').slice(0, 120)}`,
-      );
-    }
-  } else if (Array.isArray(node)) {
-    node.forEach((item, i) => findHtml(item, [...trail, String(i)], hits));
-  } else if (node && typeof node === 'object') {
-    for (const [key, value] of Object.entries(node)) {
-      findHtml(value, [...trail, key], hits);
-    }
-  }
-}
-
 const { VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REFRESH_TOKEN } = process.env;
 if (!VITE_CLIENT_ID || !VITE_CLIENT_SECRET || !VITE_REFRESH_TOKEN) {
   throw new Error(
@@ -87,11 +69,7 @@ try {
   mkdirSync(outDir, { recursive: true });
   const file = path.join(outDir, `${country}.${form}.v${version}.json`);
   writeFileSync(file, JSON.stringify(response.data.data, null, 2));
-  const hits: string[] = [];
-  findHtml(response.data.data, [], hits);
   console.log(`Wrote ${file}`);
-  console.log(`${hits.length} string(s) containing HTML:`);
-  hits.forEach((hit) => console.log(`  ${hit}`));
 } finally {
   if (employmentId) {
     await archiveEmployment(client, employmentId);
