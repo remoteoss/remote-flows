@@ -72,6 +72,12 @@ try {
   console.log(`Wrote ${file}`);
 } finally {
   if (employmentId) {
-    await archiveEmployment(client, employmentId);
+    try {
+      await archiveEmployment(client, employmentId);
+    } catch (error) {
+      console.warn(
+        `Failed to archive employment ${employmentId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 }
