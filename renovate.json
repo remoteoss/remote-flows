@@ -68,6 +68,11 @@
       "enabled": false
     },
     {
+      "description": "Declared only so the emitted types resolve; the version must match what @remoteoss/remote-json-schema-form-kit resolves, so it moves with the kit",
+      "matchPackageNames": ["@remoteoss/json-schema-form"],
+      "enabled": false
+    },
+    {
       "description": "Preserve optional dependencies in lockfile",
       "matchPackageNames": ["esbuild", "@esbuild/**"],
       "enabled": true
