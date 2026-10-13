@@ -13,6 +13,7 @@ import { execSync } from 'child_process';
 import {
   existsSync,
   copyFileSync,
+  mkdirSync,
   readdirSync,
   readFileSync,
   writeFileSync,
@@ -202,6 +203,16 @@ async function main() {
   if (existsSync(claudeLocalMd)) {
     copyFileSync(claudeLocalMd, path.join(worktreePath, 'CLAUDE.local.md'));
     log.info('Copied CLAUDE.local.md');
+  }
+
+  const claudeSettingsLocal = path.join(root, '.claude', 'settings.local.json');
+  if (existsSync(claudeSettingsLocal)) {
+    mkdirSync(path.join(worktreePath, '.claude'), { recursive: true });
+    copyFileSync(
+      claudeSettingsLocal,
+      path.join(worktreePath, '.claude', 'settings.local.json'),
+    );
+    log.info('Copied .claude/settings.local.json');
   }
 
   const gatewayEnvFiles = readdirSync(root).filter((name) =>
