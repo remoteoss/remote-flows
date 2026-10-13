@@ -21,6 +21,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Hong Kong (HKG)](./HKG.md)
 - [Iceland (ISL)](./ISL.md)
 - [India (IND)](./IND.md)
+- [Ireland (IRL)](./IRL.md)
 - [Jamaica (JAM)](./JAM.md)
 - [Kenya (KEN)](./KEN.md)
 - [Lebanon (LBN)](./LBN.md)
@@ -61,6 +62,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Hong Kong            | HKG  | v2               | March 2026     |
 | Iceland              | ISL  | v2               | March 2026     |
 | India                | IND  | v6               | October 2026   |
+| Ireland              | IRL  | v4               | October 2026   |
 | Jamaica              | JAM  | v2               | March 2026     |
 | Kenya                | KEN  | v2               | March 2026     |
 | Lebanon              | LBN  | v2               | March 2026     |
