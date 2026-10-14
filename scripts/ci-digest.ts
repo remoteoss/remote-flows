@@ -39,6 +39,11 @@ function main() {
   const args = process.argv.slice(2);
   const maxLinesFlag = args.find((arg) => arg.startsWith('--max-lines='));
   const maxLines = maxLinesFlag ? Number(maxLinesFlag.split('=')[1]) : 40;
+  if (!Number.isInteger(maxLines) || maxLines < 1) {
+    throw new Error(
+      `--max-lines must be a positive integer, got ${maxLinesFlag}`,
+    );
+  }
   const prNumber =
     args.find((arg) => /^\d+$/.test(arg)) ??
     JSON.parse(gh(['pr', 'view', '--json', 'number'])).number.toString();

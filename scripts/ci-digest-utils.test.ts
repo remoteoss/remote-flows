@@ -144,6 +144,15 @@ describe('classifyFailure', () => {
     ).toBe('e2e');
   });
 
+  it('does not call a job e2e just because its log mentions Playwright', () => {
+    expect(
+      classifyFailure(
+        'Example App Checks',
+        'npx playwright install\nBuild failed',
+      ),
+    ).toBe('unknown');
+  });
+
   it('reports a coverage-threshold failure when every test passed', () => {
     expect(
       classifyFailure(

@@ -116,7 +116,7 @@ export function classifyFailure(checkName: string, log: string): FailureKind {
   ) {
     return 'lint';
   }
-  if (/playwright/i.test(log) || name.includes('e2e')) {
+  if (/\bplaywright test\b/i.test(log) || name.includes('e2e')) {
     return 'e2e';
   }
   if (/\bFAIL\b|AssertionError/.test(log)) {
