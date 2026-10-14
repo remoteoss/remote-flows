@@ -158,6 +158,11 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'IND',
   'PHL',
   'USA',
+  'POL',
+  'NGA',
+  'IRL',
+  'SWE',
+  'NLD',
 ];
 
 /**
