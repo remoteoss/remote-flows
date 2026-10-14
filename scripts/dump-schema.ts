@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
@@ -23,6 +23,9 @@ for (const raw of process.argv.slice(2)) {
 }
 const envName = args.env ?? 'sandbox';
 const envFile = path.resolve(__dirname, '..', `.env.${envName}`);
+if (!existsSync(envFile)) {
+  throw new Error(`--env=${envName}: ${envFile} does not exist.`);
+}
 dotenv.config({ path: envFile });
 const country = args.country?.toUpperCase();
 const form = args.form ?? 'contract_details';

@@ -71,6 +71,7 @@
  *   npm run seed:onboarding -- --country=IND --env=partners --debug
  */
 import dotenv from 'dotenv';
+import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -142,6 +143,9 @@ let getAuthHeaders = async (
 
 if (ENV) {
   const envFile = path.resolve(__dirname, '..', `.env.${ENV}`);
+  if (!existsSync(envFile)) {
+    throw new Error(`--env=${ENV}: ${envFile} does not exist.`);
+  }
   dotenv.config({ path: envFile });
   const { buildGatewayURL } = require('../example/api/utils.js') as {
     buildGatewayURL: () => string | undefined;
