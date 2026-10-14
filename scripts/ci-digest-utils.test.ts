@@ -153,6 +153,12 @@ describe('classifyFailure', () => {
     ).toBe('coverage');
   });
 
+  it('does not call a crashed coverage job a threshold miss', () => {
+    expect(
+      classifyFailure('Tests with Coverage', 'npm ERR! install failed'),
+    ).toBe('test');
+  });
+
   it('detects type errors', () => {
     expect(
       classifyFailure('Lint and Format', 'src/a.ts(1,1): error TS2322: nope'),

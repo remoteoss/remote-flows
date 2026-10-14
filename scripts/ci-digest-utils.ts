@@ -122,10 +122,7 @@ export function classifyFailure(checkName: string, log: string): FailureKind {
   if (/\bFAIL\b|AssertionError/.test(log)) {
     return 'test';
   }
-  if (
-    /does not meet .*threshold|coverage threshold/i.test(log) ||
-    name.includes('coverage')
-  ) {
+  if (/does not meet .*threshold|coverage threshold/i.test(log)) {
     return 'coverage';
   }
   if (/vitest/i.test(log) || name.includes('test')) {
