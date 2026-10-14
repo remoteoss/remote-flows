@@ -4,11 +4,72 @@ Schema versions for employee onboarding in Malaysia.
 
 ## Current Version
 
-**Contract Details:** v2 (Since SDK 1.23.0)
+**Contract Details:** v5
 
 ## Contract Details
 
-### v2 - Current (Since SDK 1.23.0, March 2026)
+### v5 - Current
+
+**What changed:**
+
+- The contract duration fields move to the shared `contract_duration` component with unlimited maximum duration. The standalone `contract_duration_type` and `contract_end_date` field definitions and the contract duration help center metadata are removed from the schema (inferred from the schema diff).
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      MYS: { contract_details: 5 },
+    },
+  }}
+/>
+```
+
+---
+
+### v4
+
+**What changed:**
+
+- Adds an extreme-salary acknowledgement: a warning and a required checkbox appear when the annual salary is at or above the USD 1,000,000 equivalent. Additive and flag-gated, so no action is required unless a submitted salary crosses that threshold.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      MYS: { contract_details: 4 },
+    },
+  }}
+/>
+```
+
+---
+
+### v3
+
+**What changed:**
+
+- `annual_gross_salary` adds high-salary reserve messaging, grouped with the currency selection in a titled fieldset. Additive and flag-gated, so no action is required.
+- The form moves to the JSON Schema Form v1 engine. Validation and form generation follow v1 semantics.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      MYS: { contract_details: 3 },
+    },
+  }}
+/>
+```
+
+---
+
+### v2 (Since SDK 1.23.0, March 2026)
 
 **What changed:**
 

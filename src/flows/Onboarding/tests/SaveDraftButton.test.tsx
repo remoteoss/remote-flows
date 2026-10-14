@@ -206,7 +206,12 @@ describe('SaveDraftButton', () => {
       expect(mockSuccess).toHaveBeenCalled();
     });
 
-    expect(screen.getByText(/Step: Basic Information/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Step: Basic Information/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Step: Contract Details/i),
+    ).not.toBeInTheDocument();
   });
 
   it('should call onError when save draft fails', async () => {
