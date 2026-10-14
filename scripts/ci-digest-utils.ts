@@ -1,0 +1,158 @@
+export type FailureKind =
+  | 'format'
+  | 'lint'
+  | 'type'
+  | 'test'
+  | 'build'
+  | 'flake'
+  | 'unknown';
+
+export type CheckRun = {
+  name: string;
+  workflow: string;
+  link: string;
+  runId: string | null;
+  jobId: string | null;
+};
+
+const ESCAPE_CHAR = String.fromCharCode(27);
+const ANSI_PATTERN = new RegExp(
+  `(?:${ESCAPE_CHAR}|\\^\\[)\\[[0-9;]*[A-Za-z]`,
+  'g',
+);
+const TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}T[\d:.]+Z\s?/;
+const STRONG_ERROR_PATTERN =
+  /##\[error\]|\bFAIL\b|AssertionError|error TS\d+|Test Files .*failed|Tests\s+.*failed|✗|×|Process completed with exit code/;
+const WEAK_ERROR_PATTERN = /\bError:|\bExpected\b|\bReceived\b|\bnot ok\b/;
+const NOISE_PATTERN = /^##\[(group|endgroup|debug|warning)\]|^\s*$/;
+
+const FLAKE_SIGNATURES = [
+  /\b403\b.*(rate|forbidden|blocked)/i,
+  /rate.?limit/i,
+  /ECONNRESET|ETIMEDOUT|EAI_AGAIN/,
+  /Test timeout of \d+ms exceeded/,
+  /socket hang up/i,
+];
+
+export function parseCheckLink(
+  link: string,
+): Pick<CheckRun, 'runId' | 'jobId'> {
+  const match = link.match(/\/actions\/runs\/(\d+)(?:\/job\/(\d+))?/);
+  return { runId: match?.[1] ?? null, jobId: match?.[2] ?? null };
+}
+
+export function cleanLogLine(line: string): string {
+  const fields = line.split('\t');
+  const message = fields.length >= 3 ? fields.slice(2).join('\t') : line;
+  return message
+    .replace(ANSI_PATTERN, '')
+    .replace(TIMESTAMP_PATTERN, '')
+    .trimEnd();
+}
+
+export function extractErrorWindows(
+  log: string,
+  { context = 3, maxLines = 40 }: { context?: number; maxLines?: number } = {},
+): string[] {
+  const lines = log
+    .split('\n')
+    .map(cleanLogLine)
+    .filter((line) => !NOISE_PATTERN.test(line));
+
+  const pattern = lines.some((line) => STRONG_ERROR_PATTERN.test(line))
+    ? STRONG_ERROR_PATTERN
+    : WEAK_ERROR_PATTERN;
+  const keep = new Set<number>();
+  lines.forEach((line, index) => {
+    if (!pattern.test(line)) {
+      return;
+    }
+    for (
+      let i = Math.max(0, index - context);
+      i <= Math.min(lines.length - 1, index + context);
+      i++
+    ) {
+      keep.add(i);
+    }
+  });
+
+  const selected =
+    keep.size === 0
+      ? lines.slice(-maxLines)
+      : [...keep].sort((a, b) => a - b).map((index) => lines[index]);
+
+  const deduped = selected.filter(
+    (line, index) => line !== selected[index - 1],
+  );
+  if (deduped.length <= maxLines) {
+    return deduped;
+  }
+  return [
+    ...deduped.slice(0, maxLines - 1),
+    `… ${deduped.length - maxLines + 1} more lines truncated`,
+  ];
+}
+
+export function classifyFailure(checkName: string, log: string): FailureKind {
+  if (FLAKE_SIGNATURES.some((pattern) => pattern.test(log))) {
+    return 'flake';
+  }
+  const name = checkName.toLowerCase();
+  if (/error TS\d+/.test(log)) {
+    return 'type';
+  }
+  if (/oxfmt|Format issues found|check-format/i.test(log)) {
+    return 'format';
+  }
+  if (
+    /oxlint|Found \d+ (warnings?|errors?)/i.test(log) ||
+    name.includes('lint')
+  ) {
+    return 'lint';
+  }
+  if (
+    /vitest|playwright|\bFAIL\b|AssertionError/i.test(log) ||
+    name.includes('test')
+  ) {
+    return 'test';
+  }
+  if (name.includes('build') || /tsdown|check-exports/i.test(log)) {
+    return 'build';
+  }
+  return 'unknown';
+}
+
+const NEXT_STEP: Record<FailureKind, string> = {
+  format: 'run `npm run format` and commit',
+  lint: 'run `npx oxlint <changed files>` and fix',
+  type: 'run `npm run type-check` locally',
+  test: 'rerun only the failing file: `npx vitest run <path>`',
+  build: 'run `npm run build` / `npm run check-exports` locally',
+  flake:
+    'looks infra or rate-limit related: rerun the job after ~2 minutes before changing code',
+  unknown: 'read the excerpt; fetch the full log only if it is not enough',
+};
+
+export function renderDigest(
+  prNumber: string,
+  failures: { check: CheckRun; kind: FailureKind; excerpt: string[] }[],
+  passing: number,
+): string {
+  if (failures.length === 0) {
+    return `PR #${prNumber}: no failing checks (${passing} passing or pending).`;
+  }
+  const sections = failures.map(({ check, kind, excerpt }) =>
+    [
+      `## ${check.workflow} / ${check.name} [${kind}]`,
+      check.link,
+      `Next: ${NEXT_STEP[kind]}`,
+      '```',
+      ...excerpt,
+      '```',
+    ].join('\n'),
+  );
+  return [
+    `PR #${prNumber}: ${failures.length} failing, ${passing} other checks`,
+    ...sections,
+  ].join('\n\n');
+}
