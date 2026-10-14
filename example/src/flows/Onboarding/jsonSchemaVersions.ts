@@ -21,7 +21,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   AUS: {
     // Australia
-    contract_details: 1,
+    contract_details: 6,
   },
   AUT: {
     // Austria
