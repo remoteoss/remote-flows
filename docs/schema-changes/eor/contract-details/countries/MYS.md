@@ -18,11 +18,11 @@ Schema versions for employee onboarding in Malaysia.
 
 ```tsx
 <OnboardingFlow
-  options={
+  options={{
     jsonSchemaVersionByCountry: {
       MYS: { contract_details: 5 },
     },
-  }
+  }}
 />
 ```
 
@@ -38,11 +38,11 @@ Schema versions for employee onboarding in Malaysia.
 
 ```tsx
 <OnboardingFlow
-  options={
+  options={{
     jsonSchemaVersionByCountry: {
       MYS: { contract_details: 4 },
     },
-  }
+  }}
 />
 ```
 
@@ -59,11 +59,11 @@ Schema versions for employee onboarding in Malaysia.
 
 ```tsx
 <OnboardingFlow
-  options={
+  options={{
     jsonSchemaVersionByCountry: {
       MYS: { contract_details: 3 },
     },
-  }
+  }}
 />
 ```
 
