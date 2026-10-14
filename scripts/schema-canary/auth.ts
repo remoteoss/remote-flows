@@ -49,3 +49,20 @@ export function createSandboxClient(
     fetchSandboxAccessToken(clientId, clientSecret, refreshToken),
   );
 }
+
+/**
+ * Client for any gateway the example app's env files know about. Gateway and
+ * token flow come from the same helpers the example proxy and
+ * `seed:onboarding --env` use, so `.env.<name>` behaves identically (including
+ * the JWT-bearer fallback for `local`).
+ */
+export function createEnvClient(
+  gatewayUrl: string,
+  fetchAccessToken: () => Promise<{ accessToken: string; expiresIn?: number }>,
+): Client {
+  process.env.REMOTE_GATEWAY_URL = gatewayUrl;
+  return createClient(async () => {
+    const { accessToken, expiresIn } = await fetchAccessToken();
+    return { accessToken, expiresIn: expiresIn ?? 3600 };
+  });
+}

@@ -1,17 +1,18 @@
 #!/usr/bin/env tsx
 import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 import { getV1CountriesCountryCodeForm } from '@/src/client';
-import { createSandboxClient } from './schema-canary/auth';
+import { createEnvClient } from './schema-canary/auth';
 import {
   archiveEmployment,
   seedEmploymentForCountry,
 } from './schema-canary/seed-employment';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, '..', '.env.sandbox') });
+const require = createRequire(import.meta.url);
 
 const args: Record<string, string> = {};
 for (const raw of process.argv.slice(2)) {
@@ -20,6 +21,9 @@ for (const raw of process.argv.slice(2)) {
     args[match[1]] = match[2];
   }
 }
+const envName = args.env ?? 'sandbox';
+const envFile = path.resolve(__dirname, '..', `.env.${envName}`);
+dotenv.config({ path: envFile });
 const country = args.country?.toUpperCase();
 const form = args.form ?? 'contract_details';
 const version: number | 'latest' =
@@ -36,17 +40,20 @@ if (!country) {
   throw new Error('--country=XXX is required');
 }
 
-const { VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REFRESH_TOKEN } = process.env;
-if (!VITE_CLIENT_ID || !VITE_CLIENT_SECRET || !VITE_REFRESH_TOKEN) {
+const { buildGatewayURL } = require('../example/api/utils.js') as {
+  buildGatewayURL: () => string | undefined;
+};
+const { fetchAccessToken } = require('../example/api/get_token.js') as {
+  fetchAccessToken: () => Promise<{ accessToken: string; expiresIn?: number }>;
+};
+const gatewayUrl = buildGatewayURL();
+if (!gatewayUrl) {
   throw new Error(
-    'Missing VITE_CLIENT_ID/SECRET/REFRESH_TOKEN in .env.sandbox',
+    `Unknown --env=${envName}, or ${envFile} is missing/doesn't set VITE_REMOTE_GATEWAY.`,
   );
 }
-const client = createSandboxClient(
-  VITE_CLIENT_ID,
-  VITE_CLIENT_SECRET,
-  VITE_REFRESH_TOKEN,
-);
+console.log(`Environment: ${envName} -> ${gatewayUrl} (from ${envFile})`);
+const client = createEnvClient(gatewayUrl, fetchAccessToken);
 
 let employmentId: string | undefined;
 try {
