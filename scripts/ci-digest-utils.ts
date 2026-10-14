@@ -3,6 +3,8 @@ export type FailureKind =
   | 'lint'
   | 'type'
   | 'test'
+  | 'e2e'
+  | 'coverage'
   | 'build'
   | 'flake'
   | 'unknown';
@@ -22,15 +24,15 @@ const ANSI_PATTERN = new RegExp(
 );
 const TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}T[\d:.]+Z\s?/;
 const STRONG_ERROR_PATTERN =
-  /##\[error\]|\bFAIL\b|AssertionError|error TS\d+|Test Files .*failed|Tests\s+.*failed|✗|×|Process completed with exit code/;
+  /##\[error\]|\bFAIL\b|AssertionError|error TS\d+|Test Files .*failed|Tests\s+.*failed|✗|×/;
 const WEAK_ERROR_PATTERN = /\bError:|\bExpected\b|\bReceived\b|\bnot ok\b/;
-const NOISE_PATTERN = /^##\[(group|endgroup|debug|warning)\]|^\s*$/;
+const NOISE_PATTERN =
+  /^##\[(group|endgroup|debug|warning)\]|^##\[error\]Process completed with exit code|^\s*$/;
 
 const FLAKE_SIGNATURES = [
-  /\b403\b.*(rate|forbidden|blocked)/i,
+  /\b403\b.*(rate|blocked)/i,
   /rate.?limit/i,
   /ECONNRESET|ETIMEDOUT|EAI_AGAIN/,
-  /Test timeout of \d+ms exceeded/,
   /socket hang up/i,
 ];
 
@@ -114,10 +116,19 @@ export function classifyFailure(checkName: string, log: string): FailureKind {
   ) {
     return 'lint';
   }
+  if (/playwright/i.test(log) || name.includes('e2e')) {
+    return 'e2e';
+  }
+  if (/\bFAIL\b|AssertionError/.test(log)) {
+    return 'test';
+  }
   if (
-    /vitest|playwright|\bFAIL\b|AssertionError/i.test(log) ||
-    name.includes('test')
+    /does not meet .*threshold|coverage threshold/i.test(log) ||
+    name.includes('coverage')
   ) {
+    return 'coverage';
+  }
+  if (/vitest/i.test(log) || name.includes('test')) {
     return 'test';
   }
   if (name.includes('build') || /tsdown|check-exports/i.test(log)) {
@@ -131,6 +142,9 @@ const NEXT_STEP: Record<FailureKind, string> = {
   lint: 'run `npx oxlint <changed files>` and fix',
   type: 'run `npm run type-check` locally',
   test: 'rerun only the failing file: `npx vitest run <path>`',
+  e2e: 'rerun the failing spec from `example/` with `npm run test:e2e` (it hits the real sandbox)',
+  coverage:
+    'tests passed but a coverage threshold failed: run `npm run test:coverage` and cover the new lines',
   build: 'run `npm run build` / `npm run check-exports` locally',
   flake:
     'looks infra or rate-limit related: rerun the job after ~2 minutes before changing code',

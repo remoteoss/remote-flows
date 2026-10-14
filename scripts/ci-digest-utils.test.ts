@@ -49,6 +49,20 @@ describe('extractErrorWindows', () => {
     ]);
   });
 
+  it('drops the Actions exit-code footer so the real error stays visible', () => {
+    const log = [
+      'Error: real boom',
+      'filler 1',
+      'filler 2',
+      'filler 3',
+      'filler 4',
+      '##[error]Process completed with exit code 1.',
+    ].join('\n');
+    expect(extractErrorWindows(log, { context: 0 })).toEqual([
+      'Error: real boom',
+    ]);
+  });
+
   it('uses weak markers when there is nothing stronger', () => {
     const log = ['filler', 'Error: boom', 'filler 2'].join('\n');
     expect(extractErrorWindows(log, { context: 0 })).toEqual(['Error: boom']);
@@ -113,6 +127,30 @@ describe('classifyFailure', () => {
       'done',
     ].join('\n');
     expect(classifyFailure('Tests', log)).toBe('test');
+  });
+
+  it('does not treat a plain 403 forbidden as a flake', () => {
+    expect(classifyFailure('Tests', 'FAIL a.test.ts\nHTTP 403 forbidden')).toBe(
+      'test',
+    );
+  });
+
+  it('does not treat a Playwright timeout as a flake', () => {
+    expect(
+      classifyFailure(
+        'E2E Tests',
+        'playwright\nTest timeout of 30000ms exceeded',
+      ),
+    ).toBe('e2e');
+  });
+
+  it('reports a coverage-threshold failure when every test passed', () => {
+    expect(
+      classifyFailure(
+        'Tests with Coverage',
+        'ERROR: Coverage for lines (80%) does not meet global threshold (90%)',
+      ),
+    ).toBe('coverage');
   });
 
   it('detects type errors', () => {
