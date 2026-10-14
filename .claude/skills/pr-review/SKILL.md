@@ -81,6 +81,7 @@ Read each changed file in full, not just the diff hunks — via `Read` when the 
 Default posture: comments are opt-in, not opt-out — most code needs none. The checks below flag existing comments that shouldn't have been written; never flag a missing comment.
 
 - Doc comments (JSDoc) on exported/shared symbols should describe only caller-visible behavior — flag if it leaks internal mechanism (which hook/library/context is used) instead of the observable contract
+- Flag JSDoc longer than its real audience needs — more than ~3 lines usually means it's cataloguing edge cases or wiring the caller never deals with (e.g. a member only the prebuilt form calls)
 - Inline comments should explain _why_, not restate _what_ the code already says — flag ones that just narrate an obvious line or enumerate branches the code already makes clear
 - A comment deleted in the diff while its subject still exists in the new code is a red flag — it should have been updated to match the change, not dropped
 

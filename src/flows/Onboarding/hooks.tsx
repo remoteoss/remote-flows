@@ -15,6 +15,8 @@ import {
   buildSteps,
   StepKeys,
   usesJsfV1ContractDetails,
+  getJobTitleEligibilityStatement,
+  JOB_TITLE_ELIGIBILITY_RESULT_FIELD,
 } from '@/src/flows/Onboarding/utils';
 import { prettifyFormValues } from '@/src/lib/utils';
 import {
@@ -596,6 +598,9 @@ export const useOnboarding = ({
     options?.features?.includes('daily_schedule'),
   );
 
+  const roleDescriptionField =
+    options?.jsfModify?.contract_details?.fields?.role_description;
+
   const contractDetailsCustomFields = useMemo(
     () => ({
       fields: {
@@ -644,9 +649,33 @@ export const useOnboarding = ({
             },
           },
         },
-        employer_acknowledges_risk: {
-          presentation: { hidden: true },
-        },
+        ...(isJobTitleEligibilityEnabled
+          ? {
+              role_description: {
+                ...(roleDescriptionField as $TSFixMe),
+                presentation: {
+                  ...(roleDescriptionField as $TSFixMe)?.presentation,
+                  calculateDynamicProperties: (
+                    values: FieldValues,
+                    field: JSFField,
+                  ) => {
+                    const partnerFn = (roleDescriptionField as $TSFixMe)
+                      ?.presentation?.calculateDynamicProperties;
+                    const partnerProps = partnerFn
+                      ? partnerFn(values, field)
+                      : {};
+
+                    const ourProps = getJobTitleEligibilityStatement(
+                      values[JOB_TITLE_ELIGIBILITY_RESULT_FIELD],
+                      employment?.country?.name,
+                    );
+
+                    return { ...partnerProps, ...ourProps };
+                  },
+                },
+              },
+            }
+          : {}),
         ...(isDailyScheduleEnabled
           ? {
               daily_schedule: {
@@ -687,6 +716,9 @@ export const useOnboarding = ({
       useSplitSalaryDescription,
       isDailyScheduleEnabled,
       dailyScheduleField,
+      isJobTitleEligibilityEnabled,
+      roleDescriptionField,
+      employment?.country?.name,
     ],
   );
 
@@ -1166,7 +1198,7 @@ export const useOnboarding = ({
             throw error;
           }
         } else if (internalEmploymentId) {
-          return updateEmploymentMutationAsync({
+          const response = await updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: parsedValues,
             pricing_plan_details: {
@@ -1175,6 +1207,10 @@ export const useOnboarding = ({
             external_id: externalId,
             partner_external_id: partnerExternalId,
           });
+          if (!response.error) {
+            await refetchEmployment();
+          }
+          return response;
         }
 
         return;
@@ -1417,11 +1453,17 @@ export const useOnboarding = ({
     /**
      * Runs the job title eligibility check with the given contract details values when the
      * 'job_title_eligibility' feature is enabled, the current step is contract_details, and the
-     * role fields are filled. The prebuilt form calls it on blur; call it yourself from a custom
-     * UI to trigger the same check at another point (e.g. on step entry or before submitting).
+     * role fields are filled. The prebuilt form runs it when the step mounts (the job title may have
+     * changed since the saved check), on blur, and right before submitting; a custom UI should too.
      * @param values - Current form values
      */
     checkJobTitleEligibility: jobTitleEligibility.check,
+
+    /**
+     * True while the job title eligibility request is in flight. The prebuilt submit button is
+     * disabled meanwhile; use it to do the same in a custom UI.
+     */
+    isCheckingJobTitleEligibility: jobTitleEligibility.isFetching,
 
     /**
      * Function to handle form submission

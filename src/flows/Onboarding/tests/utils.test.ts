@@ -4,7 +4,9 @@ import {
   getBasicInformationSchemaVersion,
   getBenefitOffersSchemaVersion,
   getContractDetailsSchemaVersion,
+  getContractDetailsStrategy,
   getJobTitleEligibilityParams,
+  getJobTitleEligibilityValues,
   JOB_TITLE_ELIGIBILITY_SLUG_FIELD,
   usesJsfV1ContractDetails,
 } from '../utils';
@@ -37,9 +39,28 @@ describe('usesJsfV1ContractDetails', () => {
     expect(usesJsfV1ContractDetails('ITA')).toBe(true);
   });
 
+  it.each(['CAN', 'GBR', 'IND', 'PHL', 'USA'])(
+    'should return true for %s',
+    (countryCode) => {
+      expect(usesJsfV1ContractDetails(countryCode)).toBe(true);
+    },
+  );
+
   it('should return false for the other countries', () => {
     expect(usesJsfV1ContractDetails('PRT')).toBe(false);
     expect(usesJsfV1ContractDetails(null)).toBe(false);
+  });
+});
+
+describe('getContractDetailsStrategy', () => {
+  it('returns buildOnce for countries on the jsf v1 contract details path', () => {
+    expect(getContractDetailsStrategy('DEU')).toBe('buildOnce');
+    expect(getContractDetailsStrategy('FRA')).toBe('buildOnce');
+  });
+
+  it('returns rebuild for every other country', () => {
+    expect(getContractDetailsStrategy('PRT')).toBe('rebuild');
+    expect(getContractDetailsStrategy(null)).toBe('rebuild');
   });
 });
 
@@ -353,5 +374,31 @@ describe('getJobTitleEligibilityParams', () => {
     const result = getJobTitleEligibilityParams(roleFields, filledValues);
 
     expect(result).toEqual(filledValues);
+  });
+});
+
+describe('getJobTitleEligibilityValues', () => {
+  it.each([
+    ['eligible', 'yes'],
+    ['not_eligible', 'no'],
+    ['needs_review', 'maybe'],
+    ['eligible_with_risk_acknowledgement', 'yes_with_ack'],
+    ['not_assessed', null],
+  ] as const)('maps the %s verdict to the %s result', (verdict, result) => {
+    expect(
+      getJobTitleEligibilityValues({ check_id: 'check-id', verdict }),
+    ).toEqual({
+      additional_job_title_eligibility_check_slug: 'check-id',
+      additional_job_title_eligibility_check_result: result,
+    });
+  });
+
+  it('sets the slug to null when the check has no identifier', () => {
+    expect(
+      getJobTitleEligibilityValues({ check_id: null, verdict: 'eligible' }),
+    ).toEqual({
+      additional_job_title_eligibility_check_slug: null,
+      additional_job_title_eligibility_check_result: 'yes',
+    });
   });
 });

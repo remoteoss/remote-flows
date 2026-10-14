@@ -56,9 +56,11 @@ import {
   FlowOptions,
 } from '@/src/flows/types';
 import {
+  CONTRACT_DETAILS_STRATEGY,
   getContractDetailsSchemaVersion,
   getBasicInformationSchemaVersion,
   getBenefitOffersSchemaVersion,
+  withJobTitleEligibilityRiskAcknowledgement,
 } from '@/src/flows/Onboarding/utils';
 // oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
@@ -317,14 +319,15 @@ export const useLegacyContractDetailsSchema = ({
       return response;
     },
     enabled: options?.queryOptions?.enabled,
-    select: ({ data }) => data?.data || {},
+    select: ({ data }) =>
+      withJobTitleEligibilityRiskAcknowledgement(data?.data || {}),
   });
 
   const { form } = useHeadlessForm({
     schema,
     values: fieldValues,
     options: { jsfModify: options?.jsfModify },
-    strategy: 'rebuild',
+    strategy: CONTRACT_DETAILS_STRATEGY.legacy,
   });
 
   return { data: form, isLoading };
@@ -385,14 +388,15 @@ export const useContractDetailsSchema = ({
       return response;
     },
     enabled: options?.queryOptions?.enabled,
-    select: ({ data }) => data?.data,
+    select: ({ data }) =>
+      data?.data && withJobTitleEligibilityRiskAcknowledgement(data.data),
   });
 
   const { form, handleValidation, parseFormValues } = useHeadlessForm({
     schema,
     initialValues,
     options: { jsfModify: options?.jsfModify },
-    strategy: 'buildOnce',
+    strategy: CONTRACT_DETAILS_STRATEGY.jsfV1,
   });
 
   return { data: form, isLoading, handleValidation, parseFormValues };

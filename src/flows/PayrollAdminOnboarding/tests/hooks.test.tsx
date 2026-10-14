@@ -163,3 +163,76 @@ describe('usePayrollAdminOnboarding — creating the employment', () => {
     ]);
   });
 });
+
+describe('usePayrollAdminOnboarding — returning to a saved step', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
+
+  const conditionalSchema = {
+    type: 'object',
+    properties: {
+      kind: {
+        type: 'string',
+        title: 'Kind',
+        oneOf: [
+          { const: 'a', title: 'A' },
+          { const: 'b', title: 'B' },
+        ],
+        'x-jsf-presentation': { inputType: 'select' },
+      },
+      detail: {
+        type: 'string',
+        title: 'Detail',
+        oneOf: [
+          { const: 'x', title: 'X' },
+          { const: 'y', title: 'Y' },
+        ],
+        'x-jsf-presentation': { inputType: 'select' },
+      },
+    },
+    required: ['kind'],
+    allOf: [
+      {
+        if: { properties: { kind: { const: 'a' } }, required: ['kind'] },
+        then: { required: ['detail'] },
+        else: { properties: { detail: false } },
+      },
+    ],
+  };
+
+  it('shows conditional fields and validates saved values without any edit', async () => {
+    server.use(
+      http.get('*/v1/companies/*/legal-entities', () =>
+        HttpResponse.json(legalEntitiesResponse([gpEnabledLegalEntity])),
+      ),
+      http.get('*/v1/countries/*/global_payroll_contract_details', () =>
+        HttpResponse.json({ data: conditionalSchema }),
+      ),
+      http.get('*/v1/employments/*/onboarding-steps', () =>
+        HttpResponse.json({ data: { steps: [] } }),
+      ),
+    );
+
+    const { result } = renderHook(
+      () =>
+        usePayrollAdminOnboarding({
+          companyId: 'company-1',
+          countryCode: 'FRA',
+          employmentId: 'emp-1',
+          initialValues: { contract_details: { kind: 'a', detail: 'x' } },
+        }),
+      { wrapper: TestProviders },
+    );
+
+    await waitFor(() => {
+      expect(result.current.fields.length).toBeGreaterThan(0);
+    });
+
+    const detail = result.current.fields.find((f) => f.name === 'detail');
+    expect(detail?.isVisible).toBe(true);
+    expect(
+      await result.current.handleValidation({ kind: 'a', detail: 'x' }),
+    ).toEqual({ formErrors: undefined });
+  });
+});

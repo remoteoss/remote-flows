@@ -261,7 +261,9 @@ export async function fillDatepicker(
       }
       await availableDates.nth(index).click();
       const picked = (await trigger.textContent())?.trim() ?? '';
-      if (!excludedDates.includes(picked)) break;
+      if (!excludedDates.includes(picked)) {
+        break;
+      }
 
       await trigger.click();
       await calendar.waitFor({ state: 'visible' });
@@ -299,7 +301,9 @@ export async function getPublicHolidays(
     };
     for (const holiday of body.data ?? []) {
       holidays.push(holiday.day);
-      if (holiday.observed_day) holidays.push(holiday.observed_day);
+      if (holiday.observed_day) {
+        holidays.push(holiday.observed_day);
+      }
     }
   }
 

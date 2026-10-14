@@ -1,7 +1,12 @@
-import { CreateJobTitleEligibilityCheckParams } from '@/src/client';
+import {
+  CreateJobTitleEligibilityCheckParams,
+  JobTitleEligibilityCheck,
+} from '@/src/client';
+import { HeadlessFormStrategy } from '@/src/common/headlessForm';
 import { Employment, OnboardingFlowProps } from '@/src/flows/Onboarding/types';
 import { Step } from '@/src/flows/useStepState';
 import { JSFField, JSFFields } from '@/src/types/remoteFlows';
+import { createStatementProperty } from '@/src/components/form/jsf-utils/createFields';
 
 export type StepKeys =
   | 'select_country'
@@ -103,8 +108,7 @@ export function buildSteps(config: StepConfig = {}) {
 }
 
 /**
- * Array of employment statuses that are allowed to proceed to the review step.
- * These statuses indicate that the employment is in a final state and the employment cannot be modified further.
+ * Employment statuses that open the flow read-only on the review step, because the API no longer accepts edits.
  * @type {Employment['status'][]}
  * @constant
  */
@@ -114,6 +118,7 @@ export const reviewStepAllowedEmploymentStatus: Employment['status'][] = [
   'created_awaiting_reserve',
   'created_reserve_paid',
   'active',
+  'job_title_review',
 ];
 
 export const disabledInviteButtonEmploymentStatus: Employment['status'][] = [
@@ -139,12 +144,21 @@ export const statusesWithReserveAlreadyHandled: Employment['status'][] = [
 export const DEFAULT_VERSION = 1;
 
 /**
- * Countries whose contract details schema is served as jsfVersion 1.
- * Those forms keep their own field state, so they go through
- * useContractDetailsSchema instead of useJSONSchemaForm.
- * FRA = wage portage, ITA = APL, ESP = CBA categories fieldset.
+ * Countries whose contract details are built once through
+ * useContractDetailsSchema; every other country still uses the legacy rebuild path.
+ * FRA = wage portage, ITA = APL, ESP = CBA categories fieldset; the rest move over by usage tier.
  */
-const JSF_V1_CONTRACT_DETAILS_COUNTRIES = ['FRA', 'ITA', 'DEU', 'ESP'];
+const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
+  'FRA',
+  'ITA',
+  'DEU',
+  'ESP',
+  'CAN',
+  'GBR',
+  'IND',
+  'PHL',
+  'USA',
+];
 
 /**
  * Checks if a country's contract details schema is served as jsfVersion 1
@@ -155,6 +169,23 @@ export const usesJsfV1ContractDetails = (countryCode: string | null) =>
   Boolean(
     countryCode && JSF_V1_CONTRACT_DETAILS_COUNTRIES.includes(countryCode),
   );
+
+export const CONTRACT_DETAILS_STRATEGY = {
+  legacy: 'rebuild',
+  jsfV1: 'buildOnce',
+} as const;
+
+/**
+ * Gets the useHeadlessForm strategy the contract details step uses for a country
+ *
+ * @param countryCode - The country code to check
+ */
+export const getContractDetailsStrategy = (
+  countryCode: string | null,
+): HeadlessFormStrategy =>
+  usesJsfV1ContractDetails(countryCode)
+    ? CONTRACT_DETAILS_STRATEGY.jsfV1
+    : CONTRACT_DETAILS_STRATEGY.legacy;
 
 /**
  * Gets the default (recommended) contract details schema version for a country
@@ -231,6 +262,61 @@ export const JOB_TITLE_ELIGIBILITY_SLUG_FIELD =
 export const JOB_TITLE_ELIGIBILITY_RESULT_FIELD =
   'additional_job_title_eligibility_check_result';
 
+const EMPLOYER_ACKNOWLEDGES_RISK_FIELD = 'employer_acknowledges_risk';
+
+type ContractDetailsJsonSchema = {
+  properties?: Record<string, unknown>;
+  allOf?: unknown[];
+  'x-jsf-order'?: string[];
+};
+
+export const withJobTitleEligibilityRiskAcknowledgement = <
+  T extends ContractDetailsJsonSchema,
+>(
+  schema: T,
+): T => {
+  const properties = schema.properties ?? {};
+  if (
+    !properties[JOB_TITLE_ELIGIBILITY_SLUG_FIELD] ||
+    !properties[EMPLOYER_ACKNOWLEDGES_RISK_FIELD] ||
+    properties[JOB_TITLE_ELIGIBILITY_RESULT_FIELD]
+  ) {
+    return schema;
+  }
+
+  return {
+    ...schema,
+    properties: {
+      ...properties,
+      [JOB_TITLE_ELIGIBILITY_RESULT_FIELD]: {
+        type: ['string', 'null'],
+        'x-jsf-presentation': { inputType: 'hidden' },
+      },
+    },
+    allOf: [
+      ...(schema.allOf ?? []),
+      {
+        if: {
+          properties: {
+            [JOB_TITLE_ELIGIBILITY_RESULT_FIELD]: { const: 'yes_with_ack' },
+          },
+          required: [JOB_TITLE_ELIGIBILITY_RESULT_FIELD],
+        },
+        then: { required: [EMPLOYER_ACKNOWLEDGES_RISK_FIELD] },
+        else: { properties: { [EMPLOYER_ACKNOWLEDGES_RISK_FIELD]: false } },
+      },
+    ],
+    ...(schema['x-jsf-order']
+      ? {
+          'x-jsf-order': [
+            ...schema['x-jsf-order'],
+            JOB_TITLE_ELIGIBILITY_RESULT_FIELD,
+          ],
+        }
+      : {}),
+  };
+};
+
 const JOB_TITLE_ELIGIBILITY_PARAM_FIELDS = [
   'role_description',
   'role_is_onsite',
@@ -275,4 +361,50 @@ export const getJobTitleEligibilityParams = (
       paramFields.map((field) => [field.name, values[field.name]]),
     ),
   } as CreateJobTitleEligibilityCheckParams;
+};
+
+const JOB_TITLE_ELIGIBILITY_VERDICT_RESULTS: Record<
+  JobTitleEligibilityCheck['verdict'],
+  string | null
+> = {
+  eligible: 'yes',
+  not_eligible: 'no',
+  needs_review: 'maybe',
+  eligible_with_risk_acknowledgement: 'yes_with_ack',
+  not_assessed: null,
+};
+
+export const getJobTitleEligibilityValues = (
+  check: JobTitleEligibilityCheck,
+) => ({
+  [JOB_TITLE_ELIGIBILITY_SLUG_FIELD]: check.check_id ?? null,
+  [JOB_TITLE_ELIGIBILITY_RESULT_FIELD]:
+    JOB_TITLE_ELIGIBILITY_VERDICT_RESULTS[check.verdict] ?? null,
+});
+
+export const getJobTitleEligibilityStatement = (
+  result: unknown,
+  countryName?: string,
+) => {
+  const inCountry = countryName ? `in ${countryName}` : 'in this country';
+
+  if (result === 'maybe') {
+    return createStatementProperty({
+      title: `AI isn't sure if we can hire this role ${inCountry}`,
+      description:
+        "Complete the add employee process and we'll let you know as soon as we can if we can hire this role.",
+      severity: 'info',
+    });
+  }
+
+  if (result === 'no') {
+    return createStatementProperty({
+      title: `AI determined we can't hire this role ${inCountry}`,
+      description:
+        "Based on the job title and role description entered, we can't hire this role. Update the role details to check again.",
+      severity: 'error',
+    });
+  }
+
+  return null;
 };

@@ -44,7 +44,9 @@ function PricingPlanWithModal({
 
 function renderStep(props: ContractorOnboardingRenderProps) {
   const { contractorOnboardingBag, components } = props;
-  if (contractorOnboardingBag.isLoading) return <div>Loading...</div>;
+  if (contractorOnboardingBag.isLoading) {
+    return <div>Loading...</div>;
+  }
   const { BasicInformationStep, SubmitButton } = components;
   switch (contractorOnboardingBag.stepState.currentStep.name) {
     case 'basic_information':

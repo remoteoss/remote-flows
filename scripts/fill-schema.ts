@@ -76,7 +76,9 @@ function fakeNumber(
     min = field.minimum ?? (field.maximum ?? fallback.max) - span;
     max = field.maximum ?? min + span;
   }
-  if (min > max) return min;
+  if (min > max) {
+    return min;
+  }
   return faker.number.int({ min: Math.ceil(min), max: Math.floor(max) });
 }
 
@@ -106,8 +108,12 @@ function fakeDate(field: SeedField): string {
   const date = new Date();
   date.setDate(date.getDate() + 35);
   const iso = toIsoDate(date);
-  if (field.minDate && iso < field.minDate) return field.minDate;
-  if (field.maxDate && iso > field.maxDate) return field.maxDate;
+  if (field.minDate && iso < field.minDate) {
+    return field.minDate;
+  }
+  if (field.maxDate && iso > field.maxDate) {
+    return field.maxDate;
+  }
   return iso;
 }
 
@@ -117,8 +123,12 @@ export function fakeValueFor(field: SeedField, retry = false): unknown {
   if (field.const !== undefined && !isComputedBinding(field, field.const)) {
     return field.const;
   }
-  if (field.jsonType === 'null') return null;
-  if (inputType === 'hidden') return field.default ?? undefined;
+  if (field.jsonType === 'null') {
+    return null;
+  }
+  if (inputType === 'hidden') {
+    return field.default ?? undefined;
+  }
   if (
     !retry &&
     field.default !== undefined &&
@@ -186,8 +196,9 @@ function fillFields(
       !field.isVisible ||
       locked.has(field.name) ||
       UNFILLED_FIELDS.has(field.name)
-    )
+    ) {
       continue;
+    }
     const fieldError = errors?.[field.name];
 
     if (field.inputType === 'fieldset' && field.fields) {
@@ -203,16 +214,22 @@ function fillFields(
     }
 
     if (field.inputType === 'file') {
-      if (field.required) skipped.add(field.name);
+      if (field.required) {
+        skipped.add(field.name);
+      }
       continue;
     }
-    if (next[field.name] !== undefined && fieldError === undefined) continue;
+    if (next[field.name] !== undefined && fieldError === undefined) {
+      continue;
+    }
     if (
       (field.readOnly || field.deprecated) &&
       field.const === undefined &&
       fieldError === undefined
     ) {
-      if (field.default !== undefined) next[field.name] = field.default;
+      if (field.default !== undefined) {
+        next[field.name] = field.default;
+      }
       continue;
     }
     next[field.name] = fakeValueFor(field, fieldError !== undefined);
@@ -246,6 +263,7 @@ function keepVisibleValues(
 
 export const SAFE_START_DATE_MIN_LEAD_DAYS = 35;
 export const SAFE_START_DATE_SEARCH_WINDOW_DAYS = 60;
+export const SAFE_START_DATE_MAX_DAY_OF_MONTH = 10;
 const START_WEEKDAYS = new Set([1, 2, 3, 4]);
 
 function toIsoDate(date: Date): string {
@@ -278,6 +296,9 @@ export function safeStartDateYears(
  * single schema-canary run). Only Monday-Thursday is considered because
  * Tiger blocks some weekdays per country (ISL: Friday/Saturday, much of
  * LATAM: Saturday/Sunday) and the public API doesn't expose that table.
+ * Only days 1-10 of the month are considered because some countries block
+ * every start date from their payroll cut-off day onward (ISR: the 17th) and
+ * the public API doesn't expose that day either.
  * Falls back to the unchecked minimum-lead date if nothing in the search
  * window qualifies.
  */
@@ -294,7 +315,11 @@ export function pickSafeDate(
   const candidate = new Date(earliest);
   while (candidate <= latest) {
     const iso = toIsoDate(candidate);
-    if (START_WEEKDAYS.has(candidate.getUTCDay()) && !holidayDates.has(iso)) {
+    if (
+      START_WEEKDAYS.has(candidate.getUTCDay()) &&
+      candidate.getUTCDate() <= SAFE_START_DATE_MAX_DAY_OF_MONTH &&
+      !holidayDates.has(iso)
+    ) {
       return iso;
     }
     candidate.setDate(candidate.getDate() + 1);
@@ -316,7 +341,9 @@ export async function findSafeStartDate(
     try {
       for (const holiday of await fetchHolidays(country, year)) {
         holidayDates.add(holiday.day);
-        if (holiday.observed_day) holidayDates.add(holiday.observed_day);
+        if (holiday.observed_day) {
+          holidayDates.add(holiday.observed_day);
+        }
       }
     } catch (error) {
       console.warn(`Could not load ${year} holidays for ${country}:`, error);
@@ -341,7 +368,9 @@ export function fillSchema(
   seedValues: FormValues = {},
   { maxAttempts = 50, seed }: { maxAttempts?: number; seed?: number } = {},
 ): FillSchemaResult {
-  if (seed === undefined) return fill(schema, seedValues, maxAttempts);
+  if (seed === undefined) {
+    return fill(schema, seedValues, maxAttempts);
+  }
   faker.seed(seed);
   try {
     return fill(schema, seedValues, maxAttempts);
@@ -381,7 +410,9 @@ function fill(
           {}) as FormErrors,
       ).filter(([name]) => !skipped.has(name)),
     );
-    if (Object.keys(errors).length === 0) break;
+    if (Object.keys(errors).length === 0) {
+      break;
+    }
   }
 
   return {

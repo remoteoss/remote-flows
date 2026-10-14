@@ -13,9 +13,11 @@ import { isMutationError, mutationToPromise } from '@/src/lib/mutations';
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import {
   useGPEmployeeBankAccount,
+  useGPEmployeeFederalTaxes,
   useGPEmployeeFormSchema,
   useGPEmployeeHomeAddress,
   useGPEmployeePersonalDetails,
+  useGPEmployeeStateTaxes,
   useGPUpdateBankAccount,
   useGPUpdateFederalTaxes,
   useGPUpdateHomeAddress,
@@ -27,6 +29,7 @@ import type {
   JSFModify,
 } from '@/src/flows/types';
 import { TaxPendingEnrollmentError } from '@/src/flows/PayrollEmployeeOnboarding/taxErrors';
+import { toEmployeeFormValues } from '@/src/flows/PayrollEmployeeOnboarding/utils';
 
 export type EmployeeStepKey =
   | 'personal_details'
@@ -156,14 +159,17 @@ export const usePayrollEmployeeOnboarding = ({
     (s) => s.type === 'employee_provides_bank_details',
   );
 
+  const federalTaxesVisible = isUSA && isPostEnrollment;
+  const stateTaxesVisible = isUSA && !!jurisdiction && isPostEnrollment;
+
   const steps = useMemo(
     () =>
       buildEmployeeSteps({
         hasBankSubstep,
-        federalTaxesVisible: isUSA && isPostEnrollment,
-        stateTaxesVisible: isUSA && !!jurisdiction && isPostEnrollment,
+        federalTaxesVisible,
+        stateTaxesVisible,
       }),
-    [hasBankSubstep, isUSA, isPostEnrollment, jurisdiction],
+    [hasBankSubstep, federalTaxesVisible, stateTaxesVisible],
   );
 
   const {
@@ -183,37 +189,25 @@ export const usePayrollEmployeeOnboarding = ({
   const savedBankAccount = useGPEmployeeBankAccount(employmentId, {
     enabled: hasBankSubstep,
   });
-
-  const savedValues = useMemo<
-    Partial<Record<EmployeeStepKey, Record<string, unknown>>>
-  >(
-    () => ({
-      personal_details: savedPersonalDetails.data,
-      home_address: savedHomeAddress.data,
-      bank_account: savedBankAccount.data,
-    }),
-    [savedPersonalDetails.data, savedHomeAddress.data, savedBankAccount.data],
-  );
-
-  const savedValuesQueryByStep: Partial<
-    Record<EmployeeStepKey, { isLoading: boolean }>
-  > = {
-    personal_details: savedPersonalDetails,
-    home_address: savedHomeAddress,
-    bank_account: savedBankAccount,
-  };
-  const isLoadingSavedValues =
-    savedValuesQueryByStep[currentStep]?.isLoading ?? false;
+  const savedFederalTaxes = useGPEmployeeFederalTaxes(employmentId, {
+    enabled: federalTaxesVisible,
+  });
+  const savedStateTaxes = useGPEmployeeStateTaxes(employmentId, jurisdiction, {
+    enabled: stateTaxesVisible,
+  });
 
   // A tax step flagged `pending_enrollment` after a 404 would otherwise stay
   // flagged for the whole session, trapping the user even once the backend tax
   // task appears. Clear the flag when the user (re)enters the step so revisiting
   // it re-attempts the submit instead of showing not-available forever.
   useEffect(() => {
-    if (currentStep !== 'federal_taxes' && currentStep !== 'state_taxes')
+    if (currentStep !== 'federal_taxes' && currentStep !== 'state_taxes') {
       return;
+    }
     setTaxSubmitFailures((prev) => {
-      if (!prev[currentStep]) return prev;
+      if (!prev[currentStep]) {
+        return prev;
+      }
       const next = { ...prev };
       delete next[currentStep];
       return next;
@@ -306,26 +300,88 @@ export const usePayrollEmployeeOnboarding = ({
     stateTaxesSchema.data,
   ]);
 
+  // Saved tax answers come back in API units (money in cents), so they can
+  // only become form defaults once the step's schema says which fields are money.
+  const savedValues = useMemo<
+    Partial<Record<EmployeeStepKey, Record<string, unknown>>>
+  >(
+    () => ({
+      personal_details: savedPersonalDetails.data,
+      home_address: savedHomeAddress.data,
+      bank_account: savedBankAccount.data,
+      federal_taxes: toEmployeeFormValues(
+        savedFederalTaxes.data,
+        federalTaxesSchema.data?.fields,
+      ),
+      state_taxes: toEmployeeFormValues(
+        savedStateTaxes.data,
+        stateTaxesSchema.data?.fields,
+      ),
+    }),
+    [
+      savedPersonalDetails.data,
+      savedHomeAddress.data,
+      savedBankAccount.data,
+      savedFederalTaxes.data,
+      savedStateTaxes.data,
+      federalTaxesSchema.data?.fields,
+      stateTaxesSchema.data?.fields,
+    ],
+  );
+
+  const savedValuesQueryByStep: Partial<
+    Record<EmployeeStepKey, { isLoading: boolean }>
+  > = {
+    personal_details: savedPersonalDetails,
+    home_address: savedHomeAddress,
+    bank_account: savedBankAccount,
+    federal_taxes: {
+      isLoading: savedFederalTaxes.isLoading || federalTaxesSchema.isLoading,
+    },
+    state_taxes: {
+      isLoading: savedStateTaxes.isLoading || stateTaxesSchema.isLoading,
+    },
+  };
+  const isLoadingSavedValues =
+    savedValuesQueryByStep[currentStep]?.isLoading ?? false;
+
   // Availability is computed AFTER schema queries so we can fold their error
   // state (e.g. backend returns 400 for an unseeded schema) into a friendly
   // `schema_unavailable` reason instead of letting the consumer render an
   // empty form.
   const taxStepsAvailability = useMemo(() => {
     const federalReason = ((): TaxStepUnavailableReason | null => {
-      if (!isUSA) return 'unsupported_country';
-      if (taxSubmitFailures.federal_taxes)
+      if (!isUSA) {
+        return 'unsupported_country';
+      }
+      if (taxSubmitFailures.federal_taxes) {
         return taxSubmitFailures.federal_taxes;
-      if (!isPostEnrollment) return 'pending_enrollment';
-      if (federalTaxesSchema.isError) return 'schema_unavailable';
+      }
+      if (!isPostEnrollment) {
+        return 'pending_enrollment';
+      }
+      if (federalTaxesSchema.isError) {
+        return 'schema_unavailable';
+      }
       return null;
     })();
 
     const stateReason = ((): TaxStepUnavailableReason | null => {
-      if (!isUSA) return 'unsupported_country';
-      if (!jurisdiction) return 'no_jurisdiction';
-      if (taxSubmitFailures.state_taxes) return taxSubmitFailures.state_taxes;
-      if (!isPostEnrollment) return 'pending_enrollment';
-      if (stateTaxesSchema.isError) return 'schema_unavailable';
+      if (!isUSA) {
+        return 'unsupported_country';
+      }
+      if (!jurisdiction) {
+        return 'no_jurisdiction';
+      }
+      if (taxSubmitFailures.state_taxes) {
+        return taxSubmitFailures.state_taxes;
+      }
+      if (!isPostEnrollment) {
+        return 'pending_enrollment';
+      }
+      if (stateTaxesSchema.isError) {
+        return 'schema_unavailable';
+      }
       return null;
     })();
 
@@ -394,7 +450,9 @@ export const usePayrollEmployeeOnboarding = ({
 
   const handleValidation = useCallback(
     async (values: FieldValues) => {
-      if (!currentSchema) return null;
+      if (!currentSchema) {
+        return null;
+      }
       const parsedValues = await parseJSFToValidate(
         values,
         currentSchema.fields,
@@ -407,7 +465,9 @@ export const usePayrollEmployeeOnboarding = ({
 
   const parseFormValues = useCallback(
     async (values: FieldValues): Promise<Record<string, unknown>> => {
-      if (!currentSchema) return values;
+      if (!currentSchema) {
+        return values;
+      }
       return parseJSFToValidate(values, currentSchema.fields, {
         isPartialValidation: false,
       });
@@ -423,7 +483,9 @@ export const usePayrollEmployeeOnboarding = ({
    */
   const handleTaxSubmitError = useCallback(
     (taxStep: TaxStepKey, error: unknown): boolean => {
-      if (!isMutationError(error)) return false;
+      if (!isMutationError(error)) {
+        return false;
+      }
       const message =
         typeof error.rawError === 'object' &&
         error.rawError !== null &&

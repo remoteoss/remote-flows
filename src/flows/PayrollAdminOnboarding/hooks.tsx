@@ -122,10 +122,17 @@ export const usePayrollAdminOnboarding = ({
   // Country-picker schema for the select_country step, before a country is chosen.
   const countrySelectSchemaQuery = useGPCountrySelectSchema(fieldValues);
 
+  const savedStepValues = {
+    ...(initialValues?.[
+      currentStep === 'select_country' ? 'basic_information' : currentStep
+    ] as FieldValues | undefined),
+    ...(stepState.values?.[currentStep] as FieldValues | undefined),
+  };
+
   const currentSchemaQuery = useGPFormSchema(
     internalCountryCode,
     schemaTypeByStep[currentStep],
-    fieldValues,
+    { ...savedStepValues, ...fieldValues },
     {
       employmentId:
         currentStep !== 'select_country' ? internalEmploymentId : undefined,
@@ -194,7 +201,9 @@ export const usePayrollAdminOnboarding = ({
 
   const handleValidation = useCallback(
     async (values: FieldValues) => {
-      if (!currentSchema) return null;
+      if (!currentSchema) {
+        return null;
+      }
       const parsedValues = await parseJSFToValidate(
         values,
         currentSchema.fields,
@@ -207,7 +216,9 @@ export const usePayrollAdminOnboarding = ({
 
   const parseFormValues = useCallback(
     async (values: FieldValues): Promise<Record<string, unknown>> => {
-      if (!currentSchema) return values;
+      if (!currentSchema) {
+        return values;
+      }
       return parseJSFToValidate(values, currentSchema.fields, {
         isPartialValidation: false,
       });

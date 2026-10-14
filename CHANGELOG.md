@@ -1,5 +1,88 @@
 # @remoteoss/remote-flows
 
+## 1.63.0
+
+### Minor Changes
+
+#### Features
+
+- add --debug request/response logging to seed:onboarding (#1512) [#1512](https://github.com/remoteoss/remote-flows/pull/1512)
+- build high-tier contract details once (#1507) [#1507](https://github.com/remoteoss/remote-flows/pull/1507)
+- re-run job title check on mount (#1514) [#1514](https://github.com/remoteoss/remote-flows/pull/1514)
+
+#### Fixes
+
+- build the step form from saved values when returning to it (#1519) [#1519](https://github.com/remoteoss/remote-flows/pull/1519)
+- seed start dates in the first ten days of the month (#1531) [#1531](https://github.com/remoteoss/remote-flows/pull/1531)
+- refetch employment after basic information update (#1521) [#1521](https://github.com/remoteoss/remote-flows/pull/1521)
+
+#### Chores
+
+- update dependency lucide-react to v1.52.0 (#1227) [#1227](https://github.com/remoteoss/remote-flows/pull/1227)
+- update dependency @vitejs/plugin-react to v6.1.2 (#1528) [#1528](https://github.com/remoteoss/remote-flows/pull/1528)
+- update dependency dompurify to v3.4.16 [security] (#1445) [#1445](https://github.com/remoteoss/remote-flows/pull/1445)
+- update dependency @tanstack/react-query to v5.104.1 (#1414) [#1414](https://github.com/remoteoss/remote-flows/pull/1414)
+- update contract details schema canary report (#1536) [#1536](https://github.com/remoteoss/remote-flows/pull/1536)
+- update react monorepo to v19.3.0 (#1237) [#1237](https://github.com/remoteoss/remote-flows/pull/1237)
+- update dependency html-react-parser to v6.1.8 (#1362) [#1362](https://github.com/remoteoss/remote-flows/pull/1362)
+- update dependency dotenv to v18.0.5 (#1537) [#1537](https://github.com/remoteoss/remote-flows/pull/1537)
+- update vitest monorepo to v5.0.3 (#1539) [#1539](https://github.com/remoteoss/remote-flows/pull/1539)
+- update dependency filesize to v11.0.25 (#1538) [#1538](https://github.com/remoteoss/remote-flows/pull/1538)
+- update dependency chalk to v6.0.1 (#1532) [#1532](https://github.com/remoteoss/remote-flows/pull/1532)
+- update dependency jsdom to v30.1.2 (#1392) [#1392](https://github.com/remoteoss/remote-flows/pull/1392)
+
+## 1.62.0
+
+### Minor Changes
+
+#### Features
+
+- show job title eligibility statements for maybe and not eligible roles (#1508) [#1508](https://github.com/remoteoss/remote-flows/pull/1508)
+- add a contract details schema canary (#1481) [#1481](https://github.com/remoteoss/remote-flows/pull/1481)
+
+#### Fixes
+
+- open job_title_review read-only (#1502) [#1502](https://github.com/remoteoss/remote-flows/pull/1502)
+- cache the proxy's OAuth tokens until they expire (#1494) [#1494](https://github.com/remoteoss/remote-flows/pull/1494)
+
+#### Chores
+
+- bump CAN contract_details schema version to 7 (#1506) [#1506](https://github.com/remoteoss/remote-flows/pull/1506)
+- bump IND contract_details schema version to 6 (#1505) [#1505](https://github.com/remoteoss/remote-flows/pull/1505)
+- bump USA contract_details schema version to 8 (#1504) [#1504](https://github.com/remoteoss/remote-flows/pull/1504)
+- bump PHL contract_details schema version to 6 (#1503) [#1503](https://github.com/remoteoss/remote-flows/pull/1503)
+- require braces on every control statement (#1490) [#1490](https://github.com/remoteoss/remote-flows/pull/1490)
+- group changelog entries by commit type (#1500) [#1500](https://github.com/remoteoss/remote-flows/pull/1500)
+- share the form build and validation outside React (#1480) [#1480](https://github.com/remoteoss/remote-flows/pull/1480)
+- run the contract details canary nightly and on PRs (#1493) [#1493](https://github.com/remoteoss/remote-flows/pull/1493)
+- update contract details schema canary report (#1509) [#1509](https://github.com/remoteoss/remote-flows/pull/1509)
+
+## 1.61.0
+
+### Minor Changes
+
+#### Features
+
+- wire onBlur events to job title eligibility check (#1406) [#1406](https://github.com/remoteoss/remote-flows/pull/1406)
+- hide employer_acknowledges_risk by default (#1463) [#1463](https://github.com/remoteoss/remote-flows/pull/1463)
+- pre-fill resumed tax steps from the employee's saved answers (#1498) [#1498](https://github.com/remoteoss/remote-flows/pull/1498)
+
+#### Fixes
+
+- stop requesting onboarding steps before the employment id is set (#1474) [#1474](https://github.com/remoteoss/remote-flows/pull/1474)
+- pre-fill resumed steps from the employee's saved data (#1476) [#1476](https://github.com/remoteoss/remote-flows/pull/1476)
+- disable submit while the job title eligibility check runs (#1413) [#1413](https://github.com/remoteoss/remote-flows/pull/1413)
+
+#### Docs
+
+- keep public JSDoc short and written for its real caller (#1488) [#1488](https://github.com/remoteoss/remote-flows/pull/1488)
+
+#### Chores
+
+- only surface failures in Playwright CI output (#1485) [#1485](https://github.com/remoteoss/remote-flows/pull/1485)
+- bump GBR contract_details schema version to 6 (#1478) [#1478](https://github.com/remoteoss/remote-flows/pull/1478)
+- cover the China annual gross salary conversion on contract details (#1473) [#1473](https://github.com/remoteoss/remote-flows/pull/1473)
+
 ## 1.60.0
 
 ### Minor Changes

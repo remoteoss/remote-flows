@@ -79,7 +79,9 @@ const FieldWrapper = ({
   const badge = badges[diffType];
 
   const renderChanges = () => {
-    if (!changes || diffType !== 'modified') return null;
+    if (!changes || diffType !== 'modified') {
+      return null;
+    }
 
     const changesList: React.ReactNode[] = [];
 
@@ -198,7 +200,9 @@ const FieldWrapper = ({
       );
     }
 
-    if (changesList.length === 0) return null;
+    if (changesList.length === 0) {
+      return null;
+    }
 
     return (
       <div className='mt-2 p-2 bg-yellow-50 rounded border border-yellow-200 space-y-1'>
@@ -368,10 +372,14 @@ export const SchemaFormComparison = ({
     const leftEl = leftScrollRef.current;
     const rightEl = rightScrollRef.current;
 
-    if (!leftEl || !rightEl) return;
+    if (!leftEl || !rightEl) {
+      return;
+    }
 
     const handleLeftScroll = () => {
-      if (isSyncing.current) return;
+      if (isSyncing.current) {
+        return;
+      }
       isSyncing.current = true;
       rightEl.scrollTop = leftEl.scrollTop;
       requestAnimationFrame(() => {
@@ -380,7 +388,9 @@ export const SchemaFormComparison = ({
     };
 
     const handleRightScroll = () => {
-      if (isSyncing.current) return;
+      if (isSyncing.current) {
+        return;
+      }
       isSyncing.current = true;
       leftEl.scrollTop = rightEl.scrollTop;
       requestAnimationFrame(() => {

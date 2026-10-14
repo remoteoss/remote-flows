@@ -53,7 +53,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CAN: {
     // Canada
-    contract_details: 1,
+    contract_details: 7,
   },
   CHE: {
     // Switzerland
@@ -121,7 +121,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   GBR: {
     // United Kingdom
-    contract_details: 3,
+    contract_details: 6,
   },
   GEO: {
     // Georgia
@@ -157,11 +157,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   IND: {
     // India
-    contract_details: 2,
+    contract_details: 6,
   },
   IRL: {
     // Ireland
-    contract_details: 1,
+    contract_details: 4,
   },
   ISL: {
     // Iceland
@@ -241,7 +241,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   NGA: {
     // Nigeria
-    contract_details: 2,
+    contract_details: 5,
   },
   NIC: {
     // Nicaragua
@@ -249,7 +249,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   NLD: {
     // Netherlands
-    contract_details: 2,
+    contract_details: 6,
   },
   NOR: {
     // Norway
@@ -273,11 +273,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   PHL: {
     // Philippines
-    contract_details: 1,
+    contract_details: 6,
   },
   POL: {
     // Poland
-    contract_details: 1,
+    contract_details: 5,
   },
   PRI: {
     // Puerto Rico
@@ -321,7 +321,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   SWE: {
     // Sweden
-    contract_details: 2,
+    contract_details: 5,
   },
   THA: {
     // Thailand
@@ -353,7 +353,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   USA: {
     // United States
-    contract_details: 7,
+    contract_details: 8,
   },
   VNM: {
     // Vietnam
