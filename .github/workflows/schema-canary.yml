@@ -188,6 +188,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          fetch-depth: 2
 
       - name: Use Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
@@ -197,13 +198,24 @@ jobs:
       - name: Install dependencies
         run: npm ci --include=optional --ignore-scripts
 
+      - name: Pick the countries to check
+        id: scope
+        run: echo "countries=$(npx tsx scripts/schema-canary/changed-countries.ts)" >> "$GITHUB_OUTPUT"
+
       - name: Run schema canary (pinned and submit checks) against sandbox
         timeout-minutes: 15
+        if: steps.scope.outputs.countries != 'none'
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
           VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
-        run: npm run schema-canary -- --checks=pinned,submit --keep-submitted="$RUNNER_TEMP/kept-employments.json"
+          COUNTRIES: ${{ steps.scope.outputs.countries }}
+        run: |
+          if [ "$COUNTRIES" = "all" ]; then
+            npm run schema-canary -- --checks=pinned,submit --keep-submitted="$RUNNER_TEMP/kept-employments.json"
+          else
+            npm run schema-canary -- --checks=pinned,submit --country="$COUNTRIES" --keep-submitted="$RUNNER_TEMP/kept-employments.json"
+          fi
 
       - name: Check which employments were kept
         id: kept

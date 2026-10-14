@@ -53,7 +53,9 @@ function parseArgs(argv: string[]) {
 
 const args = parseArgs(process.argv.slice(2));
 const COUNTRY_FILTER =
-  typeof args.country === 'string' ? args.country.toUpperCase() : undefined;
+  typeof args.country === 'string'
+    ? args.country.toUpperCase().split(',')
+    : undefined;
 const REQUESTED_CHECKS =
   typeof args.checks === 'string'
     ? (args.checks.split(',') as SchemaCheckType[])
@@ -96,11 +98,11 @@ async function fetchLiveCountries(client: Client): Promise<string[]> {
   const countries = (response.data.data ?? [])
     .filter((country) => country.eor_onboarding)
     .map((country) => country.code)
-    .filter((code) => !COUNTRY_FILTER || code === COUNTRY_FILTER);
+    .filter((code) => !COUNTRY_FILTER || COUNTRY_FILTER.includes(code));
   if (countries.length === 0) {
     throw new Error(
       COUNTRY_FILTER
-        ? `--country=${COUNTRY_FILTER} is not an EOR onboarding country on the sandbox gateway`
+        ? `--country=${COUNTRY_FILTER.join(',')} has no EOR onboarding country on the sandbox gateway`
         : '/v1/countries returned no EOR onboarding countries',
     );
   }
