@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { OnboardingFlow } from '@/src/flows/Onboarding/OnboardingFlow';
 import {
+  basicInformationSchemaV1Portugal,
   contractDetailsSchemaV0JobTitleEligibility,
   contractDetailsSchemaV1JobTitleEligibility,
   employmentDefaultResponse,
@@ -176,6 +177,107 @@ describe.each(schemaPaths)(
       );
       expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledWith({
         job_title: 'pm',
+        role_description: 'Backend engineer responsibilities',
+        role_is_onsite: 'no',
+        role_requires_license: 'no',
+      });
+    });
+
+    it('checks with the job title the user saved earlier in the same session', async () => {
+      let savedJobTitle = 'Software Engineer';
+      let releaseRefetch: () => void = () => {};
+      const refetchReleased = new Promise<void>((resolve) => {
+        releaseRefetch = resolve;
+      });
+      server.use(
+        http.get(
+          `*/v1/countries/${countryCode}/employment_basic_information*`,
+          () => HttpResponse.json(basicInformationSchemaV1Portugal),
+        ),
+        http.get('*/v1/employments/:id', async ({ params }) => {
+          const { employment } = employmentDefaultResponse.data;
+          if (savedJobTitle === 'Surgeon') {
+            await refetchReleased;
+          }
+          return HttpResponse.json({
+            ...employmentDefaultResponse,
+            data: {
+              ...employmentDefaultResponse.data,
+              employment: {
+                ...employment,
+                id: params?.id,
+                country: {
+                  code: countryCode,
+                  name: countryName,
+                  alpha_2_code: countryCode.slice(0, 2),
+                  supported_json_schemas: ['employment_basic_information'],
+                },
+                basic_information: {
+                  ...employment.basic_information,
+                  job_title: savedJobTitle,
+                },
+              },
+            },
+          });
+        }),
+        http.patch('*/v1/employments/:id', async ({ request }) => {
+          const body = (await request.json()) as {
+            basic_information: { job_title: string };
+          };
+          savedJobTitle = body.basic_information.job_title;
+          return HttpResponse.json(employmentDefaultResponse);
+        }),
+      );
+
+      render(
+        <OnboardingFlow
+          companyId='test-company-id'
+          employmentId='test-employment-id'
+          skipSteps={['select_country']}
+          options={{ features: ['job_title_eligibility'] }}
+          render={({ onboardingBag, components }) => {
+            const { BasicInformationStep, ContractDetailsStep, SubmitButton } =
+              components;
+            if (onboardingBag.isLoading) {
+              return null;
+            }
+            return (
+              <>
+                {onboardingBag.stepState.currentStep.name ===
+                'basic_information' ? (
+                  <BasicInformationStep />
+                ) : (
+                  <ContractDetailsStep />
+                )}
+                <SubmitButton>Continue</SubmitButton>
+              </>
+            );
+          }}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      const user = userEvent.setup();
+      const jobTitle = await screen.findByLabelText(/Job title/i);
+      await user.clear(jobTitle);
+      await user.type(jobTitle, 'Surgeon');
+      screen.getByRole('button', { name: 'Continue' }).click();
+
+      await waitFor(() => expect(savedJobTitle).toBe('Surgeon'));
+      expect(screen.getByLabelText(/Job title/i)).toBeInTheDocument();
+      expect(
+        screen.queryByLabelText(/Role description/i),
+      ).not.toBeInTheDocument();
+
+      releaseRefetch();
+      await screen.findByLabelText(/Role description/i);
+      await fillRoleFields();
+
+      await waitFor(() =>
+        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1),
+      );
+      expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledWith({
+        job_title: 'Surgeon',
         role_description: 'Backend engineer responsibilities',
         role_is_onsite: 'no',
         role_requires_license: 'no',
@@ -400,6 +502,151 @@ describe.each(schemaPaths)(
       );
       await waitFor(() => expect(submitButton).toBeEnabled());
       expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
+    });
+
+    describe('on mount with saved contract details', () => {
+      const savedRoleAnswers = {
+        role_description: 'Licensed onsite surgeon responsibilities',
+        role_is_onsite: 'yes',
+        role_requires_license: 'yes',
+      };
+      let mountVerdict: string;
+      let checkReleased: Promise<void>;
+
+      beforeEach(() => {
+        mountVerdict = 'not_eligible';
+        checkReleased = Promise.resolve();
+        server.use(
+          http.get('*/v1/employments/:id', ({ params }) => {
+            const { employment } = employmentDefaultResponse.data;
+            return HttpResponse.json({
+              ...employmentDefaultResponse,
+              data: {
+                ...employmentDefaultResponse.data,
+                employment: {
+                  ...employment,
+                  id: params?.id,
+                  country: {
+                    code: countryCode,
+                    name: countryName,
+                    alpha_2_code: countryCode.slice(0, 2),
+                    supported_json_schemas: ['employment_basic_information'],
+                  },
+                  basic_information: {
+                    ...employment.basic_information,
+                    job_title: 'Surgeon',
+                  },
+                  contract_details: {
+                    ...employment.contract_details,
+                    ...savedRoleAnswers,
+                    additional_job_title_eligibility_check_slug:
+                      'saved-check-id',
+                    additional_job_title_eligibility_check_result: 'maybe',
+                  },
+                },
+              },
+            });
+          }),
+          http.post(
+            '*/v2/employments/:id/job-title-eligibility-check',
+            async ({ request }) => {
+              jobTitleEligibilityCheckSpy(await request.json());
+              await checkReleased;
+              return HttpResponse.json({
+                data: {
+                  job_title_eligibility_check: {
+                    check_id: 'new-check-id',
+                    verdict: mountVerdict,
+                  },
+                },
+              });
+            },
+          ),
+        );
+      });
+
+      it('replaces the saved verdict with a check against the current job title, without a blur', async () => {
+        await renderContractDetailsStep();
+
+        expect(
+          await screen.findByText(
+            `AI determined we can't hire this role in ${countryName}`,
+          ),
+        ).toBeInTheDocument();
+        expect(
+          screen.queryByText(
+            `AI isn't sure if we can hire this role in ${countryName}`,
+          ),
+        ).not.toBeInTheDocument();
+        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1);
+        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledWith({
+          job_title: 'Surgeon',
+          ...savedRoleAnswers,
+        });
+      });
+
+      it('asks for the risk acknowledgement on mount when the new verdict requires it', async () => {
+        mountVerdict = 'eligible_with_risk_acknowledgement';
+
+        await renderContractDetailsStep();
+
+        expect(
+          await screen.findByLabelText(/I acknowledge the risks/i),
+        ).toBeInTheDocument();
+      });
+
+      it('disables the submit button while the mount check is running', async () => {
+        let releaseCheck: () => void = () => {};
+        checkReleased = new Promise<void>((resolve) => {
+          releaseCheck = resolve;
+        });
+
+        await renderContractDetailsStep();
+        const submitButton = screen.getByRole('button', { name: 'Continue' });
+
+        await waitFor(() => expect(submitButton).toBeDisabled());
+
+        releaseCheck();
+
+        await waitFor(() => expect(submitButton).toBeEnabled());
+      });
+
+      it('does not call the check again when the step mounts again with nothing changed', async () => {
+        await renderContractDetailsStep();
+        await waitFor(() =>
+          expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1),
+        );
+
+        act(() => {
+          latestOnboardingBag.goTo('basic_information');
+        });
+        await waitFor(() =>
+          expect(latestOnboardingBag.stepState.currentStep.name).toBe(
+            'basic_information',
+          ),
+        );
+        act(() => {
+          latestOnboardingBag.goTo('contract_details');
+        });
+        await screen.findByLabelText(/Role description/i);
+
+        expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
+        expect(jobTitleEligibilityCheckSpy).toHaveBeenCalledTimes(1);
+      });
+
+      it('does not call the check on mount when the feature is not enabled', async () => {
+        await renderContractDetailsStep({ features: [] });
+
+        expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
+        expect(jobTitleEligibilityCheckSpy).not.toHaveBeenCalled();
+      });
+    });
+
+    it('does not call the check on mount when the saved role answers are incomplete', async () => {
+      await renderContractDetailsStep();
+
+      expect(latestOnboardingBag.isCheckingJobTitleEligibility).toBe(false);
+      expect(jobTitleEligibilityCheckSpy).not.toHaveBeenCalled();
     });
 
     describe('feeding the check result into the contract details schema', () => {

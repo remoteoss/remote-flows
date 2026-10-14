@@ -1198,7 +1198,7 @@ export const useOnboarding = ({
             throw error;
           }
         } else if (internalEmploymentId) {
-          return updateEmploymentMutationAsync({
+          const response = await updateEmploymentMutationAsync({
             employmentId: internalEmploymentId,
             basic_information: parsedValues,
             pricing_plan_details: {
@@ -1207,6 +1207,10 @@ export const useOnboarding = ({
             external_id: externalId,
             partner_external_id: partnerExternalId,
           });
+          if (!response.error) {
+            await refetchEmployment();
+          }
+          return response;
         }
 
         return;
@@ -1449,8 +1453,8 @@ export const useOnboarding = ({
     /**
      * Runs the job title eligibility check with the given contract details values when the
      * 'job_title_eligibility' feature is enabled, the current step is contract_details, and the
-     * role fields are filled. The prebuilt form runs it on blur and again right before submitting,
-     * since a submit can happen without a blur (e.g. pressing Enter); a custom UI should do both.
+     * role fields are filled. The prebuilt form runs it when the step mounts (the job title may have
+     * changed since the saved check), on blur, and right before submitting; a custom UI should too.
      * @param values - Current form values
      */
     checkJobTitleEligibility: jobTitleEligibility.check,

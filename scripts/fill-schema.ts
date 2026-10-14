@@ -263,6 +263,7 @@ function keepVisibleValues(
 
 export const SAFE_START_DATE_MIN_LEAD_DAYS = 35;
 export const SAFE_START_DATE_SEARCH_WINDOW_DAYS = 60;
+export const SAFE_START_DATE_MAX_DAY_OF_MONTH = 10;
 const START_WEEKDAYS = new Set([1, 2, 3, 4]);
 
 function toIsoDate(date: Date): string {
@@ -295,6 +296,9 @@ export function safeStartDateYears(
  * single schema-canary run). Only Monday-Thursday is considered because
  * Tiger blocks some weekdays per country (ISL: Friday/Saturday, much of
  * LATAM: Saturday/Sunday) and the public API doesn't expose that table.
+ * Only days 1-10 of the month are considered because some countries block
+ * every start date from their payroll cut-off day onward (ISR: the 17th) and
+ * the public API doesn't expose that day either.
  * Falls back to the unchecked minimum-lead date if nothing in the search
  * window qualifies.
  */
@@ -311,7 +315,11 @@ export function pickSafeDate(
   const candidate = new Date(earliest);
   while (candidate <= latest) {
     const iso = toIsoDate(candidate);
-    if (START_WEEKDAYS.has(candidate.getUTCDay()) && !holidayDates.has(iso)) {
+    if (
+      START_WEEKDAYS.has(candidate.getUTCDay()) &&
+      candidate.getUTCDate() <= SAFE_START_DATE_MAX_DAY_OF_MONTH &&
+      !holidayDates.has(iso)
+    ) {
       return iso;
     }
     candidate.setDate(candidate.getDate() + 1);
