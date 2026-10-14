@@ -267,11 +267,11 @@ async function checkCountry(
 
 async function runLive(): Promise<SchemaCanaryRow[]> {
   const clientId = process.env.VITE_CLIENT_ID;
-  const clientSecret = process.env.VITE_CLIENT_SECRET;
-  const refreshToken = process.env.VITE_REFRESH_TOKEN;
+  const clientSecret = process.env.REMOTE_CLIENT_SECRET;
+  const refreshToken = process.env.REMOTE_REFRESH_TOKEN;
   if (!clientId || !clientSecret || !refreshToken) {
     throw new Error(
-      'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, or VITE_REFRESH_TOKEN (set them in .env.sandbox at the repo root, or as env vars)',
+      'Missing VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, or REMOTE_REFRESH_TOKEN (set them in .env.sandbox at the repo root, or as env vars)',
     );
   }
 
