@@ -38,6 +38,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Portugal (PRT)](./PRT.md)
 - [Saudi Arabia (SAU)](./SAU.md)
 - [Singapore (SGP)](./SGP.md)
+- [South Africa (ZAF)](./ZAF.md)
 - [Spain (ESP)](./ESP.md)
 - [Serbia (SRB)](./SRB.md)
 - [Sweden (SWE)](./SWE.md)
@@ -79,6 +80,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Portugal             | PRT  | v3               | March 2026     |
 | Saudi Arabia         | SAU  | v2               | March 2026     |
 | Singapore            | SGP  | v2               | March 2026     |
+| South Africa         | ZAF  | v5               | October 2026   |
 | Spain                | ESP  | v7               | September 2026 |
 | Serbia               | SRB  | v2               | March 2026     |
 | Sweden               | SWE  | v5               | October 2026   |
