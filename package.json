@@ -153,7 +153,7 @@
     "@types/react": "19.3.0",
     "@vitest/coverage-istanbul": "5.0.3",
     "chalk": "6.0.1",
-    "dotenv": "18.0.5",
+    "dotenv": "18.0.6",
     "filesize": "11.0.25",
     "glob": "13.0.6",
     "gzip-size": "7.0.0",
