@@ -73,7 +73,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Lebanon              | LBN  | v2               | March 2026     |
 | Mauritius            | MUS  | v2               | March 2026     |
 | Malaysia             | MYS  | v5               | October 2026   |
-| Mexico               | MEX  | v2               | March 2026     |
+| Mexico               | MEX  | v8               | October 2026   |
 | Netherlands          | NLD  | v6               | October 2026   |
 | Nigeria              | NGA  | v5               | October 2026   |
 | Norway               | NOR  | v2               | March 2026     |
