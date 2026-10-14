@@ -221,7 +221,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   MEX: {
     // Mexico
-    contract_details: 2,
+    contract_details: 8,
   },
   MKD: {
     // North Macedonia
