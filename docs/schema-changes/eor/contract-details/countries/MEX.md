@@ -19,11 +19,11 @@ Schema versions for employee onboarding in México.
 
 ```tsx
 <OnboardingFlow
-  options={
+  options={{
     jsonSchemaVersionByCountry: {
       MEX: { contract_details: 8 },
     },
-  }
+  }}
 />
 ```
 
@@ -40,11 +40,11 @@ Schema versions for employee onboarding in México.
 
 ```tsx
 <OnboardingFlow
-  options={
+  options={{
     jsonSchemaVersionByCountry: {
       MEX: { contract_details: 7 },
     },
-  }
+  }}
 />
 ```
 
@@ -61,11 +61,11 @@ Schema versions for employee onboarding in México.
 
 ```tsx
 <OnboardingFlow
-  options={
+  options={{
     jsonSchemaVersionByCountry: {
       MEX: { contract_details: 6 },
     },
-  }
+  }}
 />
 ```
 
@@ -81,11 +81,11 @@ Schema versions for employee onboarding in México.
 
 ```tsx
 <OnboardingFlow
-  options={
+  options={{
     jsonSchemaVersionByCountry: {
       MEX: { contract_details: 5 },
     },
-  }
+  }}
 />
 ```
 
@@ -101,11 +101,11 @@ Schema versions for employee onboarding in México.
 
 ```tsx
 <OnboardingFlow
-  options={
+  options={{
     jsonSchemaVersionByCountry: {
       MEX: { contract_details: 4 },
     },
-  }
+  }}
 />
 ```
 
@@ -122,11 +122,11 @@ Schema versions for employee onboarding in México.
 
 ```tsx
 <OnboardingFlow
-  options={
+  options={{
     jsonSchemaVersionByCountry: {
       MEX: { contract_details: 3 },
     },
-  }
+  }}
 />
 ```
 
@@ -142,11 +142,11 @@ Schema versions for employee onboarding in México.
 
 ```tsx
 <OnboardingFlow
-  options={
+  options={{
     jsonSchemaVersionByCountry: {
       MEX: { contract_details: 2 },
     },
-  }
+  }}
 />
 ```
 
