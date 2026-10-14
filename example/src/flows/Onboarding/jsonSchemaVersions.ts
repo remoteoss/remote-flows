@@ -93,7 +93,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   DOM: {
     // Dominican Republic
-    contract_details: 1,
+    contract_details: 6,
   },
   ECU: {
     // Ecuador
