@@ -50,12 +50,6 @@ export function createSandboxClient(
   );
 }
 
-/**
- * Client for any gateway the example app's env files know about. Gateway and
- * token flow come from the same helpers the example proxy and
- * `seed:onboarding --env` use, so `.env.<name>` behaves identically (including
- * the JWT-bearer fallback for `local`).
- */
 export function createEnvClient(
   gatewayUrl: string,
   fetchAccessToken: () => Promise<{ accessToken: string; expiresIn?: number }>,
