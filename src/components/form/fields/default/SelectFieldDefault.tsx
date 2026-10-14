@@ -25,6 +25,13 @@ export function SelectFieldDefault({
   const { name, label, description, options, required } = fieldData;
   const isClearable = !required && Boolean(field.value);
 
+  const clearValue = (event: React.MouseEvent<HTMLButtonElement>) => {
+    field.onChange('');
+    event.currentTarget.parentElement
+      ?.querySelector<HTMLElement>('[data-slot="select-trigger"]')
+      ?.focus();
+  };
+
   return (
     <FormItem
       data-field={name}
@@ -68,7 +75,7 @@ export function SelectFieldDefault({
               type='button'
               aria-label={`Clear ${label}`}
               className='RemoteFlows__SelectField__Clear absolute right-10 top-1/2 -translate-y-1/2 text-muted-foreground'
-              onClick={() => field.onChange('')}
+              onClick={clearValue}
             >
               <XIcon className='size-4' />
             </button>
