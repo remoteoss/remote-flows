@@ -77,7 +77,7 @@ jobs:
         run: npm run coverage:extract -- --output out/current-coverage.json
 
       - name: Upload current coverage
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: current-coverage
           path: out/current-coverage.json
@@ -144,7 +144,7 @@ jobs:
 
       - name: Upload base coverage
         if: steps.check-scripts.outputs.exists == 'true'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: base-coverage
           path: base-coverage.json
@@ -270,7 +270,7 @@ jobs:
           COVERAGE_REPORT: ${{ steps.compare.outputs.report }}
 
       - name: Upload coverage analysis
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: always()
         with:
           name: coverage-analysis
@@ -306,7 +306,7 @@ jobs:
           STEPS_VERCEL_REMOTE_FLOWS_OUTPUTS_PREVIEW_URL: ${{ steps.vercel-remote-flows.outputs.preview-url }}
 
       - name: Upload deployment URL
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: remote-flows-url
           path: remote-flows-url.txt
@@ -432,7 +432,7 @@ jobs:
         working-directory: ./example
         run: npx playwright test --project=chromium
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
