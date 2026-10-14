@@ -26,7 +26,7 @@ const envFile = path.resolve(__dirname, '..', `.env.${envName}`);
 if (!existsSync(envFile)) {
   throw new Error(`--env=${envName}: ${envFile} does not exist.`);
 }
-dotenv.config({ path: envFile });
+dotenv.config({ path: envFile, override: true });
 const country = args.country?.toUpperCase();
 const form = args.form ?? 'contract_details';
 const version: number | 'latest' =
@@ -51,9 +51,7 @@ const { fetchAccessToken } = require('../example/api/get_token.js') as {
 };
 const gatewayUrl = buildGatewayURL();
 if (!gatewayUrl) {
-  throw new Error(
-    `Unknown --env=${envName}, or ${envFile} is missing/doesn't set VITE_REMOTE_GATEWAY.`,
-  );
+  throw new Error(`${envFile} doesn't set VITE_REMOTE_GATEWAY.`);
 }
 console.log(`Environment: ${envName} -> ${gatewayUrl} (from ${envFile})`);
 const client = createEnvClient(gatewayUrl, fetchAccessToken);
