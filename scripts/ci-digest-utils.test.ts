@@ -84,8 +84,13 @@ describe('extractErrorWindows', () => {
       (_, i) => `error TS${1000 + i}: bad`,
     ).join('\n');
     const result = extractErrorWindows(many, { context: 0, maxLines: 5 });
-    expect(result).toHaveLength(5);
-    expect(result[4]).toBe('… 46 more lines truncated');
+    expect(result).toEqual([
+      'error TS1000: bad',
+      'error TS1001: bad',
+      '… 46 lines truncated',
+      'error TS1048: bad',
+      'error TS1049: bad',
+    ]);
   });
 });
 
@@ -94,6 +99,20 @@ describe('classifyFailure', () => {
     expect(
       classifyFailure('Tests', 'FAIL a.test.ts\nHTTP 403 rate limit exceeded'),
     ).toBe('flake');
+  });
+
+  it('ignores rate-limit wording that is not part of a failure', () => {
+    const log = [
+      'rate limit handled in a passing test',
+      'ok',
+      'ok',
+      'ok',
+      'ok',
+      'ok',
+      'FAIL a.test.ts > breaks',
+      'done',
+    ].join('\n');
+    expect(classifyFailure('Tests', log)).toBe('test');
   });
 
   it('detects type errors', () => {

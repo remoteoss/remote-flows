@@ -30,8 +30,8 @@ function fetchFailedLog(check: CheckRun): string {
   const target = check.jobId ? ['--job', check.jobId] : [];
   try {
     return gh(['run', 'view', check.runId, ...target, '--log-failed']);
-  } catch (error) {
-    return error instanceof Error ? error.message : String(error);
+  } catch {
+    return '';
   }
 }
 
@@ -60,6 +60,15 @@ function main() {
   const failures = failed.map((rawCheck) => {
     const check: CheckRun = { ...rawCheck, ...parseCheckLink(rawCheck.link) };
     const log = fetchFailedLog(check);
+    if (!log) {
+      return {
+        check,
+        kind: 'unknown' as const,
+        excerpt: [
+          'No GitHub Actions log for this check (external service); open the link.',
+        ],
+      };
+    }
     return {
       check,
       kind: classifyFailure(check.name, log),

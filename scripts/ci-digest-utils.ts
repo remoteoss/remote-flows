@@ -87,14 +87,18 @@ export function extractErrorWindows(
   if (deduped.length <= maxLines) {
     return deduped;
   }
+  const tailLines = Math.ceil((maxLines - 1) / 2);
+  const headLines = maxLines - 1 - tailLines;
   return [
-    ...deduped.slice(0, maxLines - 1),
-    `… ${deduped.length - maxLines + 1} more lines truncated`,
+    ...deduped.slice(0, headLines),
+    `… ${deduped.length - maxLines + 1} lines truncated`,
+    ...deduped.slice(-tailLines),
   ];
 }
 
 export function classifyFailure(checkName: string, log: string): FailureKind {
-  if (FLAKE_SIGNATURES.some((pattern) => pattern.test(log))) {
+  const failureText = extractErrorWindows(log, { maxLines: 200 }).join('\n');
+  if (FLAKE_SIGNATURES.some((pattern) => pattern.test(failureText))) {
     return 'flake';
   }
   const name = checkName.toLowerCase();
