@@ -444,11 +444,11 @@ describe('OnboardingFlow', () => {
       type: 'employee',
     });
 
-    let backButton = screen.getByRole('button', { name: 'Back' });
+    let backButton = await screen.findByRole('button', { name: 'Back' });
     backButton.click();
     await screen.findByText(/Step: Basic Information/i);
 
-    backButton = screen.getByRole('button', { name: 'Back' });
+    backButton = await screen.findByRole('button', { name: 'Back' });
     backButton.click();
     await screen.findByText(/Step: Select Country/i);
 
