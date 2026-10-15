@@ -285,7 +285,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   PRT: {
     // Portugal
-    contract_details: 9,
+    contract_details: 3,
   },
   PRY: {
     // Paraguay
