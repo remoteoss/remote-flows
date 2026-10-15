@@ -55,7 +55,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           {
-            echo "A contract details schema that this library pins no longer matches its committed baseline. Pinned versions are meant to be frozen, so a breaking difference here means the backend changed a published version."
+            echo "A contract details schema that this library pins no longer matches its committed baseline. Pinned versions are meant to be frozen, so a breaking difference here usually means the backend changed a published version. It can also come from a change in how this library builds forms, such as a form engine upgrade, so check recent merges to main before blaming the backend."
             echo
             if [ -s "$RUNNER_TEMP/schema-snapshot-failures.md" ]; then
               cat "$RUNNER_TEMP/schema-snapshot-failures.md"

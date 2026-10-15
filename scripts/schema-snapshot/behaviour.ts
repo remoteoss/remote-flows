@@ -233,6 +233,14 @@ function isTightened(
   return after !== undefined;
 }
 
+function splitScenario(scenario: string) {
+  const separator = scenario.lastIndexOf('=');
+  return {
+    driver: scenario.slice(0, separator),
+    value: scenario.slice(separator + 1),
+  };
+}
+
 export function diffFingerprints(
   previous: SchemaFingerprint,
   next: SchemaFingerprint,
@@ -297,7 +305,7 @@ export function diffFingerprints(
     }
   }
   for (const [name, after] of Object.entries(next.constraints)) {
-    if (previous.constraints[name]) {
+    if (previous.constraints[name] || !(name in previous.types)) {
       continue;
     }
     for (const key of CONSTRAINT_KEYS) {
@@ -310,7 +318,18 @@ export function diffFingerprints(
   for (const [scenario, delta] of Object.entries(previous.scenarios)) {
     const after = next.scenarios[scenario];
     if (!after) {
-      add('info', `choosing \`${scenario}\` no longer changes any field`);
+      const { driver, value } = splitScenario(scenario);
+      const driverRemains =
+        driver in next.types && next.options[driver]?.includes(value) !== false;
+      if (!driverRemains) {
+        continue;
+      }
+      if (delta.addedVisible.length === 0) {
+        add('info', `choosing \`${scenario}\` no longer changes any field`);
+      }
+      for (const name of delta.addedVisible) {
+        add('breaking', `choosing \`${scenario}\` no longer shows \`${name}\``);
+      }
       continue;
     }
     for (const name of difference(after.addedRequired, delta.addedRequired)) {
@@ -321,9 +340,7 @@ export function diffFingerprints(
     }
   }
   for (const [scenario, delta] of Object.entries(next.scenarios)) {
-    const separator = scenario.lastIndexOf('=');
-    const driver = scenario.slice(0, separator);
-    const value = scenario.slice(separator + 1);
+    const { driver, value } = splitScenario(scenario);
     const isNewDriver =
       !(driver in previous.types) ||
       previous.options[driver]?.includes(value) === false;
