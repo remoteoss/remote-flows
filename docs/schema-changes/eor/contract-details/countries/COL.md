@@ -95,7 +95,7 @@ Schema versions for employee onboarding in Colombia.
 
 **What changed:**
 
-- Full-time `work_hours_per_week` maximum lowers from 44 to 42 hours, in line with the Colombian working-hours reduction.
+- Full-time `work_hours_per_week` maximum lowers from 44 to 42 hours.
 
 **Migration:**
 
