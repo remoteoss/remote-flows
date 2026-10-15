@@ -46,8 +46,9 @@ dotenv.config({ path: path.resolve(__dirname, '..', '.env.sandbox') });
 
 const BASELINE_DIR = path.resolve(
   __dirname,
-  'schema-baselines',
-  'contract_details',
+  '..',
+  'snapshots',
+  'contract-details',
 );
 
 const args: Record<string, string | true> = {};
