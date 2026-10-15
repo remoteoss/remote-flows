@@ -48,7 +48,7 @@
  *
  * Pass --env=<name> to instead talk to a gateway directly, with no dev server
  * required: credentials come from .env.<name> at the repo root
- * (VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, VITE_REFRESH_TOKEN
+ * (VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, REMOTE_REFRESH_TOKEN
  * - same shape as example/.env). The file name only picks the credentials;
  * VITE_REMOTE_GATEWAY inside it picks the gateway. So .env.sandbox (local-dev
  * sandbox client) and .env.review (the deployed demo app's sandbox client)

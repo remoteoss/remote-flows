@@ -31,8 +31,8 @@ against the one they care about.
 Reading `.env*` files directly is denied by permission settings, so check keys
 with a `node -e` one-liner that loads `<repo root>/.env.<name>` with `dotenv`
 and prints only `true`/`false` per key — never the values. It must set
-`VITE_REMOTE_GATEWAY`, `VITE_CLIENT_ID`, `VITE_CLIENT_SECRET` and
-`VITE_REFRESH_TOKEN`. If the file is missing or incomplete, ask the user to
+`VITE_REMOTE_GATEWAY`, `VITE_CLIENT_ID`, `REMOTE_CLIENT_SECRET` and
+`REMOTE_REFRESH_TOKEN`. If the file is missing or incomplete, ask the user to
 create it (same shape as `example/.env`), then stop and wait.
 
 Any feature flag the check depends on (e.g. `VITE_NEW_PREMIUM_BENEFITS`) must be

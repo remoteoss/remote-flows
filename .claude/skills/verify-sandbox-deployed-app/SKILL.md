@@ -23,7 +23,7 @@ for its own company.
 `.env.review` must have:
 
 - `VITE_REMOTE_GATEWAY=sandbox` + the deployed app's `VITE_CLIENT_ID`,
-  `VITE_CLIENT_SECRET`, `VITE_REFRESH_TOKEN` (used by
+  `REMOTE_CLIENT_SECRET`, `REMOTE_REFRESH_TOKEN` (used by
   `seed-onboarding.ts --env=review`)
 - `VITE_APP_URL` — the deployed app's URL (`https://remote-flows-eight.vercel.app`)
 - `VITE_APP_PASSWORD` — the Vercel deployment-protection password
