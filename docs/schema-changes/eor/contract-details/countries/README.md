@@ -64,7 +64,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | China                | CHN  | v8               | October 2026   |
 | Switzerland          | CHE  | v2               | March 2026     |
 | Colombia             | COL  | v6               | October 2026   |
-| Czech Republic       | CZE  | v2               | March 2026     |
+| Czech Republic       | CZE  | v7               | October 2026   |
 | Dominican Republic   | DOM  | v6               | October 2026   |
 | Germany              | DEU  | v7               | September 2026 |
 | Hong Kong            | HKG  | v2               | March 2026     |
