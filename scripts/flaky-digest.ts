@@ -10,6 +10,8 @@ import {
 } from './flaky-digest-utils';
 import type { FlakyEntry } from './flaky-reporter';
 
+const NO_ARTIFACT_MESSAGE = /no artifact matches/i;
+
 const WORKFLOWS = ['ci-main.yml', 'pr.yml'];
 
 type RawRun = {
@@ -48,9 +50,13 @@ function fetchReport(run: RawRun): RunReport | null {
       '-D',
       dir,
     ]);
-  } catch {
+  } catch (error) {
     rmSync(dir, { recursive: true, force: true });
-    return null;
+    const stderr = (error as { stderr?: string }).stderr ?? '';
+    if (NO_ARTIFACT_MESSAGE.test(stderr)) {
+      return null;
+    }
+    throw error;
   }
   try {
     const file = path.join(dir, 'flaky-tests.json');
