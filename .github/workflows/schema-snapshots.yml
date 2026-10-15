@@ -1,0 +1,82 @@
+name: Schema Snapshots
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'example/src/flows/Onboarding/jsonSchemaVersions.ts'
+      - 'scripts/schema-snapshot.ts'
+      - 'scripts/schema-baselines/**'
+      - 'scripts/schema-canary/behaviour.ts'
+      - '.github/workflows/schema-snapshots.yml'
+
+concurrency:
+  group: schema-snapshots-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  snapshots:
+    name: Pinned contract details schemas still match their baselines
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      issues: write
+    env:
+      GH_REPO: ${{ github.repository }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Use Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.15.0'
+
+      - name: Install dependencies
+        run: npm ci --include=optional --ignore-scripts
+
+      - name: Compare the pinned schemas served by sandbox with the baselines
+        id: snapshots
+        env:
+          VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
+          VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
+        run: npm run schema-snapshot -- --failures-out="$RUNNER_TEMP/schema-snapshot-failures.md"
+
+      - name: Open or update the failure issue
+        if: failure() && steps.snapshots.outcome == 'failure' && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "A contract details schema that this library pins no longer matches its committed baseline. Pinned versions are meant to be frozen, so a breaking difference here means the backend changed a published version."
+            echo
+            if [ -s "$RUNNER_TEMP/schema-snapshot-failures.md" ]; then
+              cat "$RUNNER_TEMP/schema-snapshot-failures.md"
+            else
+              echo "The check stopped before it compared any country, for example because sandbox auth failed. The run log has the error."
+            fi
+          } > "$RUNNER_TEMP/issue-body.md"
+          gh label create schema-snapshot --color B60205 --description "A pinned schema changed under its version" --force
+          number=$(gh issue list --label schema-snapshot --state open --json number --jq '.[0].number // empty')
+          if [ -z "$number" ]; then
+            number=$(gh issue create --title "A pinned contract details schema changed" --label schema-snapshot --body-file "$RUNNER_TEMP/issue-body.md" | grep -oE '[0-9]+$')
+            gh issue comment "$number" --body "Failing run: $RUN_URL"
+          elif [ "$(gh issue view "$number" --json body --jq .body)" != "$(cat "$RUNNER_TEMP/issue-body.md")" ]; then
+            gh issue edit "$number" --body-file "$RUNNER_TEMP/issue-body.md"
+            gh issue comment "$number" --body "The differences changed. Failing run: $RUN_URL"
+          fi
+
+      - name: Close the failure issue
+        if: always() && steps.snapshots.outcome == 'success' && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for number in $(gh issue list --label schema-snapshot --state open --json number --jq '.[].number'); do
+            gh issue close "$number" --comment "Back to matching the baselines: $RUN_URL"
+          done
