@@ -72,6 +72,53 @@ describe('sdkPayloadFor', () => {
     },
   );
 
+  it('fills a default that a condition turns on, as the rebuilt form does', async () => {
+    const result = await sdkPayloadFor(
+      {
+        type: 'object',
+        properties: {
+          work_schedule: {
+            type: 'string',
+            title: 'Work schedule',
+            oneOf: [
+              { const: 'full_time', title: 'Full time' },
+              { const: 'part_time', title: 'Part time' },
+            ],
+            'x-jsf-presentation': { inputType: 'radio' },
+          },
+          work_hours_per_week: {
+            type: 'number',
+            title: 'Work hours per week',
+            'x-jsf-presentation': { inputType: 'number' },
+          },
+        },
+        required: ['work_schedule'],
+        allOf: [
+          {
+            if: {
+              properties: { work_schedule: { const: 'full_time' } },
+              required: ['work_schedule'],
+            },
+            then: {
+              properties: {
+                work_hours_per_week: { const: 40, default: 40 },
+              },
+              required: ['work_hours_per_week'],
+            },
+          },
+        ],
+      },
+      'rebuild',
+      { work_schedule: 'full_time' },
+    );
+
+    expect(result).toEqual({
+      ok: true,
+      payload: { work_schedule: 'full_time', work_hours_per_week: 40 },
+      forcedFields: ['work_hours_per_week'],
+    });
+  });
+
   it('fails when the SDK form rejects values the schema accepts', async () => {
     const result = await sdkPayloadFor(
       {
@@ -182,7 +229,7 @@ describe('submitContractDetails', () => {
       { strategy: 'buildOnce' },
     );
 
-    expect(result).toEqual({ ok: true });
+    expect(result).toEqual({ ok: true, sent: { overtime_eligible: 'yes' } });
   });
 
   it('fails when a forced value is saved as something else', async () => {
@@ -261,7 +308,7 @@ describe('submitContractDetails', () => {
       },
     );
 
-    expect(result).toEqual({ ok: true });
+    expect(result).toEqual({ ok: true, sent: { overtime_eligible: 'no' } });
   });
 
   it('fails when a known unsaved field is saved now', async () => {
@@ -349,7 +396,7 @@ describe('submitContractDetails', () => {
       strategy: 'rebuild',
     });
 
-    expect(result).toEqual({ ok: true });
+    expect(result).toEqual({ ok: true, sent: { has_signing_bonus: 'no' } });
     const url = new URL(request!.url);
     expect(url.pathname).toBe('/v1/employments/emp-1');
     expect(Object.fromEntries(url.searchParams)).toEqual({
@@ -383,7 +430,7 @@ describe('submitContractDetails', () => {
       seedValues: { has_signing_bonus: 'yes' },
     });
 
-    expect(result).toEqual({ ok: true });
+    expect(result).toEqual({ ok: true, sent: { has_signing_bonus: 'yes' } });
     expect(body).toEqual({
       contract_details: { has_signing_bonus: 'yes' },
       pricing_plan_details: { frequency: 'monthly' },
@@ -401,7 +448,7 @@ describe('submitContractDetails', () => {
       { strategy: 'buildOnce' },
     );
 
-    expect(result).toEqual({ ok: true });
+    expect(result).toEqual({ ok: true, sent: { annual_gross_salary: 100000 } });
   });
 
   it('fails when the employment saved something else', async () => {
