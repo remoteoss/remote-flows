@@ -12,7 +12,7 @@ Schema versions for employee onboarding in Czech Republic.
 
 **What changed:**
 
-- Added the `contract_duration` component, with a maximum duration of `unlimited`. `contract_duration_type` is no longer required and the old has-contract-end-date conditional is removed. A part-time salary confirmation conditional is added (inferred from the schema diff).
+- Added the `contract_duration` component, with a maximum duration of `unlimited`. `contract_duration_type` is no longer required and the old has-contract-end-date conditional is removed (inferred from the schema diff).
 
 **Migration:**
 
