@@ -4,11 +4,35 @@ Schema versions for employee onboarding in United Kingdom.
 
 ## Current Version
 
-**Contract Details:** v6
+**Contract Details:** v7
 
 ## Contract Details
 
-### v6 - Current
+### v7 - Current
+
+**What changed:**
+
+- Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `GBR`) to inspect field-level diffs between your current pin and v7. Prefer jumping straight from v3 to v7 when upgrading.
+- Hourly wage type and the daily schedule are no longer hidden from Partners API (`remote_api`) consumers. `wage_type` and `hourly_gross_salary` are now returned, and the `daily_schedule` component (`daily_schedule`, `schedule_type`, `work_hours_per_week`, `shift_pattern`) replaces the plain `work_hours_per_week` field.
+- `annual_gross_salary` is only required when `wage_type` is `salary`. Part-time contracts must still use `wage_type` `salary`.
+
+**Migration:**
+
+Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when `wage_type` is `hourly`, and the daily schedule fields instead of the plain `work_hours_per_week` field. Consumers staying on v6 or earlier are unaffected.
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      GBR: { contract_details: 7 },
+    },
+  }}
+/>
+```
+
+---
+
+### v6
 
 **What changed:**
 
