@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
+import { execFileSync } from 'node:child_process';
 import {
   appendFileSync,
-  existsSync,
   mkdirSync,
   readFileSync,
   writeFileSync,
@@ -17,6 +17,12 @@ import {
   withJobTitleEligibilityRiskAcknowledgement,
 } from '@/src/flows/Onboarding/utils';
 import { createSandboxClient } from './schema-canary/auth';
+import {
+  baselineExists,
+  baselinePath,
+  previousBaselineVersion,
+  removeOtherBaselines,
+} from './schema-canary/baselines';
 import {
   diffFingerprints,
   fingerprintSchema,
@@ -52,6 +58,9 @@ for (const raw of process.argv.slice(2)) {
   }
 }
 const UPDATE = args.update === true;
+const CREATE_MISSING = args['create-missing'] === true;
+const SUMMARY_OUT =
+  typeof args['summary-out'] === 'string' ? args['summary-out'] : undefined;
 const COUNTRY_FILTER =
   typeof args.country === 'string' ? args.country.toUpperCase() : undefined;
 const FAILURES_OUT =
@@ -67,13 +76,35 @@ if (!Number.isInteger(CONCURRENCY) || CONCURRENCY < 1) {
 type CountryResult = {
   country: string;
   version: number;
-  status: 'unchanged' | 'changed' | 'updated' | 'no-baseline' | 'error';
+  status:
+    | 'unchanged'
+    | 'changed'
+    | 'updated'
+    | 'created'
+    | 'no-baseline'
+    | 'error';
   changes: FingerprintChange[];
+  previousVersion?: number;
   error?: string;
 };
 
-function baselinePath(country: string, version: number) {
-  return path.join(BASELINE_DIR, `${country}.v${version}.json`);
+const writtenFiles: string[] = [];
+
+function readBaseline(country: string, version: number): SchemaFingerprint {
+  return JSON.parse(
+    readFileSync(baselinePath(BASELINE_DIR, country, version), 'utf8'),
+  ) as SchemaFingerprint;
+}
+
+function writeBaseline(
+  country: string,
+  version: number,
+  fingerprint: SchemaFingerprint,
+) {
+  mkdirSync(BASELINE_DIR, { recursive: true });
+  const file = baselinePath(BASELINE_DIR, country, version);
+  writeFileSync(file, `${JSON.stringify(fingerprint, null, 2)}\n`);
+  writtenFiles.push(file);
 }
 
 async function fetchPinnedSchema(
@@ -118,20 +149,35 @@ async function checkCountry(
       schema,
       getContractDetailsStrategy(country),
     );
-    const file = baselinePath(country, version);
 
     if (UPDATE) {
-      mkdirSync(BASELINE_DIR, { recursive: true });
-      writeFileSync(file, `${JSON.stringify(fingerprint, null, 2)}\n`);
+      writeBaseline(country, version, fingerprint);
       return { country, version, status: 'updated', changes: [] };
     }
-    if (!existsSync(file)) {
-      return { country, version, status: 'no-baseline', changes: [] };
+    if (!baselineExists(BASELINE_DIR, country, version)) {
+      if (!CREATE_MISSING) {
+        return { country, version, status: 'no-baseline', changes: [] };
+      }
+      const previousVersion = previousBaselineVersion(
+        BASELINE_DIR,
+        country,
+        version,
+      );
+      const changes =
+        previousVersion === undefined
+          ? []
+          : diffFingerprints(
+              readBaseline(country, previousVersion),
+              fingerprint,
+            );
+      writeBaseline(country, version, fingerprint);
+      removeOtherBaselines(BASELINE_DIR, country, version);
+      return { country, version, status: 'created', changes, previousVersion };
     }
-    const baseline = JSON.parse(
-      readFileSync(file, 'utf8'),
-    ) as SchemaFingerprint;
-    const changes = diffFingerprints(baseline, fingerprint);
+    const changes = diffFingerprints(
+      readBaseline(country, version),
+      fingerprint,
+    );
     return {
       country,
       version,
@@ -160,7 +206,21 @@ async function checkCountry(
 }
 
 function hasBreaking(result: CountryResult) {
-  return result.changes.some((change) => change.severity === 'breaking');
+  return (
+    result.status === 'changed' &&
+    result.changes.some((change) => change.severity === 'breaking')
+  );
+}
+
+function describeCreated(result: CountryResult): string {
+  if (result.previousVersion === undefined) {
+    return `Baseline added for v${result.version}. There was no earlier baseline to compare it with.`;
+  }
+  const comparison =
+    result.changes.length > 0
+      ? `Compared with v${result.previousVersion}:\n\n${formatChanges(result.changes)}`
+      : `It behaves the same as v${result.previousVersion}.`;
+  return `Baseline added for v${result.version}, replacing v${result.previousVersion}. ${comparison}`;
 }
 
 function formatReport(results: CountryResult[]): string {
@@ -169,6 +229,8 @@ function formatReport(results: CountryResult[]): string {
     const heading = `### ${result.country} (pinned v${result.version})`;
     if (result.status === 'changed') {
       lines.push(heading, formatChanges(result.changes), '');
+    } else if (result.status === 'created') {
+      lines.push(heading, describeCreated(result), '');
     } else if (result.status === 'no-baseline') {
       lines.push(
         heading,
@@ -207,8 +269,21 @@ async function main() {
     .filter((country) => country.eor_onboarding)
     .map((country) => country.code)
     .filter((code) => !COUNTRY_FILTER || code === COUNTRY_FILTER)
-    .filter((code) => !findSkipEntry(SCHEMA_CANARY_SKIP_LIST, code, 'pinned'));
+    .filter((code) => !findSkipEntry(SCHEMA_CANARY_SKIP_LIST, code, 'pinned'))
+    .filter(
+      (code) =>
+        !CREATE_MISSING ||
+        !baselineExists(
+          BASELINE_DIR,
+          code,
+          resolvePinnedVersion(code, DEFAULT_VERSION),
+        ),
+    );
   if (countries.length === 0) {
+    if (CREATE_MISSING) {
+      console.log('Every pinned version already has a baseline.');
+      return;
+    }
     throw new Error('No EOR onboarding countries to check');
   }
 
@@ -216,10 +291,14 @@ async function main() {
     checkCountry(client, country),
   );
 
+  if (writtenFiles.length > 0) {
+    execFileSync('npx', ['oxfmt', ...writtenFiles], { stdio: 'inherit' });
+  }
+
   const report = formatReport(results);
   const count = (status: CountryResult['status']) =>
     results.filter((result) => result.status === status).length;
-  const summary = `${count('unchanged')} unchanged, ${count('changed')} changed, ${count('updated')} updated, ${count('no-baseline')} without baseline, ${count('error')} errors (${results.length} countries)`;
+  const summary = `${count('unchanged')} unchanged, ${count('changed')} changed, ${count('updated')} updated, ${count('created')} created, ${count('no-baseline')} without baseline, ${count('error')} errors (${results.length} countries)`;
   console.log(report || 'No differences from the committed baselines.');
   console.log(`\n${summary}`);
 
@@ -237,6 +316,12 @@ async function main() {
   );
   if (FAILURES_OUT) {
     writeFileSync(FAILURES_OUT, formatReport(failing));
+  }
+  if (SUMMARY_OUT) {
+    writeFileSync(
+      SUMMARY_OUT,
+      formatReport(results.filter((result) => result.status === 'created')),
+    );
   }
   process.exitCode = failing.length > 0 ? 1 : 0;
 }
