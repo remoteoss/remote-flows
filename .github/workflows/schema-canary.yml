@@ -10,7 +10,6 @@ on:
   pull_request:
     paths:
       - 'example/src/flows/Onboarding/jsonSchemaVersions.ts'
-      - 'package.json'
       - 'package-lock.json'
       - 'src/common/createHeadlessForm.tsx'
       - 'src/common/headlessForm.ts'
