@@ -71,6 +71,7 @@
  *   npm run seed:onboarding -- --country=IND --env=partners --debug
  */
 import dotenv from 'dotenv';
+import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -142,7 +143,10 @@ let getAuthHeaders = async (
 
 if (ENV) {
   const envFile = path.resolve(__dirname, '..', `.env.${ENV}`);
-  dotenv.config({ path: envFile });
+  if (!existsSync(envFile)) {
+    throw new Error(`--env=${ENV}: ${envFile} does not exist.`);
+  }
+  dotenv.config({ path: envFile, override: true });
   const { buildGatewayURL } = require('../example/api/utils.js') as {
     buildGatewayURL: () => string | undefined;
   };
@@ -159,9 +163,7 @@ if (ENV) {
 
   const gatewayURL = buildGatewayURL();
   if (!gatewayURL) {
-    throw new Error(
-      `Unknown --env=${ENV}, or ${envFile} is missing/doesn't set VITE_REMOTE_GATEWAY.`,
-    );
+    throw new Error(`${envFile} doesn't set VITE_REMOTE_GATEWAY.`);
   }
   BASE_URL = gatewayURL;
   console.log(`Environment: ${ENV} -> ${BASE_URL} (from ${envFile})`);
