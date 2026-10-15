@@ -4,11 +4,126 @@ Schema versions for employee onboarding in Portugal.
 
 ## Current Version
 
-**Contract Details:** v2 (Since SDK 1.23.0)
+**Contract Details:** v9
 
 ## Contract Details
 
-### v3 - Current (Since SDK 1.23.0, March 2026)
+### v9 - Current (inferred from the schema diff)
+
+**What changed:**
+
+- Adds the required `tax_and_social_security_numbers_ack` checkbox (title "Tax and social security number") - partners using a custom UI must render it and send "acknowledged"
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      PRT: { contract_details: 9 },
+    },
+  }}
+/>
+```
+
+### v8 (inferred from the schema diff)
+
+**What changed:**
+
+- Adds `extreme_salary_acknowledgement` and `extreme_salary_warning`, shown when the annual gross salary is unusually high
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      PRT: { contract_details: 8 },
+    },
+  }}
+/>
+```
+
+### v7 (inferred from the schema diff)
+
+**What changed:**
+
+- The schema is now marked as the newer form engine version (`x-rmt-meta.jsfVersion` is `"1"`); no field changes
+- Partners pinning v7 or later get the newer engine path
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      PRT: { contract_details: 7 },
+    },
+  }}
+/>
+```
+
+### v6 (inferred from the schema diff)
+
+**What changed:**
+
+- Adds the `salary_overview` field
+- Extends the annual gross salary field with a computed attribute and a longer description
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      PRT: { contract_details: 6 },
+    },
+  }}
+/>
+```
+
+### v5 (inferred from the schema diff)
+
+**What changed:**
+
+- No field changes
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      PRT: { contract_details: 5 },
+    },
+  }}
+/>
+```
+
+### v4 (inferred from the schema diff)
+
+**What changed:**
+
+- Adds the post-termination restriction fields, all required to be answered with yes or no:
+  - `non_interference_apply` (with `non_interference_halt_period` when yes)
+  - `non_solicitation_customers` (with `non_solicitation_customer_number_of_months` when yes)
+  - `non_solicitation_employees` (with `non_solicitation_employees_number_of_months` when yes)
+  - `non_compete_clause_apply` (with `non_compete_clause_halt_period_months`, `non_compete_clause_compensation_percentage` and a computed `non_compete_clause_compensation_amount` when yes)
+- Partners using a custom UI must render these four yes/no questions
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      PRT: { contract_details: 4 },
+    },
+  }}
+/>
+```
+
+### v3 (Since SDK 1.23.0, March 2026)
 
 **What changed:**
 
@@ -22,7 +137,7 @@ Schema versions for employee onboarding in Portugal.
 <OnboardingFlow
   options={{
     jsonSchemaVersionByCountry: {
-      PRT: { contract_details: 2 },
+      PRT: { contract_details: 3 },
     },
   }}
 />
