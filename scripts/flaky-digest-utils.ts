@@ -22,6 +22,9 @@ export function aggregate(reports: RunReport[]): FlakyTest[] {
   const byTest = new Map<string, FlakyTest>();
   for (const report of reports) {
     for (const entry of report.entries) {
+      if (entry.outcome === 'failed' && report.branch !== 'main') {
+        continue;
+      }
       const key = `${entry.file}::${entry.name}`;
       const existing = byTest.get(key) ?? {
         file: entry.file,

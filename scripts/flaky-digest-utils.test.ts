@@ -42,6 +42,17 @@ describe('aggregate', () => {
     });
   });
 
+  it('ignores hard failures from branches other than main', () => {
+    const result = aggregate([
+      {
+        ...report('1', '2026-10-10T00:00:00Z', [entry('failed')]),
+        branch: 'feat/x',
+      },
+      report('2', '2026-10-11T00:00:00Z', [entry('failed')]),
+    ]);
+    expect(result[0].failedRuns).toBe(1);
+  });
+
   it('sorts the most frequent test first', () => {
     const rare = { ...entry('flaky'), name: 'rare' };
     const common = { ...entry('flaky'), name: 'common' };

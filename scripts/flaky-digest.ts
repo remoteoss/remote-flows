@@ -76,7 +76,6 @@ function main() {
   const minHits = numberFlag(args, 'min-hits', 1);
 
   const reports: RunReport[] = [];
-  let scanned = 0;
   for (const workflow of WORKFLOWS) {
     const runs: RawRun[] = JSON.parse(
       gh([
@@ -91,7 +90,6 @@ function main() {
       ]),
     );
     for (const run of runs) {
-      scanned++;
       const report = fetchReport(run);
       if (report) {
         reports.push(report);
@@ -99,7 +97,7 @@ function main() {
     }
   }
 
-  console.log(renderFlakyDigest(aggregate(reports), scanned, minHits));
+  console.log(renderFlakyDigest(aggregate(reports), reports.length, minHits));
 }
 
 main();
