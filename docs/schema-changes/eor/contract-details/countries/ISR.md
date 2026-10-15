@@ -92,7 +92,7 @@ Schema versions for employee onboarding in Israel.
 
 **What changed:**
 
-- Carryover now validates the maximum `carry_over_pto_days` with an Israel-specific rule (inferred from the schema diff). The field order is now shared with the other countries.
+- Carryover now validates the maximum `carry_over_pto_days` with an Israel-specific rule. The field order is now shared with the other countries.
 
 **Migration:**
 
@@ -112,7 +112,7 @@ Schema versions for employee onboarding in Israel.
 
 **What changed:**
 
-- The `carryover` component is now used for annual leave carryover, with Israel-specific descriptions for the carry-forward, maximum days and expiry fields (inferred from the schema diff).
+- The `carryover` component is now used for annual leave carryover, with Israel-specific descriptions for the carry-forward, maximum days and expiry fields.
 
 **Migration:**
 

@@ -112,7 +112,7 @@ Schema versions for employee onboarding in New Zealand.
 
 **What changed:**
 
-- `available_pto` now has a minimum of 20 days, and its description is reworded to be based on ordinary hours of work (inferred from the schema diff).
+- `available_pto` now has a minimum of 20 days, and its description is reworded to be based on ordinary hours of work.
 
 **Migration:**
 
