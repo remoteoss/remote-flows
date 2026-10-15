@@ -69,7 +69,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   COL: {
     // Colombia
-    contract_details: 1,
+    contract_details: 6,
   },
   CRI: {
     // Costa Rica
@@ -169,7 +169,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ISR: {
     // Israel
-    contract_details: 1,
+    contract_details: 8,
   },
   ITA: {
     // Italy
@@ -257,11 +257,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   NZL: {
     // New Zealand
-    contract_details: 2,
+    contract_details: 8,
   },
   PAK: {
     // Pakistan
-    contract_details: 2,
+    contract_details: 4,
   },
   PAN: {
     // Panama
@@ -285,7 +285,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   PRT: {
     // Portugal
-    contract_details: 3,
+    contract_details: 9,
   },
   PRY: {
     // Paraguay
