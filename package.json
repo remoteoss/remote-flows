@@ -1,6 +1,6 @@
 {
   "name": "@remoteoss/remote-flows",
-  "version": "1.63.0",
+  "version": "1.64.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/remoteoss/remote-flows.git"
@@ -161,7 +161,7 @@
     "lodash": "4.18.1",
     "msw": "3.0.2",
     "oxfmt": "0.72.0",
-    "oxlint": "1.83.0",
+    "oxlint": "1.87.0",
     "oxlint-tsgolint": "7.0.2003",
     "postcss-import": "17.0.0",
     "randexp": "0.5.3",
