@@ -42,9 +42,12 @@ describe('SelectField Component', () => {
   };
 
   // Helper function to render the component with a form context
-  const renderWithFormContext = (props: SelectFieldProps) => {
+  const renderWithFormContext = (
+    props: SelectFieldProps,
+    defaultValues?: Record<string, unknown>,
+  ) => {
     const TestComponent = () => {
-      const methods = useForm();
+      const methods = useForm({ defaultValues });
       return (
         <FormProvider {...methods}>
           <SelectField {...props} />
@@ -88,6 +91,46 @@ describe('SelectField Component', () => {
     fireEvent.click(option);
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not offer to clear a required select', () => {
+    renderWithFormContext(defaultProps);
+
+    fireEvent.click(screen.getByRole('combobox'));
+    fireEvent.click(screen.getByText('Option 1'));
+
+    expect(screen.queryByLabelText('Clear Test Field')).not.toBeInTheDocument();
+  });
+
+  it('clears an optional select back to empty', () => {
+    renderWithFormContext({
+      ...defaultProps,
+      required: false,
+      onChange: mockOnChange,
+    });
+
+    expect(screen.queryByLabelText('Clear Test Field')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('combobox'));
+    fireEvent.click(screen.getByText('Option 1'));
+    fireEvent.click(screen.getByLabelText('Clear Test Field'));
+
+    expect(screen.queryByLabelText('Clear Test Field')).not.toBeInTheDocument();
+    expect(mockOnChange).toHaveBeenLastCalledWith('');
+  });
+
+  it('clears an optional select that was prefilled from saved values', () => {
+    renderWithFormContext(
+      { ...defaultProps, required: false },
+      { testField: 'option2' },
+    );
+
+    expect(screen.getByRole('combobox')).toHaveTextContent('Option 2');
+
+    fireEvent.click(screen.getByLabelText('Clear Test Field'));
+
+    expect(screen.getByRole('combobox')).not.toHaveTextContent('Option 2');
+    expect(screen.queryByLabelText('Clear Test Field')).not.toBeInTheDocument();
   });
 
   it('renders custom select component when provided', () => {
