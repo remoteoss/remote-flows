@@ -163,6 +163,11 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'IRL',
   'SWE',
   'NLD',
+  'ZAF',
+  'AUS',
+  'MYS',
+  'DOM',
+  'MEX',
 ];
 
 /**

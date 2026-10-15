@@ -34,11 +34,6 @@ describe('getContractDetailsSchemaVersion', () => {
 });
 
 describe('usesJsfV1ContractDetails', () => {
-  it('should return true for France and Italy', () => {
-    expect(usesJsfV1ContractDetails('FRA')).toBe(true);
-    expect(usesJsfV1ContractDetails('ITA')).toBe(true);
-  });
-
   it.each([
     'CAN',
     'GBR',
@@ -50,6 +45,15 @@ describe('usesJsfV1ContractDetails', () => {
     'IRL',
     'SWE',
     'NLD',
+    'FRA',
+    'ITA',
+    'DEU',
+    'ESP',
+    'ZAF',
+    'AUS',
+    'MYS',
+    'DOM',
+    'MEX',
   ])('should return true for %s', (countryCode) => {
     expect(usesJsfV1ContractDetails(countryCode)).toBe(true);
   });
