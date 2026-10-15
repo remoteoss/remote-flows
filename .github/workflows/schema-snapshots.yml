@@ -9,7 +9,7 @@ on:
       - 'example/src/flows/Onboarding/jsonSchemaVersions.ts'
       - 'scripts/schema-snapshot.ts'
       - 'snapshots/**'
-      - 'scripts/schema-canary/behaviour.ts'
+      - 'scripts/schema-snapshot/**'
       - '.github/workflows/schema-snapshots.yml'
 
 concurrency:

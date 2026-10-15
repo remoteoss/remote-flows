@@ -22,14 +22,14 @@ import {
   baselinePath,
   previousBaselineVersion,
   removeOtherBaselines,
-} from './schema-canary/baselines';
+} from './schema-snapshot/baselines';
 import {
   diffFingerprints,
   fingerprintSchema,
   FingerprintChange,
   formatChanges,
   SchemaFingerprint,
-} from './schema-canary/behaviour';
+} from './schema-snapshot/behaviour';
 import { mapWithConcurrency } from './schema-canary/lib';
 import { resolvePinnedVersion } from './schema-canary/pinned-versions';
 import {
