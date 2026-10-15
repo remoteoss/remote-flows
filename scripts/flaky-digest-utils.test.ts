@@ -19,7 +19,7 @@ const report = (
 ): RunReport => ({
   runId,
   url: `https://example.test/runs/${runId}`,
-  branch: 'main',
+  workflow: 'ci-main.yml',
   createdAt,
   entries,
 });
@@ -42,11 +42,11 @@ describe('aggregate', () => {
     });
   });
 
-  it('ignores hard failures from branches other than main', () => {
+  it('ignores hard failures from the pr workflow, even when the head branch is main', () => {
     const result = aggregate([
       {
         ...report('1', '2026-10-10T00:00:00Z', [entry('failed')]),
-        branch: 'feat/x',
+        workflow: 'pr.yml',
       },
       report('2', '2026-10-11T00:00:00Z', [entry('failed')]),
     ]);

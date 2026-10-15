@@ -5,6 +5,7 @@ import path from 'node:path';
 
 import {
   aggregate,
+  MAIN_WORKFLOW,
   renderFlakyDigest,
   type RunReport,
 } from './flaky-digest-utils';
@@ -12,12 +13,11 @@ import type { FlakyEntry } from './flaky-reporter';
 
 const NO_ARTIFACT_MESSAGE = /no artifact matches/i;
 
-const WORKFLOWS = ['ci-main.yml', 'pr.yml'];
+const WORKFLOWS = [MAIN_WORKFLOW, 'pr.yml'];
 
 type RawRun = {
   databaseId: number;
   url: string;
-  headBranch: string;
   createdAt: string;
 };
 
@@ -38,7 +38,7 @@ function numberFlag(args: string[], name: string, fallback: number): number {
   return value;
 }
 
-function fetchReport(run: RawRun): RunReport | null {
+function fetchReport(run: RawRun, workflow: string): RunReport | null {
   const dir = mkdtempSync(path.join(tmpdir(), 'flaky-'));
   try {
     gh([
@@ -67,7 +67,7 @@ function fetchReport(run: RawRun): RunReport | null {
     return {
       runId: String(run.databaseId),
       url: run.url,
-      branch: run.headBranch,
+      workflow,
       createdAt: run.createdAt,
       entries,
     };
@@ -92,11 +92,11 @@ function main() {
         '--limit',
         String(limit),
         '--json',
-        'databaseId,url,headBranch,createdAt',
+        'databaseId,url,createdAt',
       ]),
     );
     for (const run of runs) {
-      const report = fetchReport(run);
+      const report = fetchReport(run, workflow);
       if (report) {
         reports.push(report);
       }

@@ -1,9 +1,11 @@
 import type { FlakyEntry } from './flaky-reporter';
 
+export const MAIN_WORKFLOW = 'ci-main.yml';
+
 export type RunReport = {
   runId: string;
   url: string;
-  branch: string;
+  workflow: string;
   createdAt: string;
   entries: FlakyEntry[];
 };
@@ -22,7 +24,7 @@ export function aggregate(reports: RunReport[]): FlakyTest[] {
   const byTest = new Map<string, FlakyTest>();
   for (const report of reports) {
     for (const entry of report.entries) {
-      if (entry.outcome === 'failed' && report.branch !== 'main') {
+      if (entry.outcome === 'failed' && report.workflow !== MAIN_WORKFLOW) {
         continue;
       }
       const key = `${entry.file}::${entry.name}`;
