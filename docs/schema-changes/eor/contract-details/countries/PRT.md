@@ -8,7 +8,7 @@ Schema versions for employee onboarding in Portugal.
 
 ## Contract Details
 
-### v9 - Current (inferred from the schema diff)
+### v9 - Current
 
 **What changed:**
 
@@ -26,7 +26,7 @@ Schema versions for employee onboarding in Portugal.
 />
 ```
 
-### v8 (inferred from the schema diff)
+### v8
 
 **What changed:**
 
@@ -44,7 +44,7 @@ Schema versions for employee onboarding in Portugal.
 />
 ```
 
-### v7 (inferred from the schema diff)
+### v7
 
 **What changed:**
 
@@ -63,7 +63,7 @@ Schema versions for employee onboarding in Portugal.
 />
 ```
 
-### v6 (inferred from the schema diff)
+### v6
 
 **What changed:**
 
@@ -82,7 +82,7 @@ Schema versions for employee onboarding in Portugal.
 />
 ```
 
-### v5 (inferred from the schema diff)
+### v5
 
 **What changed:**
 
@@ -100,7 +100,7 @@ Schema versions for employee onboarding in Portugal.
 />
 ```
 
-### v4 (inferred from the schema diff)
+### v4
 
 **What changed:**
 
