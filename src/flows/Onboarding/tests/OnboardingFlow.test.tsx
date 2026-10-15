@@ -340,7 +340,7 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Details/i);
 
-    const backButton = screen.getByText(/Back/i);
+    const backButton = await screen.findByText(/Back/i);
     expect(backButton).toBeInTheDocument();
 
     backButton.click();
@@ -524,7 +524,7 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Details/i);
 
-    const backButton = screen.getByText(/Back/i);
+    const backButton = await screen.findByText(/Back/i);
     expect(backButton).toBeInTheDocument();
 
     backButton.click();
