@@ -23,6 +23,7 @@
     "openapi-ts:local": "openapi-ts -f openapi-ts.config.local.ts && tsx scripts/cleanup-local-openapi.ts && npm run format",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
+    "ci:digest": "tsx scripts/ci-digest.ts",
     "coverage:extract": "tsx scripts/extract-coverage.ts",
     "prepare": "npm run build",
     "release": "tsx scripts/release.ts",
