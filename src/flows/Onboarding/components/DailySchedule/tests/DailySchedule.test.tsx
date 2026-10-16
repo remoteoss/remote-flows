@@ -10,7 +10,7 @@ import {
   DailyScheduleSaveResult,
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import { TestProviders } from '@/src/tests/testHelpers';
-import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 
