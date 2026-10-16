@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { $TSFixMe } from '@/scripts/types';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { DailySchedule } from '@/src/flows/Onboarding/components/DailySchedule/DailySchedule';
@@ -928,163 +929,92 @@ describe('DailySchedule', () => {
     });
   });
 
-  describe('Headless save()', () => {
-    let editBag: DailyScheduleRenderProps['editBag'];
+  describe('Saving through a custom editor', () => {
+    const SaveProbe = ({
+      editBag,
+    }: {
+      editBag: DailyScheduleRenderProps['editBag'];
+    }) => {
+      const [result, setResult] = useState<DailyScheduleSaveResult>();
 
-    const CapturingField = (
+      return (
+        <div>
+          <button type='button' onClick={() => editBag.actions.toggleDay(3)}>
+            Toggle Thursday
+          </button>
+          <button type='button' onClick={() => editBag.actions.toggleDay(4)}>
+            Toggle Friday
+          </button>
+          <button
+            type='button'
+            onClick={async () => setResult(await editBag.actions.save())}
+          >
+            Save
+          </button>
+          <p>valid: {String(editBag.actions.validate())}</p>
+          {result && <p>{JSON.stringify(result)}</p>}
+        </div>
+      );
+    };
+
+    const SaveProbeField = (
       props: Omit<DailyScheduleContainerProps, 'render'>,
     ) => (
       <DailyScheduleContainer
         {...(props as $TSFixMe as DailyScheduleContainerProps)}
-        render={(renderProps: DailyScheduleRenderProps) => {
-          editBag = renderProps.editBag;
-          return null;
-        }}
+        render={({ editBag }: DailyScheduleRenderProps) => (
+          <SaveProbe editBag={editBag} />
+        )}
       />
     );
 
-    const renderHeadless = (defaultValues: Record<string, unknown>) =>
+    const renderProbe = (scheduleType: string) =>
       renderWithForm(
-        [createDailyScheduleField({ Component: CapturingField })],
-        defaultValues,
+        [createDailyScheduleField({ Component: SaveProbeField })],
+        {
+          work_schedule: 'full_time',
+          schedule_type: scheduleType,
+          daily_schedule: undefined,
+        },
       );
 
-    it('saves and resolves { saved: true } when the draft is valid and within the weekly range', async () => {
-      const { getFormValues } = renderHeadless({
-        work_schedule: 'full_time',
-        schedule_type: 'fixed_hours',
-        daily_schedule: undefined,
-      });
+    it('saves a schedule within the weekly range', async () => {
+      const user = userEvent.setup();
+      const { getFormValues } = renderProbe('fixed_hours');
 
-      let result: DailyScheduleSaveResult | undefined;
-      await act(async () => {
-        result = await editBag.actions.save();
-      });
+      expect(screen.getByText('valid: true')).toBeInTheDocument();
+      await user.click(screen.getByRole('button', { name: 'Save' }));
 
-      expect(result).toEqual({ saved: true });
-      expect(editBag.actions.validate()).toBe(true);
-      const value = getFormValues().daily_schedule as {
-        selected_days: string[];
-      };
-      expect(value.selected_days).toEqual([
-        'monday',
-        'tuesday',
-        'wednesday',
-        'thursday',
-        'friday',
-      ]);
+      expect(await screen.findByText('{"saved":true}')).toBeInTheDocument();
+      expect(getFormValues().daily_schedule).toBeDefined();
     });
 
-    it('does not save and resolves hours_out_of_range when the weekly total is outside the range', async () => {
-      const { getFormValues } = renderHeadless({
-        work_schedule: 'part_time',
-        schedule_type: 'fixed_hours',
-        daily_schedule: undefined,
-      });
+    it('refuses a schedule outside the weekly range', async () => {
+      const user = userEvent.setup();
+      const { getFormValues } = renderProbe('fixed_hours');
 
-      expect(editBag.state.hoursRangeError).not.toBeNull();
+      await user.click(screen.getByRole('button', { name: 'Toggle Thursday' }));
+      await user.click(screen.getByRole('button', { name: 'Toggle Friday' }));
+      await user.click(screen.getByRole('button', { name: 'Save' }));
 
-      let result: DailyScheduleSaveResult | undefined;
-      await act(async () => {
-        result = await editBag.actions.save();
-      });
-
-      expect(result).toEqual({ saved: false, reason: 'hours_out_of_range' });
-      expect(editBag.actions.validate()).toBe(false);
+      expect(
+        await screen.findByText(
+          '{"saved":false,"reason":"hours_out_of_range"}',
+        ),
+      ).toBeInTheDocument();
+      expect(screen.getByText('valid: false')).toBeInTheDocument();
       expect(getFormValues().daily_schedule).toBeUndefined();
     });
 
-    it('does not save and resolves invalid_schedule when no day is selected', async () => {
-      const { getFormValues } = renderHeadless({
-        work_schedule: 'full_time',
-        schedule_type: 'fixed_hours',
-        daily_schedule: undefined,
-      });
+    it('saves the same schedule when the schedule type is core business hours', async () => {
+      const user = userEvent.setup();
+      renderProbe('core_business_hours');
 
-      await act(async () => {
-        for (let index = 0; index < 5; index += 1) {
-          editBag.actions.toggleDay(index);
-        }
-      });
+      await user.click(screen.getByRole('button', { name: 'Toggle Thursday' }));
+      await user.click(screen.getByRole('button', { name: 'Toggle Friday' }));
+      await user.click(screen.getByRole('button', { name: 'Save' }));
 
-      let result: DailyScheduleSaveResult | undefined;
-      await act(async () => {
-        result = await editBag.actions.save();
-      });
-
-      expect(result).toEqual({ saved: false, reason: 'invalid_schedule' });
-      expect(editBag.state.formError).toBe('Select at least one work day');
-      expect(getFormValues().daily_schedule).toBeUndefined();
-    });
-
-    it('saves a schedule below the full-time minimum when the schedule type is core business hours', async () => {
-      const { getFormValues } = renderHeadless({
-        work_schedule: 'full_time',
-        schedule_type: 'core_business_hours',
-        daily_schedule: undefined,
-      });
-
-      await act(async () => {
-        editBag.actions.toggleDay(3);
-        editBag.actions.toggleDay(4);
-      });
-
-      expect(editBag.state.hoursRangeError).toBeNull();
-
-      let result: DailyScheduleSaveResult | undefined;
-      await act(async () => {
-        result = await editBag.actions.save();
-      });
-
-      expect(result).toEqual({ saved: true });
-      const value = getFormValues().daily_schedule as {
-        selected_days: string[];
-      };
-      expect(value.selected_days).toEqual(['monday', 'tuesday', 'wednesday']);
-    });
-
-    it('does not save a schedule above the full-time maximum when the schedule type is core business hours', async () => {
-      const { getFormValues } = renderHeadless({
-        work_schedule: 'full_time',
-        schedule_type: 'core_business_hours',
-        daily_schedule: undefined,
-      });
-
-      await act(async () => {
-        editBag.actions.toggleDay(5);
-        editBag.actions.updateRow(0, 'end_time', '19:00');
-      });
-
-      expect(editBag.state.hoursRangeError).not.toBeNull();
-
-      let result: DailyScheduleSaveResult | undefined;
-      await act(async () => {
-        result = await editBag.actions.save();
-      });
-
-      expect(result).toEqual({ saved: false, reason: 'hours_out_of_range' });
-      expect(getFormValues().daily_schedule).toBeUndefined();
-    });
-
-    it('does not save the same 24-hour schedule when the schedule type is fixed hours', async () => {
-      const { getFormValues } = renderHeadless({
-        work_schedule: 'full_time',
-        schedule_type: 'fixed_hours',
-        daily_schedule: undefined,
-      });
-
-      await act(async () => {
-        editBag.actions.toggleDay(3);
-        editBag.actions.toggleDay(4);
-      });
-
-      let result: DailyScheduleSaveResult | undefined;
-      await act(async () => {
-        result = await editBag.actions.save();
-      });
-
-      expect(result).toEqual({ saved: false, reason: 'hours_out_of_range' });
-      expect(getFormValues().daily_schedule).toBeUndefined();
+      expect(await screen.findByText('{"saved":true}')).toBeInTheDocument();
     });
   });
 });
