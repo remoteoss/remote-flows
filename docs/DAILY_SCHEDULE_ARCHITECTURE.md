@@ -111,13 +111,24 @@ type DailyScheduleEditState = {
 type DailyScheduleEditActions = {
   updateRow: (index, field, value) => void;
   toggleDay: (index) => void;
-  save: () => Promise<void>;
+  save: () => Promise<DailyScheduleSaveResult>;
   reset: () => void;
   close: () => void;
   validate: () => boolean;
   handleBlur: () => void;
 };
 ```
+
+```ts
+type DailyScheduleSaveResult =
+  | { saved: true }
+  | { saved: false; reason: 'invalid_schedule' | 'hours_out_of_range' };
+```
+
+`save` resolves with a `DailyScheduleSaveResult` instead of `void`, so a custom UI can tell
+whether the draft was committed and, if not, why (`invalid_schedule` for field or form
+errors, `hours_out_of_range` when the weekly total falls outside the allowed range) — e.g.
+to keep a modal open on `saved: false`.
 
 `rows` are plain objects (`day`, `checked`, `start_time`, `end_time`,
 `break_duration_minutes`, `hours`) — no RHF field arrays, no refs, no subscriptions. Actions
