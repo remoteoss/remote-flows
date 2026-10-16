@@ -146,6 +146,27 @@ describe('DailySchedule', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('disables Save while the weekly total is outside the allowed range', async () => {
+    const user = userEvent.setup();
+    renderWithForm([createDailyScheduleField()], {
+      work_schedule: 'part_time',
+      daily_schedule: undefined,
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+    const dialog = screen.getByRole('dialog');
+    const save = within(dialog).getByRole('button', { name: 'Save schedule' });
+
+    expect(save).toBeDisabled();
+
+    await user.click(
+      within(dialog).getByRole('checkbox', { name: 'Thursday' }),
+    );
+    await user.click(within(dialog).getByRole('checkbox', { name: 'Friday' }));
+
+    expect(save).toBeEnabled();
+  });
+
   it('writes the whole schedule back in a single setValue call on save', async () => {
     const user = userEvent.setup();
     const { getFormValues } = renderWithForm([createDailyScheduleField()], {
