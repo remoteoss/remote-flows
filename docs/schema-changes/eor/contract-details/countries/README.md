@@ -85,7 +85,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Pakistan             | PAK  | v4               | October 2026   |
 | Philippines          | PHL  | v6               | October 2026   |
 | Poland               | POL  | v5               | October 2026   |
-| Portugal             | PRT  | v3               | March 2026     |
+| Portugal             | PRT  | v9               | March 2026     |
 | Saudi Arabia         | SAU  | v2               | March 2026     |
 | Singapore            | SGP  | v2               | March 2026     |
 | South Africa         | ZAF  | v5               | October 2026   |
