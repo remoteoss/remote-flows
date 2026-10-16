@@ -16,7 +16,8 @@ This guide is for internal developers working on the `@remoteoss/remote-flows` p
 ### Prerequisites
 
 - Node.js 24.15
-- npm
+- pnpm, through Corepack (`corepack enable`). The root `package.json` pins the version in `packageManager`.
+- npm, for the example app (`example/` still uses npm)
 
 ### Setup
 
@@ -30,22 +31,20 @@ cd remote-flows
 2. Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
-3. Link the package for local development:
+3. Build the package in watch mode:
 
 ```bash
-npm link
-npm run dev
+pnpm run dev
 ```
 
-4. Set up the example app:
+4. Set up the example app. It depends on the package through `file:..`, so `npm install` links your local checkout:
 
 ```bash
 cd example
 npm install
-npm link @remoteoss/remote-flows
 ```
 
 5. Create `.env` file in the example directory:
@@ -70,15 +69,16 @@ The example app will be available at `http://localhost:3001`.
 
 ### Available Scripts
 
-- `npm run dev` - Build the package in watch mode
-- `npm run build` - Build the package for production
-- `npm test` - Run tests
-- `npm run type-check` - Run TypeScript type checking
-- `npm run format` - Format code with Prettier
-- `npm run dump:schema -- --country=XXX [--form=contract_details] [--version=N|latest]` - Dump a country schema from the sandbox gateway to `.schema-dumps/`
-- `npm run size` - Analyze bundle size
-- `npm run size:check` - Check if bundle size is within limits
-- `npm run size:badge` - Generate badge and history data
+- `pnpm run dev` - Build the package in watch mode
+- `pnpm run build` - Build the package for production
+- `pnpm run test` - Run tests
+- `pnpm run type-check` - Run TypeScript type checking
+- `pnpm run format` - Format code with Prettier
+- `pnpm run ci` - Run the full local CI: build, format check, exports check, lint, type check and tests. Use `pnpm run ci`: `pnpm ci` is pnpm's own clean install and does not run this script
+- `pnpm run dump:schema --country=XXX [--form=contract_details] [--version=N|latest]` - Dump a country schema from the sandbox gateway to `.schema-dumps/`
+- `pnpm run size` - Analyze bundle size
+- `pnpm run size:check` - Check if bundle size is within limits
+- `pnpm run size:badge` - Generate badge and history data
 
 ### Code Structure
 
@@ -99,13 +99,13 @@ remote-flows/
 Run the test suite:
 
 ```bash
-npm test
+pnpm run test
 ```
 
 Run type checking:
 
 ```bash
-npm run type-check
+pnpm run type-check
 ```
 
 ## Bundle Size Management
@@ -134,7 +134,7 @@ Size limits are defined in `.sizelimit.json`:
 To analyze the current bundle size:
 
 ```bash
-npm run size
+pnpm run size
 ```
 
 This will output:
@@ -150,7 +150,7 @@ This will output:
 To verify the bundle is within limits:
 
 ```bash
-npm run size:check
+pnpm run size:check
 ```
 
 This command will fail if any limits are exceeded.
@@ -160,7 +160,7 @@ This command will fail if any limits are exceeded.
 The comparison script compares two bundle analyses:
 
 ```bash
-npx tsx scripts/compare-sizes.ts out/base-bundle.json out/current-bundle.json
+pnpm exec tsx scripts/compare-sizes.ts out/base-bundle.json out/current-bundle.json
 ```
 
 This generates a detailed markdown report showing:
@@ -241,9 +241,9 @@ The badge workflow (`.github/workflows/update-badge.yml`):
 First, generate the bundle analysis and badge data:
 
 ```bash
-npm run build
-npm run size -- --output out/bundle-analysis.json
-npm run size:badge out/bundle-analysis.json
+pnpm run build
+pnpm run size --output out/bundle-analysis.json
+pnpm run size:badge out/bundle-analysis.json
 ```
 
 This creates `out/size-data.json` with the shields.io endpoint format:
@@ -286,7 +286,7 @@ For regular releases with new features and fixes:
 
 1. Install gh CLI: `brew install gh`
 2. Authenticate: `gh auth login`
-3. Run release script: `npm run release`
+3. Run release script: `pnpm run release`
 4. Review and merge the PR
 5. GitHub will automatically publish to npm
 
@@ -326,8 +326,10 @@ git commit -m "fix: description of the hotfix"
 Run the hotfix release script:
 
 ```bash
-npm run release:fix
+pnpm run release:fix
 ```
+
+On a tag from before the move to pnpm (no `pnpm-lock.yaml`), run `npm install` and `npm run release:fix` instead. The release workflow picks npm or pnpm from the lockfile of the release branch.
 
 This script will:
 
@@ -384,8 +386,8 @@ Follow semantic versioning:
 
 ### Code Quality
 
-- Run `npm run format` before committing
-- Ensure `npm run type-check` passes
+- Run `pnpm run format` before committing
+- Ensure `pnpm run type-check` passes
 - Write tests for new features
 - Update flow-specific READMEs when changing APIs
 
@@ -404,20 +406,20 @@ When modifying a flow, update its README accordingly.
 
 ### Bundle size check failing in CI
 
-1. Run `npm run size:check` locally to see violations
-2. Run `npm run size` to see detailed breakdown
+1. Run `pnpm run size:check` locally to see violations
+2. Run `pnpm run size` to see detailed breakdown
 3. Identify large files or new dependencies
 4. Optimize or split code as needed
 5. If the increase is justified, update limits in `.sizelimit.json`
 
 ### Example app not updating
 
-1. Ensure you've linked the package: `npm link @remoteoss/remote-flows`
+1. Ensure `example/node_modules/@remoteoss/remote-flows` links to the repo root (run `npm install` in `example/`)
 2. Restart both the package dev server and example dev server
 3. Check for build errors in both terminals
 
 ### Type errors in development
 
-1. Run `npm run type-check` to see all errors
+1. Run `pnpm run type-check` to see all errors
 2. Ensure dependencies are up to date
 3. Check for TypeScript version compatibility
