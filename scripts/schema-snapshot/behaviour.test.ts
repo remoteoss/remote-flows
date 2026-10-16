@@ -138,7 +138,7 @@ const buildNestedSchema = (required: string[]): Schema => ({
     details: {
       title: 'Details',
       type: 'object',
-      properties: { kind: yesNo('Kind'), extra: false },
+      properties: { kind: yesNo('Kind'), extra: text('Extra') },
       required: ['kind'],
       allOf: [
         {
@@ -146,7 +146,8 @@ const buildNestedSchema = (required: string[]): Schema => ({
             properties: { kind: { const: 'yes' } },
             required: ['kind'],
           },
-          then: { properties: { extra: text('Extra') }, required },
+          then: { required },
+          else: { properties: { extra: false } },
         },
       ],
       'x-jsf-presentation': { inputType: 'fieldset' },
