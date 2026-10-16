@@ -6,6 +6,7 @@ import { germanyDailyScheduleMetadata } from '@/src/flows/Onboarding/components/
 import {
   DailyScheduleContainerProps,
   DailyScheduleRenderProps,
+  DailyScheduleSaveResult,
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import { TestProviders } from '@/src/tests/testHelpers';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
@@ -955,7 +956,7 @@ describe('DailySchedule', () => {
         daily_schedule: undefined,
       });
 
-      let result: Awaited<ReturnType<typeof editBag.actions.save>> | undefined;
+      let result: DailyScheduleSaveResult | undefined;
       await act(async () => {
         result = await editBag.actions.save();
       });
@@ -983,7 +984,7 @@ describe('DailySchedule', () => {
 
       expect(editBag.state.hoursRangeError).not.toBeNull();
 
-      let result: Awaited<ReturnType<typeof editBag.actions.save>> | undefined;
+      let result: DailyScheduleSaveResult | undefined;
       await act(async () => {
         result = await editBag.actions.save();
       });
@@ -1006,7 +1007,7 @@ describe('DailySchedule', () => {
         }
       });
 
-      let result: Awaited<ReturnType<typeof editBag.actions.save>> | undefined;
+      let result: DailyScheduleSaveResult | undefined;
       await act(async () => {
         result = await editBag.actions.save();
       });
@@ -1030,7 +1031,7 @@ describe('DailySchedule', () => {
 
       expect(editBag.state.hoursRangeError).toBeNull();
 
-      let result: Awaited<ReturnType<typeof editBag.actions.save>> | undefined;
+      let result: DailyScheduleSaveResult | undefined;
       await act(async () => {
         result = await editBag.actions.save();
       });
@@ -1040,6 +1041,29 @@ describe('DailySchedule', () => {
         selected_days: string[];
       };
       expect(value.selected_days).toEqual(['monday', 'tuesday', 'wednesday']);
+    });
+
+    it('does not save a schedule above the full-time maximum when the schedule type is core business hours', async () => {
+      const { getFormValues } = renderHeadless({
+        work_schedule: 'full_time',
+        schedule_type: 'core_business_hours',
+        daily_schedule: undefined,
+      });
+
+      await act(async () => {
+        editBag.actions.toggleDay(5);
+        editBag.actions.updateRow(0, 'end_time', '19:00');
+      });
+
+      expect(editBag.state.hoursRangeError).not.toBeNull();
+
+      let result: DailyScheduleSaveResult | undefined;
+      await act(async () => {
+        result = await editBag.actions.save();
+      });
+
+      expect(result).toEqual({ saved: false, reason: 'hours_out_of_range' });
+      expect(getFormValues().daily_schedule).toBeUndefined();
     });
 
     it('does not save the same 24-hour schedule when the schedule type is fixed hours', async () => {
@@ -1054,7 +1078,7 @@ describe('DailySchedule', () => {
         editBag.actions.toggleDay(4);
       });
 
-      let result: Awaited<ReturnType<typeof editBag.actions.save>> | undefined;
+      let result: DailyScheduleSaveResult | undefined;
       await act(async () => {
         result = await editBag.actions.save();
       });
