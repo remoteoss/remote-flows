@@ -120,7 +120,7 @@ export type DailyScheduleEditState = {
  * These are stable functions that don't expose form library details.
  */
 export type DailyScheduleEditActions = {
-  /** Update a specific field in a specific row */
+  /** Update a specific field in a specific row. Times are stored as `HH:mm` (seconds are dropped) and a numeric break as a string. */
   updateRow: (
     index: number,
     field: keyof Omit<DailyScheduleEditFormRow, 'hours'>,

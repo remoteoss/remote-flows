@@ -22,7 +22,7 @@ export const TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 const TIME_WITH_SECONDS_PATTERN = /^(\d{2}:\d{2}):\d{2}(?:\.\d+)?$/;
 
-/** Trims a time and drops any seconds a native time input adds (`09:00:00` -> `09:00`); other input is returned as typed. */
+/** Trims a time and drops its seconds (`09:00:30` -> `09:00`); anything that isn't a time with seconds is only trimmed. */
 export function normalizeTimeInput(value: string): string {
   const trimmed = value.trim();
   const match = TIME_WITH_SECONDS_PATTERN.exec(trimmed);
