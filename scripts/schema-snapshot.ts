@@ -29,7 +29,7 @@ import {
   formatChanges,
   SchemaFingerprint,
 } from './schema-snapshot/behaviour';
-import { mapWithConcurrency } from './schema-canary/lib';
+import { mapWithConcurrency } from './map-with-concurrency';
 import { resolvePinnedVersion } from './schema-canary/pinned-versions';
 import {
   archiveEmployment,
