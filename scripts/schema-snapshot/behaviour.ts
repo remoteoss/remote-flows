@@ -338,6 +338,11 @@ export function diffFingerprints(
     for (const name of difference(delta.addedVisible, after.addedVisible)) {
       add('breaking', `choosing \`${scenario}\` no longer shows \`${name}\``);
     }
+    for (const name of difference(after.removedVisible, delta.removedVisible)) {
+      if (previous.base.visible.includes(name)) {
+        add('breaking', `choosing \`${scenario}\` now hides \`${name}\``);
+      }
+    }
   }
   for (const [scenario, delta] of Object.entries(next.scenarios)) {
     const { driver, value } = splitScenario(scenario);
@@ -349,6 +354,11 @@ export function diffFingerprints(
     }
     for (const name of delta.addedRequired) {
       add('breaking', `choosing \`${scenario}\` now requires \`${name}\``);
+    }
+    for (const name of delta.removedVisible) {
+      if (previous.base.visible.includes(name)) {
+        add('breaking', `choosing \`${scenario}\` now hides \`${name}\``);
+      }
     }
   }
 

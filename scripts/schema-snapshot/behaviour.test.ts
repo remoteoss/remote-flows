@@ -72,6 +72,89 @@ const buildSchema = ({
   'x-jsf-order': ['non_compete', 'non_compete_months', 'non_compete_notes'],
 });
 
+const buildHidingSchema = (hides: boolean): Schema => ({
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    non_compete: yesNo('Non-compete'),
+    reference: text('Reference'),
+  },
+  required: ['non_compete'],
+  allOf: [
+    {
+      if: {
+        properties: { non_compete: { const: 'yes' } },
+        required: ['non_compete'],
+      },
+      then: { properties: { reference: hides ? false : text('Reference') } },
+    },
+  ],
+  'x-jsf-order': ['non_compete', 'reference'],
+});
+
+const withRule = (
+  schema: Schema,
+  {
+    driver,
+    driverField,
+    driverValue = 'yes',
+    shows,
+    required,
+  }: {
+    driver: string;
+    driverField: Schema;
+    driverValue?: unknown;
+    shows: Schema;
+    required: string[];
+  },
+): Schema => ({
+  ...schema,
+  properties: {
+    ...(schema.properties as Schema),
+    [driver]: driverField,
+    ...shows,
+  },
+  allOf: [
+    ...(schema.allOf as Schema[]),
+    {
+      if: {
+        properties: { [driver]: { const: driverValue } },
+        required: [driver],
+      },
+      then: { properties: shows, required },
+      else: {
+        properties: Object.fromEntries(
+          Object.keys(shows).map((name) => [name, false]),
+        ),
+      },
+    },
+  ],
+});
+
+const buildNestedSchema = (required: string[]): Schema => ({
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    details: {
+      title: 'Details',
+      type: 'object',
+      properties: { kind: yesNo('Kind'), extra: false },
+      required: ['kind'],
+      allOf: [
+        {
+          if: {
+            properties: { kind: { const: 'yes' } },
+            required: ['kind'],
+          },
+          then: { properties: { extra: text('Extra') }, required },
+        },
+      ],
+      'x-jsf-presentation': { inputType: 'fieldset' },
+    },
+  },
+  required: ['details'],
+});
+
 describe.each(['buildOnce', 'rebuild'] as const)(
   'schema behaviour fingerprint with %s',
   (strategy) => {
@@ -271,6 +354,187 @@ describe.each(['buildOnce', 'rebuild'] as const)(
           severity: 'breaking',
           message:
             'choosing `non_compete=yes` no longer shows `non_compete_notes`',
+        },
+      ]);
+    });
+
+    it('flags a choice that starts hiding a field that was visible', async () => {
+      const before = await fingerprint(buildHidingSchema(false));
+      const after = await fingerprint(buildHidingSchema(true));
+
+      expect(diffFingerprints(before, after)).toEqual([
+        {
+          severity: 'breaking',
+          message: 'choosing `non_compete=yes` now hides `reference`',
+        },
+      ]);
+    });
+
+    it('treats a choice that stops hiding a field as informational', async () => {
+      const before = await fingerprint(buildHidingSchema(true));
+      const after = await fingerprint(buildHidingSchema(false));
+
+      expect(diffFingerprints(before, after)).toEqual([
+        {
+          severity: 'info',
+          message: 'choosing `non_compete=yes` no longer changes any field',
+        },
+      ]);
+    });
+
+    it('treats a new allowed value as informational', async () => {
+      const before = await fingerprint(buildSchema());
+      const after = await fingerprint(
+        buildSchema({ choices: ['yes', 'no', 'maybe'] }),
+      );
+
+      expect(diffFingerprints(before, after)).toEqual([
+        {
+          severity: 'info',
+          message: '`non_compete` accepts a new value "maybe"',
+        },
+      ]);
+    });
+
+    it('treats a loosened length limit as informational', async () => {
+      const before = await fingerprint(buildSchema({ maxLength: 10 }));
+      const after = await fingerprint(buildSchema({ maxLength: 20 }));
+
+      expect(diffFingerprints(before, after)).toEqual([
+        {
+          severity: 'info',
+          message: '`reference` maxLength changed from 10 to 20',
+        },
+      ]);
+    });
+
+    it('flags a changed pattern', async () => {
+      const withPattern = (pattern: string) =>
+        buildSchema({
+          extraProperties: { reference: text('Reference', { pattern }) },
+        });
+      const before = await fingerprint(withPattern('^A'));
+      const after = await fingerprint(withPattern('^B'));
+
+      expect(diffFingerprints(before, after)).toEqual([
+        {
+          severity: 'breaking',
+          message: '`reference` pattern changed from ^A to ^B',
+        },
+      ]);
+    });
+
+    it('survives a JSON round trip when a limit is not a finite number', async () => {
+      const result = await fingerprint(
+        buildSchema({
+          extraProperties: {
+            reference: text('Reference', { maxLength: Number.NaN }),
+          },
+        }),
+      );
+      const stored = JSON.parse(JSON.stringify(result));
+
+      expect(diffFingerprints(stored, result)).toEqual([]);
+    });
+
+    it('does not report a requirement from a newly added choice field', async () => {
+      const before = await fingerprint(buildSchema());
+      const after = await fingerprint(
+        withRule(buildSchema(), {
+          driver: 'visa_support',
+          driverField: yesNo('Visa support'),
+          shows: { visa_notes: text('Visa notes') },
+          required: ['visa_notes'],
+        }),
+      );
+
+      expect(diffFingerprints(before, after)).toEqual([
+        { severity: 'info', message: '`visa_support` is a new optional field' },
+      ]);
+    });
+
+    it('records a select choice and flags what it now requires', async () => {
+      const select = (title: string) => ({
+        title,
+        type: 'string',
+        oneOf: ['a', 'b'].map((c) => ({ const: c, title: c })),
+        'x-jsf-presentation': { inputType: 'select' },
+      });
+      const build = (required: string[]) =>
+        withRule(buildSchema(), {
+          driver: 'plan',
+          driverField: select('Plan'),
+          driverValue: 'a',
+          shows: { plan_notes: text('Plan notes') },
+          required,
+        });
+      const before = await fingerprint(build([]));
+      const after = await fingerprint(build(['plan_notes']));
+
+      expect(before.scenarios['plan=a']?.addedVisible).toEqual(['plan_notes']);
+      expect(diffFingerprints(before, after)).toEqual([
+        {
+          severity: 'breaking',
+          message: 'choosing `plan=a` now requires `plan_notes`',
+        },
+      ]);
+    });
+
+    it('records a checkbox as a single checked choice', async () => {
+      const checkbox = {
+        title: 'Agreed',
+        type: 'boolean',
+        'x-jsf-presentation': { inputType: 'checkbox' },
+      };
+      const result = await fingerprint(
+        withRule(buildSchema(), {
+          driver: 'agreed',
+          driverField: checkbox,
+          driverValue: true,
+          shows: { agreed_notes: text('Agreed notes') },
+          required: [],
+        }),
+      );
+
+      expect(Object.keys(result.scenarios)).toContain('agreed=true');
+      expect(result.scenarios['agreed=true'].addedVisible).toEqual([
+        'agreed_notes',
+      ]);
+    });
+
+    it('does not try choices when a field has too many options', async () => {
+      const many = Array.from({ length: 9 }, (_, i) => `v${i}`);
+      const result = await fingerprint(
+        withRule(buildSchema(), {
+          driver: 'plan',
+          driverField: yesNo('Plan', many),
+          driverValue: 'v0',
+          shows: { plan_notes: text('Plan notes') },
+          required: [],
+        }),
+      );
+
+      expect(
+        Object.keys(result.scenarios).filter((key) => key.startsWith('plan=')),
+      ).toEqual([]);
+    });
+
+    it('addresses fields inside a fieldset by their full path', async () => {
+      const build = (required: string[]) => buildNestedSchema(required);
+      const before = await fingerprint(build([]));
+      const after = await fingerprint(build(['extra']));
+
+      expect(before.base.visible).toEqual(['details.kind']);
+      expect(before.scenarios['details.kind=yes']).toEqual({
+        addedVisible: ['details.extra'],
+        removedVisible: [],
+        addedRequired: [],
+        removedRequired: [],
+      });
+      expect(diffFingerprints(before, after)).toEqual([
+        {
+          severity: 'breaking',
+          message: 'choosing `details.kind=yes` now requires `details.extra`',
         },
       ]);
     });
