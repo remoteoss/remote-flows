@@ -8,7 +8,7 @@
 
   "npmrc": "optional=true\ninclude=optional\nallow-remote=all",
 
-  "postUpdateOptions": ["npmDedupe"],
+  "postUpdateOptions": ["npmDedupe", "pnpmDedupe"],
 
   "ignoreScripts": true,
 

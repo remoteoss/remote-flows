@@ -7,7 +7,7 @@ const BASE_REF = 'HEAD^1';
 // Keep in sync with `pull_request.paths` in .github/workflows/schema-canary.yml.
 // Files outside this list (docs, e2e, example app) cannot change canary results.
 const OTHER_INPUTS = [
-  'package-lock.json',
+  'pnpm-lock.yaml',
   'src/common/createHeadlessForm.tsx',
   'src/common/headlessForm.ts',
   'src/components/form/utils.ts',
