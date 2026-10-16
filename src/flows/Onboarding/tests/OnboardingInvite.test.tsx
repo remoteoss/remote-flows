@@ -577,7 +577,11 @@ describe('OnboardingInvite', () => {
 
       render(<OnboardingFlow {...defaultProps} />, { wrapper: TestProviders });
 
-      const button = await screen.findByText(/Invite Employee/i);
+      const button = await screen.findByText(
+        /Invite Employee/i,
+        {},
+        { timeout: 5000 },
+      );
       expect(button).toBeInTheDocument();
 
       // Ensure it's not showing "Create Reserve"

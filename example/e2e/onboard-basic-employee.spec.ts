@@ -96,6 +96,10 @@ test.describe('Onboard basic employee', () => {
     await fillOnboardingBenefitsStepDynamically(page, benefitsSchemaPromise);
 
     stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Preview Employment Agreement');
+    await page.click('.submit-button');
+
+    stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Review');
     await page.click('.submit-button');
   });
