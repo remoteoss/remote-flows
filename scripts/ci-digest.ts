@@ -59,7 +59,16 @@ function branchChecks(branch: string): Checks {
   const headSha = runs[0].headSha;
   const failed: RawCheck[] = [];
   let passing = 0;
-  for (const run of runs.filter((candidate) => candidate.headSha === headSha)) {
+  const latestRunPerWorkflow = new Map<string, (typeof runs)[number]>();
+  for (const run of runs) {
+    if (
+      run.headSha === headSha &&
+      !latestRunPerWorkflow.has(run.workflowName)
+    ) {
+      latestRunPerWorkflow.set(run.workflowName, run);
+    }
+  }
+  for (const run of latestRunPerWorkflow.values()) {
     const { jobs } = JSON.parse(
       gh(['run', 'view', String(run.databaseId), '--json', 'jobs']),
     );
@@ -99,6 +108,18 @@ function currentBranch(): string {
   }).trim();
 }
 
+function prChecksOrBranch(): Checks {
+  let prNumber: string;
+  try {
+    prNumber = JSON.parse(
+      gh(['pr', 'view', '--json', 'number']),
+    ).number.toString();
+  } catch {
+    return branchChecks(currentBranch());
+  }
+  return prChecks(prNumber);
+}
+
 function main() {
   const args = process.argv.slice(2);
   const maxLinesFlag = args.find((arg) => arg.startsWith('--max-lines='));
@@ -114,17 +135,7 @@ function main() {
     ? branchChecks(branchFlag.split('=')[1])
     : prArg
       ? prChecks(prArg)
-      : (() => {
-          try {
-            return prChecks(
-              JSON.parse(
-                gh(['pr', 'view', '--json', 'number']),
-              ).number.toString(),
-            );
-          } catch {
-            return branchChecks(currentBranch());
-          }
-        })();
+      : prChecksOrBranch();
 
   const failures = failed.map((rawCheck) => {
     const check: CheckRun = { ...rawCheck, ...parseCheckLink(rawCheck.link) };
