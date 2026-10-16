@@ -4,11 +4,32 @@ Schema versions for employee onboarding in the Netherlands.
 
 ## Current Version
 
-**Contract Details:** v6
+**Contract Details:** v7
 
 ## Contract Details
 
-### v6 - Current
+### v7 - Current
+
+**What changed:**
+
+- Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `NLD`) to inspect field-level diffs between your current pin and v7. Prefer jumping straight to v7 when upgrading.
+- Probation can no longer be set when the employee has a recognized seniority date (`has_seniority_date: "yes"`), so the probation length field is not available for those employments. Flag-gated, and employments created before the cutoff date are unaffected — no action required for existing contracts.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      NLD: { contract_details: 7 },
+    },
+  }}
+/>
+```
+
+---
+
+### v6
 
 **What changed:**
 
