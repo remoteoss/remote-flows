@@ -37,7 +37,7 @@ const FLAKE_SIGNATURES = [
 ];
 
 const PLAYWRIGHT_FAILURE_PATTERN =
-  /✘\s+\d+\s+(\[[^\]]+\]\s+›\s+.+?)(?:\s+\(retry #\d+\))?(?:\s+\([\d.]+m?s\))?$/;
+  /✘\s+\d+\s+(\[[^\]]+\]\s+›\s+.+?)(?:\s+\(retry #\d+\))?(?:\s+\([\d.]+(?:ms|s|m)\))?$/;
 
 export function extractPlaywrightFailures(log: string): string[] {
   const specs = new Set<string>();
@@ -57,7 +57,9 @@ export function jobsToChecks(
   jobs: RunJob[],
 ): { failed: Pick<CheckRun, 'name' | 'workflow' | 'link'>[]; passing: number } {
   const failed = jobs
-    .filter((job) => job.conclusion === 'failure')
+    .filter(
+      (job) => job.conclusion === 'failure' || job.conclusion === 'timed_out',
+    )
     .map((job) => ({ name: job.name, workflow, link: job.url }));
   return { failed, passing: jobs.length - failed.length };
 }

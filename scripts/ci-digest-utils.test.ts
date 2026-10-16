@@ -235,6 +235,17 @@ describe('extractPlaywrightFailures', () => {
     ]);
   });
 
+  it('strips minute-formatted timings so timed-out specs dedupe across retries', () => {
+    const log = [
+      'Run Playwright tests\t2026-10-16T09:51:47.0Z   ✘   9 [chromium] › e2e/a.spec.ts:22:7 › A › fills (1.0m)',
+      'Run Playwright tests\t2026-10-16T09:52:47.9Z   ✘  12 [chromium] › e2e/a.spec.ts:22:7 › A › fills (retry #1) (1.0m)',
+      'Run Playwright tests\t2026-10-16T09:53:47.9Z   ✘  15 [chromium] › e2e/a.spec.ts:22:7 › A › fills (retry #2) (438ms)',
+    ].join('\n');
+    expect(extractPlaywrightFailures(log)).toEqual([
+      '[chromium] › e2e/a.spec.ts:22:7 › A › fills',
+    ]);
+  });
+
   it('returns an empty list when no spec failed', () => {
     expect(extractPlaywrightFailures('all good')).toEqual([]);
   });
@@ -281,5 +292,19 @@ describe('renderDigest failing specs', () => {
     expect(output).toContain(
       'Failing specs (2):\n- [chromium] › a\n- [chromium] › b\n```',
     );
+  });
+});
+
+describe('jobsToChecks timeouts', () => {
+  it('treats timed_out jobs as failed', () => {
+    expect(
+      jobsToChecks('Nightly', [
+        { name: 'E2E', conclusion: 'timed_out', url: 'https://x/1' },
+        { name: 'Lint', conclusion: 'success', url: 'https://x/2' },
+      ]),
+    ).toEqual({
+      failed: [{ name: 'E2E', workflow: 'Nightly', link: 'https://x/1' }],
+      passing: 1,
+    });
   });
 });
