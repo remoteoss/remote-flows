@@ -100,10 +100,18 @@ export type DailyScheduleEditState = {
   rows: DailyScheduleEditFormRow[];
   /** Live preview of the schedule as summary days (unsaved changes) */
   unsavedSummaryDays: DailyScheduleSummaryDay[];
+  /** Total weekly hours of the draft as it is being edited */
+  draftWeeklyHours: number;
+  /** Total weekly hours of the saved schedule, unaffected by unsaved edits */
+  savedWeeklyHours: number;
   /** Weekly hours validation error for the current draft */
   hoursRangeError: DailyScheduleHoursError | null;
-  /** Whether the form has unsaved changes from the default schedule */
+  /** Alias of `hasDifferencesFromCountryDefault`. It does not track unsaved edits; use `hasUnsavedChanges`. */
   isDirty: boolean;
+  /** Whether the draft differs from the country's default schedule, e.g. to decide when to offer "Reset to default". */
+  hasDifferencesFromCountryDefault: boolean;
+  /** Whether the draft differs from the saved schedule, i.e. closing would discard edits. */
+  hasUnsavedChanges: boolean;
   /** Form-level validation error (e.g., "Select at least one work day") */
   formError: string | null;
   /** Whether any fields have validation errors */
