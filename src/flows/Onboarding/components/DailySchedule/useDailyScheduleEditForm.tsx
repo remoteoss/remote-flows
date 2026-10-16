@@ -116,6 +116,19 @@ export function buildDailyScheduleEditFormDefaultValues({
   });
 }
 
+function toSummaryDays(
+  rows: DailyScheduleEditFormRowInternal[],
+): DailyScheduleSummaryDay[] {
+  return rows
+    .filter((row) => row.checked)
+    .map((row) => ({
+      day: row.day,
+      start_time: row.start_time,
+      end_time: row.end_time,
+      break_duration_minutes: Number(row.break_duration_minutes) || 0,
+    }));
+}
+
 function isSameBreakMinutes(minutes: string, otherMinutes: string): boolean {
   const trimmedMinutes = minutes.trim();
   const trimmedOtherMinutes = otherMinutes.trim();
@@ -331,17 +344,15 @@ export function useDailyScheduleEditForm({
   // Same "checked rows -> summary days" shape the read-only summary and the
   // edit modal's live preview both build from, kept here so `hoursError`
   // reflects the schedule as the user is actively editing it.
-  const unsavedSummaryDays: DailyScheduleSummaryDay[] = watchedSchedule
-    .filter((row) => row.checked)
-    .map((row) => ({
-      day: row.day,
-      start_time: row.start_time,
-      end_time: row.end_time,
-      break_duration_minutes: Number(row.break_duration_minutes) || 0,
-    }));
+  const unsavedSummaryDays = toSummaryDays(watchedSchedule);
 
   const totalWeeklyHours = calculateTotalWeeklyHours(
     unsavedSummaryDays,
+    subtractBreaksFromWorkHours,
+  );
+
+  const savedWeeklyHours = calculateTotalWeeklyHours(
+    toSummaryDays(savedScheduleRows),
     subtractBreaksFromWorkHours,
   );
 
@@ -418,6 +429,8 @@ export function useDailyScheduleEditForm({
     state: {
       rows: rowsWithHours,
       unsavedSummaryDays,
+      draftWeeklyHours: Number.isNaN(totalWeeklyHours) ? 0 : totalWeeklyHours,
+      savedWeeklyHours: Number.isNaN(savedWeeklyHours) ? 0 : savedWeeklyHours,
       hoursRangeError,
       isDirty: hasDifferencesFromCountryDefault,
       hasDifferencesFromCountryDefault,

@@ -1006,6 +1006,19 @@ describe('Edit state change flags', () => {
     expect(editBag.state.hasDifferencesFromCountryDefault).toBe(true);
   });
 
+  it('keeps the saved weekly hours fixed while the draft total follows edits', () => {
+    renderEditBag(mondayOnlySchedule);
+
+    const savedHours = editBag.state.savedWeeklyHours;
+    expect(savedHours).toBeGreaterThan(0);
+    expect(editBag.state.draftWeeklyHours).toBe(savedHours);
+
+    act(() => editBag.actions.updateRow(0, 'end_time', '15:00'));
+
+    expect(editBag.state.savedWeeklyHours).toBe(savedHours);
+    expect(editBag.state.draftWeeklyHours).toBe(savedHours + 1);
+  });
+
   it('clears unsaved changes after close() discards the edits', () => {
     renderEditBag(mondayOnlySchedule);
 

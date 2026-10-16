@@ -100,6 +100,10 @@ export type DailyScheduleEditState = {
   rows: DailyScheduleEditFormRow[];
   /** Live preview of the schedule as summary days (unsaved changes) */
   unsavedSummaryDays: DailyScheduleSummaryDay[];
+  /** Total weekly hours of the draft as it is being edited */
+  draftWeeklyHours: number;
+  /** Total weekly hours of the saved schedule, unaffected by unsaved edits */
+  savedWeeklyHours: number;
   /** Weekly hours validation error for the current draft */
   hoursRangeError: DailyScheduleHoursError | null;
   /** Alias of `hasDifferencesFromCountryDefault`. It does not track unsaved edits; use `hasUnsavedChanges`. */
