@@ -136,9 +136,9 @@ export function classifyFailure(checkName: string, log: string): FailureKind {
 
 const NEXT_STEP: Record<FailureKind, string> = {
   format: 'run `pnpm run format` and commit',
-  lint: 'run `npx oxlint <changed files>` and fix',
+  lint: 'run `pnpm exec oxlint <changed files>` and fix',
   type: 'run `pnpm run type-check` locally',
-  test: 'rerun only the failing file: `npx vitest run <path>`',
+  test: 'rerun only the failing file: `pnpm exec vitest run <path>`',
   e2e: 'rerun the failing spec from `example/` with `npm run test:e2e` (it hits the real sandbox)',
   coverage:
     'tests passed but a coverage threshold failed: run `pnpm run test:coverage` and cover the new lines',
