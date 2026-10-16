@@ -116,13 +116,7 @@ export function buildDailyScheduleEditFormDefaultValues({
   });
 }
 
-/**
- * True when `rows` describe the same schedule as `otherRows`. Unchecked days
- * are equal regardless of their times. Also used to compare against the
- * metadata-driven default — ported from Dragon's `compareSchedules`/`dirty`
- * tracking (`workScheduleFieldReducer.js`), which only shows its "Reset to
- * default" button once the schedule actually deviates from the default.
- */
+/** True when both row sets describe the same schedule; unchecked days are equal whatever their times. */
 function isSameSchedule(
   rows: DailyScheduleEditFormRowInternal[],
   otherRows: DailyScheduleEditFormRowInternal[],
