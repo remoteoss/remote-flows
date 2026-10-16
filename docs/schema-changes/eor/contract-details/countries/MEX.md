@@ -55,7 +55,7 @@ Schema versions for employee onboarding in México.
 **What changed:**
 
 - Admin-only fixed-term contracts: `contract_duration_type` is still indefinite-only for employers, but Remote Admins can set a fixed term with unlimited maximum duration.
-- `contract_end_date` and its "deprecated, Mexico doesn't allow fixed-term" definition are removed from the schema (inferred from the schema diff).
+- `contract_end_date` and its "deprecated, Mexico doesn't allow fixed-term" definition are removed from the schema.
 
 **Migration:**
 
@@ -95,7 +95,7 @@ Schema versions for employee onboarding in México.
 
 **What changed:**
 
-- Adds the shared `non_compete`, `non_solicitation` and `non_interference` components after the contract duration fields (inferred from the schema diff).
+- Adds the shared `non_compete`, `non_solicitation` and `non_interference` components after the contract duration fields.
 
 **Migration:**
 
@@ -116,7 +116,7 @@ Schema versions for employee onboarding in México.
 **What changed:**
 
 - Adds the required `ergonomic_chair_ack` acknowledgement: the employer confirms they will reimburse up to 3,000 MXN for an ergonomic chair if the employee works remotely. Submits that omit it fail validation.
-- The indefinite-only contract duration is now expressed with `indefinite_duration_only` instead of `contract_duration_options` and a forced-value statement (inferred from the schema diff).
+- The indefinite-only contract duration is now expressed with `indefinite_duration_only` instead of `contract_duration_options` and a forced-value statement.
 
 **Migration:**
 

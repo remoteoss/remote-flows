@@ -1,0 +1,206 @@
+{
+  "fingerprintVersion": 1,
+  "base": {
+    "visible": [
+      "allowances",
+      "annual_gross_salary",
+      "available_pto",
+      "available_pto_ack",
+      "confidentiality_agreement_apply",
+      "contract_duration_type",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_probation_period",
+      "has_retention_bonus",
+      "has_signing_bonus",
+      "has_variable_bonus",
+      "non_compete_clause_apply",
+      "notice_period",
+      "other_work_locations",
+      "role_description",
+      "role_handling_cash",
+      "third_party_work",
+      "work_address_is_home_address",
+      "work_hours_per_week",
+      "work_schedule"
+    ],
+    "required": [
+      "annual_gross_salary",
+      "available_pto_ack",
+      "confidentiality_agreement_apply",
+      "contract_duration_type",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_probation_period",
+      "has_retention_bonus",
+      "has_signing_bonus",
+      "has_variable_bonus",
+      "non_compete_clause_apply",
+      "notice_period",
+      "other_work_locations",
+      "role_description",
+      "role_handling_cash",
+      "third_party_work",
+      "work_address_is_home_address",
+      "work_hours_per_week",
+      "work_schedule"
+    ]
+  },
+  "types": {
+    "contract_duration_type": "radio",
+    "contract_end_date": "date",
+    "work_schedule": "radio",
+    "work_hours_per_week": "number",
+    "has_probation_period": "radio",
+    "probation_length": "number",
+    "notice_period": "number",
+    "available_pto": "number",
+    "available_pto_ack": "checkbox",
+    "role_description": "textarea",
+    "experience_level": "radio",
+    "work_address_is_home_address": "radio",
+    "other_work_locations": "radio",
+    "annual_gross_salary": "money",
+    "part_time_salary_confirmation": "checkbox",
+    "allowances": "textarea",
+    "has_signing_bonus": "radio",
+    "signing_bonus_amount": "money",
+    "signing_bonus_recovery": "radio",
+    "has_variable_bonus": "radio",
+    "has_bonus": "radio",
+    "bonus_amount": "money",
+    "bonus_details": "textarea",
+    "variable_bonus_details": "textarea",
+    "has_retention_bonus": "radio",
+    "retention_bonus_amount": "money",
+    "has_commissions": "radio",
+    "commissions_details": "textarea",
+    "commissions_ack": "checkbox",
+    "equity_compensation.offer_equity_compensation": "radio",
+    "equity_compensation.number_of_stock_options": "text",
+    "equity_compensation.equity_cliff": "number",
+    "equity_compensation.equity_vesting_period": "number",
+    "equity_compensation.equity_description": "textarea",
+    "confidentiality_agreement_apply": "radio",
+    "non_compete_clause_apply": "radio",
+    "non_compete_clause_halt_period_months": "number",
+    "has_non_compete_clause_compensation": "radio",
+    "non_compete_clause_compensation_percentage": "text",
+    "role_handling_cash": "radio",
+    "third_party_work": "radio"
+  },
+  "options": {
+    "contract_duration_type": ["fixed_term", "indefinite"],
+    "work_schedule": ["full_time", "part_time"],
+    "has_probation_period": ["no", "yes"],
+    "experience_level": [
+      "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+      "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+      "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+      "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+      "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow"
+    ],
+    "work_address_is_home_address": ["no", "yes"],
+    "other_work_locations": ["no", "yes"],
+    "has_signing_bonus": ["no", "yes"],
+    "has_variable_bonus": ["no", "yes"],
+    "has_bonus": ["no", "yes"],
+    "has_retention_bonus": ["no", "yes"],
+    "has_commissions": ["no", "yes"],
+    "equity_compensation.offer_equity_compensation": ["no", "yes"],
+    "confidentiality_agreement_apply": ["no", "yes"],
+    "non_compete_clause_apply": ["no", "yes"],
+    "role_handling_cash": ["no", "yes"],
+    "third_party_work": ["no", "yes"]
+  },
+  "constraints": {
+    "work_hours_per_week": {
+      "minimum": 1,
+      "maximum": 45
+    },
+    "role_description": {
+      "minLength": 100,
+      "maxLength": 5000
+    },
+    "allowances": {
+      "maxLength": 1000
+    }
+  },
+  "scenarios": {
+    "contract_duration_type=fixed_term": {
+      "addedVisible": ["contract_end_date"],
+      "removedVisible": [],
+      "addedRequired": ["contract_end_date"],
+      "removedRequired": []
+    },
+    "work_schedule=part_time": {
+      "addedVisible": ["part_time_salary_confirmation"],
+      "removedVisible": [],
+      "addedRequired": ["part_time_salary_confirmation"],
+      "removedRequired": []
+    },
+    "has_probation_period=yes": {
+      "addedVisible": ["probation_length"],
+      "removedVisible": [],
+      "addedRequired": ["probation_length"],
+      "removedRequired": []
+    },
+    "has_signing_bonus=yes": {
+      "addedVisible": ["signing_bonus_amount", "signing_bonus_recovery"],
+      "removedVisible": [],
+      "addedRequired": ["signing_bonus_amount", "signing_bonus_recovery"],
+      "removedRequired": []
+    },
+    "has_variable_bonus=yes": {
+      "addedVisible": ["variable_bonus_details"],
+      "removedVisible": [],
+      "addedRequired": ["variable_bonus_details"],
+      "removedRequired": []
+    },
+    "has_bonus=yes": {
+      "addedVisible": ["bonus_amount", "bonus_details"],
+      "removedVisible": [],
+      "addedRequired": ["bonus_details"],
+      "removedRequired": []
+    },
+    "has_retention_bonus=yes": {
+      "addedVisible": ["retention_bonus_amount"],
+      "removedVisible": [],
+      "addedRequired": ["retention_bonus_amount"],
+      "removedRequired": []
+    },
+    "has_commissions=yes": {
+      "addedVisible": ["commissions_ack", "commissions_details"],
+      "removedVisible": [],
+      "addedRequired": ["commissions_ack", "commissions_details"],
+      "removedRequired": []
+    },
+    "equity_compensation.offer_equity_compensation=yes": {
+      "addedVisible": [
+        "equity_compensation.equity_cliff",
+        "equity_compensation.equity_description",
+        "equity_compensation.equity_vesting_period",
+        "equity_compensation.number_of_stock_options"
+      ],
+      "removedVisible": [],
+      "addedRequired": ["equity_compensation.equity_description"],
+      "removedRequired": []
+    },
+    "non_compete_clause_apply=yes": {
+      "addedVisible": [
+        "has_non_compete_clause_compensation",
+        "non_compete_clause_halt_period_months"
+      ],
+      "removedVisible": [],
+      "addedRequired": [
+        "has_non_compete_clause_compensation",
+        "non_compete_clause_halt_period_months"
+      ],
+      "removedRequired": []
+    }
+  }
+}
