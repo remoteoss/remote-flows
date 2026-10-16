@@ -118,20 +118,39 @@ export function buildDailyScheduleEditFormDefaultValues({
   });
 }
 
-/**
- * True when `rows` matches the metadata-driven default schedule — ported from
- * Dragon's `compareSchedules`/`dirty` tracking (`workScheduleFieldReducer.js`),
- * which only shows its "Reset to default" button once the schedule actually
- * deviates from the default, rather than showing it unconditionally.
- */
-function isDefaultSchedule(
+function toSummaryDays(
   rows: DailyScheduleEditFormRowInternal[],
-  defaultRows: DailyScheduleEditFormRowInternal[],
+): DailyScheduleSummaryDay[] {
+  return rows
+    .filter((row) => row.checked)
+    .map((row) => ({
+      day: row.day,
+      start_time: row.start_time,
+      end_time: row.end_time,
+      break_duration_minutes: Number(row.break_duration_minutes) || 0,
+    }));
+}
+
+function isSameBreakMinutes(minutes: string, otherMinutes: string): boolean {
+  const trimmedMinutes = minutes.trim();
+  const trimmedOtherMinutes = otherMinutes.trim();
+
+  if (trimmedMinutes === '' || trimmedOtherMinutes === '') {
+    return trimmedMinutes === trimmedOtherMinutes;
+  }
+
+  return Number(trimmedMinutes) === Number(trimmedOtherMinutes);
+}
+
+/** True when both row sets describe the same schedule; unchecked days are equal whatever their times. */
+function isSameSchedule(
+  rows: DailyScheduleEditFormRowInternal[],
+  otherRows: DailyScheduleEditFormRowInternal[],
 ): boolean {
   return rows.every((row, index) => {
-    const defaultRow = defaultRows[index];
+    const otherRow = otherRows[index];
 
-    if (row.checked !== defaultRow.checked) {
+    if (row.checked !== otherRow.checked) {
       return false;
     }
 
@@ -140,9 +159,12 @@ function isDefaultSchedule(
     }
 
     return (
-      row.start_time === defaultRow.start_time &&
-      row.end_time === defaultRow.end_time &&
-      row.break_duration_minutes === defaultRow.break_duration_minutes
+      row.start_time === otherRow.start_time &&
+      row.end_time === otherRow.end_time &&
+      isSameBreakMinutes(
+        row.break_duration_minutes,
+        otherRow.break_duration_minutes,
+      )
     );
   });
 }
@@ -315,22 +337,24 @@ export function useDailyScheduleEditForm({
 
   const formValues = watch('schedule');
 
-  const isDirty = !isDefaultSchedule(formValues, defaultScheduleRows);
+  const hasDifferencesFromCountryDefault = !isSameSchedule(
+    formValues,
+    defaultScheduleRows,
+  );
+  const hasUnsavedChanges = !isSameSchedule(formValues, savedScheduleRows);
 
   // Same "checked rows -> summary days" shape the read-only summary and the
   // edit modal's live preview both build from, kept here so `hoursError`
   // reflects the schedule as the user is actively editing it.
-  const unsavedSummaryDays: DailyScheduleSummaryDay[] = watchedSchedule
-    .filter((row) => row.checked)
-    .map((row) => ({
-      day: row.day,
-      start_time: row.start_time,
-      end_time: row.end_time,
-      break_duration_minutes: Number(row.break_duration_minutes) || 0,
-    }));
+  const unsavedSummaryDays = toSummaryDays(watchedSchedule);
 
   const totalWeeklyHours = calculateTotalWeeklyHours(
     unsavedSummaryDays,
+    subtractBreaksFromWorkHours,
+  );
+
+  const savedWeeklyHours = calculateTotalWeeklyHours(
+    toSummaryDays(savedScheduleRows),
     subtractBreaksFromWorkHours,
   );
 
@@ -407,8 +431,12 @@ export function useDailyScheduleEditForm({
     state: {
       rows: rowsWithHours,
       unsavedSummaryDays,
+      draftWeeklyHours: Number.isNaN(totalWeeklyHours) ? 0 : totalWeeklyHours,
+      savedWeeklyHours: Number.isNaN(savedWeeklyHours) ? 0 : savedWeeklyHours,
       hoursRangeError,
-      isDirty,
+      isDirty: hasDifferencesFromCountryDefault,
+      hasDifferencesFromCountryDefault,
+      hasUnsavedChanges,
       formError,
       hasFieldErrors,
       getFieldError,
