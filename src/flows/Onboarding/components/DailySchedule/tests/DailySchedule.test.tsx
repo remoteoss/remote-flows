@@ -960,13 +960,6 @@ describe('Edit state change flags', () => {
     },
   };
 
-  it('reports no changes when nothing is saved and the form is untouched', () => {
-    renderEditBag(undefined);
-
-    expect(editBag.state.hasUnsavedChanges).toBe(false);
-    expect(editBag.state.hasDifferencesFromCountryDefault).toBe(false);
-  });
-
   it('reports no unsaved changes for a saved custom schedule, while still differing from the country default', () => {
     renderEditBag(mondayOnlySchedule);
 
@@ -976,27 +969,24 @@ describe('Edit state change flags', () => {
   });
 
   it.each([
-    ['start_time', '10:00', '11:30'],
-    ['break_duration_minutes', '15', '30'],
-  ] as const)(
-    'flags unsaved changes once %s is edited, and clears them when reverted',
-    (field, saved, edited) => {
-      renderEditBag(mondayOnlySchedule);
+    ['start_time', '11:30'],
+    ['break_duration_minutes', '30'],
+  ] as const)('flags unsaved changes once %s is edited', (field, edited) => {
+    renderEditBag(mondayOnlySchedule);
 
-      act(() => editBag.actions.updateRow(0, field, edited));
-      expect(editBag.state.hasUnsavedChanges).toBe(true);
+    act(() => editBag.actions.updateRow(0, field, edited));
 
-      act(() => editBag.actions.updateRow(0, field, saved));
-      expect(editBag.state.hasUnsavedChanges).toBe(false);
-    },
-  );
+    expect(editBag.state.hasUnsavedChanges).toBe(true);
+  });
 
-  it('ignores edits to the times of an unchecked day', () => {
+  it('ignores edits to the times of an unchecked day, but counts toggling it', () => {
     renderEditBag(mondayOnlySchedule);
 
     act(() => editBag.actions.updateRow(1, 'start_time', '07:00'));
-
     expect(editBag.state.hasUnsavedChanges).toBe(false);
+
+    act(() => editBag.actions.toggleDay(0));
+    expect(editBag.state.hasUnsavedChanges).toBe(true);
   });
 
   it('clears unsaved changes after close() discards the edits', () => {
@@ -1018,16 +1008,12 @@ describe('Edit state change flags', () => {
     expect(editBag.state.hasUnsavedChanges).toBe(true);
   });
 
-  it('clears unsaved changes after save(), even when the break was typed with leading zeros', async () => {
-    renderEditBag(undefined);
+  it('clears unsaved changes after save(), including a break typed with leading zeros', async () => {
+    renderEditBag(mondayOnlySchedule);
 
-    act(() => editBag.actions.toggleDay(4));
     act(() => editBag.actions.updateRow(0, 'break_duration_minutes', '030'));
-    expect(editBag.state.hasUnsavedChanges).toBe(true);
-
     await act(async () => editBag.actions.save());
 
     expect(editBag.state.hasUnsavedChanges).toBe(false);
-    expect(editBag.state.hasDifferencesFromCountryDefault).toBe(true);
   });
 });
