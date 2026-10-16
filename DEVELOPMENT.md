@@ -73,7 +73,7 @@ The example app will be available at `http://localhost:3001`.
 - `pnpm run build` - Build the package for production
 - `pnpm run test` - Run tests
 - `pnpm run type-check` - Run TypeScript type checking
-- `pnpm run format` - Format code with Prettier
+- `pnpm run format` - Format code with oxfmt
 - `pnpm run ci` - Run the full local CI: build, format check, exports check, lint, type check and tests. Use `pnpm run ci`: `pnpm ci` is pnpm's own clean install and does not run this script
 - `pnpm run dump:schema --country=XXX [--form=contract_details] [--version=N|latest]` - Dump a country schema from the sandbox gateway to `.schema-dumps/`
 - `pnpm run size` - Analyze bundle size
