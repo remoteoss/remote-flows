@@ -117,11 +117,14 @@ export function buildDailyScheduleEditFormDefaultValues({
 }
 
 function isSameBreakMinutes(minutes: string, otherMinutes: string): boolean {
-  if (minutes.trim() === '' || otherMinutes.trim() === '') {
-    return minutes.trim() === otherMinutes.trim();
+  const trimmedMinutes = minutes.trim();
+  const trimmedOtherMinutes = otherMinutes.trim();
+
+  if (trimmedMinutes === '' || trimmedOtherMinutes === '') {
+    return trimmedMinutes === trimmedOtherMinutes;
   }
 
-  return Number(minutes) === Number(otherMinutes);
+  return Number(trimmedMinutes) === Number(trimmedOtherMinutes);
 }
 
 /** True when both row sets describe the same schedule; unchecked days are equal whatever their times. */
