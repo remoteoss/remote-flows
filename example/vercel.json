@@ -4,5 +4,6 @@
   "github": {
     "enabled": false
   },
-  "installCommand": "node scripts/set-commit-hash.js && npx --yes npm@11.6.2 install"
+  "installCommand": "cd .. && corepack pnpm install --frozen-lockfile --ignore-scripts && corepack pnpm run build && cd example && corepack pnpm install --frozen-lockfile",
+  "buildCommand": "corepack pnpm run build"
 }
