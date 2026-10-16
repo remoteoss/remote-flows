@@ -16,6 +16,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Belarus (BLR)](./BLR.md)
 - [Canada (CAN)](./CAN.md)
 - [China (CHN)](./CHN.md)
+- [Colombia (COL)](./COL.md)
 - [Switzerland (CHE)](./CHE.md)
 - [Czech Republic (CZE)](./CZE.md)
 - [Dominican Republic (DOM)](./DOM.md)
@@ -24,6 +25,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Iceland (ISL)](./ISL.md)
 - [India (IND)](./IND.md)
 - [Ireland (IRL)](./IRL.md)
+- [Israel (ISR)](./ISR.md)
 - [Jamaica (JAM)](./JAM.md)
 - [Kenya (KEN)](./KEN.md)
 - [Lebanon (LBN)](./LBN.md)
@@ -61,13 +63,15 @@ These countries have upgraded to different versions, check each guide to know ho
 | Canada               | CAN  | v8               | October 2026 |
 | China                | CHN  | v8               | October 2026 |
 | Switzerland          | CHE  | v2               | March 2026   |
-| Czech Republic       | CZE  | v2               | March 2026   |
+| Colombia             | COL  | v6               | October 2026 |
+| Czech Republic       | CZE  | v7               | October 2026 |
 | Dominican Republic   | DOM  | v6               | October 2026 |
 | Germany              | DEU  | v8               | October 2026 |
 | Hong Kong            | HKG  | v2               | March 2026   |
 | Iceland              | ISL  | v2               | March 2026   |
 | India                | IND  | v7               | October 2026 |
 | Ireland              | IRL  | v5               | October 2026 |
+| Israel               | ISR  | v8               | October 2026 |
 | Jamaica              | JAM  | v2               | March 2026   |
 | Kenya                | KEN  | v2               | March 2026   |
 | Lebanon              | LBN  | v2               | March 2026   |
@@ -77,8 +81,8 @@ These countries have upgraded to different versions, check each guide to know ho
 | Netherlands          | NLD  | v7               | October 2026 |
 | Nigeria              | NGA  | v5               | October 2026 |
 | Norway               | NOR  | v2               | March 2026   |
-| New Zealand          | NZL  | v2               | March 2026   |
-| Pakistan             | PAK  | v2               | March 2026   |
+| New Zealand          | NZL  | v8               | October 2026 |
+| Pakistan             | PAK  | v4               | October 2026 |
 | Philippines          | PHL  | v6               | October 2026 |
 | Poland               | POL  | v5               | October 2026 |
 | Portugal             | PRT  | v3               | March 2026   |

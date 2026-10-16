@@ -1,0 +1,251 @@
+{
+  "fingerprintVersion": 1,
+  "base": {
+    "visible": [
+      "additional_holiday_days",
+      "allowances",
+      "annual_bonus_ack",
+      "annual_gross_salary",
+      "annual_leave_carry_forward_ack",
+      "available_pto_type",
+      "compensation_currency_code",
+      "contract_duration_type",
+      "employee_travel_required",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_signing_bonus",
+      "incentive_bonus_amount",
+      "is_role_managerial",
+      "part_time_salary_confirmation",
+      "payout_currency_code",
+      "post_termination_restrictions",
+      "role_description",
+      "third_party_work",
+      "work_address_is_home_address",
+      "work_equipment_provided_by",
+      "work_hours_per_week",
+      "work_schedule"
+    ],
+    "required": [
+      "additional_holiday_days",
+      "annual_bonus_ack",
+      "annual_gross_salary",
+      "annual_leave_carry_forward_ack",
+      "available_pto_type",
+      "compensation_currency_code",
+      "contract_duration_type",
+      "employee_travel_required",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_signing_bonus",
+      "incentive_bonus_amount",
+      "is_role_managerial",
+      "part_time_salary_confirmation",
+      "post_termination_restrictions",
+      "role_description",
+      "third_party_work",
+      "work_address_is_home_address",
+      "work_equipment_provided_by",
+      "work_hours_per_week",
+      "work_schedule"
+    ]
+  },
+  "types": {
+    "contract_duration_type": "radio",
+    "contract_end_date": "date",
+    "contract_duration_fixed_term_reason": "textarea",
+    "work_schedule": "radio",
+    "work_hours_per_week": "number",
+    "has_probation_period": "radio",
+    "probation_length_days": "number",
+    "notice_period_ack": "checkbox",
+    "available_pto_type": "radio",
+    "available_pto": "number",
+    "annual_leave_carry_forward_ack": "checkbox",
+    "additional_holiday_days": "radio",
+    "role_description": "textarea",
+    "experience_level": "radio",
+    "is_role_managerial": "radio",
+    "overtime_pay_confirmation": "checkbox",
+    "work_address_is_home_address": "radio",
+    "employee_travel_required": "radio",
+    "compensation_currency_code": "select",
+    "annual_gross_salary": "money",
+    "annual_bonus_ack": "checkbox",
+    "part_time_salary_confirmation": "text",
+    "incentive_bonus_amount": "money",
+    "has_signing_bonus": "radio",
+    "signing_bonus_amount": "money",
+    "signing_bonus_clawback": "radio",
+    "has_bonus": "radio",
+    "bonus_details": "textarea",
+    "has_commissions": "radio",
+    "commissions_details": "textarea",
+    "commissions_ack": "checkbox",
+    "allowances": "textarea",
+    "equity_compensation.offer_equity_compensation": "radio",
+    "equity_compensation.number_of_stock_options": "text",
+    "equity_compensation.equity_cliff": "number",
+    "equity_compensation.equity_vesting_period": "number",
+    "equity_compensation.equity_description": "textarea",
+    "post_termination_restrictions": "radio",
+    "non_compete_clause_apply": "radio",
+    "non_compete_clause_halt_period_months": "number",
+    "non_solicitation_employees": "radio",
+    "non_solicitation_employees_number_of_months": "number",
+    "non_solicitation_customers": "radio",
+    "non_solicitation_customer_number_of_months": "number",
+    "non_interference_apply": "radio",
+    "non_interference_halt_period": "number",
+    "work_equipment_provided_by": "radio",
+    "third_party_work": "radio",
+    "third_party_work_activities": "textarea",
+    "payout_currency_code": "hidden",
+    "bonus_amount": "text"
+  },
+  "options": {
+    "contract_duration_type": ["fixed_term", "indefinite"],
+    "work_schedule": ["full_time", "part_time"],
+    "available_pto_type": ["fixed", "unlimited"],
+    "additional_holiday_days": ["no", "yes"],
+    "experience_level": [
+      "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+      "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+      "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+      "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+      "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow"
+    ],
+    "is_role_managerial": ["no", "yes"],
+    "work_address_is_home_address": ["no", "yes"],
+    "employee_travel_required": ["no", "yes"],
+    "compensation_currency_code": ["GTQ", "USD"],
+    "has_signing_bonus": ["no", "yes"],
+    "has_bonus": ["no", "yes"],
+    "has_commissions": ["no", "yes"],
+    "equity_compensation.offer_equity_compensation": ["no", "yes"],
+    "post_termination_restrictions": ["no", "yes"],
+    "work_equipment_provided_by": [
+      "provided_by_client",
+      "provided_by_employee"
+    ],
+    "third_party_work": ["no", "yes"]
+  },
+  "constraints": {
+    "work_hours_per_week": {
+      "minimum": 1,
+      "maximum": 39
+    },
+    "role_description": {
+      "minLength": 100,
+      "maxLength": 5000
+    },
+    "allowances": {
+      "maxLength": 1000
+    }
+  },
+  "scenarios": {
+    "contract_duration_type=indefinite": {
+      "addedVisible": ["has_probation_period", "notice_period_ack"],
+      "removedVisible": [],
+      "addedRequired": ["has_probation_period", "notice_period_ack"],
+      "removedRequired": []
+    },
+    "contract_duration_type=fixed_term": {
+      "addedVisible": [
+        "contract_duration_fixed_term_reason",
+        "contract_end_date"
+      ],
+      "removedVisible": [],
+      "addedRequired": [
+        "contract_duration_fixed_term_reason",
+        "contract_end_date"
+      ],
+      "removedRequired": []
+    },
+    "work_schedule=full_time": {
+      "addedVisible": [],
+      "removedVisible": ["part_time_salary_confirmation"],
+      "addedRequired": [],
+      "removedRequired": ["part_time_salary_confirmation"]
+    },
+    "available_pto_type=fixed": {
+      "addedVisible": ["available_pto"],
+      "removedVisible": [],
+      "addedRequired": ["available_pto"],
+      "removedRequired": []
+    },
+    "is_role_managerial=no": {
+      "addedVisible": ["overtime_pay_confirmation"],
+      "removedVisible": [],
+      "addedRequired": ["overtime_pay_confirmation"],
+      "removedRequired": []
+    },
+    "compensation_currency_code=GTQ": {
+      "addedVisible": ["bonus_amount"],
+      "removedVisible": [],
+      "addedRequired": [],
+      "removedRequired": []
+    },
+    "compensation_currency_code=USD": {
+      "addedVisible": ["bonus_amount"],
+      "removedVisible": [],
+      "addedRequired": [],
+      "removedRequired": []
+    },
+    "has_signing_bonus=yes": {
+      "addedVisible": ["signing_bonus_amount", "signing_bonus_clawback"],
+      "removedVisible": [],
+      "addedRequired": ["signing_bonus_amount", "signing_bonus_clawback"],
+      "removedRequired": []
+    },
+    "has_bonus=yes": {
+      "addedVisible": ["bonus_details"],
+      "removedVisible": [],
+      "addedRequired": ["bonus_details"],
+      "removedRequired": []
+    },
+    "has_commissions=yes": {
+      "addedVisible": ["commissions_ack", "commissions_details"],
+      "removedVisible": [],
+      "addedRequired": ["commissions_ack", "commissions_details"],
+      "removedRequired": []
+    },
+    "equity_compensation.offer_equity_compensation=yes": {
+      "addedVisible": [
+        "equity_compensation.equity_cliff",
+        "equity_compensation.equity_description",
+        "equity_compensation.equity_vesting_period",
+        "equity_compensation.number_of_stock_options"
+      ],
+      "removedVisible": [],
+      "addedRequired": ["equity_compensation.equity_description"],
+      "removedRequired": []
+    },
+    "post_termination_restrictions=yes": {
+      "addedVisible": [
+        "non_compete_clause_apply",
+        "non_interference_apply",
+        "non_solicitation_customers",
+        "non_solicitation_employees"
+      ],
+      "removedVisible": [],
+      "addedRequired": [
+        "non_compete_clause_apply",
+        "non_interference_apply",
+        "non_solicitation_customers",
+        "non_solicitation_employees"
+      ],
+      "removedRequired": []
+    },
+    "third_party_work=yes": {
+      "addedVisible": ["third_party_work_activities"],
+      "removedVisible": [],
+      "addedRequired": ["third_party_work_activities"],
+      "removedRequired": []
+    }
+  }
+}
