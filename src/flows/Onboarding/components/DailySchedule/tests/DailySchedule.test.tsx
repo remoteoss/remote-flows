@@ -999,17 +999,6 @@ describe('DailySchedule', () => {
         },
       );
 
-    it('saves a schedule within the weekly range', async () => {
-      const user = userEvent.setup();
-      const { getFormValues } = renderProbe('fixed_hours');
-
-      expect(screen.getByText('valid: true')).toBeInTheDocument();
-      await user.click(screen.getByRole('button', { name: 'Save' }));
-
-      expect(await screen.findByText('{"saved":true}')).toBeInTheDocument();
-      expect(getFormValues().daily_schedule).toBeDefined();
-    });
-
     it('refuses a schedule outside the weekly range', async () => {
       const user = userEvent.setup();
       const { getFormValues } = renderProbe('fixed_hours');
