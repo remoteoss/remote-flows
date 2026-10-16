@@ -12,6 +12,7 @@ import {
   WorkHoursRange,
   DailyScheduleEditBag,
   DailyScheduleEditFormRow,
+  DailyScheduleSaveResult,
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import {
   calculateTotalWeeklyHours,
@@ -430,22 +431,23 @@ export function useDailyScheduleEditForm({
         );
         setValidationResult(validateSchedule(nextSchedule));
       },
-      save: async () => {
-        // Framework-agnostic validation
+      save: async (): Promise<DailyScheduleSaveResult> => {
         const validation = validateSchedule(watchedSchedule);
-        if (validation.valid) {
-          saveValue({ schedule: watchedSchedule });
-        } else {
-          // Update state so errors become visible
+        if (!validation.valid) {
           setValidationResult(validation);
+          return { saved: false, reason: 'invalid_schedule' };
         }
+        if (hoursRangeError) {
+          return { saved: false, reason: 'hours_out_of_range' };
+        }
+        saveValue({ schedule: watchedSchedule });
+        return { saved: true };
       },
       reset: handleReset,
       close: handleClose,
       validate: () => {
-        // Framework-agnostic validation check
         const validation = validateSchedule(watchedSchedule);
-        return validation.valid;
+        return validation.valid && !hoursRangeError;
       },
       handleBlur,
     },

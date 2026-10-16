@@ -165,8 +165,8 @@ function CustomDailyScheduleEditForm({
         <button
           type='button'
           onClick={async () => {
-            await actions.save();
-            if (actions.validate()) {
+            const { saved } = await actions.save();
+            if (saved) {
               onClose();
             }
           }}

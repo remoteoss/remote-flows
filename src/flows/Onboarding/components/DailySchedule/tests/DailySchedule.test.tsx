@@ -8,7 +8,7 @@ import {
   DailyScheduleRenderProps,
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import { TestProviders } from '@/src/tests/testHelpers';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -924,6 +924,143 @@ describe('DailySchedule', () => {
       expect(
         within(dialog).getByText(byOwnText('Total of 7 hours per week')),
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('Headless save()', () => {
+    let editBag: DailyScheduleRenderProps['editBag'];
+
+    const CapturingField = (
+      props: Omit<DailyScheduleContainerProps, 'render'>,
+    ) => (
+      <DailyScheduleContainer
+        {...(props as $TSFixMe as DailyScheduleContainerProps)}
+        render={(renderProps: DailyScheduleRenderProps) => {
+          editBag = renderProps.editBag;
+          return null;
+        }}
+      />
+    );
+
+    const renderHeadless = (defaultValues: Record<string, unknown>) =>
+      renderWithForm(
+        [createDailyScheduleField({ Component: CapturingField })],
+        defaultValues,
+      );
+
+    it('saves and resolves { saved: true } when the draft is valid and within the weekly range', async () => {
+      const { getFormValues } = renderHeadless({
+        work_schedule: 'full_time',
+        schedule_type: 'fixed_hours',
+        daily_schedule: undefined,
+      });
+
+      let result: Awaited<ReturnType<typeof editBag.actions.save>> | undefined;
+      await act(async () => {
+        result = await editBag.actions.save();
+      });
+
+      expect(result).toEqual({ saved: true });
+      expect(editBag.actions.validate()).toBe(true);
+      const value = getFormValues().daily_schedule as {
+        selected_days: string[];
+      };
+      expect(value.selected_days).toEqual([
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+      ]);
+    });
+
+    it('does not save and resolves hours_out_of_range when the weekly total is outside the range', async () => {
+      const { getFormValues } = renderHeadless({
+        work_schedule: 'part_time',
+        schedule_type: 'fixed_hours',
+        daily_schedule: undefined,
+      });
+
+      expect(editBag.state.hoursRangeError).not.toBeNull();
+
+      let result: Awaited<ReturnType<typeof editBag.actions.save>> | undefined;
+      await act(async () => {
+        result = await editBag.actions.save();
+      });
+
+      expect(result).toEqual({ saved: false, reason: 'hours_out_of_range' });
+      expect(editBag.actions.validate()).toBe(false);
+      expect(getFormValues().daily_schedule).toBeUndefined();
+    });
+
+    it('does not save and resolves invalid_schedule when no day is selected', async () => {
+      const { getFormValues } = renderHeadless({
+        work_schedule: 'full_time',
+        schedule_type: 'fixed_hours',
+        daily_schedule: undefined,
+      });
+
+      await act(async () => {
+        for (let index = 0; index < 5; index += 1) {
+          editBag.actions.toggleDay(index);
+        }
+      });
+
+      let result: Awaited<ReturnType<typeof editBag.actions.save>> | undefined;
+      await act(async () => {
+        result = await editBag.actions.save();
+      });
+
+      expect(result).toEqual({ saved: false, reason: 'invalid_schedule' });
+      expect(editBag.state.formError).toBe('Select at least one work day');
+      expect(getFormValues().daily_schedule).toBeUndefined();
+    });
+
+    it('saves a schedule below the full-time minimum when the schedule type is core business hours', async () => {
+      const { getFormValues } = renderHeadless({
+        work_schedule: 'full_time',
+        schedule_type: 'core_business_hours',
+        daily_schedule: undefined,
+      });
+
+      await act(async () => {
+        editBag.actions.toggleDay(3);
+        editBag.actions.toggleDay(4);
+      });
+
+      expect(editBag.state.hoursRangeError).toBeNull();
+
+      let result: Awaited<ReturnType<typeof editBag.actions.save>> | undefined;
+      await act(async () => {
+        result = await editBag.actions.save();
+      });
+
+      expect(result).toEqual({ saved: true });
+      const value = getFormValues().daily_schedule as {
+        selected_days: string[];
+      };
+      expect(value.selected_days).toEqual(['monday', 'tuesday', 'wednesday']);
+    });
+
+    it('does not save the same 24-hour schedule when the schedule type is fixed hours', async () => {
+      const { getFormValues } = renderHeadless({
+        work_schedule: 'full_time',
+        schedule_type: 'fixed_hours',
+        daily_schedule: undefined,
+      });
+
+      await act(async () => {
+        editBag.actions.toggleDay(3);
+        editBag.actions.toggleDay(4);
+      });
+
+      let result: Awaited<ReturnType<typeof editBag.actions.save>> | undefined;
+      await act(async () => {
+        result = await editBag.actions.save();
+      });
+
+      expect(result).toEqual({ saved: false, reason: 'hours_out_of_range' });
+      expect(getFormValues().daily_schedule).toBeUndefined();
     });
   });
 });
