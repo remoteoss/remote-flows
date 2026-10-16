@@ -72,7 +72,7 @@ evidence**: an API response, visible text or attribute, and a screenshot name.
 ## Verification
 
 env: review # root .env.<name>; say why if it isn't the obvious one
-seed: npm run seed:onboarding -- --country=USA --env=review
+seed: pnpm run seed:onboarding --country=USA --env=review
 route: ?demo=onboarding-basic&employmentId=<seeded>
 
 | #   | Claim                      | Steps                                                                   | Expected                                                                                     | Screenshot           |
@@ -109,6 +109,6 @@ project=$(basename "$(dirname "$(git rev-parse --path-format=absolute --git-comm
 branch you happen to be on. `/goal` usually runs on `main` before any branch
 exists, so use the current branch only when it's already the feature branch
 for this work. Otherwise propose a lowercase kebab-case name from the task.
-Create the worktree with that same name (`npm run worktree -- --branch
+Create the worktree with that same name (`pnpm run worktree --branch
 <branch>`) so later runs on the branch find the file through
 `git branch --show-current | tr / -`.
