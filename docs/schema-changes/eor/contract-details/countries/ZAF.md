@@ -13,7 +13,7 @@ Schema versions for employee onboarding in South Africa.
 **What changed:**
 
 - Fixed-term contracts are blocked, and the option removed, when the employee has a recognized seniority date (`has_seniority_date: yes`), unless the request is made by a Remote Admin. Flag-gated (`eor_seniority_block`, `eor_seniority_block_v2_ftc`), and employments created before the cutoff date are unaffected. No action required for existing contracts. The 12-month self-serve cap from v4 is unchanged.
-- The contract duration fields move to the shared `contract_duration` component with unlimited maximum duration. The standalone `contract_duration_type` and `contract_end_date` field definitions and their help center metadata are removed from the schema, and the `contract_duration_fixed_term_months` requirement moves to a later position in `allOf` (inferred from the schema diff).
+- The contract duration fields move to the shared `contract_duration` component with unlimited maximum duration. The standalone `contract_duration_type` and `contract_end_date` field definitions and their help center metadata are removed from the schema, and the `contract_duration_fixed_term_months` requirement moves to a later position in `allOf`.
 
 **Migration:**
 

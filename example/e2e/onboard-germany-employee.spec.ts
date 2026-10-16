@@ -97,6 +97,10 @@ test.describe('Onboard Germany employee', () => {
     await fillOnboardingBenefitsStepDynamically(page, benefitsSchemaPromise);
 
     stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Preview Employment Agreement');
+    await page.click('.submit-button');
+
+    stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Review');
 
     const inviteButton = page.locator('.submit-button');

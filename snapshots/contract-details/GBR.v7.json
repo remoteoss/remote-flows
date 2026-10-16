@@ -1,0 +1,387 @@
+{
+  "fingerprintVersion": 1,
+  "base": {
+    "visible": [
+      "available_pto",
+      "available_pto_type",
+      "carryover_details.can_expire",
+      "carryover_details.carry_over_pto_days",
+      "carryover_details.expiry_months",
+      "compensation_currency_code",
+      "contract_duration",
+      "daily_schedule.schedule.friday.break_duration_minutes",
+      "daily_schedule.schedule.friday.end_time",
+      "daily_schedule.schedule.friday.start_time",
+      "daily_schedule.schedule.monday.break_duration_minutes",
+      "daily_schedule.schedule.monday.end_time",
+      "daily_schedule.schedule.monday.start_time",
+      "daily_schedule.schedule.saturday.break_duration_minutes",
+      "daily_schedule.schedule.saturday.end_time",
+      "daily_schedule.schedule.saturday.start_time",
+      "daily_schedule.schedule.sunday.break_duration_minutes",
+      "daily_schedule.schedule.sunday.end_time",
+      "daily_schedule.schedule.sunday.start_time",
+      "daily_schedule.schedule.thursday.break_duration_minutes",
+      "daily_schedule.schedule.thursday.end_time",
+      "daily_schedule.schedule.thursday.start_time",
+      "daily_schedule.schedule.tuesday.break_duration_minutes",
+      "daily_schedule.schedule.tuesday.end_time",
+      "daily_schedule.schedule.tuesday.start_time",
+      "daily_schedule.schedule.wednesday.break_duration_minutes",
+      "daily_schedule.schedule.wednesday.end_time",
+      "daily_schedule.schedule.wednesday.start_time",
+      "daily_schedule.selected_days",
+      "equity_compensation.equity_cliff",
+      "equity_compensation.equity_description",
+      "equity_compensation.equity_vesting_period",
+      "equity_compensation.number_of_stock_options",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_signing_bonus",
+      "membership_id",
+      "overtime_eligible",
+      "pension_percentage",
+      "pension_scheme",
+      "pension_scheme_enrollment_status",
+      "pension_scheme_enrollment_status_effect_date",
+      "probation_length",
+      "risks_acknowledgment",
+      "role_description",
+      "schedule_type",
+      "shift_pattern",
+      "uk_country",
+      "work_address_is_home_address",
+      "work_hours_per_week",
+      "work_schedule"
+    ],
+    "required": [
+      "available_pto",
+      "available_pto_type",
+      "carryover_details.can_expire",
+      "carryover_details.carry_over_pto_days",
+      "compensation_currency_code",
+      "daily_schedule.schedule.friday.break_duration_minutes",
+      "daily_schedule.schedule.friday.end_time",
+      "daily_schedule.schedule.friday.start_time",
+      "daily_schedule.schedule.monday.break_duration_minutes",
+      "daily_schedule.schedule.monday.end_time",
+      "daily_schedule.schedule.monday.start_time",
+      "daily_schedule.schedule.saturday.break_duration_minutes",
+      "daily_schedule.schedule.saturday.end_time",
+      "daily_schedule.schedule.saturday.start_time",
+      "daily_schedule.schedule.sunday.break_duration_minutes",
+      "daily_schedule.schedule.sunday.end_time",
+      "daily_schedule.schedule.sunday.start_time",
+      "daily_schedule.schedule.thursday.break_duration_minutes",
+      "daily_schedule.schedule.thursday.end_time",
+      "daily_schedule.schedule.thursday.start_time",
+      "daily_schedule.schedule.tuesday.break_duration_minutes",
+      "daily_schedule.schedule.tuesday.end_time",
+      "daily_schedule.schedule.tuesday.start_time",
+      "daily_schedule.schedule.wednesday.break_duration_minutes",
+      "daily_schedule.schedule.wednesday.end_time",
+      "daily_schedule.schedule.wednesday.start_time",
+      "daily_schedule.selected_days",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_signing_bonus",
+      "overtime_eligible",
+      "pension_percentage",
+      "risks_acknowledgment",
+      "role_description",
+      "schedule_type",
+      "uk_country",
+      "work_address_is_home_address",
+      "work_hours_per_week",
+      "work_schedule"
+    ]
+  },
+  "types": {
+    "uk_country": "radio",
+    "contract_duration": "text",
+    "contract_duration_type": "radio",
+    "probation_length_recommended": "radio",
+    "probation_length": "hidden",
+    "contract_end_date": "date",
+    "contract_duration_fixed_term_reason": "textarea",
+    "work_schedule": "radio",
+    "overtime_eligible": "radio",
+    "schedule_type": "select",
+    "daily_schedule.selected_days": "select",
+    "daily_schedule.schedule.monday.start_time": "time",
+    "daily_schedule.schedule.monday.end_time": "time",
+    "daily_schedule.schedule.monday.break_duration_minutes": "number",
+    "daily_schedule.schedule.tuesday.start_time": "time",
+    "daily_schedule.schedule.tuesday.end_time": "time",
+    "daily_schedule.schedule.tuesday.break_duration_minutes": "number",
+    "daily_schedule.schedule.wednesday.start_time": "time",
+    "daily_schedule.schedule.wednesday.end_time": "time",
+    "daily_schedule.schedule.wednesday.break_duration_minutes": "number",
+    "daily_schedule.schedule.thursday.start_time": "time",
+    "daily_schedule.schedule.thursday.end_time": "time",
+    "daily_schedule.schedule.thursday.break_duration_minutes": "number",
+    "daily_schedule.schedule.friday.start_time": "time",
+    "daily_schedule.schedule.friday.end_time": "time",
+    "daily_schedule.schedule.friday.break_duration_minutes": "number",
+    "daily_schedule.schedule.saturday.start_time": "time",
+    "daily_schedule.schedule.saturday.end_time": "time",
+    "daily_schedule.schedule.saturday.break_duration_minutes": "number",
+    "daily_schedule.schedule.sunday.start_time": "time",
+    "daily_schedule.schedule.sunday.end_time": "time",
+    "daily_schedule.schedule.sunday.break_duration_minutes": "number",
+    "work_hours_per_week": "number",
+    "shift_pattern": "text",
+    "available_pto_type": "radio",
+    "available_pto": "number",
+    "annual_leave_carry_forward": "radio",
+    "carryover_details.carry_over_pto_days": "number",
+    "carryover_details.can_expire": "radio",
+    "carryover_details.expiry_months": "number",
+    "role_description": "textarea",
+    "experience_level": "radio",
+    "pension_scheme": "hidden",
+    "membership_id": "hidden",
+    "pension_scheme_enrollment_status": "hidden",
+    "pension_scheme_enrollment_status_effect_date": "hidden",
+    "employer_contribution_type": "radio",
+    "pension_percentage": "number",
+    "work_address_is_home_address": "radio",
+    "wage_type": "radio",
+    "compensation_currency_code": "select",
+    "salary_overview": "radio",
+    "annual_gross_salary": "money",
+    "hourly_gross_salary": "money",
+    "extreme_salary_warning": "hidden",
+    "extreme_salary_acknowledgement": "checkbox",
+    "part_time_salary_confirmation": "checkbox",
+    "has_signing_bonus": "radio",
+    "signing_bonus_amount": "money",
+    "has_bonus": "radio",
+    "bonus_amount": "money",
+    "bonus_details": "textarea",
+    "has_commissions": "radio",
+    "commissions_details": "textarea",
+    "commissions_ack": "checkbox",
+    "equity_compensation.offer_equity_compensation": "radio",
+    "equity_compensation.number_of_stock_options": "text",
+    "equity_compensation.equity_cliff": "number",
+    "equity_compensation.equity_vesting_period": "number",
+    "equity_compensation.equity_description": "textarea",
+    "risks_acknowledgment": "checkbox"
+  },
+  "options": {
+    "uk_country": ["great_britain", "northern_ireland"],
+    "work_schedule": ["full_time", "part_time"],
+    "overtime_eligible": ["no", "yes"],
+    "schedule_type": ["core_business_hours", "fixed_hours", "flexible"],
+    "daily_schedule.selected_days": [
+      "friday",
+      "monday",
+      "saturday",
+      "sunday",
+      "thursday",
+      "tuesday",
+      "wednesday"
+    ],
+    "available_pto_type": ["fixed", "unlimited"],
+    "carryover_details.can_expire": ["no", "yes"],
+    "experience_level": [
+      "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+      "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+      "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+      "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+      "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow"
+    ],
+    "pension_scheme": [
+      "3a0e7173-4148-44b7-8cab-7543f3bd2387",
+      "45ecae6c-0c35-470a-bfab-38db1ea17b22",
+      "fb6eb42c-3479-4caf-b94f-bdff648897f0"
+    ],
+    "pension_scheme_enrollment_status": [
+      "automatic",
+      "ceased_membership",
+      "contractual_pension",
+      "enrolled",
+      "excluded",
+      "leaver",
+      "opted_in",
+      "opted_out",
+      "voluntary_joiner"
+    ],
+    "work_address_is_home_address": ["no", "yes"],
+    "compensation_currency_code": ["GBP", "USD"],
+    "has_signing_bonus": ["no", "yes"],
+    "equity_compensation.offer_equity_compensation": ["no", "yes"]
+  },
+  "constraints": {
+    "contract_duration": {
+      "maxLength": 255
+    },
+    "daily_schedule.schedule.monday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.monday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.monday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.tuesday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.tuesday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.tuesday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.wednesday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.wednesday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.wednesday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.thursday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.thursday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.thursday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.friday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.friday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.friday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.saturday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.saturday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.saturday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.sunday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.sunday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.sunday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "work_hours_per_week": {
+      "minimum": 1,
+      "maximum": 48
+    },
+    "shift_pattern": {
+      "maxLength": 255
+    },
+    "available_pto": {
+      "minimum": 20
+    },
+    "carryover_details.carry_over_pto_days": {
+      "minimum": 1
+    },
+    "carryover_details.expiry_months": {
+      "minimum": 0
+    },
+    "role_description": {
+      "minLength": 100,
+      "maxLength": 5000
+    },
+    "pension_percentage": {
+      "minimum": 4
+    },
+    "equity_compensation.number_of_stock_options": {
+      "maxLength": 255
+    },
+    "equity_compensation.equity_cliff": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "equity_compensation.equity_vesting_period": {
+      "minimum": 0,
+      "maximum": 100
+    },
+    "equity_compensation.equity_description": {
+      "maxLength": 1000
+    }
+  },
+  "scenarios": {
+    "uk_country=great_britain": {
+      "addedVisible": [
+        "annual_leave_carry_forward",
+        "contract_duration_type",
+        "employer_contribution_type",
+        "has_bonus",
+        "has_commissions",
+        "probation_length_recommended",
+        "wage_type"
+      ],
+      "removedVisible": [
+        "equity_compensation.equity_cliff",
+        "equity_compensation.equity_description",
+        "equity_compensation.equity_vesting_period",
+        "equity_compensation.number_of_stock_options"
+      ],
+      "addedRequired": [
+        "contract_duration_type",
+        "has_bonus",
+        "has_commissions",
+        "probation_length",
+        "probation_length_recommended",
+        "wage_type"
+      ],
+      "removedRequired": []
+    },
+    "uk_country=northern_ireland": {
+      "addedVisible": [
+        "annual_leave_carry_forward",
+        "contract_duration_type",
+        "employer_contribution_type",
+        "has_bonus",
+        "has_commissions",
+        "probation_length_recommended",
+        "wage_type"
+      ],
+      "removedVisible": [
+        "equity_compensation.equity_cliff",
+        "equity_compensation.equity_description",
+        "equity_compensation.equity_vesting_period",
+        "equity_compensation.number_of_stock_options"
+      ],
+      "addedRequired": [
+        "contract_duration_type",
+        "has_bonus",
+        "has_commissions",
+        "probation_length",
+        "probation_length_recommended",
+        "wage_type"
+      ],
+      "removedRequired": []
+    },
+    "work_schedule=part_time": {
+      "addedVisible": ["wage_type"],
+      "removedVisible": [],
+      "addedRequired": [],
+      "removedRequired": []
+    },
+    "has_signing_bonus=yes": {
+      "addedVisible": ["signing_bonus_amount"],
+      "removedVisible": [],
+      "addedRequired": ["signing_bonus_amount"],
+      "removedRequired": []
+    }
+  }
+}
