@@ -291,7 +291,9 @@ async function main() {
   );
 
   if (writtenFiles.length > 0) {
-    execFileSync('npx', ['oxfmt', ...writtenFiles], { stdio: 'inherit' });
+    execFileSync('pnpm', ['exec', 'oxfmt', ...writtenFiles], {
+      stdio: 'inherit',
+    });
   }
 
   const report = formatReport(results);
