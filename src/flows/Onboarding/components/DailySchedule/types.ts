@@ -102,8 +102,15 @@ export type DailyScheduleEditState = {
   unsavedSummaryDays: DailyScheduleSummaryDay[];
   /** Weekly hours validation error for the current draft */
   hoursRangeError: DailyScheduleHoursError | null;
-  /** Whether the form has unsaved changes from the default schedule */
+  /**
+   * Whether the draft differs from the country default schedule, not from the
+   * saved one. Use `hasUnsavedChanges` to know if closing would lose edits.
+   */
   isDirty: boolean;
+  /** Same as `isDirty`, under a name that says what it compares against. */
+  hasDifferencesFromCountryDefault: boolean;
+  /** Whether the draft differs from the saved schedule, i.e. closing would discard edits. */
+  hasUnsavedChanges: boolean;
   /** Form-level validation error (e.g., "Select at least one work day") */
   formError: string | null;
   /** Whether any fields have validation errors */

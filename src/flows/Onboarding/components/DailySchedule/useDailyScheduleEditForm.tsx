@@ -117,19 +117,20 @@ export function buildDailyScheduleEditFormDefaultValues({
 }
 
 /**
- * True when `rows` matches the metadata-driven default schedule — ported from
- * Dragon's `compareSchedules`/`dirty` tracking (`workScheduleFieldReducer.js`),
- * which only shows its "Reset to default" button once the schedule actually
- * deviates from the default, rather than showing it unconditionally.
+ * True when `rows` describe the same schedule as `otherRows`. Unchecked days
+ * are equal regardless of their times. Also used to compare against the
+ * metadata-driven default — ported from Dragon's `compareSchedules`/`dirty`
+ * tracking (`workScheduleFieldReducer.js`), which only shows its "Reset to
+ * default" button once the schedule actually deviates from the default.
  */
-function isDefaultSchedule(
+function isSameSchedule(
   rows: DailyScheduleEditFormRowInternal[],
-  defaultRows: DailyScheduleEditFormRowInternal[],
+  otherRows: DailyScheduleEditFormRowInternal[],
 ): boolean {
   return rows.every((row, index) => {
-    const defaultRow = defaultRows[index];
+    const otherRow = otherRows[index];
 
-    if (row.checked !== defaultRow.checked) {
+    if (row.checked !== otherRow.checked) {
       return false;
     }
 
@@ -138,9 +139,9 @@ function isDefaultSchedule(
     }
 
     return (
-      row.start_time === defaultRow.start_time &&
-      row.end_time === defaultRow.end_time &&
-      row.break_duration_minutes === defaultRow.break_duration_minutes
+      row.start_time === otherRow.start_time &&
+      row.end_time === otherRow.end_time &&
+      row.break_duration_minutes === otherRow.break_duration_minutes
     );
   });
 }
@@ -313,7 +314,11 @@ export function useDailyScheduleEditForm({
 
   const formValues = watch('schedule');
 
-  const isDirty = !isDefaultSchedule(formValues, defaultScheduleRows);
+  const hasDifferencesFromCountryDefault = !isSameSchedule(
+    formValues,
+    defaultScheduleRows,
+  );
+  const hasUnsavedChanges = !isSameSchedule(formValues, savedScheduleRows);
 
   // Same "checked rows -> summary days" shape the read-only summary and the
   // edit modal's live preview both build from, kept here so `hoursError`
@@ -406,7 +411,9 @@ export function useDailyScheduleEditForm({
       rows: rowsWithHours,
       unsavedSummaryDays,
       hoursRangeError,
-      isDirty,
+      isDirty: hasDifferencesFromCountryDefault,
+      hasDifferencesFromCountryDefault,
+      hasUnsavedChanges,
       formError,
       hasFieldErrors,
       getFieldError,
