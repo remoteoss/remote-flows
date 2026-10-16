@@ -143,7 +143,7 @@ function CustomDailyScheduleEditForm({
 
       {/* Actions */}
       <div className='flex gap-2'>
-        {state.isDirty && (
+        {state.hasDifferencesFromCountryDefault && (
           <button
             type='button'
             onClick={actions.reset}

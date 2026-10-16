@@ -102,12 +102,9 @@ export type DailyScheduleEditState = {
   unsavedSummaryDays: DailyScheduleSummaryDay[];
   /** Weekly hours validation error for the current draft */
   hoursRangeError: DailyScheduleHoursError | null;
-  /**
-   * Whether the draft differs from the country default schedule, not from the
-   * saved one. Use `hasUnsavedChanges` to know if closing would lose edits.
-   */
+  /** Alias of `hasDifferencesFromCountryDefault`. It does not track unsaved edits; use `hasUnsavedChanges`. */
   isDirty: boolean;
-  /** Same as `isDirty`, under a name that says what it compares against. */
+  /** Whether the draft differs from the country's default schedule, e.g. to decide when to offer "Reset to default". */
   hasDifferencesFromCountryDefault: boolean;
   /** Whether the draft differs from the saved schedule, i.e. closing would discard edits. */
   hasUnsavedChanges: boolean;

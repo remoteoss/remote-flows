@@ -102,7 +102,8 @@ type DailyScheduleEditState = {
   rows: DailyScheduleEditFormRow[]; // one row per weekday, plain values
   unsavedSummaryDays: DailyScheduleSummaryDay[]; // live preview while editing
   hoursRangeError: DailyScheduleHoursError | null;
-  isDirty: boolean;
+  hasDifferencesFromCountryDefault: boolean; // also exposed as `isDirty`
+  hasUnsavedChanges: boolean; // draft differs from the saved schedule
   formError: string | null;
   hasFieldErrors: boolean;
   getFieldError: (index, field) => string | undefined;
