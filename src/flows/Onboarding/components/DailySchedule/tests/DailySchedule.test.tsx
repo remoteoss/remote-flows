@@ -5,10 +5,11 @@ import { DailyScheduleContainer } from '@/src/flows/Onboarding/components/DailyS
 import { germanyDailyScheduleMetadata } from '@/src/flows/Onboarding/components/DailySchedule/tests/fixtures';
 import {
   DailyScheduleContainerProps,
+  DailyScheduleEditBag,
   DailyScheduleRenderProps,
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import { TestProviders } from '@/src/tests/testHelpers';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -925,5 +926,33 @@ describe('DailySchedule', () => {
         within(dialog).getByText(byOwnText('Total of 7 hours per week')),
       ).toBeInTheDocument();
     });
+  });
+});
+
+describe('updateRow normalization', () => {
+  let editBag: DailyScheduleEditBag;
+
+  const CapturingField = (
+    props: Omit<DailyScheduleContainerProps, 'render'>,
+  ) => (
+    <DailyScheduleContainer
+      {...(props as $TSFixMe as DailyScheduleContainerProps)}
+      render={(renderProps: DailyScheduleRenderProps) => {
+        editBag = renderProps.editBag;
+        return null;
+      }}
+    />
+  );
+
+  it('stores times without seconds and breaks as strings, whatever shape was sent', () => {
+    renderWithForm([createDailyScheduleField({ Component: CapturingField })]);
+
+    act(() => editBag.actions.updateRow(0, 'start_time', '09:00:00'));
+    act(() => editBag.actions.updateRow(0, 'end_time', ' 17:00 '));
+    act(() => editBag.actions.updateRow(0, 'break_duration_minutes', 45));
+
+    expect(editBag.state.rows[0].start_time).toBe('09:00');
+    expect(editBag.state.rows[0].end_time).toBe('17:00');
+    expect(editBag.state.rows[0].break_duration_minutes).toBe('45');
   });
 });

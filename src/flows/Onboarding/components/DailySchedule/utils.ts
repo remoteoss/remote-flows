@@ -20,6 +20,29 @@ import { getSingularPluralUnit } from '@/src/lib/i18n';
 
 export const TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
+const TIME_WITH_SECONDS_PATTERN = /^(\d{2}:\d{2}):\d{2}(?:\.\d+)?$/;
+
+/** Trims a time and drops any seconds a native time input adds (`09:00:00` -> `09:00`); other input is returned as typed. */
+export function normalizeTimeInput(value: string): string {
+  const trimmed = value.trim();
+  const match = TIME_WITH_SECONDS_PATTERN.exec(trimmed);
+
+  return match ? match[1] : trimmed;
+}
+
+/** Coerces a value sent to `updateRow` into the string shape the edit form stores for that field. */
+export function normalizeRowValue(field: string, value: unknown): unknown {
+  if (field === 'start_time' || field === 'end_time') {
+    return typeof value === 'string' ? normalizeTimeInput(value) : value;
+  }
+
+  if (field === 'break_duration_minutes' && typeof value === 'number') {
+    return String(value);
+  }
+
+  return value;
+}
+
 export const DAYS_OF_THE_WEEK: Weekday[] = [
   'monday',
   'tuesday',
