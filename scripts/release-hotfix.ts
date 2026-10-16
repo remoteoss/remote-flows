@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 
 import { execSync } from 'child_process';
-import { readFileSync, writeFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { createInterface } from 'readline';
 
 async function getChangeDescription(): Promise<string> {
@@ -124,21 +124,25 @@ ${changeDescription}
   console.log(`✅ Updated version to ${newVersion}`);
   console.log(`✅ Updated CHANGELOG.md`);
 
+  const packageManager = existsSync('pnpm-lock.yaml') ? 'pnpm' : 'npm';
+  const lockfile =
+    packageManager === 'pnpm' ? 'pnpm-lock.yaml' : 'package-lock.json';
+
   // Format files with oxfmt
   console.log(`\n🎨 Formatting files with oxfmt...`);
   try {
-    execSync('pnpm run format', { stdio: 'inherit' });
+    execSync(`${packageManager} run format`, { stdio: 'inherit' });
     console.log(`✅ Files formatted`);
   } catch {
     console.log(`⚠️  oxfmt formatting failed, continuing...`);
   }
 
-  // Update pnpm-lock.yaml
+  // Update the lockfile
   try {
-    execSync('pnpm install', { stdio: 'inherit' });
-    console.log('✅ Updated pnpm-lock.yaml');
+    execSync(`${packageManager} install`, { stdio: 'inherit' });
+    console.log(`✅ Updated ${lockfile}`);
   } catch (error) {
-    console.log(`⚠️  Failed to update pnpm-lock.yaml: ${error}`);
+    console.log(`⚠️  Failed to update ${lockfile}: ${error}`);
   }
 
   // Create release branch

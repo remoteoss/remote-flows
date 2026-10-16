@@ -37,7 +37,12 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile --ignore-scripts
+          else
+            npm ci --include=optional --ignore-scripts
+          fi
 
       - name: Check if version changed
         id: version-check
@@ -75,8 +80,13 @@ jobs:
       - name: Build and test
         if: steps.version-check.outputs.changed == 'true'
         run: |
-          pnpm run build
-          pnpm run test
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm run build
+            pnpm run test
+          else
+            npm run build
+            npm run test
+          fi
 
       - name: Determine npm tag
         if: steps.version-check.outputs.changed == 'true'
