@@ -829,21 +829,24 @@
       "version": 2,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ITA/employment_basic_information -> {}"
     },
     {
       "country": "ITA",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ITA/employment_basic_information -> {}"
     },
     {
       "country": "ITA",
       "version": 2,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ITA/employment_basic_information -> {}"
     },
     {
       "country": "JAM",
