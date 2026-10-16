@@ -116,6 +116,14 @@ export function buildDailyScheduleEditFormDefaultValues({
   });
 }
 
+function isSameBreakMinutes(minutes: string, otherMinutes: string): boolean {
+  if (minutes.trim() === '' || otherMinutes.trim() === '') {
+    return minutes.trim() === otherMinutes.trim();
+  }
+
+  return Number(minutes) === Number(otherMinutes);
+}
+
 /** True when both row sets describe the same schedule; unchecked days are equal whatever their times. */
 function isSameSchedule(
   rows: DailyScheduleEditFormRowInternal[],
@@ -135,8 +143,10 @@ function isSameSchedule(
     return (
       row.start_time === otherRow.start_time &&
       row.end_time === otherRow.end_time &&
-      Number(row.break_duration_minutes) ===
-        Number(otherRow.break_duration_minutes)
+      isSameBreakMinutes(
+        row.break_duration_minutes,
+        otherRow.break_duration_minutes,
+      )
     );
   });
 }

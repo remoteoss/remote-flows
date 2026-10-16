@@ -989,6 +989,23 @@ describe('Edit state change flags', () => {
     expect(editBag.state.hasUnsavedChanges).toBe(true);
   });
 
+  it('flags unsaved changes when a saved 0-minute break is cleared', () => {
+    renderEditBag({
+      ...mondayOnlySchedule,
+      schedule: {
+        monday: {
+          ...mondayOnlySchedule.schedule.monday,
+          break_duration_minutes: 0,
+        },
+      },
+    });
+
+    act(() => editBag.actions.updateRow(0, 'break_duration_minutes', ''));
+
+    expect(editBag.state.hasUnsavedChanges).toBe(true);
+    expect(editBag.state.hasDifferencesFromCountryDefault).toBe(true);
+  });
+
   it('clears unsaved changes after close() discards the edits', () => {
     renderEditBag(mondayOnlySchedule);
 
