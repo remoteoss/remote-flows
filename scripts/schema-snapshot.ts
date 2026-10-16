@@ -233,7 +233,7 @@ function formatReport(results: CountryResult[]): string {
     } else if (result.status === 'no-baseline') {
       lines.push(
         heading,
-        'No baseline for this version. Run `npm run schema-snapshot -- --update` and commit the result.',
+        'No baseline for this version. Run `pnpm run schema-snapshot --update` and commit the result.',
         '',
       );
     } else if (result.status === 'error') {
