@@ -4,6 +4,29 @@ import { execFileSync } from 'node:child_process';
 const VERSIONS_FILE = 'example/src/flows/Onboarding/jsonSchemaVersions.ts';
 const BASE_REF = 'HEAD^1';
 
+// Keep in sync with `pull_request.paths` in .github/workflows/schema-canary.yml.
+// Files outside this list (docs, e2e, example app) cannot change canary results.
+const OTHER_INPUTS = [
+  'package-lock.json',
+  'src/common/createHeadlessForm.tsx',
+  'src/common/headlessForm.ts',
+  'src/components/form/utils.ts',
+  'src/flows/Onboarding/utils.ts',
+  'scripts/contract-details-seeds.ts',
+  'scripts/fill-schema.ts',
+  'scripts/schema-canary.ts',
+  '.github/workflows/schema-canary.yml',
+];
+const OTHER_INPUT_PREFIX = 'scripts/schema-canary/';
+
+export function touchesOtherInputs(changedFiles: string[]): boolean {
+  return changedFiles.some(
+    (file) =>
+      file !== VERSIONS_FILE &&
+      (OTHER_INPUTS.includes(file) || file.startsWith(OTHER_INPUT_PREFIX)),
+  );
+}
+
 const ENTRY_PATTERN =
   /^ {2}([A-Z]{3}): \{\n(?:\s*\/\/[^\n]*\n)?\s*contract_details: (\d+),/gm;
 
@@ -34,10 +57,10 @@ function main() {
   const changedFiles = git('diff', '--name-only', BASE_REF, 'HEAD')
     .split('\n')
     .filter(Boolean);
-  const touchesOtherInputs = changedFiles.some(
-    (file) => file !== VERSIONS_FILE,
-  );
-  if (touchesOtherInputs || !changedFiles.includes(VERSIONS_FILE)) {
+  if (
+    touchesOtherInputs(changedFiles) ||
+    !changedFiles.includes(VERSIONS_FILE)
+  ) {
     console.log('all');
     return;
   }
