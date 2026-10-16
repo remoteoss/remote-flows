@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitest/config';
 import { COVERAGE_THRESHOLDS } from './scripts/coverage-utils.ts';
 
-const isCI = Boolean(process.env.CI);
+const isCI = process.env.CI === 'true';
 
 export default defineConfig({
   test: {

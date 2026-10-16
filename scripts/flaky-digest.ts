@@ -1,7 +1,8 @@
-import { execFileSync } from 'node:child_process';
+import { execFile, execFileSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { promisify } from 'node:util';
 
 import {
   aggregate,
@@ -14,6 +15,10 @@ import type { FlakyEntry } from './flaky-reporter';
 const NO_ARTIFACT_MESSAGE = /no artifact matches/i;
 
 const WORKFLOWS = [MAIN_WORKFLOW, 'pr.yml'];
+
+const DOWNLOAD_CONCURRENCY = 8;
+
+const execFileAsync = promisify(execFile);
 
 type RawRun = {
   databaseId: number;
@@ -38,10 +43,32 @@ function numberFlag(args: string[], name: string, fallback: number): number {
   return value;
 }
 
-function fetchReport(run: RawRun, workflow: string): RunReport | null {
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let next = 0;
+  async function worker() {
+    while (next < items.length) {
+      const index = next++;
+      results[index] = await fn(items[index]);
+    }
+  }
+  await Promise.all(
+    Array.from({ length: Math.min(limit, items.length) }, worker),
+  );
+  return results;
+}
+
+async function fetchReport(
+  run: RawRun,
+  workflow: string,
+): Promise<RunReport | null> {
   const dir = mkdtempSync(path.join(tmpdir(), 'flaky-'));
   try {
-    gh([
+    await execFileAsync('gh', [
       'run',
       'download',
       String(run.databaseId),
@@ -76,7 +103,7 @@ function fetchReport(run: RawRun, workflow: string): RunReport | null {
   }
 }
 
-function main() {
+async function main() {
   const args = process.argv.slice(2);
   const limit = numberFlag(args, 'runs', 30);
   const minHits = numberFlag(args, 'min-hits', 1);
@@ -95,15 +122,18 @@ function main() {
         'databaseId,url,createdAt',
       ]),
     );
-    for (const run of runs) {
-      const report = fetchReport(run, workflow);
-      if (report) {
-        reports.push(report);
-      }
-    }
+    const fetched = await mapWithConcurrency(
+      runs,
+      DOWNLOAD_CONCURRENCY,
+      (run) => fetchReport(run, workflow),
+    );
+    reports.push(...fetched.filter((report) => report !== null));
   }
 
   console.log(renderFlakyDigest(aggregate(reports), reports.length, minHits));
 }
 
-main();
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
