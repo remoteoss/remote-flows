@@ -101,8 +101,11 @@ are a **framework-agnostic** surface:
 type DailyScheduleEditState = {
   rows: DailyScheduleEditFormRow[]; // one row per weekday, plain values
   unsavedSummaryDays: DailyScheduleSummaryDay[]; // live preview while editing
+  draftWeeklyHours: number; // weekly total of the draft being edited
+  savedWeeklyHours: number; // weekly total of the saved schedule
   hoursRangeError: DailyScheduleHoursError | null;
-  isDirty: boolean;
+  hasDifferencesFromCountryDefault: boolean; // also exposed as `isDirty`
+  hasUnsavedChanges: boolean; // draft differs from the saved schedule
   formError: string | null;
   hasFieldErrors: boolean;
   getFieldError: (index, field) => string | undefined;

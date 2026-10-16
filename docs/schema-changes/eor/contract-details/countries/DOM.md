@@ -32,7 +32,7 @@ Schema versions for employee onboarding in the Dominican Republic.
 
 **What changed:**
 
-- Contract duration moves to the Dominican Republic `dom_contract_duration` component with admin override. The standalone `contract_duration_type` field (indefinite, fixed-term variants) is removed from the schema. Fixed-term is blocked for employees with a recognized seniority date, except for Remote Admins. Flag-gated; no action is required for existing contracts (component and field removal inferred from the schema diff; the seniority block from the tiger commit message).
+- Contract duration moves to the Dominican Republic `dom_contract_duration` component with admin override. The standalone `contract_duration_type` field (indefinite, fixed-term variants) is removed from the schema. Fixed-term is blocked for employees with a recognized seniority date, except for Remote Admins. Flag-gated; no action is required for existing contracts.
 
 **Migration:**
 
@@ -52,7 +52,7 @@ Schema versions for employee onboarding in the Dominican Republic.
 
 **What changed:**
 
-- The form moves to the JSON Schema Form v1 engine. Validation and form generation follow v1 semantics (inferred from the schema diff).
+- The form moves to the JSON Schema Form v1 engine. Validation and form generation follow v1 semantics.
 
 **Migration:**
 
@@ -92,7 +92,7 @@ Schema versions for employee onboarding in the Dominican Republic.
 
 **What changed:**
 
-- Schema metadata only: marks the form as using the previous JSON Schema Form engine. No field changes (inferred from the schema diff).
+- Schema metadata only: marks the form as using the previous JSON Schema Form engine. No field changes.
 
 **Migration:**
 

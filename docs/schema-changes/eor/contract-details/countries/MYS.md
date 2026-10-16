@@ -12,7 +12,7 @@ Schema versions for employee onboarding in Malaysia.
 
 **What changed:**
 
-- The contract duration fields move to the shared `contract_duration` component with unlimited maximum duration. The standalone `contract_duration_type` and `contract_end_date` field definitions and the contract duration help center metadata are removed from the schema (inferred from the schema diff).
+- The contract duration fields move to the shared `contract_duration` component with unlimited maximum duration. The standalone `contract_duration_type` and `contract_end_date` field definitions and the contract duration help center metadata are removed from the schema.
 
 **Migration:**
 

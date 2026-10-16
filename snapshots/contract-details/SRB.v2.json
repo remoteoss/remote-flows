@@ -1,0 +1,348 @@
+{
+  "fingerprintVersion": 1,
+  "base": {
+    "visible": [
+      "annual_gross_salary",
+      "available_pto",
+      "company_car",
+      "contract_duration_type",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_non_compete_non_solicitation",
+      "has_probation_period",
+      "has_signing_bonus",
+      "increased_salary_ack",
+      "job_id",
+      "mandatory_allowances_ack",
+      "mandatory_allowances_statement",
+      "mandatory_expenses_to_be_paid",
+      "notice_period_choice",
+      "notice_period_during_probation_ack",
+      "notice_period_termination_non_performance_ack",
+      "overtime_pay_confirmation",
+      "paid_leave_ack",
+      "rest_period_ack",
+      "role_description",
+      "skills_and_qualifications",
+      "unpaid_leave",
+      "work_address_is_home_address",
+      "work_equipment",
+      "work_equipment_provided_by",
+      "work_hours_per_week",
+      "work_schedule",
+      "working_percentage_engagement"
+    ],
+    "required": [
+      "annual_gross_salary",
+      "available_pto",
+      "company_car",
+      "contract_duration_type",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_probation_period",
+      "has_signing_bonus",
+      "increased_salary_ack",
+      "job_id",
+      "mandatory_allowances_ack",
+      "mandatory_expenses_to_be_paid",
+      "notice_period_choice",
+      "notice_period_during_probation_ack",
+      "notice_period_termination_non_performance_ack",
+      "overtime_pay_confirmation",
+      "paid_leave_ack",
+      "rest_period_ack",
+      "role_description",
+      "skills_and_qualifications",
+      "unpaid_leave",
+      "work_address_is_home_address",
+      "work_equipment",
+      "work_equipment_provided_by",
+      "work_hours_per_week",
+      "work_schedule",
+      "working_percentage_engagement"
+    ]
+  },
+  "types": {
+    "job_id": "select",
+    "contract_duration_type": "radio",
+    "contract_end_date": "date",
+    "contract_duration_fixed_term_reason": "select",
+    "work_schedule": "radio",
+    "work_hours_per_week": "number",
+    "working_percentage_engagement": "select",
+    "has_probation_period": "radio",
+    "probation_length": "number",
+    "notice_period_choice": "radio",
+    "notice_period_days": "hidden",
+    "notice_period_during_probation_ack": "checkbox",
+    "notice_period_termination_non_performance_ack": "checkbox",
+    "available_pto": "number",
+    "paid_leave_ack": "checkbox",
+    "unpaid_leave": "radio",
+    "overtime_pay_confirmation": "checkbox",
+    "rest_period_ack": "checkbox",
+    "role_description": "textarea",
+    "experience_level": "radio",
+    "skills_and_qualifications": "textarea",
+    "work_address_is_home_address": "radio",
+    "annual_gross_salary": "money",
+    "mandatory_allowances_statement": "hidden",
+    "mandatory_allowances_ack": "checkbox",
+    "part_time_salary_confirmation": "checkbox",
+    "increased_salary_ack": "checkbox",
+    "has_signing_bonus": "radio",
+    "signing_bonus_amount": "money",
+    "has_bonus": "radio",
+    "bonus_details": "textarea",
+    "has_commissions": "radio",
+    "commissions_details": "textarea",
+    "commissions_ack": "checkbox",
+    "equity_compensation.offer_equity_compensation": "radio",
+    "equity_compensation.number_of_stock_options": "text",
+    "equity_compensation.equity_cliff": "number",
+    "equity_compensation.equity_vesting_period": "number",
+    "equity_compensation.equity_description": "textarea",
+    "has_non_compete_non_solicitation": "radio",
+    "non_solicitation_preceding_period_months": "number",
+    "non_compete_clause_halt_period_months": "number",
+    "work_equipment_provided_by": "radio",
+    "work_equipment_allowance": "money",
+    "work_equipment": "text",
+    "company_car": "radio",
+    "private_use_company_car": "radio",
+    "mandatory_expenses_to_be_paid": "checkbox",
+    "bonus_amount": "text"
+  },
+  "options": {
+    "job_id": [
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23",
+      "24",
+      "25",
+      "26",
+      "27",
+      "28",
+      "29",
+      "30",
+      "31",
+      "32",
+      "33",
+      "34",
+      "35",
+      "36",
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44",
+      "45",
+      "46",
+      "47",
+      "48",
+      "49",
+      "50",
+      "51",
+      "52",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "59",
+      "60",
+      "61",
+      "62",
+      "63",
+      "64",
+      "65",
+      "67",
+      "68",
+      "69",
+      "70",
+      "71",
+      "72",
+      "73",
+      "74",
+      "75",
+      "76",
+      "77",
+      "78",
+      "79",
+      "80",
+      "81"
+    ],
+    "contract_duration_type": ["fixed_term", "indefinite"],
+    "work_schedule": ["full_time", "part_time"],
+    "working_percentage_engagement": [
+      "10",
+      "100",
+      "20",
+      "25",
+      "35",
+      "50",
+      "65",
+      "75",
+      "85"
+    ],
+    "has_probation_period": ["no", "yes"],
+    "notice_period_choice": ["custom", "recommended"],
+    "unpaid_leave": ["no", "yes"],
+    "experience_level": [
+      "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+      "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+      "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+      "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+      "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow"
+    ],
+    "work_address_is_home_address": ["no", "yes"],
+    "has_signing_bonus": ["no", "yes"],
+    "has_bonus": ["no", "yes"],
+    "has_commissions": ["no", "yes"],
+    "equity_compensation.offer_equity_compensation": ["no", "yes"],
+    "has_non_compete_non_solicitation": ["no", "yes"],
+    "work_equipment_provided_by": [
+      "provided_by_client",
+      "provided_by_employee"
+    ],
+    "company_car": ["no", "yes"]
+  },
+  "constraints": {
+    "work_hours_per_week": {
+      "minimum": 36,
+      "maximum": 40
+    },
+    "available_pto": {
+      "minimum": 20
+    },
+    "role_description": {
+      "minLength": 100,
+      "maxLength": 5000
+    },
+    "skills_and_qualifications": {
+      "maxLength": 1000
+    },
+    "work_equipment": {
+      "maxLength": 1000
+    }
+  },
+  "scenarios": {
+    "contract_duration_type=fixed_term": {
+      "addedVisible": [
+        "contract_duration_fixed_term_reason",
+        "contract_end_date"
+      ],
+      "removedVisible": [],
+      "addedRequired": [
+        "contract_duration_fixed_term_reason",
+        "contract_end_date"
+      ],
+      "removedRequired": []
+    },
+    "work_schedule=part_time": {
+      "addedVisible": ["part_time_salary_confirmation"],
+      "removedVisible": [],
+      "addedRequired": ["part_time_salary_confirmation"],
+      "removedRequired": []
+    },
+    "has_probation_period=yes": {
+      "addedVisible": ["probation_length"],
+      "removedVisible": [],
+      "addedRequired": ["probation_length"],
+      "removedRequired": []
+    },
+    "notice_period_choice=recommended": {
+      "addedVisible": ["notice_period_days"],
+      "removedVisible": [],
+      "addedRequired": ["notice_period_days"],
+      "removedRequired": []
+    },
+    "notice_period_choice=custom": {
+      "addedVisible": ["notice_period_days"],
+      "removedVisible": [],
+      "addedRequired": ["notice_period_days"],
+      "removedRequired": []
+    },
+    "has_signing_bonus=yes": {
+      "addedVisible": ["signing_bonus_amount"],
+      "removedVisible": [],
+      "addedRequired": ["signing_bonus_amount"],
+      "removedRequired": []
+    },
+    "has_bonus=yes": {
+      "addedVisible": ["bonus_details"],
+      "removedVisible": [],
+      "addedRequired": ["bonus_details"],
+      "removedRequired": []
+    },
+    "has_commissions=yes": {
+      "addedVisible": ["commissions_ack", "commissions_details"],
+      "removedVisible": [],
+      "addedRequired": ["commissions_ack", "commissions_details"],
+      "removedRequired": []
+    },
+    "equity_compensation.offer_equity_compensation=yes": {
+      "addedVisible": [
+        "equity_compensation.equity_cliff",
+        "equity_compensation.equity_description",
+        "equity_compensation.equity_vesting_period",
+        "equity_compensation.number_of_stock_options"
+      ],
+      "removedVisible": [],
+      "addedRequired": ["equity_compensation.equity_description"],
+      "removedRequired": []
+    },
+    "has_non_compete_non_solicitation=yes": {
+      "addedVisible": [
+        "non_compete_clause_halt_period_months",
+        "non_solicitation_preceding_period_months"
+      ],
+      "removedVisible": [],
+      "addedRequired": [
+        "non_compete_clause_halt_period_months",
+        "non_solicitation_preceding_period_months"
+      ],
+      "removedRequired": []
+    },
+    "work_equipment_provided_by=provided_by_employee": {
+      "addedVisible": ["work_equipment_allowance"],
+      "removedVisible": [],
+      "addedRequired": ["work_equipment_allowance"],
+      "removedRequired": []
+    },
+    "company_car=yes": {
+      "addedVisible": ["private_use_company_car"],
+      "removedVisible": [],
+      "addedRequired": ["private_use_company_car"],
+      "removedRequired": []
+    }
+  }
+}
