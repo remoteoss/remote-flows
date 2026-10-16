@@ -17,6 +17,7 @@ import {
   calculateTotalWeeklyHours,
   calculateWorkingHours,
   getDailyScheduleHoursError,
+  normalizeRowValue,
   resolveDailyScheduleValue,
   TIME_PATTERN,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
@@ -417,7 +418,10 @@ export function useDailyScheduleEditForm({
         field: keyof Omit<DailyScheduleEditFormRow, 'hours'>,
         value: unknown,
       ) => {
-        setFormValue(`schedule.${index}.${field}` as $TSFixMe, value);
+        setFormValue(
+          `schedule.${index}.${field}` as $TSFixMe,
+          normalizeRowValue(field, value),
+        );
       },
       toggleDay: (index: number) => {
         const currentValue = watchedSchedule[index]?.checked;
