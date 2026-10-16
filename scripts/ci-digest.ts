@@ -3,6 +3,8 @@ import { execFileSync } from 'node:child_process';
 import {
   classifyFailure,
   extractErrorWindows,
+  extractPlaywrightFailures,
+  jobsToChecks,
   parseCheckLink,
   renderDigest,
   type CheckRun,
@@ -35,19 +37,42 @@ function fetchFailedLog(check: CheckRun): string {
   }
 }
 
-function main() {
-  const args = process.argv.slice(2);
-  const maxLinesFlag = args.find((arg) => arg.startsWith('--max-lines='));
-  const maxLines = maxLinesFlag ? Number(maxLinesFlag.split('=')[1]) : 40;
-  if (!Number.isInteger(maxLines) || maxLines < 1) {
-    throw new Error(
-      `--max-lines must be a positive integer, got ${maxLinesFlag}`,
+type Checks = { subject: string; failed: RawCheck[]; passing: number };
+
+function branchChecks(branch: string): Checks {
+  const runs: { databaseId: number; workflowName: string; headSha: string }[] =
+    JSON.parse(
+      gh([
+        'run',
+        'list',
+        '--branch',
+        branch,
+        '--limit',
+        '30',
+        '--json',
+        'databaseId,workflowName,headSha',
+      ]),
+    );
+  if (runs.length === 0) {
+    throw new Error(`No workflow runs found on branch ${branch}`);
+  }
+  const headSha = runs[0].headSha;
+  const failed: RawCheck[] = [];
+  let passing = 0;
+  for (const run of runs.filter((candidate) => candidate.headSha === headSha)) {
+    const { jobs } = JSON.parse(
+      gh(['run', 'view', String(run.databaseId), '--json', 'jobs']),
+    );
+    const result = jobsToChecks(run.workflowName, jobs);
+    passing += result.passing;
+    failed.push(
+      ...result.failed.map((check) => ({ ...check, bucket: 'fail' })),
     );
   }
-  const prNumber =
-    args.find((arg) => /^\d+$/.test(arg)) ??
-    JSON.parse(gh(['pr', 'view', '--json', 'number'])).number.toString();
+  return { subject: `${branch} @ ${headSha.slice(0, 7)}`, failed, passing };
+}
 
+function prChecks(prNumber: string): Checks {
   let raw: RawCheck[];
   try {
     raw = JSON.parse(
@@ -60,8 +85,47 @@ function main() {
     }
     raw = JSON.parse(stdout);
   }
-
   const failed = raw.filter((check) => check.bucket === 'fail');
+  return {
+    subject: `PR #${prNumber}`,
+    failed,
+    passing: raw.length - failed.length,
+  };
+}
+
+function currentBranch(): string {
+  return execFileSync('git', ['rev-parse', '--abbrev-ref', 'HEAD'], {
+    encoding: 'utf8',
+  }).trim();
+}
+
+function main() {
+  const args = process.argv.slice(2);
+  const maxLinesFlag = args.find((arg) => arg.startsWith('--max-lines='));
+  const maxLines = maxLinesFlag ? Number(maxLinesFlag.split('=')[1]) : 40;
+  if (!Number.isInteger(maxLines) || maxLines < 1) {
+    throw new Error(
+      `--max-lines must be a positive integer, got ${maxLinesFlag}`,
+    );
+  }
+  const branchFlag = args.find((arg) => arg.startsWith('--branch='));
+  const prArg = args.find((arg) => /^\d+$/.test(arg));
+  const { subject, failed, passing } = branchFlag
+    ? branchChecks(branchFlag.split('=')[1])
+    : prArg
+      ? prChecks(prArg)
+      : (() => {
+          try {
+            return prChecks(
+              JSON.parse(
+                gh(['pr', 'view', '--json', 'number']),
+              ).number.toString(),
+            );
+          } catch {
+            return branchChecks(currentBranch());
+          }
+        })();
+
   const failures = failed.map((rawCheck) => {
     const check: CheckRun = { ...rawCheck, ...parseCheckLink(rawCheck.link) };
     const log = fetchFailedLog(check);
@@ -74,14 +138,16 @@ function main() {
         ],
       };
     }
+    const kind = classifyFailure(check.name, log);
     return {
       check,
-      kind: classifyFailure(check.name, log),
+      kind,
       excerpt: extractErrorWindows(log, { maxLines }),
+      failingSpecs: kind === 'e2e' ? extractPlaywrightFailures(log) : [],
     };
   });
 
-  console.log(renderDigest(prNumber, failures, raw.length - failed.length));
+  console.log(renderDigest(subject, failures, passing));
 }
 
 main();
