@@ -1,0 +1,367 @@
+{
+  "fingerprintVersion": 1,
+  "base": {
+    "visible": [
+      "annual_gross_salary",
+      "available_pto",
+      "available_pto_type",
+      "contract_duration_type",
+      "daily_schedule.schedule.friday.break_duration_minutes",
+      "daily_schedule.schedule.friday.end_time",
+      "daily_schedule.schedule.friday.start_time",
+      "daily_schedule.schedule.monday.break_duration_minutes",
+      "daily_schedule.schedule.monday.end_time",
+      "daily_schedule.schedule.monday.start_time",
+      "daily_schedule.schedule.thursday.break_duration_minutes",
+      "daily_schedule.schedule.thursday.end_time",
+      "daily_schedule.schedule.thursday.start_time",
+      "daily_schedule.schedule.tuesday.break_duration_minutes",
+      "daily_schedule.schedule.tuesday.end_time",
+      "daily_schedule.schedule.tuesday.start_time",
+      "daily_schedule.schedule.wednesday.break_duration_minutes",
+      "daily_schedule.schedule.wednesday.end_time",
+      "daily_schedule.schedule.wednesday.start_time",
+      "daily_schedule.selected_days",
+      "employee_travel_required",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_signing_bonus",
+      "ita_work_equipment_provided",
+      "job_category",
+      "non_compete_clause_apply",
+      "non_interference_apply",
+      "non_solicitation_customers",
+      "non_solicitation_employees",
+      "primary_point_of_contact",
+      "probation_length",
+      "probation_length_days",
+      "probation_length_fixed",
+      "probation_length_maximum",
+      "probation_length_minimum",
+      "probation_length_recommended",
+      "probation_length_unit",
+      "probation_length_working_days",
+      "professional_area",
+      "professional_qualifications",
+      "role_description",
+      "salary_overview",
+      "schedule_type",
+      "work_from_home_allowance_ack",
+      "work_hours_per_week",
+      "work_schedule"
+    ],
+    "required": [
+      "annual_gross_salary",
+      "available_pto",
+      "available_pto_type",
+      "contract_duration_type",
+      "daily_schedule.schedule.friday.break_duration_minutes",
+      "daily_schedule.schedule.friday.end_time",
+      "daily_schedule.schedule.friday.start_time",
+      "daily_schedule.schedule.monday.break_duration_minutes",
+      "daily_schedule.schedule.monday.end_time",
+      "daily_schedule.schedule.monday.start_time",
+      "daily_schedule.schedule.thursday.break_duration_minutes",
+      "daily_schedule.schedule.thursday.end_time",
+      "daily_schedule.schedule.thursday.start_time",
+      "daily_schedule.schedule.tuesday.break_duration_minutes",
+      "daily_schedule.schedule.tuesday.end_time",
+      "daily_schedule.schedule.tuesday.start_time",
+      "daily_schedule.schedule.wednesday.break_duration_minutes",
+      "daily_schedule.schedule.wednesday.end_time",
+      "daily_schedule.schedule.wednesday.start_time",
+      "daily_schedule.selected_days",
+      "employee_travel_required",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_signing_bonus",
+      "ita_work_equipment_provided",
+      "non_compete_clause_apply",
+      "non_interference_apply",
+      "non_solicitation_customers",
+      "non_solicitation_employees",
+      "primary_point_of_contact",
+      "probation_length_days",
+      "probation_length_recommended",
+      "professional_qualifications",
+      "role_description",
+      "schedule_type",
+      "work_from_home_allowance_ack",
+      "work_hours_per_week",
+      "work_schedule"
+    ]
+  },
+  "types": {
+    "contract_duration_type": "radio",
+    "contract_end_date": "date",
+    "work_schedule": "radio",
+    "schedule_type": "select",
+    "daily_schedule.selected_days": "select",
+    "daily_schedule.schedule.monday.start_time": "time",
+    "daily_schedule.schedule.monday.end_time": "time",
+    "daily_schedule.schedule.monday.break_duration_minutes": "number",
+    "daily_schedule.schedule.tuesday.start_time": "time",
+    "daily_schedule.schedule.tuesday.end_time": "time",
+    "daily_schedule.schedule.tuesday.break_duration_minutes": "number",
+    "daily_schedule.schedule.wednesday.start_time": "time",
+    "daily_schedule.schedule.wednesday.end_time": "time",
+    "daily_schedule.schedule.wednesday.break_duration_minutes": "number",
+    "daily_schedule.schedule.thursday.start_time": "time",
+    "daily_schedule.schedule.thursday.end_time": "time",
+    "daily_schedule.schedule.thursday.break_duration_minutes": "number",
+    "daily_schedule.schedule.friday.start_time": "time",
+    "daily_schedule.schedule.friday.end_time": "time",
+    "daily_schedule.schedule.friday.break_duration_minutes": "number",
+    "available_pto": "number",
+    "employee_travel_required": "radio",
+    "ita_work_equipment_provided": "select",
+    "work_hours_per_week": "number",
+    "experience_level": "radio",
+    "probation_length_recommended": "radio",
+    "probation_length_unit": "hidden",
+    "probation_length": "number",
+    "probation_length_days": "number",
+    "probation_length_working_days": "number",
+    "probation_length_minimum": "hidden",
+    "probation_length_maximum": "hidden",
+    "probation_length_fixed": "hidden",
+    "available_pto_type": "hidden",
+    "role_description": "textarea",
+    "job_category": "hidden",
+    "professional_area": "hidden",
+    "primary_point_of_contact": "text",
+    "primary_point_of_contact_email": "email",
+    "professional_qualifications": "select",
+    "salary_overview": "radio",
+    "annual_gross_salary": "money",
+    "extreme_salary_warning": "hidden",
+    "extreme_salary_acknowledgement": "checkbox",
+    "annual_bonus_ack": "checkbox",
+    "part_time_salary_confirmation": "checkbox",
+    "work_from_home_allowance_ack": "checkbox",
+    "has_signing_bonus": "radio",
+    "signing_bonus_amount": "money",
+    "has_bonus": "radio",
+    "bonus_amount": "money",
+    "bonus_details": "textarea",
+    "has_commissions": "radio",
+    "commissions_details": "textarea",
+    "commissions_ack": "checkbox",
+    "equity_compensation.offer_equity_compensation": "radio",
+    "equity_compensation.number_of_stock_options": "text",
+    "equity_compensation.equity_cliff": "number",
+    "equity_compensation.equity_vesting_period": "number",
+    "equity_compensation.equity_description": "textarea",
+    "non_compete_clause_apply": "radio",
+    "non_compete_clause_halt_period_months": "number",
+    "non_compete_clause_compensation_amount": "money",
+    "non_compete_clause_compensation_percentage": "number",
+    "non_solicitation_employees": "radio",
+    "non_solicitation_employees_number_of_months": "number",
+    "non_solicitation_customers": "radio",
+    "non_solicitation_customer_number_of_months": "number",
+    "non_interference_apply": "radio",
+    "non_interference_halt_period": "number"
+  },
+  "options": {
+    "contract_duration_type": ["fixed_term", "indefinite"],
+    "work_schedule": ["full_time", "part_time"],
+    "schedule_type": ["core_business_hours", "fixed_hours", "flexible"],
+    "daily_schedule.selected_days": [
+      "friday",
+      "monday",
+      "thursday",
+      "tuesday",
+      "wednesday"
+    ],
+    "employee_travel_required": ["no", "yes"],
+    "ita_work_equipment_provided": [
+      "computer",
+      "keyboard",
+      "landline",
+      "printer",
+      "smartphone",
+      "tablet"
+    ],
+    "experience_level": ["level_1", "level_2", "level_3", "level_4", "quadro"],
+    "probation_length_recommended": ["custom", "recommended"],
+    "professional_qualifications": [
+      "bachelors_degree",
+      "higher_technical_artistic_diploma",
+      "lower_secondary_school_certificate",
+      "masters_degree",
+      "phd_research_doctorate",
+      "primary_school_certificate",
+      "upper_secondary_school_leaving_certificate",
+      "vocational_qualification"
+    ],
+    "salary_overview": ["salary_overview"],
+    "has_signing_bonus": ["no", "yes"],
+    "has_bonus": ["no", "yes"],
+    "has_commissions": ["no", "yes"],
+    "equity_compensation.offer_equity_compensation": ["no", "yes"],
+    "non_compete_clause_apply": ["no", "yes"],
+    "non_solicitation_employees": ["no", "yes"],
+    "non_solicitation_customers": ["no", "yes"],
+    "non_interference_apply": ["no", "yes"]
+  },
+  "constraints": {
+    "daily_schedule.schedule.monday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.monday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.monday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.tuesday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.tuesday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.tuesday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.wednesday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.wednesday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.wednesday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.thursday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.thursday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.thursday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.friday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.friday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.friday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "available_pto": {
+      "minimum": 0
+    },
+    "work_hours_per_week": {
+      "minimum": 18,
+      "maximum": 40
+    },
+    "probation_length": {
+      "minimum": 0,
+      "maximum": 30
+    },
+    "probation_length_days": {
+      "minimum": 0,
+      "maximum": 30
+    },
+    "probation_length_working_days": {
+      "minimum": 0,
+      "maximum": 30
+    },
+    "role_description": {
+      "minLength": 100,
+      "maxLength": 5000
+    },
+    "primary_point_of_contact": {
+      "maxLength": 255
+    },
+    "annual_gross_salary": {
+      "minimum": 0
+    }
+  },
+  "scenarios": {
+    "contract_duration_type=indefinite": {
+      "addedVisible": ["annual_bonus_ack"],
+      "removedVisible": [],
+      "addedRequired": ["annual_bonus_ack"],
+      "removedRequired": []
+    },
+    "contract_duration_type=fixed_term": {
+      "addedVisible": ["annual_bonus_ack", "contract_end_date"],
+      "removedVisible": [],
+      "addedRequired": ["annual_bonus_ack", "contract_end_date"],
+      "removedRequired": []
+    },
+    "work_schedule=part_time": {
+      "addedVisible": ["part_time_salary_confirmation"],
+      "removedVisible": [],
+      "addedRequired": ["part_time_salary_confirmation"],
+      "removedRequired": []
+    },
+    "has_signing_bonus=yes": {
+      "addedVisible": ["signing_bonus_amount"],
+      "removedVisible": [],
+      "addedRequired": ["signing_bonus_amount"],
+      "removedRequired": []
+    },
+    "has_bonus=yes": {
+      "addedVisible": ["bonus_amount", "bonus_details"],
+      "removedVisible": [],
+      "addedRequired": ["bonus_details"],
+      "removedRequired": []
+    },
+    "has_commissions=yes": {
+      "addedVisible": ["commissions_ack", "commissions_details"],
+      "removedVisible": [],
+      "addedRequired": ["commissions_ack", "commissions_details"],
+      "removedRequired": []
+    },
+    "equity_compensation.offer_equity_compensation=yes": {
+      "addedVisible": [
+        "equity_compensation.equity_cliff",
+        "equity_compensation.equity_description",
+        "equity_compensation.equity_vesting_period",
+        "equity_compensation.number_of_stock_options"
+      ],
+      "removedVisible": [],
+      "addedRequired": ["equity_compensation.equity_description"],
+      "removedRequired": []
+    },
+    "non_compete_clause_apply=yes": {
+      "addedVisible": [
+        "non_compete_clause_compensation_percentage",
+        "non_compete_clause_halt_period_months"
+      ],
+      "removedVisible": [],
+      "addedRequired": [
+        "non_compete_clause_compensation_percentage",
+        "non_compete_clause_halt_period_months"
+      ],
+      "removedRequired": []
+    },
+    "non_solicitation_employees=yes": {
+      "addedVisible": ["non_solicitation_employees_number_of_months"],
+      "removedVisible": [],
+      "addedRequired": ["non_solicitation_employees_number_of_months"],
+      "removedRequired": []
+    },
+    "non_solicitation_customers=yes": {
+      "addedVisible": ["non_solicitation_customer_number_of_months"],
+      "removedVisible": [],
+      "addedRequired": ["non_solicitation_customer_number_of_months"],
+      "removedRequired": []
+    },
+    "non_interference_apply=yes": {
+      "addedVisible": ["non_interference_halt_period"],
+      "removedVisible": [],
+      "addedRequired": ["non_interference_halt_period"],
+      "removedRequired": []
+    }
+  }
+}
