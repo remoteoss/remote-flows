@@ -246,6 +246,17 @@ describe('extractPlaywrightFailures', () => {
     ]);
   });
 
+  it('drops a spec that failed and then passed on retry', () => {
+    const log = [
+      'Run Playwright tests\t2026-10-16T09:51:47.0Z   ✘   9 [chromium] › e2e/a.spec.ts:22:7 › A › fills (31.3s)',
+      'Run Playwright tests\t2026-10-16T09:52:17.9Z   ✓  12 [chromium] › e2e/a.spec.ts:22:7 › A › fills (retry #1) (29.9s)',
+      'Run Playwright tests\t2026-10-16T09:52:52.7Z   ✘  13 [chromium] › e2e/b.spec.ts:20:7 › B › fills (31.4s)',
+    ].join('\n');
+    expect(extractPlaywrightFailures(log)).toEqual([
+      '[chromium] › e2e/b.spec.ts:20:7 › B › fills',
+    ]);
+  });
+
   it('returns an empty list when no spec failed', () => {
     expect(extractPlaywrightFailures('all good')).toEqual([]);
   });

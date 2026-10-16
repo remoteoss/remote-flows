@@ -37,14 +37,19 @@ const FLAKE_SIGNATURES = [
 ];
 
 const PLAYWRIGHT_FAILURE_PATTERN =
-  /✘\s+\d+\s+(\[[^\]]+\]\s+›\s+.+?)(?:\s+\(retry #\d+\))?(?:\s+\([\d.]+(?:ms|s|m)\))?$/;
+  /([✘✓])\s+\d+\s+(\[[^\]]+\]\s+›\s+.+?)(?:\s+\(retry #\d+\))?(?:\s+\([\d.]+(?:ms|s|m)\))?$/;
 
 export function extractPlaywrightFailures(log: string): string[] {
   const specs = new Set<string>();
   for (const line of log.split('\n').map(cleanLogLine)) {
     const match = line.trim().match(PLAYWRIGHT_FAILURE_PATTERN);
-    if (match) {
-      specs.add(match[1]);
+    if (!match) {
+      continue;
+    }
+    if (match[1] === '✘') {
+      specs.add(match[2]);
+    } else {
+      specs.delete(match[2]);
     }
   }
   return [...specs];
