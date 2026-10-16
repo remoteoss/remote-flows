@@ -135,7 +135,8 @@ function isSameSchedule(
     return (
       row.start_time === otherRow.start_time &&
       row.end_time === otherRow.end_time &&
-      row.break_duration_minutes === otherRow.break_duration_minutes
+      Number(row.break_duration_minutes) ===
+        Number(otherRow.break_duration_minutes)
     );
   });
 }

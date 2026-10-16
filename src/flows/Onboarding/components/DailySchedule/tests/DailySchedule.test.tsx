@@ -5,10 +5,11 @@ import { DailyScheduleContainer } from '@/src/flows/Onboarding/components/DailyS
 import { germanyDailyScheduleMetadata } from '@/src/flows/Onboarding/components/DailySchedule/tests/fixtures';
 import {
   DailyScheduleContainerProps,
+  DailyScheduleEditBag,
   DailyScheduleRenderProps,
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import { TestProviders } from '@/src/tests/testHelpers';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -925,5 +926,133 @@ describe('DailySchedule', () => {
         within(dialog).getByText(byOwnText('Total of 7 hours per week')),
       ).toBeInTheDocument();
     });
+  });
+});
+
+describe('Edit state change flags', () => {
+  let editBag: DailyScheduleEditBag;
+
+  const CapturingField = (
+    props: Omit<DailyScheduleContainerProps, 'render'>,
+  ) => (
+    <DailyScheduleContainer
+      {...(props as $TSFixMe as DailyScheduleContainerProps)}
+      render={(renderProps: DailyScheduleRenderProps) => {
+        editBag = renderProps.editBag;
+        return null;
+      }}
+    />
+  );
+
+  const renderEditBag = (dailySchedule?: Record<string, unknown>) =>
+    renderWithForm([createDailyScheduleField({ Component: CapturingField })], {
+      daily_schedule: dailySchedule,
+    });
+
+  const mondayOnlySchedule = {
+    selected_days: ['monday'],
+    schedule: {
+      monday: {
+        start_time: '10:00',
+        end_time: '14:00',
+        break_duration_minutes: 15,
+      },
+    },
+  };
+
+  it('reports no unsaved changes when nothing is saved and the form is untouched', () => {
+    renderEditBag(undefined);
+
+    expect(editBag.state.hasUnsavedChanges).toBe(false);
+    expect(editBag.state.hasDifferencesFromCountryDefault).toBe(false);
+    expect(editBag.state.isDirty).toBe(false);
+  });
+
+  it('reports no unsaved changes for a saved custom schedule, while still differing from the country default', () => {
+    renderEditBag(mondayOnlySchedule);
+
+    expect(editBag.state.hasUnsavedChanges).toBe(false);
+    expect(editBag.state.hasDifferencesFromCountryDefault).toBe(true);
+    expect(editBag.state.isDirty).toBe(true);
+  });
+
+  it.each(['start_time', 'end_time', 'break_duration_minutes'] as const)(
+    'flags unsaved changes once %s is edited, and clears them when the edit is reverted',
+    (field) => {
+      renderEditBag(mondayOnlySchedule);
+      const saved = String(mondayOnlySchedule.schedule.monday[field]);
+
+      act(() =>
+        editBag.actions.updateRow(
+          0,
+          field,
+          field === 'break_duration_minutes' ? '30' : '11:30',
+        ),
+      );
+      expect(editBag.state.hasUnsavedChanges).toBe(true);
+
+      act(() => editBag.actions.updateRow(0, field, saved));
+      expect(editBag.state.hasUnsavedChanges).toBe(false);
+    },
+  );
+
+  it('flags unsaved changes when a day is toggled on the default schedule', () => {
+    renderEditBag(undefined);
+
+    act(() => editBag.actions.toggleDay(4));
+
+    expect(editBag.state.hasUnsavedChanges).toBe(true);
+    expect(editBag.state.hasDifferencesFromCountryDefault).toBe(true);
+  });
+
+  it('ignores edits to the times of an unchecked day', () => {
+    renderEditBag(mondayOnlySchedule);
+
+    act(() => editBag.actions.updateRow(1, 'start_time', '07:00'));
+
+    expect(editBag.state.hasUnsavedChanges).toBe(false);
+  });
+
+  it('clears unsaved changes after close() discards the edits', () => {
+    renderEditBag(mondayOnlySchedule);
+
+    act(() => editBag.actions.updateRow(0, 'end_time', '15:00'));
+    expect(editBag.state.hasUnsavedChanges).toBe(true);
+
+    act(() => editBag.actions.close());
+    expect(editBag.state.hasUnsavedChanges).toBe(false);
+  });
+
+  it('matches the country default after reset(), but now differs from the saved schedule', () => {
+    renderEditBag(mondayOnlySchedule);
+
+    act(() => editBag.actions.reset());
+
+    expect(editBag.state.hasDifferencesFromCountryDefault).toBe(false);
+    expect(editBag.state.isDirty).toBe(false);
+    expect(editBag.state.hasUnsavedChanges).toBe(true);
+  });
+
+  it('clears unsaved changes after save() and now differs from the country default', async () => {
+    renderEditBag(undefined);
+
+    act(() => editBag.actions.toggleDay(4));
+    expect(editBag.state.hasUnsavedChanges).toBe(true);
+
+    await act(async () => editBag.actions.save());
+
+    expect(editBag.state.hasUnsavedChanges).toBe(false);
+    expect(editBag.state.hasDifferencesFromCountryDefault).toBe(true);
+  });
+
+  it('clears unsaved changes after save() when the break duration has leading zeros', async () => {
+    renderEditBag(mondayOnlySchedule);
+
+    act(() => editBag.actions.updateRow(0, 'break_duration_minutes', '030'));
+    expect(editBag.state.hasUnsavedChanges).toBe(true);
+
+    await act(async () => editBag.actions.save());
+
+    expect(editBag.state.hasUnsavedChanges).toBe(false);
   });
 });
