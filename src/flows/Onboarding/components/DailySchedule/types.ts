@@ -115,6 +115,10 @@ export type DailyScheduleEditState = {
   ) => string | undefined;
 };
 
+export type DailyScheduleSaveResult =
+  | { saved: true }
+  | { saved: false; reason: 'invalid_schedule' | 'hours_out_of_range' };
+
 /**
  * Framework-agnostic actions for the daily schedule edit form.
  * These are stable functions that don't expose form library details.
@@ -128,13 +132,13 @@ export type DailyScheduleEditActions = {
   ) => void;
   /** Toggle a day's checked state */
   toggleDay: (index: number) => void;
-  /** Save the current draft (validates and calls setValue) */
-  save: () => Promise<void>;
+  /** Validates and saves the draft. Resolves with whether it saved and, if not, why. */
+  save: () => Promise<DailyScheduleSaveResult>;
   /** Reset the schedule to the default */
   reset: () => void;
   /** Discard unsaved edits and close (resets to last saved schedule) */
   close: () => void;
-  /** Check if the current form state is valid */
+  /** Whether the draft is valid and within the allowed weekly hours. */
   validate: () => boolean;
   /** Trigger blur validation (call from field onBlur handlers) */
   handleBlur: () => void;

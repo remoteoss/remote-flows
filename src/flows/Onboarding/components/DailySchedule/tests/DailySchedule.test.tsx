@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { $TSFixMe } from '@/scripts/types';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { DailySchedule } from '@/src/flows/Onboarding/components/DailySchedule/DailySchedule';
@@ -7,6 +8,7 @@ import {
   DailyScheduleContainerProps,
   DailyScheduleEditBag,
   DailyScheduleRenderProps,
+  DailyScheduleSaveResult,
 } from '@/src/flows/Onboarding/components/DailySchedule/types';
 import { TestProviders } from '@/src/tests/testHelpers';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
@@ -143,6 +145,27 @@ describe('DailySchedule', () => {
     expect(
       screen.queryByText('Work hours outside of weekly range'),
     ).not.toBeInTheDocument();
+  });
+
+  it('disables Save while the weekly total is outside the allowed range', async () => {
+    const user = userEvent.setup();
+    renderWithForm([createDailyScheduleField()], {
+      work_schedule: 'part_time',
+      daily_schedule: undefined,
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Edit schedule' }));
+    const dialog = screen.getByRole('dialog');
+    const save = within(dialog).getByRole('button', { name: 'Save schedule' });
+
+    expect(save).toBeDisabled();
+
+    await user.click(
+      within(dialog).getByRole('checkbox', { name: 'Thursday' }),
+    );
+    await user.click(within(dialog).getByRole('checkbox', { name: 'Friday' }));
+
+    expect(save).toBeEnabled();
   });
 
   it('writes the whole schedule back in a single setValue call on save', async () => {
@@ -925,6 +948,84 @@ describe('DailySchedule', () => {
       expect(
         within(dialog).getByText(byOwnText('Total of 7 hours per week')),
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('Saving through a custom editor', () => {
+    const SaveProbe = ({
+      editBag,
+    }: {
+      editBag: DailyScheduleRenderProps['editBag'];
+    }) => {
+      const [result, setResult] = useState<DailyScheduleSaveResult>();
+
+      return (
+        <div>
+          <button type='button' onClick={() => editBag.actions.toggleDay(3)}>
+            Toggle Thursday
+          </button>
+          <button type='button' onClick={() => editBag.actions.toggleDay(4)}>
+            Toggle Friday
+          </button>
+          <button
+            type='button'
+            onClick={async () => setResult(await editBag.actions.save())}
+          >
+            Save
+          </button>
+          <p>valid: {String(editBag.actions.validate())}</p>
+          {result && <p>{JSON.stringify(result)}</p>}
+        </div>
+      );
+    };
+
+    const SaveProbeField = (
+      props: Omit<DailyScheduleContainerProps, 'render'>,
+    ) => (
+      <DailyScheduleContainer
+        {...(props as $TSFixMe as DailyScheduleContainerProps)}
+        render={({ editBag }: DailyScheduleRenderProps) => (
+          <SaveProbe editBag={editBag} />
+        )}
+      />
+    );
+
+    const renderProbe = (scheduleType: string) =>
+      renderWithForm(
+        [createDailyScheduleField({ Component: SaveProbeField })],
+        {
+          work_schedule: 'full_time',
+          schedule_type: scheduleType,
+          daily_schedule: undefined,
+        },
+      );
+
+    it('refuses a schedule outside the weekly range', async () => {
+      const user = userEvent.setup();
+      const { getFormValues } = renderProbe('fixed_hours');
+
+      await user.click(screen.getByRole('button', { name: 'Toggle Thursday' }));
+      await user.click(screen.getByRole('button', { name: 'Toggle Friday' }));
+      await user.click(screen.getByRole('button', { name: 'Save' }));
+
+      expect(
+        await screen.findByText(
+          '{"saved":false,"reason":"hours_out_of_range"}',
+        ),
+      ).toBeInTheDocument();
+      expect(screen.getByText('valid: false')).toBeInTheDocument();
+      expect(getFormValues().daily_schedule).toBeUndefined();
+    });
+
+    it('saves the same schedule when the schedule type is core business hours', async () => {
+      const user = userEvent.setup();
+      renderProbe('core_business_hours');
+
+      await user.click(screen.getByRole('button', { name: 'Toggle Thursday' }));
+      await user.click(screen.getByRole('button', { name: 'Toggle Friday' }));
+      await user.click(screen.getByRole('button', { name: 'Save' }));
+
+      expect(await screen.findByText('{"saved":true}')).toBeInTheDocument();
     });
   });
 });

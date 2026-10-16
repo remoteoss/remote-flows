@@ -23,9 +23,8 @@ export const DailyScheduleEditForm = ({
   const { close, cancel } = useDialogControl();
 
   const handleSave = async () => {
-    await actions.save();
-    // Only close if validation passed
-    if (actions.validate()) {
+    const { saved } = await actions.save();
+    if (saved) {
       close();
     }
   };
