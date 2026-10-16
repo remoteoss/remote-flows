@@ -24,6 +24,7 @@
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "ci:digest": "tsx scripts/ci-digest.ts",
+    "flaky:digest": "tsx scripts/flaky-digest.ts",
     "coverage:extract": "tsx scripts/extract-coverage.ts",
     "prepare": "npm run build",
     "release": "tsx scripts/release.ts",
