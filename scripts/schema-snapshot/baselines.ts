@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, rmSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 
 export function baselinePath(dir: string, country: string, version: number) {
@@ -29,16 +29,4 @@ export function previousBaselineVersion(
   return listBaselineVersions(dir, country)
     .filter((candidate) => candidate < version)
     .pop();
-}
-
-export function removeOtherBaselines(
-  dir: string,
-  country: string,
-  keepVersion: number,
-) {
-  for (const version of listBaselineVersions(dir, country)) {
-    if (version !== keepVersion) {
-      rmSync(baselinePath(dir, country, version));
-    }
-  }
 }

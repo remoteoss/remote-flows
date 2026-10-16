@@ -21,7 +21,6 @@ import {
   baselineExists,
   baselinePath,
   previousBaselineVersion,
-  removeOtherBaselines,
 } from './schema-snapshot/baselines';
 import {
   diffFingerprints,
@@ -172,7 +171,6 @@ async function checkCountry(
               fingerprint,
             );
       writeBaseline(country, version, fingerprint);
-      removeOtherBaselines(BASELINE_DIR, country, version);
       return { country, version, status: 'created', changes, previousVersion };
     }
     const changes = diffFingerprints(
@@ -221,7 +219,7 @@ function describeCreated(result: CountryResult): string {
     result.changes.length > 0
       ? `Compared with v${result.previousVersion}:\n\n${formatChanges(result.changes)}`
       : `It behaves the same as v${result.previousVersion}.`;
-  return `Baseline added for v${result.version}, replacing v${result.previousVersion}. ${comparison}`;
+  return `Baseline added for v${result.version}. ${comparison}`;
 }
 
 function formatReport(results: CountryResult[]): string {

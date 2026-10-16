@@ -5,7 +5,6 @@ import {
   baselineExists,
   listBaselineVersions,
   previousBaselineVersion,
-  removeOtherBaselines,
 } from './baselines';
 
 describe('schema baselines', () => {
@@ -38,10 +37,9 @@ describe('schema baselines', () => {
     expect(previousBaselineVersion(dir, 'ESP', 6)).toBeUndefined();
   });
 
-  it('removes the other versions of a country and leaves the rest', () => {
-    removeOtherBaselines(dir, 'ESP', 7);
-
-    expect(listBaselineVersions(dir, 'ESP')).toEqual([7]);
+  it('only matches the exact country and version', () => {
+    expect(baselineExists(dir, 'ESP', 7)).toBe(true);
+    expect(baselineExists(dir, 'ESP', 8)).toBe(false);
     expect(baselineExists(dir, 'ESP2', 9)).toBe(true);
     expect(baselineExists(dir, 'PRT', 1)).toBe(true);
   });
