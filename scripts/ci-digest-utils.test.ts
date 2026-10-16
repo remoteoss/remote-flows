@@ -2,6 +2,8 @@ import {
   classifyFailure,
   cleanLogLine,
   extractErrorWindows,
+  extractPlaywrightFailures,
+  jobsToChecks,
   parseCheckLink,
   renderDigest,
 } from './ci-digest-utils';
@@ -187,14 +189,14 @@ describe('classifyFailure', () => {
 
 describe('renderDigest', () => {
   it('reports a clean PR in one line', () => {
-    expect(renderDigest('7', [], 12)).toBe(
+    expect(renderDigest('PR #7', [], 12)).toBe(
       'PR #7: no failing checks (12 passing or pending).',
     );
   });
 
   it('renders each failure with kind, next step and excerpt', () => {
     const output = renderDigest(
-      '7',
+      'PR #7',
       [
         {
           check: {
@@ -216,5 +218,104 @@ describe('renderDigest', () => {
         '## PR Checks / Tests [test]\nhttps://x/y\nNext: rerun only the failing file: `npx vitest run <path>`\n```\nFAIL a.test.ts\n```',
       ].join('\n\n'),
     );
+  });
+});
+
+describe('extractPlaywrightFailures', () => {
+  it('lists each failing spec once across retries and strips counters and timings', () => {
+    const log = [
+      'Run Playwright tests\t2026-10-16T09:51:47.0Z   ✘   9 [chromium] › e2e/a.spec.ts:22:7 › A › fills (31.3s)',
+      'Run Playwright tests\t2026-10-16T09:52:17.9Z   ✘  12 [chromium] › e2e/a.spec.ts:22:7 › A › fills (retry #1) (29.9s)',
+      'Run Playwright tests\t2026-10-16T09:52:52.7Z   ✘  13 [chromium] › e2e/b.spec.ts:20:7 › B › fills (retry #1) (31.4s)',
+      'Run Playwright tests\t2026-10-16T09:52:53.0Z   ✓  14 [chromium] › e2e/c.spec.ts:5:7 › C › passes (2.1s)',
+    ].join('\n');
+    expect(extractPlaywrightFailures(log)).toEqual([
+      '[chromium] › e2e/a.spec.ts:22:7 › A › fills',
+      '[chromium] › e2e/b.spec.ts:20:7 › B › fills',
+    ]);
+  });
+
+  it('strips minute-formatted timings so timed-out specs dedupe across retries', () => {
+    const log = [
+      'Run Playwright tests\t2026-10-16T09:51:47.0Z   ✘   9 [chromium] › e2e/a.spec.ts:22:7 › A › fills (1.0m)',
+      'Run Playwright tests\t2026-10-16T09:52:47.9Z   ✘  12 [chromium] › e2e/a.spec.ts:22:7 › A › fills (retry #1) (1.0m)',
+      'Run Playwright tests\t2026-10-16T09:53:47.9Z   ✘  15 [chromium] › e2e/a.spec.ts:22:7 › A › fills (retry #2) (438ms)',
+    ].join('\n');
+    expect(extractPlaywrightFailures(log)).toEqual([
+      '[chromium] › e2e/a.spec.ts:22:7 › A › fills',
+    ]);
+  });
+
+  it('drops a spec that failed and then passed on retry', () => {
+    const log = [
+      'Run Playwright tests\t2026-10-16T09:51:47.0Z   ✘   9 [chromium] › e2e/a.spec.ts:22:7 › A › fills (31.3s)',
+      'Run Playwright tests\t2026-10-16T09:52:17.9Z   ✓  12 [chromium] › e2e/a.spec.ts:22:7 › A › fills (retry #1) (29.9s)',
+      'Run Playwright tests\t2026-10-16T09:52:52.7Z   ✘  13 [chromium] › e2e/b.spec.ts:20:7 › B › fills (31.4s)',
+    ].join('\n');
+    expect(extractPlaywrightFailures(log)).toEqual([
+      '[chromium] › e2e/b.spec.ts:20:7 › B › fills',
+    ]);
+  });
+
+  it('returns an empty list when no spec failed', () => {
+    expect(extractPlaywrightFailures('all good')).toEqual([]);
+  });
+});
+
+describe('jobsToChecks', () => {
+  it('keeps only failed jobs and counts the rest as passing', () => {
+    expect(
+      jobsToChecks('CI Main', [
+        { name: 'Unit Tests', conclusion: 'failure', url: 'https://x/1' },
+        { name: 'Lint', conclusion: 'success', url: 'https://x/2' },
+        { name: 'E2E', conclusion: null, url: 'https://x/3' },
+      ]),
+    ).toEqual({
+      failed: [
+        { name: 'Unit Tests', workflow: 'CI Main', link: 'https://x/1' },
+      ],
+      passing: 2,
+    });
+  });
+});
+
+describe('renderDigest failing specs', () => {
+  it('lists failing specs above the excerpt', () => {
+    const output = renderDigest(
+      'main @ abc1234',
+      [
+        {
+          check: {
+            name: 'E2E Tests',
+            workflow: 'CI Main',
+            link: 'https://x/y',
+            runId: '1',
+            jobId: '2',
+          },
+          kind: 'e2e',
+          excerpt: ['boom'],
+          failingSpecs: ['[chromium] › a', '[chromium] › b'],
+        },
+      ],
+      3,
+    );
+    expect(output).toContain('main @ abc1234: 1 failing, 3 other checks');
+    expect(output).toContain(
+      'Failing specs (2):\n- [chromium] › a\n- [chromium] › b\n```',
+    );
+  });
+});
+
+describe('jobsToChecks timeouts', () => {
+  it('treats timed_out jobs as failed', () => {
+    expect(
+      jobsToChecks('Nightly', [
+        { name: 'E2E', conclusion: 'timed_out', url: 'https://x/1' },
+        { name: 'Lint', conclusion: 'success', url: 'https://x/2' },
+      ]),
+    ).toEqual({
+      failed: [{ name: 'E2E', workflow: 'Nightly', link: 'https://x/1' }],
+      passing: 1,
+    });
   });
 });
