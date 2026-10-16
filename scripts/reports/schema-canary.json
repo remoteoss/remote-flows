@@ -71,21 +71,21 @@
     {
       "country": "AUS",
       "version": 6,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "AUS",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "AUS",
       "version": 6,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -301,7 +301,7 @@
     },
     {
       "country": "COL",
-      "version": 1,
+      "version": 6,
       "strategy": "rebuild",
       "check": "pinned",
       "outcome": "pass"
@@ -315,7 +315,7 @@
     },
     {
       "country": "COL",
-      "version": 1,
+      "version": 6,
       "strategy": "rebuild",
       "check": "submit",
       "outcome": "pass"
@@ -385,7 +385,7 @@
     },
     {
       "country": "CZE",
-      "version": 2,
+      "version": 7,
       "strategy": "rebuild",
       "check": "pinned",
       "outcome": "pass"
@@ -399,7 +399,7 @@
     },
     {
       "country": "CZE",
-      "version": 2,
+      "version": 7,
       "strategy": "rebuild",
       "check": "submit",
       "outcome": "pass"
@@ -428,21 +428,21 @@
     {
       "country": "DOM",
       "version": 6,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "DOM",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "DOM",
       "version": 6,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -785,27 +785,27 @@
     {
       "country": "IRL",
       "version": 5,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "IRL",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "IRL",
       "version": 5,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
     {
       "country": "ISR",
-      "version": 1,
+      "version": 8,
       "strategy": "rebuild",
       "check": "pinned",
       "outcome": "pass"
@@ -819,7 +819,7 @@
     },
     {
       "country": "ISR",
-      "version": 1,
+      "version": 8,
       "strategy": "rebuild",
       "check": "submit",
       "outcome": "pass"
@@ -1016,21 +1016,21 @@
     {
       "country": "MYS",
       "version": 5,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "MYS",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "MYS",
       "version": 5,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -1079,21 +1079,21 @@
     {
       "country": "MEX",
       "version": 8,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "MEX",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "MEX",
       "version": 8,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -1142,27 +1142,27 @@
     {
       "country": "NLD",
       "version": 6,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "NLD",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "NLD",
       "version": 6,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
     {
       "country": "NZL",
-      "version": 2,
+      "version": 8,
       "strategy": "rebuild",
       "check": "pinned",
       "outcome": "pass"
@@ -1176,7 +1176,7 @@
     },
     {
       "country": "NZL",
-      "version": 2,
+      "version": 8,
       "strategy": "rebuild",
       "check": "submit",
       "outcome": "pass"
@@ -1205,21 +1205,21 @@
     {
       "country": "NGA",
       "version": 5,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "NGA",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "NGA",
       "version": 5,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -1267,7 +1267,7 @@
     },
     {
       "country": "PAK",
-      "version": 2,
+      "version": 4,
       "strategy": "rebuild",
       "check": "pinned",
       "outcome": "pass"
@@ -1281,7 +1281,7 @@
     },
     {
       "country": "PAK",
-      "version": 2,
+      "version": 4,
       "strategy": "rebuild",
       "check": "submit",
       "outcome": "pass"
@@ -1373,21 +1373,21 @@
     {
       "country": "POL",
       "version": 5,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "POL",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "POL",
       "version": 5,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -1562,21 +1562,21 @@
     {
       "country": "ZAF",
       "version": 5,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "ZAF",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "ZAF",
       "version": 5,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -1646,21 +1646,21 @@
     {
       "country": "SWE",
       "version": 5,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "SWE",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "SWE",
       "version": 5,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },

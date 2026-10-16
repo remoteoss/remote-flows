@@ -16,6 +16,9 @@ import {
 } from '@remoteoss/remote-flows/internals';
 import { WEEKDAY_LABELS } from '@remoteoss/remote-flows';
 
+const confirmDiscard = (hasUnsavedChanges: boolean) =>
+  !hasUnsavedChanges || window.confirm('Discard your unsaved changes?');
+
 function CustomDailyScheduleEditForm({
   editBag,
   subtractBreaksFromWorkHours,
@@ -115,6 +118,12 @@ function CustomDailyScheduleEditForm({
         ))}
       </div>
 
+      {/* Weekly totals straight from state, no need to recalculate */}
+      <p className='text-sm text-gray-600'>
+        Weekly total: <strong>{state.draftWeeklyHours}h</strong>
+        {state.hasUnsavedChanges && ` (saved: ${state.savedWeeklyHours}h)`}
+      </p>
+
       {/* Live preview using state.unsavedSummaryDays */}
       <div className='p-4 bg-gray-50 rounded'>
         <h4 className='font-semibold mb-2'>Preview:</h4>
@@ -143,7 +152,7 @@ function CustomDailyScheduleEditForm({
 
       {/* Actions */}
       <div className='flex gap-2'>
-        {state.isDirty && (
+        {state.hasDifferencesFromCountryDefault && (
           <button
             type='button'
             onClick={actions.reset}
@@ -155,6 +164,9 @@ function CustomDailyScheduleEditForm({
         <button
           type='button'
           onClick={() => {
+            if (!confirmDiscard(state.hasUnsavedChanges)) {
+              return;
+            }
             actions.close();
             onClose();
           }}
@@ -165,8 +177,8 @@ function CustomDailyScheduleEditForm({
         <button
           type='button'
           onClick={async () => {
-            await actions.save();
-            if (actions.validate()) {
+            const { saved } = await actions.save();
+            if (saved) {
               onClose();
             }
           }}
@@ -205,6 +217,9 @@ export function CustomDailySchedule(props: DailyScheduleRenderProps) {
           type='button'
           onClick={() => {
             if (isEditing) {
+              if (!confirmDiscard(editBag.state.hasUnsavedChanges)) {
+                return;
+              }
               editBag.actions.close();
             }
             setIsEditing(!isEditing);

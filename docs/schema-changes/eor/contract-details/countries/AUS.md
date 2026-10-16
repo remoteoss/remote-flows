@@ -74,7 +74,7 @@ Schema versions for employee onboarding in Australia.
 
 - `work_hours_per_week` is replaced by the shared `daily_schedule` component, so work hours are now submitted through the daily schedule.
 - New required fields: `third_party_work`, `work_equipment_provided_by`, `non_compete_clause_apply`, `non_interference_apply`, `non_solicitation_customers` and `non_solicitation_employees`, with follow-up fields (`non_compete_clause_halt_period_months`, `non_interference_halt_period`, `non_solicitation_*_number_of_months`, `third_party_work_activities`). Submits that omit them fail validation.
-- The part-time minimum salary rule moves under the full-time minimum rule's conditions, same intent (inferred from the schema diff).
+- The part-time minimum salary rule moves under the full-time minimum rule's conditions, same intent.
 
 **Migration:**
 

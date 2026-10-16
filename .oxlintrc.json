@@ -36,7 +36,7 @@
           {
             "group": ["**/common/headlessForm"],
             "importNames": ["buildHeadlessForm", "parseValuesForValidation"],
-            "message": "Build JSON Schema forms with useHeadlessForm from @/src/common/useHeadlessForm. buildHeadlessForm and parseValuesForValidation are its internals, shared only with scripts/schema-canary. See docs/USE_HEADLESS_FORM_ROLLOUT.md."
+            "message": "Build JSON Schema forms with useHeadlessForm from @/src/common/useHeadlessForm. buildHeadlessForm and parseValuesForValidation are its internals, shared only with the schema scripts under scripts/. See docs/USE_HEADLESS_FORM_ROLLOUT.md."
           }
         ]
       }

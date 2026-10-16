@@ -256,6 +256,7 @@ export type {
   DailyScheduleEditBag,
   DailyScheduleEditState,
   DailyScheduleEditActions,
+  DailyScheduleSaveResult,
   DailyScheduleEditFormRow,
   DailyScheduleRenderProps,
   DailyScheduleContainerProps,

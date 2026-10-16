@@ -1,6 +1,6 @@
 {
   "name": "@remoteoss/remote-flows",
-  "version": "1.64.0",
+  "version": "1.65.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/remoteoss/remote-flows.git"
@@ -30,6 +30,7 @@
     "release": "tsx scripts/release.ts",
     "release:fix": "tsx scripts/release-hotfix.ts",
     "schema-canary": "tsx scripts/schema-canary.ts",
+    "schema-snapshot": "tsx scripts/schema-snapshot.ts",
     "dump:schema": "tsx scripts/dump-schema.ts",
     "seed:onboarding": "tsx scripts/seed-onboarding.ts",
     "size": "tsx scripts/analyze-bundle-size.ts",

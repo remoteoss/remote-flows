@@ -1,0 +1,230 @@
+{
+  "fingerprintVersion": 1,
+  "base": {
+    "visible": [
+      "allowances",
+      "annual_gross_salary",
+      "annual_leave_carry_forward",
+      "available_pto",
+      "carryover_details.can_expire",
+      "carryover_details.carry_over_pto_days",
+      "carryover_details.expiry_months",
+      "contract_duration",
+      "contract_duration_type",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_signing_bonus",
+      "non_compete_clause_apply",
+      "non_solicitation_employees",
+      "notice_period",
+      "notice_period_confirmation",
+      "probation_length",
+      "role_description",
+      "study_fund_eligibility",
+      "work_address_is_home_address",
+      "work_schedule"
+    ],
+    "required": [
+      "annual_gross_salary",
+      "available_pto",
+      "carryover_details.can_expire",
+      "carryover_details.carry_over_pto_days",
+      "contract_duration_type",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_signing_bonus",
+      "non_compete_clause_apply",
+      "non_solicitation_employees",
+      "notice_period_confirmation",
+      "probation_length",
+      "role_description",
+      "study_fund_eligibility",
+      "work_address_is_home_address",
+      "work_schedule"
+    ]
+  },
+  "types": {
+    "contract_duration": "text",
+    "contract_duration_type": "radio",
+    "contract_end_date": "date",
+    "probation_length": "number",
+    "work_schedule": "radio",
+    "work_hours_per_week": "number",
+    "annual_gross_salary": "money",
+    "part_time_salary_confirmation": "checkbox",
+    "has_signing_bonus": "radio",
+    "signing_bonus_amount": "money",
+    "has_bonus": "radio",
+    "bonus_amount": "money",
+    "bonus_details": "textarea",
+    "has_commissions": "radio",
+    "commissions_details": "textarea",
+    "commissions_ack": "checkbox",
+    "equity_compensation.offer_equity_compensation": "radio",
+    "equity_compensation.number_of_stock_options": "text",
+    "equity_compensation.equity_cliff": "number",
+    "equity_compensation.equity_vesting_period": "number",
+    "equity_compensation.equity_description": "textarea",
+    "available_pto": "number",
+    "annual_leave_carry_forward": "radio",
+    "carryover_details.carry_over_pto_days": "number",
+    "carryover_details.can_expire": "radio",
+    "carryover_details.expiry_months": "number",
+    "role_description": "textarea",
+    "study_fund_eligibility": "radio",
+    "experience_level": "radio",
+    "overtime": "select",
+    "notice_period": "text",
+    "allowances": "textarea",
+    "work_address_is_home_address": "radio",
+    "notice_period_confirmation": "checkbox",
+    "non_compete_clause_apply": "radio",
+    "non_compete_clause_halt_period_months": "number",
+    "non_solicitation_employees": "radio",
+    "non_solicitation_employees_number_of_months": "number"
+  },
+  "options": {
+    "contract_duration_type": ["fixed_term", "indefinite"],
+    "work_schedule": ["full_time", "part_time"],
+    "has_signing_bonus": ["no", "yes"],
+    "has_bonus": ["no", "yes"],
+    "has_commissions": ["no", "yes"],
+    "equity_compensation.offer_equity_compensation": ["no", "yes"],
+    "annual_leave_carry_forward": ["no", "yes"],
+    "carryover_details.can_expire": ["no", "yes"],
+    "study_fund_eligibility": ["no", "yes"],
+    "experience_level": [
+      "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+      "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+      "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+      "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+      "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow"
+    ],
+    "work_address_is_home_address": ["no", "yes"],
+    "non_compete_clause_apply": ["no", "yes"],
+    "non_solicitation_employees": ["no", "yes"]
+  },
+  "constraints": {
+    "contract_duration": {
+      "maxLength": 255
+    },
+    "probation_length": {
+      "minimum": 0
+    },
+    "available_pto": {
+      "minimum": 0
+    },
+    "carryover_details.carry_over_pto_days": {
+      "minimum": 1
+    },
+    "carryover_details.expiry_months": {
+      "minimum": 0
+    },
+    "role_description": {
+      "minLength": 100,
+      "maxLength": 5000
+    },
+    "notice_period": {
+      "minimum": 1,
+      "maximum": 6
+    },
+    "allowances": {
+      "maxLength": 1000
+    }
+  },
+  "scenarios": {
+    "contract_duration_type=fixed_term": {
+      "addedVisible": ["contract_end_date"],
+      "removedVisible": [],
+      "addedRequired": ["contract_end_date"],
+      "removedRequired": []
+    },
+    "work_schedule=full_time": {
+      "addedVisible": ["work_hours_per_week"],
+      "removedVisible": [],
+      "addedRequired": [],
+      "removedRequired": []
+    },
+    "work_schedule=part_time": {
+      "addedVisible": ["part_time_salary_confirmation", "work_hours_per_week"],
+      "removedVisible": [],
+      "addedRequired": ["part_time_salary_confirmation", "work_hours_per_week"],
+      "removedRequired": []
+    },
+    "has_signing_bonus=yes": {
+      "addedVisible": ["signing_bonus_amount"],
+      "removedVisible": [],
+      "addedRequired": ["signing_bonus_amount"],
+      "removedRequired": []
+    },
+    "has_bonus=yes": {
+      "addedVisible": ["bonus_amount", "bonus_details"],
+      "removedVisible": [],
+      "addedRequired": ["bonus_details"],
+      "removedRequired": []
+    },
+    "has_commissions=yes": {
+      "addedVisible": ["commissions_ack", "commissions_details"],
+      "removedVisible": [],
+      "addedRequired": ["commissions_ack", "commissions_details"],
+      "removedRequired": []
+    },
+    "equity_compensation.offer_equity_compensation=yes": {
+      "addedVisible": [
+        "equity_compensation.equity_cliff",
+        "equity_compensation.equity_description",
+        "equity_compensation.equity_vesting_period",
+        "equity_compensation.number_of_stock_options"
+      ],
+      "removedVisible": [],
+      "addedRequired": ["equity_compensation.equity_description"],
+      "removedRequired": []
+    },
+    "annual_leave_carry_forward=yes": {
+      "addedVisible": [],
+      "removedVisible": ["carryover_details.expiry_months"],
+      "addedRequired": [],
+      "removedRequired": []
+    },
+    "experience_level=Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy": {
+      "addedVisible": ["overtime"],
+      "removedVisible": [],
+      "addedRequired": ["overtime"],
+      "removedRequired": []
+    },
+    "experience_level=Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions": {
+      "addedVisible": ["overtime"],
+      "removedVisible": [],
+      "addedRequired": ["overtime"],
+      "removedRequired": []
+    },
+    "experience_level=Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them": {
+      "addedVisible": ["overtime"],
+      "removedVisible": [],
+      "addedRequired": ["overtime"],
+      "removedRequired": []
+    },
+    "experience_level=Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives": {
+      "addedVisible": ["overtime"],
+      "removedVisible": [],
+      "addedRequired": ["overtime"],
+      "removedRequired": []
+    },
+    "non_compete_clause_apply=yes": {
+      "addedVisible": ["non_compete_clause_halt_period_months"],
+      "removedVisible": [],
+      "addedRequired": ["non_compete_clause_halt_period_months"],
+      "removedRequired": []
+    },
+    "non_solicitation_employees=yes": {
+      "addedVisible": ["non_solicitation_employees_number_of_months"],
+      "removedVisible": [],
+      "addedRequired": ["non_solicitation_employees_number_of_months"],
+      "removedRequired": []
+    }
+  }
+}
