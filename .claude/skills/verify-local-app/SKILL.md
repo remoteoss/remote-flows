@@ -1,7 +1,7 @@
 ---
 name: verify-local-app
 description: Verify onboarding behavior of the current checkout's code by running the example app locally against a pinned root env file (.env.local / .env.sandbox / .env.staging / .env.partners), seeding a fresh employment with the same file, and driving the flow with Playwright — instead of the user doing it by hand. Use when the user asks to "verify X locally", "check my change against staging/partners/sandbox", or similar. For the deployed demo app (.env.review) use verify-sandbox-deployed-app instead; not for unit/e2e tests.
-allowed-tools: Bash(npm run build:*), Bash(npm run dev:env:*), Bash(npm run seed:onboarding:*), Bash(node:*), Bash(curl:*), Bash(cat:*), Bash(grep:*), Read, Write
+allowed-tools: Bash(pnpm run build:*), Bash(npm run dev:env:*), Bash(pnpm run seed:onboarding:*), Bash(node:*), Bash(curl:*), Bash(cat:*), Bash(grep:*), Read, Write
 ---
 
 # Verify local app
@@ -42,7 +42,7 @@ browser or the server.
 ## Step 2: Build the library
 
 `example/` depends on the repo root via `file:..`, so it serves whatever is in
-`dist/`. Run `npm run build` at the repo root first, otherwise you're verifying
+`dist/`. Run `pnpm run build` at the repo root first, otherwise you're verifying
 the last build, not the current code.
 
 ## Step 3: Start the app on its own port
@@ -65,7 +65,7 @@ seed one with the **same** env name, so it belongs to the company the app's
 server authenticates as (a mismatch returns 404 `Company not found`):
 
 ```
-npm run seed:onboarding -- --country=<COUNTRY> --env=<name>
+pnpm run seed:onboarding --country=<COUNTRY> --env=<name>
 ```
 
 Default `COUNTRY=DEU` unless the ask implies another. Seeding stops at
