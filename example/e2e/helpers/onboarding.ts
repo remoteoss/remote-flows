@@ -497,10 +497,15 @@ interface fillOnboardingStep3PortugalFormOptions {
   has_bonus?: string;
   has_commissions?: string;
   equity_compensation?: string;
+  non_interference_apply?: string;
+  non_solicitation_customers?: string;
+  non_solicitation_employees?: string;
+  non_compete_clause_apply?: string;
   work_from_home_allowance_ack?: boolean;
   annual_training_hours_ack?: boolean;
   salary_installments_confirmation?: boolean;
   offboarding_allowances_ack?: boolean;
+  tax_and_social_security_numbers_ack?: boolean;
 }
 
 export async function fillOnboardingStep3PortugalForm(
@@ -591,6 +596,26 @@ export async function fillOnboardingStep3PortugalForm(
       name: 'equity_compensation.offer_equity_compensation',
     },
     {
+      type: 'radio',
+      value: options.non_interference_apply,
+      name: 'non_interference_apply',
+    },
+    {
+      type: 'radio',
+      value: options.non_solicitation_customers,
+      name: 'non_solicitation_customers',
+    },
+    {
+      type: 'radio',
+      value: options.non_solicitation_employees,
+      name: 'non_solicitation_employees',
+    },
+    {
+      type: 'radio',
+      value: options.non_compete_clause_apply,
+      name: 'non_compete_clause_apply',
+    },
+    {
       type: 'checkbox',
       value: options.work_from_home_allowance_ack ? 'yes' : '',
       name: 'work_from_home_allowance_ack',
@@ -609,6 +634,11 @@ export async function fillOnboardingStep3PortugalForm(
       type: 'checkbox',
       value: options.offboarding_allowances_ack ? 'yes' : '',
       name: 'offboarding_allowances_ack',
+    },
+    {
+      type: 'checkbox',
+      value: options.tax_and_social_security_numbers_ack ? 'yes' : '',
+      name: 'tax_and_social_security_numbers_ack',
     },
   ]);
 
