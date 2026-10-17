@@ -53,7 +53,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CAN: {
     // Canada
-    contract_details: 7,
+    contract_details: 8,
   },
   CHE: {
     // Switzerland
@@ -85,7 +85,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   DEU: {
     // Germany
-    contract_details: 7,
+    contract_details: 8,
   },
   DNK: {
     // Denmark
@@ -105,7 +105,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ESP: {
     // Spain
-    contract_details: 7,
+    contract_details: 8,
   },
   EST: {
     // Estonia
@@ -157,7 +157,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   IND: {
     // India
-    contract_details: 6,
+    contract_details: 7,
   },
   IRL: {
     // Ireland
@@ -249,7 +249,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   NLD: {
     // Netherlands
-    contract_details: 6,
+    contract_details: 7,
   },
   NOR: {
     // Norway
