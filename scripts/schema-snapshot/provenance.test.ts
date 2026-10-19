@@ -37,6 +37,23 @@ describe('schema snapshot provenance', () => {
     ]);
   });
 
+  it('ignores the start date, which differs on every run', () => {
+    expect(
+      describeProvenanceDrift(
+        {
+          ...provenance,
+          basicInformation: { provisional_start_date: '2026-10-01' },
+        },
+        {
+          ...provenance,
+          basicInformation: { provisional_start_date: '2026-11-02' },
+        },
+      ),
+    ).toEqual([
+      "The served schema is identical to the baseline's (hash aaaa), so the difference comes from the engine or the seeded employment.",
+    ]);
+  });
+
   it('reports a changed served schema with the baseline run it is compared to', () => {
     expect(
       describeProvenanceDrift(provenance, {

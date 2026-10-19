@@ -69,6 +69,7 @@ function changedKeys(
   after: Record<string, unknown>,
 ): string[] {
   return [...new Set([...Object.keys(before), ...Object.keys(after)])]
+    .filter((key) => key !== 'provisional_start_date')
     .filter((key) => JSON.stringify(before[key]) !== JSON.stringify(after[key]))
     .sort();
 }
