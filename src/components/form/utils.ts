@@ -3,6 +3,7 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 import { JSFFields } from '@/src/types/remoteFlows';
 import { convertFilesToBase64 } from '@/src/lib/files';
 import { addBusinessDays, isWeekend, nextMonday } from 'date-fns';
+import equal from 'fast-deep-equal';
 import { getNestedValue } from '@/src/lib/utils';
 import { UploadedFileReference } from '@/src/types/fields';
 
@@ -417,7 +418,7 @@ export async function parseFormValuesToAPI(
         }
       }
 
-      if (field.const !== undefined && field.const === field.default) {
+      if (hasConstEqualToDefault(field)) {
         acc[field.name!] = field.const;
       }
 
@@ -860,6 +861,10 @@ export function getMinStartDate(minOnBoardingTime: number) {
   return isWeekend(minDate) ? nextMonday(minDate) : minDate;
 }
 
+export function hasConstEqualToDefault(field: $TSFixMe) {
+  return field.const !== undefined && equal(field.const, field.default);
+}
+
 /**
  * Check if a field has a forced value.
  * @param field - The field to check.
@@ -868,8 +873,7 @@ export function getMinStartDate(minOnBoardingTime: number) {
 export function checkFieldHasForcedValue(field: $TSFixMe) {
   // A field to be considered "forced value" must:
   return (
-    field.const !== undefined && // Only accepts a specific value
-    field.const === field.default && // It can be prefilled, meaning it's not critical
+    hasConstEqualToDefault(field) && // Only accepts a specific value that is also prefilled, meaning it's not critical
     field.type !== 'checkbox' && // Because checkbox must always be visible
     field.type !== 'hidden' // Because hidden inputs shouldn't be visible
   );
