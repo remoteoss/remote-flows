@@ -10,29 +10,32 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
+The SDK root uses pnpm (pinned in `packageManager`; run `corepack enable` once). `example/` still uses npm.
+
 ```bash
-npm run dev            # tsdown watch build (link this package into example/ for live dev)
-npm run build          # production bundle (tsdown)
-npm test               # vitest (jsdom). Single test: npx vitest run path/to/file.test.tsx
-npm run test:coverage  # coverage with thresholds from scripts/coverage-utils
-npm run type-check     # tsc --noEmit
-npm run lint           # oxlint
-npm run format         # oxfmt
-npm run check-format   # oxfmt --check (CI gate)
-npm run check-exports  # @arethetypeswrong/cli — verifies the package.json exports map
-npm run size           # bundle analysis → out/bundle-analysis.json
-npm run size:check     # fails if .sizelimit.json thresholds are exceeded
-npm run openapi-ts     # regenerate src/client/* from production gateway OpenAPI
-npm run openapi-ts:local  # regenerate from local gateway (openapi-ts.config.local.ts)
-npm run ci             # full local CI: build + check-format + check-exports + lint + type-check + test
-npm run ci:digest -- <pr>  # summary of a PR's failing CI checks (failure type, error lines, next step) - run it before reading raw job logs
-npm run seed:onboarding -- --country=XXX  # create an onboarding via API up to (not including) contract_details; needs example dev server + example/.env
-npm run seed:onboarding -- --country=XXX --env=sandbox  # same, but talks to the gateway directly using .env.sandbox at repo root (see scripts/seed-onboarding.ts) - no dev server needed
-npm run seed:onboarding -- --country=XXX --env=review   # same, using .env.review - the deployed demo app's credentials; use this for employments you'll open on the deployed app
+pnpm install                # install the root dependencies
+pnpm run dev                # tsdown watch build (example/ picks it up, see below)
+pnpm run build              # production bundle (tsdown)
+pnpm run test               # vitest (jsdom). Single test: pnpm exec vitest run path/to/file.test.tsx
+pnpm run test:coverage      # coverage with thresholds from scripts/coverage-utils
+pnpm run type-check         # tsc --noEmit
+pnpm run lint               # oxlint
+pnpm run format             # oxfmt
+pnpm run check-format       # oxfmt --check (CI gate)
+pnpm run check-exports      # @arethetypeswrong/cli — verifies the package.json exports map
+pnpm run size               # bundle analysis → out/bundle-analysis.json
+pnpm run size:check         # fails if .sizelimit.json thresholds are exceeded
+pnpm run openapi-ts         # regenerate src/client/* from production gateway OpenAPI
+pnpm run openapi-ts:local   # regenerate from local gateway (openapi-ts.config.local.ts)
+pnpm run ci                 # full local CI: build + check-format + check-exports + lint + type-check + test (not `pnpm ci`, which is pnpm's clean install)
+pnpm run ci:digest <pr>     # summary of a PR's failing CI checks (failure type, error lines, next step) - run it before reading raw job logs
+pnpm run seed:onboarding --country=XXX  # create an onboarding via API up to (not including) contract_details; needs example dev server + example/.env
+pnpm run seed:onboarding --country=XXX --env=sandbox  # same, but talks to the gateway directly using .env.sandbox at repo root (see scripts/seed-onboarding.ts) - no dev server needed
+pnpm run seed:onboarding --country=XXX --env=review   # same, using .env.review - the deployed demo app's credentials; use this for employments you'll open on the deployed app
 cd example && PORT=<port> npm run dev:env -- --env=<name>   # run the example app on .env.<name> from repo root only, ignoring example/.env - used by the verify-local-app skill
 ```
 
-The `example/` app is a separate workspace (its own `package.json`, Vite + Express dev server on `:3001` by default, overridable via `PORT` — `scripts/create-worktree.ts` assigns each worktree its own free port so several can run their example apps at once). To work against local changes: `npm link` in repo root, then `npm link @remoteoss/remote-flows` inside `example/`, then run `npm run dev` in both. E2E lives in [example/e2e/](example/e2e/) and is run with `npm run test:e2e` from `example/` (Playwright). E2E is excluded from the root vitest run.
+The `example/` app is a separate npm project (its own `package.json` and `package-lock.json`, Vite + Express dev server on `:3001` by default, overridable via `PORT` — `scripts/create-worktree.ts` assigns each worktree its own free port so several can run their example apps at once). It depends on the SDK through `file:..`, so `npm install` inside `example/` links your local checkout: run `pnpm run dev` in the repo root and `npm run dev` in `example/`. E2E lives in [example/e2e/](example/e2e/) and is run with `npm run test:e2e` from `example/` (Playwright). E2E is excluded from the root vitest run.
 
 ## Architecture
 
@@ -68,7 +71,7 @@ Flows are exposed two ways: the prebuilt `<FlowNameFlow render={...}>` component
 
 ### Generated API client
 
-`src/client/` is **fully generated** by `@hey-api/openapi-ts` from [openapi-ts.config.ts](openapi-ts.config.ts) (production gateway) or `openapi-ts.config.local.ts` (local gateway). Never hand-edit `*.gen.ts`. After schema changes, run `npm run openapi-ts` and commit the regenerated files. Import types from `src/client/types.gen.ts` and SDK functions from `src/client/sdk.gen.ts`. `.oxlintrc.json` ignores `src/client/**/*.gen.ts` from lint.
+`src/client/` is **fully generated** by `@hey-api/openapi-ts` from [openapi-ts.config.ts](openapi-ts.config.ts) (production gateway) or `openapi-ts.config.local.ts` (local gateway). Never hand-edit `*.gen.ts`. After schema changes, run `pnpm run openapi-ts` and commit the regenerated files. Import types from `src/client/types.gen.ts` and SDK functions from `src/client/sdk.gen.ts`. `.oxlintrc.json` ignores `src/client/**/*.gen.ts` from lint.
 
 ### Forms
 
@@ -114,12 +117,12 @@ Tailwind v4 (`@tailwindcss/postcss`) + CSS variables. Public component classes a
 - **JSDoc is for the caller who actually uses the symbol** — 1–3 lines by default: what it does and anything the caller has to do differently because of it. Leave out internal wiring (which hidden fields, hooks or context are involved) and edge cases that only the prebuilt components handle. A member partners never call directly (the prebuilt form calls it) gets one line. The public API being contract-bound calls for careful API design, not longer docs.
 - **Path alias `@/*` maps to repo root** (`tsconfig.json` paths); prefer `@/src/...` imports over deep relative ones.
 - **HTML from API responses is unsafe** — sanitize with `sanitizeHtml()` from `src/lib/utils.ts` (or DOMPurify) before rendering. The consumer-supplied `transformHtmlToComponents` receives **unsanitized** HTML; that's the consumer's responsibility per the README.
-- **Conventional commits** drive the automated release (`npm run release` → `scripts/release.ts`). `feat:` → minor, `fix:` → patch, `BREAKING CHANGE:` footer → major. Hotfix releases go through `npm run release:fix` from a version tag (see [DEVELOPMENT.md](DEVELOPMENT.md)).
+- **Conventional commits** drive the automated release (`pnpm run release` → `scripts/release.ts`). `feat:` → minor, `fix:` → patch, `BREAKING CHANGE:` footer → major. Hotfix releases go through `pnpm run release:fix` from a version tag, or `npm run release:fix` on a tag from before the move to pnpm (see [DEVELOPMENT.md](DEVELOPMENT.md)).
 - **CHANGELOG.md and `package.json` version** are updated by the release scripts — do not bump them by hand on feature branches.
 - **PR descriptions follow [.github/pull_request_template.md](.github/pull_request_template.md)** (Summary, Why, What changed, Screenshots, Related Resources, Testing). `gh pr create` only picks it up as the default body without `--body`/`--body-file`/`--fill`; when scripting a PR body, read the template and fill it in rather than writing free-form text.
 
 ## Things that look broken but aren't
 
 - `dist/` is checked into the working tree during dev (it's gitignored, but `prepare` runs `build`); don't be alarmed by churn there.
-- `src/client/*.gen.ts` regenerates wholesale — diffs will be large after `npm run openapi-ts` runs.
+- `src/client/*.gen.ts` regenerates wholesale — diffs will be large after `pnpm run openapi-ts` runs.
 - The error boundary's `useParentErrorBoundary` defaults to `true` in code but `false` in the README example; the README documents the recommended consumer config, not the default.

@@ -1,9 +1,9 @@
 {
-  "install": "npm ci --include=optional --ignore-scripts && npm run build && cd example && npm ci --include=optional --ignore-scripts && npm run postinstall",
+  "install": "corepack enable && pnpm install --frozen-lockfile --ignore-scripts && pnpm run build && cd example && npm ci --include=optional --ignore-scripts && npm run postinstall",
   "terminals": [
     {
       "name": "lib-watch",
-      "command": "npm run dev",
+      "command": "pnpm run dev",
       "description": "tsdown watch build for the main package"
     },
     {
