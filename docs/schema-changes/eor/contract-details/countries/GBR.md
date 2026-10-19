@@ -115,7 +115,9 @@ Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when
 
 ---
 
-### v2
+### v2 (deprecated)
+
+**Deprecated on 1 July 2026.** Requests pinned to this version are served the latest schema.
 
 **What changed:**
 
@@ -135,6 +137,8 @@ Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when
 
 ---
 
-### v1
+### v1 (deprecated)
+
+**Deprecated on 1 July 2026.** Requests pinned to this version are served the latest schema.
 
 Initial version with basic contract details fields.
