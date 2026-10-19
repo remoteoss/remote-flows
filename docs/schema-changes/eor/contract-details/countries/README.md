@@ -66,7 +66,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Colombia             | COL  | v6               | October 2026 |
 | Czech Republic       | CZE  | v7               | October 2026 |
 | Dominican Republic   | DOM  | v6               | October 2026 |
-| Germany              | DEU  | v8               | October 2026 |
+| Germany              | DEU  | v9               | October 2026 |
 | Hong Kong            | HKG  | v2               | March 2026   |
 | Iceland              | ISL  | v2               | March 2026   |
 | India                | IND  | v7               | October 2026 |
