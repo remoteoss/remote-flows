@@ -37,7 +37,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   BGR: {
     // Bulgaria
-    contract_details: 1,
+    contract_details: 8,
   },
   BIH: {
     // Bosnia and Herzegovina
@@ -49,7 +49,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   BRA: {
     // Brazil
-    contract_details: 1,
+    contract_details: 4,
   },
   CAN: {
     // Canada
@@ -61,7 +61,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CHL: {
     // Chile
-    contract_details: 1,
+    contract_details: 7,
   },
   CHN: {
     // China
@@ -113,7 +113,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   FIN: {
     // Finland
-    contract_details: 1,
+    contract_details: 5,
   },
   FRA: {
     // France
@@ -185,7 +185,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   KEN: {
     // Kenya
-    contract_details: 2,
+    contract_details: 8,
   },
   KOR: {
     // South Korea
