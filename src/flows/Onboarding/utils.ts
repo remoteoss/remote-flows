@@ -168,6 +168,12 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'MYS',
   'DOM',
   'MEX',
+  'COL',
+  'PAK',
+  'NZL',
+  'ISR',
+  'CZE',
+  'PRT',
 ];
 
 /**

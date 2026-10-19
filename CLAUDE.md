@@ -28,7 +28,8 @@ pnpm run size:check         # fails if .sizelimit.json thresholds are exceeded
 pnpm run openapi-ts         # regenerate src/client/* from production gateway OpenAPI
 pnpm run openapi-ts:local   # regenerate from local gateway (openapi-ts.config.local.ts)
 pnpm run ci                 # full local CI: build + check-format + check-exports + lint + type-check + test (not `pnpm ci`, which is pnpm's clean install)
-pnpm run ci:digest <pr>     # summary of a PR's failing CI checks (failure type, error lines, next step) - run it before reading raw job logs
+pnpm run ci:digest <pr>     # summary of a PR's failing CI checks (failure type, error lines, next step, every failing Playwright spec) - run it before reading raw job logs
+pnpm run ci:digest --branch=main  # same for the latest commit's runs on a branch (e.g. failures on main); also the fallback when the current branch has no PR
 pnpm run flaky:digest [--runs=30] [--min-hits=1]  # tests that retried or failed across recent ci-main/pr runs (from the flaky-tests artifact); run it to find flakes to fix
 pnpm run seed:onboarding --country=XXX  # create an onboarding via API up to (not including) contract_details; needs example dev server + example/.env
 pnpm run seed:onboarding --country=XXX --env=sandbox  # same, but talks to the gateway directly using .env.sandbox at repo root (see scripts/seed-onboarding.ts) - no dev server needed
