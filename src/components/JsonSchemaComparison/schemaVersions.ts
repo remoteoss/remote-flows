@@ -8,7 +8,8 @@ export interface VersionOption {
 export const BASIC_INFO_VERSIONS: VersionOption[] = [
   { value: 1, label: 'v1' },
   { value: 3, label: 'v3' },
-  { value: 4, label: 'v4 (Recommended)' },
+  { value: 4, label: 'v4' },
+  { value: 5, label: 'v5 (Recommended)' },
 ];
 
 // AI generated from tiger

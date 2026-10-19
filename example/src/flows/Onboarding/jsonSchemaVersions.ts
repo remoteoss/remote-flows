@@ -1,5 +1,5 @@
 export const ONBOARDING_JSON_SCHEMA_VERSION = {
-  employment_basic_information: 4,
+  employment_basic_information: 5,
 };
 
 export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
