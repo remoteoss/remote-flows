@@ -4,11 +4,33 @@ Schema versions for employee onboarding in Canada.
 
 ## Current Version
 
-**Contract Details:** v7
+**Contract Details:** v8
 
 ## Contract Details
 
-### v7 - Current
+### v8 - Current
+
+**What changed:**
+
+- Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `CAN`) to inspect field-level diffs between your current pin and v8. Prefer jumping straight from v1 to v8 when upgrading.
+- `probation_length`, `probation_length_weeks` and `probation_length_days` move to a shared probation component. They render and validate the same way for existing consumers.
+- When the employee has a recognized seniority date (`has_seniority_date: "yes"`), all three probation length fields are forbidden, whatever `province_of_residency` is. Flag-gated, and employments created before the cutoff date are unaffected, so no action is required.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      CAN: { contract_details: 8 },
+    },
+  }}
+/>
+```
+
+---
+
+### v7
 
 **What changed:**
 

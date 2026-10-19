@@ -116,6 +116,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 5, label: 'v5' },
     { value: 6, label: 'v6' },
     { value: 7, label: 'v7' },
+    { value: 8, label: 'v8' },
   ],
   CHE: [
     { value: 1, label: 'v1' },
