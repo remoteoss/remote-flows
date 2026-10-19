@@ -114,3 +114,11 @@ Schema versions for employee onboarding in Egypt.
   }}
 />
 ```
+
+---
+
+### v1 (deprecated)
+
+**Deprecated on 30 April 2026.** Requests pinned to this version are served the latest schema.
+
+Initial version with basic contract details fields.
