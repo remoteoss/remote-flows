@@ -1,0 +1,1302 @@
+{
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "non_compete_clause_compensation_amount": false
+        }
+      },
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "type": "integer"
+          },
+          "non_compete_clause_apply": {
+            "const": "yes"
+          },
+          "non_compete_clause_compensation_percentage": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "non_compete_clause_apply",
+          "annual_gross_salary",
+          "non_compete_clause_compensation_percentage"
+        ]
+      },
+      "then": {
+        "properties": {
+          "non_compete_clause_compensation_amount": {
+            "x-jsf-logic-computedAttrs": {
+              "const": "computed_non_compete_clause_compensation_amount_in_cents",
+              "default": "computed_non_compete_clause_compensation_amount_in_cents",
+              "x-jsf-presentation": {
+                "statement": {
+                  "description": "The employee will receive this monthly compensation after termination for the entire non-compete period.",
+                  "title": "{{computed_non_compete_clause_compensation_amount}} DOP non-compete compensation amount"
+                }
+              }
+            }
+          }
+        },
+        "required": ["non_compete_clause_compensation_amount"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_compete_clause_compensation_amount": false,
+          "non_compete_clause_compensation_percentage": false,
+          "non_compete_clause_halt_period_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_compete_clause_apply": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_compete_clause_apply"]
+      },
+      "then": {
+        "required": [
+          "non_compete_clause_compensation_percentage",
+          "non_compete_clause_halt_period_months"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "work_week_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["work_week_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 32987520,
+            "x-jsf-errorMessage": {
+              "minimum": "In the Dominican Republic, full-time employees are entitled to a minimum annual salary of DOP 329,875.20."
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "contract_duration_length": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "fixed_term"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "required": ["contract_duration_length"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "contract_duration_length_up_two_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "fixed_term_up_to_two_months"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "required": ["contract_duration_length_up_two_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "contract_duration_length_up_four_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "fixed_term_up_to_four_months"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "required": ["contract_duration_length_up_four_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "work_days": false,
+          "work_hours_part_time": false,
+          "work_hours_week_part_time": false
+        }
+      },
+      "if": {
+        "properties": {
+          "work_week_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_week_schedule"]
+      },
+      "then": {
+        "required": [
+          "work_days",
+          "work_hours_part_time",
+          "work_hours_week_part_time"
+        ]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "lunch_break_full_time": false,
+          "weekly_rest_full_time": false,
+          "work_hours_full_time": false,
+          "work_hours_week_full_time": false
+        }
+      },
+      "if": {
+        "properties": {
+          "work_week_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["work_week_schedule"]
+      },
+      "then": {
+        "required": [
+          "work_hours_week_full_time",
+          "lunch_break_full_time",
+          "weekly_rest_full_time",
+          "work_hours_full_time"
+        ]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "commissions_ack": false,
+          "commissions_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_commissions": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_commissions"]
+      },
+      "then": {
+        "properties": {
+          "commissions_ack": {
+            "type": ["string"]
+          },
+          "commissions_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["commissions_details", "commissions_ack"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "signing_bonus_amount": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_signing_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_signing_bonus"]
+      },
+      "then": {
+        "properties": {
+          "signing_bonus_amount": {
+            "type": ["integer"]
+          }
+        },
+        "required": ["signing_bonus_amount"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "bonus_amount": false,
+          "bonus_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_bonus"]
+      },
+      "then": {
+        "properties": {
+          "bonus_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["bonus_details"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "extreme_salary_acknowledgement": false,
+          "extreme_salary_warning": false
+        }
+      },
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 6153467479
+          }
+        },
+        "required": ["annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "extreme_salary_acknowledgement": {
+            "type": "string"
+          },
+          "extreme_salary_warning": {}
+        },
+        "required": ["extreme_salary_acknowledgement"]
+      }
+    }
+  ],
+  "properties": {
+    "allowances": {
+      "description": "Let us know what allowances you're providing the employee, what they cover, and the monthly amounts. If you're not offering allowances, you can skip this field.",
+      "maxLength": 1000,
+      "title": "Allowances",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "annual_bonus_ack": {
+      "const": "acknowledged",
+      "description": "In the Dominican Republic, employees receive a 13th month salary (usually called Christmas bonus) separate from their annual gross salary. The 13th salary amount is based on an employee's regular salary and isn’t affected by bonuses or commissions.",
+      "title": "I understand I must pay this employee a 13th month salary in addition to their annual gross salary",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more about bonus salaries",
+            "content": "<p>In the Dominican Republic, the \"13th salary\" bonus is known as the \"double salary\" or \"bonificación navideña.\" It's a bonus payment given to employees at the end of each year, typically in December, to help them with holiday expenses and provide additional financial support.</p>\n<p>Key points about the 13th salary bonus in the Dominican Republic include:</p>\n<ol>\n<li>Legal Requirement: The payment of the 13th salary bonus is a legal requirement under Dominican labor law. It is governed by Law 87-01, which mandates that employers must pay employees an additional month's salary as a bonus.</li>\n<li>Calculation: The 13th salary bonus is calculated based on the employee's average salary earned throughout the year. It is typically equal to one-twelfth (1/12) of the total salary earned by the employee during the year.</li>\n<li>Payment Date: Employers are required to pay the 13th salary bonus to employees no later than December 20th of each year. </li>\n<li>Taxation: The 13th salary bonus is generally subject to income tax in the Dominican Republic. However, specific tax regulations may apply, and the tax rate may vary depending on the amount of the bonus and the employee's total annual income.</li>\n<li>Benefits: The 13th salary bonus provides employees with extra income during the holiday season, helping them cover expenses such as gifts, travel, and celebrations. It serves as a form of recognition for employees' hard work throughout the year and is an essential part of their overall compensation package.</li>\n</ol>\n<p>Overall, the 13th salary bonus is an important aspect of employee compensation in the Dominican Republic, ensuring that workers receive additional financial support during the festive season.</p>\n<p><span style=\"background-color: #ffffff;\" class=\"wysiwyg-font-size-small\"><em><strong>Disclaimer</strong>: An important aspect of labor laws in Latin American countries that could affect your operations is the mandatory extra salary payment. Employers are customarily and legally required to issue an additional salary, also known as the \"13th salary\" or \"Christmas bonus.\" This bonus, typically equivalent to one month's wage, is distributed annually. It's important to note that this additional salary is not included in the base salary (gross annual salary) and should be paid separately.</em></span></p>",
+            "error": false,
+            "id": 25809539125133,
+            "title": "What is the 13th salary bonus in Dominican Republic? "
+          }
+        }
+      }
+    },
+    "annual_gross_salary": {
+      "title": "Annual gross salary",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-logic-computedAttrs": {
+        "description": "{{annual_gross_salary_reserve_description}}"
+      },
+      "x-jsf-presentation": {
+        "currency": "DOP",
+        "inputType": "money"
+      }
+    },
+    "available_pto": {
+      "const": "14",
+      "description": "Per law, the employee is entitled to 14 days as an annual vacation period, and 18 days after five years of service.",
+      "title": "Number of paid time off days",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "bonus_amount": {
+      "deprecated": true,
+      "readOnly": true,
+      "title": "Bonus amount (deprecated)",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "DOP",
+        "deprecated": {
+          "description": "Deprecated in favor of 'Bonus Details'. Please, try to leave this field empty."
+        },
+        "inputType": "money"
+      }
+    },
+    "bonus_details": {
+      "description": "Bonus type, payment frequency, and more.",
+      "maxLength": 1000,
+      "title": "Other bonus details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "commissions_ack": {
+      "const": "acknowledged",
+      "description": "I understand that I am required to provide written details of the commission plan to this employee, and upload this document on the platform for record keeping purposes. I acknowledge that Remote will not liable for any claims or losses associated with the commission or bonus plan.",
+      "title": "Confirm commission plan details",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "(i) Guidance on drafting a commission plan here.",
+            "content": "<p>It is important to understand that commission plans are individual agreements between you, and each team member. Consequently, it is important that these plans are communicated directly between you and the respective team members. This direct communication ensures clarity, transparency, and a clear understanding of the agreed-upon terms for the commission plan.</p>\n<p>Performance-linked bonuses and commissions are payments that are contingent on various factors, including individual and team performance, business outcomes, and other metrics agreed upon by you and the employees providing you services. As these are rewards that are subject to your evaluation and adjustment based on the agreed-upon criteria, we strongly recommend that you document these plans as compliantly as possible, and their specifics separately in writing, with the employee providing you services, following the below guidelines:</p>\n<ul>\n<li>Please note if there is any doubt or lack of clarity due to ambiguous wording, it will be interpreted to the employee’s benefit. Therefore, the plan should be reviewed thoroughly to determine whether it could be interpreted various ways. If so, the respective wording should be amended in a way that is precise and can be understood in one way only.</li>\n<li>In some jurisdictions, bonus and commission plans can be contractually drafted as being discretionary, but still remain unambiguous.  Where this is legally possible, this is the recommended approach to legally best protect the employer/you from any potential disputes.  Please note, however, that employees may still have a claim for commission payments, even if an agreement is drafted as discretionary.</li>\n<li>Basis for Commission Calculation: The commission plan should clearly outline the basis on which the commission will be calculated. This may include factors such as sales revenue, units sold, profit margin, or other measurable performance indicators. The commission plan should also include the timeframe in which the respective target must be achieved.</li>\n<li>Commission Rate: The commission plan should specify the commission rate or rates applicable to different levels of performance. It should clearly define how the commission will be determined, based on achieving specific targets or milestones. In order to limit the financial risk, a commission plan can include a regulation on the maximum amount of commissions that can be earned.</li>\n<li>Target Goals: The commission plan should establish realistic and achievable target goals or sales quotas that the employee is expected to reach in order to earn commission. </li>\n<li>Calculation Period: The commission plan should specify the calculation period for commission payouts. This could be monthly or quarterly. It should also state the timeline for determining and disbursing commission payments. Furthermore, a commission plan should include a specification about the point in time until when targets are set each year. Commission targets should be given prior to the commencement of the plan period.</li>\n<li>Commission Calculation Method: The commission plan should outline the methodology for calculating the commission. It should specify any deductions, adjustments, or exclusions that may be applicable to the commission calculation.</li>\n<li>Payment Terms: The commission plan should detail the terms and conditions for commission payments, including the payment schedule, method of payment, and any additional requirements or conditions. It should also explain how leaves, for example, sick leave and maternity leave, influence payment of commission and bonus, considering local requirements and non discrimination rules.</li>\n<li>Termination or Modification: The commission plan should address how it may be terminated or modified, including the circumstances under which changes may be made and the notice period required.</li>\n<li>It is helpful to include terms regarding dispute resolution.</li>\n</ul>\n<p>Please be aware that this guideline does not constitute legal advice. It is advisable to consult with your legal counsel for expert advice while formulating such plans. We will not assume liability for any claims that may arise due to a non-compliant and/or ambiguous commission plan provided to employees.</p>",
+            "error": false,
+            "id": 17932049668109,
+            "title": "Guidelines for bonus and commission plans"
+          }
+        }
+      }
+    },
+    "commissions_details": {
+      "description": "Payment amount, frequency, and more.",
+      "maxLength": 1000,
+      "title": "Commission details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "confidentiality_clause_apply": {
+      "description": "Do you want a confidentiality clause for this employee? (the employee will not without your prior written approval disclose to third parties any particulars regarding the business where the employer has imposed secrecy or secrecy may reasonably be assumed to apply)",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a confidentiality clause?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "contract_duration_length": {
+      "description": "Maximum contract length in months",
+      "minimum": 0,
+      "title": "Contract duration (in months)",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "contract_duration_length_up_four_months": {
+      "description": "Maximum contract length in months (up to four months)",
+      "maximum": 4,
+      "minimum": 0,
+      "title": "Contract duration (in months)",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "contract_duration_length_up_two_months": {
+      "description": "Maximum contract length in months (up to two months)",
+      "maximum": 2,
+      "minimum": 0,
+      "title": "Contract duration (in months)",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "contract_duration_type": {
+      "oneOf": [
+        {
+          "const": "indefinite",
+          "title": "Indefinite"
+        },
+        {
+          "const": "fixed_term",
+          "title": "Fixed-term for temporary substitution for another employee"
+        },
+        {
+          "const": "fixed_term_up_to_two_months",
+          "title": "Fixed-term for a particular job or service"
+        },
+        {
+          "const": "fixed_term_up_to_four_months",
+          "title": "Fixed-term for work by season"
+        }
+      ],
+      "title": "Contract duration",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "equity_compensation": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "equity_cliff": false,
+              "equity_description": false,
+              "equity_vesting_period": false,
+              "number_of_stock_options": false
+            }
+          },
+          "if": {
+            "properties": {
+              "offer_equity_compensation": {
+                "const": "yes"
+              }
+            },
+            "required": ["offer_equity_compensation"]
+          },
+          "then": {
+            "properties": {
+              "equity_description": {
+                "type": ["string"]
+              }
+            },
+            "required": ["equity_description"]
+          }
+        }
+      ],
+      "properties": {
+        "equity_cliff": {
+          "deprecated": true,
+          "description": "When the first portion of the stock option grant will vest.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Cliff (in months)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "equity_description": {
+          "description": "Please share any information related to the upcoming equity grant.",
+          "maxLength": 1000,
+          "title": "Number of options, RSUs, and other equity",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "textarea"
+          }
+        },
+        "equity_vesting_period": {
+          "deprecated": true,
+          "description": "The number of years it will take for the employee to vest all their options.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Vesting period (in years)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "number_of_stock_options": {
+          "deprecated": true,
+          "description": "Tell us the type of equity you're granting as well.",
+          "maxLength": 255,
+          "readOnly": true,
+          "title": "Number of options, RSUs, or other equity granted",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "text"
+          }
+        },
+        "offer_equity_compensation": {
+          "description": "Granting equity to your team generally triggers tax and legal obligations. In order for you to stay compliant, it's important to declare any equity grants.",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            }
+          ],
+          "title": "Will this employee receive equity?",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "row",
+            "inputType": "radio"
+          }
+        }
+      },
+      "required": ["offer_equity_compensation"],
+      "title": "Equity management",
+      "type": "object",
+      "x-jsf-order": [
+        "offer_equity_compensation",
+        "number_of_stock_options",
+        "equity_cliff",
+        "equity_vesting_period",
+        "equity_description"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 39,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 39,
+              "currency": "USD"
+            }
+          },
+          "helpCenter": {
+            "callToAction": "Learn more about equity management at Remote",
+            "content": "<p>Remote Equity is a lightweight compliance tool designed to help you manage equity grants across borders for team members hired through Remote's Employer of Record (EOR).</p><p>Whether you’re managing vesting, reporting exercises, or navigating local tax laws, Remote Equity gives you the structure to stay compliant, avoid risk, and support your team across borders.</p><h4 id=\"h_01K0YQSYJ8JPKYXNNNW90B0QJP\">Why it matters</h4><p>As your EOR, <strong>Remote is legally responsible</strong> for equity-related tax and reporting in the countries where your team members are employed. That means we don’t just track equity, we:</p><ul>\n<li data-list-item-id=\"eba6b95d2e41a276665f3f64525e0eb59\">Withhold and report taxes when required</li>\n<li data-list-item-id=\"ed16c354038e4b3d908bacd965dc2d71b\">File with local tax authorities</li>\n<li data-list-item-id=\"eb7162ef11477f7a7737fe34a48979559\">Support team members with clear guidance on their tax responsibilities</li>\n</ul><p>Most equity platforms can’t do that because they’re not the legal employer. <strong>Remote Equity ensures we have the data we need, when we need it, to keep your company compliant and your team fairly rewarded.</strong></p><p>Behind the scenes, our tax team:</p><ul>\n<li data-list-item-id=\"ef5c97b0472ebc9a0819e312646e4cd66\">Handles tax withholdings when taxable events occur</li>\n<li data-list-item-id=\"e5f3560641743ab0c57ba47683638560e\">Provides guidance to you and your team, even when no withholding is required</li>\n<li data-list-item-id=\"ed17d307d635b18f9f784df12d1dbe1cd\">Manages additional reporting where local laws demand it</li>\n</ul><p>See also: <a href=\"https://support.remote.com/hc/en-us/articles/37710493624589-What-types-of-equity-grants-should-I-declare-in-Remote-Equity-Essentials\">What types of equity grants should I declare in Remote Equity?</a></p><h4 id=\"h_01K0YQSYJDJ3JYC1C642ASB8E2\">What’s included</h4><p>Remote Equity provides:</p><ul>\n<li data-list-item-id=\"e0cc8d8c0b7d060b9de89e3c870fc1579\">\n<strong>Tracking and alerts</strong> for events that may create a tax obligation (like vesting or exercising)</li>\n<li data-list-item-id=\"e88a2fc75f6f43db27891e415e2f90400\">\n<strong>Automated compliance reminders</strong> based on local deadlines and regulations</li>\n<li data-list-item-id=\"e2c2cf9ef914143e339eb32e1b70c83da\">\n<strong>Localized guidance for team members</strong>, shared through the Remote Equity app</li>\n<li data-list-item-id=\"e8a2c20d648ed01a3db135ef4ada0de61\">\n<strong>Support from Remote’s tax and legal teams</strong>, who handle obligations on your behalf</li>\n<li data-list-item-id=\"e184af2a6420412152b377815ebe18ce2\">\n<strong>Integration with Carta and Pulley</strong> to automatically sync grant declarations and exercise information</li>\n</ul><h4 id=\"h_01K0YQSYJSCK6XYBXF3Q56KRC8\"><strong>Get started in minutes</strong></h4><p>Setup takes less than five minutes. Just log in to your Remote account, and launch the Equity App to follow the setup steps.</p><p>Helpful guides to get started:</p><ul>\n<li data-list-item-id=\"e73e204bc587d3417ecab74e3a29ccc2a\"><a href=\"https://support.remote.com/hc/en-us/articles/37547625350925-How-can-I-access-Remote-Equity-Essentials\">How can I access Remote Equity?</a></li>\n<li data-list-item-id=\"e0ca43a64bf2361ce43443e98200daa5a\"><a href=\"https://support.remote.com/hc/en-us/articles/35577980536589\">How do I declare a grant?</a></li>\n<li data-list-item-id=\"edfa1a00c07a70449ebe34c25dec818fe\"><a href=\"https://support.remote.com/hc/en-us/articles/35671968187149-How-can-my-employees-see-their-equity-information\">How can my team access their equity information?</a></li>\n<li data-list-item-id=\"edaaf9eb107949f79894c24e3b984da30\"><a href=\"https://support.remote.com/hc/en-us/articles/35546454220301-What-happens-if-I-already-declared-equity-before-using-Remote-Equity-Essentials\">What happens if I already declared equity before using Remote Equity?</a></li>\n</ul><h4 id=\"h_01K0YQSYJV9EH2AQ9HWYS1826S\"><span class=\"wysiwyg-underline\">Frequently Asked Questions (FAQs)</span></h4><p><strong>Who needs to use Remote Equity?</strong></p><p>Any Remote customer granting equity to a team member hired through Remote’s EOR must use Remote Equity to meet local compliance requirements.</p><p><strong>Why can’t we just use our own equity tool?</strong></p><p>Traditional equity tools track grants and vesting, but they don't file taxes, withhold contributions, or report income to local authorities. Remote, as the legal employer, is responsible for these actions. Remote Equity ensures those obligations are covered.</p><p><strong>What happens if we don’t use it?</strong></p><p>If Remote doesn’t receive timely and accurate equity data, required filings may be missed. This can result in compliance risks, unexpected tax liabilities, and issues for both your company and your team members.</p><p><strong>How much does Remote Equity cost?</strong></p><p>Remote Equity costs 39 USD per month for each EOR team member with equity. <a href=\"https://support.remote.com/hc/en-us/articles/35546441948685-How-much-does-Remote-Equity-Essentials-cost\">Learn more</a>.</p><p>For comprehensive information, visit the <a href=\"https://support.remote.com/hc/en-us/categories/45788665954189-Remote-Equity\" tabindex=\"0\" data-token-index=\"1\" rel=\"noopener noreferrer\">Remote Equity hub</a>.</p>",
+            "error": false,
+            "id": 38303424407821,
+            "title": "Welcome to Remote Equity: Global equity, without the compliance headaches"
+          }
+        }
+      }
+    },
+    "expenses_reimbursement": {
+      "const": "acknowledged",
+      "description": "The employee should be reimbursed for reasonable business expenses incurred in connection with the performance of their duties, after prior approval and upon submission of an itemized expense statement with all the relevant original receipts/invoices and necessary documents, as documentary proof, to be assessed and approved by the employer and insofar in accordance with internal regulations and applicable tax law.",
+      "title": "Expenses reimbursement",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "experience_level": {
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employees overall experience).",
+      "oneOf": [
+        {
+          "const": "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "description": "Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "title": "Level 2 - Entry Level"
+        },
+        {
+          "const": "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+          "description": "Employees who perform independently tasks and/or with coordination and control functions",
+          "title": "Level 3 - Associate"
+        },
+        {
+          "const": "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "description": "Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "title": "Level 4 - Mid-Senior level"
+        },
+        {
+          "const": "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "description": "Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "title": "Level 5 - Director"
+        },
+        {
+          "const": "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "description": "An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "title": "Level 6 - Executive"
+        }
+      ],
+      "title": "Experience level",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "extreme_salary_acknowledgement": {
+      "const": "acknowledged",
+      "title": "",
+      "type": "string",
+      "x-jsf-logic-computedAttrs": {
+        "title": "{{extreme_salary_acknowledgement_title}}"
+      },
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "extreme_salary_warning": {
+      "title": "",
+      "type": "null",
+      "x-jsf-presentation": {
+        "inputType": "hidden",
+        "meta": {
+          "ignoreValue": true
+        },
+        "statement": {
+          "description": "The entered salary is equivalent to USD 1,000,000 or more. Please double check and confirm this amount is correct.",
+          "inputType": "statement",
+          "severity": "warning"
+        }
+      }
+    },
+    "has_bonus": {
+      "description": "These can include things like performance-related bonuses.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer other bonuses?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_commissions": {
+      "description": "You can outline your policy and pay commission to the employee on the platform. However, commission will not appear in the employment agreement. Please send full policy details directly to the employee.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer commission?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_signing_bonus": {
+      "description": "This is a one-time payment the employee receives when they join your team.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer a signing bonus?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "lunch_break_full_time": {
+      "const": "1",
+      "description": "In the Dominican Republic, the Employee is entitled to a daily lunch break of maximally one hour.",
+      "title": "Lunch break for full-time employee",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "non_compete_clause_apply": {
+      "description": "Do you want a non-competition clause for this employee?",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Do you want to apply post-termination restrictions (non-compete)?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_compete_clause_compensation_amount": {
+      "description": "The employee will receive this monthly compensation after termination for the entire non-compete period.",
+      "title": "Non-compete compensation amount",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "DOP",
+        "inputType": "money"
+      }
+    },
+    "non_compete_clause_compensation_percentage": {
+      "description": "In Dominican Republic, non-compete pay must be at least 1% of monthly base salary throughout the post termination restrictions.",
+      "minimum": 1,
+      "title": "Non-compete salary percentage",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "percentage": true
+      }
+    },
+    "non_compete_clause_halt_period_months": {
+      "description": "Non-compete clauses in Dominican Republic apply after the termination of the employment agreement.",
+      "minimum": 0,
+      "title": "Duration in months",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "notice_period": {
+      "const": "7",
+      "description": "For the termination of the employment contract, the Dominican Republic Labor Code indicates the following notice period: 1) from 3 to 6 months of work, 7 days of advance notice; 2) from 6 to 12 months of work, 14 days of advance notice; and 3) after 12 months of continuous work, 28 days of advance notice.",
+      "title": "Notice period",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "probation_period": {
+      "const": "acknowledged",
+      "description": "As per Dominican Republic law, probationary periods are not allowed",
+      "title": "Probation period",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "role_description": {
+      "description": "Please provide the full job description along with the top three actions and top three responsibilities that fall under this role if they are not already included in the job description.",
+      "maxLength": 5000,
+      "minLength": 100,
+      "title": "Role description",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "salary_overview": {
+      "const": "salary_overview",
+      "default": "salary_overview",
+      "description": "We will request a reserve payment for salaries at or above DOP 10,768,568.09.",
+      "oneOf": [
+        {
+          "const": "salary_overview",
+          "title": "Salary overview"
+        }
+      ],
+      "title": "Salary overview",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about reserve payments",
+            "content": "<p>A <strong>reserve payment</strong> is an amount collected by Remote to help safeguard against potential large or unexpected severance costs if a team member's employment or engagement ends.</p><p>In many countries, labor laws require employers to pay <strong>statutory severance.</strong> Depending on the agreement, there may also be additional contractual obligations. Reserve payments help ensure funds are available to cover these costs if they arise.</p><p>Reserves are an <strong>industry-standard practice.</strong> Once a team member resigns or their agreement ends and all termination-related costs have been settled, any remaining reserve balance will be credited or refunded.</p><p>If a reserve payment has been made but <strong>onboarding is not completed</strong>, the full reserve will be credited or refunded. If your account has an overdue balance, Remote may first apply the reserve toward that outstanding amount.</p><blockquote><p><em><strong>Note:</strong> Reserve payments are required only for <strong>Employer of Record (EOR) employees and Contractor of Record (COR) contractors</strong>. They are <strong>not applicable</strong> to Global Payroll (direct employee) or users of our Standard Contractor Management and Contractor Management Plus platforms</em></p></blockquote><h3 id=\"h_01KWVSH6PWV0EARTP636WFMKX5\">Why would a reserve be required?</h3><p>Remote evaluates several factors when determining whether a reserve payment is needed. These may include:</p><ul>\n<li data-list-item-id=\"e4aa5c6c3b06eb3fd8ac290640949dd33\">The <strong>financial exposure</strong> associated with a client’s account</li>\n<li data-list-item-id=\"e6035e43ef90b77827c1d8c41be109918\">The <strong>countries</strong> in which team members are hired</li>\n<li data-list-item-id=\"e270d18c338f92bac8e35ed1f0c29ee6a\">A client’s decision to move from <strong>14-day to 30-day invoice payment terms</strong>\n</li>\n<li data-list-item-id=\"e87b2ad7dca754100d16a8d4ffabfa36a\">\n<strong>Non-standard employment contract terms</strong>, such as:<ul>\n<li data-list-item-id=\"ef35bb2e45f6361dee620f3d1949914de\">Extended notice periods</li>\n<li data-list-item-id=\"e9f05ff898e587ce3d34e80d6d7077b41\">Guaranteed severance clauses</li>\n<li data-list-item-id=\"e7cea63a7d2482bdb28eefffb6948c577\">Seniority recognition</li>\n<li data-list-item-id=\"e5b345cb8f5b041e3897b31092d6f0a06\">Non-compete, non-solicitation, or non-interference clauses</li>\n</ul>\n</li>\n<li data-list-item-id=\"e69603f26c1cfe44abe1b3b9afae0a6eb\">\n<strong>Consistent late invoice payments</strong> may also result in a reserve payment requirement</li>\n</ul><h3 id=\"h_01KWVSH6Q0PMTFJTCBARRMY0F8\">Why was I asked to pay an additional reserve?</h3><p>Some employment agreement terms increase the potential cost of ending an agreement. In these cases, additional reserves may be required.</p><p>Currently, reserves are automatically applied for:</p><ul>\n<li data-list-item-id=\"e016d051d1cae211fd2052be06528b0fb\">Extended notice periods</li>\n<li data-list-item-id=\"e121b7d92f73dc18a98058036faa4c132\">Seniority recognition</li>\n<li data-list-item-id=\"e1173074340c67d1669a2826f7ce530f4\">Non-compete, non-solicitation, or non-interference clauses</li>\n</ul><p>Other agreement terms may require additional review and could result in additional reserve requirements.</p><h4 id=\"h_01KWVSH6Q22W5N0Y71KPX7002S\">Extended notice period</h4><p>Labor laws in each country define a minimum notice period for ending an agreement. If the notice period in the agreement is longer than the statutory minimum, an additional reserve will be required for the difference.</p><p>Example: The minimum notice period is one month, but you request a three-month notice period. In this case, an additional two-month reserve would be required.</p><h4 id=\"h_01KWVSH6Q220ZTQW023A4TTNFK\">Seniority recognition</h4><p>A reserve will be automatically issued where two or more years of service is recognized.</p><p>As a general guideline:</p><ul>\n<li data-list-item-id=\"e325a4b96c617f8a6459e09da118a39d5\">\n<strong>2-4 years</strong> of recognized seniority, a reserve equal to <strong>1-month reserve</strong> is required</li>\n<li data-list-item-id=\"ec4f6d1f140f45060bca310852d94e885\">\n<strong>4-5 years</strong> of recognized seniority, a reserve equal to <strong>2-months</strong> is required</li>\n<li data-list-item-id=\"eeb5b68f0845b6a250366ba6e7449fe41\">\n<strong>More than 5 years</strong> of recognized seniority is subject to <strong>further review</strong>\n</li>\n</ul><p><strong>See also</strong>: <br><a href=\"https://remote.zendesk.com/hc/en-us/articles/12695836286861\">When is a reserve refunded?</a><br><a href=\"https://remote.zendesk.com/hc/en-us/articles/32649353517069\">What is reserve payment in Contractor of Record?</a></p>",
+            "error": false,
+            "id": 12695731865229,
+            "title": "What is a reserve payment?"
+          },
+          "ignoreValue": true
+        }
+      }
+    },
+    "signing_bonus_amount": {
+      "minimum": 0,
+      "title": "Signing bonus amount",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "DOP",
+        "inputType": "money"
+      }
+    },
+    "statutory_benefits": {
+      "const": "acknowledged",
+      "description": "In addition to the monthly salary, the Christmas salary and any other mandatory remunerations from the Dominican Republic Labor Code and Social Security Law will be applicable, such as sick leave days, etc.",
+      "title": "Statutory benefits",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "weekly_rest_full_time": {
+      "const": "36",
+      "description": "Per law, the full-time employee is entitled to a weekly rest of at least 36 hours.",
+      "title": "Weekly rest for full-time employee",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "work_address_is_home_address": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Same as their residential address"
+        },
+        {
+          "const": "no",
+          "title": "Different than their residential address"
+        }
+      ],
+      "title": "Employee's work address",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "work_days": {
+      "description": "In the Dominican Republic, normal working days are from Monday to Friday. Which days of the week will the employee work? Please indicate all days.",
+      "items": {
+        "anyOf": [
+          {
+            "const": "monday",
+            "title": "Monday"
+          },
+          {
+            "const": "tuesday",
+            "title": "Tuesday"
+          },
+          {
+            "const": "wednesday",
+            "title": "Wednesday"
+          },
+          {
+            "const": "thursday",
+            "title": "Thursday"
+          },
+          {
+            "const": "friday",
+            "title": "Friday"
+          },
+          {
+            "const": "saturday",
+            "title": "Saturday"
+          },
+          {
+            "const": "sunday",
+            "title": "Sunday"
+          }
+        ]
+      },
+      "title": "Working days period per week",
+      "type": "array",
+      "uniqueItems": true,
+      "x-jsf-presentation": {
+        "inputType": "select",
+        "placeholder": "Select..."
+      }
+    },
+    "work_equipment": {
+      "maxLength": 1000,
+      "title": "Equipment and technical allowance",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "work_hours_full_time": {
+      "const": "44",
+      "description": "Normal working hours are from Monday till Friday between 09:00 and 18:00, with a daily lunch break between 12:00 - 13:00 of maximally one hour, and Saturday between 08:00 and 12:00.",
+      "title": "Work week schedule",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "work_hours_part_time": {
+      "description": "Hours the employee is required to work each working day. i.e 9:00 - 17:00",
+      "properties": {
+        "end_time": {
+          "title": "End Time",
+          "type": "string",
+          "x-jsf-presentation": {
+            "hideLabel": true,
+            "inputType": "text"
+          }
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string",
+          "x-jsf-presentation": {
+            "hideLabel": true,
+            "inputType": "text"
+          }
+        }
+      },
+      "required": ["start_time", "end_time"],
+      "title": "Working hours",
+      "type": "object",
+      "x-jsf-order": ["start_time", "end_time"],
+      "x-jsf-presentation": {
+        "inputType": "fieldset"
+      }
+    },
+    "work_hours_week_full_time": {
+      "const": "44",
+      "description": "In the Dominican Republic, the full-time work-week is capped at 44 hours.",
+      "title": "Working hours per week",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "work_hours_week_part_time": {
+      "description": "In the Dominican Republic, the part-time work-week is capped at 29 hours.",
+      "maximum": 29,
+      "title": "Working hours per week",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "work_week_schedule": {
+      "description": "In the Dominican Republic, employees can be part-time or full-time depending on their work week hours. Select the work hours below.",
+      "oneOf": [
+        {
+          "const": "full_time",
+          "title": "Full-time"
+        },
+        {
+          "const": "part_time",
+          "title": "Part-time"
+        }
+      ],
+      "title": "Work week hours",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    }
+  },
+  "required": [
+    "non_compete_clause_apply",
+    "annual_gross_salary",
+    "contract_duration_type",
+    "annual_bonus_ack",
+    "available_pto",
+    "work_week_schedule",
+    "equity_compensation",
+    "experience_level",
+    "has_signing_bonus",
+    "has_bonus",
+    "has_commissions",
+    "role_description",
+    "work_equipment",
+    "work_address_is_home_address",
+    "confidentiality_clause_apply",
+    "expenses_reimbursement",
+    "notice_period",
+    "probation_period",
+    "statutory_benefits"
+  ],
+  "type": "object",
+  "x-jsf-logic": {
+    "computedValues": {
+      "annual_gross_salary_reserve_description": {
+        "rule": {
+          "if": [
+            {
+              ">=": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                1076856809
+              ]
+            },
+            {
+              "cat": [
+                "The minimum annual salary is calculated based on the country's applicable laws.",
+                " ",
+                "A reserve payment will be required, as described above."
+              ]
+            },
+            "The minimum annual salary is calculated based on the country's applicable laws."
+          ]
+        }
+      },
+      "computed_non_compete_clause_compensation_amount": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                {
+                  "var": "non_compete_clause_compensation_percentage"
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "-": [
+                    {
+                      "*": [
+                        {
+                          "/": [
+                            {
+                              "var": "annual_gross_salary"
+                            },
+                            12
+                          ]
+                        },
+                        {
+                          "/": [
+                            {
+                              "var": "non_compete_clause_compensation_percentage"
+                            },
+                            100
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "%": [
+                        {
+                          "*": [
+                            {
+                              "/": [
+                                {
+                                  "var": "annual_gross_salary"
+                                },
+                                12
+                              ]
+                            },
+                            {
+                              "/": [
+                                {
+                                  "var": "non_compete_clause_compensation_percentage"
+                                },
+                                100
+                              ]
+                            }
+                          ]
+                        },
+                        1
+                      ]
+                    }
+                  ]
+                },
+                100
+              ]
+            },
+            null
+          ]
+        }
+      },
+      "computed_non_compete_clause_compensation_amount_in_cents": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                {
+                  "var": "non_compete_clause_compensation_percentage"
+                }
+              ]
+            },
+            {
+              "-": [
+                {
+                  "*": [
+                    {
+                      "/": [
+                        {
+                          "var": "annual_gross_salary"
+                        },
+                        12
+                      ]
+                    },
+                    {
+                      "/": [
+                        {
+                          "var": "non_compete_clause_compensation_percentage"
+                        },
+                        100
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "%": [
+                    {
+                      "*": [
+                        {
+                          "/": [
+                            {
+                              "var": "annual_gross_salary"
+                            },
+                            12
+                          ]
+                        },
+                        {
+                          "/": [
+                            {
+                              "var": "non_compete_clause_compensation_percentage"
+                            },
+                            100
+                          ]
+                        }
+                      ]
+                    },
+                    1
+                  ]
+                }
+              ]
+            },
+            null
+          ]
+        }
+      },
+      "extreme_salary_acknowledgement_title": {
+        "rule": {
+          "cat": [
+            "I have reviewed and verified the annual salary of DOP ",
+            {
+              "money_format": {
+                "/": [
+                  {
+                    "var": "annual_gross_salary"
+                  },
+                  100
+                ]
+              }
+            },
+            "."
+          ]
+        }
+      }
+    }
+  },
+  "x-jsf-order": [
+    "contract_duration_type",
+    "contract_duration_length",
+    "contract_duration_length_up_two_months",
+    "contract_duration_length_up_four_months",
+    "work_week_schedule",
+    "work_days",
+    "work_hours_part_time",
+    "work_hours_week_full_time",
+    "work_hours_week_part_time",
+    "lunch_break_full_time",
+    "weekly_rest_full_time",
+    "work_hours_full_time",
+    "probation_period",
+    "notice_period",
+    "available_pto",
+    "statutory_benefits",
+    "role_description",
+    "experience_level",
+    "work_address_is_home_address",
+    "salary_overview",
+    "annual_gross_salary",
+    "extreme_salary_warning",
+    "extreme_salary_acknowledgement",
+    "annual_bonus_ack",
+    "allowances",
+    "has_signing_bonus",
+    "signing_bonus_amount",
+    "has_bonus",
+    "bonus_amount",
+    "bonus_details",
+    "has_commissions",
+    "commissions_details",
+    "commissions_ack",
+    "equity_compensation",
+    "confidentiality_clause_apply",
+    "non_compete_clause_apply",
+    "non_compete_clause_halt_period_months",
+    "non_compete_clause_compensation_amount",
+    "non_compete_clause_compensation_percentage",
+    "work_equipment",
+    "expenses_reimbursement"
+  ],
+  "x-rmt-flatFieldsets": {
+    "annual_gross_salary_fieldset": {
+      "propertiesByName": [
+        "salary_overview",
+        "annual_gross_salary",
+        "extreme_salary_warning",
+        "extreme_salary_acknowledgement",
+        "annual_bonus_ack"
+      ],
+      "title": "Annual gross salary"
+    },
+    "employee_schedule_fieldset": {
+      "propertiesByName": [
+        "work_days",
+        "work_hours_part_time",
+        "work_hours_week_part_time"
+      ],
+      "title": "Employee schedule"
+    },
+    "non_compete_fieldset": {
+      "propertiesByName": [
+        "non_compete_clause_apply",
+        "non_compete_clause_halt_period_months",
+        "non_compete_clause_compensation_percentage",
+        "non_compete_clause_compensation_amount"
+      ],
+      "title": "Non-compete"
+    }
+  },
+  "x-rmt-meta": {
+    "jsfVersion": "1"
+  },
+  "x-rmt-schema-changelog": {
+    "changelog": "Adds the extreme high salary acknowledgement: a warning and a mandatory checkbox when the annual salary is at or above the USD 1,000,000 equivalent. Additive and flag-gated; no action required for existing contracts.",
+    "upgradePath": "No action required."
+  }
+}

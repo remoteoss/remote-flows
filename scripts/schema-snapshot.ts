@@ -2,6 +2,7 @@
 import { execFileSync } from 'node:child_process';
 import {
   appendFileSync,
+  existsSync,
   mkdirSync,
   readFileSync,
   writeFileSync,
@@ -29,6 +30,12 @@ import {
   formatChanges,
   SchemaFingerprint,
 } from './schema-snapshot/behaviour';
+import {
+  compareRawSchema,
+  describeRawStatus,
+  RawSchemaStatus,
+  serializeRawSchema,
+} from './schema-snapshot/raw';
 import { mapWithConcurrency } from './map-with-concurrency';
 import { assertServedVersion } from './schema-snapshot/served-version';
 import { resolvePinnedVersion } from './schema-canary/pinned-versions';
@@ -49,6 +56,13 @@ const BASELINE_DIR = path.resolve(
   '..',
   'snapshots',
   'contract-details',
+);
+
+const RAW_DIR = path.resolve(
+  __dirname,
+  '..',
+  'snapshots',
+  'contract-details-raw',
 );
 
 const args: Record<string, string | true> = {};
@@ -85,6 +99,7 @@ type CountryResult = {
     | 'no-baseline'
     | 'error';
   changes: FingerprintChange[];
+  raw?: RawSchemaStatus;
   previousVersion?: number;
   error?: string;
 };
@@ -105,6 +120,18 @@ function writeBaseline(
   mkdirSync(BASELINE_DIR, { recursive: true });
   const file = baselinePath(BASELINE_DIR, country, version);
   writeFileSync(file, `${JSON.stringify(fingerprint, null, 2)}\n`);
+  writtenFiles.push(file);
+}
+
+function readRawBaseline(country: string, version: number): unknown {
+  const file = baselinePath(RAW_DIR, country, version);
+  return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : undefined;
+}
+
+function writeRawBaseline(country: string, version: number, schema: unknown) {
+  mkdirSync(RAW_DIR, { recursive: true });
+  const file = baselinePath(RAW_DIR, country, version);
+  writeFileSync(file, serializeRawSchema(schema));
   writtenFiles.push(file);
 }
 
@@ -130,7 +157,7 @@ async function fetchPinnedSchema(
     );
   }
   assertServedVersion(response.response?.headers, country, version);
-  return withJobTitleEligibilityRiskAcknowledgement(response.data.data);
+  return response.data.data;
 }
 
 async function checkCountry(
@@ -141,19 +168,20 @@ async function checkCountry(
   let employmentId: string | undefined;
   try {
     employmentId = await seedEmploymentForCountry(client, country);
-    const schema = await fetchPinnedSchema(
+    const rawSchema = await fetchPinnedSchema(
       client,
       country,
       version,
       employmentId,
     );
     const fingerprint = await fingerprintSchema(
-      schema,
+      withJobTitleEligibilityRiskAcknowledgement(rawSchema),
       getContractDetailsStrategy(country),
     );
 
     if (UPDATE) {
       writeBaseline(country, version, fingerprint);
+      writeRawBaseline(country, version, rawSchema);
       return { country, version, status: 'updated', changes: [] };
     }
     if (!baselineExists(BASELINE_DIR, country, version)) {
@@ -173,6 +201,7 @@ async function checkCountry(
               fingerprint,
             );
       writeBaseline(country, version, fingerprint);
+      writeRawBaseline(country, version, rawSchema);
       return { country, version, status: 'created', changes, previousVersion };
     }
     const changes = diffFingerprints(
@@ -184,6 +213,7 @@ async function checkCountry(
       version,
       status: changes.length > 0 ? 'changed' : 'unchanged',
       changes,
+      raw: compareRawSchema(readRawBaseline(country, version), rawSchema),
     };
   } catch (error) {
     return {
@@ -229,7 +259,15 @@ function formatReport(results: CountryResult[]): string {
   for (const result of results) {
     const heading = `### ${result.country} (pinned v${result.version})`;
     if (result.status === 'changed') {
-      lines.push(heading, formatChanges(result.changes), '');
+      lines.push(
+        heading,
+        formatChanges(result.changes),
+        '',
+        describeRawStatus(result.raw ?? 'missing', true) ?? '',
+        '',
+      );
+    } else if (result.status === 'unchanged' && result.raw === 'changed') {
+      lines.push(heading, describeRawStatus(result.raw, false) ?? '', '');
     } else if (result.status === 'created') {
       lines.push(heading, describeCreated(result), '');
     } else if (result.status === 'no-baseline') {

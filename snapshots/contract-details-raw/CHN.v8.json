@@ -1,0 +1,2553 @@
+{
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "non_interference_halt_period": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_interference_apply": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_interference_apply"]
+      },
+      "then": {
+        "required": ["non_interference_halt_period"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_solicitation_customer_number_of_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_solicitation_customers": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_solicitation_customers"]
+      },
+      "then": {
+        "properties": {
+          "non_solicitation_customer_number_of_months": {
+            "type": "number"
+          }
+        },
+        "required": ["non_solicitation_customer_number_of_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_solicitation_employees_number_of_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_solicitation_employees": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_solicitation_employees"]
+      },
+      "then": {
+        "properties": {
+          "non_solicitation_employees_number_of_months": {
+            "type": "number"
+          }
+        },
+        "required": ["non_solicitation_employees_number_of_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_compete_clause_compensation_amount": false
+        }
+      },
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "type": "integer"
+          },
+          "non_compete_clause_apply": {
+            "const": "yes"
+          },
+          "non_compete_clause_compensation_percentage": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "non_compete_clause_apply",
+          "annual_gross_salary",
+          "non_compete_clause_compensation_percentage"
+        ]
+      },
+      "then": {
+        "properties": {
+          "non_compete_clause_compensation_amount": {
+            "x-jsf-logic-computedAttrs": {
+              "const": "computed_non_compete_clause_compensation_amount_in_cents",
+              "default": "computed_non_compete_clause_compensation_amount_in_cents",
+              "x-jsf-presentation": {
+                "statement": {
+                  "description": "The employee will receive this monthly compensation after termination for the entire non-compete period.",
+                  "title": "{{computed_non_compete_clause_compensation_amount}} CNY non-compete compensation amount"
+                }
+              }
+            }
+          }
+        },
+        "required": ["non_compete_clause_compensation_amount"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_compete_clause_compensation_amount": false,
+          "non_compete_clause_compensation_percentage": false,
+          "non_compete_clause_halt_period_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_compete_clause_apply": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_compete_clause_apply"]
+      },
+      "then": {
+        "required": [
+          "non_compete_clause_compensation_percentage",
+          "non_compete_clause_halt_period_months"
+        ]
+      }
+    },
+    {
+      "else": {
+        "else": {
+          "properties": {
+            "notice_period_days": false
+          }
+        },
+        "if": {
+          "properties": {
+            "notice_period_choice": {
+              "const": "custom"
+            }
+          },
+          "required": ["notice_period_choice"]
+        },
+        "then": {
+          "properties": {
+            "notice_period_days": {
+              "readOnly": false,
+              "x-jsf-presentation": {
+                "inputType": "number"
+              }
+            }
+          },
+          "required": ["notice_period_days"]
+        }
+      },
+      "if": {
+        "properties": {
+          "notice_period_choice": {
+            "const": "recommended"
+          }
+        },
+        "required": ["notice_period_choice"]
+      },
+      "then": {
+        "properties": {
+          "notice_period_days": {
+            "const": 30,
+            "default": 30,
+            "readOnly": true,
+            "x-jsf-presentation": {
+              "inputType": "hidden"
+            }
+          }
+        },
+        "required": ["notice_period_days"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "x-jsf-logic-computedAttrs": {
+              "minimum": "minimum_annual_gross_salary_in_cents",
+              "x-jsf-errorMessage": {
+                "minimum": "Must be greater or equal to CN¥{{minimum_annual_gross_salary}}"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "province_of_residency": {
+            "const": "ZJ"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["province_of_residency", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 3192000,
+            "x-jsf-errorMessage": {
+              "minimum": "Must be greater or equal to CN¥31,920.00"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "province_of_residency": {
+            "const": "TJ"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["province_of_residency", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 3012000,
+            "x-jsf-errorMessage": {
+              "minimum": "Must be greater or equal to CN¥30,120.00"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "province_of_residency": {
+            "const": "SH"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["province_of_residency", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 3288000,
+            "x-jsf-errorMessage": {
+              "minimum": "Must be greater or equal to CN¥32,880.00"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "province_of_residency": {
+            "const": "SD"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["province_of_residency", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 2640000,
+            "x-jsf-errorMessage": {
+              "minimum": "Must be greater or equal to CN¥26,400.00"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "province_of_residency": {
+            "const": "SC"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["province_of_residency", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 2520000,
+            "x-jsf-errorMessage": {
+              "minimum": "Must be greater or equal to CN¥25,200.00"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "province_of_residency": {
+            "const": "JS"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["province_of_residency", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 2988000,
+            "x-jsf-errorMessage": {
+              "minimum": "Must be greater or equal to CN¥29,880.00"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "province_of_residency": {
+            "const": "GD"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["province_of_residency", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 3000000,
+            "x-jsf-errorMessage": {
+              "minimum": "Must be greater or equal to CN¥30,000.00"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "province_of_residency": {
+            "const": "BJ"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["province_of_residency", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 3048000,
+            "x-jsf-errorMessage": {
+              "minimum": "Must be greater or equal to CN¥30,480.00"
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "contract_end_date": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "fixed_term"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "properties": {
+          "contract_end_date": {
+            "type": "string"
+          }
+        },
+        "required": ["contract_end_date"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "part_time_salary_confirmation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "part_time_salary_confirmation": {
+            "type": "string"
+          }
+        },
+        "required": ["part_time_salary_confirmation"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "probation_length": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "properties": {
+          "probation_length": {
+            "type": "number"
+          }
+        },
+        "required": ["probation_length"]
+      }
+    },
+    {
+      "else": {
+        "if": {
+          "properties": {
+            "has_probation_period": {
+              "const": "no"
+            }
+          },
+          "required": ["has_probation_period"]
+        },
+        "properties": {
+          "work_days_number": false,
+          "work_hours_per_week": {
+            "maximum": 40,
+            "minimum": 25
+          }
+        },
+        "required": [
+          "has_probation_period",
+          "termination_rules_ack",
+          "notice_period_days"
+        ],
+        "then": {
+          "properties": {
+            "has_probation_period": {
+              "x-jsf-presentation": {
+                "statement": {
+                  "description": "Waiving the probation period is possible but discouraged",
+                  "severity": "warning"
+                }
+              }
+            }
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "has_overtime_eligibility": {
+            "description": "Part-time employees can work overtime. The hourly pay rate for overtime must be agreed upon between the employee and the employer."
+          },
+          "has_probation_period": {
+            "const": "no",
+            "default": "no",
+            "description": "In China, part-time contracts cannot have a probation period",
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "In China, part-time contracts cannot have a probation period",
+                "title": "Probation period"
+              }
+            }
+          },
+          "notice_period_choice": {
+            "const": null,
+            "description": "In China, part-time contracts do not have a notice period",
+            "oneOf": [
+              {
+                "const": null,
+                "title": "N/A"
+              }
+            ],
+            "type": ["string", "null"]
+          },
+          "notice_period_days": {
+            "const": null,
+            "description": "In China, part-time contracts do not have a notice period",
+            "type": ["number", "null"]
+          },
+          "termination_rules_ack": false,
+          "work_hours_per_day": {
+            "description": "Part-time employees can work up to 4 hours per day. There are a few different working hour systems that can be applied to employees in the People’s Republic of China.",
+            "maximum": 4,
+            "minimum": 0
+          },
+          "work_hours_per_week": {
+            "description": "Part-time employees can work a maximum of 24 hours per week.",
+            "maximum": 24,
+            "minimum": 1
+          }
+        },
+        "required": ["work_days_number"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "available_pto": {
+            "minimum": 5
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "available_pto_type": {
+            "const": "unlimited"
+          }
+        },
+        "required": ["available_pto_type"]
+      },
+      "then": {
+        "properties": {
+          "available_pto": {
+            "const": 5,
+            "default": 5,
+            "title": "Minimum paid time off days"
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "third_party_work_activities": false
+        }
+      },
+      "if": {
+        "properties": {
+          "third_party_work": {
+            "const": "yes"
+          }
+        },
+        "required": ["third_party_work"]
+      },
+      "then": {
+        "properties": {
+          "third_party_work_activities": {
+            "type": "string"
+          }
+        },
+        "required": ["third_party_work_activities"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "signing_bonus_amount": false,
+          "signing_bonus_clawback": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_signing_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_signing_bonus"]
+      },
+      "then": {
+        "properties": {
+          "signing_bonus_amount": {
+            "type": "integer"
+          },
+          "signing_bonus_clawback": {
+            "type": "string"
+          }
+        },
+        "required": ["signing_bonus_amount", "signing_bonus_clawback"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "bonus_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_bonus"]
+      },
+      "then": {
+        "properties": {
+          "bonus_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["bonus_details"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "commissions_ack": false,
+          "commissions_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_commissions": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_commissions"]
+      },
+      "then": {
+        "properties": {
+          "commissions_ack": {
+            "type": ["string"]
+          },
+          "commissions_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["commissions_details", "commissions_ack"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_compete_breach_compensation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_compete_clause_apply": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_compete_clause_apply"]
+      },
+      "then": {
+        "properties": {
+          "non_compete_breach_compensation": {
+            "minimum": 1,
+            "x-jsf-errorMessage": {
+              "minimum": "Must be greater than or equal to CN¥1."
+            },
+            "x-jsf-logic-computedAttrs": {
+              "maximum": "maximum_breach_salary_in_cents",
+              "x-jsf-errorMessage": {
+                "maximum": "Must be smaller or equal to CN¥{{maximum_breach_salary}}."
+              }
+            }
+          }
+        },
+        "required": ["non_compete_breach_compensation"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "extreme_salary_acknowledgement": false,
+          "extreme_salary_warning": false
+        }
+      },
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 668627975
+          }
+        },
+        "required": ["annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "extreme_salary_acknowledgement": {
+            "type": "string"
+          },
+          "extreme_salary_warning": {}
+        },
+        "required": ["extreme_salary_acknowledgement"]
+      }
+    }
+  ],
+  "properties": {
+    "annual_gross_salary": {
+      "title": "Annual gross salary",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-logic-computedAttrs": {
+        "description": "{{annual_gross_salary_reserve_description}}"
+      },
+      "x-jsf-presentation": {
+        "currency": "RMB",
+        "inputType": "money"
+      }
+    },
+    "annual_leave_carry_forward": {
+      "description": "In the People’s Republic of China, employees are entitled to carryover time off or payment equivalent to the time off days they don’t use each year. Please consider that compensation of full-time employees for unused statutory leave is calculated at three times the employee’s base rate.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "The employee can carry over unused time off days to the following year"
+        },
+        {
+          "const": "no",
+          "title": "We’ll pay the employee the value of unused days at the end of each year"
+        }
+      ],
+      "title": "How do you want to handle carryover paid time off?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "available_pto": {
+      "description": "In the People's Republic of China, employees get annual leave based on their accumulative working years.",
+      "title": "Number of paid time off days",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>In the People's Republic of China, employees are entitled to a minimum number of paid time off days based on their cumulative years working which includes past employment experience with other employers. You can always offer more paid time off days than the statutory minimum.</p><p><span class=\"notion-enable-hover\" data-token-index=\"1\"><strong>Statutory minimum paid time off days:</strong></span></p><ul>\n<li data-list-item-id=\"e586c6e83a539701222d78bb1fe71fc1b\">If the employee has worked between 1 and 10 years: 5 days</li>\n<li data-list-item-id=\"e64197bc117f497ed8158d9e8d9a9751d\">If the employee has worked between 10 and 20 years: 10 days</li>\n<li data-list-item-id=\"e0fb63038b9f955d9a3b850881e9b6614\">If the employee has worked for 20 years or more: 15 days</li>\n</ul>",
+            "error": false,
+            "id": 20500968689677,
+            "title": "Number of paid time off days (China)"
+          }
+        }
+      }
+    },
+    "available_pto_type": {
+      "description": "For personal time off. Also called vacation or annual leave.",
+      "oneOf": [
+        {
+          "const": "unlimited",
+          "description": "Gives the employee an uncapped number of paid time off days per year. The number below is the mandatory minimum number of days they must take.",
+          "title": "Unlimited paid time off"
+        },
+        {
+          "const": "fixed",
+          "description": "The employee gets a set number of paid time off days per year that you establish.",
+          "title": "Fixed paid time off"
+        }
+      ],
+      "title": "Paid time off policy",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "bonus_details": {
+      "description": "Bonus type, payment frequency, and more.",
+      "maxLength": 1000,
+      "title": "Other bonus details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "commissions_ack": {
+      "const": "acknowledged",
+      "description": "I understand that I am required to provide written details of the commission plan to this employee, and upload this document on the platform for record keeping purposes. I acknowledge that Remote will not liable for any claims or losses associated with the commission or bonus plan.",
+      "title": "Confirm commission plan details",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "(i) Guidance on drafting a commission plan here",
+            "content": "<p>It is important to understand that commission plans are individual agreements between you, and each team member. Consequently, it is important that these plans are communicated directly between you and the respective team members. This direct communication ensures clarity, transparency, and a clear understanding of the agreed-upon terms for the commission plan.</p>\n<p>Performance-linked bonuses and commissions are payments that are contingent on various factors, including individual and team performance, business outcomes, and other metrics agreed upon by you and the employees providing you services. As these are rewards that are subject to your evaluation and adjustment based on the agreed-upon criteria, we strongly recommend that you document these plans as compliantly as possible, and their specifics separately in writing, with the employee providing you services, following the below guidelines:</p>\n<ul>\n<li>Please note if there is any doubt or lack of clarity due to ambiguous wording, it will be interpreted to the employee’s benefit. Therefore, the plan should be reviewed thoroughly to determine whether it could be interpreted various ways. If so, the respective wording should be amended in a way that is precise and can be understood in one way only.</li>\n<li>In some jurisdictions, bonus and commission plans can be contractually drafted as being discretionary, but still remain unambiguous.  Where this is legally possible, this is the recommended approach to legally best protect the employer/you from any potential disputes.  Please note, however, that employees may still have a claim for commission payments, even if an agreement is drafted as discretionary.</li>\n<li>Basis for Commission Calculation: The commission plan should clearly outline the basis on which the commission will be calculated. This may include factors such as sales revenue, units sold, profit margin, or other measurable performance indicators. The commission plan should also include the timeframe in which the respective target must be achieved.</li>\n<li>Commission Rate: The commission plan should specify the commission rate or rates applicable to different levels of performance. It should clearly define how the commission will be determined, based on achieving specific targets or milestones. In order to limit the financial risk, a commission plan can include a regulation on the maximum amount of commissions that can be earned.</li>\n<li>Target Goals: The commission plan should establish realistic and achievable target goals or sales quotas that the employee is expected to reach in order to earn commission. </li>\n<li>Calculation Period: The commission plan should specify the calculation period for commission payouts. This could be monthly or quarterly. It should also state the timeline for determining and disbursing commission payments. Furthermore, a commission plan should include a specification about the point in time until when targets are set each year. Commission targets should be given prior to the commencement of the plan period.</li>\n<li>Commission Calculation Method: The commission plan should outline the methodology for calculating the commission. It should specify any deductions, adjustments, or exclusions that may be applicable to the commission calculation.</li>\n<li>Payment Terms: The commission plan should detail the terms and conditions for commission payments, including the payment schedule, method of payment, and any additional requirements or conditions. It should also explain how leaves, for example, sick leave and maternity leave, influence payment of commission and bonus, considering local requirements and non discrimination rules.</li>\n<li>Termination or Modification: The commission plan should address how it may be terminated or modified, including the circumstances under which changes may be made and the notice period required.</li>\n<li>It is helpful to include terms regarding dispute resolution.</li>\n</ul>\n<p>Please be aware that this guideline does not constitute legal advice. It is advisable to consult with your legal counsel for expert advice while formulating such plans. We will not assume liability for any claims that may arise due to a non-compliant and/or ambiguous commission plan provided to employees.</p>",
+            "error": false,
+            "id": 17932049668109,
+            "title": "Guidelines for bonus and commission plans"
+          }
+        }
+      }
+    },
+    "commissions_details": {
+      "description": "Payment amount, frequency, and more.",
+      "maxLength": 1000,
+      "title": "Commission details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "contract_duration_type": {
+      "oneOf": [
+        {
+          "const": "indefinite",
+          "title": "Indefinite"
+        },
+        {
+          "const": "fixed_term",
+          "title": "Fixed Term"
+        }
+      ],
+      "title": "Contract duration",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about contract duration",
+            "content": "<p>There are two types of contracts available:</p>\n<ul>\n<li>Fixed-term contract: This is a contract that has an end date. This means that towards the end of the contract, it will need to be renewed if you intend to keep the employee hired through us. In some countries, t<span class=\"notion-semantic-string\">he minimum contract duration is 6 months.</span>\n</li>\n<li>Indefinite contract: This is a contract with no end date and therefore, no renewal is needed.</li>\n</ul>\n<p data-pm-slice=\"1 3 []\">Indefinite and fixed-term contracts can be:</p>\n<ul class=\"ProsemirrorEditor-list\">\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Part-time: <span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">This is </span>a form of employment that <strong>carries fewer hours per week than a full-time job</strong><span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">. Depending on the country, workers are considered to be part-time if they commonly work fewer than 30 or 35 hours per week.</span></p>\n</li>\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Full-time.</p>\n</li>\n</ul>",
+            "error": false,
+            "id": 4410443814157,
+            "title": "Types of employment contracts"
+          }
+        }
+      }
+    },
+    "contract_end_date": {
+      "format": "date",
+      "maxLength": 255,
+      "title": "Contract end date",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "date",
+        "minDate": "2026-12-01"
+      }
+    },
+    "equity_compensation": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "equity_cliff": false,
+              "equity_description": false,
+              "equity_vesting_period": false,
+              "number_of_stock_options": false
+            }
+          },
+          "if": {
+            "properties": {
+              "offer_equity_compensation": {
+                "const": "yes"
+              }
+            },
+            "required": ["offer_equity_compensation"]
+          },
+          "then": {
+            "properties": {
+              "equity_description": {
+                "type": ["string"]
+              }
+            },
+            "required": ["equity_description"]
+          }
+        }
+      ],
+      "properties": {
+        "equity_cliff": {
+          "deprecated": true,
+          "description": "When the first portion of the stock option grant will vest.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Cliff (in months)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "equity_description": {
+          "description": "Please share any information related to the upcoming equity grant.",
+          "maxLength": 1000,
+          "title": "Number of options, RSUs, and other equity",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "textarea"
+          }
+        },
+        "equity_vesting_period": {
+          "deprecated": true,
+          "description": "The number of years it will take for the employee to vest all their options.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Vesting period (in years)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "number_of_stock_options": {
+          "deprecated": true,
+          "description": "Tell us the type of equity you're granting as well.",
+          "maxLength": 255,
+          "readOnly": true,
+          "title": "Number of options, RSUs, or other equity granted",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "text"
+          }
+        },
+        "offer_equity_compensation": {
+          "description": "Granting equity to your team generally triggers tax and legal obligations. In order for you to stay compliant, it's important to declare any equity grants.",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            }
+          ],
+          "title": "Will this employee receive equity?",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "row",
+            "inputType": "radio"
+          }
+        }
+      },
+      "required": ["offer_equity_compensation"],
+      "title": "Equity management",
+      "type": "object",
+      "x-jsf-order": [
+        "offer_equity_compensation",
+        "number_of_stock_options",
+        "equity_cliff",
+        "equity_vesting_period",
+        "equity_description"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 39,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 39,
+              "currency": "USD"
+            }
+          },
+          "helpCenter": {
+            "callToAction": "Learn more about equity management at Remote",
+            "content": "<p>Remote Equity is a lightweight compliance tool designed to help you manage equity grants across borders for team members hired through Remote's Employer of Record (EOR).</p><p>Whether you’re managing vesting, reporting exercises, or navigating local tax laws, Remote Equity gives you the structure to stay compliant, avoid risk, and support your team across borders.</p><h4 id=\"h_01K0YQSYJ8JPKYXNNNW90B0QJP\">Why it matters</h4><p>As your EOR, <strong>Remote is legally responsible</strong> for equity-related tax and reporting in the countries where your team members are employed. That means we don’t just track equity, we:</p><ul>\n<li data-list-item-id=\"eba6b95d2e41a276665f3f64525e0eb59\">Withhold and report taxes when required</li>\n<li data-list-item-id=\"ed16c354038e4b3d908bacd965dc2d71b\">File with local tax authorities</li>\n<li data-list-item-id=\"eb7162ef11477f7a7737fe34a48979559\">Support team members with clear guidance on their tax responsibilities</li>\n</ul><p>Most equity platforms can’t do that because they’re not the legal employer. <strong>Remote Equity ensures we have the data we need, when we need it, to keep your company compliant and your team fairly rewarded.</strong></p><p>Behind the scenes, our tax team:</p><ul>\n<li data-list-item-id=\"ef5c97b0472ebc9a0819e312646e4cd66\">Handles tax withholdings when taxable events occur</li>\n<li data-list-item-id=\"e5f3560641743ab0c57ba47683638560e\">Provides guidance to you and your team, even when no withholding is required</li>\n<li data-list-item-id=\"ed17d307d635b18f9f784df12d1dbe1cd\">Manages additional reporting where local laws demand it</li>\n</ul><p>See also: <a href=\"https://support.remote.com/hc/en-us/articles/37710493624589-What-types-of-equity-grants-should-I-declare-in-Remote-Equity-Essentials\">What types of equity grants should I declare in Remote Equity?</a></p><h4 id=\"h_01K0YQSYJDJ3JYC1C642ASB8E2\">What’s included</h4><p>Remote Equity provides:</p><ul>\n<li data-list-item-id=\"e0cc8d8c0b7d060b9de89e3c870fc1579\">\n<strong>Tracking and alerts</strong> for events that may create a tax obligation (like vesting or exercising)</li>\n<li data-list-item-id=\"e88a2fc75f6f43db27891e415e2f90400\">\n<strong>Automated compliance reminders</strong> based on local deadlines and regulations</li>\n<li data-list-item-id=\"e2c2cf9ef914143e339eb32e1b70c83da\">\n<strong>Localized guidance for team members</strong>, shared through the Remote Equity app</li>\n<li data-list-item-id=\"e8a2c20d648ed01a3db135ef4ada0de61\">\n<strong>Support from Remote’s tax and legal teams</strong>, who handle obligations on your behalf</li>\n<li data-list-item-id=\"e184af2a6420412152b377815ebe18ce2\">\n<strong>Integration with Carta and Pulley</strong> to automatically sync grant declarations and exercise information</li>\n</ul><h4 id=\"h_01K0YQSYJSCK6XYBXF3Q56KRC8\"><strong>Get started in minutes</strong></h4><p>Setup takes less than five minutes. Just log in to your Remote account, and launch the Equity App to follow the setup steps.</p><p>Helpful guides to get started:</p><ul>\n<li data-list-item-id=\"e73e204bc587d3417ecab74e3a29ccc2a\"><a href=\"https://support.remote.com/hc/en-us/articles/37547625350925-How-can-I-access-Remote-Equity-Essentials\">How can I access Remote Equity?</a></li>\n<li data-list-item-id=\"e0ca43a64bf2361ce43443e98200daa5a\"><a href=\"https://support.remote.com/hc/en-us/articles/35577980536589\">How do I declare a grant?</a></li>\n<li data-list-item-id=\"edfa1a00c07a70449ebe34c25dec818fe\"><a href=\"https://support.remote.com/hc/en-us/articles/35671968187149-How-can-my-employees-see-their-equity-information\">How can my team access their equity information?</a></li>\n<li data-list-item-id=\"edaaf9eb107949f79894c24e3b984da30\"><a href=\"https://support.remote.com/hc/en-us/articles/35546454220301-What-happens-if-I-already-declared-equity-before-using-Remote-Equity-Essentials\">What happens if I already declared equity before using Remote Equity?</a></li>\n</ul><h4 id=\"h_01K0YQSYJV9EH2AQ9HWYS1826S\"><span class=\"wysiwyg-underline\">Frequently Asked Questions (FAQs)</span></h4><p><strong>Who needs to use Remote Equity?</strong></p><p>Any Remote customer granting equity to a team member hired through Remote’s EOR must use Remote Equity to meet local compliance requirements.</p><p><strong>Why can’t we just use our own equity tool?</strong></p><p>Traditional equity tools track grants and vesting, but they don't file taxes, withhold contributions, or report income to local authorities. Remote, as the legal employer, is responsible for these actions. Remote Equity ensures those obligations are covered.</p><p><strong>What happens if we don’t use it?</strong></p><p>If Remote doesn’t receive timely and accurate equity data, required filings may be missed. This can result in compliance risks, unexpected tax liabilities, and issues for both your company and your team members.</p><p><strong>How much does Remote Equity cost?</strong></p><p>Remote Equity costs 39 USD per month for each EOR team member with equity. <a href=\"https://support.remote.com/hc/en-us/articles/35546441948685-How-much-does-Remote-Equity-Essentials-cost\">Learn more</a>.</p><p>For comprehensive information, visit the <a href=\"https://support.remote.com/hc/en-us/categories/45788665954189-Remote-Equity\" tabindex=\"0\" data-token-index=\"1\" rel=\"noopener noreferrer\">Remote Equity hub</a>.</p>",
+            "error": false,
+            "id": 38303424407821,
+            "title": "Welcome to Remote Equity: Global equity, without the compliance headaches"
+          }
+        }
+      }
+    },
+    "expenses_policy": {
+      "description": "You can outline your policy and reimburse expenses on the platform. However, the employment agreement will not include details on expenses. Please send full policy details directly to the employee.",
+      "maxLength": 1000,
+      "title": "Outline your policy on expenses",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "experience_level": {
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employees overall experience).",
+      "oneOf": [
+        {
+          "const": "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "description": "Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "title": "Level 2 - Entry Level"
+        },
+        {
+          "const": "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+          "description": "Employees who perform independently tasks and/or with coordination and control functions",
+          "title": "Level 3 - Associate"
+        },
+        {
+          "const": "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "description": "Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "title": "Level 4 - Mid-Senior level"
+        },
+        {
+          "const": "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "description": "Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "title": "Level 5 - Director"
+        },
+        {
+          "const": "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "description": "An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "title": "Level 6 - Executive"
+        }
+      ],
+      "title": "Experience level",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "extreme_salary_acknowledgement": {
+      "const": "acknowledged",
+      "title": "",
+      "type": "string",
+      "x-jsf-logic-computedAttrs": {
+        "title": "{{extreme_salary_acknowledgement_title}}"
+      },
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "extreme_salary_warning": {
+      "title": "",
+      "type": "null",
+      "x-jsf-presentation": {
+        "inputType": "hidden",
+        "meta": {
+          "ignoreValue": true
+        },
+        "statement": {
+          "description": "The entered salary is equivalent to USD 1,000,000 or more. Please double check and confirm this amount is correct.",
+          "inputType": "statement",
+          "severity": "warning"
+        }
+      }
+    },
+    "has_bonus": {
+      "description": "These can include things like performance-related bonuses.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer other bonuses?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p><span class=\"sc-c090059b-0 fISxvo\">We do not include bonus specifics in the employment agreement. However, you can create a bonus directly on the platform.</span></p>\n<p><span class=\"sc-c090059b-0 fISxvo\">Please note that if you decide to offer other bonuses, it will be difficult or impossible to withdraw these bonuses if you change your mind later.</span></p>",
+            "error": false,
+            "id": 18019142406029,
+            "title": "Other bonuses"
+          }
+        }
+      }
+    },
+    "has_commissions": {
+      "description": "You can outline your policy and pay commission to the employee on the platform. However, commission will not appear in the employment agreement. Please send full policy details directly to the employee.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer commission?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_overtime_eligibility": {
+      "description": "Full-time employees receive overtime pay up to 3 times the rate of their regular pay.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Is the employee eligible for overtime?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>For full-time employees, overtime rates are calculated as follows:</p>\n<ul>\n<li>\n<strong>Regular working days</strong>: For example, if the employee regularly works Monday through Friday, their pay rate for overtime on those days is 150% of their normal rate</li>\n<li>\n<strong>Rest days</strong>: For example, if the employee is usually off of work on Saturday and Sunday, their pay rate for overtime on those days is 200% of their basic rate. However, in this case, an overtime payment should be made only if the employer cannot arrange compensatory time off work for the employee.</li>\n<li>\n<strong>Statutory holidays</strong>: If the employee needs to work during any of their statutory holidays, the overtime pay rate is 300% of their basic rate</li>\n</ul>",
+            "error": false,
+            "id": 20880214137613,
+            "title": "Overtime eligibility (China)"
+          }
+        }
+      }
+    },
+    "has_probation_period": {
+      "description": "We recommend selecting Yes. In the unfortunate event of a necessary termination, probation periods make the process much easier.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Include a probation period?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about probation period",
+            "content": "<p>A probationary period is a set time for an employer to assess a new employee's suitability for the role. It allows the employer to evaluate the employee's capability, skills, performance, attendance, and conduct.</p>\n<p>Using a probationary period can make it simpler to end employment and notice periods are often shorter or don’t apply at all. After the probationary period ends, it is often more difficult and expensive to terminate an employee.</p>\n<p>Please note that if a probationary period is not included and you later receive unsatisfactory background check results, Remote cannot unilaterally terminate the employee’s employment.</p>\n<p>Keep in mind that a probationary period may not be valid if the employee has worked for your company before.</p>\n<p class=\"guide-markup\" style=\"box-sizing: inherit; font-weight: 400; margin: 0.5em 0px 0px; padding: 0px; color: #2f3941; font-family: -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 15px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\"><span class=\"guide-markup notion-enable-hover\" style=\"box-sizing: inherit; font-weight: 600;\" data-token-index=\"2\"><strong class=\"guide-markup\" style=\"box-sizing: border-box; font-weight: bold; color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">See also:</strong><span class=\"guide-markup\" style=\"box-sizing: inherit; font-weight: 400; color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;\"> </span><a class=\"guide-markup\" style=\"box-sizing: border-box; font-weight: 400; border-radius: 4px; color: #0161ff; outline: transparent solid 2px; outline-offset: 1px; transition: outline-color 0.1s ease-in-out, color 0.25s ease-in-out; text-decoration: none; background-color: #ffffff; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal;\" href=\"https://support.remote.com/hc/en-us/articles/34566185236237-What-are-Remote-s-Background-Check-Services\" target=\"_blank\" rel=\"noopener noreferrer\">What are Remote's Background Check Services?</a></span></p>",
+            "error": false,
+            "id": 9013034328205,
+            "title": "Why is it important to include a probationary period in an employee's contract?"
+          }
+        }
+      }
+    },
+    "has_signing_bonus": {
+      "description": "This is a one-time payment the employee receives when they join your team.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer a signing bonus?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_compete_breach_compensation": {
+      "description": "Enter the amount that the employee needs to repay if they breach the non-compete clause. This is normally 2-3 times their annual salary. Additionally, the repayment does not release the employee from the non-compete.",
+      "title": "Non-compete breach compensation",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "RMB",
+        "inputType": "money"
+      }
+    },
+    "non_compete_clause_apply": {
+      "description": "Prevents the employee from joining or starting a competing business. Not allowed during employment. Post-termination only, with limits and required compensation.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Do you want to apply post-termination restrictions (non-compete)?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>In the People’s Republic of China, you must pay the employee 30-50% of their average monthly salary during the 12 months prior to the termination of the employment agreement. You must pay the employee for the length of the non-compete even if they join a competitor.</p>\n<p>While we make every effort to include non-competes in employment agreements, we cannot guarantee their effectiveness because they are fact-specific and we will not be able to enforce them against an employee.</p>\n<p>For these reasons, we recommend selecting <span class=\"notion-enable-hover\" data-token-index=\"1\"><strong>No</strong>.</span></p>",
+            "error": false,
+            "id": 20957579987341,
+            "title": "Non-compete clause (China)"
+          }
+        }
+      }
+    },
+    "non_compete_clause_compensation_amount": {
+      "description": "The employee will receive this monthly compensation after termination for the entire non-compete period.",
+      "title": "Non-compete compensation amount",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "CNY",
+        "inputType": "money"
+      }
+    },
+    "non_compete_clause_compensation_percentage": {
+      "description": "In China, non-compete pay must be at least 30% of monthly base salary throughout the post termination restrictions.",
+      "maximum": 50,
+      "minimum": 30,
+      "title": "Non-compete salary percentage",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "percentage": true
+      }
+    },
+    "non_compete_clause_halt_period_months": {
+      "description": "Non-compete clauses in China can last between 1 and 24 months. The clause begins after the termination of the employment agreement.",
+      "maximum": 24,
+      "minimum": 1,
+      "title": "Duration in months",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_interference_apply": {
+      "description": "Prevents the employee from interfering with your business or customer relationships after leaving.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a non-interference clause?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_interference_halt_period": {
+      "description": "Non-interference clauses can last between 1 and 24 months. The clause begins after the termination of the employment agreement.",
+      "maximum": 24,
+      "minimum": 1,
+      "title": "Non-interference clause duration, in months",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_solicitation_customer_number_of_months": {
+      "description": "Non-solicitation of customers clauses can last between 1 and 24 months. The clause begins after the termination of the employment agreement.",
+      "maximum": 24,
+      "minimum": 1,
+      "title": "Duration in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_solicitation_customers": {
+      "description": "This prevents the employee from approaching or doing business with your customers for a competing business.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a non-solicitation of customers clause?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_solicitation_employees": {
+      "description": "This prevents the employee from recruiting or attempting to hire your employees after leaving.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a non-solicitation of employees clause?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_solicitation_employees_number_of_months": {
+      "description": "Non-solicitation of employees clauses can last between 1 and 24 months. The clause begins after the termination of the employment agreement.",
+      "maximum": 24,
+      "minimum": 1,
+      "title": "Duration in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "notice_period_choice": {
+      "description": "<a href='https://support.remote.com/hc/en-us/articles/5831900985613-Notice-Period-for-Terminations-by-Country' target='_blank'>Learn more about notice periods</a>",
+      "oneOf": [
+        {
+          "const": "recommended",
+          "title": "30 days",
+          "x-jsf-presentation": {
+            "recommended": true
+          }
+        },
+        {
+          "const": "custom",
+          "description": "We may request a reserve payment for custom notice periods. <br/> <a href='https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment' target='_blank'>Learn more about reserve payments</a>.",
+          "title": "Choose your own length"
+        }
+      ],
+      "title": "Notice period in days",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "notice_period_days": {
+      "default": 30,
+      "description": "In China, the notice period can last at least 30 days.",
+      "minimum": 30,
+      "readOnly": true,
+      "title": "Notice period in days",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "hidden"
+      }
+    },
+    "other_work_locations": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Is the employee required to work in or travel to other locations?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "part_time_salary_confirmation": {
+      "const": "acknowledged",
+      "description": "We'll include the salary in the employment agreement, so please double-check that it's correct.",
+      "title": "I confirm that this amount is the full annual salary for this part-time employee.",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "probation_length": {
+      "maximum": 6,
+      "minimum": 1,
+      "title": "Length of probation period in months",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "See the requirements",
+            "content": "<p>In the the People's Republic of China, the length of a probation period depends on the length of the employment agreement.</p>\n<p><strong><span class=\"notion-enable-hover\" data-token-index=\"1\">Maximum probation lengths:</span></strong></p>\n<ul>\n<li>For employment terms lasting 3 months to 1 year, probation can be up to 1 month</li>\n<li>For employment agreements lasting 1-3 years, probation can be up to 2 months</li>\n<li>For employment agreements longer than 3 years, probation can be up to 6 months</li>\n</ul>\n<p><strong><span class=\"notion-enable-hover\" data-token-index=\"3\">We strongly advise including the longest probation period legally possible.</span></strong></p>\n<p>In the unfortunate event of a necessary termination, probation periods make the process much easier.</p>",
+            "error": false,
+            "id": 20500809489549,
+            "title": "Probation period requirements (China)"
+          }
+        }
+      }
+    },
+    "province_of_residency": {
+      "description": "Remote can currently only employ employees residing in these provinces. If your employee is not based in the registered city, please let us know.",
+      "oneOf": [
+        {
+          "const": "BJ",
+          "title": "Beijing"
+        },
+        {
+          "const": "GD",
+          "title": "Guangdong"
+        },
+        {
+          "const": "SH",
+          "title": "Shanghai"
+        },
+        {
+          "const": "ZJ",
+          "title": "Zhejiang"
+        }
+      ],
+      "title": "Employee's province of residence",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "select",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more about our registered locations and employee benefits in China",
+            "content": "<p data-start=\"389\" data-end=\"515\">In China, Social Insurance and Housing Fund contributions are tied to the city where the employing legal entity is registered.</p><p data-start=\"517\" data-end=\"765\">The registered city is determined based on the employee’s <strong data-start=\"575\" data-end=\"595\">residential area</strong> selected during onboarding. Depending on the location, this may correspond to a municipality (such as Beijing or Shanghai) or a province (such as Guangdong or Zhejiang).</p><p data-start=\"767\" data-end=\"953\">For example:<br>• Employees residing in Guangdong are registered under Remote’s entity in Guangzhou.<br>• Employees residing in Shanghai are registered under Remote’s entity in Shanghai.</p><p data-start=\"955\" data-end=\"1164\">Under current regulations, employers are not permitted to transfer an employee’s Social Insurance or Housing Fund registration to a different city outside the registered location of the employing legal entity.</p><p data-start=\"1166\" data-end=\"1343\">Employees who wish to confirm whether benefits can be accessed outside the registered city should consult the relevant Social Insurance Bureau or Housing Fund Management Center.</p><p> </p><p>Below is a list of the employee's residential area, along with the corresponding city where Social Insurance and Housing Fund contributions are registered.</p><figure class=\"wysiwyg-table wysiwyg-table-align-left\" style=\"width: 88.14%;\"><table class=\"wysiwyg-table-resized\" style=\"border-collapse: collapse;\">\n<colgroup>\n<col style=\"width: 40%;\">\n<col style=\"width: 60%;\">\n</colgroup>\n<tbody>\n<tr>\n<td style=\"width: 28.8571%;\"><strong>Residential Area</strong></td>\n<td style=\"width: 35.4821%;\"><strong>Registered City for Social Insurance &amp; Housing Fund</strong></td>\n</tr>\n<tr>\n<td style=\"width: 28.8571%;\">(CN1): Shanghai</td>\n<td style=\"width: 35.4821%;\">Shanghai</td>\n</tr>\n<tr>\n<td style=\"width: 28.8571%;\">(CN2): Beijing</td>\n<td style=\"width: 35.4821%;\">Beijing</td>\n</tr>\n<tr>\n<td style=\"width: 28.8571%;\">(CN3): Guangdong</td>\n<td style=\"width: 35.4821%;\">Guangzhou</td>\n</tr>\n<tr>\n<td style=\"width: 28.8571%;\">(CN8): Zhejiang</td>\n<td style=\"width: 35.4821%;\">Ningbo</td>\n</tr>\n</tbody>\n</table></figure><div id=\"gtx-trans\"><div class=\"gtx-trans-icon\"> </div></div>",
+            "error": false,
+            "id": 33899495661837,
+            "location": "statement",
+            "title": "Social Insurance and Housing Fund Limitations in China"
+          }
+        },
+        "statement": {
+          "description": "The Social Insurance and Housing Fund benefits available to employees are limited to only the cities in which Remote is officially registered.\n\nAs a result, please make prospective employees aware that their access to Social Insurance and Housing Fund benefits will be determined by our registered locations and are not permitted to be transferred to other cities.\n\n",
+          "severity": "info",
+          "title": "Employee's province of residence and benefits"
+        }
+      }
+    },
+    "role_description": {
+      "description": "Please add at least 3 responsibilities, at least 100 characters in total.",
+      "maxLength": 5000,
+      "minLength": 100,
+      "title": "Role description",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<div class=\"sc-8483994-0 sc-25e5b337-1 gagDAr dNpfwN\">\n<header class=\"sc-8483994-0 sc-98ea0a46-0 cFaANn gAlQJD sc-704369bd-0 jOYBDY\">\n<h2 class=\"sc-c090059b-0 lcffkV sc-704369bd-3 eWYhqz\" id=\"01H7WSRV90B3R0X35RZ21B959A\">Why do I need to define a role description?</h2>\n</header><span class=\"sc-c090059b-0 fISxvo\">It will appear in the employment agreement. Be thorough and accurate, especially if your employee is applying for a visa.</span>\n</div>\n<div class=\"sc-8483994-0 sc-25e5b337-1 gagDAr dNpfwN\"> </div>\n<h2 class=\"sc-8483994-0 gagDAr\" id=\"01H7WSRV908B1DKFVDFKNTN2EZ\"><span class=\"sc-c090059b-0 iaMkhB sc-25e5b337-3 jwgiWP\">Tips for a better role description</span></h2>\n<ul>\n<li class=\"sc-8483994-0 gagDAr\">Keep it short – up to 5 main responsibilities</li>\n<li class=\"sc-8483994-0 gagDAr\"><span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">Include punctuation</span></li>\n<li class=\"sc-8483994-0 gagDAr\">No need to mention your company, focus on the specific duties of the role</li>\n</ul>",
+            "error": false,
+            "id": 18019255579405,
+            "title": "Role description"
+          }
+        }
+      }
+    },
+    "salary_overview": {
+      "const": "salary_overview",
+      "default": "salary_overview",
+      "description": "We will request a reserve payment for salaries at or above CN¥1,170,098.96.",
+      "oneOf": [
+        {
+          "const": "salary_overview",
+          "title": "Salary overview"
+        }
+      ],
+      "title": "Salary overview",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about reserve payments",
+            "content": "<p>A <strong>reserve payment</strong> is an amount collected by Remote to help safeguard against potential large or unexpected severance costs if a team member's employment or engagement ends.</p><p>In many countries, labor laws require employers to pay <strong>statutory severance.</strong> Depending on the agreement, there may also be additional contractual obligations. Reserve payments help ensure funds are available to cover these costs if they arise.</p><p>Reserves are an <strong>industry-standard practice.</strong> Once a team member resigns or their agreement ends and all termination-related costs have been settled, any remaining reserve balance will be credited or refunded.</p><p>If a reserve payment has been made but <strong>onboarding is not completed</strong>, the full reserve will be credited or refunded. If your account has an overdue balance, Remote may first apply the reserve toward that outstanding amount.</p><blockquote><p><em><strong>Note:</strong> Reserve payments are required only for <strong>Employer of Record (EOR) employees and Contractor of Record (COR) contractors</strong>. They are <strong>not applicable</strong> to Global Payroll (direct employee) or users of our Standard Contractor Management and Contractor Management Plus platforms</em></p></blockquote><h3 id=\"h_01KWVSH6PWV0EARTP636WFMKX5\">Why would a reserve be required?</h3><p>Remote evaluates several factors when determining whether a reserve payment is needed. These may include:</p><ul>\n<li data-list-item-id=\"e4aa5c6c3b06eb3fd8ac290640949dd33\">The <strong>financial exposure</strong> associated with a client’s account</li>\n<li data-list-item-id=\"e6035e43ef90b77827c1d8c41be109918\">The <strong>countries</strong> in which team members are hired</li>\n<li data-list-item-id=\"e270d18c338f92bac8e35ed1f0c29ee6a\">A client’s decision to move from <strong>14-day to 30-day invoice payment terms</strong>\n</li>\n<li data-list-item-id=\"e87b2ad7dca754100d16a8d4ffabfa36a\">\n<strong>Non-standard employment contract terms</strong>, such as:<ul>\n<li data-list-item-id=\"ef35bb2e45f6361dee620f3d1949914de\">Extended notice periods</li>\n<li data-list-item-id=\"e9f05ff898e587ce3d34e80d6d7077b41\">Guaranteed severance clauses</li>\n<li data-list-item-id=\"e7cea63a7d2482bdb28eefffb6948c577\">Seniority recognition</li>\n<li data-list-item-id=\"e5b345cb8f5b041e3897b31092d6f0a06\">Non-compete, non-solicitation, or non-interference clauses</li>\n</ul>\n</li>\n<li data-list-item-id=\"e69603f26c1cfe44abe1b3b9afae0a6eb\">\n<strong>Consistent late invoice payments</strong> may also result in a reserve payment requirement</li>\n</ul><h3 id=\"h_01KWVSH6Q0PMTFJTCBARRMY0F8\">Why was I asked to pay an additional reserve?</h3><p>Some employment agreement terms increase the potential cost of ending an agreement. In these cases, additional reserves may be required.</p><p>Currently, reserves are automatically applied for:</p><ul>\n<li data-list-item-id=\"e016d051d1cae211fd2052be06528b0fb\">Extended notice periods</li>\n<li data-list-item-id=\"e121b7d92f73dc18a98058036faa4c132\">Seniority recognition</li>\n<li data-list-item-id=\"e1173074340c67d1669a2826f7ce530f4\">Non-compete, non-solicitation, or non-interference clauses</li>\n</ul><p>Other agreement terms may require additional review and could result in additional reserve requirements.</p><h4 id=\"h_01KWVSH6Q22W5N0Y71KPX7002S\">Extended notice period</h4><p>Labor laws in each country define a minimum notice period for ending an agreement. If the notice period in the agreement is longer than the statutory minimum, an additional reserve will be required for the difference.</p><p>Example: The minimum notice period is one month, but you request a three-month notice period. In this case, an additional two-month reserve would be required.</p><h4 id=\"h_01KWVSH6Q220ZTQW023A4TTNFK\">Seniority recognition</h4><p>A reserve will be automatically issued where two or more years of service is recognized.</p><p>As a general guideline:</p><ul>\n<li data-list-item-id=\"e325a4b96c617f8a6459e09da118a39d5\">\n<strong>2-4 years</strong> of recognized seniority, a reserve equal to <strong>1-month reserve</strong> is required</li>\n<li data-list-item-id=\"ec4f6d1f140f45060bca310852d94e885\">\n<strong>4-5 years</strong> of recognized seniority, a reserve equal to <strong>2-months</strong> is required</li>\n<li data-list-item-id=\"eeb5b68f0845b6a250366ba6e7449fe41\">\n<strong>More than 5 years</strong> of recognized seniority is subject to <strong>further review</strong>\n</li>\n</ul><p><strong>See also</strong>: <br><a href=\"https://remote.zendesk.com/hc/en-us/articles/12695836286861\">When is a reserve refunded?</a><br><a href=\"https://remote.zendesk.com/hc/en-us/articles/32649353517069\">What is reserve payment in Contractor of Record?</a></p>",
+            "error": false,
+            "id": 12695731865229,
+            "title": "What is a reserve payment?"
+          },
+          "ignoreValue": true
+        }
+      }
+    },
+    "signing_bonus_amount": {
+      "description": "In Chinese Yuan (RMB).",
+      "minimum": 1,
+      "title": "Signing bonus amount",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "RMB",
+        "inputType": "money"
+      }
+    },
+    "signing_bonus_clawback": {
+      "description": "If you apply this clause, the employee will be able to keep their signing bonus only if they work a full year at your company and neither your company nor the employee gives notice to end their employment during the year. Otherwise, the employee will have to repay the signing bonus within 20 days of termination.",
+      "oneOf": [
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        },
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a signing bonus clawback?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "termination_rules_ack": {
+      "const": "acknowledged",
+      "description": "1. China Law prohibits termination at will, <b>termination of full time employment contract needs to be based on sufficient legal grounds and follow the procedures provided by law.</b>\n\n2. Extending or shortening the notice period from employee is not allowed in China. However, extending the employer's notice period is allowed.",
+      "title": "Please acknowledge the Termination Rules",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "third_party_work": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Can the employee work for third parties or do business on their own while employed by your company?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "third_party_work_activities": {
+      "description": "Provide as many details about the approved activities as you can. We’ll include them in the employment agreement.",
+      "maxLength": 10000,
+      "title": "Approved third-party work",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "work_address_is_home_address": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Do you want the employee's home address to be their work address?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "work_days_number": {
+      "description": "A part-time employee can work up to 5 days per week but please note, they cannot exceed 24 hours per week. Their average daily working hours cannot exceed 4 hours",
+      "maximum": 5,
+      "minimum": 1,
+      "title": "Number of work days per week",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "work_equipment_provided_by": {
+      "description": "Please note that we can’t guarantee the return of work equipment or take action against the employee to recover anything you provide.",
+      "oneOf": [
+        {
+          "const": "provided_by_client",
+          "title": "The client provides the equipment"
+        },
+        {
+          "const": "provided_by_employee",
+          "title": "The employee provides the equipment"
+        }
+      ],
+      "title": "Who will provide the employee's work equipment?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "work_hours_per_day": {
+      "description": "Full-time employees can work up to 8 hours per day. There are a few different working hour systems that can be applied to employees in the People’s Republic of China.",
+      "maximum": 8,
+      "minimum": 0,
+      "title": "Work hours per day",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>There are 3 types of work hour systems in China for employees. The standard system is the default system and covers the majority of jobs. If you want to use either the comprehensive or flexible system, you must obtain approval from the labor authority.</p>\n<ol>\n<li>\n<strong><span class=\"notion-enable-hover\" data-token-index=\"1\">Standard system</span></strong>: This is the default system in the employment agreement. It limits work to 8 hours per day and 40 hours per week.</li>\n<li>\n<strong><span class=\"notion-enable-hover\" data-token-index=\"3\">Comprehensive system</span></strong>: This system calculates hours on a weekly, monthly, quarterly, or annual basis. It allows for more than 8 hours per day or 40 hours per week, but the average over time should still be 8 hours per day and 40 hours per week. It's used for jobs with irregular time requirements.</li>\n<li>\n<strong><span class=\"notion-enable-hover\" data-token-index=\"5\">Flexible system</span></strong>: This system has no fixed hours but employers must still give employees rest time. It's used for jobs that need flexible time.</li>\n</ol>\n<p>These work hour limits are lawful and cannot be waived by the employee. Employers can arrange for overtime in the Standard or Comprehensive Systems if the employee agrees. But there are legal limits on overtime length.</p>",
+            "error": false,
+            "id": 20750100434445,
+            "title": "Work hours per day (China)"
+          }
+        }
+      }
+    },
+    "work_hours_per_week": {
+      "description": "Full-time employees can work between 25 and 40 hours per week. It's possible for employees to work overtime but the amount of overtime is restricted.",
+      "title": "Work hours per week",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>In the People’s Republic of China, full-time employees can work overtime hours but the amount of overtime is restricted. Overtime working hours cannot exceed 3 hours per day or 36 hours per month.</p>\n<p>A part-time employee’s average working time cannot exceed 4 hours per day and their cumulative weekly working time cannot exceed 24 hours. If the amount of working hours exceeds those numbers on a regular basis, it’s likely that an adjudicator may uphold that both parties have established a full-time employment relationship.</p>",
+            "error": false,
+            "id": 20750107244301,
+            "title": "Work hours per week (China)"
+          }
+        }
+      }
+    },
+    "work_schedule": {
+      "oneOf": [
+        {
+          "const": "full_time",
+          "title": "Full-time"
+        },
+        {
+          "const": "part_time",
+          "title": "Part-time"
+        }
+      ],
+      "title": "Type of employee",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    }
+  },
+  "required": [
+    "non_interference_apply",
+    "non_solicitation_customers",
+    "non_solicitation_employees",
+    "non_compete_clause_apply",
+    "annual_gross_salary",
+    "contract_duration_type",
+    "annual_leave_carry_forward",
+    "available_pto",
+    "available_pto_type",
+    "equity_compensation",
+    "experience_level",
+    "has_bonus",
+    "has_commissions",
+    "has_overtime_eligibility",
+    "has_signing_bonus",
+    "other_work_locations",
+    "province_of_residency",
+    "role_description",
+    "third_party_work",
+    "work_address_is_home_address",
+    "work_equipment_provided_by",
+    "work_hours_per_day",
+    "work_hours_per_week",
+    "work_schedule"
+  ],
+  "type": "object",
+  "x-jsf-logic": {
+    "computedValues": {
+      "annual_gross_salary_reserve_description": {
+        "rule": {
+          "if": [
+            {
+              ">=": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                117009896
+              ]
+            },
+            {
+              "cat": [
+                "In Chinese Yuan (RMB).",
+                " ",
+                "A reserve payment will be required, as described above."
+              ]
+            },
+            "In Chinese Yuan (RMB)."
+          ]
+        }
+      },
+      "computed_non_compete_clause_compensation_amount": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                {
+                  "var": "non_compete_clause_compensation_percentage"
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "-": [
+                    {
+                      "*": [
+                        {
+                          "/": [
+                            {
+                              "var": "annual_gross_salary"
+                            },
+                            12
+                          ]
+                        },
+                        {
+                          "/": [
+                            {
+                              "var": "non_compete_clause_compensation_percentage"
+                            },
+                            100
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "%": [
+                        {
+                          "*": [
+                            {
+                              "/": [
+                                {
+                                  "var": "annual_gross_salary"
+                                },
+                                12
+                              ]
+                            },
+                            {
+                              "/": [
+                                {
+                                  "var": "non_compete_clause_compensation_percentage"
+                                },
+                                100
+                              ]
+                            }
+                          ]
+                        },
+                        1
+                      ]
+                    }
+                  ]
+                },
+                100
+              ]
+            },
+            null
+          ]
+        }
+      },
+      "computed_non_compete_clause_compensation_amount_in_cents": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                {
+                  "var": "non_compete_clause_compensation_percentage"
+                }
+              ]
+            },
+            {
+              "-": [
+                {
+                  "*": [
+                    {
+                      "/": [
+                        {
+                          "var": "annual_gross_salary"
+                        },
+                        12
+                      ]
+                    },
+                    {
+                      "/": [
+                        {
+                          "var": "non_compete_clause_compensation_percentage"
+                        },
+                        100
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "%": [
+                    {
+                      "*": [
+                        {
+                          "/": [
+                            {
+                              "var": "annual_gross_salary"
+                            },
+                            12
+                          ]
+                        },
+                        {
+                          "/": [
+                            {
+                              "var": "non_compete_clause_compensation_percentage"
+                            },
+                            100
+                          ]
+                        }
+                      ]
+                    },
+                    1
+                  ]
+                }
+              ]
+            },
+            null
+          ]
+        }
+      },
+      "extreme_salary_acknowledgement_title": {
+        "rule": {
+          "cat": [
+            "I have reviewed and verified the annual salary of CNY ",
+            {
+              "money_format": {
+                "/": [
+                  {
+                    "var": "annual_gross_salary"
+                  },
+                  100
+                ]
+              }
+            },
+            "."
+          ]
+        }
+      },
+      "maximum_breach_salary": {
+        "rule": {
+          "/": [
+            {
+              "*": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                3
+              ]
+            },
+            100
+          ]
+        }
+      },
+      "maximum_breach_salary_in_cents": {
+        "rule": {
+          "*": [
+            {
+              "var": "annual_gross_salary"
+            },
+            3
+          ]
+        }
+      },
+      "minimum_annual_gross_salary": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "BJ"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "*": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    52,
+                    2770
+                  ]
+                },
+                100
+              ]
+            },
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "GD"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "*": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    52,
+                    2370
+                  ]
+                },
+                100
+              ]
+            },
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "JS"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "*": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    52,
+                    2400
+                  ]
+                },
+                100
+              ]
+            },
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "SC"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "*": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    52,
+                    2200
+                  ]
+                },
+                100
+              ]
+            },
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "SD"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "*": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    52,
+                    2200
+                  ]
+                },
+                100
+              ]
+            },
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "SH"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "*": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    52,
+                    2500
+                  ]
+                },
+                100
+              ]
+            },
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "TJ"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "*": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    52,
+                    2660
+                  ]
+                },
+                100
+              ]
+            },
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "ZJ"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "*": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    52,
+                    2500
+                  ]
+                },
+                100
+              ]
+            },
+            0
+          ]
+        }
+      },
+      "minimum_annual_gross_salary_in_cents": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "BJ"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "*": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                52,
+                2770
+              ]
+            },
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "GD"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "*": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                52,
+                2370
+              ]
+            },
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "JS"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "*": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                52,
+                2400
+              ]
+            },
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "SC"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "*": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                52,
+                2200
+              ]
+            },
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "SD"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "*": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                52,
+                2200
+              ]
+            },
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "SH"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "*": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                52,
+                2500
+              ]
+            },
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "TJ"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "*": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                52,
+                2660
+              ]
+            },
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "province_of_residency"
+                    },
+                    "ZJ"
+                  ]
+                },
+                {
+                  ">": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    0
+                  ]
+                }
+              ]
+            },
+            {
+              "*": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                52,
+                2500
+              ]
+            },
+            0
+          ]
+        }
+      }
+    }
+  },
+  "x-jsf-order": [
+    "province_of_residency",
+    "contract_duration_type",
+    "contract_end_date",
+    "work_schedule",
+    "work_hours_per_week",
+    "work_hours_per_day",
+    "work_days_number",
+    "has_probation_period",
+    "probation_length",
+    "notice_period_choice",
+    "notice_period_days",
+    "termination_rules_ack",
+    "available_pto_type",
+    "available_pto",
+    "annual_leave_carry_forward",
+    "has_overtime_eligibility",
+    "role_description",
+    "experience_level",
+    "work_address_is_home_address",
+    "other_work_locations",
+    "salary_overview",
+    "annual_gross_salary",
+    "extreme_salary_warning",
+    "extreme_salary_acknowledgement",
+    "part_time_salary_confirmation",
+    "has_signing_bonus",
+    "signing_bonus_amount",
+    "signing_bonus_clawback",
+    "has_bonus",
+    "bonus_details",
+    "has_commissions",
+    "commissions_details",
+    "commissions_ack",
+    "equity_compensation",
+    "non_compete_clause_apply",
+    "non_compete_clause_halt_period_months",
+    "non_compete_clause_compensation_amount",
+    "non_compete_breach_compensation",
+    "non_compete_clause_compensation_percentage",
+    "non_solicitation_employees",
+    "non_solicitation_employees_number_of_months",
+    "non_solicitation_customers",
+    "non_solicitation_customer_number_of_months",
+    "non_interference_apply",
+    "non_interference_halt_period",
+    "work_equipment_provided_by",
+    "expenses_policy",
+    "third_party_work",
+    "third_party_work_activities"
+  ],
+  "x-rmt-flatFieldsets": {
+    "annual_gross_salary_fieldset": {
+      "propertiesByName": [
+        "salary_overview",
+        "annual_gross_salary",
+        "part_time_salary_confirmation",
+        "extreme_salary_warning",
+        "extreme_salary_acknowledgement"
+      ],
+      "title": "Annual gross salary"
+    },
+    "non_compete_fieldset": {
+      "propertiesByName": [
+        "non_compete_clause_apply",
+        "non_compete_clause_halt_period_months",
+        "non_compete_clause_compensation_percentage",
+        "non_compete_clause_compensation_amount"
+      ],
+      "title": "Non-compete"
+    },
+    "non_interference": {
+      "propertiesByName": [
+        "non_interference_apply",
+        "non_interference_halt_period"
+      ],
+      "title": "Non-interference"
+    },
+    "non_solicitation": {
+      "description": "In China, post-termination restrictions help protect your business relationships while ensuring compliance with local employment regulations.",
+      "propertiesByName": [
+        "non_solicitation_employees",
+        "non_solicitation_employees_number_of_months",
+        "non_solicitation_customers",
+        "non_solicitation_customer_number_of_months"
+      ],
+      "title": "Non-solicitation"
+    }
+  },
+  "x-rmt-meta": {
+    "jsfVersion": "1"
+  },
+  "x-rmt-schema-changelog": {
+    "changelog": "Adds the extreme high salary acknowledgement: a warning and a mandatory checkbox when the annual salary is at or above the USD 1,000,000 equivalent. Additive and flag-gated; no action required for existing contracts.",
+    "upgradePath": "No action required."
+  }
+}

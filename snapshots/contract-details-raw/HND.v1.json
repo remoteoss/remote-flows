@@ -1,0 +1,1079 @@
+{
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "part_time_salary_confirmation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "part_time_salary_confirmation": {
+            "type": "string"
+          }
+        },
+        "required": ["part_time_salary_confirmation"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "signing_bonus_amount": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_signing_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_signing_bonus"]
+      },
+      "then": {
+        "properties": {
+          "signing_bonus_amount": {
+            "type": ["integer"]
+          }
+        },
+        "required": ["signing_bonus_amount"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "bonus_amount": false,
+          "bonus_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_bonus"]
+      },
+      "then": {
+        "properties": {
+          "bonus_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["bonus_details"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "commissions_ack": false,
+          "commissions_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_commissions": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_commissions"]
+      },
+      "then": {
+        "properties": {
+          "commissions_ack": {
+            "type": ["string"]
+          },
+          "commissions_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["commissions_details", "commissions_ack"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "contract_duration_fixed_term_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "fixed_term"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "properties": {
+          "available_pto": {
+            "const": 0,
+            "default": 0,
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "In Honduras, employees on a fixed-term contract are not entitled to paid time off.",
+                "title": "<strong>0 days</strong> of paid time off."
+              }
+            }
+          }
+        },
+        "required": ["contract_duration_fixed_term_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "notice_period": false,
+          "probation_length_days": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "indefinite"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "else": {
+          "properties": {
+            "available_pto": {
+              "description": "Please do not include public or bank holidays in this number."
+            }
+          }
+        },
+        "if": {
+          "properties": {
+            "work_schedule": {
+              "const": "full_time"
+            }
+          },
+          "required": ["work_schedule"]
+        },
+        "required": ["probation_length_days", "notice_period"],
+        "then": {
+          "properties": {
+            "available_pto": {
+              "const": 10,
+              "default": 10,
+              "x-jsf-presentation": {
+                "statement": {
+                  "title": "<strong>10 days</strong> of paid time off."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "part_time_minimum_salary_confirmation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "required": ["part_time_minimum_salary_confirmation"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "retention_bonus_amount": false,
+          "retention_bonus_rules_confirmation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_retention_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_retention_bonus"]
+      },
+      "then": {
+        "required": [
+          "retention_bonus_amount",
+          "retention_bonus_rules_confirmation"
+        ]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "work_equipment": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_work_equipment": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_work_equipment"]
+      },
+      "then": {
+        "required": ["work_equipment"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "overtime_pay_confirmation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "is_trusted_employee": {
+            "const": "no"
+          }
+        },
+        "required": ["is_trusted_employee"]
+      },
+      "then": {
+        "required": ["overtime_pay_confirmation"]
+      }
+    }
+  ],
+  "properties": {
+    "allowances": {
+      "description": "Let us know what each allowance covers and its monthly amount. If you’re not offering allowances, you can skip this field.",
+      "maxLength": 1000,
+      "title": "Allowances",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "ancillary_positions_clause_apply": {
+      "description": "Do you want to prohibit the employee from holding ancillary positions during employment? If yes, the employee would not be able to perform paid or unpaid work for third parties, except for religious, charitable, philanthropic, or social activities performed outside working hours.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Prohibition to perform third party work",
+      "type": "string",
+      "x-jsf-presentation": {
+        "description": "Do you want to prohibit the employee from holding ancillary positions during employment? <br /> <br /> If yes, the employee would not be able to perform paid or unpaid work for third parties, except for religious, charitable, philanthropic, or social activities performed outside working hours.",
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "annual_gross_salary": {
+      "description": "The minimum annual salary is calculated based on the country's applicable laws.",
+      "minimum": 16905888,
+      "title": "Annual gross salary",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "minimum": "In Honduras, employees are entitled to a minimum annual salary of HNL 169,058.88.",
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "HNL",
+        "inputType": "money"
+      }
+    },
+    "available_pto": {
+      "description": "Honduras annual paid leave varies depending on the employee’s seniority.",
+      "title": "Number of paid time off days",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>Honduras annual paid leave varies depending on the employee’s seniority:</p>\n<ul>\n<li>After the first year of employment, employees are entitled to 10 consecutive working days of paid time off</li>\n<li>After two years of employment, employees are entitled to 12 consecutive working days of paid time off</li>\n<li>After three years of employment, employees are entitled to 15 consecutive working days of paid time off</li>\n<li>After four years of employment, employees are entitled to 20 consecutive working days of paid time off<!-- notionvc: 7063d6fd-9ca9-45ca-bb7f-5ff8fe48b715 -->\n</li>\n</ul>\n<p>In Honduras, employees on a fixed-term contract are not entitled to paid time off.<!-- notionvc: 2ddb022d-64c8-42f4-93ba-7597f08c2afe --></p>",
+            "error": false,
+            "id": 28703170781837,
+            "title": "Paid time off policy (Honduras)"
+          }
+        }
+      }
+    },
+    "bonus_amount": {
+      "deprecated": true,
+      "readOnly": true,
+      "title": "Bonus amount (deprecated)",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "HNL",
+        "deprecated": {
+          "description": "Deprecated in favor of 'Bonus Details'. Please, try to leave this field empty."
+        },
+        "inputType": "money"
+      }
+    },
+    "bonus_details": {
+      "description": "Bonus type, payment frequency, and more.",
+      "maxLength": 1000,
+      "title": "Other bonus details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "commissions_ack": {
+      "const": "acknowledged",
+      "description": "I understand that I am required to provide written details of the commission plan to this employee, and upload this document on the platform for record keeping purposes. I acknowledge that Remote will not liable for any claims or losses associated with the commission or bonus plan.",
+      "title": "Confirm commission plan details",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "(i) Guidance on drafting a commission plan here.",
+            "content": "<p>It is important to understand that commission plans are individual agreements between you, and each team member. Consequently, it is important that these plans are communicated directly between you and the respective team members. This direct communication ensures clarity, transparency, and a clear understanding of the agreed-upon terms for the commission plan.</p>\n<p>Performance-linked bonuses and commissions are payments that are contingent on various factors, including individual and team performance, business outcomes, and other metrics agreed upon by you and the employees providing you services. As these are rewards that are subject to your evaluation and adjustment based on the agreed-upon criteria, we strongly recommend that you document these plans as compliantly as possible, and their specifics separately in writing, with the employee providing you services, following the below guidelines:</p>\n<ul>\n<li>Please note if there is any doubt or lack of clarity due to ambiguous wording, it will be interpreted to the employee’s benefit. Therefore, the plan should be reviewed thoroughly to determine whether it could be interpreted various ways. If so, the respective wording should be amended in a way that is precise and can be understood in one way only.</li>\n<li>In some jurisdictions, bonus and commission plans can be contractually drafted as being discretionary, but still remain unambiguous.  Where this is legally possible, this is the recommended approach to legally best protect the employer/you from any potential disputes.  Please note, however, that employees may still have a claim for commission payments, even if an agreement is drafted as discretionary.</li>\n<li>Basis for Commission Calculation: The commission plan should clearly outline the basis on which the commission will be calculated. This may include factors such as sales revenue, units sold, profit margin, or other measurable performance indicators. The commission plan should also include the timeframe in which the respective target must be achieved.</li>\n<li>Commission Rate: The commission plan should specify the commission rate or rates applicable to different levels of performance. It should clearly define how the commission will be determined, based on achieving specific targets or milestones. In order to limit the financial risk, a commission plan can include a regulation on the maximum amount of commissions that can be earned.</li>\n<li>Target Goals: The commission plan should establish realistic and achievable target goals or sales quotas that the employee is expected to reach in order to earn commission. </li>\n<li>Calculation Period: The commission plan should specify the calculation period for commission payouts. This could be monthly or quarterly. It should also state the timeline for determining and disbursing commission payments. Furthermore, a commission plan should include a specification about the point in time until when targets are set each year. Commission targets should be given prior to the commencement of the plan period.</li>\n<li>Commission Calculation Method: The commission plan should outline the methodology for calculating the commission. It should specify any deductions, adjustments, or exclusions that may be applicable to the commission calculation.</li>\n<li>Payment Terms: The commission plan should detail the terms and conditions for commission payments, including the payment schedule, method of payment, and any additional requirements or conditions. It should also explain how leaves, for example, sick leave and maternity leave, influence payment of commission and bonus, considering local requirements and non discrimination rules.</li>\n<li>Termination or Modification: The commission plan should address how it may be terminated or modified, including the circumstances under which changes may be made and the notice period required.</li>\n<li>It is helpful to include terms regarding dispute resolution.</li>\n</ul>\n<p>Please be aware that this guideline does not constitute legal advice. It is advisable to consult with your legal counsel for expert advice while formulating such plans. We will not assume liability for any claims that may arise due to a non-compliant and/or ambiguous commission plan provided to employees.</p>",
+            "error": false,
+            "id": 17932049668109,
+            "title": "Guidelines for bonus and commission plans"
+          }
+        }
+      }
+    },
+    "commissions_details": {
+      "description": "Payment amount, frequency, and more.",
+      "maxLength": 1000,
+      "title": "Commission details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "contract_duration_fixed_term_months": {
+      "description": "How many months will the fixed-term employment relationship last? Honduran law mandates a cap of 12 months for fixed-term contracts.",
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Employment term",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "contract_duration_type": {
+      "oneOf": [
+        {
+          "const": "indefinite",
+          "title": "Indefinite"
+        },
+        {
+          "const": "fixed_term",
+          "title": "Fixed Term"
+        }
+      ],
+      "title": "Contract duration",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "equity_compensation": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "equity_cliff": false,
+              "equity_description": false,
+              "equity_vesting_period": false,
+              "number_of_stock_options": false
+            }
+          },
+          "if": {
+            "properties": {
+              "offer_equity_compensation": {
+                "const": "yes"
+              }
+            },
+            "required": ["offer_equity_compensation"]
+          },
+          "then": {
+            "properties": {
+              "equity_description": {
+                "type": ["string"]
+              }
+            },
+            "required": ["equity_description"]
+          }
+        }
+      ],
+      "properties": {
+        "equity_cliff": {
+          "deprecated": true,
+          "description": "When the first portion of the stock option grant will vest.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Cliff (in months)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "equity_description": {
+          "description": "Please share any information related to the upcoming equity grant.",
+          "maxLength": 1000,
+          "title": "Number of options, RSUs, and other equity",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "textarea"
+          }
+        },
+        "equity_vesting_period": {
+          "deprecated": true,
+          "description": "The number of years it will take for the employee to vest all their options.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Vesting period (in years)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "number_of_stock_options": {
+          "deprecated": true,
+          "description": "Tell us the type of equity you're granting as well.",
+          "maxLength": 255,
+          "readOnly": true,
+          "title": "Number of options, RSUs, or other equity granted",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "text"
+          }
+        },
+        "offer_equity_compensation": {
+          "description": "Granting equity to your team generally triggers tax and legal obligations. In order for you to stay compliant, it's important to declare any equity grants.",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            }
+          ],
+          "title": "Will this employee receive equity?",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "row",
+            "inputType": "radio"
+          }
+        }
+      },
+      "required": ["offer_equity_compensation"],
+      "title": "Equity management",
+      "type": "object",
+      "x-jsf-order": [
+        "offer_equity_compensation",
+        "number_of_stock_options",
+        "equity_cliff",
+        "equity_vesting_period",
+        "equity_description"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 39,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 39,
+              "currency": "USD"
+            }
+          },
+          "helpCenter": {
+            "callToAction": "Learn more about equity management at Remote",
+            "content": "<p>Remote Equity is a lightweight compliance tool designed to help you manage equity grants across borders for team members hired through Remote's Employer of Record (EOR).</p><p>Whether you’re managing vesting, reporting exercises, or navigating local tax laws, Remote Equity gives you the structure to stay compliant, avoid risk, and support your team across borders.</p><h4 id=\"h_01K0YQSYJ8JPKYXNNNW90B0QJP\">Why it matters</h4><p>As your EOR, <strong>Remote is legally responsible</strong> for equity-related tax and reporting in the countries where your team members are employed. That means we don’t just track equity, we:</p><ul>\n<li data-list-item-id=\"eba6b95d2e41a276665f3f64525e0eb59\">Withhold and report taxes when required</li>\n<li data-list-item-id=\"ed16c354038e4b3d908bacd965dc2d71b\">File with local tax authorities</li>\n<li data-list-item-id=\"eb7162ef11477f7a7737fe34a48979559\">Support team members with clear guidance on their tax responsibilities</li>\n</ul><p>Most equity platforms can’t do that because they’re not the legal employer. <strong>Remote Equity ensures we have the data we need, when we need it, to keep your company compliant and your team fairly rewarded.</strong></p><p>Behind the scenes, our tax team:</p><ul>\n<li data-list-item-id=\"ef5c97b0472ebc9a0819e312646e4cd66\">Handles tax withholdings when taxable events occur</li>\n<li data-list-item-id=\"e5f3560641743ab0c57ba47683638560e\">Provides guidance to you and your team, even when no withholding is required</li>\n<li data-list-item-id=\"ed17d307d635b18f9f784df12d1dbe1cd\">Manages additional reporting where local laws demand it</li>\n</ul><p>See also: <a href=\"https://support.remote.com/hc/en-us/articles/37710493624589-What-types-of-equity-grants-should-I-declare-in-Remote-Equity-Essentials\">What types of equity grants should I declare in Remote Equity?</a></p><h4 id=\"h_01K0YQSYJDJ3JYC1C642ASB8E2\">What’s included</h4><p>Remote Equity provides:</p><ul>\n<li data-list-item-id=\"e0cc8d8c0b7d060b9de89e3c870fc1579\">\n<strong>Tracking and alerts</strong> for events that may create a tax obligation (like vesting or exercising)</li>\n<li data-list-item-id=\"e88a2fc75f6f43db27891e415e2f90400\">\n<strong>Automated compliance reminders</strong> based on local deadlines and regulations</li>\n<li data-list-item-id=\"e2c2cf9ef914143e339eb32e1b70c83da\">\n<strong>Localized guidance for team members</strong>, shared through the Remote Equity app</li>\n<li data-list-item-id=\"e8a2c20d648ed01a3db135ef4ada0de61\">\n<strong>Support from Remote’s tax and legal teams</strong>, who handle obligations on your behalf</li>\n<li data-list-item-id=\"e184af2a6420412152b377815ebe18ce2\">\n<strong>Integration with Carta and Pulley</strong> to automatically sync grant declarations and exercise information</li>\n</ul><h4 id=\"h_01K0YQSYJSCK6XYBXF3Q56KRC8\"><strong>Get started in minutes</strong></h4><p>Setup takes less than five minutes. Just log in to your Remote account, and launch the Equity App to follow the setup steps.</p><p>Helpful guides to get started:</p><ul>\n<li data-list-item-id=\"e73e204bc587d3417ecab74e3a29ccc2a\"><a href=\"https://support.remote.com/hc/en-us/articles/37547625350925-How-can-I-access-Remote-Equity-Essentials\">How can I access Remote Equity?</a></li>\n<li data-list-item-id=\"e0ca43a64bf2361ce43443e98200daa5a\"><a href=\"https://support.remote.com/hc/en-us/articles/35577980536589\">How do I declare a grant?</a></li>\n<li data-list-item-id=\"edfa1a00c07a70449ebe34c25dec818fe\"><a href=\"https://support.remote.com/hc/en-us/articles/35671968187149-How-can-my-employees-see-their-equity-information\">How can my team access their equity information?</a></li>\n<li data-list-item-id=\"edaaf9eb107949f79894c24e3b984da30\"><a href=\"https://support.remote.com/hc/en-us/articles/35546454220301-What-happens-if-I-already-declared-equity-before-using-Remote-Equity-Essentials\">What happens if I already declared equity before using Remote Equity?</a></li>\n</ul><h4 id=\"h_01K0YQSYJV9EH2AQ9HWYS1826S\"><span class=\"wysiwyg-underline\">Frequently Asked Questions (FAQs)</span></h4><p><strong>Who needs to use Remote Equity?</strong></p><p>Any Remote customer granting equity to a team member hired through Remote’s EOR must use Remote Equity to meet local compliance requirements.</p><p><strong>Why can’t we just use our own equity tool?</strong></p><p>Traditional equity tools track grants and vesting, but they don't file taxes, withhold contributions, or report income to local authorities. Remote, as the legal employer, is responsible for these actions. Remote Equity ensures those obligations are covered.</p><p><strong>What happens if we don’t use it?</strong></p><p>If Remote doesn’t receive timely and accurate equity data, required filings may be missed. This can result in compliance risks, unexpected tax liabilities, and issues for both your company and your team members.</p><p><strong>How much does Remote Equity cost?</strong></p><p>Remote Equity costs 39 USD per month for each EOR team member with equity. <a href=\"https://support.remote.com/hc/en-us/articles/35546441948685-How-much-does-Remote-Equity-Essentials-cost\">Learn more</a>.</p><p>For comprehensive information, visit the <a href=\"https://support.remote.com/hc/en-us/categories/45788665954189-Remote-Equity\" tabindex=\"0\" data-token-index=\"1\" rel=\"noopener noreferrer\">Remote Equity hub</a>.</p>",
+            "error": false,
+            "id": 38303424407821,
+            "title": "Welcome to Remote Equity: Global equity, without the compliance headaches"
+          }
+        }
+      }
+    },
+    "experience_level": {
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employees overall experience).",
+      "oneOf": [
+        {
+          "const": "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "description": "Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "title": "Level 2 - Entry Level"
+        },
+        {
+          "const": "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+          "description": "Employees who perform independently tasks and/or with coordination and control functions",
+          "title": "Level 3 - Associate"
+        },
+        {
+          "const": "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "description": "Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "title": "Level 4 - Mid-Senior level"
+        },
+        {
+          "const": "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "description": "Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "title": "Level 5 - Director"
+        },
+        {
+          "const": "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "description": "An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "title": "Level 6 - Executive"
+        }
+      ],
+      "title": "Experience level",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "has_bonus": {
+      "description": "These can include things like performance-related bonuses.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer other bonuses?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_commissions": {
+      "description": "You can outline your policy and pay commission to the employee on the platform. However, commission will not appear in the employment agreement. Please send full policy details directly to the employee.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer commission?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_retention_bonus": {
+      "description": "A retention bonus can be offered to the employee, and they would need to remain at the company for a period of a year. If the employee departs prior to this date, they would need to repay the unearned portion of the retention bonus.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offering a retention bonus",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_signing_bonus": {
+      "description": "This is a one-time payment the employee receives when they join your team.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer a signing bonus?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_work_equipment": {
+      "description": "Are you going to provide the employee with the equipment necessary to perform the duties?",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Equipment and technical allowance",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "is_trusted_employee": {
+      "description": "Trusted employees, generally those who occupy management positions, are not owed overtime pay per the Honduran Labor Code.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Is this person a trusted employee?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_compete_clause_apply": {
+      "description": "Do you want a non-competition and non-solicitation clause for the employee? The non-competition language will help prevent your employee from competing with your business post-termination for a period of five years after termination, irrespective the way in which and the reason for termination. The non-solicitation language prohibits enticement of your current employees by departing employees.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a non-compete clause?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "description": "Do you want a non-competition and non-solicitation clause for the employee? <br /> <br /> The non-competition language will help prevent your employee from competing with your business post-termination for a period of five years after termination, irrespective the way in which and the reason for termination. The non-solicitation language prohibits enticement of your current employees by departing employees.",
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "notice_period": {
+      "const": "acknowledged",
+      "description": "The notice period for indefinite-term contracts in Honduras is 30 days",
+      "title": "Statutory notice period acknowledgment",
+      "type": "string",
+      "x-jsf-presentation": {
+        "description": "Statutory notice period is mandatory under Honduran Labor Law. Either party may terminate the contract which written notice is: <ul><li>No notice period: during probation</li><li>Less than three months - 24-hour notice</li><li>Three to six months - one weeks' notice</li><li>Between six months and one year - two weeks' notice</li><li>Between one year and two years - one months' notice</li><li>More than two years - two months' notice</li></ul>",
+        "inputType": "checkbox"
+      }
+    },
+    "overtime_pay_confirmation": {
+      "const": "acknowledged",
+      "description": "According to the Honduran Work Code, overtime must be paid at a surcharge. The ordinary daytime shift cannot exceed eight hours per day and 44 hours per week. The ordinary night shift cannot exceed six hours per day and 36 hours a week. Daytime work happens between 5:00 AM and 7:00 PM. Nighttime work happens between 7:00 PM and 5:00 AM. In the employment contract, it is understood that the employee agrees to work outside of normal working hours if required by business conditions. Overtime pay is calculated as follows: - 125% of the employee's salary when overtime takes place during the daytime - 150% of the employee's salary when overtime hours occur during a night period - 175% of the employee's salary when overtime hours are a prolongation of a night shift.",
+      "title": "Overtime pay",
+      "type": "string",
+      "x-jsf-presentation": {
+        "description": "According to the Honduran Work Code, overtime must be paid at a surcharge. The ordinary daytime shift cannot exceed eight hours per day and 44 hours per week. The ordinary night shift cannot exceed six hours per day and 36 hours a week. Daytime work happens between 5:00 AM and 7:00 PM. Nighttime work happens between 7:00 PM and 5:00 AM. In the employment contract, it is understood that the employee agrees to work outside of normal working hours if required by business conditions.\n\n Overtime pay is calculated as follows: <ul><li>125% of the employee's salary when overtime takes place during the daytime</li><li>150% of the employee's salary when overtime hours occur during a night period</li><li>175% of the employee's salary when overtime hours are a prolongation of a night shift.</li></ul>",
+        "inputType": "checkbox"
+      }
+    },
+    "part_time_minimum_salary_confirmation": {
+      "const": "acknowledged",
+      "description": "Per Honduran law, part-time employees can only be hired if they are paid the same amount of minimum wage as full-time employees.",
+      "title": "Part-time agreements acknowledgement",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "part_time_salary_confirmation": {
+      "const": "acknowledged",
+      "description": "We'll include the salary in the employment agreement, so please double-check that it's correct.",
+      "title": "I confirm that this amount is the full annual salary for this part-time employee.",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "penalty_clause_apply": {
+      "description": "Do you want to include a clause allowing financial penalties in the event of an employee's breach of key contractual terms? During employment, if the employee violates contractual commitments related to confidentiality, company property, or intellectual property, the company could impose a penalty of 100% of the employee's most recent gross monthly salary for each violation. After employment, the same would apply for violations of the aforementioned contractual terms.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Penalty clause",
+      "type": "string",
+      "x-jsf-presentation": {
+        "description": "Do you want to include a clause allowing financial penalties in the event of an employee's breach of key contractual terms? <br /> <br /> During employment, if the employee violates contractual commitments related to confidentiality, company property, or intellectual property, the company could impose a penalty of 100% of the employee's most recent gross monthly salary for each violation. After employment, the same would apply for violations of the aforementioned contractual terms.",
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "probation_length_days": {
+      "const": "60",
+      "description": "The probation period for indefinite-term contracts in Honduras is 60 days",
+      "title": "Probation period",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "retention_bonus_amount": {
+      "title": "Retention bonus amount",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "HNL",
+        "inputType": "money"
+      }
+    },
+    "retention_bonus_rules_confirmation": {
+      "const": "acknowledged",
+      "description": "The retention bonus is paid in two payments with the first two month's salary, less applicable tax and social security contributions. If the employment is terminated within one year the employee will repay the unearned portion of the retention bonus to the employer within 45 days after termination. The Retention Bonus vests 1/12 at the end of every month of employment from the Commencement Date during the Retention Period.",
+      "title": "Retention bonus rules acknowledgment",
+      "type": "string",
+      "x-jsf-presentation": {
+        "description": "<ul><li>The retention bonus is paid in two payments with the first two month's salary, lessapplicable tax and social security contributions.</li><li>If the employment is terminated within one year the employee will repay the unearned portionof the retention bonus to the employer within 45 days after termination.</li><li>The Retention Bonus vests 1/12 at the end of every month of employment from the CommencementDate during the Retention Period.</li></ul>",
+        "inputType": "checkbox"
+      }
+    },
+    "role_description": {
+      "description": "Please add 3 tasks minimum (at least 100 characters in total). You can copy this from the job description.",
+      "maxLength": 5000,
+      "minLength": 100,
+      "title": "Role description",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "salary_installments_confirmation": {
+      "const": "acknowledged",
+      "description": "In Honduras, employees receive 13th and 14th month salaries (usually called Aguinaldo and Decimocuarta). These salaries are not part of the annual gross salary and their amounts are affected by bonuses and commissions.",
+      "title": "I understand I must pay this employee a 13th and 14th month salary in addition to their annual gross salary",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more about bonus salaries",
+            "content": "<p>In Honduras, employees receive two extra payments known as the 13th and 14th salaries, which are mandatory by law. These additional payments provide vital financial support to workers during key times of the year.</p>\n<h3 id=\"h_01HSC5Y29AQNWTPDF89REFJ0RV\">13th Salary </h3>\n<p id=\"h_01HSHEYRTNPG55P7PF649N54CC\">The 13th salary, often called the Christmas bonus, equals an extra month's salary. It's typically paid in <strong>December</strong>. If an employee hasn't worked for the full year, they receive a proportional amount based on their time worked. This bonus is based on the average of their regular wages throughout the year.</p>\n<h3 id=\"01HSHF19BP3V1BP43GPSD5E5EX\">14th Salary</h3>\n<p>Similar to the 13th salary, the 14th salary equals an extra month's pay. It's usually paid in <strong>June</strong>. Again, if an employee hasn't worked the full year, they get a proportional amount based on their tenure. This payment is also calculated using the average of their regular wages.</p>\n<h3 id=\"01HSHF10VRH2EZ275FVSVZGZ1W\">Calculation Method</h3>\n<p>Gross monthly salary / 12  * number of months worked in the year</p>\n<p> </p>\n<p><em class=\"guide-markup\" style=\"box-sizing: inherit; font-weight: 400; font-style: italic; color: #2f3941; font-family: -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 15px; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\"><span class=\"guide-markup wysiwyg-font-size-small\" style=\"box-sizing: inherit; font-weight: inherit; font-size: x-small;\"><strong class=\"guide-markup\" style=\"box-sizing: inherit; font-weight: bolder;\">Disclaimer:</strong></span></em><em class=\"guide-markup\" style=\"box-sizing: inherit; font-weight: 400; font-style: italic; color: #2f3941; font-family: -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 15px; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\"><span class=\"guide-markup wysiwyg-font-size-small\" style=\"box-sizing: inherit; font-weight: inherit; font-size: x-small;\">In Honduras, the provision of two additional payments, known as the 13th and 14th salaries, is mandated by law. These supplementary payments serve as crucial financial assistance to employees during significant periods of the year. Those bonuses, typically equal to one month's wage, is distributed annually to employees. It's crucial to understand that this additional salary is not encompassed within the base salary (gross annual salary) and must be disbursed separately.</span></em></p>",
+            "error": false,
+            "id": 25227413418637,
+            "title": "How do the 13th and 14th salary payments work in Honduras?"
+          }
+        }
+      }
+    },
+    "salary_pay_illness_confirmation": {
+      "const": "acknowledged",
+      "description": "In the event that the employee is unable to perform the duties due to illness or disability, they are entitled to the gross salary payment compliantly with the social security provisions in the Honduran law: - from the 1st to the 3rd day of illness or disability the employer pays 100% of their gross salary. - from the 4th day until 52 weeks of illness or disability the employer pays 34% of their gross salary, and the Social Security Institution pays for the remaining 66%. - after 52 weeks of illness or disability the work contract is interrupted until the sick leave is over",
+      "title": "Salary payment during employee's illness",
+      "type": "string",
+      "x-jsf-presentation": {
+        "description": "In the event that the employee is unable to perform the duties due to illness or disability, they are entitled to the gross salary payment compliantly with the social security provisions in the Honduran law:<ul><li>from the 1st to the 3rd day of illness or disability the employer pays 100% of their gross salary</li><li>from the 4th day until 52 weeks of illness or disability the employer pays 34% of their gross salary, and the Social Security Institution pays for the remaining 66%</li><li>after 52 weeks of illness or disability the work contract is interrupted until the sick leave is over</li></ul>",
+        "inputType": "checkbox"
+      }
+    },
+    "signing_bonus_amount": {
+      "title": "Signing bonus amount",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "HNL",
+        "inputType": "money"
+      }
+    },
+    "statutory_benefits": {
+      "deprecated": true,
+      "oneOf": [
+        {
+          "const": "Twice a year, every June and December",
+          "title": "Twice a year, every June and December"
+        },
+        {
+          "const": "Monthly, paid in proportions every month",
+          "title": "Monthly, paid in proportions every month"
+        },
+        {
+          "const": null,
+          "title": "N/A"
+        }
+      ],
+      "readOnly": true,
+      "title": "Statutory Benefits",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated because only 14 payments are offered now."
+        },
+        "inputType": "select"
+      }
+    },
+    "work_address_is_home_address": {
+      "description": "Is the employee's work address the same as their home address?",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Same as their residential address"
+        },
+        {
+          "const": "no",
+          "title": "Different than their residential address"
+        }
+      ],
+      "title": "Employee's work address",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "work_days": {
+      "description": "In Honduras, normal working days are from Monday to Friday. Which days of the week will the employee work? Please indicate all days.",
+      "items": {
+        "anyOf": [
+          {
+            "const": "monday",
+            "title": "Monday"
+          },
+          {
+            "const": "tuesday",
+            "title": "Tuesday"
+          },
+          {
+            "const": "wednesday",
+            "title": "Wednesday"
+          },
+          {
+            "const": "thursday",
+            "title": "Thursday"
+          },
+          {
+            "const": "friday",
+            "title": "Friday"
+          },
+          {
+            "const": "saturday",
+            "title": "Saturday"
+          },
+          {
+            "const": "sunday",
+            "title": "Sunday"
+          }
+        ]
+      },
+      "maxLength": 6,
+      "title": "Working days per week",
+      "type": "array",
+      "uniqueItems": true,
+      "x-jsf-errorMessage": {
+        "maxLength": "The employee cannot work more than 6 days"
+      },
+      "x-jsf-presentation": {
+        "inputType": "select",
+        "placeholder": "Select..."
+      }
+    },
+    "work_equipment": {
+      "description": "Please indicate all equipment that will be provided to the employee.",
+      "maxLength": 1000,
+      "title": "Equipment and technical allowance",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "work_hours": {
+      "description": "Please describe times using the 24-hour time format",
+      "properties": {
+        "end_time": {
+          "title": "End time",
+          "type": "string",
+          "x-jsf-presentation": {
+            "inputType": "text"
+          }
+        },
+        "start_time": {
+          "title": "Start time",
+          "type": "string",
+          "x-jsf-presentation": {
+            "inputType": "text"
+          }
+        }
+      },
+      "required": ["start_time", "end_time"],
+      "title": "Working hours",
+      "type": "object",
+      "x-jsf-order": ["start_time", "end_time"],
+      "x-jsf-presentation": {
+        "inputType": "fieldset"
+      }
+    },
+    "work_hours_per_week": {
+      "description": "The number of hours per week the employee will work. In Honduras, the full-time workweek is capped at 44 hours.",
+      "maximum": 44,
+      "minimum": 1,
+      "title": "Work hours per week",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "work_schedule": {
+      "oneOf": [
+        {
+          "const": "full_time",
+          "title": "Full-time"
+        },
+        {
+          "const": "part_time",
+          "title": "Part-time"
+        }
+      ],
+      "title": "Type of employee",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    }
+  },
+  "required": [
+    "annual_gross_salary",
+    "contract_duration_type",
+    "work_schedule",
+    "work_days",
+    "work_hours",
+    "work_hours_per_week",
+    "salary_installments_confirmation",
+    "salary_pay_illness_confirmation",
+    "has_signing_bonus",
+    "has_bonus",
+    "has_commissions",
+    "equity_compensation",
+    "has_retention_bonus",
+    "has_work_equipment",
+    "available_pto",
+    "work_address_is_home_address",
+    "role_description",
+    "experience_level",
+    "is_trusted_employee",
+    "non_compete_clause_apply",
+    "ancillary_positions_clause_apply",
+    "penalty_clause_apply"
+  ],
+  "type": "object",
+  "x-jsf-fieldsets": {
+    "annual_gross_salary_fieldset": {
+      "propertiesByName": [
+        "annual_gross_salary",
+        "salary_installments_confirmation",
+        "salary_pay_illness_confirmation",
+        "part_time_minimum_salary_confirmation",
+        "part_time_salary_confirmation"
+      ],
+      "title": "Annual gross salary"
+    },
+    "employee_schedule_fieldset": {
+      "propertiesByName": ["work_days", "work_hours", "work_hours_per_week"],
+      "title": "Employee schedule"
+    }
+  },
+  "x-jsf-order": [
+    "contract_duration_type",
+    "contract_duration_fixed_term_months",
+    "work_schedule",
+    "work_days",
+    "work_hours",
+    "work_hours_per_week",
+    "probation_length_days",
+    "notice_period",
+    "available_pto",
+    "is_trusted_employee",
+    "overtime_pay_confirmation",
+    "statutory_benefits",
+    "role_description",
+    "experience_level",
+    "work_address_is_home_address",
+    "annual_gross_salary",
+    "part_time_salary_confirmation",
+    "part_time_minimum_salary_confirmation",
+    "salary_installments_confirmation",
+    "salary_pay_illness_confirmation",
+    "allowances",
+    "has_signing_bonus",
+    "signing_bonus_amount",
+    "has_bonus",
+    "bonus_amount",
+    "bonus_details",
+    "has_retention_bonus",
+    "retention_bonus_amount",
+    "retention_bonus_rules_confirmation",
+    "has_commissions",
+    "commissions_details",
+    "commissions_ack",
+    "equity_compensation",
+    "non_compete_clause_apply",
+    "ancillary_positions_clause_apply",
+    "penalty_clause_apply",
+    "has_work_equipment",
+    "work_equipment"
+  ],
+  "x-rmt-meta": {
+    "jsfOldVersion": true
+  }
+}

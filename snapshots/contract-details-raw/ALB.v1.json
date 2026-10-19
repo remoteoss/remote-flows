@@ -1,0 +1,1218 @@
+{
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "contract_end_date": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "fixed_term"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "properties": {
+          "contract_end_date": {
+            "type": "string"
+          }
+        },
+        "required": ["contract_end_date"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 60000000,
+            "x-jsf-errorMessage": {
+              "minimum": "In Albania, full-time employees are entitled to a minimum annual salary of ALL 600,000."
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "work_hours_per_week": {
+            "description": "",
+            "maximum": 39
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "probation_length": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "required": ["probation_length"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "no"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "properties": {
+          "has_probation_period": {
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "Waiving the probation period is possible but discouraged",
+                "severity": "warning"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "part_time_salary_confirmation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "part_time_salary_confirmation": {
+            "type": "string"
+          }
+        },
+        "required": ["part_time_salary_confirmation"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "bonus_eligible_date": false,
+          "signing_bonus_amount": false,
+          "signing_bonus_clawback": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_signing_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_signing_bonus"]
+      },
+      "then": {
+        "required": [
+          "signing_bonus_amount",
+          "signing_bonus_clawback",
+          "bonus_eligible_date"
+        ]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "bonus_amount": false,
+          "bonus_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_bonus"]
+      },
+      "then": {
+        "properties": {
+          "bonus_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["bonus_details"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "commissions_ack": false,
+          "commissions_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_commissions": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_commissions"]
+      },
+      "then": {
+        "properties": {
+          "commissions_ack": {
+            "type": ["string"]
+          },
+          "commissions_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["commissions_details", "commissions_ack"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "available_pto_type": {
+            "const": "unlimited"
+          }
+        },
+        "required": ["available_pto_type"]
+      },
+      "then": {
+        "properties": {
+          "available_pto": {
+            "const": 22,
+            "default": 22,
+            "title": "Minimum paid time off days",
+            "x-jsf-presentation": {
+              "statement": {
+                "title": "Minimum of <strong>22 days</strong> of paid time off."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_compete_clause_halt_period_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_compete_clause_apply": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_compete_clause_apply"]
+      },
+      "then": {
+        "required": ["non_compete_clause_halt_period_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "third_party_work_activities": false
+        }
+      },
+      "if": {
+        "properties": {
+          "third_party_work": {
+            "const": "yes"
+          }
+        },
+        "required": ["third_party_work"]
+      },
+      "then": {
+        "required": ["third_party_work_activities"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_solicitation_customer_number_of_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_solicitation_customers": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_solicitation_customers"]
+      },
+      "then": {
+        "required": ["non_solicitation_customer_number_of_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_solicitation_employees_number_of_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_solicitation_employees": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_solicitation_employees"]
+      },
+      "then": {
+        "required": ["non_solicitation_employees_number_of_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_interference_halt_period": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_interference_apply": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_interference_apply"]
+      },
+      "then": {
+        "required": ["non_interference_halt_period"]
+      }
+    }
+  ],
+  "properties": {
+    "annual_gross_salary": {
+      "description": "The minimum annual salary is calculated based on the country's applicable laws.",
+      "title": "Annual gross salary",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-logic-computedAttrs": {
+        "minimum": "minimum_annual_gross_salary_in_cents",
+        "x-jsf-errorMessage": {
+          "minimum": "In Albania, part-time employees are entitled to a minimum annual salary of ALL {{ minimum_annual_gross_salary }}"
+        }
+      },
+      "x-jsf-presentation": {
+        "currency": "ALL",
+        "inputType": "money"
+      }
+    },
+    "available_pto": {
+      "description": "In Albania, employees are entitled to a minimum of 22 paid time off days per year. Please note that Statutory, Bank Holidays and Public Holidays are excluded from the above.",
+      "minimum": 22,
+      "title": "Number of paid time off days",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "available_pto_type": {
+      "description": "For personal time off. Also called vacation or annual leave.",
+      "enum": ["unlimited", "fixed"],
+      "oneOf": [
+        {
+          "const": "unlimited",
+          "description": "Gives the employee an uncapped number of paid time off days per year. The number below is the mandatory minimum number of days they must take.",
+          "title": "Unlimited paid time off"
+        },
+        {
+          "const": "fixed",
+          "description": "The employee gets a set number of paid time off days per year that you establish.",
+          "title": "Fixed paid time off"
+        }
+      ],
+      "title": "Paid time off policy",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "bonus_details": {
+      "description": "Bonus type, payment frequency, and more.",
+      "maxLength": 1000,
+      "title": "Other bonus details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "bonus_eligible_date": {
+      "description": "Date in which the sign on bonus will become eligible. Employee must be continuously employed until this date by the Employer and is not under notice of termination.",
+      "format": "date",
+      "title": "Bonus eligible date",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "date",
+        "minDate": "2026-10-19"
+      }
+    },
+    "commissions_ack": {
+      "const": "acknowledged",
+      "description": "I understand that I am required to provide written details of the commission plan to this employee, and upload this document on the platform for record keeping purposes. I acknowledge that Remote will not liable for any claims or losses associated with the commission or bonus plan.",
+      "title": "Confirm commission plan details",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "commissions_details": {
+      "description": "Payment amount, frequency, and more.",
+      "maxLength": 1000,
+      "title": "Commission details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "contract_duration_type": {
+      "oneOf": [
+        {
+          "const": "indefinite",
+          "title": "Indefinite"
+        },
+        {
+          "const": "fixed_term",
+          "title": "Fixed Term"
+        }
+      ],
+      "title": "Contract duration",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about contract duration",
+            "content": "<p>There are two types of contracts available:</p>\n<ul>\n<li>Fixed-term contract: This is a contract that has an end date. This means that towards the end of the contract, it will need to be renewed if you intend to keep the employee hired through us. In some countries, t<span class=\"notion-semantic-string\">he minimum contract duration is 6 months.</span>\n</li>\n<li>Indefinite contract: This is a contract with no end date and therefore, no renewal is needed.</li>\n</ul>\n<p data-pm-slice=\"1 3 []\">Indefinite and fixed-term contracts can be:</p>\n<ul class=\"ProsemirrorEditor-list\">\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Part-time: <span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">This is </span>a form of employment that <strong>carries fewer hours per week than a full-time job</strong><span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">. Depending on the country, workers are considered to be part-time if they commonly work fewer than 30 or 35 hours per week.</span></p>\n</li>\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Full-time.</p>\n</li>\n</ul>",
+            "error": false,
+            "id": 4410443814157,
+            "title": "Types of employment contracts"
+          }
+        }
+      }
+    },
+    "contract_end_date": {
+      "format": "date",
+      "maxLength": 255,
+      "title": "Contract end date",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "date",
+        "minDate": "2026-12-02"
+      }
+    },
+    "equity_compensation": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "equity_cliff": false,
+              "equity_description": false,
+              "equity_vesting_period": false,
+              "number_of_stock_options": false
+            }
+          },
+          "if": {
+            "properties": {
+              "offer_equity_compensation": {
+                "const": "yes"
+              }
+            },
+            "required": ["offer_equity_compensation"]
+          },
+          "then": {
+            "properties": {
+              "equity_description": {
+                "type": ["string"]
+              }
+            },
+            "required": ["equity_description"]
+          }
+        }
+      ],
+      "properties": {
+        "equity_cliff": {
+          "deprecated": true,
+          "description": "When the first portion of the stock option grant will vest.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Cliff (in months)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "equity_description": {
+          "description": "Please share any information related to the upcoming equity grant.",
+          "maxLength": 1000,
+          "title": "Number of options, RSUs, and other equity",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "textarea"
+          }
+        },
+        "equity_vesting_period": {
+          "deprecated": true,
+          "description": "The number of years it will take for the employee to vest all their options.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Vesting period (in years)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "number_of_stock_options": {
+          "deprecated": true,
+          "description": "Tell us the type of equity you're granting as well.",
+          "maxLength": 255,
+          "readOnly": true,
+          "title": "Number of options, RSUs, or other equity granted",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "text"
+          }
+        },
+        "offer_equity_compensation": {
+          "description": "Granting equity to your team generally triggers tax and legal obligations. In order for you to stay compliant, it's important to declare any equity grants.",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            }
+          ],
+          "title": "Will this employee receive equity?",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "row",
+            "inputType": "radio"
+          }
+        }
+      },
+      "required": ["offer_equity_compensation"],
+      "title": "Equity management",
+      "type": "object",
+      "x-jsf-order": [
+        "offer_equity_compensation",
+        "number_of_stock_options",
+        "equity_cliff",
+        "equity_vesting_period",
+        "equity_description"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 39,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 39,
+              "currency": "USD"
+            }
+          },
+          "helpCenter": {
+            "callToAction": "Learn more about equity management at Remote",
+            "content": "<p>Remote Equity is a lightweight compliance tool designed to help you manage equity grants across borders for team members hired through Remote's Employer of Record (EOR).</p><p>Whether you’re managing vesting, reporting exercises, or navigating local tax laws, Remote Equity gives you the structure to stay compliant, avoid risk, and support your team across borders.</p><h4 id=\"h_01K0YQSYJ8JPKYXNNNW90B0QJP\">Why it matters</h4><p>As your EOR, <strong>Remote is legally responsible</strong> for equity-related tax and reporting in the countries where your team members are employed. That means we don’t just track equity, we:</p><ul>\n<li data-list-item-id=\"eba6b95d2e41a276665f3f64525e0eb59\">Withhold and report taxes when required</li>\n<li data-list-item-id=\"ed16c354038e4b3d908bacd965dc2d71b\">File with local tax authorities</li>\n<li data-list-item-id=\"eb7162ef11477f7a7737fe34a48979559\">Support team members with clear guidance on their tax responsibilities</li>\n</ul><p>Most equity platforms can’t do that because they’re not the legal employer. <strong>Remote Equity ensures we have the data we need, when we need it, to keep your company compliant and your team fairly rewarded.</strong></p><p>Behind the scenes, our tax team:</p><ul>\n<li data-list-item-id=\"ef5c97b0472ebc9a0819e312646e4cd66\">Handles tax withholdings when taxable events occur</li>\n<li data-list-item-id=\"e5f3560641743ab0c57ba47683638560e\">Provides guidance to you and your team, even when no withholding is required</li>\n<li data-list-item-id=\"ed17d307d635b18f9f784df12d1dbe1cd\">Manages additional reporting where local laws demand it</li>\n</ul><p>See also: <a href=\"https://support.remote.com/hc/en-us/articles/37710493624589-What-types-of-equity-grants-should-I-declare-in-Remote-Equity-Essentials\">What types of equity grants should I declare in Remote Equity?</a></p><h4 id=\"h_01K0YQSYJDJ3JYC1C642ASB8E2\">What’s included</h4><p>Remote Equity provides:</p><ul>\n<li data-list-item-id=\"e0cc8d8c0b7d060b9de89e3c870fc1579\">\n<strong>Tracking and alerts</strong> for events that may create a tax obligation (like vesting or exercising)</li>\n<li data-list-item-id=\"e88a2fc75f6f43db27891e415e2f90400\">\n<strong>Automated compliance reminders</strong> based on local deadlines and regulations</li>\n<li data-list-item-id=\"e2c2cf9ef914143e339eb32e1b70c83da\">\n<strong>Localized guidance for team members</strong>, shared through the Remote Equity app</li>\n<li data-list-item-id=\"e8a2c20d648ed01a3db135ef4ada0de61\">\n<strong>Support from Remote’s tax and legal teams</strong>, who handle obligations on your behalf</li>\n<li data-list-item-id=\"e184af2a6420412152b377815ebe18ce2\">\n<strong>Integration with Carta and Pulley</strong> to automatically sync grant declarations and exercise information</li>\n</ul><h4 id=\"h_01K0YQSYJSCK6XYBXF3Q56KRC8\"><strong>Get started in minutes</strong></h4><p>Setup takes less than five minutes. Just log in to your Remote account, and launch the Equity App to follow the setup steps.</p><p>Helpful guides to get started:</p><ul>\n<li data-list-item-id=\"e73e204bc587d3417ecab74e3a29ccc2a\"><a href=\"https://support.remote.com/hc/en-us/articles/37547625350925-How-can-I-access-Remote-Equity-Essentials\">How can I access Remote Equity?</a></li>\n<li data-list-item-id=\"e0ca43a64bf2361ce43443e98200daa5a\"><a href=\"https://support.remote.com/hc/en-us/articles/35577980536589\">How do I declare a grant?</a></li>\n<li data-list-item-id=\"edfa1a00c07a70449ebe34c25dec818fe\"><a href=\"https://support.remote.com/hc/en-us/articles/35671968187149-How-can-my-employees-see-their-equity-information\">How can my team access their equity information?</a></li>\n<li data-list-item-id=\"edaaf9eb107949f79894c24e3b984da30\"><a href=\"https://support.remote.com/hc/en-us/articles/35546454220301-What-happens-if-I-already-declared-equity-before-using-Remote-Equity-Essentials\">What happens if I already declared equity before using Remote Equity?</a></li>\n</ul><h4 id=\"h_01K0YQSYJV9EH2AQ9HWYS1826S\"><span class=\"wysiwyg-underline\">Frequently Asked Questions (FAQs)</span></h4><p><strong>Who needs to use Remote Equity?</strong></p><p>Any Remote customer granting equity to a team member hired through Remote’s EOR must use Remote Equity to meet local compliance requirements.</p><p><strong>Why can’t we just use our own equity tool?</strong></p><p>Traditional equity tools track grants and vesting, but they don't file taxes, withhold contributions, or report income to local authorities. Remote, as the legal employer, is responsible for these actions. Remote Equity ensures those obligations are covered.</p><p><strong>What happens if we don’t use it?</strong></p><p>If Remote doesn’t receive timely and accurate equity data, required filings may be missed. This can result in compliance risks, unexpected tax liabilities, and issues for both your company and your team members.</p><p><strong>How much does Remote Equity cost?</strong></p><p>Remote Equity costs 39 USD per month for each EOR team member with equity. <a href=\"https://support.remote.com/hc/en-us/articles/35546441948685-How-much-does-Remote-Equity-Essentials-cost\">Learn more</a>.</p><p>For comprehensive information, visit the <a href=\"https://support.remote.com/hc/en-us/categories/45788665954189-Remote-Equity\" tabindex=\"0\" data-token-index=\"1\" rel=\"noopener noreferrer\">Remote Equity hub</a>.</p>",
+            "error": false,
+            "id": 38303424407821,
+            "title": "Welcome to Remote Equity: Global equity, without the compliance headaches"
+          }
+        }
+      }
+    },
+    "experience_level": {
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employees overall experience).",
+      "oneOf": [
+        {
+          "const": "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "description": "Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "title": "Level 2 - Entry Level"
+        },
+        {
+          "const": "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+          "description": "Employees who perform independently tasks and/or with coordination and control functions",
+          "title": "Level 3 - Associate"
+        },
+        {
+          "const": "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "description": "Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "title": "Level 4 - Mid-Senior level"
+        },
+        {
+          "const": "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "description": "Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "title": "Level 5 - Director"
+        },
+        {
+          "const": "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "description": "An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "title": "Level 6 - Executive"
+        }
+      ],
+      "title": "Experience level",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "has_bonus": {
+      "description": "These can include things like performance-related bonuses.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer other bonuses?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_commissions": {
+      "description": "You can outline your policy and pay commission to the employee on the platform. However, commission will not appear in the employment agreement. Please send full policy details directly to the employee.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer commission?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_probation_period": {
+      "description": "Do you wish to include a probation period for the employee?",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Add a probation period?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_signing_bonus": {
+      "description": "This is a one-time payment the employee receives when they join your team.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer a signing bonus?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_compete_clause_apply": {
+      "description": "This discourages the employee from entering or starting a similar company in competition against your company.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a non-compete clause?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<div>\n<div>Please note that if you choose to apply a non-compete clause in Albania covering the period after the employee leaves your company, the employee is entitled to compensation amounting to 75% of the salary they would receive if they were to continue working for your company. Also, the non-compete clause will not apply if your company terminates the employee’s employment agreement without just cause, or if the employee terminates the employment agreement with just cause related to your company.</div>\n<div> </div>\n<div><div>While we make every effort to include non-compete/non-solicitation clauses in employment agreements, Remote cannot guarantee the effectiveness of a non-compete/non-solicitation because they are fact-specific and we will not be able to institute action to enforce a non-compete/non-solicitation against an employee.</div></div>\n</div>",
+            "error": false,
+            "id": 38152171037965,
+            "title": "Non-compete clauses (Albania)"
+          }
+        }
+      }
+    },
+    "non_compete_clause_halt_period_months": {
+      "description": "Minimum of 1 month, maximum of 12 months.",
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Duration of non-compete clause, in months",
+      "type": "number",
+      "x-jsf-errorMessage": {
+        "maximum": "Must be no more than 12 months.",
+        "minimum": "Must be at least 1 month."
+      },
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_interference_apply": {
+      "description": "This prevents the employee from interfering with your company’s business and customer relationships after they leave your company.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a non-interference clause?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_interference_halt_period": {
+      "description": "Minimum of 1 month, no maximum.",
+      "minimum": 1,
+      "title": "Non-interference clause duration, in months",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_solicitation_customer_number_of_months": {
+      "description": "Minimum of 1 month, maximum of 12 months.",
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Non-solicitation of customers clause duration, in months",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_solicitation_customers": {
+      "description": "This would restrict the employee from seeking business from your company’s customers on behalf of a competing business.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a non-solicitation of customers clause?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_solicitation_employees": {
+      "description": "This would restrict the employee from enticing or hiring your company’s employees for a competing business.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a non-solicitation of employees clause?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_solicitation_employees_number_of_months": {
+      "description": "Minimum of 1 month, maximum of 12 months.",
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Non-solicitation of employees clause duration, in months",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "notice_period_confirmation": {
+      "const": "acknowledged",
+      "title": "Notice period",
+      "type": "string",
+      "x-jsf-presentation": {
+        "description": "I acknowledge that notice periods are as follows:<br/><ul><li>2 weeks for employees who have worked for the employer for up to 6 months</li><li>1 month for employees who have worked for the employer between 6 months and 2 years</li><li>2 months for employees who have worked for the employer for over 2 years, up to 5 years</li><li>3 months for employees who have worked for the employer for over 5 years</li></ul>These notice terms cannot be altered by written agreement. However, it is possible to replace the notice period with the salary the employee would have earned until the end of the notice period.",
+        "inputType": "checkbox"
+      }
+    },
+    "other_work_locations": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Is the employee required to work in or travel to other locations?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "overtime_compensation_type": {
+      "enum": ["time_off", "included_in_salary"],
+      "title": "How would you like to handle overtime for this employee?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio",
+        "options": [
+          {
+            "label": "Employee receives paid time off equal to the overtime hours they worked",
+            "value": "time_off"
+          },
+          {
+            "label": "Employee receives overtime pay included in their salary",
+            "value": "included_in_salary"
+          }
+        ]
+      }
+    },
+    "part_time_salary_confirmation": {
+      "const": "acknowledged",
+      "description": "We'll include the salary in the employment agreement, so please double-check that it's correct.",
+      "title": "I confirm that this amount is the full annual salary for this part-time employee.",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "probation_length": {
+      "description": "In Albania, probation periods can last up to 3 months. During the probation period both the employee and employer can terminate the contract with 5 days’ notice.",
+      "maximum": 3,
+      "minimum": 1,
+      "title": "Probation period, in months",
+      "type": "number",
+      "x-jsf-errorMessage": {
+        "maximum": "Must be smaller or equal to 3 months",
+        "minimum": "Must be greater than or equal to 1 month"
+      },
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "role_description": {
+      "description": "Please add at least 3 responsibilities, at least 100 characters in total.",
+      "maxLength": 5000,
+      "minLength": 100,
+      "title": "Role description",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "signing_bonus_amount": {
+      "title": "Signing bonus amount",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "ALL",
+        "inputType": "money"
+      }
+    },
+    "signing_bonus_clawback": {
+      "description": "This would require the employee to return the bonus if they leave your company before the first year.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a signing bonus clawback?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "third_party_work": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Can the employee work for third parties or do business on their own while employed by your company?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "third_party_work_activities": {
+      "maxLength": 1000,
+      "title": "What third-party work can the employee do outside of working hours?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "work_address_is_home_address": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Same as their residential address"
+        },
+        {
+          "const": "no",
+          "title": "Different than their residential address"
+        }
+      ],
+      "title": "Employee's work address",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "work_equipment_provided_by": {
+      "enum": ["provided_by_client", "provided_by_employee"],
+      "oneOf": [
+        {
+          "const": "provided_by_client",
+          "title": "We will provide equipment"
+        },
+        {
+          "const": "provided_by_employee",
+          "title": "The employee will provide equipment"
+        }
+      ],
+      "title": "Who will provide the employee's work equipment?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "work_hours_per_week": {
+      "description": "In Albania, the standard work week for full-time employees is 40 hours. Part time is less than 40 hours.",
+      "maximum": 40,
+      "minimum": 1,
+      "title": "Work hours per week",
+      "type": "number",
+      "x-jsf-errorMessage": {
+        "maximum": "Must be no more than 40 hours per week.",
+        "minimum": "Must be at least 1 hour per week."
+      },
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "work_schedule": {
+      "oneOf": [
+        {
+          "const": "full_time",
+          "title": "Full-time"
+        },
+        {
+          "const": "part_time",
+          "title": "Part-time"
+        }
+      ],
+      "title": "Type of employee",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    }
+  },
+  "required": [
+    "contract_duration_type",
+    "annual_gross_salary",
+    "work_schedule",
+    "work_hours_per_week",
+    "has_probation_period",
+    "has_signing_bonus",
+    "has_bonus",
+    "has_commissions",
+    "equity_compensation",
+    "work_equipment_provided_by",
+    "work_address_is_home_address",
+    "available_pto_type",
+    "available_pto",
+    "role_description",
+    "experience_level",
+    "non_compete_clause_apply",
+    "third_party_work",
+    "non_solicitation_customers",
+    "non_solicitation_employees",
+    "non_interference_apply",
+    "overtime_compensation_type",
+    "notice_period_confirmation",
+    "other_work_locations"
+  ],
+  "type": "object",
+  "x-jsf-logic": {
+    "computedValues": {
+      "minimum_annual_gross_salary": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                {
+                  "==": [
+                    {
+                      "var": "work_schedule"
+                    },
+                    "part_time"
+                  ]
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "-": [
+                    {
+                      "/": [
+                        {
+                          "*": [
+                            {
+                              "var": "work_hours_per_week"
+                            },
+                            600000,
+                            100
+                          ]
+                        },
+                        40
+                      ]
+                    },
+                    {
+                      "%": [
+                        {
+                          "/": [
+                            {
+                              "*": [
+                                {
+                                  "var": "work_hours_per_week"
+                                },
+                                600000,
+                                100
+                              ]
+                            },
+                            40
+                          ]
+                        },
+                        1
+                      ]
+                    }
+                  ]
+                },
+                100
+              ]
+            },
+            0
+          ]
+        }
+      },
+      "minimum_annual_gross_salary_in_cents": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                {
+                  "==": [
+                    {
+                      "var": "work_schedule"
+                    },
+                    "part_time"
+                  ]
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "-": [
+                    {
+                      "/": [
+                        {
+                          "*": [
+                            {
+                              "var": "work_hours_per_week"
+                            },
+                            60000000,
+                            100
+                          ]
+                        },
+                        40
+                      ]
+                    },
+                    {
+                      "%": [
+                        {
+                          "/": [
+                            {
+                              "*": [
+                                {
+                                  "var": "work_hours_per_week"
+                                },
+                                60000000,
+                                100
+                              ]
+                            },
+                            40
+                          ]
+                        },
+                        1
+                      ]
+                    }
+                  ]
+                },
+                100
+              ]
+            },
+            0
+          ]
+        }
+      }
+    }
+  },
+  "x-jsf-order": [
+    "contract_duration_type",
+    "contract_end_date",
+    "work_schedule",
+    "work_hours_per_week",
+    "has_probation_period",
+    "probation_length",
+    "notice_period_confirmation",
+    "available_pto_type",
+    "available_pto",
+    "overtime_compensation_type",
+    "role_description",
+    "experience_level",
+    "work_address_is_home_address",
+    "other_work_locations",
+    "annual_gross_salary",
+    "part_time_salary_confirmation",
+    "has_signing_bonus",
+    "signing_bonus_amount",
+    "bonus_eligible_date",
+    "signing_bonus_clawback",
+    "has_bonus",
+    "bonus_details",
+    "has_commissions",
+    "commissions_details",
+    "commissions_ack",
+    "equity_compensation",
+    "non_compete_clause_apply",
+    "non_compete_clause_halt_period_months",
+    "non_solicitation_employees",
+    "non_solicitation_employees_number_of_months",
+    "non_solicitation_customers",
+    "non_solicitation_customer_number_of_months",
+    "non_interference_apply",
+    "non_interference_halt_period",
+    "work_equipment_provided_by",
+    "third_party_work",
+    "third_party_work_activities"
+  ]
+}

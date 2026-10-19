@@ -1,0 +1,1444 @@
+{
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "salary_overview": false
+        }
+      },
+      "if": {
+        "required": ["compensation_currency_code"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code"]
+      },
+      "then": {
+        "properties": {
+          "salary_overview": {
+            "description": "We will request a reserve payment for salaries at or above $175,000.00."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "MXN"
+          }
+        },
+        "required": ["compensation_currency_code"]
+      },
+      "then": {
+        "properties": {
+          "salary_overview": {
+            "description": "We will request a reserve payment for salaries at or above MX$3,235,348.49."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "x-jsf-presentation": {
+              "currency": "USD"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "USD"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["compensation_currency_code", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 613458,
+            "x-jsf-errorMessage": {
+              "minimum": "In Mexico, full-time employees are entitled to a minimum annual salary of $6,134.58."
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "MXN"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["compensation_currency_code", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 11341440,
+            "x-jsf-errorMessage": {
+              "minimum": "In Mexico, full-time employees are entitled to a minimum annual salary of MX$113,414.40."
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code"]
+      },
+      "then": {
+        "properties": {
+          "compensation_currency_code": {
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "Before you complete the employee's contract details, please confirm with them that they have a bank account in this currency. This has an additional cost of 50.00 USD per month.",
+                "severity": "info",
+                "title": "The employee will be paid in Mexican Peso (MXN)"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "commissions_ack": false,
+          "commissions_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_commissions": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_commissions"]
+      },
+      "then": {
+        "properties": {
+          "commissions_ack": {
+            "type": ["string"]
+          },
+          "commissions_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["commissions_details", "commissions_ack"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "no"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "properties": {
+          "has_probation_period": {
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "Waiving the probation period is possible but discouraged",
+                "severity": "warning"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "bonus_amount": false,
+          "bonus_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_bonus"]
+      },
+      "then": {
+        "properties": {
+          "bonus_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["bonus_details"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "part_time_salary_confirmation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "part_time_salary_confirmation": {
+            "type": "string"
+          }
+        },
+        "required": ["part_time_salary_confirmation"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "available_pto": {
+            "description": "Please note that Statutory, Bank Holidays and Public Holidays in the employee's country of residence are excluded from the above."
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "is_managerial_administrative_specialized_role": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "required": ["is_managerial_administrative_specialized_role"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "probation_length_days": false,
+          "probation_skills": {
+            "$comments": "When there's no probation period in MEX, probation_skills should not be required. But if we set to false the API would complain if consumers would be passing it, making this a breaking change.",
+            "x-jsf-presentation": {
+              "inputType": "hidden"
+            }
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "is_managerial_administrative_specialized_role": {
+            "enum": ["yes", "no"]
+          }
+        },
+        "required": ["is_managerial_administrative_specialized_role"]
+      },
+      "then": {
+        "required": ["probation_length_days", "probation_skills"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "is_managerial_administrative_specialized_role": {
+            "const": "yes"
+          }
+        },
+        "required": ["is_managerial_administrative_specialized_role"]
+      },
+      "then": {
+        "properties": {
+          "probation_length_days": {
+            "oneOf": [
+              {
+                "const": 30,
+                "title": "30 days",
+                "x-jsf-presentation": {
+                  "recommended": true
+                }
+              },
+              {
+                "const": 90,
+                "title": "90 days"
+              },
+              {
+                "const": 180,
+                "title": "180 days"
+              }
+            ],
+            "type": "number"
+          }
+        },
+        "required": ["probation_length_days"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "is_managerial_administrative_specialized_role": {
+            "const": "no"
+          }
+        },
+        "required": ["is_managerial_administrative_specialized_role"]
+      },
+      "then": {
+        "properties": {
+          "probation_length_days": {
+            "const": 30,
+            "default": 30,
+            "oneOf": [
+              {
+                "const": 30,
+                "title": "30 days"
+              }
+            ],
+            "type": "number"
+          }
+        },
+        "required": ["probation_length_days"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "probation_length_ack": false
+        }
+      },
+      "if": {
+        "properties": {
+          "probation_length_days": {
+            "enum": [90, 180]
+          }
+        },
+        "required": ["probation_length_days"]
+      },
+      "then": {
+        "required": ["probation_length_ack"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "available_pto": {
+            "minimum": 12
+          },
+          "work_hours_per_week": {
+            "maximum": 48,
+            "minimum": 1
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "available_pto": {
+            "minimum": 0
+          },
+          "work_hours_per_week": {
+            "maximum": 35,
+            "minimum": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "available_pto_type": {
+            "const": "unlimited"
+          }
+        },
+        "required": ["available_pto_type"]
+      },
+      "then": {
+        "properties": {
+          "available_pto": {
+            "const": 12,
+            "default": 12,
+            "title": "Minimum paid time off days"
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "signing_bonus_amount": {
+            "x-jsf-presentation": {
+              "currency": "MXN"
+            }
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code"]
+      },
+      "then": {
+        "properties": {
+          "signing_bonus_amount": {
+            "x-jsf-presentation": {
+              "currency": "USD"
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "signing_bonus_amount": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_signing_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_signing_bonus"]
+      },
+      "then": {
+        "properties": {
+          "signing_bonus_amount": {
+            "type": ["integer"]
+          }
+        },
+        "required": ["signing_bonus_amount"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 1848770568
+          },
+          "compensation_currency_code": {
+            "const": "MXN"
+          }
+        },
+        "required": ["compensation_currency_code", "annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "extreme_salary_acknowledgement": {
+            "type": "string"
+          },
+          "extreme_salary_warning": {}
+        },
+        "required": ["extreme_salary_acknowledgement"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "maximum": 1848770567
+          },
+          "compensation_currency_code": {
+            "const": "MXN"
+          }
+        },
+        "required": ["compensation_currency_code", "annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "extreme_salary_acknowledgement": false,
+          "extreme_salary_warning": false
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 100000000
+          },
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code", "annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "extreme_salary_acknowledgement": {
+            "type": "string"
+          },
+          "extreme_salary_warning": {}
+        },
+        "required": ["extreme_salary_acknowledgement"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "maximum": 99999999
+          },
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code", "annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "extreme_salary_acknowledgement": false,
+          "extreme_salary_warning": false
+        }
+      }
+    },
+    {
+      "if": {
+        "not": {
+          "required": ["compensation_currency_code", "annual_gross_salary"]
+        }
+      },
+      "then": {
+        "properties": {
+          "extreme_salary_acknowledgement": false,
+          "extreme_salary_warning": false
+        }
+      }
+    }
+  ],
+  "properties": {
+    "annual_bonus_ack": {
+      "const": "acknowledged",
+      "description": "In Mexico, employees receive a 13th month salary (usually called Christmas bonus). This salary is not part of their annual gross salary and its amount is affected by bonuses and commissions.",
+      "title": "I understand I must pay this employee a 13th month salary in addition to their annual gross salary",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more about bonus salaries",
+            "content": "<p>The Christmas bonus, also known as the 13th salary, is a salary paid to employees by December 20th, intended to support them with holiday season expenses.</p><h3 id=\"h_01M3P0VRFK1TKETYM11F5K11YX\"><strong>How is the 13th salary calculated?</strong></h3><p>For employees with a full year of service with the company, the statutory minimum 13th salary equals 15 days of salary. The calculation is:</p><p>Daily salary × number of Aguinaldo days</p><h3 id=\"h_01M3P0VRFKGQS07378CPC4JCS1\"><strong>What happens if an employee worked for less than a year?</strong></h3><p>For employees who have been with the company for less than a full year, the 13th salary is prorated. This means the payment amount is adjusted to match the proportion of the year they have worked.</p><h3 id=\"h_01M3P0VRFMXHTSDDTEAKBY6QFB\"><strong>Calculation</strong></h3><ol>\n<li data-list-item-id=\"ea900a4c21ba0c92401775918095aa494\">Worked days to end of year/365 = % of entitlement</li>\n<li data-list-item-id=\"e15c9698491ee2c5973ce4d86dddb137b\">Base monthly salary/30 = daily salary</li>\n<li data-list-item-id=\"e388263af2b088662b8fe79635e774525\">Entitled days (minimum 15 days)*daily salary = entitled days amount</li>\n<li data-list-item-id=\"ea2939147e2903514c9545d5d2a7431f3\">Entitled days amount * % of entitlement = 13th salary</li>\n</ol><h3 id=\"h_01M3P0VRFNWZJBJR5S3SK4CF9Q\"><strong>Are commissions and allowances included in the calculation?</strong></h3><p>No. Commissions and allowances are not included when calculating the Aguinaldo. The calculation is based on the employee's daily salary and the number of Aguinaldo days.</p><p><span style=\"background-color: #ffffff;\" class=\"wysiwyg-font-size-small\"><em><strong>Disclaimer</strong>: An important aspect of labor laws in Latin American countries that could affect your operations is the mandatory extra salary payment. Employers are customarily and legally required to issue an additional salary, also known as the \"13th salary\" or \"Christmas bonus.\" This bonus, typically equivalent to one month's wage, is distributed annually. It's important to note that this additional salary is not included in the base salary (gross annual salary) and should be paid separately.</em></span></p><p> </p><p><span class=\"wysiwyg-font-size-small\" style=\"color: #000000;\">            </span></p>",
+            "error": false,
+            "id": 5128505739789,
+            "title": "What is the 13th salary or Aguinaldo in Mexico?"
+          }
+        }
+      }
+    },
+    "annual_gross_salary": {
+      "title": "Annual gross salary",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-logic-computedAttrs": {
+        "description": "{{annual_gross_salary_reserve_description}}"
+      },
+      "x-jsf-presentation": {
+        "currency": "MXN",
+        "inputType": "money"
+      }
+    },
+    "available_pto": {
+      "description": "Full-time employees are entitled to a minimum of 12 days per year. We recommend offering at least 20 days. Please pro-rate for part-time employment. Please do not include statutory, bank, or public holidays in the number you enter.",
+      "title": "Number of paid time off days",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "available_pto_type": {
+      "description": "For personal time off. Also called vacation or annual leave.",
+      "oneOf": [
+        {
+          "const": "unlimited",
+          "description": "Gives the employee an uncapped number of paid time off days per year. The number below is the mandatory minimum number of days they must take.",
+          "title": "Unlimited paid time off"
+        },
+        {
+          "const": "fixed",
+          "description": "The employee gets a set number of paid time off days per year that you establish.",
+          "title": "Fixed paid time off"
+        }
+      ],
+      "title": "Paid time off policy",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "bonus_amount": {
+      "deprecated": true,
+      "readOnly": true,
+      "title": "Bonus amount (deprecated)",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "MXN",
+        "deprecated": {
+          "description": "Deprecated in favor of 'Bonus Details'. Please, try to leave this field empty."
+        },
+        "inputType": "money"
+      }
+    },
+    "bonus_details": {
+      "description": "Bonus type, payment frequency, and more.",
+      "maxLength": 1000,
+      "title": "Other bonus details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "christmas_bonus": {
+      "description": "In Mexico, a Christmas bonus (13th month salary) is typically between 15 and 30 days' salary. Enter the number of salaried days you’re offering as a bonus.",
+      "maximum": 30,
+      "minimum": 15,
+      "title": "Christmas bonus in salaried days",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "commissions_ack": {
+      "const": "acknowledged",
+      "description": "I understand that I am required to provide written details of the commission plan to this employee, and upload this document on the platform for record keeping purposes. I acknowledge that Remote will not liable for any claims or losses associated with the commission or bonus plan.",
+      "title": "Confirm commission plan details",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "(i) Guidance on drafting a commission plan here.",
+            "content": "<p>It is important to understand that commission plans are individual agreements between you, and each team member. Consequently, it is important that these plans are communicated directly between you and the respective team members. This direct communication ensures clarity, transparency, and a clear understanding of the agreed-upon terms for the commission plan.</p>\n<p>Performance-linked bonuses and commissions are payments that are contingent on various factors, including individual and team performance, business outcomes, and other metrics agreed upon by you and the employees providing you services. As these are rewards that are subject to your evaluation and adjustment based on the agreed-upon criteria, we strongly recommend that you document these plans as compliantly as possible, and their specifics separately in writing, with the employee providing you services, following the below guidelines:</p>\n<ul>\n<li>Please note if there is any doubt or lack of clarity due to ambiguous wording, it will be interpreted to the employee’s benefit. Therefore, the plan should be reviewed thoroughly to determine whether it could be interpreted various ways. If so, the respective wording should be amended in a way that is precise and can be understood in one way only.</li>\n<li>In some jurisdictions, bonus and commission plans can be contractually drafted as being discretionary, but still remain unambiguous.  Where this is legally possible, this is the recommended approach to legally best protect the employer/you from any potential disputes.  Please note, however, that employees may still have a claim for commission payments, even if an agreement is drafted as discretionary.</li>\n<li>Basis for Commission Calculation: The commission plan should clearly outline the basis on which the commission will be calculated. This may include factors such as sales revenue, units sold, profit margin, or other measurable performance indicators. The commission plan should also include the timeframe in which the respective target must be achieved.</li>\n<li>Commission Rate: The commission plan should specify the commission rate or rates applicable to different levels of performance. It should clearly define how the commission will be determined, based on achieving specific targets or milestones. In order to limit the financial risk, a commission plan can include a regulation on the maximum amount of commissions that can be earned.</li>\n<li>Target Goals: The commission plan should establish realistic and achievable target goals or sales quotas that the employee is expected to reach in order to earn commission. </li>\n<li>Calculation Period: The commission plan should specify the calculation period for commission payouts. This could be monthly or quarterly. It should also state the timeline for determining and disbursing commission payments. Furthermore, a commission plan should include a specification about the point in time until when targets are set each year. Commission targets should be given prior to the commencement of the plan period.</li>\n<li>Commission Calculation Method: The commission plan should outline the methodology for calculating the commission. It should specify any deductions, adjustments, or exclusions that may be applicable to the commission calculation.</li>\n<li>Payment Terms: The commission plan should detail the terms and conditions for commission payments, including the payment schedule, method of payment, and any additional requirements or conditions. It should also explain how leaves, for example, sick leave and maternity leave, influence payment of commission and bonus, considering local requirements and non discrimination rules.</li>\n<li>Termination or Modification: The commission plan should address how it may be terminated or modified, including the circumstances under which changes may be made and the notice period required.</li>\n<li>It is helpful to include terms regarding dispute resolution.</li>\n</ul>\n<p>Please be aware that this guideline does not constitute legal advice. It is advisable to consult with your legal counsel for expert advice while formulating such plans. We will not assume liability for any claims that may arise due to a non-compliant and/or ambiguous commission plan provided to employees.</p>",
+            "error": false,
+            "id": 17932049668109,
+            "title": "Guidelines for bonus and commission plans"
+          }
+        }
+      }
+    },
+    "commissions_details": {
+      "description": "Payment amount, frequency, and more.",
+      "maxLength": 1000,
+      "title": "Commission details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "compensation_currency_code": {
+      "description": "Salary currency as listed in the employment agreement, not necessarily the currency the employee will be paid in.",
+      "oneOf": [
+        {
+          "const": "MXN",
+          "title": "Mexican Peso (MXN)"
+        },
+        {
+          "const": "USD",
+          "title": "United States Dollar (USD)"
+        }
+      ],
+      "title": "Salary currency in contract",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "select",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 50,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 50,
+              "currency": "USD"
+            }
+          },
+          "non_local_currencies": ["USD"]
+        }
+      }
+    },
+    "contract_duration": {
+      "deprecated": true,
+      "description": "Indefinite or fixed-term contract. If the latter, please state duration and if there's possibility for renewal.",
+      "maxLength": 255,
+      "readOnly": true,
+      "title": "Contract duration (deprecated)",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated field in favor of 'contract_duration_type'."
+        },
+        "inputType": "text"
+      }
+    },
+    "contract_duration_type": {
+      "const": "indefinite",
+      "default": "indefinite",
+      "description": "Remote only supports indefinite term contracts in Mexico. Please refer to the Mexican Federal Labor Law (FLT).",
+      "oneOf": [
+        {
+          "const": "indefinite",
+          "title": "Indefinite"
+        }
+      ],
+      "title": "Contract duration",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about contract duration",
+            "content": "<p>There are two types of contracts available:</p>\n<ul>\n<li>Fixed-term contract: This is a contract that has an end date. This means that towards the end of the contract, it will need to be renewed if you intend to keep the employee hired through us. In some countries, t<span class=\"notion-semantic-string\">he minimum contract duration is 6 months.</span>\n</li>\n<li>Indefinite contract: This is a contract with no end date and therefore, no renewal is needed.</li>\n</ul>\n<p data-pm-slice=\"1 3 []\">Indefinite and fixed-term contracts can be:</p>\n<ul class=\"ProsemirrorEditor-list\">\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Part-time: <span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">This is </span>a form of employment that <strong>carries fewer hours per week than a full-time job</strong><span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">. Depending on the country, workers are considered to be part-time if they commonly work fewer than 30 or 35 hours per week.</span></p>\n</li>\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Full-time.</p>\n</li>\n</ul>",
+            "error": false,
+            "id": 4410443814157,
+            "title": "Types of employment contracts"
+          }
+        },
+        "statement": {
+          "title": "<strong>Indefinite contract duration</strong> for Mexico."
+        }
+      }
+    },
+    "equity_compensation": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "equity_cliff": false,
+              "equity_description": false,
+              "equity_vesting_period": false,
+              "number_of_stock_options": false
+            }
+          },
+          "if": {
+            "properties": {
+              "offer_equity_compensation": {
+                "const": "yes"
+              }
+            },
+            "required": ["offer_equity_compensation"]
+          },
+          "then": {
+            "properties": {
+              "equity_description": {
+                "type": ["string"]
+              }
+            },
+            "required": ["equity_description"]
+          }
+        }
+      ],
+      "properties": {
+        "equity_cliff": {
+          "deprecated": true,
+          "description": "When the first portion of the stock option grant will vest.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Cliff (in months)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "equity_description": {
+          "description": "Please share any information related to the upcoming equity grant.",
+          "maxLength": 1000,
+          "title": "Number of options, RSUs, and other equity",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "textarea"
+          }
+        },
+        "equity_vesting_period": {
+          "deprecated": true,
+          "description": "The number of years it will take for the employee to vest all their options.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Vesting period (in years)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "number_of_stock_options": {
+          "deprecated": true,
+          "description": "Tell us the type of equity you're granting as well.",
+          "maxLength": 255,
+          "readOnly": true,
+          "title": "Number of options, RSUs, or other equity granted",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "text"
+          }
+        },
+        "offer_equity_compensation": {
+          "description": "Granting equity to your team generally triggers tax and legal obligations. In order for you to stay compliant, it's important to declare any equity grants.",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            }
+          ],
+          "title": "Will this employee receive equity?",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "row",
+            "inputType": "radio"
+          }
+        }
+      },
+      "required": ["offer_equity_compensation"],
+      "title": "Equity management",
+      "type": "object",
+      "x-jsf-order": [
+        "offer_equity_compensation",
+        "number_of_stock_options",
+        "equity_cliff",
+        "equity_vesting_period",
+        "equity_description"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 39,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 39,
+              "currency": "USD"
+            }
+          },
+          "helpCenter": {
+            "callToAction": "Learn more about equity management at Remote",
+            "content": "<p>Remote Equity is a lightweight compliance tool designed to help you manage equity grants across borders for team members hired through Remote's Employer of Record (EOR).</p><p>Whether you’re managing vesting, reporting exercises, or navigating local tax laws, Remote Equity gives you the structure to stay compliant, avoid risk, and support your team across borders.</p><h4 id=\"h_01K0YQSYJ8JPKYXNNNW90B0QJP\">Why it matters</h4><p>As your EOR, <strong>Remote is legally responsible</strong> for equity-related tax and reporting in the countries where your team members are employed. That means we don’t just track equity, we:</p><ul>\n<li data-list-item-id=\"eba6b95d2e41a276665f3f64525e0eb59\">Withhold and report taxes when required</li>\n<li data-list-item-id=\"ed16c354038e4b3d908bacd965dc2d71b\">File with local tax authorities</li>\n<li data-list-item-id=\"eb7162ef11477f7a7737fe34a48979559\">Support team members with clear guidance on their tax responsibilities</li>\n</ul><p>Most equity platforms can’t do that because they’re not the legal employer. <strong>Remote Equity ensures we have the data we need, when we need it, to keep your company compliant and your team fairly rewarded.</strong></p><p>Behind the scenes, our tax team:</p><ul>\n<li data-list-item-id=\"ef5c97b0472ebc9a0819e312646e4cd66\">Handles tax withholdings when taxable events occur</li>\n<li data-list-item-id=\"e5f3560641743ab0c57ba47683638560e\">Provides guidance to you and your team, even when no withholding is required</li>\n<li data-list-item-id=\"ed17d307d635b18f9f784df12d1dbe1cd\">Manages additional reporting where local laws demand it</li>\n</ul><p>See also: <a href=\"https://support.remote.com/hc/en-us/articles/37710493624589-What-types-of-equity-grants-should-I-declare-in-Remote-Equity-Essentials\">What types of equity grants should I declare in Remote Equity?</a></p><h4 id=\"h_01K0YQSYJDJ3JYC1C642ASB8E2\">What’s included</h4><p>Remote Equity provides:</p><ul>\n<li data-list-item-id=\"e0cc8d8c0b7d060b9de89e3c870fc1579\">\n<strong>Tracking and alerts</strong> for events that may create a tax obligation (like vesting or exercising)</li>\n<li data-list-item-id=\"e88a2fc75f6f43db27891e415e2f90400\">\n<strong>Automated compliance reminders</strong> based on local deadlines and regulations</li>\n<li data-list-item-id=\"e2c2cf9ef914143e339eb32e1b70c83da\">\n<strong>Localized guidance for team members</strong>, shared through the Remote Equity app</li>\n<li data-list-item-id=\"e8a2c20d648ed01a3db135ef4ada0de61\">\n<strong>Support from Remote’s tax and legal teams</strong>, who handle obligations on your behalf</li>\n<li data-list-item-id=\"e184af2a6420412152b377815ebe18ce2\">\n<strong>Integration with Carta and Pulley</strong> to automatically sync grant declarations and exercise information</li>\n</ul><h4 id=\"h_01K0YQSYJSCK6XYBXF3Q56KRC8\"><strong>Get started in minutes</strong></h4><p>Setup takes less than five minutes. Just log in to your Remote account, and launch the Equity App to follow the setup steps.</p><p>Helpful guides to get started:</p><ul>\n<li data-list-item-id=\"e73e204bc587d3417ecab74e3a29ccc2a\"><a href=\"https://support.remote.com/hc/en-us/articles/37547625350925-How-can-I-access-Remote-Equity-Essentials\">How can I access Remote Equity?</a></li>\n<li data-list-item-id=\"e0ca43a64bf2361ce43443e98200daa5a\"><a href=\"https://support.remote.com/hc/en-us/articles/35577980536589\">How do I declare a grant?</a></li>\n<li data-list-item-id=\"edfa1a00c07a70449ebe34c25dec818fe\"><a href=\"https://support.remote.com/hc/en-us/articles/35671968187149-How-can-my-employees-see-their-equity-information\">How can my team access their equity information?</a></li>\n<li data-list-item-id=\"edaaf9eb107949f79894c24e3b984da30\"><a href=\"https://support.remote.com/hc/en-us/articles/35546454220301-What-happens-if-I-already-declared-equity-before-using-Remote-Equity-Essentials\">What happens if I already declared equity before using Remote Equity?</a></li>\n</ul><h4 id=\"h_01K0YQSYJV9EH2AQ9HWYS1826S\"><span class=\"wysiwyg-underline\">Frequently Asked Questions (FAQs)</span></h4><p><strong>Who needs to use Remote Equity?</strong></p><p>Any Remote customer granting equity to a team member hired through Remote’s EOR must use Remote Equity to meet local compliance requirements.</p><p><strong>Why can’t we just use our own equity tool?</strong></p><p>Traditional equity tools track grants and vesting, but they don't file taxes, withhold contributions, or report income to local authorities. Remote, as the legal employer, is responsible for these actions. Remote Equity ensures those obligations are covered.</p><p><strong>What happens if we don’t use it?</strong></p><p>If Remote doesn’t receive timely and accurate equity data, required filings may be missed. This can result in compliance risks, unexpected tax liabilities, and issues for both your company and your team members.</p><p><strong>How much does Remote Equity cost?</strong></p><p>Remote Equity costs 39 USD per month for each EOR team member with equity. <a href=\"https://support.remote.com/hc/en-us/articles/35546441948685-How-much-does-Remote-Equity-Essentials-cost\">Learn more</a>.</p><p>For comprehensive information, visit the <a href=\"https://support.remote.com/hc/en-us/categories/45788665954189-Remote-Equity\" tabindex=\"0\" data-token-index=\"1\" rel=\"noopener noreferrer\">Remote Equity hub</a>.</p>",
+            "error": false,
+            "id": 38303424407821,
+            "title": "Welcome to Remote Equity: Global equity, without the compliance headaches"
+          }
+        }
+      }
+    },
+    "ergonomic_chair_ack": {
+      "const": "acknowledged",
+      "description": "In Mexico, labor law requires employers to reimburse employees for necessary tools and equipment used to perform their job remotely, including an ergonomic chair.",
+      "title": "I understand that I am responsible for reimbursing the employee, up to 3,000 MXN, for the cost of an ergonomic chair if they are working remotely",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more here",
+            "content": "<p>According to the new law, employers are required to reimburse new employees <strong>up to 3000 MXN</strong> for the purchase of an ergonomic chair.</p>\n<p>In Remote, this reimbursement will be included in the team members' payroll once the <a href=\"https://support.remote.com/hc/en-us/articles/4406932488461-How-do-I-review-employees-expenses#01GZECRVY15FTA4ZNTWYQ18CSN\">expense is approved by our customers</a>. Existing team members who have not yet received this benefit are also eligible for the ergonomic chair expense reimbursement.<!-- notionvc: 7ecc1bdd-d11f-4cc2-a6fe-0cb37987e61a --></p>",
+            "error": false,
+            "id": 24318672940045,
+            "title": "What is the cost of the ergonomic chair support in Mexico and how does it work?"
+          }
+        }
+      }
+    },
+    "experience_level": {
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employees overall experience).",
+      "oneOf": [
+        {
+          "const": "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "description": "Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "title": "Level 2 - Entry Level"
+        },
+        {
+          "const": "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+          "description": "Employees who perform independently tasks and/or with coordination and control functions",
+          "title": "Level 3 - Associate"
+        },
+        {
+          "const": "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "description": "Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "title": "Level 4 - Mid-Senior level"
+        },
+        {
+          "const": "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "description": "Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "title": "Level 5 - Director"
+        },
+        {
+          "const": "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "description": "An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "title": "Level 6 - Executive"
+        }
+      ],
+      "title": "Experience level",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "extreme_salary_acknowledgement": {
+      "const": "acknowledged",
+      "title": "",
+      "type": "string",
+      "x-jsf-logic-computedAttrs": {
+        "title": "{{extreme_salary_acknowledgement_title}}"
+      },
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "extreme_salary_warning": {
+      "title": "",
+      "type": "null",
+      "x-jsf-presentation": {
+        "inputType": "hidden",
+        "meta": {
+          "ignoreValue": true
+        },
+        "statement": {
+          "description": "The entered salary is equivalent to USD 1,000,000 or more. Please double check and confirm this amount is correct.",
+          "inputType": "statement",
+          "severity": "warning"
+        }
+      }
+    },
+    "has_bonus": {
+      "description": "These can include things like performance-related bonuses.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer other bonuses?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_commissions": {
+      "description": "You can outline your policy and pay commission to the employee on the platform. However, commission will not appear in the employment agreement. Please send full policy details directly to the employee.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer commission?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_probation_period": {
+      "description": "We recommend selecting Yes. In the unfortunate event of a necessary termination, probation periods make the process much easier.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Include a probation period?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about probation period",
+            "content": "<p>A probationary period is a set time for an employer to assess a new employee's suitability for the role. It allows the employer to evaluate the employee's capability, skills, performance, attendance, and conduct.</p>\n<p>Using a probationary period can make it simpler to end employment and notice periods are often shorter or don’t apply at all. After the probationary period ends, it is often more difficult and expensive to terminate an employee.</p>\n<p>Please note that if a probationary period is not included and you later receive unsatisfactory background check results, Remote cannot unilaterally terminate the employee’s employment.</p>\n<p>Keep in mind that a probationary period may not be valid if the employee has worked for your company before.</p>\n<p class=\"guide-markup\" style=\"box-sizing: inherit; font-weight: 400; margin: 0.5em 0px 0px; padding: 0px; color: #2f3941; font-family: -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 15px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\"><span class=\"guide-markup notion-enable-hover\" style=\"box-sizing: inherit; font-weight: 600;\" data-token-index=\"2\"><strong class=\"guide-markup\" style=\"box-sizing: border-box; font-weight: bold; color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">See also:</strong><span class=\"guide-markup\" style=\"box-sizing: inherit; font-weight: 400; color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;\"> </span><a class=\"guide-markup\" style=\"box-sizing: border-box; font-weight: 400; border-radius: 4px; color: #0161ff; outline: transparent solid 2px; outline-offset: 1px; transition: outline-color 0.1s ease-in-out, color 0.25s ease-in-out; text-decoration: none; background-color: #ffffff; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal;\" href=\"https://support.remote.com/hc/en-us/articles/34566185236237-What-are-Remote-s-Background-Check-Services\" target=\"_blank\" rel=\"noopener noreferrer\">What are Remote's Background Check Services?</a></span></p>",
+            "error": false,
+            "id": 9013034328205,
+            "title": "Why is it important to include a probationary period in an employee's contract?"
+          }
+        },
+        "statement": {
+          "description": "If you need Remote to terminate an employee (whether inside or outside of probation) in Mexico because of your company’s economic or organizational circumstances, a mutual termination agreement must be entered into with the employee.\n\nIt is common for employees in Mexico to bring claims and employers to pay settlements or to opt for termination by mutual agreement.\n\nDuring probation, you do still have some more flexibility on termination; for example, when the termination reason is the employee’s performance. For this reason, we still recommend setting the probation period to the maximum allowed.",
+          "severity": "info",
+          "title": "Information on termination - probation"
+        }
+      }
+    },
+    "has_signing_bonus": {
+      "description": "This is a one-time payment the employee receives when they join your team.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer a signing bonus?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "is_managerial_administrative_specialized_role": {
+      "description": "These positions typically involve decision-making authority, leadership responsibilities, or advanced professional or technical expertise.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "title": "N/A"
+        }
+      ],
+      "title": "Does this role qualify as a managerial, administrative, or specialized technical position?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>Under <strong>Article 39-A of the Federal Labor Law (Ley Federal del Trabajo)</strong>, the standard probation period in Mexico is<strong> 30 days</strong> for most employees.</p><p>However, for certain positions such as <strong>managerial</strong>, <strong>administrative</strong>, or <strong>specialized technical/professional</strong> roles — the probation period may extend <strong>to 90 or 180 days</strong>.</p><p>Employers should determine eligibility based on the <strong>nature of the role and its responsibilities</strong>, not only on the job title.</p><p> </p><h2 id=\"h_01K80A44VRDK5YV342KY765HZ2\">⚠️ Key Points</h2><ul>\n<li data-list-item-id=\"e14fbbbe1917fb93c958ff17b01a3151d\">Probation period is meant to assess <strong>the performance of the employee.</strong>\n</li>\n<li data-list-item-id=\"e4c52ff0f42bbc16aa87c9faabe1ed8aa\">The <strong>default probation period</strong> is <strong>30 days</strong>.</li>\n<li data-list-item-id=\"e6f6e8a2b2e20884dd911b935dba9a233\">The <strong>90 or 180-day period</strong> applies <strong>only</strong> to managerial, administrative, or specialized technical/professional roles.</li>\n<li data-list-item-id=\"e11daec06fe1af84e6e13b08f0b67f08d\">\n<strong>Job responsibilities</strong>, not job titles, determine eligibility.</li>\n<li data-list-item-id=\"eab32b80c70f3e6bbd7169890d1b1d033\">\n<strong>Misclassified probation periods may be deemed invalid</strong> — resulting in full termination costs.</li>\n<li data-list-item-id=\"e9936dcc067dfc844debcc8e483d6997f\">Once established, the probation period <strong>cannot be changed or extended (but may be deemed invalid).</strong>\n</li>\n<li data-list-item-id=\"ef43577c3962b26fff1d1e254fab3b5e1\">Termination before end date and without performance-related evidence is <strong>not recommended</strong>.</li>\n</ul><h2 id=\"h_01K8MQ4K5MJ5B8XA0M3BB6FQ3F\">⚠️ Risks of Extended Probation Periods</h2><p>If a probation period longer than 30 days is established for a role that does not meet the legal criteria for managerial, administrative, or specialized technical positions, <strong>labor authorities may declare the probation period invalid</strong>.</p><p>If the extended probation period is deemed <strong>invalid</strong>, the employment relationship is treated as <strong>standard employment from the 31st day of employment onwards</strong>, meaning:</p><ul>\n<li data-list-item-id=\"eaaefc90d1ff1f10ee609297daa90a397\">\n<strong>Termination costs apply in full</strong> — The employer must pay severance and other termination entitlements as if the employee had been working without probation.</li>\n<li data-list-item-id=\"eac32a56f6cc39c8c1c087abd7f5a5ac0\">\n<strong>Standard Mexico termination without cause costs include</strong>:<ul>\n<li data-list-item-id=\"e76a049596b01d801ef22864eb4965332\">3 months' salary</li>\n<li data-list-item-id=\"e920b33038a3e8801846129ee63d3ecad\">20 days' salary per year of service</li>\n<li data-list-item-id=\"edffd36eaeaf964f43cedbfba62430648\">Proportional vacation, vacation premium, and Christmas bonus (aguinaldo)</li>\n<li data-list-item-id=\"e14b1155708c49c94f41906a9de26a0d6\">Any other applicable benefits</li>\n</ul>\n</li>\n</ul><p>These costs can significantly exceed what would have been owed during a valid probation period, making it critical to assess role eligibility carefully before selecting an extended probation term.</p><p>Beyond the risks outlined above, since probation periods are designed to assess employee performance within a set timeframe (30, 90, or 180 days), any termination without performance evidence and/or before the end date can also <strong>be challenged</strong>. <a href=\"https://support.remote.com/hc/en-us/articles/40733895678221-Best-Practices-for-Termination-during-Probationary-Period-in-Mexico\">Learn more.</a></p><h3 id=\"h_01K80A44VFAB4KB4KZG0R7YHX9\">⚖️ Legal Background</h3><p>According to <strong>Article 39-A of the Federal Labor Law</strong>:</p><blockquote>\n<p>“In employment relationships for an indefinite period or when they exceed one hundred eighty days, a trial period may be established, which may not exceed thirty days, with the sole purpose of verifying that the worker meets the requirements and knowledge necessary to develop the work requested.</p>\n<p>The trial period referred to in the previous paragraph may extend up to one hundred and eighty days, only when it comes to workers for management, managerial positions and other people who perform management or administrative functions in the company or establishment of a general or to perform specialized technical or professional tasks.”</p>\n</blockquote><p>Once a probation period is agreed and included in the employment agreement, it <strong>cannot be modified or extended</strong>—even with the employee’s consent.</p><p>Labor authorities treat probationary terms as <strong>strictly regulated and non-waivable</strong>.</p><h2 id=\"h_01K80A44VG37BGYWER4P3YSMEY\">🧭 Categories Eligible for 90 or 180-Day Probation Period</h2><p>The determination of whether a role qualifies for a longer probation period depends on the <strong>responsibilities and skill requirements</strong> of the position.</p><p>Whether 90 or 180 days, the eligibility criteria remain the same—the difference is simply <strong>how long the employer has to evaluate</strong> the employee's performance and fit for the role.</p><p>Since best practice is to make termination decisions by the <strong>end of the probation period</strong>, a 90-day probation provides a shorter evaluation window, allowing the employer to <strong>act sooner</strong> if the employee fails to meet performance expectations.</p><p>Below are the key categories defined under Article 39-A:</p><h4 id=\"h_01K80A44VHP8QY7VZK8YV3972N\">1. <strong>Managerial / Executive Roles</strong>\n</h4><p>These are positions that involve <strong>overseeing and directing operations</strong> within the company, making <strong>strategic decisions</strong>, and <strong>managing teams or departments</strong>.</p><p><strong>Examples:</strong></p><ul>\n<li data-list-item-id=\"e4ff61627cafa4d73f83ad7cba67a0c7f\">Country Manager</li>\n<li data-list-item-id=\"e0171275e8c352feaf9ef09772a1ba556\">Operations Manager</li>\n<li data-list-item-id=\"eab09c7599102a584881db3f1eee0fbb4\">Head of Department</li>\n<li data-list-item-id=\"ef433747f47442bdd99a5d83b5aa3d021\">Director</li>\n<li data-list-item-id=\"eb3f92b10f136d8d785fc6ea8b48c46b6\">Team Lead</li>\n</ul><p><strong>Indicators:</strong></p><ul>\n<li data-list-item-id=\"ec37713fb1163a610d32e4226209865df\">Authority to make decisions impacting company direction</li>\n<li data-list-item-id=\"e686cadb64d6e6fc15f0f9e52efc659e7\">Responsibility for managing departments or budgets</li>\n<li data-list-item-id=\"e490a0499446ee29838eab954ffe82ed9\">Involvement in strategic planning and execution</li>\n<li data-list-item-id=\"ee01192f1c49d1e3a3b4192640992c9f5\">Accountability for achieving company goals</li>\n</ul><h4 id=\"h_01K80A44VKMWG2J42VEYTVG4BJ\">2. <strong>Administrative Roles</strong>\n</h4><p>Administrative roles include employees responsible for <strong>planning, coordinating, and overseeing administrative processes</strong> to ensure efficient company operations.</p><p>They are distinct from support or clerical functions.</p><p><strong>Examples:</strong></p><ul>\n<li data-list-item-id=\"e0f79ce02698772c436be4e7d19d5be35\">HR Business Partner</li>\n<li data-list-item-id=\"ea33e08c200980188d64ffbd947f9e052\">Payroll Coordinator</li>\n<li data-list-item-id=\"e31b9f65d0c0659f3034db67a3d4931de\">Finance Controller</li>\n<li data-list-item-id=\"e6315c9b3dcc5136de3376a67184e672b\">Office Manager</li>\n</ul><p>⚠️ <strong>Note:</strong> Entry-level or support roles such as <em>Administrative Assistant</em> or <em>Receptionist</em> <strong>do not qualify</strong> for a 90 or 180-day probation period.</p><p>These are considered <strong>operational</strong> positions, not administrative in the legal sense.</p><p><strong>Indicators:</strong></p><ul>\n<li data-list-item-id=\"e5d67ef44d7b22fb2bd443b0c19dae448\">Coordination of administrative processes and workflows</li>\n<li data-list-item-id=\"efe3329172394fb0966f4911aabe66051\">Oversight of office operations or staff</li>\n<li data-list-item-id=\"e8cfce2eb28a6ddb6b77e2c9ff7f54ff8\">Support to executive management through planning and organization</li>\n</ul><h4 id=\"h_01K80A44VNSTCKWHR4MGDFZ1XA\">3. <strong>Technical / Specialized Roles</strong>\n</h4><p>These are roles that require <strong>specific technical expertise</strong>, <strong>professional qualifications</strong>, or <strong>specialized training</strong> that make it necessary to have a longer evaluation period.</p><p><strong>Examples:</strong></p><ul>\n<li data-list-item-id=\"e46e5c28d4796172a49156abe10a04099\">Software Engineer</li>\n<li data-list-item-id=\"ee5628de6ac9c277c147300db9eebf6aa\">Senior Data Analyst</li>\n<li data-list-item-id=\"e6bebc292b216402506e5328936dadc19\">Legal Counsel</li>\n<li data-list-item-id=\"e8f5dbc8a34954d2812d89b22955d676c\">Electrical Engineer</li>\n<li data-list-item-id=\"e65a58aa7b7a93dd9ae0848898aabb244\">Medical Technician</li>\n</ul><p><strong>Indicators:</strong></p><ul>\n<li data-list-item-id=\"ebc481ed011dba48df5f5b21f37a8c9be\">Requires advanced education, certification, or specialized training</li>\n<li data-list-item-id=\"e030da789aef2ab1d1c513facce6b5412\">Involves complex or technical responsibilities critical to company operations</li>\n<li data-list-item-id=\"e1ec905454028a174794726bd86d81afc\">Ongoing professional development or technical recertification needed</li>\n</ul><h2 id=\"h_01K80A44VPW0J1WWD4Y15J5YVQ\">🔍 How to Determine Eligibility</h2><p>To assess if a role qualifies for a 90 or 180-day probation period:</p><ol>\n<li data-list-item-id=\"e8f2c45f1d242c1e4246526b9292d454e\">\n<strong>Review the job description</strong> — confirm whether the duties align with managerial, administrative, or specialized criteria.</li>\n<li data-list-item-id=\"eaec3a0772968f4b23cc7e4cf85c515db\">\n<strong>Evaluate the required qualifications</strong> — advanced education, certifications, or technical skills often indicate eligibility.</li>\n<li data-list-item-id=\"ef585542385a4e0863994b1a2dd8632bf\">\n<strong>Consider the impact of the role</strong> — roles that influence strategy, performance, or company direction are generally eligible.</li>\n</ol><h4 id=\"h_01K80A44VQKBTDRCJ4XRDX0165\">🧾 Example</h4><p><strong>Position:</strong> IT Manager</p><p><strong>Description:</strong> Oversees IT operations, manages a team of specialists, implements technology strategy, ensures cybersecurity compliance.</p><p><strong>Qualifications:</strong> Degree in IT or related field, management experience, relevant technical certifications.</p><p><strong>Impact:</strong> Direct influence on company’s technology operations and infrastructure.</p><p>✅ <strong>Conclusion:</strong> This position qualifies as both a <span data-token-index=\"1\"><strong>managerial</strong></span><strong> </strong>and <span data-token-index=\"3\"><strong>specialized technical</strong></span><strong> </strong>role, and is therefore eligible for a <span data-token-index=\"5\">90 or</span> <span data-token-index=\"7\">180-day probation period</span>.</p><p> </p><h2 id=\"h_01K8Q33TJPQ1VK5GTKQRY9DH1Q\"> </h2><h2 id=\"h_01K8Q33TJQ6Q8DH51FFXP2Z1DK\"> </h2>",
+            "error": false,
+            "id": 40459999373453,
+            "title": "Identifying Roles Eligible for 90 or 180-Day Probation Period (Mexico)"
+          }
+        }
+      }
+    },
+    "part_time_salary_confirmation": {
+      "const": "acknowledged",
+      "description": "We'll include the salary in the employment agreement, so please double-check that it's correct.",
+      "title": "I confirm that this amount is the full annual salary for this part-time employee.",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "payout_currency_code": {
+      "const": "MXN",
+      "default": "MXN",
+      "description": "The currency the employee will be paid in.",
+      "title": "Payout currency",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "hidden"
+      }
+    },
+    "probation_length_ack": {
+      "const": "acknowledged",
+      "title": "I acknowledge that a probation period of 90 or 180 days may be invalid and I accept any associated risks.",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>Under <strong>Article 39-A of the Federal Labor Law (Ley Federal del Trabajo)</strong>, the standard probation period in Mexico is<strong> 30 days</strong> for most employees.</p><p>However, for certain positions such as <strong>managerial</strong>, <strong>administrative</strong>, or <strong>specialized technical/professional</strong> roles — the probation period may extend <strong>to 90 or 180 days</strong>.</p><p>Employers should determine eligibility based on the <strong>nature of the role and its responsibilities</strong>, not only on the job title.</p><p> </p><h2 id=\"h_01K80A44VRDK5YV342KY765HZ2\">⚠️ Key Points</h2><ul>\n<li data-list-item-id=\"e14fbbbe1917fb93c958ff17b01a3151d\">Probation period is meant to assess <strong>the performance of the employee.</strong>\n</li>\n<li data-list-item-id=\"e4c52ff0f42bbc16aa87c9faabe1ed8aa\">The <strong>default probation period</strong> is <strong>30 days</strong>.</li>\n<li data-list-item-id=\"e6f6e8a2b2e20884dd911b935dba9a233\">The <strong>90 or 180-day period</strong> applies <strong>only</strong> to managerial, administrative, or specialized technical/professional roles.</li>\n<li data-list-item-id=\"e11daec06fe1af84e6e13b08f0b67f08d\">\n<strong>Job responsibilities</strong>, not job titles, determine eligibility.</li>\n<li data-list-item-id=\"eab32b80c70f3e6bbd7169890d1b1d033\">\n<strong>Misclassified probation periods may be deemed invalid</strong> — resulting in full termination costs.</li>\n<li data-list-item-id=\"e9936dcc067dfc844debcc8e483d6997f\">Once established, the probation period <strong>cannot be changed or extended (but may be deemed invalid).</strong>\n</li>\n<li data-list-item-id=\"ef43577c3962b26fff1d1e254fab3b5e1\">Termination before end date and without performance-related evidence is <strong>not recommended</strong>.</li>\n</ul><h2 id=\"h_01K8MQ4K5MJ5B8XA0M3BB6FQ3F\">⚠️ Risks of Extended Probation Periods</h2><p>If a probation period longer than 30 days is established for a role that does not meet the legal criteria for managerial, administrative, or specialized technical positions, <strong>labor authorities may declare the probation period invalid</strong>.</p><p>If the extended probation period is deemed <strong>invalid</strong>, the employment relationship is treated as <strong>standard employment from the 31st day of employment onwards</strong>, meaning:</p><ul>\n<li data-list-item-id=\"eaaefc90d1ff1f10ee609297daa90a397\">\n<strong>Termination costs apply in full</strong> — The employer must pay severance and other termination entitlements as if the employee had been working without probation.</li>\n<li data-list-item-id=\"eac32a56f6cc39c8c1c087abd7f5a5ac0\">\n<strong>Standard Mexico termination without cause costs include</strong>:<ul>\n<li data-list-item-id=\"e76a049596b01d801ef22864eb4965332\">3 months' salary</li>\n<li data-list-item-id=\"e920b33038a3e8801846129ee63d3ecad\">20 days' salary per year of service</li>\n<li data-list-item-id=\"edffd36eaeaf964f43cedbfba62430648\">Proportional vacation, vacation premium, and Christmas bonus (aguinaldo)</li>\n<li data-list-item-id=\"e14b1155708c49c94f41906a9de26a0d6\">Any other applicable benefits</li>\n</ul>\n</li>\n</ul><p>These costs can significantly exceed what would have been owed during a valid probation period, making it critical to assess role eligibility carefully before selecting an extended probation term.</p><p>Beyond the risks outlined above, since probation periods are designed to assess employee performance within a set timeframe (30, 90, or 180 days), any termination without performance evidence and/or before the end date can also <strong>be challenged</strong>. <a href=\"https://support.remote.com/hc/en-us/articles/40733895678221-Best-Practices-for-Termination-during-Probationary-Period-in-Mexico\">Learn more.</a></p><h3 id=\"h_01K80A44VFAB4KB4KZG0R7YHX9\">⚖️ Legal Background</h3><p>According to <strong>Article 39-A of the Federal Labor Law</strong>:</p><blockquote>\n<p>“In employment relationships for an indefinite period or when they exceed one hundred eighty days, a trial period may be established, which may not exceed thirty days, with the sole purpose of verifying that the worker meets the requirements and knowledge necessary to develop the work requested.</p>\n<p>The trial period referred to in the previous paragraph may extend up to one hundred and eighty days, only when it comes to workers for management, managerial positions and other people who perform management or administrative functions in the company or establishment of a general or to perform specialized technical or professional tasks.”</p>\n</blockquote><p>Once a probation period is agreed and included in the employment agreement, it <strong>cannot be modified or extended</strong>—even with the employee’s consent.</p><p>Labor authorities treat probationary terms as <strong>strictly regulated and non-waivable</strong>.</p><h2 id=\"h_01K80A44VG37BGYWER4P3YSMEY\">🧭 Categories Eligible for 90 or 180-Day Probation Period</h2><p>The determination of whether a role qualifies for a longer probation period depends on the <strong>responsibilities and skill requirements</strong> of the position.</p><p>Whether 90 or 180 days, the eligibility criteria remain the same—the difference is simply <strong>how long the employer has to evaluate</strong> the employee's performance and fit for the role.</p><p>Since best practice is to make termination decisions by the <strong>end of the probation period</strong>, a 90-day probation provides a shorter evaluation window, allowing the employer to <strong>act sooner</strong> if the employee fails to meet performance expectations.</p><p>Below are the key categories defined under Article 39-A:</p><h4 id=\"h_01K80A44VHP8QY7VZK8YV3972N\">1. <strong>Managerial / Executive Roles</strong>\n</h4><p>These are positions that involve <strong>overseeing and directing operations</strong> within the company, making <strong>strategic decisions</strong>, and <strong>managing teams or departments</strong>.</p><p><strong>Examples:</strong></p><ul>\n<li data-list-item-id=\"e4ff61627cafa4d73f83ad7cba67a0c7f\">Country Manager</li>\n<li data-list-item-id=\"e0171275e8c352feaf9ef09772a1ba556\">Operations Manager</li>\n<li data-list-item-id=\"eab09c7599102a584881db3f1eee0fbb4\">Head of Department</li>\n<li data-list-item-id=\"ef433747f47442bdd99a5d83b5aa3d021\">Director</li>\n<li data-list-item-id=\"eb3f92b10f136d8d785fc6ea8b48c46b6\">Team Lead</li>\n</ul><p><strong>Indicators:</strong></p><ul>\n<li data-list-item-id=\"ec37713fb1163a610d32e4226209865df\">Authority to make decisions impacting company direction</li>\n<li data-list-item-id=\"e686cadb64d6e6fc15f0f9e52efc659e7\">Responsibility for managing departments or budgets</li>\n<li data-list-item-id=\"e490a0499446ee29838eab954ffe82ed9\">Involvement in strategic planning and execution</li>\n<li data-list-item-id=\"ee01192f1c49d1e3a3b4192640992c9f5\">Accountability for achieving company goals</li>\n</ul><h4 id=\"h_01K80A44VKMWG2J42VEYTVG4BJ\">2. <strong>Administrative Roles</strong>\n</h4><p>Administrative roles include employees responsible for <strong>planning, coordinating, and overseeing administrative processes</strong> to ensure efficient company operations.</p><p>They are distinct from support or clerical functions.</p><p><strong>Examples:</strong></p><ul>\n<li data-list-item-id=\"e0f79ce02698772c436be4e7d19d5be35\">HR Business Partner</li>\n<li data-list-item-id=\"ea33e08c200980188d64ffbd947f9e052\">Payroll Coordinator</li>\n<li data-list-item-id=\"e31b9f65d0c0659f3034db67a3d4931de\">Finance Controller</li>\n<li data-list-item-id=\"e6315c9b3dcc5136de3376a67184e672b\">Office Manager</li>\n</ul><p>⚠️ <strong>Note:</strong> Entry-level or support roles such as <em>Administrative Assistant</em> or <em>Receptionist</em> <strong>do not qualify</strong> for a 90 or 180-day probation period.</p><p>These are considered <strong>operational</strong> positions, not administrative in the legal sense.</p><p><strong>Indicators:</strong></p><ul>\n<li data-list-item-id=\"e5d67ef44d7b22fb2bd443b0c19dae448\">Coordination of administrative processes and workflows</li>\n<li data-list-item-id=\"efe3329172394fb0966f4911aabe66051\">Oversight of office operations or staff</li>\n<li data-list-item-id=\"e8cfce2eb28a6ddb6b77e2c9ff7f54ff8\">Support to executive management through planning and organization</li>\n</ul><h4 id=\"h_01K80A44VNSTCKWHR4MGDFZ1XA\">3. <strong>Technical / Specialized Roles</strong>\n</h4><p>These are roles that require <strong>specific technical expertise</strong>, <strong>professional qualifications</strong>, or <strong>specialized training</strong> that make it necessary to have a longer evaluation period.</p><p><strong>Examples:</strong></p><ul>\n<li data-list-item-id=\"e46e5c28d4796172a49156abe10a04099\">Software Engineer</li>\n<li data-list-item-id=\"ee5628de6ac9c277c147300db9eebf6aa\">Senior Data Analyst</li>\n<li data-list-item-id=\"e6bebc292b216402506e5328936dadc19\">Legal Counsel</li>\n<li data-list-item-id=\"e8f5dbc8a34954d2812d89b22955d676c\">Electrical Engineer</li>\n<li data-list-item-id=\"e65a58aa7b7a93dd9ae0848898aabb244\">Medical Technician</li>\n</ul><p><strong>Indicators:</strong></p><ul>\n<li data-list-item-id=\"ebc481ed011dba48df5f5b21f37a8c9be\">Requires advanced education, certification, or specialized training</li>\n<li data-list-item-id=\"e030da789aef2ab1d1c513facce6b5412\">Involves complex or technical responsibilities critical to company operations</li>\n<li data-list-item-id=\"e1ec905454028a174794726bd86d81afc\">Ongoing professional development or technical recertification needed</li>\n</ul><h2 id=\"h_01K80A44VPW0J1WWD4Y15J5YVQ\">🔍 How to Determine Eligibility</h2><p>To assess if a role qualifies for a 90 or 180-day probation period:</p><ol>\n<li data-list-item-id=\"e8f2c45f1d242c1e4246526b9292d454e\">\n<strong>Review the job description</strong> — confirm whether the duties align with managerial, administrative, or specialized criteria.</li>\n<li data-list-item-id=\"eaec3a0772968f4b23cc7e4cf85c515db\">\n<strong>Evaluate the required qualifications</strong> — advanced education, certifications, or technical skills often indicate eligibility.</li>\n<li data-list-item-id=\"ef585542385a4e0863994b1a2dd8632bf\">\n<strong>Consider the impact of the role</strong> — roles that influence strategy, performance, or company direction are generally eligible.</li>\n</ol><h4 id=\"h_01K80A44VQKBTDRCJ4XRDX0165\">🧾 Example</h4><p><strong>Position:</strong> IT Manager</p><p><strong>Description:</strong> Oversees IT operations, manages a team of specialists, implements technology strategy, ensures cybersecurity compliance.</p><p><strong>Qualifications:</strong> Degree in IT or related field, management experience, relevant technical certifications.</p><p><strong>Impact:</strong> Direct influence on company’s technology operations and infrastructure.</p><p>✅ <strong>Conclusion:</strong> This position qualifies as both a <span data-token-index=\"1\"><strong>managerial</strong></span><strong> </strong>and <span data-token-index=\"3\"><strong>specialized technical</strong></span><strong> </strong>role, and is therefore eligible for a <span data-token-index=\"5\">90 or</span> <span data-token-index=\"7\">180-day probation period</span>.</p><p> </p><h2 id=\"h_01K8Q33TJPQ1VK5GTKQRY9DH1Q\"> </h2><h2 id=\"h_01K8Q33TJQ6Q8DH51FFXP2Z1DK\"> </h2>",
+            "error": false,
+            "id": 40459999373453,
+            "title": "Identifying Roles Eligible for 90 or 180-Day Probation Period (Mexico)"
+          }
+        }
+      }
+    },
+    "probation_length_days": {
+      "description": "In Mexico, the standard probation period is 30 days. For managerial, administrative, or specialized technical roles, a probation period of 90 or 180 days may be used, but can be subject to challenge by the employee and possibly deemed invalid.<br><br>We recommend making termination decisions at the end of the probation period and only where supported by documented performance evidence.",
+      "title": "Probation period",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "select",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>Terminating a team member during their probationary period in Mexico requires careful attention to labor laws to protect your company from potential disputes or legal claims. This guide outlines best practices, documentation requirements, and practical tools to help you manage probationary period evaluations and terminations effectively.</p><h3 id=\"h_01K8WNGW8A06Q6D9EA2RHQA8PX\"><strong>Best Practices for Terminations During the Probationary Period:</strong></h3><ol>\n<li class=\"ck-list-marker-bold\" data-list-item-id=\"e0c44cbea567e69b66f4f9f5f01e15342\">\n<strong>Document the Probationary Period Terms:</strong><ul>\n<li data-list-item-id=\"e64db70d012ff396c83419a4df7b95d30\">Ensure the probationary period is clearly stated in the employment contract, with specific duration (e.g., 30 days for general team members, or 90 or 180 days for managerial or specialized roles, per the Federal Labor Law as provided <a href=\"https://support.remote.com/hc/en-us/articles/40459999373453-Identifying-Roles-Eligible-for-up-to-180-Day-Probation-Period-Mexico\">here</a>).</li>\n<li data-list-item-id=\"e61208ee6d7ec069b0f7cff44d6511c8e\">Include the specific <strong>objectives and evaluation criteria</strong> for the probationary period in the employment contract or as a separate attachment.</li>\n</ul>\n</li>\n<li class=\"ck-list-marker-bold\" data-list-item-id=\"e389e0746cdebf5f17908c42bf1ede027\">\n<strong>Performance Monitoring:</strong><ul>\n<li data-list-item-id=\"e8c2645df1b1c66e456bc0b382edd63a1\">Monitor and evaluate the team member's performance against predefined criteria throughout the probationary period.</li>\n<li data-list-item-id=\"e6e462db52d87c8e02c9a332208a80e7d\">Document all evaluations, including strengths, areas for improvement, and missed expectations.</li>\n</ul>\n</li>\n<li class=\"ck-list-marker-bold\" data-list-item-id=\"e04b5edc98e261aed6a31aac5bec72efe\">\n<strong>Regular Feedback:</strong><ul>\n<li data-list-item-id=\"e9be46eaa2f8d1f856f7a1e762a358888\">Provide consistent and documented feedback to the team member during the probationary period. This can be through formal meetings or email communications.</li>\n<li data-list-item-id=\"e62118bdcbce0844541ba44ef09bcee9e\">Offer the team member opportunities to improve, if necessary, and record these efforts.</li>\n</ul>\n</li>\n<li class=\"ck-list-marker-bold\" data-list-item-id=\"ebcca3a0f59d22e64d15b5e827a521454\">\n<strong>Timely Decision:</strong><ul>\n<li data-list-item-id=\"e31bd549dc2b47b565ee4beb2323fdd7b\">Make the decision to terminate <strong>before the probationary period ends</strong> and ensure the team member receives written notice within the probationary period timeframe.</li>\n<li data-list-item-id=\"e77c39a265e30a819699338ea572dee28\">Ideally, this should occur <strong>near or by the end of the probationary period</strong> to allow sufficient time for performance evaluation while staying within the legal timeframe.</li>\n<li data-list-item-id=\"e973bc0fe53e0cbefd42eaa3e4586dab6\">Terminating too early may expose your company to challenges, as the team member could argue they were not given adequate opportunity to demonstrate their capabilities.</li>\n</ul>\n</li>\n<li class=\"ck-list-marker-bold\" data-list-item-id=\"e8386c87398d7dd1475d6c739fd084cd9\">\n<strong>Formal Notification:</strong><ul><li data-list-item-id=\"e149fa76d2db46d45171449f3ea0e78ef\">After being officially communicated by you, Remote will provide the team member with a written termination notice, clearly explaining that the termination is due to the unsuccessful completion of the probationary period.</li></ul>\n</li>\n</ol><h3 id=\"h_01K8WNGW8DRFXFC7V7SJM822QJ\"><strong>Key Details to Prove Unsuccessful Completion:</strong></h3><ol>\n<li class=\"ck-list-marker-bold\" data-list-item-id=\"e087c6d16dd33596702862d6659f63b39\">\n<strong>Objective Evidence:</strong><ul><li data-list-item-id=\"e60f8890da3baa610de73bccb2e45520d\">Provide written documentation of the team member's failure to meet specific job objectives, such as:<ul>\n<li data-list-item-id=\"e429cceb96724e84eb90085c41d6ddd5f\">Productivity or performance metrics.</li>\n<li data-list-item-id=\"ece4afaa93fde31cc13fcdc330ce14962\">Quality of work.</li>\n<li data-list-item-id=\"ef85c164fe955661f1e52576ebf82ae2f\">Punctuality or attendance.</li>\n<li data-list-item-id=\"e8845ed2e46eab321eacec1c64b1dc545\">Adherence to workplace policies.</li>\n</ul>\n</li></ul>\n</li>\n<li class=\"ck-list-marker-bold\" data-list-item-id=\"e68089c0c8429c7e8652e2cf0fc598589\">\n<strong>Evaluation Reports:</strong><ul>\n<li data-list-item-id=\"e3a5e46dc221aa6e3c97091c33f611c54\">Create and maintain performance evaluation reports, signed by the supervisor and the team member where possible.</li>\n<li data-list-item-id=\"e9f30617789e07a4370f7bf78a5022992\">Clearly outline the criteria used for evaluation and how the team member failed to meet them.</li>\n</ul>\n</li>\n<li class=\"ck-list-marker-bold\" data-list-item-id=\"e6512d24cffe4310487f42c0f3583cda8\">\n<strong>Training and Guidance Provided:</strong><ul><li data-list-item-id=\"e55ac646d66d355c96436890388a51451\">Document any training, mentoring, or additional resources provided to the team member during the probationary period.</li></ul>\n</li>\n<li class=\"ck-list-marker-bold\" data-list-item-id=\"e65ccfc225200e1701a1821d1f616c6fc\">\n<strong>Timelines and Comparisons:</strong><ul><li data-list-item-id=\"e1c8f384f1d346cfee8b18d7781183be5\">Compare the team member's performance against that of peers or benchmarks to provide context for the decision.</li></ul>\n</li>\n<li class=\"ck-list-marker-bold\" data-list-item-id=\"ea4f0e36c03700ad6b359803c3f3b2da6\">\n<strong>Team member Acknowledgment:</strong><ul><li data-list-item-id=\"e476d5061d076f103ea50e97738fa3c0d\">Ensure the team member has acknowledged (via signature or documented receipt) the probationary objectives and any feedback or warnings provided during the period.</li></ul>\n</li>\n</ol><h3 id=\"h_01K8WNGW8F08WBZJ6G27W2SJE2\"><strong>Suggestions for a Probationary Period Matrix or Goals:</strong></h3><ol>\n<li class=\"ck-list-marker-bold\" data-list-item-id=\"ec0e72760291a9ee9a535cf5eaf9bcd5e\">\n<strong>Key Performance Indicators (KPIs):</strong><ul><li data-list-item-id=\"ebae084fd28ef008c08afaf1ed2acfe35\">Define 3–5 measurable KPIs that align with the role's responsibilities. For example:<ul>\n<li data-list-item-id=\"e6706754309ad602182b5bdb2d2edb94c\">Sales roles: Revenue targets or number of new clients acquired.</li>\n<li data-list-item-id=\"e36bd309b46583b89ce949eebab6dda4c\">Administrative roles: Timely completion of assigned tasks or error rates.</li>\n<li data-list-item-id=\"e5f05aaaf03a5a7fafd33b2138b4062e0\">Managerial roles: Leadership effectiveness or project delivery timelines.</li>\n</ul>\n</li></ul>\n</li>\n<li class=\"ck-list-marker-bold\" data-list-item-id=\"eb972f9b70dacdaf55e6c0e4d46ba32a2\">\n<strong>Behavioral Expectations:</strong><ul><li data-list-item-id=\"e6a4e8a3ca59e9070800f3270a90e2c60\">Include qualitative goals, such as teamwork, communication skills, or adherence to company values.</li></ul>\n</li>\n<li class=\"ck-list-marker-bold\" data-list-item-id=\"e809dc76234a3152eeeb1b61d337abd2b\">\n<strong>Performance Ratings:</strong><ul><li data-list-item-id=\"ef79aff3ff6c75c5abc59cb2f16efcb93\">Use a rating system (e.g., 1–5 or unsatisfactory/satisfactory/exceeds expectations) for each criterion.</li></ul>\n</li>\n<li class=\"ck-list-marker-bold\" data-list-item-id=\"e763a7bea013ed8a4b7c2a3fb0728def2\">\n<strong>Review Schedule:</strong><ul><li data-list-item-id=\"e8827bc63ffb78e6e75fedfb7d0b1b06f\">Schedule evaluations at regular intervals (e.g., at the midpoint and end of the probationary period).</li></ul>\n</li>\n<li class=\"ck-list-marker-bold\" data-list-item-id=\"e4e85fe941912bb7d37de2996f28a52b2\">\n<strong>Action Plan:</strong><ul><li data-list-item-id=\"e1303f92b430c67607332367c81f9210a\">Develop an action plan with milestones for improvement if concerns arise during the probationary period.</li></ul>\n</li>\n</ol><h3 id=\"h_01K8WNGW8H4B84975NAZ49MZ25\"><strong>Conclusion:</strong></h3><p>The key to a lawful termination during the probationary period in Mexico is <strong>preparation, documentation, and adherence to contract terms</strong>. By focusing on clear goals, regular evaluations, and detailed evidence, you can ensure a smooth process and minimize the risk of disputes.</p>",
+            "error": false,
+            "id": 40733895678221,
+            "title": "Best Practices for Termination during Probationary Period in Mexico"
+          }
+        }
+      }
+    },
+    "probation_skills": {
+      "maxLength": 1000,
+      "title": "Skills required to pass probation",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "role_description": {
+      "description": "Please provide the full job description along with the top three actions and top three responsibilities that fall under this role if they are not already included in the job description.",
+      "maxLength": 5000,
+      "minLength": 100,
+      "title": "Role description",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "salary_overview": {
+      "const": "salary_overview",
+      "default": "salary_overview",
+      "description": "We will request a reserve payment for salaries at or above MX$3,235,348.49.",
+      "oneOf": [
+        {
+          "const": "salary_overview",
+          "title": "Salary overview"
+        }
+      ],
+      "title": "Salary overview",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about reserve payments",
+            "content": "<p>A <strong>reserve payment</strong> is an amount collected by Remote to help safeguard against potential large or unexpected severance costs if a team member's employment or engagement ends.</p><p>In many countries, labor laws require employers to pay <strong>statutory severance.</strong> Depending on the agreement, there may also be additional contractual obligations. Reserve payments help ensure funds are available to cover these costs if they arise.</p><p>Reserves are an <strong>industry-standard practice.</strong> Once a team member resigns or their agreement ends and all termination-related costs have been settled, any remaining reserve balance will be credited or refunded.</p><p>If a reserve payment has been made but <strong>onboarding is not completed</strong>, the full reserve will be credited or refunded. If your account has an overdue balance, Remote may first apply the reserve toward that outstanding amount.</p><blockquote><p><em><strong>Note:</strong> Reserve payments are required only for <strong>Employer of Record (EOR) employees and Contractor of Record (COR) contractors</strong>. They are <strong>not applicable</strong> to Global Payroll (direct employee) or users of our Standard Contractor Management and Contractor Management Plus platforms</em></p></blockquote><h3 id=\"h_01KWVSH6PWV0EARTP636WFMKX5\">Why would a reserve be required?</h3><p>Remote evaluates several factors when determining whether a reserve payment is needed. These may include:</p><ul>\n<li data-list-item-id=\"e4aa5c6c3b06eb3fd8ac290640949dd33\">The <strong>financial exposure</strong> associated with a client’s account</li>\n<li data-list-item-id=\"e6035e43ef90b77827c1d8c41be109918\">The <strong>countries</strong> in which team members are hired</li>\n<li data-list-item-id=\"e270d18c338f92bac8e35ed1f0c29ee6a\">A client’s decision to move from <strong>14-day to 30-day invoice payment terms</strong>\n</li>\n<li data-list-item-id=\"e87b2ad7dca754100d16a8d4ffabfa36a\">\n<strong>Non-standard employment contract terms</strong>, such as:<ul>\n<li data-list-item-id=\"ef35bb2e45f6361dee620f3d1949914de\">Extended notice periods</li>\n<li data-list-item-id=\"e9f05ff898e587ce3d34e80d6d7077b41\">Guaranteed severance clauses</li>\n<li data-list-item-id=\"e7cea63a7d2482bdb28eefffb6948c577\">Seniority recognition</li>\n<li data-list-item-id=\"e5b345cb8f5b041e3897b31092d6f0a06\">Non-compete, non-solicitation, or non-interference clauses</li>\n</ul>\n</li>\n<li data-list-item-id=\"e69603f26c1cfe44abe1b3b9afae0a6eb\">\n<strong>Consistent late invoice payments</strong> may also result in a reserve payment requirement</li>\n</ul><h3 id=\"h_01KWVSH6Q0PMTFJTCBARRMY0F8\">Why was I asked to pay an additional reserve?</h3><p>Some employment agreement terms increase the potential cost of ending an agreement. In these cases, additional reserves may be required.</p><p>Currently, reserves are automatically applied for:</p><ul>\n<li data-list-item-id=\"e016d051d1cae211fd2052be06528b0fb\">Extended notice periods</li>\n<li data-list-item-id=\"e121b7d92f73dc18a98058036faa4c132\">Seniority recognition</li>\n<li data-list-item-id=\"e1173074340c67d1669a2826f7ce530f4\">Non-compete, non-solicitation, or non-interference clauses</li>\n</ul><p>Other agreement terms may require additional review and could result in additional reserve requirements.</p><h4 id=\"h_01KWVSH6Q22W5N0Y71KPX7002S\">Extended notice period</h4><p>Labor laws in each country define a minimum notice period for ending an agreement. If the notice period in the agreement is longer than the statutory minimum, an additional reserve will be required for the difference.</p><p>Example: The minimum notice period is one month, but you request a three-month notice period. In this case, an additional two-month reserve would be required.</p><h4 id=\"h_01KWVSH6Q220ZTQW023A4TTNFK\">Seniority recognition</h4><p>A reserve will be automatically issued where two or more years of service is recognized.</p><p>As a general guideline:</p><ul>\n<li data-list-item-id=\"e325a4b96c617f8a6459e09da118a39d5\">\n<strong>2-4 years</strong> of recognized seniority, a reserve equal to <strong>1-month reserve</strong> is required</li>\n<li data-list-item-id=\"ec4f6d1f140f45060bca310852d94e885\">\n<strong>4-5 years</strong> of recognized seniority, a reserve equal to <strong>2-months</strong> is required</li>\n<li data-list-item-id=\"eeb5b68f0845b6a250366ba6e7449fe41\">\n<strong>More than 5 years</strong> of recognized seniority is subject to <strong>further review</strong>\n</li>\n</ul><p><strong>See also</strong>: <br><a href=\"https://remote.zendesk.com/hc/en-us/articles/12695836286861\">When is a reserve refunded?</a><br><a href=\"https://remote.zendesk.com/hc/en-us/articles/32649353517069\">What is reserve payment in Contractor of Record?</a></p>",
+            "error": false,
+            "id": 12695731865229,
+            "title": "What is a reserve payment?"
+          },
+          "ignoreValue": true
+        }
+      }
+    },
+    "signing_bonus_amount": {
+      "title": "Signing bonus amount",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "MXN",
+        "inputType": "money"
+      }
+    },
+    "work_address_is_home_address": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Same as their residential address"
+        },
+        {
+          "const": "no",
+          "title": "Different than their residential address"
+        }
+      ],
+      "title": "Employee's work address",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "work_hours_per_week": {
+      "description": "Please indicate the number of hours the employee will work per week.",
+      "title": "Work hours per week",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "work_schedule": {
+      "oneOf": [
+        {
+          "const": "full_time",
+          "title": "Full-time"
+        },
+        {
+          "const": "part_time",
+          "title": "Part-time"
+        }
+      ],
+      "title": "Type of employee",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    }
+  },
+  "required": [
+    "annual_gross_salary",
+    "compensation_currency_code",
+    "annual_bonus_ack",
+    "ergonomic_chair_ack",
+    "available_pto",
+    "available_pto_type",
+    "christmas_bonus",
+    "contract_duration_type",
+    "equity_compensation",
+    "experience_level",
+    "has_bonus",
+    "has_commissions",
+    "has_probation_period",
+    "has_signing_bonus",
+    "role_description",
+    "work_address_is_home_address",
+    "work_hours_per_week",
+    "work_schedule"
+  ],
+  "type": "object",
+  "x-jsf-logic": {
+    "computedValues": {
+      "annual_gross_salary_reserve_description": {
+        "rule": {
+          "if": [
+            {
+              ">=": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                {
+                  "if": [
+                    {
+                      "==": [
+                        {
+                          "var": "compensation_currency_code"
+                        },
+                        "MXN"
+                      ]
+                    },
+                    323534849,
+                    {
+                      "if": [
+                        {
+                          "==": [
+                            {
+                              "var": "compensation_currency_code"
+                            },
+                            "USD"
+                          ]
+                        },
+                        17500000,
+                        323534849
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "cat": [
+                "The minimum annual salary is calculated based on the country's applicable laws.",
+                " ",
+                "A reserve payment will be required, as described above."
+              ]
+            },
+            "The minimum annual salary is calculated based on the country's applicable laws."
+          ]
+        }
+      },
+      "extreme_salary_acknowledgement_title": {
+        "rule": {
+          "cat": [
+            "I have reviewed and verified the annual salary of ",
+            {
+              "if": [
+                {
+                  "==": [
+                    {
+                      "var": "compensation_currency_code"
+                    },
+                    "MXN"
+                  ]
+                },
+                "MXN",
+                {
+                  "if": [
+                    {
+                      "==": [
+                        {
+                          "var": "compensation_currency_code"
+                        },
+                        "USD"
+                      ]
+                    },
+                    "USD",
+                    ""
+                  ]
+                }
+              ]
+            },
+            " ",
+            {
+              "money_format": {
+                "/": [
+                  {
+                    "var": "annual_gross_salary"
+                  },
+                  100
+                ]
+              }
+            },
+            "."
+          ]
+        }
+      }
+    }
+  },
+  "x-jsf-order": [
+    "contract_duration",
+    "contract_duration_type",
+    "work_schedule",
+    "work_hours_per_week",
+    "is_managerial_administrative_specialized_role",
+    "has_probation_period",
+    "probation_length_days",
+    "probation_length_ack",
+    "probation_skills",
+    "available_pto_type",
+    "available_pto",
+    "role_description",
+    "experience_level",
+    "work_address_is_home_address",
+    "compensation_currency_code",
+    "salary_overview",
+    "annual_gross_salary",
+    "extreme_salary_warning",
+    "extreme_salary_acknowledgement",
+    "annual_bonus_ack",
+    "ergonomic_chair_ack",
+    "payout_currency_code",
+    "part_time_salary_confirmation",
+    "christmas_bonus",
+    "has_signing_bonus",
+    "signing_bonus_amount",
+    "has_bonus",
+    "bonus_amount",
+    "bonus_details",
+    "has_commissions",
+    "commissions_details",
+    "commissions_ack",
+    "equity_compensation"
+  ],
+  "x-rmt-flatFieldsets": {
+    "annual_gross_salary_fieldset": {
+      "propertiesByName": [
+        "compensation_currency_code",
+        "salary_overview",
+        "annual_gross_salary",
+        "extreme_salary_warning",
+        "extreme_salary_acknowledgement",
+        "annual_bonus_ack",
+        "christmas_bonus",
+        "ergonomic_chair_ack"
+      ],
+      "title": "Annual gross salary"
+    },
+    "probation_length_fieldset": {
+      "propertiesByName": [
+        "has_probation_period",
+        "is_managerial_administrative_specialized_role",
+        "probation_length_days",
+        "probation_skills",
+        "probation_length_ack"
+      ],
+      "title": "Probation period"
+    }
+  },
+  "x-rmt-meta": {
+    "jsfVersion": "1"
+  },
+  "x-rmt-schema-changelog": {
+    "changelog": "Adds the extreme high salary acknowledgement: a warning and a mandatory checkbox when the annual salary is at or above the USD 1,000,000 equivalent. Additive and flag-gated; no action required for existing contracts.",
+    "upgradePath": "No action required."
+  }
+}

@@ -1,0 +1,1499 @@
+{
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code"]
+      },
+      "then": {
+        "properties": {
+          "compensation_currency_code": {
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "Before you complete the employee's contract details, please confirm with them that they have a bank account in this currency. This has an additional cost of 50.00 USD per month.",
+                "severity": "info",
+                "title": "The employee will be paid in United States Dollar (USD)"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "work_hours_per_week": {
+            "maximum": 35,
+            "minimum": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "work_hours_per_week": {
+            "description": "In Colombia, full-time employees can work up to 42 hours per week, while 40 hours is standard for most office-based roles",
+            "maximum": 42,
+            "minimum": 35
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "contract_end_date": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "fixed_term"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "properties": {
+          "contract_end_date": {
+            "type": "string"
+          }
+        },
+        "required": ["contract_end_date"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "salary_overview": false
+        }
+      },
+      "if": {
+        "required": ["compensation_currency_code"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code"]
+      },
+      "then": {
+        "properties": {
+          "salary_overview": {
+            "description": "We will request a reserve payment for salaries at or above $175,000.00."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "COP"
+          }
+        },
+        "required": ["compensation_currency_code"]
+      },
+      "then": {
+        "properties": {
+          "salary_overview": {
+            "description": "We will request a reserve payment for salaries at or above COP 554,833,391."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "x-jsf-presentation": {
+              "currency": "USD"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "USD"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["compensation_currency_code", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 492040,
+            "x-jsf-errorMessage": {
+              "minimum": "In Colombia, full-time employees are entitled to a minimum annual salary of $4,920.40."
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "COP"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["compensation_currency_code", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 1560000000,
+            "x-jsf-errorMessage": {
+              "minimum": "In Colombia, full-time employees are entitled to a minimum annual salary of COP 15,600,000."
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "maximum": 7004183
+          },
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code", "annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "annual_bonus_ack": {
+            "type": ["string"]
+          },
+          "annual_gross_salary": {
+            "x-jsf-presentation": {
+              "statement": false
+            }
+          }
+        },
+        "required": ["annual_bonus_ack"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 7004184
+          },
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code", "annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "annual_bonus_ack": false,
+          "annual_gross_salary": {
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "As this employee’s monthly gross salary is over $5,836.82, they are not entitled to receive a 13th month salary (usually called prima or Christmas bonus).",
+                "severity": "info",
+                "title": "Employee not entitled to receive a 13th month salary"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "maximum": 22206599999
+          },
+          "compensation_currency_code": {
+            "const": "COP"
+          }
+        },
+        "required": ["compensation_currency_code", "annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "annual_bonus_ack": {
+            "type": ["string"]
+          },
+          "annual_gross_salary": {
+            "x-jsf-presentation": {
+              "statement": false
+            }
+          }
+        },
+        "required": ["annual_bonus_ack"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 22206600000
+          },
+          "compensation_currency_code": {
+            "const": "COP"
+          }
+        },
+        "required": ["compensation_currency_code", "annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "annual_bonus_ack": false,
+          "annual_gross_salary": {
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "As this employee’s monthly gross salary is over COP 18,505,500, they are not entitled to receive a 13th month salary (usually called prima or Christmas bonus).",
+                "severity": "info",
+                "title": "Employee not entitled to receive a 13th month salary"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "compensation_currency_code": {
+            "x-jsf-presentation": {
+              "statement": false
+            }
+          },
+          "employee_internet_costs": {
+            "description": "This cost is mandatory for each employee and the minimum internet and utility contribution cost is 100,000 COP per month.",
+            "minimum": 10000000,
+            "x-jsf-errorMessage": {
+              "minimum": "Must be at least 100,000 COP"
+            },
+            "x-jsf-presentation": {
+              "currency": "COP"
+            }
+          },
+          "employee_utility_costs": {
+            "description": "This cost is mandatory for each employee and the minimum internet and utility contribution cost is 100,000 COP per month.",
+            "minimum": 10000000,
+            "x-jsf-errorMessage": {
+              "minimum": "Must be at least 100,000 COP"
+            },
+            "x-jsf-presentation": {
+              "currency": "COP"
+            }
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code"]
+      },
+      "then": {
+        "properties": {
+          "bonus_amount": {
+            "x-jsf-presentation": {
+              "currency": "USD"
+            }
+          },
+          "employee_internet_costs": {
+            "description": "This cost is mandatory for each employee and the minimum internet and utility contribution cost is 25 USD per month.",
+            "minimum": 2500,
+            "x-jsf-errorMessage": {
+              "minimum": "Must be at least 25.00 USD"
+            },
+            "x-jsf-presentation": {
+              "currency": "USD"
+            }
+          },
+          "employee_utility_costs": {
+            "description": "This cost is mandatory for each employee and the minimum internet and utility contribution cost is 25 USD per month.",
+            "minimum": 2500,
+            "x-jsf-errorMessage": {
+              "minimum": "Must be at least 25.00 USD"
+            },
+            "x-jsf-presentation": {
+              "currency": "USD"
+            }
+          },
+          "signing_bonus_amount": {
+            "x-jsf-presentation": {
+              "currency": "USD"
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "part_time_salary_confirmation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "part_time_salary_confirmation": {
+            "type": "string"
+          }
+        },
+        "required": ["part_time_salary_confirmation"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "commissions_ack": false,
+          "commissions_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_commissions": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_commissions"]
+      },
+      "then": {
+        "properties": {
+          "commissions_ack": {
+            "type": ["string"]
+          },
+          "commissions_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["commissions_details", "commissions_ack"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "signing_bonus_amount": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_signing_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_signing_bonus"]
+      },
+      "then": {
+        "properties": {
+          "signing_bonus_amount": {
+            "type": ["integer"]
+          }
+        },
+        "required": ["signing_bonus_amount"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "bonus_amount": false,
+          "bonus_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_bonus"]
+      },
+      "then": {
+        "properties": {
+          "bonus_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["bonus_details"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "probation_length": {
+            "const": 0
+          }
+        },
+        "required": ["probation_length"]
+      },
+      "then": {
+        "properties": {
+          "probation_length": {
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "Waiving the probation period is possible but discouraged",
+                "severity": "warning"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "available_pto": {
+            "minimum": 15
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "available_pto_type": {
+            "const": "unlimited"
+          }
+        },
+        "required": ["available_pto_type"]
+      },
+      "required": ["available_pto"],
+      "then": {
+        "properties": {
+          "available_pto": {
+            "const": 15,
+            "default": 15,
+            "title": "Minimum paid time off days",
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "In Colombia, employees are entitled to a minimum of 15 paid time off days per year. Please note that Statutory, Bank Holidays and Public Holidays are excluded from the above.",
+                "title": "Minimum of <strong>15 days</strong> of paid time off."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 317047652262
+          },
+          "compensation_currency_code": {
+            "const": "COP"
+          }
+        },
+        "required": ["compensation_currency_code", "annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "extreme_salary_acknowledgement": {
+            "type": "string"
+          },
+          "extreme_salary_warning": {}
+        },
+        "required": ["extreme_salary_acknowledgement"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "maximum": 317047652261
+          },
+          "compensation_currency_code": {
+            "const": "COP"
+          }
+        },
+        "required": ["compensation_currency_code", "annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "extreme_salary_acknowledgement": false,
+          "extreme_salary_warning": false
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 100000000
+          },
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code", "annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "extreme_salary_acknowledgement": {
+            "type": "string"
+          },
+          "extreme_salary_warning": {}
+        },
+        "required": ["extreme_salary_acknowledgement"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "maximum": 99999999
+          },
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code", "annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "extreme_salary_acknowledgement": false,
+          "extreme_salary_warning": false
+        }
+      }
+    },
+    {
+      "if": {
+        "not": {
+          "required": ["compensation_currency_code", "annual_gross_salary"]
+        }
+      },
+      "then": {
+        "properties": {
+          "extreme_salary_acknowledgement": false,
+          "extreme_salary_warning": false
+        }
+      }
+    }
+  ],
+  "properties": {
+    "annual_bonus_ack": {
+      "const": "acknowledged",
+      "description": "In Colombia, employees receive a 13th month salary (usually called prima or Christmas bonus). This salary is not part of their annual gross salary.",
+      "title": "I understand I must pay this employee a 13th month salary in addition to their annual gross salary",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p><span class=\"notion-enable-hover\" data-token-index=\"0\">In Colombia, there are two types of salaries: Ordinary and Integral. Employees under ordinary salary are entitled to the 13th salary in addition to the base salary. </span></p><p><span class=\"notion-enable-hover\" data-token-index=\"2\"><strong>Ordinary Salary</strong></span>: This refers to the minimum monthly wage set yearly by a collective agreement between the government, employer associations, and labor unions. Under certain circumstances, it might also be established by a governmental decree. <span class=\"notion-enable-hover\" data-token-index=\"4\"><strong>Employees on an ordinary salary are eligible for a 13th-month salary.</strong></span></p><p><span class=\"notion-enable-hover\" data-token-index=\"6\"><strong>Integral Salary</strong></span>: The set Integral monthly wage for 2026 is $<span data-token-index=\"0\">22,761,765</span>,00 Colombian Pesos, inclusive of fringe benefits. Employees on an Integral salary ($<span data-token-index=\"0\">22,761,765</span>,00 Colombian Pesos per month or above) aren't entitled to the 13th-month salary, severance pay, or interests on severance.</p><p>\n  <span class=\"notion-enable-hover\" style=\"font-weight: 600;\" data-token-index=\"8\">Important information:</span>\n  If the employee's monthly salary falls under $22,761,765,00 Colombian Pesos per\n  month, they are under the ordinary salary category and are entitled to the 13th-month\n  salary, paid 50% at the end of June and the remaining 50% around mid-December.\n  <!-- notionvc: 99a045b1-eda8-4a0a-8805-d46c8a0cc7f8 -->\n</p><p> </p><p><em>Disclaimer: An important aspect of labor laws in Latin American countries that could affect your operations is the mandatory extra salary payment. Employers are customarily and legally required to issue an additional salary, also known as the \"13th salary\" or \"Christmas bonus.\" This bonus, typically equivalent to one month's wage, is distributed annually. It's important to note that this additional salary is not included in the base salary (gross annual salary) and should be paid separately.</em></p>",
+            "error": false,
+            "id": 24762859666317,
+            "title": "What is the 13th salary (Prima de Servicios) in Colombia?"
+          }
+        }
+      }
+    },
+    "annual_gross_salary": {
+      "title": "Annual gross salary",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-logic-computedAttrs": {
+        "description": "{{annual_gross_salary_reserve_description}}"
+      },
+      "x-jsf-presentation": {
+        "currency": "COP",
+        "inputType": "money",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more about bonus salaries",
+            "content": "<p><span class=\"notion-enable-hover\" data-token-index=\"0\">In Colombia, there are two types of salaries: Ordinary and Integral. Employees under ordinary salary are entitled to the 13th salary in addition to the base salary. </span></p><p><span class=\"notion-enable-hover\" data-token-index=\"2\"><strong>Ordinary Salary</strong></span>: This refers to the minimum monthly wage set yearly by a collective agreement between the government, employer associations, and labor unions. Under certain circumstances, it might also be established by a governmental decree. <span class=\"notion-enable-hover\" data-token-index=\"4\"><strong>Employees on an ordinary salary are eligible for a 13th-month salary.</strong></span></p><p><span class=\"notion-enable-hover\" data-token-index=\"6\"><strong>Integral Salary</strong></span>: The set Integral monthly wage for 2026 is $<span data-token-index=\"0\">22,761,765</span>,00 Colombian Pesos, inclusive of fringe benefits. Employees on an Integral salary ($<span data-token-index=\"0\">22,761,765</span>,00 Colombian Pesos per month or above) aren't entitled to the 13th-month salary, severance pay, or interests on severance.</p><p>\n  <span class=\"notion-enable-hover\" style=\"font-weight: 600;\" data-token-index=\"8\">Important information:</span>\n  If the employee's monthly salary falls under $22,761,765,00 Colombian Pesos per\n  month, they are under the ordinary salary category and are entitled to the 13th-month\n  salary, paid 50% at the end of June and the remaining 50% around mid-December.\n  <!-- notionvc: 99a045b1-eda8-4a0a-8805-d46c8a0cc7f8 -->\n</p><p> </p><p><em>Disclaimer: An important aspect of labor laws in Latin American countries that could affect your operations is the mandatory extra salary payment. Employers are customarily and legally required to issue an additional salary, also known as the \"13th salary\" or \"Christmas bonus.\" This bonus, typically equivalent to one month's wage, is distributed annually. It's important to note that this additional salary is not included in the base salary (gross annual salary) and should be paid separately.</em></p>",
+            "error": false,
+            "id": 24762859666317,
+            "location": "statement",
+            "title": "What is the 13th salary (Prima de Servicios) in Colombia?"
+          }
+        }
+      }
+    },
+    "available_pto": {
+      "description": "In Colombia, employees are entitled to a minimum of 15 paid time off days per year. Please don’t include any statutory, bank, or public holidays in the number you enter.",
+      "title": "Number of paid time off days",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "available_pto_type": {
+      "description": "For personal time off. Also called vacation or annual leave.",
+      "oneOf": [
+        {
+          "const": "unlimited",
+          "description": "Gives the employee an uncapped number of paid time off days per year. The number below is the mandatory minimum number of days they must take.",
+          "title": "Unlimited paid time off"
+        },
+        {
+          "const": "fixed",
+          "description": "The employee gets a set number of paid time off days per year that you establish.",
+          "title": "Fixed paid time off"
+        }
+      ],
+      "title": "Paid time off policy",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "bonus_amount": {
+      "deprecated": true,
+      "readOnly": true,
+      "title": "Bonus amount (deprecated)",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "COP",
+        "deprecated": {
+          "description": "Deprecated in favor of 'Bonus Details'. Please, try to leave this field empty."
+        },
+        "inputType": "money"
+      }
+    },
+    "bonus_details": {
+      "description": "Bonus type, payment frequency, and more.",
+      "maxLength": 1000,
+      "title": "Other bonus details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "city": {
+      "description": "What city in Colombia is the employee located?",
+      "maxLength": 255,
+      "title": "City",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "text"
+      }
+    },
+    "col_experience_level": {
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employee's overall experience).",
+      "oneOf": [
+        {
+          "const": "support",
+          "description": "Support and operational roles focused on assisting the business, typically administrative or entry-level, not requiring a technical or professional qualification. Examples: administrative assistant, customer support agent, data entry, reception.",
+          "title": "Support"
+        },
+        {
+          "const": "technical",
+          "description": "Roles requiring vocational or technical training and specialized hands-on skills, but not a full university degree. Examples: IT/technical support, QA tester, junior developer, systems technician.",
+          "title": "Technical"
+        },
+        {
+          "const": "professional",
+          "description": "Roles requiring a university/professional degree and applying specialized professional knowledge. Examples: software engineer, analyst, HR/marketing/finance professionals.",
+          "title": "Professional"
+        },
+        {
+          "const": "management_executive",
+          "description": "Leadership roles with decision-making authority over people, budgets, or the business. Examples: team leads with direct reports, managers, directors, heads of function, C-level.",
+          "title": "Management / Executive"
+        },
+        {
+          "const": "other",
+          "description": "Any role that does not clearly fit the categories above.",
+          "title": "Other"
+        }
+      ],
+      "title": "Experience level",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "commissions_ack": {
+      "const": "acknowledged",
+      "description": "I understand that I am required to provide written details of the commission plan to this employee, and upload this document on the platform for record keeping purposes. I acknowledge that Remote will not liable for any claims or losses associated with the commission or bonus plan.",
+      "title": "Confirm commission plan details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "commissions_details": {
+      "description": "Payment amount, frequency, and more.",
+      "maxLength": 1000,
+      "title": "Commission details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "compensation_currency_code": {
+      "description": "The currency you want the employee to be paid in.",
+      "oneOf": [
+        {
+          "const": "COP",
+          "title": "Colombian Peso (COP)"
+        },
+        {
+          "const": "USD",
+          "title": "United States Dollar (USD)"
+        }
+      ],
+      "title": "Contract currency",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "select",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 50,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 50,
+              "currency": "USD"
+            }
+          },
+          "non_local_currencies": ["USD"]
+        }
+      }
+    },
+    "contract_duration": {
+      "deprecated": true,
+      "description": "Indefinite or fixed-term contract. If the latter, please state duration and if there's possibility for renewal.",
+      "maxLength": 255,
+      "readOnly": true,
+      "title": "Contract duration (deprecated)",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated field in favor of 'contract_duration_type'."
+        },
+        "inputType": "text"
+      }
+    },
+    "contract_duration_type": {
+      "oneOf": [
+        {
+          "const": "indefinite",
+          "title": "Indefinite"
+        },
+        {
+          "const": "fixed_term",
+          "title": "Fixed Term"
+        }
+      ],
+      "title": "Contract duration",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about contract duration",
+            "content": "<p>There are two types of contracts available:</p>\n<ul>\n<li>Fixed-term contract: This is a contract that has an end date. This means that towards the end of the contract, it will need to be renewed if you intend to keep the employee hired through us. In some countries, t<span class=\"notion-semantic-string\">he minimum contract duration is 6 months.</span>\n</li>\n<li>Indefinite contract: This is a contract with no end date and therefore, no renewal is needed.</li>\n</ul>\n<p data-pm-slice=\"1 3 []\">Indefinite and fixed-term contracts can be:</p>\n<ul class=\"ProsemirrorEditor-list\">\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Part-time: <span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">This is </span>a form of employment that <strong>carries fewer hours per week than a full-time job</strong><span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">. Depending on the country, workers are considered to be part-time if they commonly work fewer than 30 or 35 hours per week.</span></p>\n</li>\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Full-time.</p>\n</li>\n</ul>",
+            "error": false,
+            "id": 4410443814157,
+            "title": "Types of employment contracts"
+          }
+        },
+        "statement": {
+          "description": "There is more flexibility for termination on expiry of a fixed term employment agreement. For this reason, we suggest you consider utilising a fixed term employment agreement.",
+          "severity": "info",
+          "title": "Information on termination - contract duration"
+        }
+      }
+    },
+    "contract_end_date": {
+      "description": "Please note that fixed-term contracts are limited to 48 months.",
+      "format": "date",
+      "maxLength": 255,
+      "title": "Contract end date",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "date",
+        "maxDate": "2030-11-30",
+        "minDate": "2026-12-01"
+      }
+    },
+    "employee_internet_costs": {
+      "title": "Internet costs contributions",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "---",
+        "inputType": "money"
+      }
+    },
+    "employee_utility_costs": {
+      "title": "Utility costs contributions",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "---",
+        "inputType": "money"
+      }
+    },
+    "equity_compensation": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "equity_cliff": false,
+              "equity_description": false,
+              "equity_vesting_period": false,
+              "number_of_stock_options": false
+            }
+          },
+          "if": {
+            "properties": {
+              "offer_equity_compensation": {
+                "const": "yes"
+              }
+            },
+            "required": ["offer_equity_compensation"]
+          },
+          "then": {
+            "properties": {
+              "equity_description": {
+                "type": ["string"]
+              }
+            },
+            "required": ["equity_description"]
+          }
+        }
+      ],
+      "properties": {
+        "equity_cliff": {
+          "deprecated": true,
+          "description": "When the first portion of the stock option grant will vest.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Cliff (in months)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "equity_description": {
+          "description": "Please share any information related to the upcoming equity grant.",
+          "maxLength": 1000,
+          "title": "Number of options, RSUs, and other equity",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "textarea"
+          }
+        },
+        "equity_vesting_period": {
+          "deprecated": true,
+          "description": "The number of years it will take for the employee to vest all their options.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Vesting period (in years)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "number_of_stock_options": {
+          "deprecated": true,
+          "description": "Tell us the type of equity you're granting as well.",
+          "maxLength": 255,
+          "readOnly": true,
+          "title": "Number of options, RSUs, or other equity granted",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "text"
+          }
+        },
+        "offer_equity_compensation": {
+          "description": "Granting equity to your team generally triggers tax and legal obligations. In order for you to stay compliant, it's important to declare any equity grants.",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            }
+          ],
+          "title": "Will this employee receive equity?",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "row",
+            "inputType": "radio"
+          }
+        }
+      },
+      "required": ["offer_equity_compensation"],
+      "title": "Equity management",
+      "type": "object",
+      "x-jsf-order": [
+        "offer_equity_compensation",
+        "number_of_stock_options",
+        "equity_cliff",
+        "equity_vesting_period",
+        "equity_description"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 39,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 39,
+              "currency": "USD"
+            }
+          },
+          "helpCenter": {
+            "callToAction": "Learn more about equity management at Remote",
+            "content": "<p>Remote Equity is a lightweight compliance tool designed to help you manage equity grants across borders for team members hired through Remote's Employer of Record (EOR).</p><p>Whether you’re managing vesting, reporting exercises, or navigating local tax laws, Remote Equity gives you the structure to stay compliant, avoid risk, and support your team across borders.</p><h4 id=\"h_01K0YQSYJ8JPKYXNNNW90B0QJP\">Why it matters</h4><p>As your EOR, <strong>Remote is legally responsible</strong> for equity-related tax and reporting in the countries where your team members are employed. That means we don’t just track equity, we:</p><ul>\n<li data-list-item-id=\"eba6b95d2e41a276665f3f64525e0eb59\">Withhold and report taxes when required</li>\n<li data-list-item-id=\"ed16c354038e4b3d908bacd965dc2d71b\">File with local tax authorities</li>\n<li data-list-item-id=\"eb7162ef11477f7a7737fe34a48979559\">Support team members with clear guidance on their tax responsibilities</li>\n</ul><p>Most equity platforms can’t do that because they’re not the legal employer. <strong>Remote Equity ensures we have the data we need, when we need it, to keep your company compliant and your team fairly rewarded.</strong></p><p>Behind the scenes, our tax team:</p><ul>\n<li data-list-item-id=\"ef5c97b0472ebc9a0819e312646e4cd66\">Handles tax withholdings when taxable events occur</li>\n<li data-list-item-id=\"e5f3560641743ab0c57ba47683638560e\">Provides guidance to you and your team, even when no withholding is required</li>\n<li data-list-item-id=\"ed17d307d635b18f9f784df12d1dbe1cd\">Manages additional reporting where local laws demand it</li>\n</ul><p>See also: <a href=\"https://support.remote.com/hc/en-us/articles/37710493624589-What-types-of-equity-grants-should-I-declare-in-Remote-Equity-Essentials\">What types of equity grants should I declare in Remote Equity?</a></p><h4 id=\"h_01K0YQSYJDJ3JYC1C642ASB8E2\">What’s included</h4><p>Remote Equity provides:</p><ul>\n<li data-list-item-id=\"e0cc8d8c0b7d060b9de89e3c870fc1579\">\n<strong>Tracking and alerts</strong> for events that may create a tax obligation (like vesting or exercising)</li>\n<li data-list-item-id=\"e88a2fc75f6f43db27891e415e2f90400\">\n<strong>Automated compliance reminders</strong> based on local deadlines and regulations</li>\n<li data-list-item-id=\"e2c2cf9ef914143e339eb32e1b70c83da\">\n<strong>Localized guidance for team members</strong>, shared through the Remote Equity app</li>\n<li data-list-item-id=\"e8a2c20d648ed01a3db135ef4ada0de61\">\n<strong>Support from Remote’s tax and legal teams</strong>, who handle obligations on your behalf</li>\n<li data-list-item-id=\"e184af2a6420412152b377815ebe18ce2\">\n<strong>Integration with Carta and Pulley</strong> to automatically sync grant declarations and exercise information</li>\n</ul><h4 id=\"h_01K0YQSYJSCK6XYBXF3Q56KRC8\"><strong>Get started in minutes</strong></h4><p>Setup takes less than five minutes. Just log in to your Remote account, and launch the Equity App to follow the setup steps.</p><p>Helpful guides to get started:</p><ul>\n<li data-list-item-id=\"e73e204bc587d3417ecab74e3a29ccc2a\"><a href=\"https://support.remote.com/hc/en-us/articles/37547625350925-How-can-I-access-Remote-Equity-Essentials\">How can I access Remote Equity?</a></li>\n<li data-list-item-id=\"e0ca43a64bf2361ce43443e98200daa5a\"><a href=\"https://support.remote.com/hc/en-us/articles/35577980536589\">How do I declare a grant?</a></li>\n<li data-list-item-id=\"edfa1a00c07a70449ebe34c25dec818fe\"><a href=\"https://support.remote.com/hc/en-us/articles/35671968187149-How-can-my-employees-see-their-equity-information\">How can my team access their equity information?</a></li>\n<li data-list-item-id=\"edaaf9eb107949f79894c24e3b984da30\"><a href=\"https://support.remote.com/hc/en-us/articles/35546454220301-What-happens-if-I-already-declared-equity-before-using-Remote-Equity-Essentials\">What happens if I already declared equity before using Remote Equity?</a></li>\n</ul><h4 id=\"h_01K0YQSYJV9EH2AQ9HWYS1826S\"><span class=\"wysiwyg-underline\">Frequently Asked Questions (FAQs)</span></h4><p><strong>Who needs to use Remote Equity?</strong></p><p>Any Remote customer granting equity to a team member hired through Remote’s EOR must use Remote Equity to meet local compliance requirements.</p><p><strong>Why can’t we just use our own equity tool?</strong></p><p>Traditional equity tools track grants and vesting, but they don't file taxes, withhold contributions, or report income to local authorities. Remote, as the legal employer, is responsible for these actions. Remote Equity ensures those obligations are covered.</p><p><strong>What happens if we don’t use it?</strong></p><p>If Remote doesn’t receive timely and accurate equity data, required filings may be missed. This can result in compliance risks, unexpected tax liabilities, and issues for both your company and your team members.</p><p><strong>How much does Remote Equity cost?</strong></p><p>Remote Equity costs 39 USD per month for each EOR team member with equity. <a href=\"https://support.remote.com/hc/en-us/articles/35546441948685-How-much-does-Remote-Equity-Essentials-cost\">Learn more</a>.</p><p>For comprehensive information, visit the <a href=\"https://support.remote.com/hc/en-us/categories/45788665954189-Remote-Equity\" tabindex=\"0\" data-token-index=\"1\" rel=\"noopener noreferrer\">Remote Equity hub</a>.</p>",
+            "error": false,
+            "id": 38303424407821,
+            "title": "Welcome to Remote Equity: Global equity, without the compliance headaches"
+          }
+        }
+      }
+    },
+    "experience_level": {
+      "deprecated": true,
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employees overall experience).",
+      "oneOf": [
+        {
+          "const": null,
+          "title": "N/A"
+        },
+        {
+          "const": "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "description": "Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "title": "Level 2 - Entry Level"
+        },
+        {
+          "const": "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+          "description": "Employees who perform independently tasks and/or with coordination and control functions",
+          "title": "Level 3 - Associate"
+        },
+        {
+          "const": "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "description": "Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "title": "Level 4 - Mid-Senior level"
+        },
+        {
+          "const": "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "description": "Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "title": "Level 5 - Director"
+        },
+        {
+          "const": "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "description": "An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "title": "Level 6 - Executive"
+        }
+      ],
+      "readOnly": true,
+      "title": "Experience level",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated in favour of the new Colombia experience level classification."
+        },
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "extreme_salary_acknowledgement": {
+      "const": "acknowledged",
+      "title": "",
+      "type": "string",
+      "x-jsf-logic-computedAttrs": {
+        "title": "{{extreme_salary_acknowledgement_title}}"
+      },
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "extreme_salary_warning": {
+      "title": "",
+      "type": "null",
+      "x-jsf-presentation": {
+        "inputType": "hidden",
+        "meta": {
+          "ignoreValue": true
+        },
+        "statement": {
+          "description": "The entered salary is equivalent to USD 1,000,000 or more. Please double check and confirm this amount is correct.",
+          "inputType": "statement",
+          "severity": "warning"
+        }
+      }
+    },
+    "has_bonus": {
+      "description": "These can include things like performance-related bonuses.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer other bonuses?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_commissions": {
+      "description": "You can outline your policy and pay commission to the employee on the platform. However, commission will not appear in the employment agreement. Please send full policy details directly to the employee.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer commission?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_signing_bonus": {
+      "description": "This is a one-time payment the employee receives when they join your team.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer a signing bonus?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "part_time_salary_confirmation": {
+      "const": "acknowledged",
+      "description": "We'll include the salary in the employment agreement, so please double-check that it's correct.",
+      "title": "I confirm that this amount is the full annual salary for this part-time employee.",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "probation_length": {
+      "description": "For indefinite term contracts and fixed-term contracts between 1 and 3 years, the maximum probationary period is two months. In fixed-term contracts for less than 1 year, the probationary period may not exceed one-fifth of the agreed term not exceeding two months.",
+      "maximum": 2,
+      "minimum": 0,
+      "title": "Probation period, in months",
+      "type": "number",
+      "x-jsf-errorMessage": {
+        "maximum": "Must be smaller or equal to 2 months"
+      },
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about probation period",
+            "content": "<p>A probationary period is a set time for an employer to assess a new employee's suitability for the role. It allows the employer to evaluate the employee's capability, skills, performance, attendance, and conduct.</p>\n<p>Using a probationary period can make it simpler to end employment and notice periods are often shorter or don’t apply at all. After the probationary period ends, it is often more difficult and expensive to terminate an employee.</p>\n<p>Please note that if a probationary period is not included and you later receive unsatisfactory background check results, Remote cannot unilaterally terminate the employee’s employment.</p>\n<p>Keep in mind that a probationary period may not be valid if the employee has worked for your company before.</p>\n<p class=\"guide-markup\" style=\"box-sizing: inherit; font-weight: 400; margin: 0.5em 0px 0px; padding: 0px; color: #2f3941; font-family: -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 15px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\"><span class=\"guide-markup notion-enable-hover\" style=\"box-sizing: inherit; font-weight: 600;\" data-token-index=\"2\"><strong class=\"guide-markup\" style=\"box-sizing: border-box; font-weight: bold; color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">See also:</strong><span class=\"guide-markup\" style=\"box-sizing: inherit; font-weight: 400; color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;\"> </span><a class=\"guide-markup\" style=\"box-sizing: border-box; font-weight: 400; border-radius: 4px; color: #0161ff; outline: transparent solid 2px; outline-offset: 1px; transition: outline-color 0.1s ease-in-out, color 0.25s ease-in-out; text-decoration: none; background-color: #ffffff; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal;\" href=\"https://support.remote.com/hc/en-us/articles/34566185236237-What-are-Remote-s-Background-Check-Services\" target=\"_blank\" rel=\"noopener noreferrer\">What are Remote's Background Check Services?</a></span></p>",
+            "error": false,
+            "id": 9013034328205,
+            "title": "Why is it important to include a probationary period in an employee's contract?"
+          }
+        },
+        "statement": {
+          "description": "If you need Remote to terminate an employee in Colombia (whether inside or outside of probation) because of your company’s economic or organizational circumstances, a mutual termination agreement must be entered into with the employee. Otherwise, the termination will be deemed “without cause”, and could lead to extra costs for you.\n\nDuring probation, you do still have some more flexibility on termination; for example, when the termination reason is the employee’s performance. For this reason, we still recommend setting the probation period to the maximum allowed.",
+          "severity": "info",
+          "title": "Information on termination - probation"
+        }
+      }
+    },
+    "remote_working_type": {
+      "oneOf": [
+        {
+          "const": "remote",
+          "description": "The employee works fully from home (or a place they choose) and does not go into an office.",
+          "title": "Remote"
+        },
+        {
+          "const": "hybrid",
+          "description": "The employee splits their time between home and an office or other site, working from home at least 2 days a week.",
+          "title": "Hybrid"
+        },
+        {
+          "const": "on_site",
+          "description": "Employee is classified as a regular/on-site worker (coworking, or 1 day or less from home).",
+          "title": "On-site"
+        }
+      ],
+      "title": "Remote working type",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "role_description": {
+      "description": "Please add at least 3 responsibilities, at least 100 characters in total.",
+      "maxLength": 5000,
+      "minLength": 100,
+      "title": "Role description",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "salary_overview": {
+      "const": "salary_overview",
+      "default": "salary_overview",
+      "description": "We will request a reserve payment for salaries at or above COP 554,833,391.",
+      "oneOf": [
+        {
+          "const": "salary_overview",
+          "title": "Salary overview"
+        }
+      ],
+      "title": "Salary overview",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about reserve payments",
+            "content": "<p>A <strong>reserve payment</strong> is an amount collected by Remote to help safeguard against potential large or unexpected severance costs if a team member's employment or engagement ends.</p><p>In many countries, labor laws require employers to pay <strong>statutory severance.</strong> Depending on the agreement, there may also be additional contractual obligations. Reserve payments help ensure funds are available to cover these costs if they arise.</p><p>Reserves are an <strong>industry-standard practice.</strong> Once a team member resigns or their agreement ends and all termination-related costs have been settled, any remaining reserve balance will be credited or refunded.</p><p>If a reserve payment has been made but <strong>onboarding is not completed</strong>, the full reserve will be credited or refunded. If your account has an overdue balance, Remote may first apply the reserve toward that outstanding amount.</p><blockquote><p><em><strong>Note:</strong> Reserve payments are required only for <strong>Employer of Record (EOR) employees and Contractor of Record (COR) contractors</strong>. They are <strong>not applicable</strong> to Global Payroll (direct employee) or users of our Standard Contractor Management and Contractor Management Plus platforms</em></p></blockquote><h3 id=\"h_01KWVSH6PWV0EARTP636WFMKX5\">Why would a reserve be required?</h3><p>Remote evaluates several factors when determining whether a reserve payment is needed. These may include:</p><ul>\n<li data-list-item-id=\"e4aa5c6c3b06eb3fd8ac290640949dd33\">The <strong>financial exposure</strong> associated with a client’s account</li>\n<li data-list-item-id=\"e6035e43ef90b77827c1d8c41be109918\">The <strong>countries</strong> in which team members are hired</li>\n<li data-list-item-id=\"e270d18c338f92bac8e35ed1f0c29ee6a\">A client’s decision to move from <strong>14-day to 30-day invoice payment terms</strong>\n</li>\n<li data-list-item-id=\"e87b2ad7dca754100d16a8d4ffabfa36a\">\n<strong>Non-standard employment contract terms</strong>, such as:<ul>\n<li data-list-item-id=\"ef35bb2e45f6361dee620f3d1949914de\">Extended notice periods</li>\n<li data-list-item-id=\"e9f05ff898e587ce3d34e80d6d7077b41\">Guaranteed severance clauses</li>\n<li data-list-item-id=\"e7cea63a7d2482bdb28eefffb6948c577\">Seniority recognition</li>\n<li data-list-item-id=\"e5b345cb8f5b041e3897b31092d6f0a06\">Non-compete, non-solicitation, or non-interference clauses</li>\n</ul>\n</li>\n<li data-list-item-id=\"e69603f26c1cfe44abe1b3b9afae0a6eb\">\n<strong>Consistent late invoice payments</strong> may also result in a reserve payment requirement</li>\n</ul><h3 id=\"h_01KWVSH6Q0PMTFJTCBARRMY0F8\">Why was I asked to pay an additional reserve?</h3><p>Some employment agreement terms increase the potential cost of ending an agreement. In these cases, additional reserves may be required.</p><p>Currently, reserves are automatically applied for:</p><ul>\n<li data-list-item-id=\"e016d051d1cae211fd2052be06528b0fb\">Extended notice periods</li>\n<li data-list-item-id=\"e121b7d92f73dc18a98058036faa4c132\">Seniority recognition</li>\n<li data-list-item-id=\"e1173074340c67d1669a2826f7ce530f4\">Non-compete, non-solicitation, or non-interference clauses</li>\n</ul><p>Other agreement terms may require additional review and could result in additional reserve requirements.</p><h4 id=\"h_01KWVSH6Q22W5N0Y71KPX7002S\">Extended notice period</h4><p>Labor laws in each country define a minimum notice period for ending an agreement. If the notice period in the agreement is longer than the statutory minimum, an additional reserve will be required for the difference.</p><p>Example: The minimum notice period is one month, but you request a three-month notice period. In this case, an additional two-month reserve would be required.</p><h4 id=\"h_01KWVSH6Q220ZTQW023A4TTNFK\">Seniority recognition</h4><p>A reserve will be automatically issued where two or more years of service is recognized.</p><p>As a general guideline:</p><ul>\n<li data-list-item-id=\"e325a4b96c617f8a6459e09da118a39d5\">\n<strong>2-4 years</strong> of recognized seniority, a reserve equal to <strong>1-month reserve</strong> is required</li>\n<li data-list-item-id=\"ec4f6d1f140f45060bca310852d94e885\">\n<strong>4-5 years</strong> of recognized seniority, a reserve equal to <strong>2-months</strong> is required</li>\n<li data-list-item-id=\"eeb5b68f0845b6a250366ba6e7449fe41\">\n<strong>More than 5 years</strong> of recognized seniority is subject to <strong>further review</strong>\n</li>\n</ul><p><strong>See also</strong>: <br><a href=\"https://remote.zendesk.com/hc/en-us/articles/12695836286861\">When is a reserve refunded?</a><br><a href=\"https://remote.zendesk.com/hc/en-us/articles/32649353517069\">What is reserve payment in Contractor of Record?</a></p>",
+            "error": false,
+            "id": 12695731865229,
+            "title": "What is a reserve payment?"
+          },
+          "ignoreValue": true
+        }
+      }
+    },
+    "signing_bonus_amount": {
+      "title": "Signing bonus amount",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "COP",
+        "inputType": "money"
+      }
+    },
+    "work_address_is_home_address": {
+      "deprecated": true,
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Same as their residential address"
+        },
+        {
+          "const": "no",
+          "title": "Different than their residential address"
+        },
+        {
+          "const": null,
+          "title": "N/A"
+        }
+      ],
+      "readOnly": true,
+      "title": "(Deprecated) Employee's work address",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated in favour of 'remote_working_type'."
+        },
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "work_hours_per_week": {
+      "description": "Please indicate the number of hours the employee will work per week.",
+      "title": "Work hours per week",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "work_schedule": {
+      "oneOf": [
+        {
+          "const": "full_time",
+          "title": "Full-time"
+        },
+        {
+          "const": "part_time",
+          "title": "Part-time"
+        }
+      ],
+      "title": "Type of employee",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    }
+  },
+  "required": [
+    "compensation_currency_code",
+    "work_hours_per_week",
+    "annual_gross_salary",
+    "available_pto",
+    "available_pto_type",
+    "city",
+    "col_experience_level",
+    "contract_duration_type",
+    "employee_internet_costs",
+    "employee_utility_costs",
+    "equity_compensation",
+    "has_bonus",
+    "has_commissions",
+    "has_signing_bonus",
+    "probation_length",
+    "remote_working_type",
+    "role_description",
+    "work_schedule"
+  ],
+  "type": "object",
+  "x-jsf-logic": {
+    "computedValues": {
+      "annual_gross_salary_reserve_description": {
+        "rule": {
+          "if": [
+            {
+              ">=": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                {
+                  "if": [
+                    {
+                      "==": [
+                        {
+                          "var": "compensation_currency_code"
+                        },
+                        "COP"
+                      ]
+                    },
+                    55483339146,
+                    {
+                      "if": [
+                        {
+                          "==": [
+                            {
+                              "var": "compensation_currency_code"
+                            },
+                            "USD"
+                          ]
+                        },
+                        17500000,
+                        55483339146
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "cat": [
+                "The minimum annual salary is calculated based on the country's applicable laws.",
+                " ",
+                "A reserve payment will be required, as described above."
+              ]
+            },
+            "The minimum annual salary is calculated based on the country's applicable laws."
+          ]
+        }
+      },
+      "extreme_salary_acknowledgement_title": {
+        "rule": {
+          "cat": [
+            "I have reviewed and verified the annual salary of ",
+            {
+              "if": [
+                {
+                  "==": [
+                    {
+                      "var": "compensation_currency_code"
+                    },
+                    "COP"
+                  ]
+                },
+                "COP",
+                {
+                  "if": [
+                    {
+                      "==": [
+                        {
+                          "var": "compensation_currency_code"
+                        },
+                        "USD"
+                      ]
+                    },
+                    "USD",
+                    ""
+                  ]
+                }
+              ]
+            },
+            " ",
+            {
+              "money_format": {
+                "/": [
+                  {
+                    "var": "annual_gross_salary"
+                  },
+                  100
+                ]
+              }
+            },
+            "."
+          ]
+        }
+      }
+    }
+  },
+  "x-jsf-order": [
+    "city",
+    "contract_duration",
+    "contract_duration_type",
+    "contract_end_date",
+    "work_schedule",
+    "work_hours_per_week",
+    "probation_length",
+    "available_pto_type",
+    "available_pto",
+    "role_description",
+    "experience_level",
+    "col_experience_level",
+    "work_address_is_home_address",
+    "remote_working_type",
+    "compensation_currency_code",
+    "salary_overview",
+    "annual_gross_salary",
+    "extreme_salary_warning",
+    "extreme_salary_acknowledgement",
+    "annual_bonus_ack",
+    "part_time_salary_confirmation",
+    "has_signing_bonus",
+    "signing_bonus_amount",
+    "has_bonus",
+    "bonus_amount",
+    "bonus_details",
+    "has_commissions",
+    "commissions_details",
+    "commissions_ack",
+    "equity_compensation",
+    "employee_internet_costs",
+    "employee_utility_costs"
+  ],
+  "x-jsf-presentation": {
+    "inputType": "fieldset"
+  },
+  "x-rmt-flatFieldsets": {
+    "annual_gross_salary_fieldset": {
+      "propertiesByName": [
+        "compensation_currency_code",
+        "salary_overview",
+        "annual_gross_salary",
+        "extreme_salary_warning",
+        "extreme_salary_acknowledgement",
+        "annual_bonus_ack"
+      ],
+      "title": "Annual gross salary"
+    }
+  },
+  "x-rmt-meta": {
+    "jsfVersion": "1"
+  },
+  "x-rmt-schema-changelog": {
+    "changelog": "Adds the extreme high salary acknowledgement: a warning and a mandatory checkbox when the annual salary is at or above the USD 1,000,000 equivalent. Additive and flag-gated; no action required for existing contracts.",
+    "upgradePath": "No action required."
+  }
+}

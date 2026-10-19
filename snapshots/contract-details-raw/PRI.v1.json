@@ -1,0 +1,1356 @@
+{
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "contract_end_date": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "fixed_term"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "properties": {
+          "contract_end_date": {
+            "type": ["string"]
+          }
+        },
+        "required": ["contract_end_date"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "probation_length": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "properties": {
+          "probation_length": {
+            "type": "number"
+          }
+        },
+        "required": ["probation_length"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "third_party_work_activities": false
+        }
+      },
+      "if": {
+        "properties": {
+          "third_party_work": {
+            "const": "yes"
+          }
+        },
+        "required": ["third_party_work"]
+      },
+      "then": {
+        "properties": {
+          "third_party_work_activities": {
+            "type": "string"
+          }
+        },
+        "required": ["third_party_work_activities"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_compete_clause_halt_period_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_compete_clause_apply": {
+            "const": "yes"
+          },
+          "post_termination_restrictions": {
+            "const": "yes"
+          }
+        },
+        "required": [
+          "non_compete_clause_apply",
+          "post_termination_restrictions"
+        ]
+      },
+      "then": {
+        "properties": {
+          "non_compete_clause_halt_period_months": {
+            "type": "number"
+          }
+        },
+        "required": ["non_compete_clause_halt_period_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_solicitation_employees_number_of_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_solicitation_employees": {
+            "const": "yes"
+          },
+          "post_termination_restrictions": {
+            "const": "yes"
+          }
+        },
+        "required": [
+          "non_solicitation_employees",
+          "post_termination_restrictions"
+        ]
+      },
+      "then": {
+        "required": ["non_solicitation_employees_number_of_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_solicitation_customer_number_of_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_solicitation_customers": {
+            "const": "yes"
+          },
+          "post_termination_restrictions": {
+            "const": "yes"
+          }
+        },
+        "required": [
+          "non_solicitation_customers",
+          "post_termination_restrictions"
+        ]
+      },
+      "then": {
+        "required": ["non_solicitation_customer_number_of_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_interference_halt_period": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_interference_apply": {
+            "const": "yes"
+          },
+          "post_termination_restrictions": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_interference_apply", "post_termination_restrictions"]
+      },
+      "then": {
+        "required": ["non_interference_halt_period"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "signing_bonus_amount": false,
+          "signing_bonus_clawback": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_signing_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_signing_bonus"]
+      },
+      "then": {
+        "properties": {
+          "signing_bonus_amount": {
+            "type": "integer"
+          },
+          "signing_bonus_clawback": {
+            "type": "string"
+          }
+        },
+        "required": ["signing_bonus_amount", "signing_bonus_clawback"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "bonus_amount": false,
+          "bonus_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_bonus"]
+      },
+      "then": {
+        "properties": {
+          "bonus_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["bonus_details"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "commissions_ack": false,
+          "commissions_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_commissions": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_commissions"]
+      },
+      "then": {
+        "properties": {
+          "commissions_ack": {
+            "type": ["string"]
+          },
+          "commissions_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["commissions_details", "commissions_ack"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_compete_clause_apply": false,
+          "non_interference_apply": false,
+          "non_solicitation_customers": false,
+          "non_solicitation_employees": false
+        }
+      },
+      "if": {
+        "properties": {
+          "post_termination_restrictions": {
+            "const": "yes"
+          }
+        },
+        "required": ["post_termination_restrictions"]
+      },
+      "then": {
+        "properties": {
+          "non_compete_clause_apply": {
+            "type": ["string"]
+          },
+          "non_interference_apply": {
+            "type": ["string"]
+          },
+          "non_solicitation_customers": {
+            "type": ["string"]
+          },
+          "non_solicitation_employees": {
+            "type": ["string"]
+          }
+        },
+        "required": [
+          "non_compete_clause_apply",
+          "non_interference_apply",
+          "non_solicitation_customers",
+          "non_solicitation_employees"
+        ]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "part_time_salary_confirmation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "part_time_salary_confirmation": {
+            "type": "string"
+          }
+        },
+        "required": ["part_time_salary_confirmation"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "work_hours_per_week": {
+            "description": "Employees who work 32 hours or more a week are considered full-time. Those who work under 32 hours a week are considered part-time.",
+            "maximum": 40,
+            "minimum": 32
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "work_hours_per_week": {
+            "description": "Employees who work 32 hours or more a week are considered full-time. Those who work under 32 hours a week are considered part-time.",
+            "maximum": 31,
+            "minimum": 1
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "available_pto": {
+            "title": "Number of paid time off days"
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "available_pto_type": {
+            "const": "unlimited"
+          }
+        },
+        "required": ["available_pto_type"]
+      },
+      "then": {
+        "properties": {
+          "available_pto": {
+            "const": 0,
+            "default": 0,
+            "x-jsf-presentation": {
+              "inputType": "hidden"
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "probation_length": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "properties": {
+          "probation_length": {
+            "type": "number"
+          }
+        },
+        "required": ["probation_length"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "employee_exemption": {
+            "const": "exempt"
+          },
+          "has_probation_period": {
+            "const": "yes"
+          }
+        },
+        "required": ["employee_exemption", "has_probation_period"]
+      },
+      "then": {
+        "properties": {
+          "probation_length": {
+            "description": "In Puerto Rico, the maximum probation period is 12 months.",
+            "maximum": 12
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "employee_exemption": {
+            "const": "non_exempt"
+          },
+          "has_probation_period": {
+            "const": "yes"
+          }
+        },
+        "required": ["employee_exemption", "has_probation_period"]
+      },
+      "then": {
+        "properties": {
+          "probation_length": {
+            "description": "In Puerto Rico, the maximum probation period is 9 months.",
+            "maximum": 9
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "employee_exemption": {
+            "const": "non_exempt"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["employee_exemption", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "work_hours_per_week": {
+            "description": "Employees who work 32 hours or more a week are considered full-time. Those who work under 32 hours a week are considered part-time.",
+            "maximum": 280
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "no"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "properties": {
+          "has_probation_period": {
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "Waiving the probation period is possible but discouraged",
+                "severity": "warning"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "additional_holiday_days": {
+      "description": "This can include things like self-care days or paid time off for birthdays.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        }
+      ],
+      "title": "Offer additional paid time off?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "annual_gross_salary": {
+      "description": "The minimum annual salary is calculated based on the country's applicable laws.",
+      "minimum": 2366000,
+      "title": "Annual gross salary",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "minimum": "In Puerto Rico, full-time employees are entitled to a minimum annual salary of $23,660.00.",
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "USD",
+        "inputType": "money"
+      }
+    },
+    "available_pto": {
+      "description": "Please do not include public holidays in the number you enter. In Puerto Rico, there is no maximum limit on paid time off days, but several factors determine minimum limits.",
+      "title": "Number of paid time off days",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>In Puerto Rico, there is no maximum limit on paid time off days.</p>\n<h2 id=\"h_01HKN03Y0DVRQMABD3WSJ83SBZ\">For exempt employees</h2>\n<p>There is no minimum limit on paid time off days.</p>\n<h2 id=\"h_01HKN05HS7AJE9WH6CTZM32XWR\">For non-exempt employees</h2>\n<p>There are minimums based on a system of accrual. Employees must work at least 130 hours a month to be entitled to accrued minimums.</p>\n<p>Accrued minimums are based on how long an employee has been at a company. For each month of work, they accrue:<br>• Half a day within year 1 at a company<br>• Three-quarters of a day between years 1 and 5<br>• 1 day between years 5 and 15</p>",
+            "error": false,
+            "id": 22564649788941,
+            "title": "Number of paid time off days (Puerto Rico)"
+          }
+        }
+      }
+    },
+    "available_pto_type": {
+      "description": "For personal time off. Also called vacation or annual leave.",
+      "oneOf": [
+        {
+          "const": "unlimited",
+          "description": "Gives the employee an uncapped number of paid time off days per year. The number below is the mandatory minimum number of days they must take.",
+          "title": "Unlimited paid time off"
+        },
+        {
+          "const": "fixed",
+          "description": "The employee gets a set number of paid time off days per year that you establish.",
+          "title": "Fixed paid time off"
+        }
+      ],
+      "title": "Paid time off policy",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "bonus_details": {
+      "description": "Bonus type, payment frequency, and more.",
+      "maxLength": 1000,
+      "title": "Other bonus details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "christmas_bonus_ack": {
+      "const": "acknowledged",
+      "title": "I acknowledge that per local employment law, if an employee works more than 700 hours from October 1 of one year to September 30 of the next year, the employer must pay the employee a Christmas bonus. The Christmas bonus would be 3% of the employee’s salary during this period, up to a maximum of 300 USD.",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "commissions_ack": {
+      "const": "acknowledged",
+      "description": "I understand that I am required to provide written details of the commission plan to this employee, and upload this document on the platform for record keeping purposes. I acknowledge that Remote will not liable for any claims or losses associated with the commission or bonus plan.",
+      "title": "Confirm commission plan details",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "(i) Guidance on drafting a commission plan here",
+            "content": "<p>It is important to understand that commission plans are individual agreements between you, and each team member. Consequently, it is important that these plans are communicated directly between you and the respective team members. This direct communication ensures clarity, transparency, and a clear understanding of the agreed-upon terms for the commission plan.</p>\n<p>Performance-linked bonuses and commissions are payments that are contingent on various factors, including individual and team performance, business outcomes, and other metrics agreed upon by you and the employees providing you services. As these are rewards that are subject to your evaluation and adjustment based on the agreed-upon criteria, we strongly recommend that you document these plans as compliantly as possible, and their specifics separately in writing, with the employee providing you services, following the below guidelines:</p>\n<ul>\n<li>Please note if there is any doubt or lack of clarity due to ambiguous wording, it will be interpreted to the employee’s benefit. Therefore, the plan should be reviewed thoroughly to determine whether it could be interpreted various ways. If so, the respective wording should be amended in a way that is precise and can be understood in one way only.</li>\n<li>In some jurisdictions, bonus and commission plans can be contractually drafted as being discretionary, but still remain unambiguous.  Where this is legally possible, this is the recommended approach to legally best protect the employer/you from any potential disputes.  Please note, however, that employees may still have a claim for commission payments, even if an agreement is drafted as discretionary.</li>\n<li>Basis for Commission Calculation: The commission plan should clearly outline the basis on which the commission will be calculated. This may include factors such as sales revenue, units sold, profit margin, or other measurable performance indicators. The commission plan should also include the timeframe in which the respective target must be achieved.</li>\n<li>Commission Rate: The commission plan should specify the commission rate or rates applicable to different levels of performance. It should clearly define how the commission will be determined, based on achieving specific targets or milestones. In order to limit the financial risk, a commission plan can include a regulation on the maximum amount of commissions that can be earned.</li>\n<li>Target Goals: The commission plan should establish realistic and achievable target goals or sales quotas that the employee is expected to reach in order to earn commission. </li>\n<li>Calculation Period: The commission plan should specify the calculation period for commission payouts. This could be monthly or quarterly. It should also state the timeline for determining and disbursing commission payments. Furthermore, a commission plan should include a specification about the point in time until when targets are set each year. Commission targets should be given prior to the commencement of the plan period.</li>\n<li>Commission Calculation Method: The commission plan should outline the methodology for calculating the commission. It should specify any deductions, adjustments, or exclusions that may be applicable to the commission calculation.</li>\n<li>Payment Terms: The commission plan should detail the terms and conditions for commission payments, including the payment schedule, method of payment, and any additional requirements or conditions. It should also explain how leaves, for example, sick leave and maternity leave, influence payment of commission and bonus, considering local requirements and non discrimination rules.</li>\n<li>Termination or Modification: The commission plan should address how it may be terminated or modified, including the circumstances under which changes may be made and the notice period required.</li>\n<li>It is helpful to include terms regarding dispute resolution.</li>\n</ul>\n<p>Please be aware that this guideline does not constitute legal advice. It is advisable to consult with your legal counsel for expert advice while formulating such plans. We will not assume liability for any claims that may arise due to a non-compliant and/or ambiguous commission plan provided to employees.</p>",
+            "error": false,
+            "id": 17932049668109,
+            "title": "Guidelines for bonus and commission plans"
+          }
+        }
+      }
+    },
+    "commissions_details": {
+      "description": "Payment amount, frequency, and more.",
+      "maxLength": 1000,
+      "title": "Commission details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "contract_duration_type": {
+      "description": "In Puerto Rico, a fixed-term contract cannot exceed 3 years in its initial term or in total including renewals.",
+      "oneOf": [
+        {
+          "const": "indefinite",
+          "title": "Indefinite"
+        },
+        {
+          "const": "fixed_term",
+          "title": "Fixed Term"
+        }
+      ],
+      "title": "Contract duration",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about contract duration",
+            "content": "<p>There are two types of contracts available:</p>\n<ul>\n<li>Fixed-term contract: This is a contract that has an end date. This means that towards the end of the contract, it will need to be renewed if you intend to keep the employee hired through us. In some countries, t<span class=\"notion-semantic-string\">he minimum contract duration is 6 months.</span>\n</li>\n<li>Indefinite contract: This is a contract with no end date and therefore, no renewal is needed.</li>\n</ul>\n<p data-pm-slice=\"1 3 []\">Indefinite and fixed-term contracts can be:</p>\n<ul class=\"ProsemirrorEditor-list\">\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Part-time: <span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">This is </span>a form of employment that <strong>carries fewer hours per week than a full-time job</strong><span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">. Depending on the country, workers are considered to be part-time if they commonly work fewer than 30 or 35 hours per week.</span></p>\n</li>\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Full-time.</p>\n</li>\n</ul>",
+            "error": false,
+            "id": 4410443814157,
+            "title": "Types of employment contracts"
+          }
+        }
+      }
+    },
+    "contract_end_date": {
+      "description": "Fixed-term agreements must be less than 5 years.",
+      "format": "date",
+      "maxLength": 255,
+      "title": "Contract end date",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "date",
+        "minDate": "2026-12-01"
+      }
+    },
+    "employee_exemption": {
+      "description": "An exempt employee:\n<ul>\n<li>Earns over 23,659.22 USD annually</li>\n<li>Performs administrative, executive, or professional functions</li>\n<li>Performs tasks that are not manual or repetitive</li>\n</ul>\nA non-exempt employee is paid hourly and usually performs manual labor.",
+      "maxLength": 255,
+      "oneOf": [
+        {
+          "const": "exempt",
+          "title": "Exempt"
+        },
+        {
+          "const": "non_exempt",
+          "title": "Non-exempt"
+        }
+      ],
+      "title": "Is this employee exempt or non-exempt?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "equity_compensation": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "equity_cliff": false,
+              "equity_description": false,
+              "equity_vesting_period": false,
+              "number_of_stock_options": false
+            }
+          },
+          "if": {
+            "properties": {
+              "offer_equity_compensation": {
+                "const": "yes"
+              }
+            },
+            "required": ["offer_equity_compensation"]
+          },
+          "then": {
+            "properties": {
+              "equity_description": {
+                "type": ["string"]
+              }
+            },
+            "required": ["equity_description"]
+          }
+        }
+      ],
+      "properties": {
+        "equity_cliff": {
+          "deprecated": true,
+          "description": "When the first portion of the stock option grant will vest.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Cliff (in months)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "equity_description": {
+          "description": "Please share any information related to the upcoming equity grant.",
+          "maxLength": 1000,
+          "title": "Number of options, RSUs, and other equity",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "textarea"
+          }
+        },
+        "equity_vesting_period": {
+          "deprecated": true,
+          "description": "The number of years it will take for the employee to vest all their options.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Vesting period (in years)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "number_of_stock_options": {
+          "deprecated": true,
+          "description": "Tell us the type of equity you're granting as well.",
+          "maxLength": 255,
+          "readOnly": true,
+          "title": "Number of options, RSUs, or other equity granted",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "text"
+          }
+        },
+        "offer_equity_compensation": {
+          "description": "Granting equity to your team generally triggers tax and legal obligations. In order for you to stay compliant, it's important to declare any equity grants.",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            }
+          ],
+          "title": "Will this employee receive equity?",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "row",
+            "inputType": "radio"
+          }
+        }
+      },
+      "required": ["offer_equity_compensation"],
+      "title": "Equity management",
+      "type": "object",
+      "x-jsf-order": [
+        "offer_equity_compensation",
+        "number_of_stock_options",
+        "equity_cliff",
+        "equity_vesting_period",
+        "equity_description"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 39,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 39,
+              "currency": "USD"
+            }
+          },
+          "helpCenter": {
+            "callToAction": "Learn more about equity management at Remote",
+            "content": "<p>Remote Equity is a lightweight compliance tool designed to help you manage equity grants across borders for team members hired through Remote's Employer of Record (EOR).</p><p>Whether you’re managing vesting, reporting exercises, or navigating local tax laws, Remote Equity gives you the structure to stay compliant, avoid risk, and support your team across borders.</p><h4 id=\"h_01K0YQSYJ8JPKYXNNNW90B0QJP\">Why it matters</h4><p>As your EOR, <strong>Remote is legally responsible</strong> for equity-related tax and reporting in the countries where your team members are employed. That means we don’t just track equity, we:</p><ul>\n<li data-list-item-id=\"eba6b95d2e41a276665f3f64525e0eb59\">Withhold and report taxes when required</li>\n<li data-list-item-id=\"ed16c354038e4b3d908bacd965dc2d71b\">File with local tax authorities</li>\n<li data-list-item-id=\"eb7162ef11477f7a7737fe34a48979559\">Support team members with clear guidance on their tax responsibilities</li>\n</ul><p>Most equity platforms can’t do that because they’re not the legal employer. <strong>Remote Equity ensures we have the data we need, when we need it, to keep your company compliant and your team fairly rewarded.</strong></p><p>Behind the scenes, our tax team:</p><ul>\n<li data-list-item-id=\"ef5c97b0472ebc9a0819e312646e4cd66\">Handles tax withholdings when taxable events occur</li>\n<li data-list-item-id=\"e5f3560641743ab0c57ba47683638560e\">Provides guidance to you and your team, even when no withholding is required</li>\n<li data-list-item-id=\"ed17d307d635b18f9f784df12d1dbe1cd\">Manages additional reporting where local laws demand it</li>\n</ul><p>See also: <a href=\"https://support.remote.com/hc/en-us/articles/37710493624589-What-types-of-equity-grants-should-I-declare-in-Remote-Equity-Essentials\">What types of equity grants should I declare in Remote Equity?</a></p><h4 id=\"h_01K0YQSYJDJ3JYC1C642ASB8E2\">What’s included</h4><p>Remote Equity provides:</p><ul>\n<li data-list-item-id=\"e0cc8d8c0b7d060b9de89e3c870fc1579\">\n<strong>Tracking and alerts</strong> for events that may create a tax obligation (like vesting or exercising)</li>\n<li data-list-item-id=\"e88a2fc75f6f43db27891e415e2f90400\">\n<strong>Automated compliance reminders</strong> based on local deadlines and regulations</li>\n<li data-list-item-id=\"e2c2cf9ef914143e339eb32e1b70c83da\">\n<strong>Localized guidance for team members</strong>, shared through the Remote Equity app</li>\n<li data-list-item-id=\"e8a2c20d648ed01a3db135ef4ada0de61\">\n<strong>Support from Remote’s tax and legal teams</strong>, who handle obligations on your behalf</li>\n<li data-list-item-id=\"e184af2a6420412152b377815ebe18ce2\">\n<strong>Integration with Carta and Pulley</strong> to automatically sync grant declarations and exercise information</li>\n</ul><h4 id=\"h_01K0YQSYJSCK6XYBXF3Q56KRC8\"><strong>Get started in minutes</strong></h4><p>Setup takes less than five minutes. Just log in to your Remote account, and launch the Equity App to follow the setup steps.</p><p>Helpful guides to get started:</p><ul>\n<li data-list-item-id=\"e73e204bc587d3417ecab74e3a29ccc2a\"><a href=\"https://support.remote.com/hc/en-us/articles/37547625350925-How-can-I-access-Remote-Equity-Essentials\">How can I access Remote Equity?</a></li>\n<li data-list-item-id=\"e0ca43a64bf2361ce43443e98200daa5a\"><a href=\"https://support.remote.com/hc/en-us/articles/35577980536589\">How do I declare a grant?</a></li>\n<li data-list-item-id=\"edfa1a00c07a70449ebe34c25dec818fe\"><a href=\"https://support.remote.com/hc/en-us/articles/35671968187149-How-can-my-employees-see-their-equity-information\">How can my team access their equity information?</a></li>\n<li data-list-item-id=\"edaaf9eb107949f79894c24e3b984da30\"><a href=\"https://support.remote.com/hc/en-us/articles/35546454220301-What-happens-if-I-already-declared-equity-before-using-Remote-Equity-Essentials\">What happens if I already declared equity before using Remote Equity?</a></li>\n</ul><h4 id=\"h_01K0YQSYJV9EH2AQ9HWYS1826S\"><span class=\"wysiwyg-underline\">Frequently Asked Questions (FAQs)</span></h4><p><strong>Who needs to use Remote Equity?</strong></p><p>Any Remote customer granting equity to a team member hired through Remote’s EOR must use Remote Equity to meet local compliance requirements.</p><p><strong>Why can’t we just use our own equity tool?</strong></p><p>Traditional equity tools track grants and vesting, but they don't file taxes, withhold contributions, or report income to local authorities. Remote, as the legal employer, is responsible for these actions. Remote Equity ensures those obligations are covered.</p><p><strong>What happens if we don’t use it?</strong></p><p>If Remote doesn’t receive timely and accurate equity data, required filings may be missed. This can result in compliance risks, unexpected tax liabilities, and issues for both your company and your team members.</p><p><strong>How much does Remote Equity cost?</strong></p><p>Remote Equity costs 39 USD per month for each EOR team member with equity. <a href=\"https://support.remote.com/hc/en-us/articles/35546441948685-How-much-does-Remote-Equity-Essentials-cost\">Learn more</a>.</p><p>For comprehensive information, visit the <a href=\"https://support.remote.com/hc/en-us/categories/45788665954189-Remote-Equity\" tabindex=\"0\" data-token-index=\"1\" rel=\"noopener noreferrer\">Remote Equity hub</a>.</p>",
+            "error": false,
+            "id": 38303424407821,
+            "title": "Welcome to Remote Equity: Global equity, without the compliance headaches"
+          }
+        }
+      }
+    },
+    "experience_level": {
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employees overall experience).",
+      "oneOf": [
+        {
+          "const": "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "description": "Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "title": "Level 2 - Entry Level"
+        },
+        {
+          "const": "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+          "description": "Employees who perform independently tasks and/or with coordination and control functions",
+          "title": "Level 3 - Associate"
+        },
+        {
+          "const": "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "description": "Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "title": "Level 4 - Mid-Senior level"
+        },
+        {
+          "const": "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "description": "Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "title": "Level 5 - Director"
+        },
+        {
+          "const": "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "description": "An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "title": "Level 6 - Executive"
+        }
+      ],
+      "title": "Experience level",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "has_bonus": {
+      "description": "These can include things like performance-related bonuses.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer other bonuses?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p><span class=\"sc-c090059b-0 fISxvo\">We do not include bonus specifics in the employment agreement. However, you can create a bonus directly on the platform.</span></p>\n<p><span class=\"sc-c090059b-0 fISxvo\">Please note that if you decide to offer other bonuses, it will be difficult or impossible to withdraw these bonuses if you change your mind later.</span></p>",
+            "error": false,
+            "id": 18019142406029,
+            "title": "Other bonuses"
+          }
+        }
+      }
+    },
+    "has_commissions": {
+      "description": "You can outline your policy and pay commission to the employee on the platform. However, commission will not appear in the employment agreement. Please send full policy details directly to the employee.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer commission?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_probation_period": {
+      "description": "We recommend selecting Yes. In the unfortunate event of a necessary termination, probation periods make the process much easier.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Include a probation period?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about probation period",
+            "content": "<p>The purpose of a probationary period is to allow a specific time period for the employee and company to assess suitability for the role after having first-hand experience. On the one hand, it gives the company the opportunity to assess objectively whether the new employee is suitable for the job, considering their capability, skills, performance, attendance and general conduct.</p>\n<p>During the probation period, it is typically simpler to terminate an employee that is underperforming. Often, standard notice periods do not apply or may be shortened. Depending on the employee’s country of residence, it may be more difficult and costly to terminate an employee after their probation period is over.</p>\n<p><span class=\"notion-enable-hover\" data-token-index=\"0\">Please be aware that if you do not elect to implement a probationary period and later conduct a background check during the onboarding process, </span>Remote cannot unilaterally terminate employment following the receipt of unsatisfactory background check results<span class=\"notion-enable-hover\" style=\"font-weight: 600;\" data-token-index=\"2\">.</span><!-- notionvc: 689a1f6e-271d-4ae3-9a37-8506a098847c --></p>\n<p><span class=\"notion-enable-hover\" style=\"font-weight: 600;\" data-token-index=\"2\"><strong style=\"box-sizing: border-box; font-weight: bold; color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">See also:</strong><span style=\"color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;\"> <a href=\"https://remote.zendesk.com/hc/en-us/articles/9013403125773\">How do I include a probationary period in the employee's contract?</a></span></span></p>",
+            "error": false,
+            "id": 19858883586445,
+            "title": "Why is it important to include a probationary period in an employee's contract?"
+          }
+        }
+      }
+    },
+    "has_signing_bonus": {
+      "description": "This is a one-time payment the employee receives when they join your team.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer a signing bonus?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_compete_clause_apply": {
+      "description": "This discourages the employee from entering or starting a similar company in competition against your company.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        }
+      ],
+      "title": "Apply a non-compete clause?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_compete_clause_halt_period_months": {
+      "description": "Non-competes can last between 1 and 12 months. The clause begins after the termination of the employment agreement.",
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Non-compete clause duration, in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_interference_apply": {
+      "description": "This prevents the employee from interfering with your company’s business and customer relationships after they leave your company.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        }
+      ],
+      "title": "Apply a non-interference clause?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_interference_halt_period": {
+      "description": "The non-interference clause can last between 1 and 12 months. The clause begins after the termination of the employment agreement.",
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Non-interference clause duration, in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_solicitation_customer_number_of_months": {
+      "description": "Non-solicits can last between 1 and 12 months. The clause begins after the termination of the employment agreement.",
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Non-solicitation of customers clause duration, in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_solicitation_customers": {
+      "description": "This would restrict the employee from seeking business from your company’s customers on behalf of a competing business.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        }
+      ],
+      "title": "Apply a non-solicitation of customers clause?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_solicitation_employees": {
+      "description": "This would restrict the employee from enticing or hiring your company’s employees for a competing business.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        }
+      ],
+      "title": "Apply a non-solicitation of employees clause?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_solicitation_employees_number_of_months": {
+      "description": "Non-solicits can last between 1 and 12 months. The clause begins after the termination of the employment agreement.",
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Non-solicitation of employees clause duration, in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "other_work_locations": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Is the employee required to work in or travel to other locations?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "part_time_salary_confirmation": {
+      "const": "acknowledged",
+      "description": "We'll include the salary in the employment agreement, so please double-check that it's correct.",
+      "title": "I confirm that this amount is the full annual salary for this part-time employee.",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "post_termination_restrictions": {
+      "description": "We crafted the post-termination restrictions with local counsel to provide the best language possible. However, they likely cannot be enforced. They can only be added as deterrents.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Do you want to apply any post-termination restrictions (non-compete, non-solicit)?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>Depending on a country’s laws, post-termination restrictions can include non-compete, non-solicit, and non-interference clauses.</p>\n<p>The post-termination restrictions have been crafted with local counsel to provide the best language possible. However, we cannot guarantee the effectiveness of any post-termination restriction, particularly because the employment agreement is between us and the employee. We will not pursue any action against an employee for violation.</p>\n<p>There are no applicable statutory rules or practices regarding non-solicit and non-interference clauses. So it is very likely that they are not enforceable. They can only be added in as a deterrent.</p>",
+            "error": false,
+            "id": 20956976821901,
+            "title": "Post-termination restrictions"
+          }
+        }
+      }
+    },
+    "probation_length": {
+      "description": "In Puerto Rico, the maximum probation period is 12 months.",
+      "minimum": 1,
+      "title": "Probation period, in months",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "role_description": {
+      "description": "Please add at least 3 responsibilities, at least 100 characters in total.",
+      "maxLength": 5000,
+      "minLength": 100,
+      "title": "Role description",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<div class=\"sc-8483994-0 sc-25e5b337-1 gagDAr dNpfwN\">\n<header class=\"sc-8483994-0 sc-98ea0a46-0 cFaANn gAlQJD sc-704369bd-0 jOYBDY\">\n<h2 class=\"sc-c090059b-0 lcffkV sc-704369bd-3 eWYhqz\" id=\"01H7WSRV90B3R0X35RZ21B959A\">Why do I need to define a role description?</h2>\n</header><span class=\"sc-c090059b-0 fISxvo\">It will appear in the employment agreement. Be thorough and accurate, especially if your employee is applying for a visa.</span>\n</div>\n<div class=\"sc-8483994-0 sc-25e5b337-1 gagDAr dNpfwN\"> </div>\n<h2 class=\"sc-8483994-0 gagDAr\" id=\"01H7WSRV908B1DKFVDFKNTN2EZ\"><span class=\"sc-c090059b-0 iaMkhB sc-25e5b337-3 jwgiWP\">Tips for a better role description</span></h2>\n<ul>\n<li class=\"sc-8483994-0 gagDAr\">Keep it short – up to 5 main responsibilities</li>\n<li class=\"sc-8483994-0 gagDAr\"><span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">Include punctuation</span></li>\n<li class=\"sc-8483994-0 gagDAr\">No need to mention your company, focus on the specific duties of the role</li>\n</ul>",
+            "error": false,
+            "id": 18019255579405,
+            "title": "Role description"
+          }
+        }
+      }
+    },
+    "sick_leave_ack": {
+      "const": "acknowledged",
+      "title": "I acknowledge that the employee will accrue 1 sick leave day for every month where they work at least 130 hours.",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "signing_bonus_amount": {
+      "description": "In United States Dollar (USD).",
+      "minimum": 1,
+      "title": "Signing bonus amount",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "USD",
+        "inputType": "money"
+      }
+    },
+    "signing_bonus_clawback": {
+      "description": "If you apply this clause, the employee will be able to keep their signing bonus only if they work a full year at your company and neither your company nor the employee gives notice to end their employment during the year. Otherwise, the employee will have to repay the signing bonus within 20 days of termination.",
+      "oneOf": [
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        },
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a signing bonus clawback?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "third_party_work": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Can the employee work for third parties or do business on their own while employed by your company?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "third_party_work_activities": {
+      "description": "Provide as many details about the approved activities as you can. We’ll include them in the employment agreement.",
+      "maxLength": 10000,
+      "title": "Approved third-party work",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "work_address_is_home_address": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Same as their residential address"
+        },
+        {
+          "const": "no",
+          "title": "Different than their residential address"
+        }
+      ],
+      "title": "Employee's work address",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "work_equipment_provided_by": {
+      "oneOf": [
+        {
+          "const": "provided_by_client",
+          "title": "The client provides the equipment"
+        },
+        {
+          "const": "provided_by_employee",
+          "title": "The employee provides the equipment"
+        }
+      ],
+      "title": "Who will provide the employee's work equipment?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "work_hours_per_week": {
+      "description": "Employees who work 32 hours or more a week are considered full-time. Those who work under 32 hours a week are considered part-time.",
+      "title": "Work hours per week",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>Employees cannot work more than 8 hours a day unless previously agreed upon. If they work more than 40 hours a week, that extra time is considered overtime. They’re also entitled to a 1-hour meal break between the 3rd and 6th hour of the work day. If the employee works more than 10 hours a day, they’re entitled to 2 meal breaks.<!-- notionvc: 357bd6ed-1505-44a5-9e11-81deb2cbdd19 --></p>",
+            "error": false,
+            "id": 22559139199629,
+            "title": "Work hours per week (Puerto Rico)"
+          }
+        }
+      }
+    },
+    "work_schedule": {
+      "oneOf": [
+        {
+          "const": "full_time",
+          "description": "Works between 32 and 40 hours per week.",
+          "title": "Full-time"
+        },
+        {
+          "const": "part_time",
+          "description": "Works 31 hours or less per week.",
+          "title": "Part-time"
+        }
+      ],
+      "title": "Type of employee",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    }
+  },
+  "required": [
+    "annual_gross_salary",
+    "available_pto",
+    "available_pto_type",
+    "christmas_bonus_ack",
+    "contract_duration_type",
+    "employee_exemption",
+    "equity_compensation",
+    "experience_level",
+    "has_bonus",
+    "has_commissions",
+    "has_probation_period",
+    "has_signing_bonus",
+    "other_work_locations",
+    "post_termination_restrictions",
+    "role_description",
+    "sick_leave_ack",
+    "third_party_work",
+    "work_address_is_home_address",
+    "work_equipment_provided_by",
+    "work_hours_per_week",
+    "work_schedule"
+  ],
+  "type": "object",
+  "x-jsf-order": [
+    "contract_duration_type",
+    "contract_end_date",
+    "work_schedule",
+    "employee_exemption",
+    "work_hours_per_week",
+    "has_probation_period",
+    "probation_length",
+    "available_pto_type",
+    "available_pto",
+    "additional_holiday_days",
+    "sick_leave_ack",
+    "role_description",
+    "experience_level",
+    "work_address_is_home_address",
+    "other_work_locations",
+    "annual_gross_salary",
+    "part_time_salary_confirmation",
+    "christmas_bonus_ack",
+    "has_signing_bonus",
+    "signing_bonus_amount",
+    "signing_bonus_clawback",
+    "has_bonus",
+    "bonus_details",
+    "has_commissions",
+    "commissions_details",
+    "commissions_ack",
+    "equity_compensation",
+    "post_termination_restrictions",
+    "non_compete_clause_apply",
+    "non_compete_clause_halt_period_months",
+    "non_solicitation_employees",
+    "non_solicitation_employees_number_of_months",
+    "non_solicitation_customers",
+    "non_solicitation_customer_number_of_months",
+    "non_interference_apply",
+    "non_interference_halt_period",
+    "work_equipment_provided_by",
+    "third_party_work",
+    "third_party_work_activities"
+  ],
+  "x-jsf-presentation": {
+    "inputType": "fieldset"
+  }
+}

@@ -152,7 +152,7 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           {
-            echo "This PR pins a contract details version that had no baseline, so the schema snapshot check added one and pushed it to this branch. Please review the new file under \`snapshots/contract-details/\`: it is what the sandbox serves for that version right now."
+            echo "This PR pins a contract details version that had no baseline, so the schema snapshot check added one and pushed it to this branch. Please review the new files under \`snapshots/contract-details/\` (how the form behaves) and \`snapshots/contract-details-raw/\` (the schema exactly as served): they are what the sandbox serves for that version right now."
             echo
             cat "$RUNNER_TEMP/schema-snapshot-summary.md"
           } > "$RUNNER_TEMP/comment.md"

@@ -1,0 +1,1630 @@
+{
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "else": {
+          "properties": {
+            "notice_period_days": false
+          }
+        },
+        "if": {
+          "properties": {
+            "notice_period_choice": {
+              "const": "custom"
+            }
+          },
+          "required": ["notice_period_choice"]
+        },
+        "then": {
+          "properties": {
+            "notice_period_days": {
+              "readOnly": false,
+              "x-jsf-presentation": {
+                "inputType": "number"
+              }
+            }
+          },
+          "required": ["notice_period_days"]
+        }
+      },
+      "if": {
+        "properties": {
+          "notice_period_choice": {
+            "const": "recommended"
+          }
+        },
+        "required": ["notice_period_choice"]
+      },
+      "then": {
+        "properties": {
+          "notice_period_days": {
+            "const": 30,
+            "default": 30,
+            "readOnly": true,
+            "x-jsf-presentation": {
+              "inputType": "hidden"
+            }
+          }
+        },
+        "required": ["notice_period_days"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 77464800,
+            "x-jsf-errorMessage": {
+              "minimum": "In Serbia, full-time employees are entitled to a minimum annual salary of RSD 774,648.00."
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "bonus_amount": false,
+          "bonus_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_bonus"]
+      },
+      "then": {
+        "properties": {
+          "bonus_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["bonus_details"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "signing_bonus_amount": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_signing_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_signing_bonus"]
+      },
+      "then": {
+        "properties": {
+          "signing_bonus_amount": {
+            "type": ["integer"]
+          }
+        },
+        "required": ["signing_bonus_amount"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "commissions_ack": false,
+          "commissions_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_commissions": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_commissions"]
+      },
+      "then": {
+        "properties": {
+          "commissions_ack": {
+            "type": ["string"]
+          },
+          "commissions_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["commissions_details", "commissions_ack"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "work_hours_per_week": {
+            "maximum": 40,
+            "minimum": 36,
+            "x-jsf-errorMessage": {
+              "maximum": "Must be no more than 40 hours per week.",
+              "minimum": "Must be at least 36 hours per week."
+            }
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "work_hours_per_week": {
+            "maximum": 35,
+            "minimum": 1,
+            "x-jsf-errorMessage": {
+              "maximum": "Must be no more than 35 hours per week.",
+              "minimum": "Must be at least 1 hour per week."
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "part_time_salary_confirmation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "part_time_salary_confirmation": {
+            "type": ["string"]
+          }
+        },
+        "required": ["part_time_salary_confirmation"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "probation_length": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "properties": {
+          "probation_length": {
+            "type": ["number"]
+          }
+        },
+        "required": ["probation_length"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "no"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "properties": {
+          "has_probation_period": {
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "Waiving the probation period is possible but discouraged",
+                "severity": "warning"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_compete_clause_halt_period_months": false,
+          "non_solicitation_preceding_period_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_non_compete_non_solicitation": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_non_compete_non_solicitation"]
+      },
+      "then": {
+        "properties": {
+          "non_compete_clause_halt_period_months": {
+            "type": ["number"]
+          },
+          "non_solicitation_preceding_period_months": {
+            "type": ["number"]
+          }
+        },
+        "required": [
+          "non_compete_clause_halt_period_months",
+          "non_solicitation_preceding_period_months"
+        ]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "contract_duration_fixed_term_reason": false,
+          "contract_end_date": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "fixed_term"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "properties": {
+          "contract_duration_fixed_term_reason": {
+            "type": ["string"]
+          },
+          "contract_end_date": {
+            "type": ["string"]
+          }
+        },
+        "required": ["contract_duration_fixed_term_reason", "contract_end_date"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "private_use_company_car": false
+        }
+      },
+      "if": {
+        "properties": {
+          "company_car": {
+            "const": "yes"
+          }
+        },
+        "required": ["company_car"]
+      },
+      "then": {
+        "properties": {
+          "private_use_company_car": {
+            "type": ["string"]
+          }
+        },
+        "required": ["private_use_company_car"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "work_equipment_allowance": false
+        }
+      },
+      "if": {
+        "properties": {
+          "work_equipment_provided_by": {
+            "const": "provided_by_employee"
+          }
+        },
+        "required": ["work_equipment_provided_by"]
+      },
+      "then": {
+        "properties": {
+          "work_equipment_allowance": {
+            "type": ["integer"]
+          }
+        },
+        "required": ["work_equipment_allowance"]
+      }
+    }
+  ],
+  "properties": {
+    "annual_gross_salary": {
+      "description": "The minimum annual salary is calculated based on the country's applicable laws.",
+      "title": "Annual gross salary",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "RSD",
+        "inputType": "money"
+      }
+    },
+    "available_pto": {
+      "description": "By law, the employee is entitled to at least 20 days per year of paid time off. This then may/must be increased based on certain criteria.",
+      "minimum": 20,
+      "title": "Number of paid time off days",
+      "type": "number",
+      "x-jsf-errorMessage": {
+        "minimum": "Must be at least 20 days."
+      },
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more about the requirements",
+            "content": "<h2 id=\"h_01K5V68EG8TJEF1W23VXZNBSB5\">What you need to know</h2><div><div>This number will be applied to the employment agreement for contract purposes. For example, in case of employee termination.</div></div><h2 id=\"h_01K5V6ASEKA0WX6NRYM9RQP5NZ\">Minimum days per year</h2><div>\n<div>By law, the employee is entitled to at least 20 days per year of paid time off. This then may/must be increased based on the following criteria:</div>\n<div> </div>\n</div><ul>\n<li>Contributions to work (optional): the employee’s manager or director can increase the employee’s paid time off by 20 working days</li>\n<li>Work experience (mandatory): 1 working day for every 10 years of work experience at the employer</li>\n<li>Employee education type and level (mandatory): 1 working day for employees who have VII level of education</li>\n</ul><h2 id=\"h_01K5V6CC3SNDTDK36CHT5DCM67\">Do not include public or bank holidays</h2><div><div>This field determines the number of paid time off days the employee gets as a benefit. These are sometimes called vacation or annual leave days. Each country has its own legal requirements for the number of paid time off days employees receive.</div></div>",
+            "error": false,
+            "id": 38925857257869,
+            "title": "Minimum paid time off days (Serbia)"
+          }
+        }
+      }
+    },
+    "bonus_details": {
+      "description": "Bonus type, payment frequency, and more.",
+      "maxLength": 1000,
+      "title": "Other bonus details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "commissions_ack": {
+      "const": "acknowledged",
+      "description": "I understand that I am required to provide written details of the commission plan to this employee, and upload this document on the platform for record keeping purposes. I acknowledge that Remote will not liable for any claims or losses associated with the commission or bonus plan.",
+      "title": "Confirm commission plan details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "commissions_details": {
+      "description": "Payment amount, frequency, and more.",
+      "maxLength": 1000,
+      "title": "Commission details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "company_car": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Will the employee have a company car?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "contract_duration_fixed_term_reason": {
+      "description": "For example, to complete a specific task or to provide support for a special event.",
+      "oneOf": [
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        },
+        {
+          "const": "increased_workload",
+          "title": "Increased workload - 24 months maximum"
+        },
+        {
+          "const": "replacing_absent_employee",
+          "title": "Replacing an absent employee"
+        },
+        {
+          "const": "working_on_project",
+          "title": "Working on a project - as long as the project lasts"
+        },
+        {
+          "const": "foreign_citizen",
+          "title": "Work permit limitations - for the period the work permit covers"
+        },
+        {
+          "const": "newly_established_employer",
+          "title": "Newly established employer - 36 months maximum"
+        },
+        {
+          "const": "pension_eligibility",
+          "title": "Employee has up to 5 years to fulfil criteria for pension - 5 years maximum"
+        }
+      ],
+      "title": "Reason for fixed-term contract",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "select"
+      }
+    },
+    "contract_duration_type": {
+      "description": "An employee must receive an indefinite-term contract after 3 fixed-term contracts, or if the fixed-term contract amounts to more than 36 months.",
+      "oneOf": [
+        {
+          "const": "indefinite",
+          "title": "Indefinite"
+        },
+        {
+          "const": "fixed_term",
+          "title": "Fixed Term"
+        }
+      ],
+      "title": "Contract duration",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "contract_end_date": {
+      "format": "date",
+      "maxLength": 255,
+      "title": "Contract end date",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "date",
+        "minDate": "2026-12-01"
+      }
+    },
+    "equity_compensation": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "equity_cliff": false,
+              "equity_description": false,
+              "equity_vesting_period": false,
+              "number_of_stock_options": false
+            }
+          },
+          "if": {
+            "properties": {
+              "offer_equity_compensation": {
+                "const": "yes"
+              }
+            },
+            "required": ["offer_equity_compensation"]
+          },
+          "then": {
+            "properties": {
+              "equity_description": {
+                "type": ["string"]
+              }
+            },
+            "required": ["equity_description"]
+          }
+        }
+      ],
+      "properties": {
+        "equity_cliff": {
+          "deprecated": true,
+          "description": "When the first portion of the stock option grant will vest.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Cliff (in months)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "equity_description": {
+          "description": "Please share any information related to the upcoming equity grant.",
+          "maxLength": 1000,
+          "title": "Number of options, RSUs, and other equity",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "textarea"
+          }
+        },
+        "equity_vesting_period": {
+          "deprecated": true,
+          "description": "The number of years it will take for the employee to vest all their options.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Vesting period (in years)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "number_of_stock_options": {
+          "deprecated": true,
+          "description": "Tell us the type of equity you're granting as well.",
+          "maxLength": 255,
+          "readOnly": true,
+          "title": "Number of options, RSUs, or other equity granted",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "text"
+          }
+        },
+        "offer_equity_compensation": {
+          "description": "Granting equity to your team generally triggers tax and legal obligations. In order for you to stay compliant, it's important to declare any equity grants.",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            }
+          ],
+          "title": "Will this employee receive equity?",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "row",
+            "inputType": "radio"
+          }
+        }
+      },
+      "required": ["offer_equity_compensation"],
+      "title": "Equity management",
+      "type": "object",
+      "x-jsf-order": [
+        "offer_equity_compensation",
+        "number_of_stock_options",
+        "equity_cliff",
+        "equity_vesting_period",
+        "equity_description"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 39,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 39,
+              "currency": "USD"
+            }
+          },
+          "helpCenter": {
+            "callToAction": "Learn more about equity management at Remote",
+            "content": "<p>Remote Equity is a lightweight compliance tool designed to help you manage equity grants across borders for team members hired through Remote's Employer of Record (EOR).</p><p>Whether you’re managing vesting, reporting exercises, or navigating local tax laws, Remote Equity gives you the structure to stay compliant, avoid risk, and support your team across borders.</p><h4 id=\"h_01K0YQSYJ8JPKYXNNNW90B0QJP\">Why it matters</h4><p>As your EOR, <strong>Remote is legally responsible</strong> for equity-related tax and reporting in the countries where your team members are employed. That means we don’t just track equity, we:</p><ul>\n<li data-list-item-id=\"eba6b95d2e41a276665f3f64525e0eb59\">Withhold and report taxes when required</li>\n<li data-list-item-id=\"ed16c354038e4b3d908bacd965dc2d71b\">File with local tax authorities</li>\n<li data-list-item-id=\"eb7162ef11477f7a7737fe34a48979559\">Support team members with clear guidance on their tax responsibilities</li>\n</ul><p>Most equity platforms can’t do that because they’re not the legal employer. <strong>Remote Equity ensures we have the data we need, when we need it, to keep your company compliant and your team fairly rewarded.</strong></p><p>Behind the scenes, our tax team:</p><ul>\n<li data-list-item-id=\"ef5c97b0472ebc9a0819e312646e4cd66\">Handles tax withholdings when taxable events occur</li>\n<li data-list-item-id=\"e5f3560641743ab0c57ba47683638560e\">Provides guidance to you and your team, even when no withholding is required</li>\n<li data-list-item-id=\"ed17d307d635b18f9f784df12d1dbe1cd\">Manages additional reporting where local laws demand it</li>\n</ul><p>See also: <a href=\"https://support.remote.com/hc/en-us/articles/37710493624589-What-types-of-equity-grants-should-I-declare-in-Remote-Equity-Essentials\">What types of equity grants should I declare in Remote Equity?</a></p><h4 id=\"h_01K0YQSYJDJ3JYC1C642ASB8E2\">What’s included</h4><p>Remote Equity provides:</p><ul>\n<li data-list-item-id=\"e0cc8d8c0b7d060b9de89e3c870fc1579\">\n<strong>Tracking and alerts</strong> for events that may create a tax obligation (like vesting or exercising)</li>\n<li data-list-item-id=\"e88a2fc75f6f43db27891e415e2f90400\">\n<strong>Automated compliance reminders</strong> based on local deadlines and regulations</li>\n<li data-list-item-id=\"e2c2cf9ef914143e339eb32e1b70c83da\">\n<strong>Localized guidance for team members</strong>, shared through the Remote Equity app</li>\n<li data-list-item-id=\"e8a2c20d648ed01a3db135ef4ada0de61\">\n<strong>Support from Remote’s tax and legal teams</strong>, who handle obligations on your behalf</li>\n<li data-list-item-id=\"e184af2a6420412152b377815ebe18ce2\">\n<strong>Integration with Carta and Pulley</strong> to automatically sync grant declarations and exercise information</li>\n</ul><h4 id=\"h_01K0YQSYJSCK6XYBXF3Q56KRC8\"><strong>Get started in minutes</strong></h4><p>Setup takes less than five minutes. Just log in to your Remote account, and launch the Equity App to follow the setup steps.</p><p>Helpful guides to get started:</p><ul>\n<li data-list-item-id=\"e73e204bc587d3417ecab74e3a29ccc2a\"><a href=\"https://support.remote.com/hc/en-us/articles/37547625350925-How-can-I-access-Remote-Equity-Essentials\">How can I access Remote Equity?</a></li>\n<li data-list-item-id=\"e0ca43a64bf2361ce43443e98200daa5a\"><a href=\"https://support.remote.com/hc/en-us/articles/35577980536589\">How do I declare a grant?</a></li>\n<li data-list-item-id=\"edfa1a00c07a70449ebe34c25dec818fe\"><a href=\"https://support.remote.com/hc/en-us/articles/35671968187149-How-can-my-employees-see-their-equity-information\">How can my team access their equity information?</a></li>\n<li data-list-item-id=\"edaaf9eb107949f79894c24e3b984da30\"><a href=\"https://support.remote.com/hc/en-us/articles/35546454220301-What-happens-if-I-already-declared-equity-before-using-Remote-Equity-Essentials\">What happens if I already declared equity before using Remote Equity?</a></li>\n</ul><h4 id=\"h_01K0YQSYJV9EH2AQ9HWYS1826S\"><span class=\"wysiwyg-underline\">Frequently Asked Questions (FAQs)</span></h4><p><strong>Who needs to use Remote Equity?</strong></p><p>Any Remote customer granting equity to a team member hired through Remote’s EOR must use Remote Equity to meet local compliance requirements.</p><p><strong>Why can’t we just use our own equity tool?</strong></p><p>Traditional equity tools track grants and vesting, but they don't file taxes, withhold contributions, or report income to local authorities. Remote, as the legal employer, is responsible for these actions. Remote Equity ensures those obligations are covered.</p><p><strong>What happens if we don’t use it?</strong></p><p>If Remote doesn’t receive timely and accurate equity data, required filings may be missed. This can result in compliance risks, unexpected tax liabilities, and issues for both your company and your team members.</p><p><strong>How much does Remote Equity cost?</strong></p><p>Remote Equity costs 39 USD per month for each EOR team member with equity. <a href=\"https://support.remote.com/hc/en-us/articles/35546441948685-How-much-does-Remote-Equity-Essentials-cost\">Learn more</a>.</p><p>For comprehensive information, visit the <a href=\"https://support.remote.com/hc/en-us/categories/45788665954189-Remote-Equity\" tabindex=\"0\" data-token-index=\"1\" rel=\"noopener noreferrer\">Remote Equity hub</a>.</p>",
+            "error": false,
+            "id": 38303424407821,
+            "title": "Welcome to Remote Equity: Global equity, without the compliance headaches"
+          }
+        }
+      }
+    },
+    "experience_level": {
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employees overall experience).",
+      "oneOf": [
+        {
+          "const": "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "description": "Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "title": "Level 2 - Entry Level"
+        },
+        {
+          "const": "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+          "description": "Employees who perform independently tasks and/or with coordination and control functions",
+          "title": "Level 3 - Associate"
+        },
+        {
+          "const": "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "description": "Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "title": "Level 4 - Mid-Senior level"
+        },
+        {
+          "const": "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "description": "Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "title": "Level 5 - Director"
+        },
+        {
+          "const": "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "description": "An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "title": "Level 6 - Executive"
+        }
+      ],
+      "title": "Experience level",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "has_bonus": {
+      "description": "Do you want to include any other types of bonuses, such as performance-related bonuses?",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Other bonuses",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_commissions": {
+      "description": "You can outline your policy and pay commission to the employee on the platform. However, commission will not appear in the employment agreement. Please send full policy details directly to the employee.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer commission?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_non_compete_non_solicitation": {
+      "description": "This would prohibit the employee from entering or starting a similar company in competition against your company. It would also restrict the employee from seeking business from your company's customers on behalf of a competing business.",
+      "oneOf": [
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        },
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a non-compete and non-solicitation clause?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "statement": {
+          "description": "Remote cannot guarantee the effectiveness of any post-termination restriction (particularly as the employment agreement is between Remote and the employee only) and will not pursue any action against an employee for violation.",
+          "severity": "info"
+        }
+      }
+    },
+    "has_probation_period": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Will this employee have a probation period?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_signing_bonus": {
+      "description": "This is a one-time payment the employee receives when they join your team.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer a signing bonus?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "increased_salary_ack": {
+      "const": "acknowledged",
+      "description": "I acknowledge that the employee is entitled to additional salary in the following cases:<br /><ul><li>Work on holiday – 110% of base salary</li><li>Overtime work – 26% of base salary</li><li>Work at night (if not already included in base salary) – 26% of base salary</li><li>Work experience with Remote Serbia – 0.4% of base salary per working year</li></ul><br>The base salary is indicated in the employment agreement.",
+      "title": "Additional salary",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "job_id": {
+      "description": "Select the option that best fits.",
+      "oneOf": [
+        {
+          "const": "01",
+          "title": "01 Executive Assistant"
+        },
+        {
+          "const": "02",
+          "title": "02 Project Manager"
+        },
+        {
+          "const": "03",
+          "title": "03 Sales Manager"
+        },
+        {
+          "const": "04",
+          "title": "04 Programmer"
+        },
+        {
+          "const": "05",
+          "title": "05 IT Specialist"
+        },
+        {
+          "const": "06",
+          "title": "06 Engineer"
+        },
+        {
+          "const": "07",
+          "title": "07 Product Design"
+        },
+        {
+          "const": "08",
+          "title": "08 Client Success Director"
+        },
+        {
+          "const": "09",
+          "title": "09 Client Success Manager"
+        },
+        {
+          "const": "10",
+          "title": "10 Business Operations Manager"
+        },
+        {
+          "const": "11",
+          "title": "11 Data Protection Specialist"
+        },
+        {
+          "const": "12",
+          "title": "12 Design Team Leader"
+        },
+        {
+          "const": "13",
+          "title": "13 Team Leader"
+        },
+        {
+          "const": "14",
+          "title": "14 Application Support Specialist"
+        },
+        {
+          "const": "15",
+          "title": "15 Business Process Analyst"
+        },
+        {
+          "const": "16",
+          "title": "16 Head of Customer Support and Service"
+        },
+        {
+          "const": "17",
+          "title": "17 Designer"
+        },
+        {
+          "const": "18",
+          "title": "18 Administrative Worker"
+        },
+        {
+          "const": "19",
+          "title": "19 Employment Advisor"
+        },
+        {
+          "const": "20",
+          "title": "20 Senior Software Engineer"
+        },
+        {
+          "const": "21",
+          "title": "21 Senior Recruitment Consultant"
+        },
+        {
+          "const": "22",
+          "title": "22 HR Director"
+        },
+        {
+          "const": "23",
+          "title": "23 Human Resources"
+        },
+        {
+          "const": "24",
+          "title": "24 Senior Core Customer Success Manager"
+        },
+        {
+          "const": "25",
+          "title": "25 Customer Support Associate"
+        },
+        {
+          "const": "26",
+          "title": "26 Senior HR Business Partner"
+        },
+        {
+          "const": "27",
+          "title": "27 Senior Android Engineer"
+        },
+        {
+          "const": "28",
+          "title": "28 VP People"
+        },
+        {
+          "const": "29",
+          "title": "29 Business Development Manager"
+        },
+        {
+          "const": "30",
+          "title": "30 Lead Software Developer"
+        },
+        {
+          "const": "31",
+          "title": "31 Lead Game Designer"
+        },
+        {
+          "const": "32",
+          "title": "32 Crowd Solutions Architect"
+        },
+        {
+          "const": "33",
+          "title": "33 Head of Localization"
+        },
+        {
+          "const": "34",
+          "title": "34 Head of Technology"
+        },
+        {
+          "const": "35",
+          "title": "35 Brand Designer"
+        },
+        {
+          "const": "36",
+          "title": "36 Customer Support Assistant"
+        },
+        {
+          "const": "37",
+          "title": "37 HX Temporary ITOT Shoreside DE"
+        },
+        {
+          "const": "38",
+          "title": "38 Payroll Specialist Lead"
+        },
+        {
+          "const": "39",
+          "title": "39 Global Rewards Sr Partner"
+        },
+        {
+          "const": "40",
+          "title": "40 Customer Service Ambassador"
+        },
+        {
+          "const": "41",
+          "title": "41 Head of Production"
+        },
+        {
+          "const": "42",
+          "title": "42 Legal Advisor"
+        },
+        {
+          "const": "43",
+          "title": "43 Customer Support"
+        },
+        {
+          "const": "44",
+          "title": "44 Regional Tech Manager"
+        },
+        {
+          "const": "45",
+          "title": "45 Full Stack Developer"
+        },
+        {
+          "const": "46",
+          "title": "46 Senior SEO Manager"
+        },
+        {
+          "const": "47",
+          "title": "47 Lead Engineering Manager"
+        },
+        {
+          "const": "48",
+          "title": "48 Senior Core Customer Success Manager"
+        },
+        {
+          "const": "49",
+          "title": "49 Website Developer"
+        },
+        {
+          "const": "50",
+          "title": "50 HR Lead"
+        },
+        {
+          "const": "51",
+          "title": "51 Social Media Producer"
+        },
+        {
+          "const": "52",
+          "title": "52 Account Executive EMEA"
+        },
+        {
+          "const": "53",
+          "title": "53 DevOps Engineer"
+        },
+        {
+          "const": "54",
+          "title": "54 Consultant"
+        },
+        {
+          "const": "55",
+          "title": "55 Senior ML Engineer"
+        },
+        {
+          "const": "56",
+          "title": "56 Senior Marketing Manager"
+        },
+        {
+          "const": "57",
+          "title": "57 Strategic Account Executive"
+        },
+        {
+          "const": "58",
+          "title": "58 Senior Software Development Engineer"
+        },
+        {
+          "const": "59",
+          "title": "59 Account Executive"
+        },
+        {
+          "const": "60",
+          "title": "60 Director of Product - Goodnotes Foundation"
+        },
+        {
+          "const": "61",
+          "title": "61 Key Account Manager"
+        },
+        {
+          "const": "62",
+          "title": "62 Software Engineer"
+        },
+        {
+          "const": "63",
+          "title": "63 Technical System Engineer"
+        },
+        {
+          "const": "64",
+          "title": "64 Business Development & Supply Chain Manager"
+        },
+        {
+          "const": "65",
+          "title": "65 Staff Engineer"
+        },
+        {
+          "const": "67",
+          "title": "67 Member of Engineering"
+        },
+        {
+          "const": "68",
+          "title": "68 Content Operations Specialist"
+        },
+        {
+          "const": "69",
+          "title": "69 Principal Engineer"
+        },
+        {
+          "const": "70",
+          "title": "70 Talent Partner"
+        },
+        {
+          "const": "71",
+          "title": "71 Global Rewards Manager"
+        },
+        {
+          "const": "72",
+          "title": "72 Junior Operations Engineer"
+        },
+        {
+          "const": "73",
+          "title": "73 Execution Coordinator"
+        },
+        {
+          "const": "74",
+          "title": "74 Human Resources Manager"
+        },
+        {
+          "const": "75",
+          "title": "75 Senior Operations Manager"
+        },
+        {
+          "const": "76",
+          "title": "76 Director of Operations"
+        },
+        {
+          "const": "77",
+          "title": "77 ML Engineer"
+        },
+        {
+          "const": "78",
+          "title": "78 Quality Assurance Engineer"
+        },
+        {
+          "const": "79",
+          "title": "79 Head of Enterprise Sales APAC"
+        },
+        {
+          "const": "80",
+          "title": "80 Global IT Project Manager"
+        },
+        {
+          "const": "81",
+          "title": "81 Senior UX Designer"
+        }
+      ],
+      "title": "Job ID",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "select"
+      }
+    },
+    "mandatory_allowances_ack": {
+      "const": "acknowledged",
+      "title": "I understand I must pay this employee the allowances required",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "mandatory_allowances_statement": {
+      "title": "Mandatory allowances",
+      "type": "null",
+      "x-jsf-logic-computedAttrs": {
+        "x-jsf-presentation": {
+          "statement": {
+            "description": "<strong>Mandatory allowances summary</strong><ul>  <li>Meal allowance: 1000 RSD</li>  <li>Work expense allowance: 5800 RSD</li>  <li>Annual leave allowance: 1000 RSD</li>  <li><strong>Total annual gross salary and mandatory allowance: {{computed_total_with_allowance_display}} RSD</strong></li></ul>"
+          }
+        }
+      },
+      "x-jsf-presentation": {
+        "inputType": "hidden",
+        "meta": {
+          "ignoreValue": true
+        },
+        "statement": {
+          "inputType": "statement",
+          "severity": "info"
+        }
+      }
+    },
+    "mandatory_expenses_to_be_paid": {
+      "const": "acknowledged",
+      "description": "I acknowledge that, if applicable, the employee is entitled to expense their employer for the following costs:",
+      "title": "Mandatory expenses",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "What do I need to know?",
+            "content": "<p>I acknowledge that, if applicable, the employee is entitled to expense their employer for the following costs:</p><ul>\n<li>Commuting to and from work</li>\n<li>Time spent on a business trip domestically</li>\n<li>Time spent on a business trip abroad</li>\n<li>Accommodation and meals while working outside the office'</li>\n<li>Usage of paid time off entitlement'</li>\n<li>Meals during work</li>\n</ul><p>In addition, the employee is entitled to separate compensation for work expenses incurred outside the business premises of the employer.</p><p>The amount of 1,000 RSD for meals during work is fixed and can be decreased only if the employee didn’t work for an entire month. The same can be applied to commuting expenses.</p><p>These amounts can be changed only by executing an annex to the employment agreement. In order for them to be unilaterally changed by the employer, they have to be stipulated either in the employment rulebook or through a separate decision by the employer.<br> </p>",
+            "error": false,
+            "id": 38921178777613,
+            "title": "Mandatory expenses (Serbia)"
+          }
+        }
+      }
+    },
+    "non_compete_clause_halt_period_months": {
+      "description": "Maximum of 24 months. Length of non-compete period after the employee leaves your company.",
+      "maximum": 24,
+      "minimum": 1,
+      "title": "Non-compete duration after end of employment, in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_solicitation_preceding_period_months": {
+      "description": "Maximum of 24 months. After the employee leaves your company, they are not allowed to seek business with customers who have worked with your company in this specified past number of months.",
+      "maximum": 24,
+      "minimum": 1,
+      "title": "Non-solicitation criterion, in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "notice_period_choice": {
+      "description": "<a href='https://support.remote.com/hc/en-us/articles/5831900985613-Notice-Period-for-Terminations-by-Country' target='_blank'>Learn more about notice periods</a>",
+      "oneOf": [
+        {
+          "const": "recommended",
+          "title": "30 days",
+          "x-jsf-presentation": {
+            "recommended": true
+          }
+        },
+        {
+          "const": "custom",
+          "description": "We may request a reserve payment for custom notice periods. <br/> <a href='https://support.remote.com/hc/en-us/articles/12695731865229-What-is-a-reserve-payment' target='_blank'>Learn more about reserve payments</a>.",
+          "title": "Choose your own length"
+        }
+      ],
+      "title": "Notice period in days",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "notice_period_days": {
+      "default": 30,
+      "description": "In Serbia, the notice period can last between 15 and 30 days.",
+      "maximum": 30,
+      "minimum": 15,
+      "readOnly": true,
+      "title": "Notice period in days",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "hidden"
+      }
+    },
+    "notice_period_during_probation_ack": {
+      "const": "acknowledged",
+      "description": "I acknowledge that during the probation period, both the employee and employer may terminate this agreement with a notice period of 5 working days, which can be extended if agreed by both parties.",
+      "title": "Notice period during probation",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "notice_period_termination_non_performance_ack": {
+      "const": "acknowledged",
+      "description": "I acknowledge that if the employee does not fulfil work expectations or lacks the knowledge and abilities to perform the role they were hired for, the employer may terminate the employment provided that written notification of deficiencies in the employee’s work was provided, along with instructions and an appropriate deadline for improvement, and the employee’s work does not improve within the given deadline.",
+      "title": "Notice period for employee termination",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "What do I need to know?",
+            "content": "<p>In case the employment agreement is terminated as above, the employee is entitled to a notice period whose duration depends on their total years of service:</p><ul>\n<li>8 days, if they have up to 10 years of service</li>\n<li>15 days, if they have 10 to 20 years of service</li>\n<li>30 days, if they have more than 20 years of service</li>\n</ul><p>A notice period cannot be increased.<br> </p>",
+            "error": false,
+            "id": 38926172566541,
+            "title": "Notice period for employee termination (Serbia)"
+          }
+        }
+      }
+    },
+    "overtime_pay_confirmation": {
+      "const": "acknowledged",
+      "description": "I acknowledge that the employee will be paid an additional 26% of their base salary for overtime work. ",
+      "title": "Remuneration for overtime work",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "paid_leave_ack": {
+      "const": "acknowledged",
+      "description": "I acknowledge that the employee is entitled to certain mandatory paid time off during which they will be paid in the amount of their average salary for the previous 12 months.",
+      "title": "Mandatory paid leave",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "What do I need to know?",
+            "content": "<p>The employee is entitled to a total of 5 working days of paid time off in a calendar year, in case of getting married, spouse’s childbirth, and serious illness of immediate family member (spouse, children, brothers, sisters, parents, adoptive parents, adoptees, and guardians).</p><p>In addition, the employee is entitled to the following paid time off: </p><ul>\n<li>5 working days due to the death of an immediate family member (spouse, children, brothers, sisters, parents, adoptive parents, adoptees, and guardians)</li>\n<li>2 consecutive days for every instance of voluntary blood donation, counting also the day of blood donation.<br><br> </li>\n</ul>",
+            "error": false,
+            "id": 38919320862733,
+            "title": "Mandatory paid leave (Serbia)"
+          }
+        }
+      }
+    },
+    "part_time_salary_confirmation": {
+      "const": "acknowledged",
+      "description": "I confirm the annual gross salary has been adjusted for part-time hours. Remote will use this gross salary in the employment agreement for the part-time employee.",
+      "title": "Confirm part-time salary",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "private_use_company_car": {
+      "oneOf": [
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        },
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Will the employee be able to use the company car for private purposes?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "probation_length": {
+      "description": "In Serbia, probation periods are non-renewable and can last between 1 and 6 months.",
+      "maximum": 6,
+      "minimum": 1,
+      "title": "Probation period, in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "rest_period_ack": {
+      "const": "acknowledged",
+      "description": "I acknowledge that the employee has a legal right to a rest period during the work day that cannot be used at the beginning or end of working hours.",
+      "title": "Rest period",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "What do I need to know?",
+            "content": "<p>I acknowledge that the employee has a legal right to a rest period during the work day that cannot be used at the beginning or end of working hours:</p><ul>\n<li>15 minutes if the employee works 4 to 6 hours per day</li>\n<li>30 minutes if the employee works more than 6 hours per day</li>\n<li>45 minutes if the employee works more than 10 hours per day</li>\n</ul><p>The employee is entitled to daily rest lasting at least 12 hours within a 24-hour period and weekly rest lasting at least 36 hours.<br> </p>",
+            "error": false,
+            "id": 38921731476109,
+            "title": "Rest period (Serbia)"
+          }
+        }
+      }
+    },
+    "role_description": {
+      "description": "Please add at least 3 responsibilities, at least 100 characters in total.",
+      "maxLength": 5000,
+      "minLength": 100,
+      "title": "Role description",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "signing_bonus_amount": {
+      "title": "Signing bonus amount",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "RSD",
+        "inputType": "money"
+      }
+    },
+    "skills_and_qualifications": {
+      "description": "Please add skills, qualifications and fields of expertise of the employee (2-3 points).",
+      "maxLength": 1000,
+      "title": "Skills and qualifications",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "unpaid_leave": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Do you want to allow the employee to take unpaid leave in justified cases, provided that the leave doesn't create damaging consequences for your company?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "work_address_is_home_address": {
+      "description": "Do you want the employee's home address to be their work address?",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Work Address",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "work_equipment": {
+      "description": "Please list the equipment the employee will need in order to perform their work duties.",
+      "maxLength": 1000,
+      "title": "Work equipment",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "text"
+      }
+    },
+    "work_equipment_allowance": {
+      "description": "The employee must document their purchase of work equipment and submit receipts and relevant documents to the employer. All purchased work equipment will be considered part of the employer's fixed assets and remain the employer's property.",
+      "title": "Work equipment allowance amount",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "RSB",
+        "inputType": "money"
+      }
+    },
+    "work_equipment_provided_by": {
+      "description": "Will you provide work equipment for the employee, or an allowance for the purchase of necessary work equipment?",
+      "oneOf": [
+        {
+          "const": "provided_by_client",
+          "title": "Employer provides equipment"
+        },
+        {
+          "const": "provided_by_employee",
+          "title": "Employer provides allowance for employee to purchase equipment"
+        }
+      ],
+      "title": "Equipment and technical allowance",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "work_hours_per_week": {
+      "description": "Please indicate the number of hours the employee will work per week.",
+      "title": "Work hours per week",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "work_schedule": {
+      "oneOf": [
+        {
+          "const": "full_time",
+          "title": "Full-time"
+        },
+        {
+          "const": "part_time",
+          "title": "Part-time"
+        }
+      ],
+      "title": "Type of employee",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "working_percentage_engagement": {
+      "oneOf": [
+        {
+          "const": "10",
+          "title": "10%"
+        },
+        {
+          "const": "20",
+          "title": "20%"
+        },
+        {
+          "const": "25",
+          "title": "25%"
+        },
+        {
+          "const": "35",
+          "title": "35%"
+        },
+        {
+          "const": "50",
+          "title": "50%"
+        },
+        {
+          "const": "65",
+          "title": "65%"
+        },
+        {
+          "const": "75",
+          "title": "75%"
+        },
+        {
+          "const": "85",
+          "title": "85%"
+        },
+        {
+          "const": "100",
+          "title": "100%"
+        }
+      ],
+      "title": "Working percentage engagement",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "select"
+      }
+    }
+  },
+  "required": [
+    "notice_period_choice",
+    "mandatory_allowances_ack",
+    "annual_gross_salary",
+    "job_id",
+    "available_pto",
+    "company_car",
+    "contract_duration_type",
+    "equity_compensation",
+    "experience_level",
+    "has_bonus",
+    "has_commissions",
+    "has_probation_period",
+    "has_signing_bonus",
+    "increased_salary_ack",
+    "mandatory_expenses_to_be_paid",
+    "notice_period_days",
+    "notice_period_during_probation_ack",
+    "notice_period_termination_non_performance_ack",
+    "overtime_pay_confirmation",
+    "paid_leave_ack",
+    "rest_period_ack",
+    "role_description",
+    "skills_and_qualifications",
+    "unpaid_leave",
+    "work_address_is_home_address",
+    "work_equipment",
+    "work_equipment_provided_by",
+    "work_hours_per_week",
+    "work_schedule",
+    "working_percentage_engagement"
+  ],
+  "type": "object",
+  "x-jsf-logic": {
+    "computedValues": {
+      "computed_total_with_allowance_display": {
+        "rule": {
+          "if": [
+            {
+              "var": "annual_gross_salary"
+            },
+            {
+              "+": [
+                {
+                  "/": [
+                    {
+                      "var": "annual_gross_salary"
+                    },
+                    100
+                  ]
+                },
+                7800
+              ]
+            },
+            7800
+          ]
+        }
+      }
+    }
+  },
+  "x-jsf-order": [
+    "job_id",
+    "contract_duration_type",
+    "contract_end_date",
+    "contract_duration_fixed_term_reason",
+    "work_schedule",
+    "work_hours_per_week",
+    "working_percentage_engagement",
+    "has_probation_period",
+    "probation_length",
+    "notice_period_choice",
+    "notice_period_days",
+    "notice_period_during_probation_ack",
+    "notice_period_termination_non_performance_ack",
+    "available_pto",
+    "paid_leave_ack",
+    "unpaid_leave",
+    "overtime_pay_confirmation",
+    "rest_period_ack",
+    "role_description",
+    "experience_level",
+    "skills_and_qualifications",
+    "work_address_is_home_address",
+    "annual_gross_salary",
+    "mandatory_allowances_statement",
+    "mandatory_allowances_ack",
+    "part_time_salary_confirmation",
+    "increased_salary_ack",
+    "has_signing_bonus",
+    "signing_bonus_amount",
+    "has_bonus",
+    "bonus_details",
+    "has_commissions",
+    "commissions_details",
+    "commissions_ack",
+    "equity_compensation",
+    "has_non_compete_non_solicitation",
+    "non_solicitation_preceding_period_months",
+    "non_compete_clause_halt_period_months",
+    "work_equipment_provided_by",
+    "work_equipment_allowance",
+    "work_equipment",
+    "company_car",
+    "private_use_company_car",
+    "mandatory_expenses_to_be_paid"
+  ],
+  "x-jsf-presentation": {
+    "inputType": "fieldset"
+  },
+  "x-rmt-flatFieldsets": {
+    "annual_gross_salary_fieldset": {
+      "propertiesByName": [
+        "annual_gross_salary",
+        "mandatory_allowances_statement",
+        "mandatory_allowances_ack"
+      ],
+      "title": "Annual gross salary"
+    }
+  }
+}

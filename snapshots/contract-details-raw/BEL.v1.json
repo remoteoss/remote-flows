@@ -1,0 +1,1169 @@
+{
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "experience_level_class": {
+            "const": "class_d"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["experience_level_class", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 3557562,
+            "x-jsf-errorMessage": {
+              "minimum": "In Belgium, experience level Class D full-time employees are entitled to a minimum annual salary of €35,575.62."
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "experience_level_class": {
+            "const": "class_c"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["experience_level_class", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 3298066,
+            "x-jsf-errorMessage": {
+              "minimum": "In Belgium, experience level Class C full-time employees are entitled to a minimum annual salary of €32,980.66."
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "experience_level_class": {
+            "const": "class_b"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["experience_level_class", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 3252074,
+            "x-jsf-errorMessage": {
+              "minimum": "In Belgium, experience level Class B full-time employees are entitled to a minimum annual salary of €32,520.74."
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "experience_level_class": {
+            "const": "class_a"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["experience_level_class", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 3121978,
+            "x-jsf-errorMessage": {
+              "minimum": "In Belgium, experience level Class A full-time employees are entitled to a minimum annual salary of €31,219.78."
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "contract_end_date": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "fixed_term"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "properties": {
+          "contract_end_date": {
+            "type": ["string"]
+          }
+        },
+        "required": ["contract_end_date"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "part_time_salary_confirmation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "part_time_salary_confirmation": {
+            "type": "string"
+          }
+        },
+        "required": ["part_time_salary_confirmation"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "eligible_to_work_in_residing_country": {
+            "const": "permanent_resident"
+          }
+        },
+        "required": ["eligible_to_work_in_residing_country"]
+      },
+      "then": {
+        "required": ["employer_or_work_restrictions"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "overtime_eligibility_ack": false
+        }
+      },
+      "if": {
+        "properties": {
+          "overtime_eligibility": {
+            "const": "yes"
+          }
+        },
+        "required": ["overtime_eligibility"]
+      },
+      "then": {
+        "properties": {
+          "overtime_eligibility_ack": {
+            "type": "string"
+          }
+        },
+        "required": ["overtime_eligibility_ack"]
+      }
+    },
+    {
+      "else": {
+        "else": {
+          "properties": {
+            "management_function": false
+          }
+        },
+        "if": {
+          "properties": {
+            "experience_level": {
+              "enum": [
+                "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+                "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow"
+              ]
+            }
+          },
+          "required": ["experience_level"]
+        },
+        "then": {
+          "properties": {
+            "management_function": {
+              "type": "string"
+            }
+          },
+          "required": ["management_function"]
+        }
+      },
+      "if": {
+        "properties": {
+          "experience_level_class": {
+            "enum": ["class_c", "class_d"]
+          }
+        },
+        "required": ["experience_level_class"]
+      },
+      "then": {
+        "properties": {
+          "management_function": {
+            "type": "string"
+          }
+        },
+        "required": ["management_function"]
+      }
+    },
+    {
+      "else": {
+        "else": {
+          "properties": {
+            "eligible_for_work_hours_exemption": false
+          }
+        },
+        "if": {
+          "properties": {
+            "experience_level": {
+              "enum": [
+                "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+                "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow"
+              ]
+            },
+            "management_function": {
+              "const": "yes"
+            }
+          },
+          "required": ["experience_level", "management_function"]
+        },
+        "then": {
+          "properties": {
+            "eligible_for_work_hours_exemption": {
+              "type": "string"
+            }
+          },
+          "required": ["eligible_for_work_hours_exemption"]
+        }
+      },
+      "if": {
+        "properties": {
+          "experience_level_class": {
+            "enum": ["class_c", "class_d"]
+          },
+          "management_function": {
+            "const": "yes"
+          }
+        },
+        "required": ["experience_level_class", "management_function"]
+      },
+      "then": {
+        "properties": {
+          "eligible_for_work_hours_exemption": {
+            "type": "string"
+          }
+        },
+        "required": ["eligible_for_work_hours_exemption"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "signing_bonus_amount": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_signing_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_signing_bonus"]
+      },
+      "then": {
+        "properties": {
+          "signing_bonus_amount": {
+            "type": ["integer"]
+          }
+        },
+        "required": ["signing_bonus_amount"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "available_pto": {
+            "description": "Please note that Statutory, Bank Holidays and Public Holidays in the employee's country of residence are excluded from the above."
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "bonus_amount": false,
+          "bonus_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_bonus"]
+      },
+      "then": {
+        "properties": {
+          "bonus_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["bonus_details"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "commissions_ack": false,
+          "commissions_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_commissions": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_commissions"]
+      },
+      "then": {
+        "properties": {
+          "commissions_ack": {
+            "type": ["string"]
+          },
+          "commissions_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["commissions_details", "commissions_ack"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "available_pto": {
+            "minimum": 20
+          },
+          "work_hours_part_time": false
+        },
+        "required": ["work_hours_per_week"]
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "available_pto": {
+            "description": "Full-time employees are entitled to a minimum of 20 paid time off days per year. Please pro-rate for part-time employees. Do not include public or bank holidays in this number."
+          },
+          "work_hours_per_week": false
+        },
+        "required": ["work_hours_part_time"]
+      }
+    }
+  ],
+  "properties": {
+    "allowances": {
+      "description": "What allowances do you want to provide to the employee? Please let us know the specific terms agreed. Please note that as Belgium has strong frameworks when it comes to employment laws, the allowances will be subject to review by our teams to ensure that we can compliantly incorporate them in the Employment Agreement.",
+      "maxLength": 1000,
+      "title": "Allowances",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "annual_gross_salary": {
+      "description": "In Belgium, the annual gross salary is comprised of the following elements: 12 months of salary, a 13th month of salary paid out in December, and a double vacation pay (Double pécule de vacances) which amounts to 0.92 month of salary paid in June. These last two elements are mandatory and cannot be removed. Please note that in Belgium, years of service will apply, and there will be variances in the minimum salary based on these factors.",
+      "title": "Annual gross salary",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "inputType": "money",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "More information here",
+            "content": "<p>If you are employed through Remote in Belgium, your minimum wage is determined by <strong>Joint Industrial Committee 200 (JC200). </strong>The wage structure is divided into two scales:</p><ul>\n<li data-list-item-id=\"e0f102b36f454b7be34317b42a9ec39bf\">\n<strong>Scale I</strong>: Applies during your first year of employment with a company.</li>\n<li data-list-item-id=\"ecce191807bde506edaab6b2d1229c0f4\">\n<strong>Scale II</strong>: Applies after completing one year with the same company.</li>\n</ul><p>Your minimum wage depends on several factors:</p><ul>\n<li data-list-item-id=\"edff7ab50e8f4dc54f7e1ae7145e842b7\">Your years of experience</li>\n<li data-list-item-id=\"e64a3dfb9cc5ff403feabee92438f8a81\">Your seniority within the company</li>\n<li data-list-item-id=\"ebfcb4b6d922f6064e88c40d3516f4c10\">Your job classification (from A to D, based on the complexity of your tasks)</li>\n</ul><h2 id=\"h_01JKE6CNVY0N88VAV9SQYZ4CXQ\">Job Classification</h2><p>Jobs are categorized into four classes:</p><ul>\n<li data-list-item-id=\"e7a6291651787cf0c4647c6b4e894feb9\">\n<strong>Class A – Advisory</strong>: Involves performing a limited number of simple, repetitive tasks.</li>\n<li data-list-item-id=\"e8b582ba2fa518b713d4702cb64c35324\">\n<strong>Class B – Support</strong>: Includes clearly defined tasks that contribute to a broader mission.</li>\n<li data-list-item-id=\"e0387c44ba9072bde1b6f949597ea301a\">\n<strong>Class C – Managerial</strong>: Requires completing a full set of tasks that form a single assignment.</li>\n<li data-list-item-id=\"e2335fedea4af3a1cc3a6ffaa4711e138\">\n<strong>Class D – Executive</strong>: Involves overseeing and developing a company process within a specific objective.</li>\n</ul><h2 id=\"h_01JKE6CNVYMP9GP7C725Q1HD0Z\">Minimum Wage for 2026</h2><p>The updated <strong>minimum wage scale I (barème 1)</strong>, effective <strong>April 1, 2026</strong>, applies to employees in their first year of employment. </p><p>The updated <strong>minimum wage scale II (barème 2)</strong>, effective <strong>April 1, 2026</strong>, applies to employees after their first year of employment. </p><p>You can find the detailed wage information in the page 4 to 6 of the following document: <a href=\"https://acrobat.adobe.com/id/urn:aaid:sc:eu:dc67b03e-518a-40b0-9d28-1b4742ad11bb\" target=\"_blank\" rel=\"noopener noreferrer\"><strong>2026-barème 1&amp;2</strong></a><strong>.</strong></p>",
+            "error": false,
+            "id": 34095279468301,
+            "title": "Minimum wage in Belgium"
+          }
+        }
+      }
+    },
+    "available_pto": {
+      "description": "Full-time employees are entitled to at least 20 days by-law per year. Please note that Statutory, Bank Holidays, and Public Holidays, based on employee's country of residence are excluded from the above.",
+      "title": "Number of paid time off days",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "bonus_amount": {
+      "deprecated": true,
+      "readOnly": true,
+      "title": "Bonus amount (deprecated)",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "deprecated": {
+          "description": "Deprecated in favor of 'Bonus Details'. Please, try to leave this field empty."
+        },
+        "inputType": "money"
+      }
+    },
+    "bonus_details": {
+      "description": "Bonus type, payment frequency, and more.",
+      "maxLength": 1000,
+      "title": "Other bonus details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "bonus_salary": {
+      "const": "acknowledged",
+      "description": "In Belgium, employees receive 13th and 14th salaries (usually called double vacation pay). These must be included in the annual gross salary and their amounts are affected by bonuses and commissions.",
+      "title": "I confirm the annual gross salary includes 13th and 14th salaries",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more about bonus salaries",
+            "content": "<p>In Belgium, employees typically receive two additional salary-related payments on top of their regular monthly salary:</p><p>A <strong>13th-month salary</strong>, paid with the December salary.</p><p>A <strong>14th salary</strong>, commonly referred to as <strong>double vacation pay</strong>, linked to the employee’s annual leave.</p><p>Both payments must be factored into the employee’s <strong>annual gross salary</strong>, and their amounts can be affected by variable compensation such as bonuses and commissions.</p><h3 id=\"h_01KPN377GWTHEH333B0Z4S1H4D\"><strong>Eligibility (13th-month salary)</strong></h3><p>To qualify, employees must have been employed for at least six months by the time of the payment. Seniority assigned during onboarding is also taken into account.</p><p>For offboarded employees, the 13th-month salary is paid <strong>pro rata in case of dismissal by the employer</strong>. It is <strong>not paid if the employee voluntarily resigns</strong>.</p><h3 id=\"h_01KPN37CJQSBVJGGE0JGFJJMYN\"><strong>When is the 13th salary paid?</strong></h3><p>The 13th salary is paid in December, or upon termination for offboarded employees who meet the eligibility criteria above.</p><h3 id=\"h_01KPN37HKQSGC9XZYYYSP7MS7G\"><strong>When is the 14th salary (double vacation pay) paid?</strong></h3><p>Double vacation pay is paid <strong>once per year, in May</strong>. It is paid in addition to the employee's regular salary for that month.</p><h3 id=\"h_01KPN37RRD9M94W0K68X17ZM5A\"><strong>Calculation methods</strong></h3><p>The calculation differs based on the role and the type of pay the employee receives.</p><h4 id=\"h_01KPN38243GTNHEB7A4J0ZKPEW\"><em>13th-month salary:</em></h4><p><strong>For Regular Employees:</strong> The 13th-month salary is equal to the employee's <strong>gross monthly base salary</strong>, calculated <strong>pro rata based on the employee's effective service during the reference period (typically the previous 12 months)</strong>.</p><p><strong>For Sales Representatives:</strong> The calculation of the 13th-month salary <strong>depends on the applicable sectoral or company agreement</strong>. In most cases, it is based on the <strong>fixed gross monthly salary</strong>, and <strong>variable pay (such as commissions) is not automatically included</strong> unless explicitly provided for in the applicable agreement. The amount is also <strong>calculated pro rata based on the employee's effective service during the reference period (typically the previous 12 months)</strong>.</p><h4 id=\"h_01KPN38A2NTSSTMDYWF1XMYCVW\"><em>14th salary (double vacation pay)</em></h4><p>Double vacation pay is a statutory payment calculated based on the employee's remuneration earned during the reference year (the previous calendar year). This includes <strong>gross base salary and certain variable pay elements such as bonuses and commissions</strong>.</p><p>The payment is made <strong>annually in May</strong> and is generally calculated as <strong>approximately 92% of the gross monthly remuneration</strong>, converted from the employee's earnings in the reference year into a monthly equivalent. As a result, variable remuneration earned during the reference year can impact the final amount.</p><h3 id=\"h_01KPN38SFTSYKK65AG8W3ZW8X8\"><strong>Do bonuses and commissions impact the 13th and 14th salaries?</strong></h3><p>This is the most common point of confusion, so here is a quick summary:</p><figure class=\"wysiwyg-table wysiwyg-table-align-left\"><table>\n<thead><tr>\n<th><strong>Payment</strong></th>\n<th><strong>Based on</strong></th>\n<th><strong>Are bonuses/commissions included?</strong></th>\n</tr></thead>\n<tbody>\n<tr>\n<td>13th salary — Regular Employees</td>\n<td>Gross monthly base salary (pro rata based on effective service during the reference period, typically the previous 12 months)</td>\n<td>No, only the base monthly salary is used.</td>\n</tr>\n<tr>\n<td>13th salary — Sales Representatives</td>\n<td>Depends on applicable sectoral/company agreement; generally based on fixed gross monthly salary (pro rata over the reference period)</td>\n<td>Not automatically. Variable pay (e.g. commissions) is only included if explicitly mentioned in the applicable agreement.</td>\n</tr>\n<tr>\n<td>14th salary (double vacation pay)</td>\n<td>Gross annual remuneration from the reference year</td>\n<td>Yes, variable components paid during the reference year can affect the amount.</td>\n</tr>\n</tbody>\n</table></figure><p>In short: for most employees, <strong>the 13th salary is driven by base salary</strong>, while <strong>the 14th salary is influenced by incentives</strong> because it uses a broader earnings base.</p>",
+            "error": false,
+            "id": 25152563526029,
+            "title": "How does the 13th salary payment work in Belgium?"
+          }
+        }
+      }
+    },
+    "commissions_ack": {
+      "const": "acknowledged",
+      "description": "I understand that I am required to provide written details of the commission plan to this employee, and upload this document on the platform for record keeping purposes. I acknowledge that Remote will not liable for any claims or losses associated with the commission or bonus plan.",
+      "title": "Confirm commission plan details",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "(i) Guidance on drafting a commission plan here",
+            "content": "<p>It is important to understand that commission plans are individual agreements between you, and each team member. Consequently, it is important that these plans are communicated directly between you and the respective team members. This direct communication ensures clarity, transparency, and a clear understanding of the agreed-upon terms for the commission plan.</p>\n<p>Performance-linked bonuses and commissions are payments that are contingent on various factors, including individual and team performance, business outcomes, and other metrics agreed upon by you and the employees providing you services. As these are rewards that are subject to your evaluation and adjustment based on the agreed-upon criteria, we strongly recommend that you document these plans as compliantly as possible, and their specifics separately in writing, with the employee providing you services, following the below guidelines:</p>\n<ul>\n<li>Please note if there is any doubt or lack of clarity due to ambiguous wording, it will be interpreted to the employee’s benefit. Therefore, the plan should be reviewed thoroughly to determine whether it could be interpreted various ways. If so, the respective wording should be amended in a way that is precise and can be understood in one way only.</li>\n<li>In some jurisdictions, bonus and commission plans can be contractually drafted as being discretionary, but still remain unambiguous.  Where this is legally possible, this is the recommended approach to legally best protect the employer/you from any potential disputes.  Please note, however, that employees may still have a claim for commission payments, even if an agreement is drafted as discretionary.</li>\n<li>Basis for Commission Calculation: The commission plan should clearly outline the basis on which the commission will be calculated. This may include factors such as sales revenue, units sold, profit margin, or other measurable performance indicators. The commission plan should also include the timeframe in which the respective target must be achieved.</li>\n<li>Commission Rate: The commission plan should specify the commission rate or rates applicable to different levels of performance. It should clearly define how the commission will be determined, based on achieving specific targets or milestones. In order to limit the financial risk, a commission plan can include a regulation on the maximum amount of commissions that can be earned.</li>\n<li>Target Goals: The commission plan should establish realistic and achievable target goals or sales quotas that the employee is expected to reach in order to earn commission. </li>\n<li>Calculation Period: The commission plan should specify the calculation period for commission payouts. This could be monthly or quarterly. It should also state the timeline for determining and disbursing commission payments. Furthermore, a commission plan should include a specification about the point in time until when targets are set each year. Commission targets should be given prior to the commencement of the plan period.</li>\n<li>Commission Calculation Method: The commission plan should outline the methodology for calculating the commission. It should specify any deductions, adjustments, or exclusions that may be applicable to the commission calculation.</li>\n<li>Payment Terms: The commission plan should detail the terms and conditions for commission payments, including the payment schedule, method of payment, and any additional requirements or conditions. It should also explain how leaves, for example, sick leave and maternity leave, influence payment of commission and bonus, considering local requirements and non discrimination rules.</li>\n<li>Termination or Modification: The commission plan should address how it may be terminated or modified, including the circumstances under which changes may be made and the notice period required.</li>\n<li>It is helpful to include terms regarding dispute resolution.</li>\n</ul>\n<p>Please be aware that this guideline does not constitute legal advice. It is advisable to consult with your legal counsel for expert advice while formulating such plans. We will not assume liability for any claims that may arise due to a non-compliant and/or ambiguous commission plan provided to employees.</p>",
+            "error": false,
+            "id": 17932049668109,
+            "title": "Guidelines for bonus and commission plans"
+          }
+        }
+      }
+    },
+    "commissions_details": {
+      "description": "Payment amount, frequency, and more.",
+      "maxLength": 1000,
+      "title": "Commission details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "contract_duration_type": {
+      "oneOf": [
+        {
+          "const": "indefinite",
+          "title": "Indefinite"
+        },
+        {
+          "const": "fixed_term",
+          "title": "Fixed Term"
+        }
+      ],
+      "title": "Contract duration",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about contract duration",
+            "content": "<p>There are two types of contracts available:</p>\n<ul>\n<li>Fixed-term contract: This is a contract that has an end date. This means that towards the end of the contract, it will need to be renewed if you intend to keep the employee hired through us. In some countries, t<span class=\"notion-semantic-string\">he minimum contract duration is 6 months.</span>\n</li>\n<li>Indefinite contract: This is a contract with no end date and therefore, no renewal is needed.</li>\n</ul>\n<p data-pm-slice=\"1 3 []\">Indefinite and fixed-term contracts can be:</p>\n<ul class=\"ProsemirrorEditor-list\">\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Part-time: <span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">This is </span>a form of employment that <strong>carries fewer hours per week than a full-time job</strong><span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">. Depending on the country, workers are considered to be part-time if they commonly work fewer than 30 or 35 hours per week.</span></p>\n</li>\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Full-time.</p>\n</li>\n</ul>",
+            "error": false,
+            "id": 4410443814157,
+            "title": "Types of employment contracts"
+          }
+        }
+      }
+    },
+    "contract_end_date": {
+      "format": "date",
+      "maxLength": 255,
+      "title": "Contract end date",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "date",
+        "minDate": "2026-12-01"
+      }
+    },
+    "eco_voucher": {
+      "const": 25000,
+      "default": 25000,
+      "description": "Eco-vouchers are allowed once per year in June for a value of 250 EUR to each employee. A pro-rata will apply if the employee does not work the full precedent year (the reference is June 2020 to May 2021 and so on). This sum is paid on top of the gross annual salary and is mandatory.",
+      "title": "Eco-voucher",
+      "type": "integer",
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "inputType": "money",
+        "statement": {
+          "description": "Eco-vouchers are allowed once per year in June for a value of 250 EUR to each employee. A pro-rata will apply if the employee does not work the full precedent year (the reference is June 2020 to May 2021 and so on). This sum is paid on top of the gross annual salary and is mandatory."
+        }
+      }
+    },
+    "eligible_for_work_hours_exemption": {
+      "description": "Do you require for the employee to be exempt of working hours (overtime & compensatory rest included in salary)?",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Eligible for work hours exemption",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "employee_internet_costs": {
+      "const": 2000,
+      "default": 2000,
+      "description": "Remote workers will need to receive a monthly work from home allowance of 40 EUR split into the following:<br><ul><li>20 EUR/month for use of personal computer (including maintenance and software); and</li><li>20 EUR/month for use of personal internet connection.</li></ul>",
+      "title": "Mandatory work from home allowance",
+      "type": "integer",
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "inputType": "money",
+        "statement": {
+          "description": "Remote workers will need to receive a monthly work from home allowance of 40 EUR split into the following:<br><ul><li>20 EUR/month for use of personal computer (including maintenance and software); and</li><li>20 EUR/month for use of personal internet connection.</li></ul>"
+        }
+      }
+    },
+    "equity_compensation": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "equity_cliff": false,
+              "equity_description": false,
+              "equity_vesting_period": false,
+              "number_of_stock_options": false
+            }
+          },
+          "if": {
+            "properties": {
+              "offer_equity_compensation": {
+                "const": "yes"
+              }
+            },
+            "required": ["offer_equity_compensation"]
+          },
+          "then": {
+            "properties": {
+              "equity_description": {
+                "type": ["string"]
+              }
+            },
+            "required": ["equity_description"]
+          }
+        }
+      ],
+      "properties": {
+        "equity_cliff": {
+          "deprecated": true,
+          "description": "When the first portion of the stock option grant will vest.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Cliff (in months)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "equity_description": {
+          "description": "Please share any information related to the upcoming equity grant.",
+          "maxLength": 1000,
+          "title": "Number of options, RSUs, and other equity",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "textarea"
+          }
+        },
+        "equity_vesting_period": {
+          "deprecated": true,
+          "description": "The number of years it will take for the employee to vest all their options.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Vesting period (in years)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "number_of_stock_options": {
+          "deprecated": true,
+          "description": "Tell us the type of equity you're granting as well.",
+          "maxLength": 255,
+          "readOnly": true,
+          "title": "Number of options, RSUs, or other equity granted",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "text"
+          }
+        },
+        "offer_equity_compensation": {
+          "description": "Granting equity to your team generally triggers tax and legal obligations. In order for you to stay compliant, it's important to declare any equity grants.",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            }
+          ],
+          "title": "Will this employee receive equity?",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "row",
+            "inputType": "radio"
+          }
+        }
+      },
+      "required": ["offer_equity_compensation"],
+      "title": "Equity management",
+      "type": "object",
+      "x-jsf-order": [
+        "offer_equity_compensation",
+        "number_of_stock_options",
+        "equity_cliff",
+        "equity_vesting_period",
+        "equity_description"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 39,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 39,
+              "currency": "USD"
+            }
+          },
+          "helpCenter": {
+            "callToAction": "Learn more about equity management at Remote",
+            "content": "<p>Remote Equity is a lightweight compliance tool designed to help you manage equity grants across borders for team members hired through Remote's Employer of Record (EOR).</p><p>Whether you’re managing vesting, reporting exercises, or navigating local tax laws, Remote Equity gives you the structure to stay compliant, avoid risk, and support your team across borders.</p><h4 id=\"h_01K0YQSYJ8JPKYXNNNW90B0QJP\">Why it matters</h4><p>As your EOR, <strong>Remote is legally responsible</strong> for equity-related tax and reporting in the countries where your team members are employed. That means we don’t just track equity, we:</p><ul>\n<li data-list-item-id=\"eba6b95d2e41a276665f3f64525e0eb59\">Withhold and report taxes when required</li>\n<li data-list-item-id=\"ed16c354038e4b3d908bacd965dc2d71b\">File with local tax authorities</li>\n<li data-list-item-id=\"eb7162ef11477f7a7737fe34a48979559\">Support team members with clear guidance on their tax responsibilities</li>\n</ul><p>Most equity platforms can’t do that because they’re not the legal employer. <strong>Remote Equity ensures we have the data we need, when we need it, to keep your company compliant and your team fairly rewarded.</strong></p><p>Behind the scenes, our tax team:</p><ul>\n<li data-list-item-id=\"ef5c97b0472ebc9a0819e312646e4cd66\">Handles tax withholdings when taxable events occur</li>\n<li data-list-item-id=\"e5f3560641743ab0c57ba47683638560e\">Provides guidance to you and your team, even when no withholding is required</li>\n<li data-list-item-id=\"ed17d307d635b18f9f784df12d1dbe1cd\">Manages additional reporting where local laws demand it</li>\n</ul><p>See also: <a href=\"https://support.remote.com/hc/en-us/articles/37710493624589-What-types-of-equity-grants-should-I-declare-in-Remote-Equity-Essentials\">What types of equity grants should I declare in Remote Equity?</a></p><h4 id=\"h_01K0YQSYJDJ3JYC1C642ASB8E2\">What’s included</h4><p>Remote Equity provides:</p><ul>\n<li data-list-item-id=\"e0cc8d8c0b7d060b9de89e3c870fc1579\">\n<strong>Tracking and alerts</strong> for events that may create a tax obligation (like vesting or exercising)</li>\n<li data-list-item-id=\"e88a2fc75f6f43db27891e415e2f90400\">\n<strong>Automated compliance reminders</strong> based on local deadlines and regulations</li>\n<li data-list-item-id=\"e2c2cf9ef914143e339eb32e1b70c83da\">\n<strong>Localized guidance for team members</strong>, shared through the Remote Equity app</li>\n<li data-list-item-id=\"e8a2c20d648ed01a3db135ef4ada0de61\">\n<strong>Support from Remote’s tax and legal teams</strong>, who handle obligations on your behalf</li>\n<li data-list-item-id=\"e184af2a6420412152b377815ebe18ce2\">\n<strong>Integration with Carta and Pulley</strong> to automatically sync grant declarations and exercise information</li>\n</ul><h4 id=\"h_01K0YQSYJSCK6XYBXF3Q56KRC8\"><strong>Get started in minutes</strong></h4><p>Setup takes less than five minutes. Just log in to your Remote account, and launch the Equity App to follow the setup steps.</p><p>Helpful guides to get started:</p><ul>\n<li data-list-item-id=\"e73e204bc587d3417ecab74e3a29ccc2a\"><a href=\"https://support.remote.com/hc/en-us/articles/37547625350925-How-can-I-access-Remote-Equity-Essentials\">How can I access Remote Equity?</a></li>\n<li data-list-item-id=\"e0ca43a64bf2361ce43443e98200daa5a\"><a href=\"https://support.remote.com/hc/en-us/articles/35577980536589\">How do I declare a grant?</a></li>\n<li data-list-item-id=\"edfa1a00c07a70449ebe34c25dec818fe\"><a href=\"https://support.remote.com/hc/en-us/articles/35671968187149-How-can-my-employees-see-their-equity-information\">How can my team access their equity information?</a></li>\n<li data-list-item-id=\"edaaf9eb107949f79894c24e3b984da30\"><a href=\"https://support.remote.com/hc/en-us/articles/35546454220301-What-happens-if-I-already-declared-equity-before-using-Remote-Equity-Essentials\">What happens if I already declared equity before using Remote Equity?</a></li>\n</ul><h4 id=\"h_01K0YQSYJV9EH2AQ9HWYS1826S\"><span class=\"wysiwyg-underline\">Frequently Asked Questions (FAQs)</span></h4><p><strong>Who needs to use Remote Equity?</strong></p><p>Any Remote customer granting equity to a team member hired through Remote’s EOR must use Remote Equity to meet local compliance requirements.</p><p><strong>Why can’t we just use our own equity tool?</strong></p><p>Traditional equity tools track grants and vesting, but they don't file taxes, withhold contributions, or report income to local authorities. Remote, as the legal employer, is responsible for these actions. Remote Equity ensures those obligations are covered.</p><p><strong>What happens if we don’t use it?</strong></p><p>If Remote doesn’t receive timely and accurate equity data, required filings may be missed. This can result in compliance risks, unexpected tax liabilities, and issues for both your company and your team members.</p><p><strong>How much does Remote Equity cost?</strong></p><p>Remote Equity costs 39 USD per month for each EOR team member with equity. <a href=\"https://support.remote.com/hc/en-us/articles/35546441948685-How-much-does-Remote-Equity-Essentials-cost\">Learn more</a>.</p><p>For comprehensive information, visit the <a href=\"https://support.remote.com/hc/en-us/categories/45788665954189-Remote-Equity\" tabindex=\"0\" data-token-index=\"1\" rel=\"noopener noreferrer\">Remote Equity hub</a>.</p>",
+            "error": false,
+            "id": 38303424407821,
+            "title": "Welcome to Remote Equity: Global equity, without the compliance headaches"
+          }
+        }
+      }
+    },
+    "experience_level": {
+      "deprecated": true,
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employees overall experience).",
+      "oneOf": [
+        {
+          "const": null,
+          "title": "N/A"
+        },
+        {
+          "const": "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "description": "Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "title": "Level 2 - Entry Level"
+        },
+        {
+          "const": "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+          "description": "Employees who perform independently tasks and/or with coordination and control functions",
+          "title": "Level 3 - Associate"
+        },
+        {
+          "const": "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "description": "Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "title": "Level 4 - Mid-Senior level"
+        },
+        {
+          "const": "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "description": "Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "title": "Level 5 - Director"
+        },
+        {
+          "const": "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "description": "An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "title": "Level 6 - Executive"
+        }
+      ],
+      "readOnly": true,
+      "title": "Experience level",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated in favor of 'experience_level_class'."
+        },
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "experience_level_class": {
+      "oneOf": [
+        {
+          "const": "class_a",
+          "description": "Functions marked by the performance of a limited number of simple repetitive tasks.",
+          "title": "Class A - Advisory"
+        },
+        {
+          "const": "class_b",
+          "description": "Functions characterized by the achievement of a number of tasks clearly defined and which contribute to the realization of a larger global mission.",
+          "title": "Class B - Support"
+        },
+        {
+          "const": "class_c",
+          "description": "Functions marked by the achievement of a complete set of tasks that together form one assignment.",
+          "title": "Class C - Managerial"
+        },
+        {
+          "const": "class_d",
+          "description": "Functions which are characterized by monitoring and developing one company process within the context of a particular objective.",
+          "title": "Class D - Executive"
+        }
+      ],
+      "title": "Experience level",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "hideLabel": true,
+        "inputType": "radio",
+        "variant": "card-expandable"
+      }
+    },
+    "has_bonus": {
+      "description": "These can include things like performance-related bonuses.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer other bonuses?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p><span class=\"sc-c090059b-0 fISxvo\">We do not include bonus specifics in the employment agreement. However, you can create a bonus directly on the platform.</span></p>\n<p><span class=\"sc-c090059b-0 fISxvo\">Please note that if you decide to offer other bonuses, it will be difficult or impossible to withdraw these bonuses if you change your mind later.</span></p>",
+            "error": false,
+            "id": 18019142406029,
+            "title": "Other bonuses"
+          }
+        }
+      }
+    },
+    "has_commissions": {
+      "description": "You can outline your policy and pay commission to the employee on the platform. However, commission will not appear in the employment agreement. Please send full policy details directly to the employee.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer commission?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_signing_bonus": {
+      "description": "This is a one-time payment the employee receives when they join your team.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer a signing bonus?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "management_function": {
+      "description": "Does the Employee qualify for management functions and/or a position of trust?",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Management function",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about",
+            "content": "<h1 data-component=\"HeadingIcon\">Summary</h1><p>Managerial level employees typically have decision-making authority, supervisory responsibilities, higher salaries, and may be exempt from certain labor laws (e.g., working hour restrictions, overtime payment etc).</p>",
+            "title": "Management function"
+          }
+        }
+      }
+    },
+    "overtime_eligibility": {
+      "description": "Is the employee eligible to overtime?",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Employee overtime eligibility",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about",
+            "content": "<h1 data-component=\"HeadingIcon\">Summary</h1><p>As per Belgium law, generally, all employees working overtime are entitled to overtime pay, except those who have the responsibility as the 'thinker, planner, executor and controller of the operation of the company (i.e., managerial) and their working hours cannot be limited based on the normal working hours. For more details, please refer to the policy here: <a style=\"white-space: break-spaces\" href=\"https://support.remote.com/hc/en-us/articles/22471684518541-Overtime-policy-for-Belgium-updated-in-January-2024\" target=\"_blank\" rel=\"noopener noreferrer\">Overtime policy for Belgium (updated January 2024)</a>.</p>",
+            "title": "Employee overtime eligibility"
+          }
+        }
+      }
+    },
+    "overtime_eligibility_ack": {
+      "const": "acknowledged",
+      "description": "This notification must be in writing and include the exact dates and number of hours worked. I also commit to following Remote’s overtime policy.",
+      "title": "I acknowledge that by making this employee eligible for overtime, I must notify the Remote team via email at help@remote.com with details of any overtime worked.",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>In Belgium, overtime is <strong>highly regulated and generally discouraged</strong>. Such instances should remain exceptional, and must be agreed upon in advance if they occur.</p>\n<p>Overtime pay will only generate proportional additional pay or a <em>sursalaire</em>*.</p>\n<p><em>Sursalaire</em> will be paid at 150% on business days and at 200% on public holidays or weekends if it exceeds the limit of 9 hours a day and 40 hours a week.</p>\n<p>※ <em>Sursalaire</em> refers to the additional compensation that employees receive for working overtime hours.</p>\n<p><strong>It is the customer’s responsibility to notify the Remote team when employees perform overtime.</strong></p>\n<p><strong>See also:</strong> <a href=\"https://remote.zendesk.com/hc/en-us/articles/13279781622669\">How do I contact Remote for support?</a></p>\n<p>In this article, we will cover:</p>\n<ul>\n<li><a href=\"https://support.remote.com/hc/en-us/articles/22471684518541#h_01HHZEFCSHBMWC0PVFSGW1WAY5\">Overview of overtime rules in Belgium</a></li>\n<li><a href=\"https://support.remote.com/hc/en-us/articles/22471684518541#h_01HHZEFCSHZH1W427JHYRBE1CK\">Overtime clause in Employment Agreement</a></li>\n<li><a href=\"https://support.remote.com/hc/en-us/articles/22471684518541#h_01HHZEFCSHGA5TSRGCSMQ4KDQK\">How to request overtime payout (for Customer)</a></li>\n<li><a href=\"https://remote.zendesk.com/hc/en-us/articles/undefined#h_01HHZEFCSHTZDZFCK0698CGX6Z\">Some specific cases and examples</a></li>\n<li><a href=\"https://remote.zendesk.com/hc/en-us/articles/undefined#h_01HHZEFCSHT2HQ8CZPWGNV4FSN\">Frequently Asked Questions</a></li>\n</ul>\n<h2 id=\"h_01HHZEFCSHBMWC0PVFSGW1WAY5\">Overview of overtime rules in Belgium</h2>\n<ul>\n<li>It cannot be recurring and <em><strong>must always remain exceptional</strong></em>, denoting that it should be due to a highly specific situation. <em>Example:</em> The company is launching a new project and requires an additional workforce to meet its objectives before the launch. The employee is expected to work 4 hours of overtime on Friday.</li>\n<li>It must always explicitly be agreed in writing <em><strong>beforehand</strong></em> between the employee and the Customer.</li>\n<li>Overtime will either generate additional proportional pay or “<em>sursalaire</em>”. Overtime will be compensated at 150% on business days and 200% on public holidays or weekends, provided it exceeds the limit of 9 hours a day and 40 hours a week.</li>\n<li>The Customer is responsible for contacting the Remote team via <a href=\"mailto:help@remote.com\">help@remote.com</a> to notify us about any overtime carried out by the employee and must provide exact dates and number of hours worked.</li>\n<li><em><strong>Timesheets will not be accepted.</strong></em></li>\n</ul>\n<h2 id=\"h_01HHZEFCSHZH1W427JHYRBE1CK\">Overtime clause in Employment Agreement (EA)</h2>\n<p><strong>Effective from January 2024, Article 7 of the EA will be amended as follows:</strong></p>\n<p>“<em>Being a teleworker within the meaning of CBA nr. 85 regarding teleworking, dated 9 November 2005, the Employee does not fall within the scope of the Act of 16 March 1971 on working time. This means that under no circumstances will the Employee working overtime be entitled to overtime pay or compensatory rest. Nevertheless, the Employee working overtime will be remunerated proportionally but only if it has been expressly authorized to do so in writing by the Employer. Otherwise, no additional proportional remuneration will be due for such additional work.”</em></p>\n<ul>\n<li><em><strong>The goal is to bring more clarity to the process in place regarding overtime.</strong></em></li>\n<li>Employees can only work overtime if it has been <em><strong>explicitly requested and approved by the customer in writing first</strong></em>. Without this explicit approval, any overtime work will not be compensated.\n<ul>\n<li>This updated overtime clause is beneficial for employees, as overtime is regulated in Belgium. Employees hired through Remote are teleworkers and typically not entitled to any compensation for overtime performed by law. With the clarification in the clause, we can ensure that employees can legally be compensated for the overtime.</li>\n</ul>\n</li>\n</ul>\n<h2 id=\"h_01HHZEFCSHGA5TSRGCSMQ4KDQK\">How to request overtime payout</h2>\n<p>Customers must provide explicit written consent for their employees to work overtime in advance.</p>\n<p>If you are a customer hiring through Remote EOR services in Belgium, please contact the Remote team via <em><a href=\"mailto:help@remote.com\">help@remote.com</a></em> and follow the guideline below:</p>\n<ul>\n<li>Please<em> <strong>include a copy of the written approval of the overtime and confirm the exact dates and number of hours worked each day.</strong></em>\n</li>\n<li>Please <em><strong>clarify in the email subject</strong></em> that you are requesting an employee’s overtime pay and the month. <em>Example: “Overtime pay in January 2024 in Belgium”</em>\n</li>\n</ul>\n<h2 id=\"h_01HHZEFCSHTZDZFCK0698CGX6Z\">Some specific cases and examples</h2>\n<ul>\n<li>\n<strong>For senior managerial employees</strong><br>(\"Cadres\") For Senior Managers, the Employment Agreement (EA) can state that the employee is considered a Senior Manager (\"Cadre\"), not subject to working time limitations. However, this carries some risk. If the employee doesn't truly have the autonomy typical of a senior manager, this approach may not be effective. Ultimately, it's up to the judge's discretion.</li>\n<li>\n<strong>For part-time workers</strong><br>Part-time employees typically stick to a set (fixed or variable) work schedule. However, there are instances when they may need to work beyond this schedule. This is termed as \"<strong>Heures complémentaires</strong>\", which translates to overtime without an increased hourly rate. Specifically, \"<strong>Heures complémentaires</strong>\" refers to the hours that go beyond the agreed working hours of a part-time worker, but stay within the legal limit or the limit set by the collective labor agreement (i.e., 38 hours per week for Remote). When a part-time employee exceeds the normal working hours set by law or by the collective labour agreement (i.e. 38H/week for Remote) overtime pay must be paid. <em>Example: A part-time employee is hired for a fixed schedule of 20 hours per week. In their company, a full-time worker's normal weekly hours are 38. If the part-time worker is asked to work 30 hours in a week, the extra 10 hours (30-20) are considered overtime.</em>\n</li>\n<li>\n<strong>For hourly paid employees<br></strong> i) <em>A part-time employee either works a <strong>set number of hours per week with a fixed schedule</strong> or a <strong>set number of hours per week with a flexible schedule</strong>.</em> In either case, the salary should be proportional to the part-time hours. If the employee works extra hours within the set schedule and doesn't exceed weekly or daily limits, the first 12 additional hours per month can be paid at their regular rate (referred to as credit hours). Overtime is only necessary once these credit hours are exhausted in a given month or if daily or weekly limits are surpassed. Payment for these extra hours or overtime should occur in the same month as the additional work is performed.<br>ii) <em>The part-time employee operates on a flexible schedule, meaning their employment contract <strong>specifies the average weekly hours and the reference period for these average hours</strong> (the minimum reference period is one month, and the maximum is 12 months). You should provide the varied weekly schedules at least one week in advance.</em> In this arrangement, you pay your employee <strong>monthly</strong>, based on the average working hours detailed in the contract. For example, if the contract stipulates an average of 20 hours per week, the employee is paid for these hours regardless of the actual hours worked in a specific month. So, if the employee only works 50 hours in a month, you still pay for approximately 80 hours (20 hours per week). Similarly, if the employee works 120 hours in a month, you pay for the agreed average of 20 hours per week.</li>\n</ul>\n<h2 id=\"h_01HHZEFCSHT2HQ8CZPWGNV4FSN\">Frequently Asked Questions</h2>\n<ul>\n<li>\n<p><strong>Can customers choose to add an incentive to Remote's platform to compensate for overtime work?</strong></p>\n<p>No. Overtime must be accurately calculated and cannot be compensated as a bonus.</p>\n</li>\n<li>\n<p><strong>Can Customers request to include their own overtime clause in the Employment Agreement?</strong></p>\n<p>No. The standard work schedule in Belgium is 38 hours per week, with a maximum of 40 hours per week. These cannot be changed.</p>\n<p>In Belgium, overtime is generally not acceptable, with some exceptions.</p>\n<p>If a company anticipates that an employee will need to work, for instance, 50 hours per week, there are typically some unique cases. Exceptions for such long hours could include seasonal workers who cannot return home every evening, or certain job roles, usually those performed by blue-collar workers. However, these exceptions do not apply to white-collar workers like those at Remote in Belgium.</p>\n</li>\n<li>\n<p><strong>How will overtime be compensated?</strong></p>\n<p>The determination depends on the number of hours the employee has worked daily and weekly.</p>\n<p>If the employee has worked more than 9 hours a day and over 40 hours a week, it results in \"<em>sursalaire</em>\", or overtime pay. This pay is set at 150% if the overtime occurs on business days and 200% if it occurs on weekends or public holidays. If the overtime doesn't exceed these specified limits, only a proportional payment will be made without any \"<em>sursalaire</em>\".</p>\n</li>\n</ul>\n<p><!-- notionvc: 51b86f87-9077-45fd-9620-415593170491 --></p>",
+            "error": false,
+            "id": 22471684518541,
+            "title": "Overtime policy for Belgium (updated in January 2024)"
+          }
+        }
+      }
+    },
+    "part_time_salary_confirmation": {
+      "const": "acknowledged",
+      "description": "The salary will be added to the employment agreement.",
+      "title": "I confirm the annual gross salary reflects part-time hours",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "premium_yearly": {
+      "const": 33084,
+      "default": 33084,
+      "description": "A mandatory yearly premium is payable in June each year (pro-rated) on top of the gross annual salary. The premium amount may change annually based on Belgian regulations.",
+      "title": "Yearly premium",
+      "type": "integer",
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "inputType": "money",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more about the current yearly premium amount.",
+            "content": "<p>Remote is part of Belgium's largest sector, Joint Industrial Committee 200 (JIC 200), which represents 60,000 companies and 500,000 employees.</p><p><strong>All Belgium-based employees with Remote are entitled to the following items in 2026:</strong></p><ul>\n<li data-list-item-id=\"e00cae52ab033ed899f55d89acf57b5c5\">The total gross annual payment of a sector premium amount is <strong>330.84€ </strong>in June 2026. The amount is indexed every year in January:  </li>\n<li style=\"list-style-type: none;\" data-list-item-id=\"ef96922c54063115782efc420fa8d6cb3\"> <ul>\n<li data-list-item-id=\"eb097a3ac9aba04e23a9da8e723323880\">For those who left employment during the reference period (from 1 January 2026) but before the payment in June 2026, the amount will be prorated based on the effective days and days treated as such in 2026.<ul><li data-list-item-id=\"eb012095c37c2ac2d469325093ce7a3a2\">For part-time employees, the premium will be calculated in proportion to their part-time working hours. Example: A non-manual employee who works half-time receives only 50% of the annual premium (330.84€ EUR x 50% )</li></ul>\n</li>\n<li data-list-item-id=\"e1fadd1c18f8f6ed77bec07d26fd8076c\">The premium amount is taxed at a <strong>higher</strong> percentage than the regular income tax rate: 13.07% of social security contributions and up to 53.50% of personal income tax.</li>\n<li data-list-item-id=\"e61e8f6ac24d10c0578a111409d185155\">The bonus amount of 330.84€ or pro rata amount can be confirmed on the June payslip under pay code “<em>19A0 prime sectorielle/sectorpremie</em>”:</li>\n</ul>\n</li>\n</ul><p><img src=\"https://remote.zendesk.com/hc/article_attachments/15571938092813\" alt=\"Screenshot_2023-05-08_at_12.18.15.png\" width=\"350\" height=\"480\"></p><ul><li data-list-item-id=\"ef060d26b10c56fddfed4a12337fd97d4\">Legal source: CBA of 09.07.2015, valid from 01.01.2016 for an indefinite period.</li></ul><p><strong>Eligibility conditions:</strong> The annual premium will be calculated in proportion to the actual days worked and the days treated during the reference period going from June 2025 until May 2026 included.</p><p><strong>Those who are not entitled to the annual premium:</strong></p><ul>\n<li data-list-item-id=\"e2c2c927ced0a1b681e400931f58d296e\">Employees dismissed for misconduct</li>\n<li data-list-item-id=\"ece3c69f2bd38e23248bba6125898cbf2\">Employees who have left employment before 1 January 2026: they have received the prorated amount due with their last payroll</li>\n</ul>",
+            "error": false,
+            "id": 15424845980173,
+            "title": "Yearly sector premium payment in Belgium (2026)"
+          }
+        }
+      }
+    },
+    "probation_length": {
+      "const": "0",
+      "description": "In Belgium there is no probation. This is mandatory and cannot be changed.",
+      "title": "Probation period",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about probation period",
+            "content": "<p>The purpose of a probationary period is to allow a specific time period for the employee and company to assess suitability for the role after having first-hand experience. On the one hand, it gives the company the opportunity to assess objectively whether the new employee is suitable for the job, considering their capability, skills, performance, attendance and general conduct.</p>\n<p>During the probation period, it is typically simpler to terminate an employee that is underperforming. Often, standard notice periods do not apply or may be shortened. Depending on the employee’s country of residence, it may be more difficult and costly to terminate an employee after their probation period is over.</p>\n<p><span class=\"notion-enable-hover\" data-token-index=\"0\">Please be aware that if you do not elect to implement a probationary period and later conduct a background check during the onboarding process, </span>Remote cannot unilaterally terminate employment following the receipt of unsatisfactory background check results<span class=\"notion-enable-hover\" style=\"font-weight: 600;\" data-token-index=\"2\">.</span><!-- notionvc: 689a1f6e-271d-4ae3-9a37-8506a098847c --></p>\n<p><span class=\"notion-enable-hover\" style=\"font-weight: 600;\" data-token-index=\"2\"><strong style=\"box-sizing: border-box; font-weight: bold; color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">See also:</strong><span style=\"color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;\"> <a href=\"https://remote.zendesk.com/hc/en-us/articles/9013403125773\">How do I include a probationary period in the employee's contract?</a></span></span></p>",
+            "error": false,
+            "id": 19858883586445,
+            "title": "Why is it important to include a probationary period in an employee's contract?"
+          }
+        }
+      }
+    },
+    "role_description": {
+      "description": "Please add at least 3 responsibilities, at least 100 characters in total.",
+      "maxLength": 5000,
+      "minLength": 100,
+      "title": "Role description",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<div class=\"sc-8483994-0 sc-25e5b337-1 gagDAr dNpfwN\">\n<header class=\"sc-8483994-0 sc-98ea0a46-0 cFaANn gAlQJD sc-704369bd-0 jOYBDY\">\n<h2 class=\"sc-c090059b-0 lcffkV sc-704369bd-3 eWYhqz\" id=\"01H7WSRV90B3R0X35RZ21B959A\">Why do I need to define a role description?</h2>\n</header><span class=\"sc-c090059b-0 fISxvo\">It will appear in the employment agreement. Be thorough and accurate, especially if your employee is applying for a visa.</span>\n</div>\n<div class=\"sc-8483994-0 sc-25e5b337-1 gagDAr dNpfwN\"> </div>\n<h2 class=\"sc-8483994-0 gagDAr\" id=\"01H7WSRV908B1DKFVDFKNTN2EZ\"><span class=\"sc-c090059b-0 iaMkhB sc-25e5b337-3 jwgiWP\">Tips for a better role description</span></h2>\n<ul>\n<li class=\"sc-8483994-0 gagDAr\">Keep it short – up to 5 main responsibilities</li>\n<li class=\"sc-8483994-0 gagDAr\"><span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">Include punctuation</span></li>\n<li class=\"sc-8483994-0 gagDAr\">No need to mention your company, focus on the specific duties of the role</li>\n</ul>",
+            "error": false,
+            "id": 18019255579405,
+            "title": "Role description"
+          }
+        }
+      }
+    },
+    "signing_bonus_amount": {
+      "title": "Signing bonus amount",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "inputType": "money"
+      }
+    },
+    "work_address_is_home_address": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Same as their residential address"
+        },
+        {
+          "const": "no",
+          "title": "Different than their residential address"
+        }
+      ],
+      "title": "Employee's work address",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "work_equipment": {
+      "description": "Please indicate all equipment that will be provided to the employee. If you won't provide equipment to the employee and they will use personal tools, please indicate the amount of monthly allowance in Euro to cover the maintenance.",
+      "maxLength": 1000,
+      "title": "Equipment to provide to the Employee",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "work_hours_part_time": {
+      "description": "Please indicate the number of hours the employee will work per week.",
+      "maximum": 37,
+      "minimum": 1,
+      "title": "Work hours per week",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "work_hours_per_week": {
+      "oneOf": [
+        {
+          "const": "38",
+          "description": "Standard working hours contract. Overtime will be remunerated only if it has been expressly authorized to do so by the Employer in writing. Otherwise, no additional proportional remuneration will be due for such additional work. Statutory holidays apply, with no compensatory rest days.",
+          "title": "38-hour contract"
+        },
+        {
+          "const": "40",
+          "description": "Maximum working hours contract. Overtime will be remunerated only if it has been expressly authorized to do so by the Employer in writing. Employees with this work schedule are entitled to a maximum of <b>12 compensatory rest days per year</b>, or <i>“récupération de temps de travail”</i>, on top of the statutory holidays. The compensatory rest days are prorated according to the period worked (one day earned per month worked).",
+          "title": "40-hour contract"
+        }
+      ],
+      "title": "Work hours per week",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "work_schedule": {
+      "oneOf": [
+        {
+          "const": "full_time",
+          "title": "Full-time"
+        },
+        {
+          "const": "part_time",
+          "title": "Part-time"
+        }
+      ],
+      "title": "Type of employee",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    }
+  },
+  "required": [
+    "annual_gross_salary",
+    "available_pto",
+    "bonus_salary",
+    "contract_duration_type",
+    "eco_voucher",
+    "employee_internet_costs",
+    "equity_compensation",
+    "experience_level_class",
+    "overtime_eligibility",
+    "has_signing_bonus",
+    "has_bonus",
+    "has_commissions",
+    "probation_length",
+    "role_description",
+    "work_address_is_home_address",
+    "work_equipment",
+    "work_schedule",
+    "premium_yearly"
+  ],
+  "type": "object",
+  "x-jsf-order": [
+    "contract_duration_type",
+    "contract_end_date",
+    "probation_length",
+    "work_schedule",
+    "work_hours_per_week",
+    "work_hours_part_time",
+    "annual_gross_salary",
+    "part_time_salary_confirmation",
+    "bonus_salary",
+    "eco_voucher",
+    "premium_yearly",
+    "has_signing_bonus",
+    "signing_bonus_amount",
+    "has_bonus",
+    "bonus_amount",
+    "bonus_details",
+    "has_commissions",
+    "commissions_details",
+    "commissions_ack",
+    "equity_compensation",
+    "allowances",
+    "available_pto",
+    "work_equipment",
+    "role_description",
+    "experience_level",
+    "experience_level_class",
+    "management_function",
+    "eligible_for_work_hours_exemption",
+    "overtime_eligibility",
+    "overtime_eligibility_ack",
+    "work_address_is_home_address",
+    "employee_internet_costs"
+  ],
+  "x-rmt-flatFieldsets": {
+    "annual_gross_salary_fieldset": {
+      "propertiesByName": ["annual_gross_salary", "bonus_salary"],
+      "title": "Annual gross salary"
+    },
+    "experience_level_fieldset": {
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employee's overall experience).",
+      "meta": {
+        "helpCenter": {
+          "callToAction": "Learn about employee experience level here.",
+          "content": "<p>For every new onboarded employee, it is <span class=\"wysiwyg-underline\">mandatory</span> to indicate the job category to the payroll team. These job categories are defined by the JC200. There are <strong>4 possible job categories</strong>. </p>\n<p>The jobs are classified as follows:</p>\n<ol>\n<li>\n<strong>Class A - Advisory:</strong> Functions marked by the performance of a limited number of simple repetitive tasks.\n<ul>\n<li>Complexity: treats concrete issues, mostly repetitive.</li>\n<li>Resolution of issues: repetitive treatment of issues, resolution of issues based on strict instructions and rules.</li>\n<li>Impact of mistakes: mistakes in the execution of tasks directly concern the work business of others.</li>\n<li>Contribution: the contribution implies supporting the job/function in comparison to other workers.</li>\n<li>Independence: tasks are clearly defined, there is no or very little freedom with regards to the execution of tasks.</li>\n<li>Work allocation: perform tasks based on a clear and defined procedure.<br>Control: the work is supervised by a manager and evaluated based on elements defined beforehand.</li>\n<li>Knowledge: basic practical knowledge related to a determined number of procedures and techniques to apply.</li>\n<li>Training: no specific training is required. Training in real life is sufficient.</li>\n<li>Transmission of knowledge: mostly notifies concrete situations and issues to colleagues and management.</li>\n<li>Contacts: is mainly in verbal contact with internal stakeholders. Internal contacts remain superficial.</li>\n<li>Foreign languages: Communicates (orally) in their own language. Uses basic standard sentences in one foreign language.</li>\n</ul>\n</li>\n<li>\n<strong>Class B - Support:</strong> functions characterized by the achievement of a number of tasks clearly defined and which contribute to the realization of a larger global mission.\n<ul>\n<li>Complexity: treats concrete and similar issues and questions inside of a group of tasks clearly defined.</li>\n<li>Resolution of issues: treatment of issues by similarity, resolution of issues based on rules enforcement and a choice among a group of known solutions.</li>\n<li>Impact of mistakes: mistakes are not directly spot and can lead to a loss of time, money or image.</li>\n<li>Contribution: the contribution of the function is situated in the preparation of services and the partial achievement in a field of result.</li>\n<li>Independence: missions are clearly defined. Choice are made inside of clear norms.</li>\n<li>Work allocation: achieves tasks in a set order. Can fix the order for each mission. Determine themselves the achievement order of tasks within a set limit of time.</li>\n<li>Control: the control of the performance is based on work procedures. The employee is controlled and assessed based on intermediary results.</li>\n<li>Knowledge: knowledge based on practices linked to the diverse procedures in place and techniques to apply.</li>\n<li>Training: a specific (professional) scholar training is necessary. Specific technical knowledge can be acquired with experience.</li>\n<li>Transmission of knowledge: informs team members of the state of things and eventual issues encountered.</li>\n<li>Contacts: has verbal and written contacts with internal and external stakeholders.</li>\n<li>Foreign languages: verbal and written communication in their own language. Verbal communication in one foreign language with standard sentences.</li>\n</ul>\n</li>\n<li>\n<strong>Class C - Managerial:</strong> Functions marked by the achievement of a complete set of tasks that together form one assignment.\n<ul>\n<li>Complexity: treats issues and questions less concrete and regularly changing in the scope of a determined assignment.</li>\n<li>Resolution of issues: resolution of issues by interpolation and by mastering a professional field and knowledge acquired by the experience.</li>\n<li>Impact of mistakes: mistakes have clear consequences in terms of loss of time, money and image.</li>\n<li>Contribution: satisfaction of an internal or external stakeholder, thanks to the creative and qualitative input in the assignment’s achievement.</li>\n<li>Independence: objectives are clearly defined. Taking decisions on a creative plan, inside a defined remit.</li>\n<li>Work allocation: determines tasks’ priority in collaboration with the manager.</li>\n<li>Control: control of the work performed is based on work procedures. The employee is controlled and assessed based on the final result of the assignment.</li>\n<li>Knowledge: practical and theoretical knowledge in relation with their own field of experience.</li>\n<li>Must have knowledge on other fields close to theirs.</li>\n<li>Training: a specific technical training is required, in terms of the evolution of laws and techniques.</li>\n<li>Transmission of knowledge: the employee informs other team members on the state of things and eventual concrete issues. They try to reach a similar position as other team members by listening and communicating.</li>\n<li>Contacts: has verbal and written contacts with internal and external stakeholders.</li>\n<li>Foreign languages: verbal and written communication in their own language and in one foreign language.</li>\n</ul>\n</li>\n<li>\n<strong>Class D - Executive:</strong> Functions which are characterized by monitoring and developing one company process within the context of a particular objective\n<ul>\n<li>Complexity: handles concrete and abstract issues and questions in the scope of a large set objective.</li>\n<li>Resolution of issues: resolution of issues by reflexion, and based on the analysis and interpretation of situation; and by the development of solutions (inside set norms).</li>\n<li>Impact of mistakes: bad decisions and opinions can lead to consequent losses in terms of time, money and image.</li>\n<li>Contribution: taking decisions of advice (internal or external) that will have a positive long term effect.</li>\n<li>Independence: contribution in the preparation &amp; when determining objectives. Takes innovative decisions within a large framework (budget).</li>\n<li>Work allocation: determines, according to the set goal, work priorities for themselves and for other team members.</li>\n<li>Control: controlled and assessed based on the execution of goals determined beforehand.</li>\n<li>Knowledge: deep theoretical and practical knowledge of their own field of expertise as well as others.</li>\n<li>Training: advanced continued training specialized in a field + self training necessary.</li>\n<li>Transmission of knowledge: informs, negotiates and discusses with other people in order to make them change their opinion. Has to explain complex and always abstract matters.</li>\n<li>Contacts: has deep verbal and written contacts with internal and external stakeholders.</li>\n<li>Foreign languages: written and oral communication in their own language and in one or many foreign languages.</li>\n</ul>\n</li>\n</ol>\n<p><span style=\"color: #222222; background-color: #ffffff;\">Examples of jobs within each class are as below:</span></p>\n<p><span style=\"color: #222222; background-color: #ffffff;\"><img src=\"https://lh7-rt.googleusercontent.com/docsz/AD_4nXdhXM_C9-wfAPeeERrWmyljmyaDW90CI0052cfaabGj1bKGS_JfIGHu0izORKp2eSWziQueUXvlYURn4K6-C5YXpyWOMqP-eQ5hO0eKUPBDx85qx8kB5DLqFlEN-P1ygq6aJ-YfFZRFylMmxWKOfLYC4KV5?key=ziw5laB_J8Eh4ZzChWaLng\" width=\"624\" height=\"449\"></span></p>\n<p><br><!-- notionvc: e318e97b-23d9-49b4-8eec-d4a16ac3e950 --></p>",
+          "error": false,
+          "id": 28821750485517,
+          "title": "JC200 job category in Belgium"
+        }
+      },
+      "propertiesByName": [
+        "experience_level_class",
+        "management_function",
+        "eligible_for_work_hours_exemption",
+        "overtime_eligibility",
+        "overtime_eligibility_ack"
+      ],
+      "title": "Experience level"
+    }
+  }
+}

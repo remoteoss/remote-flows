@@ -1,0 +1,2671 @@
+{
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "daily_schedule": false
+        }
+      },
+      "if": {
+        "properties": {
+          "schedule_type": {
+            "enum": ["core_business_hours", "fixed_hours"]
+          }
+        },
+        "required": ["schedule_type"]
+      },
+      "then": {
+        "required": ["daily_schedule"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "work_hours_per_week": {
+            "description": "In Ireland, part-time employees must work 34 hours or less.",
+            "maximum": 34,
+            "minimum": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "work_hours_per_week": {
+            "maximum": 48,
+            "minimum": 35
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "salary_overview": false
+        }
+      },
+      "if": {
+        "required": ["wage_type"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "wage_type": {
+            "const": "hourly"
+          }
+        },
+        "required": ["wage_type"]
+      },
+      "then": {
+        "properties": {
+          "salary_overview": {
+            "description": "We will request a reserve payment for annualized salaries at or above €150,000.00."
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "annual_gross_salary": false
+        }
+      },
+      "if": {
+        "properties": {
+          "wage_type": {
+            "const": "salary"
+          }
+        },
+        "required": ["wage_type"]
+      },
+      "then": {
+        "required": ["annual_gross_salary"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "hourly_gross_salary": false
+        }
+      },
+      "if": {
+        "properties": {
+          "wage_type": {
+            "const": "hourly"
+          }
+        },
+        "required": ["wage_type"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": false
+        },
+        "required": ["hourly_gross_salary"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "wage_type": {
+            "const": "salary"
+          },
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule", "annual_gross_salary", "wage_type"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "x-jsf-logic-computedAttrs": {
+              "minimum": "minimum_annual_gross_salary_in_cents",
+              "x-jsf-errorMessage": {
+                "minimum": "In Ireland, part-time employees are entitled to a minimum annual salary of €{{ minimum_annual_gross_salary }}"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "wage_type": {
+            "const": "salary"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["work_schedule", "annual_gross_salary", "wage_type"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 2943200,
+            "x-jsf-errorMessage": {
+              "minimum": "In Ireland, full-time employees are entitled to a minimum annual salary of €29,432.00"
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "contract_end_date": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "fixed_term"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "properties": {
+          "contract_end_date": {
+            "type": "string"
+          }
+        },
+        "required": ["contract_end_date"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "wage_type": {
+            "const": "salary",
+            "default": "salary",
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "In Ireland part-time employees must be hired on a salary basis.",
+                "title": "<strong>Annual salary as the wage type</strong>"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "wage_type": {
+            "const": "hourly"
+          }
+        },
+        "required": ["wage_type"]
+      },
+      "then": {
+        "properties": {
+          "hourly_gross_salary": {
+            "minimum": 1415,
+            "x-jsf-errorMessage": {
+              "minimum": "€14.15 is the national minimum hourly wage applicable for those aged 20 and older. In case the employee is aged under 20, the minimum hourly wage will be lower. We reserve the right to increase the employee’s wage to adhere to the applicable laws. In case you have any doubts, please reach out so we can help you set the correct salary."
+            }
+          }
+        },
+        "required": ["hourly_gross_salary"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "part_time_salary_confirmation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "wage_type": {
+            "const": "salary"
+          },
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule", "wage_type"]
+      },
+      "then": {
+        "properties": {
+          "part_time_salary_confirmation": {
+            "type": "string"
+          }
+        },
+        "required": ["part_time_salary_confirmation", "annual_gross_salary"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "probation_extend_length": false,
+          "probation_length": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "required": ["probation_length", "probation_extend_length"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "no"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "properties": {
+          "has_probation_period": {
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "Waiving the probation period is possible but discouraged",
+                "severity": "warning"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "bonus_amount": false,
+          "bonus_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_bonus"]
+      },
+      "then": {
+        "properties": {
+          "bonus_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["bonus_details"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "commissions_ack": false,
+          "commissions_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_commissions": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_commissions"]
+      },
+      "then": {
+        "properties": {
+          "commissions_ack": {
+            "type": ["string"]
+          },
+          "commissions_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["commissions_details", "commissions_ack"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "signing_bonus_amount": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_signing_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_signing_bonus"]
+      },
+      "then": {
+        "properties": {
+          "signing_bonus_amount": {
+            "type": ["integer"]
+          }
+        },
+        "required": ["signing_bonus_amount"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "third_party_work_activities": false
+        }
+      },
+      "if": {
+        "properties": {
+          "third_party_work": {
+            "const": "yes"
+          }
+        },
+        "required": ["third_party_work"]
+      },
+      "then": {
+        "required": ["third_party_work_activities"]
+      }
+    },
+    {
+      "else": {
+        "else": {
+          "properties": {
+            "available_pto": {
+              "minimum": 20
+            }
+          }
+        },
+        "if": {
+          "properties": {
+            "work_schedule": {
+              "const": "part_time"
+            }
+          },
+          "required": ["work_schedule"]
+        },
+        "then": {
+          "properties": {
+            "available_pto": {
+              "minimum": 0
+            }
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "available_pto_type": {
+            "const": "unlimited"
+          }
+        },
+        "required": ["available_pto_type"]
+      },
+      "then": {
+        "properties": {
+          "available_pto": {
+            "const": 20,
+            "default": 20,
+            "title": "Minimum paid time off days",
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "In Ireland, employees are entitled to a minimum of 20 paid time off days per year. Please note that Statutory, Bank Holidays and Public Holidays are excluded from the above.",
+                "title": "Minimum of <strong>20 days</strong> of paid time off."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "not": {
+          "properties": {
+            "wage_type": {
+              "const": "hourly"
+            }
+          },
+          "required": ["wage_type"]
+        },
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 88975888
+          }
+        },
+        "required": ["annual_gross_salary"]
+      },
+      "then": {
+        "required": ["extreme_salary_acknowledgement"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "work_hours_per_week": {
+            "x-jsf-presentation": {
+              "inputType": "hidden"
+            }
+          }
+        }
+      },
+      "if": {
+        "required": ["work_schedule", "schedule_type"]
+      },
+      "then": {}
+    }
+  ],
+  "properties": {
+    "annual_gross_salary": {
+      "title": "Annual gross salary",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-logic-computedAttrs": {
+        "description": "{{annual_gross_salary_reserve_description}}"
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "inputType": "money"
+      }
+    },
+    "available_pto": {
+      "description": "In Ireland, employees are entitled to a minimum of 20 paid time off days per year. Please pro-rate for part-time employment. Please note that Statutory, Bank Holidays and Public Holidays are excluded from the above.",
+      "title": "Number of paid time off days",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "available_pto_type": {
+      "description": "For personal time off. Also called vacation or annual leave.",
+      "oneOf": [
+        {
+          "const": "unlimited",
+          "description": "Gives the employee an uncapped number of paid time off days per year. The number below is the mandatory minimum number of days they must take.",
+          "title": "Unlimited paid time off"
+        },
+        {
+          "const": "fixed",
+          "description": "The employee gets a set number of paid time off days per year that you establish.",
+          "title": "Fixed paid time off"
+        }
+      ],
+      "title": "Paid time off policy",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "bonus_amount": {
+      "deprecated": true,
+      "readOnly": true,
+      "title": "Bonus amount (deprecated)",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "deprecated": {
+          "description": "Deprecated in favor of 'Bonus Details'. Please, try to leave this field empty."
+        },
+        "inputType": "money"
+      }
+    },
+    "bonus_details": {
+      "description": "Bonus type, payment frequency, and more.",
+      "maxLength": 1000,
+      "title": "Other bonus details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "commissions_ack": {
+      "const": "acknowledged",
+      "description": "I understand that I am required to provide written details of the commission plan to this employee, and upload this document on the platform for record keeping purposes. I acknowledge that Remote will not liable for any claims or losses associated with the commission or bonus plan.",
+      "title": "Confirm commission plan details",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "commissions_details": {
+      "description": "Payment amount, frequency, and more.",
+      "maxLength": 1000,
+      "title": "Commission details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "contract_duration": {
+      "deprecated": true,
+      "description": "Indefinite or fixed-term contract. If the latter, please state duration and if there's possibility for renewal.",
+      "maxLength": 255,
+      "readOnly": true,
+      "title": "Contract duration (deprecated)",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated field in favor of 'contract_duration_type'."
+        },
+        "inputType": "text"
+      }
+    },
+    "contract_duration_type": {
+      "oneOf": [
+        {
+          "const": "indefinite",
+          "title": "Indefinite"
+        },
+        {
+          "const": "fixed_term",
+          "title": "Fixed Term"
+        }
+      ],
+      "title": "Contract duration",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about contract duration",
+            "content": "<p>There are two types of contracts available:</p>\n<ul>\n<li>Fixed-term contract: This is a contract that has an end date. This means that towards the end of the contract, it will need to be renewed if you intend to keep the employee hired through us. In some countries, t<span class=\"notion-semantic-string\">he minimum contract duration is 6 months.</span>\n</li>\n<li>Indefinite contract: This is a contract with no end date and therefore, no renewal is needed.</li>\n</ul>\n<p data-pm-slice=\"1 3 []\">Indefinite and fixed-term contracts can be:</p>\n<ul class=\"ProsemirrorEditor-list\">\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Part-time: <span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">This is </span>a form of employment that <strong>carries fewer hours per week than a full-time job</strong><span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">. Depending on the country, workers are considered to be part-time if they commonly work fewer than 30 or 35 hours per week.</span></p>\n</li>\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Full-time.</p>\n</li>\n</ul>",
+            "error": false,
+            "id": 4410443814157,
+            "title": "Types of employment contracts"
+          }
+        }
+      }
+    },
+    "contract_end_date": {
+      "format": "date",
+      "maxLength": 255,
+      "title": "Contract end date",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "date",
+        "minDate": "2026-12-01"
+      }
+    },
+    "daily_schedule": {
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "schedule": {
+                "properties": {
+                  "sunday": false
+                }
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "selected_days": {
+                "contains": {
+                  "pattern": "sunday"
+                }
+              }
+            },
+            "required": ["selected_days"]
+          },
+          "then": {
+            "properties": {
+              "schedule": {
+                "required": ["sunday"]
+              }
+            }
+          }
+        },
+        {
+          "else": {
+            "properties": {
+              "schedule": {
+                "properties": {
+                  "saturday": false
+                }
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "selected_days": {
+                "contains": {
+                  "pattern": "saturday"
+                }
+              }
+            },
+            "required": ["selected_days"]
+          },
+          "then": {
+            "properties": {
+              "schedule": {
+                "required": ["saturday"]
+              }
+            }
+          }
+        },
+        {
+          "else": {
+            "properties": {
+              "schedule": {
+                "properties": {
+                  "friday": false
+                }
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "selected_days": {
+                "contains": {
+                  "pattern": "friday"
+                }
+              }
+            },
+            "required": ["selected_days"]
+          },
+          "then": {
+            "properties": {
+              "schedule": {
+                "required": ["friday"]
+              }
+            }
+          }
+        },
+        {
+          "else": {
+            "properties": {
+              "schedule": {
+                "properties": {
+                  "thursday": false
+                }
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "selected_days": {
+                "contains": {
+                  "pattern": "thursday"
+                }
+              }
+            },
+            "required": ["selected_days"]
+          },
+          "then": {
+            "properties": {
+              "schedule": {
+                "required": ["thursday"]
+              }
+            }
+          }
+        },
+        {
+          "else": {
+            "properties": {
+              "schedule": {
+                "properties": {
+                  "wednesday": false
+                }
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "selected_days": {
+                "contains": {
+                  "pattern": "wednesday"
+                }
+              }
+            },
+            "required": ["selected_days"]
+          },
+          "then": {
+            "properties": {
+              "schedule": {
+                "required": ["wednesday"]
+              }
+            }
+          }
+        },
+        {
+          "else": {
+            "properties": {
+              "schedule": {
+                "properties": {
+                  "tuesday": false
+                }
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "selected_days": {
+                "contains": {
+                  "pattern": "tuesday"
+                }
+              }
+            },
+            "required": ["selected_days"]
+          },
+          "then": {
+            "properties": {
+              "schedule": {
+                "required": ["tuesday"]
+              }
+            }
+          }
+        },
+        {
+          "else": {
+            "properties": {
+              "schedule": {
+                "properties": {
+                  "monday": false
+                }
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "selected_days": {
+                "contains": {
+                  "pattern": "monday"
+                }
+              }
+            },
+            "required": ["selected_days"]
+          },
+          "then": {
+            "properties": {
+              "schedule": {
+                "required": ["monday"]
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "schedule": {
+          "additionalProperties": false,
+          "properties": {
+            "friday": {
+              "properties": {
+                "break_duration_minutes": {
+                  "default": 60,
+                  "minimum": 0,
+                  "title": "Break duration (minutes)",
+                  "type": "integer",
+                  "x-jsf-presentation": {
+                    "inputType": "number"
+                  }
+                },
+                "end_time": {
+                  "default": "17:00",
+                  "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                  "title": "End time",
+                  "type": "string",
+                  "x-jsf-presentation": {
+                    "inputType": "time"
+                  }
+                },
+                "start_time": {
+                  "default": "09:00",
+                  "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                  "title": "Start time",
+                  "type": "string",
+                  "x-jsf-presentation": {
+                    "inputType": "time"
+                  }
+                }
+              },
+              "required": ["start_time", "end_time", "break_duration_minutes"],
+              "title": "Friday",
+              "type": "object",
+              "x-jsf-order": [
+                "start_time",
+                "end_time",
+                "break_duration_minutes"
+              ],
+              "x-jsf-presentation": {
+                "inputType": "fieldset"
+              }
+            },
+            "monday": {
+              "properties": {
+                "break_duration_minutes": {
+                  "default": 60,
+                  "minimum": 0,
+                  "title": "Break duration (minutes)",
+                  "type": "integer",
+                  "x-jsf-presentation": {
+                    "inputType": "number"
+                  }
+                },
+                "end_time": {
+                  "default": "17:00",
+                  "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                  "title": "End time",
+                  "type": "string",
+                  "x-jsf-presentation": {
+                    "inputType": "time"
+                  }
+                },
+                "start_time": {
+                  "default": "09:00",
+                  "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                  "title": "Start time",
+                  "type": "string",
+                  "x-jsf-presentation": {
+                    "inputType": "time"
+                  }
+                }
+              },
+              "required": ["start_time", "end_time", "break_duration_minutes"],
+              "title": "Monday",
+              "type": "object",
+              "x-jsf-order": [
+                "start_time",
+                "end_time",
+                "break_duration_minutes"
+              ],
+              "x-jsf-presentation": {
+                "inputType": "fieldset"
+              }
+            },
+            "saturday": {
+              "properties": {
+                "break_duration_minutes": {
+                  "default": 60,
+                  "minimum": 0,
+                  "title": "Break duration (minutes)",
+                  "type": "integer",
+                  "x-jsf-presentation": {
+                    "inputType": "number"
+                  }
+                },
+                "end_time": {
+                  "default": "17:00",
+                  "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                  "title": "End time",
+                  "type": "string",
+                  "x-jsf-presentation": {
+                    "inputType": "time"
+                  }
+                },
+                "start_time": {
+                  "default": "09:00",
+                  "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                  "title": "Start time",
+                  "type": "string",
+                  "x-jsf-presentation": {
+                    "inputType": "time"
+                  }
+                }
+              },
+              "required": ["start_time", "end_time", "break_duration_minutes"],
+              "title": "Saturday",
+              "type": "object",
+              "x-jsf-order": [
+                "start_time",
+                "end_time",
+                "break_duration_minutes"
+              ],
+              "x-jsf-presentation": {
+                "inputType": "fieldset"
+              }
+            },
+            "sunday": {
+              "properties": {
+                "break_duration_minutes": {
+                  "default": 60,
+                  "minimum": 0,
+                  "title": "Break duration (minutes)",
+                  "type": "integer",
+                  "x-jsf-presentation": {
+                    "inputType": "number"
+                  }
+                },
+                "end_time": {
+                  "default": "17:00",
+                  "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                  "title": "End time",
+                  "type": "string",
+                  "x-jsf-presentation": {
+                    "inputType": "time"
+                  }
+                },
+                "start_time": {
+                  "default": "09:00",
+                  "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                  "title": "Start time",
+                  "type": "string",
+                  "x-jsf-presentation": {
+                    "inputType": "time"
+                  }
+                }
+              },
+              "required": ["start_time", "end_time", "break_duration_minutes"],
+              "title": "Sunday",
+              "type": "object",
+              "x-jsf-order": [
+                "start_time",
+                "end_time",
+                "break_duration_minutes"
+              ],
+              "x-jsf-presentation": {
+                "inputType": "fieldset"
+              }
+            },
+            "thursday": {
+              "properties": {
+                "break_duration_minutes": {
+                  "default": 60,
+                  "minimum": 0,
+                  "title": "Break duration (minutes)",
+                  "type": "integer",
+                  "x-jsf-presentation": {
+                    "inputType": "number"
+                  }
+                },
+                "end_time": {
+                  "default": "17:00",
+                  "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                  "title": "End time",
+                  "type": "string",
+                  "x-jsf-presentation": {
+                    "inputType": "time"
+                  }
+                },
+                "start_time": {
+                  "default": "09:00",
+                  "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                  "title": "Start time",
+                  "type": "string",
+                  "x-jsf-presentation": {
+                    "inputType": "time"
+                  }
+                }
+              },
+              "required": ["start_time", "end_time", "break_duration_minutes"],
+              "title": "Thursday",
+              "type": "object",
+              "x-jsf-order": [
+                "start_time",
+                "end_time",
+                "break_duration_minutes"
+              ],
+              "x-jsf-presentation": {
+                "inputType": "fieldset"
+              }
+            },
+            "tuesday": {
+              "properties": {
+                "break_duration_minutes": {
+                  "default": 60,
+                  "minimum": 0,
+                  "title": "Break duration (minutes)",
+                  "type": "integer",
+                  "x-jsf-presentation": {
+                    "inputType": "number"
+                  }
+                },
+                "end_time": {
+                  "default": "17:00",
+                  "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                  "title": "End time",
+                  "type": "string",
+                  "x-jsf-presentation": {
+                    "inputType": "time"
+                  }
+                },
+                "start_time": {
+                  "default": "09:00",
+                  "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                  "title": "Start time",
+                  "type": "string",
+                  "x-jsf-presentation": {
+                    "inputType": "time"
+                  }
+                }
+              },
+              "required": ["start_time", "end_time", "break_duration_minutes"],
+              "title": "Tuesday",
+              "type": "object",
+              "x-jsf-order": [
+                "start_time",
+                "end_time",
+                "break_duration_minutes"
+              ],
+              "x-jsf-presentation": {
+                "inputType": "fieldset"
+              }
+            },
+            "wednesday": {
+              "properties": {
+                "break_duration_minutes": {
+                  "default": 60,
+                  "minimum": 0,
+                  "title": "Break duration (minutes)",
+                  "type": "integer",
+                  "x-jsf-presentation": {
+                    "inputType": "number"
+                  }
+                },
+                "end_time": {
+                  "default": "17:00",
+                  "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                  "title": "End time",
+                  "type": "string",
+                  "x-jsf-presentation": {
+                    "inputType": "time"
+                  }
+                },
+                "start_time": {
+                  "default": "09:00",
+                  "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                  "title": "Start time",
+                  "type": "string",
+                  "x-jsf-presentation": {
+                    "inputType": "time"
+                  }
+                }
+              },
+              "required": ["start_time", "end_time", "break_duration_minutes"],
+              "title": "Wednesday",
+              "type": "object",
+              "x-jsf-order": [
+                "start_time",
+                "end_time",
+                "break_duration_minutes"
+              ],
+              "x-jsf-presentation": {
+                "inputType": "fieldset"
+              }
+            }
+          },
+          "title": "Schedule details",
+          "type": "object",
+          "x-jsf-order": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday"
+          ],
+          "x-jsf-presentation": {
+            "inputType": "fieldset",
+            "variant": "focused"
+          }
+        },
+        "selected_days": {
+          "default": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+          "items": {
+            "anyOf": [
+              {
+                "label": "Monday",
+                "value": "monday"
+              },
+              {
+                "label": "Tuesday",
+                "value": "tuesday"
+              },
+              {
+                "label": "Wednesday",
+                "value": "wednesday"
+              },
+              {
+                "label": "Thursday",
+                "value": "thursday"
+              },
+              {
+                "label": "Friday",
+                "value": "friday"
+              },
+              {
+                "label": "Saturday",
+                "value": "saturday"
+              },
+              {
+                "label": "Sunday",
+                "value": "sunday"
+              }
+            ]
+          },
+          "title": "Work days",
+          "type": "array",
+          "uniqueItems": true,
+          "x-jsf-presentation": {
+            "inputType": "select"
+          }
+        }
+      },
+      "required": ["selected_days"],
+      "title": "Daily schedule",
+      "type": "object",
+      "x-jsf-order": ["selected_days", "schedule"],
+      "x-jsf-presentation": {
+        "inputType": "fieldset",
+        "metadata": {
+          "country_name": "Ireland",
+          "default_break_duration_minutes": 60,
+          "default_end_time": "17:00",
+          "default_schedule": [
+            {
+              "break_duration_minutes": 60,
+              "day": "monday",
+              "end_time": "17:00",
+              "hours": 7,
+              "start_time": "09:00"
+            },
+            {
+              "break_duration_minutes": 60,
+              "day": "tuesday",
+              "end_time": "17:00",
+              "hours": 7,
+              "start_time": "09:00"
+            },
+            {
+              "break_duration_minutes": 60,
+              "day": "wednesday",
+              "end_time": "17:00",
+              "hours": 7,
+              "start_time": "09:00"
+            },
+            {
+              "break_duration_minutes": 60,
+              "day": "thursday",
+              "end_time": "17:00",
+              "hours": 7,
+              "start_time": "09:00"
+            },
+            {
+              "break_duration_minutes": 60,
+              "day": "friday",
+              "end_time": "17:00",
+              "hours": 7,
+              "start_time": "09:00"
+            }
+          ],
+          "default_start_time": "09:00",
+          "subtract_breaks_in_work_hours": true,
+          "work_days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday"
+          ],
+          "work_hours_per_week": {
+            "baseline": {
+              "maximum": 48,
+              "minimum": 1
+            },
+            "full_time": {
+              "maximum": 48,
+              "minimum": 35
+            },
+            "part_time": {
+              "maximum": 34,
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "equity_compensation": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "equity_cliff": false,
+              "equity_description": false,
+              "equity_vesting_period": false,
+              "number_of_stock_options": false
+            }
+          },
+          "if": {
+            "properties": {
+              "offer_equity_compensation": {
+                "const": "yes"
+              }
+            },
+            "required": ["offer_equity_compensation"]
+          },
+          "then": {
+            "properties": {
+              "equity_description": {
+                "type": ["string"]
+              }
+            },
+            "required": ["equity_description"]
+          }
+        }
+      ],
+      "properties": {
+        "equity_cliff": {
+          "deprecated": true,
+          "description": "When the first portion of the stock option grant will vest.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Cliff (in months)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "equity_description": {
+          "description": "Please share any information related to the upcoming equity grant.",
+          "maxLength": 1000,
+          "title": "Number of options, RSUs, and other equity",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "textarea"
+          }
+        },
+        "equity_vesting_period": {
+          "deprecated": true,
+          "description": "The number of years it will take for the employee to vest all their options.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Vesting period (in years)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "number_of_stock_options": {
+          "deprecated": true,
+          "description": "Tell us the type of equity you're granting as well.",
+          "maxLength": 255,
+          "readOnly": true,
+          "title": "Number of options, RSUs, or other equity granted",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "text"
+          }
+        },
+        "offer_equity_compensation": {
+          "description": "Granting equity to your team generally triggers tax and legal obligations. In order for you to stay compliant, it's important to declare any equity grants.",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            }
+          ],
+          "title": "Will this employee receive equity?",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "row",
+            "inputType": "radio"
+          }
+        }
+      },
+      "required": ["offer_equity_compensation"],
+      "title": "Equity management",
+      "type": "object",
+      "x-jsf-order": [
+        "offer_equity_compensation",
+        "number_of_stock_options",
+        "equity_cliff",
+        "equity_vesting_period",
+        "equity_description"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 39,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 39,
+              "currency": "USD"
+            }
+          },
+          "helpCenter": {
+            "callToAction": "Learn more about equity management at Remote",
+            "content": "<p>Remote Equity is a lightweight compliance tool designed to help you manage equity grants across borders for team members hired through Remote's Employer of Record (EOR).</p><p>Whether you’re managing vesting, reporting exercises, or navigating local tax laws, Remote Equity gives you the structure to stay compliant, avoid risk, and support your team across borders.</p><h4 id=\"h_01K0YQSYJ8JPKYXNNNW90B0QJP\">Why it matters</h4><p>As your EOR, <strong>Remote is legally responsible</strong> for equity-related tax and reporting in the countries where your team members are employed. That means we don’t just track equity, we:</p><ul>\n<li data-list-item-id=\"eba6b95d2e41a276665f3f64525e0eb59\">Withhold and report taxes when required</li>\n<li data-list-item-id=\"ed16c354038e4b3d908bacd965dc2d71b\">File with local tax authorities</li>\n<li data-list-item-id=\"eb7162ef11477f7a7737fe34a48979559\">Support team members with clear guidance on their tax responsibilities</li>\n</ul><p>Most equity platforms can’t do that because they’re not the legal employer. <strong>Remote Equity ensures we have the data we need, when we need it, to keep your company compliant and your team fairly rewarded.</strong></p><p>Behind the scenes, our tax team:</p><ul>\n<li data-list-item-id=\"ef5c97b0472ebc9a0819e312646e4cd66\">Handles tax withholdings when taxable events occur</li>\n<li data-list-item-id=\"e5f3560641743ab0c57ba47683638560e\">Provides guidance to you and your team, even when no withholding is required</li>\n<li data-list-item-id=\"ed17d307d635b18f9f784df12d1dbe1cd\">Manages additional reporting where local laws demand it</li>\n</ul><p>See also: <a href=\"https://support.remote.com/hc/en-us/articles/37710493624589-What-types-of-equity-grants-should-I-declare-in-Remote-Equity-Essentials\">What types of equity grants should I declare in Remote Equity?</a></p><h4 id=\"h_01K0YQSYJDJ3JYC1C642ASB8E2\">What’s included</h4><p>Remote Equity provides:</p><ul>\n<li data-list-item-id=\"e0cc8d8c0b7d060b9de89e3c870fc1579\">\n<strong>Tracking and alerts</strong> for events that may create a tax obligation (like vesting or exercising)</li>\n<li data-list-item-id=\"e88a2fc75f6f43db27891e415e2f90400\">\n<strong>Automated compliance reminders</strong> based on local deadlines and regulations</li>\n<li data-list-item-id=\"e2c2cf9ef914143e339eb32e1b70c83da\">\n<strong>Localized guidance for team members</strong>, shared through the Remote Equity app</li>\n<li data-list-item-id=\"e8a2c20d648ed01a3db135ef4ada0de61\">\n<strong>Support from Remote’s tax and legal teams</strong>, who handle obligations on your behalf</li>\n<li data-list-item-id=\"e184af2a6420412152b377815ebe18ce2\">\n<strong>Integration with Carta and Pulley</strong> to automatically sync grant declarations and exercise information</li>\n</ul><h4 id=\"h_01K0YQSYJSCK6XYBXF3Q56KRC8\"><strong>Get started in minutes</strong></h4><p>Setup takes less than five minutes. Just log in to your Remote account, and launch the Equity App to follow the setup steps.</p><p>Helpful guides to get started:</p><ul>\n<li data-list-item-id=\"e73e204bc587d3417ecab74e3a29ccc2a\"><a href=\"https://support.remote.com/hc/en-us/articles/37547625350925-How-can-I-access-Remote-Equity-Essentials\">How can I access Remote Equity?</a></li>\n<li data-list-item-id=\"e0ca43a64bf2361ce43443e98200daa5a\"><a href=\"https://support.remote.com/hc/en-us/articles/35577980536589\">How do I declare a grant?</a></li>\n<li data-list-item-id=\"edfa1a00c07a70449ebe34c25dec818fe\"><a href=\"https://support.remote.com/hc/en-us/articles/35671968187149-How-can-my-employees-see-their-equity-information\">How can my team access their equity information?</a></li>\n<li data-list-item-id=\"edaaf9eb107949f79894c24e3b984da30\"><a href=\"https://support.remote.com/hc/en-us/articles/35546454220301-What-happens-if-I-already-declared-equity-before-using-Remote-Equity-Essentials\">What happens if I already declared equity before using Remote Equity?</a></li>\n</ul><h4 id=\"h_01K0YQSYJV9EH2AQ9HWYS1826S\"><span class=\"wysiwyg-underline\">Frequently Asked Questions (FAQs)</span></h4><p><strong>Who needs to use Remote Equity?</strong></p><p>Any Remote customer granting equity to a team member hired through Remote’s EOR must use Remote Equity to meet local compliance requirements.</p><p><strong>Why can’t we just use our own equity tool?</strong></p><p>Traditional equity tools track grants and vesting, but they don't file taxes, withhold contributions, or report income to local authorities. Remote, as the legal employer, is responsible for these actions. Remote Equity ensures those obligations are covered.</p><p><strong>What happens if we don’t use it?</strong></p><p>If Remote doesn’t receive timely and accurate equity data, required filings may be missed. This can result in compliance risks, unexpected tax liabilities, and issues for both your company and your team members.</p><p><strong>How much does Remote Equity cost?</strong></p><p>Remote Equity costs 39 USD per month for each EOR team member with equity. <a href=\"https://support.remote.com/hc/en-us/articles/35546441948685-How-much-does-Remote-Equity-Essentials-cost\">Learn more</a>.</p><p>For comprehensive information, visit the <a href=\"https://support.remote.com/hc/en-us/categories/45788665954189-Remote-Equity\" tabindex=\"0\" data-token-index=\"1\" rel=\"noopener noreferrer\">Remote Equity hub</a>.</p>",
+            "error": false,
+            "id": 38303424407821,
+            "title": "Welcome to Remote Equity: Global equity, without the compliance headaches"
+          }
+        }
+      }
+    },
+    "experience_level": {
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employees overall experience).",
+      "oneOf": [
+        {
+          "const": "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "description": "Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "title": "Level 2 - Entry Level"
+        },
+        {
+          "const": "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+          "description": "Employees who perform independently tasks and/or with coordination and control functions",
+          "title": "Level 3 - Associate"
+        },
+        {
+          "const": "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "description": "Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "title": "Level 4 - Mid-Senior level"
+        },
+        {
+          "const": "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "description": "Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "title": "Level 5 - Director"
+        },
+        {
+          "const": "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "description": "An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "title": "Level 6 - Executive"
+        }
+      ],
+      "title": "Experience level",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "extreme_salary_acknowledgement": {
+      "const": "acknowledged",
+      "title": "",
+      "type": "string",
+      "x-jsf-logic-computedAttrs": {
+        "title": "{{extreme_salary_acknowledgement_title}}"
+      },
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "extreme_salary_warning": {
+      "title": "",
+      "type": "null",
+      "x-jsf-presentation": {
+        "inputType": "hidden",
+        "meta": {
+          "ignoreValue": true
+        },
+        "statement": {
+          "description": "The entered salary is equivalent to USD 1,000,000 or more. Please double check and confirm this amount is correct.",
+          "inputType": "statement",
+          "severity": "warning"
+        }
+      }
+    },
+    "has_bonus": {
+      "description": "These can include things like performance-related bonuses.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer other bonuses?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_commissions": {
+      "description": "You can outline your policy and pay commission to the employee on the platform. However, commission will not appear in the employment agreement. Please send full policy details directly to the employee.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer commission?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_probation_period": {
+      "description": "We recommend selecting Yes. In the unfortunate event of a necessary termination, probation periods make the process much easier.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Include a probation period?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about probation period",
+            "content": "<p>A probationary period is a set time for an employer to assess a new employee's suitability for the role. It allows the employer to evaluate the employee's capability, skills, performance, attendance, and conduct.</p>\n<p>Using a probationary period can make it simpler to end employment and notice periods are often shorter or don’t apply at all. After the probationary period ends, it is often more difficult and expensive to terminate an employee.</p>\n<p>Please note that if a probationary period is not included and you later receive unsatisfactory background check results, Remote cannot unilaterally terminate the employee’s employment.</p>\n<p>Keep in mind that a probationary period may not be valid if the employee has worked for your company before.</p>\n<p class=\"guide-markup\" style=\"box-sizing: inherit; font-weight: 400; margin: 0.5em 0px 0px; padding: 0px; color: #2f3941; font-family: -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 15px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\"><span class=\"guide-markup notion-enable-hover\" style=\"box-sizing: inherit; font-weight: 600;\" data-token-index=\"2\"><strong class=\"guide-markup\" style=\"box-sizing: border-box; font-weight: bold; color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">See also:</strong><span class=\"guide-markup\" style=\"box-sizing: inherit; font-weight: 400; color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;\"> </span><a class=\"guide-markup\" style=\"box-sizing: border-box; font-weight: 400; border-radius: 4px; color: #0161ff; outline: transparent solid 2px; outline-offset: 1px; transition: outline-color 0.1s ease-in-out, color 0.25s ease-in-out; text-decoration: none; background-color: #ffffff; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal;\" href=\"https://support.remote.com/hc/en-us/articles/34566185236237-What-are-Remote-s-Background-Check-Services\" target=\"_blank\" rel=\"noopener noreferrer\">What are Remote's Background Check Services?</a></span></p>",
+            "error": false,
+            "id": 9013034328205,
+            "title": "Why is it important to include a probationary period in an employee's contract?"
+          }
+        }
+      }
+    },
+    "has_signing_bonus": {
+      "description": "This is a one-time payment the employee receives when they join your team.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer a signing bonus?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "hourly_gross_salary": {
+      "title": "Hourly gross salary",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-logic-computedAttrs": {
+        "description": "{{hourly_gross_salary_reserve_description}}"
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "inputType": "money"
+      }
+    },
+    "part_time_salary_confirmation": {
+      "const": "acknowledged",
+      "description": "We'll include the salary in the employment agreement, so please double-check that it's correct.",
+      "title": "I confirm that this amount is the full annual salary for this part-time employee.",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "probation_extend_length": {
+      "description": "This cannot exceed 6 months. Please put 0 if you don't desire to apply a probation extension.",
+      "maximum": 6,
+      "minimum": 0,
+      "title": "Length of extended probation period, in months",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "probation_length": {
+      "description": "In Ireland, probation periods can last up to 6 months.",
+      "maximum": 6,
+      "minimum": 1,
+      "title": "Probation period, in months",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "role_description": {
+      "description": "Please add at least 3 responsibilities, at least 100 characters in total.",
+      "maxLength": 5000,
+      "minLength": 100,
+      "title": "Role description",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "salary_overview": {
+      "const": "salary_overview",
+      "default": "salary_overview",
+      "description": "We will request a reserve payment for salaries at or above €150,000.00.",
+      "oneOf": [
+        {
+          "const": "salary_overview",
+          "title": "Salary overview"
+        }
+      ],
+      "title": "Salary overview",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about reserve payments",
+            "content": "<p>A <strong>reserve payment</strong> is an amount collected by Remote to help safeguard against potential large or unexpected severance costs if a team member's employment or engagement ends.</p><p>In many countries, labor laws require employers to pay <strong>statutory severance.</strong> Depending on the agreement, there may also be additional contractual obligations. Reserve payments help ensure funds are available to cover these costs if they arise.</p><p>Reserves are an <strong>industry-standard practice.</strong> Once a team member resigns or their agreement ends and all termination-related costs have been settled, any remaining reserve balance will be credited or refunded.</p><p>If a reserve payment has been made but <strong>onboarding is not completed</strong>, the full reserve will be credited or refunded. If your account has an overdue balance, Remote may first apply the reserve toward that outstanding amount.</p><blockquote><p><em><strong>Note:</strong> Reserve payments are required only for <strong>Employer of Record (EOR) employees and Contractor of Record (COR) contractors</strong>. They are <strong>not applicable</strong> to Global Payroll (direct employee) or users of our Standard Contractor Management and Contractor Management Plus platforms</em></p></blockquote><h3 id=\"h_01KWVSH6PWV0EARTP636WFMKX5\">Why would a reserve be required?</h3><p>Remote evaluates several factors when determining whether a reserve payment is needed. These may include:</p><ul>\n<li data-list-item-id=\"e4aa5c6c3b06eb3fd8ac290640949dd33\">The <strong>financial exposure</strong> associated with a client’s account</li>\n<li data-list-item-id=\"e6035e43ef90b77827c1d8c41be109918\">The <strong>countries</strong> in which team members are hired</li>\n<li data-list-item-id=\"e270d18c338f92bac8e35ed1f0c29ee6a\">A client’s decision to move from <strong>14-day to 30-day invoice payment terms</strong>\n</li>\n<li data-list-item-id=\"e87b2ad7dca754100d16a8d4ffabfa36a\">\n<strong>Non-standard employment contract terms</strong>, such as:<ul>\n<li data-list-item-id=\"ef35bb2e45f6361dee620f3d1949914de\">Extended notice periods</li>\n<li data-list-item-id=\"e9f05ff898e587ce3d34e80d6d7077b41\">Guaranteed severance clauses</li>\n<li data-list-item-id=\"e7cea63a7d2482bdb28eefffb6948c577\">Seniority recognition</li>\n<li data-list-item-id=\"e5b345cb8f5b041e3897b31092d6f0a06\">Non-compete, non-solicitation, or non-interference clauses</li>\n</ul>\n</li>\n<li data-list-item-id=\"e69603f26c1cfe44abe1b3b9afae0a6eb\">\n<strong>Consistent late invoice payments</strong> may also result in a reserve payment requirement</li>\n</ul><h3 id=\"h_01KWVSH6Q0PMTFJTCBARRMY0F8\">Why was I asked to pay an additional reserve?</h3><p>Some employment agreement terms increase the potential cost of ending an agreement. In these cases, additional reserves may be required.</p><p>Currently, reserves are automatically applied for:</p><ul>\n<li data-list-item-id=\"e016d051d1cae211fd2052be06528b0fb\">Extended notice periods</li>\n<li data-list-item-id=\"e121b7d92f73dc18a98058036faa4c132\">Seniority recognition</li>\n<li data-list-item-id=\"e1173074340c67d1669a2826f7ce530f4\">Non-compete, non-solicitation, or non-interference clauses</li>\n</ul><p>Other agreement terms may require additional review and could result in additional reserve requirements.</p><h4 id=\"h_01KWVSH6Q22W5N0Y71KPX7002S\">Extended notice period</h4><p>Labor laws in each country define a minimum notice period for ending an agreement. If the notice period in the agreement is longer than the statutory minimum, an additional reserve will be required for the difference.</p><p>Example: The minimum notice period is one month, but you request a three-month notice period. In this case, an additional two-month reserve would be required.</p><h4 id=\"h_01KWVSH6Q220ZTQW023A4TTNFK\">Seniority recognition</h4><p>A reserve will be automatically issued where two or more years of service is recognized.</p><p>As a general guideline:</p><ul>\n<li data-list-item-id=\"e325a4b96c617f8a6459e09da118a39d5\">\n<strong>2-4 years</strong> of recognized seniority, a reserve equal to <strong>1-month reserve</strong> is required</li>\n<li data-list-item-id=\"ec4f6d1f140f45060bca310852d94e885\">\n<strong>4-5 years</strong> of recognized seniority, a reserve equal to <strong>2-months</strong> is required</li>\n<li data-list-item-id=\"eeb5b68f0845b6a250366ba6e7449fe41\">\n<strong>More than 5 years</strong> of recognized seniority is subject to <strong>further review</strong>\n</li>\n</ul><p><strong>See also</strong>: <br><a href=\"https://remote.zendesk.com/hc/en-us/articles/12695836286861\">When is a reserve refunded?</a><br><a href=\"https://remote.zendesk.com/hc/en-us/articles/32649353517069\">What is reserve payment in Contractor of Record?</a></p>",
+            "error": false,
+            "id": 12695731865229,
+            "title": "What is a reserve payment?"
+          },
+          "ignoreValue": true
+        }
+      }
+    },
+    "schedule_type": {
+      "oneOf": [
+        {
+          "const": "flexible",
+          "suffix": "Can work any time or day",
+          "title": "Flexible"
+        },
+        {
+          "const": "core_business_hours",
+          "suffix": "Must be present at specific times",
+          "title": "Flexible within core hours"
+        },
+        {
+          "const": "fixed_hours",
+          "suffix": "Must work a set daily schedule",
+          "title": "Fixed"
+        }
+      ],
+      "title": "Employee work schedule",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "select"
+      }
+    },
+    "sick_leave_pay": {
+      "deprecated": true,
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        }
+      ],
+      "readOnly": true,
+      "title": "Sick Leave Pay",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated because now we're using sick_leave_pay_ack field."
+        },
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "sick_leave_pay_ack": {
+      "const": "acknowledged",
+      "description": "In Ireland, employees are entitled to 7 paid sick leave days per year if they have worked  with you for more than 13 weeks.",
+      "title": "I acknowledge the paid sick leave policy in Ireland",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "See more details",
+            "content": "<h3 id=\"h_01HR3C6BF83T9M4H5ADA1ZRZKH\">\n<strong>How does Statutory Sick Pay work in Ireland?</strong> </h3><p>Employees in Ireland are entitled to <strong>5 days of statutory sick pay per calendar year</strong> under the Sick Leave Act 2022, provided they have at least 13 weeks' continuous service with their employer.</p><p>Sick pay is paid by the employer at <strong>70% of normal daily wages</strong>, up to a maximum of <strong>€110 per day</strong>. A medical certificate is required to qualify.</p><p>Once the 5-day entitlement is exhausted, employees may be eligible for <strong>Illness Benefit</strong> from the Department of Social Protection, which pays up to €232 per week. Illness Benefit is subject to having sufficient PRSI contributions and kicks in after 3 waiting days.</p><div><div data-test-render-count=\"1\"><div><div><div data-is-streaming=\"false\"><div><div><div>\n<p>After the 5 statutory sick days are exhausted, employees can claim <strong>Illness Benefit</strong> from the Department of Social Protection, subject to the following:</p>\n<ul>\n<li data-list-item-id=\"e8211723c2aa4c0c70765b0f001cd49f8\">They must have <strong>104 weeks of PRSI contributions</strong> since first starting work</li>\n<li data-list-item-id=\"eb9138505db3957977b7ad05966e43f34\">There are <strong>3 waiting days</strong> before Illness Benefit kicks in (days 1–3 are unpaid unless the employer covers them)</li>\n<li data-list-item-id=\"e53d41e83907abdc6c22d889434fe5e64\">It pays up to <strong>€232 per week</strong>\n</li>\n<li data-list-item-id=\"e62693edbf3eeb7329e60c263f21da06f\">It can be claimed for <strong>up to 2 years</strong>\n</li>\n</ul>\n<p>One practical note: if the illness runs continuously beyond the 5 statutory days, the 3 waiting days for Illness Benefit overlap with the tail end of the sick leave period, so the gap in payment can be shorter than it appears.</p>\n<p>After 2 years on Illness Benefit, employees may transition to <strong>Invalidity Pension</strong> or <strong>Disability Allowance</strong>, depending on their circumstances.</p>\n</div></div></div></div></div></div></div></div><p> </p><h3 id=\"h_01JZ2FF3VNSDC3ZP3RCZH06H9R\"><strong>What is the Statutory Sick Pay (SSP) amount in Ireland?</strong></h3><p>The rate of payment for statutory sick leave of 70% of an employee's normal daily rate of pay, to be paid (up to a maximum <strong>€110 per day)</strong>. Clients of Remote pay this, any amount in excess of the statutory minimum will be at the clients absolute discretion. </p><p>Clients can, at their discretion, offer a more favorable sick pay policy, this can be called 'company', 'contractual' or 'occupational' sick pay and should be outlined in the contract of employment.</p>",
+            "error": false,
+            "id": 33175767489165,
+            "title": "Paid sick leave (Ireland)"
+          }
+        }
+      }
+    },
+    "sick_leave_pay_length": {
+      "deprecated": true,
+      "description": "We suggest 13 weeks full pay",
+      "readOnly": true,
+      "title": "Paid sick leave (in weeks)",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated because now we're using sick_leave_pay_ack field."
+        },
+        "inputType": "number"
+      }
+    },
+    "signing_bonus_amount": {
+      "title": "Signing bonus amount",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "inputType": "money"
+      }
+    },
+    "third_party_work": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Can the employee work for third parties or do business on their own while working with your company?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "third_party_work_activities": {
+      "description": "Provide as many details about the approved activities as you can. We'll include them in the employment agreement.",
+      "maxLength": 1000,
+      "title": "Approved third-party work",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "wage_type": {
+      "oneOf": [
+        {
+          "const": "salary",
+          "title": "Annual salary"
+        },
+        {
+          "const": "hourly",
+          "title": "Hourly pay"
+        }
+      ],
+      "title": "Wage type",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "work_address_is_home_address": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Same as their residential address"
+        },
+        {
+          "const": "no",
+          "title": "Different than their residential address"
+        }
+      ],
+      "title": "Employee's work address",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "work_hours_per_week": {
+      "description": "Please indicate the number of hours the employee will work per week.",
+      "maximum": 48,
+      "minimum": 1,
+      "title": "Work hours per week",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "work_schedule": {
+      "oneOf": [
+        {
+          "const": "full_time",
+          "title": "Full-time"
+        },
+        {
+          "const": "part_time",
+          "title": "Part-time"
+        }
+      ],
+      "title": "Type of employee",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    }
+  },
+  "required": [
+    "work_hours_per_week",
+    "schedule_type",
+    "contract_duration_type",
+    "wage_type",
+    "work_schedule",
+    "available_pto_type",
+    "available_pto",
+    "sick_leave_pay_ack",
+    "equity_compensation",
+    "experience_level",
+    "has_signing_bonus",
+    "has_bonus",
+    "has_commissions",
+    "has_probation_period",
+    "role_description",
+    "third_party_work",
+    "work_address_is_home_address"
+  ],
+  "type": "object",
+  "x-jsf-logic": {
+    "allOf": [
+      {
+        "if": {
+          "properties": {
+            "schedule_type": {
+              "const": "fixed_hours"
+            }
+          },
+          "required": ["schedule_type"]
+        },
+        "then": {
+          "properties": {
+            "daily_schedule": {
+              "properties": {
+                "schedule": {
+                  "title": "Fixed work hours"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "schedule_type": {
+              "const": "core_business_hours"
+            }
+          },
+          "required": ["schedule_type"]
+        },
+        "then": {
+          "properties": {
+            "daily_schedule": {
+              "properties": {
+                "schedule": {
+                  "title": "Core working hours"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "schedule_type": {
+              "const": "fixed_hours"
+            },
+            "work_schedule": {
+              "const": "part_time"
+            }
+          },
+          "required": ["schedule_type", "work_schedule"]
+        },
+        "then": {
+          "properties": {
+            "work_hours_per_week": {
+              "x-jsf-logic-computedAttrs": {
+                "const": "computed_work_hours",
+                "default": "computed_work_hours",
+                "description": ""
+              },
+              "x-jsf-logic-validations": ["fixed_part_time_within_bounds"]
+            }
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "schedule_type": {
+              "const": "fixed_hours"
+            },
+            "work_schedule": {
+              "const": "full_time"
+            }
+          },
+          "required": ["schedule_type", "work_schedule"]
+        },
+        "then": {
+          "properties": {
+            "work_hours_per_week": {
+              "x-jsf-logic-computedAttrs": {
+                "const": "computed_work_hours",
+                "default": "computed_work_hours",
+                "description": ""
+              },
+              "x-jsf-logic-validations": ["fixed_full_time_within_bounds"]
+            }
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "schedule_type": {
+              "const": "core_business_hours"
+            },
+            "work_schedule": {
+              "const": "part_time"
+            }
+          },
+          "required": ["schedule_type", "work_schedule"]
+        },
+        "then": {
+          "properties": {
+            "work_hours_per_week": {
+              "maximum": 34,
+              "x-jsf-logic-computedAttrs": {
+                "minimum": "minimum_core_hours_part_time",
+                "x-jsf-errorMessage": {
+                  "maximum": "The employee core business hours cannot exceed 34 hours",
+                  "minimum": "The employee must work at least {{minimum_core_hours_part_time}} core business hours"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "schedule_type": {
+              "const": "core_business_hours"
+            },
+            "work_schedule": {
+              "const": "full_time"
+            }
+          },
+          "required": ["schedule_type", "work_schedule"]
+        },
+        "then": {
+          "properties": {
+            "work_hours_per_week": {
+              "maximum": 48,
+              "x-jsf-logic-computedAttrs": {
+                "minimum": "minimum_core_hours_full_time",
+                "x-jsf-errorMessage": {
+                  "maximum": "The employee core business hours cannot exceed 48 hours",
+                  "minimum": "The employee must work at least {{minimum_core_hours_full_time}} core business hours"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "else": {
+          "properties": {
+            "extreme_salary_acknowledgement": false,
+            "extreme_salary_warning": false
+          }
+        },
+        "if": {
+          "computedValues": {
+            "extreme_salary_reached": {
+              "const": true
+            }
+          }
+        },
+        "then": {
+          "required": ["extreme_salary_acknowledgement"]
+        }
+      }
+    ],
+    "computedValues": {
+      "annual_gross_salary_reserve_description": {
+        "rule": {
+          "if": [
+            {
+              ">=": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                15000000
+              ]
+            },
+            {
+              "cat": [
+                "The minimum annual salary is calculated based on the country's applicable laws.",
+                " ",
+                "A reserve payment will be required, as described above."
+              ]
+            },
+            "The minimum annual salary is calculated based on the country's applicable laws."
+          ]
+        }
+      },
+      "computed_work_hours": {
+        "rule": {
+          "compute_work_hours": [
+            {
+              "var": "daily_schedule.selected_days"
+            },
+            {
+              "var": "daily_schedule.schedule"
+            },
+            true
+          ]
+        }
+      },
+      "extreme_salary_acknowledgement_title": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "!": {
+                    "==": [
+                      {
+                        "var": "wage_type"
+                      },
+                      "hourly"
+                    ]
+                  }
+                },
+                {
+                  "and": [
+                    {
+                      "var": "annual_gross_salary"
+                    },
+                    {
+                      ">=": [
+                        {
+                          "var": "annual_gross_salary"
+                        },
+                        88975888
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "cat": [
+                "I have reviewed and verified the annual salary of EUR ",
+                {
+                  "money_format": {
+                    "/": [
+                      {
+                        "var": "annual_gross_salary"
+                      },
+                      100
+                    ]
+                  }
+                },
+                "."
+              ]
+            },
+            {
+              "cat": [
+                "I have reviewed and verified the annualized salary of EUR ",
+                {
+                  "money_format": {
+                    "/": [
+                      {
+                        "if": [
+                          {
+                            "var": "work_hours_per_week"
+                          },
+                          {
+                            "-": [
+                              {
+                                "*": [
+                                  {
+                                    "var": "hourly_gross_salary"
+                                  },
+                                  {
+                                    "var": "work_hours_per_week"
+                                  },
+                                  52
+                                ]
+                              },
+                              {
+                                "%": [
+                                  {
+                                    "*": [
+                                      {
+                                        "var": "hourly_gross_salary"
+                                      },
+                                      {
+                                        "var": "work_hours_per_week"
+                                      },
+                                      52
+                                    ]
+                                  },
+                                  1
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "-": [
+                              {
+                                "*": [
+                                  {
+                                    "var": "hourly_gross_salary"
+                                  },
+                                  40,
+                                  52
+                                ]
+                              },
+                              {
+                                "%": [
+                                  {
+                                    "*": [
+                                      {
+                                        "var": "hourly_gross_salary"
+                                      },
+                                      40,
+                                      52
+                                    ]
+                                  },
+                                  1
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      100
+                    ]
+                  }
+                },
+                "."
+              ]
+            }
+          ]
+        }
+      },
+      "extreme_salary_reached": {
+        "rule": {
+          "!!": [
+            {
+              "or": [
+                {
+                  "and": [
+                    {
+                      "!": {
+                        "==": [
+                          {
+                            "var": "wage_type"
+                          },
+                          "hourly"
+                        ]
+                      }
+                    },
+                    {
+                      "and": [
+                        {
+                          "var": "annual_gross_salary"
+                        },
+                        {
+                          ">=": [
+                            {
+                              "var": "annual_gross_salary"
+                            },
+                            88975888
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "and": [
+                    {
+                      "==": [
+                        {
+                          "var": "wage_type"
+                        },
+                        "hourly"
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "if": [
+                            {
+                              "var": "work_hours_per_week"
+                            },
+                            {
+                              "-": [
+                                {
+                                  "*": [
+                                    {
+                                      "var": "hourly_gross_salary"
+                                    },
+                                    {
+                                      "var": "work_hours_per_week"
+                                    },
+                                    52
+                                  ]
+                                },
+                                {
+                                  "%": [
+                                    {
+                                      "*": [
+                                        {
+                                          "var": "hourly_gross_salary"
+                                        },
+                                        {
+                                          "var": "work_hours_per_week"
+                                        },
+                                        52
+                                      ]
+                                    },
+                                    1
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "-": [
+                                {
+                                  "*": [
+                                    {
+                                      "var": "hourly_gross_salary"
+                                    },
+                                    40,
+                                    52
+                                  ]
+                                },
+                                {
+                                  "%": [
+                                    {
+                                      "*": [
+                                        {
+                                          "var": "hourly_gross_salary"
+                                        },
+                                        40,
+                                        52
+                                      ]
+                                    },
+                                    1
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          ">=": [
+                            {
+                              "if": [
+                                {
+                                  "var": "work_hours_per_week"
+                                },
+                                {
+                                  "-": [
+                                    {
+                                      "*": [
+                                        {
+                                          "var": "hourly_gross_salary"
+                                        },
+                                        {
+                                          "var": "work_hours_per_week"
+                                        },
+                                        52
+                                      ]
+                                    },
+                                    {
+                                      "%": [
+                                        {
+                                          "*": [
+                                            {
+                                              "var": "hourly_gross_salary"
+                                            },
+                                            {
+                                              "var": "work_hours_per_week"
+                                            },
+                                            52
+                                          ]
+                                        },
+                                        1
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "-": [
+                                    {
+                                      "*": [
+                                        {
+                                          "var": "hourly_gross_salary"
+                                        },
+                                        40,
+                                        52
+                                      ]
+                                    },
+                                    {
+                                      "%": [
+                                        {
+                                          "*": [
+                                            {
+                                              "var": "hourly_gross_salary"
+                                            },
+                                            40,
+                                            52
+                                          ]
+                                        },
+                                        1
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            88975888
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "hourly_gross_salary_reserve_description": {
+        "rule": {
+          "if": [
+            {
+              ">=": [
+                {
+                  "if": [
+                    {
+                      "var": "work_hours_per_week"
+                    },
+                    {
+                      "-": [
+                        {
+                          "*": [
+                            {
+                              "var": "hourly_gross_salary"
+                            },
+                            {
+                              "var": "work_hours_per_week"
+                            },
+                            52
+                          ]
+                        },
+                        {
+                          "%": [
+                            {
+                              "*": [
+                                {
+                                  "var": "hourly_gross_salary"
+                                },
+                                {
+                                  "var": "work_hours_per_week"
+                                },
+                                52
+                              ]
+                            },
+                            1
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "-": [
+                        {
+                          "*": [
+                            {
+                              "var": "hourly_gross_salary"
+                            },
+                            40,
+                            52
+                          ]
+                        },
+                        {
+                          "%": [
+                            {
+                              "*": [
+                                {
+                                  "var": "hourly_gross_salary"
+                                },
+                                40,
+                                52
+                              ]
+                            },
+                            1
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                15000000
+              ]
+            },
+            {
+              "cat": [
+                "",
+                " ",
+                "A reserve payment will be required, as described above."
+              ]
+            },
+            ""
+          ]
+        }
+      },
+      "minimum_annual_gross_salary": {
+        "rule": {
+          "if": [
+            {
+              "var": "work_hours_per_week"
+            },
+            {
+              "/": [
+                {
+                  "-": [
+                    {
+                      "*": [
+                        {
+                          "var": "work_hours_per_week"
+                        },
+                        14.15,
+                        52,
+                        100
+                      ]
+                    },
+                    {
+                      "%": [
+                        {
+                          "*": [
+                            {
+                              "var": "work_hours_per_week"
+                            },
+                            14.15,
+                            52,
+                            100
+                          ]
+                        },
+                        1
+                      ]
+                    }
+                  ]
+                },
+                100
+              ]
+            },
+            0
+          ]
+        }
+      },
+      "minimum_annual_gross_salary_in_cents": {
+        "rule": {
+          "if": [
+            {
+              "var": "work_hours_per_week"
+            },
+            {
+              "/": [
+                {
+                  "-": [
+                    {
+                      "*": [
+                        {
+                          "var": "work_hours_per_week"
+                        },
+                        1415,
+                        52,
+                        100
+                      ]
+                    },
+                    {
+                      "%": [
+                        {
+                          "*": [
+                            {
+                              "var": "work_hours_per_week"
+                            },
+                            1415,
+                            52,
+                            100
+                          ]
+                        },
+                        1
+                      ]
+                    }
+                  ]
+                },
+                100
+              ]
+            },
+            0
+          ]
+        }
+      },
+      "minimum_core_hours_full_time": {
+        "rule": {
+          "max": [
+            {
+              "compute_work_hours": [
+                {
+                  "var": "daily_schedule.selected_days"
+                },
+                {
+                  "var": "daily_schedule.schedule"
+                },
+                true
+              ]
+            },
+            35
+          ]
+        }
+      },
+      "minimum_core_hours_part_time": {
+        "rule": {
+          "max": [
+            {
+              "compute_work_hours": [
+                {
+                  "var": "daily_schedule.selected_days"
+                },
+                {
+                  "var": "daily_schedule.schedule"
+                },
+                true
+              ]
+            },
+            1
+          ]
+        }
+      }
+    },
+    "validations": {
+      "fixed_full_time_within_bounds": {
+        "errorMessage": "The fixed work hours must be within 35 and 48 work hours per week",
+        "rule": {
+          "and": [
+            {
+              ">=": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                35
+              ]
+            },
+            {
+              "<=": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                48
+              ]
+            }
+          ]
+        }
+      },
+      "fixed_part_time_within_bounds": {
+        "errorMessage": "The fixed work hours must be within 1 and 34 work hours per week",
+        "rule": {
+          "and": [
+            {
+              ">=": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                1
+              ]
+            },
+            {
+              "<=": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                34
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "x-jsf-order": [
+    "contract_duration",
+    "contract_duration_type",
+    "contract_end_date",
+    "work_schedule",
+    "schedule_type",
+    "daily_schedule",
+    "work_hours_per_week",
+    "has_probation_period",
+    "probation_length",
+    "probation_extend_length",
+    "sick_leave_pay_ack",
+    "available_pto_type",
+    "available_pto",
+    "sick_leave_pay",
+    "sick_leave_pay_length",
+    "role_description",
+    "experience_level",
+    "work_address_is_home_address",
+    "wage_type",
+    "salary_overview",
+    "annual_gross_salary",
+    "hourly_gross_salary",
+    "extreme_salary_warning",
+    "extreme_salary_acknowledgement",
+    "part_time_salary_confirmation",
+    "has_signing_bonus",
+    "signing_bonus_amount",
+    "has_bonus",
+    "bonus_amount",
+    "bonus_details",
+    "has_commissions",
+    "commissions_details",
+    "commissions_ack",
+    "equity_compensation",
+    "third_party_work",
+    "third_party_work_activities"
+  ],
+  "x-rmt-flatFieldsets": {
+    "annual_gross_salary_fieldset": {
+      "propertiesByName": [
+        "wage_type",
+        "salary_overview",
+        "annual_gross_salary",
+        "hourly_gross_salary",
+        "extreme_salary_warning",
+        "extreme_salary_acknowledgement",
+        "part_time_salary_confirmation"
+      ],
+      "title": "Salary"
+    },
+    "employee_schedule_fieldset": {
+      "propertiesByName": [
+        "schedule_type",
+        "daily_schedule",
+        "work_hours_per_week"
+      ],
+      "title": "Employee schedule"
+    }
+  },
+  "x-rmt-meta": {
+    "jsfVersion": "1"
+  },
+  "x-rmt-schema-changelog": {
+    "changelog": "Hourly wage type and the daily schedule are no longer hidden from Partners API (remote_api) consumers: wage_type and hourly_gross_salary are now returned, and the daily_schedule component (daily_schedule, schedule_type, work_hours_per_week) replaces the plain work_hours_per_week field.",
+    "upgradePath": "Partners API consumers on v4 or earlier are unaffected. When upgrading to v5, render and submit wage_type (salary or hourly), hourly_gross_salary when wage_type is hourly, and the daily_schedule fields instead of the plain work_hours_per_week field. Part-time contracts must still use wage_type salary."
+  }
+}

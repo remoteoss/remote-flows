@@ -1,0 +1,2063 @@
+{
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "non_interference_halt_period": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_interference_apply": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_interference_apply"]
+      },
+      "then": {
+        "required": ["non_interference_halt_period"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_solicitation_customer_number_of_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_solicitation_customers": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_solicitation_customers"]
+      },
+      "then": {
+        "properties": {
+          "non_solicitation_customer_number_of_months": {
+            "type": "number"
+          }
+        },
+        "required": ["non_solicitation_customer_number_of_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_solicitation_employees_number_of_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_solicitation_employees": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_solicitation_employees"]
+      },
+      "then": {
+        "properties": {
+          "non_solicitation_employees_number_of_months": {
+            "type": "number"
+          }
+        },
+        "required": ["non_solicitation_employees_number_of_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_compete_clause_compensation_amount": false
+        }
+      },
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "type": "integer"
+          },
+          "non_compete_clause_apply": {
+            "const": "yes"
+          },
+          "non_compete_clause_compensation_percentage": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "non_compete_clause_apply",
+          "annual_gross_salary",
+          "non_compete_clause_compensation_percentage"
+        ]
+      },
+      "then": {
+        "properties": {
+          "non_compete_clause_compensation_amount": {
+            "x-jsf-logic-computedAttrs": {
+              "const": "computed_non_compete_clause_compensation_amount_in_cents",
+              "default": "computed_non_compete_clause_compensation_amount_in_cents",
+              "x-jsf-presentation": {
+                "statement": {
+                  "description": "The employee will receive this monthly compensation after termination for the entire non-compete period.",
+                  "title": "{{computed_non_compete_clause_compensation_amount}} EUR non-compete compensation amount"
+                }
+              }
+            }
+          }
+        },
+        "required": ["non_compete_clause_compensation_amount"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_compete_clause_compensation_amount": false,
+          "non_compete_clause_compensation_percentage": false,
+          "non_compete_clause_halt_period_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_compete_clause_apply": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_compete_clause_apply"]
+      },
+      "then": {
+        "required": [
+          "non_compete_clause_compensation_percentage",
+          "non_compete_clause_halt_period_months"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 1288000,
+            "x-jsf-errorMessage": {
+              "minimum": "In Portugal, full-time employees are entitled to a minimum annual salary of €12,880.00."
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "else": {
+          "properties": {
+            "work_hours_per_week": false
+          }
+        },
+        "if": {
+          "properties": {
+            "work_schedule": {
+              "const": "full_time"
+            }
+          },
+          "required": ["work_schedule"]
+        },
+        "properties": {
+          "part_time_salary_confirmation": false
+        },
+        "then": {
+          "properties": {
+            "work_hours_per_week": {
+              "const": 40,
+              "default": 40,
+              "description": "All employees in Portugal are required to work 40 hours in a full-time position.",
+              "x-jsf-presentation": {
+                "statement": {
+                  "title": "Total of <b>40 hours</b> per week."
+                }
+              }
+            }
+          },
+          "required": ["work_hours_per_week"]
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "part_time_salary_confirmation": {
+            "const": "acknowledged"
+          },
+          "work_hours_per_week": {
+            "maximum": 39,
+            "minimum": 1
+          }
+        },
+        "required": ["part_time_salary_confirmation", "work_hours_per_week"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "maximum_working_hours_regime": false
+        }
+      },
+      "if": {
+        "properties": {
+          "working_hours_exemption": {
+            "const": "yes"
+          }
+        },
+        "required": ["working_hours_exemption"]
+      },
+      "then": {
+        "required": ["maximum_working_hours_regime"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "working_hours_exemption_allowance": false
+        }
+      },
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 1
+          },
+          "maximum_working_hours_regime": {
+            "enum": ["yes", "no"]
+          },
+          "work_hours_per_week": {
+            "minimum": 1
+          },
+          "working_hours_exemption": {
+            "const": "yes"
+          }
+        },
+        "required": [
+          "working_hours_exemption",
+          "maximum_working_hours_regime",
+          "work_hours_per_week"
+        ]
+      },
+      "then": {
+        "else": {
+          "properties": {
+            "working_hours_exemption_allowance": {
+              "x-jsf-logic-computedAttrs": {
+                "const": "working_hours_exemption_allowance_no_max_hours_value_in_cents",
+                "default": "working_hours_exemption_allowance_no_max_hours_value_in_cents",
+                "x-jsf-presentation": {
+                  "statement": {
+                    "description": "As this employee will need to work outside regular hours, you’ll need to pay them an <strong>additional {{working_hours_exemption_allowance_no_max_hours_value}} EUR monthly</strong>, on top of their salary.",
+                    "severity": "info",
+                    "title": "You’ll need to pay an extended work hours allowance"
+                  }
+                }
+              }
+            }
+          },
+          "required": ["working_hours_exemption_allowance"]
+        },
+        "if": {
+          "properties": {
+            "maximum_working_hours_regime": {
+              "const": "yes"
+            }
+          },
+          "required": ["maximum_working_hours_regime"]
+        },
+        "then": {
+          "properties": {
+            "working_hours_exemption_allowance": {
+              "x-jsf-logic-computedAttrs": {
+                "const": "working_hours_exemption_allowance_with_max_hours_value_in_cents",
+                "default": "working_hours_exemption_allowance_with_max_hours_value_in_cents",
+                "x-jsf-presentation": {
+                  "statement": {
+                    "description": "As this employee will need to work outside regular hours and for more than 8 hours a day, you’ll need to pay them an <strong>additional {{working_hours_exemption_allowance_with_max_hours_value}} EUR monthly</strong>, on top of their salary.",
+                    "severity": "info",
+                    "title": "You’ll need to pay an extended work hours allowance"
+                  }
+                }
+              }
+            }
+          },
+          "required": ["working_hours_exemption_allowance"]
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "signing_bonus_amount": false,
+          "signing_bonus_clawback": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_signing_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_signing_bonus"]
+      },
+      "then": {
+        "required": ["signing_bonus_amount", "signing_bonus_clawback"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "available_pto": {
+            "minimum": 22
+          }
+        },
+        "required": ["available_pto"]
+      },
+      "if": {
+        "properties": {
+          "available_pto_type": {
+            "const": "unlimited"
+          }
+        },
+        "required": ["available_pto_type"]
+      },
+      "then": {
+        "properties": {
+          "available_pto": {
+            "const": 22,
+            "default": 22,
+            "title": "Minimum paid time off days",
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "In Portugal, employees are entitled to a minimum of 22 paid time off days per year. Please note that Statutory, Bank Holidays and Public Holidays are excluded from the above.",
+                "title": "Minimum of <strong>22 days</strong> of paid time off."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "bonus_amount": false,
+          "bonus_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_bonus"]
+      },
+      "then": {
+        "properties": {
+          "bonus_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["bonus_details"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "commissions_ack": false,
+          "commissions_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_commissions": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_commissions"]
+      },
+      "then": {
+        "properties": {
+          "commissions_ack": {
+            "type": ["string"]
+          },
+          "commissions_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["commissions_details", "commissions_ack"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "probation_length_days": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "required": ["probation_length_days"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "extreme_salary_acknowledgement": false,
+          "extreme_salary_warning": false
+        }
+      },
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 88975888
+          }
+        },
+        "required": ["annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "extreme_salary_acknowledgement": {
+            "type": "string"
+          },
+          "extreme_salary_warning": {}
+        },
+        "required": ["extreme_salary_acknowledgement"]
+      }
+    }
+  ],
+  "anyOf": [
+    {
+      "required": ["has_probation_period"]
+    },
+    {
+      "required": ["probation_length"]
+    }
+  ],
+  "properties": {
+    "annual_gross_salary": {
+      "title": "Annual gross salary",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-logic-computedAttrs": {
+        "description": "{{annual_gross_salary_reserve_description}}"
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "inputType": "money"
+      }
+    },
+    "annual_training_hours_ack": {
+      "const": "acknowledged",
+      "description": "In Portugal, employees must be provided with 40 hours of professional training per year, during regular working hours. Any training hours not provided must be paid to the employee at the time of offboarding.",
+      "title": "I acknowledge Portugal's annual training requirement",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>In Portugal, local laws state that all employees, who are under an indefinite employment agreement, are <strong>entitled to 40 hours of training and development per year</strong> of employment. The training hours should be completed within the working schedule. Fixed-term employment agreements have specific rules regarding training hours.</p>\n<p>An employee must be issued a certificate of completion in their name and uploaded to Remote anytime they complete a training:</p>\n<ul>\n<li>The certificate should state the <strong>name of the training provider</strong>, <strong>content</strong>, and <strong>duration</strong>.</li>\n<li>After completing the training with those details, <strong>employees should sign the certificate to confirm completion</strong>.</li>\n</ul>\n<p><strong>Attention:</strong> If the required training hours are not provided during the period of employment, the employee will be entitled to receive payment for any unused training hours as part of the off-boarding process. Employers would need to cover the amount.</p>\n<p>While there is no formal deadline for certificate uploads, we recommend submitting all certificates <strong>by the end of each calendar year</strong>, as this information must be reported to Portuguese authorities annually.<!-- notionvc: 8ad03933-dadf-4133-aee1-ce15db513d91 --></p>\n<h2 id=\"h_01K1T3BKSQBEHAR27P0Z4QTG0X\">Eligible Training Types</h2>\n<p>Several professional development activities qualify as training hours:</p>\n<ul>\n<li>Professional courses (online or in-person)</li>\n<li>Workshops and seminars</li>\n<li>Conferences (with proper certification)</li>\n<li>Internal training sessions (if structured and properly documented)</li>\n<li>Safety training</li>\n</ul>\n<p><!-- notionvc: 1781e72a-709c-40f2-8b72-f76f480026b1 --></p>\n<h2 id=\"h_01K1T3CEJ1T80GSWPVDRY24Z4B\">Special Circumstances</h2>\n<ul>\n<li>For employees on leave (e.g., maternity leave, sick leave): Training hours are calculated proportionally to the time worked in the year. For example, if an employee works 6 months and is on leave for 6 months, they are entitled to 20 hours of training that year.</li>\n<li>Employees cannot refuse to participate in training as it is their duty. Failure to attend can result in disciplinary proceedings.</li>\n</ul>\n<h2 id=\"h_01K1T3CEJ1GN2QC68A259QETPR\">EOR Employee Responsibilities</h2>\n<ul>\n<li>Attend scheduled training sessions</li>\n<li>Obtain proper certification for completed training of their choice<!-- notionvc: 84133e45-6fd2-42a8-8bac-5691092bb4a0 -->\n</li>\n<li>Upload certificates to Remote</li>\n</ul>\n<h2 id=\"h_01K1T3CEJ2RJCTSDQ7APSC19A7\">Our Customers' Responsibilities</h2>\n<ul>\n<li>Provide appropriate training opportunities</li>\n<li>Provide proper certification for completed training</li>\n<li>Ensure training is properly documented</li>\n<li>Track and manage training hours</li>\n</ul>\n<p><!-- notionvc: 30984a55-55fc-4448-a955-083eefa36e1e --></p>\n<p>If you require additional support regarding this topic, <a href=\"https://remote.zendesk.com/hc/en-us/articles/35899219793549\">please reach out to us</a>.</p>\n<p>For specific details of the law, please refer to the <a class=\"notion-link-token notion-focusable-token notion-enable-hover\" tabindex=\"0\" href=\"https://diariodarepublica.pt/dr/lexionario/termo/dever-formacao-continua-direito-trabalho\" rel=\"noopener noreferrer\" data-token-index=\"1\"><span class=\"link-annotation-unknown-block-id-476292002\">Portuguese Government website</span></a> (in Portuguese).</p>\n<div id=\"te-floating-button-container\"> </div>\n<div id=\"te-floating-button-container\"> </div>\n<div id=\"te-floating-button-container\"> </div>\n<p><span class=\"wysiwyg-font-size-small\"><em><strong>Disclaimer:</strong> Please be advised that the information provided is for general guidance only and should not be considered legal advice. Clients are strongly encouraged to contact Remote’s Occupational Health and Safety Team for expert guidance and assistance in navigating the intricate landscape of employee Mandatory Health Checks and Mandatory training requirements. Consulting with our Lifecycle Occupational Health and Safety Team is imperative to ensure compliance with local employment standards legislation. Your proactive engagement with our Occupational Health and Safety Team is vital to making informed decisions and adhering to all relevant regulations.</em></span></p>",
+            "error": false,
+            "id": 18006437022605,
+            "title": "Portugal training and development hours"
+          }
+        }
+      }
+    },
+    "available_pto": {
+      "description": "In Portugal, full-time and part-time employees are entitled to a minimum of 22 paid time off days per year. They also receive public and statutory holidays and a vacation allowance. In total, this amounts to 2 full monthly salaries per year.",
+      "title": "Number of paid time off days",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "available_pto_type": {
+      "description": "For personal time off. Also called vacation or annual leave.",
+      "oneOf": [
+        {
+          "const": "unlimited",
+          "description": "Gives the employee an uncapped number of paid time off days per year. The number below is the mandatory minimum number of days they must take.",
+          "title": "Unlimited paid time off"
+        },
+        {
+          "const": "fixed",
+          "description": "The employee gets a set number of paid time off days per year that you establish.",
+          "title": "Fixed paid time off"
+        }
+      ],
+      "title": "Paid time off policy",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "bonus_amount": {
+      "deprecated": true,
+      "readOnly": true,
+      "title": "Bonus amount (deprecated)",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "deprecated": {
+          "description": "Deprecated in favor of 'Bonus Details'. Please, try to leave this field empty."
+        },
+        "inputType": "money"
+      }
+    },
+    "bonus_details": {
+      "description": "Bonus type, payment frequency, and more.",
+      "maxLength": 1000,
+      "title": "Other bonus details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "commissions_ack": {
+      "const": "acknowledged",
+      "description": "I understand that I am required to provide written details of the commission plan to this employee, and upload this document on the platform for record keeping purposes. I acknowledge that Remote will not liable for any claims or losses associated with the commission or bonus plan.",
+      "title": "Confirm commission plan details",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "(i) Guidance on drafting a commission plan here.",
+            "content": "<p>It is important to understand that commission plans are individual agreements between you, and each team member. Consequently, it is important that these plans are communicated directly between you and the respective team members. This direct communication ensures clarity, transparency, and a clear understanding of the agreed-upon terms for the commission plan.</p>\n<p>Performance-linked bonuses and commissions are payments that are contingent on various factors, including individual and team performance, business outcomes, and other metrics agreed upon by you and the employees providing you services. As these are rewards that are subject to your evaluation and adjustment based on the agreed-upon criteria, we strongly recommend that you document these plans as compliantly as possible, and their specifics separately in writing, with the employee providing you services, following the below guidelines:</p>\n<ul>\n<li>Please note if there is any doubt or lack of clarity due to ambiguous wording, it will be interpreted to the employee’s benefit. Therefore, the plan should be reviewed thoroughly to determine whether it could be interpreted various ways. If so, the respective wording should be amended in a way that is precise and can be understood in one way only.</li>\n<li>In some jurisdictions, bonus and commission plans can be contractually drafted as being discretionary, but still remain unambiguous.  Where this is legally possible, this is the recommended approach to legally best protect the employer/you from any potential disputes.  Please note, however, that employees may still have a claim for commission payments, even if an agreement is drafted as discretionary.</li>\n<li>Basis for Commission Calculation: The commission plan should clearly outline the basis on which the commission will be calculated. This may include factors such as sales revenue, units sold, profit margin, or other measurable performance indicators. The commission plan should also include the timeframe in which the respective target must be achieved.</li>\n<li>Commission Rate: The commission plan should specify the commission rate or rates applicable to different levels of performance. It should clearly define how the commission will be determined, based on achieving specific targets or milestones. In order to limit the financial risk, a commission plan can include a regulation on the maximum amount of commissions that can be earned.</li>\n<li>Target Goals: The commission plan should establish realistic and achievable target goals or sales quotas that the employee is expected to reach in order to earn commission. </li>\n<li>Calculation Period: The commission plan should specify the calculation period for commission payouts. This could be monthly or quarterly. It should also state the timeline for determining and disbursing commission payments. Furthermore, a commission plan should include a specification about the point in time until when targets are set each year. Commission targets should be given prior to the commencement of the plan period.</li>\n<li>Commission Calculation Method: The commission plan should outline the methodology for calculating the commission. It should specify any deductions, adjustments, or exclusions that may be applicable to the commission calculation.</li>\n<li>Payment Terms: The commission plan should detail the terms and conditions for commission payments, including the payment schedule, method of payment, and any additional requirements or conditions. It should also explain how leaves, for example, sick leave and maternity leave, influence payment of commission and bonus, considering local requirements and non discrimination rules.</li>\n<li>Termination or Modification: The commission plan should address how it may be terminated or modified, including the circumstances under which changes may be made and the notice period required.</li>\n<li>It is helpful to include terms regarding dispute resolution.</li>\n</ul>\n<p>Please be aware that this guideline does not constitute legal advice. It is advisable to consult with your legal counsel for expert advice while formulating such plans. We will not assume liability for any claims that may arise due to a non-compliant and/or ambiguous commission plan provided to employees.</p>",
+            "error": false,
+            "id": 17932049668109,
+            "title": "Guidelines for bonus and commission plans"
+          }
+        }
+      }
+    },
+    "commissions_details": {
+      "description": "Payment amount, frequency, and more.",
+      "maxLength": 1000,
+      "title": "Commission details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "contract_duration": {
+      "deprecated": true,
+      "description": "Indefinite or fixed-term contract. If the latter, please state duration and if there's possibility for renewal.",
+      "maxLength": 255,
+      "readOnly": true,
+      "title": "Contract duration (deprecated)",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated field in favor of 'contract_duration_type'."
+        },
+        "inputType": "text"
+      }
+    },
+    "contract_duration_type": {
+      "const": "indefinite",
+      "description": "I acknowledge that only Indefinite-term Contracts are available. Remote does not support Fixed-term Contracts in Portugal.",
+      "title": "Contract duration",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about contract duration",
+            "content": "<p>There are two types of contracts available:</p>\n<ul>\n<li>Fixed-term contract: This is a contract that has an end date. This means that towards the end of the contract, it will need to be renewed if you intend to keep the employee hired through us. In some countries, t<span class=\"notion-semantic-string\">he minimum contract duration is 6 months.</span>\n</li>\n<li>Indefinite contract: This is a contract with no end date and therefore, no renewal is needed.</li>\n</ul>\n<p data-pm-slice=\"1 3 []\">Indefinite and fixed-term contracts can be:</p>\n<ul class=\"ProsemirrorEditor-list\">\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Part-time: <span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">This is </span>a form of employment that <strong>carries fewer hours per week than a full-time job</strong><span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">. Depending on the country, workers are considered to be part-time if they commonly work fewer than 30 or 35 hours per week.</span></p>\n</li>\n<li class=\"ProsemirrorEditor-listItem\" data-list-indent=\"1\" data-list-type=\"bulleted\">\n<p>Full-time.</p>\n</li>\n</ul>",
+            "error": false,
+            "id": 4410443814157,
+            "title": "Types of employment contracts"
+          }
+        }
+      }
+    },
+    "contract_end_date": {
+      "deprecated": true,
+      "format": "date",
+      "maxLength": 255,
+      "readOnly": true,
+      "title": "Contract End Date (deprecated)",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated because Contract Duration can only be 'indefinite'."
+        },
+        "inputType": "date",
+        "minDate": "2026-12-02"
+      }
+    },
+    "equity_compensation": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "equity_cliff": false,
+              "equity_description": false,
+              "equity_vesting_period": false,
+              "number_of_stock_options": false
+            }
+          },
+          "if": {
+            "properties": {
+              "offer_equity_compensation": {
+                "const": "yes"
+              }
+            },
+            "required": ["offer_equity_compensation"]
+          },
+          "then": {
+            "properties": {
+              "equity_description": {
+                "type": ["string"]
+              }
+            },
+            "required": ["equity_description"]
+          }
+        }
+      ],
+      "properties": {
+        "equity_cliff": {
+          "deprecated": true,
+          "description": "When the first portion of the stock option grant will vest.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Cliff (in months)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "equity_description": {
+          "description": "Please share any information related to the upcoming equity grant.",
+          "maxLength": 1000,
+          "title": "Number of options, RSUs, and other equity",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "textarea"
+          }
+        },
+        "equity_vesting_period": {
+          "deprecated": true,
+          "description": "The number of years it will take for the employee to vest all their options.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Vesting period (in years)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "number_of_stock_options": {
+          "deprecated": true,
+          "description": "Tell us the type of equity you're granting as well.",
+          "maxLength": 255,
+          "readOnly": true,
+          "title": "Number of options, RSUs, or other equity granted",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "text"
+          }
+        },
+        "offer_equity_compensation": {
+          "description": "Granting equity to your team generally triggers tax and legal obligations. In order for you to stay compliant, it's important to declare any equity grants.",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            }
+          ],
+          "title": "Will this employee receive equity?",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "row",
+            "inputType": "radio"
+          }
+        }
+      },
+      "required": ["offer_equity_compensation"],
+      "title": "Equity management",
+      "type": "object",
+      "x-jsf-order": [
+        "offer_equity_compensation",
+        "number_of_stock_options",
+        "equity_cliff",
+        "equity_vesting_period",
+        "equity_description"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 39,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 39,
+              "currency": "USD"
+            }
+          },
+          "helpCenter": {
+            "callToAction": "Learn more about equity management at Remote",
+            "content": "<p>Remote Equity is a lightweight compliance tool designed to help you manage equity grants across borders for team members hired through Remote's Employer of Record (EOR).</p><p>Whether you’re managing vesting, reporting exercises, or navigating local tax laws, Remote Equity gives you the structure to stay compliant, avoid risk, and support your team across borders.</p><h4 id=\"h_01K0YQSYJ8JPKYXNNNW90B0QJP\">Why it matters</h4><p>As your EOR, <strong>Remote is legally responsible</strong> for equity-related tax and reporting in the countries where your team members are employed. That means we don’t just track equity, we:</p><ul>\n<li data-list-item-id=\"eba6b95d2e41a276665f3f64525e0eb59\">Withhold and report taxes when required</li>\n<li data-list-item-id=\"ed16c354038e4b3d908bacd965dc2d71b\">File with local tax authorities</li>\n<li data-list-item-id=\"eb7162ef11477f7a7737fe34a48979559\">Support team members with clear guidance on their tax responsibilities</li>\n</ul><p>Most equity platforms can’t do that because they’re not the legal employer. <strong>Remote Equity ensures we have the data we need, when we need it, to keep your company compliant and your team fairly rewarded.</strong></p><p>Behind the scenes, our tax team:</p><ul>\n<li data-list-item-id=\"ef5c97b0472ebc9a0819e312646e4cd66\">Handles tax withholdings when taxable events occur</li>\n<li data-list-item-id=\"e5f3560641743ab0c57ba47683638560e\">Provides guidance to you and your team, even when no withholding is required</li>\n<li data-list-item-id=\"ed17d307d635b18f9f784df12d1dbe1cd\">Manages additional reporting where local laws demand it</li>\n</ul><p>See also: <a href=\"https://support.remote.com/hc/en-us/articles/37710493624589-What-types-of-equity-grants-should-I-declare-in-Remote-Equity-Essentials\">What types of equity grants should I declare in Remote Equity?</a></p><h4 id=\"h_01K0YQSYJDJ3JYC1C642ASB8E2\">What’s included</h4><p>Remote Equity provides:</p><ul>\n<li data-list-item-id=\"e0cc8d8c0b7d060b9de89e3c870fc1579\">\n<strong>Tracking and alerts</strong> for events that may create a tax obligation (like vesting or exercising)</li>\n<li data-list-item-id=\"e88a2fc75f6f43db27891e415e2f90400\">\n<strong>Automated compliance reminders</strong> based on local deadlines and regulations</li>\n<li data-list-item-id=\"e2c2cf9ef914143e339eb32e1b70c83da\">\n<strong>Localized guidance for team members</strong>, shared through the Remote Equity app</li>\n<li data-list-item-id=\"e8a2c20d648ed01a3db135ef4ada0de61\">\n<strong>Support from Remote’s tax and legal teams</strong>, who handle obligations on your behalf</li>\n<li data-list-item-id=\"e184af2a6420412152b377815ebe18ce2\">\n<strong>Integration with Carta and Pulley</strong> to automatically sync grant declarations and exercise information</li>\n</ul><h4 id=\"h_01K0YQSYJSCK6XYBXF3Q56KRC8\"><strong>Get started in minutes</strong></h4><p>Setup takes less than five minutes. Just log in to your Remote account, and launch the Equity App to follow the setup steps.</p><p>Helpful guides to get started:</p><ul>\n<li data-list-item-id=\"e73e204bc587d3417ecab74e3a29ccc2a\"><a href=\"https://support.remote.com/hc/en-us/articles/37547625350925-How-can-I-access-Remote-Equity-Essentials\">How can I access Remote Equity?</a></li>\n<li data-list-item-id=\"e0ca43a64bf2361ce43443e98200daa5a\"><a href=\"https://support.remote.com/hc/en-us/articles/35577980536589\">How do I declare a grant?</a></li>\n<li data-list-item-id=\"edfa1a00c07a70449ebe34c25dec818fe\"><a href=\"https://support.remote.com/hc/en-us/articles/35671968187149-How-can-my-employees-see-their-equity-information\">How can my team access their equity information?</a></li>\n<li data-list-item-id=\"edaaf9eb107949f79894c24e3b984da30\"><a href=\"https://support.remote.com/hc/en-us/articles/35546454220301-What-happens-if-I-already-declared-equity-before-using-Remote-Equity-Essentials\">What happens if I already declared equity before using Remote Equity?</a></li>\n</ul><h4 id=\"h_01K0YQSYJV9EH2AQ9HWYS1826S\"><span class=\"wysiwyg-underline\">Frequently Asked Questions (FAQs)</span></h4><p><strong>Who needs to use Remote Equity?</strong></p><p>Any Remote customer granting equity to a team member hired through Remote’s EOR must use Remote Equity to meet local compliance requirements.</p><p><strong>Why can’t we just use our own equity tool?</strong></p><p>Traditional equity tools track grants and vesting, but they don't file taxes, withhold contributions, or report income to local authorities. Remote, as the legal employer, is responsible for these actions. Remote Equity ensures those obligations are covered.</p><p><strong>What happens if we don’t use it?</strong></p><p>If Remote doesn’t receive timely and accurate equity data, required filings may be missed. This can result in compliance risks, unexpected tax liabilities, and issues for both your company and your team members.</p><p><strong>How much does Remote Equity cost?</strong></p><p>Remote Equity costs 39 USD per month for each EOR team member with equity. <a href=\"https://support.remote.com/hc/en-us/articles/35546441948685-How-much-does-Remote-Equity-Essentials-cost\">Learn more</a>.</p><p>For comprehensive information, visit the <a href=\"https://support.remote.com/hc/en-us/categories/45788665954189-Remote-Equity\" tabindex=\"0\" data-token-index=\"1\" rel=\"noopener noreferrer\">Remote Equity hub</a>.</p>",
+            "error": false,
+            "id": 38303424407821,
+            "title": "Welcome to Remote Equity: Global equity, without the compliance headaches"
+          }
+        }
+      }
+    },
+    "experience_level": {
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employees overall experience).",
+      "oneOf": [
+        {
+          "const": "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "description": "Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "title": "Level 2 - Entry Level"
+        },
+        {
+          "const": "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+          "description": "Employees who perform independently tasks and/or with coordination and control functions",
+          "title": "Level 3 - Associate"
+        },
+        {
+          "const": "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "description": "Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "title": "Level 4 - Mid-Senior level"
+        },
+        {
+          "const": "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "description": "Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "title": "Level 5 - Director"
+        },
+        {
+          "const": "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "description": "An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "title": "Level 6 - Executive"
+        }
+      ],
+      "title": "Experience level",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "extreme_salary_acknowledgement": {
+      "const": "acknowledged",
+      "title": "",
+      "type": "string",
+      "x-jsf-logic-computedAttrs": {
+        "title": "{{extreme_salary_acknowledgement_title}}"
+      },
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "extreme_salary_warning": {
+      "title": "",
+      "type": "null",
+      "x-jsf-presentation": {
+        "inputType": "hidden",
+        "meta": {
+          "ignoreValue": true
+        },
+        "statement": {
+          "description": "The entered salary is equivalent to USD 1,000,000 or more. Please double check and confirm this amount is correct.",
+          "inputType": "statement",
+          "severity": "warning"
+        }
+      }
+    },
+    "has_bonus": {
+      "description": "These can include things like performance-related bonuses.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer other bonuses?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p><span class=\"sc-c090059b-0 fISxvo\">We do not include bonus specifics in the employment agreement. However, you can create a bonus directly on the platform.</span></p>\n<p><span class=\"sc-c090059b-0 fISxvo\">Please note that if you decide to offer other bonuses, it will be difficult or impossible to withdraw these bonuses if you change your mind later.</span></p>",
+            "error": false,
+            "id": 18019142406029,
+            "title": "Other bonuses"
+          }
+        }
+      }
+    },
+    "has_commissions": {
+      "description": "You can outline your policy and pay commission to the employee on the platform. However, commission will not appear in the employment agreement. Please send full policy details directly to the employee.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer commission?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_probation_period": {
+      "description": "We recommend selecting Yes. In the unfortunate event of a necessary termination, probation periods make the process much easier.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Include a probation period?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about probation period",
+            "content": "<p>A probationary period is a set time for an employer to assess a new employee's suitability for the role. It allows the employer to evaluate the employee's capability, skills, performance, attendance, and conduct.</p>\n<p>Using a probationary period can make it simpler to end employment and notice periods are often shorter or don’t apply at all. After the probationary period ends, it is often more difficult and expensive to terminate an employee.</p>\n<p>Please note that if a probationary period is not included and you later receive unsatisfactory background check results, Remote cannot unilaterally terminate the employee’s employment.</p>\n<p>Keep in mind that a probationary period may not be valid if the employee has worked for your company before.</p>\n<p class=\"guide-markup\" style=\"box-sizing: inherit; font-weight: 400; margin: 0.5em 0px 0px; padding: 0px; color: #2f3941; font-family: -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 15px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\"><span class=\"guide-markup notion-enable-hover\" style=\"box-sizing: inherit; font-weight: 600;\" data-token-index=\"2\"><strong class=\"guide-markup\" style=\"box-sizing: border-box; font-weight: bold; color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">See also:</strong><span class=\"guide-markup\" style=\"box-sizing: inherit; font-weight: 400; color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;\"> </span><a class=\"guide-markup\" style=\"box-sizing: border-box; font-weight: 400; border-radius: 4px; color: #0161ff; outline: transparent solid 2px; outline-offset: 1px; transition: outline-color 0.1s ease-in-out, color 0.25s ease-in-out; text-decoration: none; background-color: #ffffff; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal;\" href=\"https://support.remote.com/hc/en-us/articles/34566185236237-What-are-Remote-s-Background-Check-Services\" target=\"_blank\" rel=\"noopener noreferrer\">What are Remote's Background Check Services?</a></span></p>",
+            "error": false,
+            "id": 9013034328205,
+            "title": "Why is it important to include a probationary period in an employee's contract?"
+          }
+        },
+        "statement": {
+          "description": "If you need Remote to terminate a post-probation employee in Portugal because of your company’s economic or organizational circumstances, a mutual termination agreement must be entered into with the employee.\n\nPerformance-related terminations must meet a high threshold of compliance. \n\nIt is common for employees in Remote to bring claims and employers to pay settlements or to opt for termination by mutual agreement. \n\nDuring probation, you have some more flexibility on termination; for example, when the termination reason is the employee’s performance. For this reason, we recommend setting the probation period to the maximum allowed.",
+          "severity": "info",
+          "title": "Information on termination - probation"
+        }
+      }
+    },
+    "has_signing_bonus": {
+      "description": "This is a one-time payment the employee receives when they join your team.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer a signing bonus?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "maximum_working_hours_regime": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Will this employee need to work more than 8 hours a day?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_compete_clause_apply": {
+      "description": "Prevents the employee from joining or starting a competing business. Not allowed during employment. Post-termination only, with limits and required compensation.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Do you want to apply post-termination restrictions (non-compete)?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_compete_clause_compensation_amount": {
+      "description": "The employee will receive this monthly compensation after termination for the entire non-compete period.",
+      "title": "Non-compete compensation amount",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "inputType": "money"
+      }
+    },
+    "non_compete_clause_compensation_percentage": {
+      "description": "In Portugal, non-compete pay must be at least 1% of monthly base salary throughout the post termination restrictions.",
+      "minimum": 1,
+      "title": "Non-compete salary percentage",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "percentage": true
+      }
+    },
+    "non_compete_clause_halt_period_months": {
+      "description": "Non-compete clauses in Portugal apply after the termination of the employment agreement.",
+      "minimum": 0,
+      "title": "Duration in months",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_interference_apply": {
+      "description": "Prevents the employee from interfering with your business or customer relationships after leaving.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a non-interference clause?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_interference_halt_period": {
+      "description": "Non-interference clauses can last between 1 and 12 months. The clause begins after the termination of the employment agreement.",
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Non-interference clause duration, in months",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_solicitation_customer_number_of_months": {
+      "description": "Non-solicitation of customers clauses can last between 1 and 12 months. The clause begins after the termination of the employment agreement.",
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Duration in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_solicitation_customers": {
+      "description": "This prevents the employee from approaching or doing business with your customers for a competing business.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a non-solicitation of customers clause?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_solicitation_employees": {
+      "description": "This prevents the employee from recruiting or attempting to hire your employees after leaving.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a non-solicitation of employees clause?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_solicitation_employees_number_of_months": {
+      "description": "Non-solicitation of employees clauses can last between 1 and 12 months. The clause begins after the termination of the employment agreement.",
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Duration in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "offboarding_allowances_ack": {
+      "const": "acknowledged",
+      "description": "Upon termination, employees receive vacation pay and Christmas allowances as separate labor credits. For terminations in the hiring year or following year, vacation pay and vacation allowance is proportional to the duration of employment. From the third civil year onwards, employees receive the vacation pay and vacation allowance allowance for unused vacation days plus the vacation pay and allowance proportional for the termination year. Christmas allowance is always paid proportionally to time worked in the termination year.",
+      "title": "I acknowledge offboarding statutory vacation pay, vacation allowance and Christmas allowance terms",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more about offboarding allowances",
+            "content": "<p>When a team member's employment ends in Portugal, they're still entitled to receive certain mandatory allowances. These payments are considered separate labor credits and must be included in the final payment, regardless of the reason for termination.</p><p>This article outlines how vacation and Christmas allowances are calculated and paid based on the length of the employment relationship.</p><h2 id=\"h_01KF1285SNNCDC8HM7VN9PNFKR\">Vacation allowance: what team members are entitled to</h2><p>Team members in Portugal may be legally entitled to receive two separate sets of payment regarding vacations:</p><ul>\n<li data-list-item-id=\"e3c16fc41ff3a35d8f3505e923cd61fb9\">\n<strong>Payment for unused vacation days and correspondent allowance</strong> due at the time of termination</li>\n<li data-list-item-id=\"e96f954f16f2644e5c0d27f9043d63b82\">\n<strong>A proportional payment for vacation days and vacation allowance</strong>, based on time worked in the year of termination</li>\n</ul><p>Whether employees are entitled to receive both categories of payment or just the proportional one depends on the year of employment in which the contract ends.</p><h3 id=\"h_01KF1285SQEPJXMNW0BDW3FDCH\">If termination occurs in the 1st or 2nd calendar year of employment</h3><p>In these two calendar years, the team member’s total vacation and allowance cannot exceed what they earned during their length of employment. The payment must be <strong>strictly proportional</strong> to the months worked.</p><p><strong>Example</strong>:</p><p>If a team member starts on March 1 and leaves on December 31 of the same year, they are entitled to:</p><ul>\n<li data-list-item-id=\"ecf556a7de05c2c0cad13603f6f9afa75\">20 vacation days (2 days per month of work)</li>\n<li data-list-item-id=\"e5b77d97192331f1134baab15ec90cd06\">\n<p>20 days’ worth of vacation allowance</p>\n<p>(assuming they didn’t take any vacation during the year)</p>\n</li>\n</ul><h3 id=\"h_01KF1285SSVNSG84XR6N4W6WR0\">If termination occurs in the 3rd calendar year of employment or later</h3><p>In this case, the team member is entitled to both of the following:</p><p>a) Payment for <strong>vacation days not taken</strong>, plus the corresponding allowance</p><p>b) <strong>A proportional amount of vacation days and allowance</strong> for the time worked in the termination year</p><p>This means that the team member must receive compensation for unused days and for time worked in the current year.</p><p><strong>Example</strong>:</p><p>If a team member starts on March 1, 2022, and their employment ends on April 30, 2025, they are entitled to:</p><ul>\n<li data-list-item-id=\"e07d73ddd13c715d002db2c6160e0819a\">22 days of unused vacation (plus the matching allowance)</li>\n<li data-list-item-id=\"e1219941e86f167009da291ddc69fc04e\">\n<p>8 days of proportional vacation (plus allowance) for January–April 2025</p>\n<p>(<em>based on the legal minimum of 22 vacation days per year in Portugal</em>)</p>\n</li>\n</ul><p>💡 You may also need to add any unused vacation and allowance carried over from previous years.</p><h2 id=\"h_01KF1285SW4SQ64B91HY7K26FN\">Christmas allowance: always paid proportionally</h2><p>In Portugal, the Christmas allowance accrued is always due when employment ends. The payment must reflect the portion of the calendar year the team member worked in the year of termination of employment.</p><p><strong>Example:</strong></p><p>If a team member leaves on September 30, they’re entitled to 9/12ths of the Christmas allowance.</p><hr><h2 id=\"h_01KF1285SW0CNNPGH323JMV7CJ\">Frequently asked questions (FAQs)</h2><p><strong>Do I need to request these allowances separately during offboarding?</strong></p><p>No. Remote will automatically calculate and include the correct vacation and Christmas allowances in the final payment when processing offboarding.</p><p><strong>What if the team member already used more vacation days than they accrued?</strong></p><p>If the team member took more vacation than they earned, Remote may apply a deduction to adjust the final payment. We’ll always notify you before this happens.</p><p><strong>Are these allowances taxed?</strong></p><p>Yes, both the vacation and Christmas allowances are subject to local tax and social security rules. Remote will handle the appropriate withholdings.</p><p><strong>Can I see the breakdown of the allowances on the final invoice?</strong></p><p>Yes. You’ll receive a detailed reconciliation invoice showing the breakdown of all payments, including vacation and Christmas allowances.</p>",
+            "error": false,
+            "id": 42697788508173,
+            "title": "Portugal: Mandatory allowances during offboarding"
+          }
+        }
+      }
+    },
+    "part_time_salary_confirmation": {
+      "const": "acknowledged",
+      "description": "We'll include the salary in the employment agreement, so please double-check that it's correct.",
+      "title": "I confirm that this amount is the full annual salary for this part-time employee.",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "probation_length": {
+      "deprecated": true,
+      "description": "Please enter a value between 0 and 6 months (legal maximum). Not electing a probationary period will adversely impact other employment actions including background checks.",
+      "maximum": 6,
+      "minimum": 0,
+      "readOnly": true,
+      "title": "Probation period (in months) (deprecated)",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated in favor of 'Probation period (in days)'."
+        },
+        "inputType": "number"
+      }
+    },
+    "probation_length_days": {
+      "description": "Enter 90 days for general employees or 180 days for employees who do technical jobs, trust-based jobs, have a high degree of responsibility, or have special qualifications.",
+      "maximum": 180,
+      "minimum": 90,
+      "title": "Probation period, in days",
+      "type": "number",
+      "x-jsf-errorMessage": {
+        "maximum": "Probation must be at most 180 days",
+        "minimum": "Probation must be at least 90 days"
+      },
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about probation period",
+            "content": "<p>A probationary period is a set time for an employer to assess a new employee's suitability for the role. It allows the employer to evaluate the employee's capability, skills, performance, attendance, and conduct.</p>\n<p>Using a probationary period can make it simpler to end employment and notice periods are often shorter or don’t apply at all. After the probationary period ends, it is often more difficult and expensive to terminate an employee.</p>\n<p>Please note that if a probationary period is not included and you later receive unsatisfactory background check results, Remote cannot unilaterally terminate the employee’s employment.</p>\n<p>Keep in mind that a probationary period may not be valid if the employee has worked for your company before.</p>\n<p class=\"guide-markup\" style=\"box-sizing: inherit; font-weight: 400; margin: 0.5em 0px 0px; padding: 0px; color: #2f3941; font-family: -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 15px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\"><span class=\"guide-markup notion-enable-hover\" style=\"box-sizing: inherit; font-weight: 600;\" data-token-index=\"2\"><strong class=\"guide-markup\" style=\"box-sizing: border-box; font-weight: bold; color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">See also:</strong><span class=\"guide-markup\" style=\"box-sizing: inherit; font-weight: 400; color: #525f7f; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;\"> </span><a class=\"guide-markup\" style=\"box-sizing: border-box; font-weight: 400; border-radius: 4px; color: #0161ff; outline: transparent solid 2px; outline-offset: 1px; transition: outline-color 0.1s ease-in-out, color 0.25s ease-in-out; text-decoration: none; background-color: #ffffff; font-family: Inter, -apple-system, ' system-ui' , ' Segoe UI' , Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal;\" href=\"https://support.remote.com/hc/en-us/articles/34566185236237-What-are-Remote-s-Background-Check-Services\" target=\"_blank\" rel=\"noopener noreferrer\">What are Remote's Background Check Services?</a></span></p>",
+            "error": false,
+            "id": 9013034328205,
+            "title": "Why is it important to include a probationary period in an employee's contract?"
+          }
+        }
+      }
+    },
+    "role_description": {
+      "description": "Please add at least 3 responsibilities, at least 100 characters in total.",
+      "maxLength": 5000,
+      "minLength": 100,
+      "title": "Role description",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Why do I need to do this?",
+            "content": "<div class=\"sc-8483994-0 sc-25e5b337-1 gagDAr dNpfwN\">\n<header class=\"sc-8483994-0 sc-98ea0a46-0 cFaANn gAlQJD sc-704369bd-0 jOYBDY\">\n<h2 class=\"sc-c090059b-0 lcffkV sc-704369bd-3 eWYhqz\" id=\"01H7WSRV90B3R0X35RZ21B959A\">Why do I need to define a role description?</h2>\n</header><span class=\"sc-c090059b-0 fISxvo\">It will appear in the employment agreement. Be thorough and accurate, especially if your employee is applying for a visa.</span>\n</div>\n<div class=\"sc-8483994-0 sc-25e5b337-1 gagDAr dNpfwN\"> </div>\n<h2 class=\"sc-8483994-0 gagDAr\" id=\"01H7WSRV908B1DKFVDFKNTN2EZ\"><span class=\"sc-c090059b-0 iaMkhB sc-25e5b337-3 jwgiWP\">Tips for a better role description</span></h2>\n<ul>\n<li class=\"sc-8483994-0 gagDAr\">Keep it short – up to 5 main responsibilities</li>\n<li class=\"sc-8483994-0 gagDAr\"><span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">Include punctuation</span></li>\n<li class=\"sc-8483994-0 gagDAr\">No need to mention your company, focus on the specific duties of the role</li>\n</ul>",
+            "error": false,
+            "id": 18019255579405,
+            "title": "Role description"
+          }
+        }
+      }
+    },
+    "salary_installments_confirmation": {
+      "const": "acknowledged",
+      "description": "In Portugal, employees receive 13th and 14th month salaries (usually called vacation and Christmas allowances) as part of their annual gross salary. The 13th and 14th salary amounts are based on an employee's regular salary and aren't affected by bonuses or commissions. On termination, employees are entitled to a portion of their Christmas allowance prorated to their leaving date, with vacation allowance entitlements varying based on their start date.",
+      "title": "I confirm the annual gross salary includes 13th and 14th salaries",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more about bonus salaries",
+            "content": "<p>When a team member's employment ends in Portugal, they're still entitled to receive certain mandatory allowances. These payments are considered separate labor credits and must be included in the final payment, regardless of the reason for termination.</p><p>This article outlines how vacation and Christmas allowances are calculated and paid based on the length of the employment relationship.</p><h2 id=\"h_01KF1285SNNCDC8HM7VN9PNFKR\">Vacation allowance: what team members are entitled to</h2><p>Team members in Portugal may be legally entitled to receive two separate sets of payment regarding vacations:</p><ul>\n<li data-list-item-id=\"e3c16fc41ff3a35d8f3505e923cd61fb9\">\n<strong>Payment for unused vacation days and correspondent allowance</strong> due at the time of termination</li>\n<li data-list-item-id=\"e96f954f16f2644e5c0d27f9043d63b82\">\n<strong>A proportional payment for vacation days and vacation allowance</strong>, based on time worked in the year of termination</li>\n</ul><p>Whether employees are entitled to receive both categories of payment or just the proportional one depends on the year of employment in which the contract ends.</p><h3 id=\"h_01KF1285SQEPJXMNW0BDW3FDCH\">If termination occurs in the 1st or 2nd calendar year of employment</h3><p>In these two calendar years, the team member’s total vacation and allowance cannot exceed what they earned during their length of employment. The payment must be <strong>strictly proportional</strong> to the months worked.</p><p><strong>Example</strong>:</p><p>If a team member starts on March 1 and leaves on December 31 of the same year, they are entitled to:</p><ul>\n<li data-list-item-id=\"ecf556a7de05c2c0cad13603f6f9afa75\">20 vacation days (2 days per month of work)</li>\n<li data-list-item-id=\"e5b77d97192331f1134baab15ec90cd06\">\n<p>20 days’ worth of vacation allowance</p>\n<p>(assuming they didn’t take any vacation during the year)</p>\n</li>\n</ul><h3 id=\"h_01KF1285SSVNSG84XR6N4W6WR0\">If termination occurs in the 3rd calendar year of employment or later</h3><p>In this case, the team member is entitled to both of the following:</p><p>a) Payment for <strong>vacation days not taken</strong>, plus the corresponding allowance</p><p>b) <strong>A proportional amount of vacation days and allowance</strong> for the time worked in the termination year</p><p>This means that the team member must receive compensation for unused days and for time worked in the current year.</p><p><strong>Example</strong>:</p><p>If a team member starts on March 1, 2022, and their employment ends on April 30, 2025, they are entitled to:</p><ul>\n<li data-list-item-id=\"e07d73ddd13c715d002db2c6160e0819a\">22 days of unused vacation (plus the matching allowance)</li>\n<li data-list-item-id=\"e1219941e86f167009da291ddc69fc04e\">\n<p>8 days of proportional vacation (plus allowance) for January–April 2025</p>\n<p>(<em>based on the legal minimum of 22 vacation days per year in Portugal</em>)</p>\n</li>\n</ul><p>💡 You may also need to add any unused vacation and allowance carried over from previous years.</p><h2 id=\"h_01KF1285SW4SQ64B91HY7K26FN\">Christmas allowance: always paid proportionally</h2><p>In Portugal, the Christmas allowance accrued is always due when employment ends. The payment must reflect the portion of the calendar year the team member worked in the year of termination of employment.</p><p><strong>Example:</strong></p><p>If a team member leaves on September 30, they’re entitled to 9/12ths of the Christmas allowance.</p><hr><h2 id=\"h_01KF1285SW0CNNPGH323JMV7CJ\">Frequently asked questions (FAQs)</h2><p><strong>Do I need to request these allowances separately during offboarding?</strong></p><p>No. Remote will automatically calculate and include the correct vacation and Christmas allowances in the final payment when processing offboarding.</p><p><strong>What if the team member already used more vacation days than they accrued?</strong></p><p>If the team member took more vacation than they earned, Remote may apply a deduction to adjust the final payment. We’ll always notify you before this happens.</p><p><strong>Are these allowances taxed?</strong></p><p>Yes, both the vacation and Christmas allowances are subject to local tax and social security rules. Remote will handle the appropriate withholdings.</p><p><strong>Can I see the breakdown of the allowances on the final invoice?</strong></p><p>Yes. You’ll receive a detailed reconciliation invoice showing the breakdown of all payments, including vacation and Christmas allowances.</p>",
+            "error": false,
+            "id": 42697788508173,
+            "title": "Portugal: Mandatory allowances during offboarding"
+          }
+        }
+      }
+    },
+    "salary_overview": {
+      "const": "salary_overview",
+      "default": "salary_overview",
+      "description": "We will request a reserve payment for salaries at or above €150,000.00.",
+      "oneOf": [
+        {
+          "const": "salary_overview",
+          "title": "Salary overview"
+        }
+      ],
+      "title": "Salary overview",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about reserve payments",
+            "content": "<p>A <strong>reserve payment</strong> is an amount collected by Remote to help safeguard against potential large or unexpected severance costs if a team member's employment or engagement ends.</p><p>In many countries, labor laws require employers to pay <strong>statutory severance.</strong> Depending on the agreement, there may also be additional contractual obligations. Reserve payments help ensure funds are available to cover these costs if they arise.</p><p>Reserves are an <strong>industry-standard practice.</strong> Once a team member resigns or their agreement ends and all termination-related costs have been settled, any remaining reserve balance will be credited or refunded.</p><p>If a reserve payment has been made but <strong>onboarding is not completed</strong>, the full reserve will be credited or refunded. If your account has an overdue balance, Remote may first apply the reserve toward that outstanding amount.</p><blockquote><p><em><strong>Note:</strong> Reserve payments are required only for <strong>Employer of Record (EOR) employees and Contractor of Record (COR) contractors</strong>. They are <strong>not applicable</strong> to Global Payroll (direct employee) or users of our Standard Contractor Management and Contractor Management Plus platforms</em></p></blockquote><h3 id=\"h_01KWVSH6PWV0EARTP636WFMKX5\">Why would a reserve be required?</h3><p>Remote evaluates several factors when determining whether a reserve payment is needed. These may include:</p><ul>\n<li data-list-item-id=\"e4aa5c6c3b06eb3fd8ac290640949dd33\">The <strong>financial exposure</strong> associated with a client’s account</li>\n<li data-list-item-id=\"e6035e43ef90b77827c1d8c41be109918\">The <strong>countries</strong> in which team members are hired</li>\n<li data-list-item-id=\"e270d18c338f92bac8e35ed1f0c29ee6a\">A client’s decision to move from <strong>14-day to 30-day invoice payment terms</strong>\n</li>\n<li data-list-item-id=\"e87b2ad7dca754100d16a8d4ffabfa36a\">\n<strong>Non-standard employment contract terms</strong>, such as:<ul>\n<li data-list-item-id=\"ef35bb2e45f6361dee620f3d1949914de\">Extended notice periods</li>\n<li data-list-item-id=\"e9f05ff898e587ce3d34e80d6d7077b41\">Guaranteed severance clauses</li>\n<li data-list-item-id=\"e7cea63a7d2482bdb28eefffb6948c577\">Seniority recognition</li>\n<li data-list-item-id=\"e5b345cb8f5b041e3897b31092d6f0a06\">Non-compete, non-solicitation, or non-interference clauses</li>\n</ul>\n</li>\n<li data-list-item-id=\"e69603f26c1cfe44abe1b3b9afae0a6eb\">\n<strong>Consistent late invoice payments</strong> may also result in a reserve payment requirement</li>\n</ul><h3 id=\"h_01KWVSH6Q0PMTFJTCBARRMY0F8\">Why was I asked to pay an additional reserve?</h3><p>Some employment agreement terms increase the potential cost of ending an agreement. In these cases, additional reserves may be required.</p><p>Currently, reserves are automatically applied for:</p><ul>\n<li data-list-item-id=\"e016d051d1cae211fd2052be06528b0fb\">Extended notice periods</li>\n<li data-list-item-id=\"e121b7d92f73dc18a98058036faa4c132\">Seniority recognition</li>\n<li data-list-item-id=\"e1173074340c67d1669a2826f7ce530f4\">Non-compete, non-solicitation, or non-interference clauses</li>\n</ul><p>Other agreement terms may require additional review and could result in additional reserve requirements.</p><h4 id=\"h_01KWVSH6Q22W5N0Y71KPX7002S\">Extended notice period</h4><p>Labor laws in each country define a minimum notice period for ending an agreement. If the notice period in the agreement is longer than the statutory minimum, an additional reserve will be required for the difference.</p><p>Example: The minimum notice period is one month, but you request a three-month notice period. In this case, an additional two-month reserve would be required.</p><h4 id=\"h_01KWVSH6Q220ZTQW023A4TTNFK\">Seniority recognition</h4><p>A reserve will be automatically issued where two or more years of service is recognized.</p><p>As a general guideline:</p><ul>\n<li data-list-item-id=\"e325a4b96c617f8a6459e09da118a39d5\">\n<strong>2-4 years</strong> of recognized seniority, a reserve equal to <strong>1-month reserve</strong> is required</li>\n<li data-list-item-id=\"ec4f6d1f140f45060bca310852d94e885\">\n<strong>4-5 years</strong> of recognized seniority, a reserve equal to <strong>2-months</strong> is required</li>\n<li data-list-item-id=\"eeb5b68f0845b6a250366ba6e7449fe41\">\n<strong>More than 5 years</strong> of recognized seniority is subject to <strong>further review</strong>\n</li>\n</ul><p><strong>See also</strong>: <br><a href=\"https://remote.zendesk.com/hc/en-us/articles/12695836286861\">When is a reserve refunded?</a><br><a href=\"https://remote.zendesk.com/hc/en-us/articles/32649353517069\">What is reserve payment in Contractor of Record?</a></p>",
+            "error": false,
+            "id": 12695731865229,
+            "title": "What is a reserve payment?"
+          },
+          "ignoreValue": true
+        }
+      }
+    },
+    "signing_bonus_amount": {
+      "title": "Signing bonus amount",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "inputType": "money"
+      }
+    },
+    "signing_bonus_clawback": {
+      "description": "This would require the employee to return the bonus if they leave your company before the first year.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a signing bonus clawback?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "tax_and_social_security_numbers_ack": {
+      "const": "acknowledged",
+      "description": "I acknowledge employees must provide their tax number (NIF) and social security number (NISS) before starting their employment.",
+      "title": "Tax and social security number",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "work_address": {
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "address": false,
+              "address_line_2": false,
+              "city": false,
+              "postal_code": false,
+              "work_in_person_days_per_week": false
+            }
+          },
+          "if": {
+            "properties": {
+              "is_home_address": {
+                "const": "no"
+              }
+            },
+            "required": ["is_home_address"]
+          },
+          "then": {
+            "required": [
+              "address",
+              "city",
+              "postal_code",
+              "work_in_person_days_per_week"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "address": {
+          "description": "Address number and street name.",
+          "maxLength": 255,
+          "title": "Work address line 1",
+          "type": "string",
+          "x-jsf-presentation": {
+            "inputType": "text"
+          }
+        },
+        "address_line_2": {
+          "description": "Apartment number or building number if applicable.",
+          "maxLength": 255,
+          "title": "Work address line 2",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "text"
+          }
+        },
+        "city": {
+          "maxLength": 255,
+          "title": "City",
+          "type": "string",
+          "x-jsf-presentation": {
+            "inputType": "text"
+          }
+        },
+        "is_home_address": {
+          "oneOf": [
+            {
+              "const": "yes",
+              "description": "Select this option if the employee is fully remote.",
+              "title": "Same as the employee's residential address"
+            },
+            {
+              "const": "no",
+              "description": "Select this option if the employee is under a hybrid work regime.",
+              "title": "Different than the employee's residential address"
+            }
+          ],
+          "title": "Local",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "column",
+            "inputType": "radio"
+          }
+        },
+        "postal_code": {
+          "maxLength": 255,
+          "title": "Postal code",
+          "type": "string",
+          "x-jsf-presentation": {
+            "inputType": "text"
+          }
+        },
+        "work_in_person_days_per_week": {
+          "description": "The number of days per week the employee will work from this location.",
+          "maximum": 7,
+          "minimum": 1,
+          "title": "Number of days per week",
+          "type": "number",
+          "x-jsf-presentation": {
+            "inputType": "number"
+          }
+        }
+      },
+      "required": ["is_home_address"],
+      "title": "Work Address",
+      "type": "object",
+      "x-jsf-order": [
+        "is_home_address",
+        "address",
+        "address_line_2",
+        "city",
+        "postal_code",
+        "work_in_person_days_per_week"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset"
+      }
+    },
+    "work_from_home_allowance": {
+      "deprecated": true,
+      "description": "This helps employees cover additional work-from-home expenses. We recommend EUR 50 based on Portugal's practices.",
+      "minimum": 5000,
+      "readOnly": true,
+      "title": "Monthly work-from-home allowance",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "minimum": "Must be greater or equal to 50 EUR.",
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "deprecated": {
+          "description": "Deprecated because of the new 'I acknowledge Portugal's work-from-home allowance' field. No longer available to customers."
+        },
+        "inputType": "money"
+      }
+    },
+    "work_from_home_allowance_ack": {
+      "const": "acknowledged",
+      "description": "In Portugal, this allowance is required by law. However, the allowance amount is based on a few different factors.",
+      "title": "I acknowledge Portugal's work-from-home allowance",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<ul class=\"Box-sc-485d66d8-0 Stack__StyledBox-sc-39e987ab-0 gzqhHd hGNcNP ListDisc__ListDiscStyle-sc-8efd8d4d-0 kNDJML\" role=\"list\">\n<li>If an employee submits a co-working expense, they should not receive the work-from-home allowance that month.</li>\n<li>Fully remote employees are entitled to 50 EUR per month.</li>\n<li>Hybrid employees are entitled to a pro rata amount based on how many days they work from home. For example, if they work 3 days from home, they are entitled to 30 EUR per month.</li>\n<li>The Work from Home allowance is tax-free up to 22 euros. The remaining 28 euros will be subject to taxes for both employers and employees. Learn more <a href=\"https://support.remote.com/hc/en-us/articles/13601390001805\">here</a>.</li>\n</ul>",
+            "error": false,
+            "id": 20498497190285,
+            "title": "Work-from-home allowance (Portugal)"
+          }
+        }
+      }
+    },
+    "work_hours_per_week": {
+      "description": "Please indicate the number of hours the employee will work per week.",
+      "title": "Work hours per week",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "work_schedule": {
+      "oneOf": [
+        {
+          "const": "full_time",
+          "title": "Full-time"
+        },
+        {
+          "const": "part_time",
+          "title": "Part-time"
+        }
+      ],
+      "title": "Type of employee",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "working_hours_exemption": {
+      "description": "This determines the employee's work schedule type. Selecting 'Yes' means a flexible schedule where the employee can decide when they start and end work (often considered an employment perk). Selecting 'No' means a fixed schedule where the employee works during set hours. This choice affects the Employment Agreement wording and may require a monthly allowance.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Will this employee need to work outside regular work hours?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<h1 data-component=\"HeadingIcon\">What do I need to know?</h1><p>Portuguese law allows 3 types of employees to work outside legally defined regular work hours:</p><ul><li>Those on company boards or in senior management.</li><li>Those whose work by nature has to take place outside regular work hours.</li><li>Those who do remote work.</li></ul><p>Employers must pay every employee who works outside regular work hours a monthly allowance. The value of this allowance depends on which days and what time an employee works outside work hour.</p><p>If you have an employee in Portugal who will work outside regular work hours, we'll calculate their allowance for you and you'll pay it on top of their salary.</p>",
+            "title": "Working hours exemption"
+          }
+        }
+      }
+    },
+    "working_hours_exemption_allowance": {
+      "description": "",
+      "title": "Extended work hours allowance",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "inputType": "money",
+        "statement": {
+          "severity": "info",
+          "title": "You’ll need to pay an extended work hours allowance"
+        }
+      }
+    }
+  },
+  "required": [
+    "non_interference_apply",
+    "non_solicitation_customers",
+    "non_solicitation_employees",
+    "non_compete_clause_apply",
+    "work_address",
+    "annual_gross_salary",
+    "contract_duration_type",
+    "work_schedule",
+    "work_from_home_allowance_ack",
+    "annual_training_hours_ack",
+    "tax_and_social_security_numbers_ack",
+    "salary_installments_confirmation",
+    "offboarding_allowances_ack",
+    "has_signing_bonus",
+    "has_bonus",
+    "has_commissions",
+    "equity_compensation",
+    "available_pto",
+    "available_pto_type",
+    "role_description",
+    "experience_level",
+    "working_hours_exemption"
+  ],
+  "type": "object",
+  "x-jsf-logic": {
+    "computedValues": {
+      "annual_gross_salary_reserve_description": {
+        "rule": {
+          "if": [
+            {
+              ">=": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                15000000
+              ]
+            },
+            {
+              "cat": [
+                "The minimum annual salary is calculated based on the country's applicable laws.",
+                " ",
+                "A reserve payment will be required, as described above."
+              ]
+            },
+            "The minimum annual salary is calculated based on the country's applicable laws."
+          ]
+        }
+      },
+      "computed_non_compete_clause_compensation_amount": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                {
+                  "var": "non_compete_clause_compensation_percentage"
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "-": [
+                    {
+                      "*": [
+                        {
+                          "/": [
+                            {
+                              "var": "annual_gross_salary"
+                            },
+                            12
+                          ]
+                        },
+                        {
+                          "/": [
+                            {
+                              "var": "non_compete_clause_compensation_percentage"
+                            },
+                            100
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "%": [
+                        {
+                          "*": [
+                            {
+                              "/": [
+                                {
+                                  "var": "annual_gross_salary"
+                                },
+                                12
+                              ]
+                            },
+                            {
+                              "/": [
+                                {
+                                  "var": "non_compete_clause_compensation_percentage"
+                                },
+                                100
+                              ]
+                            }
+                          ]
+                        },
+                        1
+                      ]
+                    }
+                  ]
+                },
+                100
+              ]
+            },
+            null
+          ]
+        }
+      },
+      "computed_non_compete_clause_compensation_amount_in_cents": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                {
+                  "var": "non_compete_clause_compensation_percentage"
+                }
+              ]
+            },
+            {
+              "-": [
+                {
+                  "*": [
+                    {
+                      "/": [
+                        {
+                          "var": "annual_gross_salary"
+                        },
+                        12
+                      ]
+                    },
+                    {
+                      "/": [
+                        {
+                          "var": "non_compete_clause_compensation_percentage"
+                        },
+                        100
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "%": [
+                    {
+                      "*": [
+                        {
+                          "/": [
+                            {
+                              "var": "annual_gross_salary"
+                            },
+                            12
+                          ]
+                        },
+                        {
+                          "/": [
+                            {
+                              "var": "non_compete_clause_compensation_percentage"
+                            },
+                            100
+                          ]
+                        }
+                      ]
+                    },
+                    1
+                  ]
+                }
+              ]
+            },
+            null
+          ]
+        }
+      },
+      "extreme_salary_acknowledgement_title": {
+        "rule": {
+          "cat": [
+            "I have reviewed and verified the annual salary of EUR ",
+            {
+              "money_format": {
+                "/": [
+                  {
+                    "var": "annual_gross_salary"
+                  },
+                  100
+                ]
+              }
+            },
+            "."
+          ]
+        }
+      },
+      "working_hours_exemption_allowance_no_max_hours_value": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                {
+                  "var": "work_hours_per_week"
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "-": [
+                    {
+                      "/": [
+                        {
+                          "*": [
+                            {
+                              "var": "annual_gross_salary"
+                            },
+                            12,
+                            1.25,
+                            2,
+                            4
+                          ]
+                        },
+                        {
+                          "*": [
+                            {
+                              "var": "work_hours_per_week"
+                            },
+                            52,
+                            14
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "%": [
+                        {
+                          "/": [
+                            {
+                              "*": [
+                                {
+                                  "var": "annual_gross_salary"
+                                },
+                                12,
+                                1.25,
+                                2,
+                                4
+                              ]
+                            },
+                            {
+                              "*": [
+                                {
+                                  "var": "work_hours_per_week"
+                                },
+                                52,
+                                14
+                              ]
+                            }
+                          ]
+                        },
+                        1
+                      ]
+                    }
+                  ]
+                },
+                100
+              ]
+            },
+            0
+          ]
+        }
+      },
+      "working_hours_exemption_allowance_no_max_hours_value_in_cents": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                {
+                  "var": "work_hours_per_week"
+                }
+              ]
+            },
+            {
+              "-": [
+                {
+                  "/": [
+                    {
+                      "*": [
+                        {
+                          "var": "annual_gross_salary"
+                        },
+                        12,
+                        1.25,
+                        2,
+                        4
+                      ]
+                    },
+                    {
+                      "*": [
+                        {
+                          "var": "work_hours_per_week"
+                        },
+                        52,
+                        14
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "%": [
+                    {
+                      "/": [
+                        {
+                          "*": [
+                            {
+                              "var": "annual_gross_salary"
+                            },
+                            12,
+                            1.25,
+                            2,
+                            4
+                          ]
+                        },
+                        {
+                          "*": [
+                            {
+                              "var": "work_hours_per_week"
+                            },
+                            52,
+                            14
+                          ]
+                        }
+                      ]
+                    },
+                    1
+                  ]
+                }
+              ]
+            },
+            0
+          ]
+        }
+      },
+      "working_hours_exemption_allowance_with_max_hours_value": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                {
+                  "var": "work_hours_per_week"
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "-": [
+                    {
+                      "/": [
+                        {
+                          "*": [
+                            {
+                              "var": "annual_gross_salary"
+                            },
+                            12,
+                            1.25,
+                            22
+                          ]
+                        },
+                        {
+                          "*": [
+                            {
+                              "var": "work_hours_per_week"
+                            },
+                            52,
+                            14
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "%": [
+                        {
+                          "/": [
+                            {
+                              "*": [
+                                {
+                                  "var": "annual_gross_salary"
+                                },
+                                12,
+                                1.25,
+                                22
+                              ]
+                            },
+                            {
+                              "*": [
+                                {
+                                  "var": "work_hours_per_week"
+                                },
+                                52,
+                                14
+                              ]
+                            }
+                          ]
+                        },
+                        1
+                      ]
+                    }
+                  ]
+                },
+                100
+              ]
+            },
+            0
+          ]
+        }
+      },
+      "working_hours_exemption_allowance_with_max_hours_value_in_cents": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                {
+                  "var": "work_hours_per_week"
+                }
+              ]
+            },
+            {
+              "-": [
+                {
+                  "/": [
+                    {
+                      "*": [
+                        {
+                          "var": "annual_gross_salary"
+                        },
+                        12,
+                        1.25,
+                        22
+                      ]
+                    },
+                    {
+                      "*": [
+                        {
+                          "var": "work_hours_per_week"
+                        },
+                        52,
+                        14
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "%": [
+                    {
+                      "/": [
+                        {
+                          "*": [
+                            {
+                              "var": "annual_gross_salary"
+                            },
+                            12,
+                            1.25,
+                            22
+                          ]
+                        },
+                        {
+                          "*": [
+                            {
+                              "var": "work_hours_per_week"
+                            },
+                            52,
+                            14
+                          ]
+                        }
+                      ]
+                    },
+                    1
+                  ]
+                }
+              ]
+            },
+            0
+          ]
+        }
+      }
+    }
+  },
+  "x-jsf-order": [
+    "contract_duration",
+    "contract_duration_type",
+    "contract_end_date",
+    "work_schedule",
+    "work_hours_per_week",
+    "has_probation_period",
+    "probation_length",
+    "probation_length_days",
+    "available_pto_type",
+    "available_pto",
+    "offboarding_allowances_ack",
+    "role_description",
+    "experience_level",
+    "work_address",
+    "salary_overview",
+    "annual_gross_salary",
+    "extreme_salary_warning",
+    "extreme_salary_acknowledgement",
+    "part_time_salary_confirmation",
+    "salary_installments_confirmation",
+    "work_from_home_allowance_ack",
+    "annual_training_hours_ack",
+    "tax_and_social_security_numbers_ack",
+    "work_from_home_allowance",
+    "working_hours_exemption",
+    "maximum_working_hours_regime",
+    "working_hours_exemption_allowance",
+    "has_signing_bonus",
+    "signing_bonus_amount",
+    "signing_bonus_clawback",
+    "has_bonus",
+    "bonus_amount",
+    "bonus_details",
+    "has_commissions",
+    "commissions_details",
+    "commissions_ack",
+    "equity_compensation",
+    "non_compete_clause_apply",
+    "non_compete_clause_halt_period_months",
+    "non_compete_clause_compensation_amount",
+    "non_compete_clause_compensation_percentage",
+    "non_solicitation_employees",
+    "non_solicitation_employees_number_of_months",
+    "non_solicitation_customers",
+    "non_solicitation_customer_number_of_months",
+    "non_interference_apply",
+    "non_interference_halt_period"
+  ],
+  "x-rmt-flatFieldsets": {
+    "annual_gross_salary_fieldset": {
+      "propertiesByName": [
+        "salary_overview",
+        "annual_gross_salary",
+        "extreme_salary_warning",
+        "extreme_salary_acknowledgement",
+        "salary_installments_confirmation"
+      ],
+      "title": "Annual gross salary"
+    },
+    "extended_work_hours": {
+      "propertiesByName": [
+        "working_hours_exemption",
+        "maximum_working_hours_regime",
+        "working_hours_exemption_allowance"
+      ],
+      "title": "Extended work hours"
+    },
+    "non_compete_fieldset": {
+      "propertiesByName": [
+        "non_compete_clause_apply",
+        "non_compete_clause_halt_period_months",
+        "non_compete_clause_compensation_percentage",
+        "non_compete_clause_compensation_amount"
+      ],
+      "title": "Non-compete"
+    },
+    "non_interference": {
+      "propertiesByName": [
+        "non_interference_apply",
+        "non_interference_halt_period"
+      ],
+      "title": "Non-interference"
+    },
+    "non_solicitation": {
+      "description": "In Portugal, post-termination restrictions help protect your business relationships while ensuring compliance with local employment regulations.",
+      "propertiesByName": [
+        "non_solicitation_employees",
+        "non_solicitation_employees_number_of_months",
+        "non_solicitation_customers",
+        "non_solicitation_customer_number_of_months"
+      ],
+      "title": "Non-solicitation"
+    }
+  },
+  "x-rmt-meta": {
+    "jsfVersion": "1"
+  },
+  "x-rmt-schema-changelog": {
+    "changelog": "Added a required acknowledgment that employees must provide their tax number (NIF) and social security number (NISS) before starting their employment. This also applies when updating contract details of employments created before this version.",
+    "upgradePath": "Send tax_and_social_security_numbers_ack with the value \"acknowledged\" when creating or updating Portugal contract details. To keep the previous behaviour, pin to version 8."
+  }
+}

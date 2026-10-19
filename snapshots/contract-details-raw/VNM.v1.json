@@ -1,0 +1,1202 @@
+{
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "contract_end_date": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "fixed_term"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "properties": {
+          "contract_end_date": {
+            "type": ["string"]
+          }
+        },
+        "required": ["contract_end_date"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "probation_length_days": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "required": ["probation_length_days"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "no"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "properties": {
+          "has_probation_period": {
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "Waiving the probation period is possible but discouraged",
+                "severity": "warning"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "work_days_for_part_time_worker": false
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "required": ["work_days_for_part_time_worker"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "allowance_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_allowances": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_allowances"]
+      },
+      "then": {
+        "required": ["allowance_details"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "signing_bonus_amount": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_signing_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_signing_bonus"]
+      },
+      "then": {
+        "properties": {
+          "signing_bonus_amount": {
+            "type": ["integer"]
+          }
+        },
+        "required": ["signing_bonus_amount"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "bonus_amount": false,
+          "bonus_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_bonus"]
+      },
+      "then": {
+        "properties": {
+          "bonus_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["bonus_details"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "commissions_ack": false,
+          "commissions_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_commissions": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_commissions"]
+      },
+      "then": {
+        "properties": {
+          "commissions_ack": {
+            "type": ["string"]
+          },
+          "commissions_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["commissions_details", "commissions_ack"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_compete_clause_halt_period_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_compete_clause_apply": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_compete_clause_apply"]
+      },
+      "then": {
+        "required": ["non_compete_clause_halt_period_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_solicit_clause_halt_period_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_solicit_clause_apply": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_solicit_clause_apply"]
+      },
+      "then": {
+        "required": ["non_solicit_clause_halt_period_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "retention_bonus_amount": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_retention_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_retention_bonus"]
+      },
+      "then": {
+        "required": ["retention_bonus_amount"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "carryover_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "annual_leave_carry_forward": {
+            "const": "yes"
+          }
+        },
+        "required": ["annual_leave_carry_forward"]
+      },
+      "then": {
+        "required": ["carryover_details"]
+      }
+    }
+  ],
+  "properties": {
+    "allowance_details": {
+      "description": "Let us know what each allowance covers and its monthly amount. If you’re not offering allowances, you can skip this field.",
+      "maxLength": 1000,
+      "title": "Allowances",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "annual_gross_salary": {
+      "description": "The minimum annual salary is calculated based on the country's applicable laws.",
+      "minimum": 6372000000,
+      "title": "Annual gross salary",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "minimum": "In Vietnam, full-time employees are entitled to a minimum annual salary of ₫63,720,000.",
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "VND",
+        "inputType": "money"
+      }
+    },
+    "annual_leave_carry_forward": {
+      "description": "This refers to the employee's ability to carry over unused annual leave to the next annual leave period.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        }
+      ],
+      "title": "Offer carryover paid time off?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "available_pto": {
+      "description": "In Vietnam, employees are entitled to at least 12 days paid annual leave if they have been working for an employer for 12 months. It should be noted that it is possible to grant more than 12 days of paid annual leave per year. If the employee has worked for less than 12 months, annual leave will be prorated. Please note that Statutory Bank Holidays and Public Holidays, based on the employee's country of residence are excluded from the above.",
+      "minimum": 12,
+      "title": "Number of paid days off",
+      "type": "number",
+      "x-jsf-presentation": {
+        "description": "In Vietnam, employees are entitled to at least 12 days paid annual leave if they have been working for an employer for 12 months. It should be noted that it is possible to grant more than 12 days of paid annual leave per year. If the employee has worked for less than 12 months, annual leave will be prorated.<br><br>Please note that Statutory Bank Holidays and Public Holidays, based on the employee's country of residence are excluded from the above.",
+        "inputType": "number"
+      }
+    },
+    "bonus_amount": {
+      "deprecated": true,
+      "readOnly": true,
+      "title": "Bonus amount (deprecated)",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "VND",
+        "deprecated": {
+          "description": "Deprecated in favor of 'Bonus Details'. Please, try to leave this field empty."
+        },
+        "inputType": "money"
+      }
+    },
+    "bonus_details": {
+      "description": "Bonus type, payment frequency, and more.",
+      "maxLength": 1000,
+      "title": "Other bonus details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "carryover_details": {
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "expiry_months": false
+            }
+          },
+          "if": {
+            "properties": {
+              "can_expire": {
+                "const": "yes"
+              }
+            },
+            "required": ["can_expire"]
+          },
+          "then": {
+            "properties": {
+              "expiry_months": {
+                "type": "number"
+              }
+            },
+            "required": ["expiry_months"]
+          }
+        }
+      ],
+      "description": "Configure the details of your paid time off carryover policy",
+      "properties": {
+        "can_expire": {
+          "description": "Whether carried over paid time off days can expire after a certain period",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            }
+          ],
+          "title": "Can carried over days expire?",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "row",
+            "inputType": "radio"
+          }
+        },
+        "carry_over_pto_days": {
+          "description": "Let us know how many paid time off days the employee can carry over to the following annual leave period.",
+          "minimum": 1,
+          "title": "Carryover paid time off details",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "inputType": "number"
+          }
+        },
+        "expiry_months": {
+          "description": "Number of months after cycle start when carryover days expire",
+          "minimum": 0,
+          "title": "Expiry period (months)",
+          "type": ["number", "null"],
+          "x-jsf-errorMessage": {
+            "minimum": "Must be 0 or greater"
+          },
+          "x-jsf-presentation": {
+            "inputType": "number"
+          }
+        }
+      },
+      "required": ["carry_over_pto_days", "can_expire"],
+      "title": "Carryover details",
+      "type": "object",
+      "x-jsf-order": ["carry_over_pto_days", "can_expire", "expiry_months"],
+      "x-jsf-presentation": {
+        "inputType": "fieldset"
+      }
+    },
+    "commissions_ack": {
+      "const": "acknowledged",
+      "description": "I understand that I am required to provide written details of the commission plan to this employee, and upload this document on the platform for record keeping purposes. I acknowledge that Remote will not liable for any claims or losses associated with the commission or bonus plan.",
+      "title": "Confirm commission plan details",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "commissions_details": {
+      "description": "Payment amount, frequency, and more.",
+      "maxLength": 1000,
+      "title": "Commission details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "contract_duration": {
+      "deprecated": true,
+      "description": "Indefinite or fixed-term contract. If the latter, please state duration and if there's possibility for renewal.",
+      "maxLength": 255,
+      "readOnly": true,
+      "title": "Contract duration (deprecated)",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated field in favor of 'contract_duration_type'."
+        },
+        "inputType": "text"
+      }
+    },
+    "contract_duration_type": {
+      "oneOf": [
+        {
+          "const": "indefinite",
+          "title": "Indefinite"
+        },
+        {
+          "const": "fixed_term",
+          "title": "Fixed Term"
+        }
+      ],
+      "title": "Contract duration",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "contract_end_date": {
+      "format": "date",
+      "maxLength": 255,
+      "title": "Contract end date",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "date",
+        "minDate": "2026-12-01"
+      }
+    },
+    "damages": {
+      "description": "If the Employee does not comply with the Confidentiality, Non-Competition and/or Non-Solicitation, the Company is entitled to damages and to take any other legal measures in accordance with Vietnamese law.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Would you like to include damages?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "equity_compensation": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "equity_cliff": false,
+              "equity_description": false,
+              "equity_vesting_period": false,
+              "number_of_stock_options": false
+            }
+          },
+          "if": {
+            "properties": {
+              "offer_equity_compensation": {
+                "const": "yes"
+              }
+            },
+            "required": ["offer_equity_compensation"]
+          },
+          "then": {
+            "properties": {
+              "equity_description": {
+                "type": ["string"]
+              }
+            },
+            "required": ["equity_description"]
+          }
+        }
+      ],
+      "properties": {
+        "equity_cliff": {
+          "deprecated": true,
+          "description": "When the first portion of the stock option grant will vest.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Cliff (in months)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "equity_description": {
+          "description": "Please share any information related to the upcoming equity grant.",
+          "maxLength": 1000,
+          "title": "Number of options, RSUs, and other equity",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "textarea"
+          }
+        },
+        "equity_vesting_period": {
+          "deprecated": true,
+          "description": "The number of years it will take for the employee to vest all their options.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Vesting period (in years)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "number_of_stock_options": {
+          "deprecated": true,
+          "description": "Tell us the type of equity you're granting as well.",
+          "maxLength": 255,
+          "readOnly": true,
+          "title": "Number of options, RSUs, or other equity granted",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "text"
+          }
+        },
+        "offer_equity_compensation": {
+          "description": "Granting equity to your team generally triggers tax and legal obligations. In order for you to stay compliant, it's important to declare any equity grants.",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            }
+          ],
+          "title": "Will this employee receive equity?",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "row",
+            "inputType": "radio"
+          }
+        }
+      },
+      "required": ["offer_equity_compensation"],
+      "title": "Equity management",
+      "type": "object",
+      "x-jsf-order": [
+        "offer_equity_compensation",
+        "number_of_stock_options",
+        "equity_cliff",
+        "equity_vesting_period",
+        "equity_description"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 39,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 39,
+              "currency": "USD"
+            }
+          },
+          "helpCenter": {
+            "callToAction": "Learn more about equity management at Remote",
+            "content": "<p>Remote Equity is a lightweight compliance tool designed to help you manage equity grants across borders for team members hired through Remote's Employer of Record (EOR).</p><p>Whether you’re managing vesting, reporting exercises, or navigating local tax laws, Remote Equity gives you the structure to stay compliant, avoid risk, and support your team across borders.</p><h4 id=\"h_01K0YQSYJ8JPKYXNNNW90B0QJP\">Why it matters</h4><p>As your EOR, <strong>Remote is legally responsible</strong> for equity-related tax and reporting in the countries where your team members are employed. That means we don’t just track equity, we:</p><ul>\n<li data-list-item-id=\"eba6b95d2e41a276665f3f64525e0eb59\">Withhold and report taxes when required</li>\n<li data-list-item-id=\"ed16c354038e4b3d908bacd965dc2d71b\">File with local tax authorities</li>\n<li data-list-item-id=\"eb7162ef11477f7a7737fe34a48979559\">Support team members with clear guidance on their tax responsibilities</li>\n</ul><p>Most equity platforms can’t do that because they’re not the legal employer. <strong>Remote Equity ensures we have the data we need, when we need it, to keep your company compliant and your team fairly rewarded.</strong></p><p>Behind the scenes, our tax team:</p><ul>\n<li data-list-item-id=\"ef5c97b0472ebc9a0819e312646e4cd66\">Handles tax withholdings when taxable events occur</li>\n<li data-list-item-id=\"e5f3560641743ab0c57ba47683638560e\">Provides guidance to you and your team, even when no withholding is required</li>\n<li data-list-item-id=\"ed17d307d635b18f9f784df12d1dbe1cd\">Manages additional reporting where local laws demand it</li>\n</ul><p>See also: <a href=\"https://support.remote.com/hc/en-us/articles/37710493624589-What-types-of-equity-grants-should-I-declare-in-Remote-Equity-Essentials\">What types of equity grants should I declare in Remote Equity?</a></p><h4 id=\"h_01K0YQSYJDJ3JYC1C642ASB8E2\">What’s included</h4><p>Remote Equity provides:</p><ul>\n<li data-list-item-id=\"e0cc8d8c0b7d060b9de89e3c870fc1579\">\n<strong>Tracking and alerts</strong> for events that may create a tax obligation (like vesting or exercising)</li>\n<li data-list-item-id=\"e88a2fc75f6f43db27891e415e2f90400\">\n<strong>Automated compliance reminders</strong> based on local deadlines and regulations</li>\n<li data-list-item-id=\"e2c2cf9ef914143e339eb32e1b70c83da\">\n<strong>Localized guidance for team members</strong>, shared through the Remote Equity app</li>\n<li data-list-item-id=\"e8a2c20d648ed01a3db135ef4ada0de61\">\n<strong>Support from Remote’s tax and legal teams</strong>, who handle obligations on your behalf</li>\n<li data-list-item-id=\"e184af2a6420412152b377815ebe18ce2\">\n<strong>Integration with Carta and Pulley</strong> to automatically sync grant declarations and exercise information</li>\n</ul><h4 id=\"h_01K0YQSYJSCK6XYBXF3Q56KRC8\"><strong>Get started in minutes</strong></h4><p>Setup takes less than five minutes. Just log in to your Remote account, and launch the Equity App to follow the setup steps.</p><p>Helpful guides to get started:</p><ul>\n<li data-list-item-id=\"e73e204bc587d3417ecab74e3a29ccc2a\"><a href=\"https://support.remote.com/hc/en-us/articles/37547625350925-How-can-I-access-Remote-Equity-Essentials\">How can I access Remote Equity?</a></li>\n<li data-list-item-id=\"e0ca43a64bf2361ce43443e98200daa5a\"><a href=\"https://support.remote.com/hc/en-us/articles/35577980536589\">How do I declare a grant?</a></li>\n<li data-list-item-id=\"edfa1a00c07a70449ebe34c25dec818fe\"><a href=\"https://support.remote.com/hc/en-us/articles/35671968187149-How-can-my-employees-see-their-equity-information\">How can my team access their equity information?</a></li>\n<li data-list-item-id=\"edaaf9eb107949f79894c24e3b984da30\"><a href=\"https://support.remote.com/hc/en-us/articles/35546454220301-What-happens-if-I-already-declared-equity-before-using-Remote-Equity-Essentials\">What happens if I already declared equity before using Remote Equity?</a></li>\n</ul><h4 id=\"h_01K0YQSYJV9EH2AQ9HWYS1826S\"><span class=\"wysiwyg-underline\">Frequently Asked Questions (FAQs)</span></h4><p><strong>Who needs to use Remote Equity?</strong></p><p>Any Remote customer granting equity to a team member hired through Remote’s EOR must use Remote Equity to meet local compliance requirements.</p><p><strong>Why can’t we just use our own equity tool?</strong></p><p>Traditional equity tools track grants and vesting, but they don't file taxes, withhold contributions, or report income to local authorities. Remote, as the legal employer, is responsible for these actions. Remote Equity ensures those obligations are covered.</p><p><strong>What happens if we don’t use it?</strong></p><p>If Remote doesn’t receive timely and accurate equity data, required filings may be missed. This can result in compliance risks, unexpected tax liabilities, and issues for both your company and your team members.</p><p><strong>How much does Remote Equity cost?</strong></p><p>Remote Equity costs 39 USD per month for each EOR team member with equity. <a href=\"https://support.remote.com/hc/en-us/articles/35546441948685-How-much-does-Remote-Equity-Essentials-cost\">Learn more</a>.</p><p>For comprehensive information, visit the <a href=\"https://support.remote.com/hc/en-us/categories/45788665954189-Remote-Equity\" tabindex=\"0\" data-token-index=\"1\" rel=\"noopener noreferrer\">Remote Equity hub</a>.</p>",
+            "error": false,
+            "id": 38303424407821,
+            "title": "Welcome to Remote Equity: Global equity, without the compliance headaches"
+          }
+        }
+      }
+    },
+    "experience_level": {
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employees overall experience).",
+      "oneOf": [
+        {
+          "const": "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "description": "Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "title": "Level 2 - Entry Level"
+        },
+        {
+          "const": "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+          "description": "Employees who perform independently tasks and/or with coordination and control functions",
+          "title": "Level 3 - Associate"
+        },
+        {
+          "const": "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "description": "Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "title": "Level 4 - Mid-Senior level"
+        },
+        {
+          "const": "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "description": "Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "title": "Level 5 - Director"
+        },
+        {
+          "const": "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "description": "An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "title": "Level 6 - Executive"
+        }
+      ],
+      "title": "Experience level",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "has_allowances": {
+      "description": "This can include things like internet, housing, and commuting allowances.",
+      "enum": ["yes", "no"],
+      "title": "Offer allowances?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio",
+        "options": [
+          {
+            "label": "Yes",
+            "value": "yes"
+          },
+          {
+            "label": "No",
+            "value": "no"
+          }
+        ]
+      }
+    },
+    "has_bonus": {
+      "description": "These can include things like performance-related bonuses.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer other bonuses?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_commissions": {
+      "description": "You can outline your policy and pay commission to the employee on the platform. However, commission will not appear in the employment agreement. Please send full policy details directly to the employee.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer commission?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_probation_period": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Add a probation period",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_retention_bonus": {
+      "description": "The employee receives the full bonus if they remain at your company for 1 year. If they depart prior to this date, they must repay the unearned portion of the retention bonus.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer a retention bonus?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_signing_bonus": {
+      "description": "This is a one-time payment the employee receives when they join your team.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer a signing bonus?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_compete_clause_apply": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a non-compete clause?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_compete_clause_halt_period_months": {
+      "description": "We recommend 12 months. The non-compete clause begins after the termination of the Employment Agreement.",
+      "minimum": 1,
+      "title": "Length of non-compete clause, in months",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_solicit_clause_apply": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a non-solicit clause?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_solicit_clause_halt_period_months": {
+      "description": "We recommend 12 months. The non-solicit clause begins after the termination of the Employment Agreement.",
+      "minimum": 1,
+      "title": "Clause duration, in months",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "notice_period": {
+      "const": "acknowledged",
+      "description": "In Vietnam, the notice period is: 45 days for infinite-term contracts 30 days for fixed-term contracts (12 to 36 months contracts); and 3 days for fixed-term contracts under 12 months",
+      "title": "Notice period",
+      "type": "string",
+      "x-jsf-presentation": {
+        "description": "In Vietnam, the notice period is:<br/><ul><li>45 days for infinite-term contracts</li><li>30 days for fixed-term contracts (12 to 36 months contracts); and</li><li>3 days for fixed-term contracts under 12 months</li></ul>",
+        "inputType": "checkbox"
+      }
+    },
+    "probation_length_days": {
+      "description": "In Vietnam, probation periods are based on the complexity and skill required to do the work. They range between 6 to 180 days: 180 days for the position of enterprise executive. 60 days for positions that require a junior college degree or above. 30 days for positions that require a secondary vocational certificate or professional secondary school. These are usually technicians. 6 days for all other jobs.",
+      "enum": [180, 60, 30, 6],
+      "oneOf": [
+        {
+          "const": 180,
+          "title": "180 days"
+        },
+        {
+          "const": 60,
+          "title": "60 days"
+        },
+        {
+          "const": 30,
+          "title": "30 days"
+        },
+        {
+          "const": 6,
+          "title": "6 days"
+        }
+      ],
+      "title": "Length of probation period in days",
+      "type": "number",
+      "x-jsf-presentation": {
+        "description": "In Vietnam, probation periods are based on the complexity and skill required to do the work. They range between 6 to 180 days:<br/><ul><li>180 days for the position of enterprise executive.</li><li>60 days for positions that require a junior college degree or above.</li><li>30 days for positions that require a secondary vocational certificate or professional secondary school. These are usually technicians.</li><li>6 days for all other jobs.</li></ul>",
+        "inputType": "select"
+      }
+    },
+    "rest_minutes_per_day": {
+      "deprecated": true,
+      "description": "We recommend 60 minutes. In Vietnam, an employee working 6 or more hours in a day is entitled to a break of at least 30 consecutive minutes.",
+      "minimum": 1,
+      "readOnly": true,
+      "title": "(Deprecated) Rest minutes per day",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "retention_bonus_amount": {
+      "description": "In the Vietnamese Dollar (VND). Please enter a whole number.",
+      "minimum": 0,
+      "title": "Retention bonus amount",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "VND",
+        "inputType": "money"
+      }
+    },
+    "role_description": {
+      "description": "Please add at least 3 responsibilities, at least 100 characters in total.",
+      "maxLength": 5000,
+      "minLength": 100,
+      "title": "Role description",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "signing_bonus_amount": {
+      "minimum": 0,
+      "title": "Signing bonus amount",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "VND",
+        "inputType": "money"
+      }
+    },
+    "weekly_days_off": {
+      "description": "In Vietnam, an employee is entitled to a break of at least 24 consecutive hours. Specify the weekly day(s) off.",
+      "items": {
+        "anyOf": [
+          {
+            "const": "monday",
+            "title": "Monday"
+          },
+          {
+            "const": "tuesday",
+            "title": "Tuesday"
+          },
+          {
+            "const": "wednesday",
+            "title": "Wednesday"
+          },
+          {
+            "const": "thursday",
+            "title": "Thursday"
+          },
+          {
+            "const": "friday",
+            "title": "Friday"
+          },
+          {
+            "const": "saturday",
+            "title": "Saturday"
+          },
+          {
+            "const": "sunday",
+            "title": "Sunday"
+          }
+        ]
+      },
+      "title": "Weekly days off",
+      "type": "array",
+      "uniqueItems": true,
+      "x-jsf-presentation": {
+        "inputType": "select",
+        "placeholder": "Select..."
+      }
+    },
+    "work_address_is_home_address": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Same as their residential address"
+        },
+        {
+          "const": "no",
+          "title": "Different than their residential address"
+        }
+      ],
+      "title": "Employee's work address",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "work_days_for_part_time_worker": {
+      "description": "Please add all standard days that the worker will be working for their part-time shifts.",
+      "items": {
+        "anyOf": [
+          {
+            "const": "monday",
+            "title": "Monday"
+          },
+          {
+            "const": "tuesday",
+            "title": "Tuesday"
+          },
+          {
+            "const": "wednesday",
+            "title": "Wednesday"
+          },
+          {
+            "const": "thursday",
+            "title": "Thursday"
+          },
+          {
+            "const": "friday",
+            "title": "Friday"
+          },
+          {
+            "const": "saturday",
+            "title": "Saturday"
+          },
+          {
+            "const": "sunday",
+            "title": "Sunday"
+          }
+        ]
+      },
+      "title": "Work days",
+      "type": "array",
+      "uniqueItems": true,
+      "x-jsf-presentation": {
+        "inputType": "select",
+        "placeholder": "Select..."
+      }
+    },
+    "work_equipment_provided": {
+      "description": "This includes required equipment for the employee to perform their role, like a laptop or mobile phone.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Provide employee with work equipment?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "work_hours_per_week": {
+      "description": "",
+      "maximum": 48,
+      "minimum": 1,
+      "title": "Work hours per week",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "work_schedule": {
+      "oneOf": [
+        {
+          "const": "full_time",
+          "title": "Full-time"
+        },
+        {
+          "const": "part_time",
+          "title": "Part-time"
+        },
+        {
+          "const": null,
+          "title": "null"
+        }
+      ],
+      "title": "Type of employee",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "work_week_schedule": {
+      "description": "We recommend a 40 hour workweek. Normal working hours should not exceed 10 hours per day or 48 hours per week. Overtime is generally payable for hours beyond this.",
+      "properties": {
+        "end_time": {
+          "title": "End time",
+          "type": "string",
+          "x-jsf-presentation": {
+            "inputType": "text"
+          }
+        },
+        "lunch_end_time": {
+          "title": "Break ends",
+          "type": "string",
+          "x-jsf-presentation": {
+            "inputType": "text"
+          }
+        },
+        "lunch_start_time": {
+          "title": "Break starts",
+          "type": "string",
+          "x-jsf-presentation": {
+            "inputType": "text"
+          }
+        },
+        "start_time": {
+          "title": "Start time",
+          "type": "string",
+          "x-jsf-presentation": {
+            "inputType": "text"
+          }
+        },
+        "working_hours": {
+          "default": 0,
+          "title": "Working hours",
+          "type": "number",
+          "x-jsf-presentation": {
+            "inputType": "number"
+          }
+        }
+      },
+      "required": [
+        "start_time",
+        "end_time",
+        "lunch_start_time",
+        "lunch_end_time",
+        "working_hours"
+      ],
+      "title": "Weekly work schedule",
+      "type": "object",
+      "x-jsf-order": [
+        "start_time",
+        "end_time",
+        "lunch_start_time",
+        "lunch_end_time",
+        "working_hours"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset"
+      }
+    }
+  },
+  "required": [
+    "annual_gross_salary",
+    "available_pto",
+    "contract_duration_type",
+    "damages",
+    "equity_compensation",
+    "experience_level",
+    "has_allowances",
+    "has_signing_bonus",
+    "has_probation_period",
+    "has_bonus",
+    "has_retention_bonus",
+    "has_commissions",
+    "non_compete_clause_apply",
+    "non_solicit_clause_apply",
+    "notice_period",
+    "role_description",
+    "weekly_days_off",
+    "work_address_is_home_address",
+    "work_hours_per_week",
+    "work_schedule",
+    "work_week_schedule",
+    "work_equipment_provided"
+  ],
+  "type": "object",
+  "x-jsf-order": [
+    "contract_duration",
+    "contract_duration_type",
+    "contract_end_date",
+    "work_schedule",
+    "work_days_for_part_time_worker",
+    "work_week_schedule",
+    "work_hours_per_week",
+    "rest_minutes_per_day",
+    "has_probation_period",
+    "probation_length_days",
+    "notice_period",
+    "available_pto",
+    "annual_leave_carry_forward",
+    "carryover_details",
+    "weekly_days_off",
+    "role_description",
+    "experience_level",
+    "work_address_is_home_address",
+    "annual_gross_salary",
+    "has_allowances",
+    "allowance_details",
+    "has_signing_bonus",
+    "signing_bonus_amount",
+    "has_bonus",
+    "bonus_amount",
+    "bonus_details",
+    "has_retention_bonus",
+    "retention_bonus_amount",
+    "has_commissions",
+    "commissions_details",
+    "commissions_ack",
+    "equity_compensation",
+    "non_compete_clause_apply",
+    "non_compete_clause_halt_period_months",
+    "non_solicit_clause_apply",
+    "non_solicit_clause_halt_period_months",
+    "damages",
+    "work_equipment_provided"
+  ],
+  "x-rmt-flatFieldsets": {
+    "employee_schedule_fieldset": {
+      "propertiesByName": [
+        "work_days_for_part_time_worker",
+        "work_week_schedule",
+        "work_hours_per_week"
+      ],
+      "title": "Employee schedule"
+    }
+  }
+}

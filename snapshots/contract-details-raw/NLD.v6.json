@@ -1,0 +1,2057 @@
+{
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "holiday_allowance": {
+            "const": "On top of salary"
+          },
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["holiday_allowance", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "x-jsf-logic-computedAttrs": {
+              "minimum": "minimum_annual_gross_salary_in_cents",
+              "x-jsf-errorMessage": {
+                "minimum": "In the Netherlands, part-time employees are entitled to a minimum annual salary of EUR {{minimum_annual_gross_salary}} EXCLUDING holiday pay."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "holiday_allowance": {
+            "const": "Within the salary"
+          },
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["holiday_allowance", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "x-jsf-logic-computedAttrs": {
+              "minimum": "minimum_annual_gross_salary_in_cents",
+              "x-jsf-errorMessage": {
+                "minimum": "In the Netherlands, part-time employees are entitled to a minimum annual salary of EUR {{minimum_annual_gross_salary}} INCLUDING holiday pay."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "holiday_allowance": {
+            "const": "On top of salary"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["holiday_allowance", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "x-jsf-logic-computedAttrs": {
+              "minimum": "minimum_annual_gross_salary_in_cents",
+              "x-jsf-errorMessage": {
+                "minimum": "In the Netherlands, full-time employees are entitled to a minimum annual salary of EUR {{minimum_annual_gross_salary}} EXCLUDING holiday pay."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "holiday_allowance": {
+            "const": "Within the salary"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["holiday_allowance", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "x-jsf-logic-computedAttrs": {
+              "minimum": "minimum_annual_gross_salary_in_cents",
+              "x-jsf-errorMessage": {
+                "minimum": "In the Netherlands, full-time employees are entitled to a minimum annual salary of EUR {{minimum_annual_gross_salary}} INCLUDING holiday pay."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "contract_end_date": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "fixed_term"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "properties": {
+          "contract_end_date": {
+            "type": "string"
+          }
+        },
+        "required": ["contract_end_date"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "bonus_amount": false,
+          "bonus_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_bonus"]
+      },
+      "then": {
+        "properties": {
+          "bonus_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["bonus_details"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "commissions_ack": false,
+          "commissions_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_commissions": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_commissions"]
+      },
+      "then": {
+        "properties": {
+          "commissions_ack": {
+            "type": ["string"]
+          },
+          "commissions_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["commissions_details", "commissions_ack"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "signing_bonus_amount": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_signing_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_signing_bonus"]
+      },
+      "then": {
+        "properties": {
+          "signing_bonus_amount": {
+            "type": ["integer"]
+          }
+        },
+        "required": ["signing_bonus_amount"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "default_weekly_hours": false,
+          "work_hours_per_week": {
+            "maximum": 40,
+            "minimum": 36,
+            "x-jsf-errorMessage": {
+              "maximum": "Must be no more than 40 hours per week.",
+              "minimum": "Must be at least 36 hours per week."
+            }
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "work_hours_per_week": {
+            "maximum": 35,
+            "minimum": 1,
+            "x-jsf-errorMessage": {
+              "maximum": "Must be no more than 35 hours per week.",
+              "minimum": "Must be at least 1 hour per week."
+            }
+          }
+        },
+        "required": ["default_weekly_hours"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "part_time_salary_confirmation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "part_time_salary_confirmation": {
+            "type": "string"
+          }
+        },
+        "required": ["part_time_salary_confirmation"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_compete_clause_halt_period_months": false,
+          "non_solicitation_clause_halt_period_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_compete_clause_apply": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_compete_clause_apply"]
+      },
+      "then": {
+        "required": [
+          "non_compete_clause_halt_period_months",
+          "non_solicitation_clause_halt_period_months"
+        ]
+      }
+    },
+    {
+      "else": {
+        "else": {
+          "properties": {
+            "available_pto": {
+              "description": "In The Netherlands, employees are entitled to a minimum of 20 paid time off days per year. Please pro-rate for part-time employment. Please note that Statutory, Bank Holidays and Public Holidays are excluded from the above.",
+              "x-jsf-logic-computedAttrs": {
+                "minimum": "min_part_time_pto",
+                "x-jsf-errorMessage": {
+                  "minimum": "Must be at least {{min_part_time_pto}} days"
+                }
+              }
+            }
+          }
+        },
+        "if": {
+          "properties": {
+            "work_schedule": {
+              "const": "full_time"
+            }
+          },
+          "required": ["work_schedule"]
+        },
+        "then": {
+          "properties": {
+            "available_pto": {
+              "description": "In The Netherlands, employees are entitled to a minimum of 20 paid time off days per year. Please note that Statutory, Bank Holidays and Public Holidays are excluded from the above."
+            }
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "available_pto_type": {
+            "const": "unlimited"
+          }
+        },
+        "required": ["available_pto_type"]
+      },
+      "then": {
+        "properties": {
+          "available_pto": {
+            "const": 20,
+            "default": 20,
+            "title": "Minimum paid time off days",
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "In The Netherlands, employees are entitled to a minimum of 20 paid time off days per year. Please note that Statutory, Bank Holidays and Public Holidays are excluded from the above.",
+                "title": "Minimum of <strong>20 days</strong> of paid time off."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "allOf": [
+          {
+            "properties": {
+              "work_schedule": {
+                "const": "full_time"
+              }
+            },
+            "required": ["work_schedule"]
+          },
+          {
+            "properties": {
+              "contract_duration_type": {
+                "const": "indefinite"
+              }
+            },
+            "required": ["contract_duration_type"]
+          },
+          {
+            "not": {
+              "properties": {
+                "available_pto_type": {
+                  "const": "unlimited"
+                }
+              },
+              "required": ["available_pto_type"]
+            }
+          }
+        ]
+      },
+      "then": {
+        "properties": {
+          "available_pto": {
+            "minimum": 20,
+            "x-jsf-errorMessage": {
+              "minimum": "Must be at least 20 days"
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "contract_duration_type_ack": false,
+          "non_compete_clause_apply": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "indefinite"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "properties": {
+          "notice_period": {
+            "x-jsf-presentation": {
+              "statement": {
+                "title": "The statutory notice period for the <strong>employer is defined at termination</strong>"
+              }
+            }
+          }
+        },
+        "required": ["non_compete_clause_apply", "contract_duration_type_ack"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "probation_length": {
+            "oneOf": [
+              {
+                "const": 2,
+                "description": "We recommend using the longest probation period available in the Netherlands, as you'll need the consent of either the labor court or the Dutch Employee Insurance Agency (UWV) to terminate the employee post-probation. Not electing a probationary period will adversely impact other employment actions including background checks.",
+                "title": "2 months",
+                "x-jsf-presentation": {
+                  "recommended": true
+                }
+              },
+              {
+                "const": 1,
+                "title": "1 month"
+              },
+              {
+                "const": 0,
+                "title": "No probation period"
+              }
+            ]
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "fixed_term"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "properties": {
+          "probation_length": {
+            "oneOf": [
+              {
+                "const": 1,
+                "description": "We recommend using the longest probation period available in the Netherlands, as you'll need the consent of either the labor court or the Dutch Employee Insurance Agency (UWV) to terminate the employee post-probation.",
+                "title": "1 month",
+                "x-jsf-presentation": {
+                  "recommended": true
+                }
+              },
+              {
+                "const": 0,
+                "title": "No probation period"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "extreme_salary_acknowledgement": false,
+          "extreme_salary_warning": false
+        }
+      },
+      "if": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 88975888
+          }
+        },
+        "required": ["annual_gross_salary"]
+      },
+      "then": {
+        "properties": {
+          "extreme_salary_acknowledgement": {
+            "type": "string"
+          },
+          "extreme_salary_warning": {}
+        },
+        "required": ["extreme_salary_acknowledgement"]
+      }
+    }
+  ],
+  "properties": {
+    "annual_gross_salary": {
+      "title": "Annual gross salary",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-logic-computedAttrs": {
+        "description": "{{annual_gross_salary_reserve_description}}",
+        "minimum": "minimum_annual_gross_salary_in_cents",
+        "x-jsf-errorMessage": {
+          "minimum": "In the Netherlands, employees are entitled to a minimum annual salary of EUR {{minimum_annual_gross_salary}}."
+        }
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "inputType": "money",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>Starting <strong>July 1, 2026</strong>, the statutory minimum wage in the Netherlands will increase. To remain compliant, employers must ensure any team member employed in the Netherlands is paid at least the new minimum wage.</p><p>This draft summarizes the updated minimum wage amounts, how holiday allowance impacts the thresholds, and what this means for employers using Remote.</p><h3 id=\"h_01KVZG0T20667SXT84YD7N7QYF\">Who this applies to</h3><p>This update applies to:</p><ul>\n<li data-list-item-id=\"edc59798b34de9327f1c8e6b2bc08f6c7\">Employers with team members employed in the <strong>Netherlands</strong> through Remote Employer of Record (EOR)</li>\n<li data-list-item-id=\"ea1a404912c1d09b75b48bd35a06be810\">Team members in the Netherlands whose salary is <strong>at or below</strong> the statutory minimum wage thresholds</li>\n</ul><h3 id=\"h_01KVZG0T23JK917VCWZ39J17C2\">What’s changing (effective July 1, 2026)</h3><h4 id=\"h_01KVZG0T23NA75H2JKAG48P995\">Minimum wage thresholds (40-hour workweek)</h4><p><strong>Adults (standard threshold)</strong></p><ul>\n<li data-list-item-id=\"e2fc67f6c95f57a3b913ad54666130877\">\n<strong>Annual minimum wage (excluding holiday allowance):</strong> €31,299.12</li>\n<li data-list-item-id=\"e3874a09156efd9030721a16ccd382da3\">\n<strong>Annual minimum wage (including holiday allowance):</strong> €33,803.05</li>\n<li data-list-item-id=\"ecc6cdb1d9ea1cab98a0635cfbfd9bcc4\">\n<strong>Monthly minimum wage (excluding holiday allowance):</strong> €2,608.26</li>\n<li data-list-item-id=\"e74dcfa7b4bb992d4c32743d9f416ebea\">\n<strong>Monthly minimum wage (including holiday allowance):</strong> €2,816.92</li>\n</ul><p><strong>19-year-old threshold</strong></p><ul>\n<li data-list-item-id=\"e46e44b9fa2b3bbd221fa0734a702335c\">\n<strong>Annual minimum wage (excluding holiday allowance):</strong> €18,771.12</li>\n<li data-list-item-id=\"e2a7589cf07418ddbdb89666b2bc9136d\">\n<strong>Annual minimum wage (including holiday allowance):</strong> €20,272.81</li>\n<li data-list-item-id=\"eaf7e41aa6acb34f216c26aa385e82d19\">\n<strong>Monthly minimum wage (excluding holiday allowance):</strong> €1,564.26</li>\n<li data-list-item-id=\"e7e452fdc7ec1e8377192020e8819ef80\">\n<strong>Monthly minimum wage (including holiday allowance):</strong> €1,689.40</li>\n</ul><p><strong>20-year-old threshold</strong></p><ul>\n<li data-list-item-id=\"ed2ce84307c3f2e0a360ebdcad3ef3e84\">\n<strong>Annual minimum wage (excluding holiday allowance):</strong> €25,035.12</li>\n<li data-list-item-id=\"e41bde55ad488f8524e4a622dd69caad3\">\n<strong>Annual minimum wage (including holiday allowance):</strong> €27,037.93</li>\n<li data-list-item-id=\"ea4a0cc18ee32f5586d2d144fbdac5bad\">\n<strong>Monthly minimum wage (excluding holiday allowance):</strong> €2,086.26</li>\n<li data-list-item-id=\"e06745876c07285b1af75885dacb5da4b\">\n<strong>Monthly minimum wage (including holiday allowance):</strong> €2,253.16</li>\n</ul><h3 id=\"h_01KVZG0T29B9TNM3XN3FF58A44\">How holiday allowance affects the minimum wage thresholds</h3><p>In the Netherlands, it’s common for <strong>holiday allowance</strong> to be handled in one of two ways:</p><ul>\n<li data-list-item-id=\"e2974d1187256223dc2b8e072c9ebd8c5\">\n<strong>Included in the salary</strong> (the gross annual/monthly salary already includes holiday allowance), or</li>\n<li data-list-item-id=\"e911f199a7518ee02dd2868e2fe37511d\">\n<strong>Paid on top of the base salary</strong> (holiday allowance is paid in addition to the base salary)</li>\n</ul><p>When comparing a salary to the minimum wage thresholds:</p><ul>\n<li data-list-item-id=\"e78d176102ef8db40c340bdc2f40ee636\">If holiday allowance is <strong>included</strong>, compare to the <strong>“including holiday allowance”</strong> threshold.</li>\n<li data-list-item-id=\"ede28b6544cbca94ab0571ea70928d4b8\">If holiday allowance is <strong>paid on top</strong>, compare the <strong>base salary</strong> to the <strong>“excluding holiday allowance”</strong> threshold.</li>\n</ul><h3 id=\"h_01KVZG0T2BEGRFAFX9VAZ3C9S9\">What this means for employers using Remote</h3><p>If a team member’s salary is below the new statutory minimum wage threshold, a salary update will be required to remain compliant.</p><p>Depending on the situation, Remote may also issue updated documentation for the team member (for example, a salary increase notification letter or other contract update documentation).</p><h3 id=\"h_01KVZG3ZC502KF8Y73C48SH0F6\">Part time employees</h3><p>For part time employees, the minimum wage is prorated based on the contracted hours relative to the 40-hour standard workweek. An employee working 32 hours out of 40 is entitled to 80% of the full time minimum wage threshold. The same holiday allowance logic applies after prorating.</p><h3 id=\"h_01KXKNGT1AA3KKKAB03Q645J5K\">Does holiday allowance count toward the 30% ruling salary threshold?</h3><p>Yes. The 30% ruling has a minimum salary requirement set by Dutch law each year. For 2026, this is €48,013 gross per year, or €36,497 for employees under 30 with a master's degree. Holiday allowance is part of the total fiscal annual salary, so it counts toward meeting this threshold. Payroll calculates this cumulatively across the year, using a year to date method. This works the same way whether holiday allowance is paid out monthly or as a lump sum in May.</p>",
+            "error": false,
+            "id": 46920163299725,
+            "title": "Holiday allowance and minimum wage thresholds in the Netherlands"
+          }
+        }
+      }
+    },
+    "available_pto": {
+      "title": "Number of paid time off days",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more about the requirements",
+            "content": "<p>In the Netherlands, employees working 40 hours per week are entitled to a minimum of 20 days.</p>\n<p> </p>\n<p><strong>What you need to know:</strong></p>\n<p>This number will be applied to the employment agreement for contract purposes. For example, in case of employee termination.</p>\n<p> </p>\n<p><strong>Minimum days per year:</strong></p>\n<p>In the Netherlands, employees working 40 hours per week are entitled to a minimum of 20 days.</p>\n<p> </p>\n<p><strong>Do not include public or bank holidays:</strong></p>\n<p>Statutory, bank, and public holidays are a separate type of time off. Do not include them in the number you enter.</p>",
+            "error": false,
+            "id": 23446399059853,
+            "title": "Number of paid time off days (Netherlands)"
+          }
+        }
+      }
+    },
+    "available_pto_type": {
+      "description": "For personal time off. Also called vacation or annual leave.",
+      "oneOf": [
+        {
+          "const": "unlimited",
+          "description": "Gives the employee an uncapped number of paid time off days per year. The number below is the mandatory minimum number of days they must take.",
+          "title": "Unlimited paid time off"
+        },
+        {
+          "const": "fixed",
+          "description": "The employee gets a set number of paid time off days per year that you establish.",
+          "title": "Fixed paid time off"
+        }
+      ],
+      "title": "Paid time off policy",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "bonus_amount": {
+      "deprecated": true,
+      "readOnly": true,
+      "title": "Bonus amount (deprecated)",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "deprecated": {
+          "description": "Deprecated in favor of 'Bonus Details'. Please, try to leave this field empty."
+        },
+        "inputType": "money"
+      }
+    },
+    "bonus_details": {
+      "description": "Bonus type, payment frequency, and more.",
+      "maxLength": 1000,
+      "title": "Other bonus details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "commissions_ack": {
+      "const": "acknowledged",
+      "description": "I understand that I am required to provide written details of the commission plan to this employee, and upload this document on the platform for record keeping purposes. I acknowledge that Remote will not liable for any claims or losses associated with the commission or bonus plan.",
+      "title": "Confirm commission plan details",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "commissions_details": {
+      "description": "Payment amount, frequency, and more.",
+      "maxLength": 1000,
+      "title": "Commission details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "confidentiality_acknowledgment": {
+      "const": "acknowledged",
+      "description": "There is no minimum or maximum duration for the employee's confidentiality after termination.",
+      "title": "I acknowledge the confidentiality terms",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "contract_duration": {
+      "deprecated": true,
+      "description": "Indefinite or fixed-term contract. If the latter, please state duration and if there's possibility for renewal.",
+      "maxLength": 255,
+      "readOnly": true,
+      "title": "Contract duration (deprecated)",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated field in favor of 'contract_duration_type'."
+        },
+        "inputType": "text"
+      }
+    },
+    "contract_duration_type": {
+      "description": "To minimize risks associated with indefinite contracts, we recommend using three fixed-term agreements of 12 months before offering a permanent position.",
+      "oneOf": [
+        {
+          "const": "fixed_term",
+          "nested_fields": ["contract_end_date"],
+          "title": "Fixed Term",
+          "x-jsf-presentation": {
+            "recommended": true
+          }
+        },
+        {
+          "const": "indefinite",
+          "title": "Indefinite"
+        }
+      ],
+      "title": "Contract duration",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about contract duration",
+            "content": "<p>In the Netherlands, we strongly encourage initially engaging employees on a fixed-term<br>contract of over 6 months and up to 12 months. This duration ensures sufficient time to<br>find a suitable match before committing to an indefinite contract and allows for the<br>implementation of a probation period.</p>\n<p>During the probation period, termination can occur without consent from the court or the<br>UWV (the Dutch Employee Insurance Agency). Once the probation period ends, terminating<br>an employee does require consent. It's important to note that probation periods are not<br>valid in fixed-term contracts lasting 6 months or less.</p>\n<p>For roles that are eligible for commission (such as sales roles), we recommend a<br>fixed-term employment agreement of over 6 months, which includes a 1-month probation<br>period.</p>\n<p id=\"h_01JB21HHGGNQDA889YZ6QA6F8K\"><strong>Indefinite term contracts</strong></p>\n<p>Under Dutch law, indefinite term employment contracts come with certain risks:</p>\n<ul>\n<li>Employees on sick leave receive salary for up to two years, and termination during<br>this period is generally prohibited, making mutual terminations rare and costly</li>\n<li>Due to robust unfair dismissal protections, terminating employees beyond their<br>probation period requires approval from either the court or the UWV (the Dutch<br>Employee Insurance Agency)</li>\n<li>The law favors employees and necessitates extensive proof, making settlement a common<br>and costly outcome</li>\n</ul>\n<p id=\"h_01JB21K6X7T2YD02E80Z2P101W\"><strong>What if an extension of fixed-term contract is needed?</strong></p>\n<p>If an extension is needed, the fixed-term contract may be extended for a second or third<br>period of up to 12 months, a common practice in the Netherlands. A fixed-term employment<br>agreement automatically converts to an indefinite one upon its third renewal or if it<br>the total duration of all fixed-term agreements exceeds 36 months, whichever happens<br>earlier.</p>\n<p> </p>\n<h2 id=\"h_01JB21NAF5EM90YWY8454BHS39\">Differences between the 2 contract types</h2>\n<h3 id=\"h_01JB21YG808T8KVJV4TE2N5K4N\">1. Fixed-Term contract</h3>\n<ul>\n<li>Limited to a specific period, typically 6 to 12 months</li>\n<li>Ends automatically at the end of the term without the need for termination</li>\n<li>Probation periods are not valid for contracts of 6 months or less</li>\n<li>Can be renewed, but automatically converts to an indefinite one upon its third<br>renewal or if it the total duration of all fixed-term agreements exceeds 36 months,<br>whichever happens earlier</li>\n</ul>\n<h3 id=\"01JB21YK79VGFTEPCMWWVX3G88\">2. Indefinite contract</h3>\n<ul>\n<li>No end date</li>\n<li>Termination requires consent from the court or the Dutch Employee Insurance Agency<br>(UWV) for termination after the probation period</li>\n<li>Probation period can be added. During the probation period, termination can occur<br>without consent from the court or the UWV (the Dutch Employee Insurance Agency)</li>\n<li>Renewal is not applicable as the contract does not have a fixed end date</li>\n</ul>",
+            "error": false,
+            "id": 31356937628685,
+            "title": "Contract duration in the Netherlands"
+          }
+        },
+        "statement": {
+          "description": "In the Netherlands, except on expiry of the fixed term (or during probation), an employee cannot be terminated without the consent of the authorities. For this reason, we recommend you engage employees on a fixed term agreement of 7 to 12 months in the first instance and utilise the maximum fixed term agreements thereafter.\n\nWhy a minimum of 7 months? Because we also recommend including a probation period and probation periods are not valid in fixed term agreements of 6 months or less.",
+          "severity": "info",
+          "title": "Information on termination - contract duration"
+        }
+      }
+    },
+    "contract_duration_type_ack": {
+      "const": "acknowledged",
+      "title": "By selecting this option, you acknowledge that you understand and accept the risks associated with an indefinite agreement and consent to proceed with an indefinite agreement",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "contract_end_date": {
+      "format": "date",
+      "maxLength": 255,
+      "title": "Contract end date",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "date",
+        "maxDate": "2029-11-30",
+        "minDate": "2026-12-01"
+      }
+    },
+    "default_weekly_hours": {
+      "description": "What is considered to be full-time employment. This is used as the reference to calculate part-time benefits.",
+      "maximum": 40,
+      "minimum": 36,
+      "title": "Full-time equivalent weekly hours",
+      "type": ["number", "null"],
+      "x-jsf-errorMessage": {
+        "maximum": "Must be no more than 40 hours per week.",
+        "minimum": "Must be at least 36 hours per week."
+      },
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "employee_travel_required": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Is the employee required to travel for work?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "equity_compensation": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "equity_cliff": false,
+              "equity_description": false,
+              "equity_vesting_period": false,
+              "number_of_stock_options": false
+            }
+          },
+          "if": {
+            "properties": {
+              "offer_equity_compensation": {
+                "const": "yes"
+              }
+            },
+            "required": ["offer_equity_compensation"]
+          },
+          "then": {
+            "properties": {
+              "equity_description": {
+                "type": ["string"]
+              }
+            },
+            "required": ["equity_description"]
+          }
+        }
+      ],
+      "properties": {
+        "equity_cliff": {
+          "deprecated": true,
+          "description": "When the first portion of the stock option grant will vest.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Cliff (in months)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "equity_description": {
+          "description": "Please share any information related to the upcoming equity grant.",
+          "maxLength": 1000,
+          "title": "Number of options, RSUs, and other equity",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "textarea"
+          }
+        },
+        "equity_vesting_period": {
+          "deprecated": true,
+          "description": "The number of years it will take for the employee to vest all their options.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Vesting period (in years)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "number_of_stock_options": {
+          "deprecated": true,
+          "description": "Tell us the type of equity you're granting as well.",
+          "maxLength": 255,
+          "readOnly": true,
+          "title": "Number of options, RSUs, or other equity granted",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "text"
+          }
+        },
+        "offer_equity_compensation": {
+          "description": "Granting equity to your team generally triggers tax and legal obligations. In order for you to stay compliant, it's important to declare any equity grants.",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            }
+          ],
+          "title": "Will this employee receive equity?",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "row",
+            "inputType": "radio"
+          }
+        }
+      },
+      "required": ["offer_equity_compensation"],
+      "title": "Equity management",
+      "type": "object",
+      "x-jsf-order": [
+        "offer_equity_compensation",
+        "number_of_stock_options",
+        "equity_cliff",
+        "equity_vesting_period",
+        "equity_description"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 39,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 39,
+              "currency": "USD"
+            }
+          },
+          "helpCenter": {
+            "callToAction": "Learn more about equity management at Remote",
+            "content": "<p>Remote Equity is a lightweight compliance tool designed to help you manage equity grants across borders for team members hired through Remote's Employer of Record (EOR).</p><p>Whether you’re managing vesting, reporting exercises, or navigating local tax laws, Remote Equity gives you the structure to stay compliant, avoid risk, and support your team across borders.</p><h4 id=\"h_01K0YQSYJ8JPKYXNNNW90B0QJP\">Why it matters</h4><p>As your EOR, <strong>Remote is legally responsible</strong> for equity-related tax and reporting in the countries where your team members are employed. That means we don’t just track equity, we:</p><ul>\n<li data-list-item-id=\"eba6b95d2e41a276665f3f64525e0eb59\">Withhold and report taxes when required</li>\n<li data-list-item-id=\"ed16c354038e4b3d908bacd965dc2d71b\">File with local tax authorities</li>\n<li data-list-item-id=\"eb7162ef11477f7a7737fe34a48979559\">Support team members with clear guidance on their tax responsibilities</li>\n</ul><p>Most equity platforms can’t do that because they’re not the legal employer. <strong>Remote Equity ensures we have the data we need, when we need it, to keep your company compliant and your team fairly rewarded.</strong></p><p>Behind the scenes, our tax team:</p><ul>\n<li data-list-item-id=\"ef5c97b0472ebc9a0819e312646e4cd66\">Handles tax withholdings when taxable events occur</li>\n<li data-list-item-id=\"e5f3560641743ab0c57ba47683638560e\">Provides guidance to you and your team, even when no withholding is required</li>\n<li data-list-item-id=\"ed17d307d635b18f9f784df12d1dbe1cd\">Manages additional reporting where local laws demand it</li>\n</ul><p>See also: <a href=\"https://support.remote.com/hc/en-us/articles/37710493624589-What-types-of-equity-grants-should-I-declare-in-Remote-Equity-Essentials\">What types of equity grants should I declare in Remote Equity?</a></p><h4 id=\"h_01K0YQSYJDJ3JYC1C642ASB8E2\">What’s included</h4><p>Remote Equity provides:</p><ul>\n<li data-list-item-id=\"e0cc8d8c0b7d060b9de89e3c870fc1579\">\n<strong>Tracking and alerts</strong> for events that may create a tax obligation (like vesting or exercising)</li>\n<li data-list-item-id=\"e88a2fc75f6f43db27891e415e2f90400\">\n<strong>Automated compliance reminders</strong> based on local deadlines and regulations</li>\n<li data-list-item-id=\"e2c2cf9ef914143e339eb32e1b70c83da\">\n<strong>Localized guidance for team members</strong>, shared through the Remote Equity app</li>\n<li data-list-item-id=\"e8a2c20d648ed01a3db135ef4ada0de61\">\n<strong>Support from Remote’s tax and legal teams</strong>, who handle obligations on your behalf</li>\n<li data-list-item-id=\"e184af2a6420412152b377815ebe18ce2\">\n<strong>Integration with Carta and Pulley</strong> to automatically sync grant declarations and exercise information</li>\n</ul><h4 id=\"h_01K0YQSYJSCK6XYBXF3Q56KRC8\"><strong>Get started in minutes</strong></h4><p>Setup takes less than five minutes. Just log in to your Remote account, and launch the Equity App to follow the setup steps.</p><p>Helpful guides to get started:</p><ul>\n<li data-list-item-id=\"e73e204bc587d3417ecab74e3a29ccc2a\"><a href=\"https://support.remote.com/hc/en-us/articles/37547625350925-How-can-I-access-Remote-Equity-Essentials\">How can I access Remote Equity?</a></li>\n<li data-list-item-id=\"e0ca43a64bf2361ce43443e98200daa5a\"><a href=\"https://support.remote.com/hc/en-us/articles/35577980536589\">How do I declare a grant?</a></li>\n<li data-list-item-id=\"edfa1a00c07a70449ebe34c25dec818fe\"><a href=\"https://support.remote.com/hc/en-us/articles/35671968187149-How-can-my-employees-see-their-equity-information\">How can my team access their equity information?</a></li>\n<li data-list-item-id=\"edaaf9eb107949f79894c24e3b984da30\"><a href=\"https://support.remote.com/hc/en-us/articles/35546454220301-What-happens-if-I-already-declared-equity-before-using-Remote-Equity-Essentials\">What happens if I already declared equity before using Remote Equity?</a></li>\n</ul><h4 id=\"h_01K0YQSYJV9EH2AQ9HWYS1826S\"><span class=\"wysiwyg-underline\">Frequently Asked Questions (FAQs)</span></h4><p><strong>Who needs to use Remote Equity?</strong></p><p>Any Remote customer granting equity to a team member hired through Remote’s EOR must use Remote Equity to meet local compliance requirements.</p><p><strong>Why can’t we just use our own equity tool?</strong></p><p>Traditional equity tools track grants and vesting, but they don't file taxes, withhold contributions, or report income to local authorities. Remote, as the legal employer, is responsible for these actions. Remote Equity ensures those obligations are covered.</p><p><strong>What happens if we don’t use it?</strong></p><p>If Remote doesn’t receive timely and accurate equity data, required filings may be missed. This can result in compliance risks, unexpected tax liabilities, and issues for both your company and your team members.</p><p><strong>How much does Remote Equity cost?</strong></p><p>Remote Equity costs 39 USD per month for each EOR team member with equity. <a href=\"https://support.remote.com/hc/en-us/articles/35546441948685-How-much-does-Remote-Equity-Essentials-cost\">Learn more</a>.</p><p>For comprehensive information, visit the <a href=\"https://support.remote.com/hc/en-us/categories/45788665954189-Remote-Equity\" tabindex=\"0\" data-token-index=\"1\" rel=\"noopener noreferrer\">Remote Equity hub</a>.</p>",
+            "error": false,
+            "id": 38303424407821,
+            "title": "Welcome to Remote Equity: Global equity, without the compliance headaches"
+          }
+        }
+      }
+    },
+    "experience_level": {
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employees overall experience).",
+      "oneOf": [
+        {
+          "const": "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "description": "Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "title": "Level 2 - Entry Level"
+        },
+        {
+          "const": "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+          "description": "Employees who perform independently tasks and/or with coordination and control functions",
+          "title": "Level 3 - Associate"
+        },
+        {
+          "const": "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "description": "Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "title": "Level 4 - Mid-Senior level"
+        },
+        {
+          "const": "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "description": "Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "title": "Level 5 - Director"
+        },
+        {
+          "const": "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "description": "An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "title": "Level 6 - Executive"
+        }
+      ],
+      "title": "Experience level",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "extreme_salary_acknowledgement": {
+      "const": "acknowledged",
+      "title": "",
+      "type": "string",
+      "x-jsf-logic-computedAttrs": {
+        "title": "{{extreme_salary_acknowledgement_title}}"
+      },
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "extreme_salary_warning": {
+      "title": "",
+      "type": "null",
+      "x-jsf-presentation": {
+        "inputType": "hidden",
+        "meta": {
+          "ignoreValue": true
+        },
+        "statement": {
+          "description": "The entered salary is equivalent to USD 1,000,000 or more. Please double check and confirm this amount is correct.",
+          "inputType": "statement",
+          "severity": "warning"
+        }
+      }
+    },
+    "has_bonus": {
+      "description": "Do you want to include any other types of bonuses, such as performance-related bonuses?",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer other bonuses?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_commissions": {
+      "description": "You can outline your policy and pay commission to the employee on the platform. However, commission will not appear in the employment agreement. Please send full policy details directly to the employee.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer commission?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_notice_period": {
+      "deprecated": true,
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        }
+      ],
+      "readOnly": true,
+      "title": "(Deprecated) Add a notice period?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated because we shouldn't allow customers to select (No)."
+        },
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_signing_bonus": {
+      "description": "Do you want to include a one-time signing bonus?",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer a signing bonus?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "holiday_allowance": {
+      "description": "This is 8% of gross annual salary, and can be included in or added on top of the total salary.",
+      "oneOf": [
+        {
+          "const": "On top of salary",
+          "title": "On top of salary"
+        },
+        {
+          "const": "Within the salary",
+          "title": "Within the salary"
+        }
+      ],
+      "title": "Holiday Allowance",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "select",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>Starting <strong>July 1, 2026</strong>, the statutory minimum wage in the Netherlands will increase. To remain compliant, employers must ensure any team member employed in the Netherlands is paid at least the new minimum wage.</p><p>This draft summarizes the updated minimum wage amounts, how holiday allowance impacts the thresholds, and what this means for employers using Remote.</p><h3 id=\"h_01KVZG0T20667SXT84YD7N7QYF\">Who this applies to</h3><p>This update applies to:</p><ul>\n<li data-list-item-id=\"edc59798b34de9327f1c8e6b2bc08f6c7\">Employers with team members employed in the <strong>Netherlands</strong> through Remote Employer of Record (EOR)</li>\n<li data-list-item-id=\"ea1a404912c1d09b75b48bd35a06be810\">Team members in the Netherlands whose salary is <strong>at or below</strong> the statutory minimum wage thresholds</li>\n</ul><h3 id=\"h_01KVZG0T23JK917VCWZ39J17C2\">What’s changing (effective July 1, 2026)</h3><h4 id=\"h_01KVZG0T23NA75H2JKAG48P995\">Minimum wage thresholds (40-hour workweek)</h4><p><strong>Adults (standard threshold)</strong></p><ul>\n<li data-list-item-id=\"e2fc67f6c95f57a3b913ad54666130877\">\n<strong>Annual minimum wage (excluding holiday allowance):</strong> €31,299.12</li>\n<li data-list-item-id=\"e3874a09156efd9030721a16ccd382da3\">\n<strong>Annual minimum wage (including holiday allowance):</strong> €33,803.05</li>\n<li data-list-item-id=\"ecc6cdb1d9ea1cab98a0635cfbfd9bcc4\">\n<strong>Monthly minimum wage (excluding holiday allowance):</strong> €2,608.26</li>\n<li data-list-item-id=\"e74dcfa7b4bb992d4c32743d9f416ebea\">\n<strong>Monthly minimum wage (including holiday allowance):</strong> €2,816.92</li>\n</ul><p><strong>19-year-old threshold</strong></p><ul>\n<li data-list-item-id=\"e46e44b9fa2b3bbd221fa0734a702335c\">\n<strong>Annual minimum wage (excluding holiday allowance):</strong> €18,771.12</li>\n<li data-list-item-id=\"e2a7589cf07418ddbdb89666b2bc9136d\">\n<strong>Annual minimum wage (including holiday allowance):</strong> €20,272.81</li>\n<li data-list-item-id=\"eaf7e41aa6acb34f216c26aa385e82d19\">\n<strong>Monthly minimum wage (excluding holiday allowance):</strong> €1,564.26</li>\n<li data-list-item-id=\"e7e452fdc7ec1e8377192020e8819ef80\">\n<strong>Monthly minimum wage (including holiday allowance):</strong> €1,689.40</li>\n</ul><p><strong>20-year-old threshold</strong></p><ul>\n<li data-list-item-id=\"ed2ce84307c3f2e0a360ebdcad3ef3e84\">\n<strong>Annual minimum wage (excluding holiday allowance):</strong> €25,035.12</li>\n<li data-list-item-id=\"e41bde55ad488f8524e4a622dd69caad3\">\n<strong>Annual minimum wage (including holiday allowance):</strong> €27,037.93</li>\n<li data-list-item-id=\"ea4a0cc18ee32f5586d2d144fbdac5bad\">\n<strong>Monthly minimum wage (excluding holiday allowance):</strong> €2,086.26</li>\n<li data-list-item-id=\"e06745876c07285b1af75885dacb5da4b\">\n<strong>Monthly minimum wage (including holiday allowance):</strong> €2,253.16</li>\n</ul><h3 id=\"h_01KVZG0T29B9TNM3XN3FF58A44\">How holiday allowance affects the minimum wage thresholds</h3><p>In the Netherlands, it’s common for <strong>holiday allowance</strong> to be handled in one of two ways:</p><ul>\n<li data-list-item-id=\"e2974d1187256223dc2b8e072c9ebd8c5\">\n<strong>Included in the salary</strong> (the gross annual/monthly salary already includes holiday allowance), or</li>\n<li data-list-item-id=\"e911f199a7518ee02dd2868e2fe37511d\">\n<strong>Paid on top of the base salary</strong> (holiday allowance is paid in addition to the base salary)</li>\n</ul><p>When comparing a salary to the minimum wage thresholds:</p><ul>\n<li data-list-item-id=\"e78d176102ef8db40c340bdc2f40ee636\">If holiday allowance is <strong>included</strong>, compare to the <strong>“including holiday allowance”</strong> threshold.</li>\n<li data-list-item-id=\"ede28b6544cbca94ab0571ea70928d4b8\">If holiday allowance is <strong>paid on top</strong>, compare the <strong>base salary</strong> to the <strong>“excluding holiday allowance”</strong> threshold.</li>\n</ul><h3 id=\"h_01KVZG0T2BEGRFAFX9VAZ3C9S9\">What this means for employers using Remote</h3><p>If a team member’s salary is below the new statutory minimum wage threshold, a salary update will be required to remain compliant.</p><p>Depending on the situation, Remote may also issue updated documentation for the team member (for example, a salary increase notification letter or other contract update documentation).</p><h3 id=\"h_01KVZG3ZC502KF8Y73C48SH0F6\">Part time employees</h3><p>For part time employees, the minimum wage is prorated based on the contracted hours relative to the 40-hour standard workweek. An employee working 32 hours out of 40 is entitled to 80% of the full time minimum wage threshold. The same holiday allowance logic applies after prorating.</p><h3 id=\"h_01KXKNGT1AA3KKKAB03Q645J5K\">Does holiday allowance count toward the 30% ruling salary threshold?</h3><p>Yes. The 30% ruling has a minimum salary requirement set by Dutch law each year. For 2026, this is €48,013 gross per year, or €36,497 for employees under 30 with a master's degree. Holiday allowance is part of the total fiscal annual salary, so it counts toward meeting this threshold. Payroll calculates this cumulatively across the year, using a year to date method. This works the same way whether holiday allowance is paid out monthly or as a lump sum in May.</p>",
+            "error": false,
+            "id": 46920163299725,
+            "title": "Holiday allowance and minimum wage thresholds in the Netherlands"
+          }
+        }
+      }
+    },
+    "holiday_allowance_payment_frequency": {
+      "oneOf": [
+        {
+          "const": "monthly",
+          "title": "Monthly"
+        },
+        {
+          "const": "yearly",
+          "title": "Once a year"
+        }
+      ],
+      "title": "Holiday allowance payment frequency",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "select"
+      }
+    },
+    "it_equipment": {
+      "deprecated": true,
+      "description": "Will you provide the employee with IT equipment?",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        }
+      ],
+      "readOnly": true,
+      "title": "IT Equipment",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated in favor of 'work_equipment_ack'."
+        },
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_compete_clause_apply": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a non-compete and non-solicit clause?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p>In the Netherlands, courts may determine that the employee is entitled payment in exchange<br>for enforcing the non-compete and the non-solicit. Because of this, we suggest selecting <strong>No</strong>.</p>\n<p>While we make every effort to include non-compete and non-solicit clauses in employment agreements, we can't guarantee their effectiveness. They are fact-specific clauses and we're unable to take action to enforce them against employees.</p>",
+            "error": false,
+            "id": 23445884235661,
+            "title": "Apply a non-compete and non-solicit clause? (Netherlands)"
+          }
+        }
+      }
+    },
+    "non_compete_clause_halt_period_months": {
+      "description": "In the Netherlands, non-competes can be between 1 and 12 months.",
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Length of non-compete in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_solicitation_clause_halt_period_months": {
+      "description": "In the Netherlands, non-solicits can be between 1 and 12 months.",
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Length of non-solicitation in months",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "notice_period": {
+      "const": 1,
+      "default": 1,
+      "description": "The notice period must be 1 month due to the length of the contract.",
+      "title": "Notice period",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "statement": {
+          "title": "Notice period of <strong>1 month.</strong>"
+        }
+      }
+    },
+    "part_time_salary_confirmation": {
+      "const": "acknowledged",
+      "description": "I confirm the annual gross salary has been adjusted for part-time hours. Remote will use this gross salary in the employment agreement for the part-time employee.",
+      "title": "I confirm that this amount is the full annual salary for this part-time employee.",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "probation_length": {
+      "title": "Probation period",
+      "type": "number",
+      "x-jsf-logic-validations": ["is_short_fixed_term"],
+      "x-jsf-presentation": {
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about probation period",
+            "content": "<p>For the Netherlands, Remote recommends selecting the longest probation period duration possible for the <strong>fixed</strong> contract length.</p>\n<h4 id=\"h_01J2HA6Z475Z7EWEMS1XEYNX8W\">Limitations for probationary periods</h4>\n<p><strong>Maximum Duration:</strong></p>\n<ul>\n<li>\n<strong>Indefinite Contracts (Permanent Contracts):</strong>\n<ul>\n<li>Maximum probation period: Two months.</li>\n</ul>\n</li>\n<li>\n<strong>Fixed-Term Contracts:</strong>\n<ul>\n<li>Contracts of six months or less: No probation period is allowed.</li>\n<li>Contracts longer than six months but less than two years: Maximum probation period is one month.</li>\n<li>Contracts of two years or more: Maximum probation period is two months.</li>\n</ul>\n</li>\n</ul>\n<p><strong style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">Mutual Agreement:</strong></p>\n<ul>\n<li>The probation period must be the same for both the employer and the employee.</li>\n<li>It must be <strong>explicitly stated</strong> in the written contract or appointment letter.</li>\n</ul>\n<p><strong>Immediate Termination:</strong></p>\n<ul>\n<li>During the probation period, both parties can terminate the employment contract with immediate effect without providing a reason.</li>\n</ul>\n<h3 id=\"h_01J2HAD126TQZ4P1AB133V6DBR\">Notice Periods</h3>\n<ul>\n<li>The notice period is typically one month unless otherwise agreed in the contract, with a maximum notice period of six months for both employer and employee. The exact duration must be the same for both parties unless otherwise stated in a collective labor agreement (CAO).</li>\n</ul>\n<h3 id=\"h_01J2H9N1MYA9EC6PBZJZFWS5Z6\">Additional Protections</h3>\n<ul>\n<li>\n<strong>Collective Labor Agreements (CAO):</strong>\n<ul>\n<li>Collective labor agreements can set different rules regarding probation periods and contract duration, provided they comply with the minimum legal standards.</li>\n</ul>\n</li>\n<li>\n<strong>Employee Rights:</strong>\n<ul>\n<li>Employees on fixed-term contracts have similar rights to those on indefinite contracts, including rights to sick leave, holiday allowance, and protection against unfair dismissal.</li>\n</ul>\n</li>\n</ul>\n<p>These rules ensure a balance between the flexibility for employers to assess the suitability of new employees and the security and rights of employees within the Dutch labor market.</p>\n<p><!-- notionvc: a3079892-f591-4946-b71f-6946d02abe00 --></p>\n<p> </p>\n<p><span class=\"link-annotation-unknown-block-id--847064249\"><span class=\"notion-enable-hover wysiwyg-font-size-small\" style=\"font-style: italic;\" data-token-index=\"0\"><strong>Disclaimer</strong>: Please be advised that the information provided is for general guidance only and should not be considered legal advice. Clients are strongly encouraged to contact the Lifecycle Contracts Management Team for expert guidance and assistance in navigating the intricate landscape of employee documentation requirements in Netherlands. Consulting with our Lifecycle Contracts Management Team is imperative to ensure compliance with local employment standards legislation. Your proactive engagement with our Lifecycle Contracts Management Team is vital to making informed decisions and adhering to all relevant regulations.</span></span></p>",
+            "error": false,
+            "id": 14718802739341,
+            "title": "Can the probation period in the Netherlands be extended or shortened?"
+          }
+        },
+        "statement": {
+          "description": "In the Netherlands, a post-probation employee cannot be terminated without the consent of the authorities. During probation, consent is not required. For this reason, we recommend you set the probation period to the maximum allowed.\n\nPlease use a fixed-term of over 6 months (i.e not exactly 6 months) if you want to use a probation period. 6 months is not enough to have a valid probation.",
+          "severity": "info",
+          "title": "Information on termination - probation"
+        }
+      }
+    },
+    "role_description": {
+      "description": "Please add at least 3 responsibilities, at least 100 characters in total.",
+      "maxLength": 5000,
+      "minLength": 100,
+      "title": "Role description",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<div class=\"sc-8483994-0 sc-25e5b337-1 gagDAr dNpfwN\">\n<header class=\"sc-8483994-0 sc-98ea0a46-0 cFaANn gAlQJD sc-704369bd-0 jOYBDY\">\n<h2 class=\"sc-c090059b-0 lcffkV sc-704369bd-3 eWYhqz\" id=\"01H7WSRV90B3R0X35RZ21B959A\">Why do I need to define a role description?</h2>\n</header><span class=\"sc-c090059b-0 fISxvo\">It will appear in the employment agreement. Be thorough and accurate, especially if your employee is applying for a visa.</span>\n</div>\n<div class=\"sc-8483994-0 sc-25e5b337-1 gagDAr dNpfwN\"> </div>\n<h2 class=\"sc-8483994-0 gagDAr\" id=\"01H7WSRV908B1DKFVDFKNTN2EZ\"><span class=\"sc-c090059b-0 iaMkhB sc-25e5b337-3 jwgiWP\">Tips for a better role description</span></h2>\n<ul>\n<li class=\"sc-8483994-0 gagDAr\">Keep it short – up to 5 main responsibilities</li>\n<li class=\"sc-8483994-0 gagDAr\"><span style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\">Include punctuation</span></li>\n<li class=\"sc-8483994-0 gagDAr\">No need to mention your company, focus on the specific duties of the role</li>\n</ul>",
+            "error": false,
+            "id": 18019255579405,
+            "title": "Role description"
+          }
+        }
+      }
+    },
+    "salary_overview": {
+      "const": "salary_overview",
+      "default": "salary_overview",
+      "description": "We will request a reserve payment for salaries at or above €150,000.00.",
+      "oneOf": [
+        {
+          "const": "salary_overview",
+          "title": "Salary overview"
+        }
+      ],
+      "title": "Salary overview",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn about reserve payments",
+            "content": "<p>A <strong>reserve payment</strong> is an amount collected by Remote to help safeguard against potential large or unexpected severance costs if a team member's employment or engagement ends.</p><p>In many countries, labor laws require employers to pay <strong>statutory severance.</strong> Depending on the agreement, there may also be additional contractual obligations. Reserve payments help ensure funds are available to cover these costs if they arise.</p><p>Reserves are an <strong>industry-standard practice.</strong> Once a team member resigns or their agreement ends and all termination-related costs have been settled, any remaining reserve balance will be credited or refunded.</p><p>If a reserve payment has been made but <strong>onboarding is not completed</strong>, the full reserve will be credited or refunded. If your account has an overdue balance, Remote may first apply the reserve toward that outstanding amount.</p><blockquote><p><em><strong>Note:</strong> Reserve payments are required only for <strong>Employer of Record (EOR) employees and Contractor of Record (COR) contractors</strong>. They are <strong>not applicable</strong> to Global Payroll (direct employee) or users of our Standard Contractor Management and Contractor Management Plus platforms</em></p></blockquote><h3 id=\"h_01KWVSH6PWV0EARTP636WFMKX5\">Why would a reserve be required?</h3><p>Remote evaluates several factors when determining whether a reserve payment is needed. These may include:</p><ul>\n<li data-list-item-id=\"e4aa5c6c3b06eb3fd8ac290640949dd33\">The <strong>financial exposure</strong> associated with a client’s account</li>\n<li data-list-item-id=\"e6035e43ef90b77827c1d8c41be109918\">The <strong>countries</strong> in which team members are hired</li>\n<li data-list-item-id=\"e270d18c338f92bac8e35ed1f0c29ee6a\">A client’s decision to move from <strong>14-day to 30-day invoice payment terms</strong>\n</li>\n<li data-list-item-id=\"e87b2ad7dca754100d16a8d4ffabfa36a\">\n<strong>Non-standard employment contract terms</strong>, such as:<ul>\n<li data-list-item-id=\"ef35bb2e45f6361dee620f3d1949914de\">Extended notice periods</li>\n<li data-list-item-id=\"e9f05ff898e587ce3d34e80d6d7077b41\">Guaranteed severance clauses</li>\n<li data-list-item-id=\"e7cea63a7d2482bdb28eefffb6948c577\">Seniority recognition</li>\n<li data-list-item-id=\"e5b345cb8f5b041e3897b31092d6f0a06\">Non-compete, non-solicitation, or non-interference clauses</li>\n</ul>\n</li>\n<li data-list-item-id=\"e69603f26c1cfe44abe1b3b9afae0a6eb\">\n<strong>Consistent late invoice payments</strong> may also result in a reserve payment requirement</li>\n</ul><h3 id=\"h_01KWVSH6Q0PMTFJTCBARRMY0F8\">Why was I asked to pay an additional reserve?</h3><p>Some employment agreement terms increase the potential cost of ending an agreement. In these cases, additional reserves may be required.</p><p>Currently, reserves are automatically applied for:</p><ul>\n<li data-list-item-id=\"e016d051d1cae211fd2052be06528b0fb\">Extended notice periods</li>\n<li data-list-item-id=\"e121b7d92f73dc18a98058036faa4c132\">Seniority recognition</li>\n<li data-list-item-id=\"e1173074340c67d1669a2826f7ce530f4\">Non-compete, non-solicitation, or non-interference clauses</li>\n</ul><p>Other agreement terms may require additional review and could result in additional reserve requirements.</p><h4 id=\"h_01KWVSH6Q22W5N0Y71KPX7002S\">Extended notice period</h4><p>Labor laws in each country define a minimum notice period for ending an agreement. If the notice period in the agreement is longer than the statutory minimum, an additional reserve will be required for the difference.</p><p>Example: The minimum notice period is one month, but you request a three-month notice period. In this case, an additional two-month reserve would be required.</p><h4 id=\"h_01KWVSH6Q220ZTQW023A4TTNFK\">Seniority recognition</h4><p>A reserve will be automatically issued where two or more years of service is recognized.</p><p>As a general guideline:</p><ul>\n<li data-list-item-id=\"e325a4b96c617f8a6459e09da118a39d5\">\n<strong>2-4 years</strong> of recognized seniority, a reserve equal to <strong>1-month reserve</strong> is required</li>\n<li data-list-item-id=\"ec4f6d1f140f45060bca310852d94e885\">\n<strong>4-5 years</strong> of recognized seniority, a reserve equal to <strong>2-months</strong> is required</li>\n<li data-list-item-id=\"eeb5b68f0845b6a250366ba6e7449fe41\">\n<strong>More than 5 years</strong> of recognized seniority is subject to <strong>further review</strong>\n</li>\n</ul><p><strong>See also</strong>: <br><a href=\"https://remote.zendesk.com/hc/en-us/articles/12695836286861\">When is a reserve refunded?</a><br><a href=\"https://remote.zendesk.com/hc/en-us/articles/32649353517069\">What is reserve payment in Contractor of Record?</a></p>",
+            "error": false,
+            "id": 12695731865229,
+            "title": "What is a reserve payment?"
+          },
+          "ignoreValue": true
+        }
+      }
+    },
+    "sick_leave_pay": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "sick_leave_percentage": {
+                "const": "internal"
+              }
+            },
+            "required": ["sick_leave_percentage"]
+          },
+          "then": {
+            "properties": {
+              "sick_leave_pay_cap_100": false,
+              "sick_leave_pay_cap_70": false,
+              "sick_leave_pay_internal": {
+                "type": "string"
+              },
+              "sick_leave_percentage": {
+                "oneOf": [
+                  {
+                    "const": "70%",
+                    "title": "Offer sick pay at 70% of the employee’s wages",
+                    "x-jsf-presentation": {
+                      "recommended": true
+                    }
+                  },
+                  {
+                    "const": "100%",
+                    "title": "Offer sick pay at 100% of the employee’s wages"
+                  },
+                  {
+                    "const": "internal",
+                    "description": "I have direct employees in the Netherlands and an internal sick pay policy more favorable than the statutory sick pay policy (70% sick pay policy or 70% of the maximum daily wage, if applicable)",
+                    "title": "I have an applicable internal policy"
+                  }
+                ],
+                "type": "string",
+                "x-jsf-presentation": {
+                  "inputType": "radio"
+                }
+              }
+            },
+            "required": ["sick_leave_pay_internal"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "sick_leave_percentage": {
+                "const": "100%"
+              }
+            },
+            "required": ["sick_leave_percentage"]
+          },
+          "then": {
+            "properties": {
+              "sick_leave_pay_cap_100": {
+                "type": "string"
+              },
+              "sick_leave_pay_cap_70": false,
+              "sick_leave_pay_internal": false
+            },
+            "required": ["sick_leave_pay_cap_100"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "sick_leave_percentage": {
+                "const": "70%"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sick_leave_pay_cap_100": false,
+              "sick_leave_pay_cap_70": {
+                "type": "string"
+              },
+              "sick_leave_pay_internal": false
+            },
+            "required": ["sick_leave_pay_cap_70"]
+          }
+        }
+      ],
+      "properties": {
+        "sick_leave_pay_cap_100": {
+          "oneOf": [
+            {
+              "const": "yes",
+              "description": "For example, based on a monthly salary of 5000.00 EUR, if the policy is 100% with cap, the employee's sick pay would be 5000.00 EUR (100% of 5000.00 EUR) per month.<br /><br />If later they receive a salary increase to 7000.00 EUR per month, their sick pay would be 6154.16 EUR (100% of UWV's cap of 6154.16 EUR) per month, since their salary would be above the cap.",
+              "title": "Yes, 100% with cap (Recommended)",
+              "x-jsf-presentation": {
+                "expanded": true
+              }
+            },
+            {
+              "const": "no",
+              "description": "For example, based on a monthly salary of 5000.00 EUR, if the policy is 100% without cap, the employee's sick pay would be 5000.00 EUR (100% of 5000.00 EUR) per month.",
+              "title": "No, 100% without cap",
+              "x-jsf-presentation": {
+                "expanded": true
+              }
+            }
+          ],
+          "title": "Do you want to apply the Dutch Employee Insurance Agency (UWV) wage cap (6154.16 EUR per month) to the sick pay?",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "direction": "column",
+            "inputType": "radio",
+            "variant": "card-expandable"
+          }
+        },
+        "sick_leave_pay_cap_70": {
+          "oneOf": [
+            {
+              "const": "yes",
+              "description": "For example, based on a monthly salary of 5000.00 EUR, if the policy is 70% with cap, the employee's sick pay would be 3500.00 EUR (70% of 5000.00 EUR) per month.<br /><br />If later they receive a salary increase to 7000.00 EUR per month, their sick pay would be 4307.91 EUR (70% of UWV's cap of 6154.16 EUR) per month, since their salary would be above the cap.",
+              "title": "Yes, 70% with cap (Recommended)",
+              "x-jsf-presentation": {
+                "expanded": true
+              }
+            },
+            {
+              "const": "no",
+              "description": "For example, based on a monthly salary of 5000.00 EUR, if the policy is 70% without cap, the employee's sick pay would be 3500.00 EUR (70% of 5000.00 EUR) per month.",
+              "title": "No, 70% without cap",
+              "x-jsf-presentation": {
+                "expanded": true
+              }
+            }
+          ],
+          "title": "Do you want to apply the Dutch Employee Insurance Agency (UWV) wage cap (6154.16 EUR per month) to the sick pay?",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "direction": "column",
+            "inputType": "radio",
+            "variant": "card-expandable"
+          }
+        },
+        "sick_leave_pay_internal": {
+          "maxLength": 1000,
+          "title": "Describe your policy details",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "textarea"
+          }
+        },
+        "sick_leave_percentage": {
+          "oneOf": [
+            {
+              "const": "70%",
+              "title": "Offer sick pay at 70% of the employee’s wages",
+              "x-jsf-presentation": {
+                "recommended": true
+              }
+            },
+            {
+              "const": "100%",
+              "title": "Offer sick pay at 100% of the employee’s wages"
+            },
+            {
+              "const": "internal",
+              "title": "I have an applicable internal policy"
+            }
+          ],
+          "title": "Sick leave",
+          "type": "string",
+          "x-jsf-presentation": {
+            "hideLabel": true,
+            "inputType": "radio"
+          }
+        }
+      },
+      "required": ["sick_leave_percentage"],
+      "title": "Sick pay",
+      "type": "object",
+      "x-jsf-order": [
+        "sick_leave_percentage",
+        "sick_leave_pay_cap_70",
+        "sick_leave_pay_cap_100",
+        "sick_leave_pay_internal"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset"
+      }
+    },
+    "signing_bonus_amount": {
+      "title": "Signing bonus amount",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "EUR",
+        "inputType": "money"
+      }
+    },
+    "skills_and_qualifications": {
+      "description": "Please add skills, qualifications and fields of expertise of the employee (2-3 points).",
+      "maxLength": 1000,
+      "title": "Skills and qualifications",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "supplemental_benefits_eligible": {
+      "description": "If you have any additional benefits you offer to Employees, such as allowances, additional maternity/paternity leave, PTO policies, travel insurance, or expense policies, you can provide them to the Employee directly. Please be aware, that any policies are subject to applicable law and WILL be considered contractual and so difficult to change once provided.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Supplemental Benefits Eligible?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "work_address": {
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "address": false,
+              "address_line_2": false,
+              "city": false,
+              "postal_code": false
+            }
+          },
+          "if": {
+            "properties": {
+              "is_home_address": {
+                "const": "no"
+              }
+            },
+            "required": ["is_home_address"]
+          },
+          "then": {
+            "required": ["address", "city", "postal_code"]
+          }
+        }
+      ],
+      "properties": {
+        "address": {
+          "description": "Address number and street name.",
+          "maxLength": 255,
+          "title": "Work address line 1",
+          "type": "string",
+          "x-jsf-presentation": {
+            "inputType": "text"
+          }
+        },
+        "address_line_2": {
+          "description": "Apartment number or building number if applicable.",
+          "maxLength": 255,
+          "title": "Work address line 2",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "text"
+          }
+        },
+        "city": {
+          "maxLength": 255,
+          "title": "City",
+          "type": "string",
+          "x-jsf-presentation": {
+            "inputType": "text"
+          }
+        },
+        "is_home_address": {
+          "oneOf": [
+            {
+              "const": "yes",
+              "description": "Select this option if the employee is fully remote.",
+              "title": "Same as the employee's residential address"
+            },
+            {
+              "const": "no",
+              "description": "Select this option if the employee is under a hybrid work regime.",
+              "title": "Different than the employee's residential address"
+            }
+          ],
+          "title": "Local",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "column",
+            "inputType": "radio"
+          }
+        },
+        "postal_code": {
+          "maxLength": 255,
+          "title": "Postal code",
+          "type": "string",
+          "x-jsf-presentation": {
+            "inputType": "text"
+          }
+        }
+      },
+      "required": ["is_home_address"],
+      "title": "Work Address",
+      "type": "object",
+      "x-jsf-order": [
+        "is_home_address",
+        "address",
+        "address_line_2",
+        "city",
+        "postal_code"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset"
+      }
+    },
+    "work_address_is_home_address": {
+      "deprecated": true,
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "title": "null"
+        }
+      ],
+      "readOnly": true,
+      "title": "Work Address (Deprecated)",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "deprecated": {
+          "description": "Deprecated in favor of 'work_address'."
+        },
+        "inputType": "radio"
+      }
+    },
+    "work_equipment_ack": {
+      "const": "acknowledged",
+      "description": "In the Netherlands, you must ensure the employee has a suitable workplace. If they do not, you must provide the equipment or other items like a chair and desk so they can perform their duties.",
+      "title": "I acknowledge the work equipment requirements",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "work_hours_per_week": {
+      "description": "Please indicate the number of hours the employee will work per week.",
+      "title": "Work hours per week",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "work_schedule": {
+      "oneOf": [
+        {
+          "const": "full_time",
+          "title": "Full-time"
+        },
+        {
+          "const": "part_time",
+          "title": "Part-time"
+        }
+      ],
+      "title": "Type of employee",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    }
+  },
+  "required": [
+    "annual_gross_salary",
+    "work_address",
+    "contract_duration_type",
+    "available_pto_type",
+    "available_pto",
+    "confidentiality_acknowledgment",
+    "employee_travel_required",
+    "equity_compensation",
+    "experience_level",
+    "has_bonus",
+    "has_commissions",
+    "holiday_allowance",
+    "holiday_allowance_payment_frequency",
+    "notice_period",
+    "probation_length",
+    "has_signing_bonus",
+    "role_description",
+    "sick_leave_pay",
+    "skills_and_qualifications",
+    "supplemental_benefits_eligible",
+    "work_equipment_ack",
+    "work_hours_per_week",
+    "work_schedule"
+  ],
+  "type": "object",
+  "x-jsf-logic": {
+    "allOf": [
+      {
+        "if": {
+          "validations": {
+            "is_short_fixed_term": {
+              "const": true
+            }
+          }
+        },
+        "then": {
+          "properties": {
+            "probation_length": {
+              "const": 0,
+              "default": 0,
+              "description": "In the Netherlands, employees on contracts lasting 0 to 6 months cannot have a probation period.",
+              "x-jsf-presentation": {
+                "statement": {
+                  "title": "<b>No probation period</b> for this employee."
+                }
+              }
+            }
+          }
+        }
+      }
+    ],
+    "computedValues": {
+      "annual_gross_salary_reserve_description": {
+        "rule": {
+          "if": [
+            {
+              ">=": [
+                {
+                  "var": "annual_gross_salary"
+                },
+                15000000
+              ]
+            },
+            {
+              "cat": [
+                "Minimum annual salary is calculated based on the country's applicable laws.",
+                " ",
+                "A reserve payment will be required, as described above."
+              ]
+            },
+            "Minimum annual salary is calculated based on the country's applicable laws."
+          ]
+        }
+      },
+      "extreme_salary_acknowledgement_title": {
+        "rule": {
+          "cat": [
+            "I have reviewed and verified the annual salary of EUR ",
+            {
+              "money_format": {
+                "/": [
+                  {
+                    "var": "annual_gross_salary"
+                  },
+                  100
+                ]
+              }
+            },
+            "."
+          ]
+        }
+      },
+      "min_part_time_pto": {
+        "rule": {
+          "if": [
+            {
+              "var": "work_hours_per_week"
+            },
+            {
+              "*": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                0.5
+              ]
+            },
+            0
+          ]
+        }
+      },
+      "minimum_annual_gross_salary": {
+        "rule": {
+          "if": [
+            {
+              "===": [
+                {
+                  "var": "work_schedule"
+                },
+                "full_time"
+              ]
+            },
+            {
+              "/": [
+                {
+                  "if": [
+                    {
+                      "===": [
+                        {
+                          "var": "holiday_allowance"
+                        },
+                        "Within the salary"
+                      ]
+                    },
+                    3380305,
+                    3129912
+                  ]
+                },
+                100
+              ]
+            },
+            {
+              "and": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                {
+                  "===": [
+                    {
+                      "var": "work_schedule"
+                    },
+                    "part_time"
+                  ]
+                }
+              ]
+            },
+            {
+              "/": [
+                {
+                  "-": [
+                    {
+                      "/": [
+                        {
+                          "*": [
+                            {
+                              "var": "work_hours_per_week"
+                            },
+                            {
+                              "if": [
+                                {
+                                  "===": [
+                                    {
+                                      "var": "holiday_allowance"
+                                    },
+                                    "Within the salary"
+                                  ]
+                                },
+                                3380305,
+                                3129912
+                              ]
+                            }
+                          ]
+                        },
+                        40
+                      ]
+                    },
+                    {
+                      "%": [
+                        {
+                          "/": [
+                            {
+                              "*": [
+                                {
+                                  "var": "work_hours_per_week"
+                                },
+                                {
+                                  "if": [
+                                    {
+                                      "===": [
+                                        {
+                                          "var": "holiday_allowance"
+                                        },
+                                        "Within the salary"
+                                      ]
+                                    },
+                                    3380305,
+                                    3129912
+                                  ]
+                                }
+                              ]
+                            },
+                            40
+                          ]
+                        },
+                        1
+                      ]
+                    }
+                  ]
+                },
+                100
+              ]
+            },
+            true,
+            0
+          ]
+        }
+      },
+      "minimum_annual_gross_salary_in_cents": {
+        "rule": {
+          "if": [
+            {
+              "===": [
+                {
+                  "var": "work_schedule"
+                },
+                "full_time"
+              ]
+            },
+            {
+              "if": [
+                {
+                  "===": [
+                    {
+                      "var": "holiday_allowance"
+                    },
+                    "Within the salary"
+                  ]
+                },
+                3380305,
+                3129912
+              ]
+            },
+            {
+              "and": [
+                {
+                  "var": "work_hours_per_week"
+                },
+                {
+                  "===": [
+                    {
+                      "var": "work_schedule"
+                    },
+                    "part_time"
+                  ]
+                }
+              ]
+            },
+            {
+              "-": [
+                {
+                  "/": [
+                    {
+                      "*": [
+                        {
+                          "var": "work_hours_per_week"
+                        },
+                        {
+                          "if": [
+                            {
+                              "===": [
+                                {
+                                  "var": "holiday_allowance"
+                                },
+                                "Within the salary"
+                              ]
+                            },
+                            3380305,
+                            3129912
+                          ]
+                        }
+                      ]
+                    },
+                    40
+                  ]
+                },
+                {
+                  "%": [
+                    {
+                      "/": [
+                        {
+                          "*": [
+                            {
+                              "var": "work_hours_per_week"
+                            },
+                            {
+                              "if": [
+                                {
+                                  "===": [
+                                    {
+                                      "var": "holiday_allowance"
+                                    },
+                                    "Within the salary"
+                                  ]
+                                },
+                                3380305,
+                                3129912
+                              ]
+                            }
+                          ]
+                        },
+                        40
+                      ]
+                    },
+                    1
+                  ]
+                }
+              ]
+            },
+            true,
+            0
+          ]
+        }
+      }
+    },
+    "validations": {
+      "is_short_fixed_term": {
+        "rule": {
+          "if": [
+            {
+              "and": [
+                {
+                  "===": [
+                    {
+                      "var": "contract_duration_type"
+                    },
+                    "fixed_term"
+                  ]
+                },
+                {
+                  "!!": [
+                    {
+                      "var": "contract_end_date"
+                    }
+                  ]
+                },
+                {
+                  "<": [
+                    {
+                      "-": [
+                        {
+                          "+": [
+                            {
+                              "*": [
+                                {
+                                  "+": [
+                                    {
+                                      "substr": [
+                                        {
+                                          "var": "contract_end_date"
+                                        },
+                                        0,
+                                        4
+                                      ]
+                                    },
+                                    0
+                                  ]
+                                },
+                                12
+                              ]
+                            },
+                            {
+                              "+": [
+                                {
+                                  "substr": [
+                                    {
+                                      "var": "contract_end_date"
+                                    },
+                                    5,
+                                    2
+                                  ]
+                                },
+                                0
+                              ]
+                            }
+                          ]
+                        },
+                        24324
+                      ]
+                    },
+                    6
+                  ]
+                }
+              ]
+            },
+            true,
+            null
+          ]
+        }
+      }
+    }
+  },
+  "x-jsf-order": [
+    "contract_duration",
+    "contract_duration_type",
+    "contract_duration_type_ack",
+    "contract_end_date",
+    "work_schedule",
+    "work_hours_per_week",
+    "default_weekly_hours",
+    "probation_length",
+    "has_notice_period",
+    "notice_period",
+    "available_pto_type",
+    "available_pto",
+    "sick_leave_pay",
+    "role_description",
+    "experience_level",
+    "skills_and_qualifications",
+    "work_address_is_home_address",
+    "work_address",
+    "employee_travel_required",
+    "salary_overview",
+    "annual_gross_salary",
+    "extreme_salary_warning",
+    "extreme_salary_acknowledgement",
+    "part_time_salary_confirmation",
+    "holiday_allowance",
+    "holiday_allowance_payment_frequency",
+    "has_signing_bonus",
+    "signing_bonus_amount",
+    "has_bonus",
+    "bonus_amount",
+    "bonus_details",
+    "has_commissions",
+    "commissions_details",
+    "commissions_ack",
+    "equity_compensation",
+    "non_compete_clause_apply",
+    "non_compete_clause_halt_period_months",
+    "non_solicitation_clause_halt_period_months",
+    "it_equipment",
+    "work_equipment_ack",
+    "confidentiality_acknowledgment",
+    "supplemental_benefits_eligible"
+  ],
+  "x-rmt-flatFieldsets": {
+    "annual_gross_salary_fieldset": {
+      "propertiesByName": [
+        "holiday_allowance",
+        "holiday_allowance_payment_frequency",
+        "salary_overview",
+        "annual_gross_salary",
+        "extreme_salary_warning",
+        "extreme_salary_acknowledgement",
+        "part_time_salary_confirmation"
+      ],
+      "title": "Annual gross salary"
+    }
+  },
+  "x-rmt-meta": {
+    "jsfVersion": "1"
+  },
+  "x-rmt-schema-changelog": {
+    "changelog": "Fixed-term contracts are now blocked and the option removed when the employee's seniority date is recognized (has_seniority_date: yes), consistent with other countries using the contract_duration component, once the eor_seniority_block and eor_seniority_block_v2_ftc feature flags are enabled for the Netherlands. Employments created before the seniority block cutoff date are grandfathered and unaffected. Remote Admins can still override the block for approved exceptions. The contract_end_date nested-field reference under the Fixed Term option moves from nested_field to nested_fields (a list), matching every other country on this shared component. contract_duration_type no longer pre-fills a default value; the customer must actively choose an option.",
+    "upgradePath": "No action required for existing contracts. Once the Netherlands' batch-2 seniority-block flags are enabled, new contract-details submissions for employments with a recognized seniority date no longer accept fixed_term for contract_duration_type (only indefinite is valid) and contract_end_date is rejected if provided, unless the request is made by a Remote Admin."
+  }
+}

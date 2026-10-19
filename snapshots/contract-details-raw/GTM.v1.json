@@ -1,0 +1,1577 @@
+{
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "GTQ"
+          }
+        },
+        "required": ["compensation_currency_code"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "x-jsf-presentation": {
+              "currency": "GTQ"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "x-jsf-presentation": {
+              "currency": "USD"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "USD"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["compensation_currency_code", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 779273,
+            "x-jsf-errorMessage": {
+              "minimum": "In Guatemala, full-time employees are entitled to a minimum annual salary of $7,792.73."
+            },
+            "x-jsf-presentation": {
+              "currency": "USD"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "GTQ"
+          },
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["compensation_currency_code", "work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "annual_gross_salary": {
+            "minimum": 5953192,
+            "x-jsf-errorMessage": {
+              "minimum": "In Guatemala, full-time employees are entitled to a minimum annual salary of GTQ 59,531.92."
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "const": "USD"
+          }
+        },
+        "required": ["compensation_currency_code"]
+      },
+      "then": {
+        "properties": {
+          "compensation_currency_code": {
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "Before you complete the employee's contract details, please confirm with them that they have a bank account in this currency. This has an additional cost of 50.00 USD per month.",
+                "severity": "info",
+                "title": "The employee will be paid in Guatemalan Quetzal (GTQ)"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "contract_duration_fixed_term_reason": false,
+          "contract_end_date": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "fixed_term"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "properties": {
+          "contract_duration_fixed_term_reason": {
+            "type": ["string"]
+          },
+          "contract_end_date": {
+            "type": ["string"]
+          }
+        },
+        "required": ["contract_end_date", "contract_duration_fixed_term_reason"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "third_party_work_activities": false
+        }
+      },
+      "if": {
+        "properties": {
+          "third_party_work": {
+            "const": "yes"
+          }
+        },
+        "required": ["third_party_work"]
+      },
+      "then": {
+        "properties": {
+          "third_party_work_activities": {
+            "type": ["string"]
+          }
+        },
+        "required": ["third_party_work_activities"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "bonus_amount": false,
+          "bonus_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_bonus"]
+      },
+      "then": {
+        "properties": {
+          "bonus_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["bonus_details"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "commissions_ack": false,
+          "commissions_details": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_commissions": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_commissions"]
+      },
+      "then": {
+        "properties": {
+          "commissions_ack": {
+            "type": ["string"]
+          },
+          "commissions_details": {
+            "type": ["string"]
+          }
+        },
+        "required": ["commissions_details", "commissions_ack"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_compete_clause_halt_period_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_compete_clause_apply": {
+            "const": "yes"
+          },
+          "post_termination_restrictions": {
+            "const": "yes"
+          }
+        },
+        "required": [
+          "non_compete_clause_apply",
+          "post_termination_restrictions"
+        ]
+      },
+      "then": {
+        "properties": {
+          "non_compete_clause_halt_period_months": {
+            "type": "number"
+          }
+        },
+        "required": ["non_compete_clause_halt_period_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_solicitation_employees_number_of_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_solicitation_employees": {
+            "const": "yes"
+          },
+          "post_termination_restrictions": {
+            "const": "yes"
+          }
+        },
+        "required": [
+          "non_solicitation_employees",
+          "post_termination_restrictions"
+        ]
+      },
+      "then": {
+        "required": ["non_solicitation_employees_number_of_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_solicitation_customer_number_of_months": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_solicitation_customers": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_solicitation_customers"]
+      },
+      "then": {
+        "properties": {
+          "non_solicitation_customer_number_of_months": {
+            "type": ["number"]
+          }
+        },
+        "required": ["non_solicitation_customer_number_of_months"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_interference_halt_period": false
+        }
+      },
+      "if": {
+        "properties": {
+          "non_interference_apply": {
+            "const": "yes"
+          }
+        },
+        "required": ["non_interference_apply"]
+      },
+      "then": {
+        "properties": {
+          "non_interference_halt_period": {
+            "type": ["number"]
+          }
+        },
+        "required": ["non_interference_halt_period"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "part_time_salary_confirmation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "part_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "part_time_salary_confirmation": {
+            "type": "string"
+          }
+        },
+        "required": ["part_time_salary_confirmation"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "probation_length_days": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "properties": {
+          "probation_length_days": {
+            "type": ["number"]
+          }
+        },
+        "required": ["probation_length_days"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "has_probation_period": false,
+          "notice_period_ack": false
+        }
+      },
+      "if": {
+        "properties": {
+          "contract_duration_type": {
+            "const": "indefinite"
+          }
+        },
+        "required": ["contract_duration_type"]
+      },
+      "then": {
+        "properties": {
+          "has_probation_period": {
+            "type": ["string"]
+          },
+          "notice_period_ack": {
+            "type": ["string"]
+          }
+        },
+        "required": ["notice_period_ack", "has_probation_period"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "overtime_pay_confirmation": false
+        }
+      },
+      "if": {
+        "properties": {
+          "is_role_managerial": {
+            "const": "no"
+          }
+        },
+        "required": ["is_role_managerial"]
+      },
+      "then": {
+        "properties": {
+          "overtime_pay_confirmation": {
+            "type": ["string"]
+          }
+        },
+        "required": ["overtime_pay_confirmation"]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "part_time_salary_confirmation": {
+            "type": "string"
+          },
+          "work_hours_per_week": {
+            "maximum": 39,
+            "minimum": 1,
+            "x-jsf-errorMessage": {
+              "maximum": "Part-time employees are expected to work a maximum of 39 hours per week.",
+              "minimum": "Part-time employees are expected to work a minimum of 1 hour per week."
+            }
+          }
+        },
+        "required": ["part_time_salary_confirmation"]
+      },
+      "if": {
+        "properties": {
+          "work_schedule": {
+            "const": "full_time"
+          }
+        },
+        "required": ["work_schedule"]
+      },
+      "then": {
+        "properties": {
+          "part_time_salary_confirmation": false,
+          "work_hours_per_week": {
+            "maximum": 44,
+            "minimum": 36,
+            "x-jsf-errorMessage": {
+              "maximum": "Full-time employees are expected to work a maximum of 44 hours per week.",
+              "minimum": "Full-time employees are expected to work a minimum of 36 hours per week."
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "non_compete_clause_apply": false,
+          "non_interference_apply": false,
+          "non_solicitation_customers": false,
+          "non_solicitation_employees": false
+        }
+      },
+      "if": {
+        "properties": {
+          "post_termination_restrictions": {
+            "const": "yes"
+          }
+        },
+        "required": ["post_termination_restrictions"]
+      },
+      "then": {
+        "properties": {
+          "non_compete_clause_apply": {
+            "type": ["string"]
+          },
+          "non_interference_apply": {
+            "type": ["string"]
+          },
+          "non_solicitation_customers": {
+            "type": ["string"]
+          },
+          "non_solicitation_employees": {
+            "type": ["string"]
+          }
+        },
+        "required": [
+          "non_compete_clause_apply",
+          "non_interference_apply",
+          "non_solicitation_customers",
+          "non_solicitation_employees"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "has_probation_period": {
+            "const": "no"
+          }
+        },
+        "required": ["has_probation_period"]
+      },
+      "then": {
+        "properties": {
+          "has_probation_period": {
+            "x-jsf-presentation": {
+              "statement": {
+                "description": "Waiving the probation period is possible but discouraged",
+                "severity": "warning"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "available_pto": false
+        }
+      },
+      "if": {
+        "properties": {
+          "available_pto_type": {
+            "const": "fixed"
+          }
+        },
+        "required": ["available_pto_type"]
+      },
+      "then": {
+        "properties": {
+          "available_pto": {
+            "type": ["number"]
+          }
+        },
+        "required": ["available_pto"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compensation_currency_code": {
+            "enum": ["USD", "GTQ"]
+          }
+        },
+        "required": ["compensation_currency_code"]
+      },
+      "then": {
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "compensation_currency_code": {
+                  "const": "USD"
+                }
+              },
+              "required": ["compensation_currency_code"]
+            },
+            "then": {
+              "properties": {
+                "bonus_amount": {
+                  "x-jsf-presentation": {
+                    "currency": "USD"
+                  }
+                },
+                "incentive_bonus_amount": {
+                  "x-jsf-logic-computedAttrs": {
+                    "description": "By law, employees in Guatemala must be paid a monthly incentive bonus of at least $32.73",
+                    "minimum": "minimum_incentive_bonus_amount",
+                    "x-jsf-errorMessage": {
+                      "minimum": "Must be at least $32.73"
+                    }
+                  },
+                  "x-jsf-presentation": {
+                    "currency": "USD"
+                  }
+                },
+                "signing_bonus_amount": {
+                  "x-jsf-presentation": {
+                    "currency": "USD"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "compensation_currency_code": {
+                  "const": "GTQ"
+                }
+              },
+              "required": ["compensation_currency_code"]
+            },
+            "then": {
+              "properties": {
+                "bonus_amount": {
+                  "x-jsf-presentation": {
+                    "currency": "GTQ"
+                  }
+                },
+                "incentive_bonus_amount": {
+                  "default": 25000,
+                  "description": "By law, employees in Guatemala must be paid a monthly incentive bonus of at least 250 GTQ.",
+                  "minimum": 25000,
+                  "x-jsf-errorMessage": {
+                    "minimum": "Must be at least 250 GTQ"
+                  },
+                  "x-jsf-presentation": {
+                    "currency": "GTQ"
+                  }
+                },
+                "signing_bonus_amount": {
+                  "x-jsf-presentation": {
+                    "currency": "GTQ"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "else": {
+        "properties": {
+          "signing_bonus_amount": false,
+          "signing_bonus_clawback": false
+        }
+      },
+      "if": {
+        "properties": {
+          "has_signing_bonus": {
+            "const": "yes"
+          }
+        },
+        "required": ["has_signing_bonus"]
+      },
+      "then": {
+        "properties": {
+          "signing_bonus_amount": {
+            "type": "integer"
+          },
+          "signing_bonus_clawback": {
+            "type": "string"
+          }
+        },
+        "required": ["signing_bonus_amount", "signing_bonus_clawback"]
+      }
+    }
+  ],
+  "properties": {
+    "additional_holiday_days": {
+      "description": "This can include things like self-care days or paid time off for birthdays.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer additional paid time off?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "allowances": {
+      "description": "Let us know what each allowance covers and its monthly amount. If you’re not offering allowances, you can skip this field.",
+      "maxLength": 1000,
+      "title": "Allowances",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "annual_bonus_ack": {
+      "const": "acknowledged",
+      "description": "In Guatemala, employees receive 13th and 14th month salaries (usually called vacation and Christmas allowances) separate from their annual gross salary. The 13th and 14th salary amounts are based on the employee's regular salary and aren't affected by bonuses or commissions.",
+      "title": "I understand I must pay this employee 13th and 14th month salaries in addition to their annual gross salary",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "annual_gross_salary": {
+      "description": "The minimum annual salary is calculated based on the country's applicable laws.",
+      "title": "Annual gross salary",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "GTQ",
+        "inputType": "money"
+      }
+    },
+    "annual_leave_carry_forward_ack": {
+      "const": "acknowledged",
+      "description": "In case of any carry-over vacation days, the employer must designate the time for usage of these days, within 60 days of the end of the holiday year. This leave cannot be further carried forward, and only paid out upon termination if not enjoyed.",
+      "title": "I understand that in Guatemala, employees cannot carry over unused paid time off from one leave period to the next. I acknowledge that if the employee does not use unused paid time off from a previous leave period within 60 days of the start of the next leave period, I must pay them for the unused days.",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "available_pto": {
+      "description": "Please do not include public holidays in the number you enter. In Guatemala, employees are entitled to a minimum of 15 paid time off days per year after working 150 days at a company.",
+      "maximum": 365,
+      "minimum": 15,
+      "title": "Number of paid time off days",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "available_pto_type": {
+      "description": "For personal time off. Also called vacation or annual leave.",
+      "oneOf": [
+        {
+          "const": "unlimited",
+          "description": "Gives the employee an uncapped number of paid time off days per year. The number below is the mandatory minimum number of days they must take.",
+          "title": "Unlimited paid time off"
+        },
+        {
+          "const": "fixed",
+          "description": "The employee gets a set number of paid time off days per year that you establish.",
+          "title": "Fixed paid time off"
+        }
+      ],
+      "title": "Paid time off policy",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "bonus_details": {
+      "description": "Bonus type, payment frequency, and more.",
+      "maxLength": 1000,
+      "title": "Other bonus details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "commissions_ack": {
+      "const": "acknowledged",
+      "description": "I understand that I am required to provide written details of the commission plan to this employee, and upload this document on the platform for record keeping purposes. I acknowledge that Remote will not liable for any claims or losses associated with the commission or bonus plan.",
+      "title": "Confirm commission plan details",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "commissions_details": {
+      "maxLength": 1000,
+      "minLength": 0,
+      "title": "Commission details",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "compensation_currency_code": {
+      "description": "Salary currency as listed in the employment agreement, not necessarily the currency the employee will be paid in.",
+      "oneOf": [
+        {
+          "const": "GTQ",
+          "title": "Guatemalan Quetzal (GTQ)"
+        },
+        {
+          "const": "USD",
+          "title": "United States Dollar (USD)"
+        }
+      ],
+      "title": "Salary currency in contract",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "select",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 50,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 50,
+              "currency": "USD"
+            }
+          },
+          "non_local_currencies": ["USD"]
+        }
+      }
+    },
+    "contract_duration_fixed_term_reason": {
+      "description": "Fixed-term contracts are allowed only if the work is temporary or seasonal in nature. Otherwise, the contract will be considered indefinite under Guatemalan law.",
+      "maxLength": 10000,
+      "title": "Reason for fixed term contract",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "contract_duration_type": {
+      "description": "In Guatemala, fixed-term contracts are only possible when there is a substantial reason for them. All fixed-term contracts without a substantial reason are considered indefinite-term by law. This also means that if you sign an employee to consecutive fixed-term contracts, Guatemalan law may see that as an indefinite contract.",
+      "oneOf": [
+        {
+          "const": "indefinite",
+          "title": "Indefinite"
+        },
+        {
+          "const": "fixed_term",
+          "title": "Fixed Term"
+        }
+      ],
+      "title": "Contract duration",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "contract_end_date": {
+      "format": "date",
+      "maxLength": 255,
+      "title": "Contract end date",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "date",
+        "minDate": "2026-12-01"
+      }
+    },
+    "employee_travel_required": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Is the employee required to travel for work?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "equity_compensation": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "equity_cliff": false,
+              "equity_description": false,
+              "equity_vesting_period": false,
+              "number_of_stock_options": false
+            }
+          },
+          "if": {
+            "properties": {
+              "offer_equity_compensation": {
+                "const": "yes"
+              }
+            },
+            "required": ["offer_equity_compensation"]
+          },
+          "then": {
+            "properties": {
+              "equity_description": {
+                "type": ["string"]
+              }
+            },
+            "required": ["equity_description"]
+          }
+        }
+      ],
+      "properties": {
+        "equity_cliff": {
+          "deprecated": true,
+          "description": "When the first portion of the stock option grant will vest.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Cliff (in months)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "equity_description": {
+          "description": "Please share any information related to the upcoming equity grant.",
+          "maxLength": 1000,
+          "title": "Number of options, RSUs, and other equity",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "inputType": "textarea"
+          }
+        },
+        "equity_vesting_period": {
+          "deprecated": true,
+          "description": "The number of years it will take for the employee to vest all their options.",
+          "maximum": 100,
+          "minimum": 0,
+          "readOnly": true,
+          "title": "Vesting period (in years)",
+          "type": ["number", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "number"
+          }
+        },
+        "number_of_stock_options": {
+          "deprecated": true,
+          "description": "Tell us the type of equity you're granting as well.",
+          "maxLength": 255,
+          "readOnly": true,
+          "title": "Number of options, RSUs, or other equity granted",
+          "type": ["string", "null"],
+          "x-jsf-presentation": {
+            "deprecated": {
+              "description": "Deprecated in favour of equity_description"
+            },
+            "inputType": "text"
+          }
+        },
+        "offer_equity_compensation": {
+          "description": "Granting equity to your team generally triggers tax and legal obligations. In order for you to stay compliant, it's important to declare any equity grants.",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            }
+          ],
+          "title": "Will this employee receive equity?",
+          "type": "string",
+          "x-jsf-presentation": {
+            "direction": "row",
+            "inputType": "radio"
+          }
+        }
+      },
+      "required": ["offer_equity_compensation"],
+      "title": "Equity management",
+      "type": "object",
+      "x-jsf-order": [
+        "offer_equity_compensation",
+        "number_of_stock_options",
+        "equity_cliff",
+        "equity_vesting_period",
+        "equity_description"
+      ],
+      "x-jsf-presentation": {
+        "inputType": "fieldset",
+        "meta": {
+          "cost": {
+            "calculated": {
+              "amount": 39,
+              "currency": "USD"
+            },
+            "discount": null,
+            "original": {
+              "amount": 39,
+              "currency": "USD"
+            }
+          },
+          "helpCenter": {
+            "callToAction": "Learn more about equity management at Remote",
+            "content": "<p>Remote Equity is a lightweight compliance tool designed to help you manage equity grants across borders for team members hired through Remote's Employer of Record (EOR).</p><p>Whether you’re managing vesting, reporting exercises, or navigating local tax laws, Remote Equity gives you the structure to stay compliant, avoid risk, and support your team across borders.</p><h4 id=\"h_01K0YQSYJ8JPKYXNNNW90B0QJP\">Why it matters</h4><p>As your EOR, <strong>Remote is legally responsible</strong> for equity-related tax and reporting in the countries where your team members are employed. That means we don’t just track equity, we:</p><ul>\n<li data-list-item-id=\"eba6b95d2e41a276665f3f64525e0eb59\">Withhold and report taxes when required</li>\n<li data-list-item-id=\"ed16c354038e4b3d908bacd965dc2d71b\">File with local tax authorities</li>\n<li data-list-item-id=\"eb7162ef11477f7a7737fe34a48979559\">Support team members with clear guidance on their tax responsibilities</li>\n</ul><p>Most equity platforms can’t do that because they’re not the legal employer. <strong>Remote Equity ensures we have the data we need, when we need it, to keep your company compliant and your team fairly rewarded.</strong></p><p>Behind the scenes, our tax team:</p><ul>\n<li data-list-item-id=\"ef5c97b0472ebc9a0819e312646e4cd66\">Handles tax withholdings when taxable events occur</li>\n<li data-list-item-id=\"e5f3560641743ab0c57ba47683638560e\">Provides guidance to you and your team, even when no withholding is required</li>\n<li data-list-item-id=\"ed17d307d635b18f9f784df12d1dbe1cd\">Manages additional reporting where local laws demand it</li>\n</ul><p>See also: <a href=\"https://support.remote.com/hc/en-us/articles/37710493624589-What-types-of-equity-grants-should-I-declare-in-Remote-Equity-Essentials\">What types of equity grants should I declare in Remote Equity?</a></p><h4 id=\"h_01K0YQSYJDJ3JYC1C642ASB8E2\">What’s included</h4><p>Remote Equity provides:</p><ul>\n<li data-list-item-id=\"e0cc8d8c0b7d060b9de89e3c870fc1579\">\n<strong>Tracking and alerts</strong> for events that may create a tax obligation (like vesting or exercising)</li>\n<li data-list-item-id=\"e88a2fc75f6f43db27891e415e2f90400\">\n<strong>Automated compliance reminders</strong> based on local deadlines and regulations</li>\n<li data-list-item-id=\"e2c2cf9ef914143e339eb32e1b70c83da\">\n<strong>Localized guidance for team members</strong>, shared through the Remote Equity app</li>\n<li data-list-item-id=\"e8a2c20d648ed01a3db135ef4ada0de61\">\n<strong>Support from Remote’s tax and legal teams</strong>, who handle obligations on your behalf</li>\n<li data-list-item-id=\"e184af2a6420412152b377815ebe18ce2\">\n<strong>Integration with Carta and Pulley</strong> to automatically sync grant declarations and exercise information</li>\n</ul><h4 id=\"h_01K0YQSYJSCK6XYBXF3Q56KRC8\"><strong>Get started in minutes</strong></h4><p>Setup takes less than five minutes. Just log in to your Remote account, and launch the Equity App to follow the setup steps.</p><p>Helpful guides to get started:</p><ul>\n<li data-list-item-id=\"e73e204bc587d3417ecab74e3a29ccc2a\"><a href=\"https://support.remote.com/hc/en-us/articles/37547625350925-How-can-I-access-Remote-Equity-Essentials\">How can I access Remote Equity?</a></li>\n<li data-list-item-id=\"e0ca43a64bf2361ce43443e98200daa5a\"><a href=\"https://support.remote.com/hc/en-us/articles/35577980536589\">How do I declare a grant?</a></li>\n<li data-list-item-id=\"edfa1a00c07a70449ebe34c25dec818fe\"><a href=\"https://support.remote.com/hc/en-us/articles/35671968187149-How-can-my-employees-see-their-equity-information\">How can my team access their equity information?</a></li>\n<li data-list-item-id=\"edaaf9eb107949f79894c24e3b984da30\"><a href=\"https://support.remote.com/hc/en-us/articles/35546454220301-What-happens-if-I-already-declared-equity-before-using-Remote-Equity-Essentials\">What happens if I already declared equity before using Remote Equity?</a></li>\n</ul><h4 id=\"h_01K0YQSYJV9EH2AQ9HWYS1826S\"><span class=\"wysiwyg-underline\">Frequently Asked Questions (FAQs)</span></h4><p><strong>Who needs to use Remote Equity?</strong></p><p>Any Remote customer granting equity to a team member hired through Remote’s EOR must use Remote Equity to meet local compliance requirements.</p><p><strong>Why can’t we just use our own equity tool?</strong></p><p>Traditional equity tools track grants and vesting, but they don't file taxes, withhold contributions, or report income to local authorities. Remote, as the legal employer, is responsible for these actions. Remote Equity ensures those obligations are covered.</p><p><strong>What happens if we don’t use it?</strong></p><p>If Remote doesn’t receive timely and accurate equity data, required filings may be missed. This can result in compliance risks, unexpected tax liabilities, and issues for both your company and your team members.</p><p><strong>How much does Remote Equity cost?</strong></p><p>Remote Equity costs 39 USD per month for each EOR team member with equity. <a href=\"https://support.remote.com/hc/en-us/articles/35546441948685-How-much-does-Remote-Equity-Essentials-cost\">Learn more</a>.</p><p>For comprehensive information, visit the <a href=\"https://support.remote.com/hc/en-us/categories/45788665954189-Remote-Equity\" tabindex=\"0\" data-token-index=\"1\" rel=\"noopener noreferrer\">Remote Equity hub</a>.</p>",
+            "error": false,
+            "id": 38303424407821,
+            "title": "Welcome to Remote Equity: Global equity, without the compliance headaches"
+          }
+        }
+      }
+    },
+    "experience_level": {
+      "description": "Please select the experience level that aligns with this role based on the job description (not the employees overall experience).",
+      "oneOf": [
+        {
+          "const": "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "description": "Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+          "title": "Level 2 - Entry Level"
+        },
+        {
+          "const": "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+          "description": "Employees who perform independently tasks and/or with coordination and control functions",
+          "title": "Level 3 - Associate"
+        },
+        {
+          "const": "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "description": "Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+          "title": "Level 4 - Mid-Senior level"
+        },
+        {
+          "const": "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "description": "Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+          "title": "Level 5 - Director"
+        },
+        {
+          "const": "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "description": "An Executive is responsible for running an organization. They create plans to help their organizations grow",
+          "title": "Level 6 - Executive"
+        }
+      ],
+      "title": "Experience level",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "radio"
+      }
+    },
+    "has_bonus": {
+      "description": "These can include things like performance-related bonuses.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer other bonuses?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more",
+            "content": "<p><span class=\"sc-c090059b-0 fISxvo\">We do not include bonus specifics in the employment agreement. However, you can create a bonus directly on the platform.</span></p>\n<p><span class=\"sc-c090059b-0 fISxvo\">Please note that if you decide to offer other bonuses, it will be difficult or impossible to withdraw these bonuses if you change your mind later.</span></p>",
+            "error": false,
+            "id": 18019142406029,
+            "title": "Other bonuses"
+          }
+        }
+      }
+    },
+    "has_commissions": {
+      "description": "You can outline your policy and pay commission to the employee on the platform. However, commission will not appear in the employment agreement. Please send full policy details directly to the employee.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer commission?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_probation_period": {
+      "description": "We recommend selecting Yes. In the unfortunate event of a necessary termination, probation periods make the process much easier.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        }
+      ],
+      "title": "Include a probation period?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "has_signing_bonus": {
+      "description": "This is a one-time payment the employee receives when they join your team.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Offer a signing bonus?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "incentive_bonus_amount": {
+      "title": "Monthly incentive bonus amount",
+      "type": "integer",
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "GTQ",
+        "inputType": "money"
+      }
+    },
+    "is_role_managerial": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Is the employee’s role managerial?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_compete_clause_apply": {
+      "description": "This discourages the employee from entering or starting a similar company in competition against your company.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        }
+      ],
+      "title": "Apply a non-compete clause?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_compete_clause_halt_period_months": {
+      "maximum": 12,
+      "minimum": 0,
+      "title": "Non-compete clause duration, in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_interference_apply": {
+      "description": "This prevents the employee from interfering with your company’s business and customer relationships after they leave your company.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        }
+      ],
+      "title": "Apply a non-interference clause?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_interference_halt_period": {
+      "maximum": 12,
+      "minimum": 0,
+      "title": "Duration of non-interference, in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_solicitation_customer_number_of_months": {
+      "maximum": 12,
+      "minimum": 0,
+      "title": "Duration of non-solicit of customers, in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "non_solicitation_customers": {
+      "description": "This discourages the employee from seeking business from your company’s current or prospective customers for a competitor.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        }
+      ],
+      "title": "Apply a non-solicit of customers clause?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_solicitation_employees": {
+      "description": "This would restrict the employee from enticing or hiring your company’s employees for a competing business.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        },
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        }
+      ],
+      "title": "Apply a non-solicitation of employees clause?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "non_solicitation_employees_number_of_months": {
+      "maximum": 12,
+      "minimum": 0,
+      "title": "Duration of non-solicit of employees, in months",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "notice_period_ack": {
+      "const": "acknowledged",
+      "description": "I acknowledge that the duration of a notice period depends on how long the employee’s worked at my company:\n• Less than 6 months: 7-day notice\n• Between 6 months and a year: 10-day notice\n• Between 1 and 5 years: 14-day notice\n• More than 5 years: 30-day notice",
+      "title": "I understand that in Guatemala, notice periods only apply if the employee initiates the termination.",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "overtime_pay_confirmation": {
+      "const": "acknowledged",
+      "title": "I understand that if the employee works overtime, I must include their overtime pay in their paycheck.",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "part_time_salary_confirmation": {
+      "const": "acknowledged",
+      "description": "We'll include the salary in the employment agreement, so please double-check that it's correct.",
+      "title": "I confirm that this amount is the full annual salary for this part-time employee.",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "checkbox"
+      }
+    },
+    "payout_currency_code": {
+      "const": "GTQ",
+      "default": "GTQ",
+      "description": "The currency the employee will be paid in.",
+      "title": "Payout currency",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "hidden"
+      }
+    },
+    "post_termination_restrictions": {
+      "description": "We crafted the clauses with local counsel to provide the best language possible. However, the restrictions cannot be enforced, and we cannot take action against employees for violating them. Because of these details, we recommend selecting No.",
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Do you want to apply any post-termination restrictions (non-compete, non-solicit)?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "probation_length_days": {
+      "description": "In Guatemala, probation periods last a maximum of 60 days.",
+      "maximum": 60,
+      "minimum": 1,
+      "title": "Length of probation period, in days",
+      "type": ["number", "null"],
+      "x-jsf-presentation": {
+        "inputType": "number"
+      }
+    },
+    "role_description": {
+      "description": "Please add at least 3 responsibilities, at least 100 characters in total.",
+      "maxLength": 5000,
+      "minLength": 100,
+      "title": "Role description",
+      "type": "string",
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "signing_bonus_amount": {
+      "minimum": 0,
+      "title": "Signing bonus amount",
+      "type": ["integer", "null"],
+      "x-jsf-errorMessage": {
+        "type": "Please, use US standard currency format. Ex: 1024.12"
+      },
+      "x-jsf-presentation": {
+        "currency": "GTQ",
+        "inputType": "money"
+      }
+    },
+    "signing_bonus_clawback": {
+      "description": "If you apply this clause, the employee will be able to keep their signing bonus only if they work a full year at your company. Otherwise, they will have to repay the signing bonus within 20 days of termination.",
+      "oneOf": [
+        {
+          "const": null,
+          "description": "N/A",
+          "title": "N/A"
+        },
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Apply a signing bonus clawback?",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "third_party_work": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Yes"
+        },
+        {
+          "const": "no",
+          "title": "No"
+        }
+      ],
+      "title": "Can the employee work for third parties or do business on their own while employed by your company?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    },
+    "third_party_work_activities": {
+      "description": "Provide as many details about the approved activities as you can. We’ll include them in the employment agreement.",
+      "maxLength": 10000,
+      "title": "Approved third-party work",
+      "type": ["string", "null"],
+      "x-jsf-presentation": {
+        "inputType": "textarea"
+      }
+    },
+    "work_address_is_home_address": {
+      "oneOf": [
+        {
+          "const": "yes",
+          "title": "Same as their residential address"
+        },
+        {
+          "const": "no",
+          "title": "Different than their residential address"
+        }
+      ],
+      "title": "Employee's work address",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "work_equipment_provided_by": {
+      "oneOf": [
+        {
+          "const": "provided_by_client",
+          "title": "The client provides the equipment"
+        },
+        {
+          "const": "provided_by_employee",
+          "title": "The employee provides the equipment"
+        }
+      ],
+      "title": "Who will provide the employee's work equipment?",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "column",
+        "inputType": "radio"
+      }
+    },
+    "work_hours_per_week": {
+      "description": "In Guatemala, full-time employees work a minimum of 36 and a maximum of 44 hours per week. Part-time employees work a maximum of 39 hours per week. A full-time employee’s weekly work hour limit depends on the time of day they do their work. Learn more about work hour limits",
+      "title": "Work hours per week",
+      "type": "number",
+      "x-jsf-presentation": {
+        "inputType": "number",
+        "meta": {
+          "helpCenter": {
+            "callToAction": "Learn more about work hour limits",
+            "content": "<p>If the full-time employee works:</p>\n<ul>\n<li>Any 8 hours between 6 a.m. and 6 p.m. of the same day, then they can work a maximum of 44 hours per week</li>\n<li>Any 6 hours between 6 p.m. of one day and 6 a.m. of the next day, then they can work a maximum of 36 hours per week</li>\n<li>Any 7 hours over day and night, then they can work a maximum of 42 hours per week</li>\n</ul>\n<p>All employees are entitled to a paid break of at least 30 minutes during a workday.</p>",
+            "error": false,
+            "id": 27168711667213,
+            "title": "Work hours per week (Guatemala)"
+          }
+        }
+      }
+    },
+    "work_schedule": {
+      "oneOf": [
+        {
+          "const": "full_time",
+          "title": "Full-time"
+        },
+        {
+          "const": "part_time",
+          "title": "Part-time"
+        }
+      ],
+      "title": "Type of employee",
+      "type": "string",
+      "x-jsf-presentation": {
+        "direction": "row",
+        "inputType": "radio"
+      }
+    }
+  },
+  "required": [
+    "annual_gross_salary",
+    "compensation_currency_code",
+    "additional_holiday_days",
+    "annual_bonus_ack",
+    "annual_leave_carry_forward_ack",
+    "available_pto_type",
+    "contract_duration_type",
+    "employee_travel_required",
+    "equity_compensation",
+    "experience_level",
+    "has_bonus",
+    "has_commissions",
+    "has_signing_bonus",
+    "incentive_bonus_amount",
+    "is_role_managerial",
+    "post_termination_restrictions",
+    "role_description",
+    "third_party_work",
+    "work_address_is_home_address",
+    "work_equipment_provided_by",
+    "work_hours_per_week",
+    "work_schedule"
+  ],
+  "type": "object",
+  "x-jsf-logic": {
+    "computedValues": {
+      "minimum_incentive_bonus_amount": {
+        "rule": 3273
+      }
+    }
+  },
+  "x-jsf-order": [
+    "contract_duration_type",
+    "contract_end_date",
+    "contract_duration_fixed_term_reason",
+    "work_schedule",
+    "work_hours_per_week",
+    "has_probation_period",
+    "probation_length_days",
+    "notice_period_ack",
+    "available_pto_type",
+    "available_pto",
+    "annual_leave_carry_forward_ack",
+    "additional_holiday_days",
+    "role_description",
+    "experience_level",
+    "is_role_managerial",
+    "overtime_pay_confirmation",
+    "work_address_is_home_address",
+    "employee_travel_required",
+    "compensation_currency_code",
+    "annual_gross_salary",
+    "annual_bonus_ack",
+    "part_time_salary_confirmation",
+    "incentive_bonus_amount",
+    "has_signing_bonus",
+    "signing_bonus_amount",
+    "signing_bonus_clawback",
+    "has_bonus",
+    "bonus_details",
+    "has_commissions",
+    "commissions_details",
+    "commissions_ack",
+    "allowances",
+    "equity_compensation",
+    "post_termination_restrictions",
+    "non_compete_clause_apply",
+    "non_compete_clause_halt_period_months",
+    "non_solicitation_employees",
+    "non_solicitation_employees_number_of_months",
+    "non_solicitation_customers",
+    "non_solicitation_customer_number_of_months",
+    "non_interference_apply",
+    "non_interference_halt_period",
+    "work_equipment_provided_by",
+    "third_party_work",
+    "third_party_work_activities",
+    "payout_currency_code"
+  ],
+  "x-rmt-flatFieldsets": {
+    "annual_gross_salary_fieldset": {
+      "propertiesByName": [
+        "compensation_currency_code",
+        "annual_gross_salary",
+        "annual_bonus_ack",
+        "part_time_salary_confirmation"
+      ],
+      "title": "Annual gross salary"
+    }
+  }
+}
