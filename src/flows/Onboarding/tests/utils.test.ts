@@ -60,6 +60,8 @@ describe('usesJsfV1ContractDetails', () => {
     'ISR',
     'CZE',
     'PRT',
+    'CHN',
+    'KEN',
   ])('should return true for %s', (countryCode) => {
     expect(usesJsfV1ContractDetails(countryCode)).toBe(true);
   });
