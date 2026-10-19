@@ -22,6 +22,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Switzerland (CHE)](./CHE.md)
 - [Czech Republic (CZE)](./CZE.md)
 - [Dominican Republic (DOM)](./DOM.md)
+- [Egypt (EGY)](./EGY.md)
 - [Germany (DEU)](./DEU.md)
 - [Hong Kong (HKG)](./HKG.md)
 - [Iceland (ISL)](./ISL.md)
@@ -68,6 +69,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Colombia             | COL  | v6               | October 2026   |
 | Czech Republic       | CZE  | v7               | October 2026   |
 | Dominican Republic   | DOM  | v6               | October 2026   |
+| Egypt                | EGY  | v6               | October 2026   |
 | Germany              | DEU  | v7               | September 2026 |
 | Hong Kong            | HKG  | v2               | March 2026     |
 | Iceland              | ISL  | v2               | March 2026     |
