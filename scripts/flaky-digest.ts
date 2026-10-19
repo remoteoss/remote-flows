@@ -13,7 +13,7 @@ import {
 import type { FlakyEntry } from './flaky-reporter';
 import { mapWithConcurrency } from './map-with-concurrency';
 
-const NO_ARTIFACT_MESSAGE = /no artifact matches/i;
+const NO_ARTIFACT_MESSAGE = /no artifact matches|no valid artifacts/i;
 
 const WORKFLOWS = [MAIN_WORKFLOW, 'pr.yml'];
 
@@ -98,6 +98,8 @@ async function main() {
         'list',
         '--workflow',
         workflow,
+        '--status',
+        'completed',
         '--limit',
         String(limit),
         '--json',
