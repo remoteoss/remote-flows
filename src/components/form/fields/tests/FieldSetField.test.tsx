@@ -70,6 +70,31 @@ describe('FieldSetField', () => {
     expect(screen.getByRole('group')).toHaveTextContent('Test Fieldset');
   });
 
+  it('skips a field whose computed const is NaN', () => {
+    renderWithFormContext({
+      fields: [
+        {
+          name: 'name',
+          label: 'Name',
+          type: 'text',
+          inputType: 'text',
+        },
+        {
+          name: 'avg_salary',
+          label: 'Standard Hours',
+          type: 'number',
+          inputType: 'number',
+          const: NaN,
+          default: NaN,
+          statement: { title: 'Standard Hours: NaN' },
+        },
+      ] as $TSFixMe,
+    });
+
+    expect(screen.getByLabelText('Name')).toBeInTheDocument();
+    expect(screen.queryByText(/Standard Hours/)).not.toBeInTheDocument();
+  });
+
   it('renders with inset variant', () => {
     renderWithFormContext({
       variant: 'inset',
