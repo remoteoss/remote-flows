@@ -38,7 +38,7 @@ Read each changed file in full, not just the diff hunks — via `Read` when the 
 - Changes to `src/index.tsx` exports, prop signatures, or hook return shapes — flag as **breaking** unless purely additive (public API is contract-bound; see CLAUDE.md)
 - Mutation error handling that skips `mutationToPromise`/`mutateAsyncOrThrow`, or accesses `normalizedErrors`/`fieldErrors`/`rawError`/`response` without narrowing via `isMutationError(error)` first, or that swallows the error instead of re-throwing
 - New React Query usage that doesn't fit either the `queryOptions` factory or custom-hook pattern (see `.cursor/rules/react-query-abstractions.mdc`)
-- Hand-edits to `src/client/*.gen.ts` (must be regenerated via `npm run openapi-ts`, never hand-edited)
+- Hand-edits to `src/client/*.gen.ts` (must be regenerated via `pnpm run openapi-ts`, never hand-edited)
 - HTML from API responses rendered without `sanitizeHtml()` (or DOMPurify)
 - `any` types outside genuine workarounds using `$TSFixMe`
 - New `console.log`/`console.info` (only `console.warn`/`console.error` are allowed outside `scripts/`)
@@ -93,7 +93,7 @@ When uncertain about intent, phrase as a question ("Was this intentional?" rathe
 
 Launch sub-agents in parallel, only when the diff warrants it:
 
-- **Bundle size** — when the diff adds a dependency, a new entry point, or non-trivial code to a flow; sanity-check against `.sizelimit.json` and whether `npm run size:check` would still pass.
+- **Bundle size** — when the diff adds a dependency, a new entry point, or non-trivial code to a flow; sanity-check against `.sizelimit.json` and whether `pnpm run size:check` would still pass.
 - **Breaking-change scan** — when the diff touches `src/index.tsx`, any flow's `hooks.tsx`/`types.ts`, or `RemoteFlowsProvider.tsx`; confirm additive-only or that a `BREAKING CHANGE:` footer is warranted.
 - **Test quality** — when the diff adds/changes tests; check Step 3's test checks against every touched `*.test.tsx`.
 

@@ -67,7 +67,7 @@ export function buildRecurrence(values: Record<string, unknown>): {
  */
 /**
  * Note `custom_days` is not yet in the generated client's create params — it arrives with
- * the next `npm run openapi-ts` once the API change exposing it is deployed. Until then the
+ * the next `pnpm run openapi-ts` once the API change exposing it is deployed. Until then the
  * payload carries it and the API ignores it, so a semi-monthly schedule falls back to the
  * cycle derived from `start_date` — the behaviour before this field existed.
  */

@@ -77,7 +77,7 @@ describe('touchesOtherInputs', () => {
   });
 
   it.each([
-    'package-lock.json',
+    'pnpm-lock.yaml',
     'src/common/createHeadlessForm.tsx',
     'scripts/schema-canary.ts',
     'scripts/schema-canary/lib.ts',
