@@ -1,12 +1,12 @@
 import { useFormContext } from 'react-hook-form';
 import { useEffect } from 'react';
 import { FormField } from '../../ui/form';
-import { isConstAndDefaultEquals } from '@/src/components/form/utils';
+import { isForceValue } from '@/src/components/form/utils';
 import { Field } from '@/src/flows/types';
 
 export function HiddenField(props: Field) {
   const { control, setValue } = useFormContext();
-  const hasForcedConst = isConstAndDefaultEquals(props);
+  const hasForcedConst = isForceValue(props);
 
   // If the field has a forced/computed value (const === default), set it
   // If not it'll get the value from the form state
