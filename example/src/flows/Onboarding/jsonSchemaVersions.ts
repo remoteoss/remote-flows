@@ -185,7 +185,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   KEN: {
     // Kenya
-    contract_details: 2,
+    contract_details: 8,
   },
   KOR: {
     // South Korea
