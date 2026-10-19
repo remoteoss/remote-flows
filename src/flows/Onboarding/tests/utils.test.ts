@@ -72,7 +72,7 @@ describe('usesJsfV1ContractDetails', () => {
   });
 
   it('should return false for the other countries', () => {
-    expect(usesJsfV1ContractDetails('HKG')).toBe(false);
+    expect(usesJsfV1ContractDetails('VNM')).toBe(false);
     expect(usesJsfV1ContractDetails(null)).toBe(false);
   });
 });
@@ -84,7 +84,7 @@ describe('getContractDetailsStrategy', () => {
   });
 
   it('returns rebuild for every other country', () => {
-    expect(getContractDetailsStrategy('HKG')).toBe('rebuild');
+    expect(getContractDetailsStrategy('VNM')).toBe('rebuild');
     expect(getContractDetailsStrategy(null)).toBe('rebuild');
   });
 });
