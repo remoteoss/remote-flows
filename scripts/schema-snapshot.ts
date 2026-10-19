@@ -29,6 +29,7 @@ import {
   formatChanges,
   SchemaFingerprint,
 } from './schema-snapshot/behaviour';
+import { assertServedVersion } from './schema-snapshot/served-version';
 import { mapWithConcurrency } from './schema-canary/lib';
 import { resolvePinnedVersion } from './schema-canary/pinned-versions';
 import {
@@ -128,6 +129,7 @@ async function fetchPinnedSchema(
       `GET /v1/countries/${country}/contract_details?json_schema_version=${version} failed`,
     );
   }
+  assertServedVersion(response.response?.headers, country, version);
   return withJobTitleEligibilityRiskAcknowledgement(response.data.data);
 }
 
