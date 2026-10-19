@@ -253,4 +253,30 @@ describe('Custom JSF Component', () => {
       });
     },
   );
+  describe('rendering an HTML string as extra', () => {
+    const extra =
+      'Contact Remote. <a href="https://example.com/help" target="_blank">Learn more.</a><img src="x" onerror="alert(1)">';
+
+    const verify = () => {
+      const link = screen.getByRole('link', { name: 'Learn more.' });
+      expect(link).toHaveAttribute('href', 'https://example.com/help');
+      expect(link).toHaveAttribute('target', '_blank');
+      expect(screen.queryByText(/<a href/)).not.toBeInTheDocument();
+      expect(document.querySelector('img[onerror]')).not.toBeInTheDocument();
+    };
+
+    it('should render the markup, sanitized, at root level', () => {
+      renderWithForm([createToggleField({ extra })], { payment_type: '' });
+
+      verify();
+    });
+
+    it('should render the markup, sanitized, inside fieldset', () => {
+      renderWithForm([createFieldsetField(createToggleField({ extra }))], {
+        payment_info: { payment_type: '' },
+      });
+
+      verify();
+    });
+  });
 });

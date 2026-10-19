@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { useFormContext } from 'react-hook-form';
 import omit from 'lodash.omit';
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
+import { FieldExtra } from '@/src/components/form/FieldExtra';
 import { Statement } from '@/src/components/form/Statement';
 import { FormFieldNameProvider } from '@/src/components/ui/form';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
@@ -106,7 +107,7 @@ export const JSONSchemaFormFields = ({
                   {...(field.statement as StatementComponentProps['data'])}
                 />
               ) : null}
-              {field.extra ? field.extra : null}
+              <FieldExtra extra={field.extra} />
             </FormFieldNameProvider>,
             field,
             field.name as string,
@@ -170,7 +171,7 @@ export const JSONSchemaFormFields = ({
                 {...(field.statement as StatementComponentProps['data'])}
               />
             ) : null}
-            {field.extra ? field.extra : null}
+            <FieldExtra extra={field.extra} />
           </>,
           field,
           field.name as string,
