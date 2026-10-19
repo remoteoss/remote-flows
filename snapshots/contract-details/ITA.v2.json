@@ -119,7 +119,7 @@
     "available_pto": "number",
     "employee_travel_required": "radio",
     "ita_work_equipment_provided": "select",
-    "work_hours_per_week": "number",
+    "work_hours_per_week": "hidden",
     "experience_level": "radio",
     "probation_length_recommended": "radio",
     "probation_length_unit": "hidden",
