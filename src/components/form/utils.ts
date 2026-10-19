@@ -418,7 +418,7 @@ export async function parseFormValuesToAPI(
         }
       }
 
-      if (hasConstEqualToDefault(field)) {
+      if (isConstAndDefaultEquals(field)) {
         acc[field.name!] = field.const;
       }
 
@@ -861,7 +861,7 @@ export function getMinStartDate(minOnBoardingTime: number) {
   return isWeekend(minDate) ? nextMonday(minDate) : minDate;
 }
 
-export function hasConstEqualToDefault(field: $TSFixMe) {
+export function isConstAndDefaultEquals(field: $TSFixMe) {
   return field.const !== undefined && equal(field.const, field.default);
 }
 
@@ -873,7 +873,7 @@ export function hasConstEqualToDefault(field: $TSFixMe) {
 export function checkFieldHasForcedValue(field: $TSFixMe) {
   // A field to be considered "forced value" must:
   return (
-    hasConstEqualToDefault(field) && // Only accepts a specific value that is also prefilled, meaning it's not critical
+    isConstAndDefaultEquals(field) && // Only accepts a specific value that is also prefilled, meaning it's not critical
     field.type !== 'checkbox' && // Because checkbox must always be visible
     field.type !== 'hidden' // Because hidden inputs shouldn't be visible
   );
