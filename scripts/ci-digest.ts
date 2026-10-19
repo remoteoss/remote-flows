@@ -15,6 +15,7 @@ type RawCheck = {
   workflow: string;
   link: string;
   bucket: string;
+  jobId?: string | null;
 };
 
 function gh(args: string[]): string {
@@ -138,7 +139,12 @@ function main() {
       : prChecksOrBranch();
 
   const failures = failed.map((rawCheck) => {
-    const check: CheckRun = { ...rawCheck, ...parseCheckLink(rawCheck.link) };
+    const parsed = parseCheckLink(rawCheck.link);
+    const check: CheckRun = {
+      ...rawCheck,
+      ...parsed,
+      jobId: rawCheck.jobId ?? parsed.jobId,
+    };
     const log = fetchFailedLog(check);
     if (!log) {
       return {

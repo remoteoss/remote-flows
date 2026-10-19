@@ -55,17 +55,30 @@ export function extractPlaywrightFailures(log: string): string[] {
   return [...specs];
 }
 
-export type RunJob = { name: string; conclusion: string | null; url: string };
+export type RunJob = {
+  name: string;
+  conclusion: string | null;
+  url: string;
+  databaseId: number;
+};
 
 export function jobsToChecks(
   workflow: string,
   jobs: RunJob[],
-): { failed: Pick<CheckRun, 'name' | 'workflow' | 'link'>[]; passing: number } {
+): {
+  failed: Pick<CheckRun, 'name' | 'workflow' | 'link' | 'jobId'>[];
+  passing: number;
+} {
   const failed = jobs
     .filter(
       (job) => job.conclusion === 'failure' || job.conclusion === 'timed_out',
     )
-    .map((job) => ({ name: job.name, workflow, link: job.url }));
+    .map((job) => ({
+      name: job.name,
+      workflow,
+      link: job.url,
+      jobId: String(job.databaseId),
+    }));
   return { failed, passing: jobs.length - failed.length };
 }
 

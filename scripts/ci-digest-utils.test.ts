@@ -266,13 +266,28 @@ describe('jobsToChecks', () => {
   it('keeps only failed jobs and counts the rest as passing', () => {
     expect(
       jobsToChecks('CI Main', [
-        { name: 'Unit Tests', conclusion: 'failure', url: 'https://x/1' },
-        { name: 'Lint', conclusion: 'success', url: 'https://x/2' },
-        { name: 'E2E', conclusion: null, url: 'https://x/3' },
+        {
+          name: 'Unit Tests',
+          conclusion: 'failure',
+          url: 'https://x/1',
+          databaseId: 11,
+        },
+        {
+          name: 'Lint',
+          conclusion: 'success',
+          url: 'https://x/2',
+          databaseId: 12,
+        },
+        { name: 'E2E', conclusion: null, url: 'https://x/3', databaseId: 13 },
       ]),
     ).toEqual({
       failed: [
-        { name: 'Unit Tests', workflow: 'CI Main', link: 'https://x/1' },
+        {
+          name: 'Unit Tests',
+          workflow: 'CI Main',
+          link: 'https://x/1',
+          jobId: '11',
+        },
       ],
       passing: 2,
     });
@@ -310,11 +325,23 @@ describe('jobsToChecks timeouts', () => {
   it('treats timed_out jobs as failed', () => {
     expect(
       jobsToChecks('Nightly', [
-        { name: 'E2E', conclusion: 'timed_out', url: 'https://x/1' },
-        { name: 'Lint', conclusion: 'success', url: 'https://x/2' },
+        {
+          name: 'E2E',
+          conclusion: 'timed_out',
+          url: 'https://x/1',
+          databaseId: 11,
+        },
+        {
+          name: 'Lint',
+          conclusion: 'success',
+          url: 'https://x/2',
+          databaseId: 12,
+        },
       ]),
     ).toEqual({
-      failed: [{ name: 'E2E', workflow: 'Nightly', link: 'https://x/1' }],
+      failed: [
+        { name: 'E2E', workflow: 'Nightly', link: 'https://x/1', jobId: '11' },
+      ],
       passing: 1,
     });
   });
