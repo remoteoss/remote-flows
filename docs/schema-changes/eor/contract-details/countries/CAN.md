@@ -12,7 +12,6 @@ Schema versions for employee onboarding in Canada.
 
 **What changed:**
 
-- Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `CAN`) to inspect field-level diffs between your current pin and v8. Prefer jumping straight from v1 to v8 when upgrading.
 - `probation_length`, `probation_length_weeks` and `probation_length_days` move to a shared probation component. They render and validate the same way for existing consumers.
 - When the employee has a recognized seniority date (`has_seniority_date: "yes"`), all three probation length fields are forbidden, whatever `province_of_residency` is. Flag-gated, so no action is required.
 - `work_hours_per_week` is `hidden` until `work_schedule` and `schedule_type` are both set, so custom UIs shouldn't expect it as a visible number input in the initial form state.
