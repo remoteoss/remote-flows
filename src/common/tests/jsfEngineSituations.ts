@@ -170,6 +170,42 @@ const equitySchema: Schema = {
   'x-jsf-order': ['annual_gross_salary', 'equity_compensation'],
 };
 
+const standardHoursSchema: Schema = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    annual_gross_salary: money('Annual gross salary'),
+    work_hours_per_week: {
+      title: 'Work hours per week',
+      type: 'number',
+      'x-jsf-presentation': { inputType: 'number' },
+    },
+    avg_salary: {
+      title: 'Standard Hours',
+      type: ['number', 'null'],
+      'x-jsf-logic-computedAttrs': {
+        const: 'standard_hours',
+        default: 'standard_hours',
+        'x-jsf-presentation': {
+          statement: {
+            title: 'Standard Hours: <strong>{{standard_hours}}</strong>',
+          },
+        },
+      },
+      'x-jsf-presentation': { inputType: 'number' },
+    },
+  },
+  required: ['annual_gross_salary', 'work_hours_per_week'],
+  'x-jsf-order': ['annual_gross_salary', 'work_hours_per_week', 'avg_salary'],
+  'x-jsf-logic': {
+    computedValues: {
+      standard_hours: {
+        rule: { '*': [{ var: 'work_hours_per_week' }, 2] },
+      },
+    },
+  },
+};
+
 export const chooseInGroup = async (
   user: UserEvent,
   group: RegExp,
@@ -180,6 +216,35 @@ export const chooseInGroup = async (
 };
 
 export const SITUATIONS: Situation[] = [
+  {
+    situation:
+      'forced value computed from an empty field is not rendered as NaN',
+    schema: standardHoursSchema,
+    fill: async (user) => {
+      await user.click(await screen.findByRole('button', { name: 'Validate' }));
+    },
+    assert: async (submitted) => {
+      expect(screen.getByLabelText('Work hours per week')).toBeVisible();
+      expect(screen.queryByLabelText('Standard Hours')).not.toBeInTheDocument();
+      expect(screen.queryByText(/NaN/)).not.toBeInTheDocument();
+      expect(submitted.avg_salary).toBeUndefined();
+    },
+  },
+  {
+    situation: 'forced value computed from a filled field shows its statement',
+    schema: standardHoursSchema,
+    fill: async (user) => {
+      await user.type(
+        await screen.findByLabelText('Work hours per week'),
+        '40',
+      );
+    },
+    assert: async (submitted) => {
+      expect(await screen.findByText('80')).toBeInTheDocument();
+      expect(screen.queryByLabelText('Standard Hours')).not.toBeInTheDocument();
+      expect(submitted.avg_salary).toBe(80);
+    },
+  },
   {
     situation: 'forced money value computed from another money field',
     schema: monthlyAllowanceSchema,

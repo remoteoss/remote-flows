@@ -10,7 +10,10 @@ import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/Zen
 import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
 import { BaseTypes, SupportedTypes } from './types';
 import { StatementComponentProps } from '@/src/types/fields';
-import { checkFieldHasForcedValue } from '@/src/components/form/utils';
+import {
+  checkFieldHasForcedValue,
+  hasNaNConst,
+} from '@/src/components/form/utils';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
 import { BaseFormDescription } from '@/src/components/ui/form';
 
@@ -251,7 +254,8 @@ export function FieldSetField({
               if (
                 field.isVisible === false ||
                 field.deprecated ||
-                field.hidden
+                field.hidden ||
+                hasNaNConst(field)
               ) {
                 return null; // Skip hidden or deprecated fields
               }

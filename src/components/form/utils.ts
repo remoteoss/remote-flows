@@ -874,3 +874,11 @@ export function checkFieldHasForcedValue(field: $TSFixMe) {
     field.type !== 'hidden' // Because hidden inputs shouldn't be visible
   );
 }
+
+/**
+ * A computed `const` that evaluated to NaN because the fields it depends on are still empty.
+ * Such a field has nothing to show or submit yet.
+ */
+export function hasNaNConst(field: $TSFixMe) {
+  return typeof field.const === 'number' && Number.isNaN(field.const);
+}
