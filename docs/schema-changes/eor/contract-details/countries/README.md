@@ -8,6 +8,8 @@ Schema versions can have different implementations per country. Instead of gener
 
 ## Quick Reference
 
+Looking for versions that are being retired? See [deprecated versions](./DEPRECATIONS.md).
+
 ### Countries that have migration guide
 
 These countries have upgraded to different versions, check each guide to know how to migrate or what has changed
