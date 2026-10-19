@@ -233,7 +233,7 @@ function formatReport(results: CountryResult[]): string {
     } else if (result.status === 'no-baseline') {
       lines.push(
         heading,
-        'No baseline for this version. Run `npm run schema-snapshot -- --update` and commit the result.',
+        'No baseline for this version. Run `pnpm run schema-snapshot --update` and commit the result.',
         '',
       );
     } else if (result.status === 'error') {
@@ -291,7 +291,9 @@ async function main() {
   );
 
   if (writtenFiles.length > 0) {
-    execFileSync('npx', ['oxfmt', ...writtenFiles], { stdio: 'inherit' });
+    execFileSync('pnpm', ['exec', 'oxfmt', ...writtenFiles], {
+      stdio: 'inherit',
+    });
   }
 
   const report = formatReport(results);

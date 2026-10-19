@@ -18,9 +18,9 @@ fi
 # Ensure we have the badge data
 if [ ! -f "out/size-data.json" ]; then
   echo "Generating badge data..."
-  npm run build
-  npm run size -- --output out/bundle-analysis.json
-  npm run size:badge --silent out/bundle-analysis.json > out/size-data.json
+  pnpm run build
+  pnpm run size --output out/bundle-analysis.json
+  pnpm --silent run size:badge out/bundle-analysis.json > out/size-data.json
 fi
 
 # Read the badge data (shields.io endpoint format)
