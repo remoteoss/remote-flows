@@ -101,7 +101,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   EGY: {
     // Egypt
-    contract_details: 1,
+    contract_details: 6,
   },
   ESP: {
     // Spain
