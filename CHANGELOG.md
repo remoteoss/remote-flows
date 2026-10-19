@@ -1,5 +1,37 @@
 # @remoteoss/remote-flows
 
+## 1.66.0
+
+### Minor Changes
+
+#### Features
+
+- build contract details once for COL, PAK, NZL, ISR, CZE and PRT (#1596) [#1596](https://github.com/remoteoss/remote-flows/pull/1596)
+- let ci:digest run against a branch and list every failing Playwright spec (#1605) [#1605](https://github.com/remoteoss/remote-flows/pull/1605)
+
+#### Fixes
+
+- account for the EA preview step in onboarding specs (#1604) [#1604](https://github.com/remoteoss/remote-flows/pull/1604)
+- fail when the API serves a different version than requested (#1613) [#1613](https://github.com/remoteoss/remote-flows/pull/1613)
+
+#### Docs
+
+- add a page listing deprecated contract details versions (#1615) [#1615](https://github.com/remoteoss/remote-flows/pull/1615)
+- document save returning DailyScheduleSaveResult (#1603) [#1603](https://github.com/remoteoss/remote-flows/pull/1603)
+
+#### Chores
+
+- move the SDK root to pnpm (#1458) [#1458](https://github.com/remoteoss/remote-flows/pull/1458)
+- move example/ to pnpm and build Vercel deploys with pnpm (#1501) [#1501](https://github.com/remoteoss/remote-flows/pull/1501)
+- point docs and tooling at pnpm for the SDK root (#1610) [#1610](https://github.com/remoteoss/remote-flows/pull/1610)
+- bump EGY contract_details schema version to 6 (#1614) [#1614](https://github.com/remoteoss/remote-flows/pull/1614)
+- update contract details schema canary report (#1616) [#1616](https://github.com/remoteoss/remote-flows/pull/1616)
+- bump PRT contract_details schema to v9 (#1589) [#1589](https://github.com/remoteoss/remote-flows/pull/1589)
+- sync COUNTRY_CONTRACT_VERSIONS with backend (#1607) [#1607](https://github.com/remoteoss/remote-flows/pull/1607)
+- update contract details schema canary report (#1621) [#1621](https://github.com/remoteoss/remote-flows/pull/1621)
+- update contract details schema canary report (#1622) [#1622](https://github.com/remoteoss/remote-flows/pull/1622)
+- report flaky tests and add a flaky:digest script (#1587) [#1587](https://github.com/remoteoss/remote-flows/pull/1587)
+
 ## 1.65.0
 
 ### Minor Changes
