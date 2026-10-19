@@ -33,13 +33,17 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Compare the pinned schemas served by sandbox with the baselines
         id: snapshots
@@ -47,7 +51,7 @@ jobs:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
           VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
-        run: npm run schema-snapshot -- --failures-out="$RUNNER_TEMP/schema-snapshot-failures.md"
+        run: pnpm run schema-snapshot --failures-out="$RUNNER_TEMP/schema-snapshot-failures.md"
 
       - name: Open or update the failure issue
         if: failure() && steps.snapshots.outcome == 'failure'
@@ -107,20 +111,24 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Create the baselines that are missing
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
           VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
-        run: npm run schema-snapshot -- --create-missing --summary-out="$RUNNER_TEMP/schema-snapshot-summary.md"
+        run: pnpm run schema-snapshot --create-missing --summary-out="$RUNNER_TEMP/schema-snapshot-summary.md"
 
       - name: Commit the baselines to the pull request branch
         id: commit

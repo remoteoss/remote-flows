@@ -55,7 +55,7 @@ function checkPinMatchesKit(): boolean {
   );
   console.error(
     chalk.red(
-      `  Set "${PACKAGE_NAME}": "${kitFloor}" in package.json, then run npm install.`,
+      `  Set "${PACKAGE_NAME}": "${kitFloor}" in package.json, then run pnpm install.`,
     ),
   );
   return false;
@@ -74,7 +74,7 @@ function main(): void {
     );
     console.error(
       chalk.red(
-        `  Align the ${PACKAGE_NAME} range in package.json with the one @remoteoss/remote-json-schema-form-kit declares, then run npm install.`,
+        `  Align the ${PACKAGE_NAME} range in package.json with the one @remoteoss/remote-json-schema-form-kit declares, then run pnpm install.`,
       ),
     );
     process.exit(1);

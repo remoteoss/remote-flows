@@ -213,7 +213,7 @@ describe('renderDigest', () => {
     expect(output).toBe(
       [
         'PR #7: 1 failing, 3 other checks',
-        '## PR Checks / Tests [test]\nhttps://x/y\nNext: rerun only the failing file: `npx vitest run <path>`\n```\nFAIL a.test.ts\n```',
+        '## PR Checks / Tests [test]\nhttps://x/y\nNext: rerun only the failing file: `pnpm exec vitest run <path>`\n```\nFAIL a.test.ts\n```',
       ].join('\n\n'),
     );
   });
