@@ -3,6 +3,7 @@ import {
   HeadlessFormStrategy,
   parseValuesForValidation,
 } from '@/src/common/headlessForm';
+import type { Provenance } from './provenance';
 
 type FormValues = Record<string, unknown>;
 
@@ -38,6 +39,7 @@ export type ScenarioDelta = {
 };
 
 export type SchemaFingerprint = {
+  provenance?: Provenance;
   fingerprintVersion: 1;
   base: { visible: string[]; required: string[] };
   types: Record<string, string>;

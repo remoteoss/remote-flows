@@ -65,6 +65,17 @@ export async function seedEmploymentForCountry(
   client: Client,
   country: string,
 ): Promise<string> {
+  return (await seedEmploymentWithDetails(client, country)).employmentId;
+}
+
+/** Same as `seedEmploymentForCountry`, also returning the basic information it was created with. */
+export async function seedEmploymentWithDetails(
+  client: Client,
+  country: string,
+): Promise<{
+  employmentId: string;
+  basicInformation: Record<string, unknown>;
+}> {
   const basicInfoSchema = await fetchSchema(
     client,
     country,
@@ -114,7 +125,7 @@ export async function seedEmploymentForCountry(
     throw error;
   }
 
-  return employmentId;
+  return { employmentId, basicInformation };
 }
 
 async function completePreContractSteps(

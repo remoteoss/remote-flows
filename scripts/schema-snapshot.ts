@@ -30,11 +30,15 @@ import {
   SchemaFingerprint,
 } from './schema-snapshot/behaviour';
 import { mapWithConcurrency } from './map-with-concurrency';
+import {
+  buildProvenance,
+  describeProvenanceDrift,
+} from './schema-snapshot/provenance';
 import { assertServedVersion } from './schema-snapshot/served-version';
 import { resolvePinnedVersion } from './schema-canary/pinned-versions';
 import {
   archiveEmployment,
-  seedEmploymentForCountry,
+  seedEmploymentWithDetails,
 } from './schema-canary/seed-employment';
 import {
   findSkipEntry,
@@ -85,6 +89,7 @@ type CountryResult = {
     | 'no-baseline'
     | 'error';
   changes: FingerprintChange[];
+  provenanceDrift?: string[];
   previousVersion?: number;
   error?: string;
 };
@@ -140,17 +145,18 @@ async function checkCountry(
   const version = resolvePinnedVersion(country, DEFAULT_VERSION);
   let employmentId: string | undefined;
   try {
-    employmentId = await seedEmploymentForCountry(client, country);
+    const seeded = await seedEmploymentWithDetails(client, country);
+    employmentId = seeded.employmentId;
     const schema = await fetchPinnedSchema(
       client,
       country,
       version,
       employmentId,
     );
-    const fingerprint = await fingerprintSchema(
-      schema,
-      getContractDetailsStrategy(country),
-    );
+    const fingerprint: SchemaFingerprint = {
+      ...(await fingerprintSchema(schema, getContractDetailsStrategy(country))),
+      provenance: buildProvenance(schema, seeded.basicInformation),
+    };
 
     if (UPDATE) {
       writeBaseline(country, version, fingerprint);
@@ -175,15 +181,17 @@ async function checkCountry(
       writeBaseline(country, version, fingerprint);
       return { country, version, status: 'created', changes, previousVersion };
     }
-    const changes = diffFingerprints(
-      readBaseline(country, version),
-      fingerprint,
-    );
+    const baseline = readBaseline(country, version);
+    const changes = diffFingerprints(baseline, fingerprint);
     return {
       country,
       version,
       status: changes.length > 0 ? 'changed' : 'unchanged',
       changes,
+      provenanceDrift:
+        changes.length > 0 && fingerprint.provenance
+          ? describeProvenanceDrift(baseline.provenance, fingerprint.provenance)
+          : undefined,
     };
   } catch (error) {
     return {
@@ -230,6 +238,9 @@ function formatReport(results: CountryResult[]): string {
     const heading = `### ${result.country} (pinned v${result.version})`;
     if (result.status === 'changed') {
       lines.push(heading, formatChanges(result.changes), '');
+      if (result.provenanceDrift) {
+        lines.push(...result.provenanceDrift.map((line) => `> ${line}`), '');
+      }
     } else if (result.status === 'created') {
       lines.push(heading, describeCreated(result), '');
     } else if (result.status === 'no-baseline') {
