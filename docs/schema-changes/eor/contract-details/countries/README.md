@@ -60,7 +60,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | -------------------- | ---- | ---------------- | ------------ |
 | Australia            | AUS  | v6               | October 2026 |
 | Belarus              | BLR  | v2               | March 2026   |
-| Canada               | CAN  | v8               | October 2026 |
+| Canada               | CAN  | v7               | October 2026 |
 | China                | CHN  | v8               | October 2026 |
 | Switzerland          | CHE  | v2               | March 2026   |
 | Colombia             | COL  | v6               | October 2026 |
@@ -78,7 +78,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Mauritius            | MUS  | v2               | March 2026   |
 | Malaysia             | MYS  | v5               | October 2026 |
 | Mexico               | MEX  | v8               | October 2026 |
-| Netherlands          | NLD  | v7               | October 2026 |
+| Netherlands          | NLD  | v6               | October 2026 |
 | Nigeria              | NGA  | v5               | October 2026 |
 | Norway               | NOR  | v2               | March 2026   |
 | New Zealand          | NZL  | v8               | October 2026 |

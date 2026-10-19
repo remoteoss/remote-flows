@@ -53,7 +53,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CAN: {
     // Canada
-    contract_details: 8,
+    contract_details: 7,
   },
   CHE: {
     // Switzerland
@@ -249,7 +249,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   NLD: {
     // Netherlands
-    contract_details: 7,
+    contract_details: 6,
   },
   NOR: {
     // Norway

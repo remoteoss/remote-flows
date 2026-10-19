@@ -4,31 +4,11 @@ Schema versions for employee onboarding in the Netherlands.
 
 ## Current Version
 
-**Contract Details:** v7
+**Contract Details:** v6
 
 ## Contract Details
 
-### v7 - Current
-
-**What changed:**
-
-- Probation can no longer be set when the employee has a recognized seniority date (`has_seniority_date: "yes"`), so the probation length field is not available for those employments. Flag-gated, and employments created before the cutoff date are unaffected — no action required for existing contracts.
-
-**Migration:**
-
-```tsx
-<OnboardingFlow
-  options={{
-    jsonSchemaVersionByCountry: {
-      NLD: { contract_details: 7 },
-    },
-  }}
-/>
-```
-
----
-
-### v6
+### v6 - Current
 
 **What changed:**
 
