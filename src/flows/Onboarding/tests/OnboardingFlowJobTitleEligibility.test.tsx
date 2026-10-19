@@ -31,8 +31,8 @@ const schemaPaths = [
   },
   {
     jsfVersion: 'v0',
-    countryCode: 'BRA',
-    countryName: 'Brazil',
+    countryCode: 'VNM',
+    countryName: 'Vietnam',
     schema: contractDetailsSchemaV0JobTitleEligibility,
   },
 ];
