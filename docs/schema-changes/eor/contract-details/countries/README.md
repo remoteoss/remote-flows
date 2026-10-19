@@ -28,6 +28,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Egypt (EGY)](./EGY.md)
 - [Finland (FIN)](./FIN.md)
 - [Germany (DEU)](./DEU.md)
+- [Guatemala (GTM)](./GTM.md)
 - [Hong Kong (HKG)](./HKG.md)
 - [Iceland (ISL)](./ISL.md)
 - [India (IND)](./IND.md)
@@ -79,6 +80,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Egypt                | EGY  | v6               | October 2026   |
 | Finland              | FIN  | v5               | October 2026   |
 | Germany              | DEU  | v7               | September 2026 |
+| Guatemala            | GTM  | v6               | October 2026   |
 | Hong Kong            | HKG  | v2               | March 2026     |
 | Iceland              | ISL  | v2               | March 2026     |
 | India                | IND  | v6               | October 2026   |
