@@ -9,6 +9,7 @@ import {
 import { Client } from '@/src/client/client';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { fillSchema, findSafeStartDate, HolidayDate } from '../fill-schema';
+import { seedFor } from './submit-contract-details';
 
 const BASIC_INFO_VERSION = 4;
 
@@ -88,9 +89,11 @@ export async function seedEmploymentWithDetails(
   const startDate = await findSafeStartDate(country, (code, year) =>
     fetchHolidays(client, code, year),
   );
-  const { values: basicInformation } = fillSchema(basicInfoSchema, {
-    provisional_start_date: startDate,
-  });
+  const { values: basicInformation } = fillSchema(
+    basicInfoSchema,
+    { provisional_start_date: startDate },
+    { seed: seedFor(country) },
+  );
 
   const created = await postV1Employments({
     client,
@@ -167,7 +170,11 @@ async function completePreContractSteps(
     Object.keys((engagementSchema.properties as Record<string, unknown>) ?? {})
       .length > 0
   ) {
-    const { values: engagementDetails } = fillSchema(engagementSchema);
+    const { values: engagementDetails } = fillSchema(
+      engagementSchema,
+      {},
+      { seed: seedFor(country) },
+    );
     const engagement =
       await postV2EmploymentsEmploymentIdEngagementAgreementDetails({
         client,
