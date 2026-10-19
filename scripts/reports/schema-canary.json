@@ -1393,7 +1393,7 @@
     },
     {
       "country": "PRT",
-      "version": 3,
+      "version": 9,
       "strategy": "rebuild",
       "check": "pinned",
       "outcome": "pass"
@@ -1407,7 +1407,7 @@
     },
     {
       "country": "PRT",
-      "version": 3,
+      "version": 9,
       "strategy": "rebuild",
       "check": "submit",
       "outcome": "pass"
