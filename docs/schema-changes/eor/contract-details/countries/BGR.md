@@ -115,7 +115,7 @@ Schema versions for employee onboarding in Bulgaria.
 
 **What changed:**
 
-- Bulgaria moves to the euro: `compensation_currency_code` is removed and the `annual_gross_salary`, `bonus_amount` and `signing_bonus_amount` fields are now in EUR instead of BGN
+- `compensation_currency_code` is removed and the `annual_gross_salary`, `bonus_amount` and `signing_bonus_amount` fields are now in EUR instead of BGN
 - Partners using a custom UI must stop rendering and submitting `compensation_currency_code`
 
 **Migration:**

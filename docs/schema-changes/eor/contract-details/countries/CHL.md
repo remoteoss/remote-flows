@@ -121,7 +121,7 @@ Schema versions for employee onboarding in Chile.
 **What changed:**
 
 - Baseline on the previous form engine (`x-rmt-meta.jsfOldVersion` is `true`)
-- Adds the required `non_compete_clause_apply` yes/no question. When yes, `non_compete_clause_halt_period_months` and either `non_compete_clause_compensation_percentage` (at least 1% of monthly base salary) or `non_compete_clause_compensation_amount` are required
+- Adds the required `non_compete_clause_apply` yes/no question. When yes, `non_compete_clause_halt_period_months` and `non_compete_clause_compensation_percentage` (at least 1% of monthly base salary) are required, and `non_compete_clause_compensation_amount` is shown as the amount computed from the percentage and the annual gross salary
 - Adds the required `non_solicitation_customers` and `non_solicitation_employees` yes/no questions, each with a duration of 1 to 12 months when yes (`non_solicitation_customer_number_of_months`, `non_solicitation_employees_number_of_months`)
 - Partners using a custom UI must render the new required questions
 

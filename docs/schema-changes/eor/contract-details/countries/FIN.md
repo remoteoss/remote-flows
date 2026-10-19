@@ -76,7 +76,7 @@ Schema versions for employee onboarding in Finland.
 **What changed:**
 
 - Baseline on the previous form engine (`x-rmt-meta.jsfOldVersion` is `true`)
-- When `non_compete_clause_apply` is yes, either `non_compete_clause_compensation_percentage` (at least 1% of monthly base salary) or `non_compete_clause_compensation_amount` is now required. Partners using a custom UI must render them
+- When `non_compete_clause_apply` is yes, `non_compete_clause_compensation_percentage` (at least 1% of monthly base salary) is now required, and `non_compete_clause_compensation_amount` is shown as the amount computed from it and the annual gross salary. Partners using a custom UI must render them
 - `non_compete_clause_halt_period_months` is relabelled "Duration in months" and no longer has the 6-month maximum
 
 **Migration:**
