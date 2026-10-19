@@ -18,7 +18,6 @@
       "has_signing_bonus",
       "incentive_bonus_amount",
       "is_role_managerial",
-      "part_time_salary_confirmation",
       "payout_currency_code",
       "post_termination_restrictions",
       "role_description",
@@ -44,7 +43,6 @@
       "has_signing_bonus",
       "incentive_bonus_amount",
       "is_role_managerial",
-      "part_time_salary_confirmation",
       "post_termination_restrictions",
       "role_description",
       "third_party_work",
@@ -76,7 +74,7 @@
     "compensation_currency_code": "select",
     "annual_gross_salary": "money",
     "annual_bonus_ack": "checkbox",
-    "part_time_salary_confirmation": "text",
+    "part_time_salary_confirmation": "checkbox",
     "incentive_bonus_amount": "money",
     "has_signing_bonus": "radio",
     "signing_bonus_amount": "money",
@@ -166,11 +164,11 @@
       ],
       "removedRequired": []
     },
-    "work_schedule=full_time": {
-      "addedVisible": [],
-      "removedVisible": ["part_time_salary_confirmation"],
-      "addedRequired": [],
-      "removedRequired": ["part_time_salary_confirmation"]
+    "work_schedule=part_time": {
+      "addedVisible": ["part_time_salary_confirmation"],
+      "removedVisible": [],
+      "addedRequired": ["part_time_salary_confirmation"],
+      "removedRequired": []
     },
     "available_pto_type=fixed": {
       "addedVisible": ["available_pto"],
@@ -182,18 +180,6 @@
       "addedVisible": ["overtime_pay_confirmation"],
       "removedVisible": [],
       "addedRequired": ["overtime_pay_confirmation"],
-      "removedRequired": []
-    },
-    "compensation_currency_code=GTQ": {
-      "addedVisible": ["bonus_amount"],
-      "removedVisible": [],
-      "addedRequired": [],
-      "removedRequired": []
-    },
-    "compensation_currency_code=USD": {
-      "addedVisible": ["bonus_amount"],
-      "removedVisible": [],
-      "addedRequired": [],
       "removedRequired": []
     },
     "has_signing_bonus=yes": {

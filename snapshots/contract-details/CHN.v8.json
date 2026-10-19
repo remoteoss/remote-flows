@@ -177,11 +177,7 @@
       "removedRequired": []
     },
     "work_schedule=part_time": {
-      "addedVisible": [
-        "notice_period_days",
-        "part_time_salary_confirmation",
-        "work_days_number"
-      ],
+      "addedVisible": ["part_time_salary_confirmation", "work_days_number"],
       "removedVisible": ["termination_rules_ack"],
       "addedRequired": ["part_time_salary_confirmation", "work_days_number"],
       "removedRequired": ["has_probation_period", "termination_rules_ack"]

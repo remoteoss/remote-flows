@@ -44,7 +44,6 @@
       "pension_scheme",
       "pension_scheme_enrollment_status",
       "pension_scheme_enrollment_status_effect_date",
-      "probation_length",
       "risks_acknowledgment",
       "role_description",
       "schedule_type",
@@ -101,7 +100,7 @@
     "contract_duration": "text",
     "contract_duration_type": "radio",
     "probation_length_recommended": "radio",
-    "probation_length": "hidden",
+    "probation_length": "number",
     "contract_end_date": "date",
     "contract_duration_fixed_term_reason": "textarea",
     "work_schedule": "radio",
@@ -326,6 +325,7 @@
         "employer_contribution_type",
         "has_bonus",
         "has_commissions",
+        "probation_length",
         "probation_length_recommended",
         "wage_type"
       ],
@@ -352,6 +352,7 @@
         "employer_contribution_type",
         "has_bonus",
         "has_commissions",
+        "probation_length",
         "probation_length_recommended",
         "wage_type"
       ],
@@ -369,12 +370,6 @@
         "probation_length_recommended",
         "wage_type"
       ],
-      "removedRequired": []
-    },
-    "work_schedule=part_time": {
-      "addedVisible": ["wage_type"],
-      "removedVisible": [],
-      "addedRequired": [],
       "removedRequired": []
     },
     "has_signing_bonus=yes": {
