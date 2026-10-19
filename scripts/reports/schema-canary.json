@@ -469,7 +469,7 @@
     },
     {
       "country": "EGY",
-      "version": 1,
+      "version": 6,
       "strategy": "rebuild",
       "check": "pinned",
       "outcome": "pass"
@@ -483,7 +483,7 @@
     },
     {
       "country": "EGY",
-      "version": 1,
+      "version": 6,
       "strategy": "rebuild",
       "check": "submit",
       "outcome": "pass"

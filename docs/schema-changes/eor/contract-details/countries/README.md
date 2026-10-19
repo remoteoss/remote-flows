@@ -8,6 +8,8 @@ Schema versions can have different implementations per country. Instead of gener
 
 ## Quick Reference
 
+Looking for versions that are being retired? See [deprecated versions](./DEPRECATIONS.md).
+
 ### Countries that have migration guide
 
 These countries have upgraded to different versions, check each guide to know how to migrate or what has changed
@@ -20,6 +22,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Switzerland (CHE)](./CHE.md)
 - [Czech Republic (CZE)](./CZE.md)
 - [Dominican Republic (DOM)](./DOM.md)
+- [Egypt (EGY)](./EGY.md)
 - [Germany (DEU)](./DEU.md)
 - [Hong Kong (HKG)](./HKG.md)
 - [Iceland (ISL)](./ISL.md)
@@ -66,6 +69,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Colombia             | COL  | v6               | October 2026   |
 | Czech Republic       | CZE  | v7               | October 2026   |
 | Dominican Republic   | DOM  | v6               | October 2026   |
+| Egypt                | EGY  | v6               | October 2026   |
 | Germany              | DEU  | v7               | September 2026 |
 | Hong Kong            | HKG  | v2               | March 2026     |
 | Iceland              | ISL  | v2               | March 2026     |
@@ -85,7 +89,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Pakistan             | PAK  | v4               | October 2026   |
 | Philippines          | PHL  | v6               | October 2026   |
 | Poland               | POL  | v5               | October 2026   |
-| Portugal             | PRT  | v3               | March 2026     |
+| Portugal             | PRT  | v9               | March 2026     |
 | Saudi Arabia         | SAU  | v2               | March 2026     |
 | Singapore            | SGP  | v2               | March 2026     |
 | South Africa         | ZAF  | v5               | October 2026   |

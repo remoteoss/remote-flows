@@ -30,6 +30,7 @@ import {
   SchemaFingerprint,
 } from './schema-snapshot/behaviour';
 import { mapWithConcurrency } from './map-with-concurrency';
+import { assertServedVersion } from './schema-snapshot/served-version';
 import { resolvePinnedVersion } from './schema-canary/pinned-versions';
 import {
   archiveEmployment,
@@ -128,6 +129,7 @@ async function fetchPinnedSchema(
       `GET /v1/countries/${country}/contract_details?json_schema_version=${version} failed`,
     );
   }
+  assertServedVersion(response.response?.headers, country, version);
   return withJobTitleEligibilityRiskAcknowledgement(response.data.data);
 }
 
@@ -233,7 +235,7 @@ function formatReport(results: CountryResult[]): string {
     } else if (result.status === 'no-baseline') {
       lines.push(
         heading,
-        'No baseline for this version. Run `npm run schema-snapshot -- --update` and commit the result.',
+        'No baseline for this version. Run `pnpm run schema-snapshot --update` and commit the result.',
         '',
       );
     } else if (result.status === 'error') {
@@ -291,7 +293,9 @@ async function main() {
   );
 
   if (writtenFiles.length > 0) {
-    execFileSync('npx', ['oxfmt', ...writtenFiles], { stdio: 'inherit' });
+    execFileSync('pnpm', ['exec', 'oxfmt', ...writtenFiles], {
+      stdio: 'inherit',
+    });
   }
 
   const report = formatReport(results);
