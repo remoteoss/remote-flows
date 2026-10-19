@@ -12,11 +12,7 @@ import {
   $TSFixMe,
 } from '@/src/types/remoteFlows';
 import { StatementComponentProps } from '@/src/types/fields';
-import {
-  checkFieldHasForcedValue,
-  getFieldsWithFlatFieldsets,
-  hasNaNConst,
-} from './utils';
+import { checkFieldHasForcedValue, getFieldsWithFlatFieldsets } from './utils';
 
 type JSONSchemaFormFieldsProps = {
   fields: JSFFields;
@@ -69,12 +65,7 @@ export const JSONSchemaFormFields = ({
           };
         }
 
-        if (
-          field.isVisible === false ||
-          field.deprecated ||
-          field.hidden ||
-          hasNaNConst(field)
-        ) {
+        if (field.isVisible === false || field.deprecated || field.hidden) {
           return null; // Skip hidden or deprecated fields
         }
 

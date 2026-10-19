@@ -28,9 +28,11 @@ export function ForcedValueField({
   const { components } = useFormFields();
   const transformHtml = useTransformer();
 
+  const isUncomputed = typeof value === 'number' && Number.isNaN(value);
+
   useEffect(() => {
-    setValue(name, value);
-  }, [name, value, setValue]);
+    setValue(name, isUncomputed ? undefined : value);
+  }, [name, value, isUncomputed, setValue]);
 
   const forcedValueDescription = statement?.description || description;
   const forcedValueTitle = statement?.title
@@ -41,7 +43,7 @@ export function ForcedValueField({
   // skip rendering entirely (the value is still set on the form via the effect above).
   const isHiddenValue = !forcedValueDescription && !statement?.title;
 
-  if (isHiddenValue) {
+  if (isHiddenValue || isUncomputed) {
     return null;
   }
 

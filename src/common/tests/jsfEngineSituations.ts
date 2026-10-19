@@ -246,6 +246,21 @@ export const SITUATIONS: Situation[] = [
     },
   },
   {
+    situation: 'forced value computed from a cleared field is not submitted',
+    schema: standardHoursSchema,
+    fill: async (user) => {
+      const hours = await screen.findByLabelText('Work hours per week');
+      await user.type(hours, '40');
+      expect(await screen.findByText('80')).toBeInTheDocument();
+      await user.clear(hours);
+    },
+    assert: async (submitted) => {
+      expect(screen.queryByText('80')).not.toBeInTheDocument();
+      expect(screen.queryByText(/NaN/)).not.toBeInTheDocument();
+      expect(submitted.avg_salary).toBeUndefined();
+    },
+  },
+  {
     situation: 'forced money value computed from another money field',
     schema: monthlyAllowanceSchema,
     fill: async (user) => {

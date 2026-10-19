@@ -869,16 +869,8 @@ export function checkFieldHasForcedValue(field: $TSFixMe) {
   // A field to be considered "forced value" must:
   return (
     field.const !== undefined && // Only accepts a specific value
-    field.const === field.default && // It can be prefilled, meaning it's not critical
+    Object.is(field.const, field.default) && // It can be prefilled, meaning it's not critical
     field.type !== 'checkbox' && // Because checkbox must always be visible
     field.type !== 'hidden' // Because hidden inputs shouldn't be visible
   );
-}
-
-/**
- * A computed `const` that evaluated to NaN because the fields it depends on are still empty.
- * Such a field has nothing to show or submit yet.
- */
-export function hasNaNConst(field: $TSFixMe) {
-  return typeof field.const === 'number' && Number.isNaN(field.const);
 }

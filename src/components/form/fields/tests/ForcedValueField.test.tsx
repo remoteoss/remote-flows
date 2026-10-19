@@ -50,6 +50,17 @@ describe('ForcedValueField Component', () => {
     expect(setValue).toHaveBeenCalledWith('testField', 'forced-value');
   });
 
+  it('clears the form value and renders nothing when the computed value is NaN', () => {
+    const { setValue, container } = renderWithFormContext({
+      ...defaultProps,
+      value: NaN as $TSFixMe,
+      statement: { title: 'Standard Hours: NaN' },
+    });
+
+    expect(setValue).toHaveBeenCalledWith('testField', undefined);
+    expect(container).toBeEmptyDOMElement();
+  });
+
   it('renders the resolved label and description via the registered component', () => {
     renderWithFormContext(defaultProps);
 
