@@ -16,13 +16,17 @@ These countries have upgraded to different versions, check each guide to know ho
 
 - [Australia (AUS)](./AUS.md)
 - [Belarus (BLR)](./BLR.md)
+- [Brazil (BRA)](./BRA.md)
+- [Bulgaria (BGR)](./BGR.md)
 - [Canada (CAN)](./CAN.md)
 - [China (CHN)](./CHN.md)
+- [Chile (CHL)](./CHL.md)
 - [Colombia (COL)](./COL.md)
 - [Switzerland (CHE)](./CHE.md)
 - [Czech Republic (CZE)](./CZE.md)
 - [Dominican Republic (DOM)](./DOM.md)
 - [Egypt (EGY)](./EGY.md)
+- [Finland (FIN)](./FIN.md)
 - [Germany (DEU)](./DEU.md)
 - [Hong Kong (HKG)](./HKG.md)
 - [Iceland (ISL)](./ISL.md)
@@ -63,13 +67,17 @@ These countries have upgraded to different versions, check each guide to know ho
 | -------------------- | ---- | ---------------- | -------------- |
 | Australia            | AUS  | v6               | October 2026   |
 | Belarus              | BLR  | v2               | March 2026     |
+| Brazil               | BRA  | v4               | October 2026   |
+| Bulgaria             | BGR  | v8               | October 2026   |
 | Canada               | CAN  | v7               | October 2026   |
+| Chile                | CHL  | v7               | October 2026   |
 | China                | CHN  | v8               | October 2026   |
 | Switzerland          | CHE  | v2               | March 2026     |
 | Colombia             | COL  | v6               | October 2026   |
 | Czech Republic       | CZE  | v7               | October 2026   |
 | Dominican Republic   | DOM  | v6               | October 2026   |
 | Egypt                | EGY  | v6               | October 2026   |
+| Finland              | FIN  | v5               | October 2026   |
 | Germany              | DEU  | v7               | September 2026 |
 | Hong Kong            | HKG  | v2               | March 2026     |
 | Iceland              | ISL  | v2               | March 2026     |
@@ -77,7 +85,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Ireland              | IRL  | v5               | October 2026   |
 | Israel               | ISR  | v8               | October 2026   |
 | Jamaica              | JAM  | v2               | March 2026     |
-| Kenya                | KEN  | v2               | March 2026     |
+| Kenya                | KEN  | v8               | October 2026   |
 | Lebanon              | LBN  | v2               | March 2026     |
 | Mauritius            | MUS  | v2               | March 2026     |
 | Malaysia             | MYS  | v5               | October 2026   |
