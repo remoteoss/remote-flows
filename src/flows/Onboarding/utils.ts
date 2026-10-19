@@ -176,6 +176,10 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'PRT',
   'CHN',
   'KEN',
+  'BGR',
+  'BRA',
+  'CHL',
+  'FIN',
 ];
 
 /**
