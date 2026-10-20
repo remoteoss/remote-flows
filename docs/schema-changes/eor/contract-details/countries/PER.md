@@ -10,6 +10,8 @@ Schema versions for employee onboarding in Peru.
 
 ### v4 - Current
 
+**Type of change:** risk
+
 **What changed:**
 
 - `contract_duration_type` no longer offers `fixed_term`, and `contract_end_date` is rejected, when the employee has a recognized seniority date (`has_seniority_date: "yes"`). Flag-gated, and employments created before the cutoff date are unaffected, so no action is required for existing contracts. Remote Admins can still override the block for approved exceptions.
@@ -30,6 +32,8 @@ Schema versions for employee onboarding in Peru.
 
 ### v3
 
+**Type of change:** risk
+
 **What changed:**
 
 - Extreme-salary acknowledgement: a warning and a required checkbox appear when the annual salary is at or above the USD 1,000,000 equivalent. Additive and flag-gated, so no action is required unless a submitted salary crosses that threshold.
@@ -49,6 +53,8 @@ Schema versions for employee onboarding in Peru.
 ---
 
 ### v2
+
+**Type of change:** risk, technical
 
 **What changed:**
 

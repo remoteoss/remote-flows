@@ -10,6 +10,8 @@ Schema versions for employee onboarding in Argentina.
 
 ### v5 - Current
 
+**Type of change:** risk
+
 **What changed:**
 
 - Extreme-salary acknowledgement: a warning and a required checkbox appear when the annual salary is at or above the USD 1,000,000 equivalent. Additive and flag-gated, so no action is required unless a submitted salary crosses that threshold.
@@ -29,6 +31,8 @@ Schema versions for employee onboarding in Argentina.
 ---
 
 ### v4
+
+**Type of change:** risk, technical
 
 **What changed:**
 
@@ -51,6 +55,8 @@ Schema versions for employee onboarding in Argentina.
 
 ### v3
 
+**Type of change:** compliance
+
 **What changed:**
 
 - The minimum `available_pto` is 14 days for part-time employments too, and the field description no longer asks to pro-rate it.
@@ -70,6 +76,8 @@ Schema versions for employee onboarding in Argentina.
 ---
 
 ### v2
+
+**Type of change:** product
 
 **What changed:**
 

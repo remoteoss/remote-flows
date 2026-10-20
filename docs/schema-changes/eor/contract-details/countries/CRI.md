@@ -10,6 +10,8 @@ Schema versions for employee onboarding in Costa Rica.
 
 ### v5 - Current
 
+**Type of change:** risk
+
 **What changed:**
 
 - Extreme-salary acknowledgement: a warning and a required checkbox appear when the annual salary is at or above the USD 1,000,000 equivalent. Additive and flag-gated, so no action is required unless a submitted salary crosses that threshold.
@@ -30,6 +32,8 @@ Schema versions for employee onboarding in Costa Rica.
 
 ### v4
 
+**Type of change:** risk
+
 **What changed:**
 
 - High-salary reserve messaging is added to the annual gross salary field: a display-only `salary_overview` statement is grouped with the salary fields in an `annual_gross_salary_fieldset` built by the component.
@@ -49,6 +53,8 @@ Schema versions for employee onboarding in Costa Rica.
 ---
 
 ### v3
+
+**Type of change:** compliance, product
 
 **What changed:**
 
@@ -73,6 +79,8 @@ Schema versions for employee onboarding in Costa Rica.
 ---
 
 ### v2
+
+**Type of change:** technical
 
 **What changed:**
 

@@ -10,6 +10,8 @@ Schema versions for employee onboarding in United Arab Emirates.
 
 ### v6 - Current
 
+**Type of change:** risk
+
 **What changed:**
 
 - Extreme-salary acknowledgement: a warning and a required checkbox appear when the annual salary is at or above the USD 1,000,000 equivalent. Additive and flag-gated, so no action is required unless a submitted salary crosses that threshold.
@@ -29,6 +31,8 @@ Schema versions for employee onboarding in United Arab Emirates.
 ---
 
 ### v5
+
+**Type of change:** technical
 
 **What changed:**
 
@@ -50,6 +54,8 @@ Schema versions for employee onboarding in United Arab Emirates.
 
 ### v4
 
+**Type of change:** risk
+
 **What changed:**
 
 - High-salary reserve messaging is added to the annual gross salary field: a display-only `salary_overview` statement is grouped with the salary fields in an `annual_gross_salary_fieldset` built by the component.
@@ -70,6 +76,8 @@ Schema versions for employee onboarding in United Arab Emirates.
 
 ### v3 (Since SDK 1.23.0, March 2026)
 
+**Type of change:** technical
+
 **What changed:**
 
 - refactors `notice_period_days` and `work_address` into reusable components and removes the conditional that hides carryover fields when unlimited PTO is selected.
@@ -89,6 +97,8 @@ Schema versions for employee onboarding in United Arab Emirates.
 ---
 
 ### v2 (Since SDK 1.23.0, March 2026)
+
+**Type of change:** compliance
 
 **What changed:**
 

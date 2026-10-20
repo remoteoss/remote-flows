@@ -10,6 +10,8 @@ Schema versions for employee onboarding in El Salvador.
 
 ### v4 - Current
 
+**Type of change:** technical
+
 **What changed:**
 
 - Fixed-term contracts stay unavailable, now enforced through the shared contract duration component. `contract_duration_type` is a radio field locked to `indefinite` (`const` and default) instead of a checkbox, and `contract_end_date` is rejected if provided. Employees with a recognized seniority date (`has_seniority_date: "yes"`) see a seniority-specific explanation. The form is indefinite-only in every case, including for Remote Admins, so no action is required for existing contracts.
@@ -30,6 +32,8 @@ Schema versions for employee onboarding in El Salvador.
 
 ### v3
 
+**Type of change:** risk
+
 **What changed:**
 
 - Extreme-salary acknowledgement: a warning and a required checkbox appear when the annual salary is at or above the USD 1,000,000 equivalent. Additive and flag-gated, so no action is required unless a submitted salary crosses that threshold.
@@ -49,6 +53,8 @@ Schema versions for employee onboarding in El Salvador.
 ---
 
 ### v2
+
+**Type of change:** risk, technical
 
 **What changed:**
 
