@@ -139,7 +139,7 @@
     "daily_schedule.schedule.sunday.start_time": "time",
     "daily_schedule.schedule.sunday.end_time": "time",
     "daily_schedule.schedule.sunday.break_duration_minutes": "number",
-    "work_hours_per_week": "number",
+    "work_hours_per_week": "hidden",
     "has_probation_period": "radio",
     "probation_length": "number",
     "trial_period": "number",
