@@ -17,6 +17,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Australia (AUS)](./AUS.md)
 - [Austria (AUT)](./AUT.md)
 - [Belarus (BLR)](./BLR.md)
+- [Belgium (BEL)](./BEL.md)
 - [Brazil (BRA)](./BRA.md)
 - [Bulgaria (BGR)](./BGR.md)
 - [Canada (CAN)](./CAN.md)
@@ -70,6 +71,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Australia            | AUS  | v6               | October 2026 |
 | Austria              | AUT  | v8               | October 2026 |
 | Belarus              | BLR  | v2               | March 2026   |
+| Belgium              | BEL  | v8               | October 2026 |
 | Brazil               | BRA  | v4               | October 2026 |
 | Bulgaria             | BGR  | v8               | October 2026 |
 | Canada               | CAN  | v7               | October 2026 |

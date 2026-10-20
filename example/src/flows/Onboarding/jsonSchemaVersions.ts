@@ -29,7 +29,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   BEL: {
     // Belgium
-    contract_details: 1,
+    contract_details: 8,
   },
   BGD: {
     // Bangladesh
