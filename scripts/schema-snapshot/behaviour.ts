@@ -248,6 +248,8 @@ export function diffFingerprints(
   const changes: FingerprintChange[] = [];
   const add = (severity: DiffSeverity, message: string) =>
     changes.push({ severity, message });
+  const stillInFormAsHidden = (name: string): DiffSeverity =>
+    next.types[name] === 'hidden' ? 'info' : 'breaking';
 
   for (const name of difference(next.base.required, previous.base.required)) {
     const wasVisible = previous.base.visible.includes(name);
@@ -262,7 +264,7 @@ export function diffFingerprints(
     add('info', `\`${name}\` is no longer required`);
   }
   for (const name of difference(previous.base.visible, next.base.visible)) {
-    add('breaking', `\`${name}\` is no longer shown`);
+    add(stillInFormAsHidden(name), `\`${name}\` is no longer shown`);
   }
   for (const name of difference(next.base.visible, previous.base.visible)) {
     if (!next.base.required.includes(name)) {
@@ -274,7 +276,7 @@ export function diffFingerprints(
     const before = previous.types[name];
     if (before !== undefined && before !== type) {
       add(
-        'breaking',
+        type === 'hidden' ? 'info' : 'breaking',
         `\`${name}\` changed input type from ${before} to ${type}`,
       );
     }
@@ -328,7 +330,10 @@ export function diffFingerprints(
         add('info', `choosing \`${scenario}\` no longer changes any field`);
       }
       for (const name of delta.addedVisible) {
-        add('breaking', `choosing \`${scenario}\` no longer shows \`${name}\``);
+        add(
+          stillInFormAsHidden(name),
+          `choosing \`${scenario}\` no longer shows \`${name}\``,
+        );
       }
       continue;
     }
@@ -336,7 +341,10 @@ export function diffFingerprints(
       add('breaking', `choosing \`${scenario}\` now requires \`${name}\``);
     }
     for (const name of difference(delta.addedVisible, after.addedVisible)) {
-      add('breaking', `choosing \`${scenario}\` no longer shows \`${name}\``);
+      add(
+        stillInFormAsHidden(name),
+        `choosing \`${scenario}\` no longer shows \`${name}\``,
+      );
     }
     for (const name of difference(after.removedVisible, delta.removedVisible)) {
       if (previous.base.visible.includes(name)) {
