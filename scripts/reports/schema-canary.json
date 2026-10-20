@@ -91,22 +91,22 @@
     },
     {
       "country": "AUT",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 8,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "AUT",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "AUT",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 8,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -133,22 +133,22 @@
     },
     {
       "country": "BEL",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 8,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "BEL",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "BEL",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 8,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -196,43 +196,43 @@
     },
     {
       "country": "BRA",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 4,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "BRA",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "BRA",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 4,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
     {
       "country": "BGR",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 8,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "BGR",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "BGR",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 8,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -259,43 +259,43 @@
     },
     {
       "country": "CHL",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 7,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "CHL",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "CHL",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 7,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
     {
       "country": "CHN",
       "version": 8,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "CHN",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "CHN",
       "version": 8,
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -532,22 +532,22 @@
     },
     {
       "country": "FIN",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 5,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "FIN",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "FIN",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 5,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -595,173 +595,173 @@
     },
     {
       "country": "DEU",
+      "version": 9,
+      "strategy": "buildOnce",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "DEU",
+      "version": "latest",
+      "strategy": "buildOnce",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "DEU",
+      "version": 9,
+      "strategy": "buildOnce",
+      "check": "submit",
+      "outcome": "pass"
+    },
+    {
+      "country": "GRC",
+      "version": 1,
+      "strategy": "rebuild",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "GRC",
+      "version": "latest",
+      "strategy": "rebuild",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "GRC",
+      "version": 1,
+      "strategy": "rebuild",
+      "check": "submit",
+      "outcome": "pass"
+    },
+    {
+      "country": "GTM",
+      "version": 6,
+      "strategy": "buildOnce",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "GTM",
+      "version": "latest",
+      "strategy": "buildOnce",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "GTM",
+      "version": 6,
+      "strategy": "buildOnce",
+      "check": "submit",
+      "outcome": "pass"
+    },
+    {
+      "country": "HND",
+      "version": 1,
+      "strategy": "rebuild",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "HND",
+      "version": "latest",
+      "strategy": "rebuild",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "HND",
+      "version": 1,
+      "strategy": "rebuild",
+      "check": "submit",
+      "outcome": "pass"
+    },
+    {
+      "country": "HKG",
+      "version": 2,
+      "strategy": "rebuild",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "HKG",
+      "version": "latest",
+      "strategy": "rebuild",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "HKG",
+      "version": 2,
+      "strategy": "rebuild",
+      "check": "submit",
+      "outcome": "pass"
+    },
+    {
+      "country": "HUN",
+      "version": 1,
+      "strategy": "rebuild",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "HUN",
+      "version": "latest",
+      "strategy": "rebuild",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "HUN",
+      "version": 1,
+      "strategy": "rebuild",
+      "check": "submit",
+      "outcome": "pass"
+    },
+    {
+      "country": "ISL",
+      "version": 2,
+      "strategy": "rebuild",
+      "check": "pinned",
+      "outcome": "pass"
+    },
+    {
+      "country": "ISL",
+      "version": "latest",
+      "strategy": "rebuild",
+      "check": "latest",
+      "outcome": "pass"
+    },
+    {
+      "country": "ISL",
+      "version": 2,
+      "strategy": "rebuild",
+      "check": "submit",
+      "outcome": "pass"
+    },
+    {
+      "country": "IND",
       "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
-      "country": "DEU",
+      "country": "IND",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
-      "country": "DEU",
+      "country": "IND",
       "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
     {
-      "country": "GRC",
-      "version": 1,
-      "strategy": "rebuild",
-      "check": "pinned",
-      "outcome": "pass"
-    },
-    {
-      "country": "GRC",
-      "version": "latest",
-      "strategy": "rebuild",
-      "check": "latest",
-      "outcome": "pass"
-    },
-    {
-      "country": "GRC",
-      "version": 1,
-      "strategy": "rebuild",
-      "check": "submit",
-      "outcome": "pass"
-    },
-    {
-      "country": "GTM",
-      "version": 1,
-      "strategy": "rebuild",
-      "check": "pinned",
-      "outcome": "pass"
-    },
-    {
-      "country": "GTM",
-      "version": "latest",
-      "strategy": "rebuild",
-      "check": "latest",
-      "outcome": "pass"
-    },
-    {
-      "country": "GTM",
-      "version": 1,
-      "strategy": "rebuild",
-      "check": "submit",
-      "outcome": "pass"
-    },
-    {
-      "country": "HND",
-      "version": 1,
-      "strategy": "rebuild",
-      "check": "pinned",
-      "outcome": "pass"
-    },
-    {
-      "country": "HND",
-      "version": "latest",
-      "strategy": "rebuild",
-      "check": "latest",
-      "outcome": "pass"
-    },
-    {
-      "country": "HND",
-      "version": 1,
-      "strategy": "rebuild",
-      "check": "submit",
-      "outcome": "pass"
-    },
-    {
-      "country": "HKG",
-      "version": 2,
-      "strategy": "rebuild",
-      "check": "pinned",
-      "outcome": "pass"
-    },
-    {
-      "country": "HKG",
-      "version": "latest",
-      "strategy": "rebuild",
-      "check": "latest",
-      "outcome": "pass"
-    },
-    {
-      "country": "HKG",
-      "version": 2,
-      "strategy": "rebuild",
-      "check": "submit",
-      "outcome": "pass"
-    },
-    {
-      "country": "HUN",
-      "version": 1,
-      "strategy": "rebuild",
-      "check": "pinned",
-      "outcome": "pass"
-    },
-    {
-      "country": "HUN",
-      "version": "latest",
-      "strategy": "rebuild",
-      "check": "latest",
-      "outcome": "pass"
-    },
-    {
-      "country": "HUN",
-      "version": 1,
-      "strategy": "rebuild",
-      "check": "submit",
-      "outcome": "pass"
-    },
-    {
-      "country": "ISL",
-      "version": 2,
-      "strategy": "rebuild",
-      "check": "pinned",
-      "outcome": "pass"
-    },
-    {
-      "country": "ISL",
-      "version": "latest",
-      "strategy": "rebuild",
-      "check": "latest",
-      "outcome": "pass"
-    },
-    {
-      "country": "ISL",
-      "version": 2,
-      "strategy": "rebuild",
-      "check": "submit",
-      "outcome": "pass"
-    },
-    {
-      "country": "IND",
-      "version": 6,
-      "strategy": "buildOnce",
-      "check": "pinned",
-      "outcome": "pass"
-    },
-    {
-      "country": "IND",
-      "version": "latest",
-      "strategy": "buildOnce",
-      "check": "latest",
-      "outcome": "pass"
-    },
-    {
-      "country": "IND",
-      "version": 6,
-      "strategy": "buildOnce",
-      "check": "submit",
-      "outcome": "pass"
-    },
-    {
       "country": "IDN",
       "version": 1,
       "strategy": "rebuild",
@@ -889,22 +889,22 @@
     },
     {
       "country": "KEN",
-      "version": 2,
-      "strategy": "rebuild",
+      "version": 8,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "KEN",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "KEN",
-      "version": 2,
-      "strategy": "rebuild",
+      "version": 8,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -1078,7 +1078,7 @@
     },
     {
       "country": "MEX",
-      "version": 8,
+      "version": 9,
       "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
@@ -1092,7 +1092,7 @@
     },
     {
       "country": "MEX",
-      "version": 8,
+      "version": 9,
       "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
@@ -1141,7 +1141,7 @@
     },
     {
       "country": "NLD",
-      "version": 6,
+      "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
@@ -1155,7 +1155,7 @@
     },
     {
       "country": "NLD",
-      "version": 6,
+      "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
@@ -1351,7 +1351,7 @@
     },
     {
       "country": "PHL",
-      "version": 6,
+      "version": 9,
       "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
@@ -1365,7 +1365,7 @@
     },
     {
       "country": "PHL",
-      "version": 6,
+      "version": 9,
       "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
@@ -1603,7 +1603,7 @@
     },
     {
       "country": "ESP",
-      "version": 7,
+      "version": 8,
       "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
@@ -1617,7 +1617,7 @@
     },
     {
       "country": "ESP",
-      "version": 7,
+      "version": 8,
       "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
@@ -1855,7 +1855,7 @@
     },
     {
       "country": "USA",
-      "version": 8,
+      "version": 9,
       "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
@@ -1869,7 +1869,7 @@
     },
     {
       "country": "USA",
-      "version": 8,
+      "version": 9,
       "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
