@@ -4,11 +4,33 @@ Schema versions for employee onboarding in Canada.
 
 ## Current Version
 
-**Contract Details:** v7
+**Contract Details:** v8
 
 ## Contract Details
 
-### v7 - Current
+### v8 - Current
+
+**What changed:**
+
+- `probation_length`, `probation_length_weeks` and `probation_length_days` move to a shared probation component. They render and validate the same way for existing consumers.
+- When the employee has a recognized seniority date (`has_seniority_date: "yes"`), all three probation length fields are forbidden, whatever `province_of_residency` is. Flag-gated, so no action is required.
+- `work_hours_per_week` is `hidden` until `work_schedule` and `schedule_type` are both set, so custom UIs shouldn't expect it as a visible number input in the initial form state.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      CAN: { contract_details: 8 },
+    },
+  }}
+/>
+```
+
+---
+
+### v7
 
 **What changed:**
 

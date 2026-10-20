@@ -30,6 +30,18 @@ export function touchesOtherInputs(changedFiles: string[]): boolean {
 const ENTRY_PATTERN =
   /^ {2}([A-Z]{3}): \{\n(?:\s*\/\/[^\n]*\n)?\s*contract_details: (\d+),/gm;
 
+const BASIC_INFO_PATTERN = /^ {2}employment_basic_information: (\d+),/m;
+
+export function basicInfoVersionChanged(
+  baseSource: string,
+  headSource: string,
+): boolean {
+  return (
+    baseSource.match(BASIC_INFO_PATTERN)?.[1] !==
+    headSource.match(BASIC_INFO_PATTERN)?.[1]
+  );
+}
+
 export function parsePinnedVersions(source: string): Map<string, number> {
   const versions = new Map<string, number>();
   for (const match of source.matchAll(ENTRY_PATTERN)) {
@@ -64,10 +76,13 @@ function main() {
     console.log('all');
     return;
   }
-  const countries = changedCountries(
-    git('show', `${BASE_REF}:${VERSIONS_FILE}`),
-    git('show', `HEAD:${VERSIONS_FILE}`),
-  );
+  const baseSource = git('show', `${BASE_REF}:${VERSIONS_FILE}`);
+  const headSource = git('show', `HEAD:${VERSIONS_FILE}`);
+  if (basicInfoVersionChanged(baseSource, headSource)) {
+    console.log('all');
+    return;
+  }
+  const countries = changedCountries(baseSource, headSource);
   console.log(countries.length > 0 ? countries.join(',') : 'none');
 }
 
