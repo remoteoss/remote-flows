@@ -12,7 +12,6 @@ Schema versions for employee onboarding in Germany.
 
 **What changed:**
 
-- Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `DEU`) to inspect field-level diffs between your current pin and v7. Intermediate versions (v4–v6) also exist; prefer jumping straight to v7 when upgrading.
 - Added a reserve messaging notice on the annual gross salary field for high salaries, grouped with the part-time salary confirmation. Additive change — no action required.
 - Corrected the minimum comparable-role salary calculation for German AUG employments that use fractional weekly working hours. If you submit AUG contract details with comparable-role data, ensure annual_gross_salary meets the corrected minimum.
 - Added an acknowledgement step for extreme high salaries: a warning message and a required confirmation checkbox now appear when the salary exceeds the extreme-high threshold. Additive change — no action required unless a submitted salary crosses that threshold.

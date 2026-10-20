@@ -12,7 +12,6 @@ Schema versions for employee onboarding in the Netherlands.
 
 **What changed:**
 
-- Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `NLD`) to inspect field-level diffs between your current pin and v6. Prefer jumping straight from v2 to v6 when upgrading.
 - `contract_duration_type` no longer offers `fixed_term`, and `contract_end_date` is rejected, when the employee has a recognized seniority date (`has_seniority_date: "yes"`). Only `indefinite` is valid then. Gated by the `eor_seniority_block` and `eor_seniority_block_v2_ftc` feature flags, and employments created before the cutoff date are unaffected. Remote Admins can still override the block.
 - `contract_duration_type` no longer pre-fills a default, so the user has to choose an option.
 - The `contract_end_date` nested-field reference under the Fixed Term option moves from `nested_field` to `nested_fields` (a list), like every other country on the shared contract duration component. Custom renderers that read it directly need to expect a list.
