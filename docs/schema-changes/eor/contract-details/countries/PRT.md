@@ -10,6 +10,8 @@ Schema versions for employee onboarding in Portugal.
 
 ### v9 - Current
 
+**Type of change:** risk
+
 **What changed:**
 
 - Adds the required `tax_and_social_security_numbers_ack` checkbox (title "Tax and social security number") - partners using a custom UI must render it and send "acknowledged"
@@ -28,6 +30,8 @@ Schema versions for employee onboarding in Portugal.
 
 ### v8
 
+**Type of change:** risk
+
 **What changed:**
 
 - Adds `extreme_salary_acknowledgement` and `extreme_salary_warning`, shown when the annual gross salary is unusually high
@@ -45,6 +49,8 @@ Schema versions for employee onboarding in Portugal.
 ```
 
 ### v7
+
+**Type of change:** technical
 
 **What changed:**
 
@@ -65,6 +71,8 @@ Schema versions for employee onboarding in Portugal.
 
 ### v6
 
+**Type of change:** risk
+
 **What changed:**
 
 - Adds the `salary_overview` field
@@ -84,6 +92,8 @@ Schema versions for employee onboarding in Portugal.
 
 ### v5
 
+**Type of change:** compliance
+
 **What changed:**
 
 - No field changes
@@ -101,6 +111,8 @@ Schema versions for employee onboarding in Portugal.
 ```
 
 ### v4
+
+**Type of change:** compliance
 
 **What changed:**
 
@@ -125,6 +137,8 @@ Schema versions for employee onboarding in Portugal.
 
 ### v3 (Since SDK 1.23.0, March 2026)
 
+**Type of change:** compliance, product
+
 **What changed:**
 
 - New offboarding acknowledgment - requires employers to acknowledge complex statutory requirements about vacation pay, vacation allowance, and Christmas allowance upon termination
@@ -144,6 +158,8 @@ Schema versions for employee onboarding in Portugal.
 ```
 
 ### v2 (Since SDK 1.23.0, March 2026)
+
+**Type of change:** compliance, technical, product
 
 **What changed:**
 
