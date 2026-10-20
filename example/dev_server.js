@@ -17,14 +17,36 @@ if (envArg && !envName) {
   process.exit(1);
 }
 
+const rootDir = path.resolve(__dirname, '..');
+const ENV_NAME_PATTERN = /^[\w-]+$/;
+let loadedKeys = [];
+
+const listEnvs = () =>
+  fs
+    .readdirSync(rootDir)
+    .map((file) => file.match(/^\.env\.([\w-]+)$/)?.[1])
+    .filter(Boolean)
+    .sort();
+
+const applyEnv = (name) => {
+  const envFile = path.resolve(rootDir, `.env.${name}`);
+  const values = dotenv.parse(fs.readFileSync(envFile));
+  loadedKeys.forEach((key) => delete process.env[key]);
+  Object.assign(process.env, values);
+  loadedKeys = Object.keys(values);
+  console.log(`Loaded ${envFile}; example/.env is ignored.`);
+};
+
+let currentEnv = envName ?? null;
+
 if (envName) {
-  const envFile = path.resolve(__dirname, '..', `.env.${envName}`);
-  if (!fs.existsSync(envFile)) {
-    console.error(`--env=${envName}: ${envFile} does not exist.`);
+  if (!fs.existsSync(path.resolve(rootDir, `.env.${envName}`))) {
+    console.error(
+      `--env=${envName}: .env.${envName} does not exist in ${rootDir}.`,
+    );
     process.exit(1);
   }
-  dotenv.config({ path: envFile });
-  console.log(`Loaded ${envFile}; example/.env is ignored.`);
+  applyEnv(envName);
 } else {
   dotenv.config();
 }
@@ -37,17 +59,45 @@ const startServer = async () => {
   // Create Vite server in middleware mode, reusing the Express HTTP server
   // for HMR's WebSocket instead of letting Vite open its own on the default
   // port — otherwise every worktree's example app collides on that port.
-  const vite = await createViteServer({
-    envDir: envName ? false : undefined,
-    server: { middlewareMode: true, ws: { server: httpServer } },
-  });
+  const createVite = () =>
+    createViteServer({
+      envDir: currentEnv ? false : undefined,
+      server: { middlewareMode: true, ws: { server: httpServer } },
+    });
+  let vite = await createVite();
 
   app.use(express.json({ limit: '50mb' }));
+
+  app.get('/__env', (req, res) => {
+    res.json({ current: currentEnv, available: listEnvs() });
+  });
+
+  app.post('/__env', async (req, res) => {
+    const name = req.body?.name;
+    if (
+      typeof name !== 'string' ||
+      !ENV_NAME_PATTERN.test(name) ||
+      !listEnvs().includes(name)
+    ) {
+      return res.status(400).json({ error: `Unknown env: ${name}` });
+    }
+    try {
+      applyEnv(name);
+      currentEnv = name;
+      const previous = vite;
+      vite = await createVite();
+      await previous.close();
+      res.json({ current: currentEnv });
+    } catch (e) {
+      console.error(e);
+      res.status(500).json({ error: String(e.message ?? e) });
+    }
+  });
 
   // API route example
   setupRoutes(app);
 
-  app.use(vite.middlewares);
+  app.use((req, res, next) => vite.middlewares(req, res, next));
 
   // Serve index.html (SSR or SPA fallback)
   app.use(async (req, res, next) => {

@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { CostCalculatorWithPremiumBenefits } from './CostCalculatorWithPremiumBenefits.tsx';
 import { ContractorOnboardingWithProps } from './ContractorOnboarding.tsx';
 import App from './App.tsx';
+import { EnvSwitcher } from './EnvSwitcher.tsx';
 
 const RenderApplication = () => {
   if (import.meta.env.VITE_NEW_PREMIUM_BENEFITS === 'true') {
@@ -20,5 +21,6 @@ const RenderApplication = () => {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <RenderApplication />
+    <EnvSwitcher />
   </StrictMode>,
 );
