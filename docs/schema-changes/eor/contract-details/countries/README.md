@@ -74,7 +74,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Belgium              | BEL  | v8               | October 2026 |
 | Brazil               | BRA  | v4               | October 2026 |
 | Bulgaria             | BGR  | v8               | October 2026 |
-| Canada               | CAN  | v7               | October 2026 |
+| Canada               | CAN  | v8               | October 2026 |
 | Chile                | CHL  | v7               | October 2026 |
 | China                | CHN  | v8               | October 2026 |
 | Switzerland          | CHE  | v2               | March 2026   |
