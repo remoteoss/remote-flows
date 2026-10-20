@@ -10,7 +10,7 @@ Schema versions for employee onboarding in Portugal.
 
 ### v9 - Current
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
@@ -97,6 +97,7 @@ Schema versions for employee onboarding in Portugal.
 **What changed:**
 
 - No field changes
+- `available_pto` now has a minimum of 22 days for part-time employees too. Before, part-time contracts accepted any value from 0, so submissions that were valid on v4 can fail validation
 
 **Migration:**
 
