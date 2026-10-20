@@ -21,6 +21,6 @@ const RenderApplication = () => {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <RenderApplication />
-    <EnvSwitcher />
+    {import.meta.env.DEV && <EnvSwitcher />}
   </StrictMode>,
 );
