@@ -4,11 +4,32 @@ Schema versions for employee onboarding in the Netherlands.
 
 ## Current Version
 
-**Contract Details:** v6
+**Contract Details:** v7
 
 ## Contract Details
 
-### v6 - Current
+### v7 - Current
+
+**What changed:**
+
+- The `probation_length` field moves to a dedicated Netherlands probation period component. It renders and validates the same for existing consumers, so no action is required.
+- Once the seniority block is enabled for the Netherlands, `probation_length` is forced to a hidden `0` for employments with a recognized seniority date.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      NLD: { contract_details: 7 },
+    },
+  }}
+/>
+```
+
+---
+
+### v6
 
 **What changed:**
 

@@ -92,6 +92,31 @@ const buildHidingSchema = (hides: boolean): Schema => ({
   'x-jsf-order': ['non_compete', 'reference'],
 });
 
+const hiddenReference = {
+  title: 'Reference',
+  type: 'string',
+  default: 'fixed',
+  'x-jsf-presentation': { inputType: 'hidden' },
+};
+
+const buildRevealSchema = (reference: Schema | false): Schema => ({
+  type: 'object',
+  additionalProperties: false,
+  properties: { non_compete: yesNo('Non-compete'), reference: hiddenReference },
+  required: ['non_compete'],
+  allOf: [
+    {
+      if: {
+        properties: { non_compete: { const: 'yes' } },
+        required: ['non_compete'],
+      },
+      then: { properties: { reference } },
+      else: { properties: { reference: false } },
+    },
+  ],
+  'x-jsf-order': ['non_compete', 'reference'],
+});
+
 const withRule = (
   schema: Schema,
   {
@@ -308,6 +333,32 @@ describe.each(['buildOnce', 'rebuild'] as const)(
         {
           severity: 'breaking',
           message: '`reference` changed input type from text to radio',
+        },
+      ]);
+    });
+
+    it('treats a field that becomes hidden as informational', async () => {
+      const before = await fingerprint(buildSchema());
+      const after = await fingerprint(
+        buildSchema({ extraProperties: { reference: hiddenReference } }),
+      );
+
+      expect(diffFingerprints(before, after)).toEqual([
+        {
+          severity: 'info',
+          message: '`reference` changed input type from text to hidden',
+        },
+      ]);
+    });
+
+    it('treats a choice that stops revealing a field that is now hidden as informational', async () => {
+      const before = await fingerprint(buildRevealSchema(text('Reference')));
+      const after = await fingerprint(buildRevealSchema(false));
+
+      expect(diffFingerprints(before, after)).toEqual([
+        {
+          severity: 'info',
+          message: 'choosing `non_compete=yes` no longer shows `reference`',
         },
       ]);
     });
