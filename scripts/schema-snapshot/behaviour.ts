@@ -250,6 +250,7 @@ export function diffFingerprints(
     changes.push({ severity, message });
   const stillInFormAsHidden = (name: string): DiffSeverity =>
     next.types[name] === 'hidden' ? 'info' : 'breaking';
+  const wasOnlyHidden = (name: string) => previous.types[name] === 'hidden';
 
   for (const name of difference(next.base.required, previous.base.required)) {
     const wasVisible = previous.base.visible.includes(name);
@@ -264,7 +265,10 @@ export function diffFingerprints(
     add('info', `\`${name}\` is no longer required`);
   }
   for (const name of difference(previous.base.visible, next.base.visible)) {
-    add(stillInFormAsHidden(name), `\`${name}\` is no longer shown`);
+    add(
+      wasOnlyHidden(name) ? 'info' : stillInFormAsHidden(name),
+      `\`${name}\` is no longer shown`,
+    );
   }
   for (const name of difference(next.base.visible, previous.base.visible)) {
     if (!next.base.required.includes(name)) {
@@ -276,7 +280,7 @@ export function diffFingerprints(
     const before = previous.types[name];
     if (before !== undefined && before !== type) {
       add(
-        type === 'hidden' ? 'info' : 'breaking',
+        type === 'hidden' || before === 'hidden' ? 'info' : 'breaking',
         `\`${name}\` changed input type from ${before} to ${type}`,
       );
     }

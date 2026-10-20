@@ -351,6 +351,31 @@ describe.each(['buildOnce', 'rebuild'] as const)(
       ]);
     });
 
+    it('treats a field that was only a hidden input and is now conditionally shown as informational', async () => {
+      const before = await fingerprint({
+        ...buildRevealSchema(hiddenReference),
+        allOf: [],
+      });
+      const after = await fingerprint({
+        ...buildRevealSchema(text('Reference')),
+        properties: {
+          non_compete: yesNo('Non-compete'),
+          reference: text('Reference'),
+        },
+      });
+
+      expect(diffFingerprints(before, after)).toEqual([
+        {
+          severity: 'info',
+          message: '`reference` is no longer shown',
+        },
+        {
+          severity: 'info',
+          message: '`reference` changed input type from hidden to text',
+        },
+      ]);
+    });
+
     it('treats a choice that stops revealing a field that is now hidden as informational', async () => {
       const before = await fingerprint(buildRevealSchema(text('Reference')));
       const after = await fingerprint(buildRevealSchema(false));
