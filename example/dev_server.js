@@ -4,6 +4,7 @@ const express = require('express');
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
+const { clearTokenCaches } = require('./api/get_token.js');
 const { setupRoutes } = require('./api/routes.js');
 const { createServer: createViteServer } = require('vite');
 
@@ -34,6 +35,7 @@ const applyEnv = (name) => {
   loadedKeys.forEach((key) => delete process.env[key]);
   Object.assign(process.env, values);
   loadedKeys = Object.keys(values);
+  clearTokenCaches();
   console.log(`Loaded ${envFile}; example/.env is ignored.`);
 };
 
@@ -48,7 +50,8 @@ if (envName) {
   }
   applyEnv(envName);
 } else {
-  dotenv.config();
+  const parsed = dotenv.config();
+  loadedKeys = Object.keys(parsed.parsed ?? {});
 }
 
 const startServer = async () => {

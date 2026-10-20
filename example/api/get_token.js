@@ -103,8 +103,17 @@ async function requestClientCredentialsAccessToken() {
 
 const EXPIRY_MARGIN_SECONDS = 60;
 
+const cacheClearers = [];
+
+function clearTokenCaches() {
+  cacheClearers.forEach((clear) => clear());
+}
+
 function cacheUntilExpiry(requestToken) {
   let cached;
+  cacheClearers.push(() => {
+    cached = undefined;
+  });
   return async () => {
     if (cached && Date.now() < cached.refreshAt) {
       const { accessToken } = await cached.token;
@@ -114,15 +123,18 @@ function cacheUntilExpiry(requestToken) {
       };
     }
     const token = requestToken();
-    cached = { token, refreshAt: Infinity, expiresAt: Infinity };
+    const entry = { token, refreshAt: Infinity, expiresAt: Infinity };
+    cached = entry;
     try {
       const { accessToken, expiresIn } = await token;
       const expiresAt = Date.now() + expiresIn * 1000;
-      cached.expiresAt = expiresAt;
-      cached.refreshAt = expiresAt - EXPIRY_MARGIN_SECONDS * 1000;
+      entry.expiresAt = expiresAt;
+      entry.refreshAt = expiresAt - EXPIRY_MARGIN_SECONDS * 1000;
       return { accessToken, expiresIn };
     } catch (error) {
-      cached = undefined;
+      if (cached === entry) {
+        cached = undefined;
+      }
       throw error;
     }
   };
@@ -160,4 +172,5 @@ module.exports = {
   getToken,
   fetchAccessToken,
   fetchClientCredentialsAccessToken,
+  clearTokenCaches,
 };
