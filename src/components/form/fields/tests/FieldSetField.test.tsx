@@ -541,6 +541,25 @@ describe('FieldSetField', () => {
       expect(container.querySelector('fieldset')).not.toHaveAttribute('hidden');
     });
 
+    it('hides a fieldset whose only field is a forced value with nothing to show, even with a custom component', () => {
+      const { container } = renderWithFormContext({
+        ...noContentProps,
+        fields: [
+          {
+            name: 'schedule_type',
+            label: 'Schedule type',
+            type: 'select',
+            inputType: 'select',
+            const: 'flexible',
+            default: 'flexible',
+            Component: () => <div>Custom</div>,
+          } as $TSFixMe,
+        ],
+      });
+
+      expect(container.querySelector('fieldset')).toHaveAttribute('hidden');
+    });
+
     it('keeps a fieldset visible when a field can be shown', () => {
       renderWithFormContext({
         ...noContentProps,

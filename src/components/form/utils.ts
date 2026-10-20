@@ -934,16 +934,16 @@ export function fieldsetHasVisibleContent(
       return false;
     }
 
-    if (resolved.Component) {
-      return true;
-    }
-
     if (checkFieldHasForcedValue(resolved)) {
       return Boolean(
         resolved.statement?.title ||
         resolved.statement?.description ||
         resolved.description,
       );
+    }
+
+    if (resolved.Component) {
+      return true;
     }
 
     if (
