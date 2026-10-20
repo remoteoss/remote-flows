@@ -25,7 +25,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   AUT: {
     // Austria
-    contract_details: 1,
+    contract_details: 8,
   },
   BEL: {
     // Belgium
@@ -85,7 +85,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   DEU: {
     // Germany
-    contract_details: 7,
+    contract_details: 9,
   },
   DNK: {
     // Denmark
@@ -105,7 +105,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ESP: {
     // Spain
-    contract_details: 7,
+    contract_details: 8,
   },
   EST: {
     // Estonia
@@ -157,7 +157,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   IND: {
     // India
-    contract_details: 6,
+    contract_details: 7,
   },
   IRL: {
     // Ireland
@@ -221,7 +221,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   MEX: {
     // Mexico
-    contract_details: 8,
+    contract_details: 9,
   },
   MKD: {
     // North Macedonia
@@ -273,7 +273,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   PHL: {
     // Philippines
-    contract_details: 6,
+    contract_details: 9,
   },
   POL: {
     // Poland
@@ -353,7 +353,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   USA: {
     // United States
-    contract_details: 8,
+    contract_details: 9,
   },
   VNM: {
     // Vietnam

@@ -125,7 +125,7 @@
     "daily_schedule.schedule.sunday.start_time": "time",
     "daily_schedule.schedule.sunday.end_time": "time",
     "daily_schedule.schedule.sunday.break_duration_minutes": "number",
-    "work_hours_per_week": "number",
+    "work_hours_per_week": "hidden",
     "us_probation_note": "hidden",
     "probation_length_recommended": "radio",
     "probation_length": "number",
