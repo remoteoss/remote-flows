@@ -6,6 +6,20 @@ Country-specific schema version history and changelogs for employee onboarding f
 
 Schema versions can have different implementations per country. Instead of generic version documentation, each country has its own changelog documenting exactly what changed for that country's onboarding flow.
 
+## Type of change
+
+Each version in a country guide has a **Type of change** line saying why the version exists, so you can tell which upgrades are urgent. A version can have more than one type, with the main one first.
+
+| Type         | What it means for you                                                                                                          |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `compliance` | A legal requirement changed. Upgrade to stay compliant.                                                                        |
+| `risk`       | Remote now requires this to limit its own exposure. It is not a legal requirement, but submissions can be rejected without it. |
+| `product`    | A new capability or improvement. Adopt it when you want it.                                                                    |
+| `technical`  | An internal or engine change. Usually no action is needed, but read the entry: it says if you must do something.               |
+| `bugfix`     | A correction to something that was wrong before.                                                                               |
+
+The type tells you how urgent a change is. **What changed** and **Migration** tell you what to do.
+
 ## Quick Reference
 
 Looking for versions that are being retired? See [deprecated versions](./DEPRECATIONS.md).
