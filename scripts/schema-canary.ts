@@ -11,6 +11,7 @@ import {
   withJobTitleEligibilityRiskAcknowledgement,
 } from '@/src/flows/Onboarding/utils';
 import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
+import { mapWithConcurrency } from './map-with-concurrency';
 import { createSandboxClient } from './schema-canary/auth';
 import { KNOWN_UNSAVED_FIELDS } from './schema-canary/known-unsaved-fields';
 import {
@@ -20,7 +21,6 @@ import {
   formatFailures,
   formatSummaryTable,
   isSkipped,
-  mapWithConcurrency,
   SCHEMA_CHECK_ORDER,
   SchemaCanaryRow,
   SchemaCheckType,
