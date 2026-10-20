@@ -53,7 +53,7 @@ Schema versions for employee onboarding in Costa Rica.
 **What changed:**
 
 - Adds a structured daily working schedule: a required `schedule_type` and a `daily_schedule` fieldset. `work_hours_per_week` keeps its name but now lives in the schedule fieldset, with a minimum of 1 and a maximum of 40.
-- `work_days`, `off_work_day`, `has_probation_period`, `probation_length` and `work_equipment` are deprecated: they are hidden and no longer required. A `probation_ack` statement explains that probation is fixed at 3 months for indefinite-term contracts.
+- `work_days`, `off_work_day`, `has_probation_period`, `probation_length` and `work_equipment` are deprecated and hidden, and `work_days`, `off_work_day` and `has_probation_period` are no longer required. A `probation_ack` statement explains that probation is fixed at 3 months for indefinite-term contracts.
 - Adds a required `available_pto_type`, and the minimum `available_pto` goes from 12 to 14 days.
 - Adds a required `third_party_work` question (with `third_party_work_activities` when the answer is `"yes"`) and a required `non_interference_apply` (with `non_interference_halt_period`, 1 to 12 months, when applied).
 - The form moves to the JSON Schema Form v1 engine. Validation and form generation follow v1 semantics. Additive and flag-gated.

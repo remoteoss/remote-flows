@@ -12,7 +12,7 @@ Schema versions for employee onboarding in El Salvador.
 
 **What changed:**
 
-- Fixed-term contracts stay unavailable, now enforced through the shared contract duration component. `contract_duration_type` is a radio field locked to `indefinite` (`const` and default) instead of a checkbox, and `contract_end_date` is rejected if provided. Employees with a recognized seniority date (`has_seniority_date: "yes"`) see a seniority-specific explanation. Flag-gated, and employments created before the cutoff date are unaffected, so no action is required for existing contracts.
+- Fixed-term contracts stay unavailable, now enforced through the shared contract duration component. `contract_duration_type` is a radio field locked to `indefinite` (`const` and default) instead of a checkbox, and `contract_end_date` is rejected if provided. Employees with a recognized seniority date (`has_seniority_date: "yes"`) see a seniority-specific explanation. The form is indefinite-only in every case, including for Remote Admins, so no action is required for existing contracts.
 
 **Migration:**
 
