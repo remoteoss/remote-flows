@@ -4,11 +4,51 @@ Schema versions for employee onboarding in Germany.
 
 ## Current Version
 
-**Contract Details:** v7
+**Contract Details:** v9
 
 ## Contract Details
 
-### v7 - Current
+### v9 - Current
+
+**What changed:**
+
+- `work_schedule` (`full_time` or `part_time`) is now required when creating or updating German contract details.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      DEU: { contract_details: 9 },
+    },
+  }}
+/>
+```
+
+---
+
+### v8
+
+**What changed:**
+
+- Probation can no longer be set when the employee has a recognized seniority date (`has_seniority_date: "yes"`), so the probation length field is not available for those employments. Flag-gated, and employments created before the cutoff date are unaffected — no action required for existing contracts.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      DEU: { contract_details: 8 },
+    },
+  }}
+/>
+```
+
+---
+
+### v7
 
 **What changed:**
 
