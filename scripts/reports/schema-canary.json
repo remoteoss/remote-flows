@@ -1141,7 +1141,7 @@
     },
     {
       "country": "NLD",
-      "version": 6,
+      "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
@@ -1155,7 +1155,7 @@
     },
     {
       "country": "NLD",
-      "version": 6,
+      "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
