@@ -54,12 +54,25 @@ describe('usesJsfV1ContractDetails', () => {
     'MYS',
     'DOM',
     'MEX',
+    'COL',
+    'PAK',
+    'NZL',
+    'ISR',
+    'CZE',
+    'PRT',
+    'CHN',
+    'KEN',
+    'BGR',
+    'BRA',
+    'CHL',
+    'FIN',
+    'GTM',
   ])('should return true for %s', (countryCode) => {
     expect(usesJsfV1ContractDetails(countryCode)).toBe(true);
   });
 
   it('should return false for the other countries', () => {
-    expect(usesJsfV1ContractDetails('PRT')).toBe(false);
+    expect(usesJsfV1ContractDetails('VNM')).toBe(false);
     expect(usesJsfV1ContractDetails(null)).toBe(false);
   });
 });
@@ -71,7 +84,7 @@ describe('getContractDetailsStrategy', () => {
   });
 
   it('returns rebuild for every other country', () => {
-    expect(getContractDetailsStrategy('PRT')).toBe('rebuild');
+    expect(getContractDetailsStrategy('VNM')).toBe('rebuild');
     expect(getContractDetailsStrategy(null)).toBe('rebuild');
   });
 });

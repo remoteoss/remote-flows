@@ -59,8 +59,8 @@ test.describe('Onboard Portugal employee', () => {
     ).json();
     expect(
       contractDetailsSchema.data['x-rmt-meta']?.jsfVersion,
-      'Portugal must stay on a jsf v0 contract_details schema for this spec to cover the v0 path',
-    ).toBeUndefined();
+      'Portugal now covers the jsf v1 path, so its contract_details schema must be jsf v1',
+    ).toBe('1');
 
     await fillOnboardingStep3PortugalForm(page, {
       contract_duration_type: true,
@@ -81,10 +81,15 @@ test.describe('Onboard Portugal employee', () => {
       has_bonus: 'no',
       has_commissions: 'no',
       equity_compensation: 'no',
+      non_interference_apply: 'no',
+      non_solicitation_customers: 'no',
+      non_solicitation_employees: 'no',
+      non_compete_clause_apply: 'no',
       work_from_home_allowance_ack: true,
       annual_training_hours_ack: true,
       salary_installments_confirmation: true,
       offboarding_allowances_ack: true,
+      tax_and_social_security_numbers_ack: true,
     });
 
     stepTitle = page.getByTestId('onboarding-step-title');

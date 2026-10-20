@@ -29,8 +29,8 @@ import {
   formatChanges,
   SchemaFingerprint,
 } from './schema-snapshot/behaviour';
+import { mapWithConcurrency } from './map-with-concurrency';
 import { assertServedVersion } from './schema-snapshot/served-version';
-import { mapWithConcurrency } from './schema-canary/lib';
 import { resolvePinnedVersion } from './schema-canary/pinned-versions';
 import {
   archiveEmployment,
