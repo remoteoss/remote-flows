@@ -4,11 +4,31 @@ Schema versions for employee onboarding in Spain.
 
 ## Current Version
 
-**Contract Details:** v7 works with v.1.57.0
+**Contract Details:** v8
 
 ## Contract Details
 
-### v7 - Current
+### v8 - Current
+
+**What changed:**
+
+- Probation can no longer be set when the employee has a recognized seniority date (`has_seniority_date: "yes"`), so the probation length field is not available for those employments. Flag-gated, and employments created before the cutoff date are unaffected — no action required for existing contracts.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      ESP: { contract_details: 8 },
+    },
+  }}
+/>
+```
+
+---
+
+### v7
 
 **What changed:**
 

@@ -4,11 +4,31 @@ Schema versions for employee onboarding in India.
 
 ## Current Version
 
-**Contract Details:** v6
+**Contract Details:** v7
 
 ## Contract Details
 
-### v6 - Current
+### v7 - Current
+
+**What changed:**
+
+- Probation can no longer be set when the employee has a recognized seniority date (`has_seniority_date: "yes"`), so the probation length field is not available for those employments. Flag-gated, and employments created before the cutoff date are unaffected — no action required for existing contracts.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      IND: { contract_details: 7 },
+    },
+  }}
+/>
+```
+
+---
+
+### v6
 
 **What changed:**
 
