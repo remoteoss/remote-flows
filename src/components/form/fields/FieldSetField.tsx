@@ -4,6 +4,7 @@ import omit from 'lodash.omit';
 import { baseFields } from '@/src/components/form/fields/baseFields';
 import { cn } from '@/src/lib/utils';
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
+import { FieldExtra } from '@/src/components/form/FieldExtra';
 import { Statement } from '@/src/components/form/Statement';
 import { useFormFields } from '@/src/context';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
@@ -339,7 +340,7 @@ export function FieldSetField({
                         {...(field.statement as StatementComponentProps['data'])}
                       />
                     ) : null}
-                    {field.extra ? field.extra : null}
+                    <FieldExtra extra={field.extra} />
                   </>,
                   fieldKey,
                 );
@@ -368,12 +369,12 @@ export function FieldSetField({
                       {...(field.statement as StatementComponentProps['data'])}
                     />
                   ) : null}
-                  {field.extra ? field.extra : null}
+                  <FieldExtra extra={field.extra} />
                 </>,
                 fieldKey,
               );
             })}
-            {extra ? extra : null}
+            <FieldExtra extra={extra} />
             {statement ? <Statement {...statement} /> : null}
           </div>
         </div>

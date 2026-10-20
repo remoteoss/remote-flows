@@ -75,7 +75,10 @@ import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY } from '../example/src/flows/Onboarding/jsonSchemaVersions';
+import {
+  ONBOARDING_JSON_SCHEMA_VERSION,
+  ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY,
+} from '../example/src/flows/Onboarding/jsonSchemaVersions';
 import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
 import { fillSchema, findSafeStartDate, HolidayDate } from './fill-schema';
 
@@ -124,7 +127,10 @@ if (TYPE !== 'employee' && TYPE !== 'contractor') {
   throw new Error(`--type must be employee or contractor (got ${TYPE}).`);
 }
 const BASIC_INFO_VERSION = Number(
-  stringArg('basic-info-version') || (TYPE === 'contractor' ? 1 : 4),
+  stringArg('basic-info-version') ||
+    (TYPE === 'contractor'
+      ? 1
+      : ONBOARDING_JSON_SCHEMA_VERSION.employment_basic_information),
 );
 if ('env' in args && stringArg('env') === undefined) {
   throw new Error(

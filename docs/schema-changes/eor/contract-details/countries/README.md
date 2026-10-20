@@ -15,6 +15,7 @@ Looking for versions that are being retired? See [deprecated versions](./DEPRECA
 These countries have upgraded to different versions, check each guide to know how to migrate or what has changed
 
 - [Australia (AUS)](./AUS.md)
+- [Austria (AUT)](./AUT.md)
 - [Belarus (BLR)](./BLR.md)
 - [Brazil (BRA)](./BRA.md)
 - [Bulgaria (BGR)](./BGR.md)
@@ -67,6 +68,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Country              | Code | Contract Details | Last Updated |
 | -------------------- | ---- | ---------------- | ------------ |
 | Australia            | AUS  | v6               | October 2026 |
+| Austria              | AUT  | v8               | October 2026 |
 | Belarus              | BLR  | v2               | March 2026   |
 | Brazil               | BRA  | v4               | October 2026 |
 | Bulgaria             | BGR  | v8               | October 2026 |
@@ -91,13 +93,13 @@ These countries have upgraded to different versions, check each guide to know ho
 | Lebanon              | LBN  | v2               | March 2026   |
 | Mauritius            | MUS  | v2               | March 2026   |
 | Malaysia             | MYS  | v5               | October 2026 |
-| Mexico               | MEX  | v8               | October 2026 |
+| Mexico               | MEX  | v9               | October 2026 |
 | Netherlands          | NLD  | v6               | October 2026 |
 | Nigeria              | NGA  | v5               | October 2026 |
 | Norway               | NOR  | v2               | March 2026   |
 | New Zealand          | NZL  | v8               | October 2026 |
 | Pakistan             | PAK  | v4               | October 2026 |
-| Philippines          | PHL  | v6               | October 2026 |
+| Philippines          | PHL  | v9               | October 2026 |
 | Poland               | POL  | v5               | October 2026 |
 | Portugal             | PRT  | v9               | March 2026   |
 | Saudi Arabia         | SAU  | v2               | March 2026   |
@@ -108,7 +110,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Sweden               | SWE  | v5               | October 2026 |
 | United Kingdom       | GBR  | v7               | October 2026 |
 | United Arab Emirates | ARE  | v3               | March 2026   |
-| United States        | USA  | v8               | October 2026 |
+| United States        | USA  | v9               | October 2026 |
 
 ## How to Use
 

@@ -4,11 +4,32 @@ Schema versions for employee onboarding in United States.
 
 ## Current Version
 
-**Contract Details:** v8
+**Contract Details:** v9
 
 ## Contract Details
 
-### v8 - Current
+### v9 - Current
+
+**What changed:**
+
+- Blocks the probation period for Montana employments with a recognized seniority date, the same way the fixed-term seniority block already works. Once the employment has a recognized seniority date, `probation_length_recommended` is locked to `"custom"` and `probation_length` to 0, and any other submitted value is rejected. No action is required for other states
+- `work_address_is_home_address` accepts `null` (`N/A`) in addition to `"yes"` / `"no"`. It stays deprecated and read-only
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      USA: { contract_details: 9 },
+    },
+  }}
+/>
+```
+
+---
+
+### v8
 
 **What changed:**
 

@@ -5,6 +5,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 import { getV1CountriesCountryCodeForm } from '@/src/client';
+import { ONBOARDING_JSON_SCHEMA_VERSION } from '../example/src/flows/Onboarding/jsonSchemaVersions';
 import { createEnvClient } from './schema-canary/auth';
 import {
   archiveEmployment,
@@ -28,11 +29,21 @@ if (!existsSync(envFile)) {
 }
 dotenv.config({ path: envFile, override: true });
 const country = args.country?.toUpperCase();
-const form = args.form ?? 'contract_details';
+const FORM_ALIASES: Record<string, string> = {
+  basic_information: 'employment_basic_information',
+};
+const requestedForm = args.form ?? 'contract_details';
+const form = FORM_ALIASES[requestedForm] ?? requestedForm;
+const defaultVersion: number | 'latest' =
+  form === 'employment_basic_information'
+    ? ONBOARDING_JSON_SCHEMA_VERSION.employment_basic_information
+    : 'latest';
 const version: number | 'latest' =
-  args.version === undefined || args.version === 'latest'
-    ? 'latest'
-    : Number(args.version);
+  args.version === undefined
+    ? defaultVersion
+    : args.version === 'latest'
+      ? 'latest'
+      : Number(args.version);
 if (version !== 'latest' && !Number.isInteger(version)) {
   throw new Error(
     `--version must be an integer or 'latest', got ${args.version}`,
@@ -72,7 +83,9 @@ try {
     },
   });
   if (response.error || !response.data) {
-    throw new Error(`Fetch failed: ${JSON.stringify(response.error)}`);
+    throw new Error(
+      `Fetch failed for form '${form}' (HTTP ${response.response?.status}): ${JSON.stringify(response.error)}. Use the gateway form name, e.g. contract_details or employment_basic_information.`,
+    );
   }
   mkdirSync(outDir, { recursive: true });
   const file = path.join(outDir, `${country}.${form}.v${version}.json`);
