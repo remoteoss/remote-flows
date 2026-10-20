@@ -20,7 +20,6 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Canada (CAN)](./CAN.md)
 - [China (CHN)](./CHN.md)
 - [Colombia (COL)](./COL.md)
-- [Costa Rica (CRI)](./CRI.md)
 - [Switzerland (CHE)](./CHE.md)
 - [Czech Republic (CZE)](./CZE.md)
 - [Dominican Republic (DOM)](./DOM.md)
@@ -72,7 +71,6 @@ These countries have upgraded to different versions, check each guide to know ho
 | China                | CHN  | v8               | October 2026   |
 | Switzerland          | CHE  | v2               | March 2026     |
 | Colombia             | COL  | v6               | October 2026   |
-| Costa Rica           | CRI  | v5               | October 2026   |
 | Czech Republic       | CZE  | v7               | October 2026   |
 | Dominican Republic   | DOM  | v6               | October 2026   |
 | Egypt                | EGY  | v6               | October 2026   |
