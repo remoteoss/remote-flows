@@ -482,6 +482,65 @@ describe('FieldSetField', () => {
       expect(container.querySelector('fieldset')).toHaveAttribute('hidden');
     });
 
+    it('hides a fieldset whose only children are empty nested fieldsets', () => {
+      const { container } = renderWithFormContext({
+        ...noContentProps,
+        fields: [
+          {
+            name: 'nested',
+            label: 'Nested',
+            type: 'fieldset',
+            inputType: 'fieldset',
+            fields: [
+              {
+                name: 'schedule_type',
+                label: 'Schedule type',
+                type: 'hidden',
+                inputType: 'hidden',
+              },
+            ],
+          } as $TSFixMe,
+        ],
+      });
+
+      expect(container.querySelector('fieldset')).toHaveAttribute('hidden');
+    });
+
+    it('keeps a fieldset visible when a nested fieldset has a visible field', () => {
+      const { container } = renderWithFormContext({
+        ...noContentProps,
+        fields: [
+          {
+            name: 'nested',
+            label: 'Nested',
+            type: 'fieldset',
+            inputType: 'fieldset',
+            fields: [
+              {
+                name: 'schedule_type',
+                label: 'Schedule type',
+                type: 'text',
+                inputType: 'text',
+              },
+            ],
+          } as $TSFixMe,
+        ],
+      });
+
+      expect(container.querySelector('fieldset')).not.toHaveAttribute('hidden');
+    });
+
+    it('keeps an inset fieldset visible when it has a toggle', () => {
+      const { container } = renderWithFormContext({
+        ...noContentProps,
+        variant: 'inset',
+        features: { toggle: { enabled: true, defaultExpanded: false } },
+        fields: [],
+      });
+
+      expect(container.querySelector('fieldset')).not.toHaveAttribute('hidden');
+    });
+
     it('keeps a fieldset visible when a field can be shown', () => {
       renderWithFormContext({
         ...noContentProps,

@@ -10,7 +10,12 @@ import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/Zen
 import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
 import { BaseTypes, SupportedTypes } from './types';
 import { StatementComponentProps } from '@/src/types/fields';
-import { checkFieldHasForcedValue } from '@/src/components/form/utils';
+import {
+  checkFieldHasForcedValue,
+  fieldsetHasVisibleContent,
+  isFieldSkipped,
+  resolveFieldDynamicProperties,
+} from '@/src/components/form/utils';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
 import { BaseFormDescription } from '@/src/components/ui/form';
 
@@ -149,32 +154,10 @@ export function FieldSetField({
     };
   }, [watchedValues, trigger, formState.isSubmitted, formState.submitCount]);
 
-  const hasVisibleContent =
-    Boolean(description || statement || extra || helpCenter?.id) ||
-    fields.some((field: $TSFixMe) => {
-      const resolved = field.calculateDynamicProperties
-        ? {
-            ...field,
-            ...(field.calculateDynamicProperties(allFormValues, field) || {}),
-          }
-        : field;
-      if (
-        resolved.isVisible === false ||
-        resolved.deprecated ||
-        resolved.hidden ||
-        resolved.type === 'hidden'
-      ) {
-        return false;
-      }
-      if (checkFieldHasForcedValue(resolved)) {
-        return Boolean(
-          resolved.statement?.title ||
-          resolved.statement?.description ||
-          resolved.description,
-        );
-      }
-      return true;
-    });
+  const hasVisibleContent = fieldsetHasVisibleContent(
+    { description, statement, extra, fields, features, meta },
+    allFormValues,
+  );
 
   const ToggleComponent =
     formComponents?.fieldsetToggle || FieldsetToggleButtonDefault;
@@ -268,19 +251,9 @@ export function FieldSetField({
           ) : null}
           <div className='grid gap-4'>
             {fields.map((field: $TSFixMe) => {
-              if (field.calculateDynamicProperties) {
-                field = {
-                  ...field,
-                  ...(field.calculateDynamicProperties(allFormValues, field) ||
-                    {}),
-                };
-              }
+              field = resolveFieldDynamicProperties(field, allFormValues);
 
-              if (
-                field.isVisible === false ||
-                field.deprecated ||
-                field.hidden
-              ) {
+              if (isFieldSkipped(field)) {
                 return null; // Skip hidden or deprecated fields
               }
 
