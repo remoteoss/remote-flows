@@ -10,7 +10,7 @@ Schema versions for employee onboarding in Spain.
 
 ### v7 - Current
 
-**Type of change:** reason `product` · kind `field_added_or_required` · partner impact `rerender`
+**Type of change:** risk
 
 **What changed:**
 
@@ -32,7 +32,7 @@ Schema versions for employee onboarding in Spain.
 
 ### v6
 
-**Type of change:** reason `compliance` · kind `field_added_or_required` · partner impact `rerender`
+**Type of change:** compliance
 
 **What changed:**
 
@@ -54,7 +54,7 @@ Schema versions for employee onboarding in Spain.
 
 ### v5
 
-**Type of change:** reason `compliance` (primary, also `technical`) · kind `field_removed_or_replaced` (also `display_only`, `no_consumer_effect`) · partner impact `breaking`
+**Type of change:** risk, product, technical
 
 **What changed:**
 
