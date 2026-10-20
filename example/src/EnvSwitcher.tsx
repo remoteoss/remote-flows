@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 
-type EnvState = { current: string | null; available: string[] };
+type EnvState = {
+  current: string | null;
+  gateway: string | null;
+  available: string[];
+};
 
 export const EnvSwitcher = () => {
   const [state, setState] = useState<EnvState | null>(null);
@@ -12,6 +16,14 @@ export const EnvSwitcher = () => {
       .then((data) => setState(data?.available ? data : null))
       .catch(() => setState(null));
   }, []);
+
+  useEffect(() => {
+    if (!state) {
+      return;
+    }
+    const label = state.current ?? 'example/.env';
+    document.title = `[${label}] ${document.title.replace(/^\[[^\]]*\] /, '')}`;
+  }, [state]);
 
   if (!state) {
     return null;
@@ -62,6 +74,7 @@ export const EnvSwitcher = () => {
           </option>
         ))}
       </select>
+      {state.gateway && <span> → gateway: {state.gateway}</span>}
     </label>
   );
 };

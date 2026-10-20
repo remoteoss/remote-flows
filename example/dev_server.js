@@ -69,7 +69,11 @@ const startServer = async () => {
   app.use(express.json({ limit: '50mb' }));
 
   app.get('/__env', (req, res) => {
-    res.json({ current: currentEnv, available: listEnvs() });
+    res.json({
+      current: currentEnv,
+      gateway: process.env.VITE_REMOTE_GATEWAY ?? null,
+      available: listEnvs(),
+    });
   });
 
   app.post('/__env', async (req, res) => {
