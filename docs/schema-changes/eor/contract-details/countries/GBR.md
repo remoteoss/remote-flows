@@ -10,6 +10,8 @@ Schema versions for employee onboarding in United Kingdom.
 
 ### v7 - Current
 
+**Type of change:** product
+
 **What changed:**
 
 - Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `GBR`) to inspect field-level diffs between your current pin and v7. Prefer jumping straight from v3 to v7 when upgrading.
@@ -34,6 +36,8 @@ Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when
 
 ### v6
 
+**Type of change:** risk
+
 **What changed:**
 
 - Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `GBR`) to inspect field-level diffs between your current pin and v6. Prefer jumping straight from v3 to v6 when upgrading.
@@ -55,6 +59,8 @@ Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when
 
 ### v5
 
+**Type of change:** risk, technical
+
 **What changed:**
 
 - `annual_gross_salary` moves to the shared annual gross salary component and adds high-salary reserve messaging: a `salary_overview` statement grouped with the salary field, plus a computed description on `annual_gross_salary`. Not rendered when `wage_type` is hourly. Additive and flag-gated — no action required.
@@ -75,6 +81,8 @@ Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when
 
 ### v4
 
+**Type of change:** compliance
+
 **What changed:**
 
 - `available_pto_type` is now required and only accepts `"unlimited"` or `"fixed"`. The `N/A` (`null`) option is removed, so submissions that omit the field or send `null` now fail validation.
@@ -94,6 +102,8 @@ Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when
 ---
 
 ### v3
+
+**Type of change:** risk, product
 
 **What changed:**
 
@@ -116,6 +126,8 @@ Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when
 ---
 
 ### v2 (deprecated)
+
+**Type of change:** product
 
 **Deprecated on 1 July 2026.** Requests pinned to this version are served the latest schema.
 
