@@ -4,11 +4,32 @@ Schema versions for employee onboarding in México.
 
 ## Current Version
 
-**Contract Details:** v8
+**Contract Details:** v9
 
 ## Contract Details
 
-### v8 - Current
+### v9 - Current
+
+**What changed:**
+
+- Migrates the probation period fields (`has_probation_period`, `is_managerial_administrative_specialized_role`, `probation_length_days`, `probation_skills`, `probation_length_ack`) to the `mex_probation_period` component. They render and validate the same for existing consumers, so no action is required
+- Blocks the probation period for employments with a recognized seniority date. Flag-gated: once enabled for Mexico, `has_probation_period` is forced to `"no"` (hidden for non-admins), which forbids the role, length, skills and acknowledgement fields
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      MEX: { contract_details: 9 },
+    },
+  }}
+/>
+```
+
+---
+
+### v8
 
 **What changed:**
 
