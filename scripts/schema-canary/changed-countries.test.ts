@@ -1,4 +1,5 @@
 import {
+  basicInfoVersionChanged,
   changedCountries,
   parsePinnedVersions,
   touchesOtherInputs,
@@ -53,6 +54,26 @@ describe('changedCountries', () => {
         source(8),
       ),
     ).toEqual(['POL']);
+  });
+});
+
+describe('basicInfoVersionChanged', () => {
+  const withBasicInfo = (version: number) =>
+    `export const V = {\n  employment_basic_information: ${version},\n};\n\n${source(8)}`;
+
+  it('detects a bumped basic information version', () => {
+    expect(basicInfoVersionChanged(withBasicInfo(4), withBasicInfo(5))).toBe(
+      true,
+    );
+  });
+
+  it('ignores a file where only a country pin changed', () => {
+    expect(
+      basicInfoVersionChanged(
+        withBasicInfo(4) + source(2),
+        withBasicInfo(4) + source(8),
+      ),
+    ).toBe(false);
   });
 });
 

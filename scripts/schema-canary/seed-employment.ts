@@ -1,3 +1,4 @@
+import { ONBOARDING_JSON_SCHEMA_VERSION } from '@/example/src/flows/Onboarding/jsonSchemaVersions';
 import {
   deleteV1SandboxEmploymentsEmploymentId,
   getV1CountriesCountryCodeForm,
@@ -10,7 +11,8 @@ import { Client } from '@/src/client/client';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { fillSchema, findSafeStartDate, HolidayDate } from '../fill-schema';
 
-const BASIC_INFO_VERSION = 4;
+const BASIC_INFO_VERSION =
+  ONBOARDING_JSON_SCHEMA_VERSION.employment_basic_information;
 
 async function fetchHolidays(
   client: Client,
