@@ -77,7 +77,7 @@ Schema versions for employee onboarding in Argentina.
 
 ### v2
 
-**Type of change:** product
+**Type of change:** compliance
 
 **What changed:**
 
