@@ -115,11 +115,12 @@ function cacheUntilExpiry(requestToken) {
     cached = undefined;
   });
   return async () => {
-    if (cached && Date.now() < cached.refreshAt) {
-      const { accessToken } = await cached.token;
+    const hit = cached;
+    if (hit && Date.now() < hit.refreshAt) {
+      const { accessToken } = await hit.token;
       return {
         accessToken,
-        expiresIn: Math.floor((cached.expiresAt - Date.now()) / 1000),
+        expiresIn: Math.floor((hit.expiresAt - Date.now()) / 1000),
       };
     }
     const token = requestToken();
