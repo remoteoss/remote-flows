@@ -9,11 +9,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ARE: {
     // United Arab Emirates
-    contract_details: 3,
+    contract_details: 6,
   },
   ARG: {
     // Argentina
-    contract_details: 1,
+    contract_details: 5,
   },
   ARM: {
     // Armenia
@@ -73,7 +73,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CRI: {
     // Costa Rica
-    contract_details: 1,
+    contract_details: 5,
   },
   CYP: {
     // Cyprus
@@ -269,7 +269,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   PER: {
     // Peru
-    contract_details: 1,
+    contract_details: 4,
   },
   PHL: {
     // Philippines
@@ -305,7 +305,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   SLV: {
     // El Salvador
-    contract_details: 1,
+    contract_details: 4,
   },
   SRB: {
     // Serbia
