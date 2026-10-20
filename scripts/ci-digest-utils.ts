@@ -36,6 +36,52 @@ const FLAKE_SIGNATURES = [
   /socket hang up/i,
 ];
 
+const PLAYWRIGHT_FAILURE_PATTERN =
+  /([✘✓])\s+\d+\s+(\[[^\]]+\]\s+›\s+.+?)(?:\s+\(retry #\d+\))?(?:\s+\([\d.]+(?:ms|s|m)\))?$/;
+
+export function extractPlaywrightFailures(log: string): string[] {
+  const specs = new Set<string>();
+  for (const line of log.split('\n').map(cleanLogLine)) {
+    const match = line.trim().match(PLAYWRIGHT_FAILURE_PATTERN);
+    if (!match) {
+      continue;
+    }
+    if (match[1] === '✘') {
+      specs.add(match[2]);
+    } else {
+      specs.delete(match[2]);
+    }
+  }
+  return [...specs];
+}
+
+export type RunJob = {
+  name: string;
+  conclusion: string | null;
+  url: string;
+  databaseId: number;
+};
+
+export function jobsToChecks(
+  workflow: string,
+  jobs: RunJob[],
+): {
+  failed: Pick<CheckRun, 'name' | 'workflow' | 'link' | 'jobId'>[];
+  passing: number;
+} {
+  const failed = jobs
+    .filter(
+      (job) => job.conclusion === 'failure' || job.conclusion === 'timed_out',
+    )
+    .map((job) => ({
+      name: job.name,
+      workflow,
+      link: job.url,
+      jobId: String(job.databaseId),
+    }));
+  return { failed, passing: jobs.length - failed.length };
+}
+
 export function parseCheckLink(
   link: string,
 ): Pick<CheckRun, 'runId' | 'jobId'> {
@@ -149,25 +195,36 @@ const NEXT_STEP: Record<FailureKind, string> = {
 };
 
 export function renderDigest(
-  prNumber: string,
-  failures: { check: CheckRun; kind: FailureKind; excerpt: string[] }[],
+  subject: string,
+  failures: {
+    check: CheckRun;
+    kind: FailureKind;
+    excerpt: string[];
+    failingSpecs?: string[];
+  }[],
   passing: number,
 ): string {
   if (failures.length === 0) {
-    return `PR #${prNumber}: no failing checks (${passing} passing or pending).`;
+    return `${subject}: no failing checks (${passing} passing or pending).`;
   }
-  const sections = failures.map(({ check, kind, excerpt }) =>
+  const sections = failures.map(({ check, kind, excerpt, failingSpecs }) =>
     [
       `## ${check.workflow} / ${check.name} [${kind}]`,
       check.link,
       `Next: ${NEXT_STEP[kind]}`,
+      ...(failingSpecs?.length
+        ? [
+            `Failing specs (${failingSpecs.length}):`,
+            ...failingSpecs.map((spec) => `- ${spec}`),
+          ]
+        : []),
       '```',
       ...excerpt,
       '```',
     ].join('\n'),
   );
   return [
-    `PR #${prNumber}: ${failures.length} failing, ${passing} other checks`,
+    `${subject}: ${failures.length} failing, ${passing} other checks`,
     ...sections,
   ].join('\n\n');
 }

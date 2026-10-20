@@ -84,6 +84,15 @@ jobs:
       - name: Run tests
         run: pnpm run test
 
+      - name: Upload flaky test report
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: flaky-tests
+          path: out/flaky-tests.json
+          if-no-files-found: ignore
+          retention-days: 30
+
   example-checks:
     name: Example App Checks
     runs-on: ubuntu-latest
