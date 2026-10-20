@@ -10,6 +10,8 @@ Schema versions for employee onboarding in Brazil.
 
 ### v5 - Current
 
+**Type of change:** compliance
+
 **What changed:**
 
 - Adds the required `health_check_ack` checkbox. A health check must be completed and uploaded to the employee's profile at least 3 business days before the start date, and requests without `health_check_ack: "acknowledged"` fail validation. Partners using a custom UI must render it

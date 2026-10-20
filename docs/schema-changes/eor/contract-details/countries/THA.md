@@ -10,6 +10,8 @@ Schema versions for employee onboarding in Thailand.
 
 ### v5 - Current
 
+**Type of change:** risk
+
 **What changed:**
 
 - Adds the `extreme_salary_acknowledgement` checkbox and the `extreme_salary_warning` message, shown when the annual gross salary is at or above the USD 1,000,000 equivalent. Additive and flag-gated, so no action is required unless a submitted salary crosses that threshold
@@ -29,6 +31,8 @@ Schema versions for employee onboarding in Thailand.
 ---
 
 ### v4 - jsf v1
+
+**Type of change:** technical
 
 **What changed:**
 
@@ -50,6 +54,8 @@ Schema versions for employee onboarding in Thailand.
 
 ### v3
 
+**Type of change:** risk
+
 **What changed:**
 
 - Adds the `salary_overview` field, which notes the salary at or above which a reserve payment is requested. It is display-only: render it but never submit it
@@ -70,6 +76,8 @@ Schema versions for employee onboarding in Thailand.
 ---
 
 ### v2
+
+**Type of change:** product
 
 **What changed:**
 

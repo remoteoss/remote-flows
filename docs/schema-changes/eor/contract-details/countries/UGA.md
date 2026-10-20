@@ -10,6 +10,8 @@ Schema versions for employee onboarding in Uganda.
 
 ### v5 - Current
 
+**Type of change:** compliance
+
 **What changed:**
 
 - Adds the `probation_ack` checkbox, required when `has_probation_period` is `yes` and rejected when it is `no`. It confirms the employer must contact Remote at least 30 days before the probation end date to extend a probation or request a termination. Partners using a custom UI must render it
@@ -30,6 +32,8 @@ Schema versions for employee onboarding in Uganda.
 ---
 
 ### v4
+
+**Type of change:** compliance
 
 **What changed:**
 
@@ -52,6 +56,8 @@ Schema versions for employee onboarding in Uganda.
 
 ### v3
 
+**Type of change:** risk
+
 **What changed:**
 
 - Adds the `salary_overview` field, which notes the salary at or above which a reserve payment is requested. It is display-only: render it but never submit it
@@ -73,6 +79,8 @@ Schema versions for employee onboarding in Uganda.
 ---
 
 ### v2 - jsf v1
+
+**Type of change:** technical
 
 **What changed:**
 

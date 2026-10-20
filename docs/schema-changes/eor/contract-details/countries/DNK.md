@@ -10,6 +10,8 @@ Schema versions for employee onboarding in Denmark.
 
 ### v6 - Current
 
+**Type of change:** compliance
+
 **What changed:**
 
 - Fixed-term contracts are blocked when the employee's seniority date is recognized (`has_seniority_date: yes`), once the `eor_seniority_block` and `eor_seniority_block_v2_ftc` feature flags are enabled for the country. `contract_duration_type` then only accepts `indefinite`, and `contract_end_date` is rejected if provided, unless the request is made by a Remote Admin. Employments created before the seniority block cutoff date are unaffected
@@ -29,6 +31,8 @@ Schema versions for employee onboarding in Denmark.
 ---
 
 ### v5
+
+**Type of change:** risk
 
 **What changed:**
 
@@ -50,6 +54,8 @@ Schema versions for employee onboarding in Denmark.
 
 ### v4 - jsf v1
 
+**Type of change:** technical
+
 **What changed:**
 
 - The schema is now marked as the newer form engine version (`x-rmt-meta.jsfVersion` is `"1"`). Partners pinning this version or later get the newer engine path
@@ -69,6 +75,8 @@ Schema versions for employee onboarding in Denmark.
 ---
 
 ### v3
+
+**Type of change:** risk
 
 **What changed:**
 
@@ -90,6 +98,8 @@ Schema versions for employee onboarding in Denmark.
 ---
 
 ### v2
+
+**Type of change:** compliance
 
 **What changed:**
 

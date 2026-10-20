@@ -10,6 +10,8 @@ Schema versions for employee onboarding in Jamaica.
 
 ### v5 - Current
 
+**Type of change:** compliance
+
 **What changed:**
 
 - Fixed-term contracts are blocked when the employee's seniority date is recognized (`has_seniority_date: yes`), once the `eor_seniority_block` and `eor_seniority_block_v1_ftc` feature flags are enabled for the country. `contract_duration_type` then only accepts `indefinite`, and `contract_end_date` is rejected if provided, unless the request is made by a Remote Admin. Employments created before the seniority block cutoff date are unaffected
@@ -30,6 +32,8 @@ Schema versions for employee onboarding in Jamaica.
 
 ### v4
 
+**Type of change:** risk
+
 **What changed:**
 
 - Adds the `extreme_salary_acknowledgement` checkbox and the `extreme_salary_warning` message, shown when the annual gross salary is at or above the USD 1,000,000 equivalent. Additive and flag-gated, so no action is required unless a submitted salary crosses that threshold
@@ -49,6 +53,8 @@ Schema versions for employee onboarding in Jamaica.
 ---
 
 ### v3 - jsf v1
+
+**Type of change:** risk, technical
 
 **What changed:**
 
