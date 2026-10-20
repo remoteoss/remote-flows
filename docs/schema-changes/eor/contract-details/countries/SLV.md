@@ -10,7 +10,7 @@ Schema versions for employee onboarding in El Salvador.
 
 ### v4 - Current
 
-**Type of change:** technical
+**Type of change:** compliance
 
 **What changed:**
 
