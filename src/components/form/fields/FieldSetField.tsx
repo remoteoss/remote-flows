@@ -149,6 +149,33 @@ export function FieldSetField({
     };
   }, [watchedValues, trigger, formState.isSubmitted, formState.submitCount]);
 
+  const hasVisibleContent =
+    Boolean(description || statement || extra || helpCenter?.id) ||
+    fields.some((field: $TSFixMe) => {
+      const resolved = field.calculateDynamicProperties
+        ? {
+            ...field,
+            ...(field.calculateDynamicProperties(allFormValues, field) || {}),
+          }
+        : field;
+      if (
+        resolved.isVisible === false ||
+        resolved.deprecated ||
+        resolved.hidden ||
+        resolved.type === 'hidden'
+      ) {
+        return false;
+      }
+      if (checkFieldHasForcedValue(resolved)) {
+        return Boolean(
+          resolved.statement?.title ||
+          resolved.statement?.description ||
+          resolved.description,
+        );
+      }
+      return true;
+    });
+
   const ToggleComponent =
     formComponents?.fieldsetToggle || FieldsetToggleButtonDefault;
   const contentId = `${name}-content`;
@@ -169,6 +196,7 @@ export function FieldSetField({
 
   return (
     <fieldset
+      hidden={!hasVisibleContent}
       className={cn(
         'border-1 border-input p-4 rounded-xl',
         `RemoteFlows__FieldSetField`,
