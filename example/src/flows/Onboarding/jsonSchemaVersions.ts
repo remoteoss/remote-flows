@@ -49,7 +49,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   BRA: {
     // Brazil
-    contract_details: 4,
+    contract_details: 5,
   },
   CAN: {
     // Canada
@@ -89,7 +89,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   DNK: {
     // Denmark
-    contract_details: 1,
+    contract_details: 6,
   },
   DOM: {
     // Dominican Republic
@@ -177,7 +177,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   JAM: {
     // Jamaica
-    contract_details: 2,
+    contract_details: 5,
   },
   JPN: {
     // Japan
@@ -301,7 +301,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   SGP: {
     // Singapore
-    contract_details: 2,
+    contract_details: 5,
   },
   SLV: {
     // El Salvador
@@ -325,7 +325,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   THA: {
     // Thailand
-    contract_details: 1,
+    contract_details: 5,
   },
   TUN: {
     // Tunisia
@@ -341,7 +341,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   UGA: {
     // Uganda
-    contract_details: 1,
+    contract_details: 5,
   },
   UKR: {
     // Ukraine
