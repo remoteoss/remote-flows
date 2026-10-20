@@ -1,3 +1,4 @@
+import { XIcon } from 'lucide-react';
 import {
   FormControl,
   FormDescription,
@@ -21,7 +22,15 @@ export function SelectFieldDefault({
   fieldState,
   fieldData,
 }: FieldComponentProps) {
-  const { name, label, description, options } = fieldData;
+  const { name, label, description, options, required } = fieldData;
+  const isClearable = !required && Boolean(field.value);
+
+  const clearValue = (event: React.MouseEvent<HTMLButtonElement>) => {
+    field.onChange('');
+    event.currentTarget.parentElement
+      ?.querySelector<HTMLElement>('[data-slot="select-trigger"]')
+      ?.focus();
+  };
 
   return (
     <FormItem
@@ -61,6 +70,16 @@ export function SelectFieldDefault({
               </SelectGroup>
             </SelectContent>
           </Select>
+          {isClearable && (
+            <button
+              type='button'
+              aria-label={`Clear ${label}`}
+              className='RemoteFlows__SelectField__Clear absolute right-10 top-1/2 -translate-y-1/2 text-muted-foreground'
+              onClick={clearValue}
+            >
+              <XIcon className='size-4' />
+            </button>
+          )}
         </div>
       </FormControl>
       {(description || fieldData.meta?.helpCenter) && (

@@ -34,20 +34,38 @@ describe('getContractDetailsSchemaVersion', () => {
 });
 
 describe('usesJsfV1ContractDetails', () => {
-  it('should return true for France and Italy', () => {
-    expect(usesJsfV1ContractDetails('FRA')).toBe(true);
-    expect(usesJsfV1ContractDetails('ITA')).toBe(true);
+  it.each([
+    'CAN',
+    'GBR',
+    'IND',
+    'PHL',
+    'USA',
+    'POL',
+    'NGA',
+    'IRL',
+    'SWE',
+    'NLD',
+    'FRA',
+    'ITA',
+    'DEU',
+    'ESP',
+    'ZAF',
+    'AUS',
+    'MYS',
+    'DOM',
+    'MEX',
+    'COL',
+    'PAK',
+    'NZL',
+    'ISR',
+    'CZE',
+    'PRT',
+  ])('should return true for %s', (countryCode) => {
+    expect(usesJsfV1ContractDetails(countryCode)).toBe(true);
   });
 
-  it.each(['CAN', 'GBR', 'IND', 'PHL', 'USA'])(
-    'should return true for %s',
-    (countryCode) => {
-      expect(usesJsfV1ContractDetails(countryCode)).toBe(true);
-    },
-  );
-
   it('should return false for the other countries', () => {
-    expect(usesJsfV1ContractDetails('PRT')).toBe(false);
+    expect(usesJsfV1ContractDetails('BRA')).toBe(false);
     expect(usesJsfV1ContractDetails(null)).toBe(false);
   });
 });
@@ -59,7 +77,7 @@ describe('getContractDetailsStrategy', () => {
   });
 
   it('returns rebuild for every other country', () => {
-    expect(getContractDetailsStrategy('PRT')).toBe('rebuild');
+    expect(getContractDetailsStrategy('BRA')).toBe('rebuild');
     expect(getContractDetailsStrategy(null)).toBe('rebuild');
   });
 });

@@ -21,7 +21,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   AUS: {
     // Australia
-    contract_details: 1,
+    contract_details: 6,
   },
   AUT: {
     // Austria
@@ -69,7 +69,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   COL: {
     // Colombia
-    contract_details: 1,
+    contract_details: 6,
   },
   CRI: {
     // Costa Rica
@@ -81,7 +81,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CZE: {
     // Czech Republic
-    contract_details: 2,
+    contract_details: 7,
   },
   DEU: {
     // Germany
@@ -93,7 +93,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   DOM: {
     // Dominican Republic
-    contract_details: 1,
+    contract_details: 6,
   },
   ECU: {
     // Ecuador
@@ -101,7 +101,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   EGY: {
     // Egypt
-    contract_details: 1,
+    contract_details: 6,
   },
   ESP: {
     // Spain
@@ -121,7 +121,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   GBR: {
     // United Kingdom
-    contract_details: 6,
+    contract_details: 7,
   },
   GEO: {
     // Georgia
@@ -161,7 +161,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   IRL: {
     // Ireland
-    contract_details: 4,
+    contract_details: 5,
   },
   ISL: {
     // Iceland
@@ -169,7 +169,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ISR: {
     // Israel
-    contract_details: 1,
+    contract_details: 8,
   },
   ITA: {
     // Italy
@@ -221,7 +221,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   MEX: {
     // Mexico
-    contract_details: 2,
+    contract_details: 8,
   },
   MKD: {
     // North Macedonia
@@ -237,7 +237,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   MYS: {
     // Malaysia
-    contract_details: 2,
+    contract_details: 5,
   },
   NGA: {
     // Nigeria
@@ -257,11 +257,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   NZL: {
     // New Zealand
-    contract_details: 2,
+    contract_details: 8,
   },
   PAK: {
     // Pakistan
-    contract_details: 2,
+    contract_details: 4,
   },
   PAN: {
     // Panama
@@ -285,7 +285,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   PRT: {
     // Portugal
-    contract_details: 3,
+    contract_details: 9,
   },
   PRY: {
     // Paraguay
@@ -365,7 +365,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ZAF: {
     // South Africa
-    contract_details: 1,
+    contract_details: 5,
   },
   ZWE: {
     // Zimbabwe

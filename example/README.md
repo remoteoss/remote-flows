@@ -3,8 +3,8 @@
 Before running the example folder, install dependencies from the root folder and run the library in development mode
 
 ```sh
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 create an .env file

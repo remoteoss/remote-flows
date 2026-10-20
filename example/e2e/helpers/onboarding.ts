@@ -304,6 +304,9 @@ interface fillOnboardingStep3SpainFormOptions {
   has_commissions?: string;
   equity_compensation?: string;
   non_compete_clause_apply?: string;
+  non_solicitation_employees?: string;
+  non_solicitation_customers?: string;
+  non_interference_apply?: string;
   // Required from contract_details v6: previously admin-only, cba_categories is now surfaced
   // to clients and enforced. cba_group and cba_level only render once the prior field is set.
   cba_area?: string;
@@ -429,6 +432,21 @@ export async function fillOnboardingStep3SpainForm(
     },
     {
       type: 'radio',
+      value: options.non_solicitation_employees,
+      name: 'non_solicitation_employees',
+    },
+    {
+      type: 'radio',
+      value: options.non_solicitation_customers,
+      name: 'non_solicitation_customers',
+    },
+    {
+      type: 'radio',
+      value: options.non_interference_apply,
+      name: 'non_interference_apply',
+    },
+    {
+      type: 'radio',
       value: options.cba_area,
       name: 'cba_categories.cba_area',
     },
@@ -479,10 +497,15 @@ interface fillOnboardingStep3PortugalFormOptions {
   has_bonus?: string;
   has_commissions?: string;
   equity_compensation?: string;
+  non_interference_apply?: string;
+  non_solicitation_customers?: string;
+  non_solicitation_employees?: string;
+  non_compete_clause_apply?: string;
   work_from_home_allowance_ack?: boolean;
   annual_training_hours_ack?: boolean;
   salary_installments_confirmation?: boolean;
   offboarding_allowances_ack?: boolean;
+  tax_and_social_security_numbers_ack?: boolean;
 }
 
 export async function fillOnboardingStep3PortugalForm(
@@ -573,6 +596,26 @@ export async function fillOnboardingStep3PortugalForm(
       name: 'equity_compensation.offer_equity_compensation',
     },
     {
+      type: 'radio',
+      value: options.non_interference_apply,
+      name: 'non_interference_apply',
+    },
+    {
+      type: 'radio',
+      value: options.non_solicitation_customers,
+      name: 'non_solicitation_customers',
+    },
+    {
+      type: 'radio',
+      value: options.non_solicitation_employees,
+      name: 'non_solicitation_employees',
+    },
+    {
+      type: 'radio',
+      value: options.non_compete_clause_apply,
+      name: 'non_compete_clause_apply',
+    },
+    {
       type: 'checkbox',
       value: options.work_from_home_allowance_ack ? 'yes' : '',
       name: 'work_from_home_allowance_ack',
@@ -591,6 +634,11 @@ export async function fillOnboardingStep3PortugalForm(
       type: 'checkbox',
       value: options.offboarding_allowances_ack ? 'yes' : '',
       name: 'offboarding_allowances_ack',
+    },
+    {
+      type: 'checkbox',
+      value: options.tax_and_social_security_numbers_ack ? 'yes' : '',
+      name: 'tax_and_social_security_numbers_ack',
     },
   ]);
 
