@@ -10,7 +10,7 @@ Schema versions for employee onboarding in Peru.
 
 ### v4 - Current
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
