@@ -183,6 +183,10 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'FIN',
   'GTM',
   'AUT',
+  'ARG',
+  'ARE',
+  'SLV',
+  'PER',
 ];
 
 /**
