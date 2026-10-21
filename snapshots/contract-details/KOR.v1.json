@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "allowances",
       "annual_gross_salary",
       "available_pto",
@@ -21,6 +23,8 @@
       "notice_period_during_probation_days",
       "probation_length",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "work_address.is_home_address",
       "work_days_for_part_time_worker.item",
       "work_hours_per_week",
@@ -57,6 +61,10 @@
     ]
   },
   "types": {
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "contract_duration": "text",
     "contract_duration_type": "radio",
     "contract_end_date": "date",
@@ -101,9 +109,12 @@
     "equity_compensation.equity_cliff": "number",
     "equity_compensation.equity_vesting_period": "number",
     "equity_compensation.equity_description": "textarea",
-    "non_compete_and_non_solicitation_period_months": "number"
+    "non_compete_and_non_solicitation_period_months": "number",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "contract_duration_type": ["fixed_term", "indefinite"],
     "work_schedule": ["full_time", "part_time"],
     "work_days_for_part_time_worker.item": [

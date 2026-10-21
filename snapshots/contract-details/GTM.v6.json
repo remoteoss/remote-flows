@@ -3,6 +3,8 @@
   "base": {
     "visible": [
       "additional_holiday_days",
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "allowances",
       "annual_bonus_ack",
       "annual_gross_salary",
@@ -23,6 +25,8 @@
       "non_solicitation_employees",
       "payout_currency_code",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "third_party_work",
       "work_address_is_home_address",
       "work_equipment_provided_by",
@@ -72,6 +76,10 @@
     "is_role_managerial": "radio",
     "overtime_pay_confirmation": "checkbox",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
     "employee_travel_required": "radio",
@@ -107,13 +115,16 @@
     "work_equipment_provided_by": "radio",
     "monthly_teleworking_contribution": "money",
     "third_party_work": "radio",
-    "third_party_work_activities": "textarea"
+    "third_party_work_activities": "textarea",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "contract_duration_type": ["fixed_term", "indefinite"],
     "work_schedule": ["full_time", "part_time"],
     "additional_holiday_days": ["no", "yes"],
     "is_role_managerial": ["no", "yes"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",

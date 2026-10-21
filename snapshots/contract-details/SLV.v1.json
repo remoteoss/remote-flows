@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_gross_salary",
       "available_pto_type",
       "contract_duration_type",
@@ -17,6 +19,8 @@
       "overtime_compensation_type",
       "pension_ack",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "third_party_work",
       "thirteenth_salary_ack",
       "vacation_bonus_ack",
@@ -63,6 +67,10 @@
     "available_pto": "number",
     "overtime_compensation_type": "checkbox",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "pension_ack": "checkbox",
     "employee_travel_required": "radio",
@@ -86,13 +94,16 @@
     "non_compete_non_relationship_non_solicit_clause_apply": "checkbox",
     "work_equipment_provided_by": "radio",
     "third_party_work": "radio",
-    "third_party_work_activities": "textarea"
+    "third_party_work_activities": "textarea",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "work_schedule": ["full_time", "part_time"],
     "work_schedule_type": ["day_worker", "night_worker"],
     "has_probation_period": ["no", "yes"],
     "available_pto_type": ["fixed", "unlimited"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
