@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "allowances",
       "annual_gross_salary",
       "annual_leave_carry_forward",
@@ -24,6 +26,8 @@
       "religious_holiday_allowance_ack",
       "retirement_age",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "work_address_is_home_address",
       "work_hours_per_week",
       "work_schedule"
@@ -70,6 +74,10 @@
     "carryover_details.expiry_months": "number",
     "overtime_eligibility": "radio",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
     "annual_gross_salary": "money",
@@ -94,7 +102,8 @@
     "non_compete_clause_apply": "radio",
     "non_compete_clause_halt_period_months": "number",
     "non_solicit_clause_apply": "radio",
-    "non_solicit_clause": "number"
+    "non_solicit_clause": "number",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "contract_duration_type": ["fixed_term", "indefinite"],
@@ -102,6 +111,8 @@
     "annual_leave_carry_forward": ["no", "yes"],
     "carryover_details.can_expire": ["no", "yes"],
     "overtime_eligibility": ["no", "yes"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",

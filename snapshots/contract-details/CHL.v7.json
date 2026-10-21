@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_gross_salary",
       "available_pto_type",
       "carryover.annual_leave_carry_forward",
@@ -46,6 +48,8 @@
       "non_solicitation_customers",
       "non_solicitation_employees",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "schedule_type",
       "thirteen_month_salary",
       "thirteenth_salary_ack",
@@ -139,6 +143,10 @@
     "carryover.expiry_months": "number",
     "is_excluded_from_working_hours": "radio",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
     "work_address.is_home_address": "radio",
@@ -178,7 +186,8 @@
     "non_solicitation_customers": "radio",
     "non_solicitation_customer_number_of_months": "number",
     "non_interference_apply": "radio",
-    "non_interference_halt_period": "number"
+    "non_interference_halt_period": "number",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "contract_duration_type": ["fixed_term", "indefinite"],
@@ -197,6 +206,8 @@
     "carryover.annual_leave_carry_forward": ["no", "yes"],
     "carryover.can_expire": ["no", "yes"],
     "is_excluded_from_working_hours": ["no", "yes"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",

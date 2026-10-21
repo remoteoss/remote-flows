@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_gross_salary",
       "available_pto",
       "available_pto_type",
@@ -37,6 +39,8 @@
       "non_compete_clause_apply",
       "other_work_locations",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "schedule_type",
       "state_of_residency",
       "training_required_for_position",
@@ -136,6 +140,10 @@
     "available_pto_type": "radio",
     "available_pto": "number",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "training_required_for_position": "textarea",
     "work_arrangement": "radio",
@@ -169,7 +177,8 @@
     "equity_compensation.equity_description": "textarea",
     "non_compete_clause_apply": "radio",
     "non_compete_clause_halt_months": "number",
-    "non_compete_severance_amount": "money"
+    "non_compete_severance_amount": "money",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "job_code": [
@@ -250,6 +259,8 @@
       "wednesday"
     ],
     "available_pto_type": ["fixed", "unlimited"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",

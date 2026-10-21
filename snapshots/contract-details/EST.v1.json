@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "allowances",
       "annual_gross_salary",
       "available_pto",
@@ -16,6 +18,8 @@
       "has_signing_bonus",
       "non_compete_clause_apply",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "work_address_is_home_address",
       "work_schedule"
     ],
@@ -37,6 +41,10 @@
     ]
   },
   "types": {
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "contract_duration": "text",
     "contract_duration_type": "radio",
     "contract_end_date": "date",
@@ -70,9 +78,12 @@
     "non_compete_clause_halt_period_months": "number",
     "non_compete_clause_compensation_amount": "number",
     "non_compete_clause_location": "text",
-    "non_compete_clause_penality_amount_months": "number"
+    "non_compete_clause_penality_amount_months": "number",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "contract_duration_type": ["fixed_term", "indefinite"],
     "has_probation_period": ["no", "yes"],
     "work_schedule": ["full_time", "part_time"],

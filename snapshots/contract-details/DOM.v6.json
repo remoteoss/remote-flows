@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "allowances",
       "annual_bonus_ack",
       "annual_gross_salary",
@@ -18,6 +20,8 @@
       "notice_period",
       "probation_period",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "salary_overview",
       "statutory_benefits",
       "work_address_is_home_address",
@@ -70,6 +74,10 @@
     "available_pto": "checkbox",
     "statutory_benefits": "checkbox",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
     "salary_overview": "radio",
@@ -97,7 +105,8 @@
     "non_compete_clause_compensation_amount": "money",
     "non_compete_clause_compensation_percentage": "number",
     "work_equipment": "textarea",
-    "expenses_reimbursement": "checkbox"
+    "expenses_reimbursement": "checkbox",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "contract_duration_type": [
@@ -116,6 +125,8 @@
       "tuesday",
       "wednesday"
     ],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",

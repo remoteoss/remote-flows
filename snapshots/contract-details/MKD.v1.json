@@ -3,6 +3,8 @@
   "base": {
     "visible": [
       "additional_holiday_days",
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_gross_salary",
       "annual_leave_carry_forward",
       "available_pto",
@@ -19,6 +21,8 @@
       "overtime_compensation_type",
       "post_termination_restrictions",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "third_party_work",
       "work_address_is_home_address",
       "work_equipment_provided_by",
@@ -51,6 +55,10 @@
     ]
   },
   "types": {
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "contract_duration_type": "radio",
     "contract_end_date": "date",
     "notice_period": "number",
@@ -94,9 +102,12 @@
     "equity_compensation.equity_cliff": "number",
     "equity_compensation.equity_vesting_period": "number",
     "equity_compensation.equity_description": "textarea",
-    "experience_level": "radio"
+    "experience_level": "radio",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "contract_duration_type": ["fixed_term", "indefinite"],
     "has_probation_period": ["no", "yes"],
     "work_address_is_home_address": ["no", "yes"],

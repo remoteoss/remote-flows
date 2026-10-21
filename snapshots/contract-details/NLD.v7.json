@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_gross_salary",
       "available_pto",
       "available_pto_type",
@@ -21,6 +23,8 @@
       "notice_period",
       "probation_length",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "salary_overview",
       "sick_leave_pay.sick_leave_pay_cap_70",
       "sick_leave_pay.sick_leave_percentage",
@@ -77,6 +81,10 @@
     "sick_leave_pay.sick_leave_pay_cap_100": "radio",
     "sick_leave_pay.sick_leave_pay_internal": "textarea",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "skills_and_qualifications": "textarea",
     "work_address_is_home_address": "radio",
@@ -112,7 +120,8 @@
     "it_equipment": "radio",
     "work_equipment_ack": "checkbox",
     "confidentiality_acknowledgment": "checkbox",
-    "supplemental_benefits_eligible": "radio"
+    "supplemental_benefits_eligible": "radio",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "contract_duration_type": ["fixed_term", "indefinite"],
@@ -122,6 +131,8 @@
     "available_pto_type": ["fixed", "unlimited"],
     "sick_leave_pay.sick_leave_percentage": ["100%", "70%", "internal"],
     "sick_leave_pay.sick_leave_pay_cap_70": ["no", "yes"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",

@@ -6,6 +6,19 @@ Country-specific schema version history and changelogs for employee onboarding f
 
 Schema versions can have different implementations per country. Instead of generic version documentation, each country has its own changelog documenting exactly what changed for that country's onboarding flow.
 
+## Type of change
+
+Each version in a country guide has a **Type of change** line saying why the version exists, so you can tell which upgrades are urgent. A version can have more than one type, with the main one first.
+
+| Type         | What it means for you                                                                                            |
+| ------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `compliance` | A legal requirement changed. Upgrade to stay compliant.                                                          |
+| `product`    | A new capability or improvement. Adopt it when you want it.                                                      |
+| `technical`  | An internal or engine change. Usually no action is needed, but read the entry: it says if you must do something. |
+| `bugfix`     | A correction to something that was wrong before.                                                                 |
+
+The type tells you how urgent a change is. **What changed** and **Migration** tell you what to do.
+
 ## Quick Reference
 
 Looking for versions that are being retired? See [deprecated versions](./DEPRECATIONS.md).
@@ -14,6 +27,7 @@ Looking for versions that are being retired? See [deprecated versions](./DEPRECA
 
 These countries have upgraded to different versions, check each guide to know how to migrate or what has changed
 
+- [Argentina (ARG)](./ARG.md)
 - [Australia (AUS)](./AUS.md)
 - [Austria (AUT)](./AUT.md)
 - [Belarus (BLR)](./BLR.md)
@@ -29,6 +43,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Czech Republic (CZE)](./CZE.md)
 - [Dominican Republic (DOM)](./DOM.md)
 - [Egypt (EGY)](./EGY.md)
+- [El Salvador (SLV)](./SLV.md)
 - [Finland (FIN)](./FIN.md)
 - [Germany (DEU)](./DEU.md)
 - [Guatemala (GTM)](./GTM.md)
@@ -48,6 +63,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Norway (NOR)](./NOR.md)
 - [New Zealand (NZL)](./NZL.md)
 - [Pakistan (PAK)](./PAK.md)
+- [Peru (PER)](./PER.md)
 - [Philippines (PHL)](./PHL.md)
 - [Poland (POL)](./POL.md)
 - [Portugal (PRT)](./PRT.md)
@@ -69,6 +85,7 @@ These countries have upgraded to different versions, check each guide to know ho
 
 | Country              | Code | Contract Details | Last Updated |
 | -------------------- | ---- | ---------------- | ------------ |
+| Argentina            | ARG  | v5               | October 2026 |
 | Australia            | AUS  | v6               | October 2026 |
 | Austria              | AUT  | v8               | October 2026 |
 | Belarus              | BLR  | v2               | March 2026   |
@@ -84,6 +101,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Czech Republic       | CZE  | v7               | October 2026 |
 | Dominican Republic   | DOM  | v6               | October 2026 |
 | Egypt                | EGY  | v6               | October 2026 |
+| El Salvador          | SLV  | v4               | October 2026 |
 | Finland              | FIN  | v5               | October 2026 |
 | Germany              | DEU  | v9               | October 2026 |
 | Guatemala            | GTM  | v6               | October 2026 |
@@ -103,6 +121,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Norway               | NOR  | v2               | March 2026   |
 | New Zealand          | NZL  | v8               | October 2026 |
 | Pakistan             | PAK  | v4               | October 2026 |
+| Peru                 | PER  | v4               | October 2026 |
 | Philippines          | PHL  | v9               | October 2026 |
 | Poland               | POL  | v5               | October 2026 |
 | Portugal             | PRT  | v9               | March 2026   |
@@ -113,7 +132,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Serbia               | SRB  | v2               | March 2026   |
 | Sweden               | SWE  | v5               | October 2026 |
 | United Kingdom       | GBR  | v7               | October 2026 |
-| United Arab Emirates | ARE  | v3               | March 2026   |
+| United Arab Emirates | ARE  | v6               | October 2026 |
 | United States        | USA  | v9               | October 2026 |
 
 ## How to Use

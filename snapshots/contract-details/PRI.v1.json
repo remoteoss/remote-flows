@@ -3,6 +3,8 @@
   "base": {
     "visible": [
       "additional_holiday_days",
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_gross_salary",
       "available_pto",
       "available_pto_type",
@@ -18,6 +20,8 @@
       "other_work_locations",
       "post_termination_restrictions",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "sick_leave_ack",
       "third_party_work",
       "work_address_is_home_address",
@@ -62,6 +66,10 @@
     "additional_holiday_days": "radio",
     "sick_leave_ack": "checkbox",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
     "other_work_locations": "radio",
@@ -93,6 +101,7 @@
     "work_equipment_provided_by": "radio",
     "third_party_work": "radio",
     "third_party_work_activities": "textarea",
+    "additional_job_title_eligibility_check_result": "hidden",
     "bonus_amount": "text"
   },
   "options": {
@@ -102,6 +111,8 @@
     "has_probation_period": ["no", "yes"],
     "available_pto_type": ["fixed", "unlimited"],
     "additional_holiday_days": ["no", "yes"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
