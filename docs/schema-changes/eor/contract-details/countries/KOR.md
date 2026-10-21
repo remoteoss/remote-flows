@@ -14,9 +14,10 @@ Schema versions for employee onboarding in South Korea.
 
 **What changed:**
 
-- `available_pto` is now computed: fixed-term contracts shorter than one year accrue 1 day per month of contract duration, and the 15 to 25 days range stays for longer contracts
-- `work_hours_per_week` is now read-only and computed from the work schedule and the work days selected
-- The `holiday_days_for_part_time_worker` options exclude the days the employee works
+- Contract details rules now run on the server. `work_hours_per_week` is now read-only and must equal the number of work days times `work_week_schedule.working_hours` (5 days for full-time). Partners using a custom UI must send that value
+- For full-time fixed-term contracts shorter than 12 months, `available_pto` is locked to the number of contract months, counted from the provisional start date
+- `holiday_days_for_part_time_worker` can no longer include a selected work day
+- External companies can no longer use experience levels 4 to 6
 
 **Migration:**
 
