@@ -3,9 +3,9 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
+import { mapWithConcurrency } from './map-with-concurrency';
 import { createSandboxClient } from './schema-canary/auth';
 import { KeptEmployment } from './schema-canary/kept-employments';
-import { mapWithConcurrency } from './schema-canary/lib';
 import { archiveEmployment } from './schema-canary/seed-employment';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
