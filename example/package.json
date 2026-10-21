@@ -36,7 +36,7 @@
     "typescript": "7.0.2"
   },
   "devDependencies": {
-    "@playwright/test": "1.64.0",
+    "@playwright/test": "1.64.1",
     "@remoteoss/remote-json-schema-form-kit": "1.1.4",
     "@types/node": "24.12.4",
     "@types/react-dom": "19.3.0",
