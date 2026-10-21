@@ -10,7 +10,7 @@ Schema versions for employee onboarding in United States.
 
 ### v8 - Current
 
-**Type of change:** product
+**Type of change:** compliance
 
 **What changed:**
 
