@@ -30,7 +30,7 @@ Schema versions for employee onboarding in Spain.
 
 ### v7
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
@@ -74,7 +74,7 @@ Schema versions for employee onboarding in Spain.
 
 ### v5
 
-**Type of change:** risk, product, technical
+**Type of change:** compliance, product, technical
 
 **What changed:**
 
