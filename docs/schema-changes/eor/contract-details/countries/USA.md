@@ -31,6 +31,8 @@ Schema versions for employee onboarding in United States.
 
 ### v8
 
+**Type of change:** compliance
+
 **What changed:**
 
 - Adds a required `work_arrangement` (`"remote"`, `"hybrid"` or `"office"`) and a required `other_work_locations` (`"yes"` / `"no"`, whether the role needs regular travel).
@@ -53,6 +55,8 @@ Schema versions for employee onboarding in United States.
 
 ### v7
 
+**Type of change:** compliance
+
 **What changed:**
 
 - Adds an extreme-salary acknowledgement: a warning plus a required checkbox when the annual salary is USD 1,000,000 or more.
@@ -72,6 +76,8 @@ Schema versions for employee onboarding in United States.
 ---
 
 ### v6
+
+**Type of change:** compliance
 
 **What changed:**
 
@@ -93,6 +99,8 @@ Schema versions for employee onboarding in United States.
 
 ### v5
 
+**Type of change:** compliance
+
 **What changed:**
 
 - Outside Montana, fixed-term contracts are removed and `contract_duration_type` only accepts `"indefinite"`, because US employment is at-will.
@@ -112,6 +120,8 @@ Schema versions for employee onboarding in United States.
 ---
 
 ### v4
+
+**Type of change:** compliance
 
 **What changed:**
 
@@ -133,6 +143,8 @@ Schema versions for employee onboarding in United States.
 
 ### v3
 
+**Type of change:** product
+
 **What changed:**
 
 - Employee schedule added
@@ -153,6 +165,8 @@ Schema versions for employee onboarding in United States.
 ---
 
 ### v2
+
+**Type of change:** technical
 
 **What changed:**
 

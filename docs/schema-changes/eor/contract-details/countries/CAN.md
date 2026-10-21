@@ -32,6 +32,8 @@ Schema versions for employee onboarding in Canada.
 
 ### v7
 
+**Type of change:** compliance
+
 **What changed:**
 
 - Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `CAN`) to inspect field-level diffs between your current pin and v7. Prefer jumping straight from v1 to v7 when upgrading.
@@ -52,6 +54,8 @@ Schema versions for employee onboarding in Canada.
 ---
 
 ### v6
+
+**Type of change:** compliance, product
 
 **What changed:**
 
@@ -77,6 +81,8 @@ Schema versions for employee onboarding in Canada.
 
 ### v5
 
+**Type of change:** compliance
+
 **What changed:**
 
 - Adds an extreme-salary acknowledgement: a warning and a required checkbox appear when the annual salary is at or above the USD 1,000,000 equivalent. Additive and flag-gated — no action required unless a submitted salary crosses that threshold.
@@ -96,6 +102,8 @@ Schema versions for employee onboarding in Canada.
 ---
 
 ### v4
+
+**Type of change:** compliance, technical
 
 **What changed:**
 
@@ -119,6 +127,8 @@ Schema versions for employee onboarding in Canada.
 
 ### v3
 
+**Type of change:** technical
+
 **What changed:**
 
 - `standard_hours` is computed from `work_hours_per_week` (weekly hours × 52 / 24, rounded to two decimals) and locked to that value, shown as a "Standard Hours" statement.
@@ -138,6 +148,8 @@ Schema versions for employee onboarding in Canada.
 ---
 
 ### v2
+
+**Type of change:** technical
 
 **What changed:**
 
