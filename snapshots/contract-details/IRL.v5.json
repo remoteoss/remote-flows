@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "available_pto",
       "available_pto_type",
       "contract_duration",
@@ -35,6 +37,8 @@
       "has_probation_period",
       "has_signing_bonus",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "schedule_type",
       "sick_leave_pay",
       "sick_leave_pay_ack",
@@ -125,6 +129,10 @@
     "sick_leave_pay": "radio",
     "sick_leave_pay_length": "number",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
     "wage_type": "radio",
@@ -148,7 +156,8 @@
     "equity_compensation.equity_vesting_period": "number",
     "equity_compensation.equity_description": "textarea",
     "third_party_work": "radio",
-    "third_party_work_activities": "textarea"
+    "third_party_work_activities": "textarea",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "contract_duration_type": ["fixed_term", "indefinite"],
@@ -166,6 +175,8 @@
     "has_probation_period": ["no", "yes"],
     "available_pto_type": ["fixed", "unlimited"],
     "sick_leave_pay": ["no", "yes"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",

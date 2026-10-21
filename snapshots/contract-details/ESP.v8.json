@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "allowances",
       "annual_bonus_ack",
       "annual_gross_salary",
@@ -26,6 +28,8 @@
       "probation_length",
       "probation_length_ack",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "salary_overview",
       "work_address_is_home_address",
       "work_equipment",
@@ -73,6 +77,10 @@
     "overtime_compensation_method": "radio",
     "info_message": "hidden",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
     "salary_overview": "radio",
@@ -113,13 +121,16 @@
     "has_social_security_number": "radio",
     "work_equipment": "text",
     "compensation_expenses": "money",
-    "compensation_expenses_ack": "checkbox"
+    "compensation_expenses_ack": "checkbox",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "contract_duration_type": ["indefinite"],
     "work_schedule": ["full_time", "part_time"],
     "overtime_eligible": ["yes"],
     "available_pto_type": ["fixed", "unlimited"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Group Level A - Workers who thanks to their professional knowledge and experience, coordinate, plan and manage the resources available to them, ensuring the achievement of the objectives pursued. They carry out these activities with autonomy and supervision. (probation period - 6 months)",
       "Group Level B - Workers who have assigned functions related to the analysis, definition, coordination and supervision of projects, tasks, sector-specific activities, line, area of belonging, ensuring the achievement of the objectives pursued, and who have the necessary training, knowledge and professional experience. They plan and manage the available human and technical resources by project. (probation period - 6 months)",

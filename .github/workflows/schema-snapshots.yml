@@ -49,8 +49,8 @@ jobs:
         id: snapshots
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
-          VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
-          VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
+          REMOTE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          REMOTE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
         run: pnpm run schema-snapshot --failures-out="$RUNNER_TEMP/schema-snapshot-failures.md"
 
       - name: Open or update the failure issue
@@ -126,8 +126,8 @@ jobs:
       - name: Create the baselines that are missing
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
-          VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
-          VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
+          REMOTE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          REMOTE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
         run: pnpm run schema-snapshot --create-missing --summary-out="$RUNNER_TEMP/schema-snapshot-summary.md"
 
       - name: Commit the baselines to the pull request branch

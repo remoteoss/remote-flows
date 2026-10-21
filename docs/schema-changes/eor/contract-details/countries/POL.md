@@ -12,7 +12,6 @@ Schema versions for employee onboarding in Poland.
 
 **What changed:**
 
-- Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `POL`) to inspect field-level diffs between your current pin and v5. Prefer jumping straight from v1 to v5 when upgrading.
 - `contract_duration_type` no longer offers `fixed_term`, and `contract_end_date` is rejected, when the employee has a recognized seniority date (`has_seniority_date: "yes"`), unless the request is made by a Remote Admin. Flag-gated (`eor_seniority_block`, `eor_seniority_block_v2_ftc`), and employments created before the cutoff date are unaffected. No action required for existing contracts.
 - The contract duration fields move to the shared `contract_duration` component with unlimited maximum duration, and the standalone `contract_duration_type` and `contract_end_date` field definitions and their help center metadata are removed from the schema.
 

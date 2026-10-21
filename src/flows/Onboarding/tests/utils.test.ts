@@ -71,6 +71,16 @@ describe('usesJsfV1ContractDetails', () => {
     'ARM',
     'EST',
     'LBN',
+    'DNK',
+    'JAM',
+    'SGP',
+    'UGA',
+    'THA',
+    'CRI',
+    'ARG',
+    'ARE',
+    'SLV',
+    'PER',
   ])('should return true for %s', (countryCode) => {
     expect(usesJsfV1ContractDetails(countryCode)).toBe(true);
   });

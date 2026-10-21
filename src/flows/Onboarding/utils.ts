@@ -187,6 +187,16 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'ARM',
   'EST',
   'LBN',
+  'DNK',
+  'JAM',
+  'SGP',
+  'UGA',
+  'THA',
+  'CRI',
+  'ARG',
+  'ARE',
+  'SLV',
+  'PER',
 ];
 
 /**

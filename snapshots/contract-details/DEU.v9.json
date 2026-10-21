@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "ancillary_positions_clause_apply",
       "annual_gross_salary",
       "available_pto",
@@ -41,6 +43,7 @@
       "probation_length_recommended",
       "required_qualifications",
       "role_description",
+      "role_is_onsite",
       "role_requires_license",
       "salary_overview",
       "schedule_type",
@@ -130,6 +133,10 @@
     "required_qualifications": "select",
     "professional_licenses": "textarea",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
     "work_address.is_home_address": "radio",
@@ -164,7 +171,7 @@
     "ancillary_positions_clause_apply": "radio",
     "work_equipment_provided": "radio",
     "work_equipment": "textarea",
-    "role_requires_license": "radio"
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "business_model": ["aug", "solutions"],
@@ -198,6 +205,8 @@
       "secondary_school_intermediate_certificate",
       "state_examination"
     ],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
@@ -214,8 +223,7 @@
     "equity_compensation.offer_equity_compensation": ["no", "yes"],
     "non_compete_clause_apply": ["no", "yes"],
     "ancillary_positions_clause_apply": ["no", "yes"],
-    "work_equipment_provided": ["no", "yes"],
-    "role_requires_license": ["no", "yes"]
+    "work_equipment_provided": ["no", "yes"]
   },
   "constraints": {
     "contract_duration": {
@@ -313,6 +321,12 @@
       "addedRequired": ["additional_holiday_days"],
       "removedRequired": []
     },
+    "role_requires_license=yes": {
+      "addedVisible": ["professional_licenses"],
+      "removedVisible": [],
+      "addedRequired": ["professional_licenses"],
+      "removedRequired": []
+    },
     "work_address.is_home_address=no": {
       "addedVisible": [
         "work_address.address",
@@ -375,12 +389,6 @@
       "addedVisible": ["work_equipment"],
       "removedVisible": [],
       "addedRequired": ["work_equipment"],
-      "removedRequired": []
-    },
-    "role_requires_license=yes": {
-      "addedVisible": ["professional_licenses"],
-      "removedVisible": [],
-      "addedRequired": ["professional_licenses"],
       "removedRequired": []
     }
   }

@@ -10,9 +10,10 @@ Schema versions for employee onboarding in United Kingdom.
 
 ### v7 - Current
 
+**Type of change:** product
+
 **What changed:**
 
-- Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `GBR`) to inspect field-level diffs between your current pin and v7. Prefer jumping straight from v3 to v7 when upgrading.
 - Hourly wage type and the daily schedule are no longer hidden from Partners API (`remote_api`) consumers. `wage_type` and `hourly_gross_salary` are now returned, and the `daily_schedule` component (`daily_schedule`, `schedule_type`, `work_hours_per_week`, `shift_pattern`) replaces the plain `work_hours_per_week` field.
 - `annual_gross_salary` is only required when `wage_type` is `salary`. Part-time contracts must still use `wage_type` `salary`.
 
@@ -34,9 +35,10 @@ Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when
 
 ### v6
 
+**Type of change:** compliance
+
 **What changed:**
 
-- Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `GBR`) to inspect field-level diffs between your current pin and v6. Prefer jumping straight from v3 to v6 when upgrading.
 - Adds an extreme-salary acknowledgement: `extreme_salary_warning` and a required `extreme_salary_acknowledgement` checkbox appear when the annual salary is at or above the USD 1,000,000 equivalent, resolved per contract currency. Shown only for salaried wage types. Additive and flag-gated — no action required unless a submitted salary crosses that threshold.
 
 **Migration:**
@@ -54,6 +56,8 @@ Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when
 ---
 
 ### v5
+
+**Type of change:** compliance, technical
 
 **What changed:**
 
@@ -75,6 +79,8 @@ Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when
 
 ### v4
 
+**Type of change:** compliance
+
 **What changed:**
 
 - `available_pto_type` is now required and only accepts `"unlimited"` or `"fixed"`. The `N/A` (`null`) option is removed, so submissions that omit the field or send `null` now fail validation.
@@ -94,6 +100,8 @@ Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when
 ---
 
 ### v3
+
+**Type of change:** compliance, product
 
 **What changed:**
 
@@ -116,6 +124,8 @@ Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when
 ---
 
 ### v2 (deprecated)
+
+**Type of change:** product
 
 **Deprecated on 1 July 2026.** Requests pinned to this version are served the latest schema.
 

@@ -59,8 +59,8 @@ jobs:
         timeout-minutes: 25
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
-          VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
-          VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
+          REMOTE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          REMOTE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
         run: pnpm run schema-canary --write --failures-out="$RUNNER_TEMP/schema-canary-failures.md"
 
       - name: Count failing checks in the report
@@ -172,8 +172,8 @@ jobs:
         if: steps.scope.outputs.countries != 'none'
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
-          VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
-          VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
+          REMOTE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          REMOTE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
           COUNTRIES: ${{ steps.scope.outputs.countries }}
         run: |
           if [ "$COUNTRIES" = "all" ]; then

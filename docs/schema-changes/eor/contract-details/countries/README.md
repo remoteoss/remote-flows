@@ -6,6 +6,19 @@ Country-specific schema version history and changelogs for employee onboarding f
 
 Schema versions can have different implementations per country. Instead of generic version documentation, each country has its own changelog documenting exactly what changed for that country's onboarding flow.
 
+## Type of change
+
+Each version in a country guide has a **Type of change** line saying why the version exists, so you can tell which upgrades are urgent. A version can have more than one type, with the main one first.
+
+| Type         | What it means for you                                                                                            |
+| ------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `compliance` | A legal requirement changed. Upgrade to stay compliant.                                                          |
+| `product`    | A new capability or improvement. Adopt it when you want it.                                                      |
+| `technical`  | An internal or engine change. Usually no action is needed, but read the entry: it says if you must do something. |
+| `bugfix`     | A correction to something that was wrong before.                                                                 |
+
+The type tells you how urgent a change is. **What changed** and **Migration** tell you what to do.
+
 ## Quick Reference
 
 Looking for versions that are being retired? See [deprecated versions](./DEPRECATIONS.md).
@@ -14,6 +27,7 @@ Looking for versions that are being retired? See [deprecated versions](./DEPRECA
 
 These countries have upgraded to different versions, check each guide to know how to migrate or what has changed
 
+- [Argentina (ARG)](./ARG.md)
 - [Armenia (ARM)](./ARM.md)
 - [Australia (AUS)](./AUS.md)
 - [Austria (AUT)](./AUT.md)
@@ -25,10 +39,13 @@ These countries have upgraded to different versions, check each guide to know ho
 - [China (CHN)](./CHN.md)
 - [Chile (CHL)](./CHL.md)
 - [Colombia (COL)](./COL.md)
+- [Costa Rica (CRI)](./CRI.md)
 - [Switzerland (CHE)](./CHE.md)
 - [Czech Republic (CZE)](./CZE.md)
+- [Denmark (DNK)](./DNK.md)
 - [Dominican Republic (DOM)](./DOM.md)
 - [Egypt (EGY)](./EGY.md)
+- [El Salvador (SLV)](./SLV.md)
 - [Estonia (EST)](./EST.md)
 - [Finland (FIN)](./FIN.md)
 - [Germany (DEU)](./DEU.md)
@@ -49,6 +66,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Norway (NOR)](./NOR.md)
 - [New Zealand (NZL)](./NZL.md)
 - [Pakistan (PAK)](./PAK.md)
+- [Peru (PER)](./PER.md)
 - [Philippines (PHL)](./PHL.md)
 - [Poland (POL)](./POL.md)
 - [Portugal (PRT)](./PRT.md)
@@ -58,6 +76,8 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Spain (ESP)](./ESP.md)
 - [Serbia (SRB)](./SRB.md)
 - [Sweden (SWE)](./SWE.md)
+- [Thailand (THA)](./THA.md)
+- [Uganda (UGA)](./UGA.md)
 - [United Arab Emirates (ARE)](./ARE.md)
 - [United Kingdom (GBR)](./GBR.md)
 - [United States (USA)](./USA.md)
@@ -70,21 +90,25 @@ These countries have upgraded to different versions, check each guide to know ho
 
 | Country              | Code | Contract Details | Last Updated |
 | -------------------- | ---- | ---------------- | ------------ |
+| Argentina            | ARG  | v5               | October 2026 |
 | Armenia              | ARM  | v3               | October 2026 |
 | Australia            | AUS  | v6               | October 2026 |
 | Austria              | AUT  | v8               | October 2026 |
 | Belarus              | BLR  | v2               | March 2026   |
 | Belgium              | BEL  | v8               | October 2026 |
-| Brazil               | BRA  | v4               | October 2026 |
+| Brazil               | BRA  | v5               | October 2026 |
 | Bulgaria             | BGR  | v8               | October 2026 |
 | Canada               | CAN  | v8               | October 2026 |
 | Chile                | CHL  | v7               | October 2026 |
 | China                | CHN  | v8               | October 2026 |
 | Switzerland          | CHE  | v2               | March 2026   |
 | Colombia             | COL  | v6               | October 2026 |
+| Costa Rica           | CRI  | v5               | October 2026 |
 | Czech Republic       | CZE  | v7               | October 2026 |
+| Denmark              | DNK  | v6               | October 2026 |
 | Dominican Republic   | DOM  | v6               | October 2026 |
 | Egypt                | EGY  | v6               | October 2026 |
+| El Salvador          | SLV  | v4               | October 2026 |
 | Estonia              | EST  | v5               | October 2026 |
 | Finland              | FIN  | v5               | October 2026 |
 | Germany              | DEU  | v9               | October 2026 |
@@ -94,7 +118,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | India                | IND  | v7               | October 2026 |
 | Ireland              | IRL  | v5               | October 2026 |
 | Israel               | ISR  | v8               | October 2026 |
-| Jamaica              | JAM  | v2               | March 2026   |
+| Jamaica              | JAM  | v5               | October 2026 |
 | Kenya                | KEN  | v8               | October 2026 |
 | Lebanon              | LBN  | v4               | October 2026 |
 | Mauritius            | MUS  | v2               | March 2026   |
@@ -105,17 +129,20 @@ These countries have upgraded to different versions, check each guide to know ho
 | Norway               | NOR  | v7               | October 2026 |
 | New Zealand          | NZL  | v8               | October 2026 |
 | Pakistan             | PAK  | v4               | October 2026 |
+| Peru                 | PER  | v4               | October 2026 |
 | Philippines          | PHL  | v9               | October 2026 |
 | Poland               | POL  | v5               | October 2026 |
 | Portugal             | PRT  | v9               | March 2026   |
 | Saudi Arabia         | SAU  | v2               | March 2026   |
-| Singapore            | SGP  | v2               | March 2026   |
+| Singapore            | SGP  | v5               | October 2026 |
 | South Africa         | ZAF  | v5               | October 2026 |
 | Spain                | ESP  | v8               | October 2026 |
 | Serbia               | SRB  | v2               | March 2026   |
 | Sweden               | SWE  | v5               | October 2026 |
+| Thailand             | THA  | v5               | October 2026 |
+| Uganda               | UGA  | v5               | October 2026 |
 | United Kingdom       | GBR  | v7               | October 2026 |
-| United Arab Emirates | ARE  | v3               | March 2026   |
+| United Arab Emirates | ARE  | v6               | October 2026 |
 | United States        | USA  | v9               | October 2026 |
 
 ## How to Use
