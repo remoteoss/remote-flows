@@ -14,6 +14,7 @@ Looking for versions that are being retired? See [deprecated versions](./DEPRECA
 
 These countries have upgraded to different versions, check each guide to know how to migrate or what has changed
 
+- [Armenia (ARM)](./ARM.md)
 - [Australia (AUS)](./AUS.md)
 - [Austria (AUT)](./AUT.md)
 - [Belarus (BLR)](./BLR.md)
@@ -28,6 +29,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Czech Republic (CZE)](./CZE.md)
 - [Dominican Republic (DOM)](./DOM.md)
 - [Egypt (EGY)](./EGY.md)
+- [Estonia (EST)](./EST.md)
 - [Finland (FIN)](./FIN.md)
 - [Germany (DEU)](./DEU.md)
 - [Guatemala (GTM)](./GTM.md)
@@ -38,6 +40,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Israel (ISR)](./ISR.md)
 - [Jamaica (JAM)](./JAM.md)
 - [Kenya (KEN)](./KEN.md)
+- [South Korea (KOR)](./KOR.md)
 - [Lebanon (LBN)](./LBN.md)
 - [Mauritius (MUS)](./MUS.md)
 - [Malaysia (MYS)](./MYS.md)
@@ -68,6 +71,7 @@ These countries have upgraded to different versions, check each guide to know ho
 
 | Country              | Code | Contract Details | Last Updated |
 | -------------------- | ---- | ---------------- | ------------ |
+| Armenia              | ARM  | v3               | October 2026 |
 | Australia            | AUS  | v6               | October 2026 |
 | Austria              | AUT  | v8               | October 2026 |
 | Belarus              | BLR  | v2               | March 2026   |
@@ -82,6 +86,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Czech Republic       | CZE  | v7               | October 2026 |
 | Dominican Republic   | DOM  | v6               | October 2026 |
 | Egypt                | EGY  | v6               | October 2026 |
+| Estonia              | EST  | v5               | October 2026 |
 | Finland              | FIN  | v5               | October 2026 |
 | Germany              | DEU  | v9               | October 2026 |
 | Guatemala            | GTM  | v6               | October 2026 |
@@ -92,13 +97,13 @@ These countries have upgraded to different versions, check each guide to know ho
 | Israel               | ISR  | v8               | October 2026 |
 | Jamaica              | JAM  | v2               | March 2026   |
 | Kenya                | KEN  | v8               | October 2026 |
-| Lebanon              | LBN  | v2               | March 2026   |
+| Lebanon              | LBN  | v4               | October 2026 |
 | Mauritius            | MUS  | v2               | March 2026   |
 | Malaysia             | MYS  | v5               | October 2026 |
 | Mexico               | MEX  | v9               | October 2026 |
 | Netherlands          | NLD  | v7               | October 2026 |
 | Nigeria              | NGA  | v5               | October 2026 |
-| Norway               | NOR  | v2               | March 2026   |
+| Norway               | NOR  | v7               | October 2026 |
 | New Zealand          | NZL  | v8               | October 2026 |
 | Pakistan             | PAK  | v4               | October 2026 |
 | Philippines          | PHL  | v9               | October 2026 |
@@ -107,6 +112,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Saudi Arabia         | SAU  | v2               | March 2026   |
 | Singapore            | SGP  | v2               | March 2026   |
 | South Africa         | ZAF  | v5               | October 2026 |
+| South Korea          | KOR  | v7               | October 2026 |
 | Spain                | ESP  | v8               | October 2026 |
 | Serbia               | SRB  | v2               | March 2026   |
 | Sweden               | SWE  | v5               | October 2026 |

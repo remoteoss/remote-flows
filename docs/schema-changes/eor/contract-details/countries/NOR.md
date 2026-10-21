@@ -4,11 +4,122 @@ Schema versions for employee onboarding in Norway.
 
 ## Current Version
 
-**Contract Details:** v2 (Since SDK 1.23.0)
+**Contract Details:** v7
 
 ## Contract Details
 
-### v2 - Current (Since SDK 1.23.0, March 2026)
+### v7 - Current
+
+**Type of change:** technical
+
+**What changed:**
+
+- Contract duration fields are now built by the `contract_duration` component. Field names and values are unchanged. Copy only
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      NOR: { contract_details: 7 },
+    },
+  }}
+/>
+```
+
+---
+
+### v6
+
+**Type of change:** compliance
+
+**What changed:**
+
+- Adds the `extreme_salary_acknowledgement` checkbox and the `extreme_salary_warning` message, shown when the annual gross salary is at or above the USD 1,000,000 equivalent. Additive and flag-gated, so no action is required unless a submitted salary crosses that threshold
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      NOR: { contract_details: 6 },
+    },
+  }}
+/>
+```
+
+---
+
+### v5 - jsf v1
+
+**Type of change:** technical
+
+**What changed:**
+
+- The schema is now marked as the newer form engine version (`x-rmt-meta.jsfVersion` is `"1"`). Partners pinning this version or later get the newer engine path
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      NOR: { contract_details: 5 },
+    },
+  }}
+/>
+```
+
+---
+
+### v4
+
+**Type of change:** compliance
+
+**What changed:**
+
+- Adds the display-only `salary_overview` field, which notes the salary at or above which a reserve payment is requested (NOK 1,646,284.10). Render it but never submit it. `annual_gross_salary.description` is dropped
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      NOR: { contract_details: 4 },
+    },
+  }}
+/>
+```
+
+---
+
+### v3
+
+**Type of change:** compliance
+
+**What changed:**
+
+- Baseline on the previous form engine (`x-rmt-meta.jsfOldVersion` is `true`)
+- Adds required `non_compete_clause_apply` (`"yes"` / `"no"`). When `"yes"`, `non_compete_clause_halt_period_months` (up to 12 months) and `non_compete_clause_compensation_percentage` (at least 1% of monthly base salary) are required, and `non_compete_clause_compensation_amount` is shown as the amount computed from them and the annual gross salary. Partners using a custom UI must render them
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      NOR: { contract_details: 3 },
+    },
+  }}
+/>
+```
+
+---
+
+### v2 (Since SDK 1.23.0, March 2026)
 
 **What changed:**
 
