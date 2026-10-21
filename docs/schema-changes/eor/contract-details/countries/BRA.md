@@ -4,11 +4,33 @@ Schema versions for employee onboarding in Brazil.
 
 ## Current Version
 
-**Contract Details:** v4
+**Contract Details:** v5
 
 ## Contract Details
 
-### v4 - Current
+### v5 - Current
+
+**Type of change:** compliance
+
+**What changed:**
+
+- Adds the required `health_check_ack` checkbox. A health check must be completed and uploaded to the employee's profile at least 3 business days before the start date, and requests without `health_check_ack: "acknowledged"` fail validation. Partners using a custom UI must render it
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      BRA: { contract_details: 5 },
+    },
+  }}
+/>
+```
+
+---
+
+### v4
 
 **What changed:**
 

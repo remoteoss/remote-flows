@@ -41,6 +41,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Costa Rica (CRI)](./CRI.md)
 - [Switzerland (CHE)](./CHE.md)
 - [Czech Republic (CZE)](./CZE.md)
+- [Denmark (DNK)](./DNK.md)
 - [Dominican Republic (DOM)](./DOM.md)
 - [Egypt (EGY)](./EGY.md)
 - [El Salvador (SLV)](./SLV.md)
@@ -73,6 +74,8 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Spain (ESP)](./ESP.md)
 - [Serbia (SRB)](./SRB.md)
 - [Sweden (SWE)](./SWE.md)
+- [Thailand (THA)](./THA.md)
+- [Uganda (UGA)](./UGA.md)
 - [United Arab Emirates (ARE)](./ARE.md)
 - [United Kingdom (GBR)](./GBR.md)
 - [United States (USA)](./USA.md)
@@ -90,7 +93,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Austria              | AUT  | v8               | October 2026 |
 | Belarus              | BLR  | v2               | March 2026   |
 | Belgium              | BEL  | v8               | October 2026 |
-| Brazil               | BRA  | v4               | October 2026 |
+| Brazil               | BRA  | v5               | October 2026 |
 | Bulgaria             | BGR  | v8               | October 2026 |
 | Canada               | CAN  | v8               | October 2026 |
 | Chile                | CHL  | v7               | October 2026 |
@@ -99,6 +102,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Colombia             | COL  | v6               | October 2026 |
 | Costa Rica           | CRI  | v5               | October 2026 |
 | Czech Republic       | CZE  | v7               | October 2026 |
+| Denmark              | DNK  | v6               | October 2026 |
 | Dominican Republic   | DOM  | v6               | October 2026 |
 | Egypt                | EGY  | v6               | October 2026 |
 | El Salvador          | SLV  | v4               | October 2026 |
@@ -110,7 +114,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | India                | IND  | v7               | October 2026 |
 | Ireland              | IRL  | v5               | October 2026 |
 | Israel               | ISR  | v8               | October 2026 |
-| Jamaica              | JAM  | v2               | March 2026   |
+| Jamaica              | JAM  | v5               | October 2026 |
 | Kenya                | KEN  | v8               | October 2026 |
 | Lebanon              | LBN  | v2               | March 2026   |
 | Mauritius            | MUS  | v2               | March 2026   |
@@ -126,11 +130,13 @@ These countries have upgraded to different versions, check each guide to know ho
 | Poland               | POL  | v5               | October 2026 |
 | Portugal             | PRT  | v9               | March 2026   |
 | Saudi Arabia         | SAU  | v2               | March 2026   |
-| Singapore            | SGP  | v2               | March 2026   |
+| Singapore            | SGP  | v5               | October 2026 |
 | South Africa         | ZAF  | v5               | October 2026 |
 | Spain                | ESP  | v8               | October 2026 |
 | Serbia               | SRB  | v2               | March 2026   |
 | Sweden               | SWE  | v5               | October 2026 |
+| Thailand             | THA  | v5               | October 2026 |
+| Uganda               | UGA  | v5               | October 2026 |
 | United Kingdom       | GBR  | v7               | October 2026 |
 | United Arab Emirates | ARE  | v6               | October 2026 |
 | United States        | USA  | v9               | October 2026 |
