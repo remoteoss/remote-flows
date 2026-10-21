@@ -17,13 +17,17 @@ const OTHER_INPUTS = [
   'scripts/schema-canary.ts',
   '.github/workflows/schema-canary.yml',
 ];
-const OTHER_INPUT_PREFIX = 'scripts/schema-canary/';
+const OTHER_INPUT_PREFIXES = [
+  'scripts/schema-canary/',
+  'example/src/flows/Onboarding/',
+];
 
 export function touchesOtherInputs(changedFiles: string[]): boolean {
   return changedFiles.some(
     (file) =>
       file !== VERSIONS_FILE &&
-      (OTHER_INPUTS.includes(file) || file.startsWith(OTHER_INPUT_PREFIX)),
+      (OTHER_INPUTS.includes(file) ||
+        OTHER_INPUT_PREFIXES.some((prefix) => file.startsWith(prefix))),
   );
 }
 

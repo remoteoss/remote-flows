@@ -22,7 +22,7 @@ runs:
     - name: Install example/ dependencies
       shell: bash
       working-directory: ./example
-      run: npm ci --include=optional --ignore-scripts
+      run: pnpm install --frozen-lockfile --ignore-scripts
 
     - name: Get Playwright version
       id: playwright-version
@@ -42,7 +42,7 @@ runs:
       working-directory: ./example
       run: |
         for i in 1 2 3; do
-          if npx playwright install-deps chromium; then exit 0; fi
+          if pnpm exec playwright install-deps chromium; then exit 0; fi
           sleep $((i * 10))
         done
         exit 1
@@ -53,7 +53,7 @@ runs:
       working-directory: ./example
       run: |
         for i in 1 2 3; do
-          if npx playwright install chromium; then exit 0; fi
+          if pnpm exec playwright install chromium; then exit 0; fi
           sleep $((i * 10))
         done
         exit 1
@@ -68,7 +68,7 @@ runs:
         REMOTE_CLIENT_SECRET: ${{ inputs.client-secret }}
         REMOTE_REFRESH_TOKEN: ${{ inputs.refresh-token }}
       run: |
-        nohup npm run dev:env > "$RUNNER_TEMP/example-app.log" 2>&1 &
+        nohup pnpm run dev:env > "$RUNNER_TEMP/example-app.log" 2>&1 &
         for _ in $(seq 1 60); do
           if curl -sf -o /dev/null http://localhost:3001/; then exit 0; fi
           sleep 2
@@ -82,7 +82,7 @@ runs:
       env:
         PORT: '3001'
         SCHEMA_CANARY_EMPLOYMENTS: ${{ inputs.employments-file }}
-      run: npx playwright test -c playwright.canary.config.ts
+      run: pnpm exec playwright test -c playwright.canary.config.ts
 
     - name: Upload the Playwright report
       if: ${{ !cancelled() }}

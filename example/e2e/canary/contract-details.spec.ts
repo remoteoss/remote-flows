@@ -61,9 +61,13 @@ async function continueUntilContractDetails(page: Page) {
     await test.step(`continue past ${current}`, async () => {
       await acknowledgeAgain(page);
       await page.locator('.submit-button').click();
-      await expect(stepTitle, {
-        message: `${current} did not move on. Field errors: ${JSON.stringify(await fieldErrors(page))}`,
-      }).not.toHaveText(current);
+      try {
+        await expect(stepTitle).not.toHaveText(current);
+      } catch (error) {
+        throw new Error(
+          `${current} did not move on. Field errors: ${JSON.stringify(await fieldErrors(page))}\n${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
     });
   }
   await expect(stepTitle).toHaveText('Contract Details');

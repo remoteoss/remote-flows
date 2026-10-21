@@ -9,7 +9,7 @@ on:
       - main
   pull_request:
     paths:
-      - 'example/src/flows/Onboarding/jsonSchemaVersions.ts'
+      - 'example/src/flows/Onboarding/**'
       - 'pnpm-lock.yaml'
       - 'src/common/createHeadlessForm.tsx'
       - 'src/common/headlessForm.ts'
@@ -181,9 +181,6 @@ jobs:
     if: github.event_name == 'pull_request'
     name: Contract Details Schema Canary (pinned, PR)
     runs-on: ubuntu-latest
-    concurrency:
-      group: schema-canary-pr-${{ github.event.pull_request.number }}
-      cancel-in-progress: true
     timeout-minutes: 30
     permissions:
       contents: read

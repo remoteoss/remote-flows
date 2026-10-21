@@ -102,6 +102,7 @@ describe('touchesOtherInputs', () => {
     'src/common/createHeadlessForm.tsx',
     'scripts/schema-canary.ts',
     'scripts/schema-canary/lib.ts',
+    'example/src/flows/Onboarding/features.ts',
     '.github/workflows/schema-canary.yml',
   ])('treats %s as a canary input', (file) => {
     expect(
