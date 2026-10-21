@@ -13,18 +13,24 @@ const OTHER_INPUTS = [
   'src/components/form/utils.ts',
   'src/flows/Onboarding/utils.ts',
   'example/src/flows/Onboarding/constants.ts',
+  'example/playwright.canary.config.ts',
   'scripts/contract-details-seeds.ts',
   'scripts/fill-schema.ts',
   'scripts/schema-canary.ts',
   '.github/workflows/schema-canary.yml',
 ];
-const OTHER_INPUT_PREFIX = 'scripts/schema-canary/';
+const OTHER_INPUT_PREFIXES = [
+  'scripts/schema-canary/',
+  'example/e2e/canary/',
+  '.github/actions/schema-canary-browser/',
+];
 
 export function touchesOtherInputs(changedFiles: string[]): boolean {
   return changedFiles.some(
     (file) =>
       file !== VERSIONS_FILE &&
-      (OTHER_INPUTS.includes(file) || file.startsWith(OTHER_INPUT_PREFIX)),
+      (OTHER_INPUTS.includes(file) ||
+        OTHER_INPUT_PREFIXES.some((prefix) => file.startsWith(prefix))),
   );
 }
 
