@@ -36,7 +36,6 @@ Schema versions for employee onboarding in Canada.
 
 **What changed:**
 
-- Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `CAN`) to inspect field-level diffs between your current pin and v7. Prefer jumping straight from v1 to v7 when upgrading.
 - `contract_duration_type` no longer offers `fixed_term`, and `contract_end_date` is rejected, when the employee has a recognized seniority date (`has_seniority_date: "yes"`). Flag-gated, and employments created before the cutoff date are unaffected — no action required for existing contracts.
 
 **Migration:**
