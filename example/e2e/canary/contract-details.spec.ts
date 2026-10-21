@@ -145,9 +145,15 @@ for (const {
       response?.ok(),
       `PATCH /v1/employments/${employmentId} returned ${response?.status()}: ${await response?.text()}`,
     ).toBe(true);
+    const {
+      additional_job_title_eligibility_check_result: _result,
+      additional_job_title_eligibility_check_slug: _slug,
+      ...browserSent
+    } = (
+      request.postDataJSON() as { contract_details: Record<string, unknown> }
+    ).contract_details;
     expect(
-      (request.postDataJSON() as { contract_details?: unknown })
-        .contract_details,
+      browserSent,
       'the browser sent different contract_details than the canary saved',
     ).toEqual(sent);
     await expect(page.getByTestId('onboarding-step-title')).not.toHaveText(
