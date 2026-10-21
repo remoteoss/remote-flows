@@ -246,17 +246,17 @@ function formatReport(results: CountryResult[]): string {
 }
 
 async function main() {
-  const { VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REFRESH_TOKEN } =
+  const { VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, REMOTE_REFRESH_TOKEN } =
     process.env;
-  if (!VITE_CLIENT_ID || !VITE_CLIENT_SECRET || !VITE_REFRESH_TOKEN) {
+  if (!VITE_CLIENT_ID || !REMOTE_CLIENT_SECRET || !REMOTE_REFRESH_TOKEN) {
     throw new Error(
-      'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, or VITE_REFRESH_TOKEN (set them in .env.sandbox at the repo root, or as env vars)',
+      'Missing VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, or REMOTE_REFRESH_TOKEN (set them in .env.sandbox at the repo root, or as env vars)',
     );
   }
   const client = createSandboxClient(
     VITE_CLIENT_ID,
-    VITE_CLIENT_SECRET,
-    VITE_REFRESH_TOKEN,
+    REMOTE_CLIENT_SECRET,
+    REMOTE_REFRESH_TOKEN,
   );
 
   const response = await getV1Countries({

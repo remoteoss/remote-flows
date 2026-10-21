@@ -72,6 +72,7 @@ describe('usesJsfV1ContractDetails', () => {
     'SGP',
     'UGA',
     'THA',
+    'CRI',
     'ARG',
     'ARE',
     'SLV',
