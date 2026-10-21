@@ -30,6 +30,8 @@ Schema versions for employee onboarding in Spain.
 
 ### v7
 
+**Type of change:** compliance
+
 **What changed:**
 
 - Added an acknowledgement step for extreme high salaries: if annual salary is at/above ~USD 1M equivalent, a warning message and a required confirmation checkbox now appear. Additive / flag-gated change — no action required for existing contracts.
@@ -50,6 +52,8 @@ Schema versions for employee onboarding in Spain.
 
 ### v6
 
+**Type of change:** compliance
+
 **What changed:**
 
 - Collective bargaining classification (`cba_categories`: area, group, level) is now visible to clients and required. Previously it was only visible to Remote admins. Omitting it fails validation; pin to `contract_details: 5` or below to keep the old behaviour.
@@ -69,6 +73,8 @@ Schema versions for employee onboarding in Spain.
 ---
 
 ### v5
+
+**Type of change:** compliance, product, technical
 
 **What changed:**
 
