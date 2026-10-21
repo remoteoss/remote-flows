@@ -31,8 +31,8 @@ const schemaPaths = [
   },
   {
     jsfVersion: 'v0',
-    countryCode: 'PRT',
-    countryName: 'Portugal',
+    countryCode: 'VNM',
+    countryName: 'Vietnam',
     schema: contractDetailsSchemaV0JobTitleEligibility,
   },
 ];
@@ -396,9 +396,19 @@ describe.each(schemaPaths)(
 
     it('aborts the in-flight check when the values change, without logging an error for it', async () => {
       const errorSpy = vi.spyOn(console, 'error');
+      const fetchSignals: AbortSignal[] = [];
+      const originalFetch = globalThis.fetch;
+      vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) => {
+        if (
+          input instanceof Request &&
+          input.url.includes('job-title-eligibility-check')
+        ) {
+          fetchSignals.push(input.signal);
+        }
+        return originalFetch(input, init);
+      });
       const requests: {
         roleDescription: string;
-        signal: AbortSignal;
         release: () => void;
       }[] = [];
       server.use(
@@ -412,7 +422,6 @@ describe.each(schemaPaths)(
             });
             requests.push({
               roleDescription: body.role_description,
-              signal: request.signal,
               release,
             });
             await released;
@@ -441,7 +450,7 @@ describe.each(schemaPaths)(
       await user.tab();
 
       await waitFor(() => expect(requests).toHaveLength(2));
-      expect(requests[0].signal.aborted).toBe(true);
+      expect(fetchSignals[0].aborted).toBe(true);
       expect(requests[1].roleDescription).toBe(
         'Frontend engineer responsibilities',
       );

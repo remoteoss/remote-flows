@@ -4,15 +4,38 @@ Schema versions for employee onboarding in Canada.
 
 ## Current Version
 
-**Contract Details:** v7
+**Contract Details:** v8
 
 ## Contract Details
 
-### v7 - Current
+### v8 - Current
 
 **What changed:**
 
-- Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `CAN`) to inspect field-level diffs between your current pin and v7. Prefer jumping straight from v1 to v7 when upgrading.
+- `probation_length`, `probation_length_weeks` and `probation_length_days` move to a shared probation component. They render and validate the same way for existing consumers.
+- When the employee has a recognized seniority date (`has_seniority_date: "yes"`), all three probation length fields are forbidden, whatever `province_of_residency` is. Flag-gated, so no action is required.
+- `work_hours_per_week` is `hidden` until `work_schedule` and `schedule_type` are both set, so custom UIs shouldn't expect it as a visible number input in the initial form state.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      CAN: { contract_details: 8 },
+    },
+  }}
+/>
+```
+
+---
+
+### v7
+
+**Type of change:** compliance
+
+**What changed:**
+
 - `contract_duration_type` no longer offers `fixed_term`, and `contract_end_date` is rejected, when the employee has a recognized seniority date (`has_seniority_date: "yes"`). Flag-gated, and employments created before the cutoff date are unaffected — no action required for existing contracts.
 
 **Migration:**
@@ -30,6 +53,8 @@ Schema versions for employee onboarding in Canada.
 ---
 
 ### v6
+
+**Type of change:** compliance, product
 
 **What changed:**
 
@@ -55,6 +80,8 @@ Schema versions for employee onboarding in Canada.
 
 ### v5
 
+**Type of change:** compliance
+
 **What changed:**
 
 - Adds an extreme-salary acknowledgement: a warning and a required checkbox appear when the annual salary is at or above the USD 1,000,000 equivalent. Additive and flag-gated — no action required unless a submitted salary crosses that threshold.
@@ -74,6 +101,8 @@ Schema versions for employee onboarding in Canada.
 ---
 
 ### v4
+
+**Type of change:** compliance, technical
 
 **What changed:**
 
@@ -97,6 +126,8 @@ Schema versions for employee onboarding in Canada.
 
 ### v3
 
+**Type of change:** technical
+
 **What changed:**
 
 - `standard_hours` is computed from `work_hours_per_week` (weekly hours × 52 / 24, rounded to two decimals) and locked to that value, shown as a "Standard Hours" statement.
@@ -116,6 +147,8 @@ Schema versions for employee onboarding in Canada.
 ---
 
 ### v2
+
+**Type of change:** technical
 
 **What changed:**
 

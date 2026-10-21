@@ -1,0 +1,452 @@
+{
+  "fingerprintVersion": 1,
+  "base": {
+    "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
+      "annual_gross_salary",
+      "annual_leave_carry_forward",
+      "available_pto",
+      "available_pto_type",
+      "carryover_details.can_expire",
+      "carryover_details.carry_over_pto_days",
+      "carryover_details.expiry_months",
+      "contract_duration",
+      "contract_duration_type",
+      "daily_schedule.schedule.friday.break_duration_minutes",
+      "daily_schedule.schedule.friday.end_time",
+      "daily_schedule.schedule.friday.start_time",
+      "daily_schedule.schedule.monday.break_duration_minutes",
+      "daily_schedule.schedule.monday.end_time",
+      "daily_schedule.schedule.monday.start_time",
+      "daily_schedule.schedule.saturday.break_duration_minutes",
+      "daily_schedule.schedule.saturday.end_time",
+      "daily_schedule.schedule.saturday.start_time",
+      "daily_schedule.schedule.sunday.break_duration_minutes",
+      "daily_schedule.schedule.sunday.end_time",
+      "daily_schedule.schedule.sunday.start_time",
+      "daily_schedule.schedule.thursday.break_duration_minutes",
+      "daily_schedule.schedule.thursday.end_time",
+      "daily_schedule.schedule.thursday.start_time",
+      "daily_schedule.schedule.tuesday.break_duration_minutes",
+      "daily_schedule.schedule.tuesday.end_time",
+      "daily_schedule.schedule.tuesday.start_time",
+      "daily_schedule.schedule.wednesday.break_duration_minutes",
+      "daily_schedule.schedule.wednesday.end_time",
+      "daily_schedule.schedule.wednesday.start_time",
+      "daily_schedule.selected_days",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_previous_eor_profile",
+      "has_signing_bonus",
+      "is_rehire",
+      "non_compete_clause_apply",
+      "non_interference_apply",
+      "non_solicitation_customers",
+      "non_solicitation_employees",
+      "notice_period_choice",
+      "overtime_compensation_type",
+      "role_description",
+      "role_is_onsite",
+      "role_requires_license",
+      "salary_overview",
+      "schedule_type",
+      "statutory_benefits",
+      "third_party_work",
+      "work_address_is_home_address",
+      "work_equipment",
+      "work_hours_part_time",
+      "work_hours_per_week",
+      "work_requires_qualifications_or_licenses",
+      "work_schedule"
+    ],
+    "required": [
+      "annual_gross_salary",
+      "available_pto_type",
+      "contract_duration_type",
+      "daily_schedule.schedule.friday.break_duration_minutes",
+      "daily_schedule.schedule.friday.end_time",
+      "daily_schedule.schedule.friday.start_time",
+      "daily_schedule.schedule.monday.break_duration_minutes",
+      "daily_schedule.schedule.monday.end_time",
+      "daily_schedule.schedule.monday.start_time",
+      "daily_schedule.schedule.saturday.break_duration_minutes",
+      "daily_schedule.schedule.saturday.end_time",
+      "daily_schedule.schedule.saturday.start_time",
+      "daily_schedule.schedule.sunday.break_duration_minutes",
+      "daily_schedule.schedule.sunday.end_time",
+      "daily_schedule.schedule.sunday.start_time",
+      "daily_schedule.schedule.thursday.break_duration_minutes",
+      "daily_schedule.schedule.thursday.end_time",
+      "daily_schedule.schedule.thursday.start_time",
+      "daily_schedule.schedule.tuesday.break_duration_minutes",
+      "daily_schedule.schedule.tuesday.end_time",
+      "daily_schedule.schedule.tuesday.start_time",
+      "daily_schedule.schedule.wednesday.break_duration_minutes",
+      "daily_schedule.schedule.wednesday.end_time",
+      "daily_schedule.schedule.wednesday.start_time",
+      "daily_schedule.selected_days",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_signing_bonus",
+      "is_rehire",
+      "non_compete_clause_apply",
+      "non_interference_apply",
+      "non_solicitation_customers",
+      "non_solicitation_employees",
+      "notice_period_choice",
+      "overtime_compensation_type",
+      "role_description",
+      "schedule_type",
+      "statutory_benefits",
+      "third_party_work",
+      "work_address_is_home_address",
+      "work_equipment",
+      "work_hours_per_week",
+      "work_requires_qualifications_or_licenses",
+      "work_schedule"
+    ]
+  },
+  "types": {
+    "has_previous_eor_profile": "hidden",
+    "is_rehire": "radio",
+    "contract_duration": "text",
+    "contract_duration_type": "radio",
+    "contract_end_date": "date",
+    "contract_duration_fixed_term_reason": "textarea",
+    "work_schedule": "radio",
+    "work_hours_part_time": "number",
+    "schedule_type": "select",
+    "daily_schedule.selected_days": "select",
+    "daily_schedule.schedule.monday.start_time": "time",
+    "daily_schedule.schedule.monday.end_time": "time",
+    "daily_schedule.schedule.monday.break_duration_minutes": "number",
+    "daily_schedule.schedule.tuesday.start_time": "time",
+    "daily_schedule.schedule.tuesday.end_time": "time",
+    "daily_schedule.schedule.tuesday.break_duration_minutes": "number",
+    "daily_schedule.schedule.wednesday.start_time": "time",
+    "daily_schedule.schedule.wednesday.end_time": "time",
+    "daily_schedule.schedule.wednesday.break_duration_minutes": "number",
+    "daily_schedule.schedule.thursday.start_time": "time",
+    "daily_schedule.schedule.thursday.end_time": "time",
+    "daily_schedule.schedule.thursday.break_duration_minutes": "number",
+    "daily_schedule.schedule.friday.start_time": "time",
+    "daily_schedule.schedule.friday.end_time": "time",
+    "daily_schedule.schedule.friday.break_duration_minutes": "number",
+    "daily_schedule.schedule.saturday.start_time": "time",
+    "daily_schedule.schedule.saturday.end_time": "time",
+    "daily_schedule.schedule.saturday.break_duration_minutes": "number",
+    "daily_schedule.schedule.sunday.start_time": "time",
+    "daily_schedule.schedule.sunday.end_time": "time",
+    "daily_schedule.schedule.sunday.break_duration_minutes": "number",
+    "work_hours_per_week": "hidden",
+    "has_probation_period": "radio",
+    "probation_length": "number",
+    "trial_period": "number",
+    "notice_period_choice": "radio",
+    "notice_period_weeks": "hidden",
+    "available_pto_type": "radio",
+    "available_pto": "hidden",
+    "annual_leave_carry_forward": "radio",
+    "carryover_details.carry_over_pto_days": "number",
+    "carryover_details.can_expire": "radio",
+    "carryover_details.expiry_months": "number",
+    "overtime_compensation_type": "radio",
+    "statutory_benefits": "select",
+    "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
+    "experience_level": "radio",
+    "work_requires_qualifications_or_licenses": "radio",
+    "work_address_is_home_address": "radio",
+    "salary_overview": "radio",
+    "annual_gross_salary": "money",
+    "extreme_salary_warning": "hidden",
+    "extreme_salary_acknowledgement": "checkbox",
+    "part_time_salary_confirmation": "checkbox",
+    "has_signing_bonus": "radio",
+    "signing_bonus_amount": "money",
+    "has_bonus": "radio",
+    "bonus_amount": "money",
+    "bonus_details": "textarea",
+    "has_commissions": "radio",
+    "commissions_details": "textarea",
+    "commissions_ack": "checkbox",
+    "equity_compensation.offer_equity_compensation": "radio",
+    "equity_compensation.number_of_stock_options": "text",
+    "equity_compensation.equity_cliff": "number",
+    "equity_compensation.equity_vesting_period": "number",
+    "equity_compensation.equity_description": "textarea",
+    "non_compete_clause_apply": "radio",
+    "non_compete_clause_halt_period_months": "number",
+    "non_solicitation_employees": "radio",
+    "non_solicitation_employees_number_of_months": "number",
+    "non_solicitation_customers": "radio",
+    "non_solicitation_customer_number_of_months": "number",
+    "non_interference_apply": "radio",
+    "non_interference_halt_period": "number",
+    "work_equipment": "textarea",
+    "third_party_work": "radio",
+    "third_party_work_activities": "textarea",
+    "additional_job_title_eligibility_check_result": "hidden"
+  },
+  "options": {
+    "has_previous_eor_profile": ["no", "yes"],
+    "is_rehire": ["no", "yes"],
+    "contract_duration_type": ["fixed_term", "indefinite"],
+    "work_schedule": ["full_time", "part_time"],
+    "schedule_type": ["core_business_hours", "fixed_hours", "flexible"],
+    "daily_schedule.selected_days": [
+      "friday",
+      "monday",
+      "saturday",
+      "sunday",
+      "thursday",
+      "tuesday",
+      "wednesday"
+    ],
+    "notice_period_choice": ["custom", "recommended"],
+    "available_pto_type": ["fixed", "unlimited"],
+    "annual_leave_carry_forward": ["no", "yes"],
+    "carryover_details.can_expire": ["no", "yes"],
+    "overtime_compensation_type": [
+      "included_in_salary",
+      "overtime_remunerated",
+      "time_off"
+    ],
+    "statutory_benefits": ["KiwiSaver 1", "KiwiSaver 2"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
+    "experience_level": [
+      "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+      "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+      "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+      "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+      "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow"
+    ],
+    "work_requires_qualifications_or_licenses": ["no", "yes"],
+    "work_address_is_home_address": ["no", "yes"],
+    "salary_overview": ["salary_overview"],
+    "has_signing_bonus": ["no", "yes"],
+    "has_bonus": ["no", "yes"],
+    "has_commissions": ["no", "yes"],
+    "equity_compensation.offer_equity_compensation": ["no", "yes"],
+    "non_compete_clause_apply": ["no", "yes"],
+    "non_solicitation_employees": ["no", "yes"],
+    "non_solicitation_customers": ["no", "yes"],
+    "non_interference_apply": ["no", "yes"],
+    "third_party_work": ["no", "yes"]
+  },
+  "constraints": {
+    "contract_duration": {
+      "maxLength": 255
+    },
+    "daily_schedule.schedule.monday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.monday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.monday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.tuesday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.tuesday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.tuesday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.wednesday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.wednesday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.wednesday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.thursday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.thursday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.thursday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.friday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.friday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.friday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.saturday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.saturday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.saturday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "daily_schedule.schedule.sunday.start_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.sunday.end_time": {
+      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$"
+    },
+    "daily_schedule.schedule.sunday.break_duration_minutes": {
+      "minimum": 0
+    },
+    "work_hours_per_week": {
+      "minimum": 1,
+      "maximum": 40
+    },
+    "available_pto": {
+      "minimum": 20
+    },
+    "carryover_details.carry_over_pto_days": {
+      "minimum": 1
+    },
+    "carryover_details.expiry_months": {
+      "minimum": 0
+    },
+    "role_description": {
+      "minLength": 100,
+      "maxLength": 5000
+    },
+    "annual_gross_salary": {
+      "minimum": 0
+    },
+    "work_equipment": {
+      "maxLength": 1000
+    }
+  },
+  "scenarios": {
+    "is_rehire=yes": {
+      "addedVisible": ["has_probation_period"],
+      "removedVisible": [],
+      "addedRequired": ["has_probation_period"],
+      "removedRequired": []
+    },
+    "is_rehire=no": {
+      "addedVisible": ["trial_period"],
+      "removedVisible": [],
+      "addedRequired": ["trial_period"],
+      "removedRequired": []
+    },
+    "contract_duration_type=fixed_term": {
+      "addedVisible": [
+        "contract_duration_fixed_term_reason",
+        "contract_end_date"
+      ],
+      "removedVisible": [],
+      "addedRequired": [
+        "contract_duration_fixed_term_reason",
+        "contract_end_date"
+      ],
+      "removedRequired": []
+    },
+    "work_schedule=part_time": {
+      "addedVisible": ["part_time_salary_confirmation"],
+      "removedVisible": [],
+      "addedRequired": ["part_time_salary_confirmation"],
+      "removedRequired": []
+    },
+    "notice_period_choice=recommended": {
+      "addedVisible": ["notice_period_weeks"],
+      "removedVisible": [],
+      "addedRequired": ["notice_period_weeks"],
+      "removedRequired": []
+    },
+    "notice_period_choice=custom": {
+      "addedVisible": ["notice_period_weeks"],
+      "removedVisible": [],
+      "addedRequired": ["notice_period_weeks"],
+      "removedRequired": []
+    },
+    "available_pto_type=unlimited": {
+      "addedVisible": [],
+      "removedVisible": [],
+      "addedRequired": ["available_pto"],
+      "removedRequired": []
+    },
+    "available_pto_type=fixed": {
+      "addedVisible": [],
+      "removedVisible": [],
+      "addedRequired": ["available_pto"],
+      "removedRequired": []
+    },
+    "has_signing_bonus=yes": {
+      "addedVisible": ["signing_bonus_amount"],
+      "removedVisible": [],
+      "addedRequired": ["signing_bonus_amount"],
+      "removedRequired": []
+    },
+    "has_bonus=yes": {
+      "addedVisible": ["bonus_amount", "bonus_details"],
+      "removedVisible": [],
+      "addedRequired": ["bonus_details"],
+      "removedRequired": []
+    },
+    "has_commissions=yes": {
+      "addedVisible": ["commissions_ack", "commissions_details"],
+      "removedVisible": [],
+      "addedRequired": ["commissions_ack", "commissions_details"],
+      "removedRequired": []
+    },
+    "equity_compensation.offer_equity_compensation=yes": {
+      "addedVisible": [
+        "equity_compensation.equity_cliff",
+        "equity_compensation.equity_description",
+        "equity_compensation.equity_vesting_period",
+        "equity_compensation.number_of_stock_options"
+      ],
+      "removedVisible": [],
+      "addedRequired": ["equity_compensation.equity_description"],
+      "removedRequired": []
+    },
+    "non_compete_clause_apply=yes": {
+      "addedVisible": ["non_compete_clause_halt_period_months"],
+      "removedVisible": [],
+      "addedRequired": ["non_compete_clause_halt_period_months"],
+      "removedRequired": []
+    },
+    "non_solicitation_employees=yes": {
+      "addedVisible": ["non_solicitation_employees_number_of_months"],
+      "removedVisible": [],
+      "addedRequired": ["non_solicitation_employees_number_of_months"],
+      "removedRequired": []
+    },
+    "non_solicitation_customers=yes": {
+      "addedVisible": ["non_solicitation_customer_number_of_months"],
+      "removedVisible": [],
+      "addedRequired": ["non_solicitation_customer_number_of_months"],
+      "removedRequired": []
+    },
+    "non_interference_apply=yes": {
+      "addedVisible": ["non_interference_halt_period"],
+      "removedVisible": [],
+      "addedRequired": ["non_interference_halt_period"],
+      "removedRequired": []
+    },
+    "third_party_work=yes": {
+      "addedVisible": ["third_party_work_activities"],
+      "removedVisible": [],
+      "addedRequired": ["third_party_work_activities"],
+      "removedRequired": []
+    }
+  }
+}

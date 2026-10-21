@@ -11,6 +11,7 @@ import {
   withJobTitleEligibilityRiskAcknowledgement,
 } from '@/src/flows/Onboarding/utils';
 import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
+import { mapWithConcurrency } from './map-with-concurrency';
 import { createSandboxClient } from './schema-canary/auth';
 import { KNOWN_UNSAVED_FIELDS } from './schema-canary/known-unsaved-fields';
 import {
@@ -20,7 +21,6 @@ import {
   formatFailures,
   formatSummaryTable,
   isSkipped,
-  mapWithConcurrency,
   SCHEMA_CHECK_ORDER,
   SchemaCanaryRow,
   SchemaCheckType,
@@ -309,11 +309,11 @@ async function checkCountry(
 
 async function runLive(): Promise<CountryResult[]> {
   const clientId = process.env.VITE_CLIENT_ID;
-  const clientSecret = process.env.VITE_CLIENT_SECRET;
-  const refreshToken = process.env.VITE_REFRESH_TOKEN;
+  const clientSecret = process.env.REMOTE_CLIENT_SECRET;
+  const refreshToken = process.env.REMOTE_REFRESH_TOKEN;
   if (!clientId || !clientSecret || !refreshToken) {
     throw new Error(
-      'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, or VITE_REFRESH_TOKEN (set them in .env.sandbox at the repo root, or as env vars)',
+      'Missing VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, or REMOTE_REFRESH_TOKEN (set them in .env.sandbox at the repo root, or as env vars)',
     );
   }
 

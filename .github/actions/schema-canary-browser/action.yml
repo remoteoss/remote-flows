@@ -3,7 +3,7 @@ description: Opens each employment the canary kept in the example app and re-sub
 
 inputs:
   employments-file:
-    description: File written by npm run schema-canary -- --keep-submitted
+    description: File written by pnpm run schema-canary --keep-submitted
     required: true
   client-id:
     required: true
@@ -17,7 +17,7 @@ runs:
   steps:
     - name: Build the library
       shell: bash
-      run: npm run build
+      run: pnpm run build
 
     - name: Install example/ dependencies
       shell: bash
@@ -65,8 +65,8 @@ runs:
         PORT: '3001'
         VITE_REMOTE_GATEWAY: sandbox
         VITE_CLIENT_ID: ${{ inputs.client-id }}
-        VITE_CLIENT_SECRET: ${{ inputs.client-secret }}
-        VITE_REFRESH_TOKEN: ${{ inputs.refresh-token }}
+        REMOTE_CLIENT_SECRET: ${{ inputs.client-secret }}
+        REMOTE_REFRESH_TOKEN: ${{ inputs.refresh-token }}
       run: |
         nohup npm run dev:env > "$RUNNER_TEMP/example-app.log" 2>&1 &
         for _ in $(seq 1 60); do

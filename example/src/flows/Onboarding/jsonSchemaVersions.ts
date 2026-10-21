@@ -9,11 +9,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ARE: {
     // United Arab Emirates
-    contract_details: 3,
+    contract_details: 6,
   },
   ARG: {
     // Argentina
-    contract_details: 1,
+    contract_details: 5,
   },
   ARM: {
     // Armenia
@@ -21,15 +21,15 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   AUS: {
     // Australia
-    contract_details: 1,
+    contract_details: 6,
   },
   AUT: {
     // Austria
-    contract_details: 1,
+    contract_details: 8,
   },
   BEL: {
     // Belgium
-    contract_details: 1,
+    contract_details: 8,
   },
   BGD: {
     // Bangladesh
@@ -37,7 +37,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   BGR: {
     // Bulgaria
-    contract_details: 1,
+    contract_details: 8,
   },
   BIH: {
     // Bosnia and Herzegovina
@@ -49,11 +49,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   BRA: {
     // Brazil
-    contract_details: 1,
+    contract_details: 5,
   },
   CAN: {
     // Canada
-    contract_details: 7,
+    contract_details: 8,
   },
   CHE: {
     // Switzerland
@@ -61,7 +61,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CHL: {
     // Chile
-    contract_details: 1,
+    contract_details: 7,
   },
   CHN: {
     // China
@@ -69,11 +69,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   COL: {
     // Colombia
-    contract_details: 1,
+    contract_details: 6,
   },
   CRI: {
     // Costa Rica
-    contract_details: 1,
+    contract_details: 5,
   },
   CYP: {
     // Cyprus
@@ -81,19 +81,19 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CZE: {
     // Czech Republic
-    contract_details: 2,
+    contract_details: 7,
   },
   DEU: {
     // Germany
-    contract_details: 7,
+    contract_details: 9,
   },
   DNK: {
     // Denmark
-    contract_details: 1,
+    contract_details: 6,
   },
   DOM: {
     // Dominican Republic
-    contract_details: 1,
+    contract_details: 6,
   },
   ECU: {
     // Ecuador
@@ -101,11 +101,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   EGY: {
     // Egypt
-    contract_details: 1,
+    contract_details: 6,
   },
   ESP: {
     // Spain
-    contract_details: 7,
+    contract_details: 8,
   },
   EST: {
     // Estonia
@@ -113,7 +113,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   FIN: {
     // Finland
-    contract_details: 1,
+    contract_details: 5,
   },
   FRA: {
     // France
@@ -121,7 +121,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   GBR: {
     // United Kingdom
-    contract_details: 6,
+    contract_details: 7,
   },
   GEO: {
     // Georgia
@@ -133,7 +133,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   GTM: {
     // Guatemala
-    contract_details: 1,
+    contract_details: 6,
   },
   HKG: {
     // Hong Kong
@@ -157,11 +157,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   IND: {
     // India
-    contract_details: 6,
+    contract_details: 7,
   },
   IRL: {
     // Ireland
-    contract_details: 4,
+    contract_details: 5,
   },
   ISL: {
     // Iceland
@@ -169,7 +169,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ISR: {
     // Israel
-    contract_details: 1,
+    contract_details: 8,
   },
   ITA: {
     // Italy
@@ -177,7 +177,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   JAM: {
     // Jamaica
-    contract_details: 2,
+    contract_details: 5,
   },
   JPN: {
     // Japan
@@ -185,7 +185,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   KEN: {
     // Kenya
-    contract_details: 2,
+    contract_details: 8,
   },
   KOR: {
     // South Korea
@@ -221,7 +221,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   MEX: {
     // Mexico
-    contract_details: 2,
+    contract_details: 9,
   },
   MKD: {
     // North Macedonia
@@ -237,7 +237,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   MYS: {
     // Malaysia
-    contract_details: 2,
+    contract_details: 5,
   },
   NGA: {
     // Nigeria
@@ -249,7 +249,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   NLD: {
     // Netherlands
-    contract_details: 6,
+    contract_details: 7,
   },
   NOR: {
     // Norway
@@ -257,11 +257,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   NZL: {
     // New Zealand
-    contract_details: 2,
+    contract_details: 8,
   },
   PAK: {
     // Pakistan
-    contract_details: 2,
+    contract_details: 4,
   },
   PAN: {
     // Panama
@@ -269,11 +269,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   PER: {
     // Peru
-    contract_details: 1,
+    contract_details: 4,
   },
   PHL: {
     // Philippines
-    contract_details: 6,
+    contract_details: 9,
   },
   POL: {
     // Poland
@@ -285,7 +285,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   PRT: {
     // Portugal
-    contract_details: 3,
+    contract_details: 9,
   },
   PRY: {
     // Paraguay
@@ -301,11 +301,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   SGP: {
     // Singapore
-    contract_details: 2,
+    contract_details: 5,
   },
   SLV: {
     // El Salvador
-    contract_details: 1,
+    contract_details: 4,
   },
   SRB: {
     // Serbia
@@ -325,7 +325,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   THA: {
     // Thailand
-    contract_details: 1,
+    contract_details: 5,
   },
   TUN: {
     // Tunisia
@@ -341,7 +341,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   UGA: {
     // Uganda
-    contract_details: 1,
+    contract_details: 5,
   },
   UKR: {
     // Ukraine
@@ -353,7 +353,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   USA: {
     // United States
-    contract_details: 8,
+    contract_details: 9,
   },
   VNM: {
     // Vietnam
@@ -365,7 +365,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ZAF: {
     // South Africa
-    contract_details: 1,
+    contract_details: 5,
   },
   ZWE: {
     // Zimbabwe

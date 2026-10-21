@@ -12,7 +12,7 @@ type KeptEmployment = {
 const employmentsFile = process.env.SCHEMA_CANARY_EMPLOYMENTS;
 if (!employmentsFile) {
   throw new Error(
-    'Set SCHEMA_CANARY_EMPLOYMENTS to the file written by npm run schema-canary -- --keep-submitted=<file>',
+    'Set SCHEMA_CANARY_EMPLOYMENTS to the file written by pnpm run schema-canary --keep-submitted=<file>',
   );
 }
 const employments = JSON.parse(

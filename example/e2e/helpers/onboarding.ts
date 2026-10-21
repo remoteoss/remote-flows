@@ -1,11 +1,6 @@
 import { Page } from '@playwright/test';
 import { fillForm, submitAndWaitForSave } from './general';
 
-// Must be the company the example app's API token is bound to, otherwise
-// GET /v1/companies/:id 404s and the flow runs without company data.
-const E2E_COMPANY_ID =
-  process.env.E2E_COMPANY_ID || '178ec896-4b1b-499d-9b19-d2490e3f5249';
-
 interface fillOnboardingIntroductionFormOptions {
   company_id: string;
   employment_id?: string;
@@ -17,11 +12,15 @@ export async function fillOnboardingIntroductionForm(
   options: Partial<fillOnboardingIntroductionFormOptions>,
 ) {
   await fillForm(page, [
-    {
-      type: 'textField',
-      value: options.company_id ?? E2E_COMPANY_ID,
-      name: 'companyId',
-    },
+    ...(options.company_id
+      ? [
+          {
+            type: 'textField' as const,
+            value: options.company_id,
+            name: 'companyId',
+          },
+        ]
+      : []),
     {
       type: 'select',
       value: 'employee',
@@ -304,6 +303,9 @@ interface fillOnboardingStep3SpainFormOptions {
   has_commissions?: string;
   equity_compensation?: string;
   non_compete_clause_apply?: string;
+  non_solicitation_employees?: string;
+  non_solicitation_customers?: string;
+  non_interference_apply?: string;
   // Required from contract_details v6: previously admin-only, cba_categories is now surfaced
   // to clients and enforced. cba_group and cba_level only render once the prior field is set.
   cba_area?: string;
@@ -429,6 +431,21 @@ export async function fillOnboardingStep3SpainForm(
     },
     {
       type: 'radio',
+      value: options.non_solicitation_employees,
+      name: 'non_solicitation_employees',
+    },
+    {
+      type: 'radio',
+      value: options.non_solicitation_customers,
+      name: 'non_solicitation_customers',
+    },
+    {
+      type: 'radio',
+      value: options.non_interference_apply,
+      name: 'non_interference_apply',
+    },
+    {
+      type: 'radio',
       value: options.cba_area,
       name: 'cba_categories.cba_area',
     },
@@ -479,10 +496,15 @@ interface fillOnboardingStep3PortugalFormOptions {
   has_bonus?: string;
   has_commissions?: string;
   equity_compensation?: string;
+  non_interference_apply?: string;
+  non_solicitation_customers?: string;
+  non_solicitation_employees?: string;
+  non_compete_clause_apply?: string;
   work_from_home_allowance_ack?: boolean;
   annual_training_hours_ack?: boolean;
   salary_installments_confirmation?: boolean;
   offboarding_allowances_ack?: boolean;
+  tax_and_social_security_numbers_ack?: boolean;
 }
 
 export async function fillOnboardingStep3PortugalForm(
@@ -573,6 +595,26 @@ export async function fillOnboardingStep3PortugalForm(
       name: 'equity_compensation.offer_equity_compensation',
     },
     {
+      type: 'radio',
+      value: options.non_interference_apply,
+      name: 'non_interference_apply',
+    },
+    {
+      type: 'radio',
+      value: options.non_solicitation_customers,
+      name: 'non_solicitation_customers',
+    },
+    {
+      type: 'radio',
+      value: options.non_solicitation_employees,
+      name: 'non_solicitation_employees',
+    },
+    {
+      type: 'radio',
+      value: options.non_compete_clause_apply,
+      name: 'non_compete_clause_apply',
+    },
+    {
       type: 'checkbox',
       value: options.work_from_home_allowance_ack ? 'yes' : '',
       name: 'work_from_home_allowance_ack',
@@ -591,6 +633,11 @@ export async function fillOnboardingStep3PortugalForm(
       type: 'checkbox',
       value: options.offboarding_allowances_ack ? 'yes' : '',
       name: 'offboarding_allowances_ack',
+    },
+    {
+      type: 'checkbox',
+      value: options.tax_and_social_security_numbers_ack ? 'yes' : '',
+      name: 'tax_and_social_security_numbers_ack',
     },
   ]);
 

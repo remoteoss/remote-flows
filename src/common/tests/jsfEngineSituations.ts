@@ -122,6 +122,47 @@ const monthlyAllowanceSchema: Schema = {
   },
 };
 
+const standardHoursSchema: Schema = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    annual_gross_salary: money('Annual gross salary'),
+    work_hours_per_week: {
+      title: 'Work hours per week',
+      type: 'number',
+      'x-jsf-presentation': { inputType: 'number' },
+    },
+    standard_hours: {
+      title: 'Standard Hours',
+      type: ['number', 'null'],
+      minimum: 0,
+      'x-jsf-logic-computedAttrs': {
+        const: 'standard_hours',
+        default: 'standard_hours',
+        'x-jsf-presentation': {
+          statement: {
+            title: 'Standard Hours: <strong>{{standard_hours}}</strong>',
+          },
+        },
+      },
+      'x-jsf-presentation': { inputType: 'number' },
+    },
+  },
+  required: ['work_hours_per_week'],
+  'x-jsf-order': [
+    'annual_gross_salary',
+    'work_hours_per_week',
+    'standard_hours',
+  ],
+  'x-jsf-logic': {
+    computedValues: {
+      standard_hours: {
+        rule: { '/': [{ '*': [{ var: 'work_hours_per_week' }, 52] }, 12] },
+      },
+    },
+  },
+};
+
 const paymentTermsSchema: Schema = {
   type: 'object',
   additionalProperties: false,
@@ -180,6 +221,17 @@ export const chooseInGroup = async (
 };
 
 export const SITUATIONS: Situation[] = [
+  {
+    situation: 'forced value computed from an empty field stays read-only',
+    schema: standardHoursSchema,
+    fill: async () => {
+      await screen.findByLabelText('Work hours per week');
+    },
+    assert: async () => {
+      expect(await screen.findByText(/Standard Hours:/)).toBeInTheDocument();
+      expect(screen.queryByLabelText('Standard Hours')).not.toBeInTheDocument();
+    },
+  },
   {
     situation: 'forced money value computed from another money field',
     schema: monthlyAllowanceSchema,

@@ -122,10 +122,10 @@ When adding a new customizable component:
 - [ ] Use `TestProviders` with custom components prop
 
 ### 6. Validation
-- [ ] Run `npm run format`
-- [ ] Run `npm run lint`
-- [ ] Run `npm run type-check`
-- [ ] Run `npm test`
+- [ ] Run `pnpm run format`
+- [ ] Run `pnpm run lint`
+- [ ] Run `pnpm run type-check`
+- [ ] Run `pnpm test`
 
 ## Examples from Codebase
 

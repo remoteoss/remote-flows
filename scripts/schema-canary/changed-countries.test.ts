@@ -1,4 +1,9 @@
-import { changedCountries, parsePinnedVersions } from './changed-countries';
+import {
+  basicInfoVersionChanged,
+  changedCountries,
+  parsePinnedVersions,
+  touchesOtherInputs,
+} from './changed-countries';
 
 const source = (mex: number, pol = 5) => `export const X = {
   MEX: {
@@ -49,5 +54,61 @@ describe('changedCountries', () => {
         source(8),
       ),
     ).toEqual(['POL']);
+  });
+});
+
+describe('basicInfoVersionChanged', () => {
+  const withBasicInfo = (version: number) =>
+    `export const V = {\n  employment_basic_information: ${version},\n};\n\n${source(8)}`;
+
+  it('detects a bumped basic information version', () => {
+    expect(basicInfoVersionChanged(withBasicInfo(4), withBasicInfo(5))).toBe(
+      true,
+    );
+  });
+
+  it('ignores a file where only a country pin changed', () => {
+    expect(
+      basicInfoVersionChanged(
+        withBasicInfo(4) + source(2),
+        withBasicInfo(4) + source(8),
+      ),
+    ).toBe(false);
+  });
+});
+
+describe('touchesOtherInputs', () => {
+  it('ignores the pins file itself', () => {
+    expect(
+      touchesOtherInputs([
+        'example/src/flows/Onboarding/jsonSchemaVersions.ts',
+      ]),
+    ).toBe(false);
+  });
+
+  it('ignores docs, e2e and example files that are not canary inputs', () => {
+    expect(
+      touchesOtherInputs([
+        'example/src/flows/Onboarding/jsonSchemaVersions.ts',
+        'docs/schema-changes/eor/contract-details/countries/PRT.md',
+        'example/e2e/onboard-portugal-employee.spec.ts',
+        'example/e2e/helpers/onboarding.ts',
+      ]),
+    ).toBe(false);
+  });
+
+  it.each([
+    'pnpm-lock.yaml',
+    'src/common/createHeadlessForm.tsx',
+    'scripts/schema-canary.ts',
+    'scripts/schema-canary/lib.ts',
+    '.github/workflows/schema-canary.yml',
+  ])('treats %s as a canary input', (file) => {
+    expect(
+      touchesOtherInputs([
+        'example/src/flows/Onboarding/jsonSchemaVersions.ts',
+        file,
+      ]),
+    ).toBe(true);
   });
 });

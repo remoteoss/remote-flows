@@ -28,8 +28,8 @@
  * example/e2e/ (Playwright's testDir / CI).
  *
  * Usage (from repo root):
- *   npm run seed:onboarding -- --country=DEU
- *   npm run seed:onboarding -- --country=ESP --basic-info-version=4
+ *   pnpm run seed:onboarding --country=DEU
+ *   pnpm run seed:onboarding --country=ESP --basic-info-version=4
  *
  * Pass --type=contractor to instead create a contractor employment from the
  * contractor_basic_information schema and stop there, mirroring the
@@ -40,7 +40,7 @@
  * employment - so this does the same with fixed answers that avoid the IR35
  * SDS upload and the non-national warning.
  *
- *   npm run seed:onboarding -- --country=GBR --type=contractor --env=sandbox
+ *   pnpm run seed:onboarding --country=GBR --type=contractor --env=sandbox
  *
  * By default this proxies through a locally running `example` dev server
  * (BASE_URL, `example/.env`'s VITE_REMOTE_GATEWAY decides which gateway that
@@ -48,7 +48,7 @@
  *
  * Pass --env=<name> to instead talk to a gateway directly, with no dev server
  * required: credentials come from .env.<name> at the repo root
- * (VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, VITE_REFRESH_TOKEN
+ * (VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, REMOTE_REFRESH_TOKEN
  * - same shape as example/.env). The file name only picks the credentials;
  * VITE_REMOTE_GATEWAY inside it picks the gateway. So .env.sandbox (local-dev
  * sandbox client) and .env.review (the deployed demo app's sandbox client)
@@ -59,8 +59,8 @@
  * app URL> in that same file gets you a ready-to-click link (with
  * ?employmentId= prefilled) in the final output.
  *
- *   npm run seed:onboarding -- --country=DEU --env=sandbox
- *   npm run seed:onboarding -- --country=DEU --env=review
+ *   pnpm run seed:onboarding --country=DEU --env=sandbox
+ *   pnpm run seed:onboarding --country=DEU --env=review
  *
  * Pass --debug to log every request and response: URL, request body, status,
  * timing, response headers (x-request-id, traceparent, ... - what you need to
@@ -68,13 +68,17 @@
  * command to replay it (Authorization redacted). Failures always print the
  * response headers, with or without --debug.
  *
- *   npm run seed:onboarding -- --country=IND --env=partners --debug
+ *   pnpm run seed:onboarding --country=IND --env=partners --debug
  */
 import dotenv from 'dotenv';
+import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY } from '../example/src/flows/Onboarding/jsonSchemaVersions';
+import {
+  ONBOARDING_JSON_SCHEMA_VERSION,
+  ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY,
+} from '../example/src/flows/Onboarding/jsonSchemaVersions';
 import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
 import { fillSchema, findSafeStartDate, HolidayDate } from './fill-schema';
 
@@ -123,7 +127,10 @@ if (TYPE !== 'employee' && TYPE !== 'contractor') {
   throw new Error(`--type must be employee or contractor (got ${TYPE}).`);
 }
 const BASIC_INFO_VERSION = Number(
-  stringArg('basic-info-version') || (TYPE === 'contractor' ? 1 : 4),
+  stringArg('basic-info-version') ||
+    (TYPE === 'contractor'
+      ? 1
+      : ONBOARDING_JSON_SCHEMA_VERSION.employment_basic_information),
 );
 if ('env' in args && stringArg('env') === undefined) {
   throw new Error(
@@ -142,7 +149,10 @@ let getAuthHeaders = async (
 
 if (ENV) {
   const envFile = path.resolve(__dirname, '..', `.env.${ENV}`);
-  dotenv.config({ path: envFile });
+  if (!existsSync(envFile)) {
+    throw new Error(`--env=${ENV}: ${envFile} does not exist.`);
+  }
+  dotenv.config({ path: envFile, override: true });
   const { buildGatewayURL } = require('../example/api/utils.js') as {
     buildGatewayURL: () => string | undefined;
   };
@@ -159,9 +169,7 @@ if (ENV) {
 
   const gatewayURL = buildGatewayURL();
   if (!gatewayURL) {
-    throw new Error(
-      `Unknown --env=${ENV}, or ${envFile} is missing/doesn't set VITE_REMOTE_GATEWAY.`,
-    );
+    throw new Error(`${envFile} doesn't set VITE_REMOTE_GATEWAY.`);
   }
   BASE_URL = gatewayURL;
   console.log(`Environment: ${ENV} -> ${BASE_URL} (from ${envFile})`);

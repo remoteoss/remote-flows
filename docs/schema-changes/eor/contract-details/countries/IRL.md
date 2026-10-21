@@ -4,15 +4,37 @@ Schema versions for employee onboarding in Ireland.
 
 ## Current Version
 
-**Contract Details:** v4
+**Contract Details:** v5
 
 ## Contract Details
 
-### v4 - Current
+### v5 - Current
 
 **What changed:**
 
-- Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `IRL`) to inspect field-level diffs between your current pin and v4. Prefer jumping straight from v1 to v4 when upgrading.
+- Hourly wage type and the daily schedule are no longer hidden from Partners API (`remote_api`) consumers. `wage_type` and `hourly_gross_salary` are now returned, and the `daily_schedule` component (`daily_schedule`, `schedule_type`, `work_hours_per_week`) replaces the plain `work_hours_per_week` field.
+- Part-time contracts must still use `wage_type` `salary`.
+
+**Migration:**
+
+Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when `wage_type` is `hourly`, and the daily schedule fields instead of the plain `work_hours_per_week` field. Consumers staying on v4 or earlier are unaffected.
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      IRL: { contract_details: 5 },
+    },
+  }}
+/>
+```
+
+---
+
+### v4
+
+**What changed:**
+
 - `contract_duration_type` no longer offers `fixed_term`, and `contract_end_date` is rejected, when the employee has a recognized seniority date (`has_seniority_date: "yes"`). Flag-gated, and employments created before the cutoff date are unaffected — no action required for existing contracts.
 
 **Migration:**

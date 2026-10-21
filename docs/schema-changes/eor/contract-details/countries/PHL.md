@@ -4,15 +4,74 @@ Schema versions for employee onboarding in the Philippines.
 
 ## Current Version
 
-**Contract Details:** v6
+**Contract Details:** v9
 
 ## Contract Details
 
-### v6 - Current
+### v9 - Current
 
 **What changed:**
 
-- Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `PHL`) to inspect field-level diffs between your current pin and v6. Prefer jumping straight from v1 to v6 when upgrading.
+- Full-time `work_hours_per_week` is now a whole number from 36 to 40 (default 40) instead of a fixed 40, and it is required when `work_schedule` is `full_time`. Partners using a custom UI must render and submit it for every full-time submission. Pin v8 or earlier to keep the fixed 40
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      PHL: { contract_details: 9 },
+    },
+  }}
+/>
+```
+
+---
+
+### v8
+
+**What changed:**
+
+- Deprecates the additional De Minimis fields (`has_additional_de_minimis_benefits`, `additional_de_minimis_benefits_amount`, `additional_de_minimis_benefits_covers`). They are hidden, read-only and no longer asked for full-time employees, so stop sending them. Add extra De Minimis benefits as an incentive instead
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      PHL: { contract_details: 8 },
+    },
+  }}
+/>
+```
+
+---
+
+### v7
+
+**What changed:**
+
+- Blocks the probation period for employments with a recognized seniority date, the same way the fixed-term seniority block already works. Flag-gated: once the employment has a recognized seniority date, `probation_length` is locked to 0 and any other submitted value is rejected. Remote admins see an explanatory statement
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      PHL: { contract_details: 7 },
+    },
+  }}
+/>
+```
+
+---
+
+### v6
+
+**What changed:**
+
 - `contract_duration_type` no longer offers `fixed_term`, and `contract_end_date` is rejected, when the employee has a recognized seniority date (`has_seniority_date: "yes"`). Flag-gated, and employments created before the cutoff date are unaffected — no action required for existing contracts.
 - `contract_duration_type` gains a help center link, and `contract_end_date` now accepts `null`. It's still required for `fixed_term` and not allowed otherwise.
 

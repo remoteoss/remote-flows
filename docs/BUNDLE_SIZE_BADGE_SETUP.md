@@ -128,13 +128,13 @@ You can test the badge generation locally:
 
 ```bash
 # Build the project
-npm run build
+pnpm run build
 
 # Analyze bundle size
-npm run size -- --output out/bundle-analysis.json
+pnpm run size --output out/bundle-analysis.json
 
 # Generate badge data
-npm run size:badge --silent out/bundle-analysis.json > out/size-data.json
+pnpm --silent run size:badge out/bundle-analysis.json > out/size-data.json
 
 # View the generated data
 cat out/size-data.json
