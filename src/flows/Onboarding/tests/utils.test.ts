@@ -67,7 +67,6 @@ describe('usesJsfV1ContractDetails', () => {
     'CHL',
     'FIN',
     'GTM',
-    'KOR',
     'NOR',
     'ARM',
     'EST',

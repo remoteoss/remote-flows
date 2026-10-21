@@ -40,7 +40,6 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Israel (ISR)](./ISR.md)
 - [Jamaica (JAM)](./JAM.md)
 - [Kenya (KEN)](./KEN.md)
-- [South Korea (KOR)](./KOR.md)
 - [Lebanon (LBN)](./LBN.md)
 - [Mauritius (MUS)](./MUS.md)
 - [Malaysia (MYS)](./MYS.md)
@@ -112,7 +111,6 @@ These countries have upgraded to different versions, check each guide to know ho
 | Saudi Arabia         | SAU  | v2               | March 2026   |
 | Singapore            | SGP  | v2               | March 2026   |
 | South Africa         | ZAF  | v5               | October 2026 |
-| South Korea          | KOR  | v7               | October 2026 |
 | Spain                | ESP  | v8               | October 2026 |
 | Serbia               | SRB  | v2               | March 2026   |
 | Sweden               | SWE  | v5               | October 2026 |
