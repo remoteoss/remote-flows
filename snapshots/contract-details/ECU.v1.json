@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_bonus_ack",
       "annual_gross_salary",
       "available_pto",
@@ -14,6 +16,8 @@
       "has_signing_bonus",
       "probation_length_days",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "work_address_is_home_address",
       "work_schedule"
     ],
@@ -34,6 +38,10 @@
     ]
   },
   "types": {
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "contract_duration": "text",
     "contract_duration_type": "radio",
     "contract_end_date": "date",
@@ -59,9 +67,12 @@
     "available_pto": "number",
     "role_description": "textarea",
     "experience_level": "radio",
-    "work_address_is_home_address": "radio"
+    "work_address_is_home_address": "radio",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "contract_duration_type": ["fixed_term", "indefinite"],
     "work_schedule": ["full_time", "part_time"],
     "has_signing_bonus": ["no", "yes"],

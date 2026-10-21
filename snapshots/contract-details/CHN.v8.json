@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_gross_salary",
       "annual_leave_carry_forward",
       "available_pto",
@@ -23,6 +25,8 @@
       "other_work_locations",
       "province_of_residency",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "salary_overview",
       "termination_rules_ack",
       "third_party_work",
@@ -79,6 +83,10 @@
     "annual_leave_carry_forward": "radio",
     "has_overtime_eligibility": "radio",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
     "other_work_locations": "radio",
@@ -114,7 +122,8 @@
     "work_equipment_provided_by": "radio",
     "expenses_policy": "textarea",
     "third_party_work": "radio",
-    "third_party_work_activities": "textarea"
+    "third_party_work_activities": "textarea",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "province_of_residency": ["BJ", "GD", "SH", "ZJ"],
@@ -125,6 +134,8 @@
     "available_pto_type": ["fixed", "unlimited"],
     "annual_leave_carry_forward": ["no", "yes"],
     "has_overtime_eligibility": ["no", "yes"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
@@ -177,11 +188,7 @@
       "removedRequired": []
     },
     "work_schedule=part_time": {
-      "addedVisible": [
-        "notice_period_days",
-        "part_time_salary_confirmation",
-        "work_days_number"
-      ],
+      "addedVisible": ["part_time_salary_confirmation", "work_days_number"],
       "removedVisible": ["termination_rules_ack"],
       "addedRequired": ["part_time_salary_confirmation", "work_days_number"],
       "removedRequired": ["has_probation_period", "termination_rules_ack"]

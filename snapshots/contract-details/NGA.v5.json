@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_gross_salary",
       "available_pto",
       "available_pto_type",
@@ -19,6 +21,8 @@
       "notice_period_days",
       "other_work_locations",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "sick_leave_pay_length_days",
       "sick_leave_pay_length_months",
       "supplemental_benefits_eligible",
@@ -76,6 +80,10 @@
     "additional_holiday_days": "radio",
     "sick_leave_pay_length_days": "number",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
     "other_work_locations": "radio",
@@ -107,7 +115,8 @@
     "non_solicitation_customer_number_of_months": "number",
     "exclusivity": "radio",
     "work_equipment_provided_by": "radio",
-    "supplemental_benefits_eligible": "radio"
+    "supplemental_benefits_eligible": "radio",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "contract_duration_type": ["fixed_term", "indefinite"],
@@ -115,6 +124,8 @@
     "work_schedule_type": ["core_business_hours", "fixed_hours", "flexible"],
     "has_probation_period": ["no", "yes"],
     "available_pto_type": ["fixed", "unlimited"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",

@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_gross_salary",
       "available_pto_type",
       "compensation_currency_code",
@@ -40,6 +42,8 @@
       "overtime_compensation_type",
       "post_termination_restrictions",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "schedule_type",
       "third_party_work",
       "work_address.is_home_address",
@@ -131,6 +135,10 @@
     "additional_holiday_days": "radio",
     "overtime_compensation_type": "radio",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address.is_home_address": "radio",
     "work_address.address": "text",
@@ -167,6 +175,7 @@
     "work_equipment_provided_by": "radio",
     "third_party_work": "radio",
     "third_party_work_activities": "textarea",
+    "additional_job_title_eligibility_check_result": "hidden",
     "bonus_amount": "text"
   },
   "options": {
@@ -189,6 +198,8 @@
       "overtime_compensation_time_off",
       "overtime_remunerated"
     ],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",

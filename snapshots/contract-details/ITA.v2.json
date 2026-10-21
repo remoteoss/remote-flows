@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_gross_salary",
       "available_pto",
       "available_pto_type",
@@ -46,6 +48,8 @@
       "professional_area",
       "professional_qualifications",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "salary_overview",
       "schedule_type",
       "work_from_home_allowance_ack",
@@ -131,6 +135,10 @@
     "probation_length_fixed": "hidden",
     "available_pto_type": "hidden",
     "role_description": "textarea",
+    "role_is_onsite": "hidden",
+    "role_requires_license": "hidden",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "job_category": "hidden",
     "professional_area": "hidden",
     "primary_point_of_contact": "text",
@@ -165,7 +173,8 @@
     "non_solicitation_customers": "radio",
     "non_solicitation_customer_number_of_months": "number",
     "non_interference_apply": "radio",
-    "non_interference_halt_period": "number"
+    "non_interference_halt_period": "number",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "contract_duration_type": ["fixed_term", "indefinite"],

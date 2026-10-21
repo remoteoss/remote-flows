@@ -3,6 +3,8 @@
   "base": {
     "visible": [
       "additional_holiday_days",
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "allowances",
       "annual_gross_salary",
       "available_pto",
@@ -18,6 +20,8 @@
       "overtime_compensation_type",
       "post_termination_restrictions",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "third_party_work",
       "time_tracking_rules_ack",
       "work_address_is_home_address",
@@ -52,6 +56,10 @@
     ]
   },
   "types": {
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "contract_duration_type": "radio",
     "contract_end_date": "date",
     "work_schedule": "radio",
@@ -96,9 +104,12 @@
     "non_solicitation_customers": "radio",
     "non_solicitation_customer_number_of_months": "number",
     "non_interference_apply": "radio",
-    "non_interference_halt_period": "number"
+    "non_interference_halt_period": "number",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "contract_duration_type": ["fixed_term", "indefinite"],
     "work_schedule": ["full_time", "part_time"],
     "has_probation_period": ["no", "yes"],

@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "allowances",
       "annual_gross_salary",
       "available_pto_ack",
@@ -15,6 +17,8 @@
       "meal_allowance",
       "probation_length",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "work_address_is_home_address",
       "work_schedule"
     ],
@@ -43,6 +47,10 @@
     "probation_length": "number",
     "available_pto_ack": "checkbox",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
     "annual_gross_salary": "money",
@@ -61,11 +69,14 @@
     "equity_compensation.number_of_stock_options": "text",
     "equity_compensation.equity_cliff": "number",
     "equity_compensation.equity_vesting_period": "number",
-    "equity_compensation.equity_description": "textarea"
+    "equity_compensation.equity_description": "textarea",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "contract_duration_type": ["fixed_term", "indefinite"],
     "work_schedule": ["full_time", "part_time"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
