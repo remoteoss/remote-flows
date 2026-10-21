@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_gross_salary",
       "annual_leave_carry_forward",
       "available_pto",
@@ -24,6 +26,8 @@
       "notice_period",
       "rest_minutes_per_day",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "weekly_days_off",
       "work_address_is_home_address",
       "work_days_for_part_time_worker.item",
@@ -90,6 +94,10 @@
     "carryover_details.expiry_months": "number",
     "weekly_days_off": "select",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
     "annual_gross_salary": "money",
@@ -115,7 +123,8 @@
     "non_solicit_clause_apply": "radio",
     "non_solicit_clause_halt_period_months": "number",
     "damages": "radio",
-    "work_equipment_provided": "radio"
+    "work_equipment_provided": "radio",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "contract_duration_type": ["fixed_term", "indefinite"],
@@ -141,6 +150,8 @@
       "tuesday",
       "wednesday"
     ],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",

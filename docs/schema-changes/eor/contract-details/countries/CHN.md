@@ -12,7 +12,6 @@ Schema versions for employee onboarding in China.
 
 **What changed:**
 
-- Use the [JSON schema comparison](https://remote-flows-eight.vercel.app/?demo=json-schema-comparison) tool (country `CHN`) to inspect field-level diffs between your current pin and v8. Prefer jumping straight from v3 to v8 when upgrading.
 - Adds an extreme-salary acknowledgement: a warning plus a required checkbox when the annual salary is at or above the USD 1,000,000 equivalent. Additive change — no action required unless a submitted salary crosses that threshold.
 
 **Migration:**

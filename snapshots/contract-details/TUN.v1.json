@@ -3,6 +3,8 @@
   "base": {
     "visible": [
       "additional_holiday_days",
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_gross_salary",
       "annual_leave_carry_forward",
       "available_pto_type",
@@ -18,6 +20,8 @@
       "overtime_compensation_type",
       "post_termination_restrictions",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "third_party_work",
       "work_address_is_home_address",
       "work_equipment_provided_by",
@@ -62,6 +66,10 @@
     "additional_holiday_days": "radio",
     "overtime_compensation_type": "radio",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
     "other_work_locations": "radio",
@@ -91,7 +99,8 @@
     "non_interference_halt_period": "number",
     "work_equipment_provided_by": "radio",
     "third_party_work": "radio",
-    "third_party_work_activities": "textarea"
+    "third_party_work_activities": "textarea",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "contract_duration_type": ["fixed_term", "indefinite"],
@@ -104,6 +113,8 @@
       "included_in_salary",
       "overtime_remunerated"
     ],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": ["level_2", "level_3", "level_4", "level_5"],
     "work_address_is_home_address": ["no", "yes"],
     "other_work_locations": ["no", "yes"],

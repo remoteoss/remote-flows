@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_bonus_ack",
       "annual_gross_salary",
       "available_pto",
@@ -21,6 +23,8 @@
       "overtime_pay_method",
       "probation_length",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "salary_overview",
       "work_address_is_home_address",
       "work_from_home_allowance_ack",
@@ -63,6 +67,10 @@
     "available_pto_type": "radio",
     "available_pto": "number",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "years_of_experience": "number",
     "experience_level": "radio",
     "is_cover_travel_reimbursement": "radio",
@@ -98,12 +106,15 @@
     "non_solicitation_customers": "radio",
     "non_solicitation_customer_number_of_months": "number",
     "non_interference_apply": "radio",
-    "non_interference_halt_period": "number"
+    "non_interference_halt_period": "number",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "contract_duration_type": ["fixed_term", "indefinite"],
     "work_schedule": ["full_time", "part_time"],
     "available_pto_type": ["fixed", "unlimited"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": ["level_2", "level_3", "level_4", "level_5", "level_6"],
     "is_cover_travel_reimbursement": ["no", "yes"],
     "work_address_is_home_address": ["no", "yes"],

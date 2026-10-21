@@ -3,6 +3,8 @@
   "base": {
     "visible": [
       "additional_bonus",
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "allowances.conveyance_allowance",
       "allowances.house_rent_allowance",
       "allowances.medical_allowance",
@@ -25,6 +27,8 @@
       "notice_period_days",
       "other_work_locations",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "work_address_is_home_address",
       "work_equipment_provided",
       "work_hours_per_week"
@@ -56,6 +60,10 @@
     ]
   },
   "types": {
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "contract_duration_type": "radio",
     "contract_end_date": "date",
     "temporary_work_reason_ack": "checkbox",
@@ -96,9 +104,12 @@
     "non_solicitation_clause_halt_period_months": "number",
     "non_compete_clause_cannot_apply_ack": "checkbox",
     "ancillary_positions_clause_apply": "radio",
-    "work_equipment_provided": "radio"
+    "work_equipment_provided": "radio",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "contract_duration_type": ["fixed_term", "indefinite"],
     "available_pto_type": ["fixed", "unlimited"],
     "has_overtime_eligibility": ["no", "yes"],

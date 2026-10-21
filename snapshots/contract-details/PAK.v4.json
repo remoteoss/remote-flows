@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "ancillary_positions",
       "annual_gross_salary",
       "available_pto",
@@ -23,6 +25,8 @@
       "payout_currency_code",
       "province",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "work_address_is_home_address",
       "work_hours_per_week",
       "work_schedule"
@@ -64,6 +68,10 @@
     "notice_period": "checkbox",
     "available_pto": "number",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
     "compensation_currency_code": "select",
@@ -99,7 +107,8 @@
     "non_solicit_clause_halt_period_months": "number",
     "non_solicitation_employees": "radio",
     "non_solicitation_customers": "radio",
-    "non_interference_apply": "radio"
+    "non_interference_apply": "radio",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "province": [
@@ -114,6 +123,8 @@
     "contract_duration_type": ["fixed_term", "indefinite"],
     "work_schedule": ["full_time", "part_time"],
     "has_probation_period": ["no", "yes"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",

@@ -2,6 +2,7 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
       "has_wage_portage_higher_degree",
       "has_wage_portage_years_of_experience",
       "provided_equipment.item",
@@ -26,6 +27,10 @@
     "probation_length_days": "number",
     "available_pto": "number",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "mission_duration": "number",
     "mission_deliverables_cadence": "select",
@@ -59,7 +64,8 @@
     "non_compete_clause_halt_period_months": "number",
     "non_compete_clause_compensation_amount": "money",
     "non_compete_compensation_salary_percentage": "number",
-    "non_compete_restricted_activities": "textarea"
+    "non_compete_restricted_activities": "textarea",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "has_wage_portage_higher_degree": ["no", "yes"],
@@ -87,6 +93,7 @@
   "scenarios": {
     "has_wage_portage_higher_degree=yes": {
       "addedVisible": [
+        "additional_job_title_eligibility_check_slug",
         "annual_gross_salary",
         "available_pto",
         "contract_duration_type",
@@ -108,6 +115,8 @@
         "provided_equipment",
         "provided_systems",
         "role_description",
+        "role_is_onsite",
+        "role_requires_license",
         "salary_overview",
         "work_address_is_home_address",
         "work_experience",
@@ -144,6 +153,7 @@
     },
     "has_wage_portage_years_of_experience=yes": {
       "addedVisible": [
+        "additional_job_title_eligibility_check_slug",
         "annual_gross_salary",
         "available_pto",
         "contract_duration_type",
@@ -165,6 +175,8 @@
         "provided_equipment",
         "provided_systems",
         "role_description",
+        "role_is_onsite",
+        "role_requires_license",
         "salary_overview",
         "work_address_is_home_address",
         "work_experience",
