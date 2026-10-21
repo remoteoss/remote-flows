@@ -10,7 +10,7 @@ Schema versions for employee onboarding in Argentina.
 
 ### v5 - Current
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
@@ -32,7 +32,7 @@ Schema versions for employee onboarding in Argentina.
 
 ### v4
 
-**Type of change:** risk, technical
+**Type of change:** compliance, technical
 
 **What changed:**
 

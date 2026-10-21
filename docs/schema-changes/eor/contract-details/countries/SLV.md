@@ -32,7 +32,7 @@ Schema versions for employee onboarding in El Salvador.
 
 ### v3
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
@@ -54,7 +54,7 @@ Schema versions for employee onboarding in El Salvador.
 
 ### v2
 
-**Type of change:** risk, technical
+**Type of change:** compliance, technical
 
 **What changed:**
 

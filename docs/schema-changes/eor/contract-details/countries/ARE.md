@@ -10,7 +10,7 @@ Schema versions for employee onboarding in United Arab Emirates.
 
 ### v6 - Current
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
@@ -54,7 +54,7 @@ Schema versions for employee onboarding in United Arab Emirates.
 
 ### v4
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
