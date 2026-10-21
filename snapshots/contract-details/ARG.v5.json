@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_bonus_ack",
       "annual_gross_salary",
       "available_pto",
@@ -20,6 +22,8 @@
       "non_solicitation_customers",
       "non_solicitation_employees",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "work_address_is_home_address",
       "work_hours_per_week",
       "work_schedule"
@@ -59,6 +63,10 @@
     "available_pto_type": "radio",
     "available_pto": "number",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
     "compensation_currency_code": "select",
@@ -91,12 +99,15 @@
     "non_solicitation_customer_number_of_months": "number",
     "non_interference_apply": "radio",
     "non_interference_halt_period": "number",
-    "monthly_teleworking_contribution": "money"
+    "monthly_teleworking_contribution": "money",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "contract_duration_type": ["fixed_term", "indefinite"],
     "work_schedule": ["full_time", "part_time"],
     "available_pto_type": ["fixed", "unlimited"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
       "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",

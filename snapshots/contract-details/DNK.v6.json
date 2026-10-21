@@ -2,6 +2,8 @@
   "fingerprintVersion": 1,
   "base": {
     "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
       "annual_gross_salary",
       "available_pto",
       "contract_duration",
@@ -18,6 +20,8 @@
       "non_solicitation_employees",
       "probation_length",
       "role_description",
+      "role_is_onsite",
+      "role_requires_license",
       "salary_overview",
       "work_address_is_home_address",
       "work_hours_per_week",
@@ -53,6 +57,10 @@
     "probation_length": "number",
     "available_pto": "number",
     "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
     "is_autonomous_worker": "radio",
     "experience_level": "radio",
     "work_address_is_home_address": "radio",
@@ -83,11 +91,14 @@
     "non_solicitation_customers": "radio",
     "non_solicitation_customer_number_of_months": "number",
     "non_interference_apply": "radio",
-    "non_interference_halt_period": "number"
+    "non_interference_halt_period": "number",
+    "additional_job_title_eligibility_check_result": "hidden"
   },
   "options": {
     "contract_duration_type": ["fixed_term", "indefinite"],
     "work_schedule": ["full_time", "part_time"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
     "is_autonomous_worker": ["no", "yes"],
     "experience_level": [
       "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
