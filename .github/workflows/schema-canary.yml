@@ -9,7 +9,8 @@ on:
       - main
   pull_request:
     paths:
-      - 'example/src/flows/Onboarding/**'
+      - 'example/src/flows/Onboarding/jsonSchemaVersions.ts'
+      - 'example/src/flows/Onboarding/constants.ts'
       - 'pnpm-lock.yaml'
       - 'src/common/createHeadlessForm.tsx'
       - 'src/common/headlessForm.ts'
