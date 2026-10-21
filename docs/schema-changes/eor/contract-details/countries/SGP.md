@@ -33,7 +33,7 @@ Schema versions for employee onboarding in Singapore.
 
 ### v4
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
@@ -55,7 +55,7 @@ Schema versions for employee onboarding in Singapore.
 
 ### v3 - jsf v1
 
-**Type of change:** risk, technical
+**Type of change:** compliance, technical
 
 **What changed:**
 

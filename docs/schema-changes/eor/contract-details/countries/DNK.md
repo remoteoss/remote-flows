@@ -32,7 +32,7 @@ Schema versions for employee onboarding in Denmark.
 
 ### v5
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
@@ -76,7 +76,7 @@ Schema versions for employee onboarding in Denmark.
 
 ### v3
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 

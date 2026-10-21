@@ -56,7 +56,7 @@ Schema versions for employee onboarding in Uganda.
 
 ### v3
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 

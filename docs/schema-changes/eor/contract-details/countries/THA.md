@@ -10,7 +10,7 @@ Schema versions for employee onboarding in Thailand.
 
 ### v5 - Current
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
@@ -54,7 +54,7 @@ Schema versions for employee onboarding in Thailand.
 
 ### v3
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
