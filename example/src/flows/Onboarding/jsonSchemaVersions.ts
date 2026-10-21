@@ -73,7 +73,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CRI: {
     // Costa Rica
-    contract_details: 1,
+    contract_details: 5,
   },
   CYP: {
     // Cyprus
