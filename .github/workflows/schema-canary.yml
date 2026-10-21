@@ -27,7 +27,7 @@ on:
       - '.github/workflows/schema-canary.yml'
 
 concurrency:
-  group: schema-canary
+  group: schema-canary-${{ github.event_name == 'pull_request' && 'pr' || 'main' }}
   queue: max
 
 jobs:
