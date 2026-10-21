@@ -1,7 +1,7 @@
 ---
 name: verify-sandbox-deployed-app
 description: Manually verify onboarding behavior on the deployed sandbox demo (https://remote-flows-eight.vercel.app) instead of the user doing it by hand — seeds a fresh employment via the sandbox gateway, logs past the Vercel password gate, drives the flow to the right step, and checks whatever the user asked about. Use when the user asks to "verify X on sandbox/the deployed app", "check the deployed demo", or similar — not for local dev (use verify-local-app for that) or unit/e2e tests.
-allowed-tools: Bash(npm run seed:onboarding:*), Bash(node:*), Bash(cat:*), Bash(grep:*), Read, Write
+allowed-tools: Bash(pnpm run seed:onboarding:*), Bash(node:*), Bash(cat:*), Bash(grep:*), Read, Write
 ---
 
 # Verify sandbox deployed app
@@ -23,7 +23,7 @@ for its own company.
 `.env.review` must have:
 
 - `VITE_REMOTE_GATEWAY=sandbox` + the deployed app's `VITE_CLIENT_ID`,
-  `VITE_CLIENT_SECRET`, `VITE_REFRESH_TOKEN` (used by
+  `REMOTE_CLIENT_SECRET`, `REMOTE_REFRESH_TOKEN` (used by
   `seed-onboarding.ts --env=review`)
 - `VITE_APP_URL` — the deployed app's URL (`https://remote-flows-eight.vercel.app`)
 - `VITE_APP_PASSWORD` — the Vercel deployment-protection password
@@ -57,7 +57,7 @@ Then stop and wait for them, rather than guessing or asking for the password in 
 If the user gave you an existing employment ID, use it. Otherwise seed one:
 
 ```
-npm run seed:onboarding -- --country=<COUNTRY> --env=review
+pnpm run seed:onboarding --country=<COUNTRY> --env=review
 ```
 
 (default `COUNTRY=DEU` unless the user's ask implies another country — e.g. a

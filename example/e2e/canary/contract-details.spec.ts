@@ -13,7 +13,7 @@ type KeptEmployment = {
 const employmentsFile = process.env.SCHEMA_CANARY_EMPLOYMENTS;
 if (!employmentsFile) {
   throw new Error(
-    'Set SCHEMA_CANARY_EMPLOYMENTS to the file written by npm run schema-canary -- --keep-submitted=<file>',
+    'Set SCHEMA_CANARY_EMPLOYMENTS to the file written by pnpm run schema-canary --keep-submitted=<file>',
   );
 }
 const employments = JSON.parse(
@@ -21,6 +21,19 @@ const employments = JSON.parse(
 ) as KeptEmployment[];
 
 const MAX_STEPS_BEFORE_CONTRACT_DETAILS = 4;
+
+const JOB_TITLE_CHECK_FIELDS = [
+  'additional_job_title_eligibility_check_result',
+  'additional_job_title_eligibility_check_slug',
+];
+
+function withoutJobTitleCheck(contractDetails: Record<string, unknown>) {
+  return Object.fromEntries(
+    Object.entries(contractDetails).filter(
+      ([field]) => !JOB_TITLE_CHECK_FIELDS.includes(field),
+    ),
+  );
+}
 
 function fieldErrors(page: Page) {
   return page
@@ -62,9 +75,13 @@ async function continueUntilContractDetails(page: Page) {
     await test.step(`continue past ${current}`, async () => {
       await acknowledgeAgain(page);
       await page.locator('.submit-button').click();
-      await expect(stepTitle, {
-        message: `${current} did not move on. Field errors: ${JSON.stringify(await fieldErrors(page))}`,
-      }).not.toHaveText(current);
+      try {
+        await expect(stepTitle).not.toHaveText(current);
+      } catch (error) {
+        throw new Error(
+          `${current} did not move on. Field errors: ${JSON.stringify(await fieldErrors(page))}\n${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
     });
   }
   await expect(stepTitle).toHaveText('Contract Details');
@@ -166,10 +183,15 @@ for (const {
         `PATCH /v1/employments/${employmentId} returned ${response?.status()}: ${await response?.text()}`,
       ).toBe(true);
       expect(
-        (request.postDataJSON() as { contract_details?: unknown })
-          .contract_details,
+        withoutJobTitleCheck(
+          (
+            request.postDataJSON() as {
+              contract_details: Record<string, unknown>;
+            }
+          ).contract_details,
+        ),
         'the browser sent different contract_details than the canary saved',
-      ).toEqual(sent);
+      ).toEqual(withoutJobTitleCheck(sent));
       await expect(page.getByTestId('onboarding-step-title')).not.toHaveText(
         'Contract Details',
       );

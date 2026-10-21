@@ -6,29 +6,29 @@ set -euo pipefail
 # Read hook input (though we don't need it for this hook)
 input=$(cat)
 
-# Only run validation if we're in a git repository and npm is available
-if [ -d ".git" ] && command -v npm &> /dev/null; then
+# Only run validation if we're in a git repository and pnpm is available
+if [ -d ".git" ] && command -v pnpm &> /dev/null; then
   echo "Running validation checks..." >&2
   
   # Run format check
-  if npm run check-format > /tmp/format-check.log 2>&1; then
+  if pnpm run check-format > /tmp/format-check.log 2>&1; then
     format_status="✅ Format check passed"
   else
-    format_status="❌ Format check failed (run 'npm run format')"
+    format_status="❌ Format check failed (run 'pnpm run format')"
   fi
   
   # Run lint
-  if npm run lint > /tmp/lint-check.log 2>&1; then
+  if pnpm run lint > /tmp/lint-check.log 2>&1; then
     lint_status="✅ Lint check passed"
   else
-    lint_status="⚠️  Lint warnings (see 'npm run lint')"
+    lint_status="⚠️  Lint warnings (see 'pnpm run lint')"
   fi
   
   # Run type check
-  if npm run type-check > /tmp/type-check.log 2>&1; then
+  if pnpm run type-check > /tmp/type-check.log 2>&1; then
     type_status="✅ Type check passed"
   else
-    type_status="❌ Type check failed (see 'npm run type-check')"
+    type_status="❌ Type check failed (see 'pnpm run type-check')"
   fi
   
   # Check if any validation failed
@@ -49,7 +49,7 @@ if [ -d ".git" ] && command -v npm &> /dev/null; then
     echo "{}"
   fi
 else
-  # If not in git repo or npm not available, skip validation
+  # If not in git repo or pnpm not available, skip validation
   echo '{}'
 fi
 

@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { JSFCustomComponentProps } from '@/src/types/remoteFlows';
 import { StatementComponentProps } from '@/src/types/fields';
+import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 
 const MockStatement = ({ data }: StatementComponentProps) => (
   <div data-testid='mock-statement' data-severity={data.severity}>
@@ -19,6 +20,7 @@ vi.mock('@/src/context', async (importOriginal) => {
     useFormFields: vi.fn(() => ({
       components: {
         statement: MockStatement,
+        text: TextFieldDefault,
       },
     })),
   };
@@ -253,4 +255,55 @@ describe('Custom JSF Component', () => {
       });
     },
   );
+  describe.each([
+    {
+      kind: 'custom component',
+      createField: (overrides = {}) => createToggleField(overrides),
+    },
+    {
+      kind: 'built-in field',
+      createField: (overrides = {}) => ({
+        name: 'payment_type',
+        label: 'Payment Type',
+        inputType: 'text' as const,
+        type: 'text' as const,
+        jsonType: 'string',
+        isVisible: true,
+        ...overrides,
+      }),
+    },
+  ])('rendering an HTML string as extra on a $kind', ({ createField }) => {
+    const extra =
+      'Contact Remote. <a href="https://example.com/help" target="_blank">Learn more.</a><img src="x" onerror="alert(1)">';
+
+    const verify = () => {
+      const link = screen.getByRole('link', { name: 'Learn more.' });
+      expect(link).toHaveAttribute('href', 'https://example.com/help');
+      expect(link).toHaveAttribute('target', '_blank');
+      expect(screen.queryByText(/<a href/)).not.toBeInTheDocument();
+      expect(document.querySelector('img[onerror]')).not.toBeInTheDocument();
+    };
+
+    it('should render the markup, sanitized, at root level', () => {
+      renderWithForm([createField({ extra })], { payment_type: '' });
+
+      verify();
+    });
+
+    it('should render the markup, sanitized, inside fieldset', () => {
+      renderWithForm([createFieldsetField(createField({ extra }))], {
+        payment_info: { payment_type: '' },
+      });
+
+      verify();
+    });
+
+    it('should render the fieldset own extra', () => {
+      renderWithForm([{ ...createFieldsetField(createField()), extra }], {
+        payment_info: { payment_type: '' },
+      });
+
+      verify();
+    });
+  });
 });

@@ -100,10 +100,18 @@ export type DailyScheduleEditState = {
   rows: DailyScheduleEditFormRow[];
   /** Live preview of the schedule as summary days (unsaved changes) */
   unsavedSummaryDays: DailyScheduleSummaryDay[];
+  /** Total weekly hours of the draft as it is being edited */
+  draftWeeklyHours: number;
+  /** Total weekly hours of the saved schedule, unaffected by unsaved edits */
+  savedWeeklyHours: number;
   /** Weekly hours validation error for the current draft */
   hoursRangeError: DailyScheduleHoursError | null;
-  /** Whether the form has unsaved changes from the default schedule */
+  /** Alias of `hasDifferencesFromCountryDefault`. It does not track unsaved edits; use `hasUnsavedChanges`. */
   isDirty: boolean;
+  /** Whether the draft differs from the country's default schedule, e.g. to decide when to offer "Reset to default". */
+  hasDifferencesFromCountryDefault: boolean;
+  /** Whether the draft differs from the saved schedule, i.e. closing would discard edits. */
+  hasUnsavedChanges: boolean;
   /** Form-level validation error (e.g., "Select at least one work day") */
   formError: string | null;
   /** Whether any fields have validation errors */
@@ -115,12 +123,16 @@ export type DailyScheduleEditState = {
   ) => string | undefined;
 };
 
+export type DailyScheduleSaveResult =
+  | { saved: true }
+  | { saved: false; reason: 'invalid_schedule' | 'hours_out_of_range' };
+
 /**
  * Framework-agnostic actions for the daily schedule edit form.
  * These are stable functions that don't expose form library details.
  */
 export type DailyScheduleEditActions = {
-  /** Update a specific field in a specific row */
+  /** Update a specific field in a specific row. Times are stored as `HH:mm` (seconds are dropped) and a numeric break as a string. */
   updateRow: (
     index: number,
     field: keyof Omit<DailyScheduleEditFormRow, 'hours'>,
@@ -128,13 +140,13 @@ export type DailyScheduleEditActions = {
   ) => void;
   /** Toggle a day's checked state */
   toggleDay: (index: number) => void;
-  /** Save the current draft (validates and calls setValue) */
-  save: () => Promise<void>;
+  /** Validates and saves the draft. Resolves with whether it saved and, if not, why. */
+  save: () => Promise<DailyScheduleSaveResult>;
   /** Reset the schedule to the default */
   reset: () => void;
   /** Discard unsaved edits and close (resets to last saved schedule) */
   close: () => void;
-  /** Check if the current form state is valid */
+  /** Whether the draft is valid and within the allowed weekly hours. */
   validate: () => boolean;
   /** Trigger blur validation (call from field onBlur handlers) */
   handleBlur: () => void;

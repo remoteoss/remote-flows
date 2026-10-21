@@ -14,22 +14,26 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run format check
-        run: npm run check-format
+        run: pnpm run check-format
 
       - name: Run lint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Run type check
-        run: npm run type-check
+        run: pnpm run type-check
 
   build-and-exports:
     name: Build and Check Exports
@@ -39,19 +43,23 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
       - name: Check exports
-        run: npm run check-exports
+        run: pnpm run check-exports
 
   tests:
     name: Unit Tests
@@ -61,16 +69,29 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run tests
-        run: npm run test
+        run: pnpm run test
+
+      - name: Upload flaky test report
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: flaky-tests
+          path: out/flaky-tests.json
+          if-no-files-found: ignore
+          retention-days: 30
 
   example-checks:
     name: Example App Checks
@@ -80,28 +101,35 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            example/pnpm-lock.yaml
 
       - name: Install main package dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build main package
-        run: npm run build
+        run: pnpm run build
 
       - name: Install example dependencies
         working-directory: ./example
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Lint example app
         working-directory: ./example
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Type-check example app
         working-directory: ./example
-        run: npm run type-check
+        run: pnpm run type-check
 
   deploy-remote-flows:
     name: Deploy Remote Flows Preview
@@ -129,7 +157,7 @@ jobs:
           STEPS_VERCEL_REMOTE_FLOWS_OUTPUTS_PREVIEW_URL: ${{ steps.vercel-remote-flows.outputs.preview-url }}
 
       - name: Upload deployment URL
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: remote-flows-url
           path: remote-flows-url.txt
@@ -171,17 +199,24 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            example/pnpm-lock.yaml
 
       - name: Install main package dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Install example/ dependencies
         working-directory: ./example
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Get Playwright version
         id: playwright-version
@@ -204,7 +239,7 @@ jobs:
           # Retry with backoff in case apt-get has issues
           for i in 1 2 3; do
             echo "Installing system dependencies (attempt $i of 3)"
-            if npx playwright install-deps chromium; then
+            if pnpm exec playwright install-deps chromium; then
               echo "Successfully installed system dependencies"
               exit 0
             fi
@@ -225,7 +260,7 @@ jobs:
           # Retry up to 3 times with exponential backoff
           for i in 1 2 3; do
             echo "Attempt $i of 3"
-            if npx playwright install chromium; then
+            if pnpm exec playwright install chromium; then
               echo "Successfully installed Playwright browsers"
               exit 0
             fi
@@ -238,7 +273,7 @@ jobs:
           exit 1
 
       - name: Download remote-flows URL
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: remote-flows-url
 
@@ -252,9 +287,9 @@ jobs:
           BASE_URL: ${{ env.REMOTE_FLOWS_URL }}
           VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
         working-directory: ./example
-        run: npx playwright test --project=chromium
+        run: pnpm exec playwright test --project=chromium
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: ${{ !cancelled() }}
         with:
           name: playwright-report

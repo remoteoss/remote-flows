@@ -1,0 +1,275 @@
+{
+  "fingerprintVersion": 1,
+  "base": {
+    "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
+      "annual_gross_salary",
+      "annual_training_hours_ack",
+      "available_pto",
+      "available_pto_type",
+      "contract_duration",
+      "contract_duration_type",
+      "contract_end_date",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_probation_period",
+      "has_signing_bonus",
+      "non_compete_clause_apply",
+      "non_interference_apply",
+      "non_solicitation_customers",
+      "non_solicitation_employees",
+      "offboarding_allowances_ack",
+      "probation_length",
+      "role_description",
+      "role_is_onsite",
+      "role_requires_license",
+      "salary_installments_confirmation",
+      "salary_overview",
+      "tax_and_social_security_numbers_ack",
+      "work_address.is_home_address",
+      "work_from_home_allowance",
+      "work_from_home_allowance_ack",
+      "work_schedule",
+      "working_hours_exemption"
+    ],
+    "required": [
+      "annual_gross_salary",
+      "annual_training_hours_ack",
+      "available_pto",
+      "available_pto_type",
+      "contract_duration_type",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_signing_bonus",
+      "non_compete_clause_apply",
+      "non_interference_apply",
+      "non_solicitation_customers",
+      "non_solicitation_employees",
+      "offboarding_allowances_ack",
+      "role_description",
+      "salary_installments_confirmation",
+      "tax_and_social_security_numbers_ack",
+      "work_address.is_home_address",
+      "work_from_home_allowance_ack",
+      "work_schedule",
+      "working_hours_exemption"
+    ]
+  },
+  "types": {
+    "contract_duration": "text",
+    "contract_duration_type": "checkbox",
+    "contract_end_date": "date",
+    "work_schedule": "radio",
+    "work_hours_per_week": "number",
+    "has_probation_period": "radio",
+    "probation_length": "number",
+    "probation_length_days": "number",
+    "available_pto_type": "radio",
+    "available_pto": "number",
+    "offboarding_allowances_ack": "checkbox",
+    "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
+    "experience_level": "radio",
+    "work_address.is_home_address": "radio",
+    "work_address.address": "text",
+    "work_address.address_line_2": "text",
+    "work_address.city": "text",
+    "work_address.postal_code": "text",
+    "work_address.work_in_person_days_per_week": "number",
+    "salary_overview": "radio",
+    "annual_gross_salary": "money",
+    "extreme_salary_warning": "hidden",
+    "extreme_salary_acknowledgement": "checkbox",
+    "part_time_salary_confirmation": "checkbox",
+    "salary_installments_confirmation": "checkbox",
+    "work_from_home_allowance_ack": "checkbox",
+    "annual_training_hours_ack": "checkbox",
+    "tax_and_social_security_numbers_ack": "checkbox",
+    "work_from_home_allowance": "money",
+    "working_hours_exemption": "radio",
+    "maximum_working_hours_regime": "radio",
+    "working_hours_exemption_allowance": "money",
+    "has_signing_bonus": "radio",
+    "signing_bonus_amount": "money",
+    "signing_bonus_clawback": "radio",
+    "has_bonus": "radio",
+    "bonus_amount": "money",
+    "bonus_details": "textarea",
+    "has_commissions": "radio",
+    "commissions_details": "textarea",
+    "commissions_ack": "checkbox",
+    "equity_compensation.offer_equity_compensation": "radio",
+    "equity_compensation.number_of_stock_options": "text",
+    "equity_compensation.equity_cliff": "number",
+    "equity_compensation.equity_vesting_period": "number",
+    "equity_compensation.equity_description": "textarea",
+    "non_compete_clause_apply": "radio",
+    "non_compete_clause_halt_period_months": "number",
+    "non_compete_clause_compensation_amount": "money",
+    "non_compete_clause_compensation_percentage": "number",
+    "non_solicitation_employees": "radio",
+    "non_solicitation_employees_number_of_months": "number",
+    "non_solicitation_customers": "radio",
+    "non_solicitation_customer_number_of_months": "number",
+    "non_interference_apply": "radio",
+    "non_interference_halt_period": "number",
+    "additional_job_title_eligibility_check_result": "hidden"
+  },
+  "options": {
+    "work_schedule": ["full_time", "part_time"],
+    "has_probation_period": ["no", "yes"],
+    "available_pto_type": ["fixed", "unlimited"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
+    "experience_level": [
+      "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+      "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+      "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+      "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+      "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow"
+    ],
+    "work_address.is_home_address": ["no", "yes"],
+    "salary_overview": ["salary_overview"],
+    "working_hours_exemption": ["no", "yes"],
+    "has_signing_bonus": ["no", "yes"],
+    "has_bonus": ["no", "yes"],
+    "has_commissions": ["no", "yes"],
+    "equity_compensation.offer_equity_compensation": ["no", "yes"],
+    "non_compete_clause_apply": ["no", "yes"],
+    "non_solicitation_employees": ["no", "yes"],
+    "non_solicitation_customers": ["no", "yes"],
+    "non_interference_apply": ["no", "yes"]
+  },
+  "constraints": {
+    "contract_duration": {
+      "maxLength": 255
+    },
+    "contract_end_date": {
+      "maxLength": 255
+    },
+    "probation_length": {
+      "minimum": 0,
+      "maximum": 6
+    },
+    "available_pto": {
+      "minimum": 22
+    },
+    "role_description": {
+      "minLength": 100,
+      "maxLength": 5000
+    },
+    "work_from_home_allowance": {
+      "minimum": 5000
+    }
+  },
+  "scenarios": {
+    "work_schedule=full_time": {
+      "addedVisible": ["work_hours_per_week"],
+      "removedVisible": [],
+      "addedRequired": ["work_hours_per_week"],
+      "removedRequired": []
+    },
+    "work_schedule=part_time": {
+      "addedVisible": ["part_time_salary_confirmation", "work_hours_per_week"],
+      "removedVisible": [],
+      "addedRequired": ["part_time_salary_confirmation", "work_hours_per_week"],
+      "removedRequired": []
+    },
+    "has_probation_period=yes": {
+      "addedVisible": ["probation_length_days"],
+      "removedVisible": [],
+      "addedRequired": ["probation_length_days"],
+      "removedRequired": []
+    },
+    "work_address.is_home_address=no": {
+      "addedVisible": [
+        "work_address.address",
+        "work_address.address_line_2",
+        "work_address.city",
+        "work_address.postal_code",
+        "work_address.work_in_person_days_per_week"
+      ],
+      "removedVisible": [],
+      "addedRequired": [
+        "work_address.address",
+        "work_address.city",
+        "work_address.postal_code",
+        "work_address.work_in_person_days_per_week"
+      ],
+      "removedRequired": []
+    },
+    "working_hours_exemption=yes": {
+      "addedVisible": ["maximum_working_hours_regime"],
+      "removedVisible": [],
+      "addedRequired": ["maximum_working_hours_regime"],
+      "removedRequired": []
+    },
+    "has_signing_bonus=yes": {
+      "addedVisible": ["signing_bonus_amount", "signing_bonus_clawback"],
+      "removedVisible": [],
+      "addedRequired": ["signing_bonus_amount", "signing_bonus_clawback"],
+      "removedRequired": []
+    },
+    "has_bonus=yes": {
+      "addedVisible": ["bonus_amount", "bonus_details"],
+      "removedVisible": [],
+      "addedRequired": ["bonus_details"],
+      "removedRequired": []
+    },
+    "has_commissions=yes": {
+      "addedVisible": ["commissions_ack", "commissions_details"],
+      "removedVisible": [],
+      "addedRequired": ["commissions_ack", "commissions_details"],
+      "removedRequired": []
+    },
+    "equity_compensation.offer_equity_compensation=yes": {
+      "addedVisible": [
+        "equity_compensation.equity_cliff",
+        "equity_compensation.equity_description",
+        "equity_compensation.equity_vesting_period",
+        "equity_compensation.number_of_stock_options"
+      ],
+      "removedVisible": [],
+      "addedRequired": ["equity_compensation.equity_description"],
+      "removedRequired": []
+    },
+    "non_compete_clause_apply=yes": {
+      "addedVisible": [
+        "non_compete_clause_compensation_percentage",
+        "non_compete_clause_halt_period_months"
+      ],
+      "removedVisible": [],
+      "addedRequired": [
+        "non_compete_clause_compensation_percentage",
+        "non_compete_clause_halt_period_months"
+      ],
+      "removedRequired": []
+    },
+    "non_solicitation_employees=yes": {
+      "addedVisible": ["non_solicitation_employees_number_of_months"],
+      "removedVisible": [],
+      "addedRequired": ["non_solicitation_employees_number_of_months"],
+      "removedRequired": []
+    },
+    "non_solicitation_customers=yes": {
+      "addedVisible": ["non_solicitation_customer_number_of_months"],
+      "removedVisible": [],
+      "addedRequired": ["non_solicitation_customer_number_of_months"],
+      "removedRequired": []
+    },
+    "non_interference_apply=yes": {
+      "addedVisible": ["non_interference_halt_period"],
+      "removedVisible": [],
+      "addedRequired": ["non_interference_halt_period"],
+      "removedRequired": []
+    }
+  }
+}

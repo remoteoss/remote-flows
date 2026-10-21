@@ -11,6 +11,7 @@ import {
   withJobTitleEligibilityRiskAcknowledgement,
 } from '@/src/flows/Onboarding/utils';
 import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
+import { mapWithConcurrency } from './map-with-concurrency';
 import { createSandboxClient } from './schema-canary/auth';
 import { KNOWN_UNSAVED_FIELDS } from './schema-canary/known-unsaved-fields';
 import {
@@ -22,7 +23,6 @@ import {
   formatStepSummary,
   formatSummaryTable,
   isSkipped,
-  mapWithConcurrency,
   SCHEMA_CHECK_ORDER,
   SCHEMA_VERSION_TRACKS,
   SchemaCanaryRow,
@@ -59,7 +59,9 @@ function parseArgs(argv: string[]) {
 
 const args = parseArgs(process.argv.slice(2));
 const COUNTRY_FILTER =
-  typeof args.country === 'string' ? args.country.toUpperCase() : undefined;
+  typeof args.country === 'string'
+    ? args.country.toUpperCase().split(',')
+    : undefined;
 const REQUESTED_CHECKS =
   typeof args.checks === 'string'
     ? (args.checks.split(',') as SchemaCheckType[])
@@ -112,11 +114,11 @@ async function fetchLiveCountries(client: Client): Promise<string[]> {
   const countries = (response.data.data ?? [])
     .filter((country) => country.eor_onboarding)
     .map((country) => country.code)
-    .filter((code) => !COUNTRY_FILTER || code === COUNTRY_FILTER);
+    .filter((code) => !COUNTRY_FILTER || COUNTRY_FILTER.includes(code));
   if (countries.length === 0) {
     throw new Error(
       COUNTRY_FILTER
-        ? `--country=${COUNTRY_FILTER} is not an EOR onboarding country on the sandbox gateway`
+        ? `--country=${COUNTRY_FILTER.join(',')} has no EOR onboarding country on the sandbox gateway`
         : '/v1/countries returned no EOR onboarding countries',
     );
   }
@@ -322,11 +324,11 @@ async function checkCountry(
 
 async function runLive(): Promise<CountryResult[]> {
   const clientId = process.env.VITE_CLIENT_ID;
-  const clientSecret = process.env.VITE_CLIENT_SECRET;
-  const refreshToken = process.env.VITE_REFRESH_TOKEN;
+  const clientSecret = process.env.REMOTE_CLIENT_SECRET;
+  const refreshToken = process.env.REMOTE_REFRESH_TOKEN;
   if (!clientId || !clientSecret || !refreshToken) {
     throw new Error(
-      'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, or VITE_REFRESH_TOKEN (set them in .env.sandbox at the repo root, or as env vars)',
+      'Missing VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, or REMOTE_REFRESH_TOKEN (set them in .env.sandbox at the repo root, or as env vars)',
     );
   }
 

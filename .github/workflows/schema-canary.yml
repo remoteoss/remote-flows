@@ -9,9 +9,9 @@ on:
       - main
   pull_request:
     paths:
-      - 'example/src/flows/Onboarding/**'
-      - 'package.json'
-      - 'package-lock.json'
+      - 'example/src/flows/Onboarding/jsonSchemaVersions.ts'
+      - 'example/src/flows/Onboarding/constants.ts'
+      - 'pnpm-lock.yaml'
       - 'src/common/createHeadlessForm.tsx'
       - 'src/common/headlessForm.ts'
       - 'src/components/form/utils.ts'
@@ -26,6 +26,10 @@ on:
       - 'example/playwright.canary.config.ts'
       - '.github/actions/schema-canary-browser/**'
       - '.github/workflows/schema-canary.yml'
+
+concurrency:
+  group: schema-canary-${{ github.event_name == 'pull_request' && 'pr' || 'main' }}
+  queue: max
 
 jobs:
   main-canary:
@@ -49,22 +53,26 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run schema canary against sandbox
         id: canary
         timeout-minutes: 25
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
-          VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
-          VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
-        run: npm run schema-canary -- --versions="$([ "$CHECK_LATEST" = true ] && echo pinned,latest || echo pinned)" --write --failures-out="$RUNNER_TEMP/pinned-failures.md" --latest-failures-out="$RUNNER_TEMP/latest-failures.md" --keep-submitted="$RUNNER_TEMP/kept-employments.json"
+          REMOTE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          REMOTE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
+        run: pnpm run schema-canary --versions="$([ "$CHECK_LATEST" = true ] && echo pinned,latest || echo pinned)" --write --failures-out="$RUNNER_TEMP/pinned-failures.md" --latest-failures-out="$RUNNER_TEMP/latest-failures.md" --keep-submitted="$RUNNER_TEMP/kept-employments.json"
 
       - name: Check which employments were kept
         id: kept
@@ -88,17 +96,17 @@ jobs:
       - name: Add the browser results to the report
         id: browser
         if: ${{ !cancelled() && steps.kept.outputs.any == 'true' }}
-        run: npm run schema-canary:browser-report -- --kept="$RUNNER_TEMP/kept-employments.json" --results="$RUNNER_TEMP/browser-results.json,$RUNNER_TEMP/browser-rerun-results.json" --write --failures-out="$RUNNER_TEMP/pinned-failures.md" --latest-failures-out="$RUNNER_TEMP/latest-failures.md"
+        run: pnpm run schema-canary:browser-report --kept="$RUNNER_TEMP/kept-employments.json" --results="$RUNNER_TEMP/browser-results.json,$RUNNER_TEMP/browser-rerun-results.json" --write --failures-out="$RUNNER_TEMP/pinned-failures.md" --latest-failures-out="$RUNNER_TEMP/latest-failures.md"
 
       - name: Archive the kept employments
         if: always()
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
-          VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
-          VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
+          REMOTE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          REMOTE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
         run: |
           if [ -f "$RUNNER_TEMP/kept-employments.json" ]; then
-            npm run schema-canary:archive -- --from="$RUNNER_TEMP/kept-employments.json"
+            pnpm run schema-canary:archive --from="$RUNNER_TEMP/kept-employments.json"
           fi
 
       - name: Count failing checks in the report
@@ -126,8 +134,17 @@ jobs:
           permission-contents: write
           permission-pull-requests: write
 
+      - name: Skip the pull request if main already has this report
+        id: stale
+        if: always()
+        run: |
+          git fetch --depth=1 origin main
+          if git diff --quiet origin/main -- scripts/reports/schema-canary.json; then
+            echo "same=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Create pull request with the updated report
-        if: ${{ !cancelled() && github.event_name != 'push' && steps.app-token.outcome == 'success' }}
+        if: ${{ !cancelled() && github.event_name != 'push' && steps.app-token.outcome == 'success' && steps.stale.outputs.same != 'true' }}
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ steps.app-token.outputs.token }}
@@ -135,7 +152,7 @@ jobs:
           branch: chore/schema-canary-report-auto
           delete-branch: true
           title: ${{ steps.count.outputs.title }}
-          body: 'Automated run of `npm run schema-canary` on main. See the workflow run summary for the full pass/fail table.'
+          body: 'Automated run of `pnpm run schema-canary` on main. See the workflow run summary for the full pass/fail table.'
           add-paths: |
             scripts/reports/schema-canary.json
 
@@ -231,9 +248,6 @@ jobs:
     if: github.event_name == 'pull_request'
     name: Contract Details Schema Canary (pinned, PR)
     runs-on: ubuntu-latest
-    concurrency:
-      group: schema-canary-pr-${{ github.event.pull_request.number }}
-      cancel-in-progress: true
     timeout-minutes: 30
     permissions:
       contents: read
@@ -241,22 +255,38 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          fetch-depth: 2
+
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Use Node.js
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24.15.0'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --include=optional --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Pick the countries to check
+        id: scope
+        run: echo "countries=$(pnpm exec tsx scripts/schema-canary/changed-countries.ts)" >> "$GITHUB_OUTPUT"
 
       - name: Run schema canary (pinned versions) against sandbox
         timeout-minutes: 15
+        if: steps.scope.outputs.countries != 'none'
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
-          VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
-          VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
-        run: npm run schema-canary -- --versions=pinned --keep-submitted="$RUNNER_TEMP/kept-employments.json"
+          REMOTE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          REMOTE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
+          COUNTRIES: ${{ steps.scope.outputs.countries }}
+        run: |
+          if [ "$COUNTRIES" = "all" ]; then
+            pnpm run schema-canary --versions=pinned --keep-submitted="$RUNNER_TEMP/kept-employments.json"
+          else
+            pnpm run schema-canary --versions=pinned --country="$COUNTRIES" --keep-submitted="$RUNNER_TEMP/kept-employments.json"
+          fi
 
       - name: Check which employments were kept
         id: kept
@@ -278,15 +308,15 @@ jobs:
 
       - name: Check the browser results
         if: ${{ !cancelled() && steps.kept.outputs.any == 'true' }}
-        run: npm run schema-canary:browser-report -- --kept="$RUNNER_TEMP/kept-employments.json" --results="$RUNNER_TEMP/browser-results.json,$RUNNER_TEMP/browser-rerun-results.json"
+        run: pnpm run schema-canary:browser-report --kept="$RUNNER_TEMP/kept-employments.json" --results="$RUNNER_TEMP/browser-results.json,$RUNNER_TEMP/browser-rerun-results.json"
 
       - name: Archive the kept employments
         if: always()
         env:
           VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
-          VITE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
-          VITE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
+          REMOTE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          REMOTE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
         run: |
           if [ -f "$RUNNER_TEMP/kept-employments.json" ]; then
-            npm run schema-canary:archive -- --from="$RUNNER_TEMP/kept-employments.json"
+            pnpm run schema-canary:archive --from="$RUNNER_TEMP/kept-employments.json"
           fi

@@ -1,0 +1,222 @@
+{
+  "fingerprintVersion": 1,
+  "base": {
+    "visible": [
+      "additional_available_pto_to_be_forfeited",
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
+      "allowances",
+      "annual_gross_salary",
+      "available_pto",
+      "available_pto_to_be_forfeited",
+      "compensation_currency_code",
+      "contract_duration_type",
+      "employee_provident_fund",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "force_majeure_apply",
+      "has_bonus",
+      "has_commissions",
+      "has_signing_bonus",
+      "medical_examination",
+      "notice_period_choice",
+      "payout_currency_code",
+      "probation_length",
+      "retirement_age_apply",
+      "role_description",
+      "role_is_onsite",
+      "role_requires_license",
+      "sick_leave_days_of_notice",
+      "sick_leave_days_of_notice_apply",
+      "work_address_is_home_address",
+      "work_hours_per_week"
+    ],
+    "required": [
+      "annual_gross_salary",
+      "available_pto",
+      "compensation_currency_code",
+      "contract_duration_type",
+      "employee_provident_fund",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "force_majeure_apply",
+      "has_bonus",
+      "has_commissions",
+      "has_signing_bonus",
+      "medical_examination",
+      "notice_period_choice",
+      "probation_length",
+      "retirement_age_apply",
+      "role_description",
+      "sick_leave_days_of_notice_apply",
+      "work_address_is_home_address",
+      "work_hours_per_week"
+    ]
+  },
+  "types": {
+    "contract_duration_type": "radio",
+    "contract_end_date": "date",
+    "work_hours_per_week": "number",
+    "probation_length": "number",
+    "notice_period_choice": "radio",
+    "notice_period": "hidden",
+    "retirement_age_apply": "radio",
+    "retirement_age": "number",
+    "available_pto": "number",
+    "available_pto_to_be_forfeited": "number",
+    "additional_available_pto_to_be_forfeited": "number",
+    "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
+    "experience_level": "radio",
+    "work_address_is_home_address": "radio",
+    "compensation_currency_code": "select",
+    "salary_overview": "radio",
+    "annual_gross_salary": "money",
+    "extreme_salary_warning": "hidden",
+    "extreme_salary_acknowledgement": "checkbox",
+    "payout_currency_code": "hidden",
+    "employee_provident_fund": "radio",
+    "employee_provident_fund_rate": "number",
+    "allowances": "textarea",
+    "sick_leave_days_of_notice": "hidden",
+    "sick_leave_days_of_notice_apply": "checkbox",
+    "medical_examination": "checkbox",
+    "has_signing_bonus": "radio",
+    "has_signing_bonus_bond": "radio",
+    "signing_bonus_bond": "text",
+    "signing_bonus_amount": "money",
+    "has_bonus": "radio",
+    "bonus_amount": "money",
+    "bonus_details": "textarea",
+    "has_commissions": "radio",
+    "commissions_details": "textarea",
+    "commissions_ack": "checkbox",
+    "equity_compensation.offer_equity_compensation": "radio",
+    "equity_compensation.number_of_stock_options": "text",
+    "equity_compensation.equity_cliff": "number",
+    "equity_compensation.equity_vesting_period": "number",
+    "equity_compensation.equity_description": "textarea",
+    "force_majeure_apply": "radio",
+    "additional_job_title_eligibility_check_result": "hidden"
+  },
+  "options": {
+    "contract_duration_type": ["fixed_term", "indefinite"],
+    "notice_period_choice": ["custom", "recommended"],
+    "retirement_age_apply": ["no", "yes"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
+    "experience_level": [
+      "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+      "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+      "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+      "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+      "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow"
+    ],
+    "work_address_is_home_address": ["no", "yes"],
+    "compensation_currency_code": ["MYR", "USD"],
+    "employee_provident_fund": ["no", "yes"],
+    "has_signing_bonus": ["no", "yes"],
+    "has_bonus": ["no", "yes"],
+    "has_commissions": ["no", "yes"],
+    "equity_compensation.offer_equity_compensation": ["no", "yes"],
+    "force_majeure_apply": ["no", "yes"]
+  },
+  "constraints": {
+    "work_hours_per_week": {
+      "minimum": 1,
+      "maximum": 45
+    },
+    "probation_length": {
+      "minimum": 0
+    },
+    "available_pto": {
+      "minimum": 8
+    },
+    "role_description": {
+      "minLength": 100,
+      "maxLength": 5000
+    },
+    "annual_gross_salary": {
+      "minimum": 2040000
+    },
+    "allowances": {
+      "maxLength": 1000
+    }
+  },
+  "scenarios": {
+    "contract_duration_type=fixed_term": {
+      "addedVisible": ["contract_end_date"],
+      "removedVisible": [],
+      "addedRequired": ["contract_end_date"],
+      "removedRequired": []
+    },
+    "notice_period_choice=recommended": {
+      "addedVisible": ["notice_period"],
+      "removedVisible": [],
+      "addedRequired": ["notice_period"],
+      "removedRequired": []
+    },
+    "notice_period_choice=custom": {
+      "addedVisible": ["notice_period"],
+      "removedVisible": [],
+      "addedRequired": ["notice_period"],
+      "removedRequired": []
+    },
+    "retirement_age_apply=yes": {
+      "addedVisible": ["retirement_age"],
+      "removedVisible": [],
+      "addedRequired": ["retirement_age"],
+      "removedRequired": []
+    },
+    "compensation_currency_code=MYR": {
+      "addedVisible": ["salary_overview"],
+      "removedVisible": [],
+      "addedRequired": [],
+      "removedRequired": []
+    },
+    "compensation_currency_code=USD": {
+      "addedVisible": ["salary_overview"],
+      "removedVisible": [],
+      "addedRequired": [],
+      "removedRequired": []
+    },
+    "employee_provident_fund=yes": {
+      "addedVisible": ["employee_provident_fund_rate"],
+      "removedVisible": [],
+      "addedRequired": ["employee_provident_fund_rate"],
+      "removedRequired": []
+    },
+    "has_signing_bonus=yes": {
+      "addedVisible": ["has_signing_bonus_bond", "signing_bonus_amount"],
+      "removedVisible": [],
+      "addedRequired": ["has_signing_bonus_bond", "signing_bonus_amount"],
+      "removedRequired": []
+    },
+    "has_bonus=yes": {
+      "addedVisible": ["bonus_amount", "bonus_details"],
+      "removedVisible": [],
+      "addedRequired": ["bonus_details"],
+      "removedRequired": []
+    },
+    "has_commissions=yes": {
+      "addedVisible": ["commissions_ack", "commissions_details"],
+      "removedVisible": [],
+      "addedRequired": ["commissions_ack", "commissions_details"],
+      "removedRequired": []
+    },
+    "equity_compensation.offer_equity_compensation=yes": {
+      "addedVisible": [
+        "equity_compensation.equity_cliff",
+        "equity_compensation.equity_description",
+        "equity_compensation.equity_vesting_period",
+        "equity_compensation.number_of_stock_options"
+      ],
+      "removedVisible": [],
+      "addedRequired": ["equity_compensation.equity_description"],
+      "removedRequired": []
+    }
+  }
+}

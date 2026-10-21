@@ -4,11 +4,33 @@ Schema versions for employee onboarding in Spain.
 
 ## Current Version
 
-**Contract Details:** v7 works with v.1.57.0
+**Contract Details:** v8
 
 ## Contract Details
 
-### v7 - Current
+### v8 - Current
+
+**What changed:**
+
+- Probation can no longer be set when the employee has a recognized seniority date (`has_seniority_date: "yes"`), so the probation length field is not available for those employments. Flag-gated, and employments created before the cutoff date are unaffected — no action required for existing contracts.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      ESP: { contract_details: 8 },
+    },
+  }}
+/>
+```
+
+---
+
+### v7
+
+**Type of change:** compliance
 
 **What changed:**
 
@@ -30,6 +52,8 @@ Schema versions for employee onboarding in Spain.
 
 ### v6
 
+**Type of change:** compliance
+
 **What changed:**
 
 - Collective bargaining classification (`cba_categories`: area, group, level) is now visible to clients and required. Previously it was only visible to Remote admins. Omitting it fails validation; pin to `contract_details: 5` or below to keep the old behaviour.
@@ -49,6 +73,8 @@ Schema versions for employee onboarding in Spain.
 ---
 
 ### v5
+
+**Type of change:** compliance, product, technical
 
 **What changed:**
 

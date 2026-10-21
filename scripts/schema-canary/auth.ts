@@ -49,3 +49,14 @@ export function createSandboxClient(
     fetchSandboxAccessToken(clientId, clientSecret, refreshToken),
   );
 }
+
+export function createEnvClient(
+  gatewayUrl: string,
+  fetchAccessToken: () => Promise<{ accessToken: string; expiresIn?: number }>,
+): Client {
+  process.env.REMOTE_GATEWAY_URL = gatewayUrl;
+  return createClient(async () => {
+    const { accessToken, expiresIn } = await fetchAccessToken();
+    return { accessToken, expiresIn: expiresIn ?? 3600 };
+  });
+}

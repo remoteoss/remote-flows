@@ -10,17 +10,17 @@ alwaysApply: true
 
 1. **Lint check** (automatically done via ReadLints tool):
    ```bash
-   npm run lint
+   pnpm run lint
    ```
 
 2. **Type check** - Run to catch TypeScript errors:
    ```bash
-   npm run type-check
+   pnpm run type-check
    ```
 
 3. **Format** - Run to ensure consistent formatting:
    ```bash
-   npm run format
+   pnpm run format
    ```
 
 **Never complete a task without running all validation checks.**
