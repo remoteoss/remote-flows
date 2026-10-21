@@ -14,7 +14,7 @@ Schema versions for employee onboarding in Saudi Arabia.
 
 **What changed:**
 
-- Adds `extreme_salary_warning` and a required `extreme_salary_acknowledgement` checkbox. They appear when the annual gross salary is at or above the USD 1,000,000 equivalent and stay hidden below it. The `annual_gross_salary` minimum is also raised to match the new bounds. Additive and flag-gated, so no action is required unless a submitted salary crosses that threshold.
+- Adds `extreme_salary_warning` and a required `extreme_salary_acknowledgement` checkbox. They appear when the annual gross salary is at or above the USD 1,000,000 equivalent and stay hidden below it. Additive and flag-gated, so no action is required unless a submitted salary crosses that threshold.
 
 **Migration:**
 
@@ -60,7 +60,7 @@ Schema versions for employee onboarding in Saudi Arabia.
 
 - Baseline on the previous form engine (`x-rmt-meta.jsfOldVersion` is `true`).
 - Adds the display-only `salary_overview` field, which notes the salary at or above which a reserve payment is requested. Render it but never submit it. `annual_gross_salary.description` is dropped from the schema in favour of it. Additive and flag-gated, so no action is required.
-- The unused `bonus_amount` field is removed from the schema. No action is required.
+- The `bonus_amount` field is removed from the schema. Custom UIs must stop rendering and submitting it.
 
 **Migration:**
 

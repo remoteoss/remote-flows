@@ -37,7 +37,7 @@ Schema versions for employee onboarding in Lithuania.
 
 **What changed:**
 
-- Adds `extreme_salary_warning` and a required `extreme_salary_acknowledgement` checkbox. They appear when the annual gross salary is at or above the USD 1,000,000 equivalent and stay hidden below it. The `annual_gross_salary` minimum is also raised to match the new bounds. Additive and flag-gated, so no action is required unless a submitted salary crosses that threshold.
+- Adds `extreme_salary_warning` and a required `extreme_salary_acknowledgement` checkbox. They appear when the annual gross salary is at or above the USD 1,000,000 equivalent and stay hidden below it. Additive and flag-gated, so no action is required unless a submitted salary crosses that threshold.
 
 **Migration:**
 

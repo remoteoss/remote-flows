@@ -63,7 +63,7 @@ Schema versions for employee onboarding in Serbia.
 
 **What changed:**
 
-- Adds `extreme_salary_warning` and a required `extreme_salary_acknowledgement` checkbox. They appear when the annual gross salary is at or above the USD 1,000,000 equivalent and stay hidden below it. The `annual_gross_salary` minimum is also raised to match the new bounds. Additive and flag-gated, so no action is required unless a submitted salary crosses that threshold.
+- Adds `extreme_salary_warning` and a required `extreme_salary_acknowledgement` checkbox. They appear when the annual gross salary is at or above the USD 1,000,000 equivalent and stay hidden below it. Additive and flag-gated, so no action is required unless a submitted salary crosses that threshold.
 
 **Migration:**
 
@@ -111,8 +111,8 @@ Schema versions for employee onboarding in Serbia.
 - Adds the `daily_schedule` component with its `schedule_type`, `selected_days`, `start_time`, `end_time` and `break_duration_minutes` fields and one object per weekday. `work_hours_per_week` is now owned by the component and arrives hidden, so provide it through the schedule.
 - Adds the required `work_address` fieldset (`address`, `address_line_2`, `city`, `postal_code`, `is_home_address`) and required `field_of_work` and `required_qualifications`. Partners using a custom UI must render and submit them.
 - Adds required `overtime_compensation_type`, `third_party_work` (with `third_party_work_activities` when allowed), `non_interference_apply`, `non_solicitation_customers` and `non_solicitation_employees`, with `non_interference_halt_period`, `non_solicitation_customer_number_of_months` and `non_solicitation_employees_number_of_months` asked when the matching answer is `"yes"`.
-- Deprecated and read-only, no longer required: `overtime_pay_confirmation` (use `overtime_compensation_type`), `skills_and_qualifications` (use `required_qualifications` and `field_of_work`) and `work_address_is_home_address` (use `work_address`). The `has_non_compete_non_solicitation` and `non_solicitation_preceding_period_months` fields and the unused `bonus_amount` are removed.
-- `transportation_allowance_ack` is no longer required.
+- Deprecated and read-only, no longer required: `overtime_pay_confirmation` (use `overtime_compensation_type`), `skills_and_qualifications` (use `required_qualifications` and `field_of_work`) and `work_address_is_home_address` (use `work_address`). The `has_non_compete_non_solicitation` and `non_solicitation_preceding_period_months` fields and `bonus_amount` are removed.
+- `transportation_allowance_ack` is now always required instead of only when `work_address_is_home_address` is `"no"`. Partners using a custom UI must render and submit it.
 
 **Migration:**
 
@@ -158,7 +158,7 @@ Schema versions for employee onboarding in Serbia.
 
 **What changed:**
 
-- Adds the `transportation_allowance_ack` checkbox, required when the transportation allowance applies. `work_address_is_home_address` is fixed to `"no"`. Partners using a custom UI must render and submit the acknowledgement.
+- Adds the `transportation_allowance_ack` checkbox, required when `work_address_is_home_address` is `"no"`. `work_address_is_home_address` is fixed to `"no"`, so the acknowledgement is always asked. Partners using a custom UI must render and submit it.
 
 **Migration:**
 
