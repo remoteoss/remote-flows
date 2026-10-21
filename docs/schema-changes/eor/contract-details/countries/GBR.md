@@ -36,7 +36,7 @@ Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when
 
 ### v6
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
@@ -59,7 +59,7 @@ Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when
 
 ### v5
 
-**Type of change:** risk, technical
+**Type of change:** compliance, technical
 
 **What changed:**
 
@@ -103,7 +103,7 @@ Render and submit `wage_type` (`salary` or `hourly`), `hourly_gross_salary` when
 
 ### v3
 
-**Type of change:** risk, product
+**Type of change:** compliance, product
 
 **What changed:**
 

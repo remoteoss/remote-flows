@@ -34,7 +34,7 @@ Schema versions for employee onboarding in United States.
 
 ### v7
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
@@ -100,7 +100,7 @@ Schema versions for employee onboarding in United States.
 
 ### v4
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 

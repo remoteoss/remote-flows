@@ -10,7 +10,7 @@ Schema versions for employee onboarding in Canada.
 
 ### v7 - Current
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
@@ -59,7 +59,7 @@ Schema versions for employee onboarding in Canada.
 
 ### v5
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
@@ -81,7 +81,7 @@ Schema versions for employee onboarding in Canada.
 
 ### v4
 
-**Type of change:** risk, technical
+**Type of change:** compliance, technical
 
 **What changed:**
 
