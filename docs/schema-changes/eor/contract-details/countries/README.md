@@ -30,6 +30,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Argentina (ARG)](./ARG.md)
 - [Australia (AUS)](./AUS.md)
 - [Austria (AUT)](./AUT.md)
+- [Bangladesh (BGD)](./BGD.md)
 - [Belarus (BLR)](./BLR.md)
 - [Belgium (BEL)](./BEL.md)
 - [Brazil (BRA)](./BRA.md)
@@ -56,6 +57,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Jamaica (JAM)](./JAM.md)
 - [Kenya (KEN)](./KEN.md)
 - [Lebanon (LBN)](./LBN.md)
+- [Lithuania (LTU)](./LTU.md)
 - [Mauritius (MUS)](./MUS.md)
 - [Malaysia (MYS)](./MYS.md)
 - [Mexico (MEX)](./MEX.md)
@@ -79,6 +81,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [United Arab Emirates (ARE)](./ARE.md)
 - [United Kingdom (GBR)](./GBR.md)
 - [United States (USA)](./USA.md)
+- [Uruguay (URY)](./URY.md)
 
 ### Countries on Contract Details v1
 
@@ -91,6 +94,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Argentina            | ARG  | v5               | October 2026 |
 | Australia            | AUS  | v6               | October 2026 |
 | Austria              | AUT  | v8               | October 2026 |
+| Bangladesh           | BGD  | v8               | October 2026 |
 | Belarus              | BLR  | v2               | March 2026   |
 | Belgium              | BEL  | v8               | October 2026 |
 | Brazil               | BRA  | v5               | October 2026 |
@@ -117,6 +121,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Jamaica              | JAM  | v5               | October 2026 |
 | Kenya                | KEN  | v8               | October 2026 |
 | Lebanon              | LBN  | v2               | March 2026   |
+| Lithuania            | LTU  | v6               | October 2026 |
 | Mauritius            | MUS  | v2               | March 2026   |
 | Malaysia             | MYS  | v5               | October 2026 |
 | Mexico               | MEX  | v9               | October 2026 |
@@ -129,17 +134,18 @@ These countries have upgraded to different versions, check each guide to know ho
 | Philippines          | PHL  | v9               | October 2026 |
 | Poland               | POL  | v5               | October 2026 |
 | Portugal             | PRT  | v9               | March 2026   |
-| Saudi Arabia         | SAU  | v2               | March 2026   |
+| Saudi Arabia         | SAU  | v5               | October 2026 |
 | Singapore            | SGP  | v5               | October 2026 |
 | South Africa         | ZAF  | v5               | October 2026 |
 | Spain                | ESP  | v8               | October 2026 |
-| Serbia               | SRB  | v2               | March 2026   |
+| Serbia               | SRB  | v9               | October 2026 |
 | Sweden               | SWE  | v5               | October 2026 |
 | Thailand             | THA  | v5               | October 2026 |
 | Uganda               | UGA  | v5               | October 2026 |
 | United Kingdom       | GBR  | v7               | October 2026 |
 | United Arab Emirates | ARE  | v6               | October 2026 |
 | United States        | USA  | v9               | October 2026 |
+| Uruguay              | URY  | v6               | October 2026 |
 
 ## How to Use
 

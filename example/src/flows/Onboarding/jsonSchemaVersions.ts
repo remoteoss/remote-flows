@@ -33,7 +33,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   BGD: {
     // Bangladesh
-    contract_details: 1,
+    contract_details: 8,
   },
   BGR: {
     // Bulgaria
@@ -201,7 +201,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   LTU: {
     // Lithuania
-    contract_details: 1,
+    contract_details: 6,
   },
   LUX: {
     // Luxembourg
@@ -297,7 +297,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   SAU: {
     // Saudi Arabia
-    contract_details: 2,
+    contract_details: 5,
   },
   SGP: {
     // Singapore
@@ -309,7 +309,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   SRB: {
     // Serbia
-    contract_details: 2,
+    contract_details: 9,
   },
   SVK: {
     // Slovakia
@@ -349,7 +349,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   URY: {
     // Uruguay
-    contract_details: 1,
+    contract_details: 6,
   },
   USA: {
     // United States
