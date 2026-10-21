@@ -71,6 +71,7 @@ describe('usesJsfV1ContractDetails', () => {
     'ARM',
     'EST',
     'LBN',
+    'KOR',
     'DNK',
     'JAM',
     'SGP',

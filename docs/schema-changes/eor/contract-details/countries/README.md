@@ -57,6 +57,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Israel (ISR)](./ISR.md)
 - [Jamaica (JAM)](./JAM.md)
 - [Kenya (KEN)](./KEN.md)
+- [South Korea (KOR)](./KOR.md)
 - [Lebanon (LBN)](./LBN.md)
 - [Mauritius (MUS)](./MUS.md)
 - [Malaysia (MYS)](./MYS.md)
@@ -120,6 +121,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Israel               | ISR  | v8               | October 2026 |
 | Jamaica              | JAM  | v5               | October 2026 |
 | Kenya                | KEN  | v8               | October 2026 |
+| South Korea          | KOR  | v7               | October 2026 |
 | Lebanon              | LBN  | v4               | October 2026 |
 | Mauritius            | MUS  | v2               | March 2026   |
 | Malaysia             | MYS  | v5               | October 2026 |

@@ -187,6 +187,7 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'ARM',
   'EST',
   'LBN',
+  'KOR',
   'DNK',
   'JAM',
   'SGP',
