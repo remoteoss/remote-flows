@@ -30,7 +30,7 @@ Schema versions for employee onboarding in Portugal.
 
 ### v8
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
@@ -71,7 +71,7 @@ Schema versions for employee onboarding in Portugal.
 
 ### v6
 
-**Type of change:** risk
+**Type of change:** compliance
 
 **What changed:**
 
