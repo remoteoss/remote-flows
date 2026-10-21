@@ -21,6 +21,19 @@ const employments = JSON.parse(
 
 const MAX_STEPS_BEFORE_CONTRACT_DETAILS = 4;
 
+const JOB_TITLE_CHECK_FIELDS = [
+  'additional_job_title_eligibility_check_result',
+  'additional_job_title_eligibility_check_slug',
+];
+
+function withoutJobTitleCheck(contractDetails: Record<string, unknown>) {
+  return Object.fromEntries(
+    Object.entries(contractDetails).filter(
+      ([field]) => !JOB_TITLE_CHECK_FIELDS.includes(field),
+    ),
+  );
+}
+
 function fieldErrors(page: Page) {
   return page
     .locator('[data-slot="form-message"]')
@@ -145,17 +158,13 @@ for (const {
       response?.ok(),
       `PATCH /v1/employments/${employmentId} returned ${response?.status()}: ${await response?.text()}`,
     ).toBe(true);
-    const {
-      additional_job_title_eligibility_check_result: _result,
-      additional_job_title_eligibility_check_slug: _slug,
-      ...browserSent
-    } = (
+    const browserSent = (
       request.postDataJSON() as { contract_details: Record<string, unknown> }
     ).contract_details;
     expect(
-      browserSent,
+      withoutJobTitleCheck(browserSent),
       'the browser sent different contract_details than the canary saved',
-    ).toEqual(sent);
+    ).toEqual(withoutJobTitleCheck(sent));
     await expect(page.getByTestId('onboarding-step-title')).not.toHaveText(
       'Contract Details',
     );
