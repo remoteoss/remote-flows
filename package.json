@@ -147,7 +147,7 @@
     "@testing-library/user-event": "14.6.8",
     "@tsdown/css": "0.23.0",
     "@types/jsdom": "30.0.0",
-    "@types/lodash": "4.17.25",
+    "@types/lodash": "4.17.26",
     "@types/lodash.capitalize": "4.2.9",
     "@types/lodash.groupby": "4.6.9",
     "@types/lodash.isnull": "3.0.9",
