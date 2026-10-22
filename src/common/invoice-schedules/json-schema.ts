@@ -240,7 +240,8 @@ export function buildCreateInvoiceScheduleSchema({
         },
       },
       periodicity: {
-        description: 'How often invoices are generated for this schedule.',
+        description:
+          'What is the frequency you want to invoice? <a href="https://support.remote.com/contractor/contractor-management/what-are-the-frequency-options-when-scheduling-a-contractors-invoice" target="_blank">Learn more about invoicing frequencies.</a>',
         title: 'Frequency',
         type: 'string',
         oneOf: periodicityOptions({ includeOneTime, isContractorOfRecord }),
@@ -249,8 +250,8 @@ export function buildCreateInvoiceScheduleSchema({
         },
       },
       start_date: {
-        description: 'Date the first invoice will be generated.',
-        title: 'Start date',
+        description: 'The invoice will be generated on this date.',
+        title: 'Invoice date',
         type: 'string',
         format: 'date',
         'x-jsf-presentation': {
@@ -296,10 +297,10 @@ export function buildCreateInvoiceScheduleSchema({
     ],
     'x-jsf-order': [
       'currency',
+      ...itemFieldOrder,
       'periodicity',
       'start_date',
       ...(includeCustomDays ? ['custom_day_1', 'custom_day_2'] : []),
-      ...itemFieldOrder,
       'number',
       'note',
       'nr_occurrences',
