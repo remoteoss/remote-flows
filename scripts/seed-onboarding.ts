@@ -390,7 +390,7 @@ async function seedEmployee() {
   const startDate = await findSafeStartDate(COUNTRY, fetchHolidays);
   const { values: basicInformation, skipped: basicSkipped } = fillSchema(
     basicInfoSchema,
-    { provisional_start_date: startDate },
+    { job_title: 'Software Engineer', provisional_start_date: startDate },
   );
   console.log(
     'basic_information payload:',

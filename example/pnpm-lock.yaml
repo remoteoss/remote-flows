@@ -207,8 +207,8 @@ importers:
         specifier: 1.64.1
         version: 1.64.1
       '@remoteoss/remote-json-schema-form-kit':
-        specifier: 1.1.4
-        version: 1.1.4
+        specifier: 1.2.1
+        version: 1.2.1
       '@types/node':
         specifier: 24.12.4
         version: 24.12.4
@@ -404,12 +404,12 @@ packages:
     resolution: {integrity: sha512-HDyw74FhHAB2mgmvHlu0oBX6WVAabJ4cj3oVaOa6KM0S8H2S0mpmp7aE00HRCxiJhgrlhqyXG1LNznsvPCfEQQ==}
     engines: {node: '>=18.14.0'}
 
-  '@remoteoss/json-schema-form@1.2.19':
-    resolution: {integrity: sha512-j4TnAq8AO2FUGbrhlaigq8Z7AvWJZ5DcTUCrn5qCuM8HXeqSXjWtVTxE8QQc4G9O5JX6m/rGG08CG3RlluZ/jQ==}
+  '@remoteoss/json-schema-form@1.2.20':
+    resolution: {integrity: sha512-Gpfwch75ohSRUt8IFAf+fmpJOU5QVDGGAAUpce+DfU1XZb9b4u7ry/r4MnO8TiPopzanyZ7BtcYJHVZJpYAbZA==}
     engines: {node: '>=18.14.0'}
 
-  '@remoteoss/remote-json-schema-form-kit@1.1.4':
-    resolution: {integrity: sha512-0FyjIvONWp+ZC8+4aCLzdAgm3KQk0PkC5Dk6z5oDrMwQlfE80NSzEFm40pxFbY8ms8kzNnQEigXZz023K1P1Nw==}
+  '@remoteoss/remote-json-schema-form-kit@1.2.1':
+    resolution: {integrity: sha512-A4x0YR0dzCjM8skyrM/FeNZRFBZ8EAQzIQ3e9hwZ+Owjk3MklJnC9LyIWR2aSEp2P6L0FoWfO/wuSmYqnNCwlQ==}
     engines: {node: '>=18.14.0'}
 
   '@rolldown/binding-android-arm-eabi@1.2.13':
@@ -1630,13 +1630,13 @@ snapshots:
       randexp: 0.5.3
       yup: 0.30.0
 
-  '@remoteoss/json-schema-form@1.2.19':
+  '@remoteoss/json-schema-form@1.2.20':
     dependencies:
       json-logic-js: 2.0.5
 
-  '@remoteoss/remote-json-schema-form-kit@1.1.4':
+  '@remoteoss/remote-json-schema-form-kit@1.2.1':
     dependencies:
-      '@remoteoss/json-schema-form': 1.2.19
+      '@remoteoss/json-schema-form': 1.2.20
       '@remoteoss/json-schema-form-v0-deprecated': '@remoteoss/json-schema-form@0.12.5-beta.0'
       date-fns: 4.4.0
 

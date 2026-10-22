@@ -82,6 +82,11 @@ describe('usesJsfV1ContractDetails', () => {
     'ARE',
     'SLV',
     'PER',
+    'LTU',
+    'SAU',
+    'SRB',
+    'URY',
+    'BGD',
   ])('should return true for %s', (countryCode) => {
     expect(usesJsfV1ContractDetails(countryCode)).toBe(true);
   });
