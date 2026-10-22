@@ -197,5 +197,4 @@ known. Note this is a client-side restriction; it is not enforced by the API tod
 - **Create only.** Editing an existing schedule is not part of this flow.
 - **Platform banners are not shown.** The platform also warns when the contractor has no active
   deposit method, when the company still has to set up Remote Payments, and about SWIFT fees.
-  This flow shows none of them yet. A schedule created for a contractor without a deposit method
-  comes back with status `pending_contractor_action`.
+  This flow shows none of them.
