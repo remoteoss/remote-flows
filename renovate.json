@@ -54,6 +54,11 @@
       "semanticCommitScope": "deps"
     },
     {
+      "description": "tsdown and @tsdown/css pin each other to an exact version, so they must update in one PR",
+      "matchPackageNames": ["tsdown", "@tsdown/*"],
+      "groupName": "tsdown"
+    },
+    {
       "description": "Disable automatic Node.js engine updates (handle manually for major releases)",
       "matchManagers": ["npm"],
       "matchDepTypes": ["engines"],
