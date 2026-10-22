@@ -27,6 +27,37 @@ export function buildInvoiceItems(values: Record<string, unknown>) {
 }
 
 /**
+ * Turns a saved invoice schedule into form values in API units, with item amounts in cents.
+ * @param schedule - The schedule as the API returns it
+ * @returns Values keyed by form field name, ready to seed the form
+ */
+export function buildInvoiceScheduleFormValues(schedule: {
+  currency?: string;
+  periodicity?: string;
+  start_date?: string;
+  number?: string | null;
+  note?: string | null;
+  nr_occurrences?: number | null;
+  items?: { description?: string; amount?: number }[];
+}) {
+  const values: Record<string, unknown> = {
+    currency: schedule.currency,
+    periodicity: schedule.periodicity,
+    start_date: schedule.start_date,
+    number: schedule.number,
+    note: schedule.note,
+    nr_occurrences: schedule.nr_occurrences,
+  };
+
+  schedule.items?.forEach((item, index) => {
+    values[`item_${index + 1}_description`] = item.description;
+    values[`item_${index + 1}_amount`] = item.amount;
+  });
+
+  return values;
+}
+
+/**
  * Resolves the `periodicity` / `nr_occurrences` pair the API expects.
  *
  * The API has no `one_time` periodicity: a one-off schedule is `nr_occurrences: 1` paired

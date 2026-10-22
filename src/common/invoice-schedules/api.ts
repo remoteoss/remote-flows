@@ -37,6 +37,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
   isContractorOfRecord,
   includeCustomDays,
   includeBackdateTip,
+  initialValues,
 }: {
   enabled?: boolean;
   employmentId?: string;
@@ -59,6 +60,11 @@ export const useGetCreateInvoiceScheduleSchema = ({
    * contractor is paid.
    */
   includeBackdateTip?: boolean;
+  /**
+   * Saved values in API units (item amounts in cents). They seed the first build so the item
+   * rows a saved schedule needs are visible before the step mounts.
+   */
+  initialValues?: Record<string, unknown>;
 }) => {
   const { data: currencies, isLoading } = useContractorCurrencies({
     employmentId: employmentId as string,
@@ -94,6 +100,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
 
   const headlessForm = useHeadlessForm({
     schema,
+    initialValues,
     options: { jsfModify },
     strategy: 'buildOnce',
   });

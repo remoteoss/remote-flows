@@ -38,6 +38,7 @@ import {
   useGetExistingInvoiceSchedule,
 } from '@/src/flows/ContractorOnboarding/api';
 import { useCompanyOpenTasks } from '@/src/common/api/companies';
+import { buildInvoiceScheduleFormValues } from '@/src/common/invoice-schedules/utils';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
   useCreateContractorContractDocument,
@@ -781,6 +782,14 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const createInvoiceScheduleSavedValues = useMemo(
+    () =>
+      existingInvoiceSchedule
+        ? buildInvoiceScheduleFormValues(existingInvoiceSchedule)
+        : { ...onboardingInitialValues },
+    [existingInvoiceSchedule, onboardingInitialValues],
+  );
+
   const {
     data: createInvoiceScheduleForm,
     handleValidation: handleCreateInvoiceScheduleValidation,
@@ -792,6 +801,7 @@ export const useContractorOnboarding = ({
       stepState.currentStep.name === 'create_invoice_schedule',
     employmentId: internalEmploymentId,
     jsfModify: options?.jsfModify?.create_invoice_schedule,
+    initialValues: createInvoiceScheduleSavedValues,
   });
 
   const {
@@ -955,36 +965,14 @@ export const useContractorOnboarding = ({
     existingInvoiceSchedule,
   ]);
 
-  const createInvoiceScheduleInitialValues = useMemo(() => {
-    // If an existing schedule exists, transform it to form values
-    if (existingInvoiceSchedule) {
-      const formValues: Record<string, unknown> = {
-        currency: existingInvoiceSchedule.currency,
-        periodicity: existingInvoiceSchedule.periodicity,
-        start_date: existingInvoiceSchedule.start_date,
-        number: existingInvoiceSchedule.number,
-        note: existingInvoiceSchedule.note,
-        nr_occurrences: existingInvoiceSchedule.nr_occurrences,
-      };
-
-      existingInvoiceSchedule.items?.forEach((item, index: number) => {
-        const itemNumber = index + 1;
-        formValues[`item_${itemNumber}_description`] = item.description;
-        formValues[`item_${itemNumber}_amount`] = item.amount;
-      });
-
-      return getInitialValues(stepFields.create_invoice_schedule, formValues);
-    }
-
-    const initialValues = {
-      ...onboardingInitialValues,
-    };
-    return getInitialValues(stepFields.create_invoice_schedule, initialValues);
-  }, [
-    stepFields.create_invoice_schedule,
-    onboardingInitialValues,
-    existingInvoiceSchedule,
-  ]);
+  const createInvoiceScheduleInitialValues = useMemo(
+    () =>
+      getInitialValues(
+        stepFields.create_invoice_schedule,
+        createInvoiceScheduleSavedValues,
+      ),
+    [stepFields.create_invoice_schedule, createInvoiceScheduleSavedValues],
+  );
 
   const contractDetailsInitialValues = useMemo(() => {
     const hardcodedValues = {
