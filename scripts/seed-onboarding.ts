@@ -79,7 +79,7 @@ import {
   ONBOARDING_JSON_SCHEMA_VERSION,
   ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY,
 } from '../example/src/flows/Onboarding/jsonSchemaVersions';
-import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
+import { contractDetailsSeedsFor } from './contract-details-seeds';
 import { fillSchema, findSafeStartDate, HolidayDate } from './fill-schema';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -512,7 +512,7 @@ async function submitContractDetails(employmentId: string) {
   ).then((res) => res.data);
   const { values, skipped, errors } = fillSchema(
     schema,
-    CONTRACT_DETAILS_SEEDS[COUNTRY],
+    contractDetailsSeedsFor(COUNTRY),
   );
   console.log('contract_details payload:', JSON.stringify(values, null, 2));
   if (skipped.length) {

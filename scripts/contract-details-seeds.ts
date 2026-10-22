@@ -13,3 +13,12 @@ export const CONTRACT_DETAILS_SEEDS: Record<string, Record<string, unknown>> = {
   },
   ROU: { compensation_currency_code: 'RON' },
 };
+
+const DEFAULT_CONTRACT_DETAILS_SEED = { job_title: 'Software Engineer' };
+
+export function contractDetailsSeedsFor(country: string) {
+  return {
+    ...DEFAULT_CONTRACT_DETAILS_SEED,
+    ...CONTRACT_DETAILS_SEEDS[country],
+  };
+}
