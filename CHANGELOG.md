@@ -1,5 +1,83 @@
 # @remoteoss/remote-flows
 
+## 1.66.0
+
+### Minor Changes
+
+#### Features
+
+- build contract details once for COL, PAK, NZL, ISR, CZE and PRT (#1596) [#1596](https://github.com/remoteoss/remote-flows/pull/1596)
+- let ci:digest run against a branch and list every failing Playwright spec (#1605) [#1605](https://github.com/remoteoss/remote-flows/pull/1605)
+- bump CRI contract_details to v5 and build it once (#1646) [#1646](https://github.com/remoteoss/remote-flows/pull/1646)
+- re-submit each country's contract details in the browser (#1484) [#1484](https://github.com/remoteoss/remote-flows/pull/1484)
+- show the invoice date note (#1683) [#1683](https://github.com/remoteoss/remote-flows/pull/1683)
+
+#### Fixes
+
+- account for the EA preview step in onboarding specs (#1604) [#1604](https://github.com/remoteoss/remote-flows/pull/1604)
+- fail when the API serves a different version than requested (#1613) [#1613](https://github.com/remoteoss/remote-flows/pull/1613)
+- render HTML string extra as sanitized description text (#1618) [#1618](https://github.com/remoteoss/remote-flows/pull/1618)
+- hide fieldsets with no visible fields and bump BEL contract_details to v8 (#1639) [#1639](https://github.com/remoteoss/remote-flows/pull/1639)
+- treat NaN const/default as a forced value (#1624) [#1624](https://github.com/remoteoss/remote-flows/pull/1624)
+- report a field that becomes hidden as info, not breaking (#1634) [#1634](https://github.com/remoteoss/remote-flows/pull/1634)
+- keep the client secret and refresh token out of the browser (#1495) [#1495](https://github.com/remoteoss/remote-flows/pull/1495)
+- apply security PR settings and raise branch limit (#1666) [#1666](https://github.com/remoteoss/remote-flows/pull/1666)
+- reorder create form and update frequency and invoice date copy (#1676) [#1676](https://github.com/remoteoss/remote-flows/pull/1676)
+
+#### Docs
+
+- add a page listing deprecated contract details versions (#1615) [#1615](https://github.com/remoteoss/remote-flows/pull/1615)
+- document save returning DailyScheduleSaveResult (#1603) [#1603](https://github.com/remoteoss/remote-flows/pull/1603)
+- label ESP contract details versions with a type of change (#1640) [#1640](https://github.com/remoteoss/remote-flows/pull/1640)
+- label PRT contract details versions with a type of change (#1641) [#1641](https://github.com/remoteoss/remote-flows/pull/1641)
+- label GBR, CAN and USA contract details versions with a type of change (#1642) [#1642](https://github.com/remoteoss/remote-flows/pull/1642)
+- define the type of change labels for partners (#1643) [#1643](https://github.com/remoteoss/remote-flows/pull/1643)
+- remove references to the schema comparison tool (#1644) [#1644](https://github.com/remoteoss/remote-flows/pull/1644)
+
+#### Chores
+
+- move the SDK root to pnpm (#1458) [#1458](https://github.com/remoteoss/remote-flows/pull/1458)
+- move example/ to pnpm and build Vercel deploys with pnpm (#1501) [#1501](https://github.com/remoteoss/remote-flows/pull/1501)
+- point docs and tooling at pnpm for the SDK root (#1610) [#1610](https://github.com/remoteoss/remote-flows/pull/1610)
+- bump EGY contract_details schema version to 6 (#1614) [#1614](https://github.com/remoteoss/remote-flows/pull/1614)
+- update contract details schema canary report (#1616) [#1616](https://github.com/remoteoss/remote-flows/pull/1616)
+- bump PRT contract_details schema to v9 (#1589) [#1589](https://github.com/remoteoss/remote-flows/pull/1589)
+- sync COUNTRY_CONTRACT_VERSIONS with backend (#1607) [#1607](https://github.com/remoteoss/remote-flows/pull/1607)
+- update contract details schema canary report (#1621) [#1621](https://github.com/remoteoss/remote-flows/pull/1621)
+- update contract details schema canary report (#1622) [#1622](https://github.com/remoteoss/remote-flows/pull/1622)
+- report flaky tests and add a flaky:digest script (#1587) [#1587](https://github.com/remoteoss/remote-flows/pull/1587)
+- refresh contract_details baselines for AUS, CAN, CZE, DEU, IRL, ISR, ITA, LBN and USA (#1627) [#1627](https://github.com/remoteoss/remote-flows/pull/1627)
+- refresh contract_details baselines for NZL and GBR (#1632) [#1632](https://github.com/remoteoss/remote-flows/pull/1632)
+- stop hardcoding the company ID in onboarding specs (#1648) [#1648](https://github.com/remoteoss/remote-flows/pull/1648)
+- bump onboarding contract details versions for DEU, ESP and IND (#1598) [#1598](https://github.com/remoteoss/remote-flows/pull/1598)
+- refresh embedded-integration country tiers (#1637) [#1637](https://github.com/remoteoss/remote-flows/pull/1637)
+- bump PHL, USA, MEX and AUT contract_details schema versions (#1638) [#1638](https://github.com/remoteoss/remote-flows/pull/1638)
+- read the basic information schema version from one place (#1617) [#1617](https://github.com/remoteoss/remote-flows/pull/1617)
+- bump NLD contract_details schema version to 7 (#1625) [#1625](https://github.com/remoteoss/remote-flows/pull/1625)
+- bump KEN, BGR, BRA, CHL, FIN and GTM contract_details schema versions (#1628) [#1628](https://github.com/remoteoss/remote-flows/pull/1628)
+- bump CAN contract_details schema version to 8 (#1619) [#1619](https://github.com/remoteoss/remote-flows/pull/1619)
+- update contract details schema canary report (#1651) [#1651](https://github.com/remoteoss/remote-flows/pull/1651)
+- update contract details schema canary report (#1653) [#1653](https://github.com/remoteoss/remote-flows/pull/1653)
+- update contract details schema canary report (#1654) [#1654](https://github.com/remoteoss/remote-flows/pull/1654)
+- update contract details schema canary report (#1656) [#1656](https://github.com/remoteoss/remote-flows/pull/1656)
+- refresh GBR contract_details v7 baseline (#1660) [#1660](https://github.com/remoteoss/remote-flows/pull/1660)
+- refresh contract_details baselines for all countries (#1661) [#1661](https://github.com/remoteoss/remote-flows/pull/1661)
+- bump ARG, ARE, SLV and PER contract_details versions (#1645) [#1645](https://github.com/remoteoss/remote-flows/pull/1645)
+- bump DNK, JAM, SGP, UGA, THA and BRA contract_details (#1658) [#1658](https://github.com/remoteoss/remote-flows/pull/1658)
+- update contract details schema canary report (#1662) [#1662](https://github.com/remoteoss/remote-flows/pull/1662)
+- refresh contract details baselines for all pinned countries (#1664) [#1664](https://github.com/remoteoss/remote-flows/pull/1664)
+- update dependency express to v5.3.0 (#1608) [#1608](https://github.com/remoteoss/remote-flows/pull/1608)
+- update dependency react-syntax-highlighter to v16.1.2 (#1588) [#1588](https://github.com/remoteoss/remote-flows/pull/1588)
+- update dependency vite to v8.3.4 (#1584) [#1584](https://github.com/remoteoss/remote-flows/pull/1584)
+- update dependency @playwright/test to v1.64.1 (#1667) [#1667](https://github.com/remoteoss/remote-flows/pull/1667)
+- update dependency @testing-library/user-event to v14.6.8 (#1668) [#1668](https://github.com/remoteoss/remote-flows/pull/1668)
+- bump NOR, ARM, EST, LBN and KOR contract_details schema versions (#1659) [#1659](https://github.com/remoteoss/remote-flows/pull/1659)
+- update contract details schema canary report (#1673) [#1673](https://github.com/remoteoss/remote-flows/pull/1673)
+- skip the browser stage on pull requests (#1685) [#1685](https://github.com/remoteoss/remote-flows/pull/1685)
+- open dependency PRs overnight (#1684) [#1684](https://github.com/remoteoss/remote-flows/pull/1684)
+- bump LTU, SAU, SRB, URY and BGD contract_details schema versions (#1663) [#1663](https://github.com/remoteoss/remote-flows/pull/1663)
+- update contract details schema canary report (#1688) [#1688](https://github.com/remoteoss/remote-flows/pull/1688)
+
 ## 1.65.0
 
 ### Minor Changes
