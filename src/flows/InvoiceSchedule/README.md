@@ -151,9 +151,9 @@ navigation to the `data:` scheme, so it can be rendered in an `iframe`/`embed` o
 
 The Remote platform shows two notes on this screen. The SDK covers them like this:
 
-- **Invoice date note.** Built into the form, above Frequency: the invoice date is when the
-  invoice is created, not when the contractor gets paid, so backdate the start date if payment
-  is needed by a specific day. It is a form field with no value, so it never reaches the payload.
+- **Invoice date note.** Built into the form, shown under the start date: the invoice date is
+  when the invoice is created, not when the contractor gets paid, so backdate the start date if
+  payment is needed by a specific day.
 - **Remote Payments setup.** Not rendered for you, because the platform's banner links into
   Remote's own setup screen. Read `needsRemotePaymentsSetup` from the bag and show your own
   banner. It is `true` when the company has a pending `setup_remote_payments` action on

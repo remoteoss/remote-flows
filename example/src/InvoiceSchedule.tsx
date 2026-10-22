@@ -49,6 +49,14 @@ function CreateInvoiceSchedule({ employmentId }: { employmentId: string }) {
               </p>
             )}
 
+            {invoiceScheduleBag.needsRemotePaymentsSetup && (
+              <p>
+                Remote Payments setup required: set up Remote Payments before
+                paying contractors. Allow 48 hours after setup before you can
+                send funds.
+              </p>
+            )}
+
             <InvoiceScheduleForm
               onSuccess={(data) => {
                 setError(null);

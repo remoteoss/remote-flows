@@ -170,25 +170,6 @@ function periodicityOptions({
     : [...RECURRING_PERIODICITY_OPTIONS];
 }
 
-function backdateTipProperty() {
-  return {
-    type: 'null',
-    title: 'Invoice date note',
-    'x-jsf-presentation': {
-      inputType: 'hidden',
-      statement: {
-        description:
-          'The invoice date specifies when the invoice will be created, not when the contractor gets paid. If the contractor needs payment on a specific date, please backdate the <strong>Start date</strong> to account for processing time.',
-        inputType: 'statement',
-        severity: 'info',
-      },
-      meta: {
-        ignoreValue: true,
-      },
-    },
-  };
-}
-
 type CreateInvoiceScheduleSchemaOptions = {
   /**
    * Currency codes the contractor can be invoiced in. Replaces the placeholder `oneOf`.
@@ -238,7 +219,6 @@ export function buildCreateInvoiceScheduleSchema({
         'Fill out the invoice details and specify the recurrence options.',
     },
     properties: {
-      ...(includeBackdateTip ? { backdate_tip: backdateTipProperty() } : {}),
       currency: {
         description: 'The currency this invoice schedule will be issued in.',
         title: 'Invoice currency',
@@ -283,6 +263,16 @@ export function buildCreateInvoiceScheduleSchema({
         format: 'date',
         'x-jsf-presentation': {
           inputType: 'date',
+          ...(includeBackdateTip
+            ? {
+                statement: {
+                  description:
+                    'The invoice date specifies when the invoice will be created, not when the contractor gets paid. If the contractor needs payment on a specific date, please backdate the start date to account for processing time.',
+                  inputType: 'statement',
+                  severity: 'info',
+                },
+              }
+            : {}),
         },
       },
       ...(includeCustomDays ? semiMonthlyDayProperties() : {}),

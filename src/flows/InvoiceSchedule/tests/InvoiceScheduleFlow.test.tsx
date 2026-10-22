@@ -512,18 +512,6 @@ describe('InvoiceScheduleFlow callouts', () => {
     expect(screen.getByText(/to account for processing time/i)).toBeVisible();
   });
 
-  it('does not treat the date note as a field the user has to fill in', async () => {
-    renderFlow();
-
-    await fillScheduleDetails();
-    await fillSelect('periodicity', 'monthly');
-    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
-
-    await waitFor(() => {
-      expect(screen.queryByText(/Required field/i)).not.toBeInTheDocument();
-    });
-  });
-
   it('reports that Remote Payments setup is needed when the company has that pending action', async () => {
     server.use(
       http.get('*/v1/companies/*/actions', () =>
