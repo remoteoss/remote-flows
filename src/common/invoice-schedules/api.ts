@@ -27,23 +27,9 @@ import {
   JSFModify,
 } from '@/src/flows/types';
 
-/**
- * Get the create invoice schedule schema with currency options from the contractor currencies endpoint.
- * React Query caches the result, so multiple calls share the same data.
- */
-export const useGetCreateInvoiceScheduleSchema = ({
-  enabled,
-  employmentId,
-  jsfModify,
-  includeOneTime,
-  isContractorOfRecord,
-  includeCustomDays,
-  includeBackdateTip,
-  fieldValues,
-}: {
+type CreateInvoiceScheduleSchemaArgs = {
   enabled?: boolean;
   employmentId?: string;
-  jsfModify?: JSFModify;
   /**
    * Offer "One time" alongside the recurring cadences. Off by default so the in-flow
    * onboarding step keeps the field set it shipped with.
@@ -62,34 +48,40 @@ export const useGetCreateInvoiceScheduleSchema = ({
    * contractor is paid.
    */
   includeBackdateTip?: boolean;
-  /**
-   * Current form values. Passed to `createHeadlessForm` so the schema's conditionals — the
-   * item-row reveal, and the semi-monthly day fields — re-evaluate as the user fills the
-   * form. Without this the form is built once against empty values and nothing ever reveals.
-   */
-  fieldValues?: Record<string, unknown>;
-}): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
-  const { data: currencies, isLoading: isLoadingCurrencies } =
-    useContractorCurrencies({
-      employmentId: employmentId as string,
-      options: {
-        queryOptions: { enabled: enabled && Boolean(employmentId) },
-      },
-    });
+};
 
-  const schemaWithCurrencies = useMemo(() => {
-    if (!enabled) {
-      return null;
-    }
+/**
+ * The create invoice schedule schema with currency options from the contractor currencies
+ * endpoint, ready to hand to `useHeadlessForm`. React Query caches the currencies, so
+ * multiple calls share the same data.
+ */
+export const useCreateInvoiceScheduleSchema = ({
+  enabled,
+  employmentId,
+  includeOneTime,
+  isContractorOfRecord,
+  includeCustomDays,
+  includeBackdateTip,
+}: CreateInvoiceScheduleSchemaArgs): {
+  schema: Record<string, unknown> | undefined;
+  isLoading: boolean;
+} => {
+  const { data: currencies, isLoading } = useContractorCurrencies({
+    employmentId: employmentId as string,
+    options: {
+      queryOptions: { enabled: enabled && Boolean(employmentId) },
+    },
+  });
 
-    // Both callers know their employment up front, so there is always a currency list on the
+  const schema = useMemo(() => {
+    // Callers know their employment up front, so there is always a currency list on the
     // way — render nothing until it arrives rather than a currency field with no options.
-    if (!currencies) {
-      return null;
+    if (!enabled || !currencies) {
+      return undefined;
     }
 
-    const schema = buildCreateInvoiceScheduleSchema({
-      currencies: currencies?.map(
+    return buildCreateInvoiceScheduleSchema({
+      currencies: currencies.map(
         (currency: { code: string; source: string }) => currency.code,
       ),
       includeOneTime,
@@ -97,23 +89,45 @@ export const useGetCreateInvoiceScheduleSchema = ({
       includeCustomDays,
       includeBackdateTip,
     });
-
-    return createHeadlessForm(schema, fieldValues, { jsfModify });
   }, [
     enabled,
     currencies,
-    jsfModify,
     includeOneTime,
     isContractorOfRecord,
     includeCustomDays,
     includeBackdateTip,
-    fieldValues,
   ]);
 
-  return {
-    data: schemaWithCurrencies,
-    isLoading: isLoadingCurrencies,
-  };
+  return { schema, isLoading };
+};
+
+/**
+ * Same schema as `useCreateInvoiceScheduleSchema`, built into a form that is rebuilt from
+ * `fieldValues` on every change. Only the Contractor Onboarding step still uses this; the
+ * standalone flow goes through `useHeadlessForm`.
+ */
+export const useGetCreateInvoiceScheduleSchema = ({
+  jsfModify,
+  fieldValues,
+  ...schemaArgs
+}: CreateInvoiceScheduleSchemaArgs & {
+  jsfModify?: JSFModify;
+  /**
+   * Current form values. Passed to `createHeadlessForm` so the schema's conditionals — the
+   * item-row reveal, and the semi-monthly day fields — re-evaluate as the user fills the
+   * form. Without this the form is built once against empty values and nothing ever reveals.
+   */
+  fieldValues?: Record<string, unknown>;
+}): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
+  const { schema, isLoading } = useCreateInvoiceScheduleSchema(schemaArgs);
+
+  const form = useMemo(
+    () =>
+      schema ? createHeadlessForm(schema, fieldValues, { jsfModify }) : null,
+    [schema, fieldValues, jsfModify],
+  );
+
+  return { data: form, isLoading };
 };
 
 /**
