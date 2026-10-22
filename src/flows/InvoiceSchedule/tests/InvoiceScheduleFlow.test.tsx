@@ -714,6 +714,11 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     await waitFor(() => {
       expect(onError).toHaveBeenCalled();
     });
+    expect(onError).toHaveBeenCalledWith({
+      error: new Error('Failed to create invoice schedule'),
+      rawError: { message: 'Failed to create invoice schedule' },
+      fieldErrors: [],
+    });
     expect(onSuccess).not.toHaveBeenCalled();
   });
 

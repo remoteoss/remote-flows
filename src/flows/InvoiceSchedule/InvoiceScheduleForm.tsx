@@ -7,6 +7,7 @@ import {
   InvoiceScheduleResponse,
 } from '@/src/flows/InvoiceSchedule/types';
 import { isMutationError, NormalizedFieldError } from '@/src/lib/mutations';
+import { isStructuredError } from '@/src/lib/utils';
 
 type InvoiceScheduleFormProps = Partial<{
   /**
@@ -52,6 +53,15 @@ export function InvoiceScheduleForm({
           error: error.error,
           rawError: error.rawError as Record<string, unknown>,
           fieldErrors: error.fieldErrors as NormalizedFieldError[],
+        });
+        return;
+      }
+
+      if (isStructuredError(error)) {
+        onError?.({
+          error: error.error,
+          rawError: error.rawError,
+          fieldErrors: error.fieldErrors,
         });
         return;
       }
