@@ -6,7 +6,6 @@ import {
 } from '@/src/common/invoice-schedules/api';
 import { ContractorInvoicePreview } from '@/src/common/invoice-schedules/types';
 import { buildInvoiceSchedulePayload } from '@/src/common/invoice-schedules/utils';
-import { useCompanyOpenTasks } from '@/src/common/api/companies';
 import { useEmploymentQuery } from '@/src/common/api/employment';
 import {
   InvoiceScheduleFormValues,
@@ -48,8 +47,6 @@ export const useInvoiceSchedule = ({
 
   const isContractorOfRecord =
     (employment as $TSFixMe)?.contractor_type === 'cor';
-
-  const { data: openTasks } = useCompanyOpenTasks();
 
   const { data: schemaForm, isLoading: isLoadingCurrencies } =
     useGetCreateInvoiceScheduleSchema({
@@ -250,13 +247,6 @@ export const useInvoiceSchedule = ({
      * to one-off invoicing.
      */
     isContractorOfRecord,
-    /**
-     * Whether the company still has to set up Remote Payments before contractors can be paid.
-     * Use this to show a Remote Payments setup banner above the form. Stays `false` while the
-     * company's pending actions load, and if they cannot be read.
-     */
-    needsRemotePaymentsSetup:
-      openTasks?.some((task) => task.type === 'setup_remote_payments') ?? false,
     /**
      * Field metadata, for building error messages.
      */
