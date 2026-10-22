@@ -27,7 +27,6 @@ export type { ContractorInvoicePreview } from './types';
 export {
   invoiceSchedulesOptions,
   useCreateInvoiceSchedule,
-  useCreateInvoiceScheduleSchema,
   useGetCreateInvoiceScheduleSchema,
   useGetExistingInvoiceSchedule,
   usePreviewContractorInvoice,

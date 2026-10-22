@@ -1,14 +1,13 @@
 import { useCallback } from 'react';
 import {
   useCreateInvoiceSchedule,
-  useCreateInvoiceScheduleSchema,
+  useGetCreateInvoiceScheduleSchema,
   usePreviewContractorInvoice,
 } from '@/src/common/invoice-schedules/api';
 import { ContractorInvoicePreview } from '@/src/common/invoice-schedules/types';
 import { buildInvoiceSchedulePayload } from '@/src/common/invoice-schedules/utils';
 import { useCompanyOpenTasks } from '@/src/common/api/companies';
 import { useEmploymentQuery } from '@/src/common/api/employment';
-import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import {
   InvoiceScheduleFormValues,
   InvoiceSchedulePayload,
@@ -43,25 +42,20 @@ export const useInvoiceSchedule = ({
 
   const { data: openTasks } = useCompanyOpenTasks();
 
-  const { schema, isLoading: isLoadingCurrencies } =
-    useCreateInvoiceScheduleSchema({
-      enabled: true,
-      employmentId,
-      includeOneTime: true,
-      isContractorOfRecord,
-      includeCustomDays: true,
-      includeBackdateTip: true,
-    });
-
   const {
-    form: schemaForm,
+    data: schemaForm,
     handleValidation,
     onValuesChange: checkFieldUpdates,
     parseFormValues: parseValues,
-  } = useHeadlessForm({
-    schema,
-    options: { jsfModify },
-    strategy: 'buildOnce',
+    isLoading: isLoadingCurrencies,
+  } = useGetCreateInvoiceScheduleSchema({
+    enabled: true,
+    employmentId,
+    jsfModify,
+    includeOneTime: true,
+    isContractorOfRecord,
+    includeCustomDays: true,
+    includeBackdateTip: true,
   });
 
   const createInvoiceScheduleMutation = useCreateInvoiceSchedule();

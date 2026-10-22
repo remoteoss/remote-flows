@@ -13,8 +13,7 @@ import {
 } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
-// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
-import { createHeadlessForm } from '@/src/common/createHeadlessForm';
+import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
 import { INVOICE_SCHEDULE_STATUS } from '@/src/common/invoice-schedules/constants';
 import { buildCreateInvoiceScheduleSchema } from '@/src/common/invoice-schedules/json-schema';
@@ -22,14 +21,29 @@ import {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
 } from '@/src/common/invoice-schedules/utils';
-import {
-  JSONSchemaFormResultWithFieldsets,
-  JSFModify,
-} from '@/src/flows/types';
+import { JSFModify } from '@/src/flows/types';
 
-type CreateInvoiceScheduleSchemaArgs = {
+/**
+ * Get the create invoice schedule form, with currency options from the contractor
+ * currencies endpoint. React Query caches the result, so multiple calls share the same data.
+ *
+ * The form is built through `useHeadlessForm`. Pass `fieldValues` to rebuild it from the
+ * current values on every change (what the Contractor Onboarding step does today); leave it
+ * out to build once and let validation resolve the conditionals.
+ */
+export const useGetCreateInvoiceScheduleSchema = ({
+  enabled,
+  employmentId,
+  jsfModify,
+  includeOneTime,
+  isContractorOfRecord,
+  includeCustomDays,
+  includeBackdateTip,
+  fieldValues,
+}: {
   enabled?: boolean;
   employmentId?: string;
+  jsfModify?: JSFModify;
   /**
    * Offer "One time" alongside the recurring cadences. Off by default so the in-flow
    * onboarding step keeps the field set it shipped with.
@@ -48,24 +62,13 @@ type CreateInvoiceScheduleSchemaArgs = {
    * contractor is paid.
    */
   includeBackdateTip?: boolean;
-};
-
-/**
- * The create invoice schedule schema with currency options from the contractor currencies
- * endpoint, ready to hand to `useHeadlessForm`. React Query caches the currencies, so
- * multiple calls share the same data.
- */
-export const useCreateInvoiceScheduleSchema = ({
-  enabled,
-  employmentId,
-  includeOneTime,
-  isContractorOfRecord,
-  includeCustomDays,
-  includeBackdateTip,
-}: CreateInvoiceScheduleSchemaArgs): {
-  schema: Record<string, unknown> | undefined;
-  isLoading: boolean;
-} => {
+  /**
+   * Current form values. When given, the form is rebuilt from them on every change so the
+   * schema's conditionals — the item-row reveal, and the semi-monthly day fields —
+   * re-evaluate as the user fills the form.
+   */
+  fieldValues?: Record<string, unknown>;
+}) => {
   const { data: currencies, isLoading } = useContractorCurrencies({
     employmentId: employmentId as string,
     options: {
@@ -98,36 +101,20 @@ export const useCreateInvoiceScheduleSchema = ({
     includeBackdateTip,
   ]);
 
-  return { schema, isLoading };
-};
-
-/**
- * Same schema as `useCreateInvoiceScheduleSchema`, built into a form that is rebuilt from
- * `fieldValues` on every change. Only the Contractor Onboarding step still uses this; the
- * standalone flow goes through `useHeadlessForm`.
- */
-export const useGetCreateInvoiceScheduleSchema = ({
-  jsfModify,
-  fieldValues,
-  ...schemaArgs
-}: CreateInvoiceScheduleSchemaArgs & {
-  jsfModify?: JSFModify;
-  /**
-   * Current form values. Passed to `createHeadlessForm` so the schema's conditionals — the
-   * item-row reveal, and the semi-monthly day fields — re-evaluate as the user fills the
-   * form. Without this the form is built once against empty values and nothing ever reveals.
-   */
-  fieldValues?: Record<string, unknown>;
-}): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
-  const { schema, isLoading } = useCreateInvoiceScheduleSchema(schemaArgs);
-
-  const form = useMemo(
-    () =>
-      schema ? createHeadlessForm(schema, fieldValues, { jsfModify }) : null,
-    [schema, fieldValues, jsfModify],
+  const options = { jsfModify };
+  const headlessForm = useHeadlessForm(
+    fieldValues
+      ? { schema, options, strategy: 'rebuild', values: fieldValues }
+      : { schema, options, strategy: 'buildOnce' },
   );
 
-  return { data: form, isLoading };
+  return {
+    data: headlessForm.form,
+    handleValidation: headlessForm.handleValidation,
+    onValuesChange: headlessForm.onValuesChange,
+    parseFormValues: headlessForm.parseFormValues,
+    isLoading,
+  };
 };
 
 /**
