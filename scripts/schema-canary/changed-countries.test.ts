@@ -93,12 +93,12 @@ describe('touchesOtherInputs', () => {
         'docs/schema-changes/eor/contract-details/countries/PRT.md',
         'example/e2e/onboard-portugal-employee.spec.ts',
         'example/e2e/helpers/onboarding.ts',
+        'pnpm-lock.yaml',
       ]),
     ).toBe(false);
   });
 
   it.each([
-    'pnpm-lock.yaml',
     'src/common/createHeadlessForm.tsx',
     'scripts/schema-canary.ts',
     'scripts/schema-canary/lib.ts',

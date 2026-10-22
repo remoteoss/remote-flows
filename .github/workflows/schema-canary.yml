@@ -7,32 +7,15 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    paths:
-      - 'example/src/flows/Onboarding/jsonSchemaVersions.ts'
-      - 'example/src/flows/Onboarding/constants.ts'
-      - 'pnpm-lock.yaml'
-      - 'src/common/createHeadlessForm.tsx'
-      - 'src/common/headlessForm.ts'
-      - 'src/components/form/utils.ts'
-      - 'src/flows/Onboarding/utils.ts'
-      - 'scripts/contract-details-seeds.ts'
-      - 'scripts/fill-schema.ts'
-      - 'scripts/schema-canary.ts'
-      - 'scripts/schema-canary/**'
-      - 'scripts/schema-canary-archive.ts'
-      - 'example/e2e/canary/**'
-      - 'example/playwright.canary.config.ts'
-      - '.github/actions/schema-canary-browser/**'
-      - '.github/workflows/schema-canary.yml'
+  merge_group:
 
 concurrency:
-  group: schema-canary-${{ github.event_name == 'pull_request' && 'pr' || 'main' }}
+  group: schema-canary-${{ github.event_name == 'merge_group' && 'merge-queue' || 'main' }}
   queue: max
 
 jobs:
   main-canary:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'merge_group'
     name: Contract Details Schema Canary (main)
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -179,8 +162,8 @@ jobs:
           done
 
   pr-canary:
-    if: github.event_name == 'pull_request'
-    name: Contract Details Schema Canary (pinned, PR)
+    if: github.event_name == 'merge_group'
+    name: Contract Details Schema Canary (pinned, merge queue)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
