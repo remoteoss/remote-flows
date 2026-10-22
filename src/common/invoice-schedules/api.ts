@@ -27,9 +27,7 @@ import { JSFModify } from '@/src/flows/types';
  * Get the create invoice schedule form, with currency options from the contractor
  * currencies endpoint. React Query caches the result, so multiple calls share the same data.
  *
- * The form is built through `useHeadlessForm`. Pass `fieldValues` to rebuild it from the
- * current values on every change (what the Contractor Onboarding step does today); leave it
- * out to build once and let validation resolve the conditionals.
+ * The form is built once through `useHeadlessForm`; validation resolves the conditionals.
  */
 export const useGetCreateInvoiceScheduleSchema = ({
   enabled,
@@ -39,7 +37,6 @@ export const useGetCreateInvoiceScheduleSchema = ({
   isContractorOfRecord,
   includeCustomDays,
   includeBackdateTip,
-  fieldValues,
 }: {
   enabled?: boolean;
   employmentId?: string;
@@ -62,12 +59,6 @@ export const useGetCreateInvoiceScheduleSchema = ({
    * contractor is paid.
    */
   includeBackdateTip?: boolean;
-  /**
-   * Current form values. When given, the form is rebuilt from them on every change so the
-   * schema's conditionals — the item-row reveal, and the semi-monthly day fields —
-   * re-evaluate as the user fills the form.
-   */
-  fieldValues?: Record<string, unknown>;
 }) => {
   const { data: currencies, isLoading } = useContractorCurrencies({
     employmentId: employmentId as string,
@@ -101,12 +92,11 @@ export const useGetCreateInvoiceScheduleSchema = ({
     includeBackdateTip,
   ]);
 
-  const options = { jsfModify };
-  const headlessForm = useHeadlessForm(
-    fieldValues
-      ? { schema, options, strategy: 'rebuild', values: fieldValues }
-      : { schema, options, strategy: 'buildOnce' },
-  );
+  const headlessForm = useHeadlessForm({
+    schema,
+    options: { jsfModify },
+    strategy: 'buildOnce',
+  });
 
   return {
     data: headlessForm.form,

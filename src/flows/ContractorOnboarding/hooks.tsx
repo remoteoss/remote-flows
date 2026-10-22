@@ -783,6 +783,8 @@ export const useContractorOnboarding = ({
 
   const {
     data: createInvoiceScheduleForm,
+    handleValidation: handleCreateInvoiceScheduleValidation,
+    parseFormValues: parseCreateInvoiceScheduleValues,
     isLoading: isLoadingCreateInvoiceScheduleForm,
   } = useGetCreateInvoiceScheduleSchema({
     enabled:
@@ -790,12 +792,6 @@ export const useContractorOnboarding = ({
       stepState.currentStep.name === 'create_invoice_schedule',
     employmentId: internalEmploymentId,
     jsfModify: options?.jsfModify?.create_invoice_schedule,
-    // The schema hides item rows 2..10 until the row before them is filled in, and that
-    // conditional is evaluated against the values handed to createHeadlessForm. Calling
-    // handleValidation on change (see checkFieldUpdates) validates but does not re-derive
-    // field visibility, so without the current values here every row past the first stays
-    // hidden for good.
-    fieldValues,
   });
 
   const {
@@ -1274,13 +1270,7 @@ export const useContractorOnboarding = ({
       createInvoiceScheduleForm &&
       stepState.currentStep.name === 'create_invoice_schedule'
     ) {
-      return await parseJSFToValidate(
-        values,
-        createInvoiceScheduleForm?.fields,
-        {
-          isPartialValidation: false,
-        },
-      );
+      return await parseCreateInvoiceScheduleValues(values);
     }
 
     return {};
@@ -1767,12 +1757,7 @@ export const useContractorOnboarding = ({
         createInvoiceScheduleForm &&
         stepState.currentStep.name === 'create_invoice_schedule'
       ) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          createInvoiceScheduleForm?.fields,
-          { isPartialValidation: false },
-        );
-        return createInvoiceScheduleForm?.handleValidation(parsedValues);
+        return handleCreateInvoiceScheduleValidation(values);
       }
 
       return null;
@@ -1789,6 +1774,7 @@ export const useContractorOnboarding = ({
       contractOriginForm,
       invoiceScheduleForm,
       createInvoiceScheduleForm,
+      handleCreateInvoiceScheduleValidation,
     ],
   );
 
