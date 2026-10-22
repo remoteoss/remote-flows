@@ -3,6 +3,9 @@
   "extends": ["config:recommended"],
   "rangeStrategy": "bump",
 
+  "timezone": "Europe/Madrid",
+  "schedule": ["after 11pm and before 5am"],
+
   "minimumReleaseAge": "7 days",
   "internalChecksFilter": "strict",
 
