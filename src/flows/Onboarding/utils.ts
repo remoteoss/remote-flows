@@ -203,6 +203,11 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'SRB',
   'URY',
   'BGD',
+  'GEO',
+  'NIC',
+  'SVN',
+  'ALB',
+  'CYP',
 ];
 
 /**
