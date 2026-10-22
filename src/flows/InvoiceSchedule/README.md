@@ -195,6 +195,3 @@ known. Note this is a client-side restriction; it is not enforced by the API tod
   from your start date (that day and the day 14 days apart), or set them to pick the pair
   yourself. One of the two must be the start date's day.
 - **Create only.** Editing an existing schedule is not part of this flow.
-- **Platform banners are not shown.** The platform also warns when the contractor has no active
-  deposit method, when the company still has to set up Remote Payments, and about SWIFT fees.
-  This flow shows none of them.
