@@ -651,6 +651,8 @@ describe('InvoiceScheduleFlow partner usage', () => {
     fireEvent.click(screen.getByRole('button', { name: /Re-render/i }));
 
     const currency = bag?.fields.find((field) => field.name === 'currency');
-    expect(currency?.options?.length).toBeGreaterThan(0);
+    expect(
+      (currency?.options as unknown[] | undefined)?.length,
+    ).toBeGreaterThan(0);
   });
 });

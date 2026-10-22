@@ -1,4 +1,8 @@
 import {
+  ContractorInvoiceSchedule,
+  ContractorInvoiceScheduleItem,
+} from '@/src/client';
+import {
   INVOICE_ITEM_SLOTS,
   ONE_TIME_PERIODICITY,
   ONE_TIME_PERSISTED_PERIODICITY,
@@ -31,15 +35,19 @@ export function buildInvoiceItems(values: Record<string, unknown>) {
  * @param schedule - The schedule as the API returns it
  * @returns Values keyed by form field name, ready to seed the form
  */
-export function buildInvoiceScheduleFormValues(schedule: {
-  currency?: string;
-  periodicity?: string;
-  start_date?: string;
-  number?: string | null;
-  note?: string | null;
-  nr_occurrences?: number | null;
-  items?: { description?: string; amount?: number }[];
-}) {
+export function buildInvoiceScheduleFormValues(
+  schedule: Pick<
+    ContractorInvoiceSchedule,
+    | 'currency'
+    | 'periodicity'
+    | 'start_date'
+    | 'number'
+    | 'note'
+    | 'nr_occurrences'
+  > & {
+    items?: Pick<ContractorInvoiceScheduleItem, 'description' | 'amount'>[];
+  },
+) {
   const values: Record<string, unknown> = {
     currency: schedule.currency,
     periodicity: schedule.periodicity,
