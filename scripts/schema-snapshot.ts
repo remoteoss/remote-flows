@@ -140,7 +140,7 @@ async function checkCountry(
   const version = resolvePinnedVersion(country, DEFAULT_VERSION);
   let employmentId: string | undefined;
   try {
-    employmentId = await seedEmploymentForCountry(client, country);
+    ({ employmentId } = await seedEmploymentForCountry(client, country));
     const schema = await fetchPinnedSchema(
       client,
       country,

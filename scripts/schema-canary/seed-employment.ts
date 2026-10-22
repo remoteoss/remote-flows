@@ -62,11 +62,13 @@ async function fetchSchema(
   return response.data?.data ?? null;
 }
 
-/** Creates a sandbox employment for `country` up to contract_details and returns its id. */
+export type SeededEmployment = { employmentId: string; companyId: string };
+
+/** Creates a sandbox employment for `country` up to contract_details and returns its employment and company ids. */
 export async function seedEmploymentForCountry(
   client: Client,
   country: string,
-): Promise<string> {
+): Promise<SeededEmployment> {
   const basicInfoSchema = await fetchSchema(
     client,
     country,
@@ -96,10 +98,12 @@ export async function seedEmploymentForCountry(
   if (created.error) {
     throw new Error(`POST /v1/employments -> ${JSON.stringify(created.error)}`);
   }
-  const employmentId = (created.data as $TSFixMe)?.data?.employment?.id;
-  if (!employmentId) {
+  const employment = created.data?.data?.employment;
+  const employmentId = employment?.id;
+  const companyId = employment?.company_id;
+  if (!employmentId || !companyId) {
     throw new Error(
-      `Could not find employment id in response: ${JSON.stringify(created.data)}`,
+      `Could not find the employment and company ids in the response: ${JSON.stringify(created.data)}`,
     );
   }
 
@@ -116,7 +120,7 @@ export async function seedEmploymentForCountry(
     throw error;
   }
 
-  return employmentId;
+  return { employmentId, companyId };
 }
 
 async function completePreContractSteps(
@@ -174,23 +178,26 @@ async function completePreContractSteps(
   }
 }
 
-/**
- * Archives a sandbox-created employment. Only works in Sandbox
- * (deleteV1SandboxEmploymentsEmploymentId 404s elsewhere). Best-effort:
- * a cleanup failure shouldn't fail the country's checks, which already ran.
- */
+const ARCHIVE_ATTEMPTS = 4;
+
 export async function archiveEmployment(
   client: Client,
   employmentId: string,
 ): Promise<void> {
-  const response = await deleteV1SandboxEmploymentsEmploymentId({
-    client,
-    headers: { Authorization: '' },
-    path: { employment_id: employmentId },
-  });
-  if (response.error) {
-    throw new Error(
-      `DELETE /v1/sandbox/employments/${employmentId} -> ${JSON.stringify(response.error)}`,
-    );
+  for (let attempt = 1; ; attempt++) {
+    const response = await deleteV1SandboxEmploymentsEmploymentId({
+      client,
+      headers: { Authorization: '' },
+      path: { employment_id: employmentId },
+    });
+    if (!response.error) {
+      return;
+    }
+    if (attempt === ARCHIVE_ATTEMPTS) {
+      throw new Error(
+        `DELETE /v1/sandbox/employments/${employmentId} -> ${JSON.stringify(response.error)}`,
+      );
+    }
+    await new Promise((resolve) => setTimeout(resolve, 2000 * 2 ** attempt));
   }
 }

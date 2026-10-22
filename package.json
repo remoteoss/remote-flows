@@ -30,6 +30,7 @@
     "release": "tsx scripts/release.ts",
     "release:fix": "tsx scripts/release-hotfix.ts",
     "schema-canary": "tsx scripts/schema-canary.ts",
+    "schema-canary:archive": "tsx scripts/schema-canary-archive.ts",
     "schema-snapshot": "tsx scripts/schema-snapshot.ts",
     "dump:schema": "tsx scripts/dump-schema.ts",
     "seed:onboarding": "tsx scripts/seed-onboarding.ts",
