@@ -267,7 +267,7 @@ export function buildCreateInvoiceScheduleSchema({
             ? {
                 statement: {
                   description:
-                    'The invoice date specifies when the invoice will be created, not when the contractor gets paid. If the contractor needs payment on a specific date, please backdate the start date to account for processing time.',
+                    'The invoice date specifies when the invoice will be created, not when the contractor gets paid. If the contractor needs payment on a specific date, please backdate the invoice date to account for processing time.',
                   inputType: 'statement',
                   severity: 'info',
                 },
