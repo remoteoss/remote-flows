@@ -48,6 +48,10 @@ const identityHandler = http.get('*/v1/identity/current', () => {
   return HttpResponse.json(identityMock);
 });
 
+const companyActionsHandler = http.get('*/v1/companies/*/actions', () => {
+  return HttpResponse.json({ data: { actions: [] } });
+});
+
 const legalEntitiesHandler = http.get('*/v1/companies/*/legal-entities', () => {
   return HttpResponse.json(legalEntitiesMock);
 });
@@ -340,6 +344,7 @@ const previewContractorInvoiceHandler = http.post(
 
 export const defaultHandlers = [
   identityHandler,
+  companyActionsHandler,
   legalEntitiesHandler,
   eligibilityQuestionnaireHandler,
   eligibilityQuestionnaireResponseHandler,

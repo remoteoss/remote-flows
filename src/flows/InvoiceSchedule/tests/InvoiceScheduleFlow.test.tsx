@@ -477,3 +477,106 @@ describe('InvoiceScheduleFlow', () => {
     });
   });
 });
+
+describe('InvoiceScheduleFlow callouts', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
+
+  function renderNeedsRemotePaymentsSetup() {
+    return render(
+      <InvoiceScheduleFlow
+        employmentId='employment-grace'
+        render={(bag) =>
+          bag.isLoading ? (
+            <p>Loading…</p>
+          ) : (
+            <p data-testid='needs-remote-payments-setup'>
+              {String(bag.needsRemotePaymentsSetup)}
+            </p>
+          )
+        }
+      />,
+      { wrapper: TestProviders },
+    );
+  }
+
+  it('explains that the invoice date is when the invoice is created, not when the contractor is paid', async () => {
+    renderFlow();
+
+    expect(
+      await screen.findByText(
+        /specifies when the invoice will be created, not when the contractor gets paid/i,
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/to account for processing time/i)).toBeVisible();
+  });
+
+  it('does not treat the date note as a field the user has to fill in', async () => {
+    renderFlow();
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'monthly');
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Required field/i)).not.toBeInTheDocument();
+    });
+  });
+
+  it('reports that Remote Payments setup is needed when the company has that pending action', async () => {
+    server.use(
+      http.get('*/v1/companies/*/actions', () =>
+        HttpResponse.json({
+          data: {
+            actions: [
+              {
+                type: 'setup_remote_payments',
+                required: true,
+                legal_entity_id: 'legal-entity-1',
+              },
+            ],
+          },
+        }),
+      ),
+    );
+
+    renderNeedsRemotePaymentsSetup();
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId('needs-remote-payments-setup'),
+      ).toHaveTextContent('true');
+    });
+  });
+
+  it('does not report a Remote Payments setup for other pending actions', async () => {
+    server.use(
+      http.get('*/v1/companies/*/actions', () =>
+        HttpResponse.json({
+          data: { actions: [{ type: 'verify_company', required: true }] },
+        }),
+      ),
+    );
+
+    renderNeedsRemotePaymentsSetup();
+
+    expect(
+      await screen.findByTestId('needs-remote-payments-setup'),
+    ).toHaveTextContent('false');
+  });
+
+  it('still renders the form when the company actions cannot be read', async () => {
+    server.use(
+      http.get('*/v1/companies/*/actions', () =>
+        HttpResponse.json({ message: 'Forbidden' }, { status: 403 }),
+      ),
+    );
+
+    renderNeedsRemotePaymentsSetup();
+
+    expect(
+      await screen.findByTestId('needs-remote-payments-setup'),
+    ).toHaveTextContent('false');
+  });
+});

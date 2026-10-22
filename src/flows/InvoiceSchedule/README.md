@@ -20,6 +20,7 @@ If you want the invoice-schedule step **inside** contractor onboarding, that is 
   - [InvoiceScheduleForm](#invoicescheduleform)
   - [InvoiceScheduleSubmitButton](#invoiceschedulesubmitbutton)
   - [InvoiceSchedulePreviewButton](#invoiceschedulepreviewbutton)
+- [Callouts](#callouts)
 - [The bag](#the-bag)
 - [How values map to the API](#how-values-map-to-the-api)
 - [Current limitations](#current-limitations)
@@ -67,6 +68,13 @@ export function CreateInvoiceSchedule({
             <>
               {invoiceScheduleBag.isContractorOfRecord && (
                 <p>This contractor can only be invoiced one-off.</p>
+              )}
+
+              {invoiceScheduleBag.needsRemotePaymentsSetup && (
+                <p>
+                  Set up Remote Payments before paying contractors. Allow 48
+                  hours after setup before you can send funds.
+                </p>
               )}
 
               <InvoiceScheduleForm
@@ -139,23 +147,37 @@ navigation to the `data:` scheme, so it can be rendered in an `iframe`/`embed` o
 `<a download>`, but not passed to `window.open`. Override the `pdfViewer` component on
 `<RemoteFlows components={…}>` to render it your own way.
 
+## Callouts
+
+The Remote platform shows two notes on this screen. The SDK covers them like this:
+
+- **Invoice date note.** Built into the form, above Frequency: the invoice date is when the
+  invoice is created, not when the contractor gets paid, so backdate the start date if payment
+  is needed by a specific day. It is a form field with no value, so it never reaches the payload.
+- **Remote Payments setup.** Not rendered for you, because the platform's banner links into
+  Remote's own setup screen. Read `needsRemotePaymentsSetup` from the bag and show your own
+  banner. It is `true` when the company has a pending `setup_remote_payments` action on
+  `GET /v1/companies/{company_id}/actions`, and `false` while that loads or if it cannot be
+  read (the form still works).
+
 ## The bag
 
 `useInvoiceSchedule()` is the headless equivalent of the render prop, for fully custom UIs.
 Both surfaces expose the same bag:
 
-| Key                    | Description                                                                                            |
-| ---------------------- | ------------------------------------------------------------------------------------------------------ |
-| `fields`               | Generated form fields.                                                                                 |
-| `handleValidation`     | Validation handler for the generated form.                                                             |
-| `parseFormValues`      | Turns form values into the API payload without submitting.                                             |
-| `onSubmit`             | Creates the invoice schedule.                                                                          |
-| `previewInvoice`       | Renders the current values as a draft PDF without creating anything.                                   |
-| `employmentId`         | The contractor the schedule will be created for.                                                       |
-| `isSubmitting`         | True while creating.                                                                                   |
-| `isPreviewingInvoice`  | True while a draft PDF preview is being generated.                                                     |
-| `isLoading`            | True until there is a form to show: no `employmentId`, or its currencies and employment still loading. |
-| `isContractorOfRecord` | Whether the contractor is a Contractor of Record.                                                      |
+| Key                        | Description                                                                                            |
+| -------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `fields`                   | Generated form fields.                                                                                 |
+| `handleValidation`         | Validation handler for the generated form.                                                             |
+| `parseFormValues`          | Turns form values into the API payload without submitting.                                             |
+| `onSubmit`                 | Creates the invoice schedule.                                                                          |
+| `previewInvoice`           | Renders the current values as a draft PDF without creating anything.                                   |
+| `employmentId`             | The contractor the schedule will be created for.                                                       |
+| `isSubmitting`             | True while creating.                                                                                   |
+| `isPreviewingInvoice`      | True while a draft PDF preview is being generated.                                                     |
+| `isLoading`                | True until there is a form to show: no `employmentId`, or its currencies and employment still loading. |
+| `isContractorOfRecord`     | Whether the contractor is a Contractor of Record.                                                      |
+| `needsRemotePaymentsSetup` | Whether the company still has to set up Remote Payments before contractors can be paid.                |
 
 ## How values map to the API
 
@@ -188,7 +210,11 @@ known. Note this is a client-side restriction; it is not enforced by the API tod
   from your start date (that day and the day 14 days apart), or set them to pick the pair
   yourself. One of the two must be the start date's day.
 - **Create only.** Editing an existing schedule is not part of this flow.
-- **No advisory banners.** The platform also warns about missing contractor deposit methods and
-  SWIFT fees. Those signals are not on the public API, so they are omitted. A schedule created
-  for a contractor without a deposit method comes back with status
+- **Two platform banners are missing.** The platform also warns when the contractor has no
+  active deposit method and about SWIFT fees. Neither signal is on the public API, so they are
+  omitted. A schedule created for a contractor without a deposit method comes back with status
   `pending_contractor_action`.
+- **Remote Payments setup differs slightly from the platform.** The platform hides its deposit
+  method warning only when Remote Payments is the company's sole way to pay contractors. The
+  public `setup_remote_payments` action does not check for other payment options, so a company
+  that could also pay through another provider can still see `needsRemotePaymentsSetup: true`.
