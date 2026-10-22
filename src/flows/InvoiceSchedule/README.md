@@ -151,8 +151,8 @@ navigation to the `data:` scheme, so it can be rendered in an `iframe`/`embed` o
 
 The Remote platform shows two notes on this screen. The SDK covers them like this:
 
-- **Invoice date note.** Built into the form, shown under the start date: the invoice date is
-  when the invoice is created, not when the contractor gets paid, so backdate the start date if
+- **Invoice date note.** Built into the form, shown under the invoice date: the invoice date is
+  when the invoice is created, not when the contractor gets paid, so backdate the invoice date if
   payment is needed by a specific day.
 - **Remote Payments setup.** Not rendered for you, because the platform's banner links into
   Remote's own setup screen. Read `needsRemotePaymentsSetup` from the bag and show your own
