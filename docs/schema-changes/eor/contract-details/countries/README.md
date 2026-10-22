@@ -141,7 +141,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Peru                 | PER  | v4               | Yes    | October 2026 |
 | Philippines          | PHL  | v9               | Yes    | October 2026 |
 | Poland               | POL  | v5               | Yes    | October 2026 |
-| Portugal             | PRT  | v9               | Yes    | March 2026   |
+| Portugal             | PRT  | v9               | Yes    | October 2026 |
 | Saudi Arabia         | SAU  | v5               | Yes    | October 2026 |
 | Singapore            | SGP  | v5               | Yes    | October 2026 |
 | South Africa         | ZAF  | v5               | Yes    | October 2026 |
