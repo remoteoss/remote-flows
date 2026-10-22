@@ -104,7 +104,7 @@ Schema versions for employee onboarding in Cyprus.
 
 **What changed:**
 
-- Adds `work_in_person_days_per_week` and the required `work_from_home_allowance_ack`, conditionally required for remote work arrangements. `work_address_is_home_address` is now fixed to `no`.
+- Adds the required `work_from_home_allowance_ack` checkbox, which acknowledges the monthly remote work allowance, and `work_in_person_days_per_week` (1 to 5), which is required when `work_address_is_home_address` is `no`. Render and submit both.
 
 **Migration:**
 

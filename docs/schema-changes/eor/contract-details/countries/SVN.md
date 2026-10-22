@@ -85,7 +85,7 @@ Schema versions for employee onboarding in Slovenia.
 
 **What changed:**
 
-- Adds `notice_period_choice`, which is required. `notice_period_days` defaults to and is fixed at 30 days, and is only required when the choice calls for it.
+- Adds the required `notice_period_choice` (`recommended` or `custom`). With `recommended`, `notice_period_days` is fixed at 30 days and hidden. With `custom`, `notice_period_days` is editable between 30 and 60 days.
 
 **Migration:**
 
