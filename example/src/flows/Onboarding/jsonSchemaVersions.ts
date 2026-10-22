@@ -17,7 +17,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ARM: {
     // Armenia
-    contract_details: 1,
+    contract_details: 3,
   },
   AUS: {
     // Australia
@@ -109,7 +109,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   EST: {
     // Estonia
-    contract_details: 1,
+    contract_details: 5,
   },
   FIN: {
     // Finland
@@ -189,11 +189,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   KOR: {
     // South Korea
-    contract_details: 1,
+    contract_details: 7,
   },
   LBN: {
     // Lebanon
-    contract_details: 2,
+    contract_details: 4,
   },
   LKA: {
     // Sri Lanka
@@ -253,7 +253,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   NOR: {
     // Norway
-    contract_details: 2,
+    contract_details: 7,
   },
   NZL: {
     // New Zealand
