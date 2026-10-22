@@ -27,7 +27,6 @@ import {
   useCountriesSchemaField,
   CONTRACT_PRODUCT_TITLES,
   useHasCompanySignedContract,
-  useCompanyOpenTasks,
   useSetContractOrigin,
   useGetContractOriginSchema,
   useGetInvoiceScheduleSchema,
@@ -38,6 +37,7 @@ import {
   usePreviewContractorInvoice,
   useGetExistingInvoiceSchedule,
 } from '@/src/flows/ContractorOnboarding/api';
+import { useCompanyOpenTasks } from '@/src/common/api/companies';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
   useCreateContractorContractDocument,

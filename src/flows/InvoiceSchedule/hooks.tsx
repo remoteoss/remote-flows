@@ -56,6 +56,7 @@ export const useInvoiceSchedule = ({
       includeOneTime: true,
       isContractorOfRecord,
       includeCustomDays: true,
+      includeBackdateTip: true,
       fieldValues,
     });
 

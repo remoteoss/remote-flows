@@ -477,3 +477,20 @@ describe('InvoiceScheduleFlow', () => {
     });
   });
 });
+
+describe('InvoiceScheduleFlow callouts', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
+
+  it('explains that the invoice date is when the invoice is created, not when the contractor is paid', async () => {
+    renderFlow();
+
+    expect(
+      await screen.findByText(
+        /specifies when the invoice will be created, not when the contractor gets paid/i,
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/to account for processing time/i)).toBeVisible();
+  });
+});

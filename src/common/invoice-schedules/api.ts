@@ -38,6 +38,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
   includeOneTime,
   isContractorOfRecord,
   includeCustomDays,
+  includeBackdateTip,
   fieldValues,
 }: {
   enabled?: boolean;
@@ -56,6 +57,11 @@ export const useGetCreateInvoiceScheduleSchema = ({
    * Offer the two semi-monthly day fields, which map to `custom_days`.
    */
   includeCustomDays?: boolean;
+  /**
+   * Show the note that the invoice date is when the invoice is created, not when the
+   * contractor is paid.
+   */
+  includeBackdateTip?: boolean;
   /**
    * Current form values. Passed to `createHeadlessForm` so the schema's conditionals — the
    * item-row reveal, and the semi-monthly day fields — re-evaluate as the user fills the
@@ -89,6 +95,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
       includeOneTime,
       isContractorOfRecord,
       includeCustomDays,
+      includeBackdateTip,
     });
 
     return createHeadlessForm(schema, fieldValues, { jsfModify });
@@ -99,6 +106,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
     includeOneTime,
     isContractorOfRecord,
     includeCustomDays,
+    includeBackdateTip,
     fieldValues,
   ]);
 

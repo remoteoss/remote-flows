@@ -20,6 +20,7 @@ If you want the invoice-schedule step **inside** contractor onboarding, that is 
   - [InvoiceScheduleForm](#invoicescheduleform)
   - [InvoiceScheduleSubmitButton](#invoiceschedulesubmitbutton)
   - [InvoiceSchedulePreviewButton](#invoiceschedulepreviewbutton)
+- [Callouts](#callouts)
 - [The bag](#the-bag)
 - [How values map to the API](#how-values-map-to-the-api)
 - [Current limitations](#current-limitations)
@@ -139,6 +140,12 @@ navigation to the `data:` scheme, so it can be rendered in an `iframe`/`embed` o
 `<a download>`, but not passed to `window.open`. Override the `pdfViewer` component on
 `<RemoteFlows components={…}>` to render it your own way.
 
+## Callouts
+
+The form shows the platform's invoice date note under the invoice date: the invoice date is
+when the invoice is created, not when the contractor gets paid, so backdate the invoice date if
+payment is needed by a specific day.
+
 ## The bag
 
 `useInvoiceSchedule()` is the headless equivalent of the render prop, for fully custom UIs.
@@ -188,7 +195,3 @@ known. Note this is a client-side restriction; it is not enforced by the API tod
   from your start date (that day and the day 14 days apart), or set them to pick the pair
   yourself. One of the two must be the start date's day.
 - **Create only.** Editing an existing schedule is not part of this flow.
-- **No advisory banners.** The platform also warns about missing contractor deposit methods and
-  SWIFT fees. Those signals are not on the public API, so they are omitted. A schedule created
-  for a contractor without a deposit method comes back with status
-  `pending_contractor_action`.

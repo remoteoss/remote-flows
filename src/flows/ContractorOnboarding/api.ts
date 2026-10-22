@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 import {
-  CompanyAction,
-  getV1CompaniesCompanyIdActions,
   getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions,
   ManageContractorPlusSubscriptionOperationsParams,
   postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription,
@@ -64,8 +62,7 @@ import {
   selectCountryStepSchema,
 } from '@/src/common/selectCountryStep';
 import { shouldIncludeProduct } from '@/src/flows/ContractorOnboarding/utils';
-import { useCompanyPricingPlans, hasCompany } from '@/src/common/api/companies';
-import { useIdentity } from '@/src/common/api/identity';
+import { useCompanyPricingPlans } from '@/src/common/api/companies';
 
 /**
  * Get the contractor subscriptions for the given employment id
@@ -684,25 +681,4 @@ export const useCountriesSchemaField = (
     selectCountryForm,
     countries,
   };
-};
-
-export const useCompanyOpenTasks = ({
-  options,
-}: {
-  options?: { queryOptions?: { enabled?: boolean } };
-} = {}) => {
-  const { data: identity } = useIdentity();
-  const companyId = hasCompany(identity) ? (identity?.company?.id ?? '') : '';
-  const { client } = useClient();
-
-  return useQuery({
-    queryKey: ['company-open-tasks', companyId],
-    queryFn: () =>
-      getV1CompaniesCompanyIdActions({
-        client: client as Client,
-        path: { company_id: companyId },
-      }),
-    select: ({ data }) => data?.data?.actions ?? ([] as CompanyAction[]),
-    enabled: (options?.queryOptions?.enabled ?? true) && !!companyId,
-  });
 };
