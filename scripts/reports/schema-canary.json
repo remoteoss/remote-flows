@@ -49,22 +49,22 @@
     },
     {
       "country": "ARM",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 3,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "ARM",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "ARM",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 3,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -511,22 +511,22 @@
     },
     {
       "country": "EST",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 5,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "EST",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "EST",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 5,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -952,22 +952,22 @@
     },
     {
       "country": "LBN",
-      "version": 2,
-      "strategy": "rebuild",
+      "version": 4,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "LBN",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "LBN",
-      "version": 2,
-      "strategy": "rebuild",
+      "version": 4,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -1246,22 +1246,22 @@
     },
     {
       "country": "NOR",
-      "version": 2,
-      "strategy": "rebuild",
+      "version": 7,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "NOR",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "NOR",
-      "version": 2,
-      "strategy": "rebuild",
+      "version": 7,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
@@ -1582,22 +1582,22 @@
     },
     {
       "country": "KOR",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 7,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "KOR",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "KOR",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 7,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },

@@ -70,7 +70,7 @@ const client = createEnvClient(gatewayUrl, fetchAccessToken);
 let employmentId: string | undefined;
 try {
   if (form === 'contract_details') {
-    employmentId = await seedEmploymentForCountry(client, country);
+    ({ employmentId } = await seedEmploymentForCountry(client, country));
   }
   const response = await getV1CountriesCountryCodeForm({
     client,

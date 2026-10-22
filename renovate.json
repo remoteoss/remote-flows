@@ -13,8 +13,14 @@
   "vulnerabilityAlerts": {
     "enabled": true,
     "groupName": null,
-    "minimumReleaseAge": "0 days"
+    "minimumReleaseAge": "0 days",
+    "rangeStrategy": "bump",
+    "semanticCommitType": "fix",
+    "semanticCommitScope": "security"
   },
+
+  "branchConcurrentLimit": 20,
+  "prConcurrentLimit": 20,
 
   "semanticCommits": "enabled",
 
@@ -23,17 +29,6 @@
       "description": "Enforce 7-day wait for all non-security updates",
       "matchUpdateTypes": ["major", "minor", "patch"],
       "minimumReleaseAge": "7 days"
-    },
-    {
-      "description": "Security updates bypass wait time",
-      "matchDatasources": ["npm"],
-      "vulnerabilityAlerts": {
-        "enabled": true
-      },
-      "rangeStrategy": "bump",
-      "minimumReleaseAge": "0 days",
-      "semanticCommitType": "fix",
-      "semanticCommitScope": "security"
     },
     {
       "description": "DevDependencies always use chore (all update types)",
@@ -57,6 +52,11 @@
       "minimumReleaseAge": "7 days",
       "semanticCommitType": "chore",
       "semanticCommitScope": "deps"
+    },
+    {
+      "description": "tsdown and @tsdown/css pin each other to an exact version, so they must update in one PR",
+      "matchPackageNames": ["tsdown", "@tsdown/*"],
+      "groupName": "tsdown"
     },
     {
       "description": "Disable automatic Node.js engine updates (handle manually for major releases)",
