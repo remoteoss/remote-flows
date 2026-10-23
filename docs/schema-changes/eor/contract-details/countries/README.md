@@ -123,7 +123,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | El Salvador            | SLV  | v4               | v4              | Yes        | October 2026 |
 | Estonia                | EST  | v5               | v5              | Yes        | October 2026 |
 | Finland                | FIN  | v5               | v5              | Yes        | October 2026 |
-| France                 | FRA  | v1               | v6              | No         | -            |
+| France                 | FRA  | v1               | v2              | No         | -            |
 | Georgia                | GEO  | v1               | v6              | No         | -            |
 | Germany                | DEU  | v9               | v9              | Yes        | October 2026 |
 | Greece                 | GRC  | v1               | v6              | No         | -            |
@@ -136,7 +136,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Indonesia              | IDN  | v1               | v5              | No         | -            |
 | Ireland                | IRL  | v5               | v5              | Yes        | October 2026 |
 | Israel                 | ISR  | v8               | v8              | Yes        | October 2026 |
-| Italy                  | ITA  | v2               | v5              | No         | -            |
+| Italy                  | ITA  | v2               | v2              | Yes        | -            |
 | Jamaica                | JAM  | v5               | v5              | Yes        | October 2026 |
 | Japan                  | JPN  | v1               | v5              | No         | -            |
 | Kenya                  | KEN  | v8               | v8              | Yes        | October 2026 |
