@@ -18,7 +18,7 @@ paths:
 
 ## Minimal tests
 
-## Philosophy: Less is More ✨
+### Philosophy: Less is More ✨
 
 The most powerful tests are the simplest ones. When creating tests, embrace these principles:
 
@@ -30,24 +30,24 @@ The most powerful tests are the simplest ones. When creating tests, embrace thes
 
 Remember: **If you're tempted to write "just one more test case," that's a sign to stop and ask the user first.**
 
-## Test Writing Guidelines
+### Test Writing Guidelines
 
 When writing tests, follow these principles:
 
-### 1. Minimal Test Focus
+#### 1. Minimal Test Focus
 
 - Write tests that focus ONLY on the specific functionality being tested
 - Don't generate comprehensive test suites unless explicitly requested
 - Focus on the core functionality being tested
 
-### 2. Test Structure
+#### 2. Test Structure
 
 - Include only the essential setup needed for the specific test
 - Remove unnecessary test cases and focus on the core functionality
 - Use exact object matching in assertions (no `expect.objectContaining()`)
 - Clear mocks between tests for isolation
 
-### 3. Vitest Globals
+#### 3. Vitest Globals
 
 Vitest globals are enabled in this project (`vitest.config.ts` line 20: `globals: true`).
 
@@ -70,13 +70,13 @@ describe('example', () => {
 });
 ```
 
-### 4. Incremental Approach
+#### 4. Incremental Approach
 
 - Get one test working completely before adding more
 - Don't write multiple test cases until the first one passes
 - Ask the user if they want additional test cases after the first one works
 
-### 5. Example Pattern
+#### 5. Example Pattern
 
 ```tsx
 it('should pass jsonSchemaVersion to API call', async () => {
@@ -100,7 +100,7 @@ This rule ensures tests are focused, minimal, and follow strict equality checks.
 
 When asserting radio button values in tests, use the `assertRadioValue` helper function instead of manually querying and asserting.
 
-## Pattern to Use
+### Pattern to Use
 
 ✅ **GOOD - Use the helper:**
 
