@@ -591,8 +591,6 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
   async function fillItem(slot: number, description: string, amount: string) {
     const descriptionInput = await screen.findByLabelText(
       new RegExp(`Item ${slot} description`, 'i'),
-      undefined,
-      { timeout: 10000 },
     );
     fireEvent.change(descriptionInput, { target: { value: description } });
     fireEvent.blur(descriptionInput);
@@ -768,13 +766,10 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
-    await waitFor(
-      () => {
-        expect(onSuccess).toHaveBeenCalled();
-      },
-      { timeout: 10000 },
-    );
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalled();
+    });
 
     expect(request.body.contractor_invoice_schedules[0].items).toHaveLength(10);
-  }, 60000);
+  });
 });
