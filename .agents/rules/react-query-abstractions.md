@@ -1,7 +1,8 @@
 ---
-alwaysApply: true
 description: Use queryOptions pattern for React Query abstractions instead of custom hooks
-glob: 'src/**/*.{ts,tsx}'
+paths:
+  - 'src/**/api.ts'
+  - 'src/common/api/**'
 ---
 
 # React Query Abstractions Rule

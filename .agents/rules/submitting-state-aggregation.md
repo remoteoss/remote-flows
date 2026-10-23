@@ -1,3 +1,9 @@
+---
+description: Add every new flow mutation to isSubmitting and wrap it with mutationToPromise
+paths:
+  - 'src/flows/**/hooks.tsx'
+---
+
 # Submitting State Aggregation Pattern
 
 ## Overview
@@ -23,8 +29,9 @@ Most flow mutations are wrapped with `mutationToPromise()` for structured error 
 const createEmploymentMutation = useCreateEmployment();
 
 // 2. Wrap with mutationToPromise
-const { mutateAsyncOrThrow: createEmploymentMutationAsync } =
-  mutationToPromise(createEmploymentMutation);
+const { mutateAsyncOrThrow: createEmploymentMutationAsync } = mutationToPromise(
+  createEmploymentMutation,
+);
 
 // 3. Call in handlers
 try {
@@ -100,10 +107,12 @@ const createInvoiceScheduleMutation = useCreateInvoiceSchedule();
 const updateInvoiceScheduleMutation = useUpdateInvoiceSchedule();
 
 // Wrap with mutationToPromise for error handling
-const { mutateAsyncOrThrow: createEmploymentMutationAsync } =
-  mutationToPromise(createEmploymentMutation);
-const { mutateAsyncOrThrow: updateEmploymentMutationAsync } =
-  mutationToPromise(updateEmploymentMutation);
+const { mutateAsyncOrThrow: createEmploymentMutationAsync } = mutationToPromise(
+  createEmploymentMutation,
+);
+const { mutateAsyncOrThrow: updateEmploymentMutationAsync } = mutationToPromise(
+  updateEmploymentMutation,
+);
 const { mutateAsyncOrThrow: createContractDocumentMutationAsync } =
   mutationToPromise(createContractDocumentMutation);
 const { mutateAsyncOrThrow: signContractDocumentMutationAsync } =
@@ -132,8 +141,9 @@ return {
 
 ```typescript
 const createEmploymentMutation = useCreateEmployment();
-const { mutateAsyncOrThrow: createEmploymentMutationAsync } =
-  mutationToPromise(createEmploymentMutation);
+const { mutateAsyncOrThrow: createEmploymentMutationAsync } = mutationToPromise(
+  createEmploymentMutation,
+);
 
 // ❌ WRONG - wrapped function doesn't have isPending
 isSubmitting: createEmploymentMutationAsync.isPending;
@@ -149,10 +159,9 @@ isSubmitting: createEmploymentMutation.isPending;
 const createInvoiceScheduleMutation = useCreateInvoiceSchedule();
 
 // But forgot to add to isSubmitting
-isSubmitting:
-  createEmploymentMutation.isPending ||
+isSubmitting: createEmploymentMutation.isPending ||
   updateEmploymentMutation.isPending;
-  // ❌ Missing createInvoiceScheduleMutation.isPending
+// ❌ Missing createInvoiceScheduleMutation.isPending
 ```
 
 **Result:** Users can double-submit, causing duplicate API calls.

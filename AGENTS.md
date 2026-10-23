@@ -79,7 +79,7 @@ Flows are exposed two ways: the prebuilt `<FlowNameFlow render={...}>` component
 
 Forms use **React Hook Form + Yup + `@remoteoss/remote-json-schema-form-kit`**. Field rendering is delegated to the `FormFieldsContext` component map; consumers override per-type renderers via the `<RemoteFlows components={...}>` prop, and built-ins come from [src/lazy-default-components.ts](src/lazy-default-components.ts) (lazy-loaded to keep the bundle small). The `flowBag` exposes `handleValidation` and `parseFormValues` — both are **async** (changed in v1.0.0, see [MIGRATION.md](MIGRATION.md)).
 
-Build every schema-backed form with `useHeadlessForm` ([src/common/useHeadlessForm.ts](src/common/useHeadlessForm.ts)), never by calling `createHeadlessForm` directly. For a new schema: fetch it with React Query (`select` the raw schema), pass `schema`, the saved `initialValues` (API units, e.g. partner initial values merged with the employment's saved step data), `options` (`{ jsfModify }`) and `strategy: 'buildOnce'` to the hook, expose its `handleValidation` / `parseFormValues` on the flow bag, and call its `onValuesChange` when the form values change. Don't pass the live form values; the hook tracks them through validation. Data from an API (options, defaults, `disabled`) goes into a memoized schema before the build, never onto `form.fields` afterwards: jsf v1's `handleValidation` rebuilds the fields from the schema and silently overwrites anything written later. `strategy: 'rebuild'` only exists to migrate legacy call sites and is going away. oxlint's `no-restricted-imports` fails on any new `createHeadlessForm` import. Legacy files that still import it carry a `no-restricted-imports -- TODO` disable comment. They're debt tracked in [docs/USE_HEADLESS_FORM_ROLLOUT.md](docs/USE_HEADLESS_FORM_ROLLOUT.md). Don't copy them, and never add a new disable comment for this rule. Detailed guidance lives in [.agents/rules/json-schema-form-usage.mdc](.agents/rules/json-schema-form-usage.mdc).
+Build every schema-backed form with `useHeadlessForm` ([src/common/useHeadlessForm.ts](src/common/useHeadlessForm.ts)), never by calling `createHeadlessForm` directly; oxlint fails any new import of it. Data from an API (options, defaults, `disabled`) goes into a memoized schema before the build, never onto `form.fields` afterwards. Legacy files that still import it carry a `no-restricted-imports -- TODO` disable comment: that is debt tracked in [docs/USE_HEADLESS_FORM_ROLLOUT.md](docs/USE_HEADLESS_FORM_ROLLOUT.md), so don't copy it and never add a new one. Full guidance in [.agents/rules/json-schema-form-usage.md](.agents/rules/json-schema-form-usage.md).
 
 ### React Query patterns
 
@@ -88,30 +88,34 @@ Two patterns coexist; pick deliberately:
 - **`queryOptions` factory** (preferred when transformations vary per consumer): export `xxxOptions(client, ...)` returning `queryOptions({...})`. Consumers spread it into `useQuery`/`useSuspenseQuery`/`useQueries` and add their own `select`/`enabled`/`staleTime`. Reference: [src/common/api/countries.ts](src/common/api/countries.ts).
 - **Custom hook** (preferred when the transformation is fixed and idempotent for every consumer): wrap `useQuery` directly. Reference: [src/common/api/identity.ts](src/common/api/identity.ts).
 
-Detailed guidance lives in [.agents/rules/react-query-abstractions.mdc](.agents/rules/react-query-abstractions.mdc).
+Detailed guidance lives in [.agents/rules/react-query-abstractions.md](.agents/rules/react-query-abstractions.md).
 
 ### Mutation error handling
 
 All mutations go through `mutationToPromise()` and `mutateAsyncOrThrow` (the plain `mutateAsync` path is deprecated). When catching errors, **always** narrow with `isMutationError(error)` from [src/lib/mutations.ts](src/lib/mutations.ts) before accessing `normalizedErrors`, `fieldErrors`, `rawError`, `response`. Re-throw after handling.
 
-### Theming & CSS
+## Rules
 
-Tailwind v4 (`@tailwindcss/postcss`) + CSS variables. Public component classes are prefixed `RemoteFlows__` (e.g. `RemoteFlows__Button`, `RemoteFlows__CostCalculatorForm`); variants use `RemoteFlows_VariantName`. Theme tokens (`colors`, `spacing`, `borderRadius`, `font`) are injected as CSS custom properties by `applyTheme()` in [src/lib/applyTheme.ts](src/lib/applyTheme.ts). Class merging uses the `cn()` helper.
+Path-scoped rules live in `.agents/rules/`. Claude Code loads each one when you read or edit a matching file; with any other tool, read the rule before touching those paths.
 
-### Package exports & bundle
-
-[package.json](package.json) ships **multiple ESM entry points** — `.`, `./internals`, `./default-components`, `./flows/*`, `./styles`, `./styles.css`, `./index.css`. Tsup builds each as a separate chunk ([tsdown.config.ts](tsdown.config.ts)), `react`/`react-dom` are externals, `react-hook-form` + `@hookform/resolvers` are bundled (`noExternal`). Bundle limits in [.sizelimit.json](.sizelimit.json) are enforced in CI by `.github/workflows/size-check.yml`. The `internals` entry point has **no semver guarantees**.
+| Rule                                                                                                                                                   | Applies to                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| [json-schema-form-usage](.agents/rules/json-schema-form-usage.md)                                                                                      | `src/flows/**`, `src/common/**`, `src/components/**`               |
+| [react-query-abstractions](.agents/rules/react-query-abstractions.md)                                                                                  | `src/**/api.ts`, `src/common/api/**`                               |
+| [mutation-error-handling](.agents/rules/mutation-error-handling.md)                                                                                    | `src/flows/**`, `src/common/**`, `src/lib/mutations.ts`            |
+| [loading-state-aggregation](.agents/rules/loading-state-aggregation.md), [submitting-state-aggregation](.agents/rules/submitting-state-aggregation.md) | `src/flows/**/hooks.tsx`                                           |
+| [step-component-types](.agents/rules/step-component-types.md)                                                                                          | `src/flows/**/types.ts`, `src/flows/**/components/**`              |
+| [component-pattern](.agents/rules/component-pattern.md)                                                                                                | `src/components/**`                                                |
+| [component-documentation](.agents/rules/component-documentation.md)                                                                                    | `src/types/remoteFlows.ts`, `src/index.tsx`                        |
+| [testing](.agents/rules/testing.md)                                                                                                                    | `**/*.test.{ts,tsx}`, `src/tests/**`, `example/e2e/**`             |
+| [theming](.agents/rules/theming.md)                                                                                                                    | `src/styles/**`, `src/lib/applyTheme.ts`, `**/*.css`               |
+| [package-exports](.agents/rules/package-exports.md)                                                                                                    | `package.json`, `tsdown.config.ts`, `.sizelimit.json`, entry files |
 
 ## Conventions worth knowing
 
 - **Import order** (convention only — neither `oxlint` nor `oxfmt` enforce or auto-sort this): `react` first, then other external packages, then `@remoteoss/*` packages, then absolute (`@/`) imports, then relative (`./`, `../`) imports. Alphabetize within each group.
-- **Vitest globals are enabled** (`vitest.config.ts`). Do not import `describe`/`it`/`expect`/`vi`/`beforeEach` from `vitest` — use them as globals.
-- **Strict equality in mocks** — use `toHaveBeenCalledWith({ exact: 'shape' })`, not `expect.objectContaining()`.
-- **MSW for API mocking** in tests — never `vi.mock('@/src/client')`. Override endpoints with `server.use(http.get(...))` inside `beforeEach`; defaults live in [src/tests/handlers.ts](src/tests/handlers.ts) and are reset after each test by [src/tests/server.ts](src/tests/server.ts). This holds for headless-hook tests (`renderHook` + `useFlowName()`) exactly as much as for rendered-flow tests — [OnboardingFlowGermanyDynamicSteps.test.tsx](src/flows/Onboarding/tests/OnboardingFlowGermanyDynamicSteps.test.tsx) and [useOnboardingJsfV1ContractDetails.test.tsx](src/flows/Onboarding/tests/useOnboardingJsfV1ContractDetails.test.tsx) are the references. Mocking the generated client bypasses the real query/serialization path and silently drops any endpoint the flow starts calling (the server is set to `onUnhandledRequest: 'error'`, so MSW surfaces those instead). Reserve `vi.fn()` for consumer callbacks (`onSubmit`, `onSuccess`, `render`) and for the rare test that asserts on request _arguments_ rather than behaviour.
-- **E2E never fakes the API** — specs in `example/e2e/` run against the real sandbox. `page.route` is fine for passing requests on (`route.continue`, as `setupVercelBypass` does), but `fulfill`, `abort`, `routeFromHAR` and `routeWebSocket` are banned by oxlint's `no-restricted-properties`. If a scenario needs fake data, write it as a vitest + MSW test under `src/`, reusing [src/tests/handlers.ts](src/tests/handlers.ts) and the existing fixtures.
-- **Schema fixtures already include the response envelope** — a `contractDetailsSchemaV1<Country>` is `{ data: <schema> }`, so a handler is just `HttpResponse.json(fixture)`. Add new ones under `tests/fixtures/<form>/` and re-export from that folder's `index.ts`.
-- **Form behaviour bugs get a situation, not an integration test** — when the bug is in how a JSON Schema form behaves (conditional visibility, computed or forced values, money conversion, `initialValues`, `jsfModify`), reproduce it first as a failing entry in [jsfEngineSituations.ts](src/common/tests/jsfEngineSituations.ts), then fix it. Each situation runs against every jsf engine and `useHeadlessForm` strategy in [jsfEngineContract.test.tsx](src/common/tests/jsfEngineContract.test.tsx). Use a minimal inline schema unless the bug depends on a specific country's fixture, and name the situation after the behaviour, not the country or ticket. Integration tests are for flow wiring (steps, API calls, submit payloads). How to write one: [docs/USE_HEADLESS_FORM_ROLLOUT.md](docs/USE_HEADLESS_FORM_ROLLOUT.md#adding-a-situation).
-- **Tests must wrap React Query consumers** in a `QueryClientProvider` and `queryClient.clear()` between tests. Use the shared `queryClient` + `TestProviders` from [src/tests/testHelpers.tsx](src/tests/testHelpers.tsx) rather than constructing a local `QueryClient`.
+- **Read before you write** — search for how a sibling flow, component or hook already does it and reuse its helpers; never import a function you haven't confirmed exists.
+- **Tests** — Vitest globals are enabled (never import `describe`/`it`/`expect`/`vi` from `vitest`), mock APIs with MSW (never `vi.mock('@/src/client')`), and assert exact shapes in `toHaveBeenCalledWith`. Details in [.agents/rules/testing.md](.agents/rules/testing.md).
 - **`no-console: warn`** in oxlint — only `console.warn` / `console.error` permitted.
 - **No `any`** — `typescript/no-explicit-any: error`. Use the `$TSFixMe` type from `src/types/remoteFlows.ts` for genuine workarounds.
 - **Inline comments are opt-in, not default** — implementation, config, and test code should have none by default. Add one only for a genuinely non-obvious _why_ (a hidden constraint, a workaround for a specific bug), never to restate _what_ the code does; one short line max, never a reference to the current task/PR/fix. Full rule and examples in [.cursor/BUGBOT.md](.cursor/BUGBOT.md).
@@ -131,6 +135,6 @@ Tailwind v4 (`@tailwindcss/postcss`) + CSS variables. Public component classes a
 
 ## Agent configuration
 
-- Rules live in `.agents/rules/`, skills in `.agents/skills/<name>/`. `.claude/skills/<name>` links to each skill so Claude Code discovers it.
+- Rules live in `.agents/rules/` (linked from `.claude/rules`), skills in `.agents/skills/<name>/` (linked from `.claude/skills/<name>`), so Claude Code discovers both.
 - `CLAUDE.md` only imports this file. Keep shared guidance here and Claude-only guidance in `CLAUDE.md`.
 - `.cursor/BUGBOT.md` stays until Cursor Bugbot is switched off. The rollout is in [plans/agent-config-ssot.md](plans/agent-config-ssot.md).
