@@ -2,20 +2,20 @@
 
 ## Project rules
 
-Review every change against the repo's shared guidance. It is the source of truth, and the sections below add Bugbot-specific checks on top of it.
+Review every change against the repo's shared guidance. It is the source of truth: if anything below conflicts with it, the shared guidance wins, and the sections below only add Bugbot-specific checks.
 
-- [AGENTS.md](../AGENTS.md)
-- [json-schema-form-usage](../.agents/rules/json-schema-form-usage.md)
-- [react-query-abstractions](../.agents/rules/react-query-abstractions.md)
-- [mutation-error-handling](../.agents/rules/mutation-error-handling.md)
-- [loading-state-aggregation](../.agents/rules/loading-state-aggregation.md)
-- [submitting-state-aggregation](../.agents/rules/submitting-state-aggregation.md)
-- [step-component-types](../.agents/rules/step-component-types.md)
-- [component-pattern](../.agents/rules/component-pattern.md)
-- [component-documentation](../.agents/rules/component-documentation.md)
-- [testing](../.agents/rules/testing.md)
-- [theming](../.agents/rules/theming.md)
-- [package-exports](../.agents/rules/package-exports.md)
+- [AGENTS.md](../AGENTS.md): applies to every change
+- [json-schema-form-usage](../.agents/rules/json-schema-form-usage.md): flows, `src/common`, components
+- [react-query-abstractions](../.agents/rules/react-query-abstractions.md): `api.ts`, `src/common/api`, flow hooks
+- [mutation-error-handling](../.agents/rules/mutation-error-handling.md): flows, `src/common`, `src/lib/mutations.ts`
+- [loading-state-aggregation](../.agents/rules/loading-state-aggregation.md): flow `hooks` files
+- [submitting-state-aggregation](../.agents/rules/submitting-state-aggregation.md): flow `hooks` files
+- [step-component-types](../.agents/rules/step-component-types.md): flow `types.ts` and step components
+- [component-pattern](../.agents/rules/component-pattern.md): `src/components`
+- [component-documentation](../.agents/rules/component-documentation.md): `src/types/remoteFlows.ts`, `src/index.tsx`
+- [testing](../.agents/rules/testing.md): test files and `example/e2e`. Apply only its "Repo conventions" section, and ignore the parts addressed to whoever writes the tests, such as asking the user before adding another test.
+- [theming](../.agents/rules/theming.md): styles, CSS and theme files
+- [package-exports](../.agents/rules/package-exports.md): `package.json`, build config, entry files
 
 ## Project Architecture
 
@@ -33,7 +33,7 @@ This project is a React component library (`@remoteoss/remote-flows`) that provi
 ### TypeScript
 
 - **Strict mode enabled** - all strict TypeScript checks are enforced via `tsconfig.json`
-- **No `any` types** - except where explicitly needed with `/* oxlint-disable @typescript-eslint/no-explicit-any */`
+- **No `any` types** - `typescript/no-explicit-any` is a lint error; use `$TSFixMe` for genuine workarounds
 - **Use `$TSFixMe` type** - for temporary type workarounds (defined in `src/types/remoteFlows.ts`)
 - **Export types** - all public types must be exported for consumer TypeScript support
 - **Type imports** - use `import type` for type-only imports where possible
@@ -98,24 +98,7 @@ This project is a React component library (`@remoteoss/remote-flows`) that provi
 
 ### Import Conventions
 
-Imports should be organized in this order:
-
-1. External dependencies (React, third-party libraries)
-2. Internal imports using `@/` alias
-3. Type imports (preferably with `import type`)
-4. Relative imports (avoid if possible)
-
-**Example:**
-
-```typescript
-import { useCallback, useEffect, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-
-import { jsonSchema } from '@/src/flows/CostCalculator/jsonSchema';
-import type { CostCalculatorEstimationFormValues } from '@/src/flows/CostCalculator/types';
-
-import { buildPayload } from './utils';
-```
+Follow the import order described in [AGENTS.md](../AGENTS.md). It is a convention that lint does not enforce, so mention a deviation only when it is clearly out of step with the surrounding file.
 
 ### Security
 
@@ -255,7 +238,7 @@ Forms are central to this library - ensure consistency:
 
 - **React Hook Form** - All forms use React Hook Form for state management
 - **Yup schemas** - Validation schemas defined with Yup
-- **JSON Schema Form** - Dynamic fields use `@remoteoss/json-schema-form`
+- **JSON Schema Form** - Dynamic fields use `@remoteoss/remote-json-schema-form-kit`
 - **Field mapping** - Custom field components mapped in `src/components/form/fields/fieldsMapping.tsx`
 - **useHeadlessForm** - Schema-backed forms are built with `useHeadlessForm` (`src/common/useHeadlessForm.ts`): fetch the schema, then pass `schema`, saved `initialValues` (not the live form values), `options` and `strategy: 'buildOnce'`
 - **Validation and parsing** - Use the hook's `handleValidation` / `parseFormValues` instead of calling `parseJSFToValidate()` by hand
@@ -270,7 +253,7 @@ OpenAPI-driven development - never manually write client code:
 - **Regenerate after schema changes** - Run `pnpm run openapi-ts` after API updates
 - **Use generated types** - Import types from `src/client/types.gen.ts`
 - **Use generated SDK** - Import API methods from `src/client/sdk.gen.ts`
-- **Query hooks pattern** - Wrap generated client in custom hooks (see `src/common/api.ts`)
+- **Query abstractions** - Wrap the generated client in a `queryOptions` factory or a custom hook, chosen as described in the React Query rule (see `src/common/api/countries.ts` and `src/common/api/identity.ts`)
 - **Error response handling** - API errors follow Remote's standard format
 - **Environment config** - Use environment configs from `src/environments.ts`
 
@@ -431,9 +414,9 @@ flows/[FlowName]/
 
 ### 11. Documentation
 
-- **JSDoc for public APIs** - All exported functions, hooks, and components need JSDoc
+- **JSDoc for public APIs** - Public APIs get 1-3 lines of JSDoc written for the caller, with no internal wiring
 - **README updates** - Update main README when adding new flows or features
-- **Type documentation** - Complex types should have comments explaining usage
+- **Type documentation** - Complex public types may carry a short JSDoc for the caller; avoid other comments unless they explain a non-obvious why
 - **Changelog** - Follows conventional commits (auto-generated via `pnpm run release`)
 - **Migration guides** - Breaking changes need migration documentation
 - **Example app** - Update `example/` app when adding new features
@@ -455,7 +438,7 @@ flows/[FlowName]/
 
 ### 3. Type Safety Issues
 
-- Using `any` without `oxlint-disable` comment
+- Using `any` (lint error; `$TSFixMe` is the escape hatch for genuine workarounds)
 - Type assertions (`as`) without clear justification
 - Missing null/undefined checks for optional values
 - Incorrect generic type parameters
