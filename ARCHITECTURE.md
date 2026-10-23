@@ -1,6 +1,6 @@
 # Architecture Guide
 
-This document explains the architectural patterns, design philosophy, and decision-making framework for `@remoteoss/remote-flows`. It complements the implementation details in `CLAUDE.md` and user-facing documentation in `README.md`.
+This document explains the architectural patterns, design philosophy, and decision-making framework for `@remoteoss/remote-flows`. It complements the implementation details in `AGENTS.md` and user-facing documentation in `README.md`.
 
 **Target audience:** Maintainers, contributors, and anyone making architectural decisions.
 
@@ -1650,7 +1650,7 @@ This architecture guide captures the **patterns**, **philosophy**, and **decisio
 
 **For questions not covered here, see:**
 
-- `CLAUDE.md` - Implementation details
+- `AGENTS.md` - Implementation details
 - `README.md` - User-facing documentation
 - `MIGRATION.md` - Breaking changes and upgrade paths
 - `docs/COMPONENT_CUSTOMIZATION.md` - Field component overrides

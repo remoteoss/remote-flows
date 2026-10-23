@@ -19,7 +19,7 @@ Diff-scoped review of a remote-flows GitHub PR. Scale depth to the actual change
 
 ## Step 2: Read the rules
 
-Read [CLAUDE.md](../../../CLAUDE.md), [ARCHITECTURE.md](../../../ARCHITECTURE.md), and any `.cursor/rules/*.mdc` whose globs match the changed files. Apply them to the diff. Skip rules that don't match.
+Read [AGENTS.md](../../../AGENTS.md), [ARCHITECTURE.md](../../../ARCHITECTURE.md), and any `.agents/rules/*.mdc` whose globs match the changed files. Apply them to the diff. Skip rules that don't match.
 
 ## Step 3: Analyze the diff — code quality review
 
@@ -35,9 +35,9 @@ Read each changed file in full, not just the diff hunks — via `Read` when the 
 **remote-flows conventions**
 
 - A flow under `src/flows/<FlowName>/` importing from a sibling flow (flows must be self-contained)
-- Changes to `src/index.tsx` exports, prop signatures, or hook return shapes — flag as **breaking** unless purely additive (public API is contract-bound; see CLAUDE.md)
+- Changes to `src/index.tsx` exports, prop signatures, or hook return shapes — flag as **breaking** unless purely additive (public API is contract-bound; see AGENTS.md)
 - Mutation error handling that skips `mutationToPromise`/`mutateAsyncOrThrow`, or accesses `normalizedErrors`/`fieldErrors`/`rawError`/`response` without narrowing via `isMutationError(error)` first, or that swallows the error instead of re-throwing
-- New React Query usage that doesn't fit either the `queryOptions` factory or custom-hook pattern (see `.cursor/rules/react-query-abstractions.mdc`)
+- New React Query usage that doesn't fit either the `queryOptions` factory or custom-hook pattern (see `.agents/rules/react-query-abstractions.mdc`)
 - Hand-edits to `src/client/*.gen.ts` (must be regenerated via `pnpm run openapi-ts`, never hand-edited)
 - HTML from API responses rendered without `sanitizeHtml()` (or DOMPurify)
 - `any` types outside genuine workarounds using `$TSFixMe`
