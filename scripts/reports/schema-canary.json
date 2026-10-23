@@ -255,7 +255,8 @@
       "version": 8,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "PATCH /v1/employments/{id} -> \"Internal Server Error\""
     },
     {
       "country": "CHL",
