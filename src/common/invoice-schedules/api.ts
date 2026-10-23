@@ -23,22 +23,7 @@ import {
 } from '@/src/common/invoice-schedules/utils';
 import { JSFModify } from '@/src/flows/types';
 
-/**
- * Get the create invoice schedule form, with currency options from the contractor
- * currencies endpoint. React Query caches the result, so multiple calls share the same data.
- *
- * The form is built once through `useHeadlessForm`; validation resolves the conditionals.
- */
-export const useGetCreateInvoiceScheduleSchema = ({
-  enabled,
-  employmentId,
-  jsfModify,
-  includeOneTime,
-  isContractorOfRecord,
-  includeCustomDays,
-  includeBackdateTip,
-  initialValues,
-}: {
+type UseGetCreateInvoiceScheduleSchemaParams = {
   enabled?: boolean;
   employmentId?: string;
   jsfModify?: JSFModify;
@@ -65,7 +50,24 @@ export const useGetCreateInvoiceScheduleSchema = ({
    * rows a saved schedule needs are visible before the step mounts.
    */
   initialValues?: Record<string, unknown>;
-}) => {
+};
+
+/**
+ * Get the create invoice schedule form, with currency options from the contractor
+ * currencies endpoint. React Query caches the result, so multiple calls share the same data.
+ *
+ * The form is built once through `useHeadlessForm`; validation resolves the conditionals.
+ */
+export const useGetCreateInvoiceScheduleSchema = ({
+  enabled,
+  employmentId,
+  jsfModify,
+  includeOneTime,
+  isContractorOfRecord,
+  includeCustomDays,
+  includeBackdateTip,
+  initialValues,
+}: UseGetCreateInvoiceScheduleSchemaParams) => {
   const { data: currencies, isLoading } = useContractorCurrencies({
     employmentId: employmentId as string,
     options: {
