@@ -150,6 +150,18 @@ function recordKept(employment: KeptEmployment, keepFile: string) {
   writeFileSync(keepFile, `${JSON.stringify(keptSoFar, null, 2)}\n`);
 }
 
+function submitOptionsFor(
+  country: string,
+  strategy: SchemaCanaryRow['strategy'],
+) {
+  return {
+    strategy,
+    seed: seedFor(country),
+    seedValues: CONTRACT_DETAILS_SEEDS[country],
+    knownUnsavedFields: KNOWN_UNSAVED_FIELDS[country],
+  };
+}
+
 async function checkLatestSubmit(
   client: Client,
   country: string,
@@ -177,12 +189,7 @@ async function checkLatestSubmit(
       employmentId,
       schema,
       'latest',
-      {
-        strategy,
-        seed: seedFor(country),
-        seedValues: CONTRACT_DETAILS_SEEDS[country],
-        knownUnsavedFields: KNOWN_UNSAVED_FIELDS[country],
-      },
+      submitOptionsFor(country, strategy),
     );
     console.log(
       `[${country}] ${check}@latest -> ${result.ok ? 'pass' : `fail: ${result.error}`}`,
@@ -297,12 +304,7 @@ async function checkCountry(
             employmentId,
             schema,
             resolvePinnedVersion(country, DEFAULT_VERSION),
-            {
-              strategy,
-              seed: seedFor(country),
-              seedValues: CONTRACT_DETAILS_SEEDS[country],
-              knownUnsavedFields: KNOWN_UNSAVED_FIELDS[country],
-            },
+            submitOptionsFor(country, strategy),
           );
           if (submitted.ok) {
             kept = {
