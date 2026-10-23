@@ -318,6 +318,13 @@ export async function fillCreateInvoiceSchedule(
 
   if (newValues?.periodicity) {
     await fillSelect('periodicity', newValues?.periodicity);
+    fireEvent.click(
+      screen.getByRole('radio', {
+        name: newValues?.nrOccurrences
+          ? 'End after a number of occurrences'
+          : 'No end date',
+      }),
+    );
   }
 
   if (newValues?.startDate) {
@@ -349,7 +356,7 @@ export async function fillCreateInvoiceSchedule(
   }
 
   if (newValues?.nrOccurrences) {
-    fireEvent.change(screen.getByLabelText(/Number of occurrences/i), {
+    fireEvent.change(screen.getByLabelText(/^Number of occurrences$/i), {
       target: { value: newValues?.nrOccurrences },
     });
   }
