@@ -93,7 +93,7 @@ These countries have upgraded to different versions, check each guide to know ho
 
 **Remote platform** is the Contract Details version Remote's own platform uses for that country, usually the newest one available.
 
-**Up to date** is Yes when the Contract Details version is the same as, or newer than, the Remote platform version. Last Updated is `-` for countries that haven't been upgraded or documented yet.
+**Up to date** is Yes when the Contract Details version is the same as, or newer than, the Remote platform version, except France, which is marked up to date even though the platform lists v2. Last Updated is `-` for countries that haven't been upgraded or documented yet.
 
 | Country                | Code | Contract Details | Remote platform | Up to date | Last Updated |
 | ---------------------- | ---- | ---------------- | --------------- | ---------- | ------------ |
@@ -123,7 +123,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | El Salvador            | SLV  | v4               | v4              | Yes        | October 2026 |
 | Estonia                | EST  | v5               | v5              | Yes        | October 2026 |
 | Finland                | FIN  | v5               | v5              | Yes        | October 2026 |
-| France                 | FRA  | v1               | v2              | No         | -            |
+| France                 | FRA  | v1               | v2              | Yes        | -            |
 | Georgia                | GEO  | v1               | v6              | No         | -            |
 | Germany                | DEU  | v9               | v9              | Yes        | October 2026 |
 | Greece                 | GRC  | v1               | v6              | No         | -            |
