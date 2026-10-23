@@ -397,16 +397,20 @@ const onboardingOptions = (countryCode?: string) => {
   if (!countryCode || !contractDetailsVersion) {
     return ONBOARDING_OPTIONS as $TSFixMe;
   }
+  const version =
+    contractDetailsVersion === 'latest'
+      ? 'latest'
+      : Number(contractDetailsVersion);
+  if (version !== 'latest' && !Number.isInteger(version)) {
+    throw new Error(
+      `contractDetailsVersion must be "latest" or a whole number, got "${contractDetailsVersion}"`,
+    );
+  }
   return {
     ...ONBOARDING_OPTIONS,
     jsonSchemaVersionByCountry: {
       ...ONBOARDING_OPTIONS.jsonSchemaVersionByCountry,
-      [countryCode]: {
-        contract_details:
-          contractDetailsVersion === 'latest'
-            ? 'latest'
-            : Number(contractDetailsVersion),
-      },
+      [countryCode]: { contract_details: version },
     },
   } as $TSFixMe;
 };
