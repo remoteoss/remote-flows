@@ -2,7 +2,7 @@
 
 This file gives coding agents guidance for working in this repository.
 
-> **See also:** [ARCHITECTURE.md](ARCHITECTURE.md) for architectural patterns, design philosophy, and decision-making framework.
+> **See also:** `ARCHITECTURE.md` for architectural patterns, design philosophy, and decision-making framework.
 
 ## What this is
 
@@ -77,9 +77,9 @@ Flows are exposed two ways: the prebuilt `<FlowNameFlow render={...}>` component
 
 ### Forms
 
-Forms use **React Hook Form + Yup + `@remoteoss/remote-json-schema-form-kit`**. Field rendering is delegated to the `FormFieldsContext` component map; consumers override per-type renderers via the `<RemoteFlows components={...}>` prop, and built-ins come from [src/lazy-default-components.ts](src/lazy-default-components.ts) (lazy-loaded to keep the bundle small). The `flowBag` exposes `handleValidation` and `parseFormValues` — both are **async** (changed in v1.0.0, see [MIGRATION.md](MIGRATION.md)).
+Forms use **React Hook Form + Yup + `@remoteoss/remote-json-schema-form-kit`**. Field rendering is delegated to the `FormFieldsContext` component map; consumers override per-type renderers via the `<RemoteFlows components={...}>` prop, and built-ins come from [src/lazy-default-components.ts](src/lazy-default-components.ts) (lazy-loaded to keep the bundle small). The `flowBag` exposes `handleValidation` and `parseFormValues` — both are **async** (changed in v1.0.0, see `MIGRATION.md`).
 
-Build every schema-backed form with `useHeadlessForm` ([src/common/useHeadlessForm.ts](src/common/useHeadlessForm.ts)), never by calling `createHeadlessForm` directly; oxlint fails any new import of it. Pass `strategy: 'buildOnce'` and the saved `initialValues` in API units (not the live form values), and call the hook's `onValuesChange` when form values change. Data from an API (options, defaults, `disabled`) goes into a memoized schema before the build, never onto `form.fields` afterwards. Legacy files that still import it carry a `no-restricted-imports -- TODO` disable comment: that is debt tracked in [docs/USE_HEADLESS_FORM_ROLLOUT.md](docs/USE_HEADLESS_FORM_ROLLOUT.md), so don't copy it and never add a new one. Full guidance in [.agents/rules/json-schema-form-usage.md](.agents/rules/json-schema-form-usage.md).
+Build every schema-backed form with `useHeadlessForm` ([src/common/useHeadlessForm.ts](src/common/useHeadlessForm.ts)), never by calling `createHeadlessForm` directly; oxlint fails any new import of it. Pass `strategy: 'buildOnce'` and the saved `initialValues` in API units (not the live form values), and call the hook's `onValuesChange` when form values change. Data from an API (options, defaults, `disabled`) goes into a memoized schema before the build, never onto `form.fields` afterwards. Legacy files that still import it carry a `no-restricted-imports -- TODO` disable comment: that is debt tracked in `docs/USE_HEADLESS_FORM_ROLLOUT.md`, so don't copy it and never add a new one. Full guidance in [.agents/rules/json-schema-form-usage.md](.agents/rules/json-schema-form-usage.md).
 
 ### React Query patterns
 
@@ -118,14 +118,14 @@ Path-scoped rules live in `.agents/rules/`. Claude Code loads each one when you 
 - **Tests** — Vitest globals are enabled (never import `describe`/`it`/`expect`/`vi` from `vitest`), mock APIs with MSW (never `vi.mock('@/src/client')`), and assert exact shapes in `toHaveBeenCalledWith`. Details in [.agents/rules/testing.md](.agents/rules/testing.md).
 - **`no-console: warn`** in oxlint — only `console.warn` / `console.error` permitted.
 - **No `any`** — `typescript/no-explicit-any: error`. Use the `$TSFixMe` type from `src/types/remoteFlows.ts` for genuine workarounds.
-- **Inline comments are opt-in, not default** — implementation, config, and test code should have none by default. Add one only for a genuinely non-obvious _why_ (a hidden constraint, a workaround for a specific bug), never to restate _what_ the code does; one short line max, never a reference to the current task/PR/fix. Full rule and examples in [.cursor/BUGBOT.md](.cursor/BUGBOT.md).
+- **Inline comments are opt-in, not default** — implementation, config, and test code should have none by default. Add one only for a genuinely non-obvious _why_ (a hidden constraint, a workaround for a specific bug), never to restate _what_ the code does; one short line max, never a reference to the current task/PR/fix. Full rule and examples in `.cursor/BUGBOT.md`.
 - **A comment that does get written should read like plain English, not shorthand** — explain _why_ in ordinary words a newcomer could follow in one pass, not jargon-dense shorthand. When a human explicitly asks for a comment, the one-line cap above doesn't apply — take as many plain sentences as it needs to be clear. When you add one on your own initiative for the non-obvious-why case, keep it to that one line, and don't add one at all if the code is actually simple.
 - **JSDoc is for the caller who actually uses the symbol** — 1–3 lines by default: what it does and anything the caller has to do differently because of it. Leave out internal wiring (which hidden fields, hooks or context are involved) and edge cases that only the prebuilt components handle. A member partners never call directly (the prebuilt form calls it) gets one line. The public API being contract-bound calls for careful API design, not longer docs.
 - **Path alias `@/*` maps to repo root** (`tsconfig.json` paths); prefer `@/src/...` imports over deep relative ones.
 - **HTML from API responses is unsafe** — sanitize with `sanitizeHtml()` from `src/lib/utils.ts` (or DOMPurify) before rendering. The consumer-supplied `transformHtmlToComponents` receives **unsanitized** HTML; that's the consumer's responsibility per the README.
-- **Conventional commits** drive the automated release (`pnpm run release` → `scripts/release.ts`). `feat:` → minor, `fix:` → patch, `BREAKING CHANGE:` footer → major. Hotfix releases go through `pnpm run release:fix` from a version tag, or `npm run release:fix` on a tag from before the move to pnpm (see [DEVELOPMENT.md](DEVELOPMENT.md)).
+- **Conventional commits** drive the automated release (`pnpm run release` → `scripts/release.ts`). `feat:` → minor, `fix:` → patch, `BREAKING CHANGE:` footer → major. Hotfix releases go through `pnpm run release:fix` from a version tag, or `npm run release:fix` on a tag from before the move to pnpm (see `DEVELOPMENT.md`).
 - **CHANGELOG.md and `package.json` version** are updated by the release scripts — do not bump them by hand on feature branches.
-- **PR descriptions follow [.github/pull_request_template.md](.github/pull_request_template.md)** (Summary, Why, What changed, Screenshots, Related Resources, Testing). `gh pr create` only picks it up as the default body without `--body`/`--body-file`/`--fill`; when scripting a PR body, read the template and fill it in rather than writing free-form text.
+- **PR descriptions follow `.github/pull_request_template.md`** (Summary, Why, What changed, Screenshots, Related Resources, Testing). `gh pr create` only picks it up as the default body without `--body`/`--body-file`/`--fill`; when scripting a PR body, read the template and fill it in rather than writing free-form text.
 
 ## Things that look broken but aren't
 
@@ -137,4 +137,4 @@ Path-scoped rules live in `.agents/rules/`. Claude Code loads each one when you 
 
 - Rules live in `.agents/rules/` (linked from `.claude/rules`), skills in `.agents/skills/<name>/` (linked from `.claude/skills/<name>`), so Claude Code discovers both.
 - `CLAUDE.md` only imports this file. Keep shared guidance here and Claude-only guidance in `CLAUDE.md`.
-- `.cursor/BUGBOT.md` stays until Cursor Bugbot is switched off. The rollout is in [plans/agent-config-ssot.md](plans/agent-config-ssot.md).
+- `.cursor/BUGBOT.md` stays until Cursor Bugbot is switched off. The rollout is in `plans/agent-config-ssot.md`.
