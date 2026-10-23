@@ -238,11 +238,12 @@ async function checkLatestSubmit(
   }
 }
 
-async function checkCountry(
+async function checkSharedEmployment(
   client: Client,
   country: string,
+  strategy: SchemaCanaryRow['strategy'],
+  checks: SchemaCheckType[],
 ): Promise<CountryResult> {
-  const strategy = getContractDetailsStrategy(country);
   const rows: SchemaCanaryRow[] = [];
   let kept: KeptEmployment | undefined;
 
@@ -257,7 +258,7 @@ async function checkCountry(
   } catch (error) {
     const reason = `employment seeding failed: ${error instanceof Error ? error.message : String(error)}`;
     console.log(`[${country}] ${reason}`);
-    for (const check of CHECK_TYPES) {
+    for (const check of checks) {
       const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
       rows.push({
         country,
@@ -287,9 +288,7 @@ async function checkCountry(
 
   try {
     let pinnedBuildFailed = false;
-    for (const check of CHECK_TYPES.filter(
-      (check) => check !== 'latest-submit',
-    )) {
+    for (const check of checks) {
       const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
       const version = versionFor(country, check);
 
@@ -389,11 +388,23 @@ async function checkCountry(
     }
   }
 
-  if (CHECK_TYPES.includes('latest-submit')) {
-    rows.push(await checkLatestSubmit(client, country, strategy));
-  }
-
   return { rows, kept };
+}
+
+async function checkCountry(
+  client: Client,
+  country: string,
+): Promise<CountryResult> {
+  const strategy = getContractDetailsStrategy(country);
+  const sharedChecks = CHECK_TYPES.filter((check) => check !== 'latest-submit');
+  const result =
+    sharedChecks.length > 0
+      ? await checkSharedEmployment(client, country, strategy, sharedChecks)
+      : { rows: [] };
+  if (CHECK_TYPES.includes('latest-submit')) {
+    result.rows.push(await checkLatestSubmit(client, country, strategy));
+  }
+  return result;
 }
 
 async function runLive(): Promise<CountryResult[]> {
