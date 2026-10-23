@@ -19,7 +19,7 @@ Schema versions for employee onboarding in Mauritius.
 - `available_pto` is now read-only and locked to the legal minimum: 22 days for full-time, otherwise 22 / 5 times the number of work days, rounded
 - `contract_end_date` must be on or after the provisional start date
 - On fixed-term contracts, `notice_period` (between 1 and 6) and `probation_length` (between 1 and 12) can't exceed the contract length in months, counted from the provisional start date
-- When `has_probation_period` is waived, `probation_length` is fixed to `0` and the "waiving the probation period is discouraged" warning moves to `probation_length`
+- The "waiving the probation period is discouraged" warning now shows on `probation_length` when it is `0`, instead of on `has_probation_period`
 
 Custom UIs must render `work_hours_per_week` and `available_pto` as read-only and send the computed values, and keep the notice period and probation length within the contract length.
 
