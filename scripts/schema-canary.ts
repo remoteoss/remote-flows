@@ -175,8 +175,13 @@ async function checkLatestSubmit(
   }
 
   let employmentId: string | undefined;
+  let keep = false;
   try {
-    ({ employmentId } = await seedEmploymentForCountry(client, country));
+    let companyId: string;
+    ({ employmentId, companyId } = await seedEmploymentForCountry(
+      client,
+      country,
+    ));
     console.log(`[${country}] seeded latest-submit employment ${employmentId}`);
     const schema = await fetchLiveSchema(
       client,
@@ -194,9 +199,26 @@ async function checkLatestSubmit(
     console.log(
       `[${country}] ${check}@latest -> ${result.ok ? 'pass' : `fail: ${result.error}`}`,
     );
-    return result.ok
-      ? { ...row, outcome: 'pass' }
-      : { ...row, outcome: 'fail', error: result.error };
+    if (!result.ok) {
+      return { ...row, outcome: 'fail', error: result.error };
+    }
+    if (KEEP_SUBMITTED) {
+      recordKept(
+        {
+          country,
+          employmentId,
+          companyId,
+          version: 'latest',
+          strategy,
+          sent: result.sent,
+          knownUnsavedFields: Object.keys(KNOWN_UNSAVED_FIELDS[country] ?? {}),
+        },
+        KEEP_SUBMITTED,
+      );
+      keep = true;
+      console.log(`[${country}] kept latest-submit employment ${employmentId}`);
+    }
+    return { ...row, outcome: 'pass' };
   } catch (error) {
     return {
       ...row,
@@ -204,7 +226,7 @@ async function checkLatestSubmit(
       error: error instanceof Error ? error.message : String(error),
     };
   } finally {
-    if (employmentId) {
+    if (employmentId && !keep) {
       try {
         await archiveEmployment(client, employmentId);
       } catch (error) {

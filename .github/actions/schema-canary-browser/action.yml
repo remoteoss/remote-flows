@@ -82,12 +82,41 @@ runs:
       env:
         PORT: '3001'
         SCHEMA_CANARY_EMPLOYMENTS: ${{ inputs.employments-file }}
-      run: pnpm exec playwright test -c playwright.canary.config.ts
+      run: pnpm exec playwright test -c playwright.canary.config.ts --grep-invert @latest --pass-with-no-tests
+
+    - name: Re-submit contract details in the browser on the latest schema
+      id: latest
+      if: ${{ !cancelled() }}
+      continue-on-error: true
+      shell: bash
+      working-directory: ./example
+      env:
+        PORT: '3001'
+        SCHEMA_CANARY_EMPLOYMENTS: ${{ inputs.employments-file }}
+        PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-latest
+        SCHEMA_CANARY_WARN_ONLY: 'true'
+      run: pnpm exec playwright test -c playwright.canary.config.ts --grep @latest --pass-with-no-tests
+
+    - name: Warn about latest browser failures
+      if: ${{ !cancelled() && steps.latest.outcome == 'failure' }}
+      shell: bash
+      run: |
+        echo "::warning title=Schema canary (latest, browser)::Re-submitting contract details on the latest schema failed in the browser. This does not fail the job. The latest Playwright report is attached to the run."
+        echo "The browser stage failed on the latest schema (warning only). See the \`schema-canary-browser-report-latest\` artifact." >> "$GITHUB_STEP_SUMMARY"
 
     - name: Upload the Playwright report
       if: ${{ !cancelled() }}
-      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: schema-canary-browser-report
         path: example/playwright-report/
         retention-days: 14
+
+    - name: Upload the latest Playwright report
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: schema-canary-browser-report-latest
+        path: example/playwright-report-latest/
+        retention-days: 14
+        if-no-files-found: ignore
