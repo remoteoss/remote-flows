@@ -301,7 +301,7 @@ importers:
         version: 14.6.8(@testing-library/dom@10.4.2)
       '@tsdown/css':
         specifier: 0.23.0
-        version: 0.23.0(jiti@2.7.0)(postcss-import@17.0.0(postcss@8.5.23))(postcss@8.5.23)(tsdown@0.23.0)(tsx@4.23.15)
+        version: 0.23.0(jiti@2.7.0)(postcss-import@17.0.1(postcss@8.5.23))(postcss@8.5.23)(tsdown@0.23.0)(tsx@4.23.15)
       '@types/jsdom':
         specifier: 30.0.0
         version: 30.0.0
@@ -369,8 +369,8 @@ importers:
         specifier: 7.0.2004
         version: 7.0.2004
       postcss-import:
-        specifier: 17.0.0
-        version: 17.0.0(postcss@8.5.23)
+        specifier: 17.0.1
+        version: 17.0.1(postcss@8.5.23)
       randexp:
         specifier: 0.5.3
         version: 0.5.3
@@ -3146,8 +3146,8 @@ packages:
   pkg-types@2.3.3:
     resolution: {integrity: sha512-j/lCFdcppV0JxWpCEITdbDltBxPP6cHT+yNJ6Go2OgoSA9518X847X9z0p6LtA4Nc16+eQzCZjRrWanTGvHJ5w==}
 
-  postcss-import@17.0.0:
-    resolution: {integrity: sha512-qzVMJhcq39KweT7Fp0HcjE5YxL5yI854Q3CtufxDuZKO9HLQUp2rptB9+U0MIj3pT1ZEVXoqnpeC1mSkfYuz4Q==}
+  postcss-import@17.0.1:
+    resolution: {integrity: sha512-lthLZRa+sMc/xo+lG7TMUvOviwP9ngR0VULnvfXTyOE3JIc0mFrbjcubI6Jx52X+B3IKt9yfp6wwVWE768JezA==}
     engines: {node: '>=22.0.0'}
     peerDependencies:
       postcss: ^8.0.0
@@ -4935,7 +4935,7 @@ snapshots:
     dependencies:
       '@testing-library/dom': 10.4.2
 
-  '@tsdown/css@0.23.0(jiti@2.7.0)(postcss-import@17.0.0(postcss@8.5.23))(postcss@8.5.23)(tsdown@0.23.0)(tsx@4.23.15)':
+  '@tsdown/css@0.23.0(jiti@2.7.0)(postcss-import@17.0.1(postcss@8.5.23))(postcss@8.5.23)(tsdown@0.23.0)(tsx@4.23.15)':
     dependencies:
       lightningcss: 1.33.0
       postcss-load-config: 6.0.1(jiti@2.7.0)(postcss@8.5.23)(tsx@4.23.15)
@@ -4943,7 +4943,7 @@ snapshots:
       tsdown: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
     optionalDependencies:
       postcss: 8.5.23
-      postcss-import: 17.0.0(postcss@8.5.23)
+      postcss-import: 17.0.1(postcss@8.5.23)
     transitivePeerDependencies:
       - jiti
       - tsx
@@ -5977,7 +5977,7 @@ snapshots:
       exsolve: 1.1.1
       pathe: 2.0.3
 
-  postcss-import@17.0.0(postcss@8.5.23):
+  postcss-import@17.0.1(postcss@8.5.23):
     dependencies:
       postcss: 8.5.23
       postcss-value-parser: 4.2.0
@@ -6279,7 +6279,7 @@ snapshots:
       verkit: 0.4.0
     optionalDependencies:
       '@arethetypeswrong/core': 0.18.5
-      '@tsdown/css': 0.23.0(jiti@2.7.0)(postcss-import@17.0.0(postcss@8.5.23))(postcss@8.5.23)(tsdown@0.23.0)(tsx@4.23.15)
+      '@tsdown/css': 0.23.0(jiti@2.7.0)(postcss-import@17.0.1(postcss@8.5.23))(postcss@8.5.23)(tsdown@0.23.0)(tsx@4.23.15)
       tsx: 4.23.15
       typescript: 7.0.2
       unrun: 0.3.1
