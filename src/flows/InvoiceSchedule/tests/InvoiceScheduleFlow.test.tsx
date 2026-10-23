@@ -68,6 +68,10 @@ async function fillScheduleDetails({
   });
 }
 
+function chooseNoEndDate() {
+  fireEvent.click(screen.getByRole('radio', { name: 'No end date' }));
+}
+
 describe('InvoiceScheduleFlow', () => {
   beforeEach(() => {
     queryClient.clear();
@@ -337,6 +341,7 @@ describe('InvoiceScheduleFlow', () => {
 
     await fillScheduleDetails();
     await fillSelect('periodicity', 'weekly');
+    chooseNoEndDate();
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
@@ -350,6 +355,90 @@ describe('InvoiceScheduleFlow', () => {
     expect(requestBody.contractor_invoice_schedules[0]).not.toHaveProperty(
       'nr_occurrences',
     );
+  });
+
+  it('sends the occurrence count when the schedule ends after a number of invoices', async () => {
+    let requestBody: $TSFixMe;
+    server.use(
+      http.post('*/v1/contractor-invoice-schedules', async ({ request }) => {
+        requestBody = await request.json();
+        return HttpResponse.json({
+          data: { successes: [{ id: 'schedule-1' }], failures: [] },
+        });
+      }),
+    );
+
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'monthly');
+
+    expect(screen.queryByLabelText(/^Number of occurrences$/i)).toBeNull();
+
+    fireEvent.click(
+      screen.getByRole('radio', { name: 'End after a number of occurrences' }),
+    );
+    fireEvent.change(await screen.findByLabelText(/^Number of occurrences$/i), {
+      target: { value: '6' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalled();
+    });
+
+    expect(requestBody.contractor_invoice_schedules[0].nr_occurrences).toBe(6);
+    expect(requestBody.contractor_invoice_schedules[0]).not.toHaveProperty(
+      'end_type',
+    );
+  });
+
+  it('drops the occurrence count when the user goes back to "No end date"', async () => {
+    let requestBody: $TSFixMe;
+    server.use(
+      http.post('*/v1/contractor-invoice-schedules', async ({ request }) => {
+        requestBody = await request.json();
+        return HttpResponse.json({
+          data: { successes: [{ id: 'schedule-1' }], failures: [] },
+        });
+      }),
+    );
+
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'monthly');
+
+    fireEvent.click(
+      screen.getByRole('radio', { name: 'End after a number of occurrences' }),
+    );
+    fireEvent.change(await screen.findByLabelText(/^Number of occurrences$/i), {
+      target: { value: '6' },
+    });
+    chooseNoEndDate();
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalled();
+    });
+
+    expect(requestBody.contractor_invoice_schedules[0]).not.toHaveProperty(
+      'nr_occurrences',
+    );
+  });
+
+  it('blocks a recurring schedule until an end date is chosen', async () => {
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'monthly');
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    expect(await screen.findByText(/Required field/i)).toBeInTheDocument();
+    expect(onSuccess).not.toHaveBeenCalled();
   });
 
   it('reveals the second item row once the first has a description and an amount', async () => {
@@ -476,6 +565,7 @@ describe('InvoiceScheduleFlow', () => {
 
     await fillScheduleDetails();
     await fillSelect('periodicity', 'monthly');
+    chooseNoEndDate();
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
@@ -633,6 +723,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
 
     await fillScheduleDetails();
     await fillSelect('periodicity', 'monthly');
+    chooseNoEndDate();
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
     await waitFor(() => {
@@ -653,6 +744,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
 
     await fillScheduleDetails();
     await fillSelect('periodicity', 'semi_monthly');
+    chooseNoEndDate();
 
     fireEvent.change(await screen.findByLabelText(/First invoice day/i), {
       target: { value: '1' },
@@ -682,6 +774,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     await fillItem(2, 'Hosting', '75');
     await fillItem(3, 'Support', '10');
     await fillSelect('periodicity', 'monthly');
+    chooseNoEndDate();
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
@@ -710,6 +803,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     });
     fireEvent.blur(screen.getByLabelText(/Item 2 description/i));
     await fillSelect('periodicity', 'monthly');
+    chooseNoEndDate();
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
@@ -735,6 +829,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     await fillItem(2, 'Hosting', '19.99');
     await fillItem(3, 'Support', '0.07');
     await fillSelect('periodicity', 'monthly');
+    chooseNoEndDate();
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
@@ -759,6 +854,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
       await fillItem(slot, `Item ${slot}`, `${slot}`);
     }
     await fillSelect('periodicity', 'monthly');
+    chooseNoEndDate();
 
     expect(
       screen.queryByLabelText(/Item 11 description/i),

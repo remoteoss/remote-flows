@@ -168,16 +168,16 @@ Both surfaces expose the same bag:
 
 The form submits to `POST /v1/contractor-invoice-schedules`.
 
-| Field            | API field        | Notes                                                                     |
-| ---------------- | ---------------- | ------------------------------------------------------------------------- |
-| —                | `employment_id`  | Taken from the `employmentId` prop, not collected by the form.            |
-| Invoice currency | `currency`       | Restricted to the contractor's supported currencies.                      |
-| Frequency        | `periodicity`    | See the one-off note below.                                               |
-| Start date       | `start_date`     | Date the first invoice is generated.                                      |
-| Items 1–10       | `items`          | Slot _n+1_ is revealed once slot _n_ is filled. The API accepts up to 10. |
-| Invoice number   | `number`         | Optional — omit it and Remote numbers the invoice for you.                |
-| Additional notes | `note`           | Optional.                                                                 |
-| Occurrences      | `nr_occurrences` | Optional; blank repeats indefinitely. Hidden for a one-off.               |
+| Field            | API field        | Notes                                                                                                                                              |
+| ---------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| —                | `employment_id`  | Taken from the `employmentId` prop, not collected by the form.                                                                                     |
+| Invoice currency | `currency`       | Restricted to the contractor's supported currencies.                                                                                               |
+| Frequency        | `periodicity`    | See the one-off note below.                                                                                                                        |
+| Start date       | `start_date`     | Date the first invoice is generated.                                                                                                               |
+| Items 1–10       | `items`          | Slot _n+1_ is revealed once slot _n_ is filled. The API accepts up to 10.                                                                          |
+| Invoice number   | `number`         | Optional — omit it and Remote numbers the invoice for you.                                                                                         |
+| Additional notes | `note`           | Optional.                                                                                                                                          |
+| End date         | `nr_occurrences` | Required for a recurring schedule: "No end date" omits it, "End after a number of occurrences" sends the count (at least 1). Hidden for a one-off. |
 
 **One-off schedules.** Choosing "One time" submits `periodicity: 'monthly'` with
 `nr_occurrences: 1`. The API has no `one_time` periodicity for scheduled invoices: recurrence
