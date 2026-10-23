@@ -32,7 +32,6 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Australia (AUS)](./AUS.md)
 - [Austria (AUT)](./AUT.md)
 - [Bangladesh (BGD)](./BGD.md)
-- [Belarus (BLR)](./BLR.md)
 - [Belgium (BEL)](./BEL.md)
 - [Brazil (BRA)](./BRA.md)
 - [Bulgaria (BGR)](./BGR.md)
@@ -103,7 +102,6 @@ These countries have upgraded to different versions, check each guide to know ho
 | Australia            | AUS  | v6               | v6              | Yes        | October 2026 |
 | Austria              | AUT  | v8               | v8              | Yes        | October 2026 |
 | Bangladesh           | BGD  | v8               | v8              | Yes        | October 2026 |
-| Belarus              | BLR  | v2               | n/a             | n/a        | March 2026   |
 | Belgium              | BEL  | v8               | v8              | Yes        | October 2026 |
 | Brazil               | BRA  | v5               | v5              | Yes        | October 2026 |
 | Bulgaria             | BGR  | v8               | v8              | Yes        | October 2026 |
