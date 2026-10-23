@@ -12,7 +12,7 @@ import {
   InvoiceSchedulePayload,
   UseInvoiceScheduleOptions,
 } from '@/src/flows/InvoiceSchedule/types';
-import { clearBase64Data } from '@/src/lib/utils';
+import { clearBase64Data, createStructuredError } from '@/src/lib/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { Fields } from '@remoteoss/remote-json-schema-form-kit';
@@ -129,10 +129,16 @@ export const useInvoiceSchedule = ({
       assertEmploymentId();
       const parsed = await parseValues(values);
 
-      return mutateAsyncOrThrow({
+      const response = await mutateAsyncOrThrow({
         employmentId,
         values: parsed,
       });
+
+      if (response?.data?.failures?.length) {
+        throw createStructuredError('Failed to create invoice schedule');
+      }
+
+      return response;
     },
     [assertEmploymentId, employmentId, mutateAsyncOrThrow, parseValues],
   );
