@@ -119,8 +119,6 @@ function semiMonthlyConditional() {
   };
 }
 
-// A one-off is `nr_occurrences: 1` on the API and the payload builder pins it, so the end
-// date choice only exists for a recurring schedule, where it is mandatory.
 function endDateConditionals() {
   return [
     {
