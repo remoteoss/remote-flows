@@ -17,6 +17,7 @@ export {
 export {
   buildCustomDays,
   buildInvoiceItems,
+  buildInvoiceScheduleFormValues,
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
   buildRecurrence,

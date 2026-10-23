@@ -118,6 +118,7 @@ import { buildPayload } from './utils';
 - **Test validation** - Form validation errors and field-level errors
 - **Fixtures per flow** - Organize test data in `src/flows/*/tests/fixtures.ts`
 - **Coverage required** - Run `pnpm run test:coverage` to check coverage
+- **No timeouts or fixed sleeps** - Flag an added line in a `src/**/*.test.{ts,tsx}` file that sets `timeout`, `asyncUtilTimeout`, `testTimeout` or `hookTimeout`, or that adds `new Promise((resolve) => setTimeout(resolve, ms))`. Suggest awaiting the real condition (`findBy*`, `waitFor`) or `vi.useFakeTimers()`. Don't flag `example/e2e/`, latency simulated in an MSW handler, or fake-timer usage, and only flag added lines: existing ones are legacy
 
 **Test File Conventions:**
 
