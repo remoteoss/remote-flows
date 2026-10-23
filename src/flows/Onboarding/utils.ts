@@ -208,6 +208,8 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'SVN',
   'ALB',
   'CYP',
+  'MUS',
+  'VNM',
 ];
 
 /**

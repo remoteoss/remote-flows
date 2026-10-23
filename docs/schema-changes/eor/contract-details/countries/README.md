@@ -89,6 +89,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [United Kingdom (GBR)](./GBR.md)
 - [United States (USA)](./USA.md)
 - [Uruguay (URY)](./URY.md)
+- [Vietnam (VNM)](./VNM.md)
 
 ### Countries on Contract Details v1
 
@@ -152,7 +153,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Luxembourg             | LUX  | v1               | v5              | No         | -            |
 | Malaysia               | MYS  | v5               | v5              | Yes        | October 2026 |
 | Malta                  | MLT  | v1               | v5              | No         | -            |
-| Mauritius              | MUS  | v2               | v5              | No         | March 2026   |
+| Mauritius              | MUS  | v6               | v5              | Yes        | October 2026 |
 | Mexico                 | MEX  | v9               | v9              | Yes        | October 2026 |
 | Moldova                | MDA  | v1               | v6              | No         | -            |
 | Morocco                | MAR  | v1               | v8              | No         | -            |
@@ -192,7 +193,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | United Kingdom         | GBR  | v7               | v7              | Yes        | October 2026 |
 | United States          | USA  | v9               | v9              | Yes        | October 2026 |
 | Uruguay                | URY  | v6               | v6              | Yes        | October 2026 |
-| Vietnam                | VNM  | v1               | v7              | No         | -            |
+| Vietnam                | VNM  | v7               | v7              | Yes        | October 2026 |
 | Zimbabwe               | ZWE  | v1               | v6              | No         | -            |
 
 ## How to Use
