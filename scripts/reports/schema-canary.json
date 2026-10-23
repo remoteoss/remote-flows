@@ -73,21 +73,24 @@
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/AUS/employment_basic_information -> {}"
     },
     {
       "country": "AUS",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/AUS/employment_basic_information -> {}"
     },
     {
       "country": "AUS",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/AUS/employment_basic_information -> {}"
     },
     {
       "country": "AUT",
