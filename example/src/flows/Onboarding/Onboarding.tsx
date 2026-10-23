@@ -392,12 +392,32 @@ type OnboardingFormData = {
   partnerExternalId?: string;
 };
 
+const onboardingOptions = (countryCode?: string) => {
+  const contractDetailsVersion = getUrlParam('contractDetailsVersion');
+  if (!countryCode || !contractDetailsVersion) {
+    return ONBOARDING_OPTIONS as $TSFixMe;
+  }
+  return {
+    ...ONBOARDING_OPTIONS,
+    jsonSchemaVersionByCountry: {
+      ...ONBOARDING_OPTIONS.jsonSchemaVersionByCountry,
+      [countryCode]: {
+        contract_details:
+          contractDetailsVersion === 'latest'
+            ? 'latest'
+            : Number(contractDetailsVersion),
+      },
+    },
+  } as $TSFixMe;
+};
+
 const OnboardingWithProps = ({
   companyId,
   type,
   employmentId,
   externalId,
   partnerExternalId,
+  countryCode,
 }: OnboardingFormData) => (
   <RemoteFlows
     proxy={{ url: window.location.origin }}
@@ -410,7 +430,7 @@ const OnboardingWithProps = ({
       employmentId={employmentId}
       externalId={externalId}
       partnerExternalId={partnerExternalId}
-      options={ONBOARDING_OPTIONS as $TSFixMe}
+      options={onboardingOptions(countryCode)}
     />
   </RemoteFlows>
 );
@@ -426,6 +446,7 @@ export const OnboardingForm = () => {
       import.meta.env.VITE_COMPANY_ID || 'c3c22940-e118-425c-9e31-f2fd4d43c6d8', // use your own company ID
     externalId: '',
     partnerExternalId: '',
+    countryCode: getUrlParam('countryCode') || undefined,
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
