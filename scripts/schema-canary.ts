@@ -155,7 +155,7 @@ async function checkLatestSubmit(
   country: string,
   strategy: SchemaCanaryRow['strategy'],
 ): Promise<SchemaCanaryRow> {
-  const check = 'latest-submit';
+  const check: SchemaCheckType = 'latest-submit';
   const row = { country, version: 'latest' as const, strategy, check };
   const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
   if (skipEntry) {
