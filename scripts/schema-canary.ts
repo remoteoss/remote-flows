@@ -110,7 +110,7 @@ async function fetchLiveCountries(client: Client): Promise<string[]> {
 }
 
 function versionFor(country: string, check: SchemaCheckType) {
-  return check === 'latest'
+  return check === 'latest' || check === 'latest-submit'
     ? 'latest'
     : resolvePinnedVersion(country, DEFAULT_VERSION);
 }
@@ -150,11 +150,78 @@ function recordKept(employment: KeptEmployment, keepFile: string) {
   writeFileSync(keepFile, `${JSON.stringify(keptSoFar, null, 2)}\n`);
 }
 
-async function checkCountry(
+function submitOptionsFor(
+  country: string,
+  strategy: SchemaCanaryRow['strategy'],
+) {
+  return {
+    strategy,
+    seed: seedFor(country),
+    seedValues: CONTRACT_DETAILS_SEEDS[country],
+    knownUnsavedFields: KNOWN_UNSAVED_FIELDS[country],
+  };
+}
+
+async function checkLatestSubmit(
   client: Client,
   country: string,
+  strategy: SchemaCanaryRow['strategy'],
+): Promise<SchemaCanaryRow> {
+  const check: SchemaCheckType = 'latest-submit';
+  const row = { country, version: 'latest' as const, strategy, check };
+  const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
+  if (skipEntry) {
+    return { ...row, outcome: 'skip', error: skipEntry.reason };
+  }
+
+  let employmentId: string | undefined;
+  try {
+    ({ employmentId } = await seedEmploymentForCountry(client, country));
+    console.log(`[${country}] seeded latest-submit employment ${employmentId}`);
+    const schema = await fetchLiveSchema(
+      client,
+      country,
+      'latest',
+      employmentId,
+    );
+    const result = await submitContractDetails(
+      client,
+      employmentId,
+      schema,
+      'latest',
+      submitOptionsFor(country, strategy),
+    );
+    console.log(
+      `[${country}] ${check}@latest -> ${result.ok ? 'pass' : `fail: ${result.error}`}`,
+    );
+    return result.ok
+      ? { ...row, outcome: 'pass' }
+      : { ...row, outcome: 'fail', error: result.error };
+  } catch (error) {
+    return {
+      ...row,
+      outcome: 'fail',
+      error: error instanceof Error ? error.message : String(error),
+    };
+  } finally {
+    if (employmentId) {
+      try {
+        await archiveEmployment(client, employmentId);
+      } catch (error) {
+        console.warn(
+          `[${country}] failed to archive employment ${employmentId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
+  }
+}
+
+async function checkSharedEmployment(
+  client: Client,
+  country: string,
+  strategy: SchemaCanaryRow['strategy'],
+  checks: SchemaCheckType[],
 ): Promise<CountryResult> {
-  const strategy = getContractDetailsStrategy(country);
   const rows: SchemaCanaryRow[] = [];
   let kept: KeptEmployment | undefined;
 
@@ -169,7 +236,7 @@ async function checkCountry(
   } catch (error) {
     const reason = `employment seeding failed: ${error instanceof Error ? error.message : String(error)}`;
     console.log(`[${country}] ${reason}`);
-    for (const check of CHECK_TYPES) {
+    for (const check of checks) {
       const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
       rows.push({
         country,
@@ -199,7 +266,7 @@ async function checkCountry(
 
   try {
     let pinnedBuildFailed = false;
-    for (const check of CHECK_TYPES) {
+    for (const check of checks) {
       const skipEntry = isSkipped(SCHEMA_CANARY_SKIP_LIST, country, check);
       const version = versionFor(country, check);
 
@@ -236,12 +303,7 @@ async function checkCountry(
             employmentId,
             schema,
             resolvePinnedVersion(country, DEFAULT_VERSION),
-            {
-              strategy,
-              seed: seedFor(country),
-              seedValues: CONTRACT_DETAILS_SEEDS[country],
-              knownUnsavedFields: KNOWN_UNSAVED_FIELDS[country],
-            },
+            submitOptionsFor(country, strategy),
           );
           if (submitted.ok) {
             kept = {
@@ -305,6 +367,22 @@ async function checkCountry(
   }
 
   return { rows, kept };
+}
+
+async function checkCountry(
+  client: Client,
+  country: string,
+): Promise<CountryResult> {
+  const strategy = getContractDetailsStrategy(country);
+  const sharedChecks = CHECK_TYPES.filter((check) => check !== 'latest-submit');
+  const result =
+    sharedChecks.length > 0
+      ? await checkSharedEmployment(client, country, strategy, sharedChecks)
+      : { rows: [] };
+  if (CHECK_TYPES.includes('latest-submit')) {
+    result.rows.push(await checkLatestSubmit(client, country, strategy));
+  }
+  return result;
 }
 
 async function runLive(): Promise<CountryResult[]> {
@@ -373,7 +451,9 @@ async function main() {
     (row) => row.check === 'pinned' && row.outcome === 'fail',
   );
   const failedLatest = rows.filter(
-    (row) => row.check === 'latest' && row.outcome === 'fail',
+    (row) =>
+      (row.check === 'latest' || row.check === 'latest-submit') &&
+      row.outcome === 'fail',
   );
   const failedSubmit = rows.filter(
     (row) => row.check === 'submit' && row.outcome === 'fail',
@@ -386,10 +466,10 @@ async function main() {
   }
   if (failedLatest.length > 0) {
     console.warn(
-      `\n${failedLatest.length} "latest" check(s) failed (warning only, does not fail the job):`,
+      `\n${failedLatest.length} latest check(s) failed (warning only, does not fail the job):`,
     );
     for (const row of failedLatest) {
-      console.warn(`  - ${row.country}: ${row.error}`);
+      console.warn(`  - ${row.country} (${row.check}): ${row.error}`);
     }
   }
   const seedErrorCountries = [
