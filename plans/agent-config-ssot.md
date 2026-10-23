@@ -39,14 +39,14 @@ Skills are linked one by one, not as a whole directory, so local-only skills and
 
 Each PR is based on the previous one and leaves the repo working. A final PR from the tip of the stack to `main` shows every change in one diff and is for review only.
 
-| PR    | Branch                                | Content                                                                                                                      |
-| ----- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| 1     | `chore/agent-config-1-move-content`   | Move rules and tracked skills into `.agents/`, link them back, `AGENTS.md` plus a `CLAUDE.md` import, update path references |
-| 2     | `chore/agent-config-2-slim-agents-md` | Convert rules to `.md` with `paths:`, slim `AGENTS.md` under 200 lines, link `.claude/rules`                                 |
-| 3     | `chore/agent-config-3-bugbot-links`   | `BUGBOT.md` links into the SSOT, `pr-review` reads `AGENTS.md` and `.agents/rules`                                           |
-| 4     | `chore/agent-config-4-hooks`          | Format hook in `.claude/settings.json`, delete Cursor hooks                                                                  |
-| all   | `chore/agent-config-all`              | Tip of the stack against `main`, review only                                                                                 |
-| March | not opened yet                        | Switch Bugbot off and delete `.cursor/`                                                                                      |
+| PR                                                           | Branch                                | Content                                                                                                                                      |
+| ------------------------------------------------------------ | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| [#1703](https://github.com/remoteoss/remote-flows/pull/1703) | `chore/agent-config-1-move-content`   | Move rules and tracked skills into `.agents/`, link them back, `AGENTS.md` plus a `CLAUDE.md` import, update path references                 |
+| [#1704](https://github.com/remoteoss/remote-flows/pull/1704) | `chore/agent-config-2-slim-agents-md` | Convert rules to `.md` with `paths:`, link `.claude/rules`, move testing, theming and exports guidance out of `AGENTS.md`, add a rules index |
+| [#1705](https://github.com/remoteoss/remote-flows/pull/1705) | `chore/agent-config-3-bugbot-links`   | `BUGBOT.md` links into the SSOT, body kept until the links are verified                                                                      |
+| [#1706](https://github.com/remoteoss/remote-flows/pull/1706) | `chore/agent-config-4-hooks`          | Format hook in `.claude/settings.json`, delete Cursor hooks and environment config                                                           |
+| all                                                          | `chore/agent-config-all`              | Tip of the stack against `main`, review only, never merged                                                                                   |
+| March                                                        | not opened yet                        | Switch Bugbot off, delete `.cursor/`, trim what is left of `BUGBOT.md`                                                                       |
 
 PR 3 only takes effect for Bugbot once it is merged to the default branch, so it has to be merged on its own before its links can be tested.
 
