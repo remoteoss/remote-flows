@@ -82,6 +82,7 @@ export async function seedEmploymentForCountry(
     fetchHolidays(client, code, year),
   );
   const { values: basicInformation } = fillSchema(basicInfoSchema, {
+    job_title: 'Software Engineer',
     provisional_start_date: startDate,
   });
 

@@ -198,6 +198,11 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'ARE',
   'SLV',
   'PER',
+  'LTU',
+  'SAU',
+  'SRB',
+  'URY',
+  'BGD',
 ];
 
 /**
