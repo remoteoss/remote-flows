@@ -44,6 +44,7 @@ Formatting and lint rules are enforced by `oxfmt` and `oxlint` in CI, so don't c
 - New features and fixes need tests: hooks and components, user interactions through `@testing-library/react` and `user-event`, and the empty, loading, error and validation states.
 - API calls are mocked with MSW handlers through `src/tests/server.ts`. Test data lives in `src/flows/*/tests/fixtures.ts`.
 - Hook tests use `renderHook`, and tests that use React Query wrap the consumer in `QueryClientProvider`.
+- **No timeouts or fixed sleeps** - Flag an added line in a `src/**/*.test.{ts,tsx}` file that sets `timeout`, `asyncUtilTimeout`, `testTimeout` or `hookTimeout`, or that adds `new Promise((resolve) => setTimeout(resolve, ms))`. Suggest awaiting the real condition (`findBy*`, `waitFor`) or `vi.useFakeTimers()`. Don't flag `example/e2e/`, latency simulated in an MSW handler, or fake-timer usage, and only flag added lines: existing ones are legacy
 
 **E2E tests (`example/e2e/`):**
 
