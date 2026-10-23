@@ -1,6 +1,7 @@
 import { createClient } from '@/src/auth/createClient';
 import { ENVIRONMENTS } from '@/src/environments';
 import { Client } from '@/src/client/client';
+import { retryOnGatewayBlock } from './retry-fetch';
 
 export const SANDBOX_GATEWAY_URL = ENVIRONMENTS.sandbox;
 
@@ -45,9 +46,11 @@ export function createSandboxClient(
   refreshToken: string,
 ): Client {
   process.env.REMOTE_GATEWAY_URL = SANDBOX_GATEWAY_URL;
-  return createClient(() =>
+  const client = createClient(() =>
     fetchSandboxAccessToken(clientId, clientSecret, refreshToken),
   );
+  client.setConfig({ fetch: retryOnGatewayBlock(globalThis.fetch) });
+  return client;
 }
 
 export function createEnvClient(
@@ -55,8 +58,10 @@ export function createEnvClient(
   fetchAccessToken: () => Promise<{ accessToken: string; expiresIn?: number }>,
 ): Client {
   process.env.REMOTE_GATEWAY_URL = gatewayUrl;
-  return createClient(async () => {
+  const client = createClient(async () => {
     const { accessToken, expiresIn } = await fetchAccessToken();
     return { accessToken, expiresIn: expiresIn ?? 3600 };
   });
+  client.setConfig({ fetch: retryOnGatewayBlock(globalThis.fetch) });
+  return client;
 }
