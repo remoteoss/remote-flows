@@ -51,9 +51,6 @@ function invoiceItemRevealConditionals() {
             type: 'string',
             minLength: 1,
           },
-          // Integer cents, like the slot itself — validation parses the money input's major
-          // units into cents before the conditionals are evaluated. `minimum: 1` is
-          // therefore one cent, so any non-zero amount reveals the next row.
           [`item_${previousSlot}_amount`]: { type: 'integer', minimum: 1 },
         },
         required: [
