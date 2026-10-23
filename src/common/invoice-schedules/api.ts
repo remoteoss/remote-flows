@@ -13,8 +13,7 @@ import {
 } from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
-// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
-import { createHeadlessForm } from '@/src/common/createHeadlessForm';
+import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
 import { INVOICE_SCHEDULE_STATUS } from '@/src/common/invoice-schedules/constants';
 import { buildCreateInvoiceScheduleSchema } from '@/src/common/invoice-schedules/json-schema';
@@ -22,25 +21,9 @@ import {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
 } from '@/src/common/invoice-schedules/utils';
-import {
-  JSONSchemaFormResultWithFieldsets,
-  JSFModify,
-} from '@/src/flows/types';
+import { JSFModify } from '@/src/flows/types';
 
-/**
- * Get the create invoice schedule schema with currency options from the contractor currencies endpoint.
- * React Query caches the result, so multiple calls share the same data.
- */
-export const useGetCreateInvoiceScheduleSchema = ({
-  enabled,
-  employmentId,
-  jsfModify,
-  includeOneTime,
-  isContractorOfRecord,
-  includeCustomDays,
-  includeBackdateTip,
-  fieldValues,
-}: {
+type UseGetCreateInvoiceScheduleSchemaParams = {
   enabled?: boolean;
   employmentId?: string;
   jsfModify?: JSFModify;
@@ -63,33 +46,44 @@ export const useGetCreateInvoiceScheduleSchema = ({
    */
   includeBackdateTip?: boolean;
   /**
-   * Current form values. Passed to `createHeadlessForm` so the schema's conditionals — the
-   * item-row reveal, and the semi-monthly day fields — re-evaluate as the user fills the
-   * form. Without this the form is built once against empty values and nothing ever reveals.
+   * Saved values in API units (item amounts in cents). They seed the first build so the item
+   * rows a saved schedule needs are visible before the step mounts.
    */
-  fieldValues?: Record<string, unknown>;
-}): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
-  const { data: currencies, isLoading: isLoadingCurrencies } =
-    useContractorCurrencies({
-      employmentId: employmentId as string,
-      options: {
-        queryOptions: { enabled: enabled && Boolean(employmentId) },
-      },
-    });
+  initialValues?: Record<string, unknown>;
+};
 
-  const schemaWithCurrencies = useMemo(() => {
-    if (!enabled) {
-      return null;
-    }
+/**
+ * Get the create invoice schedule form, with currency options from the contractor
+ * currencies endpoint. React Query caches the result, so multiple calls share the same data.
+ *
+ * The form is built once through `useHeadlessForm`; validation resolves the conditionals.
+ */
+export const useGetCreateInvoiceScheduleSchema = ({
+  enabled,
+  employmentId,
+  jsfModify,
+  includeOneTime,
+  isContractorOfRecord,
+  includeCustomDays,
+  includeBackdateTip,
+  initialValues,
+}: UseGetCreateInvoiceScheduleSchemaParams) => {
+  const { data: currencies, isLoading } = useContractorCurrencies({
+    employmentId: employmentId as string,
+    options: {
+      queryOptions: { enabled: enabled && Boolean(employmentId) },
+    },
+  });
 
-    // Both callers know their employment up front, so there is always a currency list on the
+  const schema = useMemo(() => {
+    // Callers know their employment up front, so there is always a currency list on the
     // way — render nothing until it arrives rather than a currency field with no options.
-    if (!currencies) {
-      return null;
+    if (!enabled || !currencies) {
+      return undefined;
     }
 
-    const schema = buildCreateInvoiceScheduleSchema({
-      currencies: currencies?.map(
+    return buildCreateInvoiceScheduleSchema({
+      currencies: currencies.map(
         (currency: { code: string; source: string }) => currency.code,
       ),
       includeOneTime,
@@ -97,22 +91,28 @@ export const useGetCreateInvoiceScheduleSchema = ({
       includeCustomDays,
       includeBackdateTip,
     });
-
-    return createHeadlessForm(schema, fieldValues, { jsfModify });
   }, [
     enabled,
     currencies,
-    jsfModify,
     includeOneTime,
     isContractorOfRecord,
     includeCustomDays,
     includeBackdateTip,
-    fieldValues,
   ]);
 
+  const headlessForm = useHeadlessForm({
+    schema,
+    initialValues,
+    options: { jsfModify },
+    strategy: 'buildOnce',
+  });
+
   return {
-    data: schemaWithCurrencies,
-    isLoading: isLoadingCurrencies,
+    data: headlessForm.form,
+    handleValidation: headlessForm.handleValidation,
+    onValuesChange: headlessForm.onValuesChange,
+    parseFormValues: headlessForm.parseFormValues,
+    isLoading,
   };
 };
 

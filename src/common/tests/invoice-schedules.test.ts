@@ -3,6 +3,7 @@ import {
   ONE_TIME_PERIODICITY,
   buildCustomDays,
   buildInvoiceItems,
+  buildInvoiceScheduleFormValues,
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
   buildRecurrence,
@@ -351,5 +352,35 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     });
 
     expect(result?.formErrors).toHaveProperty('currency');
+  });
+});
+
+describe('buildInvoiceScheduleFormValues', () => {
+  it('maps a saved schedule to form values, one slot per item, amounts untouched', () => {
+    expect(
+      buildInvoiceScheduleFormValues({
+        currency: 'EUR',
+        periodicity: 'monthly',
+        start_date: '2026-10-01',
+        number: 'INV-1',
+        note: null,
+        nr_occurrences: 3,
+        items: [
+          { description: 'Design work', amount: 250000 },
+          { description: 'Hosting', amount: 7500 },
+        ],
+      }),
+    ).toEqual({
+      currency: 'EUR',
+      periodicity: 'monthly',
+      start_date: '2026-10-01',
+      number: 'INV-1',
+      note: null,
+      nr_occurrences: 3,
+      item_1_description: 'Design work',
+      item_1_amount: 250000,
+      item_2_description: 'Hosting',
+      item_2_amount: 7500,
+    });
   });
 });
