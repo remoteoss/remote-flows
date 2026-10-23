@@ -12,6 +12,7 @@ export type InvoiceScheduleFormValues = FieldValues & {
   start_date?: string;
   number?: string;
   note?: string;
+  end_type?: 'never' | 'multiple';
   nr_occurrences?: number;
 };
 
