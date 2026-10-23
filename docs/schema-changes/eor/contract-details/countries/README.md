@@ -27,6 +27,7 @@ Looking for versions that are being retired? See [deprecated versions](./DEPRECA
 
 These countries have upgraded to different versions, check each guide to know how to migrate or what has changed
 
+- [Albania (ALB)](./ALB.md)
 - [Argentina (ARG)](./ARG.md)
 - [Armenia (ARM)](./ARM.md)
 - [Australia (AUS)](./AUS.md)
@@ -40,6 +41,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Chile (CHL)](./CHL.md)
 - [Colombia (COL)](./COL.md)
 - [Costa Rica (CRI)](./CRI.md)
+- [Cyprus (CYP)](./CYP.md)
 - [Switzerland (CHE)](./CHE.md)
 - [Czech Republic (CZE)](./CZE.md)
 - [Denmark (DNK)](./DNK.md)
@@ -48,6 +50,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [El Salvador (SLV)](./SLV.md)
 - [Estonia (EST)](./EST.md)
 - [Finland (FIN)](./FIN.md)
+- [Georgia (GEO)](./GEO.md)
 - [Germany (DEU)](./DEU.md)
 - [Guatemala (GTM)](./GTM.md)
 - [Hong Kong (HKG)](./HKG.md)
@@ -64,6 +67,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Malaysia (MYS)](./MYS.md)
 - [Mexico (MEX)](./MEX.md)
 - [Netherlands (NLD)](./NLD.md)
+- [Nicaragua (NIC)](./NIC.md)
 - [Nigeria (NGA)](./NGA.md)
 - [Norway (NOR)](./NOR.md)
 - [New Zealand (NZL)](./NZL.md)
@@ -75,6 +79,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Saudi Arabia (SAU)](./SAU.md)
 - [Singapore (SGP)](./SGP.md)
 - [South Africa (ZAF)](./ZAF.md)
+- [Slovenia (SVN)](./SVN.md)
 - [Spain (ESP)](./ESP.md)
 - [Serbia (SRB)](./SRB.md)
 - [Sweden (SWE)](./SWE.md)
@@ -97,7 +102,7 @@ These countries have upgraded to different versions, check each guide to know ho
 
 | Country                | Code | Contract Details | Remote platform | Up to date | Last Updated |
 | ---------------------- | ---- | ---------------- | --------------- | ---------- | ------------ |
-| Albania                | ALB  | v1               | v4              | No         | -            |
+| Albania                | ALB  | v4               | v4              | Yes        | October 2026 |
 | Argentina              | ARG  | v5               | v5              | Yes        | October 2026 |
 | Armenia                | ARM  | v3               | v3              | Yes        | October 2026 |
 | Australia              | AUS  | v6               | v6              | Yes        | October 2026 |
@@ -114,7 +119,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Colombia               | COL  | v6               | v6              | Yes        | October 2026 |
 | Costa Rica             | CRI  | v5               | v5              | Yes        | October 2026 |
 | Croatia                | HRV  | v1               | v6              | No         | -            |
-| Cyprus                 | CYP  | v1               | v7              | No         | -            |
+| Cyprus                 | CYP  | v7               | v7              | Yes        | October 2026 |
 | Czech Republic         | CZE  | v7               | v7              | Yes        | October 2026 |
 | Denmark                | DNK  | v6               | v6              | Yes        | October 2026 |
 | Dominican Republic     | DOM  | v6               | v6              | Yes        | October 2026 |
@@ -124,7 +129,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Estonia                | EST  | v5               | v5              | Yes        | October 2026 |
 | Finland                | FIN  | v5               | v5              | Yes        | October 2026 |
 | France                 | FRA  | v1               | v2              | Yes        | -            |
-| Georgia                | GEO  | v1               | v6              | No         | -            |
+| Georgia                | GEO  | v6               | v6              | Yes        | October 2026 |
 | Germany                | DEU  | v9               | v9              | Yes        | October 2026 |
 | Greece                 | GRC  | v1               | v6              | No         | -            |
 | Guatemala              | GTM  | v6               | v6              | Yes        | October 2026 |
@@ -153,7 +158,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Morocco                | MAR  | v1               | v8              | No         | -            |
 | Netherlands            | NLD  | v7               | v7              | Yes        | October 2026 |
 | New Zealand            | NZL  | v8               | v8              | Yes        | October 2026 |
-| Nicaragua              | NIC  | v1               | v4              | No         | -            |
+| Nicaragua              | NIC  | v4               | v4              | Yes        | October 2026 |
 | Nigeria                | NGA  | v5               | v5              | Yes        | October 2026 |
 | North Macedonia        | MKD  | v1               | v6              | No         | -            |
 | Norway                 | NOR  | v7               | v7              | Yes        | October 2026 |
@@ -170,7 +175,7 @@ These countries have upgraded to different versions, check each guide to know ho
 | Serbia                 | SRB  | v9               | v9              | Yes        | October 2026 |
 | Singapore              | SGP  | v5               | v5              | Yes        | October 2026 |
 | Slovakia               | SVK  | v1               | v6              | No         | -            |
-| Slovenia               | SVN  | v1               | v6              | No         | -            |
+| Slovenia               | SVN  | v6               | v6              | Yes        | October 2026 |
 | South Africa           | ZAF  | v5               | v5              | Yes        | October 2026 |
 | South Korea            | KOR  | v7               | v6              | Yes        | October 2026 |
 | Spain                  | ESP  | v8               | v8              | Yes        | October 2026 |
