@@ -30,23 +30,25 @@ export function buildInvoiceItems(values: Record<string, unknown>) {
   return items;
 }
 
+type InvoiceScheduleFormSource = Pick<
+  ContractorInvoiceSchedule,
+  | 'currency'
+  | 'periodicity'
+  | 'start_date'
+  | 'number'
+  | 'note'
+  | 'nr_occurrences'
+> & {
+  items?: Pick<ContractorInvoiceScheduleItem, 'description' | 'amount'>[];
+};
+
 /**
  * Turns a saved invoice schedule into form values in API units, with item amounts in cents.
  * @param schedule - The schedule as the API returns it
  * @returns Values keyed by form field name, ready to seed the form
  */
 export function buildInvoiceScheduleFormValues(
-  schedule: Pick<
-    ContractorInvoiceSchedule,
-    | 'currency'
-    | 'periodicity'
-    | 'start_date'
-    | 'number'
-    | 'note'
-    | 'nr_occurrences'
-  > & {
-    items?: Pick<ContractorInvoiceScheduleItem, 'description' | 'amount'>[];
-  },
+  schedule: InvoiceScheduleFormSource,
 ) {
   const values: Record<string, unknown> = {
     currency: schedule.currency,

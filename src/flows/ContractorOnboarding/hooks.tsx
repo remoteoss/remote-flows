@@ -38,7 +38,7 @@ import {
   useGetExistingInvoiceSchedule,
 } from '@/src/flows/ContractorOnboarding/api';
 import { useCompanyOpenTasks } from '@/src/common/api/companies';
-import { buildInvoiceScheduleFormValues } from '@/src/common/invoice-schedules/utils';
+import { buildInvoiceScheduleFormValues } from '@/src/common/invoice-schedules';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
   useCreateContractorContractDocument,
