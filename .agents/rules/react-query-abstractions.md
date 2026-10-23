@@ -1,14 +1,17 @@
 ---
-alwaysApply: true
-description: Use queryOptions pattern for React Query abstractions instead of custom hooks
-glob: 'src/**/*.{ts,tsx}'
+description: Choose between a queryOptions factory and a custom hook when abstracting a React Query call
+paths:
+  - 'src/**/api.ts'
+  - 'src/common/api/**'
+  - 'src/flows/**/hooks.{ts,tsx}'
+  - 'src/flows/**/hooks/**'
 ---
 
 # React Query Abstractions Rule
 
-## Philosophy: queryOptions over Custom Hooks
+## Philosophy: queryOptions unless the transformation is fixed
 
-When creating abstractions for React Query, prefer the `queryOptions` pattern over custom hooks. This provides better composability, reusability, and type safety.
+When creating abstractions for React Query, prefer the `queryOptions` pattern when consumers need to add their own `select`, `enabled` or other options. Use a custom hook only when the transformation is fixed and idempotent for every consumer (see the Decision Guide below). `queryOptions` provides better composability, reusability, and type safety.
 
 **Reference:** [Creating Query Abstractions by TkDodo](https://tkdodo.eu/blog/creating-query-abstractions)
 
