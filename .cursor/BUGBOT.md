@@ -1,5 +1,22 @@
 # Code Review Guidelines
 
+## Project rules
+
+Review every change against the repo's shared guidance. It is the source of truth, and the sections below add Bugbot-specific checks on top of it.
+
+- [AGENTS.md](../AGENTS.md)
+- [json-schema-form-usage](../.agents/rules/json-schema-form-usage.md)
+- [react-query-abstractions](../.agents/rules/react-query-abstractions.md)
+- [mutation-error-handling](../.agents/rules/mutation-error-handling.md)
+- [loading-state-aggregation](../.agents/rules/loading-state-aggregation.md)
+- [submitting-state-aggregation](../.agents/rules/submitting-state-aggregation.md)
+- [step-component-types](../.agents/rules/step-component-types.md)
+- [component-pattern](../.agents/rules/component-pattern.md)
+- [component-documentation](../.agents/rules/component-documentation.md)
+- [testing](../.agents/rules/testing.md)
+- [theming](../.agents/rules/theming.md)
+- [package-exports](../.agents/rules/package-exports.md)
+
 ## Project Architecture
 
 This project is a React component library (`@remoteoss/remote-flows`) that provides embeddable UI flows for Remote's HR and employment workflows. The following principles guide our architecture:
@@ -344,7 +361,7 @@ const { data } = useQuery({
 - Used in prefetching or outside components
 - Want to enable maximum flexibility
 
-**Reference:** See `.cursor/rules/react-query-abstractions.mdc` and [TkDodo's article](https://tkdodo.eu/blog/creating-query-abstractions)
+**Reference:** See `.agents/rules/react-query-abstractions.md` and [TkDodo's article](https://tkdodo.eu/blog/creating-query-abstractions)
 
 **Check:** Does the query need flexible transformations? Use `queryOptions`. Always returns same data? Use custom hook.
 
