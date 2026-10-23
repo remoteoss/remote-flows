@@ -1,7 +1,7 @@
 ---
 description: Add every new flow query to the initialLoading aggregation
 paths:
-  - 'src/flows/**/hooks.tsx'
+  - 'src/flows/**/hooks.{ts,tsx}'
 ---
 
 # Loading State Aggregation Pattern
