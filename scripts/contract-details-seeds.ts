@@ -11,5 +11,24 @@ export const CONTRACT_DETAILS_SEEDS: Record<string, Record<string, unknown>> = {
       working_hours: 8,
     },
   },
+  MUS: {
+    work_days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+    work_week_schedule: {
+      start_time: '09:00',
+      end_time: '18:00',
+      lunch_start_time: '12:00',
+      lunch_end_time: '13:00',
+      working_hours: 8,
+    },
+  },
   ROU: { compensation_currency_code: 'RON' },
+  VNM: {
+    work_week_schedule: {
+      start_time: '09:00',
+      end_time: '18:00',
+      lunch_start_time: '12:00',
+      lunch_end_time: '13:00',
+      working_hours: 8,
+    },
+  },
 };

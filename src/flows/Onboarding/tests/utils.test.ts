@@ -92,12 +92,14 @@ describe('usesJsfV1ContractDetails', () => {
     'SVN',
     'ALB',
     'CYP',
+    'MUS',
+    'VNM',
   ])('should return true for %s', (countryCode) => {
     expect(usesJsfV1ContractDetails(countryCode)).toBe(true);
   });
 
   it('should return false for the other countries', () => {
-    expect(usesJsfV1ContractDetails('VNM')).toBe(false);
+    expect(usesJsfV1ContractDetails('LUX')).toBe(false);
     expect(usesJsfV1ContractDetails(null)).toBe(false);
   });
 });
@@ -109,7 +111,7 @@ describe('getContractDetailsStrategy', () => {
   });
 
   it('returns rebuild for every other country', () => {
-    expect(getContractDetailsStrategy('VNM')).toBe('rebuild');
+    expect(getContractDetailsStrategy('LUX')).toBe('rebuild');
     expect(getContractDetailsStrategy(null)).toBe('rebuild');
   });
 });
