@@ -222,24 +222,6 @@ jobs:
             pnpm run schema-canary --checks=pinned,submit --country="$COUNTRIES" --keep-submitted="$RUNNER_TEMP/kept-employments.json"
           fi
 
-      - name: Check which employments were kept
-        id: kept
-        if: ${{ !cancelled() }}
-        run: |
-          if [ -s "$RUNNER_TEMP/kept-employments.json" ] && [ "$(jq length "$RUNNER_TEMP/kept-employments.json")" -gt 0 ]; then
-            echo "any=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Re-submit contract details in the browser
-        id: browser
-        if: ${{ !cancelled() && steps.kept.outputs.any == 'true' }}
-        uses: ./.github/actions/schema-canary-browser
-        with:
-          employments-file: ${{ runner.temp }}/kept-employments.json
-          client-id: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
-          client-secret: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
-          refresh-token: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
-
       - name: Archive the kept employments
         if: always()
         env:
