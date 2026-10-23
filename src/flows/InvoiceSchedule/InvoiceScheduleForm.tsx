@@ -6,7 +6,7 @@ import {
   InvoiceSchedulePayload,
   InvoiceScheduleResponse,
 } from '@/src/flows/InvoiceSchedule/types';
-import { isMutationError, NormalizedFieldError } from '@/src/lib/mutations';
+import { NormalizedFieldError } from '@/src/lib/mutations';
 import { isStructuredError } from '@/src/lib/utils';
 
 type InvoiceScheduleFormProps = Partial<{
@@ -46,17 +46,6 @@ export function InvoiceScheduleForm({
       const response = await invoiceScheduleBag?.onSubmit(values);
       await onSuccess?.(response as InvoiceScheduleResponse);
     } catch (error: unknown) {
-      // Reported to the consumer rather than re-thrown: this runs inside react-hook-form's
-      // handleSubmit, so re-throwing would surface as an unhandled rejection.
-      if (isMutationError(error)) {
-        onError?.({
-          error: error.error,
-          rawError: error.rawError as Record<string, unknown>,
-          fieldErrors: error.fieldErrors as NormalizedFieldError[],
-        });
-        return;
-      }
-
       if (isStructuredError(error)) {
         onError?.({
           error: error.error,
