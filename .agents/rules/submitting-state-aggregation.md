@@ -1,7 +1,7 @@
 ---
 description: Add every new flow mutation to isSubmitting and wrap it with mutationToPromise
 paths:
-  - 'src/flows/**/hooks.tsx'
+  - 'src/flows/**/hooks.{ts,tsx}'
 ---
 
 # Submitting State Aggregation Pattern
