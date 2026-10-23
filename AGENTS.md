@@ -115,7 +115,7 @@ Path-scoped rules live in `.agents/rules/`. Claude Code loads each one when you 
 
 - **Import order** (convention only — neither `oxlint` nor `oxfmt` enforce or auto-sort this): `react` first, then other external packages, then `@remoteoss/*` packages, then absolute (`@/`) imports, then relative (`./`, `../`) imports. Alphabetize within each group.
 - **Read before you write** — search for how a sibling flow, component or hook already does it and reuse its helpers; never import a function you haven't confirmed exists.
-- **Tests** — Vitest globals are enabled (never import `describe`/`it`/`expect`/`vi` from `vitest`), mock APIs with MSW (never `vi.mock('@/src/client')`), and assert exact shapes in `toHaveBeenCalledWith`. Details in [.agents/rules/testing.md](.agents/rules/testing.md).
+- **Tests** — Vitest globals are enabled (never import `describe`/`it`/`expect`/`vi` from `vitest`), mock APIs with MSW (never `vi.mock('@/src/client')`), assert exact shapes in `toHaveBeenCalledWith`, and never add timeouts or fixed sleeps. Details in [.agents/rules/testing.md](.agents/rules/testing.md).
 - **`no-console: warn`** in oxlint — only `console.warn` / `console.error` permitted.
 - **No `any`** — `typescript/no-explicit-any: error`. Use the `$TSFixMe` type from `src/types/remoteFlows.ts` for genuine workarounds.
 - **Inline comments are opt-in, not default** — implementation, config, and test code should have none by default. Add one only for a genuinely non-obvious _why_ (a hidden constraint, a workaround for a specific bug), never to restate _what_ the code does; one short line max, never a reference to the current task/PR/fix. Full rule and examples in [.cursor/BUGBOT.md](.cursor/BUGBOT.md).
