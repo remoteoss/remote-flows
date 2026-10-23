@@ -38,7 +38,7 @@ Pure refactor. Each call site keeps the strategy it effectively has today, so no
 
 Call sites that don't pass values already behave like `buildOnce`, so they go straight onto it.
 
-Before moving a call site, check whether it writes onto `form.fields` after building (`grep -rnE "\.(options|isVisible|required)\s*=[^=]" src`). Move that data into the schema as part of the move. See "Dynamic Data Goes in the Schema" in [`json-schema-form-usage.mdc`](../.cursor/rules/json-schema-form-usage.mdc). On jsf v1 those writes are wiped by the next `handleValidation`.
+Before moving a call site, check whether it writes onto `form.fields` after building (`grep -rnE "\.(options|isVisible|required)\s*=[^=]" src`). Move that data into the schema as part of the move. See "Dynamic Data Goes in the Schema" in [`json-schema-form-usage.mdc`](../.agents/rules/json-schema-form-usage.mdc). On jsf v1 those writes are wiped by the next `handleValidation`.
 
 A `rebuild` step can also skip this phase and go straight onto `buildOnce` when it passes the phase 2 checklist. Basic information did this in #1433, benefits and engagement agreement details in #1442.
 
