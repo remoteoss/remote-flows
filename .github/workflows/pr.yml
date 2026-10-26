@@ -433,14 +433,14 @@ jobs:
 
       - name: Install Playwright system dependencies
         working-directory: ./example
-        timeout-minutes: 5
+        timeout-minutes: 10
         run: |
           # Install system dependencies using Playwright's built-in command
           # This ensures all OS-specific and browser-specific deps are installed
           # Retry with backoff in case apt-get has issues
           for i in 1 2 3; do
             echo "Installing system dependencies (attempt $i of 3)"
-            if pnpm exec playwright install-deps chromium; then
+            if timeout 120 pnpm exec playwright install-deps chromium; then
               echo "Successfully installed system dependencies"
               exit 0
             fi

@@ -42,7 +42,7 @@ runs:
       working-directory: ./example
       run: |
         for i in 1 2 3; do
-          if pnpm exec playwright install-deps chromium; then exit 0; fi
+          if timeout 120 pnpm exec playwright install-deps chromium; then exit 0; fi
           sleep $((i * 10))
         done
         exit 1
