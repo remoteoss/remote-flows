@@ -68,4 +68,4 @@ The visualizer is password-protected. Contact the Remote team to request access 
 
 ### What if a country isn't listed in the migration guide?
 
-The country is using the default v1 schema. Check the [countries README](./schema-changes/eor/contract-details/countries/README.md) for the complete list.
+The country is using the default v1 schema. Check the [version matrix](./schema-changes/eor/contract-details/countries/README.md#version-matrix) to confirm.
