@@ -772,4 +772,70 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
 
     expect(request.body.contractor_invoice_schedules[0].items).toHaveLength(10);
   });
+
+  describe('missing deposit method statement', () => {
+    const statement =
+      /does not have an active deposit method on their account yet/i;
+
+    function mockEmployment(overrides: Record<string, unknown>) {
+      server.use(
+        http.get('*/v1/employments/:id', ({ params }) =>
+          HttpResponse.json({
+            ...employmentDefaultResponse,
+            data: {
+              ...employmentDefaultResponse.data,
+              employment: {
+                ...employmentDefaultResponse.data.employment,
+                id: params.id,
+                ...overrides,
+              },
+            },
+          }),
+        ),
+      );
+    }
+
+    it('names the contractor when they have no active withdrawal method', async () => {
+      mockEmployment({
+        has_active_withdrawal_method: false,
+        basic_information: { name: 'Ardin Brl' },
+      });
+
+      renderFlow();
+
+      expect(await screen.findByText(statement)).toHaveTextContent(
+        /^Ardin Brl does not have an active deposit method/,
+      );
+      expect(
+        screen.getByRole('button', { name: /Create schedule/i }),
+      ).toBeEnabled();
+    });
+
+    it('falls back to a generic name when the employment has none', async () => {
+      mockEmployment({
+        has_active_withdrawal_method: false,
+        basic_information: {},
+      });
+
+      renderFlow();
+
+      expect(await screen.findByText(statement)).toHaveTextContent(
+        /^This contractor does not have an active deposit method/,
+      );
+    });
+
+    it.each([
+      ['an active withdrawal method', { has_active_withdrawal_method: true }],
+      ['no withdrawal method information', {}],
+    ])('shows nothing for %s', async (_label, overrides) => {
+      mockEmployment(overrides);
+
+      renderFlow();
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
+      });
+      expect(screen.queryByText(statement)).not.toBeInTheDocument();
+    });
+  });
 });

@@ -4386,6 +4386,31 @@ describe('ContractorOnboardingFlow', () => {
       await waitFor(() => expect(visibleSteps()).toContain('invoice_schedule'));
     });
 
+    it('does not show the missing deposit method statement, even when the contractor has no withdrawal method', async () => {
+      const employmentId = generateUniqueEmploymentId();
+      server.use(
+        http.get('*/v1/employments/:id', ({ params }) =>
+          HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: params.id,
+                has_active_withdrawal_method: false,
+              },
+            },
+          }),
+        ),
+      );
+
+      await goToFilledCreateInvoiceSchedule(employmentId);
+
+      expect(
+        screen.queryByText(/does not have an active deposit method/i),
+      ).not.toBeInTheDocument();
+    });
+
     it('reveals the second item row once the first has a description and an amount', async () => {
       const employmentId = generateUniqueEmploymentId();
       await goToFilledCreateInvoiceSchedule(employmentId);

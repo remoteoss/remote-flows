@@ -175,6 +175,10 @@ export const useInvoiceSchedule = ({
      */
     employmentId,
     /**
+     * The contractor's employment, once loaded.
+     */
+    employment,
+    /**
      * True while the schedule is being created.
      */
     isSubmitting: createInvoiceScheduleMutation.isPending,

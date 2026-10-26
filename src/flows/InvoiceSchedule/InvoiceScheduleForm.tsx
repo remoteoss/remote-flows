@@ -1,4 +1,5 @@
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
+import { Alert, AlertDescription } from '@/src/components/ui/alert';
 import { Form } from '@/src/components/ui/form';
 import { useInvoiceScheduleContext } from '@/src/flows/InvoiceSchedule/context';
 import {
@@ -8,6 +9,8 @@ import {
 } from '@/src/flows/InvoiceSchedule/types';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { isStructuredError } from '@/src/lib/utils';
+import { $TSFixMe } from '@/src/types/remoteFlows';
+import { AlertCircle } from 'lucide-react';
 
 type InvoiceScheduleFormProps = Partial<{
   /**
@@ -63,6 +66,13 @@ export function InvoiceScheduleForm({
     }
   };
 
+  const employment = invoiceScheduleBag?.employment as $TSFixMe;
+  const missingWithdrawalMethod =
+    employment?.has_active_withdrawal_method === false;
+  const contractorName =
+    (employment?.basic_information?.name as string | undefined) ||
+    'This contractor';
+
   return (
     <Form {...form}>
       <form
@@ -70,6 +80,16 @@ export function InvoiceScheduleForm({
         onSubmit={form.handleSubmit(handleSubmit)}
         className='space-y-4 RemoteFlows__InvoiceScheduleForm'
       >
+        {missingWithdrawalMethod && (
+          <Alert variant='warning'>
+            <AlertCircle className='h-4 w-4' />
+            <AlertDescription>
+              {contractorName} does not have an active deposit method on their
+              account yet. Schedule this invoice and we&apos;ll reach out to
+              them to get one added.
+            </AlertDescription>
+          </Alert>
+        )}
         <JSONSchemaFormFields fields={invoiceScheduleBag?.fields ?? []} />
       </form>
     </Form>
