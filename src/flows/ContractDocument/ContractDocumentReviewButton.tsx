@@ -37,8 +37,8 @@ export function ContractDocumentReviewButton({
     if (!reviewCompleted) {
       event.preventDefault();
       setIsOpen(true);
-      onClick?.(event);
     }
+    onClick?.(event);
   };
 
   const handleOpenChange = (open: boolean) => {
