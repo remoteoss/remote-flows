@@ -429,6 +429,41 @@ describe('InvoiceScheduleFlow', () => {
     );
   });
 
+  it('submits a one-off as a single occurrence after "End after" was picked on a recurring cadence', async () => {
+    let requestBody: $TSFixMe;
+    server.use(
+      http.post('*/v1/contractor-invoice-schedules', async ({ request }) => {
+        requestBody = await request.json();
+        return HttpResponse.json({
+          data: { successes: [{ id: 'schedule-1' }], failures: [] },
+        });
+      }),
+    );
+
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'monthly');
+    fireEvent.click(
+      screen.getByRole('radio', { name: 'End after a number of occurrences' }),
+    );
+    fireEvent.change(await screen.findByLabelText(/^Number of occurrences$/i), {
+      target: { value: '6' },
+    });
+    await fillSelect('periodicity', 'one_time');
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalled();
+    });
+
+    expect(requestBody.contractor_invoice_schedules[0]).toMatchObject({
+      periodicity: 'monthly',
+      nr_occurrences: 1,
+    });
+  });
+
   it('blocks a recurring schedule until an end date is chosen', async () => {
     const onSuccess = vi.fn();
     renderFlow({ onSuccess });
