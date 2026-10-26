@@ -1,7 +1,9 @@
 ---
-alwaysApply: true
 description: Always use isMutationError type guard when catching errors from mutateAsyncOrThrow
-glob: 'src/**/*.{ts,tsx}'
+paths:
+  - 'src/flows/**'
+  - 'src/common/**'
+  - 'src/lib/mutations.ts'
 ---
 
 # Mutation Error Handling Rule
@@ -24,16 +26,18 @@ try {
   if (isMutationError(error)) {
     // ✅ Type-safe access to error properties
     console.log(error.normalizedErrors); // Direct access to errors object
-    console.log(error.fieldErrors);      // Array of field errors
-    console.log(error.rawError);         // Original API error
-    console.log(error.response);         // HTTP response
+    console.log(error.fieldErrors); // Array of field errors
+    console.log(error.rawError); // Original API error
+    console.log(error.response); // HTTP response
 
     // Example: Check for specific field errors
-    const aiError = error.normalizedErrors.services_and_deliverables as {
-      error: string[];
-      source: string;
-      skippable: boolean;
-    } | undefined;
+    const aiError = error.normalizedErrors.services_and_deliverables as
+      | {
+          error: string[];
+          source: string;
+          skippable: boolean;
+        }
+      | undefined;
 
     if (aiError?.source === 'remote_ai') {
       // Handle AI validation error
@@ -57,4 +61,3 @@ catch (error: any) {
   const errors = error.rawError?.errors; // Unsafe navigation
 }
 ```
-

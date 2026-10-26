@@ -1,6 +1,7 @@
 import { createClient } from '@/src/auth/createClient';
 import { ENVIRONMENTS } from '@/src/environments';
 import { Client } from '@/src/client/client';
+import { retryOnGatewayBlock } from './retry-fetch';
 
 export const SANDBOX_GATEWAY_URL = ENVIRONMENTS.sandbox;
 
@@ -13,17 +14,20 @@ export async function fetchSandboxAccessToken(
     `${clientId}:${clientSecret}`,
   ).toString('base64');
 
-  const response = await fetch(`${SANDBOX_GATEWAY_URL}/auth/oauth2/token`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: `Basic ${encodedCredentials}`,
+  const response = await retryOnGatewayBlock()(
+    `${SANDBOX_GATEWAY_URL}/auth/oauth2/token`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${encodedCredentials}`,
+      },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+      }),
     },
-    body: new URLSearchParams({
-      grant_type: 'refresh_token',
-      refresh_token: refreshToken,
-    }),
-  });
+  );
 
   if (!response.ok) {
     const errorText = await response.text();
@@ -44,8 +48,7 @@ export function createSandboxClient(
   clientSecret: string,
   refreshToken: string,
 ): Client {
-  process.env.REMOTE_GATEWAY_URL = SANDBOX_GATEWAY_URL;
-  return createClient(() =>
+  return createEnvClient(SANDBOX_GATEWAY_URL, () =>
     fetchSandboxAccessToken(clientId, clientSecret, refreshToken),
   );
 }
@@ -55,8 +58,10 @@ export function createEnvClient(
   fetchAccessToken: () => Promise<{ accessToken: string; expiresIn?: number }>,
 ): Client {
   process.env.REMOTE_GATEWAY_URL = gatewayUrl;
-  return createClient(async () => {
+  const client = createClient(async () => {
     const { accessToken, expiresIn } = await fetchAccessToken();
     return { accessToken, expiresIn: expiresIn ?? 3600 };
   });
+  client.setConfig({ fetch: retryOnGatewayBlock() });
+  return client;
 }

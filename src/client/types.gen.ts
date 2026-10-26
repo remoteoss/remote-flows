@@ -1238,6 +1238,13 @@ export type Employment = {
    */
   updated_at: string;
   /**
+   * Whether the contractor has at least one active withdrawal method (the deposit method their invoices
+   * are paid out to). Only present for contractor employments. Use it to warn before creating an
+   * invoice schedule for a contractor who hasn't added one yet.
+   *
+   */
+  has_active_withdrawal_method?: boolean;
+  /**
    * Employment basic information. Its properties may vary depending on the country.
    *
    * When present, `login_email` indicates which address the employee logs in with:
@@ -1573,6 +1580,26 @@ export type IncentiveResponse = {
 };
 
 /**
+ * CostCalculatorIndirectTaxSummary
+ *
+ * How local indirect tax applies to this employment. Null when the country has no indirect tax.
+ */
+export type CostCalculatorIndirectTaxSummary = {
+  /**
+   * How indirect tax applies in this country.
+   */
+  description: string;
+  /**
+   * Short text shown as the indirect tax cost.
+   */
+  estimate: string;
+  /**
+   * Help center article explaining local country indirect taxes.
+   */
+  guide_url: string;
+} | null;
+
+/**
  * ExpenseResponse
  *
  * Response containing a single expense record.
@@ -1817,12 +1844,20 @@ export type PayItem = {
    */
   end_date: string | null;
   /**
-   * Pay item's unique identifier
+   * Pay item's unique identifier. Editing `amount` or `effective_date` creates a new version with a new `id`; every `id` this API returned for a pay item edited through `PATCH` keeps working on `PATCH` and `DELETE` and resolves to the current version. A monthly payment generated from a recurring pay item can be regenerated with a new `id` when the recurring item changes; its old `id` then returns 404.
+   *
    */
   id: string;
+  /**
+   * A reference code for the pay item record in the calling integration's own system.
+   * Private to that integration — no other integration can read or overwrite it.
+   * Null when the integration has not set one.
+   *
+   */
+  partner_external_id?: string | null;
   provider_data: PayItemProviderData;
   /**
-   * Ids of pay items this one has replaced, oldest first. Empty if this pay item has never been edited.
+   * Earlier `id`s of this pay item, oldest first; empty if it has never been edited. Each of them still resolves to the current version on `PATCH` and `DELETE`, so tracking them is strongly advised but not necessary.
    *
    */
   replaced_ids: Array<string>;
@@ -2925,7 +2960,7 @@ export type CreatePricingPlanParams =
  * The status of the user account associated with this employment.
  *
  * - `active`: The user account is active and the user can log in.
- * - `created`: The user account has been created but not yet activated.
+ * - `created`: The user account has been created but the user hasn't been invited yet.
  * - `invited`: The user has been invited but has not accepted the invitation yet.
  * - `initiated`: The user has been invited but has not completed registration.
  * - `cancelled`: The user account was cancelled before activation.
@@ -3128,8 +3163,8 @@ export type EmploymentV2UpdateParams = {
   /**
    * A reference code for the employment record in the calling integration's own system.
    * Private to that integration — no other integration can read or overwrite it.
-   * Omit the field to leave the value unchanged; send `null` to clear it. Surrounding
-   * whitespace is trimmed off. It can be set at any employment status, and the same
+   * Omit the field to leave the value unchanged; send `null` or an empty string to clear
+   * it. Surrounding whitespace is trimmed off. It can be set at any employment status, and the same
    * value may be used on several employments (for example a rehire).
    *
    */
@@ -3195,6 +3230,14 @@ export type ImportJobRow = {
       amount: number | null;
       created_by: {
         name: string;
+        roles?: Array<{
+          user_type:
+            | 'contractor'
+            | 'admin'
+            | 'employer'
+            | 'employee'
+            | 'freelancer';
+        }>;
         slug: string;
       } | null;
       effective_date: string | null;
@@ -4030,8 +4073,8 @@ export type EmploymentFullParams = {
   /**
    * A reference code for the employment record in the calling integration's own system.
    * Private to that integration — no other integration can read or overwrite it.
-   * Omit the field to leave the value unchanged; send `null` to clear it. Surrounding
-   * whitespace is trimmed off. It can be set at any employment status, and the same
+   * Omit the field to leave the value unchanged; send `null` or an empty string to clear
+   * it. Surrounding whitespace is trimmed off. It can be set at any employment status, and the same
    * value may be used on several employments (for example a rehire).
    *
    */
@@ -4123,11 +4166,11 @@ export type AccountsAssignedRoles = Array<{
     | 'secondary_reports'
     | 'direct_reports'
     | 'employment_countries'
-    | 'direct_and_indirect_reports'
+    | 'assigned_billing_legal_entities'
     | 'employment_departments'
     | 'employment_company_structure_nodes'
-    | 'onboarding_reports'
-    | 'assigned_billing_legal_entities';
+    | 'direct_and_indirect_reports'
+    | 'onboarding_reports';
   name: string;
   slug: string;
   type?: 'default' | 'custom' | 'template' | 'owner';
@@ -5223,6 +5266,10 @@ export type OAuth2Tokens =
  */
 export type ApprovedWorkAuthozation = {
   employer_special_instructions?: string | null;
+  /**
+   * The mobility service level for the approved request.
+   */
+  service_level: 'assessment_only' | 'full_service';
   status: 'approved_by_manager';
 };
 
@@ -5880,7 +5927,7 @@ export type CompanyManagerParams = {
   /**
    * The role assigned for the new manager. The value should be one of the following:
    *
-   * - `admin`: an Admin can manage most of the resources in remote.
+   * - `admin`: assigns the Super Admin role. A Super Admin has full access to the company on Remote, like the owner.
    * - `onboarding_manager`: an Onboarding Manager can add, see and manage new hires.
    * - `people_manager`: a People Manager can view employee profiles of the team members they manage and approve and decline time off and expenses for their employees.
    *
@@ -6428,6 +6475,8 @@ export type PayProgressResponse = {
  *
  * Currently supports setting the Employment Status to `active` and backdating the employment start date.
  *
+ * All fields other than the ones listed are ignored.
+ *
  */
 export type EmploymentUpdateParams = {
   provisional_start_date?: string;
@@ -6595,7 +6644,11 @@ export type ContractorTimesheet = {
   regular_hours: HoursAndMinutes;
   start_date: Date;
   /**
-   * The timestamp the timesheet was submitted.
+   * Timesheets created through the API are open drafts: the contractor can still edit them, and the customer approves the hours through the contractor's invoice.
+   */
+  status: 'open';
+  /**
+   * The timestamp the timesheet was submitted. Always `null` for timesheets created through this endpoint, since they are created open.
    */
   submitted_at: string | null;
   /**
@@ -8159,7 +8212,7 @@ export type NullableCountry = {
 /**
  * UpdatePayItemParams
  *
- * Partial update — only the fields provided are changed. Editing `amount` or `effective_date` archives the existing pay item and creates a new one with a new `id`; use the response's `replaced_ids` to reconcile. Editing `end_date`, `provider_data` or `custom_configuration` alone updates the pay item in place and keeps the same `id`.
+ * Partial update — only the fields provided are changed. Editing `amount` or `effective_date` archives the existing pay item and creates a new one with a new `id`; the old `id` keeps working, and the response's `replaced_ids` lists the earlier ids for integrations that track changes. Editing `end_date`, `provider_data` or `custom_configuration` alone updates the pay item in place and keeps the same `id`.
  *
  */
 export type UpdatePayItemParams = {
@@ -8176,6 +8229,15 @@ export type UpdatePayItemParams = {
    * Last day of a leave period, inclusive (YYYY-MM-DD). Leave-of-absence pay codes only; send `null` to clear it.
    */
   end_date?: string | null;
+  /**
+   * A reference code for the pay item record in the calling integration's own system.
+   * Private to that integration — no other integration can read or overwrite it.
+   * Omit the field to leave the value unchanged; send `null` or an empty string to clear
+   * it. Surrounding whitespace is trimmed off. A value can be held by one live pay item at a time, per integration and company; editing a
+   * pay item keeps its value on the new version. At most 64 characters, after trimming.
+   *
+   */
+  partner_external_id?: string | null;
   provider_data?: PayItemProviderDataParams;
 };
 
@@ -8311,6 +8373,11 @@ export type ContractAmendmentFormResponse = {
  *   Category selection mirrors the company endpoint: use either `category` (legacy enum, deprecated but supported)
  *   or `expense_category_slug` (recommended). When both are provided, `expense_category_slug` wins.
  *
+ *   `expense_category_slug` must be the `slug` of a category listed for the employee by
+ *   `GET /v1/employee/expense-categories`. Slugs differ between sandbox and production, so read them
+ *   from that endpoint instead of storing them. A slug that isn't listed is refused, unless `category`
+ *   is also sent: then `category` is used.
+ *
  */
 export type ParamsToCreateEmployeeExpense = {
   /**
@@ -8356,7 +8423,7 @@ export type ParamsToCreateEmployeeExpense = {
    */
   currency: string;
   /**
-   * Slug of the expense category from the hierarchical categories system (recommended). Takes precedence over legacy category field.
+   * Slug of a category listed by `GET /v1/employee/expense-categories` for the employee (recommended). Takes precedence over legacy category field.
    */
   expense_category_slug?: string | null;
   /**
@@ -8661,6 +8728,7 @@ export type CostCalculatorEmployment = {
    * Whether this country has a fringe benefits tax on employer-paid benefit premiums (e.g. New Zealand).
    */
   has_fringe_benefits_tax?: boolean;
+  indirect_tax_summary?: CostCalculatorIndirectTaxSummary;
   /**
    * The minimum number of business days required to onboard an employee in this country. Null if not determined.
    */
@@ -9143,6 +9211,17 @@ export type PayItemParams = {
    * Partner-defined pay element identifier, as configured on the legal entity pay element. Mutually exclusive with `code` — provide exactly one.
    */
   external_import_code?: string;
+  /**
+   * A reference code for the pay item record in the calling integration's own system.
+   * Private to that integration — no other integration can read or overwrite it.
+   * When the integration already holds this value on a live pay item, the item updates that
+   * pay item; otherwise it creates a new pay item holding the value. `null` or an empty string
+   * fails the item. An item without the field always creates a new pay item, so sending it
+   * again creates a duplicate. Surrounding whitespace is trimmed off. A value can be held by one live pay item at a time, per integration and company; editing a
+   * pay item keeps its value on the new version. At most 64 characters, after trimming.
+   *
+   */
+  partner_external_id?: string | null;
   provider_data?: PayItemProviderDataParams;
 };
 
@@ -10345,7 +10424,7 @@ export type CorTerminationRequestId = string;
  */
 export type PayItemBulkCreateFailures = {
   /**
-   * Failure reason. Includes `employment_not_global_payroll` when the provided employment is not Global Payroll, `pay_item_code_not_allowed` / `pay_item_external_import_code_not_allowed` when the given identifier does not resolve to an allowed pay element, and `effective_date_after_termination_date` (as a `code`/`message` pair) when a `time_attendance` pay item's `effective_date` falls after the employment's termination date. It also includes `custom_configuration_required`, `custom_configuration_not_used` and `invalid_custom_configuration` (as `code`/`message`/`param`) when the pay item's `custom_configuration` doesn't match the pay code's.
+   * Failure reason. Includes `employment_not_global_payroll` when the provided employment is not Global Payroll, `pay_item_code_not_allowed` / `pay_item_external_import_code_not_allowed` when the given identifier does not resolve to an allowed pay element, and `effective_date_after_termination_date` (as a `code`/`message` pair) when a `time_attendance` pay item's `effective_date` falls after the employment's termination date. It also includes `custom_configuration_required`, `custom_configuration_not_used` and `invalid_custom_configuration` (as `code`/`message`/`param`) when the pay item's `custom_configuration` doesn't match the pay code's. An item with a `partner_external_id` can also fail with `partner_external_id_not_available`, `partner_external_id_blank`, `partner_external_id_repeated_in_request`, `partner_external_id_ambiguous` or `partner_external_id_held_by_other_pay_item` (as `code`/`message`), with the errors `PATCH` returns when the matched pay item cannot be updated, or with `errors.partner_external_id` when the value is refused.
    */
   error?:
     | string
@@ -13785,8 +13864,8 @@ export type EmploymentCreateParams = {
   /**
    * A reference code for the employment record in the calling integration's own system.
    * Private to that integration — no other integration can read or overwrite it.
-   * Omit the field to leave the value unchanged; send `null` to clear it. Surrounding
-   * whitespace is trimmed off. It can be set at any employment status, and the same
+   * Omit the field to leave the value unchanged; send `null` or an empty string to clear
+   * it. Surrounding whitespace is trimmed off. It can be set at any employment status, and the same
    * value may be used on several employments (for example a rehire).
    *
    */
@@ -20855,7 +20934,7 @@ export type GetV1CountriesCountryCodeFormData = {
   };
   query?: {
     /**
-     * Required for `contract_amendment` and `global_payroll_state_taxes` forms. Optional for `contract_details` and `global_payroll_contract_details`, where it tailors the schema to that employment.
+     * Required for `contract_amendment`, `global_payroll_contract_details` and `global_payroll_state_taxes` forms. Optional for `contract_details`, where it tailors the schema to that employment.
      */
     employment_id?: string;
     /**
@@ -21241,6 +21320,50 @@ export type PostV1IdentityVerificationEmploymentIdDeclineResponses = {
 
 export type PostV1IdentityVerificationEmploymentIdDeclineResponse =
   PostV1IdentityVerificationEmploymentIdDeclineResponses[keyof PostV1IdentityVerificationEmploymentIdDeclineResponses];
+
+export type PostV1ContractorsEmploymentsEmploymentIdDeactivateData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/contractors/employments/{employment_id}/deactivate';
+};
+
+export type PostV1ContractorsEmploymentsEmploymentIdDeactivateErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostV1ContractorsEmploymentsEmploymentIdDeactivateError =
+  PostV1ContractorsEmploymentsEmploymentIdDeactivateErrors[keyof PostV1ContractorsEmploymentsEmploymentIdDeactivateErrors];
+
+export type PostV1ContractorsEmploymentsEmploymentIdDeactivateResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostV1ContractorsEmploymentsEmploymentIdDeactivateResponse =
+  PostV1ContractorsEmploymentsEmploymentIdDeactivateResponses[keyof PostV1ContractorsEmploymentsEmploymentIdDeactivateResponses];
 
 export type GetV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsIdData =
   {
@@ -22250,6 +22373,50 @@ export type PutV1EmploymentsEmploymentIdBasicInformationResponses = {
 
 export type PutV1EmploymentsEmploymentIdBasicInformationResponse =
   PutV1EmploymentsEmploymentIdBasicInformationResponses[keyof PutV1EmploymentsEmploymentIdBasicInformationResponses];
+
+export type PostV1ContractorsEmploymentsEmploymentIdActivateData = {
+  body?: never;
+  path: {
+    /**
+     * Employment ID
+     */
+    employment_id: string;
+  };
+  query?: never;
+  url: '/v1/contractors/employments/{employment_id}/activate';
+};
+
+export type PostV1ContractorsEmploymentsEmploymentIdActivateErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
+   * Unprocessable Entity
+   */
+  422: UnprocessableEntityResponse;
+};
+
+export type PostV1ContractorsEmploymentsEmploymentIdActivateError =
+  PostV1ContractorsEmploymentsEmploymentIdActivateErrors[keyof PostV1ContractorsEmploymentsEmploymentIdActivateErrors];
+
+export type PostV1ContractorsEmploymentsEmploymentIdActivateResponses = {
+  /**
+   * Success
+   */
+  200: SuccessResponse;
+};
+
+export type PostV1ContractorsEmploymentsEmploymentIdActivateResponse =
+  PostV1ContractorsEmploymentsEmploymentIdActivateResponses[keyof PostV1ContractorsEmploymentsEmploymentIdActivateResponses];
 
 export type GetV1EmploymentsEmploymentIdBenefitOffersSchemaData = {
   body?: never;
@@ -23733,6 +23900,10 @@ export type PostV1CompaniesCompanyIdCreateTokenErrors = {
    * Unauthorized
    */
   401: UnauthorizedResponse;
+  /**
+   * Forbidden
+   */
+  403: ForbiddenResponse;
   /**
    * Not Found
    */
@@ -26578,6 +26749,10 @@ export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDoc
      * Forbidden
      */
     403: ForbiddenResponse;
+    /**
+     * Not Found
+     */
+    404: NotFoundResponse;
   };
 
 export type PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignError =
@@ -27102,6 +27277,14 @@ export type GetV1PayItemsData = {
      */
     effective_to?: Date;
     /**
+     * Filters the results by the `partner_external_id` value the calling integration holds
+     * for the pay item; another integration's identifiers are never matched. Matching is
+     * exact, including case. A value can be held by one live pay item at a time, per integration and company; editing a
+     * pay item keeps its value on the new version. At most 64 characters, after trimming.
+     *
+     */
+    partner_external_id?: string;
+    /**
      * Starts fetching records after the given page
      */
     page?: number;
@@ -27114,6 +27297,10 @@ export type GetV1PayItemsData = {
 };
 
 export type GetV1PayItemsErrors = {
+  /**
+   * Bad Request
+   */
+  400: BadRequestResponse;
   /**
    * Unauthorized
    */

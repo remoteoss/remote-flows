@@ -1,7 +1,9 @@
 ---
-alwaysApply: true
 description: Build JSON Schema forms with useHeadlessForm, never by calling createHeadlessForm directly
-glob: '{src,example/e2e}/**/*.{ts,tsx}'
+paths:
+  - 'src/flows/**'
+  - 'src/common/**'
+  - 'src/components/**'
 ---
 
 # useHeadlessForm Rule

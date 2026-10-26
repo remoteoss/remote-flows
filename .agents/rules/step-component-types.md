@@ -1,6 +1,8 @@
 ---
-alwaysApply: true
 description: Step component callback types must be exported from types.ts
+paths:
+  - 'src/flows/**/types.ts'
+  - 'src/flows/**/components/**'
 ---
 
 # Step Component Types Rule
