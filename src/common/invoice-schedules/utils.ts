@@ -1,4 +1,8 @@
 import {
+  ContractorInvoiceSchedule,
+  ContractorInvoiceScheduleItem,
+} from '@/src/client';
+import {
   INVOICE_ITEM_SLOTS,
   ONE_TIME_PERIODICITY,
   ONE_TIME_PERSISTED_PERIODICITY,
@@ -24,6 +28,43 @@ export function buildInvoiceItems(values: Record<string, unknown>) {
     }
   }
   return items;
+}
+
+type InvoiceScheduleFormSource = Pick<
+  ContractorInvoiceSchedule,
+  | 'currency'
+  | 'periodicity'
+  | 'start_date'
+  | 'number'
+  | 'note'
+  | 'nr_occurrences'
+> & {
+  items?: Pick<ContractorInvoiceScheduleItem, 'description' | 'amount'>[];
+};
+
+/**
+ * Turns a saved invoice schedule into form values in API units, with item amounts in cents.
+ * @param schedule - The schedule as the API returns it
+ * @returns Values keyed by form field name, ready to seed the form
+ */
+export function buildInvoiceScheduleFormValues(
+  schedule: InvoiceScheduleFormSource,
+) {
+  const values: Record<string, unknown> = {
+    currency: schedule.currency,
+    periodicity: schedule.periodicity,
+    start_date: schedule.start_date,
+    number: schedule.number,
+    note: schedule.note,
+    nr_occurrences: schedule.nr_occurrences,
+  };
+
+  schedule.items?.forEach((item, index) => {
+    values[`item_${index + 1}_description`] = item.description;
+    values[`item_${index + 1}_amount`] = item.amount;
+  });
+
+  return values;
 }
 
 /**
