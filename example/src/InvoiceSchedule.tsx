@@ -49,6 +49,18 @@ function CreateInvoiceSchedule({ employmentId }: { employmentId: string }) {
               </p>
             )}
 
+            {invoiceScheduleBag.employment?.has_active_withdrawal_method ===
+              false && (
+              <p>
+                {(invoiceScheduleBag.employment.basic_information?.name as
+                  | string
+                  | undefined) || 'This contractor'}{' '}
+                does not have an active deposit method on their account yet.
+                Schedule this invoice and we&apos;ll reach out to them to get
+                one added.
+              </p>
+            )}
+
             <InvoiceScheduleForm
               onSuccess={(data) => {
                 setError(null);

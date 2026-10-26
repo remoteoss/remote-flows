@@ -773,10 +773,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     expect(request.body.contractor_invoice_schedules[0].items).toHaveLength(10);
   });
 
-  describe('missing deposit method statement', () => {
-    const statement =
-      /does not have an active deposit method on their account yet/i;
-
+  describe('employment on the bag', () => {
     function mockEmployment(overrides: Record<string, unknown>) {
       server.use(
         http.get('*/v1/employments/:id', ({ params }) =>
@@ -795,47 +792,55 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
       );
     }
 
-    it('names the contractor when they have no active withdrawal method', async () => {
-      mockEmployment({
-        has_active_withdrawal_method: false,
-        basic_information: { name: 'Ardin Brl' },
-      });
-
-      renderFlow();
-
-      expect(await screen.findByText(statement)).toHaveTextContent(
-        /^Ardin Brl does not have an active deposit method/,
+    function renderBag() {
+      return render(
+        <InvoiceScheduleFlow
+          employmentId='employment-grace'
+          render={(bag) =>
+            bag.isLoading ? (
+              <p>Loading…</p>
+            ) : (
+              <p data-testid='employment'>
+                {JSON.stringify({
+                  hasActiveWithdrawalMethod:
+                    bag.employment?.has_active_withdrawal_method,
+                  name: bag.employment?.basic_information?.name,
+                })}
+              </p>
+            )
+          }
+        />,
+        { wrapper: TestProviders },
       );
-      expect(
-        screen.getByRole('button', { name: /Create schedule/i }),
-      ).toBeEnabled();
-    });
-
-    it('falls back to a generic name when the employment has none', async () => {
-      mockEmployment({
-        has_active_withdrawal_method: false,
-        basic_information: {},
-      });
-
-      renderFlow();
-
-      expect(await screen.findByText(statement)).toHaveTextContent(
-        /^This contractor does not have an active deposit method/,
-      );
-    });
+    }
 
     it.each([
-      ['an active withdrawal method', { has_active_withdrawal_method: true }],
-      ['no withdrawal method information', {}],
-    ])('shows nothing for %s', async (_label, overrides) => {
-      mockEmployment(overrides);
+      [false, 'Ardin Brl'],
+      [true, 'Ardin Brl'],
+    ])(
+      'exposes has_active_withdrawal_method %s and the contractor name',
+      async (hasActiveWithdrawalMethod, name) => {
+        mockEmployment({
+          has_active_withdrawal_method: hasActiveWithdrawalMethod,
+          basic_information: { name },
+        });
 
-      renderFlow();
+        renderBag();
 
-      await waitFor(() => {
-        expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
-      });
-      expect(screen.queryByText(statement)).not.toBeInTheDocument();
+        expect(
+          JSON.parse((await screen.findByTestId('employment')).textContent!),
+        ).toEqual({ hasActiveWithdrawalMethod, name });
+      },
+    );
+
+    it('leaves has_active_withdrawal_method undefined when the employment has none', async () => {
+      mockEmployment({ basic_information: { name: 'Ardin Brl' } });
+
+      renderBag();
+
+      expect(
+        JSON.parse((await screen.findByTestId('employment')).textContent!),
+      ).toEqual({ name: 'Ardin Brl' });
     });
   });
 });

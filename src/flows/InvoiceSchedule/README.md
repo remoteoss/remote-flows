@@ -146,12 +146,10 @@ The form shows the platform's invoice date note under the invoice date: the invo
 when the invoice is created, not when the contractor gets paid, so backdate the invoice date if
 payment is needed by a specific day.
 
-When the contractor has no active deposit method (`has_active_withdrawal_method` is `false` on
-their employment), the form also shows a warning above the fields: the schedule can still be
-created, and Remote will reach out to the contractor to get one added. Nothing is shown while
-the employment loads or when the value is missing. The warning is only part of this standalone
-flow, not the invoice-schedule step of Contractor Onboarding. Building your own UI? Read
-`employment.has_active_withdrawal_method` from the bag instead.
+The form does not warn about a contractor with no active deposit method. Render your own notice
+from the bag: `employment.has_active_withdrawal_method` is `false` when they have none. The
+schedule can still be created, and Remote reaches out to the contractor to get one added. The
+example app shows one.
 
 ## The bag
 
