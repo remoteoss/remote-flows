@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import {
   useCreateInvoiceSchedule,
   useGetCreateInvoiceScheduleSchema,
@@ -12,14 +12,10 @@ import {
   InvoiceSchedulePayload,
   UseInvoiceScheduleOptions,
 } from '@/src/flows/InvoiceSchedule/types';
-import { parseJSFToValidate } from '@/src/components/form/utils';
-import { clearBase64Data } from '@/src/lib/utils';
+import { clearBase64Data, createStructuredError } from '@/src/lib/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import {
-  Fields,
-  ValidationResult,
-} from '@remoteoss/remote-json-schema-form-kit';
+import { Fields } from '@remoteoss/remote-json-schema-form-kit';
 
 /**
  * Headless hook powering the standalone invoice-schedule screen.
@@ -32,11 +28,6 @@ export const useInvoiceSchedule = ({
   employmentId,
   jsfModify,
 }: UseInvoiceScheduleOptions) => {
-  // The schema's conditionals depend on what has been filled in so far, so the current
-  // values have to reach `createHeadlessForm`. `checkFieldUpdates` is wired to the form's
-  // watch subscription by `useJSONSchemaForm`.
-  const [fieldValues, setFieldValues] = useState<Record<string, unknown>>({});
-
   // `contractor_type` is not on the employments list payload, so the individual employment is
   // fetched purely to tell Contractor of Record apart.
   const { data: employment, isLoading: isLoadingEmployment } =
@@ -48,17 +39,21 @@ export const useInvoiceSchedule = ({
   const isContractorOfRecord =
     (employment as $TSFixMe)?.contractor_type === 'cor';
 
-  const { data: schemaForm, isLoading: isLoadingCurrencies } =
-    useGetCreateInvoiceScheduleSchema({
-      enabled: true,
-      employmentId,
-      jsfModify,
-      includeOneTime: true,
-      isContractorOfRecord,
-      includeCustomDays: true,
-      includeBackdateTip: true,
-      fieldValues,
-    });
+  const {
+    data: schemaForm,
+    handleValidation,
+    onValuesChange: checkFieldUpdates,
+    parseFormValues: parseValues,
+    isLoading: isLoadingCurrencies,
+  } = useGetCreateInvoiceScheduleSchema({
+    enabled: true,
+    employmentId,
+    jsfModify,
+    includeOneTime: true,
+    isContractorOfRecord,
+    includeCustomDays: true,
+    includeBackdateTip: true,
+  });
 
   const createInvoiceScheduleMutation = useCreateInvoiceSchedule();
   const { mutateAsyncOrThrow } = mutationToPromise(
@@ -68,46 +63,6 @@ export const useInvoiceSchedule = ({
   const previewContractorInvoiceMutation = usePreviewContractorInvoice();
   const { mutateAsyncOrThrow: previewContractorInvoiceAsync } =
     mutationToPromise(previewContractorInvoiceMutation);
-
-  /**
-   * Feed the latest form values back in so the schema's conditionals re-evaluate.
-   * `InvoiceScheduleForm` wires this to the form's watch subscription.
-   */
-  const checkFieldUpdates = useCallback((values: InvoiceScheduleFormValues) => {
-    setFieldValues(values);
-  }, []);
-
-  // Annotated rather than inferred: the generated result's inferred type reaches into
-  // json-schema-form internals that cannot be named from here (TS4023).
-  const handleValidation = useCallback(
-    async (
-      values: InvoiceScheduleFormValues,
-    ): Promise<ValidationResult | null> => {
-      if (!schemaForm) {
-        return null;
-      }
-
-      // Values must be parsed first — money inputs hold strings, and the item amounts are
-      // declared `integer`, which JSF v1 enforces. Validating raw values fails on every
-      // amount and blocks submission.
-      const parsed = await parseJSFToValidate(values, schemaForm.fields, {
-        isPartialValidation: false,
-      });
-
-      return (schemaForm.handleValidation(parsed) as ValidationResult) ?? null;
-    },
-    [schemaForm],
-  );
-
-  // Coerces the raw form values into the shapes the API expects — most importantly money
-  // inputs into integer cents, which `buildInvoiceItems` requires to pick a slot up.
-  const parseValues = useCallback(
-    async (values: InvoiceScheduleFormValues) =>
-      (await parseJSFToValidate(values, schemaForm?.fields ?? [], {
-        isPartialValidation: false,
-      })) as InvoiceScheduleFormValues,
-    [schemaForm],
-  );
 
   const parseFormValues = useCallback(
     async (values: InvoiceScheduleFormValues) => {
@@ -174,10 +129,16 @@ export const useInvoiceSchedule = ({
       assertEmploymentId();
       const parsed = await parseValues(values);
 
-      return mutateAsyncOrThrow({
+      const response = await mutateAsyncOrThrow({
         employmentId,
         values: parsed,
       });
+
+      if (response?.data?.failures?.length) {
+        throw createStructuredError('Failed to create invoice schedule');
+      }
+
+      return response;
     },
     [assertEmploymentId, employmentId, mutateAsyncOrThrow, parseValues],
   );
