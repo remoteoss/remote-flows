@@ -161,8 +161,9 @@ The header and statement fields can be customized through
 Must be rendered inside the flow's `render` prop. Until the document is reviewed, it opens the
 contract document PDF in a drawer through the `pdfViewer` component; closing the drawer marks
 the document as reviewed. From then on it submits the preview form, which signs the document.
-Same API as the onboarding `ContractReviewButton`: a `render({ reviewCompleted })` prop for the
-label, plus any button props. `ContractDocumentSubmitButton` also submits the preview form.
+Your `onClick` runs on every click, before and after the review. Same API as the onboarding
+`ContractReviewButton`: a `render({ reviewCompleted })` prop for the label, plus any button
+props. `ContractDocumentSubmitButton` also submits the preview form.
 
 ### ContractDocumentBackButton
 

@@ -37,8 +37,8 @@ export function ContractReviewButton({
     if (!reviewCompleted) {
       e.preventDefault();
       setIsOpen(true);
-      onClick?.(e);
     }
+    onClick?.(e);
   };
 
   const handleClose = () => {
