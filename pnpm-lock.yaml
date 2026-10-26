@@ -372,8 +372,8 @@ importers:
         specifier: 17.0.0
         version: 17.0.0(postcss@8.5.23)
       randexp:
-        specifier: 0.5.3
-        version: 0.5.3
+        specifier: 0.6.1
+        version: 0.6.1
       tsdown:
         specifier: 0.23.0
         version: 0.23.0(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.0)(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)
@@ -2519,6 +2519,10 @@ packages:
     resolution: {integrity: sha512-pYxfDYpued//QpnLIm4Avk7rsNtAtQkUES2cwAYSvD/wd2pKD71gN2Ebj3e7klzXwjocvE8c5vx/1fxwpqmSxA==}
     engines: {node: '>=4'}
 
+  drange@2.0.1:
+    resolution: {integrity: sha512-s/Gs2VG0zdUXxWz4cK3vcwniF914RKWLNYY6YAVTTLo2HjqsynfUzUcSvNFEdktQXKDbJMKF9wmg67Rv32VhEQ==}
+    engines: {node: '>=6'}
+
   dts-resolver@3.0.0:
     resolution: {integrity: sha512-1T1f+z+4tl9XD+m+0HBgWoL/nm0bOIffyWaUuUSBlFg/86IWvfx+wjNaO/ybU0AJzG9/Mi5hBUgGV6zCmWEN7Q==}
     engines: {node: ^22.18.0 || >=24.0.0}
@@ -3206,6 +3210,10 @@ packages:
     resolution: {integrity: sha512-U+5l2KrcMNOUPYvazA3h5ekF80FHTUG+87SEAmHZmolh1M+i/WyTCxVzmi+tidIa1tM4BSe8g2Y/D3loWDjj+w==}
     engines: {node: '>=4'}
 
+  randexp@0.6.1:
+    resolution: {integrity: sha512-OKfFskZBqkEEOniLgSTsMpleZOc4lo0akIwZgS2ZwJBZWIl4svnm+kKdpWrRQy59E1/XiDQQ2YK7Wd/vi4xarA==}
+    engines: {node: '>=8'}
+
   rc9@3.1.0:
     resolution: {integrity: sha512-ufjkNVzbRHKcCOmTahZkmVsyc3W+MSk3jY03m+a7tGHkIsdVMG9l10/3HvFbWkkKzY5VFp3pkRsIo/UYgmFL7Q==}
 
@@ -3299,6 +3307,10 @@ packages:
   ret@0.2.2:
     resolution: {integrity: sha512-M0b3YWQs7R3Z917WRQy1HHA7Ba7D8hvZg6UE5mLykJxQVE2ju0IXbGlaHPPlkY+WN7wFP+wUMXmBFA0aV6vYGQ==}
     engines: {node: '>=4'}
+
+  ret@0.5.1:
+    resolution: {integrity: sha512-Z/nyvABwcRnRD2mMP7Kz6G1dFZZqX1mNErOnxF42OCQKE07b9k9hK9SQxHL3LFEZUdzQaLM4dId1E/E6Vm4WhA==}
+    engines: {node: '>=10'}
 
   rettime@0.11.12:
     resolution: {integrity: sha512-5ExtR1ppiDBQkVoPw5NAqdbfH4Iq2VOmQKHMtUoaFxA9bo2krzFYBtyq6K40xxbYp+2w/YOr6D+1ToF6tTN53A==}
@@ -5426,6 +5438,8 @@ snapshots:
 
   drange@1.1.1: {}
 
+  drange@2.0.1: {}
+
   dts-resolver@3.0.0: {}
 
   duplexer@0.1.2: {}
@@ -6028,6 +6042,11 @@ snapshots:
       drange: 1.1.1
       ret: 0.2.2
 
+  randexp@0.6.1:
+    dependencies:
+      drange: 2.0.1
+      ret: 0.5.1
+
   rc9@3.1.0:
     dependencies:
       defu: 6.1.7
@@ -6111,6 +6130,8 @@ snapshots:
       supports-preserve-symlinks-flag: 1.0.0
 
   ret@0.2.2: {}
+
+  ret@0.5.1: {}
 
   rettime@0.11.12: {}
 
