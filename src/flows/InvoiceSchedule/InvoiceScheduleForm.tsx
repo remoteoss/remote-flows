@@ -9,7 +9,6 @@ import {
 } from '@/src/flows/InvoiceSchedule/types';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { isStructuredError } from '@/src/lib/utils';
-import { $TSFixMe } from '@/src/types/remoteFlows';
 import { AlertCircle } from 'lucide-react';
 
 type InvoiceScheduleFormProps = Partial<{
@@ -66,7 +65,7 @@ export function InvoiceScheduleForm({
     }
   };
 
-  const employment = invoiceScheduleBag?.employment as $TSFixMe;
+  const employment = invoiceScheduleBag?.employment;
   const missingWithdrawalMethod =
     employment?.has_active_withdrawal_method === false;
   const contractorName =
