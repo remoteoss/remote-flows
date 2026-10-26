@@ -119,6 +119,24 @@ function semiMonthlyConditional() {
   };
 }
 
+function startDateLabelConditional() {
+  return {
+    if: {
+      properties: {
+        periodicity: {
+          enum: RECURRING_PERIODICITY_OPTIONS.map((option) => option.const),
+        },
+      },
+      required: ['periodicity'],
+    },
+    then: {
+      properties: {
+        start_date: { title: 'Start date' },
+      },
+    },
+  };
+}
+
 function endDateConditionals() {
   return [
     {
@@ -370,6 +388,7 @@ export function buildCreateInvoiceScheduleSchema({
     allOf: [
       ...invoiceItemRevealConditionals(),
       ...(includeCustomDays ? [semiMonthlyConditional()] : []),
+      startDateLabelConditional(),
       ...endDateConditionals(),
     ],
   };

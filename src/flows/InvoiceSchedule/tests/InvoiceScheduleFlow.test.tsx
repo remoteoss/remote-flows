@@ -464,6 +464,28 @@ describe('InvoiceScheduleFlow', () => {
     });
   });
 
+  it('labels the date "Start date" for a recurring cadence and "Invoice date" for a one-off', async () => {
+    renderFlow();
+
+    await fillScheduleDetails();
+    expect(screen.getByLabelText(/^Invoice date$/i)).toBeInTheDocument();
+
+    for (const periodicity of [
+      'weekly',
+      'bi_weekly',
+      'semi_monthly',
+      'monthly',
+    ]) {
+      await fillSelect('periodicity', periodicity);
+      expect(screen.getByLabelText(/^Start date$/i)).toBeInTheDocument();
+      expect(screen.queryByLabelText(/^Invoice date$/i)).toBeNull();
+    }
+
+    await fillSelect('periodicity', 'one_time');
+    expect(screen.getByLabelText(/^Invoice date$/i)).toBeInTheDocument();
+    expect(screen.queryByLabelText(/^Start date$/i)).toBeNull();
+  });
+
   it('blocks a recurring schedule until an end date is chosen', async () => {
     const onSuccess = vi.fn();
     renderFlow({ onSuccess });

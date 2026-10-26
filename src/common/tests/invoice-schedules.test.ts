@@ -338,6 +338,36 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     expect(currency?.options?.[0]?.disabled).toBe(true);
   });
 
+  describe('start date label', () => {
+    const labelFor = async (periodicity?: string) => {
+      const form = createHeadlessForm(
+        buildCreateInvoiceScheduleSchema({
+          currencies: ['USD'],
+          includeOneTime: true,
+        }) as $TSFixMe,
+        {},
+      );
+
+      await form.handleValidation(periodicity ? { periodicity } : {});
+
+      return form.fields.find((field) => field.name === 'start_date')?.label;
+    };
+
+    it.each(['weekly', 'bi_weekly', 'semi_monthly', 'monthly'])(
+      'reads "Start date" for %s',
+      async (p) => {
+        expect(await labelFor(p)).toBe('Start date');
+      },
+    );
+
+    it.each([undefined, ONE_TIME_PERIODICITY])(
+      'keeps "Invoice date" for %s',
+      async (p) => {
+        expect(await labelFor(p)).toBe('Invoice date');
+      },
+    );
+  });
+
   describe('end date choice', () => {
     const buildForm = (options = {}) =>
       createHeadlessForm(
