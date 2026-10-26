@@ -1,3 +1,9 @@
+---
+description: Customizable components are a logic component plus a default presentation component
+paths:
+  - 'src/components/**'
+---
+
 # Component Pattern Rule
 
 ## Philosophy: Separation of Concerns
@@ -31,21 +37,22 @@ import { useFormFields } from '@/src/context';
 
 export function ComponentName(props) {
   const { components } = useFormFields();
-  
+
   // Business logic here
   const processedData = /* ... */;
-  
+
   const Component = components?.componentName;
-  
+
   if (!Component) {
     throw new Error(`Component not found for field ${name}`);
   }
-  
+
   return <Component fieldData={processedData} />;
 }
 ```
 
 **Responsibilities:**
+
 - Business logic and data processing
 - Context consumption
 - Component resolution via `useFormFields()`
@@ -69,6 +76,7 @@ export function ComponentNameDefault({ fieldData }: ComponentNameComponentProps)
 ```
 
 **Responsibilities:**
+
 - Pure presentation component
 - Receives props from main component
 - No context consumption
@@ -95,6 +103,7 @@ export const lazyDefaultComponents: Components = {
 When adding a new customizable component:
 
 ### 1. Component Files
+
 - [ ] Create `ComponentName.tsx` with business logic
 - [ ] Create `default/ComponentNameDefault.tsx` with presentation
 - [ ] Main component uses `useFormFields()` to get custom component
@@ -102,19 +111,23 @@ When adding a new customizable component:
 - [ ] No inline default rendering in main component
 
 ### 2. Type Definitions
+
 - [ ] Export `ComponentNameComponentProps` in `src/types/remoteFlows.ts`
 - [ ] Add `componentName?: React.ComponentType<ComponentNameComponentProps>` to `Components` type
 - [ ] Export props type from `src/index.tsx`
 
 ### 3. Lazy Loading
+
 - [ ] Add to `src/lazy-default-components.ts` using `React.lazy()`
 - [ ] Import path points to Default component file
 - [ ] Test that import path is correct
 
 ### 4. Documentation
-- [ ] Update `docs/COMPONENT_CUSTOMIZATION.md` (see component-documentation.mdc)
+
+- [ ] Update `docs/COMPONENT_CUSTOMIZATION.md` (see component-documentation.md)
 
 ### 5. Tests
+
 - [ ] Create test file in `tests/` subdirectory
 - [ ] Test default rendering
 - [ ] Test custom component override
@@ -122,6 +135,7 @@ When adding a new customizable component:
 - [ ] Use `TestProviders` with custom components prop
 
 ### 6. Validation
+
 - [ ] Run `pnpm run format`
 - [ ] Run `pnpm run lint`
 - [ ] Run `pnpm run type-check`
@@ -132,11 +146,13 @@ When adding a new customizable component:
 ### Good Examples
 
 **ForcedValueField** (lines 1-67):
+
 - Main component: `src/components/form/fields/ForcedValueField.tsx`
 - Default: `src/components/form/fields/default/ForcedValueFieldDefault.tsx`
 - Lazy: `src/lazy-default-components.ts` (lines 63-69)
 
 **ZendeskDrawer** (lines 1-47):
+
 - Main component: `src/components/shared/zendesk-drawer/ZendeskDrawer.tsx`
 - Default: `src/components/shared/zendesk-drawer/ZendeskDrawerDefault.tsx`
 - Follows pattern correctly
@@ -148,11 +164,11 @@ When adding a new customizable component:
 export function ComponentName(props) {
   const { components } = useFormFields();
   const CustomComponent = components?.componentName;
-  
+
   if (CustomComponent) {
     return <CustomComponent {...props} />;
   }
-  
+
   // ❌ Don't do this - create a Default component instead
   return (
     <div>
@@ -163,6 +179,7 @@ export function ComponentName(props) {
 ```
 
 **Why this is bad:**
+
 - No lazy loading (default always included in bundle)
 - Violates separation of concerns
 - Inconsistent with codebase patterns
@@ -179,6 +196,7 @@ export function ComponentName(props) {
 ## Red Flags
 
 Stop and refactor if you find yourself:
+
 - Writing inline JSX in the main component for default case
 - Not creating a Default component file
 - Skipping the lazy-default-components.ts registration

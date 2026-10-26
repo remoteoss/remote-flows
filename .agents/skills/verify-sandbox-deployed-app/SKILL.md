@@ -9,7 +9,7 @@ allowed-tools: Bash(pnpm run seed:onboarding:*), Bash(node:*), Bash(cat:*), Bash
 Drives `https://remote-flows-eight.vercel.app` the same way the user does by hand
 (1Password credential → log in → onboarding route → fill/navigate → verify), but
 scripted end to end via Playwright. See `scripts/seed-onboarding.ts` for the
-seeding half of this and `CLAUDE.md` for repo conventions.
+seeding half of this and `AGENTS.md` for repo conventions.
 
 ## Step 1: Confirm the config exists
 

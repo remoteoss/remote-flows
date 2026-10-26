@@ -1,3 +1,9 @@
+---
+description: Add every new flow query to the initialLoading aggregation
+paths:
+  - 'src/flows/**/hooks.{ts,tsx}'
+---
+
 # Loading State Aggregation Pattern
 
 ## Flow hooks.tsx Pattern
@@ -11,13 +17,13 @@ When adding new queries to flow hooks (Onboarding, ContractorOnboarding, CreateC
    ```
 
 2. **Add it to the `initialLoading` aggregation** (typically around line 966-976 in flow hooks):
-   
+
    ```typescript
    const initialLoading =
      isLoadingCountries ||
      isLoadingBasicInformationForm ||
      // ... other loading states ...
-     isLoadingSomething;  // <-- Don't forget this!
+     isLoadingSomething; // <-- Don't forget this!
    ```
 
 3. **Why this matters:**
@@ -62,5 +68,5 @@ const initialLoading =
   isLoadingContractDocuments ||
   isLoadingEligibilityQuestionnaire ||
   isLoadingCreateInvoiceScheduleForm ||
-  isLoadingInvoiceSchedules;  // <-- Added here
+  isLoadingInvoiceSchedules; // <-- Added here
 ```
