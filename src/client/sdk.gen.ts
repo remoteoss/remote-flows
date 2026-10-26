@@ -632,6 +632,9 @@ import type {
   PostV1ContractorsEligibilityQuestionnaireData,
   PostV1ContractorsEligibilityQuestionnaireErrors,
   PostV1ContractorsEligibilityQuestionnaireResponses,
+  PostV1ContractorsEmploymentsEmploymentIdActivateData,
+  PostV1ContractorsEmploymentsEmploymentIdActivateErrors,
+  PostV1ContractorsEmploymentsEmploymentIdActivateResponses,
   PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignData,
   PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignErrors,
   PostV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSignResponses,
@@ -647,6 +650,9 @@ import type {
   PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsData,
   PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsErrors,
   PostV1ContractorsEmploymentsEmploymentIdCorTerminationRequestsResponses,
+  PostV1ContractorsEmploymentsEmploymentIdDeactivateData,
+  PostV1ContractorsEmploymentsEmploymentIdDeactivateErrors,
+  PostV1ContractorsEmploymentsEmploymentIdDeactivateResponses,
   PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentData,
   PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentErrors,
   PostV1ContractorsEmploymentsEmploymentIdTerminateCorEmploymentResponses,
@@ -1298,6 +1304,11 @@ export const getV1ContractAmendmentsSchema = <
  * Integration-specific fields (shift code, currency, pay amount, etc.) go in the `provider_data` object.
  * Pay codes that use a pay item custom configuration, such as a company car, describe it under `custom_configuration` in GET /v1/companies/:company_id/legal-entities/:legal_entity_id/pay-codes. Send its values in the pay item's `custom_configuration`, with the same `key`.
  * Only Global Payroll employments are supported. Non-GP employments are returned as `employment_not_global_payroll`.
+ * An item whose `partner_external_id` the integration already holds on a live pay item of the company updates that pay item under the same rules as `PATCH`, and any other item creates a new pay item.
+ * When that pay item belongs to another employment or pay code, the item fails with `partner_external_id_held_by_other_pay_item` instead.
+ * When more than one live pay item holds the value, the item fails with `partner_external_id_ambiguous`, unless it already fails for its employment or its pay code, or because the value is held by a recurring pay item.
+ * Within one request each `partner_external_id` may appear once, and `null` or an empty string fails the item.
+ * An item without `partner_external_id` always creates a new pay item, so sending it again creates a duplicate.
  *
  * ## Authentication
  *
@@ -2669,8 +2680,9 @@ export const getV1CompaniesSchema = <ThrowOnError extends boolean = false>(
  * `service_start_date` is updated in place and keeps its `id`. A main rate with one belongs to a
  * Statement of Work and is kept: seeding adds a new main rate beside it, and the list endpoint
  * returns both while that Statement of Work is in force. This lets the rate endpoints be exercised
- * without going through contract signature. Contractor Management Plus contractors cannot be
- * seeded: the endpoint returns `422`.
+ * without going through contract signature. Contractor of Record contractors, including ones not
+ * active yet, and Contractor Management Plus contractors whose contract is signed cannot be seeded,
+ * since their Statement of Work sets the rate: the endpoint returns `422`.
  *
  * The currency is derived from the legal entity the contractor is paid in by. A rate in a
  * currency the contractor cannot be paid in is rejected with `422`.
@@ -4106,7 +4118,12 @@ export const postV1SsoConfiguration = <ThrowOnError extends boolean = false>(
  *
  * Creates a timesheet on behalf of a contractor employment.
  *
- * The submitted hours are immediately available to the contractor in the Remote UI for
+ * The timesheet is created as an `open` draft, matching a timesheet the contractor creates
+ * themselves: the contractor can still edit the hours, and the customer approves them through the
+ * contractor's invoice rather than the timesheet. Contractor timesheets can't be submitted or
+ * approved through the API.
+ *
+ * The hours are immediately available to the contractor in the Remote UI for
  * self-serve invoice creation (Invoices → Create invoice → "Use Time Tracking").
  *
  * This endpoint is restricted to contractor employments. Calls against EOR or Global Payroll
@@ -7206,6 +7223,11 @@ export const postV1EmployeeTimeoffIdCancel = <
  * and `company_basic_information` forms can be accessed using client_credentials
  * authentication (without a company).
  *
+ * The `global_payroll_contract_details` form requires the `employment_id` query parameter,
+ * because its fields depend on the employment. For example, `overtime_eligible` is shown and
+ * required only when the employment's legal entity is not on Time & Attendance 2.0. A request
+ * without `employment_id` returns 400.
+ *
  * ## Authentication
  *
  * This endpoint accepts any one of the following token types:
@@ -7613,6 +7635,92 @@ export const postV1IdentityVerificationEmploymentIdDecline = <
       },
     ],
     url: '/v1/identity-verification/{employment_id}/decline',
+    ...options,
+  });
+
+/**
+ * Deactivate a contractor employment
+ *
+ * Deactivates a Contractor Management (CM/CM+) contractor: the employment is
+ * archived and the contractor's user account is deactivated.
+ *
+ * Only contractor employments are supported; any other employment type returns
+ * a 422. Contractor of Record (COR) employments cannot be deactivated through
+ * this endpoint and return a 422.
+ *
+ * Requirements:
+ *
+ * * The contractor's user account must be active.
+ * * The employment status must be `created` or `active`.
+ * * The requesting user must be allowed to manage this contractor. Managing
+ *   a contractor who has completed onboarding requires the
+ *   people-onboarded/update permission; without it the request returns a 403.
+ *
+ * Deactivation also deletes or cancels the contractor's open resources, and
+ * these are NOT restored by a later activation: recurring contractor invoices,
+ * scheduled contractor invoices, open contractor invoices, recurring
+ * incentives, automatic payments and pending time off. Pending contract
+ * documents are archived and the contract is set to inactive.
+ *
+ * Be aware of the following consequences, which match deactivating a
+ * contractor in the Remote app:
+ *
+ * * An active Contractor Plus subscription is scheduled to end at the end of
+ *   the following month; a pending (not yet started) Contractor Plus upgrade
+ *   is cancelled immediately. Neither is restored by a later activation.
+ * * If the contractor also has a company admin profile, that profile is
+ *   deleted.
+ * * Payments that are already processing remain billable.
+ * * The contractor's signed Statements of Work are ended.
+ *
+ * On success the `employment.user_status.deactivated` webhook is triggered.
+ *
+ * Calling this endpoint for an employment that is already deactivated returns
+ * a 422 with a descriptive message.
+ *
+ * ## Authentication
+ *
+ * This endpoint accepts any one of the following token types:
+ *
+ * - **Company-scoped access token** (`OAuth2AuthorizationCode`) — obtained through the Authorization Code flow or the Refresh Token flow. See [Authentication for partners](https://developer.remote.com/docs/authentication-for-partners).
+ * - **Customer API token** (`CustomerAPIToken`) — generated by the customer on their Integration Settings page. See [Authorization for customers](https://developer.remote.com/docs/authorization-for-customers).
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ */
+export const postV1ContractorsEmploymentsEmploymentIdDeactivate = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostV1ContractorsEmploymentsEmploymentIdDeactivateData,
+    ThrowOnError
+  >,
+): RequestResult<
+  PostV1ContractorsEmploymentsEmploymentIdDeactivateResponses,
+  PostV1ContractorsEmploymentsEmploymentIdDeactivateErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostV1ContractorsEmploymentsEmploymentIdDeactivateResponses,
+    PostV1ContractorsEmploymentsEmploymentIdDeactivateErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/contractors/employments/{employment_id}/deactivate',
     ...options,
   });
 
@@ -8215,6 +8323,8 @@ export const postV1WebhookCallbacks = <ThrowOnError extends boolean = false>(
  *
  * Approves the given timesheet.
  *
+ * Contractor timesheets can't be approved through the API and are rejected with `422`.
+ *
  * ## Authentication
  *
  * This endpoint accepts any one of the following token types:
@@ -8618,6 +8728,83 @@ export const putV1EmploymentsEmploymentIdBasicInformation = <
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+
+/**
+ * Activate a contractor employment
+ *
+ * Activates a Contractor Management (CM/CM+) contractor that was previously
+ * deactivated: the employment, the contractor's user account and the latest
+ * contract are reactivated.
+ *
+ * Only contractor employments are supported; any other employment type returns
+ * a 422. Contractor of Record (COR) employments cannot be activated through
+ * this endpoint and return a 422.
+ *
+ * Requirements:
+ *
+ * * The contractor's user account must be inactive.
+ * * The employment status must be `archived`.
+ * * The requesting user must be allowed to manage this contractor.
+ *
+ * When the employment has no product assigned, the standard Contractor
+ * Management product is assigned on activation. Resources deleted by a
+ * previous deactivation (invoices, incentives, automatic payments, time off)
+ * are not restored. A Contractor Plus subscription that was scheduled to end
+ * by the deactivation is not reinstated: the contractor keeps Plus until that
+ * end date and then drops to standard. To keep the contractor on Plus,
+ * upgrade again through the contractor-plus-subscription endpoint after
+ * activation.
+ *
+ * On success the `employment.user_status.activated` webhook is triggered.
+ *
+ * Calling this endpoint for an employment that is already active returns a
+ * 422 with a descriptive message.
+ *
+ * ## Authentication
+ *
+ * This endpoint accepts any one of the following token types:
+ *
+ * - **Company-scoped access token** (`OAuth2AuthorizationCode`) — obtained through the Authorization Code flow or the Refresh Token flow. See [Authentication for partners](https://developer.remote.com/docs/authentication-for-partners).
+ * - **Customer API token** (`CustomerAPIToken`) — generated by the customer on their Integration Settings page. See [Authorization for customers](https://developer.remote.com/docs/authorization-for-customers).
+ *
+ * ## Scopes
+ *
+ * | Category | Read only Scope | Write only Scope (read access implicit) |
+ * |---|---|---|
+ * | Manage employments (`employments`) | - | Manage employments (`employment:write`) |
+ */
+export const postV1ContractorsEmploymentsEmploymentIdActivate = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostV1ContractorsEmploymentsEmploymentIdActivateData,
+    ThrowOnError
+  >,
+): RequestResult<
+  PostV1ContractorsEmploymentsEmploymentIdActivateResponses,
+  PostV1ContractorsEmploymentsEmploymentIdActivateErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostV1ContractorsEmploymentsEmploymentIdActivateResponses,
+    PostV1ContractorsEmploymentsEmploymentIdActivateErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        key: 'CustomerAPIToken',
+        scheme: 'bearer',
+        type: 'http',
+      },
+      {
+        key: 'OAuth2AuthorizationCode',
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/v1/contractors/employments/{employment_id}/activate',
+    ...options,
   });
 
 /**
@@ -10061,7 +10248,10 @@ export const getV1EmployeePayslipFiles = <ThrowOnError extends boolean = false>(
 /**
  * Create a new token for a company
  *
- * Creates new tokens for a given company
+ * Creates new tokens for a given company, on behalf of the company owner.
+ *
+ * Only available to integrations that Remote has allowed to act on behalf of users.
+ * Other integrations get a 403.
  *
  * ## Authentication
  *
@@ -10791,7 +10981,10 @@ export const getV1PayslipsPayslipIdPdf = <ThrowOnError extends boolean = false>(
 /**
  * Delete a Pay Item
  *
- * Archives a pay item. Cannot delete pay items linked to a payroll adjustment, salary pay items, pay items automatically created from an external source, or pay items whose payroll run is no longer in preparation.
+ * Archives a pay item. Cannot delete pay items linked to a payroll adjustment, salary pay items, pay items automatically created from an external source, pay items whose payroll run is no longer in preparation, or pay items with more than one live version.
+ * Any `id` this API returned for a pay item edited through `PATCH`, including every entry of `replaced_ids`, is accepted and archives its current version. A pay item that was already deleted returns 404 with the message "Pay item not found because it was deleted", so a retried delete never removes anything else.
+ * Recurring pay items cannot be updated or deleted through this API and return 422. A monthly payment generated from a recurring pay item can be regenerated with a new `id` when the recurring item changes; its old `id` then returns 404.
+ * When more than one refusal applies, the first in this order is returned: an employment that isn't on Global Payroll (404 "Pay item not found"), a recurring pay item (422), then a pay item with more than one live version (422).
  *
  * ## Authentication
  *
@@ -10837,8 +11030,11 @@ export const deleteV1PayItemsId = <ThrowOnError extends boolean = false>(
 /**
  * Update a Pay Item
  *
- * Updates a pay item. Editing a pay item archives the existing one and creates a new one with a new `id` — use the response's `replaced_ids` to reconcile with the id you had stored. Only the fields provided are changed.
- * Cannot update pay items linked to a payroll adjustment, salary pay items, pay items automatically created from an external source, or pay items whose payroll run is no longer in preparation.
+ * Updates a pay item. Only the fields provided are changed. Editing `amount` or `effective_date` archives the existing pay item and creates a new one with a new `id`. Any `id` this API returned for a pay item edited through `PATCH`, including every entry of `replaced_ids`, keeps working and resolves to its current version, so storing the new id is strongly advised but not necessary; `replaced_ids` in the response lists the earlier ids for integrations that track changes. A deleted pay item (no live version left) returns 404 with the message "Pay item not found because it was deleted".
+ * Cannot update pay items linked to a payroll adjustment, salary pay items, pay items automatically created from an external source, pay items whose payroll run is no longer in preparation, or pay items with more than one live version.
+ * The one change allowed on a pay item linked to a payroll adjustment, a salary pay item, one created from an external source or one whose payroll run is no longer in preparation is clearing `partner_external_id`: a request whose only field is `partner_external_id`, sent as `null` or an empty string, clears it and leaves the pay item itself unchanged. Setting a value on such a pay item is refused, so the clear can't be undone, and a bulk item sent again with the cleared value creates a new pay item. A clear still gets the not found, recurring, more than one live version and "is not available" refusals; any pay item they allow accepts it, including one dated after the employment's termination date.
+ * Recurring pay items cannot be updated or deleted through this API and return 422. A monthly payment generated from a recurring pay item can be regenerated with a new `id` when the recurring item changes; its old `id` then returns 404.
+ * When more than one refusal applies, the first in this order is returned: an employment that isn't on Global Payroll (404 "Pay item not found"), a recurring pay item (422), then a pay item with more than one live version (422).
  * When `custom_configuration` doesn't match the pay code's custom configuration, the 422 response is a parameter error with the same `code` bulk create returns: `custom_configuration_not_used`, `custom_configuration_required` or `invalid_custom_configuration`, and the `param` at fault.
  *
  * ## Authentication
@@ -13439,6 +13635,7 @@ export const getV1BulkEmploymentJobsJobId = <
  * List Pay Items
  *
  * Lists pay items for a company with optional filtering by employment, legal entity, date range, and pagination.
+ * Recurring pay items are not included; the monthly payments generated from them are.
  *
  * ## Authentication
  *
