@@ -83,7 +83,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | Luxembourg                       | LUX  | v1               | v5              | No         | -            |
 | [Malaysia](./MYS.md)             | MYS  | v5               | v5              | Yes        | October 2026 |
 | Malta                            | MLT  | v1               | v5              | No         | -            |
-| [Mauritius](./MUS.md)            | MUS  | v2               | v5              | No         | March 2026   |
+| [Mauritius](./MUS.md)            | MUS  | v6               | v5              | Yes        | October 2026 |
 | [Mexico](./MEX.md)               | MEX  | v9               | v9              | Yes        | October 2026 |
 | Moldova                          | MDA  | v1               | v6              | No         | -            |
 | Morocco                          | MAR  | v1               | v8              | No         | -            |
@@ -123,7 +123,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [United Kingdom](./GBR.md)       | GBR  | v7               | v7              | Yes        | October 2026 |
 | [United States](./USA.md)        | USA  | v9               | v9              | Yes        | October 2026 |
 | [Uruguay](./URY.md)              | URY  | v6               | v6              | Yes        | October 2026 |
-| Vietnam                          | VNM  | v1               | v7              | No         | -            |
+| [Vietnam](./VNM.md)              | VNM  | v7               | v7              | Yes        | October 2026 |
 | Zimbabwe                         | ZWE  | v1               | v6              | No         | -            |
 
 ## How to Use
