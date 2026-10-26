@@ -27,12 +27,12 @@ Looking for versions that are being retired? See [deprecated versions](./DEPRECA
 
 These countries have upgraded to different versions, check each guide to know how to migrate or what has changed
 
+- [Albania (ALB)](./ALB.md)
 - [Argentina (ARG)](./ARG.md)
 - [Armenia (ARM)](./ARM.md)
 - [Australia (AUS)](./AUS.md)
 - [Austria (AUT)](./AUT.md)
 - [Bangladesh (BGD)](./BGD.md)
-- [Belarus (BLR)](./BLR.md)
 - [Belgium (BEL)](./BEL.md)
 - [Brazil (BRA)](./BRA.md)
 - [Bulgaria (BGR)](./BGR.md)
@@ -41,6 +41,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Chile (CHL)](./CHL.md)
 - [Colombia (COL)](./COL.md)
 - [Costa Rica (CRI)](./CRI.md)
+- [Cyprus (CYP)](./CYP.md)
 - [Switzerland (CHE)](./CHE.md)
 - [Czech Republic (CZE)](./CZE.md)
 - [Denmark (DNK)](./DNK.md)
@@ -49,6 +50,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [El Salvador (SLV)](./SLV.md)
 - [Estonia (EST)](./EST.md)
 - [Finland (FIN)](./FIN.md)
+- [Georgia (GEO)](./GEO.md)
 - [Germany (DEU)](./DEU.md)
 - [Guatemala (GTM)](./GTM.md)
 - [Hong Kong (HKG)](./HKG.md)
@@ -65,6 +67,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Malaysia (MYS)](./MYS.md)
 - [Mexico (MEX)](./MEX.md)
 - [Netherlands (NLD)](./NLD.md)
+- [Nicaragua (NIC)](./NIC.md)
 - [Nigeria (NGA)](./NGA.md)
 - [Norway (NOR)](./NOR.md)
 - [New Zealand (NZL)](./NZL.md)
@@ -76,6 +79,7 @@ These countries have upgraded to different versions, check each guide to know ho
 - [Saudi Arabia (SAU)](./SAU.md)
 - [Singapore (SGP)](./SGP.md)
 - [South Africa (ZAF)](./ZAF.md)
+- [Slovenia (SVN)](./SVN.md)
 - [Spain (ESP)](./ESP.md)
 - [Serbia (SRB)](./SRB.md)
 - [Sweden (SWE)](./SWE.md)
@@ -92,66 +96,104 @@ These countries have upgraded to different versions, check each guide to know ho
 
 ## Version Matrix
 
-| Country              | Code | Contract Details | Last Updated |
-| -------------------- | ---- | ---------------- | ------------ |
-| Argentina            | ARG  | v5               | October 2026 |
-| Armenia              | ARM  | v3               | October 2026 |
-| Australia            | AUS  | v6               | October 2026 |
-| Austria              | AUT  | v8               | October 2026 |
-| Bangladesh           | BGD  | v8               | October 2026 |
-| Belarus              | BLR  | v2               | March 2026   |
-| Belgium              | BEL  | v8               | October 2026 |
-| Brazil               | BRA  | v5               | October 2026 |
-| Bulgaria             | BGR  | v8               | October 2026 |
-| Canada               | CAN  | v8               | October 2026 |
-| Chile                | CHL  | v7               | October 2026 |
-| China                | CHN  | v8               | October 2026 |
-| Switzerland          | CHE  | v2               | March 2026   |
-| Colombia             | COL  | v6               | October 2026 |
-| Costa Rica           | CRI  | v5               | October 2026 |
-| Czech Republic       | CZE  | v7               | October 2026 |
-| Denmark              | DNK  | v6               | October 2026 |
-| Dominican Republic   | DOM  | v6               | October 2026 |
-| Egypt                | EGY  | v6               | October 2026 |
-| El Salvador          | SLV  | v4               | October 2026 |
-| Estonia              | EST  | v5               | October 2026 |
-| Finland              | FIN  | v5               | October 2026 |
-| Germany              | DEU  | v9               | October 2026 |
-| Guatemala            | GTM  | v6               | October 2026 |
-| Hong Kong            | HKG  | v2               | March 2026   |
-| Iceland              | ISL  | v2               | March 2026   |
-| India                | IND  | v7               | October 2026 |
-| Ireland              | IRL  | v5               | October 2026 |
-| Israel               | ISR  | v8               | October 2026 |
-| Jamaica              | JAM  | v5               | October 2026 |
-| Kenya                | KEN  | v8               | October 2026 |
-| South Korea          | KOR  | v7               | October 2026 |
-| Lebanon              | LBN  | v4               | October 2026 |
-| Lithuania            | LTU  | v6               | October 2026 |
-| Mauritius            | MUS  | v2               | March 2026   |
-| Malaysia             | MYS  | v5               | October 2026 |
-| Mexico               | MEX  | v9               | October 2026 |
-| Netherlands          | NLD  | v7               | October 2026 |
-| Nigeria              | NGA  | v5               | October 2026 |
-| Norway               | NOR  | v7               | October 2026 |
-| New Zealand          | NZL  | v8               | October 2026 |
-| Pakistan             | PAK  | v4               | October 2026 |
-| Peru                 | PER  | v4               | October 2026 |
-| Philippines          | PHL  | v9               | October 2026 |
-| Poland               | POL  | v5               | October 2026 |
-| Portugal             | PRT  | v9               | March 2026   |
-| Saudi Arabia         | SAU  | v5               | October 2026 |
-| Singapore            | SGP  | v5               | October 2026 |
-| South Africa         | ZAF  | v5               | October 2026 |
-| Spain                | ESP  | v8               | October 2026 |
-| Serbia               | SRB  | v9               | October 2026 |
-| Sweden               | SWE  | v5               | October 2026 |
-| Thailand             | THA  | v5               | October 2026 |
-| Uganda               | UGA  | v5               | October 2026 |
-| United Kingdom       | GBR  | v7               | October 2026 |
-| United Arab Emirates | ARE  | v6               | October 2026 |
-| United States        | USA  | v9               | October 2026 |
-| Uruguay              | URY  | v6               | October 2026 |
+**Remote platform** is the Contract Details version Remote's own platform uses for that country, usually the newest one available.
+
+**Up to date** is Yes when the Contract Details version is the same as, or newer than, the Remote platform version, except France, which is marked up to date even though the platform lists v2. Last Updated is `-` for countries that haven't been upgraded or documented yet.
+
+| Country                | Code | Contract Details | Remote platform | Up to date | Last Updated |
+| ---------------------- | ---- | ---------------- | --------------- | ---------- | ------------ |
+| Albania                | ALB  | v4               | v4              | Yes        | October 2026 |
+| Argentina              | ARG  | v5               | v5              | Yes        | October 2026 |
+| Armenia                | ARM  | v3               | v3              | Yes        | October 2026 |
+| Australia              | AUS  | v6               | v6              | Yes        | October 2026 |
+| Austria                | AUT  | v8               | v8              | Yes        | October 2026 |
+| Bangladesh             | BGD  | v8               | v8              | Yes        | October 2026 |
+| Belgium                | BEL  | v8               | v8              | Yes        | October 2026 |
+| Bolivia                | BOL  | v1               | v5              | No         | -            |
+| Bosnia and Herzegovina | BIH  | v1               | v6              | No         | -            |
+| Brazil                 | BRA  | v5               | v5              | Yes        | October 2026 |
+| Bulgaria               | BGR  | v8               | v8              | Yes        | October 2026 |
+| Canada                 | CAN  | v8               | v8              | Yes        | October 2026 |
+| Chile                  | CHL  | v7               | v7              | Yes        | October 2026 |
+| China                  | CHN  | v8               | v8              | Yes        | October 2026 |
+| Colombia               | COL  | v6               | v6              | Yes        | October 2026 |
+| Costa Rica             | CRI  | v5               | v5              | Yes        | October 2026 |
+| Croatia                | HRV  | v1               | v6              | No         | -            |
+| Cyprus                 | CYP  | v7               | v7              | Yes        | October 2026 |
+| Czech Republic         | CZE  | v7               | v7              | Yes        | October 2026 |
+| Denmark                | DNK  | v6               | v6              | Yes        | October 2026 |
+| Dominican Republic     | DOM  | v6               | v6              | Yes        | October 2026 |
+| Ecuador                | ECU  | v1               | v7              | No         | -            |
+| Egypt                  | EGY  | v6               | v6              | Yes        | October 2026 |
+| El Salvador            | SLV  | v4               | v4              | Yes        | October 2026 |
+| Estonia                | EST  | v5               | v5              | Yes        | October 2026 |
+| Finland                | FIN  | v5               | v5              | Yes        | October 2026 |
+| France                 | FRA  | v1               | v2              | Yes        | -            |
+| Georgia                | GEO  | v6               | v6              | Yes        | October 2026 |
+| Germany                | DEU  | v9               | v9              | Yes        | October 2026 |
+| Greece                 | GRC  | v1               | v6              | No         | -            |
+| Guatemala              | GTM  | v6               | v6              | Yes        | October 2026 |
+| Honduras               | HND  | v1               | v6              | No         | -            |
+| Hong Kong              | HKG  | v2               | v6              | No         | March 2026   |
+| Hungary                | HUN  | v1               | v4              | No         | -            |
+| Iceland                | ISL  | v2               | v5              | No         | March 2026   |
+| India                  | IND  | v7               | v7              | Yes        | October 2026 |
+| Indonesia              | IDN  | v1               | v5              | No         | -            |
+| Ireland                | IRL  | v5               | v5              | Yes        | October 2026 |
+| Israel                 | ISR  | v8               | v8              | Yes        | October 2026 |
+| Italy                  | ITA  | v2               | v2              | Yes        | -            |
+| Jamaica                | JAM  | v5               | v5              | Yes        | October 2026 |
+| Japan                  | JPN  | v1               | v5              | No         | -            |
+| Kenya                  | KEN  | v8               | v8              | Yes        | October 2026 |
+| Kosovo                 | XKX  | v1               | v3              | No         | -            |
+| Latvia                 | LVA  | v1               | v6              | No         | -            |
+| Lebanon                | LBN  | v4               | v4              | Yes        | October 2026 |
+| Lithuania              | LTU  | v6               | v6              | Yes        | October 2026 |
+| Luxembourg             | LUX  | v1               | v5              | No         | -            |
+| Malaysia               | MYS  | v5               | v5              | Yes        | October 2026 |
+| Malta                  | MLT  | v1               | v5              | No         | -            |
+| Mauritius              | MUS  | v2               | v5              | No         | March 2026   |
+| Mexico                 | MEX  | v9               | v9              | Yes        | October 2026 |
+| Moldova                | MDA  | v1               | v6              | No         | -            |
+| Morocco                | MAR  | v1               | v8              | No         | -            |
+| Netherlands            | NLD  | v7               | v7              | Yes        | October 2026 |
+| New Zealand            | NZL  | v8               | v8              | Yes        | October 2026 |
+| Nicaragua              | NIC  | v4               | v4              | Yes        | October 2026 |
+| Nigeria                | NGA  | v5               | v5              | Yes        | October 2026 |
+| North Macedonia        | MKD  | v1               | v6              | No         | -            |
+| Norway                 | NOR  | v7               | v7              | Yes        | October 2026 |
+| Pakistan               | PAK  | v4               | v4              | Yes        | October 2026 |
+| Panama                 | PAN  | v1               | v7              | No         | -            |
+| Paraguay               | PRY  | v1               | v8              | No         | -            |
+| Peru                   | PER  | v4               | v4              | Yes        | October 2026 |
+| Philippines            | PHL  | v9               | v9              | Yes        | October 2026 |
+| Poland                 | POL  | v5               | v5              | Yes        | October 2026 |
+| Portugal               | PRT  | v9               | v9              | Yes        | October 2026 |
+| Puerto Rico            | PRI  | v1               | v6              | No         | -            |
+| Romania                | ROU  | v1               | v6              | No         | -            |
+| Saudi Arabia           | SAU  | v5               | v5              | Yes        | October 2026 |
+| Serbia                 | SRB  | v9               | v9              | Yes        | October 2026 |
+| Singapore              | SGP  | v5               | v5              | Yes        | October 2026 |
+| Slovakia               | SVK  | v1               | v6              | No         | -            |
+| Slovenia               | SVN  | v6               | v6              | Yes        | October 2026 |
+| South Africa           | ZAF  | v5               | v5              | Yes        | October 2026 |
+| South Korea            | KOR  | v7               | v6              | Yes        | October 2026 |
+| Spain                  | ESP  | v8               | v8              | Yes        | October 2026 |
+| Sri Lanka              | LKA  | v1               | v8              | No         | -            |
+| Sweden                 | SWE  | v5               | v5              | Yes        | October 2026 |
+| Switzerland            | CHE  | v2               | v8              | No         | March 2026   |
+| Taiwan                 | TWN  | v1               | v5              | No         | -            |
+| Thailand               | THA  | v5               | v5              | Yes        | October 2026 |
+| Tunisia                | TUN  | v1               | v8              | No         | -            |
+| Turkey                 | TUR  | v1               | v7              | No         | -            |
+| Uganda                 | UGA  | v5               | v5              | Yes        | October 2026 |
+| Ukraine                | UKR  | v1               | v7              | No         | -            |
+| United Arab Emirates   | ARE  | v6               | v6              | Yes        | October 2026 |
+| United Kingdom         | GBR  | v7               | v7              | Yes        | October 2026 |
+| United States          | USA  | v9               | v9              | Yes        | October 2026 |
+| Uruguay                | URY  | v6               | v6              | Yes        | October 2026 |
+| Vietnam                | VNM  | v1               | v7              | No         | -            |
+| Zimbabwe               | ZWE  | v1               | v6              | No         | -            |
 
 ## How to Use
 

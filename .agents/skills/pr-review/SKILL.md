@@ -75,6 +75,7 @@ Read each changed file in full, not just the diff hunks — via `Read` when the 
 - `expect.objectContaining()` used where strict `toHaveBeenCalledWith({ exact: 'shape' })` is expected
 - React Query consumers not wrapped in the shared `TestProviders`/`queryClient`, or missing `queryClient.clear()` between tests
 - New behavior added without a corresponding test
+- Added `timeout`, `asyncUtilTimeout`, `testTimeout` or `hookTimeout`, or an added `new Promise((resolve) => setTimeout(resolve, ms))` sleep, in a `src/**/*.test.{ts,tsx}` file — the test should await the real condition or use fake timers (`.agents/rules/testing.md`). Only added lines; existing ones are legacy, and `example/e2e/` and MSW handler latency are fine
 
 **Comment quality**
 

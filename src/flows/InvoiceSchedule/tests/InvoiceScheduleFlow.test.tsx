@@ -1,4 +1,11 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import {
+  act,
+  render,
+  screen,
+  waitFor,
+  fireEvent,
+} from '@testing-library/react';
+import { useState } from 'react';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
 import {
@@ -8,6 +15,7 @@ import {
   fillDatePickerByTestId,
 } from '@/src/tests/testHelpers';
 import { InvoiceScheduleFlow } from '@/src/flows/InvoiceSchedule/InvoiceScheduleFlow';
+import { useInvoiceSchedule } from '@/src/flows/InvoiceSchedule/hooks';
 import { InvoiceScheduleForm } from '@/src/flows/InvoiceSchedule/InvoiceScheduleForm';
 import { InvoiceScheduleSubmitButton } from '@/src/flows/InvoiceSchedule/InvoiceScheduleSubmitButton';
 import { employmentDefaultResponse } from '@/src/flows/Onboarding/tests/fixtures';
@@ -377,8 +385,7 @@ describe('InvoiceScheduleFlow', () => {
   // The reveal condition used to require an integer, which the flow's own values can never
   // satisfy once an amount has cents: the money input holds major units and the schema is
   // built without the cents conversion, so `2500.50` stayed a decimal and froze the form at
-  // one item. Driven through the rendered form because that is the only place the flow's
-  // real `createHeadlessForm` call is exercised.
+  // one item. Driven through the rendered form so the real form building is exercised.
   it('reveals the second item row when the first amount has cents', async () => {
     renderFlow();
 
@@ -492,5 +499,277 @@ describe('InvoiceScheduleFlow callouts', () => {
       ),
     ).toBeInTheDocument();
     expect(screen.getByText(/to account for processing time/i)).toBeVisible();
+  });
+});
+
+describe('InvoiceScheduleFlow partner usage', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
+
+  it('keeps a jsfModify passed inline across re-renders', async () => {
+    function Partner() {
+      const [renders, setRenders] = useState(0);
+
+      return (
+        <>
+          <button onClick={() => setRenders(renders + 1)}>Re-render</button>
+          <InvoiceScheduleFlow
+            employmentId='employment-grace'
+            jsfModify={{
+              fields: { note: { title: 'Memo for the contractor' } },
+            }}
+            render={() => <InvoiceScheduleForm />}
+          />
+        </>
+      );
+    }
+
+    render(<Partner />, { wrapper: TestProviders });
+
+    await screen.findByLabelText(/Memo for the contractor/i);
+
+    fireEvent.click(screen.getByRole('button', { name: /Re-render/i }));
+    fireEvent.change(screen.getByLabelText(/Item 1 description/i), {
+      target: { value: 'Design work' },
+    });
+    fireEvent.blur(screen.getByLabelText(/Item 1 description/i));
+    fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
+      target: { value: '2500' },
+    });
+    fireEvent.blur(screen.getByLabelText(/Item 1 amount/i));
+
+    await screen.findByLabelText(/Item 2 description/i, undefined, {
+      timeout: 10000,
+    });
+    expect(
+      screen.getByLabelText(/Memo for the contractor/i),
+    ).toBeInTheDocument();
+  });
+
+  it('keeps the currency options when the partner validates and re-renders on their own', async () => {
+    let bag: ReturnType<typeof useInvoiceSchedule> | undefined;
+
+    function Partner() {
+      const [renders, setRenders] = useState(0);
+
+      return (
+        <>
+          <button onClick={() => setRenders(renders + 1)}>Re-render</button>
+          <InvoiceScheduleFlow
+            employmentId='employment-grace'
+            render={(invoiceScheduleBag) => {
+              bag = invoiceScheduleBag;
+              return <InvoiceScheduleForm />;
+            }}
+          />
+        </>
+      );
+    }
+
+    render(<Partner />, { wrapper: TestProviders });
+
+    await screen.findByLabelText(/Invoice currency/i);
+
+    await act(async () => {
+      await bag?.handleValidation({});
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Re-render/i }));
+
+    const currency = bag?.fields.find((field) => field.name === 'currency');
+    expect(
+      (currency?.options as unknown[] | undefined)?.length,
+    ).toBeGreaterThan(0);
+  });
+});
+
+describe('InvoiceScheduleFlow creating a schedule', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
+
+  async function fillItem(slot: number, description: string, amount: string) {
+    const descriptionInput = await screen.findByLabelText(
+      new RegExp(`Item ${slot} description`, 'i'),
+    );
+    fireEvent.change(descriptionInput, { target: { value: description } });
+    fireEvent.blur(descriptionInput);
+
+    const amountInput = screen.getByLabelText(
+      new RegExp(`Item ${slot} amount`, 'i'),
+    );
+    fireEvent.change(amountInput, { target: { value: amount } });
+    fireEvent.blur(amountInput);
+  }
+
+  function captureCreateRequest() {
+    const captured: { body?: $TSFixMe } = {};
+    server.use(
+      http.post('*/v1/contractor-invoice-schedules', async ({ request }) => {
+        captured.body = await request.json();
+        return HttpResponse.json({
+          data: { successes: [{ id: 'schedule-1' }], failures: [] },
+        });
+      }),
+    );
+    return captured;
+  }
+
+  it('reports an error instead of a success when the response carries failures', async () => {
+    server.use(
+      http.post('*/v1/contractor-invoice-schedules', () =>
+        HttpResponse.json({
+          data: {
+            successes: [],
+            failures: [{ errors: { start_date: ['Is invalid'] } }],
+          },
+        }),
+      ),
+    );
+
+    const onSuccess = vi.fn();
+    const onError = vi.fn();
+    renderFlow({ onSuccess, onError });
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'monthly');
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalled();
+    });
+    expect(onError).toHaveBeenCalledWith({
+      error: new Error('Failed to create invoice schedule'),
+      rawError: { message: 'Failed to create invoice schedule' },
+      fieldErrors: [],
+    });
+    expect(onSuccess).not.toHaveBeenCalled();
+  });
+
+  it('sends the two invoice days of a semi-monthly schedule as custom_days', async () => {
+    const request = captureCreateRequest();
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'semi_monthly');
+
+    fireEvent.change(await screen.findByLabelText(/First invoice day/i), {
+      target: { value: '1' },
+    });
+    fireEvent.change(screen.getByLabelText(/Second invoice day/i), {
+      target: { value: '15' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalled();
+    });
+
+    expect(request.body.contractor_invoice_schedules[0]).toMatchObject({
+      periodicity: 'semi_monthly',
+      custom_days: [1, 15],
+    });
+  });
+
+  it('sends every filled item row, in order', async () => {
+    const request = captureCreateRequest();
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    await fillItem(2, 'Hosting', '75');
+    await fillItem(3, 'Support', '10');
+    await fillSelect('periodicity', 'monthly');
+
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalled();
+    });
+
+    expect(request.body.contractor_invoice_schedules[0].items).toEqual([
+      { description: 'Design work', amount: 250000 },
+      { description: 'Hosting', amount: 7500 },
+      { description: 'Support', amount: 1000 },
+    ]);
+  });
+
+  it('does not send the rows after one the user cleared', async () => {
+    const request = captureCreateRequest();
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    await fillItem(2, 'Hosting', '75');
+    await fillItem(3, 'Support', '10');
+
+    fireEvent.change(screen.getByLabelText(/Item 2 description/i), {
+      target: { value: '' },
+    });
+    fireEvent.blur(screen.getByLabelText(/Item 2 description/i));
+    await fillSelect('periodicity', 'monthly');
+
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalled();
+    });
+
+    expect(request.body.contractor_invoice_schedules[0].items).toEqual([
+      { description: 'Design work', amount: 250000 },
+    ]);
+  });
+
+  it('converts amounts to whole cents without floating point drift', async () => {
+    const request = captureCreateRequest();
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
+      target: { value: '4.35' },
+    });
+    fireEvent.blur(screen.getByLabelText(/Item 1 amount/i));
+    await fillItem(2, 'Hosting', '19.99');
+    await fillItem(3, 'Support', '0.07');
+    await fillSelect('periodicity', 'monthly');
+
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalled();
+    });
+
+    expect(
+      request.body.contractor_invoice_schedules[0].items.map(
+        (item: { amount: number }) => item.amount,
+      ),
+    ).toEqual([435, 1999, 7]);
+  });
+
+  it('accepts ten item rows and offers no eleventh', async () => {
+    const request = captureCreateRequest();
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    for (let slot = 2; slot <= 10; slot++) {
+      await fillItem(slot, `Item ${slot}`, `${slot}`);
+    }
+    await fillSelect('periodicity', 'monthly');
+
+    expect(
+      screen.queryByLabelText(/Item 11 description/i),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalled();
+    });
+
+    expect(request.body.contractor_invoice_schedules[0].items).toHaveLength(10);
   });
 });

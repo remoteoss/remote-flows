@@ -2,122 +2,35 @@
 
 ## Project rules
 
-Review every change against the repo's shared guidance. It is the source of truth, and the sections below add Bugbot-specific checks on top of it.
+Review every change against the repo's shared guidance. It is the source of truth: if anything below conflicts with it, the shared guidance wins, and the sections below only add Bugbot-specific checks.
 
-- [AGENTS.md](../AGENTS.md)
-- [json-schema-form-usage](../.agents/rules/json-schema-form-usage.md)
-- [react-query-abstractions](../.agents/rules/react-query-abstractions.md)
-- [mutation-error-handling](../.agents/rules/mutation-error-handling.md)
-- [loading-state-aggregation](../.agents/rules/loading-state-aggregation.md)
-- [submitting-state-aggregation](../.agents/rules/submitting-state-aggregation.md)
-- [step-component-types](../.agents/rules/step-component-types.md)
-- [component-pattern](../.agents/rules/component-pattern.md)
-- [component-documentation](../.agents/rules/component-documentation.md)
-- [testing](../.agents/rules/testing.md)
-- [theming](../.agents/rules/theming.md)
-- [package-exports](../.agents/rules/package-exports.md)
+- [AGENTS.md](../AGENTS.md): applies to every change
+- [json-schema-form-usage](../.agents/rules/json-schema-form-usage.md): flows, `src/common`, components
+- [react-query-abstractions](../.agents/rules/react-query-abstractions.md): `api.ts`, `src/common/api`, flow hooks
+- [mutation-error-handling](../.agents/rules/mutation-error-handling.md): flows, `src/common`, `src/lib/mutations.ts`
+- [loading-state-aggregation](../.agents/rules/loading-state-aggregation.md): flow `hooks` files
+- [submitting-state-aggregation](../.agents/rules/submitting-state-aggregation.md): flow `hooks` files
+- [step-component-types](../.agents/rules/step-component-types.md): flow `types.ts` and step components
+- [component-pattern](../.agents/rules/component-pattern.md): `src/components`
+- [component-documentation](../.agents/rules/component-documentation.md): `src/types/remoteFlows.ts`, `src/index.tsx`
+- [testing](../.agents/rules/testing.md): test files and `example/e2e`. Apply only its "Repo conventions" section, and ignore the parts addressed to whoever writes the tests, such as asking the user before adding another test.
+- [theming](../.agents/rules/theming.md): styles, CSS and theme files
+- [package-exports](../.agents/rules/package-exports.md): `package.json`, build config, entry files
 
-## Project Architecture
+Formatting and lint rules are enforced by `oxfmt` and `oxlint` in CI, so don't comment on what they already catch.
 
-This project is a React component library (`@remoteoss/remote-flows`) that provides embeddable UI flows for Remote's HR and employment workflows. The following principles guide our architecture:
-
-- **Provider-Based Architecture**: Root `<RemoteFlows>` provider wraps multiple nested contexts (auth, theming, form customization)
-- **Feature-First Organization**: Each flow is self-contained with its own components, hooks, context, and tests
-- **Headless Component Pattern**: Flows expose both pre-built UI components and headless hooks for custom implementations
-- **Render Props for Flexibility**: Consumers control rendering while we provide the business logic and components
-- **API Client Generation**: OpenAPI schema auto-generates TypeScript types and SDK methods (never manually write API clients)
-- **Multi-Entry Points**: Package exports multiple entry points for tree-shaking (`./`, `./internals`, `./flows/*`)
-
-## Coding Standards
-
-### TypeScript
-
-- **Strict mode enabled** - all strict TypeScript checks are enforced via `tsconfig.json`
-- **No `any` types** - except where explicitly needed with `/* oxlint-disable @typescript-eslint/no-explicit-any */`
-- **Use `$TSFixMe` type** - for temporary type workarounds (defined in `src/types/remoteFlows.ts`)
-- **Export types** - all public types must be exported for consumer TypeScript support
-- **Type imports** - use `import type` for type-only imports where possible
-- **Intersection types for props** - combine component props with variants:
-  ```typescript
-  React.ComponentProps<'button'> &
-    VariantProps<typeof buttonVariants> &
-    { asChild: boolean };
-  ```
-
-### Code Style
-
-**Enforced by oxfmt (Rust-based formatter):**
-
-- Single quotes (including JSX: `jsxSingleQuote: true`)
-- Semicolons required
-- Trailing commas everywhere
-- 80 character line width
-- 2 space indentation
-
-**Enforced by oxlint (Rust-based linter):**
-
-- React Hooks rules (exhaustive dependencies)
-- `no-console`: warn (only `console.warn` and `console.error` allowed)
-- `no-restricted-properties` in `example/e2e/**`: bans `fulfill`, `abort`, `routeFromHAR` and `routeWebSocket` so e2e never fakes the API
-
-**Naming Conventions:**
+## Naming and function conventions
 
 - Components: PascalCase (`CostCalculatorFlow`, `Button`)
 - Hooks: camelCase with `use` prefix (`useCostCalculator`, `useAuth`)
-- Files: Match export name (`CostCalculatorFlow.tsx`, `hooks.tsx`)
-- CSS classes: Prefix with `RemoteFlows__` for public components (`RemoteFlows__Button`, `RemoteFlows__CostCalculatorForm`)
-- Variants: Use `RemoteFlows_VariantName` format (`RemoteFlows_ButtonDefault`)
-
-**Function Guidelines:**
-
-- Use arrow functions for components and utilities
-- Use regular functions for top-level exported functions with JSDoc
+- Files: match the export name (`CostCalculatorFlow.tsx`, `hooks.tsx`)
+- Variants: use the `RemoteFlows_VariantName` format (`RemoteFlows_ButtonDefault`)
+- Use arrow functions for components and utilities, and regular functions for top-level exported functions with JSDoc
 - Keep functions small and focused (ideally under 50 lines)
-- Add JSDoc comments for all public APIs, written for the caller who actually uses them: 1–3 lines by default, no internal wiring, no edge cases only the prebuilt components handle
+- Intersection types for props: combine component props with variants, for example `React.ComponentProps<'button'> & VariantProps<typeof buttonVariants> & { asChild: boolean }`
+- Import order follows [AGENTS.md](../AGENTS.md). It is a convention that lint does not enforce, so mention a deviation only when it is clearly out of step with the surrounding file.
 
-**Inline Comments (implementation code, config, tests — not public-API JSDoc above):**
-
-- Default to no comments. Only add one when the WHY is genuinely non-obvious (a hidden constraint, a workaround for a specific bug, behavior that would surprise a reader) — never to restate WHAT the code does.
-- One short line max. No multi-line comment blocks or paragraphs. Exception: when a human explicitly asked for the comment, favor a clear plain-language explanation over compressing it to fit one line. This exception doesn't cover a comment added on the AI's own initiative for the non-obvious-why case above — keep those to one line, and skip them entirely if the code is actually simple.
-- Never reference the current task, PR, fix, or caller (e.g. "used by X", "added for the Y flow", "fixes #123") — that belongs in the commit message or PR description, not the file.
-
-**❌ INCORRECT: multi-line comment explaining a design decision**
-
-```yaml
-# Deliberately not diffing the regenerated output against what's committed:
-# the schema drifts independently of this PR, so a diff here isn't a
-# failure. Only a nonzero exit should fail this job.
-- name: Run codegen
-```
-
-**✅ CORRECT: no comment — rationale lives in the PR description**
-
-```yaml
-- name: Run codegen
-```
-
-### Import Conventions
-
-Imports should be organized in this order:
-
-1. External dependencies (React, third-party libraries)
-2. Internal imports using `@/` alias
-3. Type imports (preferably with `import type`)
-4. Relative imports (avoid if possible)
-
-**Example:**
-
-```typescript
-import { useCallback, useEffect, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-
-import { jsonSchema } from '@/src/flows/CostCalculator/jsonSchema';
-import type { CostCalculatorEstimationFormValues } from '@/src/flows/CostCalculator/types';
-
-import { buildPayload } from './utils';
-```
-
-### Security
+## Security
 
 - **API key safety**: Never commit API keys or tokens (check `.env` files before commits)
 - **Input sanitization**: Use `sanitizeHtml()` from `src/lib/utils.ts` before rendering HTML
@@ -126,22 +39,12 @@ import { buildPayload } from './utils';
 - **No sensitive logging**: Never log tokens, passwords, or PII (check console statements)
 - **Environment variables**: Use environment variables for secrets and API endpoints
 
-### Testing
+## Testing review
 
-- **All new features require tests** - Unit tests for hooks and components
-- **Test user interactions** - Use `@testing-library/react` and `@testing-library/user-event`
-- **Mock API calls** - Use MSW (Mock Service Worker) handlers via `src/tests/server.ts`
-- **Test edge cases** - Empty states, loading states, error states
-- **Test validation** - Form validation errors and field-level errors
-- **Fixtures per flow** - Organize test data in `src/flows/*/tests/fixtures.ts`
-- **Coverage required** - Run `pnpm run test:coverage` to check coverage
-
-**Test File Conventions:**
-
-- Test files: `*.test.tsx` co-located with code in `tests/` directories
-- Hook tests: Use `renderHook` from `@testing-library/react`
-- Component tests: Use `render` and user events
-- Query client wrapper: Wrap tests that use React Query with `QueryClientProvider`
+- New features and fixes need tests: hooks and components, user interactions through `@testing-library/react` and `user-event`, and the empty, loading, error and validation states.
+- API calls are mocked with MSW handlers through `src/tests/server.ts`. Test data lives in `src/flows/*/tests/fixtures.ts`.
+- Hook tests use `renderHook`, and tests that use React Query wrap the consumer in `QueryClientProvider`.
+- **No timeouts or fixed sleeps** - Flag an added line in a `src/**/*.test.{ts,tsx}` file that sets `timeout`, `asyncUtilTimeout`, `testTimeout` or `hookTimeout`, or that adds `new Promise((resolve) => setTimeout(resolve, ms))`. Suggest awaiting the real condition (`findBy*`, `waitFor`) or `vi.useFakeTimers()`. Don't flag `example/e2e/`, latency simulated in an MSW handler, or fake-timer usage, and only flag added lines: existing ones are legacy
 
 **E2E tests (`example/e2e/`):**
 
@@ -151,29 +54,6 @@ E2E runs against the real sandbox. Anything that needs fake data belongs in a vi
 - Fake data served from outside `example/e2e/`, where the rule doesn't apply: fake routes in `example/api/proxy.js` or `example/dev_server.js`, an MSW `setupWorker` in the example app, or a demo query flag that swaps in canned responses.
 - Calls that dodge the rule, such as a computed property (`route['ful' + 'fill']`) or handing `route` to a helper outside `example/e2e/`.
 - A new spec whose scenario needs controlled data. Suggest writing it as a vitest + MSW test instead.
-
-**Example Test Pattern:**
-
-```typescript
-describe('useCostCalculator', () => {
-  beforeEach(() => {
-    server.use(
-      http.get('*/v1/cost-calculator/countries', () => {
-        return HttpResponse.json(countries);
-      }),
-    );
-    queryClient.clear();
-  });
-
-  it('should load regions when a country with regions is selected', async () => {
-    const { result } = renderHook(() => useCostCalculator(), { wrapper });
-
-    await waitFor(() => {
-      expect(countryField?.onChange).toBeDefined();
-    });
-  });
-});
-```
 
 ## Specific Areas of Focus
 
@@ -201,65 +81,23 @@ Package is consumed by external applications - monitor bundle impact:
 - **Dynamic imports** - Large dependencies (PDF.js, Recharts) should be lazy-loaded where possible
 - **Dependency audit** - Avoid adding heavy dependencies without discussion
 - **Multiple entry points** - Verify exports in `package.json` work correctly
-- **Build output check** - Review `dist/` size after builds
 
-**Check:** Run `pnpm run build` and compare `dist/` size before/after.
+**Check:** Would `pnpm run size:check` still pass?
 
 ### 3. Error Handling
 
-Consistent error handling across all flows:
+Mutation errors follow the mutation error handling rule. Also check:
 
-- **Type-safe error handling** - Always use `isMutationError()` type guard when catching mutation errors
-- **Use mutateAsyncOrThrow** - Prefer over deprecated `mutateAsync` method
-- **Mutation wrapper** - All mutations must use `mutationToPromise()` helper
-- **Error structure** - Access `normalizedErrors`, `fieldErrors`, `rawError`, and `response` properties
-- **User-friendly messages** - Extract field labels from metadata for error display with `normalizeFieldErrors()`
 - **Try/catch blocks** - Async operations must have error handling
+- **User-friendly messages** - Field labels come from metadata via `normalizeFieldErrors()`
 - **Fallback UI** - Loading states, error states, empty states
 
-**✅ CORRECT: Use isMutationError type guard**
+### 4. Forms
 
-```typescript
-import { isMutationError } from '@/src/lib/mutations';
+Forms follow the form rule. Also check:
 
-try {
-  const result = await mutateAsyncOrThrow(payload);
-  // Handle success
-} catch (error) {
-  if (isMutationError(error)) {
-    // Type-safe access to error properties
-    console.log(error.normalizedErrors); // Direct access to errors object
-    console.log(error.fieldErrors); // Array of field errors
-
-    // Example: Check for specific field errors
-    const fieldError = error.normalizedErrors.field_name;
-    if (fieldError) {
-      // Handle specific error
-    }
-  }
-  throw error;
-}
-```
-
-**❌ INCORRECT: Don't access error properties without type guard**
-
-```typescript
-catch (error: any) {
-  const rawError = error.rawError; // No type safety!
-}
-```
-
-### 4. Form Handling and Validation
-
-Forms are central to this library - ensure consistency:
-
-- **React Hook Form** - All forms use React Hook Form for state management
-- **Yup schemas** - Validation schemas defined with Yup
-- **JSON Schema Form** - Dynamic fields use `@remoteoss/json-schema-form`
-- **Field mapping** - Custom field components mapped in `src/components/form/fields/fieldsMapping.tsx`
-- **useHeadlessForm** - Schema-backed forms are built with `useHeadlessForm` (`src/common/useHeadlessForm.ts`): fetch the schema, then pass `schema`, saved `initialValues` (not the live form values), `options` and `strategy: 'buildOnce'`
-- **Validation and parsing** - Use the hook's `handleValidation` / `parseFormValues` instead of calling `parseJSFToValidate()` by hand
-- **Required vs optional** - Match field requirements to JSON schema
+- **Field mapping** - Custom field components are mapped in `src/components/form/fields/fieldsMapping.tsx`
+- **Required vs optional** - Field requirements match the JSON schema
 
 **Check:** Are validation errors user-friendly? Do they display with proper field labels?
 
@@ -268,125 +106,30 @@ Forms are central to this library - ensure consistency:
 OpenAPI-driven development - never manually write client code:
 
 - **Regenerate after schema changes** - Run `pnpm run openapi-ts` after API updates
-- **Use generated types** - Import types from `src/client/types.gen.ts`
-- **Use generated SDK** - Import API methods from `src/client/sdk.gen.ts`
-- **Query hooks pattern** - Wrap generated client in custom hooks (see `src/common/api.ts`)
-- **Error response handling** - API errors follow Remote's standard format
+- **Use generated types and SDK** - Import from `src/client/types.gen.ts` and `src/client/sdk.gen.ts`
 - **Environment config** - Use environment configs from `src/environments.ts`
 
-**Example Query Hook:**
+For wrapping the client in a query, follow the React Query rule: pick a `queryOptions` factory or a custom hook as it describes (see `src/common/api/countries.ts` and `src/common/api/identity.ts`).
 
-```typescript
-export const useEmploymentQuery = ({ id, options }) => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['employment', id],
-    queryFn: () => getEmployment({ client, path: { id } }),
-    select: ({ data }) => data,
-    ...options,
-  });
-};
-```
-
-### 6. React Query Abstractions
-
-When creating query abstractions, choose between custom hooks and queryOptions factories based on the use case:
-
-#### Custom Hook Pattern (for idempotent data)
-
-Use when the data transformation is always the same:
-
-```typescript
-// ✅ Good: Always returns same shape, no customization needed
-export const useIdentity = () => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['identity'],
-    queryFn: () =>
-      getCurrentIdentity({
-        client: client as Client,
-        headers: { Authorization: `` },
-      }),
-    select: (data) => data.data?.data,
-  });
-};
-```
-
-**When to use:**
-
-- Fixed data transformation that never varies
-- Every consumer needs identical behavior (idempotent usage)
-- No need for composability or customization
-- The hook adds business logic beyond just query configuration
-
-#### queryOptions Factory Pattern (for flexible data)
-
-Use when consumers need to manipulate or transform data differently:
-
-```typescript
-// ✅ Good: Returns raw response, consumers add their own select
-export const countriesOptions = (
-  client: Client,
-  queryKeySuffix = 'default',
-) => {
-  return queryOptions({
-    queryKey: ['countries', queryKeySuffix] as const,
-    retry: false,
-    queryFn: async () => {
-      const response = await getSupportedCountry({
-        client,
-        headers: { Authorization: `` },
-      });
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch supported countries');
-      }
-      return response;
-    },
-  });
-};
-
-// Usage: consumers add their own transformations
-const { client } = useClient();
-const { data } = useQuery({
-  ...countriesOptions(client),
-  select: (response) => response.data?.filter((c) => c.active),
-  staleTime: 60000,
-});
-```
-
-**When to use:**
-
-- Different consumers need different data transformations
-- Need composability (enabled, select, staleTime, etc.)
-- Used in prefetching or outside components
-- Want to enable maximum flexibility
-
-**Reference:** See `.agents/rules/react-query-abstractions.md` and [TkDodo's article](https://tkdodo.eu/blog/creating-query-abstractions)
-
-**Check:** Does the query need flexible transformations? Use `queryOptions`. Always returns same data? Use custom hook.
-
-### 7. Theme and Styling
+### 6. Theme and Styling
 
 Custom theming system - maintain consistency:
 
 - **Tailwind utility-first** - Use Tailwind classes, avoid inline styles
-- **CSS variables** - Colors, spacing, radius defined as CSS variables
 - **`cn()` helper** - Use for conditional class merging
 - **Component variants** - Use `class-variance-authority` for variant handling
-- **Prefix classes** - Public components use `RemoteFlows__` prefix
 - **Dark mode support** - Test with `class="dark"` on root element
 - **Theme customization** - Changes must work with theme overrides via `applyTheme()`
 
-### 8. Performance
+### 7. Performance
 
 - **Memoization** - Use `useMemo` for expensive computations, `useCallback` for function props
 - **Query invalidation** - Invalidate React Query cache appropriately on mutations
 - **Avoid unnecessary re-renders** - Check React DevTools Profiler for re-render issues
-- **Lazy loading** - Use dynamic imports for large components (PDF viewer, charts)
 - **Virtualization** - Long lists should use virtualization (if applicable)
 - **Bundle splitting** - Verify code splitting works for flows
 
-### 9. Accessibility
+### 8. Accessibility
 
 Radix UI provides foundation - maintain it:
 
@@ -397,31 +140,9 @@ Radix UI provides foundation - maintain it:
 - **Color contrast** - Ensure text meets WCAG AA standards
 - **Form labels** - All form fields have associated labels
 
-### 10. Flow Structure and Organization
+### 9. Flow Structure and Organization
 
-Each flow should follow this structure:
-
-```
-flows/[FlowName]/
-├── index.ts                    # Public exports only
-├── [FlowName]Flow.tsx          # Main flow component (render props)
-├── hooks.tsx                   # Main business logic hook (use[FlowName])
-├── api.ts                      # API query/mutation hooks
-├── context.ts                  # Flow-specific context (if needed)
-├── types.ts                    # TypeScript types
-├── components/                 # Flow-specific components
-│   ├── ComponentName.tsx
-│   └── AnotherComponent.tsx
-├── json-schemas/               # JSON schema definitions
-│   └── schema.json
-├── tests/                      # All tests for this flow
-│   ├── fixtures.ts            # Test data
-│   ├── [FlowName]Flow.test.tsx
-│   └── hooks.test.tsx
-└── utils.ts                    # Flow-specific utilities
-```
-
-**Key principles:**
+The flow layout is in [AGENTS.md](../AGENTS.md). Key principles to check:
 
 - **Self-contained** - Flow should not import from other flows
 - **Public exports** - Only export what's needed via `index.ts`
@@ -429,11 +150,11 @@ flows/[FlowName]/
 - **Headless hook** - Expose `use[FlowName]()` hook for custom implementations
 - **Tests co-located** - All tests in flow's `tests/` directory
 
-### 11. Documentation
+### 10. Documentation
 
-- **JSDoc for public APIs** - All exported functions, hooks, and components need JSDoc
+- **JSDoc for public APIs** - Public APIs get 1-3 lines of JSDoc written for the caller, with no internal wiring
 - **README updates** - Update main README when adding new flows or features
-- **Type documentation** - Complex types should have comments explaining usage
+- **Type documentation** - Complex public types may carry a short JSDoc for the caller; avoid other comments unless they explain a non-obvious why
 - **Changelog** - Follows conventional commits (auto-generated via `pnpm run release`)
 - **Migration guides** - Breaking changes need migration documentation
 - **Example app** - Update `example/` app when adding new features
@@ -455,7 +176,7 @@ flows/[FlowName]/
 
 ### 3. Type Safety Issues
 
-- Using `any` without `oxlint-disable` comment
+- Using `any` (lint error; `$TSFixMe` is the escape hatch for genuine workarounds)
 - Type assertions (`as`) without clear justification
 - Missing null/undefined checks for optional values
 - Incorrect generic type parameters
@@ -503,6 +224,7 @@ flows/[FlowName]/
 - Breaking changes without `BREAKING CHANGE:` in commit message
 - Version bump doesn't match change type (feat vs fix)
 - Peer dependency changes without testing in example app
+- Manual edits to the version in `package.json` or to `CHANGELOG.md`, which the release scripts own
 
 ### 10. Package-Specific Issues
 
@@ -553,39 +275,3 @@ Before approving a PR, verify:
 - [ ] **No console.log** - Only `console.warn` and `console.error` allowed
 - [ ] **Security reviewed** - No exposed secrets, proper input validation
 - [ ] **Content consistency** - String arrays have consistent punctuation
-
-## Release Process
-
-This project uses automated releases via GitHub Actions:
-
-1. **Commit convention** - Use conventional commits (feat, fix, chore, etc.)
-2. **PR merged** - Merge to `main` branch
-3. **Version bump** - CI checks if version changed in `package.json`
-4. **Auto-publish** - If version changed, package is published to npm
-5. **Git tag created** - Tag matches package.json version
-6. **GitHub release** - Auto-generated changelog from commits
-
-**Manual release:**
-
-```bash
-pnpm run release
-```
-
-This will:
-
-- Analyze commits since last release
-- Determine version bump (major/minor/patch)
-- Update `package.json` and `CHANGELOG.md`
-- Create release branch and PR
-- Open PR in browser
-
-**IMPORTANT:** Never manually edit version in `package.json` without going through release process.
-
-## Getting Help
-
-- **Documentation**: Check `README.md` and flow-specific READMEs
-- **Architecture questions**: Review this document and `src/` structure
-- **Build issues**: Check `tsdown.config.ts` and `package.json` scripts
-- **Test issues**: See `vitest.config.ts` and `vitest-setup.ts`
-- **CI issues**: Review `.github/workflows/ci.yml`
-- **Ask the team**: When in doubt, ask for clarification before merging
