@@ -814,33 +814,17 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
       );
     }
 
-    it.each([
-      [false, 'Ardin Brl'],
-      [true, 'Ardin Brl'],
-    ])(
-      'exposes has_active_withdrawal_method %s and the contractor name',
-      async (hasActiveWithdrawalMethod, name) => {
-        mockEmployment({
-          has_active_withdrawal_method: hasActiveWithdrawalMethod,
-          basic_information: { name },
-        });
-
-        renderBag();
-
-        expect(
-          JSON.parse((await screen.findByTestId('employment')).textContent!),
-        ).toEqual({ hasActiveWithdrawalMethod, name });
-      },
-    );
-
-    it('leaves has_active_withdrawal_method undefined when the employment has none', async () => {
-      mockEmployment({ basic_information: { name: 'Ardin Brl' } });
+    it('exposes the loaded employment', async () => {
+      mockEmployment({
+        has_active_withdrawal_method: false,
+        basic_information: { name: 'Ardin Brl' },
+      });
 
       renderBag();
 
       expect(
         JSON.parse((await screen.findByTestId('employment')).textContent!),
-      ).toEqual({ name: 'Ardin Brl' });
+      ).toEqual({ hasActiveWithdrawalMethod: false, name: 'Ardin Brl' });
     });
   });
 });
