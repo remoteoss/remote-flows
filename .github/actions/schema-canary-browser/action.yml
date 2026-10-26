@@ -42,7 +42,7 @@ runs:
       working-directory: ./example
       run: |
         for i in 1 2 3; do
-          if timeout 120 pnpm exec playwright install-deps chromium; then exit 0; fi
+          if sudo timeout 120 env "PATH=$PATH" ./node_modules/.bin/playwright install-deps chromium; then exit 0; fi
           sleep $((i * 10))
         done
         exit 1

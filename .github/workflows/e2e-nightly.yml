@@ -96,7 +96,7 @@ jobs:
           # Retry with backoff in case apt-get has issues
           for i in 1 2 3; do
             echo "Installing system dependencies for ${{ matrix.browser }} (attempt $i of 3)"
-            if timeout 120 pnpm exec playwright install-deps ${{ matrix.browser }}; then
+            if sudo timeout 120 env "PATH=$PATH" ./node_modules/.bin/playwright install-deps ${{ matrix.browser }}; then
               echo "Successfully installed system dependencies"
               exit 0
             fi
