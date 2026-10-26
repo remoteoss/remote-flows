@@ -8,7 +8,7 @@ function isGatewayBlock(response: Response) {
 }
 
 export function retryOnGatewayBlock(
-  baseFetch: typeof fetch,
+  baseFetch: typeof fetch = globalThis.fetch,
   retryDelaysMs: number[] = GATEWAY_BLOCK_RETRY_DELAYS_MS,
   sleep: (ms: number) => Promise<void> = (ms) =>
     new Promise((resolve) => setTimeout(resolve, ms)),
