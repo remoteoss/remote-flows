@@ -45,10 +45,13 @@ function CreateInvoiceSchedule({ employmentId }: { employmentId: string }) {
             </p>
 
             {invoiceScheduleBag.isContractorOfRecord && (
-              <p>
-                This contractor is a Contractor of Record, so only one-off
-                invoices can be scheduled.
-              </p>
+              <Alert style={{ marginBottom: 16 }}>
+                <AlertCircle />
+                <AlertDescription>
+                  This contractor is a Contractor of Record, so only one-off
+                  invoices can be scheduled.
+                </AlertDescription>
+              </Alert>
             )}
 
             {invoiceScheduleBag.employment?.has_active_withdrawal_method ===
