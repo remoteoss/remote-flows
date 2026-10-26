@@ -115,7 +115,7 @@ Path-scoped rules live in `.agents/rules/`. Claude Code loads each one when you 
 ## Conventions worth knowing
 
 - **Import order** (convention only — neither `oxlint` nor `oxfmt` enforce or auto-sort this): `react` first, then other external packages, then `@remoteoss/*` packages, then absolute (`@/`) imports, then relative (`./`, `../`) imports. Alphabetize within each group.
-- **Notices are partner UI** — a warning or statement driven by API data goes on the flow bag and is rendered in `example/src` with `Alert`; never inside a flow's `*Form.tsx`. See [partner-facing-ui](.agents/rules/partner-facing-ui.md).
+- **Notices are partner UI** — a warning or statement driven by API data goes on the flow bag and is rendered in `example/src` with the shipped UI primitive that matches the issue's design; never inside a flow's `*Form.tsx`. See [partner-facing-ui](.agents/rules/partner-facing-ui.md).
 - **Read before you write** — search for how a sibling flow, component or hook already does it and reuse its helpers; never import a function you haven't confirmed exists.
 - **Tests** — Vitest globals are enabled (never import `describe`/`it`/`expect`/`vi` from `vitest`), mock APIs with MSW (never `vi.mock('@/src/client')`), assert exact shapes in `toHaveBeenCalledWith`, and never add timeouts or fixed sleeps. Details in [.agents/rules/testing.md](.agents/rules/testing.md).
 - **`no-console: warn`** in oxlint — only `console.warn` / `console.error` permitted.
