@@ -85,7 +85,7 @@ Schema versions for employee onboarding in Greece.
 
 - The schema is now marked as the newer form engine version (`x-rmt-meta.jsfVersion` is `"1"`). Partners pinning v3 or later get the newer engine path
 - `work_days` is removed. Work hours now come from the shared `daily_schedule` component: a required `schedule_type` (`flexible`, `core_business_hours` or `fixed_hours`), plus a `daily_schedule` fieldset that is required for `core_business_hours` and `fixed_hours`
-- `work_hours_per_week` is now required and bounded by `work_schedule`: exactly 40 for `full_time`, 1 to 39 for `part_time`. For `full_time` it is hidden and filled with 40
+- `work_hours_per_week` is now required and bounded by `work_schedule`: fixed at 40 for `full_time` and 1 to 39 for `part_time`
 - Custom UIs that rendered `work_days` must render `schedule_type` and `daily_schedule` instead
 
 **Migration:**
