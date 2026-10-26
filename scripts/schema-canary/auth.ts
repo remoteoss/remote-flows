@@ -14,17 +14,20 @@ export async function fetchSandboxAccessToken(
     `${clientId}:${clientSecret}`,
   ).toString('base64');
 
-  const response = await fetch(`${SANDBOX_GATEWAY_URL}/auth/oauth2/token`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: `Basic ${encodedCredentials}`,
+  const response = await retryOnGatewayBlock(globalThis.fetch)(
+    `${SANDBOX_GATEWAY_URL}/auth/oauth2/token`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${encodedCredentials}`,
+      },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+      }),
     },
-    body: new URLSearchParams({
-      grant_type: 'refresh_token',
-      refresh_token: refreshToken,
-    }),
-  });
+  );
 
   if (!response.ok) {
     const errorText = await response.text();
