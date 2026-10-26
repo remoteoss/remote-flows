@@ -138,7 +138,7 @@ to keep a modal open on `saved: false`.
 are stable functions that internally call into RHF and `setValue` (the JSF field's value
 setter) but never hand that mechanism back to the caller. This is the same boundary
 discipline the rest of the package uses for forms in general (see "Forms" in the root
-`CLAUDE.md`): consumers get `handleValidation`/`parseFormValues`-style async functions and
+`AGENTS.md`): consumers get `handleValidation`/`parseFormValues`-style async functions and
 plain data, never the form library instance.
 
 The tradeoff we accepted: any interaction the edit bag doesn't expose (e.g. per-keystroke

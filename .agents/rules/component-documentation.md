@@ -1,3 +1,11 @@
+---
+description: Keep docs/COMPONENT_CUSTOMIZATION.md in sync when adding customizable components
+paths:
+  - 'src/types/remoteFlows.ts'
+  - 'src/index.tsx'
+  - 'docs/COMPONENT_CUSTOMIZATION.md'
+---
+
 # Component Documentation Rule
 
 ## Philosophy: Keep Documentation in Sync
@@ -27,12 +35,14 @@ If the component has unique props or usage patterns, add an example section simi
 ### 2. Verify Exports
 
 Ensure the component props type is exported from:
+
 - `src/types/remoteFlows.ts` - Type definition
 - `src/index.tsx` - Public API export
 
 ### 3. When to Update
 
 **Always check and update this documentation when:**
+
 - Adding a new field to `Components` type in `src/types/remoteFlows.ts`
 - Creating a new customizable component
 - Exporting a new component props type from `src/index.tsx`
@@ -43,19 +53,22 @@ Ensure the component props type is exported from:
 For a new `CustomWidget` component:
 
 1. **docs/COMPONENT_CUSTOMIZATION.md** (line ~113):
+
 ```markdown
 - `customWidget` - Custom widget component
 ```
 
 2. **docs/COMPONENT_CUSTOMIZATION.md** (line ~130):
+
 ```markdown
 - `CustomWidgetComponentProps`: For custom widget components
 ```
 
 3. **Verify exports**:
+
 ```typescript
 // src/types/remoteFlows.ts
-export type CustomWidgetComponentProps = { /* ... */ };
+export type CustomWidgetComponentProps = {/* ... */};
 
 // src/index.tsx
 export type { CustomWidgetComponentProps } from '@/src/types/remoteFlows';
@@ -64,6 +77,7 @@ export type { CustomWidgetComponentProps } from '@/src/types/remoteFlows';
 ## Red Flags
 
 If you find yourself:
+
 - Adding a type to `Components` without updating docs
 - Exporting a new `*ComponentProps` type without documenting it
 - Implementing a custom component without checking the docs
