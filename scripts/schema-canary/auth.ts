@@ -45,12 +45,9 @@ export function createSandboxClient(
   clientSecret: string,
   refreshToken: string,
 ): Client {
-  process.env.REMOTE_GATEWAY_URL = SANDBOX_GATEWAY_URL;
-  const client = createClient(() =>
+  return createEnvClient(SANDBOX_GATEWAY_URL, () =>
     fetchSandboxAccessToken(clientId, clientSecret, refreshToken),
   );
-  client.setConfig({ fetch: retryOnGatewayBlock(globalThis.fetch) });
-  return client;
 }
 
 export function createEnvClient(

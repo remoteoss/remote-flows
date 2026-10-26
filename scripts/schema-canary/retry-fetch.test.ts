@@ -3,7 +3,7 @@ import { retryOnGatewayBlock } from './retry-fetch';
 const cloudFrontBlock = () =>
   new Response(
     '<HTML><HEAD><TITLE>ERROR: The request could not be satisfied</TITLE></HEAD></HTML>',
-    { status: 403 },
+    { status: 403, headers: { 'content-type': 'text/html' } },
   );
 
 describe('retryOnGatewayBlock', () => {
@@ -50,12 +50,13 @@ describe('retryOnGatewayBlock', () => {
   });
 
   it('does not retry an API error that is not a CloudFront block', async () => {
-    const baseFetch = vi
-      .fn<typeof fetch>()
-      .mockImplementation(
-        async () =>
-          new Response('{"message":"contract is required"}', { status: 422 }),
-      );
+    const baseFetch = vi.fn<typeof fetch>().mockImplementation(
+      async () =>
+        new Response('{"message":"contract is required"}', {
+          status: 422,
+          headers: { 'content-type': 'application/json' },
+        }),
+    );
     const sleep = vi.fn(async () => {});
 
     const response = await retryOnGatewayBlock(
@@ -65,6 +66,27 @@ describe('retryOnGatewayBlock', () => {
     )('https://gateway.test/v1/employments');
 
     expect(response.status).toBe(422);
+    expect(baseFetch).toHaveBeenCalledTimes(1);
+    expect(sleep).not.toHaveBeenCalled();
+  });
+
+  it('does not retry a JSON 403 from the API', async () => {
+    const baseFetch = vi.fn<typeof fetch>().mockImplementation(
+      async () =>
+        new Response('{"message":"forbidden"}', {
+          status: 403,
+          headers: { 'content-type': 'application/json' },
+        }),
+    );
+    const sleep = vi.fn(async () => {});
+
+    const response = await retryOnGatewayBlock(
+      baseFetch,
+      [10, 20],
+      sleep,
+    )('https://gateway.test/v1/employments');
+
+    expect(response.status).toBe(403);
     expect(baseFetch).toHaveBeenCalledTimes(1);
     expect(sleep).not.toHaveBeenCalled();
   });

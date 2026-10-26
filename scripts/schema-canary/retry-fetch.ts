@@ -1,13 +1,10 @@
-const GATEWAY_BLOCK_MARKER = 'The request could not be satisfied';
-
 export const GATEWAY_BLOCK_RETRY_DELAYS_MS = [30_000, 120_000];
 
-async function isGatewayBlock(response: Response) {
-  if (response.ok) {
-    return false;
-  }
-  const body = await response.clone().text();
-  return body.includes(GATEWAY_BLOCK_MARKER);
+function isGatewayBlock(response: Response) {
+  return (
+    response.status === 403 &&
+    !response.headers.get('content-type')?.includes('json')
+  );
 }
 
 export function retryOnGatewayBlock(
@@ -20,10 +17,7 @@ export function retryOnGatewayBlock(
     const request = new Request(input, init);
     for (let attempt = 0; ; attempt++) {
       const response = await baseFetch(request.clone());
-      if (
-        attempt >= retryDelaysMs.length ||
-        !(await isGatewayBlock(response))
-      ) {
+      if (attempt >= retryDelaysMs.length || !isGatewayBlock(response)) {
         return response;
       }
       await sleep(retryDelaysMs[attempt]);
