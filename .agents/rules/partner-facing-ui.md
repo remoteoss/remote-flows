@@ -17,7 +17,7 @@ Flows are headless: the SDK exposes data, the partner renders it. A visible noti
 | The notice itself, with the copy and the condition                          | `example/src/<Flow>.tsx`                                                         |
 | A test that the bag exposes the data in each state (`true`, `false`, unset) | `src/flows/<Flow>/tests/`                                                        |
 
-Never add the notice to a `*Form.tsx` or any other file under `src/flows/**`. Reference: `isContractorOfRecord` in the InvoiceSchedule README and example.
+Never add the notice to a `*Form.tsx` or any other file under `src/flows/**`. Reference for exposing the data: `isContractorOfRecord` in the InvoiceSchedule README and bag. Its example renders a plain `<p>`; that predates this rule, so don't copy it for the notice.
 
 Some older flow code renders UI that a partner would own. That is tracked debt, not precedent: follow this rule, not those spots.
 
@@ -26,7 +26,7 @@ Some older flow code renders UI that a partner would own. That is tracked debt, 
 - Use `Alert` and `AlertDescription` from `@remoteoss/remote-flows/internals` with `variant='warning'` and a lucide icon. Never a bare `<p>`.
 - Reuse what `example/src` already has (`AlertError`, `components/`) before writing new markup.
 - If the Linear issue has a screenshot, open it first (`extract_images`) and match what it shows: variant, icon, wording.
-- Schema-provided strings still go through `BaseFormDescription` or `sanitizeHtml`; fixed copy plus a name renders as plain text.
+- API-provided HTML goes through `sanitizeHtml`; fixed copy plus a name renders as plain text.
 
 ## When the requirements are ambiguous
 
