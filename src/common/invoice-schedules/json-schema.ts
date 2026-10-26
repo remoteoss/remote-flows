@@ -72,7 +72,7 @@ function invoiceItemRevealConditionals() {
 }
 
 // Only offered when asked for, so the in-flow onboarding step keeps the field set it
-// shipped with — the same reason `includeOneTime` is opt-in.
+// shipped with.
 function semiMonthlyDayProperties() {
   return {
     custom_day_1: {
@@ -152,19 +152,15 @@ const itemFieldOrder = Array.from(
  * here keeps the form from suggesting something the API will refuse.
  */
 function periodicityOptions({
-  includeOneTime,
   isContractorOfRecord,
 }: {
-  includeOneTime: boolean;
   isContractorOfRecord: boolean;
 }) {
   if (isContractorOfRecord) {
     return [ONE_TIME_PERIODICITY_OPTION];
   }
 
-  return includeOneTime
-    ? [ONE_TIME_PERIODICITY_OPTION, ...RECURRING_PERIODICITY_OPTIONS]
-    : [...RECURRING_PERIODICITY_OPTIONS];
+  return [ONE_TIME_PERIODICITY_OPTION, ...RECURRING_PERIODICITY_OPTIONS];
 }
 
 type CreateInvoiceScheduleSchemaOptions = {
@@ -172,11 +168,6 @@ type CreateInvoiceScheduleSchemaOptions = {
    * Currency codes the contractor can be invoiced in. Replaces the placeholder `oneOf`.
    */
   currencies?: string[];
-  /**
-   * Offer "One time" alongside the recurring cadences. Off by default so the in-flow
-   * onboarding step keeps the field set it shipped with.
-   */
-  includeOneTime?: boolean;
   /**
    * Restrict to one-off only. Derive from the employment's `contractor_type === 'cor'`.
    */
@@ -203,7 +194,6 @@ type CreateInvoiceScheduleSchemaOptions = {
  */
 export function buildCreateInvoiceScheduleSchema({
   currencies,
-  includeOneTime = false,
   isContractorOfRecord = false,
   includeCustomDays = false,
   includeBackdateTip = false,
@@ -248,7 +238,7 @@ export function buildCreateInvoiceScheduleSchema({
           'What is the frequency you want to invoice? <a href="https://support.remote.com/contractor/contractor-management/what-are-the-frequency-options-when-scheduling-a-contractors-invoice" target="_blank">Learn more about invoicing frequencies.</a>',
         title: 'Frequency',
         type: 'string',
-        oneOf: periodicityOptions({ includeOneTime, isContractorOfRecord }),
+        oneOf: periodicityOptions({ isContractorOfRecord }),
         'x-jsf-presentation': {
           inputType: 'select',
         },
@@ -334,15 +324,13 @@ export function buildCreateInvoiceScheduleSchema({
     allOf: [
       ...invoiceItemRevealConditionals(),
       ...(includeCustomDays ? [semiMonthlyConditional()] : []),
-      ...(includeOneTime || isContractorOfRecord
-        ? [occurrencesConditional()]
-        : []),
+      occurrencesConditional(),
     ],
   };
 }
 
 /**
- * The schema as the in-flow onboarding step renders it (no one-off option).
+ * The schema as the in-flow onboarding step renders it.
  * Currencies are substituted at runtime — see `useGetCreateInvoiceScheduleSchema`.
  */
 export const createInvoiceScheduleSchema = buildCreateInvoiceScheduleSchema();

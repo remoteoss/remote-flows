@@ -224,21 +224,8 @@ describe('buildCreateInvoiceScheduleSchema', () => {
       (option) => option.const,
     );
 
-  it('offers only the recurring cadences by default, matching the in-flow step', () => {
+  it('offers the one-off option alongside the recurring cadences', () => {
     expect(periodicityOptions(buildCreateInvoiceScheduleSchema())).toEqual([
-      'weekly',
-      'bi_weekly',
-      'semi_monthly',
-      'monthly',
-    ]);
-  });
-
-  it('offers the one-off option when asked', () => {
-    expect(
-      periodicityOptions(
-        buildCreateInvoiceScheduleSchema({ includeOneTime: true }),
-      ),
-    ).toEqual([
       ONE_TIME_PERIODICITY,
       'weekly',
       'bi_weekly',
@@ -248,17 +235,6 @@ describe('buildCreateInvoiceScheduleSchema', () => {
   });
 
   it('restricts a Contractor of Record to one-off invoicing', () => {
-    expect(
-      periodicityOptions(
-        buildCreateInvoiceScheduleSchema({
-          includeOneTime: true,
-          isContractorOfRecord: true,
-        }),
-      ),
-    ).toEqual([ONE_TIME_PERIODICITY]);
-  });
-
-  it('restricts a Contractor of Record even when the one-off option was not requested', () => {
     expect(
       periodicityOptions(
         buildCreateInvoiceScheduleSchema({ isContractorOfRecord: true }),
@@ -382,5 +358,20 @@ describe('buildInvoiceScheduleFormValues', () => {
       item_2_description: 'Hosting',
       item_2_amount: 7500,
     });
+  });
+
+  it('reloads a saved one-off schedule as "One time" with no occurrence count', () => {
+    const values = buildInvoiceScheduleFormValues({
+      currency: 'EUR',
+      periodicity: 'monthly',
+      start_date: '2026-10-01',
+      number: null,
+      note: null,
+      nr_occurrences: 1,
+      items: [{ description: 'Design work', amount: 250000 }],
+    });
+
+    expect(values.periodicity).toBe(ONE_TIME_PERIODICITY);
+    expect(values.nr_occurrences).toBeUndefined();
   });
 });
