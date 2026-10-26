@@ -86,6 +86,14 @@ describe('decideExitCode', () => {
     expect(decideExitCode(rows)).toBe(0);
   });
 
+  it('returns 0 when only a "latest-submit" check failed', () => {
+    const rows: SchemaCanaryRow[] = [
+      passingRow,
+      { ...passingRow, check: 'latest-submit', outcome: 'fail', error: 'boom' },
+    ];
+    expect(decideExitCode(rows)).toBe(0);
+  });
+
   it('returns 1 when a "submit" check failed', () => {
     const rows: SchemaCanaryRow[] = [
       passingRow,

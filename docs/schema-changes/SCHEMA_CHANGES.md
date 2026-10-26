@@ -39,7 +39,7 @@ Schema versions for the Contract Details step in employee onboarding flows.
 ### Version Availability
 
 - **v2** - Available for 18 countries (SDK 1.23.0+)
-  - Belarus, China, Switzerland, Czech Republic, Hong Kong, Iceland, Jamaica, Kenya, Lebanon, Mauritius, Malaysia, Nigeria, Norway, New Zealand, Saudi Arabia, Singapore, Serbia, Sweden
+  - China, Switzerland, Czech Republic, Hong Kong, Iceland, Jamaica, Kenya, Lebanon, Mauritius, Malaysia, Nigeria, Norway, New Zealand, Saudi Arabia, Singapore, Serbia, Sweden
 - **v1** - Default for all other countries (SDK 1.0.0+)
 
 **Quick Start (v2 example for Switzerland):**

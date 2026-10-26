@@ -5,12 +5,18 @@ import {
 } from '@/src/common/headlessForm';
 import { findSkipEntry, SchemaCanarySkipEntry } from './skip-list';
 
-export type SchemaCheckType = 'pinned' | 'latest' | 'submit';
+export type SchemaCheckType = 'pinned' | 'latest' | 'submit' | 'latest-submit';
 
 export const SCHEMA_CHECK_ORDER: SchemaCheckType[] = [
   'pinned',
   'latest',
   'submit',
+  'latest-submit',
+];
+
+export const WARNING_ONLY_CHECKS: SchemaCheckType[] = [
+  'latest',
+  'latest-submit',
 ];
 export type SchemaCheckOutcome = 'pass' | 'fail' | 'seed-error' | 'skip';
 
@@ -65,7 +71,7 @@ export function isSkipped(
 
 export function decideExitCode(rows: SchemaCanaryRow[]): 0 | 1 {
   const hasGatingFailure = rows.some(
-    (row) => row.check !== 'latest' && row.outcome === 'fail',
+    (row) => !WARNING_ONLY_CHECKS.includes(row.check) && row.outcome === 'fail',
   );
   const hasSeedError = rows.some((row) => row.outcome === 'seed-error');
   const checkedAnything = rows.some(

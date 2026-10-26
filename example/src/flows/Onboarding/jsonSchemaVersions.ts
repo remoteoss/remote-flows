@@ -5,7 +5,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION = {
 export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   ALB: {
     // Albania
-    contract_details: 1,
+    contract_details: 4,
   },
   ARE: {
     // United Arab Emirates
@@ -77,7 +77,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CYP: {
     // Cyprus
-    contract_details: 1,
+    contract_details: 7,
   },
   CZE: {
     // Czech Republic
@@ -125,7 +125,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   GEO: {
     // Georgia
-    contract_details: 1,
+    contract_details: 6,
   },
   GRC: {
     // Greece
@@ -245,7 +245,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   NIC: {
     // Nicaragua
-    contract_details: 1,
+    contract_details: 4,
   },
   NLD: {
     // Netherlands
@@ -317,7 +317,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   SVN: {
     // Slovenia
-    contract_details: 1,
+    contract_details: 6,
   },
   SWE: {
     // Sweden

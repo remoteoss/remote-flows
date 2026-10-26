@@ -5,6 +5,7 @@ type KeptEmployment = {
   country: string;
   employmentId: string;
   companyId: string;
+  version: number | 'latest';
   sent: Record<string, unknown>;
   knownUnsavedFields: string[];
 };
@@ -119,13 +120,20 @@ for (const {
   country,
   employmentId,
   companyId,
+  version,
   sent,
   knownUnsavedFields,
 } of employments) {
-  test(`${country} re-submits the saved contract details unchanged`, async ({
+  test(`${country}@${version} re-submits the saved contract details unchanged`, async ({
     page,
   }) => {
-    await page.goto(`/?demo=onboarding-basic&employmentId=${employmentId}`);
+    const versionParams =
+      version === 'latest'
+        ? `&countryCode=${country}&contractDetailsVersion=latest`
+        : '';
+    await page.goto(
+      `/?demo=onboarding-basic&employmentId=${employmentId}${versionParams}`,
+    );
     await page.locator('#companyId').fill(companyId);
     await page.locator('.onboarding-form-button').click();
 
