@@ -45,7 +45,7 @@ function CreateInvoiceSchedule({ employmentId }: { employmentId: string }) {
             </p>
 
             {invoiceScheduleBag.isContractorOfRecord && (
-              <Alert style={{ marginBottom: 16 }}>
+              <Alert className='mb-4'>
                 <AlertCircle />
                 <AlertDescription>
                   This contractor is a Contractor of Record, so only one-off
@@ -56,7 +56,7 @@ function CreateInvoiceSchedule({ employmentId }: { employmentId: string }) {
 
             {invoiceScheduleBag.employment?.has_active_withdrawal_method ===
               false && (
-              <Alert variant='warning' style={{ marginBottom: 16 }}>
+              <Alert variant='warning' className='mb-4'>
                 <AlertCircle />
                 <AlertDescription>
                   {(invoiceScheduleBag.employment.basic_information?.name as
