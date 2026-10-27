@@ -260,6 +260,7 @@ export function buildCreateInvoiceScheduleSchema({
         format: 'date',
         'x-jsf-presentation': {
           inputType: 'date',
+          minDate: new Date().toISOString().slice(0, 10),
           ...(includeBackdateTip
             ? {
                 statement: {
