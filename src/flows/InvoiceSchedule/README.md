@@ -179,7 +179,7 @@ The form submits to `POST /v1/contractor-invoice-schedules`.
 | —                | `employment_id`  | Taken from the `employmentId` prop, not collected by the form.            |
 | Invoice currency | `currency`       | Restricted to the contractor's supported currencies.                      |
 | Frequency        | `periodicity`    | See the one-off note below.                                               |
-| Start date       | `start_date`     | Date the first invoice is generated.                                      |
+| Start date       | `start_date`     | Date the first invoice is generated. Today (UTC) or later.                |
 | Items 1–10       | `items`          | Slot _n+1_ is revealed once slot _n_ is filled. The API accepts up to 10. |
 | Invoice number   | `number`         | Optional — omit it and Remote numbers the invoice for you.                |
 | Additional notes | `note`           | Optional.                                                                 |
