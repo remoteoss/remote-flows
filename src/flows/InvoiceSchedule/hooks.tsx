@@ -53,6 +53,7 @@ export const useInvoiceSchedule = ({
     isContractorOfRecord,
     includeCustomDays: true,
     includeBackdateTip: true,
+    includeScheduleSummary: true,
   });
 
   const createInvoiceScheduleMutation = useCreateInvoiceSchedule();

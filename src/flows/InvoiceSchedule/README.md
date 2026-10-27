@@ -146,6 +146,10 @@ The form shows the platform's invoice date note under the invoice date: the invo
 when the invoice is created, not when the contractor gets paid, so backdate the invoice date if
 payment is needed by a specific day.
 
+For a weekly, bi-weekly or monthly schedule the form also shows a sentence that sums it up,
+for example "This schedule will create a weekly recurring invoice that ends after one
+occurrence, starting October 30, 2026." It is not shown for a one-off or a semi-monthly schedule.
+
 ## The bag
 
 `useInvoiceSchedule()` is the headless equivalent of the render prop, for fully custom UIs.

@@ -615,6 +615,86 @@ describe('InvoiceScheduleFlow start date label', () => {
   });
 });
 
+describe('InvoiceScheduleFlow schedule summary', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
+
+  async function expectSummary(text: string) {
+    await waitFor(() => {
+      expect(
+        screen.getAllByRole('alert').map((alert) => alert.textContent),
+      ).toContain(text);
+    });
+  }
+
+  async function setStartDate(value: string) {
+    fireEvent.change(await screen.findByLabelText(/Start date/i), {
+      target: { value },
+    });
+  }
+
+  it('sums up the schedule as the frequency, the end and the start date change', async () => {
+    renderFlow();
+
+    await fillSelect('periodicity', 'bi_weekly');
+    await setStartDate('2026-10-30');
+
+    await expectSummary(
+      'This schedule will create a bi-weekly recurring invoice, starting October 30, 2026.',
+    );
+
+    fireEvent.click(screen.getByRole('radio', { name: 'No end date' }));
+
+    await expectSummary(
+      'This schedule will create a bi-weekly recurring invoice with no end date, starting October 30, 2026.',
+    );
+
+    fireEvent.click(
+      screen.getByRole('radio', { name: 'End after a number of occurrences' }),
+    );
+    fireEvent.change(await screen.findByLabelText(/^Number of occurrences$/i), {
+      target: { value: '1' },
+    });
+
+    await expectSummary(
+      'This schedule will create a bi-weekly recurring invoice that ends after one occurrence, starting October 30, 2026.',
+    );
+
+    fireEvent.change(screen.getByLabelText(/^Number of occurrences$/i), {
+      target: { value: '6' },
+    });
+
+    await expectSummary(
+      'This schedule will create a bi-weekly recurring invoice that ends after 6 occurrences, starting October 30, 2026.',
+    );
+  });
+
+  it.each(['one_time', 'semi_monthly'])(
+    'does not sum up a %s schedule',
+    async (periodicity) => {
+      renderFlow();
+
+      await fillSelect('periodicity', 'weekly');
+      await expectSummary(
+        'This schedule will create a weekly recurring invoice, starting \u2014.',
+      );
+
+      await fillSelect('periodicity', periodicity);
+
+      await waitFor(() => {
+        expect(
+          screen
+            .queryAllByRole('alert')
+            .some((alert) =>
+              alert.textContent?.startsWith('This schedule will create a'),
+            ),
+        ).toBe(false);
+      });
+    },
+  );
+});
+
 describe('InvoiceScheduleFlow partner usage', () => {
   beforeEach(() => {
     queryClient.clear();

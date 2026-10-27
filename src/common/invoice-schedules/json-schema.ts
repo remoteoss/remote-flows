@@ -157,6 +157,101 @@ function endDateConditionals() {
   ];
 }
 
+const SUMMARY_PERIODICITIES = ['weekly', 'bi_weekly', 'monthly'];
+
+function scheduleSummaryProperty() {
+  return {
+    type: 'null',
+    title: 'Schedule summary',
+    'x-jsf-presentation': {
+      inputType: 'hidden',
+      statement: {
+        description: '',
+        inputType: 'statement',
+        severity: 'info',
+      },
+      meta: {
+        ignoreValue: true,
+      },
+    },
+    'x-jsf-logic-computedAttrs': {
+      'x-jsf-presentation': {
+        statement: {
+          description:
+            'This schedule will create a <strong>{{schedule_frequency}}</strong> recurring invoice{{schedule_end}}, starting <strong>{{schedule_start}}</strong>.',
+        },
+      },
+    },
+  };
+}
+
+const scheduleSummaryComputedValues = {
+  schedule_frequency: {
+    rule: {
+      if: [
+        { '==': [{ var: 'periodicity' }, 'bi_weekly'] },
+        'bi-weekly',
+        { var: 'periodicity' },
+      ],
+    },
+  },
+  schedule_end: {
+    rule: {
+      if: [
+        { '==': [{ var: 'end_type' }, END_TYPE_NEVER] },
+        ' <strong>with no end date</strong>',
+        { '==': [{ var: 'end_type' }, END_TYPE_MULTIPLE] },
+        {
+          cat: [
+            ' that <strong>ends after ',
+            {
+              if: [
+                { var: 'nr_occurrences' },
+                {
+                  if: [
+                    { '==': [{ var: 'nr_occurrences' }, 1] },
+                    'one occurrence',
+                    { cat: [{ var: 'nr_occurrences' }, ' occurrences'] },
+                  ],
+                },
+                '\u2014',
+              ],
+            },
+            '</strong>',
+          ],
+        },
+        '',
+      ],
+    },
+  },
+  schedule_start: {
+    rule: {
+      if: [
+        { var: 'start_date' },
+        { date_format: [{ var: 'start_date' }, 'MMMM d, yyyy'] },
+        '\u2014',
+      ],
+    },
+  },
+};
+
+function scheduleSummaryConditional() {
+  return {
+    if: {
+      properties: {
+        periodicity: { enum: SUMMARY_PERIODICITIES },
+      },
+      required: ['periodicity'],
+    },
+    then: {},
+    else: {
+      properties: {
+        schedule_summary: false,
+      },
+    },
+  };
+}
+
 function startDateConditional() {
   return {
     if: {
@@ -235,6 +330,12 @@ type CreateInvoiceScheduleSchemaOptions = {
    * shipped with.
    */
   includeBackdateTip?: boolean;
+  /**
+   * Show a sentence under the form that sums up the schedule: frequency, how it ends and
+   * when it starts. Off by default so the in-flow onboarding step keeps the field set it
+   * shipped with.
+   */
+  includeScheduleSummary?: boolean;
 };
 
 /**
@@ -250,6 +351,7 @@ export function buildCreateInvoiceScheduleSchema({
   isContractorOfRecord = false,
   includeCustomDays = false,
   includeBackdateTip = false,
+  includeScheduleSummary = false,
 }: CreateInvoiceScheduleSchemaOptions = {}) {
   return {
     type: 'object',
@@ -326,6 +428,9 @@ export function buildCreateInvoiceScheduleSchema({
           inputType: 'text',
         },
       },
+      ...(includeScheduleSummary
+        ? { schedule_summary: scheduleSummaryProperty() }
+        : {}),
       note: {
         description: 'Shown on generated invoices.',
         title: 'Additional notes',
@@ -375,6 +480,7 @@ export function buildCreateInvoiceScheduleSchema({
       'end_type',
       'nr_occurrences',
       'number',
+      ...(includeScheduleSummary ? ['schedule_summary'] : []),
       'note',
     ],
     'x-jsf-logic': {
@@ -382,6 +488,7 @@ export function buildCreateInvoiceScheduleSchema({
         currency_selected: {
           rule: { var: 'currency' },
         },
+        ...(includeScheduleSummary ? scheduleSummaryComputedValues : {}),
       },
     },
     // Carried over when this schema moved here: the static ContractorOnboarding schemas
@@ -393,6 +500,7 @@ export function buildCreateInvoiceScheduleSchema({
       ...invoiceItemRevealConditionals(),
       ...(includeCustomDays ? [semiMonthlyConditional()] : []),
       ...endDateConditionals(),
+      ...(includeScheduleSummary ? [scheduleSummaryConditional()] : []),
       ...(includeOneTime || isContractorOfRecord
         ? [startDateConditional()]
         : []),
