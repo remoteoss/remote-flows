@@ -49,7 +49,6 @@ export const useInvoiceSchedule = ({
     enabled: true,
     employmentId,
     jsfModify,
-    includeOneTime: true,
     isContractorOfRecord,
     includeCustomDays: true,
   });

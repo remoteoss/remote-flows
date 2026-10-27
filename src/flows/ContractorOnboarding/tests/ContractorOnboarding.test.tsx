@@ -4707,7 +4707,7 @@ describe('ContractorOnboardingFlow', () => {
       });
 
       expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
-      expect(screen.getByLabelText(/Invoice date/i)).toHaveValue('2100-01-01');
+      expect(screen.getByLabelText(/Start date/i)).toHaveValue('2100-01-01');
       expect(screen.getByLabelText(/Item 1 description/i)).toHaveValue(
         'salary',
       );
@@ -5035,6 +5035,59 @@ describe('ContractorOnboardingFlow', () => {
       expect(
         fieldErrors.some((fieldError) => fieldError.field === 'currency'),
       ).toBe(true);
+    });
+
+    it('creates a one-off schedule as monthly with a single occurrence when "One time" is chosen', async () => {
+      const employmentId = generateUniqueEmploymentId();
+      let createRequestBody: Record<string, unknown> | undefined;
+
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: employmentId,
+                status: 'created',
+              },
+            },
+          });
+        }),
+        http.post('*/v1/contractor-invoice-schedules', async ({ request }) => {
+          createRequestBody = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json({ data: createRequestBody });
+        }),
+      );
+
+      await goToFilledCreateInvoiceSchedule(employmentId, {
+        periodicity: 'one_time',
+        startDate: '2026-12-01',
+      });
+
+      expect(
+        screen.queryByLabelText(/Number of occurrences/i),
+      ).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: /continue/i }));
+
+      await screen.findByText('Step: Review');
+
+      expect(createRequestBody).toEqual({
+        contractor_invoice_schedules: [
+          {
+            employment_id: employmentId,
+            currency: 'EUR',
+            periodicity: 'monthly',
+            nr_occurrences: 1,
+            start_date: '2026-12-01',
+            number: '1234',
+            note: 'Test notes',
+            items: [{ description: 'Salary', amount: 250000 }],
+          },
+        ],
+      });
     });
   });
 });
