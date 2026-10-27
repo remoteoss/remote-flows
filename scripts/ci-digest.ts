@@ -43,11 +43,11 @@ function fetchFailedLog(check: CheckRun): string {
   if (log || !check.jobId) {
     return log;
   }
-  return tryGh([
-    'api',
-    '--allow-escape-sequences',
-    `repos/{owner}/{repo}/actions/jobs/${check.jobId}/logs`,
-  ]);
+  const endpoint = `repos/{owner}/{repo}/actions/jobs/${check.jobId}/logs`;
+  return (
+    tryGh(['api', '--allow-escape-sequences', endpoint]) ||
+    tryGh(['api', endpoint])
+  );
 }
 
 type Checks = { subject: string; failed: RawCheck[]; passing: number };
