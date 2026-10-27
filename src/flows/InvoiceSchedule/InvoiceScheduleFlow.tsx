@@ -1,4 +1,5 @@
-import React, { useEffect, useId } from 'react';
+import React, { useEffect, useId, useRef } from 'react';
+import { getInitialValues } from '@/src/components/form/utils';
 import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
 import { ONE_TIME_PERIODICITY } from '@/src/common/invoice-schedules';
 import { InvoiceScheduleContext } from '@/src/flows/InvoiceSchedule/context';
@@ -55,6 +56,26 @@ export const InvoiceScheduleFlow = ({
       ...defaultValues,
     },
   });
+
+  const { fields } = invoiceScheduleBag;
+  const seededDefaults = useRef(false);
+
+  useEffect(() => {
+    if (seededDefaults.current || fields.length === 0) {
+      return;
+    }
+
+    seededDefaults.current = true;
+
+    Object.entries(getInitialValues(fields, form.getValues())).forEach(
+      ([name, value]) => {
+        const current = form.getValues(name);
+        if ((current === undefined || current === '') && value !== '') {
+          form.setValue(name, value);
+        }
+      },
+    );
+  }, [fields, form]);
 
   // Contractor of Record is only known once the employment request resolves, so the form
   // offers the recurring frequencies until then and a frequency chosen in that window

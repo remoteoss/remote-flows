@@ -5,7 +5,6 @@ import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
 import { FieldExtra } from '@/src/components/form/FieldExtra';
 import { Statement } from '@/src/components/form/Statement';
 import { FormFieldNameProvider } from '@/src/components/ui/form';
-import { useApplyRevealDefaults } from '@/src/components/form/useApplyRevealDefaults';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
 import {
   Components,
@@ -36,20 +35,18 @@ export const JSONSchemaFormFields = ({
 }: JSONSchemaFormFieldsProps) => {
   const { setValue, watch } = useFormContext();
 
+  if (!fields || fields.length === 0) {
+    return null;
+  }
+
   const maybeFieldWithFlatFieldsets =
-    fields && fieldsets && fieldValues
+    fieldsets && fieldValues
       ? getFieldsWithFlatFieldsets({
           fields: fields,
           fieldsets: fieldsets,
           values: fieldValues,
         })
       : fields;
-
-  useApplyRevealDefaults(maybeFieldWithFlatFieldsets ?? [], fieldValues);
-
-  if (!fields || fields.length === 0) {
-    return null;
-  }
 
   const wrapWithCustomWrapper = (
     content: React.ReactNode,
