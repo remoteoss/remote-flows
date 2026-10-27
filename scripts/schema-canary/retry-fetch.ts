@@ -1,6 +1,6 @@
 export const GATEWAY_RETRY_DELAYS_MS = [30_000, 120_000];
 
-const RETRYABLE_SERVER_STATUSES = new Set([500, 502, 503, 504]);
+const RETRYABLE_SERVER_STATUSES = new Set([502, 503, 504]);
 
 function isRetryable(response: Response) {
   const isGatewayBlock =

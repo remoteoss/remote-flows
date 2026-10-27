@@ -7,7 +7,7 @@ const cloudFrontBlock = () =>
   );
 
 describe('retryOnGatewayError', () => {
-  it.each([500, 502, 503, 504])(
+  it.each([502, 503, 504])(
     'retries a %i from the gateway and returns the first good response',
     async (status) => {
       const baseFetch = vi
@@ -96,6 +96,27 @@ describe('retryOnGatewayError', () => {
     )('https://gateway.test/v1/employments');
 
     expect(response.status).toBe(422);
+    expect(baseFetch).toHaveBeenCalledTimes(1);
+    expect(sleep).not.toHaveBeenCalled();
+  });
+
+  it('does not retry a 500 from the API', async () => {
+    const baseFetch = vi.fn<typeof fetch>().mockImplementation(
+      async () =>
+        new Response('"Internal Server Error"', {
+          status: 500,
+          headers: { 'content-type': 'application/json' },
+        }),
+    );
+    const sleep = vi.fn(async () => {});
+
+    const response = await retryOnGatewayError(
+      baseFetch,
+      [10, 20],
+      sleep,
+    )('https://gateway.test/v1/employments');
+
+    expect(response.status).toBe(500);
     expect(baseFetch).toHaveBeenCalledTimes(1);
     expect(sleep).not.toHaveBeenCalled();
   });
