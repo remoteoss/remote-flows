@@ -819,29 +819,29 @@
     },
     {
       "country": "GRC",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 6,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "GRC",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "GRC",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 6,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
     {
       "country": "GRC",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest-submit",
       "outcome": "pass"
     },
@@ -903,29 +903,29 @@
     },
     {
       "country": "HKG",
-      "version": 2,
-      "strategy": "rebuild",
+      "version": 6,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "HKG",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "HKG",
-      "version": 2,
-      "strategy": "rebuild",
+      "version": 6,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
     {
       "country": "HKG",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest-submit",
       "outcome": "pass"
     },
@@ -1235,7 +1235,8 @@
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "POST /v1/employments/258ed856-1cfc-4b37-99da-94690d15783a/contract-eligibility -> \"<html>\\r\\n<head><title>502 Bad Gateway</title></head>\\r\\n<body>\\r\\n<center><h1>502 Bad Gateway</h1></center>\\r\\n<hr><center>nginx</center>\\r\\n</body>\\r\\n</html>\\r\\n\""
     },
     {
       "country": "LVA",
