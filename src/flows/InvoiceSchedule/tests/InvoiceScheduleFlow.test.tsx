@@ -5,7 +5,7 @@ import {
   waitFor,
   fireEvent,
 } from '@testing-library/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
 import {
@@ -384,6 +384,16 @@ describe('InvoiceScheduleFlow', () => {
           </InvoiceScheduleSubmitButton>
         </>
       );
+    const warmCache = render(
+      <InvoiceScheduleFlow
+        employmentId='employment-ada'
+        render={(bag) => <p>{bag.isLoading ? 'Loading…' : 'Ready'}</p>}
+      />,
+      { wrapper: TestProviders },
+    );
+    await screen.findByText('Ready');
+    warmCache.unmount();
+
     const { rerender } = render(
       <InvoiceScheduleFlow
         employmentId='employment-grace'
@@ -663,6 +673,18 @@ describe('InvoiceScheduleFlow partner usage', () => {
   it('keeps the currency options when the partner validates and re-renders on their own', async () => {
     let bag: ReturnType<typeof useInvoiceSchedule> | undefined;
 
+    function BagProbe({
+      current,
+    }: {
+      current: ReturnType<typeof useInvoiceSchedule>;
+    }) {
+      useEffect(() => {
+        bag = current;
+      });
+
+      return null;
+    }
+
     function Partner() {
       const [renders, setRenders] = useState(0);
 
@@ -671,12 +693,12 @@ describe('InvoiceScheduleFlow partner usage', () => {
           <button onClick={() => setRenders(renders + 1)}>Re-render</button>
           <InvoiceScheduleFlow
             employmentId='employment-grace'
-            render={(invoiceScheduleBag) => {
-              bag = invoiceScheduleBag;
-              return invoiceScheduleBag.isLoading ? null : (
-                <InvoiceScheduleForm />
-              );
-            }}
+            render={(invoiceScheduleBag) => (
+              <>
+                <BagProbe current={invoiceScheduleBag} />
+                {invoiceScheduleBag.isLoading ? null : <InvoiceScheduleForm />}
+              </>
+            )}
           />
         </>
       );
