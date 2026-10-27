@@ -239,7 +239,7 @@ jobs:
           # Retry with backoff in case apt-get has issues
           for i in 1 2 3; do
             echo "Installing system dependencies (attempt $i of 3)"
-            if pnpm exec playwright install-deps chromium; then
+            if timeout --kill-after=5 75 pnpm exec playwright install-deps chromium; then
               echo "Successfully installed system dependencies"
               exit 0
             fi
