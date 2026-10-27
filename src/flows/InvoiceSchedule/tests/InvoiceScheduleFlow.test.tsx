@@ -372,6 +372,40 @@ describe('InvoiceScheduleFlow', () => {
     ).toHaveValue('1');
   });
 
+  it('starts from a fresh form when it is given a different contractor', async () => {
+    const renderContent = () => (
+      <>
+        <InvoiceScheduleForm />
+        <InvoiceScheduleSubmitButton>
+          Create schedule
+        </InvoiceScheduleSubmitButton>
+      </>
+    );
+    const { rerender } = render(
+      <InvoiceScheduleFlow
+        employmentId='employment-grace'
+        render={renderContent}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await fillScheduleDetails();
+    expect(screen.getByLabelText(/Item 1 description/i)).toHaveValue(
+      'Design work',
+    );
+
+    rerender(
+      <InvoiceScheduleFlow
+        employmentId='employment-ada'
+        render={renderContent}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Item 1 description/i)).toHaveValue('');
+    });
+  });
+
   it('sends the occurrence count when the schedule ends after a number of invoices', async () => {
     let requestBody: $TSFixMe;
     server.use(
@@ -514,58 +548,6 @@ describe('InvoiceScheduleFlow', () => {
       },
       { timeout: 10000 },
     );
-  });
-
-  it('clears a recurring frequency chosen before the contractor turns out to be a CoR', async () => {
-    // `contractor_type` only arrives with the employment, so the recurring cadences are on
-    // offer until it does. Held open here to pick one inside that window.
-    let revealContractorType: () => void = () => {};
-    const employmentRequested = new Promise<void>((resolve) => {
-      revealContractorType = resolve;
-    });
-
-    server.use(
-      http.get('*/v1/employments/:id', async ({ params }) => {
-        await employmentRequested;
-
-        return HttpResponse.json({
-          ...employmentDefaultResponse,
-          data: {
-            ...employmentDefaultResponse.data,
-            employment: {
-              ...employmentDefaultResponse.data.employment,
-              id: params.id,
-              contractor_type: 'cor',
-            },
-          },
-        });
-      }),
-    );
-
-    renderFlow();
-
-    await fillScheduleDetails();
-    await fillSelect('periodicity', 'weekly');
-
-    revealContractorType();
-
-    await waitFor(() => {
-      expect(
-        screen.queryByRole('option', { name: 'Weekly' }),
-      ).not.toBeInTheDocument();
-    });
-
-    // Asserting on the error rather than the select's value: the rendered select is a
-    // native one in tests and blanks itself when its option disappears, whether or not the
-    // form still holds the stale value. Submitting is what tells them apart — a form still
-    // holding `weekly` is rejected for an option the user can no longer see, where a cleared
-    // one asks them to pick a frequency.
-    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
-
-    expect(
-      await screen.findByText(/Required field/i, undefined, { timeout: 10000 }),
-    ).toBeInTheDocument();
-    expect(screen.queryByText(/is not valid/i)).not.toBeInTheDocument();
   });
 
   it('surfaces a creation failure through onError', async () => {

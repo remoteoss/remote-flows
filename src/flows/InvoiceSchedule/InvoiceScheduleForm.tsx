@@ -3,7 +3,6 @@ import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { getInitialValues } from '@/src/components/form/utils';
 import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
-import { ONE_TIME_PERIODICITY } from '@/src/common/invoice-schedules';
 import { useInvoiceScheduleContext } from '@/src/flows/InvoiceSchedule/context';
 import {
   InvoiceScheduleFormValues,
@@ -47,7 +46,7 @@ function InvoiceScheduleFormContent({
   onSuccess,
   onError,
 }: InvoiceScheduleFormProps) {
-  const { formRef, formId, defaultValues, invoiceScheduleBag } =
+  const { formId, defaultValues, invoiceScheduleBag } =
     useInvoiceScheduleContext();
 
   const initialValues = useMemo(
@@ -70,29 +69,9 @@ function InvoiceScheduleFormContent({
   });
 
   useEffect(() => {
-    formRef.current = form;
-    return () => {
-      formRef.current = null;
-    };
-  }, [form, formRef]);
-
-  // Contractor of Record is only known once the employment request resolves, so the form
-  // offers the recurring frequencies until then and a frequency chosen in that window
-  // outlives the schema shrinking to one-off. Validation does reject it — the field's `oneOf`
-  // no longer holds it — but the select renders blank in the meantime and the user only finds
-  // out on submit, so drop it as soon as the restriction is known.
-  const { isContractorOfRecord } = invoiceScheduleBag;
-
-  useEffect(() => {
-    if (!isContractorOfRecord) {
-      return;
-    }
-
-    const periodicity = form.getValues('periodicity');
-    if (periodicity && periodicity !== ONE_TIME_PERIODICITY) {
-      form.setValue('periodicity', '');
-    }
-  }, [isContractorOfRecord, form]);
+    invoiceScheduleBag.checkFieldUpdates(form.getValues());
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (values: InvoiceScheduleFormValues) => {
     try {

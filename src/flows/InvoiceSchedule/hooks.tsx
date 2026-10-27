@@ -1,4 +1,5 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import { FieldValues } from 'react-hook-form';
 import {
   useCreateInvoiceSchedule,
   useGetCreateInvoiceScheduleSchema,
@@ -42,7 +43,7 @@ export const useInvoiceSchedule = ({
   const {
     data: schemaForm,
     handleValidation,
-    onValuesChange: checkFieldUpdates,
+    onValuesChange: updateSchemaForValues,
     parseFormValues: parseValues,
     isLoading: isLoadingCurrencies,
   } = useGetCreateInvoiceScheduleSchema({
@@ -52,6 +53,16 @@ export const useInvoiceSchedule = ({
     isContractorOfRecord,
     includeCustomDays: true,
   });
+
+  const [fieldValues, setFieldValues] = useState<FieldValues>({});
+
+  const checkFieldUpdates = useCallback(
+    (values: FieldValues) => {
+      setFieldValues(values);
+      updateSchemaForValues(values);
+    },
+    [updateSchemaForValues],
+  );
 
   const createInvoiceScheduleMutation = useCreateInvoiceSchedule();
   const { mutateAsyncOrThrow } = mutationToPromise(
@@ -168,6 +179,10 @@ export const useInvoiceSchedule = ({
      * Feed the latest form values back in so conditional fields re-evaluate.
      */
     checkFieldUpdates,
+    /**
+     * The latest form values, as last reported through `checkFieldUpdates`.
+     */
+    fieldValues,
     /**
      * The contractor the schedule will be created for.
      */
