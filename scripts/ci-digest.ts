@@ -26,8 +26,6 @@ function gh(args: string[]): string {
   });
 }
 
-const ANSI_ESCAPE = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
-
 function fetchFailedLog(check: CheckRun): string {
   if (!check.runId) {
     return '';
@@ -45,7 +43,7 @@ function fetchFailedLog(check: CheckRun): string {
       'api',
       '--allow-escape-sequences',
       `repos/{owner}/{repo}/actions/jobs/${check.jobId}/logs`,
-    ]).replace(ANSI_ESCAPE, '');
+    ]);
   } catch {
     return '';
   }
