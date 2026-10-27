@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from 'react';
-import equal from 'fast-deep-equal';
 import { FieldValues } from 'react-hook-form';
 import {
   useCreateInvoiceSchedule,
@@ -9,6 +8,7 @@ import {
 import { ContractorInvoicePreview } from '@/src/common/invoice-schedules/types';
 import { buildInvoiceSchedulePayload } from '@/src/common/invoice-schedules/utils';
 import { useEmploymentQuery } from '@/src/common/api/employment';
+import { useDeepStable } from '@/src/common/hooks';
 import { getInitialValues } from '@/src/components/form/utils';
 import {
   InvoiceScheduleFormValues,
@@ -62,10 +62,7 @@ export const useInvoiceSchedule = ({
     [schemaForm?.fields],
   );
 
-  const [stableDefaultValues, setStableDefaultValues] = useState(defaultValues);
-  if (!equal(stableDefaultValues, defaultValues)) {
-    setStableDefaultValues(defaultValues);
-  }
+  const stableDefaultValues = useDeepStable(defaultValues);
 
   const initialValues = useMemo(
     () =>
