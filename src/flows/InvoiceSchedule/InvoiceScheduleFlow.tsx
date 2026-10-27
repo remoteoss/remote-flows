@@ -26,11 +26,7 @@ export type InvoiceScheduleFlowProps = {
  * Standalone screen for creating a contractor invoice schedule, mirroring the platform's
  * single-screen modal. Mount it anywhere — it does not depend on the onboarding flow.
  */
-export const InvoiceScheduleFlow = (props: InvoiceScheduleFlowProps) => (
-  <InvoiceScheduleFlowContent key={props.employmentId} {...props} />
-);
-
-const InvoiceScheduleFlowContent = ({
+export const InvoiceScheduleFlow = ({
   employmentId,
   jsfModify,
   defaultValues,
