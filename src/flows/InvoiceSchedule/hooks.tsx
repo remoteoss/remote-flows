@@ -49,10 +49,8 @@ export const useInvoiceSchedule = ({
     enabled: true,
     employmentId,
     jsfModify,
-    includeOneTime: true,
     isContractorOfRecord,
     includeCustomDays: true,
-    includeBackdateTip: true,
     includeScheduleSummary: true,
   });
 
@@ -175,6 +173,10 @@ export const useInvoiceSchedule = ({
      * The contractor the schedule will be created for.
      */
     employmentId,
+    /**
+     * The contractor's employment, once loaded.
+     */
+    employment,
     /**
      * True while the schedule is being created.
      */

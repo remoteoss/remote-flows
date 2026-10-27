@@ -28,11 +28,6 @@ type UseGetCreateInvoiceScheduleSchemaParams = {
   employmentId?: string;
   jsfModify?: JSFModify;
   /**
-   * Offer "One time" alongside the recurring cadences. Off by default so the in-flow
-   * onboarding step keeps the field set it shipped with.
-   */
-  includeOneTime?: boolean;
-  /**
    * Restrict to one-off only, as the platform does for Contractor of Record.
    */
   isContractorOfRecord?: boolean;
@@ -66,10 +61,8 @@ export const useGetCreateInvoiceScheduleSchema = ({
   enabled,
   employmentId,
   jsfModify,
-  includeOneTime,
   isContractorOfRecord,
   includeCustomDays,
-  includeBackdateTip,
   includeScheduleSummary,
   initialValues,
 }: UseGetCreateInvoiceScheduleSchemaParams) => {
@@ -91,19 +84,15 @@ export const useGetCreateInvoiceScheduleSchema = ({
       currencies: currencies.map(
         (currency: { code: string; source: string }) => currency.code,
       ),
-      includeOneTime,
       isContractorOfRecord,
       includeCustomDays,
-      includeBackdateTip,
       includeScheduleSummary,
     });
   }, [
     enabled,
     currencies,
-    includeOneTime,
     isContractorOfRecord,
     includeCustomDays,
-    includeBackdateTip,
     includeScheduleSummary,
   ]);
 

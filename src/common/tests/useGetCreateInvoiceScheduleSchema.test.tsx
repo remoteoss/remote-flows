@@ -48,4 +48,34 @@ describe('useGetCreateInvoiceScheduleSchema', () => {
       true,
     );
   });
+
+  describe('start_date minimum', () => {
+    function utcDate(offsetDays: number) {
+      const date = new Date();
+      date.setUTCDate(date.getUTCDate() + offsetDays);
+      return date.toISOString().slice(0, 10);
+    }
+
+    async function startDateErrors(startDate: string) {
+      const { result } = renderForm();
+
+      await waitFor(() => expect(result.current.data).not.toBeNull());
+
+      const validation = await result.current.handleValidation({
+        start_date: startDate,
+      });
+
+      return validation?.formErrors?.start_date;
+    }
+
+    it('rejects a start date before today (UTC)', async () => {
+      expect(await startDateErrors(utcDate(-1))).toBe(
+        `The date must be ${utcDate(0)} or after.`,
+      );
+    });
+
+    it('accepts today (UTC) as the start date', async () => {
+      expect(await startDateErrors(utcDate(0))).toBeUndefined();
+    });
+  });
 });
