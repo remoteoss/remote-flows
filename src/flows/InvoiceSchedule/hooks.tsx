@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import {
   useCreateInvoiceSchedule,
@@ -8,6 +8,7 @@ import {
 import { ContractorInvoicePreview } from '@/src/common/invoice-schedules/types';
 import { buildInvoiceSchedulePayload } from '@/src/common/invoice-schedules/utils';
 import { useEmploymentQuery } from '@/src/common/api/employment';
+import { getInitialValues } from '@/src/components/form/utils';
 import {
   InvoiceScheduleFormValues,
   InvoiceSchedulePayload,
@@ -28,6 +29,7 @@ import { Fields } from '@remoteoss/remote-json-schema-form-kit';
 export const useInvoiceSchedule = ({
   employmentId,
   jsfModify,
+  defaultValues,
 }: UseInvoiceScheduleOptions) => {
   // `contractor_type` is not on the employments list payload, so the individual employment is
   // fetched purely to tell Contractor of Record apart.
@@ -53,6 +55,24 @@ export const useInvoiceSchedule = ({
     isContractorOfRecord,
     includeCustomDays: true,
   });
+
+  const fields = useMemo(
+    () => (schemaForm?.fields ?? []) as Fields,
+    [schemaForm?.fields],
+  );
+
+  const initialValues = useMemo(
+    () =>
+      getInitialValues(fields, {
+        currency: '',
+        periodicity: '',
+        start_date: '',
+        number: '',
+        note: '',
+        ...defaultValues,
+      }),
+    [fields, defaultValues],
+  );
 
   const [fieldValues, setFieldValues] = useState<FieldValues>({});
 
@@ -156,7 +176,11 @@ export const useInvoiceSchedule = ({
     /**
      * Form fields generated from the invoice-schedule schema.
      */
-    fields: (schemaForm?.fields ?? []) as Fields,
+    fields,
+    /**
+     * Starting values for the generated form, with `defaultValues` applied.
+     */
+    initialValues,
     /**
      * Validation handler for the generated form.
      */

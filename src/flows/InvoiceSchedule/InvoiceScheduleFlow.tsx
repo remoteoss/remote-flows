@@ -40,13 +40,13 @@ const InvoiceScheduleFlowContent = ({
   const invoiceScheduleBag = useInvoiceSchedule({
     employmentId,
     jsfModify,
+    defaultValues,
   });
 
   return (
     <InvoiceScheduleContext.Provider
       value={{
         formId,
-        defaultValues,
         invoiceScheduleBag,
       }}
     >

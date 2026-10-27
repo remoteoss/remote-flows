@@ -159,6 +159,7 @@ Both surfaces expose the same bag:
 | Key                    | Description                                                                                            |
 | ---------------------- | ------------------------------------------------------------------------------------------------------ |
 | `fields`               | Generated form fields.                                                                                 |
+| `initialValues`        | Starting values for the generated form, with `defaultValues` applied.                                  |
 | `handleValidation`     | Validation handler for the generated form.                                                             |
 | `parseFormValues`      | Turns form values into the API payload without submitting.                                             |
 | `onSubmit`             | Creates the invoice schedule.                                                                          |

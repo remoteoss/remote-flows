@@ -3,11 +3,9 @@ import { useInvoiceSchedule } from '@/src/flows/InvoiceSchedule/hooks';
 
 export const InvoiceScheduleContext = createContext<{
   formId: string | undefined;
-  defaultValues?: Record<string, unknown>;
   invoiceScheduleBag?: ReturnType<typeof useInvoiceSchedule>;
 }>({
   formId: undefined,
-  defaultValues: undefined,
   invoiceScheduleBag: undefined,
 });
 
@@ -21,7 +19,6 @@ export const useInvoiceScheduleContext = () => {
 
   return {
     formId: context.formId,
-    defaultValues: context.defaultValues,
     invoiceScheduleBag: context.invoiceScheduleBag,
   } as const;
 };

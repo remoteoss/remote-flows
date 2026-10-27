@@ -1,6 +1,5 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
-import { getInitialValues } from '@/src/components/form/utils';
 import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { useInvoiceScheduleContext } from '@/src/flows/InvoiceSchedule/context';
@@ -46,26 +45,12 @@ function InvoiceScheduleFormContent({
   onSuccess,
   onError,
 }: InvoiceScheduleFormProps) {
-  const { formId, defaultValues, invoiceScheduleBag } =
-    useInvoiceScheduleContext();
-
-  const initialValues = useMemo(
-    () =>
-      getInitialValues(invoiceScheduleBag.fields, {
-        currency: '',
-        periodicity: '',
-        start_date: '',
-        number: '',
-        note: '',
-        ...defaultValues,
-      }),
-    [invoiceScheduleBag.fields, defaultValues],
-  );
+  const { formId, invoiceScheduleBag } = useInvoiceScheduleContext();
 
   const form = useJSONSchemaForm({
     handleValidation: invoiceScheduleBag.handleValidation,
     checkFieldUpdates: invoiceScheduleBag.checkFieldUpdates,
-    defaultValues: initialValues,
+    defaultValues: invoiceScheduleBag.initialValues,
   });
 
   useEffect(() => {
