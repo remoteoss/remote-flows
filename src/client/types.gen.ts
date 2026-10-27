@@ -72,7 +72,7 @@ export type CreatePreOnboardingDocumentResponse = {
 export type CreateCurrencyCustomFieldDefinitionParams = {
   data_entry_access: CustomFieldDataEntryAccess;
   metadata: {
-    currency?: CurrencyCode;
+    currency?: NullableCurrencyCode;
   };
   name: string;
   required: boolean;
@@ -370,11 +370,11 @@ export type EmploymentCustomFieldValueResponse = {
  * PeriodProperties
  */
 export type PeriodProperties = {
-  nextPeriodEndDate?: Date;
-  paymentDate: Date;
-  periodEndDate: Date;
-  periodStartDate: Date;
-  priorPeriodEndDate?: Date;
+  nextPeriodEndDate?: GphDate;
+  paymentDate: GphDate;
+  periodEndDate: GphDate;
+  periodStartDate: GphDate;
+  priorPeriodEndDate?: GphDate;
 };
 
 /**
@@ -705,6 +705,17 @@ export type EmploymentCustomField = {
 };
 
 /**
+ * LeavePolicySummaryBooked
+ *
+ * Includes all upcoming requested time off.
+ */
+export type LeavePolicySummaryBooked = {
+  days: number;
+  hours: number;
+  type: 'limited';
+};
+
+/**
  * PayItemProviderDataParams
  */
 export type PayItemProviderDataParams = {
@@ -722,7 +733,7 @@ export type PayItemProviderDataParams = {
    * Hourly rate in cents
    */
   hourly_rate?: number;
-  hourly_rate_currency_code?: CurrencyCode;
+  hourly_rate_currency_code?: NullableCurrencyCode;
   /**
    * **Deprecated — accepted and ignored.** Express a deduction as a negative `amount`.
    *
@@ -1055,6 +1066,17 @@ export type BillingDocumentBreakdownItem = {
    * Variance from invoice amount in cents
    */
   variance_from_invoice_amount: number | null;
+};
+
+/**
+ * LeavePolicySummaryUsed
+ *
+ * Includes only approved time off in the past.
+ */
+export type LeavePolicySummaryUsed = {
+  days: number;
+  hours: number;
+  type: 'limited';
 };
 
 /**
@@ -1468,9 +1490,9 @@ export type BenefitOffersEmployment = {
 /**
  * CurrencyCode
  *
- * Currency code of the SWIFT fee. Only present when processing_fee is set.
+ * Currency code in [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) format.
  */
-export type CurrencyCode = string | null;
+export type CurrencyCode = string;
 
 /**
  * ListEmployeePayslipsResponse
@@ -1887,11 +1909,6 @@ export type MinimalTimesheet = {
    */
   submitted_at: string | null;
 };
-
-/**
- * ConflictErrorResponse
- */
-export type ConflictErrorResponse = ValidationError | MessageResponse;
 
 /**
  * IdentityCurrentResponse
@@ -2677,8 +2694,6 @@ export type ValidateResignationRequestParams =
 
 /**
  * LimitedDaysandHoursResponse
- *
- * Includes all upcoming requested time off.
  */
 export type LimitedDaysandHoursResponse = {
   days: number;
@@ -2798,6 +2813,17 @@ export type ListDirectOffboardingResponse = {
      */
     total_pages?: number;
   };
+};
+
+/**
+ * LeavePolicySummaryTaken
+ *
+ * Includes all time off (past and future, pending or approved).
+ */
+export type LeavePolicySummaryTaken = {
+  days: number;
+  hours: number;
+  type: 'limited';
 };
 
 /**
@@ -3793,6 +3819,17 @@ export type ContractorInvoiceSchedule = {
 };
 
 /**
+ * LeavePolicySummaryUpcomingRequested
+ *
+ * Includes all upcoming requested time off.
+ */
+export type LeavePolicySummaryUpcomingRequested = {
+  days: number;
+  hours: number;
+  type: 'limited';
+};
+
+/**
  * SSOConfigurationDetailsResponse
  *
  * SSO Configuration Details response
@@ -3871,8 +3908,8 @@ export type ClientCredentialsParams = {
  * Stage
  */
 export type Stage = {
-  completionDate?: Date;
-  dueDate?: Date;
+  completionDate?: GphDate;
+  dueDate?: GphDate;
   label: string;
   state: 'In Progress' | 'Not Yet Started' | 'Error' | 'Complete' | 'Warning';
 };
@@ -4169,12 +4206,12 @@ export type AccountsAssignedRoles = Array<{
     | 'rps'
     | 'secondary_reports'
     | 'direct_reports'
-    | 'assigned_billing_legal_entities'
     | 'employment_countries'
     | 'direct_and_indirect_reports'
     | 'employment_departments'
     | 'employment_company_structure_nodes'
-    | 'onboarding_reports';
+    | 'onboarding_reports'
+    | 'assigned_billing_legal_entities';
   name: string;
   slug: string;
   type?: 'default' | 'custom' | 'template' | 'owner';
@@ -4590,7 +4627,7 @@ export type Currency = {
 export type Payment = {
   bankValueNumber?: Amount;
   fields?: Array<CustomField>;
-  payrollFundedDate: Date;
+  payrollFundedDate: GphDate;
 };
 
 /**
@@ -5089,10 +5126,7 @@ export type MinimalUser = {
    * URL
    */
   profile_picture?: string | null;
-  /**
-   * Slug
-   */
-  slug: string;
+  slug: Slug;
   status?:
     | 'active'
     | 'cancelled'
@@ -5831,24 +5865,6 @@ export type V2TerminationRequest = {
 };
 
 /**
- * ContractOriginResponse
- *
- * Either `data.status` (when no contract document is created) or `data.slug` (when one is), depending on the `contract_origin` that was set.
- */
-export type ContractOriginResponse = {
-  data: {
-    /**
-     * ID of the contract document that was created. Returned when `contract_origin` is `remote_contract` or `custom_remote_contract`. Pass it as the contract document ID to the contract document endpoints (`/contractors/employments/{employment_id}/contract-documents/{id}` and its `sign` action). Calling this endpoint again creates a new contract document and archives the pending one, so keep the ID from the latest call.
-     */
-    slug?: string;
-    /**
-     * Always `"ok"`. Returned when no contract document is created (`contract_origin` is `provided_by_customer`).
-     */
-    status?: 'ok';
-  };
-};
-
-/**
  * TimeoffDaysAndHours
  */
 export type TimeoffDaysAndHours = {
@@ -6018,7 +6034,7 @@ export type CompanyWithTokensResponse = {
  * Payload shape used to create invoice schedules.
  */
 export type ContractorInvoiceScheduleCreateParams = {
-  currency: CurrencyCode;
+  currency: NullableCurrencyCode;
   custom_days?: ContractorInvoiceScheduleCustomDays;
   /**
    * Employment identifier
@@ -6398,7 +6414,7 @@ export type BillingDocumentsResponse = {
  * Payload shape used to update invoice schedules.
  */
 export type UpdateScheduleContractorInvoiceParams = {
-  currency?: CurrencyCode;
+  currency?: NullableCurrencyCode;
   custom_days?: ContractorInvoiceScheduleCustomDays;
   /**
    * List of invoice items that composes the overall invoice amount.
@@ -6988,8 +7004,8 @@ export type ResourceErrorResponse = {
       | 'parameter_value_unknown'
       | 'request_body_empty'
       | 'request_internal_server_error'
-      | 'parameter_one_of_required_missing'
       | 'parameter_required_missing'
+      | 'parameter_one_of_required_missing'
       | 'parameter_too_many'
       | 'parameter_unknown'
       | 'parameter_map_empty'
@@ -8288,9 +8304,9 @@ export type PayGroup = {
    */
   payGroupName: string;
   payGroupReferences?: Array<string>;
-  paymentDate: Date;
-  periodEndDate: Date;
-  periodStartDate: Date;
+  paymentDate: GphDate;
+  periodEndDate: GphDate;
+  periodStartDate: GphDate;
   runType?: ReferencedItem;
   status?: Status;
 };
@@ -8595,7 +8611,7 @@ export type LeavePolicySummary = {
    */
   balance: UnlimitedDaysandHoursResponse | LimitedDaysandHoursResponse;
   /**
-   * LimitedDaysandHoursResponse
+   * LeavePolicySummaryBooked
    *
    * Includes all upcoming requested time off.
    */
@@ -8612,7 +8628,7 @@ export type LeavePolicySummary = {
     | LimitedDaysandHoursResponse;
   leave_policy: EmployeeLeavePolicy;
   /**
-   * LimitedDaysandHoursResponse
+   * LeavePolicySummaryPendingApproval
    *
    * Includes requested timeoffs (not approved) in the past or in the future.
    */
@@ -8622,7 +8638,7 @@ export type LeavePolicySummary = {
     type: 'limited';
   };
   /**
-   * LimitedDaysandHoursResponse
+   * LeavePolicySummaryTaken
    *
    * Includes all time off (past and future, pending or approved).
    */
@@ -8632,7 +8648,7 @@ export type LeavePolicySummary = {
     type: 'limited';
   };
   /**
-   * LimitedDaysandHoursResponse
+   * LeavePolicySummaryUpcomingApproved
    *
    * Includes all upcoming approved time off.
    */
@@ -8642,7 +8658,7 @@ export type LeavePolicySummary = {
     type: 'limited';
   };
   /**
-   * LimitedDaysandHoursResponse
+   * LeavePolicySummaryUpcomingRequested
    *
    * Includes all upcoming requested time off.
    */
@@ -8652,7 +8668,7 @@ export type LeavePolicySummary = {
     type: 'limited';
   };
   /**
-   * LimitedDaysandHoursResponse
+   * LeavePolicySummaryUsed
    *
    * Includes only approved time off in the past.
    */
@@ -9218,7 +9234,7 @@ export type PayItemParams = {
    * Pay item type code. Mutually exclusive with `external_import_code` — provide exactly one.
    */
   code?: string;
-  currency?: CurrencyCode;
+  currency?: NullableCurrencyCode;
   custom_configuration?: PayItemCustomConfiguration;
   /**
    * Date the pay item is applied on (YYYY-MM-DD). For an original submission this is the day worked; for a correction it is the day the correction is submitted, so the pay item lands in the right payroll run. The day being corrected goes in `provider_data.correction_effective_date`. On a leave-of-absence pay item this is the first day of the leave period, whose last day goes in `end_date`.
@@ -9272,7 +9288,7 @@ export type Job = {
     value?: string | number | boolean;
   }>;
   /**
-   * A description of the job's responsibilities and scope. It may be plain text or HTML. HTML keeps only these tags: p, h1 to h6, strong, b, em, i, u, s, br, ul, ol, li, a, code, pre, blockquote, span and div, a text-align style on paragraphs and headings, and http, https and mailto links. Other tags are removed. Text over 10,000 bytes, and most text that looks like tags but has none of these, is returned HTML-escaped. Null if not set.
+   * A description of the job's responsibilities and scope. Null if not set.
    */
   description?: string | null;
   /**
@@ -10177,6 +10193,13 @@ export type CompanyManager = {
 };
 
 /**
+ * GPHDate
+ *
+ * Formatted as YYYY-MM-DD (always set TZ to UTC)
+ */
+export type GphDate = string;
+
+/**
  * EmploymentContractStatus
  *
  * The status of the employment contract.
@@ -10305,6 +10328,17 @@ export type CreateSingleSelectCustomFieldDefinitionParams = {
   required: boolean;
   type: 'single_select';
   visibility_scope: CustomFieldVisibilityScope;
+};
+
+/**
+ * LeavePolicySummaryPendingApproval
+ *
+ * Includes requested timeoffs (not approved) in the past or in the future.
+ */
+export type LeavePolicySummaryPendingApproval = {
+  days: number;
+  hours: number;
+  type: 'limited';
 };
 
 /**
@@ -10464,10 +10498,7 @@ export type TimesheetStatus =
 export type AccountsMinimalCompanyAdmin = {
   job_title?: string | null;
   name?: string;
-  /**
-   * Slug
-   */
-  slug?: string;
+  slug?: Slug;
 };
 
 /**
@@ -11811,7 +11842,7 @@ export type EmploymentJobResponse = {
  * Set of invoice schedule attributes with failed validation.
  */
 export type ContractorInvoiceScheduleCreateResponseFailure = {
-  currency: CurrencyCode;
+  currency: NullableCurrencyCode;
   custom_days?: ContractorInvoiceScheduleCustomDays;
   /**
    * Employment identifier
@@ -12009,7 +12040,7 @@ export type WorkAuthorizationUser = {
  * Payload shape used to preview a contractor invoice before it's created.
  */
 export type PreviewContractorInvoiceParams = {
-  currency: CurrencyCode;
+  currency: NullableCurrencyCode;
   /**
    * List of invoice items that composes the overall invoice amount.
    */
@@ -12321,6 +12352,13 @@ export type WorkAuthorizationRequest = {
 };
 
 /**
+ * ProcessingFeeCurrencyCode
+ *
+ * Currency code of the SWIFT fee. Only present when processing_fee is set.
+ */
+export type ProcessingFeeCurrencyCode = string | null;
+
+/**
  * ContractorInvoicePaymentReference
  *
  * The reference to quote when paying: the transaction receipt number, or the Remote invoice number for Contractor of Record. Put it in the transfer memo, with the company name; Remote matches an incoming transfer on it.
@@ -12409,6 +12447,17 @@ export type ResignationFile = {
    * The file name
    */
   name: string;
+};
+
+/**
+ * LeavePolicySummaryUpcomingApproved
+ *
+ * Includes all upcoming approved time off.
+ */
+export type LeavePolicySummaryUpcomingApproved = {
+  days: number;
+  hours: number;
+  type: 'limited';
 };
 
 /**
@@ -12656,6 +12705,13 @@ export type EmploymentAdministrativeDetailsParams = {
     [key: string]: unknown;
   };
 };
+
+/**
+ * NullableCurrencyCode
+ *
+ * Currency code in [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) format.
+ */
+export type NullableCurrencyCode = string | null;
 
 /**
  * EmploymentBasicInformationParams
@@ -14053,7 +14109,7 @@ export type MaybeEmail = Email | null;
  */
 export type CustomDate = {
   label: string;
-  value: Date;
+  value: GphDate;
 };
 
 /**
@@ -14153,6 +14209,15 @@ export type ContractorInvoiceScheduleItem = {
    * Describes invoice item intent.
    */
   description: string;
+};
+
+/**
+ * DeclineCancelTimeoffParams
+ *
+ * Decline an employee's request to cancel a time off
+ */
+export type DeclineCancelTimeoffParams = {
+  decline_reason: string | null;
 };
 
 /**
@@ -14667,7 +14732,7 @@ export type ContractorInvoice = {
    */
   processing_fee?: number | null;
   /**
-   * CurrencyCode
+   * ProcessingFeeCurrencyCode
    *
    * Currency code of the SWIFT fee. Only present when processing_fee is set.
    */
@@ -14686,12 +14751,7 @@ export type ContractorInvoice = {
    * The amount the contractor receives (pay out amount). Can be null if pay out is not guaranteed.
    */
   target_amount?: number | null;
-  /**
-   * CurrencyCode
-   *
-   * Currency code in [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) format.
-   */
-  target_currency?: string | null;
+  target_currency?: NullableCurrencyCode;
 };
 
 /**
@@ -14843,7 +14903,7 @@ export type ListEligibleLeadsResponse = {
  * Set of invoice schedule attributes that were successfully created.
  */
 export type ContractorInvoiceScheduleCreateResponseSuccess = {
-  currency: CurrencyCode;
+  currency: NullableCurrencyCode;
   custom_days?: ContractorInvoiceScheduleCustomDays;
   /**
    * Employment identifier
@@ -20672,7 +20732,7 @@ export type PostV1ContractorsEligibilityQuestionnaireErrors = {
   /**
    * Conflict
    */
-  409: ConflictErrorResponse;
+  409: ConflictResponse;
   /**
    * Unprocessable Entity
    */
@@ -20943,7 +21003,7 @@ export type GetV1WdGphPayDetailDataData = {
     /**
      * The period end date in question, defaults to current period if not provided
      */
-    periodEndDate?: Date;
+    periodEndDate?: GphDate;
   };
   url: '/v1/wd/gph/payDetailData';
 };
@@ -21846,7 +21906,7 @@ export type GetV1WdGphPayVarianceData = {
     /**
      * The period end date in question, defaults to current period if not provided
      */
-    periodEndDate?: Date;
+    periodEndDate?: GphDate;
   };
   url: '/v1/wd/gph/payVariance';
 };
@@ -25913,7 +25973,7 @@ export type PostV1TimeoffTimeoffIdCancelRequestDeclineData = {
   /**
    * Timeoff
    */
-  body: DeclineTimeoffParams;
+  body: DeclineCancelTimeoffParams;
   path: {
     /**
      * Time Off ID
@@ -26015,7 +26075,7 @@ export type PostV1EmploymentsEmploymentIdContractOriginResponses = {
   /**
    * Success
    */
-  200: ContractOriginResponse;
+  200: SuccessResponse;
 };
 
 export type PostV1EmploymentsEmploymentIdContractOriginResponse =
@@ -26142,7 +26202,7 @@ export type GetV1WdGphPayDetailData = {
     /**
      * The period end date in question, defaults to current period if not provided
      */
-    periodEndDate?: Date;
+    periodEndDate?: GphDate;
   };
   url: '/v1/wd/gph/payDetail';
 };
@@ -28005,7 +28065,7 @@ export type GetV1WdGphPayProgressData = {
     /**
      * The period end date in question, defaults to current period if not provided
      */
-    periodEndDate?: Date;
+    periodEndDate?: GphDate;
   };
   url: '/v1/wd/gph/payProgress';
 };
@@ -28287,16 +28347,9 @@ export type PostV1ContractorInvoiceSchedulesErrors = {
    */
   404: NotFoundResponse;
   /**
-   * BulkContractorInvoiceScheduleCreateResponse
-   *
-   * Response containing the lists of succeeded and failed schedules.
+   * All entries had failed
    */
-  422: {
-    data: {
-      failures: Array<ContractorInvoiceScheduleCreateResponseFailure>;
-      successes: Array<ContractorInvoiceScheduleCreateResponseSuccess>;
-    };
-  };
+  422: BulkContractorInvoiceScheduleCreateResponse;
 };
 
 export type PostV1ContractorInvoiceSchedulesError =
@@ -28304,27 +28357,13 @@ export type PostV1ContractorInvoiceSchedulesError =
 
 export type PostV1ContractorInvoiceSchedulesResponses = {
   /**
-   * BulkContractorInvoiceScheduleCreateResponse
-   *
-   * Response containing the lists of succeeded and failed schedules.
+   * All entries have been created
    */
-  201: {
-    data: {
-      failures: Array<ContractorInvoiceScheduleCreateResponseFailure>;
-      successes: Array<ContractorInvoiceScheduleCreateResponseSuccess>;
-    };
-  };
+  201: BulkContractorInvoiceScheduleCreateResponse;
   /**
-   * BulkContractorInvoiceScheduleCreateResponse
-   *
-   * Response containing the lists of succeeded and failed schedules.
+   * Multiple successes and failures
    */
-  207: {
-    data: {
-      failures: Array<ContractorInvoiceScheduleCreateResponseFailure>;
-      successes: Array<ContractorInvoiceScheduleCreateResponseSuccess>;
-    };
-  };
+  207: BulkContractorInvoiceScheduleCreateResponse;
 };
 
 export type PostV1ContractorInvoiceSchedulesResponse =
@@ -28678,8 +28717,11 @@ export type DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionR
     /**
      * No Content
      */
-    204: unknown;
+    204: void;
   };
+
+export type DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponse =
+  DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses[keyof DeleteV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionResponses];
 
 export type PostV1ContractorsEmploymentsEmploymentIdContractorCorSubscriptionData =
   {
