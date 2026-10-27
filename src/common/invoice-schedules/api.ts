@@ -36,11 +36,6 @@ type UseGetCreateInvoiceScheduleSchemaParams = {
    */
   includeCustomDays?: boolean;
   /**
-   * Show the note that the invoice date is when the invoice is created, not when the
-   * contractor is paid.
-   */
-  includeBackdateTip?: boolean;
-  /**
    * Show a sentence that sums up the schedule: frequency, how it ends and when it starts.
    */
   includeScheduleSummary?: boolean;
