@@ -23,6 +23,8 @@ export {
   buildRecurrence,
 } from './utils';
 
+export { useDefaultOccurrences } from './useDefaultOccurrences';
+
 export type { ContractorInvoicePreview } from './types';
 
 export {

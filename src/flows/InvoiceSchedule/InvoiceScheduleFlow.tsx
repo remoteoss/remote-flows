@@ -1,6 +1,9 @@
 import React, { useEffect, useId } from 'react';
 import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
-import { ONE_TIME_PERIODICITY } from '@/src/common/invoice-schedules';
+import {
+  ONE_TIME_PERIODICITY,
+  useDefaultOccurrences,
+} from '@/src/common/invoice-schedules';
 import { InvoiceScheduleContext } from '@/src/flows/InvoiceSchedule/context';
 import { useInvoiceSchedule } from '@/src/flows/InvoiceSchedule/hooks';
 import { UseInvoiceScheduleOptions } from '@/src/flows/InvoiceSchedule/types';
@@ -55,6 +58,8 @@ export const InvoiceScheduleFlow = ({
       ...defaultValues,
     },
   });
+
+  useDefaultOccurrences(form);
 
   // Contractor of Record is only known once the employment request resolves, so the form
   // offers the recurring frequencies until then and a frequency chosen in that window
