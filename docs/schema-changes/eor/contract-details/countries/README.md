@@ -62,10 +62,10 @@ Click a country name to open its migration guide. Countries without a link are o
 | France                           | FRA  | v1               | v2              | Yes        | -            |
 | [Georgia](./GEO.md)              | GEO  | v6               | v6              | Yes        | October 2026 |
 | [Germany](./DEU.md)              | DEU  | v9               | v9              | Yes        | October 2026 |
-| Greece                           | GRC  | v1               | v6              | No         | -            |
+| [Greece](./GRC.md)               | GRC  | v6               | v6              | Yes        | October 2026 |
 | [Guatemala](./GTM.md)            | GTM  | v6               | v6              | Yes        | October 2026 |
 | Honduras                         | HND  | v1               | v6              | No         | -            |
-| [Hong Kong](./HKG.md)            | HKG  | v2               | v6              | No         | March 2026   |
+| [Hong Kong](./HKG.md)            | HKG  | v6               | v6              | Yes        | October 2026 |
 | Hungary                          | HUN  | v1               | v4              | No         | -            |
 | [Iceland](./ISL.md)              | ISL  | v2               | v5              | No         | March 2026   |
 | [India](./IND.md)                | IND  | v7               | v7              | Yes        | October 2026 |

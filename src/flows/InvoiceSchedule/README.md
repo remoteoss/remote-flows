@@ -146,6 +146,11 @@ The form shows the platform's invoice date note under the invoice date: the invo
 when the invoice is created, not when the contractor gets paid, so backdate the invoice date if
 payment is needed by a specific day.
 
+The form does not warn about a contractor with no active deposit method. Render your own notice
+from the bag: `employment.has_active_withdrawal_method` is `false` when they have none. The
+schedule can still be created, and Remote reaches out to the contractor to get one added. The
+example app shows one.
+
 ## The bag
 
 `useInvoiceSchedule()` is the headless equivalent of the render prop, for fully custom UIs.
@@ -163,6 +168,7 @@ Both surfaces expose the same bag:
 | `isPreviewingInvoice`  | True while a draft PDF preview is being generated.                                                     |
 | `isLoading`            | True until there is a form to show: no `employmentId`, or its currencies and employment still loading. |
 | `isContractorOfRecord` | Whether the contractor is a Contractor of Record.                                                      |
+| `employment`           | The contractor's employment once loaded, e.g. for `has_active_withdrawal_method` or the name.          |
 
 ## How values map to the API
 
@@ -173,7 +179,7 @@ The form submits to `POST /v1/contractor-invoice-schedules`.
 | —                | `employment_id`  | Taken from the `employmentId` prop, not collected by the form.                                                                                     |
 | Invoice currency | `currency`       | Restricted to the contractor's supported currencies.                                                                                               |
 | Frequency        | `periodicity`    | See the one-off note below.                                                                                                                        |
-| Start date       | `start_date`     | Date the first invoice is generated.                                                                                                               |
+| Start date       | `start_date`     | Date the first invoice is generated. Today (UTC) or later.                                                                                         |
 | Items 1–10       | `items`          | Slot _n+1_ is revealed once slot _n_ is filled. The API accepts up to 10.                                                                          |
 | Invoice number   | `number`         | Optional — omit it and Remote numbers the invoice for you.                                                                                         |
 | Additional notes | `note`           | Optional.                                                                                                                                          |

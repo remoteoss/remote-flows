@@ -318,13 +318,15 @@ export async function fillCreateInvoiceSchedule(
 
   if (newValues?.periodicity) {
     await fillSelect('periodicity', newValues?.periodicity);
-    fireEvent.click(
-      screen.getByRole('radio', {
-        name: newValues?.nrOccurrences
-          ? 'End after a number of occurrences'
-          : 'No end date',
-      }),
-    );
+    if (newValues.periodicity !== 'one_time') {
+      fireEvent.click(
+        screen.getByRole('radio', {
+          name: newValues?.nrOccurrences
+            ? 'End after a number of occurrences'
+            : 'No end date',
+        }),
+      );
+    }
   }
 
   if (newValues?.startDate) {

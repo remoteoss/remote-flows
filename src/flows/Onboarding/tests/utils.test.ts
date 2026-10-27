@@ -94,6 +94,8 @@ describe('usesJsfV1ContractDetails', () => {
     'CYP',
     'MUS',
     'VNM',
+    'GRC',
+    'HKG',
   ])('should return true for %s', (countryCode) => {
     expect(usesJsfV1ContractDetails(countryCode)).toBe(true);
   });
