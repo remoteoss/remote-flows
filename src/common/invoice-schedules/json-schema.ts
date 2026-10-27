@@ -186,12 +186,6 @@ type CreateInvoiceScheduleSchemaOptions = {
    * the in-flow onboarding step keeps the field set it shipped with.
    */
   includeCustomDays?: boolean;
-  /**
-   * Show the note that the invoice date is when the invoice is created, not when the
-   * contractor is paid. Off by default so the in-flow onboarding step keeps the field set it
-   * shipped with.
-   */
-  includeBackdateTip?: boolean;
 };
 
 /**
@@ -206,7 +200,6 @@ export function buildCreateInvoiceScheduleSchema({
   includeOneTime = false,
   isContractorOfRecord = false,
   includeCustomDays = false,
-  includeBackdateTip = false,
 }: CreateInvoiceScheduleSchemaOptions = {}) {
   return {
     type: 'object',
@@ -260,16 +253,12 @@ export function buildCreateInvoiceScheduleSchema({
         format: 'date',
         'x-jsf-presentation': {
           inputType: 'date',
-          ...(includeBackdateTip
-            ? {
-                statement: {
-                  description:
-                    'The invoice date specifies when the invoice will be created, not when the contractor gets paid. If the contractor needs payment on a specific date, please backdate the invoice date to account for processing time.',
-                  inputType: 'statement',
-                  severity: 'info',
-                },
-              }
-            : {}),
+          statement: {
+            description:
+              'The invoice date specifies when the invoice will be created, not when the contractor gets paid. If the contractor needs payment on a specific date, please backdate the invoice date to account for processing time.',
+            inputType: 'statement',
+            severity: 'info',
+          },
         },
       },
       ...(includeCustomDays ? semiMonthlyDayProperties() : {}),
