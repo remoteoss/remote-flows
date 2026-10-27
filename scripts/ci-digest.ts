@@ -26,27 +26,28 @@ function gh(args: string[]): string {
   });
 }
 
+function tryGh(args: string[]): string {
+  try {
+    return gh(args);
+  } catch {
+    return '';
+  }
+}
+
 function fetchFailedLog(check: CheckRun): string {
   if (!check.runId) {
     return '';
   }
   const target = check.jobId ? ['--job', check.jobId] : [];
-  try {
-    return gh(['run', 'view', check.runId, ...target, '--log-failed']);
-  } catch {
-    if (!check.jobId) {
-      return '';
-    }
+  const log = tryGh(['run', 'view', check.runId, ...target, '--log-failed']);
+  if (log || !check.jobId) {
+    return log;
   }
-  try {
-    return gh([
-      'api',
-      '--allow-escape-sequences',
-      `repos/{owner}/{repo}/actions/jobs/${check.jobId}/logs`,
-    ]);
-  } catch {
-    return '';
-  }
+  return tryGh([
+    'api',
+    '--allow-escape-sequences',
+    `repos/{owner}/{repo}/actions/jobs/${check.jobId}/logs`,
+  ]);
 }
 
 type Checks = { subject: string; failed: RawCheck[]; passing: number };
