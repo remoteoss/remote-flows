@@ -50,7 +50,7 @@ export function InvoiceSchedulePreviewButton({
 
   const handlePreview = async () => {
     try {
-      const previewDocument = await invoiceScheduleBag?.previewInvoice(
+      const previewDocument = await invoiceScheduleBag.previewInvoice(
         invoiceScheduleBag.fieldValues,
       );
 
@@ -98,8 +98,8 @@ export function InvoiceSchedulePreviewButton({
           onClick={handlePreview}
           disabled={
             disabled ||
-            invoiceScheduleBag?.isPreviewingInvoice ||
-            !invoiceScheduleBag?.employmentId
+            invoiceScheduleBag.isPreviewingInvoice ||
+            !invoiceScheduleBag.employmentId
           }
           className={cn(
             'RemoteFlows__InvoiceScheduleForm__PreviewButton',

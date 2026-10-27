@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import equal from 'fast-deep-equal';
 import { FieldValues } from 'react-hook-form';
 import {
   useCreateInvoiceSchedule,
@@ -61,6 +62,11 @@ export const useInvoiceSchedule = ({
     [schemaForm?.fields],
   );
 
+  const [stableDefaultValues, setStableDefaultValues] = useState(defaultValues);
+  if (!equal(stableDefaultValues, defaultValues)) {
+    setStableDefaultValues(defaultValues);
+  }
+
   const initialValues = useMemo(
     () =>
       getInitialValues(fields, {
@@ -69,9 +75,9 @@ export const useInvoiceSchedule = ({
         start_date: '',
         number: '',
         note: '',
-        ...defaultValues,
+        ...stableDefaultValues,
       }),
-    [fields, defaultValues],
+    [fields, stableDefaultValues],
   );
 
   const [fieldValues, setFieldValues] = useState<FieldValues>({});

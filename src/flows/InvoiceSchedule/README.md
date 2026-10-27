@@ -108,6 +108,9 @@ export function CreateInvoiceSchedule({
 | `onSuccess` | `(data) => void \| Promise<void>`            | Called once the schedule has been created.                                     |
 | `onError`   | `({ error, rawError, fieldErrors }) => void` | Called when creation fails.                                                    |
 
+Render it once `invoiceScheduleBag.isLoading` is false, as in the example above. The form reads
+its starting values, including `defaultValues`, when it mounts, so a form mounted earlier starts empty.
+
 ### InvoiceScheduleSubmitButton
 
 Must be rendered inside the flow's `render` prop. Accepts any button props; disables itself
@@ -160,6 +163,8 @@ Both surfaces expose the same bag:
 | ---------------------- | ------------------------------------------------------------------------------------------------------ |
 | `fields`               | Generated form fields.                                                                                 |
 | `initialValues`        | Starting values for the generated form, with `defaultValues` applied.                                  |
+| `fieldValues`          | The latest form values, as reported through `checkFieldUpdates`.                                       |
+| `checkFieldUpdates`    | Feed the latest form values back in so conditional fields re-evaluate.                                 |
 | `handleValidation`     | Validation handler for the generated form.                                                             |
 | `parseFormValues`      | Turns form values into the API payload without submitting.                                             |
 | `onSubmit`             | Creates the invoice schedule.                                                                          |
