@@ -11,7 +11,6 @@ import {
   ContractorOnboardingContractDetailsFormPayload,
 } from '@/src/flows/ContractorOnboarding/types';
 import { normalizeFieldErrors } from '@/src/lib/mutations';
-import { useDefaultOccurrences } from '@/src/common/invoice-schedules';
 import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
 import { UseFormReturn } from 'react-hook-form';
 
@@ -42,8 +41,6 @@ export function ContractorOnboardingForm({
     defaultValues,
     checkFieldUpdates: contractorOnboardingBag.checkFieldUpdates,
   });
-
-  useDefaultOccurrences(form);
 
   // Register the form's setValue method with the context so other components can access it
   useEffect(() => {
