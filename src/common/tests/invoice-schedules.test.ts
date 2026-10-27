@@ -445,6 +445,7 @@ describe('buildCreateInvoiceScheduleSchema', () => {
         'end_type',
         'nr_occurrences',
         'number',
+        'schedule_summary',
         'note',
       ]);
     });
