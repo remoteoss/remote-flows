@@ -4707,7 +4707,7 @@ describe('ContractorOnboardingFlow', () => {
       });
 
       expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
-      expect(screen.getByLabelText(/Invoice date/i)).toHaveValue('2100-01-01');
+      expect(screen.getByLabelText(/Start date/i)).toHaveValue('2100-01-01');
       expect(screen.getByLabelText(/Item 1 description/i)).toHaveValue(
         'salary',
       );
