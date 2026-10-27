@@ -41,11 +41,6 @@ type UseGetCreateInvoiceScheduleSchemaParams = {
    */
   includeCustomDays?: boolean;
   /**
-   * Show the note that the invoice date is when the invoice is created, not when the
-   * contractor is paid.
-   */
-  includeBackdateTip?: boolean;
-  /**
    * Saved values in API units (item amounts in cents). They seed the first build so the item
    * rows a saved schedule needs are visible before the step mounts.
    */
@@ -65,7 +60,6 @@ export const useGetCreateInvoiceScheduleSchema = ({
   includeOneTime,
   isContractorOfRecord,
   includeCustomDays,
-  includeBackdateTip,
   initialValues,
 }: UseGetCreateInvoiceScheduleSchemaParams) => {
   const { data: currencies, isLoading } = useContractorCurrencies({
@@ -89,7 +83,6 @@ export const useGetCreateInvoiceScheduleSchema = ({
       includeOneTime,
       isContractorOfRecord,
       includeCustomDays,
-      includeBackdateTip,
     });
   }, [
     enabled,
@@ -97,7 +90,6 @@ export const useGetCreateInvoiceScheduleSchema = ({
     includeOneTime,
     isContractorOfRecord,
     includeCustomDays,
-    includeBackdateTip,
   ]);
 
   const headlessForm = useHeadlessForm({

@@ -4386,6 +4386,17 @@ describe('ContractorOnboardingFlow', () => {
       await waitFor(() => expect(visibleSteps()).toContain('invoice_schedule'));
     });
 
+    it('explains that the invoice date is when the invoice is created, not when the contractor is paid', async () => {
+      const employmentId = generateUniqueEmploymentId();
+      await goToFilledCreateInvoiceSchedule(employmentId);
+
+      expect(
+        await screen.findByText(
+          /specifies when the invoice will be created, not when the contractor gets paid/i,
+        ),
+      ).toBeInTheDocument();
+    });
+
     it('reveals the second item row once the first has a description and an amount', async () => {
       const employmentId = generateUniqueEmploymentId();
       await goToFilledCreateInvoiceSchedule(employmentId);
