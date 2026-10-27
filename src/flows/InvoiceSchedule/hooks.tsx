@@ -51,7 +51,6 @@ export const useInvoiceSchedule = ({
     jsfModify,
     isContractorOfRecord,
     includeCustomDays: true,
-    includeScheduleSummary: true,
   });
 
   const createInvoiceScheduleMutation = useCreateInvoiceSchedule();

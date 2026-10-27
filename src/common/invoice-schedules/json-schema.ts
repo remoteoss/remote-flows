@@ -315,12 +315,6 @@ type CreateInvoiceScheduleSchemaOptions = {
    * the in-flow onboarding step keeps the field set it shipped with.
    */
   includeCustomDays?: boolean;
-  /**
-   * Show a sentence under the form that sums up the schedule: frequency, how it ends and
-   * when it starts. Off by default so the in-flow onboarding step keeps the field set it
-   * shipped with.
-   */
-  includeScheduleSummary?: boolean;
 };
 
 /**
@@ -334,7 +328,6 @@ export function buildCreateInvoiceScheduleSchema({
   currencies,
   isContractorOfRecord = false,
   includeCustomDays = false,
-  includeScheduleSummary = false,
 }: CreateInvoiceScheduleSchemaOptions = {}) {
   return {
     type: 'object',
@@ -418,9 +411,7 @@ export function buildCreateInvoiceScheduleSchema({
           inputType: 'text',
         },
       },
-      ...(includeScheduleSummary
-        ? { schedule_summary: scheduleSummaryProperty() }
-        : {}),
+      schedule_summary: scheduleSummaryProperty(),
       note: {
         description: 'Shown on generated invoices.',
         title: 'Additional notes',
@@ -471,7 +462,7 @@ export function buildCreateInvoiceScheduleSchema({
       'end_type',
       'nr_occurrences',
       'number',
-      ...(includeScheduleSummary ? ['schedule_summary'] : []),
+      'schedule_summary',
       'note',
     ],
     'x-jsf-logic': {
@@ -479,7 +470,7 @@ export function buildCreateInvoiceScheduleSchema({
         currency_selected: {
           rule: { var: 'currency' },
         },
-        ...(includeScheduleSummary ? scheduleSummaryComputedValues : {}),
+        ...scheduleSummaryComputedValues,
       },
     },
     // Carried over when this schema moved here: the static ContractorOnboarding schemas
@@ -491,7 +482,7 @@ export function buildCreateInvoiceScheduleSchema({
       ...invoiceItemRevealConditionals(),
       ...(includeCustomDays ? [semiMonthlyConditional()] : []),
       ...endDateConditionals(),
-      ...(includeScheduleSummary ? [scheduleSummaryConditional()] : []),
+      scheduleSummaryConditional(),
       startDateConditional(),
     ],
   };

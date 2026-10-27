@@ -36,10 +36,6 @@ type UseGetCreateInvoiceScheduleSchemaParams = {
    */
   includeCustomDays?: boolean;
   /**
-   * Show a sentence that sums up the schedule: frequency, how it ends and when it starts.
-   */
-  includeScheduleSummary?: boolean;
-  /**
    * Saved values in API units (item amounts in cents). They seed the first build so the item
    * rows a saved schedule needs are visible before the step mounts.
    */
@@ -58,7 +54,6 @@ export const useGetCreateInvoiceScheduleSchema = ({
   jsfModify,
   isContractorOfRecord,
   includeCustomDays,
-  includeScheduleSummary,
   initialValues,
 }: UseGetCreateInvoiceScheduleSchemaParams) => {
   const { data: currencies, isLoading } = useContractorCurrencies({
@@ -81,15 +76,8 @@ export const useGetCreateInvoiceScheduleSchema = ({
       ),
       isContractorOfRecord,
       includeCustomDays,
-      includeScheduleSummary,
     });
-  }, [
-    enabled,
-    currencies,
-    isContractorOfRecord,
-    includeCustomDays,
-    includeScheduleSummary,
-  ]);
+  }, [enabled, currencies, isContractorOfRecord, includeCustomDays]);
 
   const headlessForm = useHeadlessForm({
     schema,
