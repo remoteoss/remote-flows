@@ -1,4 +1,4 @@
-import { retryOnGatewayBlock } from './retry-fetch';
+import { retryOnGatewayError } from './retry-fetch';
 
 const cloudFrontBlock = () =>
   new Response(
@@ -6,7 +6,37 @@ const cloudFrontBlock = () =>
     { status: 403, headers: { 'content-type': 'text/html' } },
   );
 
-describe('retryOnGatewayBlock', () => {
+describe('retryOnGatewayError', () => {
+  it.each([500, 502, 503, 504])(
+    'retries a %i from the gateway and returns the first good response',
+    async (status) => {
+      const baseFetch = vi
+        .fn<typeof fetch>()
+        .mockImplementationOnce(
+          async () =>
+            new Response('{"message":"Gateway Timeout"}', {
+              status,
+              headers: { 'content-type': 'application/json' },
+            }),
+        )
+        .mockImplementationOnce(async () => new Response('{"ok":true}'));
+      const sleep = vi.fn(async () => {});
+
+      const response = await retryOnGatewayError(
+        baseFetch,
+        [10, 20],
+        sleep,
+      )('https://gateway.test/v1/employments', {
+        method: 'POST',
+        body: '{"a":1}',
+      });
+
+      expect(await response.text()).toBe('{"ok":true}');
+      expect(baseFetch).toHaveBeenCalledTimes(2);
+      expect(sleep.mock.calls).toEqual([[10]]);
+    },
+  );
+
   it('retries a CloudFront block after each delay and returns the first good response', async () => {
     const baseFetch = vi
       .fn<typeof fetch>()
@@ -15,7 +45,7 @@ describe('retryOnGatewayBlock', () => {
       .mockImplementationOnce(async () => new Response('{"ok":true}'));
     const sleep = vi.fn(async () => {});
 
-    const response = await retryOnGatewayBlock(
+    const response = await retryOnGatewayError(
       baseFetch,
       [10, 20],
       sleep,
@@ -39,7 +69,7 @@ describe('retryOnGatewayBlock', () => {
       .mockImplementation(async () => cloudFrontBlock());
     const sleep = vi.fn(async () => {});
 
-    const response = await retryOnGatewayBlock(
+    const response = await retryOnGatewayError(
       baseFetch,
       [10],
       sleep,
@@ -59,7 +89,7 @@ describe('retryOnGatewayBlock', () => {
     );
     const sleep = vi.fn(async () => {});
 
-    const response = await retryOnGatewayBlock(
+    const response = await retryOnGatewayError(
       baseFetch,
       [10, 20],
       sleep,
@@ -80,7 +110,7 @@ describe('retryOnGatewayBlock', () => {
     );
     const sleep = vi.fn(async () => {});
 
-    const response = await retryOnGatewayBlock(
+    const response = await retryOnGatewayError(
       baseFetch,
       [10, 20],
       sleep,
