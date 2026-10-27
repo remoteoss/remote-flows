@@ -136,6 +136,28 @@ function occurrencesConditional() {
   };
 }
 
+function startDateConditional() {
+  return {
+    if: {
+      properties: {
+        periodicity: {
+          enum: RECURRING_PERIODICITY_OPTIONS.map(({ const: value }) => value),
+        },
+      },
+      required: ['periodicity'],
+    },
+    then: {
+      properties: {
+        start_date: {
+          title: 'Start date',
+          description: 'The first invoice will be generated on this date.',
+        },
+      },
+    },
+    else: {},
+  };
+}
+
 const itemFieldOrder = Array.from(
   { length: INVOICE_ITEM_SLOTS },
   (_, index) => index + 1,
@@ -335,7 +357,7 @@ export function buildCreateInvoiceScheduleSchema({
       ...invoiceItemRevealConditionals(),
       ...(includeCustomDays ? [semiMonthlyConditional()] : []),
       ...(includeOneTime || isContractorOfRecord
-        ? [occurrencesConditional()]
+        ? [occurrencesConditional(), startDateConditional()]
         : []),
     ],
   };

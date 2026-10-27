@@ -502,6 +502,29 @@ describe('InvoiceScheduleFlow callouts', () => {
   });
 });
 
+describe('InvoiceScheduleFlow start date label', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
+
+  it('labels the date as the invoice date for a one-off and the start date for a recurring cadence', async () => {
+    renderFlow();
+
+    await fillSelect('periodicity', 'one_time');
+    expect(await screen.findByLabelText(/Invoice date/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/The invoice will be generated on this date/i),
+    ).toBeInTheDocument();
+
+    await fillSelect('periodicity', 'weekly');
+    expect(await screen.findByLabelText(/Start date/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/The first invoice will be generated on this date/i),
+    ).toBeInTheDocument();
+    expect(screen.queryByLabelText(/Invoice date/i)).not.toBeInTheDocument();
+  });
+});
+
 describe('InvoiceScheduleFlow partner usage', () => {
   beforeEach(() => {
     queryClient.clear();
