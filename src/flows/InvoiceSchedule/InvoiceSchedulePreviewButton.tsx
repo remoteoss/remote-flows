@@ -45,13 +45,13 @@ export function InvoiceSchedulePreviewButton({
 }: InvoiceSchedulePreviewButtonProps) {
   const [preview, setPreview] = useState<ContractorInvoicePreview | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const { form, invoiceScheduleBag } = useInvoiceScheduleContext();
+  const { formRef, invoiceScheduleBag } = useInvoiceScheduleContext();
   const { components } = useFormFields();
 
   const handlePreview = async () => {
     try {
       const previewDocument = await invoiceScheduleBag?.previewInvoice(
-        form.getValues(),
+        formRef.current?.getValues() ?? {},
       );
 
       if (previewDocument) {

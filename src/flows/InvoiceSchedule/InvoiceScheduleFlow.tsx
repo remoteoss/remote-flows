@@ -1,10 +1,9 @@
-import React, { useEffect, useId, useRef } from 'react';
-import { getInitialValues } from '@/src/components/form/utils';
-import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
-import { ONE_TIME_PERIODICITY } from '@/src/common/invoice-schedules';
+import React, { useId, useRef } from 'react';
+import { UseFormReturn } from 'react-hook-form';
 import { InvoiceScheduleContext } from '@/src/flows/InvoiceSchedule/context';
 import { useInvoiceSchedule } from '@/src/flows/InvoiceSchedule/hooks';
 import { UseInvoiceScheduleOptions } from '@/src/flows/InvoiceSchedule/types';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 export type InvoiceScheduleFlowProps = {
   /**
@@ -41,65 +40,14 @@ export const InvoiceScheduleFlow = ({
     jsfModify,
   });
 
-  // `useJSONSchemaForm` subscribes to form changes and feeds them back through
-  // `checkFieldUpdates`, which is what makes the schema's conditionals — the item-row
-  // reveal and the semi-monthly day fields — re-evaluate as the form is filled in.
-  const form = useJSONSchemaForm({
-    handleValidation: invoiceScheduleBag.handleValidation,
-    checkFieldUpdates: invoiceScheduleBag.checkFieldUpdates,
-    defaultValues: {
-      currency: '',
-      periodicity: '',
-      start_date: '',
-      number: '',
-      note: '',
-      ...defaultValues,
-    },
-  });
-
-  const { fields } = invoiceScheduleBag;
-  const seededDefaults = useRef(false);
-
-  useEffect(() => {
-    if (seededDefaults.current || fields.length === 0) {
-      return;
-    }
-
-    seededDefaults.current = true;
-
-    Object.entries(getInitialValues(fields, form.getValues())).forEach(
-      ([name, value]) => {
-        const current = form.getValues(name);
-        if ((current === undefined || current === '') && value !== '') {
-          form.setValue(name, value);
-        }
-      },
-    );
-  }, [fields, form]);
-
-  // Contractor of Record is only known once the employment request resolves, so the form
-  // offers the recurring frequencies until then and a frequency chosen in that window
-  // outlives the schema shrinking to one-off. Validation does reject it — the field's `oneOf`
-  // no longer holds it — but the select renders blank in the meantime and the user only finds
-  // out on submit, so drop it as soon as the restriction is known.
-  const { isContractorOfRecord } = invoiceScheduleBag;
-
-  useEffect(() => {
-    if (!isContractorOfRecord) {
-      return;
-    }
-
-    const periodicity = form.getValues('periodicity');
-    if (periodicity && periodicity !== ONE_TIME_PERIODICITY) {
-      form.setValue('periodicity', '');
-    }
-  }, [isContractorOfRecord, form]);
+  const formRef = useRef<UseFormReturn<$TSFixMe> | null>(null);
 
   return (
     <InvoiceScheduleContext.Provider
       value={{
-        form,
+        formRef,
         formId,
+        defaultValues,
         invoiceScheduleBag,
       }}
     >
