@@ -795,4 +795,59 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
 
     expect(request.body.contractor_invoice_schedules[0].items).toHaveLength(10);
   });
+
+  describe('employment on the bag', () => {
+    function mockEmployment(overrides: Record<string, unknown>) {
+      server.use(
+        http.get('*/v1/employments/:id', ({ params }) =>
+          HttpResponse.json({
+            ...employmentDefaultResponse,
+            data: {
+              ...employmentDefaultResponse.data,
+              employment: {
+                ...employmentDefaultResponse.data.employment,
+                id: params.id,
+                ...overrides,
+              },
+            },
+          }),
+        ),
+      );
+    }
+
+    function renderBag() {
+      return render(
+        <InvoiceScheduleFlow
+          employmentId='employment-grace'
+          render={(bag) =>
+            bag.isLoading ? (
+              <p>Loading…</p>
+            ) : (
+              <p data-testid='employment'>
+                {JSON.stringify({
+                  hasActiveWithdrawalMethod:
+                    bag.employment?.has_active_withdrawal_method,
+                  name: bag.employment?.basic_information?.name,
+                })}
+              </p>
+            )
+          }
+        />,
+        { wrapper: TestProviders },
+      );
+    }
+
+    it('exposes the loaded employment', async () => {
+      mockEmployment({
+        has_active_withdrawal_method: false,
+        basic_information: { name: 'Ardin Brl' },
+      });
+
+      renderBag();
+
+      expect(
+        JSON.parse((await screen.findByTestId('employment')).textContent!),
+      ).toEqual({ hasActiveWithdrawalMethod: false, name: 'Ardin Brl' });
+    });
+  });
 });

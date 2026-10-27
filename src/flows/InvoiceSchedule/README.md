@@ -146,6 +146,11 @@ The form shows the platform's invoice date note under the invoice date: the invo
 when the invoice is created, not when the contractor gets paid, so backdate the invoice date if
 payment is needed by a specific day.
 
+The form does not warn about a contractor with no active deposit method. Render your own notice
+from the bag: `employment.has_active_withdrawal_method` is `false` when they have none. The
+schedule can still be created, and Remote reaches out to the contractor to get one added. The
+example app shows one.
+
 ## The bag
 
 `useInvoiceSchedule()` is the headless equivalent of the render prop, for fully custom UIs.
@@ -163,6 +168,7 @@ Both surfaces expose the same bag:
 | `isPreviewingInvoice`  | True while a draft PDF preview is being generated.                                                     |
 | `isLoading`            | True until there is a form to show: no `employmentId`, or its currencies and employment still loading. |
 | `isContractorOfRecord` | Whether the contractor is a Contractor of Record.                                                      |
+| `employment`           | The contractor's employment once loaded, e.g. for `has_active_withdrawal_method` or the name.          |
 
 ## How values map to the API
 
