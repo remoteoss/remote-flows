@@ -30,17 +30,7 @@ type InvoiceScheduleFormProps = Partial<{
   }) => void;
 }>;
 
-export function InvoiceScheduleForm(props: InvoiceScheduleFormProps) {
-  const { invoiceScheduleBag } = useInvoiceScheduleContext();
-
-  if (invoiceScheduleBag.fields.length === 0) {
-    return null;
-  }
-
-  return <InvoiceScheduleFormContent {...props} />;
-}
-
-function InvoiceScheduleFormContent({
+export function InvoiceScheduleForm({
   onSubmit,
   onSuccess,
   onError,

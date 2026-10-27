@@ -33,14 +33,16 @@ function renderFlow({
   return render(
     <InvoiceScheduleFlow
       employmentId={employmentId}
-      render={() => (
-        <>
-          <InvoiceScheduleForm onSuccess={onSuccess} onError={onError} />
-          <InvoiceScheduleSubmitButton>
-            Create schedule
-          </InvoiceScheduleSubmitButton>
-        </>
-      )}
+      render={(bag) =>
+        bag.isLoading ? null : (
+          <>
+            <InvoiceScheduleForm onSuccess={onSuccess} onError={onError} />
+            <InvoiceScheduleSubmitButton>
+              Create schedule
+            </InvoiceScheduleSubmitButton>
+          </>
+        )
+      }
     />,
     { wrapper: TestProviders },
   );
@@ -373,14 +375,15 @@ describe('InvoiceScheduleFlow', () => {
   });
 
   it('starts from a fresh form when it is given a different contractor', async () => {
-    const renderContent = () => (
-      <>
-        <InvoiceScheduleForm />
-        <InvoiceScheduleSubmitButton>
-          Create schedule
-        </InvoiceScheduleSubmitButton>
-      </>
-    );
+    const renderContent = (bag: { isLoading: boolean }) =>
+      bag.isLoading ? null : (
+        <>
+          <InvoiceScheduleForm />
+          <InvoiceScheduleSubmitButton>
+            Create schedule
+          </InvoiceScheduleSubmitButton>
+        </>
+      );
     const { rerender } = render(
       <InvoiceScheduleFlow
         employmentId='employment-grace'
@@ -629,7 +632,7 @@ describe('InvoiceScheduleFlow partner usage', () => {
             jsfModify={{
               fields: { note: { title: 'Memo for the contractor' } },
             }}
-            render={() => <InvoiceScheduleForm />}
+            render={(bag) => (bag.isLoading ? null : <InvoiceScheduleForm />)}
           />
         </>
       );
@@ -670,7 +673,9 @@ describe('InvoiceScheduleFlow partner usage', () => {
             employmentId='employment-grace'
             render={(invoiceScheduleBag) => {
               bag = invoiceScheduleBag;
-              return <InvoiceScheduleForm />;
+              return invoiceScheduleBag.isLoading ? null : (
+                <InvoiceScheduleForm />
+              );
             }}
           />
         </>
