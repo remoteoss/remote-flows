@@ -277,6 +277,14 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     ]);
   });
 
+  it('shows the invoice date note right before the frequency', () => {
+    const order = buildCreateInvoiceScheduleSchema()['x-jsf-order'];
+
+    expect(order.indexOf('invoice_date_note')).toBe(
+      order.indexOf('periodicity') - 1,
+    );
+  });
+
   it('omits the semi-monthly day fields by default, so the in-flow step is unchanged', () => {
     const schema = buildCreateInvoiceScheduleSchema();
 
