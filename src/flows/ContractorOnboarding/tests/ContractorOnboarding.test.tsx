@@ -4625,7 +4625,7 @@ describe('ContractorOnboardingFlow', () => {
                     },
                   ],
                   currency: 'EUR',
-                  start_date: '2026-09-17',
+                  start_date: '2100-01-01',
                   employment_id: employmentId,
                   note: 'fdfdnafdjsfdjjfdsa',
                   total_amount: 1000000,
@@ -4696,7 +4696,7 @@ describe('ContractorOnboardingFlow', () => {
       });
 
       expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
-      expect(screen.getByLabelText(/Invoice date/i)).toHaveValue('2026-09-17');
+      expect(screen.getByLabelText(/Invoice date/i)).toHaveValue('2100-01-01');
       expect(screen.getByLabelText(/Item 1 description/i)).toHaveValue(
         'salary',
       );
