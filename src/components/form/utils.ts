@@ -823,6 +823,41 @@ export function getFieldsWithFlatFieldsets({
   return filteredFields;
 }
 
+export function hoistRadioNestedFields(fields: $TSFixMe[]) {
+  const nestedNames = new Set<string>();
+
+  const withNested = fields.map((field) => {
+    if (field.type !== supportedTypes.RADIO || field.Component) {
+      return field;
+    }
+    if (!Array.isArray(field.options)) {
+      return field;
+    }
+    return {
+      ...field,
+      options: field.options.map((option: $TSFixMe) => {
+        if (!Array.isArray(option.nested_fields)) {
+          return option;
+        }
+        const nestedFields = option.nested_fields
+          .map((nestedName: string) =>
+            fields.find((candidate) => candidate.name === nestedName),
+          )
+          .filter(Boolean);
+        nestedFields.forEach((nested: $TSFixMe) =>
+          nestedNames.add(nested.name),
+        );
+        return { ...option, nestedFields };
+      }),
+    };
+  });
+
+  if (nestedNames.size === 0) {
+    return fields;
+  }
+  return withNested.filter((field) => !nestedNames.has(field.name));
+}
+
 export function enableAckFields(
   fields: JSFFields,
   values: Record<string, unknown>,

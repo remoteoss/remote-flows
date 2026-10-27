@@ -234,6 +234,10 @@ function MultiStepForm({ onboardingBag, components }) {
 - Special UI requirements for a specific step
 - Step-specific interactions that differ from your global design
 
+### Radio options with nested fields
+
+When a schema lists `nested_fields` on a `radio` option, the form renders each referenced field inside that option, disabled until the option is selected, and no longer renders it as a separate top-level field. A custom `radio` component receives those fields as `fieldData.options[].nestedFields` and is responsible for rendering them; fields it does not render are not shown.
+
 ## Method 3: Field-Specific Override with jsfModify
 
 Override a **single field** within a form using the `jsfModify` option. This allows surgical customization without affecting other fields.

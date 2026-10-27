@@ -1,4 +1,5 @@
 import { Fragment } from 'react';
+import { useWatch } from 'react-hook-form';
 import {
   FormControl,
   FormDescription,
@@ -11,6 +12,11 @@ import { cn } from '@/src/lib/utils';
 import { RadioGroupComponentProps } from '@/src/types/fields';
 import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 import { Badge } from '@/src/components/ui/badge';
+import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
+import {
+  isFieldSkipped,
+  resolveFieldDynamicProperties,
+} from '@/src/components/form/utils';
 
 export const RadioGroupFieldDefault = ({
   field,
@@ -18,6 +24,7 @@ export const RadioGroupFieldDefault = ({
   fieldState,
 }: RadioGroupComponentProps) => {
   const { name, label, description, options } = fieldData;
+  const formValues = useWatch();
   return (
     <fieldset
       className={cn('space-y-3', `RemoteFlows__RadioGroupField__Item__${name}`)}
@@ -75,6 +82,22 @@ export const RadioGroupFieldDefault = ({
                     )}
                   </div>
                 </FormItem>
+                {option.nestedFields?.some(
+                  (nested) =>
+                    !isFieldSkipped(
+                      resolveFieldDynamicProperties(nested, formValues),
+                    ),
+                ) && (
+                  <fieldset
+                    disabled={field.value !== option.value}
+                    className='ml-7 RemoteFlows__RadioField__NestedFields'
+                  >
+                    <JSONSchemaFormFields
+                      fields={option.nestedFields}
+                      fieldValues={formValues}
+                    />
+                  </fieldset>
+                )}
               </Fragment>
             ))}
           </RadioGroup>

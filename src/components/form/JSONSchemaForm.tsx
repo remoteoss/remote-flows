@@ -16,6 +16,7 @@ import { StatementComponentProps } from '@/src/types/fields';
 import {
   checkFieldHasForcedValue,
   getFieldsWithFlatFieldsets,
+  hoistRadioNestedFields,
   isFieldSkipped,
   resolveFieldDynamicProperties,
 } from './utils';
@@ -39,14 +40,15 @@ export const JSONSchemaFormFields = ({
     return null;
   }
 
-  const maybeFieldWithFlatFieldsets =
+  const maybeFieldWithFlatFieldsets = hoistRadioNestedFields(
     fieldsets && fieldValues
       ? getFieldsWithFlatFieldsets({
           fields: fields,
           fieldsets: fieldsets,
           values: fieldValues,
         })
-      : fields;
+      : fields,
+  );
 
   const wrapWithCustomWrapper = (
     content: React.ReactNode,

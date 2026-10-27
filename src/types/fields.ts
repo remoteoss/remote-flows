@@ -252,7 +252,8 @@ type RadioGroupDataProps = Omit<FieldDataProps, 'options'> & {
     description?: string;
     disabled?: boolean;
     recommended?: boolean;
-    nested_field?: string;
+    nested_fields?: string[];
+    nestedFields?: JSFField[];
     meta?: Record<string, unknown>;
   }>;
 };
