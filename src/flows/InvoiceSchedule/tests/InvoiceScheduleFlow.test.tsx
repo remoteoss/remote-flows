@@ -357,6 +357,21 @@ describe('InvoiceScheduleFlow', () => {
     );
   });
 
+  it('prefills the occurrence count with 1 when end after is picked', async () => {
+    renderFlow();
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'monthly');
+
+    fireEvent.click(
+      screen.getByRole('radio', { name: 'End after a number of occurrences' }),
+    );
+
+    expect(
+      await screen.findByLabelText(/^Number of occurrences$/i),
+    ).toHaveValue('1');
+  });
+
   it('sends the occurrence count when the schedule ends after a number of invoices', async () => {
     let requestBody: $TSFixMe;
     server.use(
