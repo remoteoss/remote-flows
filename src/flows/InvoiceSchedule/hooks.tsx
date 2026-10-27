@@ -51,7 +51,6 @@ export const useInvoiceSchedule = ({
     jsfModify,
     isContractorOfRecord,
     includeCustomDays: true,
-    includeBackdateTip: true,
   });
 
   const createInvoiceScheduleMutation = useCreateInvoiceSchedule();
@@ -173,6 +172,10 @@ export const useInvoiceSchedule = ({
      * The contractor the schedule will be created for.
      */
     employmentId,
+    /**
+     * The contractor's employment, once loaded.
+     */
+    employment,
     /**
      * True while the schedule is being created.
      */

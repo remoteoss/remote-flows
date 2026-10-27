@@ -502,6 +502,29 @@ describe('InvoiceScheduleFlow callouts', () => {
   });
 });
 
+describe('InvoiceScheduleFlow start date label', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
+
+  it('labels the date as the invoice date for a one-off and the start date for a recurring cadence', async () => {
+    renderFlow();
+
+    await fillSelect('periodicity', 'one_time');
+    expect(await screen.findByLabelText(/Invoice date/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/The invoice will be generated on this date/i),
+    ).toBeInTheDocument();
+
+    await fillSelect('periodicity', 'weekly');
+    expect(await screen.findByLabelText(/Start date/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/The first invoice will be generated on this date/i),
+    ).toBeInTheDocument();
+    expect(screen.queryByLabelText(/Invoice date/i)).not.toBeInTheDocument();
+  });
+});
+
 describe('InvoiceScheduleFlow partner usage', () => {
   beforeEach(() => {
     queryClient.clear();
@@ -771,5 +794,60 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     });
 
     expect(request.body.contractor_invoice_schedules[0].items).toHaveLength(10);
+  });
+
+  describe('employment on the bag', () => {
+    function mockEmployment(overrides: Record<string, unknown>) {
+      server.use(
+        http.get('*/v1/employments/:id', ({ params }) =>
+          HttpResponse.json({
+            ...employmentDefaultResponse,
+            data: {
+              ...employmentDefaultResponse.data,
+              employment: {
+                ...employmentDefaultResponse.data.employment,
+                id: params.id,
+                ...overrides,
+              },
+            },
+          }),
+        ),
+      );
+    }
+
+    function renderBag() {
+      return render(
+        <InvoiceScheduleFlow
+          employmentId='employment-grace'
+          render={(bag) =>
+            bag.isLoading ? (
+              <p>Loading…</p>
+            ) : (
+              <p data-testid='employment'>
+                {JSON.stringify({
+                  hasActiveWithdrawalMethod:
+                    bag.employment?.has_active_withdrawal_method,
+                  name: bag.employment?.basic_information?.name,
+                })}
+              </p>
+            )
+          }
+        />,
+        { wrapper: TestProviders },
+      );
+    }
+
+    it('exposes the loaded employment', async () => {
+      mockEmployment({
+        has_active_withdrawal_method: false,
+        basic_information: { name: 'Ardin Brl' },
+      });
+
+      renderBag();
+
+      expect(
+        JSON.parse((await screen.findByTestId('employment')).textContent!),
+      ).toEqual({ hasActiveWithdrawalMethod: false, name: 'Ardin Brl' });
+    });
   });
 });

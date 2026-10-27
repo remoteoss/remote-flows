@@ -9911,6 +9911,37 @@ export type ImportJobRowsResponse = {
      */
     aggregates?: {
       /**
+       * Multi-entity pay item uploads only: each employing country the upload's rows have, sorted by name. Rows whose employee wasn't found, and the deleted and skipped rows the rows list never shows, are left out
+       */
+      employing_countries?: Array<{
+        /**
+         * ISO 3166-1 alpha-3 country code
+         */
+        code: string;
+        name: string;
+      }>;
+      /**
+       * Multi-entity pay item uploads only: each employing legal entity the upload's rows have, sorted by name. Rows whose employee wasn't found, and the deleted and skipped rows the rows list never shows, are left out
+       */
+      employing_legal_entities?: Array<{
+        country_code: string | null;
+        name: string;
+        slug: string;
+      }>;
+      /**
+       * Multi-entity pay item uploads only: distinct employing legal entities across the complete import job
+       */
+      employing_legal_entity_counts?: {
+        /**
+         * Employing legal entities of the rows the next submission adds
+         */
+        ready_to_submit: number;
+        /**
+         * Employing legal entities of the successful rows; after submission, of the added rows
+         */
+        successful: number;
+      };
+      /**
        * Distinct team members across the complete import job, counted once even when they are split across several table records. `needs_changes` and `ready_to_submit` are mutually exclusive; `successfully_assigned` and `failed_to_assign` are subsets of `ready_to_submit`. The counts describe the job as of `job_stage`: the same rows count as needing changes before submission and as failed to assign afterwards.
        */
       team_member_counts?: {
@@ -11609,6 +11640,23 @@ export type DraftExpense = {
    * Optional additional notes about the expense.
    */
   notes?: string | null;
+  /**
+   * The company project the expense is tagged with. Null when it has none.
+   */
+  project?: {
+    /**
+     * The customer's own project code, to match in their finance system
+     */
+    code?: string;
+    /**
+     * Unique identifier for the project
+     */
+    id?: string;
+    /**
+     * Project name
+     */
+    name?: string;
+  } | null;
   /**
    * Not applicable for draft expenses. Always null.
    */
@@ -14406,6 +14454,23 @@ export type Expense = {
    * Optional additional notes or context about the expense.
    */
   notes?: string | null;
+  /**
+   * The company project the expense is tagged with. Null when it has none.
+   */
+  project?: {
+    /**
+     * The customer's own project code, to match in their finance system
+     */
+    code?: string;
+    /**
+     * Unique identifier for the project
+     */
+    id?: string;
+    /**
+     * Project name
+     */
+    name?: string;
+  } | null;
   /**
    * The reason provided when the expense was declined. Null for non-declined expenses.
    */
@@ -22292,6 +22357,10 @@ export type PostV1TimeoffTimeoffIdCancelRequestDeclineErrors = {
    */
   401: UnauthorizedResponse;
   /**
+   * Not Found
+   */
+  404: NotFoundResponse;
+  /**
    * Conflict
    */
   409: ConflictResponse;
@@ -26002,6 +26071,10 @@ export type PostV1BenefitRenewalRequestsBenefitRenewalRequestIdErrors = {
    * Unauthorized
    */
   401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
   /**
    * Unprocessable Entity
    */
@@ -30277,6 +30350,10 @@ export type PostV1TimeoffTimeoffIdCancelRequestApproveErrors = {
    * Unauthorized
    */
   401: UnauthorizedResponse;
+  /**
+   * Not Found
+   */
+  404: NotFoundResponse;
   /**
    * Unprocessable Entity
    */

@@ -36,6 +36,7 @@ const aiValidationErrorResponse = {
 
 const onSigned = vi.fn();
 const onSignError = vi.fn();
+const onReviewButtonClick = vi.fn();
 
 function renderFlow(onStepRendered?: (step: string) => void) {
   return render(
@@ -57,6 +58,7 @@ function renderFlow(onStepRendered?: (step: string) => void) {
               />
               <ContractDocumentBackButton>Back</ContractDocumentBackButton>
               <ContractDocumentReviewButton
+                onClick={onReviewButtonClick}
                 render={({ reviewCompleted }) =>
                   reviewCompleted ? 'Sign contract' : 'Review contract'
                 }
@@ -104,6 +106,7 @@ describe('ContractDocumentForm', () => {
     queryClient.clear();
     onSigned.mockReset();
     onSignError.mockReset();
+    onReviewButtonClick.mockReset();
     createdDocuments.length = 0;
 
     mockEmployment();
@@ -298,6 +301,52 @@ describe('ContractDocumentForm', () => {
         expect(onSignError).toHaveBeenCalled();
       });
       expect(onSigned).not.toHaveBeenCalled();
+    });
+
+    it('calls the review button onClick on every signature attempt', async () => {
+      mockExistingContractDocument();
+      server.use(
+        http.post(
+          '*/v1/contractors/employments/employment-grace/contract-documents/contract-document-1/sign',
+          async ({ request }) => {
+            signRequests.push(await request.json());
+            if (signRequests.length === 1) {
+              return HttpResponse.json(
+                {
+                  message: 'Unprocessable Entity',
+                  errors: { signature: ['is invalid'] },
+                },
+                { status: 422 },
+              );
+            }
+            return HttpResponse.json(mockContractDocumentSignedResponse);
+          },
+        ),
+      );
+
+      renderFlow();
+      fireEvent.change(await reviewContract(), {
+        target: { value: 'Grace Hopper' },
+      });
+      expect(onReviewButtonClick).toHaveBeenCalledTimes(1);
+
+      fireEvent.click(screen.getByText('Sign contract'));
+      await waitFor(() => {
+        expect(onSignError).toHaveBeenCalled();
+      });
+      expect(onReviewButtonClick).toHaveBeenCalledTimes(2);
+
+      fireEvent.click(screen.getByText('Sign contract'));
+      await waitFor(() => {
+        expect(onSigned).toHaveBeenCalledWith(
+          mockContractDocumentSignedResponse.data,
+        );
+      });
+      expect(onReviewButtonClick).toHaveBeenCalledTimes(3);
+      expect(signRequests).toEqual([
+        { signature: 'Grace Hopper' },
+        { signature: 'Grace Hopper' },
+      ]);
     });
 
     it('does not sign again a contract document the company has already signed', async () => {

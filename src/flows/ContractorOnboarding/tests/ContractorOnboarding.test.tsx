@@ -4386,6 +4386,17 @@ describe('ContractorOnboardingFlow', () => {
       await waitFor(() => expect(visibleSteps()).toContain('invoice_schedule'));
     });
 
+    it('explains that the invoice date is when the invoice is created, not when the contractor is paid', async () => {
+      const employmentId = generateUniqueEmploymentId();
+      await goToFilledCreateInvoiceSchedule(employmentId);
+
+      expect(
+        await screen.findByText(
+          /specifies when the invoice will be created, not when the contractor gets paid/i,
+        ),
+      ).toBeInTheDocument();
+    });
+
     it('reveals the second item row once the first has a description and an amount', async () => {
       const employmentId = generateUniqueEmploymentId();
       await goToFilledCreateInvoiceSchedule(employmentId);
@@ -4625,7 +4636,7 @@ describe('ContractorOnboardingFlow', () => {
                     },
                   ],
                   currency: 'EUR',
-                  start_date: '2026-09-17',
+                  start_date: '2100-01-01',
                   employment_id: employmentId,
                   note: 'fdfdnafdjsfdjjfdsa',
                   total_amount: 1000000,
@@ -4696,7 +4707,7 @@ describe('ContractorOnboardingFlow', () => {
       });
 
       expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
-      expect(screen.getByLabelText(/Invoice date/i)).toHaveValue('2026-09-17');
+      expect(screen.getByLabelText(/Invoice date/i)).toHaveValue('2100-01-01');
       expect(screen.getByLabelText(/Item 1 description/i)).toHaveValue(
         'salary',
       );
