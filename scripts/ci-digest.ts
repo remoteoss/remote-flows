@@ -26,6 +26,8 @@ function gh(args: string[]): string {
   });
 }
 
+const ANSI_ESCAPE = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
+
 function fetchFailedLog(check: CheckRun): string {
   if (!check.runId) {
     return '';
@@ -33,6 +35,17 @@ function fetchFailedLog(check: CheckRun): string {
   const target = check.jobId ? ['--job', check.jobId] : [];
   try {
     return gh(['run', 'view', check.runId, ...target, '--log-failed']);
+  } catch {
+    if (!check.jobId) {
+      return '';
+    }
+  }
+  try {
+    return gh([
+      'api',
+      '--allow-escape-sequences',
+      `repos/{owner}/{repo}/actions/jobs/${check.jobId}/logs`,
+    ]).replace(ANSI_ESCAPE, '');
   } catch {
     return '';
   }
@@ -151,7 +164,9 @@ function main() {
         check,
         kind: 'unknown' as const,
         excerpt: [
-          'No GitHub Actions log for this check (external service); open the link.',
+          check.runId
+            ? 'Could not fetch the job log from GitHub; open the link.'
+            : 'No GitHub Actions log for this check (external service); open the link.',
         ],
       };
     }
