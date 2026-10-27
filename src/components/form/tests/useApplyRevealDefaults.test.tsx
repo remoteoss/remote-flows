@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { render, screen } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import userEvent from '@testing-library/user-event';
@@ -25,11 +25,9 @@ type Defaults = { choice: string; amount: string };
 
 function TestForm({
   defaultValues,
-  initialChoice = 'off',
   withError = false,
 }: {
   defaultValues: Defaults;
-  initialChoice?: string;
   withError?: boolean;
 }) {
   const methods = useForm({ defaultValues });
@@ -42,7 +40,7 @@ function TestForm({
       });
     }
   }, [withError, methods]);
-  const choice = methods.watch('choice') || initialChoice;
+  const choice = methods.watch('choice');
 
   const fields = [
     {
@@ -70,6 +68,34 @@ function TestForm({
 
   return (
     <FormProvider {...methods}>
+      <JSONSchemaFormFields fields={fields} />
+    </FormProvider>
+  );
+}
+
+function AsyncLoadedForm() {
+  const methods = useForm({ defaultValues: { amount: '' } });
+  const [loaded, setLoaded] = useState(false);
+
+  const fields = loaded
+    ? [
+        {
+          name: 'amount',
+          label: 'Amount',
+          inputType: 'number' as const,
+          type: 'number',
+          isVisible: true,
+          jsonType: 'integer',
+          default: 5,
+        },
+      ]
+    : [];
+
+  return (
+    <FormProvider {...methods}>
+      <button type='button' onClick={() => setLoaded(true)}>
+        Load schema
+      </button>
       <JSONSchemaFormFields fields={fields} />
     </FormProvider>
   );
@@ -112,5 +138,14 @@ describe('useApplyRevealDefaults', () => {
     render(<TestForm defaultValues={{ choice: 'on', amount: '' }} />);
 
     expect(screen.getByLabelText('Amount')).toHaveValue('');
+  });
+
+  it('does not apply the default to a field that is visible once the schema finishes loading', async () => {
+    const user = userEvent.setup();
+    render(<AsyncLoadedForm />);
+
+    await user.click(screen.getByRole('button', { name: 'Load schema' }));
+
+    expect(await screen.findByLabelText('Amount')).toHaveValue('');
   });
 });

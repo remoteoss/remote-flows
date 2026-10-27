@@ -41,6 +41,10 @@ export function useApplyRevealDefaults(
       }
     });
 
+    if (!previouslyVisible.current && visible.size === 0) {
+      return;
+    }
+
     revealedWithDefault.forEach((field) => {
       if (isEmpty(getValues(field.name))) {
         setValue(field.name, field.default);
