@@ -1,10 +1,10 @@
-import { createContext, MutableRefObject, useContext } from 'react';
+import { createContext, RefObject, useContext } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { useInvoiceSchedule } from '@/src/flows/InvoiceSchedule/hooks';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
 export const InvoiceScheduleContext = createContext<{
-  formRef: MutableRefObject<UseFormReturn<$TSFixMe> | null> | undefined;
+  formRef: RefObject<UseFormReturn<$TSFixMe> | null> | undefined;
   formId: string | undefined;
   defaultValues?: Record<string, unknown>;
   invoiceScheduleBag?: ReturnType<typeof useInvoiceSchedule>;
