@@ -8,6 +8,7 @@ import {
 } from 'react-hook-form';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { GroupArrayField } from '@/src/components/form/fields/GroupArrayField';
+import { GroupArrayFieldDefault } from '@/src/components/form/fields/default/GroupArrayFieldDefault';
 import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
 import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 import { useFormFields } from '@/src/context';
@@ -65,7 +66,10 @@ function renderGroup({
 describe('GroupArrayField', () => {
   beforeEach(() => {
     (useFormFields as $TSFixMe).mockReturnValue({
-      components: { text: TextFieldDefault },
+      components: {
+        text: TextFieldDefault,
+        'group-array': GroupArrayFieldDefault,
+      },
     });
   });
 
@@ -140,7 +144,11 @@ describe('GroupArrayField', () => {
   it('renders a multiple select in a row as a multi-select', () => {
     const MultiSpy = vi.fn((_props: $TSFixMe) => null);
     (useFormFields as $TSFixMe).mockReturnValue({
-      components: { text: TextFieldDefault, 'multi-select': MultiSpy },
+      components: {
+        text: TextFieldDefault,
+        'multi-select': MultiSpy,
+        'group-array': GroupArrayFieldDefault,
+      },
     });
 
     renderGroup({
@@ -222,5 +230,31 @@ describe('GroupArrayField', () => {
     expect(
       screen.getByRole('group', { name: 'Items' }),
     ).toHaveAccessibleDescription('Must have at least 1 item');
+  });
+
+  it('renders through a custom group-array component', () => {
+    const Custom = vi.fn((_props: $TSFixMe) => null);
+    (useFormFields as $TSFixMe).mockReturnValue({
+      components: { text: TextFieldDefault, 'group-array': Custom },
+    });
+
+    renderGroup({ maxItems: 1 });
+
+    const props = Custom.mock.calls[0][0];
+    expect(props.name).toBe('items');
+    expect(props.addFieldText).toBe('Add item');
+    expect(props.canAdd).toBe(false);
+    expect(props.rows).toHaveLength(1);
+  });
+
+  it('throws when there is no group-array component to render with', () => {
+    (useFormFields as $TSFixMe).mockReturnValue({
+      components: { text: TextFieldDefault },
+    });
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    expect(() => renderGroup()).toThrow(
+      'Group array component not found for field items',
+    );
   });
 });
