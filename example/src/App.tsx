@@ -151,7 +151,8 @@ const additionalDemos = [
   {
     id: 'time-off',
     title: 'Time Off',
-    description: 'Time-off flow with its empty time-off step',
+    description:
+      'Time-off flow: enter a request ID, then its empty time-off step',
     component: TimeOff,
     sourceCode: TimeOffCode,
   },
