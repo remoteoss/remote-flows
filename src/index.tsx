@@ -59,7 +59,9 @@ export { TimeOffFlow, useTimeOff } from '@/src/flows/TimeOff';
 export type {
   TimeOffFlowProps,
   TimeOffRenderProps,
+  TimeOffRequestIdFormValues,
   TimeOffStepKeys,
+  UseTimeOffOptions,
 } from '@/src/flows/TimeOff';
 
 export {
