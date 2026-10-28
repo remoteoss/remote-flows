@@ -151,6 +151,10 @@ from the bag: `employment.has_active_withdrawal_method` is `false` when they hav
 schedule can still be created, and Remote reaches out to the contractor to get one added. The
 example app shows one.
 
+For a weekly, bi-weekly or monthly schedule the form also shows a sentence that sums it up,
+for example "This schedule will create a weekly recurring invoice that ends after one
+occurrence, starting October 30, 2026." It is not shown for a one-off or a semi-monthly schedule.
+
 ## The bag
 
 `useInvoiceSchedule()` is the headless equivalent of the render prop, for fully custom UIs.
