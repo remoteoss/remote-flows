@@ -138,7 +138,10 @@ describe('GroupArrayField', () => {
   });
 
   it('renders a multiple select in a row as a multi-select', () => {
-    const MultiSpy = vi.fn(() => null);
+    const MultiSpy = vi.fn((_props: $TSFixMe) => null);
+    (useFormFields as $TSFixMe).mockReturnValue({
+      components: { text: TextFieldDefault, 'multi-select': MultiSpy },
+    });
 
     renderGroup({
       fields: [
@@ -150,10 +153,9 @@ describe('GroupArrayField', () => {
           options: [],
         },
       ],
-      components: { 'multi-select': MultiSpy },
     });
 
-    expect(MultiSpy).toHaveBeenCalled();
+    expect(MultiSpy.mock.calls[0][0].fieldData.name).toBe('items.0.tags');
   });
 
   it('hands the step-level component overrides to the row inputs', () => {

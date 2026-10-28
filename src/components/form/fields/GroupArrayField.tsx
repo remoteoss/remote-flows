@@ -75,13 +75,7 @@ export function GroupArrayField({
                   key={fieldName}
                   {...omit(field, 'WrapperComponent')}
                   name={fieldName}
-                  component={
-                    components?.[
-                      (isMultiSelect
-                        ? 'multi-select'
-                        : field.type) as keyof Components
-                    ]
-                  }
+                  component={components?.[field.type as keyof Components]}
                 />
               );
             })}
