@@ -117,11 +117,6 @@ export function buildRecurrence(values: Record<string, unknown>): {
  * Only meaningful for `semi_monthly`. The default cycle is the 15th and the last day of the
  * month; a custom cycle is the chosen first day and the day 14 days after it.
  *
- * Note `custom_days` is not yet in the generated client's create params — it arrives with
- * the next `pnpm run openapi-ts` once the API change exposing it is deployed. Until then the
- * payload carries it and the API ignores it, so a semi-monthly schedule falls back to the
- * cycle derived from `start_date` — the behaviour before this field existed.
- *
  * @param values - Form values containing `periodicity` and the `semi_monthly_settings` group
  */
 export function buildCustomDays(
