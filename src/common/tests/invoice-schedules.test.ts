@@ -309,7 +309,7 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     });
 
     expect(
-      schema.properties.semi_monthly_settings['x-jsf-presentation'],
+      schema.properties.semi_monthly_settings?.['x-jsf-presentation'],
     ).toEqual({ inputType: 'fieldset' });
     expect(schema.required).not.toContain('semi_monthly_settings');
 
