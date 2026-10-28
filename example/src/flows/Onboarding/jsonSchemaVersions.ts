@@ -165,7 +165,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ISL: {
     // Iceland
-    contract_details: 2,
+    contract_details: 5,
   },
   ISR: {
     // Israel
@@ -205,7 +205,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   LUX: {
     // Luxembourg
-    contract_details: 1,
+    contract_details: 5,
   },
   LVA: {
     // Latvia

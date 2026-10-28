@@ -98,6 +98,25 @@ const { form, handleValidation, parseFormValues, onValuesChange } =
 
 **Test it like a partner:** in the flow's render prop, a component calls `flowBag.handleValidation(...)` and then sets its own state. Assert the options are still there afterwards. `CompanyBasicInformationOptions.test.tsx` in `src/flows/CreateCompany/tests/` does this.
 
+## Express Form Behaviour in the Schema First
+
+Visibility, defaults, required-ness and values derived from other fields belong in the JSON schema, not in a `*Form.tsx`. A `useEffect` that calls `setValue` or `watch` to keep one field in step with another is a sign the schema was skipped: it only exists for the SDK's own form, so partners using the headless hook don't get it.
+
+Try these in order, and stop at the first that works:
+
+1. **Conditionals**: `if` / `then` / `else` in `allOf`, with `else: { properties: { field: false } }` to hide a field.
+2. **Computed values**: `x-jsf-logic` `computedValues` (JSON Logic rules), applied to a field with `x-jsf-logic-computedAttrs`.
+3. **Derived read-only value**: a `readOnly` field whose `const` and `default` are computed attributes, with a computed `statement` to show it. See `monthly_allowance` in `src/common/tests/jsfEngineSituations.ts`.
+4. **Form code**: only when the schema can't express it. Say why in the PR description.
+
+Before writing form code, search for a precedent: `src/common/tests/jsfEngineSituations.ts` and the existing schemas under `src/common/` and `src/flows/**/json-schemas/`.
+
+Gotchas:
+
+- A field with a `const` is a forced value. The SDK sets its value, and renders it only when it has a description or `statement`. It is always a statement, never a disabled input. If the design needs a disabled input, that is form code.
+- Selects submit strings. Use string `const`s in `oneOf` (and string `default`s), not integers.
+- JSON Logic `var` reads nested values with a dot path, e.g. `group.field`.
+
 ## Strategies
 
 - **`buildOnce`**: use this for all new code.

@@ -54,6 +54,14 @@ export type {
   UseContractDocumentOptions,
 } from '@/src/flows/ContractDocument';
 
+export { TimeOffFlow, useTimeOff } from '@/src/flows/TimeOff';
+
+export type {
+  TimeOffFlowProps,
+  TimeOffRenderProps,
+  TimeOffStepKeys,
+} from '@/src/flows/TimeOff';
+
 export {
   ContractAmendmentConfirmationForm,
   ContractAmendmentFlow,
