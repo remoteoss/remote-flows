@@ -169,7 +169,7 @@
     "oxlint": "1.89.0",
     "oxlint-tsgolint": "7.0.2004",
     "postcss-import": "17.0.0",
-    "randexp": "0.5.3",
+    "randexp": "0.6.1",
     "tsdown": "0.23.0",
     "tsx": "4.23.15",
     "typescript": "7.0.2",
