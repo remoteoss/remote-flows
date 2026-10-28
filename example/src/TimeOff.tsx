@@ -27,7 +27,7 @@ export function TimeOff() {
             },
           }) => (
             <div className='onboarding-form-container'>
-              <h2>Time off</h2>
+              <h2 className='text-lg font-semibold mb-4'>Time off</h2>
               {timeOffBag.stepState.currentStep.name === 'request_id' && (
                 <>
                   <RequestIdStep />
