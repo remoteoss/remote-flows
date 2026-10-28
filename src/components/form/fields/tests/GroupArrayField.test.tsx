@@ -6,7 +6,9 @@ import {
   useFormContext,
   useWatch,
 } from 'react-hook-form';
+import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { GroupArrayField } from '@/src/components/form/fields/GroupArrayField';
+import { useJsonSchemasValidationFormResolver } from '@/src/components/form/validationResolver';
 import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 import { useFormFields } from '@/src/context';
 import { $TSFixMe } from '@/src/types/remoteFlows';
@@ -133,5 +135,90 @@ describe('GroupArrayField', () => {
     });
 
     expect(screen.queryByLabelText('Hidden')).not.toBeInTheDocument();
+  });
+
+  it('renders a multiple select in a row as a multi-select', () => {
+    const MultiSpy = vi.fn(() => null);
+
+    renderGroup({
+      fields: [
+        {
+          name: 'tags',
+          label: 'Tags',
+          type: 'select',
+          multiple: true,
+          options: [],
+        },
+      ],
+      components: { 'multi-select': MultiSpy },
+    });
+
+    expect(MultiSpy).toHaveBeenCalled();
+  });
+
+  it('hands the step-level component overrides to the row inputs', () => {
+    const TextSpy = vi.fn((_props: $TSFixMe) => null);
+
+    function Harness() {
+      const methods = useForm<FieldValues>({
+        defaultValues: { items: [{ description: 'Design work' }] },
+      });
+      return (
+        <FormProvider {...methods}>
+          <JSONSchemaFormFields
+            fields={[
+              {
+                name: 'items',
+                type: 'group-array',
+                label: 'Items',
+                isVisible: true,
+                fields: [
+                  { name: 'description', label: 'Description', type: 'text' },
+                ],
+              },
+            ]}
+            components={{ text: TextSpy }}
+          />
+        </FormProvider>
+      );
+    }
+
+    render(<Harness />);
+
+    expect(TextSpy.mock.calls[0][0].fieldData.name).toBe('items.0.description');
+  });
+
+  it('shows an error that belongs to the whole group', async () => {
+    function Harness() {
+      const resolver = useJsonSchemasValidationFormResolver(
+        async (values: FieldValues) =>
+          values.items?.length
+            ? {}
+            : { formErrors: { items: 'Must have at least 1 item' } },
+      );
+      const methods = useForm<FieldValues>({
+        defaultValues: { items: [{ description: 'Design work', amount: '1' }] },
+        resolver,
+      });
+      return (
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(() => undefined)}>
+            <GroupArrayField name='items' label='Items' fields={rowFields} />
+            <button type='submit'>Send</button>
+          </form>
+        </FormProvider>
+      );
+    }
+
+    render(<Harness />);
+    fireEvent.click(screen.getByRole('button', { name: 'Remove Items 1' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Must have at least 1 item',
+    );
+    expect(
+      screen.getByRole('group', { name: 'Items' }),
+    ).toHaveAccessibleDescription('Must have at least 1 item');
   });
 });

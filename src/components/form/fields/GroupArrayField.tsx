@@ -3,7 +3,7 @@ import omit from 'lodash.omit';
 import { baseFields } from '@/src/components/form/fields/baseFields';
 import { Button } from '@/src/components/ui/button';
 import { isFieldSkipped } from '@/src/components/form/utils';
-import { $TSFixMe } from '@/src/types/remoteFlows';
+import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { BaseTypes } from './types';
 
 type GroupArrayFieldProps = {
@@ -13,6 +13,7 @@ type GroupArrayFieldProps = {
   minItems?: number;
   maxItems?: number;
   fields: $TSFixMe[];
+  components?: Components;
 };
 
 export function GroupArrayField({
@@ -22,20 +23,24 @@ export function GroupArrayField({
   minItems = 0,
   maxItems,
   fields,
+  components,
 }: GroupArrayFieldProps) {
-  const { control } = useFormContext();
+  const { control, getFieldState, formState } = useFormContext();
   const {
     fields: rows,
     append,
     remove,
   } = useFieldArray({ control, name, keyName: 'rowId' });
 
+  const error = getFieldState(name, formState).error?.message;
+  const errorId = `${name}-error`;
   const blankRow = Object.fromEntries(fields.map((field) => [field.name, '']));
 
   return (
     <div
       role='group'
       aria-label={label}
+      aria-describedby={error ? errorId : undefined}
       className='grid gap-4 RemoteFlows__GroupArrayField'
     >
       <p className='text-sm font-semibold'>{label}</p>
@@ -50,7 +55,11 @@ export function GroupArrayField({
                 return null;
               }
 
-              const FieldComponent = baseFields[field.type as BaseTypes];
+              const isMultiSelect = field.type === 'select' && field.multiple;
+              const FieldComponent =
+                baseFields[
+                  isMultiSelect ? 'multi-select' : (field.type as BaseTypes)
+                ];
               const fieldName = `${name}.${index}.${field.name}`;
 
               if (!FieldComponent) {
@@ -66,6 +75,13 @@ export function GroupArrayField({
                   key={fieldName}
                   {...omit(field, 'WrapperComponent')}
                   name={fieldName}
+                  component={
+                    components?.[
+                      (isMultiSelect
+                        ? 'multi-select'
+                        : field.type) as keyof Components
+                    ]
+                  }
                 />
               );
             })}
@@ -85,6 +101,15 @@ export function GroupArrayField({
           ) : null}
         </div>
       ))}
+      {error ? (
+        <p
+          id={errorId}
+          role='alert'
+          className='text-sm text-destructive RemoteFlows__GroupArrayField__Error'
+        >
+          {error}
+        </p>
+      ) : null}
       {maxItems === undefined || rows.length < maxItems ? (
         <div>
           <Button

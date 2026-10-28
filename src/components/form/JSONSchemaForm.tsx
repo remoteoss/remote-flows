@@ -165,6 +165,7 @@ export const JSONSchemaFormFields = ({
               component={
                 components && components[fieldType as keyof Components]
               }
+              {...(fieldType === 'group-array' && { components })}
             />
             {field.statement ? (
               <Statement
