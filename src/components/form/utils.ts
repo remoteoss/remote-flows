@@ -661,7 +661,7 @@ function getInitialSubFieldValues(
   defaultValues: Record<string, unknown>,
   parentFieldKeyPath?: string,
 ) {
-  const initialValue: Record<string, Record<string, unknown>> = {};
+  const initialValue: Record<string, unknown> = {};
 
   let fieldKeyPath = field.name;
 
@@ -669,6 +669,14 @@ function getInitialSubFieldValues(
     fieldKeyPath = fieldKeyPath
       ? `${parentFieldKeyPath}.${fieldKeyPath}`
       : parentFieldKeyPath;
+  }
+
+  if (field.type === supportedTypes.GROUP_ARRAY) {
+    initialValue[field.name!] = getInitialGroupArrayRows(
+      field,
+      getNestedValue(defaultValues, fieldKeyPath),
+    );
+    return initialValue;
   }
 
   const subFields = field.fields;
@@ -718,11 +726,7 @@ export function getBlankRowValues(fields: $TSFixMe[]) {
   );
 }
 
-function getInitialGroupArrayRows(
-  field: $TSFixMe,
-  defaultValues: Record<string, unknown>,
-) {
-  const savedRows = defaultValues[field.name];
+function getInitialGroupArrayRows(field: $TSFixMe, savedRows: unknown) {
   const rows =
     Array.isArray(savedRows) && savedRows.length > 0
       ? savedRows
@@ -777,7 +781,7 @@ export function getInitialValues(
         case supportedTypes.GROUP_ARRAY: {
           initialValues[field.name] = getInitialGroupArrayRows(
             field,
-            defaultFieldValues,
+            defaultFieldValues[field.name],
           );
           break;
         }
