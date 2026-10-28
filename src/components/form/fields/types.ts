@@ -16,4 +16,8 @@ export type BaseTypes =
   | 'tel'
   | 'time';
 
-export type SupportedTypes = BaseTypes | 'fieldset' | 'fieldset-flat';
+export type SupportedTypes =
+  | BaseTypes
+  | 'fieldset'
+  | 'fieldset-flat'
+  | 'group-array';

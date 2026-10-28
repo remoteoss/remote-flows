@@ -360,12 +360,12 @@ export async function parseFormValuesToAPI(
         case supportedTypes.GROUP_ARRAY: {
           // NOTE: The field `name` in group arrays represents a path, but we only
           // need the last part of it which is represented by `nameKey`.
-          const transformedFields = field
-            ?.fields?.()
-            .map((subField: $TSFixMe) => ({
-              ...subField,
-              name: subField.nameKey || '',
-            }));
+          const rowFields: $TSFixMe[] =
+            typeof field.fields === 'function' ? field.fields() : field.fields;
+          const transformedFields = rowFields?.map((subField: $TSFixMe) => ({
+            ...subField,
+            name: subField.nameKey || subField.name || '',
+          }));
 
           const parsedFieldValues = await Promise.all(
             formValues[field.name]?.map(
@@ -374,7 +374,7 @@ export async function parseFormValuesToAPI(
             ) || [],
           );
 
-          acc[field.name] = parsedFieldValues;
+          acc[field.name] = parsedFieldValues.map(removeEmptyValues);
           break;
         }
 
@@ -502,6 +502,10 @@ function excludeValuesInvisible(
             fieldKeyPath,
           ),
         );
+      } else if (field.type === supportedTypes.GROUP_ARRAY) {
+        if (valueOfField !== undefined) {
+          valuesAsked[field.name!] = valueOfField;
+        }
       } else if (Array.isArray(field.fields)) {
         valuesAsked[field.name!] = excludeValuesInvisible(
           values,
@@ -696,6 +700,26 @@ function getInitialSubFieldValues(
   return initialValue;
 }
 
+function getInitialGroupArrayRows(
+  field: $TSFixMe,
+  defaultValues: Record<string, unknown>,
+) {
+  const savedRows = defaultValues[field.name];
+  const rows =
+    Array.isArray(savedRows) && savedRows.length > 0
+      ? savedRows
+      : Array.from({ length: field.minItems ?? 0 }, () => ({}));
+
+  return rows.map((row) =>
+    Object.fromEntries(
+      (field.fields as $TSFixMe[]).map((subField) => [
+        subField.name,
+        getInitialDefaultValue(row as Record<string, unknown>, subField),
+      ]),
+    ),
+  );
+}
+
 export function getInitialValues(
   fields: JSFFields,
   defaultValues: Record<string, unknown>,
@@ -723,6 +747,13 @@ export function getInitialValues(
             );
             Object.assign(initialValues, subFieldValues);
           }
+          break;
+        }
+        case supportedTypes.GROUP_ARRAY: {
+          initialValues[field.name] = getInitialGroupArrayRows(
+            field,
+            defaultFieldValues,
+          );
           break;
         }
         default: {
