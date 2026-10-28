@@ -1,7 +1,7 @@
 import { createClient } from '@/src/auth/createClient';
 import { ENVIRONMENTS } from '@/src/environments';
 import { Client } from '@/src/client/client';
-import { retryOnGatewayBlock } from './retry-fetch';
+import { retryOnGatewayError } from './retry-fetch';
 
 export const SANDBOX_GATEWAY_URL = ENVIRONMENTS.sandbox;
 
@@ -14,7 +14,7 @@ export async function fetchSandboxAccessToken(
     `${clientId}:${clientSecret}`,
   ).toString('base64');
 
-  const response = await retryOnGatewayBlock()(
+  const response = await retryOnGatewayError()(
     `${SANDBOX_GATEWAY_URL}/auth/oauth2/token`,
     {
       method: 'POST',
@@ -62,6 +62,6 @@ export function createEnvClient(
     const { accessToken, expiresIn } = await fetchAccessToken();
     return { accessToken, expiresIn: expiresIn ?? 3600 };
   });
-  client.setConfig({ fetch: retryOnGatewayBlock() });
+  client.setConfig({ fetch: retryOnGatewayError() });
   return client;
 }
