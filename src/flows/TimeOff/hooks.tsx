@@ -4,11 +4,13 @@ import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import {
   getTimeOffDecisionError,
   useApproveTimeOffRequest,
+  useDeclineTimeOffRequest,
   useGetTimeOffRequest,
 } from '@/src/flows/TimeOff/api';
 import { requestIdSchema } from '@/src/flows/TimeOff/json-schemas/requestId';
 import {
   TimeOffApproveOptions,
+  TimeOffDeclineOptions,
   TimeOffRequestIdFormValues,
   TimeOffStepKeys,
   UseTimeOffOptions,
@@ -73,6 +75,32 @@ export const useTimeOff = ({
     [approveTimeOffRequestAsync, timeOffId],
   );
 
+  const declineTimeOffRequestMutation = useDeclineTimeOffRequest();
+  const { mutateAsyncOrThrow: declineTimeOffRequestAsync } = mutationToPromise(
+    declineTimeOffRequestMutation,
+  );
+
+  const decline = useCallback(
+    async ({ declineReason }: TimeOffDeclineOptions) => {
+      try {
+        if (!timeOffId) {
+          throw new Error('No time-off request to decline.');
+        }
+        const response = await declineTimeOffRequestAsync({
+          timeOffId,
+          declineReason,
+        });
+        if (!response) {
+          throw new Error('The decline returned no time-off request.');
+        }
+        return response.data.timeoff;
+      } catch (error) {
+        throw getTimeOffDecisionError(error);
+      }
+    },
+    [declineTimeOffRequestAsync, timeOffId],
+  );
+
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
       setFieldValues(values);
@@ -132,9 +160,16 @@ export const useTimeOff = ({
      */
     approve,
     /**
+     * Declines the time-off request under review. Resolves with the request as the API returns
+     * it, so read the outcome from its `status`. Rejects with a `TimeOffDecisionError`.
+     */
+    decline,
+    /**
      * Whether a decision on the time-off request under review is being sent.
      */
-    isSubmitting: approveTimeOffRequestMutation.isPending,
+    isSubmitting:
+      approveTimeOffRequestMutation.isPending ||
+      declineTimeOffRequestMutation.isPending,
     /**
      * Moves to the next step.
      */

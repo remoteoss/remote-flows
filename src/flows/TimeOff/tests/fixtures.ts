@@ -51,3 +51,17 @@ export const timeOffErrorResponse: TimeoffErrorResponse = {
   ],
   message: 'Unprocessable Entity',
 };
+
+export const declineReasonErrorResponse: TimeoffErrorResponse = {
+  errors: {
+    decline_reason: ['Missing field'],
+  },
+  field_errors: [
+    {
+      code: 'parameter_required_missing',
+      field: 'decline_reason',
+      message: 'Missing field',
+    },
+  ],
+  message: 'Missing field',
+};
