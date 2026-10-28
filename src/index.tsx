@@ -61,6 +61,9 @@ export {
 } from '@/src/flows/TimeOff';
 
 export type {
+  TimeOffApproveButtonProps,
+  TimeOffApproveOptions,
+  TimeOffDecisionError,
   TimeOffFlowProps,
   TimeOffRenderProps,
   TimeOffRequest,

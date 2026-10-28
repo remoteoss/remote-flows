@@ -1,9 +1,14 @@
 import { useCallback } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
-import { useGetTimeOffRequest } from '@/src/flows/TimeOff/api';
+import {
+  getTimeOffDecisionError,
+  useApproveTimeOffRequest,
+  useGetTimeOffRequest,
+} from '@/src/flows/TimeOff/api';
 import { requestIdSchema } from '@/src/flows/TimeOff/json-schemas/requestId';
 import {
+  TimeOffApproveOptions,
   TimeOffRequestIdFormValues,
   TimeOffStepKeys,
   UseTimeOffOptions,
@@ -11,6 +16,7 @@ import {
 } from '@/src/flows/TimeOff/types';
 import { STEPS, STEPS_ARRAY } from '@/src/flows/TimeOff/utils';
 import { useStepState } from '@/src/flows/useStepState';
+import { mutationToPromise } from '@/src/lib/mutations';
 
 /**
  * Headless hook powering the time-off flow.
@@ -40,6 +46,32 @@ export const useTimeOff = ({
   const { timeOffRequest, isLoading, error, refetch } = useTimeOffRequest({
     timeOffId: stepState.currentStep.name === 'review' ? timeOffId : undefined,
   });
+
+  const approveTimeOffRequestMutation = useApproveTimeOffRequest();
+  const { mutateAsyncOrThrow: approveTimeOffRequestAsync } = mutationToPromise(
+    approveTimeOffRequestMutation,
+  );
+
+  const approve = useCallback(
+    async ({ approverId }: TimeOffApproveOptions) => {
+      try {
+        if (!timeOffId) {
+          throw new Error('No time-off request to approve.');
+        }
+        const response = await approveTimeOffRequestAsync({
+          timeOffId,
+          approverId,
+        });
+        if (!response) {
+          throw new Error('The approval returned no time-off request.');
+        }
+        return response.data.timeoff;
+      } catch (error) {
+        throw getTimeOffDecisionError(error);
+      }
+    },
+    [approveTimeOffRequestAsync, timeOffId],
+  );
 
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
@@ -94,6 +126,15 @@ export const useTimeOff = ({
      * Loads the time-off request under review again, e.g. to retry after an error.
      */
     refetchTimeOffRequest: refetch,
+    /**
+     * Approves the time-off request under review. Resolves with the request as the API returns
+     * it, so read the outcome from its `status`. Rejects with a `TimeOffDecisionError`.
+     */
+    approve,
+    /**
+     * Whether a decision on the time-off request under review is being sent.
+     */
+    isSubmitting: approveTimeOffRequestMutation.isPending,
     /**
      * Moves to the next step.
      */

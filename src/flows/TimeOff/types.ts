@@ -1,5 +1,9 @@
 import React, { ButtonHTMLAttributes, PropsWithChildren } from 'react';
-import { Timeoff } from '@/src/client';
+import {
+  NullableApproverId,
+  Timeoff,
+  TimeoffErrorResponse,
+} from '@/src/client';
 import { useTimeOff } from '@/src/flows/TimeOff/hooks';
 
 export type TimeOffStepKeys = 'request_id' | 'review';
@@ -40,6 +44,26 @@ export type TimeOffRequestError = {
 };
 
 /**
+ * Why a decision on a time-off request failed: `not_found` when it doesn't exist or isn't visible
+ * to the caller, `unauthorized` when the token is rejected, `rejected` when the API refuses the
+ * decision with a `422` (its `message` and `fieldErrors` say why), `request_failed` for anything else.
+ */
+export type TimeOffDecisionError = {
+  reason: 'not_found' | 'unauthorized' | 'rejected' | 'request_failed';
+  status: number | undefined;
+  message: string;
+  fieldErrors: TimeoffErrorResponse['field_errors'];
+};
+
+export type TimeOffApproveOptions = {
+  /**
+   * Sent unchanged as `approver_id`, which the API requires: the `id` of a user allowed to approve
+   * time off, as listed by the company managers endpoint, or `null`.
+   */
+  approverId: NullableApproverId;
+};
+
+/**
  * One detail of a time-off request, labelled and formatted for display.
  */
 export type TimeOffRequestDetail = {
@@ -74,6 +98,19 @@ type TimeOffButtonProps = PropsWithChildren<
   ButtonHTMLAttributes<HTMLButtonElement>
 >;
 
+export type TimeOffApproveButtonProps = Omit<TimeOffButtonProps, 'onError'> &
+  TimeOffApproveOptions & {
+    /**
+     * Called with the request as the API returns it once approved. Read the outcome from its
+     * `status` rather than assuming `approved`.
+     */
+    onSuccess?: (timeOffRequest: TimeOffRequest) => void | Promise<void>;
+    /**
+     * Called when the approval fails. The button is enabled again so the user can retry.
+     */
+    onError?: (error: TimeOffDecisionError) => void;
+  };
+
 export type TimeOffRenderProps = {
   timeOffBag: ReturnType<typeof useTimeOff>;
   components: {
@@ -82,6 +119,7 @@ export type TimeOffRenderProps = {
     ReviewStep: React.ComponentType<TimeOffReviewStepProps>;
     RetryButton: React.ComponentType<TimeOffButtonProps>;
     BackButton: React.ComponentType<TimeOffButtonProps>;
+    ApproveButton: React.ComponentType<TimeOffApproveButtonProps>;
   };
 };
 
