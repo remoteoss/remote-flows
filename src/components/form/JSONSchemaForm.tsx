@@ -121,7 +121,6 @@ export const JSONSchemaFormFields = ({
         // the version of json-schema-form is decided by remote-json-schema-form-kit
         // our product uses field.type instead of field.inputType and we probably should do the same
         const fieldType = field.type;
-        // TODO: Have doubts about this, it seems we only support checkbox for multiple select
         const FieldComponent =
           fieldsMap[getFieldRenderType(field) as keyof typeof fieldsMap];
 
