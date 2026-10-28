@@ -24,9 +24,9 @@ function renderFlow({
   return render(
     <InvoiceScheduleFlow
       employmentId={employmentId}
-      render={() => (
+      render={(bag) => (
         <>
-          <InvoiceScheduleForm />
+          {!bag.isLoading && <InvoiceScheduleForm />}
           <InvoiceSchedulePreviewButton onSuccess={onSuccess} onError={onError}>
             Preview invoice
           </InvoiceSchedulePreviewButton>

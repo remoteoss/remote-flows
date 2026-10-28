@@ -440,6 +440,7 @@ export function buildCreateInvoiceScheduleSchema({
         title: 'Number of occurrences',
         type: 'integer',
         minimum: 1,
+        default: 1,
         'x-jsf-presentation': {
           inputType: 'number',
         },

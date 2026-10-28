@@ -43,4 +43,8 @@ export type UseInvoiceScheduleOptions = {
    * Modify the generated JSON-schema form fields.
    */
   jsfModify?: JSFModify;
+  /**
+   * Default values for the form fields.
+   */
+  defaultValues?: Record<string, unknown>;
 };
