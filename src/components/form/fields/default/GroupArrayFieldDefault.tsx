@@ -23,6 +23,8 @@ export function GroupArrayFieldDefault({
       {rows.map((row) => (
         <div
           key={row.id}
+          role='group'
+          aria-label={`${label} ${row.index + 1}`}
           className='grid gap-4 RemoteFlows__GroupArrayField__Row'
         >
           <div className='grid grid-cols-[repeat(auto-fit,minmax(7rem,1fr))] gap-4'>

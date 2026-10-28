@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import {
   FieldValues,
   FormProvider,
@@ -82,7 +82,11 @@ describe('GroupArrayField', () => {
     });
 
     expect(screen.getByRole('group', { name: 'Items' })).toBeVisible();
-    expect(screen.getAllByLabelText('Description')[1]).toHaveValue('Hosting');
+    expect(
+      within(screen.getByRole('group', { name: 'Items 2' })).getByLabelText(
+        'Description',
+      ),
+    ).toHaveValue('Hosting');
     expect(screen.getAllByLabelText('Amount')[0]).toHaveValue('2500');
   });
 
