@@ -62,12 +62,12 @@ Click a country name to open its migration guide. Countries without a link are o
 | France                           | FRA  | v1               | v2              | Yes        | -            |
 | [Georgia](./GEO.md)              | GEO  | v6               | v6              | Yes        | October 2026 |
 | [Germany](./DEU.md)              | DEU  | v9               | v9              | Yes        | October 2026 |
-| Greece                           | GRC  | v1               | v6              | No         | -            |
+| [Greece](./GRC.md)               | GRC  | v6               | v6              | Yes        | October 2026 |
 | [Guatemala](./GTM.md)            | GTM  | v6               | v6              | Yes        | October 2026 |
 | Honduras                         | HND  | v1               | v6              | No         | -            |
-| [Hong Kong](./HKG.md)            | HKG  | v2               | v6              | No         | March 2026   |
+| [Hong Kong](./HKG.md)            | HKG  | v6               | v6              | Yes        | October 2026 |
 | Hungary                          | HUN  | v1               | v4              | No         | -            |
-| [Iceland](./ISL.md)              | ISL  | v2               | v5              | No         | March 2026   |
+| [Iceland](./ISL.md)              | ISL  | v5               | v5              | Yes        | October 2026 |
 | [India](./IND.md)                | IND  | v7               | v7              | Yes        | October 2026 |
 | Indonesia                        | IDN  | v1               | v5              | No         | -            |
 | [Ireland](./IRL.md)              | IRL  | v5               | v5              | Yes        | October 2026 |
@@ -80,7 +80,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | Latvia                           | LVA  | v1               | v6              | No         | -            |
 | [Lebanon](./LBN.md)              | LBN  | v4               | v4              | Yes        | October 2026 |
 | [Lithuania](./LTU.md)            | LTU  | v6               | v6              | Yes        | October 2026 |
-| Luxembourg                       | LUX  | v1               | v5              | No         | -            |
+| [Luxembourg](./LUX.md)           | LUX  | v5               | v5              | Yes        | October 2026 |
 | [Malaysia](./MYS.md)             | MYS  | v5               | v5              | Yes        | October 2026 |
 | Malta                            | MLT  | v1               | v5              | No         | -            |
 | [Mauritius](./MUS.md)            | MUS  | v6               | v5              | Yes        | October 2026 |

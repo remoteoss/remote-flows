@@ -224,21 +224,8 @@ describe('buildCreateInvoiceScheduleSchema', () => {
       (option) => option.const,
     );
 
-  it('offers only the recurring cadences by default, matching the in-flow step', () => {
+  it('offers the one-off option alongside the recurring cadences', () => {
     expect(periodicityOptions(buildCreateInvoiceScheduleSchema())).toEqual([
-      'weekly',
-      'bi_weekly',
-      'semi_monthly',
-      'monthly',
-    ]);
-  });
-
-  it('offers the one-off option when asked', () => {
-    expect(
-      periodicityOptions(
-        buildCreateInvoiceScheduleSchema({ includeOneTime: true }),
-      ),
-    ).toEqual([
       ONE_TIME_PERIODICITY,
       'weekly',
       'bi_weekly',
@@ -248,17 +235,6 @@ describe('buildCreateInvoiceScheduleSchema', () => {
   });
 
   it('restricts a Contractor of Record to one-off invoicing', () => {
-    expect(
-      periodicityOptions(
-        buildCreateInvoiceScheduleSchema({
-          includeOneTime: true,
-          isContractorOfRecord: true,
-        }),
-      ),
-    ).toEqual([ONE_TIME_PERIODICITY]);
-  });
-
-  it('restricts a Contractor of Record even when the one-off option was not requested', () => {
     expect(
       periodicityOptions(
         buildCreateInvoiceScheduleSchema({ isContractorOfRecord: true }),
@@ -275,6 +251,14 @@ describe('buildCreateInvoiceScheduleSchema', () => {
       { const: 'USD', title: 'USD' },
       { const: 'EUR', title: 'EUR' },
     ]);
+  });
+
+  it('shows the invoice date note right before the frequency', () => {
+    const order = buildCreateInvoiceScheduleSchema()['x-jsf-order'];
+
+    expect(order.indexOf('invoice_date_note')).toBe(
+      order.indexOf('periodicity') - 1,
+    );
   });
 
   it('omits the semi-monthly day fields by default, so the in-flow step is unchanged', () => {
@@ -338,6 +322,135 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     expect(currency?.options?.[0]?.disabled).toBe(true);
   });
 
+  describe('end date choice', () => {
+    const buildForm = (options = {}) =>
+      createHeadlessForm(
+        buildCreateInvoiceScheduleSchema({
+          currencies: ['USD'],
+          ...options,
+        }) as $TSFixMe,
+        {},
+      );
+
+    const endDateBaseValues = { ...baseValues, start_date: '2099-01-01' };
+
+    const visible = (form: ReturnType<typeof buildForm>, name: string) =>
+      form.fields.find((field) => field.name === name)?.isVisible;
+
+    it('hides the end date fields until a recurring frequency is chosen', async () => {
+      const form = buildForm();
+
+      await form.handleValidation({});
+      expect(visible(form, 'end_type')).toBe(false);
+      expect(visible(form, 'nr_occurrences')).toBe(false);
+
+      await form.handleValidation({ periodicity: ONE_TIME_PERIODICITY });
+      expect(visible(form, 'end_type')).toBe(false);
+      expect(visible(form, 'nr_occurrences')).toBe(false);
+    });
+
+    it('hides the count when the user switches to a one-off after picking "End after"', async () => {
+      const form = buildForm();
+
+      await form.handleValidation({
+        periodicity: ONE_TIME_PERIODICITY,
+        end_type: 'multiple',
+      });
+
+      expect(visible(form, 'end_type')).toBe(false);
+      expect(visible(form, 'nr_occurrences')).toBe(false);
+    });
+
+    it.each(['weekly', 'bi_weekly', 'semi_monthly', 'monthly'])(
+      'shows the end date choice for %s, with the count hidden until "End after" is picked',
+      async (periodicity) => {
+        const form = buildForm();
+
+        await form.handleValidation({ periodicity });
+        expect(visible(form, 'end_type')).toBe(true);
+        expect(visible(form, 'nr_occurrences')).toBe(false);
+
+        await form.handleValidation({ periodicity, end_type: 'never' });
+        expect(visible(form, 'nr_occurrences')).toBe(false);
+
+        await form.handleValidation({ periodicity, end_type: 'multiple' });
+        expect(visible(form, 'nr_occurrences')).toBe(true);
+      },
+    );
+
+    it('requires the end date choice for a recurring schedule', async () => {
+      const form = buildForm();
+
+      const result = await form.handleValidation({
+        ...endDateBaseValues,
+        periodicity: 'monthly',
+      });
+
+      expect(result?.formErrors).toEqual({ end_type: 'Required field' });
+    });
+
+    it('requires a count only when "End after" is picked', async () => {
+      const form = buildForm();
+
+      const never = await form.handleValidation({
+        ...endDateBaseValues,
+        end_type: 'never',
+      });
+      expect(never?.formErrors).toBeUndefined();
+
+      const multiple = await form.handleValidation({
+        ...endDateBaseValues,
+        end_type: 'multiple',
+      });
+      expect(multiple?.formErrors).toEqual({
+        nr_occurrences: 'Required field',
+      });
+
+      const filled = await form.handleValidation({
+        ...endDateBaseValues,
+        end_type: 'multiple',
+        nr_occurrences: 3,
+      });
+      expect(filled?.formErrors).toBeUndefined();
+    });
+
+    it('rejects a count below one', async () => {
+      const form = buildForm();
+
+      const result = await form.handleValidation({
+        ...endDateBaseValues,
+        end_type: 'multiple',
+        nr_occurrences: 0,
+      });
+
+      expect(result?.formErrors).toHaveProperty('nr_occurrences');
+    });
+
+    it('does not require the end date choice for a one-off', async () => {
+      const form = buildForm();
+
+      const result = await form.handleValidation({
+        ...endDateBaseValues,
+        periodicity: ONE_TIME_PERIODICITY,
+      });
+
+      expect(result?.formErrors).toBeUndefined();
+    });
+
+    it('places the end date choice right after the start date', () => {
+      const order = buildCreateInvoiceScheduleSchema()['x-jsf-order'];
+
+      expect(order.slice(order.indexOf('start_date'))).toEqual([
+        'start_date',
+        'end_type',
+        'nr_occurrences',
+        'number',
+        'schedule_summary',
+        'note',
+      ]);
+    });
+  });
+
   it('reports a required error when no currency has been chosen', async () => {
     const form = createHeadlessForm(
       buildCreateInvoiceScheduleSchema() as $TSFixMe,
@@ -376,11 +489,41 @@ describe('buildInvoiceScheduleFormValues', () => {
       start_date: '2026-10-01',
       number: 'INV-1',
       note: null,
+      end_type: 'multiple',
       nr_occurrences: 3,
       item_1_description: 'Design work',
       item_1_amount: 250000,
       item_2_description: 'Hosting',
       item_2_amount: 7500,
     });
+  });
+
+  it('selects "No end date" for a schedule that repeats indefinitely', () => {
+    expect(
+      buildInvoiceScheduleFormValues({
+        currency: 'EUR',
+        periodicity: 'weekly',
+        start_date: '2026-10-01',
+        number: null,
+        note: null,
+        nr_occurrences: null,
+      }),
+    ).toMatchObject({ end_type: 'never', nr_occurrences: null });
+  });
+
+  it('reloads a saved one-off schedule as "One time" with no occurrence count', () => {
+    const values = buildInvoiceScheduleFormValues({
+      currency: 'EUR',
+      periodicity: 'monthly',
+      start_date: '2026-10-01',
+      number: null,
+      note: null,
+      nr_occurrences: 1,
+      items: [{ description: 'Design work', amount: 250000 }],
+    });
+
+    expect(values.periodicity).toBe(ONE_TIME_PERIODICITY);
+    expect(values.end_type).toBeUndefined();
+    expect(values.nr_occurrences).toBeUndefined();
   });
 });

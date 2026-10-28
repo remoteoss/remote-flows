@@ -28,11 +28,6 @@ type UseGetCreateInvoiceScheduleSchemaParams = {
   employmentId?: string;
   jsfModify?: JSFModify;
   /**
-   * Offer "One time" alongside the recurring cadences. Off by default so the in-flow
-   * onboarding step keeps the field set it shipped with.
-   */
-  includeOneTime?: boolean;
-  /**
    * Restrict to one-off only, as the platform does for Contractor of Record.
    */
   isContractorOfRecord?: boolean;
@@ -40,11 +35,6 @@ type UseGetCreateInvoiceScheduleSchemaParams = {
    * Offer the two semi-monthly day fields, which map to `custom_days`.
    */
   includeCustomDays?: boolean;
-  /**
-   * Show the note that the invoice date is when the invoice is created, not when the
-   * contractor is paid.
-   */
-  includeBackdateTip?: boolean;
   /**
    * Saved values in API units (item amounts in cents). They seed the first build so the item
    * rows a saved schedule needs are visible before the step mounts.
@@ -62,10 +52,8 @@ export const useGetCreateInvoiceScheduleSchema = ({
   enabled,
   employmentId,
   jsfModify,
-  includeOneTime,
   isContractorOfRecord,
   includeCustomDays,
-  includeBackdateTip,
   initialValues,
 }: UseGetCreateInvoiceScheduleSchemaParams) => {
   const { data: currencies, isLoading } = useContractorCurrencies({
@@ -86,19 +74,10 @@ export const useGetCreateInvoiceScheduleSchema = ({
       currencies: currencies.map(
         (currency: { code: string; source: string }) => currency.code,
       ),
-      includeOneTime,
       isContractorOfRecord,
       includeCustomDays,
-      includeBackdateTip,
     });
-  }, [
-    enabled,
-    currencies,
-    includeOneTime,
-    isContractorOfRecord,
-    includeCustomDays,
-    includeBackdateTip,
-  ]);
+  }, [enabled, currencies, isContractorOfRecord, includeCustomDays]);
 
   const headlessForm = useHeadlessForm({
     schema,

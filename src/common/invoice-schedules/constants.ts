@@ -64,3 +64,10 @@ export const ONE_TIME_PERSISTED_PERIODICITY = 'monthly';
  * chosen, which is what keeps it from ever being submitted.
  */
 export const PLACEHOLDER_OPTION = 'placeholder';
+
+/**
+ * Values of the form-only `end_type` field. It never reaches the API: "never" omits
+ * `nr_occurrences` and "multiple" sends the count.
+ */
+export const END_TYPE_NEVER = 'never';
+export const END_TYPE_MULTIPLE = 'multiple';

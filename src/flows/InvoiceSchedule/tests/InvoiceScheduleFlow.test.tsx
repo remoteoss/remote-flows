@@ -5,7 +5,7 @@ import {
   waitFor,
   fireEvent,
 } from '@testing-library/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
 import {
@@ -33,14 +33,16 @@ function renderFlow({
   return render(
     <InvoiceScheduleFlow
       employmentId={employmentId}
-      render={() => (
-        <>
-          <InvoiceScheduleForm onSuccess={onSuccess} onError={onError} />
-          <InvoiceScheduleSubmitButton>
-            Create schedule
-          </InvoiceScheduleSubmitButton>
-        </>
-      )}
+      render={(bag) =>
+        bag.isLoading ? null : (
+          <>
+            <InvoiceScheduleForm onSuccess={onSuccess} onError={onError} />
+            <InvoiceScheduleSubmitButton>
+              Create schedule
+            </InvoiceScheduleSubmitButton>
+          </>
+        )
+      }
     />,
     { wrapper: TestProviders },
   );
@@ -66,6 +68,10 @@ async function fillScheduleDetails({
   fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
     target: { value: '2500' },
   });
+}
+
+function chooseNoEndDate() {
+  fireEvent.click(screen.getByRole('radio', { name: 'No end date' }));
 }
 
 describe('InvoiceScheduleFlow', () => {
@@ -337,6 +343,7 @@ describe('InvoiceScheduleFlow', () => {
 
     await fillScheduleDetails();
     await fillSelect('periodicity', 'weekly');
+    chooseNoEndDate();
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
@@ -350,6 +357,150 @@ describe('InvoiceScheduleFlow', () => {
     expect(requestBody.contractor_invoice_schedules[0]).not.toHaveProperty(
       'nr_occurrences',
     );
+  });
+
+  it('prefills the occurrence count with 1 when end after is picked', async () => {
+    renderFlow();
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'monthly');
+
+    fireEvent.click(
+      screen.getByRole('radio', { name: 'End after a number of occurrences' }),
+    );
+
+    expect(
+      await screen.findByLabelText(/^Number of occurrences$/i),
+    ).toHaveValue('1');
+  });
+
+  it('starts from a fresh form when it is given a different contractor', async () => {
+    const renderContent = (bag: { isLoading: boolean }) =>
+      bag.isLoading ? null : (
+        <>
+          <InvoiceScheduleForm />
+          <InvoiceScheduleSubmitButton>
+            Create schedule
+          </InvoiceScheduleSubmitButton>
+        </>
+      );
+    const warmCache = render(
+      <InvoiceScheduleFlow
+        employmentId='employment-ada'
+        render={(bag) => <p>{bag.isLoading ? 'Loading…' : 'Ready'}</p>}
+      />,
+      { wrapper: TestProviders },
+    );
+    await screen.findByText('Ready');
+    warmCache.unmount();
+
+    const { rerender } = render(
+      <InvoiceScheduleFlow
+        employmentId='employment-grace'
+        render={renderContent}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await fillScheduleDetails();
+    expect(screen.getByLabelText(/Item 1 description/i)).toHaveValue(
+      'Design work',
+    );
+
+    rerender(
+      <InvoiceScheduleFlow
+        employmentId='employment-ada'
+        render={renderContent}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Item 1 description/i)).toHaveValue('');
+    });
+  });
+
+  it('sends the occurrence count when the schedule ends after a number of invoices', async () => {
+    let requestBody: $TSFixMe;
+    server.use(
+      http.post('*/v1/contractor-invoice-schedules', async ({ request }) => {
+        requestBody = await request.json();
+        return HttpResponse.json({
+          data: { successes: [{ id: 'schedule-1' }], failures: [] },
+        });
+      }),
+    );
+
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'monthly');
+
+    expect(screen.queryByLabelText(/^Number of occurrences$/i)).toBeNull();
+
+    fireEvent.click(
+      screen.getByRole('radio', { name: 'End after a number of occurrences' }),
+    );
+    fireEvent.change(await screen.findByLabelText(/^Number of occurrences$/i), {
+      target: { value: '6' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalled();
+    });
+
+    expect(requestBody.contractor_invoice_schedules[0].nr_occurrences).toBe(6);
+    expect(requestBody.contractor_invoice_schedules[0]).not.toHaveProperty(
+      'end_type',
+    );
+  });
+
+  it('drops the occurrence count when the user goes back to "No end date"', async () => {
+    let requestBody: $TSFixMe;
+    server.use(
+      http.post('*/v1/contractor-invoice-schedules', async ({ request }) => {
+        requestBody = await request.json();
+        return HttpResponse.json({
+          data: { successes: [{ id: 'schedule-1' }], failures: [] },
+        });
+      }),
+    );
+
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'monthly');
+
+    fireEvent.click(
+      screen.getByRole('radio', { name: 'End after a number of occurrences' }),
+    );
+    fireEvent.change(await screen.findByLabelText(/^Number of occurrences$/i), {
+      target: { value: '6' },
+    });
+    chooseNoEndDate();
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalled();
+    });
+
+    expect(requestBody.contractor_invoice_schedules[0]).not.toHaveProperty(
+      'nr_occurrences',
+    );
+  });
+
+  it('blocks a recurring schedule until an end date is chosen', async () => {
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'monthly');
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    expect(await screen.findByText(/Required field/i)).toBeInTheDocument();
+    expect(onSuccess).not.toHaveBeenCalled();
   });
 
   it('reveals the second item row once the first has a description and an amount', async () => {
@@ -412,58 +563,6 @@ describe('InvoiceScheduleFlow', () => {
     );
   });
 
-  it('clears a recurring frequency chosen before the contractor turns out to be a CoR', async () => {
-    // `contractor_type` only arrives with the employment, so the recurring cadences are on
-    // offer until it does. Held open here to pick one inside that window.
-    let revealContractorType: () => void = () => {};
-    const employmentRequested = new Promise<void>((resolve) => {
-      revealContractorType = resolve;
-    });
-
-    server.use(
-      http.get('*/v1/employments/:id', async ({ params }) => {
-        await employmentRequested;
-
-        return HttpResponse.json({
-          ...employmentDefaultResponse,
-          data: {
-            ...employmentDefaultResponse.data,
-            employment: {
-              ...employmentDefaultResponse.data.employment,
-              id: params.id,
-              contractor_type: 'cor',
-            },
-          },
-        });
-      }),
-    );
-
-    renderFlow();
-
-    await fillScheduleDetails();
-    await fillSelect('periodicity', 'weekly');
-
-    revealContractorType();
-
-    await waitFor(() => {
-      expect(
-        screen.queryByRole('option', { name: 'Weekly' }),
-      ).not.toBeInTheDocument();
-    });
-
-    // Asserting on the error rather than the select's value: the rendered select is a
-    // native one in tests and blanks itself when its option disappears, whether or not the
-    // form still holds the stale value. Submitting is what tells them apart — a form still
-    // holding `weekly` is rejected for an option the user can no longer see, where a cleared
-    // one asks them to pick a frequency.
-    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
-
-    expect(
-      await screen.findByText(/Required field/i, undefined, { timeout: 10000 }),
-    ).toBeInTheDocument();
-    expect(screen.queryByText(/is not valid/i)).not.toBeInTheDocument();
-  });
-
   it('surfaces a creation failure through onError', async () => {
     server.use(
       http.post('*/v1/contractor-invoice-schedules', () =>
@@ -476,6 +575,7 @@ describe('InvoiceScheduleFlow', () => {
 
     await fillScheduleDetails();
     await fillSelect('periodicity', 'monthly');
+    chooseNoEndDate();
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
@@ -502,6 +602,109 @@ describe('InvoiceScheduleFlow callouts', () => {
   });
 });
 
+describe('InvoiceScheduleFlow start date label', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
+
+  it('labels the date as the invoice date for a one-off and the start date for a recurring cadence', async () => {
+    renderFlow();
+
+    await fillSelect('periodicity', 'one_time');
+    expect(await screen.findByLabelText(/Invoice date/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/The invoice will be generated on this date/i),
+    ).toBeInTheDocument();
+
+    await fillSelect('periodicity', 'weekly');
+    expect(await screen.findByLabelText(/Start date/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/The first invoice will be generated on this date/i),
+    ).toBeInTheDocument();
+    expect(screen.queryByLabelText(/Invoice date/i)).not.toBeInTheDocument();
+  });
+});
+
+describe('InvoiceScheduleFlow schedule summary', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
+
+  async function expectSummary(text: string) {
+    await waitFor(() => {
+      expect(
+        screen.getAllByRole('alert').map((alert) => alert.textContent),
+      ).toContain(text);
+    });
+  }
+
+  async function setStartDate(value: string) {
+    fireEvent.change(await screen.findByLabelText(/Start date/i), {
+      target: { value },
+    });
+  }
+
+  it('sums up the schedule as the frequency, the end and the start date change', async () => {
+    renderFlow();
+
+    await fillSelect('periodicity', 'bi_weekly');
+    await setStartDate('2026-10-30');
+
+    await expectSummary(
+      'This schedule will create a bi-weekly recurring invoice, starting October 30, 2026.',
+    );
+
+    fireEvent.click(screen.getByRole('radio', { name: 'No end date' }));
+
+    await expectSummary(
+      'This schedule will create a bi-weekly recurring invoice with no end date, starting October 30, 2026.',
+    );
+
+    fireEvent.click(
+      screen.getByRole('radio', { name: 'End after a number of occurrences' }),
+    );
+    fireEvent.change(await screen.findByLabelText(/^Number of occurrences$/i), {
+      target: { value: '1' },
+    });
+
+    await expectSummary(
+      'This schedule will create a bi-weekly recurring invoice that ends after one occurrence, starting October 30, 2026.',
+    );
+
+    fireEvent.change(screen.getByLabelText(/^Number of occurrences$/i), {
+      target: { value: '6' },
+    });
+
+    await expectSummary(
+      'This schedule will create a bi-weekly recurring invoice that ends after 6 occurrences, starting October 30, 2026.',
+    );
+  });
+
+  it.each(['one_time', 'semi_monthly'])(
+    'does not sum up a %s schedule',
+    async (periodicity) => {
+      renderFlow();
+
+      await fillSelect('periodicity', 'weekly');
+      await expectSummary(
+        'This schedule will create a weekly recurring invoice, starting \u2014.',
+      );
+
+      await fillSelect('periodicity', periodicity);
+
+      await waitFor(() => {
+        expect(
+          screen
+            .queryAllByRole('alert')
+            .some((alert) =>
+              alert.textContent?.startsWith('This schedule will create a'),
+            ),
+        ).toBe(false);
+      });
+    },
+  );
+});
+
 describe('InvoiceScheduleFlow partner usage', () => {
   beforeEach(() => {
     queryClient.clear();
@@ -519,7 +722,7 @@ describe('InvoiceScheduleFlow partner usage', () => {
             jsfModify={{
               fields: { note: { title: 'Memo for the contractor' } },
             }}
-            render={() => <InvoiceScheduleForm />}
+            render={(bag) => (bag.isLoading ? null : <InvoiceScheduleForm />)}
           />
         </>
       );
@@ -550,6 +753,18 @@ describe('InvoiceScheduleFlow partner usage', () => {
   it('keeps the currency options when the partner validates and re-renders on their own', async () => {
     let bag: ReturnType<typeof useInvoiceSchedule> | undefined;
 
+    function BagProbe({
+      current,
+    }: {
+      current: ReturnType<typeof useInvoiceSchedule>;
+    }) {
+      useEffect(() => {
+        bag = current;
+      });
+
+      return null;
+    }
+
     function Partner() {
       const [renders, setRenders] = useState(0);
 
@@ -558,10 +773,12 @@ describe('InvoiceScheduleFlow partner usage', () => {
           <button onClick={() => setRenders(renders + 1)}>Re-render</button>
           <InvoiceScheduleFlow
             employmentId='employment-grace'
-            render={(invoiceScheduleBag) => {
-              bag = invoiceScheduleBag;
-              return <InvoiceScheduleForm />;
-            }}
+            render={(invoiceScheduleBag) => (
+              <>
+                <BagProbe current={invoiceScheduleBag} />
+                {invoiceScheduleBag.isLoading ? null : <InvoiceScheduleForm />}
+              </>
+            )}
           />
         </>
       );
@@ -633,6 +850,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
 
     await fillScheduleDetails();
     await fillSelect('periodicity', 'monthly');
+    chooseNoEndDate();
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
     await waitFor(() => {
@@ -653,6 +871,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
 
     await fillScheduleDetails();
     await fillSelect('periodicity', 'semi_monthly');
+    chooseNoEndDate();
 
     fireEvent.change(await screen.findByLabelText(/First invoice day/i), {
       target: { value: '1' },
@@ -682,6 +901,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     await fillItem(2, 'Hosting', '75');
     await fillItem(3, 'Support', '10');
     await fillSelect('periodicity', 'monthly');
+    chooseNoEndDate();
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
@@ -710,6 +930,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     });
     fireEvent.blur(screen.getByLabelText(/Item 2 description/i));
     await fillSelect('periodicity', 'monthly');
+    chooseNoEndDate();
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
@@ -735,6 +956,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     await fillItem(2, 'Hosting', '19.99');
     await fillItem(3, 'Support', '0.07');
     await fillSelect('periodicity', 'monthly');
+    chooseNoEndDate();
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
@@ -759,6 +981,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
       await fillItem(slot, `Item ${slot}`, `${slot}`);
     }
     await fillSelect('periodicity', 'monthly');
+    chooseNoEndDate();
 
     expect(
       screen.queryByLabelText(/Item 11 description/i),
@@ -771,5 +994,60 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     });
 
     expect(request.body.contractor_invoice_schedules[0].items).toHaveLength(10);
+  });
+
+  describe('employment on the bag', () => {
+    function mockEmployment(overrides: Record<string, unknown>) {
+      server.use(
+        http.get('*/v1/employments/:id', ({ params }) =>
+          HttpResponse.json({
+            ...employmentDefaultResponse,
+            data: {
+              ...employmentDefaultResponse.data,
+              employment: {
+                ...employmentDefaultResponse.data.employment,
+                id: params.id,
+                ...overrides,
+              },
+            },
+          }),
+        ),
+      );
+    }
+
+    function renderBag() {
+      return render(
+        <InvoiceScheduleFlow
+          employmentId='employment-grace'
+          render={(bag) =>
+            bag.isLoading ? (
+              <p>Loading…</p>
+            ) : (
+              <p data-testid='employment'>
+                {JSON.stringify({
+                  hasActiveWithdrawalMethod:
+                    bag.employment?.has_active_withdrawal_method,
+                  name: bag.employment?.basic_information?.name,
+                })}
+              </p>
+            )
+          }
+        />,
+        { wrapper: TestProviders },
+      );
+    }
+
+    it('exposes the loaded employment', async () => {
+      mockEmployment({
+        has_active_withdrawal_method: false,
+        basic_information: { name: 'Ardin Brl' },
+      });
+
+      renderBag();
+
+      expect(
+        JSON.parse((await screen.findByTestId('employment')).textContent!),
+      ).toEqual({ hasActiveWithdrawalMethod: false, name: 'Ardin Brl' });
+    });
   });
 });

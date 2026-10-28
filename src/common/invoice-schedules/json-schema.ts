@@ -1,4 +1,6 @@
 import {
+  END_TYPE_MULTIPLE,
+  END_TYPE_NEVER,
   INVOICE_ITEM_SLOTS,
   ONE_TIME_PERIODICITY_OPTION,
   PLACEHOLDER_OPTION,
@@ -72,7 +74,7 @@ function invoiceItemRevealConditionals() {
 }
 
 // Only offered when asked for, so the in-flow onboarding step keeps the field set it
-// shipped with — the same reason `includeOneTime` is opt-in.
+// shipped with.
 function semiMonthlyDayProperties() {
   return {
     custom_day_1: {
@@ -117,19 +119,155 @@ function semiMonthlyConditional() {
   };
 }
 
-// `nr_occurrences` is meaningless for a one-off — the payload builder pins it to 1 — so
-// hide the field rather than letting a user contradict their own choice.
-function occurrencesConditional() {
+function endDateConditionals() {
+  return [
+    {
+      if: {
+        properties: {
+          periodicity: {
+            enum: RECURRING_PERIODICITY_OPTIONS.map((option) => option.const),
+          },
+        },
+        required: ['periodicity'],
+      },
+      then: {
+        required: ['end_type'],
+      },
+      else: {
+        properties: {
+          end_type: false,
+          nr_occurrences: false,
+        },
+      },
+    },
+    {
+      if: {
+        properties: { end_type: { const: END_TYPE_MULTIPLE } },
+        required: ['end_type'],
+      },
+      then: {
+        required: ['nr_occurrences'],
+      },
+      else: {
+        properties: {
+          nr_occurrences: false,
+        },
+      },
+    },
+  ];
+}
+
+const SUMMARY_PERIODICITIES = ['weekly', 'bi_weekly', 'monthly'];
+
+function scheduleSummaryProperty() {
+  return {
+    type: 'null',
+    title: 'Schedule summary',
+    'x-jsf-presentation': {
+      inputType: 'hidden',
+      statement: {
+        description: '',
+        inputType: 'statement',
+        severity: 'info',
+      },
+      meta: {
+        ignoreValue: true,
+      },
+    },
+    'x-jsf-logic-computedAttrs': {
+      'x-jsf-presentation': {
+        statement: {
+          description:
+            'This schedule will create a <strong>{{schedule_frequency}}</strong> recurring invoice{{schedule_end}}, starting <strong>{{schedule_start}}</strong>.',
+        },
+      },
+    },
+  };
+}
+
+const scheduleSummaryComputedValues = {
+  schedule_frequency: {
+    rule: {
+      if: [
+        { '==': [{ var: 'periodicity' }, 'bi_weekly'] },
+        'bi-weekly',
+        { var: 'periodicity' },
+      ],
+    },
+  },
+  schedule_end: {
+    rule: {
+      if: [
+        { '==': [{ var: 'end_type' }, END_TYPE_NEVER] },
+        ' <strong>with no end date</strong>',
+        { '==': [{ var: 'end_type' }, END_TYPE_MULTIPLE] },
+        {
+          cat: [
+            ' that <strong>ends after ',
+            {
+              if: [
+                { var: 'nr_occurrences' },
+                {
+                  if: [
+                    { '==': [{ var: 'nr_occurrences' }, 1] },
+                    'one occurrence',
+                    { cat: [{ var: 'nr_occurrences' }, ' occurrences'] },
+                  ],
+                },
+                '\u2014',
+              ],
+            },
+            '</strong>',
+          ],
+        },
+        '',
+      ],
+    },
+  },
+  schedule_start: {
+    rule: {
+      if: [
+        { var: 'start_date' },
+        { date_format: [{ var: 'start_date' }, 'MMMM d, yyyy'] },
+        '\u2014',
+      ],
+    },
+  },
+};
+
+function scheduleSummaryConditional() {
   return {
     if: {
       properties: {
-        periodicity: { const: ONE_TIME_PERIODICITY_OPTION.const },
+        periodicity: { enum: SUMMARY_PERIODICITIES },
+      },
+      required: ['periodicity'],
+    },
+    then: {},
+    else: {
+      properties: {
+        schedule_summary: false,
+      },
+    },
+  };
+}
+
+function startDateConditional() {
+  return {
+    if: {
+      properties: {
+        periodicity: {
+          enum: RECURRING_PERIODICITY_OPTIONS.map(({ const: value }) => value),
+        },
       },
       required: ['periodicity'],
     },
     then: {
       properties: {
-        nr_occurrences: false,
+        start_date: {
+          title: 'Start date',
+          description: 'The first invoice will be generated on this date.',
+        },
       },
     },
     else: {},
@@ -152,19 +290,15 @@ const itemFieldOrder = Array.from(
  * here keeps the form from suggesting something the API will refuse.
  */
 function periodicityOptions({
-  includeOneTime,
   isContractorOfRecord,
 }: {
-  includeOneTime: boolean;
   isContractorOfRecord: boolean;
 }) {
   if (isContractorOfRecord) {
     return [ONE_TIME_PERIODICITY_OPTION];
   }
 
-  return includeOneTime
-    ? [ONE_TIME_PERIODICITY_OPTION, ...RECURRING_PERIODICITY_OPTIONS]
-    : [...RECURRING_PERIODICITY_OPTIONS];
+  return [ONE_TIME_PERIODICITY_OPTION, ...RECURRING_PERIODICITY_OPTIONS];
 }
 
 type CreateInvoiceScheduleSchemaOptions = {
@@ -172,11 +306,6 @@ type CreateInvoiceScheduleSchemaOptions = {
    * Currency codes the contractor can be invoiced in. Replaces the placeholder `oneOf`.
    */
   currencies?: string[];
-  /**
-   * Offer "One time" alongside the recurring cadences. Off by default so the in-flow
-   * onboarding step keeps the field set it shipped with.
-   */
-  includeOneTime?: boolean;
   /**
    * Restrict to one-off only. Derive from the employment's `contractor_type === 'cor'`.
    */
@@ -186,12 +315,6 @@ type CreateInvoiceScheduleSchemaOptions = {
    * the in-flow onboarding step keeps the field set it shipped with.
    */
   includeCustomDays?: boolean;
-  /**
-   * Show the note that the invoice date is when the invoice is created, not when the
-   * contractor is paid. Off by default so the in-flow onboarding step keeps the field set it
-   * shipped with.
-   */
-  includeBackdateTip?: boolean;
 };
 
 /**
@@ -203,10 +326,8 @@ type CreateInvoiceScheduleSchemaOptions = {
  */
 export function buildCreateInvoiceScheduleSchema({
   currencies,
-  includeOneTime = false,
   isContractorOfRecord = false,
   includeCustomDays = false,
-  includeBackdateTip = false,
 }: CreateInvoiceScheduleSchemaOptions = {}) {
   return {
     type: 'object',
@@ -243,12 +364,28 @@ export function buildCreateInvoiceScheduleSchema({
           inputType: 'select',
         },
       },
+      invoice_date_note: {
+        type: 'null',
+        title: 'Invoice date note',
+        'x-jsf-presentation': {
+          inputType: 'hidden',
+          statement: {
+            description:
+              'The invoice date specifies when the invoice will be created, not when the contractor gets paid. If the contractor needs payment on a specific date, please backdate the invoice date to account for processing time.',
+            inputType: 'statement',
+            severity: 'info',
+          },
+          meta: {
+            ignoreValue: true,
+          },
+        },
+      },
       periodicity: {
         description:
           'What is the frequency you want to invoice? <a href="https://support.remote.com/contractor/contractor-management/what-are-the-frequency-options-when-scheduling-a-contractors-invoice" target="_blank">Learn more about invoicing frequencies.</a>',
         title: 'Frequency',
         type: 'string',
-        oneOf: periodicityOptions({ includeOneTime, isContractorOfRecord }),
+        oneOf: periodicityOptions({ isContractorOfRecord }),
         'x-jsf-presentation': {
           inputType: 'select',
         },
@@ -260,16 +397,7 @@ export function buildCreateInvoiceScheduleSchema({
         format: 'date',
         'x-jsf-presentation': {
           inputType: 'date',
-          ...(includeBackdateTip
-            ? {
-                statement: {
-                  description:
-                    'The invoice date specifies when the invoice will be created, not when the contractor gets paid. If the contractor needs payment on a specific date, please backdate the invoice date to account for processing time.',
-                  inputType: 'statement',
-                  severity: 'info',
-                },
-              }
-            : {}),
+          minDate: new Date().toISOString().slice(0, 10),
         },
       },
       ...(includeCustomDays ? semiMonthlyDayProperties() : {}),
@@ -283,6 +411,7 @@ export function buildCreateInvoiceScheduleSchema({
           inputType: 'text',
         },
       },
+      schedule_summary: scheduleSummaryProperty(),
       note: {
         description: 'Shown on generated invoices.',
         title: 'Additional notes',
@@ -291,12 +420,27 @@ export function buildCreateInvoiceScheduleSchema({
           inputType: 'textarea',
         },
       },
+      end_type: {
+        title: 'End date',
+        type: 'string',
+        oneOf: [
+          { const: END_TYPE_NEVER, title: 'No end date' },
+          {
+            const: END_TYPE_MULTIPLE,
+            title: 'End after a number of occurrences',
+          },
+        ],
+        'x-jsf-presentation': {
+          inputType: 'radio',
+          direction: 'column',
+        },
+      },
       nr_occurrences: {
-        description:
-          'Number of invoices to generate. Leave blank for the schedule to repeat indefinitely.',
+        description: 'Number of invoices to generate.',
         title: 'Number of occurrences',
         type: 'integer',
         minimum: 1,
+        default: 1,
         'x-jsf-presentation': {
           inputType: 'number',
         },
@@ -312,18 +456,22 @@ export function buildCreateInvoiceScheduleSchema({
     'x-jsf-order': [
       'currency',
       ...itemFieldOrder,
+      'invoice_date_note',
       'periodicity',
-      'start_date',
       ...(includeCustomDays ? ['custom_day_1', 'custom_day_2'] : []),
-      'number',
-      'note',
+      'start_date',
+      'end_type',
       'nr_occurrences',
+      'number',
+      'schedule_summary',
+      'note',
     ],
     'x-jsf-logic': {
       computedValues: {
         currency_selected: {
           rule: { var: 'currency' },
         },
+        ...scheduleSummaryComputedValues,
       },
     },
     // Carried over when this schema moved here: the static ContractorOnboarding schemas
@@ -334,15 +482,15 @@ export function buildCreateInvoiceScheduleSchema({
     allOf: [
       ...invoiceItemRevealConditionals(),
       ...(includeCustomDays ? [semiMonthlyConditional()] : []),
-      ...(includeOneTime || isContractorOfRecord
-        ? [occurrencesConditional()]
-        : []),
+      ...endDateConditionals(),
+      scheduleSummaryConditional(),
+      startDateConditional(),
     ],
   };
 }
 
 /**
- * The schema as the in-flow onboarding step renders it (no one-off option).
+ * The schema as the in-flow onboarding step renders it.
  * Currencies are substituted at runtime — see `useGetCreateInvoiceScheduleSchema`.
  */
 export const createInvoiceScheduleSchema = buildCreateInvoiceScheduleSchema();

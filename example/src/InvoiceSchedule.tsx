@@ -4,6 +4,8 @@ import {
   InvoiceSchedulePreviewButton,
   InvoiceScheduleSubmitButton,
 } from '@remoteoss/remote-flows';
+import { Alert, AlertDescription } from '@remoteoss/remote-flows/internals';
+import { AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 import { EmploymentIdForm } from './components/EmploymentIdForm';
 import { RemoteFlows } from './RemoteFlows';
@@ -43,10 +45,28 @@ function CreateInvoiceSchedule({ employmentId }: { employmentId: string }) {
             </p>
 
             {invoiceScheduleBag.isContractorOfRecord && (
-              <p>
-                This contractor is a Contractor of Record, so only one-off
-                invoices can be scheduled.
-              </p>
+              <Alert className='mb-4'>
+                <AlertCircle />
+                <AlertDescription>
+                  This contractor is a Contractor of Record, so only one-off
+                  invoices can be scheduled.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {invoiceScheduleBag.employment?.has_active_withdrawal_method ===
+              false && (
+              <Alert variant='warning' className='mb-4'>
+                <AlertCircle />
+                <AlertDescription>
+                  {(invoiceScheduleBag.employment.basic_information?.name as
+                    | string
+                    | undefined) || 'This contractor'}{' '}
+                  does not have an active deposit method on their account yet.
+                  Schedule this invoice and we&apos;ll reach out to them to get
+                  one added.
+                </AlertDescription>
+              </Alert>
             )}
 
             <InvoiceScheduleForm

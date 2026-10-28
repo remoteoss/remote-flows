@@ -45,13 +45,13 @@ export function InvoiceSchedulePreviewButton({
 }: InvoiceSchedulePreviewButtonProps) {
   const [preview, setPreview] = useState<ContractorInvoicePreview | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const { form, invoiceScheduleBag } = useInvoiceScheduleContext();
+  const { invoiceScheduleBag } = useInvoiceScheduleContext();
   const { components } = useFormFields();
 
   const handlePreview = async () => {
     try {
-      const previewDocument = await invoiceScheduleBag?.previewInvoice(
-        form.getValues(),
+      const previewDocument = await invoiceScheduleBag.previewInvoice(
+        invoiceScheduleBag.fieldValues,
       );
 
       if (previewDocument) {
@@ -98,8 +98,8 @@ export function InvoiceSchedulePreviewButton({
           onClick={handlePreview}
           disabled={
             disabled ||
-            invoiceScheduleBag?.isPreviewingInvoice ||
-            !invoiceScheduleBag?.employmentId
+            invoiceScheduleBag.isPreviewingInvoice ||
+            !invoiceScheduleBag.employmentId
           }
           className={cn(
             'RemoteFlows__InvoiceScheduleForm__PreviewButton',

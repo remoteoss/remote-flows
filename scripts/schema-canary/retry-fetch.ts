@@ -1,15 +1,17 @@
-export const GATEWAY_BLOCK_RETRY_DELAYS_MS = [30_000, 120_000];
+export const GATEWAY_RETRY_DELAYS_MS = [30_000, 120_000];
 
-function isGatewayBlock(response: Response) {
-  return (
+const RETRYABLE_SERVER_STATUSES = new Set([502, 503, 504]);
+
+function isRetryable(response: Response) {
+  const isGatewayBlock =
     response.status === 403 &&
-    !response.headers.get('content-type')?.includes('json')
-  );
+    !response.headers.get('content-type')?.includes('json');
+  return isGatewayBlock || RETRYABLE_SERVER_STATUSES.has(response.status);
 }
 
-export function retryOnGatewayBlock(
+export function retryOnGatewayError(
   baseFetch: typeof fetch = globalThis.fetch,
-  retryDelaysMs: number[] = GATEWAY_BLOCK_RETRY_DELAYS_MS,
+  retryDelaysMs: number[] = GATEWAY_RETRY_DELAYS_MS,
   sleep: (ms: number) => Promise<void> = (ms) =>
     new Promise((resolve) => setTimeout(resolve, ms)),
 ): typeof fetch {
@@ -17,7 +19,7 @@ export function retryOnGatewayBlock(
     const request = new Request(input, init);
     for (let attempt = 0; ; attempt++) {
       const response = await baseFetch(request.clone());
-      if (attempt >= retryDelaysMs.length || !isGatewayBlock(response)) {
+      if (attempt >= retryDelaysMs.length || !isRetryable(response)) {
         return response;
       }
       await sleep(retryDelaysMs[attempt]);

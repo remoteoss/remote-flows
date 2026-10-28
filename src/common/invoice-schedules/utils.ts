@@ -3,6 +3,8 @@ import {
   ContractorInvoiceScheduleItem,
 } from '@/src/client';
 import {
+  END_TYPE_MULTIPLE,
+  END_TYPE_NEVER,
   INVOICE_ITEM_SLOTS,
   ONE_TIME_PERIODICITY,
   ONE_TIME_PERSISTED_PERIODICITY,
@@ -50,13 +52,22 @@ type InvoiceScheduleFormSource = Pick<
 export function buildInvoiceScheduleFormValues(
   schedule: InvoiceScheduleFormSource,
 ) {
+  const isOneTime =
+    schedule.periodicity === ONE_TIME_PERSISTED_PERIODICITY &&
+    schedule.nr_occurrences === 1;
+
   const values: Record<string, unknown> = {
     currency: schedule.currency,
-    periodicity: schedule.periodicity,
+    periodicity: isOneTime ? ONE_TIME_PERIODICITY : schedule.periodicity,
     start_date: schedule.start_date,
     number: schedule.number,
     note: schedule.note,
-    nr_occurrences: schedule.nr_occurrences,
+    end_type: isOneTime
+      ? undefined
+      : schedule.nr_occurrences
+        ? END_TYPE_MULTIPLE
+        : END_TYPE_NEVER,
+    nr_occurrences: isOneTime ? undefined : schedule.nr_occurrences,
   };
 
   schedule.items?.forEach((item, index) => {
