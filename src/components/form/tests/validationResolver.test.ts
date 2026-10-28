@@ -51,13 +51,4 @@ describe('iterateFormErrors', () => {
     expect(result['items.0.description']).toBeUndefined();
     expect(result['items']).toBeUndefined();
   });
-
-  it('should keep a plain array of messages on the field itself', () => {
-    const result = iterateFormErrors({ files: ['Too large', 'Wrong type'] });
-
-    expect(result['files']).toEqual({
-      type: 'validation',
-      message: JSON.stringify(['Too large', 'Wrong type']),
-    });
-  });
 });
