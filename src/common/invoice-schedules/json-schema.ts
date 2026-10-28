@@ -447,7 +447,6 @@ export function buildCreateInvoiceScheduleSchema({
         second_invoice_day_label: {
           rule: {
             cat: [
-              'Second invoice raised on the ',
               SECOND_INVOICE_DAY_RULE,
               {
                 if: [
@@ -460,7 +459,7 @@ export function buildCreateInvoiceScheduleSchema({
                   'th',
                 ],
               },
-              ' of the month.',
+              ' of the month',
             ],
           },
         },

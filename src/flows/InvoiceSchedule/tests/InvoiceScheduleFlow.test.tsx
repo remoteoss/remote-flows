@@ -826,11 +826,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     fireEvent.click(await screen.findByRole('radio', { name: 'Custom cycle' }));
     await fillSelect('semi_monthly_settings.first_invoice_day', '3');
 
-    expect(
-      await screen.findByText(
-        'Second invoice raised on the 17th of the month.',
-      ),
-    ).toBeInTheDocument();
+    expect(await screen.findByText('17th of the month')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
