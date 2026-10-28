@@ -700,6 +700,16 @@ function getInitialSubFieldValues(
   return initialValue;
 }
 
+function isMultiSelect(field: $TSFixMe) {
+  return field.type === supportedTypes.SELECT && field.multiple;
+}
+
+export function getBlankRowValues(fields: $TSFixMe[]) {
+  return Object.fromEntries(
+    fields.map((field) => [field.name, isMultiSelect(field) ? [] : '']),
+  );
+}
+
 function getInitialGroupArrayRows(
   field: $TSFixMe,
   defaultValues: Record<string, unknown>,
@@ -712,10 +722,17 @@ function getInitialGroupArrayRows(
 
   return rows.map((row) =>
     Object.fromEntries(
-      (field.fields as $TSFixMe[]).map((subField) => [
-        subField.name,
-        getInitialDefaultValue(row as Record<string, unknown>, subField),
-      ]),
+      (field.fields as $TSFixMe[]).map((subField) => {
+        const value = getInitialDefaultValue(
+          row as Record<string, unknown>,
+          subField,
+        );
+
+        return [
+          subField.name,
+          value === '' && isMultiSelect(subField) ? [] : value,
+        ];
+      }),
     ),
   );
 }

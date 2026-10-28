@@ -1,5 +1,6 @@
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import {
+  getBlankRowValues,
   getInitialValues,
   parseJSFToValidate,
 } from '@/src/components/form/utils';
@@ -87,6 +88,33 @@ describe('group-array values', () => {
           { description: 'Design work', amount: 250000 },
           { description: 'Hosting', amount: 1999 },
         ],
+      });
+    });
+  });
+
+  describe('multiple selects', () => {
+    const tagsField = {
+      name: 'tags',
+      type: 'select',
+      multiple: true,
+    };
+
+    it('seeds an empty array, not a string, in a blank row', () => {
+      expect(
+        getBlankRowValues([tagsField, { name: 'note', type: 'text' }]),
+      ).toEqual({ tags: [], note: '' });
+    });
+
+    it('seeds an empty array for rows created from the minimum', () => {
+      const group = {
+        name: 'items',
+        type: 'group-array',
+        minItems: 1,
+        fields: [tagsField],
+      };
+
+      expect(getInitialValues([group] as $TSFixMe, {})).toEqual({
+        items: [{ tags: [] }],
       });
     });
   });

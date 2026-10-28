@@ -1,7 +1,7 @@
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import omit from 'lodash.omit';
 import { baseFields } from '@/src/components/form/fields/baseFields';
-import { isFieldSkipped } from '@/src/components/form/utils';
+import { getBlankRowValues, isFieldSkipped } from '@/src/components/form/utils';
 import { useFormFields } from '@/src/context';
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { BaseTypes } from './types';
@@ -43,7 +43,7 @@ export function GroupArrayField({
   const error = getFieldState(name, formState).error?.message;
   const canRemove = rows.length > minItems;
   const visibleFields = fields.filter((field) => !isFieldSkipped(field));
-  const blankRow = Object.fromEntries(fields.map((field) => [field.name, '']));
+  const blankRow = getBlankRowValues(fields);
 
   const renderRowFields = (index: number) =>
     visibleFields.map((field) => {
