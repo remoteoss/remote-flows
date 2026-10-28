@@ -41,50 +41,53 @@ export function GroupArrayField({
     throw new Error(`Group array component not found for field ${name}`);
   }
 
+  const error = getFieldState(name, formState).error?.message;
+  const canRemove = rows.length > minItems;
+  const visibleFields = fields.filter((field) => !isFieldSkipped(field));
   const blankRow = Object.fromEntries(fields.map((field) => [field.name, '']));
+
+  const renderRowFields = (index: number) =>
+    visibleFields.map((field) => {
+      const fieldName = `${name}.${index}.${field.name}`;
+      const FieldComponent =
+        baseFields[
+          field.type === 'select' && field.multiple
+            ? 'multi-select'
+            : (field.type as BaseTypes)
+        ];
+
+      if (!FieldComponent) {
+        return (
+          <p key={fieldName} className='error'>
+            Field type {field.type} not supported
+          </p>
+        );
+      }
+
+      return (
+        <FieldComponent
+          key={fieldName}
+          {...omit(field, 'WrapperComponent')}
+          name={fieldName}
+          component={components?.[field.type as keyof Components]}
+        />
+      );
+    });
 
   return (
     <Component
       name={name}
       label={label}
       addFieldText={addFieldText}
-      error={getFieldState(name, formState).error?.message}
+      error={error}
       canAdd={maxItems === undefined || rows.length < maxItems}
       add={() => append(blankRow)}
       rows={rows.map((row, index) => ({
         id: row.rowId,
         index,
-        canRemove: rows.length > minItems,
+        canRemove,
         remove: () => remove(index),
-        fields: fields.map((field) => {
-          if (isFieldSkipped(field)) {
-            return null;
-          }
-
-          const isMultiSelect = field.type === 'select' && field.multiple;
-          const FieldComponent =
-            baseFields[
-              isMultiSelect ? 'multi-select' : (field.type as BaseTypes)
-            ];
-          const fieldName = `${name}.${index}.${field.name}`;
-
-          if (!FieldComponent) {
-            return (
-              <p key={fieldName} className='error'>
-                Field type {field.type} not supported
-              </p>
-            );
-          }
-
-          return (
-            <FieldComponent
-              key={fieldName}
-              {...omit(field, 'WrapperComponent')}
-              name={fieldName}
-              component={components?.[field.type as keyof Components]}
-            />
-          );
-        }),
+        fields: renderRowFields(index),
       }))}
     />
   );
