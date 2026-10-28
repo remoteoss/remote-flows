@@ -362,6 +362,7 @@ export async function parseFormValuesToAPI(
           // need the last part of it which is represented by `nameKey`.
           const rowFields: $TSFixMe[] =
             typeof field.fields === 'function' ? field.fields() : field.fields;
+
           const transformedFields = rowFields?.map((subField: $TSFixMe) => ({
             ...subField,
             name: subField.nameKey || subField.name || '',
@@ -502,11 +503,10 @@ function excludeValuesInvisible(
             fieldKeyPath,
           ),
         );
-      } else if (field.type === supportedTypes.GROUP_ARRAY) {
-        if (valueOfField !== undefined) {
-          valuesAsked[field.name!] = valueOfField;
-        }
-      } else if (Array.isArray(field.fields)) {
+      } else if (
+        field.type !== supportedTypes.GROUP_ARRAY &&
+        Array.isArray(field.fields)
+      ) {
         valuesAsked[field.name!] = excludeValuesInvisible(
           values,
           field.fields,
