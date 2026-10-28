@@ -19,6 +19,8 @@ Flows are headless: the SDK exposes data, the partner renders it. A visible noti
 
 Never add the notice to a `*Form.tsx` or any other file under `src/flows/**`. Reference for exposing the data: `isContractorOfRecord` in the InvoiceSchedule README and bag. Its example renders a plain `<p>`; that predates this rule, so don't copy its markup.
 
+**Schema statements are not covered.** A `statement` that is part of the JSON schema, whether static text or text computed from form values with `x-jsf-logic` computed values, is headless: the default statement component renders it and a partner can override that component. Keep it in the schema, not on the bag. The bag and example route is for notices driven by API data the schema can't carry.
+
 Some older flow code renders UI that a partner would own. That is tracked debt, not precedent: follow this rule, not those spots.
 
 ## Building the notice in the example app
