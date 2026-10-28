@@ -3,6 +3,8 @@ import {
   ContractorInvoiceScheduleItem,
 } from '@/src/client';
 import {
+  END_TYPE_MULTIPLE,
+  END_TYPE_NEVER,
   INVOICE_ITEM_SLOTS,
   ONE_TIME_PERIODICITY,
   ONE_TIME_PERSISTED_PERIODICITY,
@@ -60,6 +62,11 @@ export function buildInvoiceScheduleFormValues(
     start_date: schedule.start_date,
     number: schedule.number,
     note: schedule.note,
+    end_type: isOneTime
+      ? undefined
+      : schedule.nr_occurrences
+        ? END_TYPE_MULTIPLE
+        : END_TYPE_NEVER,
     nr_occurrences: isOneTime ? undefined : schedule.nr_occurrences,
   };
 

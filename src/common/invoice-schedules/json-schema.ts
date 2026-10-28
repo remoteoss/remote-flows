@@ -1,4 +1,6 @@
 import {
+  END_TYPE_MULTIPLE,
+  END_TYPE_NEVER,
   INVOICE_ITEM_SLOTS,
   ONE_TIME_PERIODICITY_OPTION,
   PLACEHOLDER_OPTION,
@@ -117,23 +119,42 @@ function semiMonthlyConditional() {
   };
 }
 
-// `nr_occurrences` is meaningless for a one-off — the payload builder pins it to 1 — so
-// hide the field rather than letting a user contradict their own choice.
-function occurrencesConditional() {
-  return {
-    if: {
-      properties: {
-        periodicity: { const: ONE_TIME_PERIODICITY_OPTION.const },
+function endDateConditionals() {
+  return [
+    {
+      if: {
+        properties: {
+          periodicity: {
+            enum: RECURRING_PERIODICITY_OPTIONS.map((option) => option.const),
+          },
+        },
+        required: ['periodicity'],
       },
-      required: ['periodicity'],
-    },
-    then: {
-      properties: {
-        nr_occurrences: false,
+      then: {
+        required: ['end_type'],
+      },
+      else: {
+        properties: {
+          end_type: false,
+          nr_occurrences: false,
+        },
       },
     },
-    else: {},
-  };
+    {
+      if: {
+        properties: { end_type: { const: END_TYPE_MULTIPLE } },
+        required: ['end_type'],
+      },
+      then: {
+        required: ['nr_occurrences'],
+      },
+      else: {
+        properties: {
+          nr_occurrences: false,
+        },
+      },
+    },
+  ];
 }
 
 function startDateConditional() {
@@ -303,9 +324,23 @@ export function buildCreateInvoiceScheduleSchema({
           inputType: 'textarea',
         },
       },
+      end_type: {
+        title: 'End date',
+        type: 'string',
+        oneOf: [
+          { const: END_TYPE_NEVER, title: 'No end date' },
+          {
+            const: END_TYPE_MULTIPLE,
+            title: 'End after a number of occurrences',
+          },
+        ],
+        'x-jsf-presentation': {
+          inputType: 'radio',
+          direction: 'column',
+        },
+      },
       nr_occurrences: {
-        description:
-          'Number of invoices to generate. Leave blank for the schedule to repeat indefinitely.',
+        description: 'Number of invoices to generate.',
         title: 'Number of occurrences',
         type: 'integer',
         minimum: 1,
@@ -326,11 +361,12 @@ export function buildCreateInvoiceScheduleSchema({
       ...itemFieldOrder,
       'invoice_date_note',
       'periodicity',
-      'start_date',
       ...(includeCustomDays ? ['custom_day_1', 'custom_day_2'] : []),
+      'start_date',
+      'end_type',
+      'nr_occurrences',
       'number',
       'note',
-      'nr_occurrences',
     ],
     'x-jsf-logic': {
       computedValues: {
@@ -347,7 +383,7 @@ export function buildCreateInvoiceScheduleSchema({
     allOf: [
       ...invoiceItemRevealConditionals(),
       ...(includeCustomDays ? [semiMonthlyConditional()] : []),
-      occurrencesConditional(),
+      ...endDateConditionals(),
       startDateConditional(),
     ],
   };
