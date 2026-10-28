@@ -305,6 +305,35 @@ const itemFieldOrder = Array.from(
   (_, index) => index + 1,
 ).flatMap((slot) => [`item_${slot}_description`, `item_${slot}_amount`]);
 
+function invoiceFieldsets() {
+  return {
+    invoicing_details: {
+      title: 'Invoicing details',
+      propertiesByName: ['currency'],
+    },
+    invoice_items: {
+      title: 'Invoice items',
+      propertiesByName: itemFieldOrder,
+    },
+    invoicing_preferences: {
+      title: 'Invoicing preferences',
+      propertiesByName: [
+        'invoice_date_note',
+        'periodicity',
+        'semi_monthly_settings',
+        'start_date',
+        'end_type',
+        'nr_occurrences',
+        'number',
+      ],
+    },
+    summary: {
+      title: 'Summary',
+      propertiesByName: ['note'],
+    },
+  };
+}
+
 /**
  * Options offered for `periodicity`.
  *
@@ -336,6 +365,11 @@ type CreateInvoiceScheduleSchemaOptions = {
    * Restrict to one-off only. Derive from the employment's `contractor_type === 'cor'`.
    */
   isContractorOfRecord?: boolean;
+  /**
+   * Group the fields under the platform's headings (Invoicing details, Invoice items,
+   * Invoicing preferences, Summary). Off by default: the standalone flow renders them flat.
+   */
+  includeFieldsets?: boolean;
 };
 
 /**
@@ -348,6 +382,7 @@ type CreateInvoiceScheduleSchemaOptions = {
 export function buildCreateInvoiceScheduleSchema({
   currencies,
   isContractorOfRecord = false,
+  includeFieldsets = false,
 }: CreateInvoiceScheduleSchemaOptions = {}) {
   return {
     type: 'object',
@@ -473,6 +508,7 @@ export function buildCreateInvoiceScheduleSchema({
       'item_1_description',
       'item_1_amount',
     ],
+    ...(includeFieldsets ? { 'x-jsf-fieldsets': invoiceFieldsets() } : {}),
     'x-jsf-order': [
       'currency',
       ...itemFieldOrder,

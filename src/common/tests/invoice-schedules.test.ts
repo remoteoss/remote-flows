@@ -349,6 +349,51 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     expect(currency?.options?.[0]?.disabled).toBe(true);
   });
 
+  describe('fieldsets', () => {
+    const buildForm = (options = {}) =>
+      createHeadlessForm(
+        buildCreateInvoiceScheduleSchema({
+          currencies: ['USD'],
+          ...options,
+        }) as $TSFixMe,
+        {},
+      );
+
+    it('leaves the fields flat by default', () => {
+      expect(buildForm().meta['x-jsf-fieldsets']).toBeUndefined();
+    });
+
+    it('groups the fields under the platform headings when asked', () => {
+      const fieldsets = buildForm({ includeFieldsets: true }).meta[
+        'x-jsf-fieldsets'
+      ] as Record<string, { title: string; propertiesByName: string[] }>;
+
+      expect(
+        Object.values(fieldsets).map((fieldset) => fieldset.title),
+      ).toEqual([
+        'Invoicing details',
+        'Invoice items',
+        'Invoicing preferences',
+        'Summary',
+      ]);
+    });
+
+    it('places every visible field in exactly one group', () => {
+      const form = buildForm({ includeFieldsets: true });
+      const grouped = Object.values(
+        form.meta['x-jsf-fieldsets'] as Record<
+          string,
+          { propertiesByName: string[] }
+        >,
+      ).flatMap((fieldset) => fieldset.propertiesByName);
+
+      const fieldNames = form.fields.map((field) => field.name);
+
+      expect(new Set(grouped).size).toBe(grouped.length);
+      expect([...fieldNames].sort()).toEqual([...grouped].sort());
+    });
+  });
+
   describe('semi-monthly start date', () => {
     const MESSAGE = 'Choose a date that matches the selected invoicing cycle';
 

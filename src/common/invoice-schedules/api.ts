@@ -32,6 +32,10 @@ type UseGetCreateInvoiceScheduleSchemaParams = {
    */
   isContractorOfRecord?: boolean;
   /**
+   * Group the fields under the platform's headings. Off for the standalone flow.
+   */
+  includeFieldsets?: boolean;
+  /**
    * Saved values in API units (item amounts in cents). They seed the first build so the item
    * rows a saved schedule needs are visible before the step mounts.
    */
@@ -49,6 +53,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
   employmentId,
   jsfModify,
   isContractorOfRecord,
+  includeFieldsets,
   initialValues,
 }: UseGetCreateInvoiceScheduleSchemaParams) => {
   const { data: currencies, isLoading } = useContractorCurrencies({
@@ -70,8 +75,9 @@ export const useGetCreateInvoiceScheduleSchema = ({
         (currency: { code: string; source: string }) => currency.code,
       ),
       isContractorOfRecord,
+      includeFieldsets,
     });
-  }, [enabled, currencies, isContractorOfRecord]);
+  }, [enabled, currencies, isContractorOfRecord, includeFieldsets]);
 
   const headlessForm = useHeadlessForm({
     schema,
