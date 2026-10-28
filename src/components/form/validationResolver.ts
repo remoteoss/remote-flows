@@ -26,6 +26,13 @@ export function iterateErrors(error: ValidationError) {
   return errors;
 }
 
+function hasRowErrors(message: unknown): message is (FormErrors | null)[] {
+  return (
+    Array.isArray(message) &&
+    message.some((row) => typeof row === 'object' && row !== null)
+  );
+}
+
 export function iterateFormErrors(
   formErrors?: FormErrors,
   parentPath = '',
@@ -46,21 +53,13 @@ export function iterateFormErrors(
         };
       }
 
-      if (
-        Array.isArray(message) &&
-        message.some((row) => typeof row === 'object' && row !== null)
-      ) {
-        return {
-          ...allErrors,
-          ...iterateFormErrors(
-            Object.fromEntries(
-              message.flatMap((row, index) =>
-                row === null || row === undefined ? [] : [[index, row]],
-              ),
-            ) as FormErrors,
-            fullPath,
-          ),
-        };
+      // A field array reports one entry per row, with null for rows that have no error.
+      if (hasRowErrors(message)) {
+        const errorsByRow = Object.fromEntries(
+          message.flatMap((row, index) => (row ? [[index, row]] : [])),
+        );
+
+        return { ...allErrors, ...iterateFormErrors(errorsByRow, fullPath) };
       }
 
       // Extract the error message string from various payload formats
