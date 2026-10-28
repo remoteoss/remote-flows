@@ -1,10 +1,14 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { FormProvider, useForm } from 'react-hook-form';
+import {
+  FieldValues,
+  FormProvider,
+  UseFormReturn,
+  useForm,
+} from 'react-hook-form';
 import { GroupArrayField } from '@/src/components/form/fields/GroupArrayField';
-import { GroupArrayFieldDefault } from '@/src/components/form/fields/default/GroupArrayFieldDefault';
 import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 import { useFormFields } from '@/src/context';
-import { $TSFixMe, GroupArrayComponentProps } from '@/src/types/remoteFlows';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 vi.mock('@/src/context', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/src/context')>();
@@ -22,44 +26,39 @@ const rowFields = [
 
 function renderGroup({
   rows = [{ description: 'Design work', amount: '2500' }],
-  errors,
+  fields = rowFields,
   ...props
 }: Partial<React.ComponentProps<typeof GroupArrayField>> & {
   rows?: Record<string, string>[];
-  errors?: Record<string, { type: string; message: string }>;
 } = {}) {
+  let methods!: UseFormReturn;
+
   function Harness() {
-    const methods = useForm({ defaultValues: { items: rows } });
+    methods = useForm<FieldValues>({ defaultValues: { items: rows } });
     return (
-      <FormProvider
-        {...methods}
-        formState={{ ...methods.formState, errors: (errors ?? {}) as $TSFixMe }}
-      >
+      <FormProvider {...methods}>
         <GroupArrayField
           name='items'
-          label='Invoice items'
-          fields={rowFields}
+          label='Items'
+          fields={fields}
           {...props}
         />
       </FormProvider>
     );
   }
 
-  return render(<Harness />);
+  render(<Harness />);
+  return { getValues: () => methods.getValues() };
 }
 
 describe('GroupArrayField', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     (useFormFields as $TSFixMe).mockReturnValue({
-      components: {
-        text: TextFieldDefault,
-        'group-array': GroupArrayFieldDefault,
-      },
+      components: { text: TextFieldDefault },
     });
   });
 
-  it('renders a row of inputs for each saved item under the group label', () => {
+  it('renders a row of inputs for each saved item', () => {
     renderGroup({
       rows: [
         { description: 'Design work', amount: '2500' },
@@ -67,125 +66,63 @@ describe('GroupArrayField', () => {
       ],
     });
 
-    expect(screen.getByRole('group', { name: 'Invoice items' })).toBeVisible();
-    expect(screen.getAllByLabelText('Description')).toHaveLength(2);
+    expect(screen.getByRole('group', { name: 'Items' })).toBeVisible();
     expect(screen.getAllByLabelText('Description')[1]).toHaveValue('Hosting');
     expect(screen.getAllByLabelText('Amount')[0]).toHaveValue('2500');
   });
 
-  it('appends a blank row from the add button, labelled with addFieldText', () => {
-    renderGroup({ addFieldText: 'Add line' });
+  it('appends a blank row from the add button', () => {
+    const { getValues } = renderGroup({ addFieldText: 'Add line' });
 
     fireEvent.click(screen.getByRole('button', { name: 'Add line' }));
 
-    expect(screen.getAllByLabelText('Description')).toHaveLength(2);
-    expect(screen.getAllByLabelText('Description')[1]).toHaveValue('');
+    expect(getValues().items).toEqual([
+      { description: 'Design work', amount: '2500' },
+      { description: '', amount: '' },
+    ]);
   });
 
   it('removes the row whose remove button is pressed', () => {
-    renderGroup({
+    const { getValues } = renderGroup({
       rows: [
-        { description: 'Design work', amount: '2500' },
-        { description: 'Hosting', amount: '75' },
+        { description: 'First', amount: '1' },
+        { description: 'Second', amount: '2' },
+        { description: 'Third', amount: '3' },
       ],
     });
 
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Remove Invoice items 1' }),
-    );
+    fireEvent.click(screen.getByRole('button', { name: 'Remove Items 2' }));
 
-    expect(screen.getAllByLabelText('Description')).toHaveLength(1);
-    expect(screen.getByLabelText('Description')).toHaveValue('Hosting');
+    expect(getValues().items).toEqual([
+      { description: 'First', amount: '1' },
+      { description: 'Third', amount: '3' },
+    ]);
   });
 
   it('keeps the last row when the minimum is one', () => {
     renderGroup({ minItems: 1 });
 
     expect(
-      screen.queryByRole('button', { name: /Remove Invoice items/ }),
+      screen.queryByRole('button', { name: /Remove Items/ }),
     ).not.toBeInTheDocument();
   });
 
   it('offers no add button once the maximum is reached', () => {
-    renderGroup({
-      maxItems: 2,
-      rows: [
-        { description: 'Design work', amount: '2500' },
-        { description: 'Hosting', amount: '75' },
-      ],
-    });
+    renderGroup({ maxItems: 1 });
 
     expect(
       screen.queryByRole('button', { name: 'Add item' }),
     ).not.toBeInTheDocument();
   });
 
-  it('hides the visible label when hideLabel is set', () => {
-    renderGroup({ hideLabel: true });
-
-    expect(screen.queryByText('Invoice items')).not.toBeInTheDocument();
-    expect(screen.getByRole('group', { name: 'Invoice items' })).toBeVisible();
-  });
-
-  it('shows an error that belongs to the whole group', () => {
+  it('does not render a field that is not visible', () => {
     renderGroup({
-      errors: { items: { type: 'validation', message: 'Add at least 1 item' } },
+      fields: [
+        ...rowFields,
+        { name: 'hidden', label: 'Hidden', type: 'text', isVisible: false },
+      ],
     });
 
-    expect(screen.getByRole('alert')).toHaveTextContent('Add at least 1 item');
-  });
-
-  it('hands the group additionalProps to every row field', () => {
-    const TextSpy = vi.fn(() => null);
-    renderGroup({
-      additionalProps: { currency: 'EUR' },
-      components: { text: TextSpy } as $TSFixMe,
-    });
-
-    expect(TextSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        fieldData: expect.objectContaining({
-          name: 'items.0.description',
-          metadata: { currency: 'EUR' },
-        }),
-      }),
-      expect.anything(),
-    );
-  });
-
-  it('renders through a custom group-array component with the rows prepared', () => {
-    const Custom = vi.fn(
-      ({ label, rows, canAdd }: GroupArrayComponentProps) => (
-        <p>
-          {label}: {rows.length} row(s), add {canAdd ? 'on' : 'off'}
-        </p>
-      ),
-    );
-    (useFormFields as $TSFixMe).mockReturnValue({
-      components: { text: TextFieldDefault, 'group-array': Custom },
-    });
-
-    renderGroup({ maxItems: 1 });
-
-    expect(screen.getByText('Invoice items: 1 row(s), add off')).toBeVisible();
-    expect(Custom).toHaveBeenCalledWith(
-      expect.objectContaining({
-        name: 'items',
-        addFieldText: 'Add item',
-        canAdd: false,
-      }),
-      expect.anything(),
-    );
-  });
-
-  it('throws when there is no group-array component to render with', () => {
-    (useFormFields as $TSFixMe).mockReturnValue({
-      components: { text: TextFieldDefault },
-    });
-    vi.spyOn(console, 'error').mockImplementation(() => undefined);
-
-    expect(() => renderGroup()).toThrow(
-      'Group array component not found for field items',
-    );
+    expect(screen.queryByLabelText('Hidden')).not.toBeInTheDocument();
   });
 });

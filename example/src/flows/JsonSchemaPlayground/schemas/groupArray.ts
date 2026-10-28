@@ -1,22 +1,11 @@
 export const GROUP_ARRAY_SCHEMA = {
   name: 'Group array',
   description:
-    'A repeatable group of fields: add and remove rows, with limits and a shared currency',
+    'A repeatable group of fields with add and remove, from one to five rows',
   schema: {
     type: 'object',
     additionalProperties: false,
     properties: {
-      currency: {
-        title: 'Currency',
-        type: 'string',
-        oneOf: [
-          { const: 'EUR', title: 'EUR' },
-          { const: 'USD', title: 'USD' },
-        ],
-        'x-jsf-presentation': {
-          inputType: 'select',
-        },
-      },
       items: {
         title: 'Items',
         type: 'array',
@@ -25,7 +14,7 @@ export const GROUP_ARRAY_SCHEMA = {
         items: {
           type: 'object',
           additionalProperties: false,
-          required: ['description', 'amount'],
+          required: ['description', 'quantity'],
           properties: {
             description: {
               title: 'Description',
@@ -35,28 +24,20 @@ export const GROUP_ARRAY_SCHEMA = {
                 inputType: 'text',
               },
             },
-            amount: {
-              title: 'Amount',
+            quantity: {
+              title: 'Quantity',
               type: 'integer',
               minimum: 1,
               'x-jsf-presentation': {
-                inputType: 'money',
+                inputType: 'number',
               },
             },
           },
-          'x-jsf-order': ['description', 'amount'],
+          'x-jsf-order': ['description', 'quantity'],
         },
         'x-jsf-presentation': {
           inputType: 'group-array',
           addFieldText: 'Add item',
-          hideLabel: true,
-        },
-        'x-jsf-logic-computedAttrs': {
-          'x-jsf-presentation': {
-            additionalProps: {
-              currency: 'currency_selected',
-            },
-          },
         },
       },
       notes: {
@@ -67,29 +48,8 @@ export const GROUP_ARRAY_SCHEMA = {
         },
       },
     },
-    required: ['currency', 'items'],
-    'x-jsf-order': ['currency', 'items', 'notes'],
-    'x-jsf-fieldsets': {
-      details: {
-        title: 'Details',
-        propertiesByName: ['currency'],
-      },
-      line_items: {
-        title: 'Line items',
-        propertiesByName: ['items'],
-      },
-      summary: {
-        title: 'Summary',
-        propertiesByName: ['notes'],
-      },
-    },
-    'x-jsf-logic': {
-      computedValues: {
-        currency_selected: {
-          rule: { var: 'currency' },
-        },
-      },
-    },
+    required: ['items'],
+    'x-jsf-order': ['items', 'notes'],
     'x-rmt-meta': {
       jsfVersion: '1',
     },

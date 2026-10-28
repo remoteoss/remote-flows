@@ -18,7 +18,6 @@ import {
   resolveFieldDynamicProperties,
 } from '@/src/components/form/utils';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
-import { GroupArrayField } from '@/src/components/form/fields/GroupArrayField';
 import { BaseFormDescription } from '@/src/components/ui/form';
 
 type FieldBase = {
@@ -315,18 +314,6 @@ export function FieldSetField({
                     name={fieldKey}
                     components={components}
                     isFlatFieldset
-                  />,
-                  fieldKey,
-                );
-              }
-              if (fieldType === 'group-array') {
-                const fieldProps = omit(field, 'WrapperComponent');
-                return wrapWithCustomWrapper(
-                  <GroupArrayField
-                    {...(fieldProps as $TSFixMe)}
-                    name={fieldKey}
-                    component={components?.['group-array']}
-                    components={components}
                   />,
                   fieldKey,
                 );

@@ -150,32 +150,6 @@ export type FieldSetToggleComponentProps = {
   children?: React.ReactNode;
 };
 
-/**
- * One row of a `group-array` field. `fields` is the row's inputs, already rendered.
- */
-export type GroupArrayRowProps = {
-  id: string;
-  index: number;
-  fields: ReactNode;
-  canRemove: boolean;
-  remove: () => void;
-};
-
-/**
- * Props for custom group-array components: a repeatable group of fields, such as a list of line items.
- */
-export type GroupArrayComponentProps = {
-  name: string;
-  label: string;
-  hideLabel?: boolean;
-  description?: ReactNode;
-  addFieldText: string;
-  rows: GroupArrayRowProps[];
-  canAdd: boolean;
-  add: () => void;
-  error?: string;
-};
-
 export type PDFPreviewComponentProps = {
   base64Data: string;
   fileName?: string;
@@ -207,7 +181,6 @@ export type Components = {
   forcedValue?: React.ComponentType<ForcedValueComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
   fieldsetToggle?: React.ComponentType<FieldSetToggleComponentProps>;
-  'group-array'?: React.ComponentType<GroupArrayComponentProps>;
   zendeskDrawer?: React.ComponentType<ZendeskDrawerComponentProps>;
   zendeskTriggerButton?: React.ComponentType<ZendeskTriggerButtonComponentProps>;
   drawer?: React.ComponentType<DrawerComponentProps>;

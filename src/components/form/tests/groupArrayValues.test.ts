@@ -89,14 +89,5 @@ describe('group-array values', () => {
         ],
       });
     });
-
-    it('leaves a blank value out of its row so it reads as missing', async () => {
-      const parsed = await parseJSFToValidate(
-        { items: [{ description: 'Design work', amount: '' }] },
-        buildFields(),
-      );
-
-      expect(parsed).toEqual({ items: [{ description: 'Design work' }] });
-    });
   });
 });
