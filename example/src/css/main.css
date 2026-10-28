@@ -1240,6 +1240,11 @@ button.reset-button {
   padding-left: 20px;
 }
 
+.RemoteFlows__RequestIdStep > * + *,
+.RemoteFlows__ReviewStep > * + * {
+  margin-top: 1rem;
+}
+
 .RemoteFlows__ReviewStep__Details {
   border: 1px solid #e2e8f0;
   border-radius: 10px;
