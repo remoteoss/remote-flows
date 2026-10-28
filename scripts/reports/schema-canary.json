@@ -959,29 +959,29 @@
     },
     {
       "country": "ISL",
-      "version": 2,
-      "strategy": "rebuild",
+      "version": 5,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "ISL",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "ISL",
-      "version": 2,
-      "strategy": "rebuild",
+      "version": 5,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
     {
       "country": "ISL",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest-submit",
       "outcome": "pass"
     },
@@ -1323,29 +1323,29 @@
     },
     {
       "country": "LUX",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 5,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "LUX",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "LUX",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 5,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
     {
       "country": "LUX",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest-submit",
       "outcome": "pass"
     },
