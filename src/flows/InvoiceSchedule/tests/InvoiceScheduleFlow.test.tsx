@@ -827,8 +827,10 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     await fillSelect('semi_monthly_settings.first_invoice_day', '3');
 
     expect(
-      screen.getByTestId('semi_monthly_settings.second_invoice_day'),
-    ).toHaveValue('17');
+      await screen.findByText(
+        'Second invoice raised on the 17th of the month.',
+      ),
+    ).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 

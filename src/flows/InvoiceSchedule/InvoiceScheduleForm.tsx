@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
-import { SEMI_MONTHLY_CYCLE_GAP_DAYS } from '@/src/common/invoice-schedules/constants';
 import { Form } from '@/src/components/ui/form';
 import { useInvoiceScheduleContext } from '@/src/flows/InvoiceSchedule/context';
 import {
@@ -48,17 +47,6 @@ export function InvoiceScheduleForm({
     invoiceScheduleBag.checkFieldUpdates(form.getValues());
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const firstInvoiceDay = form.watch('semi_monthly_settings.first_invoice_day');
-
-  useEffect(() => {
-    if (firstInvoiceDay) {
-      form.setValue(
-        'semi_monthly_settings.second_invoice_day',
-        String(Number(firstInvoiceDay) + SEMI_MONTHLY_CYCLE_GAP_DAYS),
-      );
-    }
-  }, [firstInvoiceDay, form]);
 
   const handleSubmit = async (values: InvoiceScheduleFormValues) => {
     try {

@@ -77,6 +77,15 @@ function invoiceItemRevealConditionals() {
   return conditionals;
 }
 
+// A custom cycle's second invoice is the first one plus a fixed gap, so it is derived in the
+// schema rather than chosen. Only meaningful while the custom cycle fields are shown.
+const SECOND_INVOICE_DAY_RULE = {
+  '+': [
+    { var: 'semi_monthly_settings.first_invoice_day' },
+    SEMI_MONTHLY_CYCLE_GAP_DAYS,
+  ],
+};
+
 function dayOptions(from: number, to: number) {
   return Array.from({ length: to - from + 1 }, (_, index) => ({
     const: String(from + index),
@@ -122,11 +131,18 @@ function semiMonthlySettingsProperty() {
       second_invoice_day: {
         title: 'Second invoice raised on',
         type: 'string',
-        default: String(1 + SEMI_MONTHLY_CYCLE_GAP_DAYS),
-        oneOf: dayOptions(15, 28),
         readOnly: true,
         'x-jsf-presentation': {
-          inputType: 'select',
+          inputType: 'text',
+        },
+        'x-jsf-logic-computedAttrs': {
+          const: 'second_invoice_day_value',
+          default: 'second_invoice_day_value',
+          'x-jsf-presentation': {
+            statement: {
+              description: '{{second_invoice_day_label}}',
+            },
+          },
         },
       },
     },
@@ -424,6 +440,29 @@ export function buildCreateInvoiceScheduleSchema({
       computedValues: {
         currency_selected: {
           rule: { var: 'currency' },
+        },
+        second_invoice_day_value: {
+          rule: { cat: [SECOND_INVOICE_DAY_RULE] },
+        },
+        second_invoice_day_label: {
+          rule: {
+            cat: [
+              'Second invoice raised on the ',
+              SECOND_INVOICE_DAY_RULE,
+              {
+                if: [
+                  { '==': [SECOND_INVOICE_DAY_RULE, 21] },
+                  'st',
+                  { '==': [SECOND_INVOICE_DAY_RULE, 22] },
+                  'nd',
+                  { '==': [SECOND_INVOICE_DAY_RULE, 23] },
+                  'rd',
+                  'th',
+                ],
+              },
+              ' of the month.',
+            ],
+          },
         },
       },
     },

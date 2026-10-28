@@ -205,8 +205,9 @@ known. Note this is a client-side restriction; it is not enforced by the API tod
 
 Choosing the semi-monthly frequency reveals a "Semi-monthly" group with an **Invoicing cycle**
 radio. The default is the 15th and the last day of the month. **Custom cycle** reveals
-**First invoice raised on** (1st to 14th) and a read-only **Second invoice raised on**, always
-14 days after the first. The group is sent as `custom_days`: `[15, 31]` for the default cycle
+**First invoice raised on** (1st to 14th) and a read-only line saying the second invoice is
+raised 14 days after the first. It is derived in the schema (a computed `const`), so it needs
+no form code. The group is sent as `custom_days`: `[15, 31]` for the default cycle
 (the API treats 31 as the last day of the month) and `[first, first + 14]` for a custom one.
 
 ## Current limitations
