@@ -8,6 +8,8 @@ import {
   SEMI_MONTHLY_CUSTOM_CYCLE,
   SEMI_MONTHLY_CYCLE_GAP_DAYS,
   SEMI_MONTHLY_DEFAULT_CYCLE,
+  SEMI_MONTHLY_DEFAULT_CYCLE_DAYS,
+  SEMI_MONTHLY_PERIODICITY,
 } from '@/src/common/invoice-schedules/constants';
 import { toOrdinal } from '@/src/common/invoice-schedules/utils';
 
@@ -85,6 +87,62 @@ const SECOND_INVOICE_DAY_RULE = {
     SEMI_MONTHLY_CYCLE_GAP_DAYS,
   ],
 };
+
+const START_DATE_VAR = { var: 'start_date' };
+const START_DATE_DAY = { '+': [{ substr: [START_DATE_VAR, 8, 2] }] };
+const START_DATE_MONTH_DAY = { substr: [START_DATE_VAR, 5, 5] };
+const START_DATE_YEAR = { '+': [{ substr: [START_DATE_VAR, 0, 4] }] };
+
+const MONTH_END_DATES = [
+  '01-31',
+  '02-29',
+  '03-31',
+  '04-30',
+  '05-31',
+  '06-30',
+  '07-31',
+  '08-31',
+  '09-30',
+  '10-31',
+  '11-30',
+  '12-31',
+];
+
+const IS_LEAP_YEAR = {
+  or: [
+    { '==': [{ '%': [START_DATE_YEAR, 400] }, 0] },
+    {
+      and: [
+        { '==': [{ '%': [START_DATE_YEAR, 4] }, 0] },
+        { '!=': [{ '%': [START_DATE_YEAR, 100] }, 0] },
+      ],
+    },
+  ],
+};
+
+const STARTS_ON_DEFAULT_CYCLE_DAY = {
+  or: [
+    { '==': [START_DATE_DAY, SEMI_MONTHLY_DEFAULT_CYCLE_DAYS[0]] },
+    { in: [START_DATE_MONTH_DAY, MONTH_END_DATES] },
+    {
+      and: [{ '==': [START_DATE_MONTH_DAY, '02-28'] }, { '!': [IS_LEAP_YEAR] }],
+    },
+  ],
+};
+
+const STARTS_ON_CUSTOM_CYCLE_DAY = {
+  or: [
+    {
+      '==': [
+        START_DATE_DAY,
+        { '+': [{ var: 'semi_monthly_settings.first_invoice_day' }] },
+      ],
+    },
+    { '==': [START_DATE_DAY, SECOND_INVOICE_DAY_RULE] },
+  ],
+};
+
+const START_DATE_MATCHES_CYCLE_VALIDATION = 'start_date_matches_cycle';
 
 function dayOptions(from: number, to: number) {
   return Array.from({ length: to - from + 1 }, (_, index) => ({
@@ -369,6 +427,9 @@ export function buildCreateInvoiceScheduleSchema({
           inputType: 'date',
           minDate: new Date().toISOString().slice(0, 10),
         },
+        ...(includeCustomDays
+          ? { 'x-jsf-logic-validations': [START_DATE_MATCHES_CYCLE_VALIDATION] }
+          : {}),
       },
       ...(includeCustomDays
         ? { semi_monthly_settings: semiMonthlySettingsProperty() }
@@ -437,6 +498,36 @@ export function buildCreateInvoiceScheduleSchema({
       'note',
     ],
     'x-jsf-logic': {
+      ...(includeCustomDays
+        ? {
+            validations: {
+              [START_DATE_MATCHES_CYCLE_VALIDATION]: {
+                errorMessage:
+                  'Choose a date that matches the selected invoicing cycle',
+                rule: {
+                  or: [
+                    { '!': [START_DATE_VAR] },
+                    {
+                      '!=': [{ var: 'periodicity' }, SEMI_MONTHLY_PERIODICITY],
+                    },
+                    {
+                      if: [
+                        {
+                          '==': [
+                            { var: 'semi_monthly_settings.invoicing_cycle' },
+                            SEMI_MONTHLY_CUSTOM_CYCLE,
+                          ],
+                        },
+                        STARTS_ON_CUSTOM_CYCLE_DAY,
+                        STARTS_ON_DEFAULT_CYCLE_DAY,
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+          }
+        : {}),
       computedValues: {
         currency_selected: {
           rule: { var: 'currency' },

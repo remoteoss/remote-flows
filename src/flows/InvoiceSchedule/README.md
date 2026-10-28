@@ -210,6 +210,8 @@ raised 14 days after the first. It is derived in the schema (a computed `const`)
 no form code. The group is sent as `custom_days`: `[15, 31]` for the default cycle
 (the API treats 31 as the last day of the month) and `[first, first + 14]` for a custom one.
 
+The start date must fall on one of the cycle's days: the 15th or the last day of the month for the default cycle, or the first or second day for a custom one. Any other date fails validation on `start_date` with "Choose a date that matches the selected invoicing cycle". The date picker is not restricted to those days, so the error appears after a date is picked.
+
 ## Current limitations
 
 - **Create only.** Editing an existing schedule is not part of this flow.

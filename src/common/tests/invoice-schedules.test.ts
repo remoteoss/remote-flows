@@ -358,6 +358,114 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     expect(currency?.options?.[0]?.disabled).toBe(true);
   });
 
+  describe('semi-monthly start date', () => {
+    const MESSAGE = 'Choose a date that matches the selected invoicing cycle';
+
+    const buildForm = () =>
+      createHeadlessForm(
+        buildCreateInvoiceScheduleSchema({
+          currencies: ['USD'],
+          includeCustomDays: true,
+        }) as $TSFixMe,
+        {},
+      );
+
+    const semiMonthlyValues = (
+      start_date: string,
+      semi_monthly_settings: Record<string, string> = {
+        invoicing_cycle: 'default_cycle',
+      },
+    ) => ({
+      ...baseValues,
+      periodicity: 'semi_monthly',
+      end_type: 'never',
+      start_date,
+      semi_monthly_settings,
+    });
+
+    const startDateError = async (
+      values: ReturnType<typeof semiMonthlyValues>,
+    ) => (await buildForm().handleValidation(values))?.formErrors?.start_date;
+
+    it.each(['2099-01-15', '2099-01-31', '2099-04-30', '2099-02-28'])(
+      'accepts %s for the default cycle',
+      async (date) => {
+        expect(await startDateError(semiMonthlyValues(date))).toBeUndefined();
+      },
+    );
+
+    it.each(['2099-01-01', '2099-01-30', '2099-04-29', '2099-02-27'])(
+      'rejects %s for the default cycle',
+      async (date) => {
+        expect(await startDateError(semiMonthlyValues(date))).toBe(MESSAGE);
+      },
+    );
+
+    it('treats the 28th of February as month end only outside leap years', async () => {
+      expect(
+        await startDateError(semiMonthlyValues('2100-02-28')),
+      ).toBeUndefined();
+      expect(await startDateError(semiMonthlyValues('2096-02-28'))).toBe(
+        MESSAGE,
+      );
+      expect(
+        await startDateError(semiMonthlyValues('2096-02-29')),
+      ).toBeUndefined();
+    });
+
+    it('accepts either day of a custom cycle', async () => {
+      const custom = {
+        invoicing_cycle: 'custom_cycle',
+        first_invoice_day: '3',
+      };
+
+      expect(
+        await startDateError(semiMonthlyValues('2099-01-03', custom)),
+      ).toBeUndefined();
+      expect(
+        await startDateError(semiMonthlyValues('2099-01-17', custom)),
+      ).toBeUndefined();
+    });
+
+    it('rejects a day outside a custom cycle, including the default cycle days', async () => {
+      const custom = {
+        invoicing_cycle: 'custom_cycle',
+        first_invoice_day: '3',
+      };
+
+      expect(
+        await startDateError(semiMonthlyValues('2099-01-15', custom)),
+      ).toBe(MESSAGE);
+      expect(
+        await startDateError(semiMonthlyValues('2099-01-31', custom)),
+      ).toBe(MESSAGE);
+    });
+
+    it('does not constrain the start date of another frequency', async () => {
+      const values = {
+        ...semiMonthlyValues('2099-01-01'),
+        periodicity: 'monthly',
+      };
+
+      expect(await startDateError(values)).toBeUndefined();
+    });
+
+    it('leaves the start date unconstrained unless the cycle fields are included', async () => {
+      const form = createHeadlessForm(
+        buildCreateInvoiceScheduleSchema({ currencies: ['USD'] }) as $TSFixMe,
+        {},
+      );
+      const result = await form.handleValidation({
+        ...baseValues,
+        periodicity: 'semi_monthly',
+        end_type: 'never',
+        start_date: '2099-01-01',
+      });
+
+      expect(result?.formErrors?.start_date).toBeUndefined();
+    });
+  });
+
   describe('end date choice', () => {
     const buildForm = (options = {}) =>
       createHeadlessForm(

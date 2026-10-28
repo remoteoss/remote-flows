@@ -791,6 +791,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
 
     await fillScheduleDetails();
     await fillSelect('periodicity', 'semi_monthly');
+    await fillDatePickerByTestId('2100-01-15', 'start_date');
     chooseNoEndDate();
 
     expect(
@@ -821,6 +822,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
 
     await fillScheduleDetails();
     await fillSelect('periodicity', 'semi_monthly');
+    await fillDatePickerByTestId('2100-01-17', 'start_date');
     chooseNoEndDate();
 
     fireEvent.click(await screen.findByRole('radio', { name: 'Custom cycle' }));
@@ -838,6 +840,26 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
       periodicity: 'semi_monthly',
       custom_days: [3, 17],
     });
+  });
+
+  it('rejects a start date that is not a day of the selected cycle', async () => {
+    const request = captureCreateRequest();
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'semi_monthly');
+    chooseNoEndDate();
+
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    expect(
+      await screen.findByText(
+        'Choose a date that matches the selected invoicing cycle',
+      ),
+    ).toBeInTheDocument();
+    expect(onSuccess).not.toHaveBeenCalled();
+    expect(request.body).toBeUndefined();
   });
 
   it('does not offer the semi-monthly cycle for another frequency', async () => {
