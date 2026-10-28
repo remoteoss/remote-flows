@@ -700,8 +700,16 @@ function getInitialSubFieldValues(
   return initialValue;
 }
 
-function isMultiSelect(field: $TSFixMe) {
+export function isMultiSelect(field: $TSFixMe) {
   return field.type === supportedTypes.SELECT && field.multiple;
+}
+
+/**
+ * The field type to render a field with: a select that allows several values renders as a
+ * multi-select, every other field as its own type.
+ */
+export function getFieldRenderType(field: $TSFixMe): string {
+  return isMultiSelect(field) ? 'multi-select' : field.type;
 }
 
 export function getBlankRowValues(fields: $TSFixMe[]) {
