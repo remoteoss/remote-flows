@@ -133,7 +133,7 @@ Schema versions for employee onboarding in Morocco.
 
 **What changed:**
 
-- `available_pto` keeps the 18-day statutory minimum but is now validated for part-time employment too, with a clearer description. Part-time contracts below 18 days are rejected
+- The 18-day statutory minimum for `available_pto` now applies to part-time employment too. Before, only full-time contracts were checked and part-time days were pro-rated, so part-time contracts below 18 days are now rejected. The field description is also clearer
 
 **Migration:**
 
