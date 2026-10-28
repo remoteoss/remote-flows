@@ -43,7 +43,7 @@
     "@types/react-syntax-highlighter": "15.5.13",
     "@vitejs/plugin-react": "6.1.2",
     "nodemon": "3.1.14",
-    "oxlint": "1.87.0",
+    "oxlint": "1.89.0",
     "oxlint-tsgolint": "7.0.2004",
     "vite": "8.3.4"
   }
