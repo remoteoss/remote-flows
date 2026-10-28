@@ -13,7 +13,6 @@ type GroupArrayFieldProps = {
   minItems?: number;
   maxItems?: number;
   fields: $TSFixMe[];
-  component?: Components['group-array'];
   components?: Components;
 };
 
@@ -24,7 +23,6 @@ export function GroupArrayField({
   minItems = 0,
   maxItems,
   fields,
-  component,
   components,
 }: GroupArrayFieldProps) {
   const { components: formComponents } = useFormFields();
@@ -35,7 +33,8 @@ export function GroupArrayField({
     remove,
   } = useFieldArray({ control, name, keyName: 'rowId' });
 
-  const Component = component || formComponents?.['group-array'];
+  const Component =
+    components?.['group-array'] || formComponents?.['group-array'];
 
   if (!Component) {
     throw new Error(`Group array component not found for field ${name}`);

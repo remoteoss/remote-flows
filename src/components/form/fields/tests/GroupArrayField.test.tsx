@@ -257,4 +257,32 @@ describe('GroupArrayField', () => {
       'Group array component not found for field items',
     );
   });
+
+  it('uses a step-level group-array component over the default one', () => {
+    const StepCustom = vi.fn((_props: $TSFixMe) => null);
+
+    function Harness() {
+      const methods = useForm<FieldValues>({ defaultValues: { items: [] } });
+      return (
+        <FormProvider {...methods}>
+          <JSONSchemaFormFields
+            fields={[
+              {
+                name: 'items',
+                type: 'group-array',
+                label: 'Items',
+                isVisible: true,
+                fields: rowFields,
+              },
+            ]}
+            components={{ 'group-array': StepCustom }}
+          />
+        </FormProvider>
+      );
+    }
+
+    render(<Harness />);
+
+    expect(StepCustom.mock.calls[0][0].name).toBe('items');
+  });
 });
