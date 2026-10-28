@@ -54,7 +54,6 @@ export const useInvoiceSchedule = ({
     employmentId,
     jsfModify,
     isContractorOfRecord,
-    includeCustomDays: true,
   });
 
   const fields = useMemo(

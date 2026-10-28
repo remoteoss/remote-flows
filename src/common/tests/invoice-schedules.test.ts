@@ -296,17 +296,8 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     );
   });
 
-  it('omits the semi-monthly cycle by default, so the in-flow step is unchanged', () => {
+  it('exposes the semi-monthly cycle fieldset, hidden unless semi-monthly is chosen', () => {
     const schema = buildCreateInvoiceScheduleSchema();
-
-    expect(schema.properties).not.toHaveProperty('semi_monthly_settings');
-    expect(schema['x-jsf-order']).not.toContain('semi_monthly_settings');
-  });
-
-  it('exposes the semi-monthly cycle fieldset when asked, hidden unless semi-monthly is chosen', () => {
-    const schema = buildCreateInvoiceScheduleSchema({
-      includeCustomDays: true,
-    });
 
     expect(
       schema.properties.semi_monthly_settings?.['x-jsf-presentation'],
@@ -365,7 +356,6 @@ describe('buildCreateInvoiceScheduleSchema', () => {
       createHeadlessForm(
         buildCreateInvoiceScheduleSchema({
           currencies: ['USD'],
-          includeCustomDays: true,
         }) as $TSFixMe,
         {},
       );
@@ -448,21 +438,6 @@ describe('buildCreateInvoiceScheduleSchema', () => {
       };
 
       expect(await startDateError(values)).toBeUndefined();
-    });
-
-    it('leaves the start date unconstrained unless the cycle fields are included', async () => {
-      const form = createHeadlessForm(
-        buildCreateInvoiceScheduleSchema({ currencies: ['USD'] }) as $TSFixMe,
-        {},
-      );
-      const result = await form.handleValidation({
-        ...baseValues,
-        periodicity: 'semi_monthly',
-        end_type: 'never',
-        start_date: '2099-01-01',
-      });
-
-      expect(result?.formErrors?.start_date).toBeUndefined();
     });
   });
 

@@ -151,8 +151,6 @@ function dayOptions(from: number, to: number) {
   }));
 }
 
-// Only offered when asked for, so the in-flow onboarding step keeps the field set it
-// shipped with.
 function semiMonthlySettingsProperty() {
   return {
     title: 'Semi-monthly',
@@ -338,11 +336,6 @@ type CreateInvoiceScheduleSchemaOptions = {
    * Restrict to one-off only. Derive from the employment's `contractor_type === 'cor'`.
    */
   isContractorOfRecord?: boolean;
-  /**
-   * Offer the two semi-monthly day fields, which map to `custom_days`. Off by default so
-   * the in-flow onboarding step keeps the field set it shipped with.
-   */
-  includeCustomDays?: boolean;
 };
 
 /**
@@ -355,7 +348,6 @@ type CreateInvoiceScheduleSchemaOptions = {
 export function buildCreateInvoiceScheduleSchema({
   currencies,
   isContractorOfRecord = false,
-  includeCustomDays = false,
 }: CreateInvoiceScheduleSchemaOptions = {}) {
   return {
     type: 'object',
@@ -427,13 +419,9 @@ export function buildCreateInvoiceScheduleSchema({
           inputType: 'date',
           minDate: new Date().toISOString().slice(0, 10),
         },
-        ...(includeCustomDays
-          ? { 'x-jsf-logic-validations': [START_DATE_MATCHES_CYCLE_VALIDATION] }
-          : {}),
+        'x-jsf-logic-validations': [START_DATE_MATCHES_CYCLE_VALIDATION],
       },
-      ...(includeCustomDays
-        ? { semi_monthly_settings: semiMonthlySettingsProperty() }
-        : {}),
+      semi_monthly_settings: semiMonthlySettingsProperty(),
       ...invoiceItemProperties(),
       number: {
         description: 'Optional identifier shown on generated invoices.',
@@ -490,7 +478,7 @@ export function buildCreateInvoiceScheduleSchema({
       ...itemFieldOrder,
       'invoice_date_note',
       'periodicity',
-      ...(includeCustomDays ? ['semi_monthly_settings'] : []),
+      'semi_monthly_settings',
       'start_date',
       'end_type',
       'nr_occurrences',
@@ -498,36 +486,32 @@ export function buildCreateInvoiceScheduleSchema({
       'note',
     ],
     'x-jsf-logic': {
-      ...(includeCustomDays
-        ? {
-            validations: {
-              [START_DATE_MATCHES_CYCLE_VALIDATION]: {
-                errorMessage:
-                  'Choose a date that matches the selected invoicing cycle',
-                rule: {
-                  or: [
-                    { '!': [START_DATE_VAR] },
-                    {
-                      '!=': [{ var: 'periodicity' }, SEMI_MONTHLY_PERIODICITY],
-                    },
-                    {
-                      if: [
-                        {
-                          '==': [
-                            { var: 'semi_monthly_settings.invoicing_cycle' },
-                            SEMI_MONTHLY_CUSTOM_CYCLE,
-                          ],
-                        },
-                        STARTS_ON_CUSTOM_CYCLE_DAY,
-                        STARTS_ON_DEFAULT_CYCLE_DAY,
-                      ],
-                    },
-                  ],
-                },
+      validations: {
+        [START_DATE_MATCHES_CYCLE_VALIDATION]: {
+          errorMessage:
+            'Choose a date that matches the selected invoicing cycle',
+          rule: {
+            or: [
+              { '!': [START_DATE_VAR] },
+              {
+                '!=': [{ var: 'periodicity' }, SEMI_MONTHLY_PERIODICITY],
               },
-            },
-          }
-        : {}),
+              {
+                if: [
+                  {
+                    '==': [
+                      { var: 'semi_monthly_settings.invoicing_cycle' },
+                      SEMI_MONTHLY_CUSTOM_CYCLE,
+                    ],
+                  },
+                  STARTS_ON_CUSTOM_CYCLE_DAY,
+                  STARTS_ON_DEFAULT_CYCLE_DAY,
+                ],
+              },
+            ],
+          },
+        },
+      },
       computedValues: {
         currency_selected: {
           rule: { var: 'currency' },
@@ -563,7 +547,7 @@ export function buildCreateInvoiceScheduleSchema({
     },
     allOf: [
       ...invoiceItemRevealConditionals(),
-      ...(includeCustomDays ? [semiMonthlyConditional()] : []),
+      semiMonthlyConditional(),
       ...endDateConditionals(),
       startDateConditional(),
     ],
