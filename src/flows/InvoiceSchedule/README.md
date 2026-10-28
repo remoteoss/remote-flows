@@ -187,7 +187,7 @@ The form submits to `POST /v1/contractor-invoice-schedules`.
 | Invoice currency | `currency`       | Restricted to the contractor's supported currencies.                                                                                               |
 | Frequency        | `periodicity`    | See the one-off note below.                                                                                                                        |
 | Start date       | `start_date`     | Date the first invoice is generated. Today (UTC) or later.                                                                                         |
-| Items 1–10       | `items`          | Slot _n+1_ is revealed once slot _n_ is filled. The API accepts up to 10.                                                                          |
+| Invoice items    | `items`          | One row per item, added with "Add item" and removed with the row's remove button. At least one, and the API accepts up to 10.                      |
 | Invoice number   | `number`         | Optional — omit it and Remote numbers the invoice for you.                                                                                         |
 | Additional notes | `note`           | Optional.                                                                                                                                          |
 | End date         | `nr_occurrences` | Required for a recurring schedule: "No end date" omits it, "End after a number of occurrences" sends the count (at least 1). Hidden for a one-off. |

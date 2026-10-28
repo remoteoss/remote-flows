@@ -190,6 +190,8 @@ export type {
   Components,
   RemoteFlowsSDKProps,
   FieldSetToggleComponentProps,
+  GroupArrayComponentProps,
+  GroupArrayRowProps,
   ButtonComponentProps,
   ZendeskDrawerComponentProps,
   ZendeskTriggerButtonComponentProps,

@@ -12,6 +12,7 @@ import { RadioGroupFieldDefault } from '@/src/components/form/fields/default/Rad
 import { MultiSelectFieldDefault } from '@/src/components/form/fields/default/MultiSelectFieldDefault';
 import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
 import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
+import { GroupArrayFieldDefault } from '@/src/components/form/fields/default/GroupArrayFieldDefault';
 import { DrawerDefault } from '@/src/components/shared/drawer/DrawerDefault';
 import { ZendeskDrawerDefault } from '@/src/components/shared/zendesk-drawer/ZendeskDrawerDefault';
 import { ZendeskTriggerButtonDefault } from '@/src/components/shared/zendesk-drawer/default/ZendeskTriggerButtonDefault';
@@ -39,6 +40,7 @@ export const defaultComponents: Components = {
   fieldsetToggle: FieldsetToggleButtonDefault,
   file: FileUploadFieldDefault,
   forcedValue: ForcedValueFieldDefault,
+  'group-array': GroupArrayFieldDefault,
   // TODO: we have doubts multi-select, it's actually used
   'multi-select': MultiSelectFieldDefault,
   number: NumberFieldDefault,

@@ -103,6 +103,7 @@ Available component types include:
 - `file` - File upload fields
 - `work-schedule` - Work schedule fields
 - `fieldsetToggle` - Fieldset toggle buttons
+- `group-array` - Repeatable group of fields, such as invoice items
 - `statement` - Statement/information display
 - `table` - Table components
 - `drawer` - Drawer components
@@ -129,12 +130,13 @@ and their typescript definitions
 - `TelFieldComponentProps`: for the tel component
 - `TimeFieldComponentProps`: for the timefield component
 - `ForcedValueComponentProps`: for the forced value component
+- `GroupArrayComponentProps`: for the group-array component
 
 > **Tip:** Check [src/default-components.ts](../src/default-components.ts) to see the default implementations. You can use these as a starting point or reference when building your own custom components.
 
 ### Important Notes
 
-- All custom components are wrapped with React Hook Form's `Controller` except zendeskDrawer, pdfViewer, table, drawer, statement, fieldsetToggle
+- All custom components are wrapped with React Hook Form's `Controller` except zendeskDrawer, pdfViewer, table, drawer, statement, fieldsetToggle, group-array
 - You **must** bind the `field` props to your HTML elements for proper form state management
 - Use the exported TypeScript types for proper typing
 
@@ -396,6 +398,32 @@ type JSFCustomComponentProps = {
   // ... additional JSON Schema Form props
 };
 ```
+
+### GroupArrayComponentProps
+
+The `group-array` component lays out a repeatable group of fields, such as the invoice items of a schedule. The SDK keeps the rows in the form and renders each row's inputs with your other field components. Your component only places them and shows the add and remove controls.
+
+```typescript
+type GroupArrayComponentProps = {
+  name: string;
+  label: string;
+  hideLabel?: boolean;
+  description?: React.ReactNode;
+  addFieldText: string;
+  rows: Array<{
+    id: string;
+    index: number;
+    fields: React.ReactNode; // the row's inputs, already rendered
+    canRemove: boolean;
+    remove: () => void;
+  }>;
+  canAdd: boolean; // false once the group's `maxItems` is reached
+  add: () => void;
+  error?: string; // an error on the group itself, such as too few items
+};
+```
+
+Per-row errors are shown by the row's own inputs. They are not passed to this component.
 
 ### ZendeskTriggerButtonComponentProps
 

@@ -19,34 +19,26 @@ describe('useGetCreateInvoiceScheduleSchema', () => {
     queryClient.clear();
   });
 
-  it('shows only the first item row when there are no saved values', async () => {
+  it('offers an items group of up to ten rows', async () => {
     const { result } = renderForm();
 
     await waitFor(() => expect(result.current.data).not.toBeNull());
 
-    const fields = result.current.data?.fields ?? [];
-    expect(fields.find((f) => f.name === 'item_2_description')?.isVisible).toBe(
-      false,
-    );
+    const items = result.current.data?.fields.find((f) => f.name === 'items');
+    expect(items).toMatchObject({
+      type: 'group-array',
+      minItems: 1,
+      maxItems: 10,
+    });
   });
 
-  it('shows the item rows a saved schedule needs on the first build', async () => {
-    const { result } = renderForm({
-      item_1_description: 'Design work',
-      item_1_amount: 250000,
-      item_2_description: 'Hosting',
-      item_2_amount: 7500,
-    });
+  it('hands the selected currency to the item amounts', async () => {
+    const { result } = renderForm({ currency: 'EUR' });
 
     await waitFor(() => expect(result.current.data).not.toBeNull());
 
-    const fields = result.current.data?.fields ?? [];
-    expect(fields.find((f) => f.name === 'item_2_description')?.isVisible).toBe(
-      true,
-    );
-    expect(fields.find((f) => f.name === 'item_3_description')?.isVisible).toBe(
-      true,
-    );
+    const items = result.current.data?.fields.find((f) => f.name === 'items');
+    expect(items?.additionalProps).toEqual({ currency: 'EUR' });
   });
 
   describe('start_date minimum', () => {

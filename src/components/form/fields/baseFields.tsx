@@ -18,7 +18,7 @@ import { SupportedTypes } from './types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
 export const baseFields: Record<
-  Exclude<SupportedTypes, 'fieldset' | 'fieldset-flat'>,
+  Exclude<SupportedTypes, 'fieldset' | 'fieldset-flat' | 'group-array'>,
   React.ComponentType<$TSFixMe>
 > = {
   checkbox: CheckBoxField,

@@ -24,8 +24,7 @@ describe('buildInvoicePreviewPayload', () => {
     const payload = buildInvoicePreviewPayload({
       currency: 'EUR',
       start_date: '2026-06-01',
-      item_1_description: 'Consulting work',
-      item_1_amount: 250000,
+      items: [{ description: 'Consulting work', amount: 250000 }],
     });
 
     expect(payload).toEqual({

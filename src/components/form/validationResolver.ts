@@ -46,6 +46,23 @@ export function iterateFormErrors(
         };
       }
 
+      if (
+        Array.isArray(message) &&
+        message.some((row) => typeof row === 'object' && row !== null)
+      ) {
+        return {
+          ...allErrors,
+          ...iterateFormErrors(
+            Object.fromEntries(
+              message.flatMap((row, index) =>
+                row === null || row === undefined ? [] : [[index, row]],
+              ),
+            ) as FormErrors,
+            fullPath,
+          ),
+        };
+      }
+
       // Extract the error message string from various payload formats
       const messageString =
         typeof message === 'string' ? message : JSON.stringify(message);
