@@ -2,8 +2,9 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import {
   FieldValues,
   FormProvider,
-  UseFormReturn,
   useForm,
+  useFormContext,
+  useWatch,
 } from 'react-hook-form';
 import { GroupArrayField } from '@/src/components/form/fields/GroupArrayField';
 import { TextFieldDefault } from '@/src/components/form/fields/default/TextFieldDefault';
@@ -24,6 +25,13 @@ const rowFields = [
   { name: 'amount', label: 'Amount', type: 'text' },
 ];
 
+function FormItems() {
+  const { control } = useFormContext();
+  const items = useWatch({ control, name: 'items' });
+
+  return <output data-testid='items'>{JSON.stringify(items)}</output>;
+}
+
 function renderGroup({
   rows = [{ description: 'Design work', amount: '2500' }],
   fields = rowFields,
@@ -31,10 +39,8 @@ function renderGroup({
 }: Partial<React.ComponentProps<typeof GroupArrayField>> & {
   rows?: Record<string, string>[];
 } = {}) {
-  let methods!: UseFormReturn;
-
   function Harness() {
-    methods = useForm<FieldValues>({ defaultValues: { items: rows } });
+    const methods = useForm<FieldValues>({ defaultValues: { items: rows } });
     return (
       <FormProvider {...methods}>
         <GroupArrayField
@@ -43,12 +49,15 @@ function renderGroup({
           fields={fields}
           {...props}
         />
+        <FormItems />
       </FormProvider>
     );
   }
 
   render(<Harness />);
-  return { getValues: () => methods.getValues() };
+  return {
+    getItems: () => JSON.parse(screen.getByTestId('items').textContent ?? ''),
+  };
 }
 
 describe('GroupArrayField', () => {
@@ -72,18 +81,18 @@ describe('GroupArrayField', () => {
   });
 
   it('appends a blank row from the add button', () => {
-    const { getValues } = renderGroup({ addFieldText: 'Add line' });
+    const { getItems } = renderGroup({ addFieldText: 'Add line' });
 
     fireEvent.click(screen.getByRole('button', { name: 'Add line' }));
 
-    expect(getValues().items).toEqual([
+    expect(getItems()).toEqual([
       { description: 'Design work', amount: '2500' },
       { description: '', amount: '' },
     ]);
   });
 
   it('removes the row whose remove button is pressed', () => {
-    const { getValues } = renderGroup({
+    const { getItems } = renderGroup({
       rows: [
         { description: 'First', amount: '1' },
         { description: 'Second', amount: '2' },
@@ -93,7 +102,7 @@ describe('GroupArrayField', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Remove Items 2' }));
 
-    expect(getValues().items).toEqual([
+    expect(getItems()).toEqual([
       { description: 'First', amount: '1' },
       { description: 'Third', amount: '3' },
     ]);
