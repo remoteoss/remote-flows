@@ -41,6 +41,7 @@ export function SelectFieldDefault({
       <FormControl>
         <div className='relative'>
           <Select
+            disabled={fieldData.readOnly}
             value={field.value || ''}
             onValueChange={(value: string) => {
               field.onChange(value);

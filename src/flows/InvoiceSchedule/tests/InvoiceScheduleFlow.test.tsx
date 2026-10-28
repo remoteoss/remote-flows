@@ -784,7 +784,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     expect(onSuccess).not.toHaveBeenCalled();
   });
 
-  it('sends the two invoice days of a semi-monthly schedule as custom_days', async () => {
+  it('sends the 15th and the last day for the default semi-monthly cycle', async () => {
     const request = captureCreateRequest();
     const onSuccess = vi.fn();
     renderFlow({ onSuccess });
@@ -793,12 +793,14 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     await fillSelect('periodicity', 'semi_monthly');
     chooseNoEndDate();
 
-    fireEvent.change(await screen.findByLabelText(/First invoice day/i), {
-      target: { value: '1' },
-    });
-    fireEvent.change(screen.getByLabelText(/Second invoice day/i), {
-      target: { value: '15' },
-    });
+    expect(
+      await screen.findByRole('radio', {
+        name: '15th and last day of the month',
+      }),
+    ).toBeChecked();
+    expect(
+      screen.queryByText('First invoice raised on'),
+    ).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
@@ -808,8 +810,58 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
 
     expect(request.body.contractor_invoice_schedules[0]).toMatchObject({
       periodicity: 'semi_monthly',
-      custom_days: [1, 15],
+      custom_days: [15, 31],
     });
+  });
+
+  it('reveals the day selects for a custom cycle and sends the first day and the one 14 days later', async () => {
+    const request = captureCreateRequest();
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'semi_monthly');
+    chooseNoEndDate();
+
+    fireEvent.click(await screen.findByRole('radio', { name: 'Custom cycle' }));
+    await fillSelect('semi_monthly_settings.first_invoice_day', '3');
+
+    expect(
+      screen.getByTestId('semi_monthly_settings.second_invoice_day'),
+    ).toHaveValue('17');
+
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalled();
+    });
+
+    expect(request.body.contractor_invoice_schedules[0]).toMatchObject({
+      periodicity: 'semi_monthly',
+      custom_days: [3, 17],
+    });
+  });
+
+  it('does not offer the semi-monthly cycle for another frequency', async () => {
+    const request = captureCreateRequest();
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'monthly');
+    chooseNoEndDate();
+
+    expect(screen.queryByText('Invoicing cycle')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalled();
+    });
+
+    expect(request.body.contractor_invoice_schedules[0]).not.toHaveProperty(
+      'custom_days',
+    );
   });
 
   it('sends every filled item row, in order', async () => {

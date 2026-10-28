@@ -7,6 +7,7 @@ import {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
   buildRecurrence,
+  toOrdinal,
 } from '@/src/common/invoice-schedules';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { $TSFixMe } from '@/src/types/remoteFlows';
@@ -116,8 +117,11 @@ describe('buildInvoiceSchedulePayload', () => {
       buildInvoiceSchedulePayload({
         ...baseValues,
         periodicity: 'semi_monthly',
-        custom_day_1: 1,
-        custom_day_2: 15,
+        semi_monthly_settings: {
+          invoicing_cycle: 'custom_cycle',
+          first_invoice_day: 1,
+          second_invoice_day: 15,
+        },
       }),
     ).toEqual({
       currency: 'USD',
@@ -132,8 +136,7 @@ describe('buildInvoiceSchedulePayload', () => {
     expect(
       buildInvoiceSchedulePayload({
         ...baseValues,
-        custom_day_1: 1,
-        custom_day_2: 15,
+        semi_monthly_settings: { invoicing_cycle: 'default_cycle' },
       }),
     ).not.toHaveProperty('custom_days');
   });
@@ -159,44 +162,76 @@ describe('buildInvoiceSchedulePayload', () => {
 });
 
 describe('buildCustomDays', () => {
-  it('returns the pair for a semi-monthly schedule', () => {
+  it('is the 15th and the last day for the default cycle', () => {
     expect(
       buildCustomDays({
         periodicity: 'semi_monthly',
-        custom_day_1: 1,
-        custom_day_2: 15,
+        semi_monthly_settings: { invoicing_cycle: 'default_cycle' },
       }),
-    ).toEqual([1, 15]);
+    ).toEqual([15, 31]);
   });
 
-  it('coerces string inputs, since number fields submit strings', () => {
+  it('is the chosen first day and the day 14 days after it for a custom cycle', () => {
     expect(
       buildCustomDays({
         periodicity: 'semi_monthly',
-        custom_day_1: '3',
-        custom_day_2: '17',
+        semi_monthly_settings: {
+          invoicing_cycle: 'custom_cycle',
+          first_invoice_day: 3,
+        },
       }),
     ).toEqual([3, 17]);
+  });
+
+  it('coerces a string day, since select values can arrive as strings', () => {
+    expect(
+      buildCustomDays({
+        periodicity: 'semi_monthly',
+        semi_monthly_settings: {
+          invoicing_cycle: 'custom_cycle',
+          first_invoice_day: '14',
+        },
+      }),
+    ).toEqual([14, 28]);
   });
 
   it('is undefined for any other periodicity, which the API rejects the field for', () => {
     expect(
       buildCustomDays({
         periodicity: 'monthly',
-        custom_day_1: 1,
-        custom_day_2: 15,
+        semi_monthly_settings: { invoicing_cycle: 'default_cycle' },
       }),
     ).toBeUndefined();
   });
 
-  it('is undefined when only one day is given, falling back to the derived cycle', () => {
+  it('is undefined when a custom cycle has no first day', () => {
     expect(
-      buildCustomDays({ periodicity: 'semi_monthly', custom_day_1: 1 }),
+      buildCustomDays({
+        periodicity: 'semi_monthly',
+        semi_monthly_settings: { invoicing_cycle: 'custom_cycle' },
+      }),
     ).toBeUndefined();
   });
 
-  it('is undefined when neither day is given', () => {
+  it('is undefined when the settings are absent', () => {
     expect(buildCustomDays({ periodicity: 'semi_monthly' })).toBeUndefined();
+  });
+});
+
+describe('toOrdinal', () => {
+  it.each([
+    [1, '1st'],
+    [2, '2nd'],
+    [3, '3rd'],
+    [4, '4th'],
+    [11, '11th'],
+    [12, '12th'],
+    [13, '13th'],
+    [21, '21st'],
+    [22, '22nd'],
+    [28, '28th'],
+  ])('formats %i as %s', (day, expected) => {
+    expect(toOrdinal(day)).toBe(expected);
   });
 });
 
@@ -261,26 +296,27 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     );
   });
 
-  it('omits the semi-monthly day fields by default, so the in-flow step is unchanged', () => {
+  it('omits the semi-monthly cycle by default, so the in-flow step is unchanged', () => {
     const schema = buildCreateInvoiceScheduleSchema();
 
-    expect(schema.properties).not.toHaveProperty('custom_day_1');
-    expect(schema['x-jsf-order']).not.toContain('custom_day_1');
+    expect(schema.properties).not.toHaveProperty('semi_monthly_settings');
+    expect(schema['x-jsf-order']).not.toContain('semi_monthly_settings');
   });
 
-  it('exposes the semi-monthly day fields when asked, hidden unless semi-monthly is chosen', () => {
+  it('exposes the semi-monthly cycle fieldset when asked, hidden unless semi-monthly is chosen', () => {
     const schema = buildCreateInvoiceScheduleSchema({
       includeCustomDays: true,
     });
 
-    expect(schema.properties).toHaveProperty('custom_day_1');
-    expect(schema.properties).toHaveProperty('custom_day_2');
-    expect(schema.required).not.toContain('custom_day_1');
+    expect(
+      schema.properties.semi_monthly_settings['x-jsf-presentation'],
+    ).toEqual({ inputType: 'fieldset' });
+    expect(schema.required).not.toContain('semi_monthly_settings');
 
     const hides = schema.allOf.some(
       (c: Record<string, $TSFixMe>) =>
         c.if?.properties?.periodicity?.const === 'semi_monthly' &&
-        c.else?.properties?.custom_day_1 === false,
+        c.else?.properties?.semi_monthly_settings === false,
     );
     expect(hides).toBe(true);
   });
