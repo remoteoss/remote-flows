@@ -9,7 +9,8 @@ The flow acts on one contractor, which you name with the required `employmentId`
 source that id — a picker of your own, a route param, the row the user clicked — is up to you.
 
 If you want the invoice-schedule step **inside** contractor onboarding, that is part of the
-[Contractor Onboarding](../ContractorOnboarding/README.md) flow instead.
+[Contractor Onboarding](../ContractorOnboarding/README.md) flow instead. There the form is grouped under the platform's headings (Invoicing details, Invoice items,
+Invoicing preferences, Summary); this standalone flow renders the same fields without them.
 
 # Table of Contents
 

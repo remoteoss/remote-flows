@@ -4717,6 +4717,15 @@ describe('ContractorOnboardingFlow', () => {
       );
       expect(screen.getByLabelText(/Item 2 amount/i)).toHaveValue('7500');
 
+      [
+        'Invoicing details',
+        'Invoice items',
+        'Invoicing preferences',
+        'Summary',
+      ].forEach((heading) => {
+        expect(screen.getByText(heading)).toBeInTheDocument();
+      });
+
       fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
         target: { value: '3000' },
       });

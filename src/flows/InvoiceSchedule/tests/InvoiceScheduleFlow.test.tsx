@@ -90,6 +90,23 @@ describe('InvoiceScheduleFlow', () => {
     expect(screen.queryByTestId('employment_id')).not.toBeInTheDocument();
   });
 
+  it('renders the fields flat, without the onboarding step headings', async () => {
+    renderFlow();
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
+    });
+
+    [
+      'Invoicing details',
+      'Invoice items',
+      'Invoicing preferences',
+      'Summary',
+    ].forEach((heading) => {
+      expect(screen.queryByText(heading)).not.toBeInTheDocument();
+    });
+  });
+
   // A consumer reading the id off a route that has not resolved yet hands over an empty
   // string. The currencies query is disabled without one, so nothing is in flight and no
   // schema is built — reporting "ready" there hands back a form with no fields.
