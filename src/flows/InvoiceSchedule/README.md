@@ -9,7 +9,8 @@ The flow acts on one contractor, which you name with the required `employmentId`
 source that id — a picker of your own, a route param, the row the user clicked — is up to you.
 
 If you want the invoice-schedule step **inside** contractor onboarding, that is part of the
-[Contractor Onboarding](../ContractorOnboarding/README.md) flow instead.
+[Contractor Onboarding](../ContractorOnboarding/README.md) flow instead. There the form is grouped under the platform's headings (Invoicing details, Invoice items,
+Invoicing preferences, Summary); this standalone flow renders the same fields without them.
 
 # Table of Contents
 
@@ -205,9 +206,17 @@ platform. `contractor_type` arrives with the employment, so the recurring cadenc
 for a moment first; a recurring choice made in that window is cleared once the restriction is
 known. Note this is a client-side restriction; it is not enforced by the API today.
 
+## Semi-monthly cycle
+
+Choosing the semi-monthly frequency reveals a "Semi-monthly" group with an **Invoicing cycle**
+radio. The default is the 15th and the last day of the month. **Custom cycle** reveals
+**First invoice raised on** (1st to 14th) and a read-only line saying the second invoice is
+raised 14 days after the first. It is derived in the schema (a computed `const`), so it needs
+no form code. The group is sent as `custom_days`: `[15, 31]` for the default cycle
+(the API treats 31 as the last day of the month) and `[first, first + 14]` for a custom one.
+
+The start date must fall on one of the cycle's days: the 15th or the last day of the month for the default cycle, or the first or second day for a custom one. Any other date fails validation on `start_date` with "Choose a date that matches the selected invoicing cycle". The date picker is not restricted to those days, so the error appears after a date is picked.
+
 ## Current limitations
 
-- **Semi-monthly cycle.** Leave both invoice-day fields blank to use the cycle Remote derives
-  from your start date (that day and the day 14 days apart), or set them to pick the pair
-  yourself. One of the two must be the start date's day.
 - **Create only.** Editing an existing schedule is not part of this flow.

@@ -21,6 +21,7 @@ export {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
   buildRecurrence,
+  toOrdinal,
 } from './utils';
 
 export type { ContractorInvoicePreview } from './types';
