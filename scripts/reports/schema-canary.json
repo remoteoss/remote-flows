@@ -10,21 +10,24 @@
       "version": 4,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "ALB",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "ALB",
       "version": 4,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "ALB",
@@ -38,21 +41,24 @@
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "ARG",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "ARG",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "ARG",
@@ -66,21 +72,24 @@
       "version": 3,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "ARM",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "ARM",
       "version": 3,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "ARM",
@@ -94,21 +103,24 @@
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "AUS",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "AUS",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "AUS",
@@ -122,21 +134,24 @@
       "version": 8,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "AUT",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "AUT",
       "version": 8,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "AUT",
@@ -150,21 +165,24 @@
       "version": 8,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "BGD",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "BGD",
       "version": 8,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "BGD",
@@ -1379,29 +1397,29 @@
     },
     {
       "country": "MLT",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 5,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "MLT",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "MLT",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 5,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
     {
       "country": "MLT",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest-submit",
       "outcome": "pass"
     },
@@ -1491,29 +1509,29 @@
     },
     {
       "country": "MAR",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 8,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "MAR",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "MAR",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 8,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
     {
       "country": "MAR",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest-submit",
       "outcome": "pass"
     },
