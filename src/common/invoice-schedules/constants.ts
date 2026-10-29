@@ -45,6 +45,19 @@ export const ONE_TIME_PERIODICITY = 'one_time';
  */
 export const SEMI_MONTHLY_PERIODICITY = 'semi_monthly';
 
+export const SEMI_MONTHLY_DEFAULT_CYCLE = 'default_cycle';
+export const SEMI_MONTHLY_CUSTOM_CYCLE = 'custom_cycle';
+
+/**
+ * The backend treats 31 as "the end of the month": a shorter month issues on its last day.
+ */
+export const SEMI_MONTHLY_DEFAULT_CYCLE_DAYS: [number, number] = [15, 31];
+
+/**
+ * A custom cycle's second invoice is always this many days after the first.
+ */
+export const SEMI_MONTHLY_CYCLE_GAP_DAYS = 14;
+
 export const ONE_TIME_PERIODICITY_OPTION = {
   const: ONE_TIME_PERIODICITY,
   title: 'One time',

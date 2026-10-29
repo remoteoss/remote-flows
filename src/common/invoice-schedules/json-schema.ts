@@ -5,7 +5,13 @@ import {
   ONE_TIME_PERIODICITY_OPTION,
   PLACEHOLDER_OPTION,
   RECURRING_PERIODICITY_OPTIONS,
+  SEMI_MONTHLY_CUSTOM_CYCLE,
+  SEMI_MONTHLY_CYCLE_GAP_DAYS,
+  SEMI_MONTHLY_DEFAULT_CYCLE,
+  SEMI_MONTHLY_DEFAULT_CYCLE_DAYS,
+  SEMI_MONTHLY_PERIODICITY,
 } from '@/src/common/invoice-schedules/constants';
+import { toOrdinal } from '@/src/common/invoice-schedules/utils';
 
 function invoiceItemProperties() {
   const properties: Record<string, object> = {};
@@ -73,47 +79,162 @@ function invoiceItemRevealConditionals() {
   return conditionals;
 }
 
-// Only offered when asked for, so the in-flow onboarding step keeps the field set it
-// shipped with.
-function semiMonthlyDayProperties() {
+// A custom cycle's second invoice is the first one plus a fixed gap, so it is derived in the
+// schema rather than chosen. Only meaningful while the custom cycle fields are shown.
+const SECOND_INVOICE_DAY_RULE = {
+  '+': [
+    { var: 'semi_monthly_settings.first_invoice_day' },
+    SEMI_MONTHLY_CYCLE_GAP_DAYS,
+  ],
+};
+
+const START_DATE_VAR = { var: 'start_date' };
+const START_DATE_DAY = { '+': [{ substr: [START_DATE_VAR, 8, 2] }] };
+const START_DATE_MONTH_DAY = { substr: [START_DATE_VAR, 5, 5] };
+const START_DATE_YEAR = { '+': [{ substr: [START_DATE_VAR, 0, 4] }] };
+
+const MONTH_END_DATES = [
+  '01-31',
+  '02-29',
+  '03-31',
+  '04-30',
+  '05-31',
+  '06-30',
+  '07-31',
+  '08-31',
+  '09-30',
+  '10-31',
+  '11-30',
+  '12-31',
+];
+
+const IS_LEAP_YEAR = {
+  or: [
+    { '==': [{ '%': [START_DATE_YEAR, 400] }, 0] },
+    {
+      and: [
+        { '==': [{ '%': [START_DATE_YEAR, 4] }, 0] },
+        { '!=': [{ '%': [START_DATE_YEAR, 100] }, 0] },
+      ],
+    },
+  ],
+};
+
+const STARTS_ON_DEFAULT_CYCLE_DAY = {
+  or: [
+    { '==': [START_DATE_DAY, SEMI_MONTHLY_DEFAULT_CYCLE_DAYS[0]] },
+    { in: [START_DATE_MONTH_DAY, MONTH_END_DATES] },
+    {
+      and: [{ '==': [START_DATE_MONTH_DAY, '02-28'] }, { '!': [IS_LEAP_YEAR] }],
+    },
+  ],
+};
+
+const STARTS_ON_CUSTOM_CYCLE_DAY = {
+  or: [
+    {
+      '==': [
+        START_DATE_DAY,
+        { '+': [{ var: 'semi_monthly_settings.first_invoice_day' }] },
+      ],
+    },
+    { '==': [START_DATE_DAY, SECOND_INVOICE_DAY_RULE] },
+  ],
+};
+
+const START_DATE_MATCHES_CYCLE_VALIDATION = 'start_date_matches_cycle';
+
+function dayOptions(from: number, to: number) {
+  return Array.from({ length: to - from + 1 }, (_, index) => ({
+    const: String(from + index),
+    title: `${toOrdinal(from + index)} of the month`,
+  }));
+}
+
+function semiMonthlySettingsProperty() {
   return {
-    custom_day_1: {
-      description:
-        'First day of the month an invoice is generated. Leave both days blank to use the cycle derived from the start date. One of the two days must be the start date\u2019s day.',
-      title: 'First invoice day',
-      type: 'integer',
-      minimum: 1,
-      maximum: 31,
-      'x-jsf-presentation': {
-        inputType: 'number',
+    title: 'Semi-monthly',
+    type: 'object',
+    'x-jsf-presentation': {
+      inputType: 'fieldset',
+    },
+    properties: {
+      invoicing_cycle: {
+        title: 'Invoicing cycle',
+        type: 'string',
+        default: SEMI_MONTHLY_DEFAULT_CYCLE,
+        oneOf: [
+          {
+            const: SEMI_MONTHLY_DEFAULT_CYCLE,
+            title: '15th and last day of the month',
+          },
+          { const: SEMI_MONTHLY_CUSTOM_CYCLE, title: 'Custom cycle' },
+        ],
+        'x-jsf-presentation': {
+          inputType: 'radio',
+          direction: 'column',
+        },
+      },
+      first_invoice_day: {
+        title: 'First invoice raised on',
+        type: 'string',
+        default: '1',
+        oneOf: dayOptions(1, 14),
+        'x-jsf-presentation': {
+          inputType: 'select',
+        },
+      },
+      second_invoice_day: {
+        title: 'Second invoice raised on',
+        type: 'string',
+        readOnly: true,
+        'x-jsf-presentation': {
+          inputType: 'text',
+        },
+        'x-jsf-logic-computedAttrs': {
+          const: 'second_invoice_day_value',
+          default: 'second_invoice_day_value',
+          'x-jsf-presentation': {
+            statement: {
+              description: '{{second_invoice_day_label}}',
+            },
+          },
+        },
       },
     },
-    custom_day_2: {
-      description: 'Second day of the month an invoice is generated.',
-      title: 'Second invoice day',
-      type: 'integer',
-      minimum: 1,
-      maximum: 31,
-      'x-jsf-presentation': {
-        inputType: 'number',
+    required: ['invoicing_cycle'],
+    'x-jsf-order': [
+      'invoicing_cycle',
+      'first_invoice_day',
+      'second_invoice_day',
+    ],
+    allOf: [
+      {
+        if: {
+          properties: { invoicing_cycle: { const: SEMI_MONTHLY_CUSTOM_CYCLE } },
+          required: ['invoicing_cycle'],
+        },
+        then: { required: ['first_invoice_day', 'second_invoice_day'] },
+        else: {
+          properties: { first_invoice_day: false, second_invoice_day: false },
+        },
       },
-    },
+    ],
   };
 }
 
-// The two custom-day fields only mean anything for a semi-monthly schedule; the API rejects
-// them for any other periodicity. Hide them unless semi-monthly is selected.
+// The cycle fieldset only means anything for a semi-monthly schedule; the API rejects
+// custom days for any other periodicity. Hide it unless semi-monthly is selected.
 function semiMonthlyConditional() {
   return {
     if: {
       properties: { periodicity: { const: 'semi_monthly' } },
       required: ['periodicity'],
     },
-    then: {},
+    then: { required: ['semi_monthly_settings'] },
     else: {
       properties: {
-        custom_day_1: false,
-        custom_day_2: false,
+        semi_monthly_settings: false,
       },
     },
   };
@@ -279,6 +400,36 @@ const itemFieldOrder = Array.from(
   (_, index) => index + 1,
 ).flatMap((slot) => [`item_${slot}_description`, `item_${slot}_amount`]);
 
+function invoiceFieldsets() {
+  return {
+    invoicing_details: {
+      title: 'Invoicing details',
+      propertiesByName: ['currency'],
+    },
+    invoice_items: {
+      title: 'Invoice items',
+      propertiesByName: itemFieldOrder,
+    },
+    invoicing_preferences: {
+      title: 'Invoicing preferences',
+      propertiesByName: [
+        'invoice_date_note',
+        'periodicity',
+        'semi_monthly_settings',
+        'start_date',
+        'end_type',
+        'nr_occurrences',
+        'number',
+        'schedule_summary',
+      ],
+    },
+    summary: {
+      title: 'Summary',
+      propertiesByName: ['note'],
+    },
+  };
+}
+
 /**
  * Options offered for `periodicity`.
  *
@@ -311,10 +462,10 @@ type CreateInvoiceScheduleSchemaOptions = {
    */
   isContractorOfRecord?: boolean;
   /**
-   * Offer the two semi-monthly day fields, which map to `custom_days`. Off by default so
-   * the in-flow onboarding step keeps the field set it shipped with.
+   * Group the fields under the platform's headings (Invoicing details, Invoice items,
+   * Invoicing preferences, Summary). Off by default: the standalone flow renders them flat.
    */
-  includeCustomDays?: boolean;
+  includeFieldsets?: boolean;
 };
 
 /**
@@ -327,7 +478,7 @@ type CreateInvoiceScheduleSchemaOptions = {
 export function buildCreateInvoiceScheduleSchema({
   currencies,
   isContractorOfRecord = false,
-  includeCustomDays = false,
+  includeFieldsets = false,
 }: CreateInvoiceScheduleSchemaOptions = {}) {
   return {
     type: 'object',
@@ -399,8 +550,9 @@ export function buildCreateInvoiceScheduleSchema({
           inputType: 'date',
           minDate: new Date().toISOString().slice(0, 10),
         },
+        'x-jsf-logic-validations': [START_DATE_MATCHES_CYCLE_VALIDATION],
       },
-      ...(includeCustomDays ? semiMonthlyDayProperties() : {}),
+      semi_monthly_settings: semiMonthlySettingsProperty(),
       ...invoiceItemProperties(),
       number: {
         description: 'Optional identifier shown on generated invoices.',
@@ -453,12 +605,13 @@ export function buildCreateInvoiceScheduleSchema({
       'item_1_description',
       'item_1_amount',
     ],
+    ...(includeFieldsets ? { 'x-jsf-fieldsets': invoiceFieldsets() } : {}),
     'x-jsf-order': [
       'currency',
       ...itemFieldOrder,
       'invoice_date_note',
       'periodicity',
-      ...(includeCustomDays ? ['custom_day_1', 'custom_day_2'] : []),
+      'semi_monthly_settings',
       'start_date',
       'end_type',
       'nr_occurrences',
@@ -467,9 +620,57 @@ export function buildCreateInvoiceScheduleSchema({
       'note',
     ],
     'x-jsf-logic': {
+      validations: {
+        [START_DATE_MATCHES_CYCLE_VALIDATION]: {
+          errorMessage:
+            'Choose a date that matches the selected invoicing cycle',
+          rule: {
+            or: [
+              { '!': [START_DATE_VAR] },
+              {
+                '!=': [{ var: 'periodicity' }, SEMI_MONTHLY_PERIODICITY],
+              },
+              {
+                if: [
+                  {
+                    '==': [
+                      { var: 'semi_monthly_settings.invoicing_cycle' },
+                      SEMI_MONTHLY_CUSTOM_CYCLE,
+                    ],
+                  },
+                  STARTS_ON_CUSTOM_CYCLE_DAY,
+                  STARTS_ON_DEFAULT_CYCLE_DAY,
+                ],
+              },
+            ],
+          },
+        },
+      },
       computedValues: {
         currency_selected: {
           rule: { var: 'currency' },
+        },
+        second_invoice_day_value: {
+          rule: { cat: [SECOND_INVOICE_DAY_RULE] },
+        },
+        second_invoice_day_label: {
+          rule: {
+            cat: [
+              SECOND_INVOICE_DAY_RULE,
+              {
+                if: [
+                  { '==': [SECOND_INVOICE_DAY_RULE, 21] },
+                  'st',
+                  { '==': [SECOND_INVOICE_DAY_RULE, 22] },
+                  'nd',
+                  { '==': [SECOND_INVOICE_DAY_RULE, 23] },
+                  'rd',
+                  'th',
+                ],
+              },
+              ' of the month',
+            ],
+          },
         },
         ...scheduleSummaryComputedValues,
       },
@@ -481,7 +682,7 @@ export function buildCreateInvoiceScheduleSchema({
     },
     allOf: [
       ...invoiceItemRevealConditionals(),
-      ...(includeCustomDays ? [semiMonthlyConditional()] : []),
+      semiMonthlyConditional(),
       ...endDateConditionals(),
       scheduleSummaryConditional(),
       startDateConditional(),
