@@ -31,8 +31,8 @@ const schemaPaths = [
   },
   {
     jsfVersion: 'v0',
-    countryCode: 'LUX',
-    countryName: 'Luxembourg',
+    countryCode: 'LKA',
+    countryName: 'Sri Lanka',
     schema: contractDetailsSchemaV0JobTitleEligibility,
   },
 ];
