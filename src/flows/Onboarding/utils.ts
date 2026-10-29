@@ -214,6 +214,8 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'HKG',
   'ISL',
   'LUX',
+  'MAR',
+  'MLT',
 ];
 
 /**
