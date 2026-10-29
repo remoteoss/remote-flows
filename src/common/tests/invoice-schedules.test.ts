@@ -398,7 +398,7 @@ describe('buildCreateInvoiceScheduleSchema', () => {
         currencies: ['USD'],
         includeFieldsets: true,
       });
-      const grouped = Object.values(schema['x-jsf-fieldsets']).flatMap(
+      const grouped = Object.values(schema['x-jsf-fieldsets'] ?? {}).flatMap(
         (fieldset) => fieldset.propertiesByName,
       );
 
