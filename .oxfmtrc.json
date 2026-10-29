@@ -12,6 +12,9 @@
     "coverage/",
     "example/playwright-report/",
     "example/node_modules/",
+    "spike/angular/node_modules/",
+    "spike/angular/.angular/",
+    "spike/angular/dist/",
     "node_modules/"
   ]
 }
