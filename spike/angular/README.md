@@ -2,7 +2,11 @@
 
 Renders a JSON schema from the SDK's own form logic in Angular 22, with field components injected through a dependency injection token. Not part of the published package.
 
+The app imports the SDK's source directly, so install the repo root first:
+
 ```bash
+pnpm install
+cd spike/angular
 pnpm install
 pnpm start
 ```
