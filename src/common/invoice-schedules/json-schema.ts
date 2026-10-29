@@ -420,6 +420,7 @@ function invoiceFieldsets() {
         'end_type',
         'nr_occurrences',
         'number',
+        'schedule_summary',
       ],
     },
     summary: {

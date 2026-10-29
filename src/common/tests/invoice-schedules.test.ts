@@ -392,6 +392,20 @@ describe('buildCreateInvoiceScheduleSchema', () => {
       expect(new Set(grouped).size).toBe(grouped.length);
       expect([...fieldNames].sort()).toEqual([...grouped].sort());
     });
+
+    it('groups every schema property, including the conditional schedule summary', () => {
+      const schema = buildCreateInvoiceScheduleSchema({
+        currencies: ['USD'],
+        includeFieldsets: true,
+      });
+      const grouped = Object.values(schema['x-jsf-fieldsets']).flatMap(
+        (fieldset) => fieldset.propertiesByName,
+      );
+
+      expect(Object.keys(schema.properties).sort()).toEqual(
+        [...grouped].sort(),
+      );
+    });
   });
 
   describe('semi-monthly start date', () => {
