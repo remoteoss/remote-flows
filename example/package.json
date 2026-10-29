@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "commonjs",
-  "packageManager": "pnpm@12.11.1",
+  "packageManager": "pnpm@12.15.0",
   "scripts": {
     "preinstall": "test -n \"$VERCEL\" || npx only-allow pnpm",
     "audit": "pnpm audit --audit-level=high",
@@ -27,7 +27,7 @@
     "dompurify": "3.4.17",
     "dotenv": "18.0.8",
     "express": "5.3.0",
-    "html-react-parser": "6.1.8",
+    "html-react-parser": "6.1.9",
     "jsonwebtoken": "9.0.3",
     "react": "18.3.1",
     "react-dom": "18.3.1",
@@ -43,7 +43,7 @@
     "@types/react-syntax-highlighter": "15.5.13",
     "@vitejs/plugin-react": "6.1.2",
     "nodemon": "3.1.14",
-    "oxlint": "1.87.0",
+    "oxlint": "1.89.0",
     "oxlint-tsgolint": "7.0.2004",
     "vite": "8.3.4"
   }

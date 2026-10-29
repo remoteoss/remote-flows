@@ -801,6 +801,7 @@ export const useContractorOnboarding = ({
       stepState.currentStep.name === 'create_invoice_schedule',
     employmentId: internalEmploymentId,
     jsfModify: options?.jsfModify?.create_invoice_schedule,
+    includeFieldsets: true,
     initialValues: createInvoiceScheduleSavedValues,
   });
 
@@ -862,7 +863,7 @@ export const useContractorOnboarding = ({
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
     contract_origin: null,
     invoice_schedule: null,
-    create_invoice_schedule: null,
+    create_invoice_schedule: createInvoiceScheduleForm?.meta['x-jsf-fieldsets'],
     pricing_plan: null,
     contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
     eligibility_questionnaire: null,

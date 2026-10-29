@@ -32,9 +32,9 @@ type UseGetCreateInvoiceScheduleSchemaParams = {
    */
   isContractorOfRecord?: boolean;
   /**
-   * Offer the two semi-monthly day fields, which map to `custom_days`.
+   * Group the fields under the platform's headings. Off for the standalone flow.
    */
-  includeCustomDays?: boolean;
+  includeFieldsets?: boolean;
   /**
    * Saved values in API units (item amounts in cents). They seed the first build so the item
    * rows a saved schedule needs are visible before the step mounts.
@@ -53,7 +53,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
   employmentId,
   jsfModify,
   isContractorOfRecord,
-  includeCustomDays,
+  includeFieldsets,
   initialValues,
 }: UseGetCreateInvoiceScheduleSchemaParams) => {
   const { data: currencies, isLoading } = useContractorCurrencies({
@@ -75,9 +75,9 @@ export const useGetCreateInvoiceScheduleSchema = ({
         (currency: { code: string; source: string }) => currency.code,
       ),
       isContractorOfRecord,
-      includeCustomDays,
+      includeFieldsets,
     });
-  }, [enabled, currencies, isContractorOfRecord, includeCustomDays]);
+  }, [enabled, currencies, isContractorOfRecord, includeFieldsets]);
 
   const headlessForm = useHeadlessForm({
     schema,
