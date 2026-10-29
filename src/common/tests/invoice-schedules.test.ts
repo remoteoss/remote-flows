@@ -620,7 +620,7 @@ describe('buildInvoiceScheduleFormValues', () => {
   describe('semi-monthly cycle', () => {
     const saved = (custom_days: [number, number] | null) => ({
       currency: 'EUR',
-      periodicity: 'semi_monthly',
+      periodicity: 'semi_monthly' as const,
       start_date: '2026-10-03',
       number: null,
       note: null,
@@ -650,7 +650,7 @@ describe('buildInvoiceScheduleFormValues', () => {
       expect(
         buildInvoiceScheduleFormValues({
           ...saved([3, 17]),
-          periodicity: 'monthly',
+          periodicity: 'monthly' as const,
         }),
       ).not.toHaveProperty('semi_monthly_settings');
     });
