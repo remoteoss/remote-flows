@@ -278,6 +278,101 @@ function endDateConditionals() {
   ];
 }
 
+const SUMMARY_PERIODICITIES = ['weekly', 'bi_weekly', 'monthly'];
+
+function scheduleSummaryProperty() {
+  return {
+    type: 'null',
+    title: 'Schedule summary',
+    'x-jsf-presentation': {
+      inputType: 'hidden',
+      statement: {
+        description: '',
+        inputType: 'statement',
+        severity: 'info',
+      },
+      meta: {
+        ignoreValue: true,
+      },
+    },
+    'x-jsf-logic-computedAttrs': {
+      'x-jsf-presentation': {
+        statement: {
+          description:
+            'This schedule will create a <strong>{{schedule_frequency}}</strong> recurring invoice{{schedule_end}}, starting <strong>{{schedule_start}}</strong>.',
+        },
+      },
+    },
+  };
+}
+
+const scheduleSummaryComputedValues = {
+  schedule_frequency: {
+    rule: {
+      if: [
+        { '==': [{ var: 'periodicity' }, 'bi_weekly'] },
+        'bi-weekly',
+        { var: 'periodicity' },
+      ],
+    },
+  },
+  schedule_end: {
+    rule: {
+      if: [
+        { '==': [{ var: 'end_type' }, END_TYPE_NEVER] },
+        ' <strong>with no end date</strong>',
+        { '==': [{ var: 'end_type' }, END_TYPE_MULTIPLE] },
+        {
+          cat: [
+            ' that <strong>ends after ',
+            {
+              if: [
+                { var: 'nr_occurrences' },
+                {
+                  if: [
+                    { '==': [{ var: 'nr_occurrences' }, 1] },
+                    'one occurrence',
+                    { cat: [{ var: 'nr_occurrences' }, ' occurrences'] },
+                  ],
+                },
+                '\u2014',
+              ],
+            },
+            '</strong>',
+          ],
+        },
+        '',
+      ],
+    },
+  },
+  schedule_start: {
+    rule: {
+      if: [
+        { var: 'start_date' },
+        { date_format: [{ var: 'start_date' }, 'MMMM d, yyyy'] },
+        '\u2014',
+      ],
+    },
+  },
+};
+
+function scheduleSummaryConditional() {
+  return {
+    if: {
+      properties: {
+        periodicity: { enum: SUMMARY_PERIODICITIES },
+      },
+      required: ['periodicity'],
+    },
+    then: {},
+    else: {
+      properties: {
+        schedule_summary: false,
+      },
+    },
+  };
+}
+
 function startDateConditional() {
   return {
     if: {
@@ -467,6 +562,7 @@ export function buildCreateInvoiceScheduleSchema({
           inputType: 'text',
         },
       },
+      schedule_summary: scheduleSummaryProperty(),
       note: {
         description: 'Shown on generated invoices.',
         title: 'Additional notes',
@@ -519,6 +615,7 @@ export function buildCreateInvoiceScheduleSchema({
       'end_type',
       'nr_occurrences',
       'number',
+      'schedule_summary',
       'note',
     ],
     'x-jsf-logic': {
@@ -574,6 +671,7 @@ export function buildCreateInvoiceScheduleSchema({
             ],
           },
         },
+        ...scheduleSummaryComputedValues,
       },
     },
     // Carried over when this schema moved here: the static ContractorOnboarding schemas
@@ -585,6 +683,7 @@ export function buildCreateInvoiceScheduleSchema({
       ...invoiceItemRevealConditionals(),
       semiMonthlyConditional(),
       ...endDateConditionals(),
+      scheduleSummaryConditional(),
       startDateConditional(),
     ],
   };
