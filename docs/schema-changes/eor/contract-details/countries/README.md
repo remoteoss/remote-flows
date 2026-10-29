@@ -94,13 +94,13 @@ Click a country name to open its migration guide. Countries without a link are o
 | North Macedonia                  | MKD  | v1               | v6              | No         | -            |
 | [Norway](./NOR.md)               | NOR  | v7               | v7              | Yes        | October 2026 |
 | [Pakistan](./PAK.md)             | PAK  | v4               | v4              | Yes        | October 2026 |
-| Panama                           | PAN  | v1               | v7              | No         | -            |
+| [Panama](./PAN.md)               | PAN  | v7               | v7              | Yes        | October 2026 |
 | Paraguay                         | PRY  | v1               | v8              | No         | -            |
 | [Peru](./PER.md)                 | PER  | v4               | v4              | Yes        | October 2026 |
 | [Philippines](./PHL.md)          | PHL  | v9               | v9              | Yes        | October 2026 |
 | [Poland](./POL.md)               | POL  | v5               | v5              | Yes        | October 2026 |
 | [Portugal](./PRT.md)             | PRT  | v9               | v9              | Yes        | October 2026 |
-| Puerto Rico                      | PRI  | v1               | v6              | No         | -            |
+| [Puerto Rico](./PRI.md)          | PRI  | v6               | v6              | Yes        | October 2026 |
 | Romania                          | ROU  | v1               | v6              | No         | -            |
 | [Saudi Arabia](./SAU.md)         | SAU  | v5               | v5              | Yes        | October 2026 |
 | [Serbia](./SRB.md)               | SRB  | v9               | v9              | Yes        | October 2026 |

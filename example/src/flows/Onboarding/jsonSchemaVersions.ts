@@ -265,7 +265,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   PAN: {
     // Panama
-    contract_details: 1,
+    contract_details: 7,
   },
   PER: {
     // Peru
@@ -281,7 +281,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   PRI: {
     // Puerto Rico
-    contract_details: 1,
+    contract_details: 6,
   },
   PRT: {
     // Portugal
