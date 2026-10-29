@@ -617,6 +617,45 @@ describe('buildInvoiceScheduleFormValues', () => {
     });
   });
 
+  describe('semi-monthly cycle', () => {
+    const saved = (custom_days: [number, number] | null) => ({
+      currency: 'EUR',
+      periodicity: 'semi_monthly',
+      start_date: '2026-10-03',
+      number: null,
+      note: null,
+      nr_occurrences: null,
+      custom_days,
+    });
+
+    it('restores a saved custom cycle as the custom cycle with its first day', () => {
+      expect(
+        buildInvoiceScheduleFormValues(saved([3, 17])).semi_monthly_settings,
+      ).toEqual({ invoicing_cycle: 'custom_cycle', first_invoice_day: '3' });
+    });
+
+    it('restores the 15th and last day as the default cycle', () => {
+      expect(
+        buildInvoiceScheduleFormValues(saved([15, 31])).semi_monthly_settings,
+      ).toEqual({ invoicing_cycle: 'default_cycle' });
+    });
+
+    it('leaves the cycle to the schema default when no days were saved', () => {
+      expect(buildInvoiceScheduleFormValues(saved(null))).not.toHaveProperty(
+        'semi_monthly_settings',
+      );
+    });
+
+    it('ignores the saved days for another frequency', () => {
+      expect(
+        buildInvoiceScheduleFormValues({
+          ...saved([3, 17]),
+          periodicity: 'monthly',
+        }),
+      ).not.toHaveProperty('semi_monthly_settings');
+    });
+  });
+
   it('selects "No end date" for a schedule that repeats indefinitely', () => {
     expect(
       buildInvoiceScheduleFormValues({

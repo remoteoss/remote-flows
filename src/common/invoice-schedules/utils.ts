@@ -10,6 +10,7 @@ import {
   ONE_TIME_PERSISTED_PERIODICITY,
   SEMI_MONTHLY_CUSTOM_CYCLE,
   SEMI_MONTHLY_CYCLE_GAP_DAYS,
+  SEMI_MONTHLY_DEFAULT_CYCLE,
   SEMI_MONTHLY_DEFAULT_CYCLE_DAYS,
   SEMI_MONTHLY_PERIODICITY,
 } from '@/src/common/invoice-schedules/constants';
@@ -43,9 +44,33 @@ type InvoiceScheduleFormSource = Pick<
   | 'number'
   | 'note'
   | 'nr_occurrences'
+  | 'custom_days'
 > & {
   items?: Pick<ContractorInvoiceScheduleItem, 'description' | 'amount'>[];
 };
+
+function buildSemiMonthlySettings(
+  schedule: Pick<InvoiceScheduleFormSource, 'periodicity' | 'custom_days'>,
+) {
+  if (
+    schedule.periodicity !== SEMI_MONTHLY_PERIODICITY ||
+    !schedule.custom_days
+  ) {
+    return undefined;
+  }
+
+  const [first, second] = schedule.custom_days;
+  const isCustomCycle =
+    first !== SEMI_MONTHLY_DEFAULT_CYCLE_DAYS[0] &&
+    second === first + SEMI_MONTHLY_CYCLE_GAP_DAYS;
+
+  return isCustomCycle
+    ? {
+        invoicing_cycle: SEMI_MONTHLY_CUSTOM_CYCLE,
+        first_invoice_day: String(first),
+      }
+    : { invoicing_cycle: SEMI_MONTHLY_DEFAULT_CYCLE };
+}
 
 /**
  * Turns a saved invoice schedule into form values in API units, with item amounts in cents.
@@ -72,6 +97,11 @@ export function buildInvoiceScheduleFormValues(
         : END_TYPE_NEVER,
     nr_occurrences: isOneTime ? undefined : schedule.nr_occurrences,
   };
+
+  const semiMonthlySettings = buildSemiMonthlySettings(schedule);
+  if (semiMonthlySettings) {
+    values.semi_monthly_settings = semiMonthlySettings;
+  }
 
   schedule.items?.forEach((item, index) => {
     values[`item_${index + 1}_description`] = item.description;
