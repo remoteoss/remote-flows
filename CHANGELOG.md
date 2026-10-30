@@ -1,5 +1,81 @@
 # @remoteoss/remote-flows
 
+## 1.67.0
+
+### Minor Changes
+
+#### Features
+
+- submit contract details on the latest schema nightly (#1697) [#1697](https://github.com/remoteoss/remote-flows/pull/1697)
+- re-submit contract details in the browser on the latest schema (#1698) [#1698](https://github.com/remoteoss/remote-flows/pull/1698)
+- expose the employment on the flow bag (#1730) [#1730](https://github.com/remoteoss/remote-flows/pull/1730)
+- always offer one time as a frequency (#1733) [#1733](https://github.com/remoteoss/remote-flows/pull/1733)
+- add an empty composable TimeOff flow (#1738) [#1738](https://github.com/remoteoss/remote-flows/pull/1738)
+- choose how a recurring schedule ends (#1744) [#1744](https://github.com/remoteoss/remote-flows/pull/1744)
+- sum up a recurring schedule under the form (#1747) [#1747](https://github.com/remoteoss/remote-flows/pull/1747)
+- add a request ID entry step (PBYR-5101) (#1770) [#1770](https://github.com/remoteoss/remote-flows/pull/1770)
+- add the semi-monthly invoicing cycle fieldset (#1765) [#1765](https://github.com/remoteoss/remote-flows/pull/1765)
+
+#### Fixes
+
+- retry sandbox requests blocked by a CloudFront error page (#1718) [#1718](https://github.com/remoteoss/remote-flows/pull/1718)
+- call the consumer onClick when the review button signs (#1734) [#1734](https://github.com/remoteoss/remote-flows/pull/1734)
+- update dependency zod to v4.6.6 [security] (#1746) [#1746](https://github.com/remoteoss/remote-flows/pull/1746)
+- show the invoice date note in contractor onboarding too (#1739) [#1739](https://github.com/remoteoss/remote-flows/pull/1739)
+- label the date as start date for recurring frequencies (#1742) [#1742](https://github.com/remoteoss/remote-flows/pull/1742)
+- block start dates before today (UTC) (#1741) [#1741](https://github.com/remoteoss/remote-flows/pull/1741)
+- fall back to the job logs API in ci:digest (#1752) [#1752](https://github.com/remoteoss/remote-flows/pull/1752)
+- retry sandbox gateway 5xx errors (#1749) [#1749](https://github.com/remoteoss/remote-flows/pull/1749)
+- prefill the occurrence count with 1 when end after is picked (#1756) [#1756](https://github.com/remoteoss/remote-flows/pull/1756)
+
+#### Docs
+
+- ban timeouts and fixed sleeps in tests (#1702) [#1702](https://github.com/remoteoss/remote-flows/pull/1702)
+- add a Remote platform column to the contract details version matrix (#1692) [#1692](https://github.com/remoteoss/remote-flows/pull/1692)
+- link countries from the version matrix (#1713) [#1713](https://github.com/remoteoss/remote-flows/pull/1713)
+- fix "compatibility" typo in README (#1740) [#1740](https://github.com/remoteoss/remote-flows/pull/1740)
+- add a rule for where partner-facing notices go (#1732) [#1732](https://github.com/remoteoss/remote-flows/pull/1732)
+- express form behaviour in the JSON schema before form code (#1766) [#1766](https://github.com/remoteoss/remote-flows/pull/1766)
+- schema statements stay in the schema (#1748) [#1748](https://github.com/remoteoss/remote-flows/pull/1748)
+
+#### Chores
+
+- update dependency msw to v3.0.3 (#1672) [#1672](https://github.com/remoteoss/remote-flows/pull/1672)
+- update dependency dompurify to v3.4.17 (#1694) [#1694](https://github.com/remoteoss/remote-flows/pull/1694)
+- update dependency oxlint-tsgolint to v7.0.2004 (#1674) [#1674](https://github.com/remoteoss/remote-flows/pull/1674)
+- update dependency oxfmt to v0.73.0 (#1696) [#1696](https://github.com/remoteoss/remote-flows/pull/1696)
+- update dependency @tanstack/react-query to v5.104.3 (#1682) [#1682](https://github.com/remoteoss/remote-flows/pull/1682)
+- update dependency jsdom to v30.1.3 (#1693) [#1693](https://github.com/remoteoss/remote-flows/pull/1693)
+- update actions/upload-artifact action to v7.0.2 (#1681) [#1681](https://github.com/remoteoss/remote-flows/pull/1681)
+- update dependency filesize to v11.0.26 (#1671) [#1671](https://github.com/remoteoss/remote-flows/pull/1671)
+- update dependency @types/lodash to v4.17.26 (#1670) [#1670](https://github.com/remoteoss/remote-flows/pull/1670)
+- update vitest monorepo to v5.0.5 (#1679) [#1679](https://github.com/remoteoss/remote-flows/pull/1679)
+- update dependency dotenv to v18.0.8 (#1609) [#1609](https://github.com/remoteoss/remote-flows/pull/1609)
+- sync COUNTRY_CONTRACT_VERSIONS with backend (#1689) [#1689](https://github.com/remoteoss/remote-flows/pull/1689)
+- build the standalone flow's form with useHeadlessForm (#1686) [#1686](https://github.com/remoteoss/remote-flows/pull/1686)
+- bump GEO, NIC, SVN, ALB and CYP contract_details schema versions (#1690) [#1690](https://github.com/remoteoss/remote-flows/pull/1690)
+- consolidate agent config into .agents with AGENTS.md as the entry point (#1728) [#1728](https://github.com/remoteoss/remote-flows/pull/1728)
+- regenerate API client from the latest OpenAPI spec (#1715) [#1715](https://github.com/remoteoss/remote-flows/pull/1715)
+- bump MUS and VNM contract_details schema versions (#1716) [#1716](https://github.com/remoteoss/remote-flows/pull/1716)
+- update contract details schema canary report (#1711) [#1711](https://github.com/remoteoss/remote-flows/pull/1711)
+- bump GRC and HKG contract_details schema versions (#1735) [#1735](https://github.com/remoteoss/remote-flows/pull/1735)
+- cancel superseded PR workflow runs (#1731) [#1731](https://github.com/remoteoss/remote-flows/pull/1731)
+- update contract details schema canary report (#1754) [#1754](https://github.com/remoteoss/remote-flows/pull/1754)
+- bump ISL and LUX contract_details schema versions (#1755) [#1755](https://github.com/remoteoss/remote-flows/pull/1755)
+- update contract details schema canary report (#1772) [#1772](https://github.com/remoteoss/remote-flows/pull/1772)
+- update actions/upload-artifact action to v7.0.2 (#1719) [#1719](https://github.com/remoteoss/remote-flows/pull/1719)
+- update actions/create-github-app-token action to v3.3.0 (#1723) [#1723](https://github.com/remoteoss/remote-flows/pull/1723)
+- update pnpm to v12.15.0 (#1763) [#1763](https://github.com/remoteoss/remote-flows/pull/1763)
+- update dependency lucide-react to v1.61.0 (#1762) [#1762](https://github.com/remoteoss/remote-flows/pull/1762)
+- update dependency @tanstack/react-query to v5.104.5 (#1721) [#1721](https://github.com/remoteoss/remote-flows/pull/1721)
+- update dependency postcss to v8.5.31 (#1061) [#1061](https://github.com/remoteoss/remote-flows/pull/1061)
+- update dependency oxlint to v1.89.0 (#1720) [#1720](https://github.com/remoteoss/remote-flows/pull/1720)
+- update dependency html-react-parser to v6.1.9 (#1761) [#1761](https://github.com/remoteoss/remote-flows/pull/1761)
+- update dependency randexp to v0.6.1 (#1722) [#1722](https://github.com/remoteoss/remote-flows/pull/1722)
+- update dependency oxfmt to v0.74.0 (#1736) [#1736](https://github.com/remoteoss/remote-flows/pull/1736)
+- bump MAR and MLT contract_details schema versions (#1771) [#1771](https://github.com/remoteoss/remote-flows/pull/1771)
+- update contract details schema canary report (#1786) [#1786](https://github.com/remoteoss/remote-flows/pull/1786)
+
 ## 1.66.0
 
 ### Minor Changes
