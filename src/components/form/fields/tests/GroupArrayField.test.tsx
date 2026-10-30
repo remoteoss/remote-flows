@@ -113,9 +113,36 @@ describe('GroupArrayField', () => {
       },
     });
 
+    // The form kit only applies computed attributes to the group itself, never to the
+    // fields inside its rows, so the group hands its extra props to every input in every
+    // row. Two rows with two inputs each means all four receive the currency, including the
+    // description inputs that have no use for it.
     expect(
       screen.getAllByTestId('row-currency').map((node) => node.textContent),
     ).toEqual(['EUR', 'EUR', 'EUR', 'EUR']);
+  });
+
+  it("keeps a row input's own additional props over the group's", () => {
+    renderGroup({
+      additionalProps: { currency: 'EUR' },
+      fields: [
+        {
+          name: 'amount',
+          label: 'Amount',
+          type: 'text',
+          additionalProps: { currency: 'USD' },
+        },
+      ],
+      components: {
+        text: ({ fieldData }: $TSFixMe) => (
+          <output data-testid='row-currency'>
+            {fieldData.metadata.currency}
+          </output>
+        ),
+      },
+    });
+
+    expect(screen.getByTestId('row-currency')).toHaveTextContent('USD');
   });
 
   it('shows the description', () => {
