@@ -2250,21 +2250,24 @@
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "TWN",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "TWN",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "TWN",
