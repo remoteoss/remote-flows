@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import omit from 'lodash.omit';
 import { baseFields } from '@/src/components/form/fields/baseFields';
@@ -13,6 +14,7 @@ import { BaseTypes } from './types';
 type GroupArrayFieldProps = {
   name: string;
   label: string;
+  description?: ReactNode;
   addFieldText?: string;
   minItems?: number;
   maxItems?: number;
@@ -23,6 +25,7 @@ type GroupArrayFieldProps = {
 export function GroupArrayField({
   name,
   label,
+  description,
   addFieldText = 'Add item',
   minItems = 0,
   maxItems,
@@ -76,6 +79,7 @@ export function GroupArrayField({
     <Component
       name={name}
       label={label}
+      description={description}
       addFieldText={addFieldText}
       error={error}
       canAdd={maxItems === undefined || rows.length < maxItems}
