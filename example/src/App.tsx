@@ -325,14 +325,17 @@ function App() {
   >({
     'cost-calculator': true, // Start with Cost Calculator expanded
   });
-  const [activeDemo, setActiveDemo] = useUrlState('demo', defaultDemoId, {
-    validate: (value) =>
-      value in flattenedDemos && !flattenedDemos[value].isParent,
+  const [urlDemo, setActiveDemo] = useUrlState('demo', defaultDemoId, {
+    validate: (value) => value in flattenedDemos,
   });
+  const activeDemo = flattenedDemos[urlDemo].isParent
+    ? (demoStructure.find((category) => category.id === urlDemo)?.children?.[0]
+        ?.id ?? defaultDemoId)
+    : urlDemo;
   const [copied, setCopied] = useState<string | null>(null);
 
   const selectDemo = (demoId: string) => {
-    setActiveDemo(demoId as typeof activeDemo);
+    setActiveDemo(demoId as typeof urlDemo);
 
     // If this is a child demo, ensure its parent is expanded
     const demo = flattenedDemos[demoId];
