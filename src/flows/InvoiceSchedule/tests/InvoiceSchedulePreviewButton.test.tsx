@@ -75,10 +75,10 @@ describe('InvoiceSchedulePreviewButton', () => {
     await fillSelect('currency', 'EUR');
     await fillSelect('periodicity', 'monthly');
     await fillDatePickerByTestId('2100-01-01', 'start_date');
-    fireEvent.change(screen.getByLabelText(/Item 1 description/i), {
+    fireEvent.change(screen.getAllByLabelText(/^Description/i)[0], {
       target: { value: 'Design work' },
     });
-    fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
+    fireEvent.change(screen.getAllByLabelText(/^Amount/i)[0], {
       target: { value: '2500.50' },
     });
 

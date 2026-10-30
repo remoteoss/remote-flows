@@ -62,10 +62,10 @@ async function fillScheduleDetails({
   await fillSelect('currency', currency);
   await fillDatePickerByTestId('2100-01-01', 'start_date');
 
-  fireEvent.change(screen.getByLabelText(/Item 1 description/i), {
+  fireEvent.change(screen.getAllByLabelText(/^Description/i)[0], {
     target: { value: 'Design work' },
   });
-  fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
+  fireEvent.change(screen.getAllByLabelText(/^Amount/i)[0], {
     target: { value: '2500' },
   });
 }
@@ -420,7 +420,7 @@ describe('InvoiceScheduleFlow', () => {
     );
 
     await fillScheduleDetails();
-    expect(screen.getByLabelText(/Item 1 description/i)).toHaveValue(
+    expect(screen.getAllByLabelText(/^Description/i)[0]).toHaveValue(
       'Design work',
     );
 
@@ -432,7 +432,7 @@ describe('InvoiceScheduleFlow', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/Item 1 description/i)).toHaveValue('');
+      expect(screen.getAllByLabelText(/^Description/i)[0]).toHaveValue('');
     });
   });
 
@@ -520,64 +520,30 @@ describe('InvoiceScheduleFlow', () => {
     expect(onSuccess).not.toHaveBeenCalled();
   });
 
-  it('reveals the second item row once the first has a description and an amount', async () => {
+  it('starts with one item row and adds another from the add item button', async () => {
     renderFlow();
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/Item 1 description/i)).toBeInTheDocument();
+      expect(screen.getAllByLabelText(/^Description/i)).toHaveLength(1);
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /add item/i }));
+
+    await waitFor(() => {
+      expect(screen.getAllByLabelText(/^Description/i)).toHaveLength(2);
+    });
+  });
+
+  it('keeps the first item row when the only row is the one left', async () => {
+    renderFlow();
+
+    await waitFor(() => {
+      expect(screen.getAllByLabelText(/^Description/i)).toHaveLength(1);
     });
 
     expect(
-      screen.queryByLabelText(/Item 2 description/i),
+      screen.queryByRole('button', { name: /remove invoice items/i }),
     ).not.toBeInTheDocument();
-
-    fireEvent.change(screen.getByLabelText(/Item 1 description/i), {
-      target: { value: 'Design work' },
-    });
-    fireEvent.blur(screen.getByLabelText(/Item 1 description/i));
-    fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
-      target: { value: '2500' },
-    });
-    fireEvent.blur(screen.getByLabelText(/Item 1 amount/i));
-
-    await waitFor(
-      () => {
-        expect(
-          screen.getByLabelText(/Item 2 description/i),
-        ).toBeInTheDocument();
-      },
-      { timeout: 10000 },
-    );
-  });
-
-  // The reveal condition used to require an integer, which the flow's own values can never
-  // satisfy once an amount has cents: the money input holds major units and the schema is
-  // built without the cents conversion, so `2500.50` stayed a decimal and froze the form at
-  // one item. Driven through the rendered form so the real form building is exercised.
-  it('reveals the second item row when the first amount has cents', async () => {
-    renderFlow();
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Item 1 description/i)).toBeInTheDocument();
-    });
-
-    fireEvent.change(screen.getByLabelText(/Item 1 description/i), {
-      target: { value: 'Design work' },
-    });
-    fireEvent.blur(screen.getByLabelText(/Item 1 description/i));
-    fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
-      target: { value: '2500.50' },
-    });
-    fireEvent.blur(screen.getByLabelText(/Item 1 amount/i));
-
-    await waitFor(
-      () => {
-        expect(
-          screen.getByLabelText(/Item 2 description/i),
-        ).toBeInTheDocument();
-      },
-      { timeout: 10000 },
-    );
   });
 
   it('surfaces a creation failure through onError', async () => {
@@ -750,17 +716,18 @@ describe('InvoiceScheduleFlow partner usage', () => {
     await screen.findByLabelText(/Memo for the contractor/i);
 
     fireEvent.click(screen.getByRole('button', { name: /Re-render/i }));
-    fireEvent.change(screen.getByLabelText(/Item 1 description/i), {
+    fireEvent.change(screen.getAllByLabelText(/^Description/i)[0], {
       target: { value: 'Design work' },
     });
-    fireEvent.blur(screen.getByLabelText(/Item 1 description/i));
-    fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
+    fireEvent.blur(screen.getAllByLabelText(/^Description/i)[0]);
+    fireEvent.change(screen.getAllByLabelText(/^Amount/i)[0], {
       target: { value: '2500' },
     });
-    fireEvent.blur(screen.getByLabelText(/Item 1 amount/i));
+    fireEvent.blur(screen.getAllByLabelText(/^Amount/i)[0]);
 
-    await screen.findByLabelText(/Item 2 description/i, undefined, {
-      timeout: 10000,
+    fireEvent.click(screen.getByRole('button', { name: /add item/i }));
+    await waitFor(() => {
+      expect(screen.getAllByLabelText(/^Description/i)).toHaveLength(2);
     });
     expect(
       screen.getByLabelText(/Memo for the contractor/i),
@@ -823,15 +790,17 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
   });
 
   async function fillItem(slot: number, description: string, amount: string) {
-    const descriptionInput = await screen.findByLabelText(
-      new RegExp(`Item ${slot} description`, 'i'),
-    );
+    if (screen.queryAllByLabelText(/^Description/i).length < slot) {
+      fireEvent.click(screen.getByRole('button', { name: /add item/i }));
+    }
+
+    const descriptionInput = (await screen.findAllByLabelText(/^Description/i))[
+      slot - 1
+    ];
     fireEvent.change(descriptionInput, { target: { value: description } });
     fireEvent.blur(descriptionInput);
 
-    const amountInput = screen.getByLabelText(
-      new RegExp(`Item ${slot} amount`, 'i'),
-    );
+    const amountInput = screen.getAllByLabelText(/^Amount/i)[slot - 1];
     fireEvent.change(amountInput, { target: { value: amount } });
     fireEvent.blur(amountInput);
   }
@@ -1005,7 +974,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     ]);
   });
 
-  it('does not send the rows after one the user cleared', async () => {
+  it('does not send a row the user removed', async () => {
     const request = captureCreateRequest();
     const onSuccess = vi.fn();
     renderFlow({ onSuccess });
@@ -1014,10 +983,12 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     await fillItem(2, 'Hosting', '75');
     await fillItem(3, 'Support', '10');
 
-    fireEvent.change(screen.getByLabelText(/Item 2 description/i), {
-      target: { value: '' },
+    fireEvent.click(
+      screen.getByRole('button', { name: /remove invoice items 2/i }),
+    );
+    await waitFor(() => {
+      expect(screen.getAllByLabelText(/^Description/i)).toHaveLength(2);
     });
-    fireEvent.blur(screen.getByLabelText(/Item 2 description/i));
     await fillSelect('periodicity', 'monthly');
     chooseNoEndDate();
 
@@ -1029,7 +1000,23 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
 
     expect(request.body.contractor_invoice_schedules[0].items).toEqual([
       { description: 'Design work', amount: 250000 },
+      { description: 'Support', amount: 1000 },
     ]);
+  });
+
+  it('blocks submission while an item row is left blank', async () => {
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await fillScheduleDetails();
+    fireEvent.click(screen.getByRole('button', { name: /add item/i }));
+    await fillSelect('periodicity', 'monthly');
+    chooseNoEndDate();
+
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    expect(await screen.findAllByText(/Required field/i)).toHaveLength(2);
+    expect(onSuccess).not.toHaveBeenCalled();
   });
 
   it('converts amounts to whole cents without floating point drift', async () => {
@@ -1038,10 +1025,10 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     renderFlow({ onSuccess });
 
     await fillScheduleDetails();
-    fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
+    fireEvent.change(screen.getAllByLabelText(/^Amount/i)[0], {
       target: { value: '4.35' },
     });
-    fireEvent.blur(screen.getByLabelText(/Item 1 amount/i));
+    fireEvent.blur(screen.getAllByLabelText(/^Amount/i)[0]);
     await fillItem(2, 'Hosting', '19.99');
     await fillItem(3, 'Support', '0.07');
     await fillSelect('periodicity', 'monthly');
@@ -1073,7 +1060,7 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     chooseNoEndDate();
 
     expect(
-      screen.queryByLabelText(/Item 11 description/i),
+      screen.queryByRole('button', { name: /add item/i }),
     ).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));

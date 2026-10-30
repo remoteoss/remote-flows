@@ -15,10 +15,10 @@ export const INVOICE_SCHEDULE_STATUS = {
 } as const;
 
 /**
- * Number of invoice item slots the hardcoded schema exposes.
- * Matches the API's `maxItems: 10` on `contractor_invoice_schedules[].items`.
+ * Most invoice items one schedule can carry.
+ * Matches the public API's `maxItems: 10` on the create-schedule `items`.
  */
-export const INVOICE_ITEM_SLOTS = 10;
+export const MAX_INVOICE_ITEMS = 10;
 
 /**
  * The recurring cadences the API's `periodicity` enum accepts.

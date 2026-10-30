@@ -9,7 +9,14 @@ export function PrettifiedValuesRenderer({
         if (Array.isArray(value)) {
           return (
             <pre key={key}>
-              {key}: {value.join(', ')}
+              {key}:{' '}
+              {value
+                .map((entry) =>
+                  typeof entry === 'object' && entry !== null
+                    ? JSON.stringify(entry)
+                    : String(entry),
+                )
+                .join(', ')}
             </pre>
           );
         }

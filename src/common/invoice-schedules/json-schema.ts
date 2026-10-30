@@ -1,7 +1,7 @@
 import {
   END_TYPE_MULTIPLE,
   END_TYPE_NEVER,
-  INVOICE_ITEM_SLOTS,
+  MAX_INVOICE_ITEMS,
   ONE_TIME_PERIODICITY_OPTION,
   PLACEHOLDER_OPTION,
   RECURRING_PERIODICITY_OPTIONS,
@@ -13,70 +13,49 @@ import {
 } from '@/src/common/invoice-schedules/constants';
 import { toOrdinal } from '@/src/common/invoice-schedules/utils';
 
-function invoiceItemProperties() {
-  const properties: Record<string, object> = {};
-
-  for (let slot = 1; slot <= INVOICE_ITEM_SLOTS; slot++) {
-    properties[`item_${slot}_description`] = {
-      title: `Item ${slot} description`,
-      type: 'string',
-      'x-jsf-presentation': {
-        inputType: 'text',
-      },
-    };
-    properties[`item_${slot}_amount`] = {
-      title: `Item ${slot} amount`,
-      type: 'integer',
-      'x-jsf-presentation': {
-        inputType: 'money',
-      },
-      'x-jsf-logic-computedAttrs': {
-        'x-jsf-presentation': {
-          additionalProps: {
-            currency: 'currency_selected',
+function invoiceItemsProperty() {
+  return {
+    title: 'Invoice items',
+    type: 'array',
+    minItems: 1,
+    maxItems: MAX_INVOICE_ITEMS,
+    items: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['description', 'amount'],
+      properties: {
+        description: {
+          title: 'Description',
+          type: 'string',
+          minLength: 1,
+          'x-jsf-presentation': {
+            inputType: 'text',
+          },
+        },
+        amount: {
+          title: 'Amount',
+          type: 'integer',
+          minimum: 1,
+          'x-jsf-presentation': {
+            inputType: 'money',
           },
         },
       },
-    };
-  }
-
-  return properties;
-}
-
-// Slot 1 is required (see the base required array below).
-// Slots 2..N are optional and only revealed once the previous slot has been filled in,
-// since the form-kit has no built-in "add another row" renderer for a true items array.
-function invoiceItemRevealConditionals() {
-  const conditionals = [];
-
-  for (let slot = 2; slot <= INVOICE_ITEM_SLOTS; slot++) {
-    const previousSlot = slot - 1;
-
-    conditionals.push({
-      if: {
-        properties: {
-          [`item_${previousSlot}_description`]: {
-            type: 'string',
-            minLength: 1,
-          },
-          [`item_${previousSlot}_amount`]: { type: 'integer', minimum: 1 },
-        },
-        required: [
-          `item_${previousSlot}_description`,
-          `item_${previousSlot}_amount`,
-        ],
-      },
-      then: {},
-      else: {
-        properties: {
-          [`item_${slot}_description`]: false,
-          [`item_${slot}_amount`]: false,
+      'x-jsf-order': ['description', 'amount'],
+    },
+    'x-jsf-presentation': {
+      inputType: 'group-array',
+      addFieldText: 'Add item',
+      hideLabel: true,
+    },
+    'x-jsf-logic-computedAttrs': {
+      'x-jsf-presentation': {
+        additionalProps: {
+          currency: 'currency_selected',
         },
       },
-    });
-  }
-
-  return conditionals;
+    },
+  };
 }
 
 // A custom cycle's second invoice is the first one plus a fixed gap, so it is derived in the
@@ -395,11 +374,6 @@ function startDateConditional() {
   };
 }
 
-const itemFieldOrder = Array.from(
-  { length: INVOICE_ITEM_SLOTS },
-  (_, index) => index + 1,
-).flatMap((slot) => [`item_${slot}_description`, `item_${slot}_amount`]);
-
 function invoiceFieldsets() {
   return {
     invoicing_details: {
@@ -408,7 +382,7 @@ function invoiceFieldsets() {
     },
     invoice_items: {
       title: 'Invoice items',
-      propertiesByName: itemFieldOrder,
+      propertiesByName: ['items'],
     },
     invoicing_preferences: {
       title: 'Invoicing preferences',
@@ -553,7 +527,7 @@ export function buildCreateInvoiceScheduleSchema({
         'x-jsf-logic-validations': [START_DATE_MATCHES_CYCLE_VALIDATION],
       },
       semi_monthly_settings: semiMonthlySettingsProperty(),
-      ...invoiceItemProperties(),
+      items: invoiceItemsProperty(),
       number: {
         description: 'Optional identifier shown on generated invoices.',
         title: 'Invoice number',
@@ -598,17 +572,11 @@ export function buildCreateInvoiceScheduleSchema({
         },
       },
     },
-    required: [
-      'currency',
-      'periodicity',
-      'start_date',
-      'item_1_description',
-      'item_1_amount',
-    ],
+    required: ['currency', 'periodicity', 'start_date', 'items'],
     ...(includeFieldsets ? { 'x-jsf-fieldsets': invoiceFieldsets() } : {}),
     'x-jsf-order': [
       'currency',
-      ...itemFieldOrder,
+      'items',
       'invoice_date_note',
       'periodicity',
       'semi_monthly_settings',
@@ -681,7 +649,6 @@ export function buildCreateInvoiceScheduleSchema({
       jsfVersion: '1',
     },
     allOf: [
-      ...invoiceItemRevealConditionals(),
       semiMonthlyConditional(),
       ...endDateConditionals(),
       scheduleSummaryConditional(),
