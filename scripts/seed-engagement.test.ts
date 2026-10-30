@@ -52,17 +52,33 @@ describe('seed-onboarding', () => {
     },
   );
 
-  it('continues when the engagement schema fetch returns 422', async () => {
-    const result = await runEngagementStep({
-      country: 'CZE',
-      employmentId: 'emp-1',
-      fetchSchema: async () => {
-        throw apiError(422);
-      },
-      submit: vi.fn(),
-    });
+  it('fails when the engagement schema fetch returns 422', async () => {
+    const error = apiError(422);
+    const submit = vi.fn();
 
-    expect(result).toBe('tolerated');
+    await expect(
+      runEngagementStep({
+        country: 'CZE',
+        employmentId: 'emp-1',
+        fetchSchema: async () => {
+          throw error;
+        },
+        submit,
+      }),
+    ).rejects.toBe(error);
+    expect(submit).not.toHaveBeenCalled();
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it('rethrows a non-API failure such as a network error', async () => {
+    const error = new TypeError('fetch failed');
+
+    await expect(
+      run(async () => {
+        throw error;
+      }),
+    ).rejects.toBe(error);
+    expect(warnSpy).not.toHaveBeenCalled();
   });
 
   it('fails on non-tolerated engagement status', async () => {

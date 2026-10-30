@@ -13,7 +13,7 @@ export class ApiError extends Error {
   }
 }
 
-export const TOLERATED_ENGAGEMENT_STATUSES = [404, 422];
+const TOLERATED_ENGAGEMENT_STATUSES = [404, 422];
 
 export type EngagementStepResult = 'submitted' | 'skipped' | 'tolerated';
 
@@ -24,7 +24,7 @@ interface EngagementStepOptions {
   submit: (urlPath: string, body: unknown) => Promise<unknown>;
 }
 
-async function fillAndSubmit({
+export async function runEngagementStep({
   country,
   employmentId,
   fetchSchema,
@@ -59,18 +59,11 @@ async function fillAndSubmit({
     console.log('Skipped (unfillable) fields:', skipped.join(', '));
   }
 
-  await submit(`/v2/employments/${employmentId}/engagement-agreement-details`, {
-    engagement_agreement_details: engagementDetails,
-  });
-  console.log('engagement_agreement_details submitted.');
-  return 'submitted';
-}
-
-export async function runEngagementStep(
-  options: EngagementStepOptions,
-): Promise<EngagementStepResult> {
   try {
-    return await fillAndSubmit(options);
+    await submit(
+      `/v2/employments/${employmentId}/engagement-agreement-details`,
+      { engagement_agreement_details: engagementDetails },
+    );
   } catch (err) {
     if (
       err instanceof ApiError &&
@@ -90,4 +83,6 @@ export async function runEngagementStep(
     }
     throw err;
   }
+  console.log('engagement_agreement_details submitted.');
+  return 'submitted';
 }

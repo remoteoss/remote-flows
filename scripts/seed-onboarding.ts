@@ -420,7 +420,7 @@ async function seedEmployee() {
   });
 
   console.log('\nChecking for an engagement_agreement_details step...');
-  await runEngagementStep({
+  const engagementResult = await runEngagementStep({
     country: COUNTRY,
     employmentId,
     fetchSchema: (form) => fetchSchema(form),
@@ -434,6 +434,11 @@ async function seedEmployee() {
   console.log(
     `\nDone. Employment ${employmentId} for ${COUNTRY} is now ${FILL_CONTRACT_DETAILS ? 'past' : 'sitting at'} contract_details.`,
   );
+  if (engagementResult === 'tolerated') {
+    console.warn(
+      'WARNING: engagement_agreement_details was NOT submitted (the API rejected it, see the warning above), so that step is incomplete on this employment.',
+    );
+  }
   const appUrl = process.env.VITE_APP_URL || (ENV ? undefined : BASE_URL);
   if (appUrl) {
     console.log(
