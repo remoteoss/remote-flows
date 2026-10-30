@@ -1,5 +1,6 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
+import { TimeoffStatus } from '@/src/client';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import {
   getTimeOffDecisionError,
@@ -9,46 +10,37 @@ import {
   useGetTimeOffRequests,
 } from '@/src/flows/TimeOff/api';
 import { requestIdSchema } from '@/src/flows/TimeOff/json-schemas/requestId';
+import { statusFilterSchema } from '@/src/flows/TimeOff/json-schemas/statusFilter';
 import {
   TimeOffApproveOptions,
   TimeOffDeclineOptions,
+  TimeOffListStepKeys,
   TimeOffRequestIdFormValues,
+  TimeOffStatusFilterFormValues,
   TimeOffStepKeys,
+  UseTimeOffListOptions,
   UseTimeOffOptions,
   UseTimeOffRequestOptions,
   UseTimeOffRequestsOptions,
 } from '@/src/flows/TimeOff/types';
-import { STEPS, STEPS_ARRAY } from '@/src/flows/TimeOff/utils';
+import {
+  LIST_STEPS,
+  LIST_STEPS_ARRAY,
+  STEPS,
+  STEPS_ARRAY,
+} from '@/src/flows/TimeOff/utils';
 import { useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 
-/**
- * Headless hook powering the time-off flow.
- */
-export const useTimeOff = ({
-  timeOffId: initialTimeOffId,
-}: UseTimeOffOptions = {}) => {
-  const {
-    stepState,
-    fieldValues,
-    setFieldValues,
-    nextStep,
-    previousStep,
-    goToStep,
-  } = useStepState<TimeOffStepKeys, TimeOffRequestIdFormValues>(STEPS);
-
-  const { form, handleValidation, onValuesChange } = useHeadlessForm({
-    schema: requestIdSchema,
-    strategy: 'buildOnce',
-  });
-
-  const timeOffId = (
-    stepState.values?.request_id?.timeoff_id ?? initialTimeOffId
-  )?.trim();
-  const enteredTimeOffId = (fieldValues.timeoff_id ?? timeOffId)?.trim();
-
+export const useTimeOffRequestReview = ({
+  timeOffId,
+  isReviewing,
+}: {
+  timeOffId: string | undefined;
+  isReviewing: boolean;
+}) => {
   const { timeOffRequest, isLoading, error, refetch } = useTimeOffRequest({
-    timeOffId: stepState.currentStep.name === 'review' ? timeOffId : undefined,
+    timeOffId: isReviewing ? timeOffId : undefined,
   });
 
   const approveTimeOffRequestMutation = useApproveTimeOffRequest();
@@ -103,6 +95,72 @@ export const useTimeOff = ({
     [declineTimeOffRequestAsync, timeOffId],
   );
 
+  return {
+    /**
+     * The time-off request under review, loaded once the flow reaches the review step.
+     */
+    timeOffRequest,
+    /**
+     * Whether the time-off request under review is loading for the first time.
+     */
+    isLoading,
+    /**
+     * Why the time-off request under review failed to load, or `null`.
+     */
+    timeOffRequestError: error,
+    /**
+     * Loads the time-off request under review again, e.g. to retry after an error.
+     */
+    refetchTimeOffRequest: refetch,
+    /**
+     * Approves the time-off request under review. Resolves with the request as the API returns
+     * it, so read the outcome from its `status`. Rejects with a `TimeOffDecisionError`.
+     */
+    approve,
+    /**
+     * Declines the time-off request under review. Resolves with the request as the API returns
+     * it, so read the outcome from its `status`. Rejects with a `TimeOffDecisionError`.
+     */
+    decline,
+    /**
+     * Whether a decision on the time-off request under review is being sent.
+     */
+    isSubmitting:
+      approveTimeOffRequestMutation.isPending ||
+      declineTimeOffRequestMutation.isPending,
+  };
+};
+
+/**
+ * Headless hook powering the time-off flow.
+ */
+export const useTimeOff = ({
+  timeOffId: initialTimeOffId,
+}: UseTimeOffOptions = {}) => {
+  const {
+    stepState,
+    fieldValues,
+    setFieldValues,
+    nextStep,
+    previousStep,
+    goToStep,
+  } = useStepState<TimeOffStepKeys, TimeOffRequestIdFormValues>(STEPS);
+
+  const { form, handleValidation, onValuesChange } = useHeadlessForm({
+    schema: requestIdSchema,
+    strategy: 'buildOnce',
+  });
+
+  const timeOffId = (
+    stepState.values?.request_id?.timeoff_id ?? initialTimeOffId
+  )?.trim();
+  const enteredTimeOffId = (fieldValues.timeoff_id ?? timeOffId)?.trim();
+
+  const timeOffRequestReview = useTimeOffRequestReview({
+    timeOffId,
+    isReviewing: stepState.currentStep.name === 'review',
+  });
+
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
       setFieldValues(values);
@@ -140,44 +198,166 @@ export const useTimeOff = ({
      * Whether the request ID step holds a non-blank ID, so the flow can move on.
      */
     hasRequestId: Boolean(enteredTimeOffId),
-    /**
-     * The time-off request under review, loaded once the flow reaches the review step.
-     */
-    timeOffRequest,
-    /**
-     * Whether the time-off request under review is loading for the first time.
-     */
-    isLoading,
-    /**
-     * Why the time-off request under review failed to load, or `null`.
-     */
-    timeOffRequestError: error,
-    /**
-     * Loads the time-off request under review again, e.g. to retry after an error.
-     */
-    refetchTimeOffRequest: refetch,
-    /**
-     * Approves the time-off request under review. Resolves with the request as the API returns
-     * it, so read the outcome from its `status`. Rejects with a `TimeOffDecisionError`.
-     */
-    approve,
-    /**
-     * Declines the time-off request under review. Resolves with the request as the API returns
-     * it, so read the outcome from its `status`. Rejects with a `TimeOffDecisionError`.
-     */
-    decline,
-    /**
-     * Whether a decision on the time-off request under review is being sent.
-     */
-    isSubmitting:
-      approveTimeOffRequestMutation.isPending ||
-      declineTimeOffRequestMutation.isPending,
+    ...timeOffRequestReview,
     /**
      * Moves to the next step.
      */
     next: nextStep,
     /**
      * Moves to the previous step.
+     */
+    back: previousStep,
+    /**
+     * Moves to a specific step.
+     */
+    goTo: goToStep,
+  };
+};
+
+/**
+ * Headless hook powering the time-off list flow.
+ */
+export const useTimeOffList = ({ pageSize }: UseTimeOffListOptions = {}) => {
+  const { stepState, previousStep, goToStep } =
+    useStepState<TimeOffListStepKeys>(LIST_STEPS);
+  const [status, setStatus] = useState<TimeoffStatus>('requested');
+  const [page, setPage] = useState<number>();
+  const [timeOffId, setTimeOffId] = useState<string>();
+
+  const { form, handleValidation, onValuesChange } = useHeadlessForm({
+    schema: statusFilterSchema,
+    strategy: 'buildOnce',
+  });
+
+  const {
+    timeOffRequests,
+    isEmpty,
+    currentPage,
+    totalPages,
+    totalCount,
+    isLoading: isLoadingTimeOffRequests,
+    error: timeOffRequestsError,
+    refetch: refetchTimeOffRequests,
+  } = useTimeOffRequests({ status, page, pageSize });
+
+  const timeOffRequestReview = useTimeOffRequestReview({
+    timeOffId,
+    isReviewing: stepState.currentStep.name === 'review',
+  });
+
+  const checkFieldUpdates = useCallback(
+    async (values: FieldValues) => {
+      await onValuesChange(values);
+      const { status: selectedStatus } =
+        values as TimeOffStatusFilterFormValues;
+      if (selectedStatus) {
+        setStatus(selectedStatus);
+        setPage(undefined);
+      }
+    },
+    [onValuesChange],
+  );
+
+  const hasPreviousPage = Boolean(currentPage && currentPage > 1);
+  const hasNextPage = Boolean(
+    currentPage && totalPages && currentPage < totalPages,
+  );
+
+  return {
+    /**
+     * Current step state containing the current step and total number of steps.
+     */
+    stepState,
+    /**
+     * Every step of the flow, in order.
+     */
+    steps: LIST_STEPS_ARRAY,
+    /**
+     * Fields of the status filter.
+     */
+    fields: form?.fields ?? [],
+    /**
+     * Validates the status filter values.
+     */
+    handleValidation,
+    /**
+     * Lists the requests in the status picked in the status filter, from the first page.
+     */
+    checkFieldUpdates,
+    /**
+     * The status the list is filtered by. Starts with `requested`, the requests awaiting a decision.
+     */
+    status,
+    /**
+     * The time-off requests of the loaded page, empty until it loads.
+     */
+    timeOffRequests,
+    /**
+     * Whether the loaded page holds no time-off request.
+     */
+    isEmpty,
+    /**
+     * The page the API returned.
+     */
+    currentPage,
+    /**
+     * How many pages the API reports for the current status.
+     */
+    totalPages,
+    /**
+     * How many time-off requests the API reports for the current status.
+     */
+    totalCount,
+    /**
+     * Whether the requested page is loading for the first time.
+     */
+    isLoadingTimeOffRequests,
+    /**
+     * Why the requested page failed to load, or `null`.
+     */
+    timeOffRequestsError,
+    /**
+     * Loads the requested page again, e.g. to retry after an error.
+     */
+    refetchTimeOffRequests,
+    /**
+     * Whether a page comes before the loaded one.
+     */
+    hasPreviousPage,
+    /**
+     * Whether a page comes after the loaded one.
+     */
+    hasNextPage,
+    /**
+     * Loads the page before the loaded one.
+     */
+    previousPage: () => {
+      if (currentPage && hasPreviousPage) {
+        setPage(currentPage - 1);
+      }
+    },
+    /**
+     * Loads the page after the loaded one.
+     */
+    nextPage: () => {
+      if (currentPage && hasNextPage) {
+        setPage(currentPage + 1);
+      }
+    },
+    /**
+     * Opens the review step for one of the listed time-off requests.
+     */
+    selectTimeOffRequest: (selectedTimeOffId: string) => {
+      setTimeOffId(selectedTimeOffId);
+      goToStep('review');
+    },
+    /**
+     * The ID of the time-off request picked from the list.
+     */
+    timeOffId,
+    ...timeOffRequestReview,
+    /**
+     * Moves back to the list, on the page and status it showed.
      */
     back: previousStep,
     /**

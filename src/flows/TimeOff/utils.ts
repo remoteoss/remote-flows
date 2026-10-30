@@ -1,6 +1,7 @@
 import { parseLocalDate } from '@/src/common/dates';
 import { Step } from '@/src/flows/useStepState';
 import {
+  TimeOffListStepKeys,
   TimeOffRequest,
   TimeOffRequestDetail,
   TimeOffStepKeys,
@@ -21,7 +22,25 @@ export const STEPS_ARRAY = Object.values(STEPS).map((step) => ({
   label: STEP_LABELS[step.name],
 }));
 
-const STATUS_LABELS: Record<TimeOffRequest['status'], string> = {
+export const LIST_STEPS: Record<
+  TimeOffListStepKeys,
+  Step<TimeOffListStepKeys>
+> = {
+  list: { index: 0, name: 'list' },
+  review: { index: 1, name: 'review' },
+};
+
+const LIST_STEP_LABELS: Record<TimeOffListStepKeys, string> = {
+  list: 'Requests',
+  review: 'Review',
+};
+
+export const LIST_STEPS_ARRAY = Object.values(LIST_STEPS).map((step) => ({
+  ...step,
+  label: LIST_STEP_LABELS[step.name],
+}));
+
+export const STATUS_LABELS: Record<TimeOffRequest['status'], string> = {
   requested: 'Requested',
   approved: 'Approved',
   declined: 'Declined',
