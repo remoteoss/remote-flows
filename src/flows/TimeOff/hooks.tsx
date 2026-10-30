@@ -6,6 +6,7 @@ import {
   useApproveTimeOffRequest,
   useDeclineTimeOffRequest,
   useGetTimeOffRequest,
+  useGetTimeOffRequests,
 } from '@/src/flows/TimeOff/api';
 import { requestIdSchema } from '@/src/flows/TimeOff/json-schemas/requestId';
 import {
@@ -15,6 +16,7 @@ import {
   TimeOffStepKeys,
   UseTimeOffOptions,
   UseTimeOffRequestOptions,
+  UseTimeOffRequestsOptions,
 } from '@/src/flows/TimeOff/types';
 import { STEPS, STEPS_ARRAY } from '@/src/flows/TimeOff/utils';
 import { useStepState } from '@/src/flows/useStepState';
@@ -206,6 +208,57 @@ export const useTimeOffRequest = ({ timeOffId }: UseTimeOffRequestOptions) => {
     error,
     /**
      * Loads the time-off request again, e.g. to retry after an error.
+     */
+    refetch,
+  };
+};
+
+/**
+ * Loads one page of the company's time-off requests, filtered by status.
+ */
+export const useTimeOffRequests = ({
+  status = 'requested',
+  page,
+  pageSize,
+}: UseTimeOffRequestsOptions = {}) => {
+  const { data, isLoading, error, refetch } = useGetTimeOffRequests({
+    status,
+    page,
+    page_size: pageSize,
+  });
+  const timeOffRequests = data?.timeoffs ?? [];
+
+  return {
+    /**
+     * The time-off requests of the loaded page, empty until it loads.
+     */
+    timeOffRequests,
+    /**
+     * Whether the loaded page holds no time-off request.
+     */
+    isEmpty: Boolean(data) && timeOffRequests.length === 0,
+    /**
+     * The page the API returned.
+     */
+    currentPage: data?.current_page,
+    /**
+     * How many pages the API reports for the current status.
+     */
+    totalPages: data?.total_pages,
+    /**
+     * How many time-off requests the API reports for the current status.
+     */
+    totalCount: data?.total_count,
+    /**
+     * Whether the requested page is loading for the first time.
+     */
+    isLoading,
+    /**
+     * Why the last load failed, or `null`.
+     */
+    error,
+    /**
+     * Loads the page again, e.g. to retry after an error.
      */
     refetch,
   };
