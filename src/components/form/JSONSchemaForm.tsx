@@ -152,6 +152,23 @@ export const JSONSchemaFormFields = ({
           );
         }
 
+        if (fieldType === 'group-array') {
+          const fieldProps = omit(field, 'WrapperComponent');
+          return wrapWithCustomWrapper(
+            <>
+              <FieldComponent {...fieldProps} components={components} />
+              {field.statement ? (
+                <Statement
+                  {...(field.statement as StatementComponentProps['data'])}
+                />
+              ) : null}
+              <FieldExtra extra={field.extra} />
+            </>,
+            field,
+            field.name,
+          );
+        }
+
         // TODO: Have doubts about this, it seems we only support checkbox for multiple select
         if (fieldType === 'select' && field.multiple) {
           FieldComponent = fieldsMap['multi-select'];

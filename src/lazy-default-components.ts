@@ -60,6 +60,13 @@ export const lazyDefaultComponents: Components = {
       }),
     ),
   ),
+  'group-array': lazy(() =>
+    import('./components/form/fields/default/GroupArrayFieldDefault').then(
+      (m) => ({
+        default: m.GroupArrayFieldDefault,
+      }),
+    ),
+  ),
   forcedValue: lazy(() =>
     import('./components/form/fields/default/ForcedValueFieldDefault').then(
       (m) => ({
