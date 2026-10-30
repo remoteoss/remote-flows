@@ -247,7 +247,11 @@ function main() {
     latestVersions,
   );
 
-  const changed = currentSchemaVersionsContent !== newSchemaVersionsContent;
+  const stripDate = (content: string) =>
+    content.replace(/\/\/ Last updated: \d{4}-\d{2}-\d{2}/, '');
+  const changed =
+    stripDate(currentSchemaVersionsContent) !==
+    stripDate(newSchemaVersionsContent);
   console.log(
     changed
       ? '\nschemaVersions.ts is stale relative to the BE repo.'
@@ -262,12 +266,20 @@ function main() {
   }
 
   if (write) {
-    fs.mkdirSync(path.dirname(GAP_REPORT_JSON_PATH), { recursive: true });
-    fs.writeFileSync(
-      GAP_REPORT_JSON_PATH,
-      `${JSON.stringify(generateJsonGapReport(comparison), null, 2)}\n`,
-    );
-    console.log(`Wrote ${GAP_REPORT_JSON_PATH}`);
+    const stripGeneratedAt = (json: string) =>
+      json.replace(/"generatedAt": "[^"]*"/, '');
+    const newGapReportJson = `${JSON.stringify(generateJsonGapReport(comparison), null, 2)}\n`;
+    const currentGapReportJson = fs.existsSync(GAP_REPORT_JSON_PATH)
+      ? fs.readFileSync(GAP_REPORT_JSON_PATH, 'utf-8')
+      : '';
+    if (
+      stripGeneratedAt(currentGapReportJson) !==
+      stripGeneratedAt(newGapReportJson)
+    ) {
+      fs.mkdirSync(path.dirname(GAP_REPORT_JSON_PATH), { recursive: true });
+      fs.writeFileSync(GAP_REPORT_JSON_PATH, newGapReportJson);
+      console.log(`Wrote ${GAP_REPORT_JSON_PATH}`);
+    }
   }
 
   if (reportFile) {
