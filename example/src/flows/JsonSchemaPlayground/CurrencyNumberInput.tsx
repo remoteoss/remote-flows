@@ -3,8 +3,13 @@ import { defaultComponents } from '@remoteoss/remote-flows/default-components';
 
 const DefaultNumberInput = defaultComponents.number!;
 
+type NumberFieldData = FieldComponentProps['fieldData'] & {
+  additionalProps?: { currency?: string };
+};
+
 export function CurrencyNumberInput(props: FieldComponentProps) {
-  const currency = props.fieldData.additionalProps?.currency;
+  const fieldData = props.fieldData as NumberFieldData;
+  const currency = fieldData.additionalProps?.currency;
 
   if (!currency) {
     return <DefaultNumberInput {...props} />;
@@ -13,10 +18,7 @@ export function CurrencyNumberInput(props: FieldComponentProps) {
   return (
     <DefaultNumberInput
       {...props}
-      fieldData={{
-        ...props.fieldData,
-        label: `${props.fieldData.label} (${currency})`,
-      }}
+      fieldData={{ ...fieldData, label: `${fieldData.label} (${currency})` }}
     />
   );
 }
