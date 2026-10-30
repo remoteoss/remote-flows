@@ -90,10 +90,15 @@ describe('GroupArrayField', () => {
     expect(screen.getAllByLabelText('Amount')[0]).toHaveValue('2500');
   });
 
-  it('shows the description under the label and describes the group with it', () => {
+  it('shows the description', () => {
     renderGroup({ description: 'Everything you are billing for' });
 
     expect(screen.getByText('Everything you are billing for')).toBeVisible();
+  });
+
+  it('announces the description with the group', () => {
+    renderGroup({ description: 'Everything you are billing for' });
+
     expect(
       screen.getByRole('group', { name: 'Items' }),
     ).toHaveAccessibleDescription('Everything you are billing for');
