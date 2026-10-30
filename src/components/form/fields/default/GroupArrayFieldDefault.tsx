@@ -15,7 +15,10 @@ export function GroupArrayFieldDefault({
 }: GroupArrayComponentProps) {
   const errorId = `${name}-error`;
   const descriptionId = `${name}-description`;
-  const describedBy = [description ? descriptionId : null, error ? errorId : null]
+  const describedBy = [
+    description ? descriptionId : null,
+    error ? errorId : null,
+  ]
     .filter(Boolean)
     .join(' ');
 

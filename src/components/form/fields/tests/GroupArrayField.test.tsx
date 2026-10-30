@@ -94,9 +94,9 @@ describe('GroupArrayField', () => {
     renderGroup({ description: 'Everything you are billing for' });
 
     expect(screen.getByText('Everything you are billing for')).toBeVisible();
-    expect(screen.getByRole('group', { name: 'Items' })).toHaveAccessibleDescription(
-      'Everything you are billing for',
-    );
+    expect(
+      screen.getByRole('group', { name: 'Items' }),
+    ).toHaveAccessibleDescription('Everything you are billing for');
   });
 
   it('appends a blank row from the add button', () => {
