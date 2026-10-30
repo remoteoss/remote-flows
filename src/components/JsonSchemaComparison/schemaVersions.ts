@@ -11,14 +11,15 @@ export const BASIC_INFO_VERSIONS: VersionOption[] = [
   { value: 4, label: 'v4 (Recommended)' },
 ];
 
-// AI generated from tiger
-// Last updated: 2026-10-22
+// Generated from the BE repo
+// Last updated: 2026-10-30
 export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
   ALB: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
     { value: 3, label: 'v3' },
     { value: 4, label: 'v4' },
+    { value: 5, label: 'v5' },
   ],
   ARE: [
     { value: 1, label: 'v1' },
@@ -27,6 +28,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 4, label: 'v4' },
     { value: 5, label: 'v5' },
     { value: 6, label: 'v6' },
+    { value: 7, label: 'v7' },
   ],
   ARG: [
     { value: 1, label: 'v1' },
@@ -34,11 +36,13 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 3, label: 'v3' },
     { value: 4, label: 'v4' },
     { value: 5, label: 'v5' },
+    { value: 6, label: 'v6' },
   ],
   ARM: [
     { value: 1, label: 'v1' },
     { value: 2, label: 'v2' },
     { value: 3, label: 'v3' },
+    { value: 4, label: 'v4' },
   ],
   AUS: [
     { value: 1, label: 'v1' },
@@ -47,6 +51,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 4, label: 'v4' },
     { value: 5, label: 'v5' },
     { value: 6, label: 'v6' },
+    { value: 7, label: 'v7' },
   ],
   AUT: [
     { value: 1, label: 'v1' },
@@ -57,6 +62,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 6, label: 'v6' },
     { value: 7, label: 'v7' },
     { value: 8, label: 'v8' },
+    { value: 9, label: 'v9' },
   ],
   BEL: [
     { value: 1, label: 'v1' },
@@ -208,6 +214,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 4, label: 'v4' },
     { value: 5, label: 'v5' },
     { value: 6, label: 'v6' },
+    { value: 7, label: 'v7' },
   ],
   ECU: [
     { value: 1, label: 'v1' },
@@ -547,6 +554,7 @@ export const COUNTRY_CONTRACT_VERSIONS: Record<string, VersionOption[]> = {
     { value: 6, label: 'v6' },
     { value: 7, label: 'v7' },
     { value: 8, label: 'v8' },
+    { value: 9, label: 'v9' },
   ],
   PAK: [
     { value: 1, label: 'v1' },

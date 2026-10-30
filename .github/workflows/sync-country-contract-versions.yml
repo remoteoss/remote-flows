@@ -1,0 +1,90 @@
+name: Sync Country Contract Versions
+
+on:
+  schedule:
+    # Weekly, Monday ~06:20 UTC (off the round hour on purpose).
+    - cron: '23 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    name: Sync COUNTRY_CONTRACT_VERSIONS from the BE repo
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout remote-flows
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Use Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.15.0'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Check for BE repo GitLab token
+        id: check-token
+        env:
+          BE_REPO_TOKEN: ${{ secrets.BE_REPO_GITLAB_READ_TOKEN }}
+        run: |
+          if [ -z "$BE_REPO_TOKEN" ]; then
+            echo "::warning::BE_REPO_GITLAB_READ_TOKEN is not configured. Skipping sync. See scripts/sync-country-contract-versions.ts for what this needs."
+            echo "has_token=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_token=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Only the BE repo's contract_details schemas are needed here.
+      - name: Sparse-checkout BE repo contract_details schemas
+        if: steps.check-token.outputs.has_token == 'true'
+        env:
+          BE_REPO_TOKEN: ${{ secrets.BE_REPO_GITLAB_READ_TOKEN }}
+        run: |
+          git clone --depth 1 --filter=blob:none --sparse \
+            "https://oauth2:${BE_REPO_TOKEN}@gitlab.com/remote-com/employ-starbase/tiger.git" \
+            be-repo-schemas
+          git -C be-repo-schemas sparse-checkout set apps/tiger/priv/json_schemas/contract_details
+
+      - name: Run sync script
+        if: steps.check-token.outputs.has_token == 'true'
+        run: |
+          pnpm run sync:contract-versions \
+            --be-repo-path=./be-repo-schemas \
+            --write \
+            --report-file=/tmp/gap-report.md
+
+      - name: Mint a GitHub App token for the pull request
+        id: app-token
+        if: steps.check-token.outputs.has_token == 'true'
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ secrets.SCHEMA_CANARY_APP_CLIENT_ID }}
+          private-key: ${{ secrets.SCHEMA_CANARY_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Create pull request
+        if: steps.check-token.outputs.has_token == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          commit-message: 'chore(JsonSchemaComparison): sync COUNTRY_CONTRACT_VERSIONS from the BE repo'
+          branch: chore/sync-country-contract-versions-auto
+          delete-branch: true
+          title: 'chore(JsonSchemaComparison): sync COUNTRY_CONTRACT_VERSIONS from the BE repo'
+          body-path: /tmp/gap-report.md
+          add-paths: |
+            src/components/JsonSchemaComparison/schemaVersions.ts
+            docs/schema-changes/eor/contract-details/countries/README.md

@@ -34,6 +34,7 @@
     "schema-snapshot": "tsx scripts/schema-snapshot.ts",
     "dump:schema": "tsx scripts/dump-schema.ts",
     "seed:onboarding": "tsx scripts/seed-onboarding.ts",
+    "sync:contract-versions": "tsx scripts/sync-country-contract-versions.ts",
     "size": "tsx scripts/analyze-bundle-size.ts",
     "size:check": "tsx scripts/check-size-limits.ts",
     "size:badge": "tsx scripts/update-size-badge.ts",
