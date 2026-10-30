@@ -52,6 +52,27 @@ describe('seed-onboarding', () => {
     },
   );
 
+  it('skips when the schema fetch says the form is not available for the country', async () => {
+    const submit = vi.fn();
+
+    await expect(
+      runEngagementStep({
+        country: 'CZE',
+        employmentId: 'emp-1',
+        fetchSchema: async () => {
+          throw new ApiError(
+            'GET /v1/countries/CZE/engagement_agreement_details -> 422',
+            422,
+            { message: 'Form not available for requested country' },
+            {},
+          );
+        },
+        submit,
+      }),
+    ).resolves.toBe('skipped');
+    expect(submit).not.toHaveBeenCalled();
+  });
+
   it('fails when the engagement schema fetch returns 422', async () => {
     const error = apiError(422);
     const submit = vi.fn();

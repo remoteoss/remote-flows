@@ -15,6 +15,11 @@ export class ApiError extends Error {
 
 const TOLERATED_ENGAGEMENT_STATUSES = [404, 422];
 
+const isFormNotAvailable = (err: ApiError) =>
+  err.status === 422 &&
+  (err.body as { message?: string } | undefined)?.message ===
+    'Form not available for requested country';
+
 export type EngagementStepResult = 'submitted' | 'skipped' | 'tolerated';
 
 interface EngagementStepOptions {
@@ -34,7 +39,10 @@ export async function runEngagementStep({
   try {
     engagementSchema = await fetchSchema('engagement_agreement_details');
   } catch (err) {
-    if (err instanceof ApiError && err.status === 404) {
+    if (
+      err instanceof ApiError &&
+      (err.status === 404 || isFormNotAvailable(err))
+    ) {
       console.log(
         `No engagement_agreement_details schema for ${country} - skipping.`,
       );
