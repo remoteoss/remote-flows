@@ -65,10 +65,21 @@ jobs:
             --write \
             --report-file=/tmp/gap-report.md
 
+      - name: Mint a GitHub App token for the pull request
+        id: app-token
+        if: steps.check-token.outputs.has_token == 'true'
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ secrets.SCHEMA_CANARY_APP_CLIENT_ID }}
+          private-key: ${{ secrets.SCHEMA_CANARY_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
       - name: Create pull request
         if: steps.check-token.outputs.has_token == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
+          token: ${{ steps.app-token.outputs.token }}
           commit-message: 'chore(JsonSchemaComparison): sync COUNTRY_CONTRACT_VERSIONS from the BE repo'
           branch: chore/sync-country-contract-versions-auto
           delete-branch: true
