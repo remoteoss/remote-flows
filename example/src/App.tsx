@@ -326,7 +326,8 @@ function App() {
     'cost-calculator': true, // Start with Cost Calculator expanded
   });
   const [activeDemo, setActiveDemo] = useUrlState('demo', defaultDemoId, {
-    validate: (value) => value in flattenedDemos,
+    validate: (value) =>
+      value in flattenedDemos && !flattenedDemos[value].isParent,
   });
   const [copied, setCopied] = useState<string | null>(null);
 
