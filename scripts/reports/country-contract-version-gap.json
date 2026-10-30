@@ -65,13 +65,6 @@
       "gap": 5
     },
     {
-      "country": "BLR",
-      "countryName": "Belarus",
-      "inUseVersion": 1,
-      "latestVersion": 6,
-      "gap": 5
-    },
-    {
       "country": "FRA",
       "countryName": "France",
       "inUseVersion": 1,
@@ -163,13 +156,6 @@
       "gap": 4
     },
     {
-      "country": "MNG",
-      "countryName": "Mongolia",
-      "inUseVersion": 1,
-      "latestVersion": 5,
-      "gap": 4
-    },
-    {
       "country": "TWN",
       "countryName": "Taiwan",
       "inUseVersion": 1,
@@ -188,20 +174,6 @@
       "countryName": "Italy",
       "inUseVersion": 2,
       "latestVersion": 5,
-      "gap": 3
-    },
-    {
-      "country": "KGZ",
-      "countryName": "Kyrgyzstan",
-      "inUseVersion": 1,
-      "latestVersion": 4,
-      "gap": 3
-    },
-    {
-      "country": "KHM",
-      "countryName": "Cambodia",
-      "inUseVersion": 1,
-      "latestVersion": 4,
       "gap": 3
     },
     {

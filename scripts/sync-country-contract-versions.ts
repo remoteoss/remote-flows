@@ -6,7 +6,7 @@
  * against a BE repo checkout, paste the result back" step.
  *
  * Usage:
- *   npm run sync:contract-versions -- [--be-repo-path=<path>] [--write] [--report-file=path.md]
+ *   pnpm run sync:contract-versions [--be-repo-path=<path>] [--write] [--report-file=path.md]
  *
  * Dry run by default; --write updates schemaVersions.ts and the committed
  * gap-report JSON below, --report-file additionally writes the gap report
@@ -34,6 +34,8 @@ const GAP_REPORT_JSON_PATH = path.join(
   __dirname,
   'reports/country-contract-version-gap.json',
 );
+
+const UNSUPPORTED_COUNTRIES = new Set(['BLR', 'KGZ', 'KHM', 'MNG']);
 
 interface VersionOption {
   value: number;
@@ -76,7 +78,8 @@ function computeCountryContractVersions(
       (entry) =>
         entry.isFile() &&
         entry.name.endsWith('.json') &&
-        entry.name !== 'base.json',
+        entry.name !== 'base.json' &&
+        !UNSUPPORTED_COUNTRIES.has(entry.name.replace(/\.json$/, '')),
     )
     .map((entry) => entry.name.replace(/\.json$/, ''))
     .sort((a, b) => a.localeCompare(b));
