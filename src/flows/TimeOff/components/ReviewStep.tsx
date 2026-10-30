@@ -14,7 +14,7 @@ export function ReviewStep({ render, children }: TimeOffReviewStepProps) {
 
   return (
     <div
-      className={`RemoteFlows__ReviewStepRemoteFlows__ReviewStep--${timeOffRequest.status}`}
+      className={`RemoteFlows__ReviewStep RemoteFlows__ReviewStep--${timeOffRequest.status}`}
     >
       {render ? (
         render({ timeOffRequest, details })
