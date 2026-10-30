@@ -97,6 +97,50 @@ describe('GroupArrayField', () => {
     expect(screen.getByRole('group', { name: 'Items' })).toBeVisible();
   });
 
+  it('hands the group additional props to every row input', () => {
+    renderGroup({
+      rows: [
+        { description: 'Design work', amount: '2500' },
+        { description: 'Hosting', amount: '75' },
+      ],
+      additionalProps: { currency: 'EUR' },
+      components: {
+        text: ({ fieldData }: $TSFixMe) => (
+          <output data-testid='row-currency'>
+            {fieldData.metadata.currency}
+          </output>
+        ),
+      },
+    });
+
+    expect(
+      screen.getAllByTestId('row-currency').map((node) => node.textContent),
+    ).toEqual(['EUR', 'EUR', 'EUR', 'EUR']);
+  });
+
+  it("keeps a row input's own additional props over the group's", () => {
+    renderGroup({
+      additionalProps: { currency: 'EUR' },
+      fields: [
+        {
+          name: 'amount',
+          label: 'Amount',
+          type: 'text',
+          additionalProps: { currency: 'USD' },
+        },
+      ],
+      components: {
+        text: ({ fieldData }: $TSFixMe) => (
+          <output data-testid='row-currency'>
+            {fieldData.metadata.currency}
+          </output>
+        ),
+      },
+    });
+
+    expect(screen.getByTestId('row-currency')).toHaveTextContent('USD');
+  });
+
   it('shows the description', () => {
     renderGroup({ description: 'Everything you are billing for' });
 
