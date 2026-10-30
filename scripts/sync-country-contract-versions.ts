@@ -8,15 +8,15 @@
  * Usage:
  *   pnpm run sync:contract-versions [--be-repo-path=<path>] [--write] [--report-file=path.md]
  *
- * Dry run by default; --write updates schemaVersions.ts and the committed
- * gap-report JSON below, --report-file additionally writes the gap report
- * as markdown (used by CI as the PR body).
+ * Dry run by default; --write updates schemaVersions.ts and the version
+ * matrix, --report-file additionally writes the gap report as markdown (used
+ * by CI as the PR body).
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { updateVersionMatrix } from './contract-versions-matrix';
-import { COUNTRY_NAMES, countryLabel } from './country-names';
+import { countryLabel } from './country-names';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -31,13 +31,6 @@ const ONBOARDING_VERSIONS_PATH = path.join(
 const VERSION_MATRIX_PATH = path.join(
   __dirname,
   '../docs/schema-changes/eor/contract-details/countries/README.md',
-);
-// Committed (not /tmp) so it's a durable, machine-readable record of the gap
-// over time -- e.g. to later correlate against which countries matter most
-// to partners, rather than living only in a PR body.
-const GAP_REPORT_JSON_PATH = path.join(
-  __dirname,
-  'reports/country-contract-version-gap.json',
 );
 
 const UNSUPPORTED_COUNTRIES = new Set(['BLR', 'KGZ', 'KHM', 'MNG']);
@@ -190,26 +183,6 @@ function generateMarkdownGapReport(
   ].join('\n');
 }
 
-/**
- * Structured version of the same comparison, for every country (not just
- * ones behind), so it can be read back by tooling later -- e.g. joined
- * against a partner-importance list to prioritize which countries to bump.
- */
-function generateJsonGapReport(
-  comparison: { country: string; inUse: number; latest: number; gap: number }[],
-) {
-  return {
-    generatedAt: new Date().toISOString().slice(0, 10),
-    countries: comparison.map((row) => ({
-      country: row.country,
-      countryName: COUNTRY_NAMES[row.country] ?? null,
-      inUseVersion: row.inUse,
-      latestVersion: row.latest,
-      gap: row.gap,
-    })),
-  };
-}
-
 function main() {
   const { beRepoPath, write, reportFile } = parseArgs();
 
@@ -289,23 +262,6 @@ function main() {
   if (write && newMatrix !== currentMatrix) {
     fs.writeFileSync(VERSION_MATRIX_PATH, newMatrix);
     console.log(`Wrote ${VERSION_MATRIX_PATH}`);
-  }
-
-  if (write) {
-    const stripGeneratedAt = (json: string) =>
-      json.replace(/"generatedAt": "[^"]*"/, '');
-    const newGapReportJson = `${JSON.stringify(generateJsonGapReport(comparison), null, 2)}\n`;
-    const currentGapReportJson = fs.existsSync(GAP_REPORT_JSON_PATH)
-      ? fs.readFileSync(GAP_REPORT_JSON_PATH, 'utf-8')
-      : '';
-    if (
-      stripGeneratedAt(currentGapReportJson) !==
-      stripGeneratedAt(newGapReportJson)
-    ) {
-      fs.mkdirSync(path.dirname(GAP_REPORT_JSON_PATH), { recursive: true });
-      fs.writeFileSync(GAP_REPORT_JSON_PATH, newGapReportJson);
-      console.log(`Wrote ${GAP_REPORT_JSON_PATH}`);
-    }
   }
 
   if (reportFile) {

@@ -87,5 +87,4 @@ jobs:
           body-path: /tmp/gap-report.md
           add-paths: |
             src/components/JsonSchemaComparison/schemaVersions.ts
-            scripts/reports/country-contract-version-gap.json
             docs/schema-changes/eor/contract-details/countries/README.md
