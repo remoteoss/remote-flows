@@ -60,6 +60,8 @@ import { useJobTitleEligibilityCheck } from '@/src/flows/Onboarding/hooks/useJob
 
 type OnboardingHookProps = Omit<OnboardingFlowProps, 'render'>;
 
+const ENGAGEMENT_AGREEMENT_DETAILS_COUNTRIES = ['DEU'];
+
 const jsonSchemaToEmployment: Partial<
   Record<JSONSchemaFormType, keyof Employment>
 > = {
@@ -285,7 +287,10 @@ export const useOnboarding = ({
     isLoading: isLoadingEmploymentEngagementAgreementDetails,
   } = useEmploymentEngagementAgreementDetails(internalEmploymentId, {
     enabled: Boolean(
-      !!internalEmploymentId && options?.features?.includes('dynamic_steps'),
+      !!internalEmploymentId &&
+      !!internalCountryCode &&
+      ENGAGEMENT_AGREEMENT_DETAILS_COUNTRIES.includes(internalCountryCode) &&
+      options?.features?.includes('dynamic_steps'),
     ),
   });
 
@@ -310,7 +315,11 @@ export const useOnboarding = ({
       jsfModify: options?.jsfModify,
       queryOptions: {
         enabled: Boolean(
-          !!internalCountryCode && options?.features?.includes('dynamic_steps'),
+          !!internalCountryCode &&
+          ENGAGEMENT_AGREEMENT_DETAILS_COUNTRIES.includes(
+            internalCountryCode,
+          ) &&
+          options?.features?.includes('dynamic_steps'),
         ),
       },
       jsonSchemaVersion: getEngagementAgreementDetailsSchemaVersion(options),
