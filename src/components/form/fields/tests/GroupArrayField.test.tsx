@@ -90,6 +90,40 @@ describe('GroupArrayField', () => {
     expect(screen.getAllByLabelText('Amount')[0]).toHaveValue('2500');
   });
 
+  it('leaves the visible label out when the label is hidden', () => {
+    renderGroup({ hideLabel: true });
+
+    expect(screen.queryByText('Items')).not.toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Items' })).toBeVisible();
+  });
+
+  it('shows the description under the label', () => {
+    renderGroup({ description: 'Everything you are billing for' });
+
+    expect(screen.getByText('Everything you are billing for')).toBeVisible();
+  });
+
+  it('hands the group additional props to every row input', () => {
+    renderGroup({
+      rows: [
+        { description: 'Design work', amount: '2500' },
+        { description: 'Hosting', amount: '75' },
+      ],
+      additionalProps: { currency: 'EUR' },
+      components: {
+        text: ({ fieldData }: $TSFixMe) => (
+          <output data-testid='row-currency'>
+            {fieldData.metadata.currency}
+          </output>
+        ),
+      },
+    });
+
+    expect(
+      screen.getAllByTestId('row-currency').map((node) => node.textContent),
+    ).toEqual(['EUR', 'EUR', 'EUR', 'EUR']);
+  });
+
   it('appends a blank row from the add button', () => {
     const { getItems } = renderGroup({ addFieldText: 'Add line' });
 

@@ -334,13 +334,13 @@ export async function fillCreateInvoiceSchedule(
   }
 
   if (newValues?.item1Description) {
-    fireEvent.change(screen.getByLabelText(/Item 1 description/i), {
+    fireEvent.change(screen.getAllByLabelText(/^Description/i)[0], {
       target: { value: newValues?.item1Description },
     });
   }
 
   if (newValues?.item1Amount) {
-    fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
+    fireEvent.change(screen.getAllByLabelText(/^Amount/i)[0], {
       target: { value: newValues?.item1Amount },
     });
   }
