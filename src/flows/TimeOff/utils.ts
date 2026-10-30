@@ -41,9 +41,16 @@ const pluralize = (count: number, unit: string) =>
   `${count} ${unit}${count === 1 ? '' : 's'}`;
 
 const formatDuration = (totalMinutes: number) => {
-  const hours = pluralize(Math.floor(totalMinutes / 60), 'hour');
+  const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
-  return minutes ? `${hours} ${pluralize(minutes, 'minute')}` : hours;
+  return (
+    [
+      hours > 0 && pluralize(hours, 'hour'),
+      minutes > 0 && pluralize(minutes, 'minute'),
+    ]
+      .filter(Boolean)
+      .join(' ') || pluralize(0, 'minute')
+  );
 };
 
 export const getTimeOffRequestDetails = (
