@@ -54,14 +54,28 @@ export type {
   UseContractDocumentOptions,
 } from '@/src/flows/ContractDocument';
 
-export { TimeOffFlow, useTimeOff } from '@/src/flows/TimeOff';
+export {
+  TimeOffFlow,
+  useTimeOff,
+  useTimeOffRequest,
+} from '@/src/flows/TimeOff';
 
 export type {
+  TimeOffApproveButtonProps,
+  TimeOffApproveOptions,
+  TimeOffDeclineButtonProps,
+  TimeOffDeclineOptions,
+  TimeOffDecisionError,
   TimeOffFlowProps,
   TimeOffRenderProps,
+  TimeOffRequest,
+  TimeOffRequestDetail,
+  TimeOffRequestError,
   TimeOffRequestIdFormValues,
+  TimeOffReviewStepProps,
   TimeOffStepKeys,
   UseTimeOffOptions,
+  UseTimeOffRequestOptions,
 } from '@/src/flows/TimeOff';
 
 export {
