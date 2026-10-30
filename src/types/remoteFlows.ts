@@ -156,6 +156,7 @@ export type FieldSetToggleComponentProps = {
 export type GroupArrayComponentProps = {
   name: string;
   label: string;
+  description?: ReactNode;
   addFieldText: string;
   rows: Array<{
     id: string;

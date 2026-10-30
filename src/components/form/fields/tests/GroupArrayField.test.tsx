@@ -90,6 +90,15 @@ describe('GroupArrayField', () => {
     expect(screen.getAllByLabelText('Amount')[0]).toHaveValue('2500');
   });
 
+  it('shows the description under the label and describes the group with it', () => {
+    renderGroup({ description: 'Everything you are billing for' });
+
+    expect(screen.getByText('Everything you are billing for')).toBeVisible();
+    expect(screen.getByRole('group', { name: 'Items' })).toHaveAccessibleDescription(
+      'Everything you are billing for',
+    );
+  });
+
   it('appends a blank row from the add button', () => {
     const { getItems } = renderGroup({ addFieldText: 'Add line' });
 
