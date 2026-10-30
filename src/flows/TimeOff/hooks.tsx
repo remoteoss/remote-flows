@@ -1,14 +1,24 @@
 import { useCallback } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
+import {
+  getTimeOffDecisionError,
+  useApproveTimeOffRequest,
+  useDeclineTimeOffRequest,
+  useGetTimeOffRequest,
+} from '@/src/flows/TimeOff/api';
 import { requestIdSchema } from '@/src/flows/TimeOff/json-schemas/requestId';
 import {
+  TimeOffApproveOptions,
+  TimeOffDeclineOptions,
   TimeOffRequestIdFormValues,
   TimeOffStepKeys,
   UseTimeOffOptions,
+  UseTimeOffRequestOptions,
 } from '@/src/flows/TimeOff/types';
 import { STEPS, STEPS_ARRAY } from '@/src/flows/TimeOff/utils';
 import { useStepState } from '@/src/flows/useStepState';
+import { mutationToPromise } from '@/src/lib/mutations';
 
 /**
  * Headless hook powering the time-off flow.
@@ -34,6 +44,62 @@ export const useTimeOff = ({
     stepState.values?.request_id?.timeoff_id ?? initialTimeOffId
   )?.trim();
   const enteredTimeOffId = (fieldValues.timeoff_id ?? timeOffId)?.trim();
+
+  const { timeOffRequest, isLoading, error, refetch } = useTimeOffRequest({
+    timeOffId: stepState.currentStep.name === 'review' ? timeOffId : undefined,
+  });
+
+  const approveTimeOffRequestMutation = useApproveTimeOffRequest();
+  const { mutateAsyncOrThrow: approveTimeOffRequestAsync } = mutationToPromise(
+    approveTimeOffRequestMutation,
+  );
+
+  const approve = useCallback(
+    async ({ approverId }: TimeOffApproveOptions) => {
+      try {
+        if (!timeOffId) {
+          throw new Error('No time-off request to approve.');
+        }
+        const response = await approveTimeOffRequestAsync({
+          timeOffId,
+          approverId,
+        });
+        if (!response) {
+          throw new Error('The approval returned no time-off request.');
+        }
+        return response.data.timeoff;
+      } catch (error) {
+        throw getTimeOffDecisionError(error);
+      }
+    },
+    [approveTimeOffRequestAsync, timeOffId],
+  );
+
+  const declineTimeOffRequestMutation = useDeclineTimeOffRequest();
+  const { mutateAsyncOrThrow: declineTimeOffRequestAsync } = mutationToPromise(
+    declineTimeOffRequestMutation,
+  );
+
+  const decline = useCallback(
+    async ({ declineReason }: TimeOffDeclineOptions) => {
+      try {
+        if (!timeOffId) {
+          throw new Error('No time-off request to decline.');
+        }
+        const response = await declineTimeOffRequestAsync({
+          timeOffId,
+          declineReason,
+        });
+        if (!response) {
+          throw new Error('The decline returned no time-off request.');
+        }
+        return response.data.timeoff;
+      } catch (error) {
+        throw getTimeOffDecisionError(error);
+      }
+    },
+    [declineTimeOffRequestAsync, timeOffId],
+  );
 
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
@@ -73,6 +139,38 @@ export const useTimeOff = ({
      */
     hasRequestId: Boolean(enteredTimeOffId),
     /**
+     * The time-off request under review, loaded once the flow reaches the review step.
+     */
+    timeOffRequest,
+    /**
+     * Whether the time-off request under review is loading for the first time.
+     */
+    isLoading,
+    /**
+     * Why the time-off request under review failed to load, or `null`.
+     */
+    timeOffRequestError: error,
+    /**
+     * Loads the time-off request under review again, e.g. to retry after an error.
+     */
+    refetchTimeOffRequest: refetch,
+    /**
+     * Approves the time-off request under review. Resolves with the request as the API returns
+     * it, so read the outcome from its `status`. Rejects with a `TimeOffDecisionError`.
+     */
+    approve,
+    /**
+     * Declines the time-off request under review. Resolves with the request as the API returns
+     * it, so read the outcome from its `status`. Rejects with a `TimeOffDecisionError`.
+     */
+    decline,
+    /**
+     * Whether a decision on the time-off request under review is being sent.
+     */
+    isSubmitting:
+      approveTimeOffRequestMutation.isPending ||
+      declineTimeOffRequestMutation.isPending,
+    /**
      * Moves to the next step.
      */
     next: nextStep,
@@ -84,5 +182,31 @@ export const useTimeOff = ({
      * Moves to a specific step.
      */
     goTo: goToStep,
+  };
+};
+
+/**
+ * Loads one time-off request by its ID, e.g. `timeOffBag.timeOffId`.
+ */
+export const useTimeOffRequest = ({ timeOffId }: UseTimeOffRequestOptions) => {
+  const { data, isLoading, error, refetch } = useGetTimeOffRequest(timeOffId);
+
+  return {
+    /**
+     * The loaded time-off request.
+     */
+    timeOffRequest: data,
+    /**
+     * Whether the time-off request is loading for the first time.
+     */
+    isLoading,
+    /**
+     * Why the last load failed, or `null`.
+     */
+    error,
+    /**
+     * Loads the time-off request again, e.g. to retry after an error.
+     */
+    refetch,
   };
 };
