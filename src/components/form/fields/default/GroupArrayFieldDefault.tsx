@@ -15,18 +15,26 @@ export function GroupArrayFieldDefault({
   error,
 }: GroupArrayComponentProps) {
   const errorId = `${name}-error`;
+  const descriptionId = `${name}-description`;
+  const describedBy = [
+    description ? descriptionId : null,
+    error ? errorId : null,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <div
       role='group'
       aria-label={label}
-      aria-describedby={error ? errorId : undefined}
+      aria-describedby={describedBy || undefined}
       className='grid gap-4 RemoteFlows__GroupArrayField'
     >
       {hideLabel ? null : <p className='text-sm font-semibold'>{label}</p>}
       {description ? (
         <BaseFormDescription
           as='div'
+          id={descriptionId}
           className='RemoteFlows__GroupArrayField__Description'
         >
           {description}

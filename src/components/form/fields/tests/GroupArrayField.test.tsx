@@ -90,17 +90,11 @@ describe('GroupArrayField', () => {
     expect(screen.getAllByLabelText('Amount')[0]).toHaveValue('2500');
   });
 
-  it('leaves the visible label out when the label is hidden', () => {
+  it('leaves the visible label out when the label is hidden, keeping the group name', () => {
     renderGroup({ hideLabel: true });
 
     expect(screen.queryByText('Items')).not.toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'Items' })).toBeVisible();
-  });
-
-  it('shows the description under the label', () => {
-    renderGroup({ description: 'Everything you are billing for' });
-
-    expect(screen.getByText('Everything you are billing for')).toBeVisible();
   });
 
   it('hands the group additional props to every row input', () => {
@@ -122,6 +116,20 @@ describe('GroupArrayField', () => {
     expect(
       screen.getAllByTestId('row-currency').map((node) => node.textContent),
     ).toEqual(['EUR', 'EUR', 'EUR', 'EUR']);
+  });
+
+  it('shows the description', () => {
+    renderGroup({ description: 'Everything you are billing for' });
+
+    expect(screen.getByText('Everything you are billing for')).toBeVisible();
+  });
+
+  it('announces the description with the group', () => {
+    renderGroup({ description: 'Everything you are billing for' });
+
+    expect(
+      screen.getByRole('group', { name: 'Items' }),
+    ).toHaveAccessibleDescription('Everything you are billing for');
   });
 
   it('appends a blank row from the add button', () => {
