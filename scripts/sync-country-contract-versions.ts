@@ -15,6 +15,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { updateVersionMatrix } from './contract-versions-matrix';
 import { COUNTRY_NAMES, countryLabel } from './country-names';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -26,6 +27,10 @@ const SCHEMA_VERSIONS_PATH = path.join(
 const ONBOARDING_VERSIONS_PATH = path.join(
   __dirname,
   '../example/src/flows/Onboarding/jsonSchemaVersions.ts',
+);
+const VERSION_MATRIX_PATH = path.join(
+  __dirname,
+  '../docs/schema-changes/eor/contract-details/countries/README.md',
 );
 // Committed (not /tmp) so it's a durable, machine-readable record of the gap
 // over time -- e.g. to later correlate against which countries matter most
@@ -263,6 +268,27 @@ function main() {
     console.log(`Wrote ${SCHEMA_VERSIONS_PATH}`);
   } else if (changed) {
     console.log('Re-run with --write to update schemaVersions.ts.');
+  }
+
+  const latestCounts = Object.fromEntries(
+    Object.entries(latestVersions).map(([country, opts]) => [
+      country,
+      opts.length,
+    ]),
+  );
+  const currentMatrix = fs.readFileSync(VERSION_MATRIX_PATH, 'utf-8');
+  const { content: newMatrix, unreadableRows } = updateVersionMatrix(
+    currentMatrix,
+    latestCounts,
+  );
+  for (const row of unreadableRows) {
+    console.warn(
+      `Version matrix row left unchanged, could not read it: ${row}`,
+    );
+  }
+  if (write && newMatrix !== currentMatrix) {
+    fs.writeFileSync(VERSION_MATRIX_PATH, newMatrix);
+    console.log(`Wrote ${VERSION_MATRIX_PATH}`);
   }
 
   if (write) {
