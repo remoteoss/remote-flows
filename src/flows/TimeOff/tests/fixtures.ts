@@ -1,4 +1,4 @@
-import { TimeoffResponse } from '@/src/client';
+import { TimeoffErrorResponse, TimeoffResponse } from '@/src/client';
 
 export const timeOffRequestResponse: TimeoffResponse = {
   data: {
@@ -28,4 +28,26 @@ export const timeOffRequestResponse: TimeoffResponse = {
       },
     },
   },
+};
+
+export const timeOffErrorResponse: TimeoffErrorResponse = {
+  errors: {
+    'timeoff_days/hours': [
+      'must be greater than or equal to 0',
+      'must be less than or equal to 8',
+    ],
+  },
+  field_errors: [
+    {
+      code: 'parameter_value_unknown',
+      field: 'timeoff_days/hours',
+      message: 'must be greater than or equal to 0',
+    },
+    {
+      code: 'parameter_value_unknown',
+      field: 'timeoff_days/hours',
+      message: 'must be less than or equal to 8',
+    },
+  ],
+  message: 'Unprocessable Entity',
 };

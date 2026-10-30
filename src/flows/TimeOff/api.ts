@@ -1,8 +1,23 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import { getV1TimeoffId, TimeoffResponse } from '@/src/client';
+import {
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
+import {
+  getV1TimeoffId,
+  NullableApproverId,
+  postV1TimeoffTimeoffIdApprove,
+  TimeoffErrorResponse,
+  TimeoffResponse,
+} from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
-import { TimeOffRequestError } from '@/src/flows/TimeOff/types';
+import {
+  TimeOffDecisionError,
+  TimeOffRequestError,
+} from '@/src/flows/TimeOff/types';
+import { isMutationError } from '@/src/lib/mutations';
 
 const getTimeOffRequestErrorReason = (
   status: number | undefined,
@@ -50,5 +65,72 @@ export const useGetTimeOffRequest = (timeOffId: string | undefined) => {
     ...timeOffRequestOptions(client as Client, timeOffId ?? ''),
     enabled: Boolean(timeOffId),
     select: (data) => data.data.timeoff,
+  });
+};
+
+export const getTimeOffDecisionError = (
+  error: unknown,
+): TimeOffDecisionError => {
+  if (!isMutationError(error)) {
+    return {
+      reason: 'request_failed',
+      status: undefined,
+      message: error instanceof Error ? error.message : String(error),
+      fieldErrors: [],
+    };
+  }
+
+  const status = error.response?.status;
+  if (status === 422) {
+    const { field_errors: fieldErrors = [] } = (error.rawError.error ??
+      error.rawError) as Partial<TimeoffErrorResponse>;
+    return {
+      reason: 'rejected',
+      status,
+      message: error.error.message,
+      fieldErrors,
+    };
+  }
+
+  return {
+    reason: getTimeOffRequestErrorReason(status),
+    status,
+    message: error.error.message,
+    fieldErrors: [],
+  };
+};
+
+/**
+ * Approves one time-off request with `POST /v1/timeoff/{timeoff_id}/approve`, then caches the
+ * request the API returns so the request under review shows its new status.
+ */
+export const useApproveTimeOffRequest = () => {
+  const { client } = useClient();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      timeOffId,
+      approverId,
+    }: {
+      timeOffId: string;
+      approverId: NullableApproverId;
+    }) =>
+      postV1TimeoffTimeoffIdApprove({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: { timeoff_id: timeOffId },
+        body: { approver_id: approverId },
+      }),
+    onSuccess: (response, { timeOffId }) => {
+      if (!response.data) {
+        return;
+      }
+      queryClient.setQueryData(
+        timeOffRequestOptions(client as Client, timeOffId).queryKey,
+        response.data,
+      );
+    },
   });
 };
