@@ -58,6 +58,7 @@ export {
   TimeOffFlow,
   useTimeOff,
   useTimeOffRequest,
+  useTimeOffRequests,
 } from '@/src/flows/TimeOff';
 
 export type {
@@ -72,10 +73,12 @@ export type {
   TimeOffRequestDetail,
   TimeOffRequestError,
   TimeOffRequestIdFormValues,
+  TimeOffRequestsError,
   TimeOffReviewStepProps,
   TimeOffStepKeys,
   UseTimeOffOptions,
   UseTimeOffRequestOptions,
+  UseTimeOffRequestsOptions,
 } from '@/src/flows/TimeOff';
 
 export {
