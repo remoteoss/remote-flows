@@ -113,6 +113,10 @@ describe('GroupArrayField', () => {
       },
     });
 
+    // The form kit only applies computed attributes to the group itself, never to the
+    // fields inside its rows, so the group hands its extra props to every input in every
+    // row. Two rows with two inputs each means all four receive the currency, including the
+    // description inputs that have no use for it.
     expect(
       screen.getAllByTestId('row-currency').map((node) => node.textContent),
     ).toEqual(['EUR', 'EUR', 'EUR', 'EUR']);
