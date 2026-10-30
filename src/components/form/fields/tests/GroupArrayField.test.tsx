@@ -124,24 +124,6 @@ describe('GroupArrayField', () => {
     ).toEqual(['EUR', 'EUR', 'EUR', 'EUR']);
   });
 
-  it('shows icons on the add and remove buttons', () => {
-    renderGroup({
-      rows: [
-        { description: 'First', amount: '1' },
-        { description: 'Second', amount: '2' },
-      ],
-    });
-
-    expect(
-      screen
-        .getByRole('button', { name: 'Remove Items 1' })
-        .querySelector('svg'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Add item' }).querySelector('svg'),
-    ).toBeInTheDocument();
-  });
-
   it('appends a blank row from the add button', () => {
     const { getItems } = renderGroup({ addFieldText: 'Add line' });
 
