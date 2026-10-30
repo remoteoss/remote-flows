@@ -15,6 +15,7 @@ import {
 import { StatementComponentProps } from '@/src/types/fields';
 import {
   checkFieldHasForcedValue,
+  getFieldRenderType,
   getFieldsWithFlatFieldsets,
   isFieldSkipped,
   resolveFieldDynamicProperties,
@@ -120,7 +121,8 @@ export const JSONSchemaFormFields = ({
         // the version of json-schema-form is decided by remote-json-schema-form-kit
         // our product uses field.type instead of field.inputType and we probably should do the same
         const fieldType = field.type;
-        let FieldComponent = fieldsMap[fieldType as keyof typeof fieldsMap];
+        const FieldComponent =
+          fieldsMap[getFieldRenderType(field) as keyof typeof fieldsMap];
 
         if (!FieldComponent) {
           return (
@@ -167,11 +169,6 @@ export const JSONSchemaFormFields = ({
             field,
             field.name,
           );
-        }
-
-        // TODO: Have doubts about this, it seems we only support checkbox for multiple select
-        if (fieldType === 'select' && field.multiple) {
-          FieldComponent = fieldsMap['multi-select'];
         }
 
         const fieldProps = omit(field, 'WrapperComponent');

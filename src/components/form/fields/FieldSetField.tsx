@@ -14,6 +14,7 @@ import { StatementComponentProps } from '@/src/types/fields';
 import {
   checkFieldHasForcedValue,
   fieldsetHasVisibleContent,
+  getFieldRenderType,
   isFieldSkipped,
   resolveFieldDynamicProperties,
 } from '@/src/components/form/utils';
@@ -320,7 +321,8 @@ export function FieldSetField({
               }
               // We need to do the check after checking (field.type || field.inputType) === 'fieldset' or (field.type || field.inputType) === 'fieldset-flat'
               // circular dependency most likely
-              let FieldComponent = baseFields[fieldType as BaseTypes];
+              const FieldComponent =
+                baseFields[getFieldRenderType(field) as BaseTypes];
 
               if (field.Component) {
                 const { Component } = field as {
@@ -351,10 +353,6 @@ export function FieldSetField({
                 return (
                   <p className='error'>Field type {fieldType} not supported</p>
                 );
-              }
-
-              if (fieldType === 'select' && field.multiple) {
-                FieldComponent = baseFields['multi-select'];
               }
 
               const fieldProps = omit(field, 'WrapperComponent');

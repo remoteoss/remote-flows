@@ -1,7 +1,11 @@
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import omit from 'lodash.omit';
 import { baseFields } from '@/src/components/form/fields/baseFields';
-import { getBlankRowValues, isFieldSkipped } from '@/src/components/form/utils';
+import {
+  getBlankRowValues,
+  getFieldRenderType,
+  isFieldSkipped,
+} from '@/src/components/form/utils';
 import { useFormFields } from '@/src/context';
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { BaseTypes } from './types';
@@ -48,12 +52,7 @@ export function GroupArrayField({
   const renderRowFields = (index: number) =>
     visibleFields.map((field) => {
       const fieldName = `${name}.${index}.${field.name}`;
-      const FieldComponent =
-        baseFields[
-          field.type === 'select' && field.multiple
-            ? 'multi-select'
-            : (field.type as BaseTypes)
-        ];
+      const FieldComponent = baseFields[getFieldRenderType(field) as BaseTypes];
 
       if (!FieldComponent) {
         return (
