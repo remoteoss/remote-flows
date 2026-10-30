@@ -62,6 +62,11 @@
  *   pnpm run seed:onboarding --country=DEU --env=sandbox
  *   pnpm run seed:onboarding --country=DEU --env=review
  *
+ * The engagement_agreement_details step is only seeded for DEU. Pass
+ * --engagement to include it for any other country.
+ *
+ *   pnpm run seed:onboarding --country=CZE --env=sandbox --engagement
+ *
  * Pass --debug to log every request and response: URL, request body, status,
  * timing, response headers (x-request-id, traceparent, ... - what you need to
  * find the request in Sentry/Honeycomb) and full response body, plus a curl
@@ -140,6 +145,7 @@ if ('env' in args && stringArg('env') === undefined) {
 const ENV = stringArg('env');
 const FILL_CONTRACT_DETAILS = args['contract-details'] === true;
 const DEBUG = args.debug === true;
+const INCLUDE_ENGAGEMENT = COUNTRY === 'DEU' || args.engagement === true;
 
 let BASE_URL: string;
 let getAuthHeaders = async (
@@ -429,18 +435,24 @@ async function seedEmployee() {
     },
   });
 
-  console.log('\nChecking for an engagement_agreement_details step...');
   let engagementSchema: FormSchema | undefined;
-  try {
-    engagementSchema = await fetchSchema('engagement_agreement_details');
-  } catch (err) {
-    if (err instanceof ApiError && err.status === 404) {
-      console.log(
-        `No engagement_agreement_details schema for ${COUNTRY} - skipping.`,
-      );
-    } else {
-      throw err;
+  if (INCLUDE_ENGAGEMENT) {
+    console.log('\nChecking for an engagement_agreement_details step...');
+    try {
+      engagementSchema = await fetchSchema('engagement_agreement_details');
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 404) {
+        console.log(
+          `No engagement_agreement_details schema for ${COUNTRY} - skipping.`,
+        );
+      } else {
+        throw err;
+      }
     }
+  } else {
+    console.log(
+      `\nSkipping engagement_agreement_details for ${COUNTRY} (only DEU by default, pass --engagement to include it).`,
+    );
   }
 
   if (
