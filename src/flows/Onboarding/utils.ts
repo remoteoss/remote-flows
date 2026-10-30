@@ -216,6 +216,8 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'LUX',
   'MAR',
   'MLT',
+  'PAN',
+  'PRI',
 ];
 
 /**
