@@ -1,11 +1,13 @@
 import { useCallback } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
+import { useGetTimeOffRequest } from '@/src/flows/TimeOff/api';
 import { requestIdSchema } from '@/src/flows/TimeOff/json-schemas/requestId';
 import {
   TimeOffRequestIdFormValues,
   TimeOffStepKeys,
   UseTimeOffOptions,
+  UseTimeOffRequestOptions,
 } from '@/src/flows/TimeOff/types';
 import { STEPS, STEPS_ARRAY } from '@/src/flows/TimeOff/utils';
 import { useStepState } from '@/src/flows/useStepState';
@@ -84,5 +86,31 @@ export const useTimeOff = ({
      * Moves to a specific step.
      */
     goTo: goToStep,
+  };
+};
+
+/**
+ * Loads one time-off request by its ID, e.g. `timeOffBag.timeOffId`.
+ */
+export const useTimeOffRequest = ({ timeOffId }: UseTimeOffRequestOptions) => {
+  const { data, isLoading, error, refetch } = useGetTimeOffRequest(timeOffId);
+
+  return {
+    /**
+     * The loaded time-off request.
+     */
+    timeOffRequest: data,
+    /**
+     * Whether the time-off request is loading for the first time.
+     */
+    isLoading,
+    /**
+     * Why the last load failed, or `null`.
+     */
+    error,
+    /**
+     * Loads the time-off request again, e.g. to retry after an error.
+     */
+    refetch,
   };
 };
