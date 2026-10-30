@@ -1271,3 +1271,36 @@ button.reset-button {
   font-weight: 500;
   overflow-wrap: anywhere;
 }
+
+.RemoteFlows__StatusFilter {
+  margin-bottom: 1rem;
+}
+
+.RemoteFlows__ListStep {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.RemoteFlows__ListStep__Item + .RemoteFlows__ListStep__Item {
+  border-top: 1px solid #e2e8f0;
+}
+
+.RemoteFlows__ListStep__SelectButton {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  color: #1e293b;
+  cursor: pointer;
+}
+
+.RemoteFlows__ListStep__SelectButton:hover {
+  background-color: #f8fafc;
+}
+
+.RemoteFlows__ListStep__Value__leave_policy {
+  font-weight: 500;
+}

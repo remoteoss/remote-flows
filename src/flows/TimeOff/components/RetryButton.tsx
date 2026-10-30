@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes, PropsWithChildren, useState } from 'react';
 import { useFormFields } from '@/src/context';
-import { useTimeOffContext } from '@/src/flows/TimeOff/context';
+import { useTimeOffReviewContext } from '@/src/flows/TimeOff/context';
 import { cn } from '@/src/lib/utils';
 
 export function RetryButton({
@@ -8,7 +8,7 @@ export function RetryButton({
   onClick,
   ...props
 }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>) {
-  const { timeOffBag } = useTimeOffContext();
+  const { timeOffBag } = useTimeOffReviewContext();
   const { components } = useFormFields();
   const [isRetrying, setIsRetrying] = useState(false);
 
