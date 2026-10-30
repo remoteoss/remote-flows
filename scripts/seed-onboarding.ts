@@ -81,6 +81,7 @@ import {
 } from '../example/src/flows/Onboarding/jsonSchemaVersions';
 import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
 import { fillSchema, findSafeStartDate, HolidayDate } from './fill-schema';
+import { ApiError, runEngagementStep } from './seed-engagement';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
@@ -92,17 +93,6 @@ type AuthHeaders = Record<string, string>;
 interface ApiOptions {
   query?: Record<string, string | number | boolean | undefined>;
   body?: unknown;
-}
-
-class ApiError extends Error {
-  constructor(
-    message: string,
-    readonly status: number,
-    readonly body: unknown,
-    readonly headers: Record<string, string>,
-  ) {
-    super(message);
-  }
 }
 
 function parseArgs(argv: string[]): Record<string, string | true> {
@@ -430,42 +420,12 @@ async function seedEmployee() {
   });
 
   console.log('\nChecking for an engagement_agreement_details step...');
-  let engagementSchema: FormSchema | undefined;
-  try {
-    engagementSchema = await fetchSchema('engagement_agreement_details');
-  } catch (err) {
-    if (err instanceof ApiError && err.status === 404) {
-      console.log(
-        `No engagement_agreement_details schema for ${COUNTRY} - skipping.`,
-      );
-    } else {
-      throw err;
-    }
-  }
-
-  if (
-    engagementSchema &&
-    Object.keys((engagementSchema as { properties?: object }).properties || {})
-      .length > 0
-  ) {
-    const { values: engagementDetails, skipped } = fillSchema(engagementSchema);
-    console.log(
-      'engagement_agreement_details payload:',
-      JSON.stringify(engagementDetails, null, 2),
-    );
-    if (skipped.length) {
-      console.log('Skipped (unfillable) fields:', skipped.join(', '));
-    }
-
-    await api(
-      'POST',
-      `/v2/employments/${employmentId}/engagement-agreement-details`,
-      {
-        body: { engagement_agreement_details: engagementDetails },
-      },
-    );
-    console.log('engagement_agreement_details submitted.');
-  }
+  await runEngagementStep({
+    country: COUNTRY,
+    employmentId,
+    fetchSchema: (form) => fetchSchema(form),
+    submit: (urlPath, body) => api('POST', urlPath, { body }),
+  });
 
   if (FILL_CONTRACT_DETAILS) {
     await submitContractDetails(employmentId);
