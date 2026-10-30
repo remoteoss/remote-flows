@@ -1,8 +1,13 @@
+import { $TSFixMe } from '@/src/types/remoteFlows';
 import {
   buildSteps,
   getBasicInformationSchemaVersion,
   getBenefitOffersSchemaVersion,
   getContractDetailsSchemaVersion,
+  getContractDetailsStrategy,
+  getJobTitleEligibilityParams,
+  getJobTitleEligibilityValues,
+  JOB_TITLE_ELIGIBILITY_SLUG_FIELD,
   usesJsfV1ContractDetails,
 } from '../utils';
 
@@ -29,14 +34,91 @@ describe('getContractDetailsSchemaVersion', () => {
 });
 
 describe('usesJsfV1ContractDetails', () => {
-  it('should return true for France and Italy', () => {
-    expect(usesJsfV1ContractDetails('FRA')).toBe(true);
-    expect(usesJsfV1ContractDetails('ITA')).toBe(true);
+  it.each([
+    'CAN',
+    'GBR',
+    'IND',
+    'PHL',
+    'USA',
+    'POL',
+    'NGA',
+    'IRL',
+    'SWE',
+    'NLD',
+    'FRA',
+    'ITA',
+    'DEU',
+    'ESP',
+    'ZAF',
+    'AUS',
+    'MYS',
+    'DOM',
+    'MEX',
+    'COL',
+    'PAK',
+    'NZL',
+    'ISR',
+    'CZE',
+    'PRT',
+    'CHN',
+    'KEN',
+    'BGR',
+    'BRA',
+    'CHL',
+    'FIN',
+    'GTM',
+    'NOR',
+    'ARM',
+    'EST',
+    'LBN',
+    'KOR',
+    'DNK',
+    'JAM',
+    'SGP',
+    'UGA',
+    'THA',
+    'CRI',
+    'ARG',
+    'ARE',
+    'SLV',
+    'PER',
+    'LTU',
+    'SAU',
+    'SRB',
+    'URY',
+    'BGD',
+    'GEO',
+    'NIC',
+    'SVN',
+    'ALB',
+    'CYP',
+    'MUS',
+    'VNM',
+    'GRC',
+    'HKG',
+    'ISL',
+    'LUX',
+    'MAR',
+    'MLT',
+  ])('should return true for %s', (countryCode) => {
+    expect(usesJsfV1ContractDetails(countryCode)).toBe(true);
   });
 
   it('should return false for the other countries', () => {
-    expect(usesJsfV1ContractDetails('PRT')).toBe(false);
+    expect(usesJsfV1ContractDetails('LVA')).toBe(false);
     expect(usesJsfV1ContractDetails(null)).toBe(false);
+  });
+});
+
+describe('getContractDetailsStrategy', () => {
+  it('returns buildOnce for countries on the jsf v1 contract details path', () => {
+    expect(getContractDetailsStrategy('DEU')).toBe('buildOnce');
+    expect(getContractDetailsStrategy('FRA')).toBe('buildOnce');
+  });
+
+  it('returns rebuild for every other country', () => {
+    expect(getContractDetailsStrategy('LVA')).toBe('rebuild');
+    expect(getContractDetailsStrategy(null)).toBe('rebuild');
   });
 });
 
@@ -264,6 +346,117 @@ describe('buildSteps', () => {
       );
 
       expect(stepAtIndex?.name).toBe('contract_details');
+    });
+  });
+});
+
+describe('getJobTitleEligibilityParams', () => {
+  const buildField = (name: string, isVisible = true): $TSFixMe => ({
+    name,
+    isVisible,
+  });
+
+  const roleFields = [
+    buildField(JOB_TITLE_ELIGIBILITY_SLUG_FIELD),
+    buildField('role_description'),
+    buildField('role_is_onsite'),
+    buildField('role_requires_license'),
+  ];
+
+  const filledValues = {
+    role_description: 'Backend engineer',
+    role_is_onsite: 'no',
+    role_requires_license: 'no',
+  };
+
+  it('returns null when the slug field is not part of the schema', () => {
+    const fields = roleFields.filter(
+      (field) => field.name !== JOB_TITLE_ELIGIBILITY_SLUG_FIELD,
+    );
+
+    const result = getJobTitleEligibilityParams(fields, filledValues);
+
+    expect(result).toBeNull();
+  });
+
+  it('returns null when a role field is missing a value', () => {
+    const result = getJobTitleEligibilityParams(roleFields, {
+      ...filledValues,
+      role_description: '',
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it('returns null when a role field has a validation error', () => {
+    const result = getJobTitleEligibilityParams(roleFields, filledValues, {
+      role_description: 'Too short',
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it('ignores a role field that is hidden by conditional logic', () => {
+    const fields = [
+      buildField(JOB_TITLE_ELIGIBILITY_SLUG_FIELD),
+      buildField('role_description'),
+      buildField('role_is_onsite', false),
+      buildField('role_requires_license'),
+    ];
+
+    const result = getJobTitleEligibilityParams(fields, filledValues);
+
+    expect(result).toEqual({
+      role_description: 'Backend engineer',
+      role_requires_license: 'no',
+    });
+  });
+
+  it('returns the params with job_title when all role fields are filled and valid', () => {
+    const result = getJobTitleEligibilityParams(
+      roleFields,
+      filledValues,
+      null,
+      'Software Engineer',
+    );
+
+    expect(result).toEqual({
+      job_title: 'Software Engineer',
+      role_description: 'Backend engineer',
+      role_is_onsite: 'no',
+      role_requires_license: 'no',
+    });
+  });
+
+  it('omits job_title when none is available', () => {
+    const result = getJobTitleEligibilityParams(roleFields, filledValues);
+
+    expect(result).toEqual(filledValues);
+  });
+});
+
+describe('getJobTitleEligibilityValues', () => {
+  it.each([
+    ['eligible', 'yes'],
+    ['not_eligible', 'no'],
+    ['needs_review', 'maybe'],
+    ['eligible_with_risk_acknowledgement', 'yes_with_ack'],
+    ['not_assessed', null],
+  ] as const)('maps the %s verdict to the %s result', (verdict, result) => {
+    expect(
+      getJobTitleEligibilityValues({ check_id: 'check-id', verdict }),
+    ).toEqual({
+      additional_job_title_eligibility_check_slug: 'check-id',
+      additional_job_title_eligibility_check_result: result,
+    });
+  });
+
+  it('sets the slug to null when the check has no identifier', () => {
+    expect(
+      getJobTitleEligibilityValues({ check_id: null, verdict: 'eligible' }),
+    ).toEqual({
+      additional_job_title_eligibility_check_slug: null,
+      additional_job_title_eligibility_check_result: 'yes',
     });
   });
 });

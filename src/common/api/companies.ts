@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useClient } from '@/src/context';
 import {
+  CompanyAction,
+  getV1CompaniesCompanyIdActions,
   getV1CompaniesCompanyIdPricingPlans,
   IdentityCurrentResponse,
 } from '@/src/client';
@@ -31,5 +33,26 @@ export const useCompanyPricingPlans = (
       }),
     select: (data) => data.data?.data?.pricing_plans,
     enabled: Boolean(queryOptions?.enabled) && !!companyId,
+  });
+};
+
+export const useCompanyOpenTasks = ({
+  options,
+}: {
+  options?: { queryOptions?: { enabled?: boolean } };
+} = {}) => {
+  const { data: identity } = useIdentity();
+  const companyId = hasCompany(identity) ? (identity?.company?.id ?? '') : '';
+  const { client } = useClient();
+
+  return useQuery({
+    queryKey: ['company-open-tasks', companyId],
+    queryFn: () =>
+      getV1CompaniesCompanyIdActions({
+        client: client as Client,
+        path: { company_id: companyId },
+      }),
+    select: ({ data }) => data?.data?.actions ?? ([] as CompanyAction[]),
+    enabled: (options?.queryOptions?.enabled ?? true) && !!companyId,
   });
 };

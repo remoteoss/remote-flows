@@ -4332,6 +4332,71 @@ describe('ContractorOnboardingFlow', () => {
       await fillCreateInvoiceSchedule(values);
     };
 
+    // The Remote platform only offers invoice schedules during contractor onboarding for CM and CM+: Contractor of Record
+    // invoice schedules can only be created once the contractor is active.
+    it('offers the invoice schedule step for Contractor Management but not for Contractor of Record', async () => {
+      const recordVisibleSteps = vi.fn();
+      const visibleSteps = (): string[] =>
+        recordVisibleSteps.mock.lastCall?.[0] ?? [];
+
+      const MultiStepFormWithVisibleSteps = (props: $TSFixMe) => {
+        recordVisibleSteps(
+          (props.contractorOnboardingBag.steps ?? [])
+            .filter((step: $TSFixMe) => step.visible)
+            .map((step: $TSFixMe) => step.name),
+        );
+
+        return <MultiStepFormWithoutCountry {...props} />;
+      };
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithVisibleSteps),
+      );
+
+      render(
+        <RemoteFlowContext.Provider value={{ client: apiClient }}>
+          <ContractorOnboardingFlow
+            employmentId={generateUniqueEmploymentId()}
+            skipSteps={['select_country']}
+            options={{
+              features: ['create_invoice_schedule'],
+            }}
+            {...defaultProps}
+          />
+        </RemoteFlowContext.Provider>,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText('Step: Basic Information');
+      await fillBasicInformation();
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Pricing Plan');
+
+      await fillContractorSubscription('Contractor Management');
+      await waitFor(() => expect(visibleSteps()).toContain('invoice_schedule'));
+
+      await fillContractorSubscription('Contractor of Record');
+      await waitFor(() => {
+        expect(visibleSteps()).not.toContain('invoice_schedule');
+        expect(visibleSteps()).not.toContain('create_invoice_schedule');
+      });
+
+      await fillContractorSubscription('Contractor Management');
+      await waitFor(() => expect(visibleSteps()).toContain('invoice_schedule'));
+    });
+
+    it('explains that the invoice date is when the invoice is created, not when the contractor is paid', async () => {
+      const employmentId = generateUniqueEmploymentId();
+      await goToFilledCreateInvoiceSchedule(employmentId);
+
+      expect(
+        await screen.findByText(
+          /specifies when the invoice will be created, not when the contractor gets paid/i,
+        ),
+      ).toBeInTheDocument();
+    });
+
     it('reveals the second item row once the first has a description and an amount', async () => {
       const employmentId = generateUniqueEmploymentId();
       await goToFilledCreateInvoiceSchedule(employmentId);
@@ -4571,7 +4636,7 @@ describe('ContractorOnboardingFlow', () => {
                     },
                   ],
                   currency: 'EUR',
-                  start_date: '2026-09-17',
+                  start_date: '2100-01-01',
                   employment_id: employmentId,
                   note: 'fdfdnafdjsfdjjfdsa',
                   total_amount: 1000000,
@@ -4642,7 +4707,7 @@ describe('ContractorOnboardingFlow', () => {
       });
 
       expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
-      expect(screen.getByLabelText(/Start date/i)).toHaveValue('2026-09-17');
+      expect(screen.getByLabelText(/Start date/i)).toHaveValue('2100-01-01');
       expect(screen.getByLabelText(/Item 1 description/i)).toHaveValue(
         'salary',
       );
@@ -4651,6 +4716,15 @@ describe('ContractorOnboardingFlow', () => {
         'another',
       );
       expect(screen.getByLabelText(/Item 2 amount/i)).toHaveValue('7500');
+
+      [
+        'Invoicing details',
+        'Invoice items',
+        'Invoicing preferences',
+        'Summary',
+      ].forEach((heading) => {
+        expect(screen.getByText(heading)).toBeInTheDocument();
+      });
 
       fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
         target: { value: '3000' },
@@ -4970,6 +5044,59 @@ describe('ContractorOnboardingFlow', () => {
       expect(
         fieldErrors.some((fieldError) => fieldError.field === 'currency'),
       ).toBe(true);
+    });
+
+    it('creates a one-off schedule as monthly with a single occurrence when "One time" is chosen', async () => {
+      const employmentId = generateUniqueEmploymentId();
+      let createRequestBody: Record<string, unknown> | undefined;
+
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () => {
+          return HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: employmentId,
+                status: 'created',
+              },
+            },
+          });
+        }),
+        http.post('*/v1/contractor-invoice-schedules', async ({ request }) => {
+          createRequestBody = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json({ data: createRequestBody });
+        }),
+      );
+
+      await goToFilledCreateInvoiceSchedule(employmentId, {
+        periodicity: 'one_time',
+        startDate: '2026-12-01',
+      });
+
+      expect(
+        screen.queryByLabelText(/Number of occurrences/i),
+      ).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: /continue/i }));
+
+      await screen.findByText('Step: Review');
+
+      expect(createRequestBody).toEqual({
+        contractor_invoice_schedules: [
+          {
+            employment_id: employmentId,
+            currency: 'EUR',
+            periodicity: 'monthly',
+            nr_occurrences: 1,
+            start_date: '2026-12-01',
+            number: '1234',
+            note: 'Test notes',
+            items: [{ description: 'Salary', amount: 250000 }],
+          },
+        ],
+      });
     });
   });
 });

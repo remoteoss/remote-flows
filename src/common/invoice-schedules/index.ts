@@ -17,9 +17,11 @@ export {
 export {
   buildCustomDays,
   buildInvoiceItems,
+  buildInvoiceScheduleFormValues,
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
   buildRecurrence,
+  toOrdinal,
 } from './utils';
 
 export type { ContractorInvoicePreview } from './types';

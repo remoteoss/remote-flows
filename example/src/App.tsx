@@ -31,6 +31,7 @@ import { TerminationForm } from './Termination';
 import { ContractAmendment } from './ContractAmendment';
 import { InvoiceSchedule } from './InvoiceSchedule';
 import { ContractDocument } from './ContractDocument';
+import { TimeOff } from './TimeOff';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { OnboardingForm } from './flows/Onboarding/Onboarding';
@@ -48,6 +49,7 @@ import TerminationCode from './Termination?raw';
 import ContractAmendmentCode from './ContractAmendment?raw';
 import InvoiceScheduleCode from './InvoiceSchedule?raw';
 import ContractDocumentCode from './ContractDocument?raw';
+import TimeOffCode from './TimeOff?raw';
 import { ContractorOnboardingForm } from './ContractorOnboarding';
 import { CreateCompanyForm } from './CreateCompany';
 import { MagicLinkTest } from './MagicLinkTest';
@@ -145,6 +147,13 @@ const additionalDemos = [
       "Standalone flow to create a contractor's contract document (details, then preview)",
     component: ContractDocument,
     sourceCode: ContractDocumentCode,
+  },
+  {
+    id: 'time-off',
+    title: 'Time Off',
+    description: 'Time-off flow: enter a request ID, then review the request',
+    component: TimeOff,
+    sourceCode: TimeOffCode,
   },
   {
     id: 'onboarding',

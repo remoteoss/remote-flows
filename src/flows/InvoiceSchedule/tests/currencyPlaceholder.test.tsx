@@ -27,7 +27,7 @@ describe('currency placeholder', () => {
     render(
       <InvoiceScheduleFlow
         employmentId='employment-grace'
-        render={() => <InvoiceScheduleForm />}
+        render={(bag) => (bag.isLoading ? null : <InvoiceScheduleForm />)}
       />,
       { wrapper: TestProviders },
     );

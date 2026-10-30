@@ -4,13 +4,19 @@ import omit from 'lodash.omit';
 import { baseFields } from '@/src/components/form/fields/baseFields';
 import { cn } from '@/src/lib/utils';
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
+import { FieldExtra } from '@/src/components/form/FieldExtra';
 import { Statement } from '@/src/components/form/Statement';
 import { useFormFields } from '@/src/context';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
 import { FieldsetToggleButtonDefault } from '@/src/components/form/fields/default/FieldsetToggleButtonDefault';
 import { BaseTypes, SupportedTypes } from './types';
 import { StatementComponentProps } from '@/src/types/fields';
-import { checkFieldHasForcedValue } from '@/src/components/form/utils';
+import {
+  checkFieldHasForcedValue,
+  fieldsetHasVisibleContent,
+  isFieldSkipped,
+  resolveFieldDynamicProperties,
+} from '@/src/components/form/utils';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
 import { BaseFormDescription } from '@/src/components/ui/form';
 
@@ -149,6 +155,11 @@ export function FieldSetField({
     };
   }, [watchedValues, trigger, formState.isSubmitted, formState.submitCount]);
 
+  const hasVisibleContent = fieldsetHasVisibleContent(
+    { description, statement, extra, fields, features, meta },
+    allFormValues,
+  );
+
   const ToggleComponent =
     formComponents?.fieldsetToggle || FieldsetToggleButtonDefault;
   const contentId = `${name}-content`;
@@ -169,6 +180,7 @@ export function FieldSetField({
 
   return (
     <fieldset
+      hidden={!hasVisibleContent}
       className={cn(
         'border-1 border-input p-4 rounded-xl',
         `RemoteFlows__FieldSetField`,
@@ -240,15 +252,9 @@ export function FieldSetField({
           ) : null}
           <div className='grid gap-4'>
             {fields.map((field: $TSFixMe) => {
-              if (field.calculateDynamicProperties) {
-                field = {
-                  ...field,
-                  ...(field.calculateDynamicProperties(allFormValues, field) ||
-                    {}),
-                };
-              }
+              field = resolveFieldDynamicProperties(field, allFormValues);
 
-              if (field.isVisible === false || field.deprecated) {
+              if (isFieldSkipped(field)) {
                 return null; // Skip hidden or deprecated fields
               }
 
@@ -335,7 +341,7 @@ export function FieldSetField({
                         {...(field.statement as StatementComponentProps['data'])}
                       />
                     ) : null}
-                    {field.extra ? field.extra : null}
+                    <FieldExtra extra={field.extra} />
                   </>,
                   fieldKey,
                 );
@@ -364,12 +370,12 @@ export function FieldSetField({
                       {...(field.statement as StatementComponentProps['data'])}
                     />
                   ) : null}
-                  {field.extra ? field.extra : null}
+                  <FieldExtra extra={field.extra} />
                 </>,
                 fieldKey,
               );
             })}
-            {extra ? extra : null}
+            <FieldExtra extra={extra} />
             {statement ? <Statement {...statement} /> : null}
           </div>
         </div>

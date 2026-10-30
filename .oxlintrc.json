@@ -12,16 +12,79 @@
         "allow": ["warn", "error"]
       }
     ],
+    "curly": ["error", "all"],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "typescript/no-explicit-any": "error",
-    "typescript/no-deprecated": "error"
+    "typescript/no-deprecated": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "@remoteoss/remote-json-schema-form-kit",
+            "importNames": ["createHeadlessForm"],
+            "message": "Build JSON Schema forms with useHeadlessForm from @/src/common/useHeadlessForm instead of calling createHeadlessForm directly. See docs/USE_HEADLESS_FORM_ROLLOUT.md."
+          }
+        ],
+        "patterns": [
+          {
+            "group": ["**/createHeadlessForm"],
+            "importNames": ["createHeadlessForm"],
+            "message": "Build JSON Schema forms with useHeadlessForm from @/src/common/useHeadlessForm instead of calling createHeadlessForm directly. See docs/USE_HEADLESS_FORM_ROLLOUT.md."
+          },
+          {
+            "group": ["**/common/headlessForm"],
+            "importNames": ["buildHeadlessForm", "parseValuesForValidation"],
+            "message": "Build JSON Schema forms with useHeadlessForm from @/src/common/useHeadlessForm. buildHeadlessForm and parseValuesForValidation are its internals, shared only with the schema scripts under scripts/. See docs/USE_HEADLESS_FORM_ROLLOUT.md."
+          }
+        ]
+      }
+    ]
   },
   "overrides": [
     {
       "files": ["src/client/**"],
       "rules": {
         "typescript/no-deprecated": "off"
+      }
+    },
+    {
+      "files": [
+        "scripts/**",
+        "src/common/createHeadlessForm.tsx",
+        "src/common/headlessForm.ts",
+        "src/common/useHeadlessForm.ts",
+        "src/**/tests/**",
+        "src/**/__tests__/**",
+        "src/**/*.test.{ts,tsx}"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    },
+    {
+      "files": ["example/e2e/**"],
+      "rules": {
+        "no-restricted-properties": [
+          "error",
+          {
+            "property": "fulfill",
+            "message": "E2E runs against the real API. Fake responses belong in a vitest + MSW test under src/, reusing src/tests/handlers.ts and the existing fixtures."
+          },
+          {
+            "property": "abort",
+            "message": "E2E runs against the real API. Fake responses belong in a vitest + MSW test under src/, reusing src/tests/handlers.ts and the existing fixtures."
+          },
+          {
+            "property": "routeFromHAR",
+            "message": "E2E runs against the real API. Fake responses belong in a vitest + MSW test under src/, reusing src/tests/handlers.ts and the existing fixtures."
+          },
+          {
+            "property": "routeWebSocket",
+            "message": "E2E runs against the real API. Fake responses belong in a vitest + MSW test under src/, reusing src/tests/handlers.ts and the existing fixtures."
+          }
+        ]
       }
     }
   ]

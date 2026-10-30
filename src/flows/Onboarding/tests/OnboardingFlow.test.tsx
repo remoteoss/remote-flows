@@ -340,7 +340,7 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Details/i);
 
-    const backButton = screen.getByText(/Back/i);
+    const backButton = await screen.findByText(/Back/i);
     expect(backButton).toBeInTheDocument();
 
     backButton.click();
@@ -444,11 +444,11 @@ describe('OnboardingFlow', () => {
       type: 'employee',
     });
 
-    let backButton = screen.getByRole('button', { name: 'Back' });
+    let backButton = await screen.findByRole('button', { name: 'Back' });
     backButton.click();
     await screen.findByText(/Step: Basic Information/i);
 
-    backButton = screen.getByRole('button', { name: 'Back' });
+    backButton = await screen.findByRole('button', { name: 'Back' });
     backButton.click();
     await screen.findByText(/Step: Select Country/i);
 
@@ -524,7 +524,7 @@ describe('OnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Details/i);
 
-    const backButton = screen.getByText(/Back/i);
+    const backButton = await screen.findByText(/Back/i);
     expect(backButton).toBeInTheDocument();
 
     backButton.click();
@@ -1159,6 +1159,65 @@ describe('OnboardingFlow', () => {
     });
   });
 
+  it('stays on basic information without refetching the employment when the update fails', async () => {
+    const employmentId = generateUniqueEmploymentId();
+    const patchSpy = vi.fn();
+    const getEmploymentSpy = vi.fn();
+
+    server.use(
+      http.get(`*/v1/employments/${employmentId}`, () => {
+        getEmploymentSpy();
+        return HttpResponse.json(employmentDefaultResponse);
+      }),
+      http.patch('*/v1/employments/*', () => {
+        patchSpy();
+        return HttpResponse.json(
+          { errors: { job_title: ['is invalid'] } },
+          { status: 422 },
+        );
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        const steps: Record<number, string> = {
+          [0]: 'Basic Information',
+          [1]: 'Contract Details',
+        };
+
+        return (
+          <>
+            <h1>Step: {steps[onboardingBag.stepState.currentStep.index]}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        {...defaultProps}
+        employmentId={employmentId}
+        skipSteps={['select_country']}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await screen.findByText(/Step: Basic Information/i);
+    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    const getCallsBeforeSubmit = getEmploymentSpy.mock.calls.length;
+
+    screen.getByText(/Next Step/i).click();
+
+    await waitFor(() => expect(mockOnError).toHaveBeenCalledTimes(1));
+    expect(patchSpy).toHaveBeenCalledTimes(1);
+    expect(getEmploymentSpy).toHaveBeenCalledTimes(getCallsBeforeSubmit);
+    expect(screen.getByText(/Step: Basic Information/i)).toBeInTheDocument();
+  });
+
   it.each([
     'invited',
     'created_awaiting_reserve',
@@ -1468,6 +1527,61 @@ describe('OnboardingFlow', () => {
     );
 
     expect(hasIntermediateSteps).toBe(false);
+  });
+
+  it('should open a job_title_review employment read-only on the review step with invite disabled', async () => {
+    const employmentId = generateUniqueEmploymentId();
+    let lastBag: OnboardingRenderProps['onboardingBag'] | undefined;
+    server.use(
+      http.get(`*/v1/employments/${employmentId}`, () => {
+        return HttpResponse.json({
+          ...employmentDefaultResponse,
+          data: {
+            ...employmentDefaultResponse.data,
+            employment: {
+              ...employmentDefaultResponse.data.employment,
+              employmentId: employmentId,
+              status: 'job_title_review',
+            },
+          },
+        });
+      }),
+    );
+
+    mockRender.mockImplementation(
+      ({ onboardingBag, components }: OnboardingRenderProps) => {
+        lastBag = onboardingBag;
+        if (onboardingBag.isLoading) {
+          return <div data-testid='spinner'>Loading...</div>;
+        }
+
+        return (
+          <>
+            <h1>Step: {onboardingBag.stepState.currentStep.name}</h1>
+            <MultiStepFormWithoutCountry
+              onboardingBag={onboardingBag}
+              components={components}
+            />
+          </>
+        );
+      },
+    );
+
+    render(
+      <OnboardingFlow
+        employmentId={employmentId}
+        skipSteps={['select_country']}
+        {...defaultProps}
+      />,
+      {
+        wrapper: TestProviders,
+      },
+    );
+
+    await screen.findByText('Step: review');
+
+    expect(lastBag?.isEmploymentReadOnly).toBe(true);
+    expect(lastBag?.canInvite).toBe(false);
   });
 
   it('should override field labels using jsfModify options', async () => {

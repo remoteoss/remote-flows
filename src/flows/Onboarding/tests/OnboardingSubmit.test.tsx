@@ -26,7 +26,10 @@ describe('OnboardingSubmit Component', () => {
     vi.clearAllMocks();
     (useOnboardingContext as $TSFixMe).mockReturnValue({
       formId: mockFormId,
-      onboardingBag: { isSubmitting: false },
+      onboardingBag: {
+        isSubmitting: false,
+        isCheckingJobTitleEligibility: false,
+      },
     });
     (useFormFields as $TSFixMe).mockReturnValue({
       components: {
@@ -237,5 +240,19 @@ describe('OnboardingSubmit Component', () => {
     expect(call.className).toBe('submit-button');
     expect(call.disabled).toBe(false);
     expect(call.onClick).toBe(mockOnClick);
+  });
+
+  it('disables the button while the job title eligibility check is in flight', () => {
+    (useOnboardingContext as $TSFixMe).mockReturnValue({
+      formId: mockFormId,
+      onboardingBag: {
+        isSubmitting: false,
+        isCheckingJobTitleEligibility: true,
+      },
+    });
+
+    render(<OnboardingSubmit>Submit</OnboardingSubmit>);
+
+    expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled();
   });
 });

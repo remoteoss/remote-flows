@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { useFormContext } from 'react-hook-form';
 import omit from 'lodash.omit';
 import { fieldsMap } from '@/src/components/form/fields/fieldsMapping';
+import { FieldExtra } from '@/src/components/form/FieldExtra';
 import { Statement } from '@/src/components/form/Statement';
 import { FormFieldNameProvider } from '@/src/components/ui/form';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
@@ -12,7 +13,12 @@ import {
   $TSFixMe,
 } from '@/src/types/remoteFlows';
 import { StatementComponentProps } from '@/src/types/fields';
-import { checkFieldHasForcedValue, getFieldsWithFlatFieldsets } from './utils';
+import {
+  checkFieldHasForcedValue,
+  getFieldsWithFlatFieldsets,
+  isFieldSkipped,
+  resolveFieldDynamicProperties,
+} from './utils';
 
 type JSONSchemaFormFieldsProps = {
   fields: JSFFields;
@@ -29,7 +35,9 @@ export const JSONSchemaFormFields = ({
 }: JSONSchemaFormFieldsProps) => {
   const { setValue, watch } = useFormContext();
 
-  if (!fields || fields.length === 0) return null;
+  if (!fields || fields.length === 0) {
+    return null;
+  }
 
   const maybeFieldWithFlatFieldsets =
     fieldsets && fieldValues
@@ -56,14 +64,9 @@ export const JSONSchemaFormFields = ({
   return (
     <>
       {maybeFieldWithFlatFieldsets.map((field) => {
-        if (field.calculateDynamicProperties) {
-          field = {
-            ...field,
-            ...(field.calculateDynamicProperties(fieldValues, field) || {}),
-          };
-        }
+        field = resolveFieldDynamicProperties(field, fieldValues);
 
-        if (field.isVisible === false || field.deprecated || field.hidden) {
+        if (isFieldSkipped(field)) {
           return null; // Skip hidden or deprecated fields
         }
 
@@ -104,7 +107,7 @@ export const JSONSchemaFormFields = ({
                   {...(field.statement as StatementComponentProps['data'])}
                 />
               ) : null}
-              {field.extra ? field.extra : null}
+              <FieldExtra extra={field.extra} />
             </FormFieldNameProvider>,
             field,
             field.name as string,
@@ -168,7 +171,7 @@ export const JSONSchemaFormFields = ({
                 {...(field.statement as StatementComponentProps['data'])}
               />
             ) : null}
-            {field.extra ? field.extra : null}
+            <FieldExtra extra={field.extra} />
           </>,
           field,
           field.name as string,

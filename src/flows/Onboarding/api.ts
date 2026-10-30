@@ -1,4 +1,9 @@
-import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
+import {
+  queryOptions,
+  useMutation,
+  useQuery,
+  UseQueryResult,
+} from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import { Client } from '@/src/client/client';
 import {
@@ -32,6 +37,8 @@ import {
   getV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirements,
   getV1OnboardingEmploymentsEmploymentIdPreOnboardingDocumentsId,
   PostV1OnboardingEmploymentsEmploymentIdPreOnboardingRequirementsRequirementSlugDocumentsData,
+  CreateJobTitleEligibilityCheckParams,
+  postV2EmploymentsEmploymentIdJobTitleEligibilityCheck,
 } from '@/src/client';
 
 import { useClient } from '@/src/context';
@@ -49,13 +56,22 @@ import {
   FlowOptions,
 } from '@/src/flows/types';
 import {
+  CONTRACT_DETAILS_STRATEGY,
   getContractDetailsSchemaVersion,
   getBasicInformationSchemaVersion,
   getBenefitOffersSchemaVersion,
+  withJobTitleEligibilityRiskAcknowledgement,
 } from '@/src/flows/Onboarding/utils';
+// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
+import { HeadlessForm, useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { countriesOptions } from '@/src/common/api/countries';
 import { useMemo } from 'react';
+import { $TSFixMe } from '@/scripts/types';
+import {
+  extractFieldErrors,
+  MutationErrorStructure,
+} from '@/src/lib/mutations';
 
 export const useCompany = (companyId: string) => {
   const { client } = useClient();
@@ -252,17 +268,16 @@ export const useJSONSchemaForm = ({
   });
 };
 
-export const useContractDetailsSchema = ({
+export const useLegacyContractDetailsSchema = ({
   countryCode,
+  fieldValues,
   options,
   query = {},
   jsonSchemaVersion,
 }: {
   countryCode: string;
-  options?: FlowOptions & {
-    queryOptions?: { enabled?: boolean };
-    transformMoneyFields?: boolean;
-  };
+  fieldValues: FieldValues;
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
   query?: Record<string, unknown>;
   jsonSchemaVersion?: number | 'latest';
 }): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
@@ -272,11 +287,80 @@ export const useContractDetailsSchema = ({
         json_schema_version: jsonSchemaVersion,
       }
     : {};
-  const { data: response, ...reactQueryResult } = useQuery({
+  const { data: schema, isLoading } = useQuery({
+    queryKey: [
+      'onboarding-legacy-contract-details-schema',
+      countryCode,
+      jsonSchemaVersion,
+      query,
+    ],
+    retry: false,
+    queryFn: async () => {
+      const response = await getV1CountriesCountryCodeForm({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          country_code: countryCode,
+          form: 'contract_details',
+        },
+        query: {
+          skip_benefits: true,
+          ...query,
+          ...jsonSchemaQueryParam,
+        },
+      });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch onboarding schema');
+      }
+
+      return response;
+    },
+    enabled: options?.queryOptions?.enabled,
+    select: ({ data }) =>
+      withJobTitleEligibilityRiskAcknowledgement(data?.data || {}),
+  });
+
+  const { form } = useHeadlessForm({
+    schema,
+    values: fieldValues,
+    options: { jsfModify: options?.jsfModify },
+    strategy: CONTRACT_DETAILS_STRATEGY.legacy,
+  });
+
+  return { data: form, isLoading };
+};
+
+export const useContractDetailsSchema = ({
+  countryCode,
+  initialValues,
+  options,
+  query = {},
+  jsonSchemaVersion,
+}: {
+  countryCode: string;
+  initialValues?: FieldValues;
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
+  query?: Record<string, unknown>;
+  jsonSchemaVersion?: number | 'latest';
+}): Omit<HeadlessForm, 'form' | 'onValuesChange'> & {
+  data: JSONSchemaFormResultWithFieldsets | null;
+  isLoading: boolean;
+} => {
+  const { client } = useClient();
+  const jsonSchemaQueryParam = jsonSchemaVersion
+    ? {
+        json_schema_version: jsonSchemaVersion,
+      }
+    : {};
+  const { data: schema, isLoading } = useQuery({
     queryKey: [
       'onboarding-contract-details-schema',
       countryCode,
       jsonSchemaVersion,
+      query,
     ],
     retry: false,
     queryFn: async () => {
@@ -304,32 +388,104 @@ export const useContractDetailsSchema = ({
       return response;
     },
     enabled: options?.queryOptions?.enabled,
+    select: ({ data }) =>
+      data?.data && withJobTitleEligibilityRiskAcknowledgement(data.data),
   });
 
-  const contractDetailsFormFrance: JSONSchemaFormResultWithFieldsets | null =
-    useMemo(() => {
-      const schemaData = response?.data.data;
-      if (!schemaData) return null;
-      return createHeadlessForm(schemaData, {}, options);
-    }, [options, response?.data]);
+  const { form, handleValidation, parseFormValues } = useHeadlessForm({
+    schema,
+    initialValues,
+    options: { jsfModify: options?.jsfModify },
+    strategy: CONTRACT_DETAILS_STRATEGY.jsfV1,
+  });
+
+  return { data: form, isLoading, handleValidation, parseFormValues };
+};
+
+export const useBasicInformationSchema = ({
+  countryCode,
+  initialValues,
+  options,
+  jsonSchemaVersion,
+}: {
+  countryCode: string;
+  initialValues?: FieldValues;
+  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
+  jsonSchemaVersion?: number | 'latest';
+}): Omit<HeadlessForm, 'form'> & {
+  data: JSONSchemaFormResultWithFieldsets | null;
+  isLoading: boolean;
+} => {
+  const { client } = useClient();
+  const jsonSchemaQueryParam = jsonSchemaVersion
+    ? {
+        json_schema_version: jsonSchemaVersion,
+      }
+    : {};
+  const { data: schema, isLoading } = useQuery({
+    queryKey: [
+      'onboarding-basic-information-schema',
+      countryCode,
+      jsonSchemaVersion,
+    ],
+    retry: false,
+    queryFn: async () => {
+      const response = await getV1CountriesCountryCodeForm({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: {
+          country_code: countryCode,
+          form: 'employment_basic_information',
+        },
+        query: {
+          skip_benefits: true,
+          ...jsonSchemaQueryParam,
+        },
+      });
+
+      if (response.error || !response.data) {
+        throw new Error('Failed to fetch onboarding schema');
+      }
+
+      return response;
+    },
+    enabled: options?.queryOptions?.enabled,
+    select: ({ data }) => data?.data,
+  });
+
+  const { form, handleValidation, onValuesChange, parseFormValues } =
+    useHeadlessForm({
+      schema,
+      initialValues,
+      options: { jsfModify: options?.jsfModify },
+      strategy: 'buildOnce',
+    });
 
   return {
-    data: contractDetailsFormFrance,
-    isLoading: reactQueryResult.isLoading,
+    data: form,
+    isLoading,
+    handleValidation,
+    onValuesChange,
+    parseFormValues,
   };
 };
 
 export const useBenefitOffersSchema = (
   employmentId: string,
-  fieldValues: FieldValues,
+  initialValues: FieldValues | undefined,
   options: OnboardingFlowProps['options'],
-) => {
+): Omit<HeadlessForm, 'form'> & {
+  data: JSONSchemaFormResultWithFieldsets | null;
+  isLoading: boolean;
+} => {
   const { client } = useClient();
   const jsonSchemaQueryParam = {
     json_schema_version: getBenefitOffersSchemaVersion(options),
   };
 
-  return useQuery({
+  const { data: schema, isLoading } = useQuery({
     queryKey: ['benefit-offers-schema', employmentId],
     retry: false,
     enabled: !!employmentId,
@@ -349,14 +505,24 @@ export const useBenefitOffersSchema = (
 
       return response;
     },
-    select: ({ data }) => {
-      const jsfSchema = data?.data?.schema || {};
-
-      return createHeadlessForm(jsfSchema, fieldValues, {
-        jsfModify: options?.jsfModify?.benefits,
-      });
-    },
+    select: ({ data }) => data?.data?.schema || {},
   });
+
+  const { form, handleValidation, onValuesChange, parseFormValues } =
+    useHeadlessForm({
+      schema,
+      initialValues,
+      options: { jsfModify: options?.jsfModify?.benefits },
+      strategy: 'buildOnce',
+    });
+
+  return {
+    data: form,
+    isLoading,
+    handleValidation,
+    onValuesChange,
+    parseFormValues,
+  };
 };
 
 /**
@@ -604,13 +770,16 @@ export const useEmploymentOnboardingReservesStatus = (
 
 export const useEngagementAgreementDetailsSchema = (
   countryCode: string,
-  fieldValues: FieldValues,
+  initialValues: FieldValues | undefined,
   options?: {
     jsfModify?: OnboardingJsfModify;
     queryOptions?: { enabled?: boolean };
     jsonSchemaVersion?: number | 'latest';
   },
-) => {
+): Omit<HeadlessForm, 'form'> & {
+  data: JSONSchemaFormResultWithFieldsets | null;
+  isLoading: boolean;
+} => {
   const { client } = useClient();
   const jsonSchemaQueryParam = options?.jsonSchemaVersion
     ? {
@@ -618,7 +787,7 @@ export const useEngagementAgreementDetailsSchema = (
       }
     : {};
 
-  return useQuery({
+  const { data: schema, isLoading } = useQuery({
     queryKey: [
       'engagement-agreement-details',
       countryCode,
@@ -645,14 +814,26 @@ export const useEngagementAgreementDetailsSchema = (
 
       return response;
     },
-    select: ({ data }) => {
-      const jsfSchema = data?.data || {};
-
-      return createHeadlessForm(jsfSchema, fieldValues, {
-        jsfModify: options?.jsfModify?.engagement_agreement_details,
-      });
-    },
+    select: ({ data }) => data?.data || {},
   });
+
+  const { form, handleValidation, onValuesChange, parseFormValues } =
+    useHeadlessForm({
+      schema,
+      initialValues,
+      options: {
+        jsfModify: options?.jsfModify?.engagement_agreement_details,
+      },
+      strategy: 'buildOnce',
+    });
+
+  return {
+    data: form,
+    isLoading,
+    handleValidation,
+    onValuesChange,
+    parseFormValues,
+  };
 };
 
 /**
@@ -861,3 +1042,47 @@ export const useEmploymentAgreementPreview = (
     select: (response) => response.data?.data.employment_agreement,
   });
 };
+
+export const jobTitleEligibilityCheckOptions = (
+  client: Client,
+  employmentId: string,
+  params: CreateJobTitleEligibilityCheckParams,
+) =>
+  queryOptions({
+    queryKey: ['job-title-eligibility-check', employmentId, params] as const,
+    retry: false,
+    staleTime: Infinity,
+    queryFn: async ({ signal }) => {
+      const response =
+        await postV2EmploymentsEmploymentIdJobTitleEligibilityCheck({
+          client,
+          headers: {
+            Authorization: ``,
+          },
+          body: params,
+          path: {
+            employment_id: employmentId,
+          },
+          signal,
+        });
+
+      if (response.error || !response.data) {
+        const errorData =
+          (response.error as $TSFixMe)?.error || response.error || {};
+        const error: MutationErrorStructure = {
+          error: new Error(
+            typeof errorData.message === 'string'
+              ? errorData.message
+              : 'Something went wrong. Please try again later.',
+          ),
+          rawError: response.error as Record<string, unknown>,
+          normalizedErrors: errorData.errors || {},
+          fieldErrors: extractFieldErrors(response.error),
+          response: response.response,
+        };
+        throw error;
+      }
+
+      return response.data.data.job_title_eligibility_check;
+    },
+  });

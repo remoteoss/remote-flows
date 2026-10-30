@@ -1,0 +1,159 @@
+name: Schema Snapshots
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'example/src/flows/Onboarding/jsonSchemaVersions.ts'
+      - 'scripts/schema-snapshot.ts'
+      - 'snapshots/**'
+      - 'scripts/schema-snapshot/**'
+      - '.github/workflows/schema-snapshots.yml'
+
+concurrency:
+  group: schema-snapshots-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  snapshots:
+    if: github.event_name != 'pull_request'
+    name: Pinned contract details schemas still match their baselines
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      issues: write
+    env:
+      GH_REPO: ${{ github.repository }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Use Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.15.0'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Compare the pinned schemas served by sandbox with the baselines
+        id: snapshots
+        env:
+          VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
+          REMOTE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          REMOTE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
+        run: pnpm run schema-snapshot --failures-out="$RUNNER_TEMP/schema-snapshot-failures.md"
+
+      - name: Open or update the failure issue
+        if: failure() && steps.snapshots.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "A contract details schema that this library pins no longer matches its committed baseline. Pinned versions are meant to be frozen, so a breaking difference here usually means the backend changed a published version. It can also come from a change in how this library builds forms, such as a form engine upgrade, so check recent merges to main before blaming the backend."
+            echo
+            if [ -s "$RUNNER_TEMP/schema-snapshot-failures.md" ]; then
+              cat "$RUNNER_TEMP/schema-snapshot-failures.md"
+            else
+              echo "The check stopped before it compared any country, for example because sandbox auth failed. The run log has the error."
+            fi
+          } > "$RUNNER_TEMP/issue-body.md"
+          gh label create schema-snapshot --color B60205 --description "A pinned schema changed under its version" --force
+          number=$(gh issue list --label schema-snapshot --state open --json number --jq '.[0].number // empty')
+          if [ -z "$number" ]; then
+            number=$(gh issue create --title "A pinned contract details schema changed" --label schema-snapshot --body-file "$RUNNER_TEMP/issue-body.md" | grep -oE '[0-9]+$')
+            gh issue comment "$number" --body "Failing run: $RUN_URL"
+          elif [ "$(gh issue view "$number" --json body --jq .body)" != "$(cat "$RUNNER_TEMP/issue-body.md")" ]; then
+            gh issue edit "$number" --body-file "$RUNNER_TEMP/issue-body.md"
+            gh issue comment "$number" --body "The differences changed. Failing run: $RUN_URL"
+          fi
+
+      - name: Close the failure issue
+        if: always() && steps.snapshots.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for number in $(gh issue list --label schema-snapshot --state open --json number --jq '.[].number'); do
+            gh issue close "$number" --comment "Back to matching the baselines: $RUN_URL"
+          done
+
+  baselines-for-bump:
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    name: Add baselines for newly pinned versions
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      HEAD_REF: ${{ github.event.pull_request.head.ref }}
+    steps:
+      - name: Mint a GitHub App token to push the baselines
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ secrets.SCHEMA_CANARY_APP_CLIENT_ID }}
+          private-key: ${{ secrets.SCHEMA_CANARY_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          persist-credentials: false
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Use Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.15.0'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Create the baselines that are missing
+        env:
+          VITE_CLIENT_ID: ${{ secrets.SCHEMA_CANARY_CLIENT_ID }}
+          REMOTE_CLIENT_SECRET: ${{ secrets.SCHEMA_CANARY_CLIENT_SECRET }}
+          REMOTE_REFRESH_TOKEN: ${{ secrets.SCHEMA_CANARY_REFRESH_TOKEN }}
+        run: pnpm run schema-snapshot --create-missing --summary-out="$RUNNER_TEMP/schema-snapshot-summary.md"
+
+      - name: Commit the baselines to the pull request branch
+        id: commit
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          git add --all snapshots
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git config user.name "schema-snapshots[bot]"
+          git config user.email "schema-snapshots[bot]@users.noreply.github.com"
+          git commit -m "chore(schema-snapshots): add baselines for the new pinned versions"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git" "HEAD:refs/heads/${HEAD_REF}"
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Tell the author what was added
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          {
+            echo "This PR pins a contract details version that had no baseline, so the schema snapshot check added one and pushed it to this branch. Please review the new file under \`snapshots/contract-details/\`: it is what the sandbox serves for that version right now."
+            echo
+            cat "$RUNNER_TEMP/schema-snapshot-summary.md"
+          } > "$RUNNER_TEMP/comment.md"
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/comment.md"

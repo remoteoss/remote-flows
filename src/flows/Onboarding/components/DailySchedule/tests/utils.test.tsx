@@ -12,6 +12,8 @@ import {
   getDailyScheduleHoursError,
   getDefaultsFromSchema,
   getWorkHoursBounds,
+  normalizeRowValue,
+  normalizeTimeInput,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
 import { germanyDailyScheduleMetadata as germanyMetadata } from '@/src/flows/Onboarding/components/DailySchedule/tests/fixtures';
 
@@ -426,5 +428,39 @@ describe('DailySchedule utils', () => {
         'The work week for a full-time employee in Germany is 40 hours.',
       );
     });
+  });
+});
+
+describe('normalizeTimeInput', () => {
+  it.each([
+    ['09:00', '09:00'],
+    ['09:00:00', '09:00'],
+    ['09:00:30.250', '09:00'],
+    [' 18:30 ', '18:30'],
+  ])('reshapes %j to %j', (input, expected) => {
+    expect(normalizeTimeInput(input)).toBe(expected);
+  });
+
+  it.each(['', '9', '9:00', '9:0', '25:99', 'abc'])(
+    'leaves %j as typed',
+    (input) => {
+      expect(normalizeTimeInput(input)).toBe(input);
+    },
+  );
+});
+
+describe('normalizeRowValue', () => {
+  it('normalizes the time fields', () => {
+    expect(normalizeRowValue('start_time', '09:00:00')).toBe('09:00');
+    expect(normalizeRowValue('end_time', '17:00:00')).toBe('17:00');
+  });
+
+  it('stores a numeric break as a string', () => {
+    expect(normalizeRowValue('break_duration_minutes', 30)).toBe('30');
+    expect(normalizeRowValue('break_duration_minutes', '30')).toBe('30');
+  });
+
+  it('passes other fields through untouched', () => {
+    expect(normalizeRowValue('checked', true)).toBe(true);
   });
 });

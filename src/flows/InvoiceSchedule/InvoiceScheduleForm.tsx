@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
+import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
 import { useInvoiceScheduleContext } from '@/src/flows/InvoiceSchedule/context';
 import {
@@ -6,7 +8,8 @@ import {
   InvoiceSchedulePayload,
   InvoiceScheduleResponse,
 } from '@/src/flows/InvoiceSchedule/types';
-import { isMutationError, NormalizedFieldError } from '@/src/lib/mutations';
+import { NormalizedFieldError } from '@/src/lib/mutations';
+import { isStructuredError } from '@/src/lib/utils';
 
 type InvoiceScheduleFormProps = Partial<{
   /**
@@ -32,26 +35,35 @@ export function InvoiceScheduleForm({
   onSuccess,
   onError,
 }: InvoiceScheduleFormProps) {
-  const { form, formId, invoiceScheduleBag } = useInvoiceScheduleContext();
+  const { formId, invoiceScheduleBag } = useInvoiceScheduleContext();
+
+  const form = useJSONSchemaForm({
+    handleValidation: invoiceScheduleBag.handleValidation,
+    checkFieldUpdates: invoiceScheduleBag.checkFieldUpdates,
+    defaultValues: invoiceScheduleBag.initialValues,
+  });
+
+  useEffect(() => {
+    invoiceScheduleBag.checkFieldUpdates(form.getValues());
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (values: InvoiceScheduleFormValues) => {
     try {
-      const payload = await invoiceScheduleBag?.parseFormValues(values);
+      const payload = await invoiceScheduleBag.parseFormValues(values);
 
       if (payload) {
         await onSubmit?.(payload);
       }
 
-      const response = await invoiceScheduleBag?.onSubmit(values);
+      const response = await invoiceScheduleBag.onSubmit(values);
       await onSuccess?.(response as InvoiceScheduleResponse);
     } catch (error: unknown) {
-      // Reported to the consumer rather than re-thrown: this runs inside react-hook-form's
-      // handleSubmit, so re-throwing would surface as an unhandled rejection.
-      if (isMutationError(error)) {
+      if (isStructuredError(error)) {
         onError?.({
           error: error.error,
-          rawError: error.rawError as Record<string, unknown>,
-          fieldErrors: error.fieldErrors as NormalizedFieldError[],
+          rawError: error.rawError,
+          fieldErrors: error.fieldErrors,
         });
         return;
       }
@@ -71,7 +83,7 @@ export function InvoiceScheduleForm({
         onSubmit={form.handleSubmit(handleSubmit)}
         className='space-y-4 RemoteFlows__InvoiceScheduleForm'
       >
-        <JSONSchemaFormFields fields={invoiceScheduleBag?.fields ?? []} />
+        <JSONSchemaFormFields fields={invoiceScheduleBag.fields} />
       </form>
     </Form>
   );

@@ -1,0 +1,196 @@
+{
+  "fingerprintVersion": 1,
+  "base": {
+    "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
+      "allowances",
+      "annual_gross_salary",
+      "available_pto",
+      "confidentiality_agreement",
+      "contract_duration",
+      "contract_duration_type",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_probation_period",
+      "has_signing_bonus",
+      "non_compete_clause_apply",
+      "role_description",
+      "role_is_onsite",
+      "role_requires_license",
+      "work_address_is_home_address",
+      "work_schedule"
+    ],
+    "required": [
+      "annual_gross_salary",
+      "available_pto",
+      "confidentiality_agreement",
+      "contract_duration_type",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_probation_period",
+      "has_signing_bonus",
+      "non_compete_clause_apply",
+      "role_description",
+      "work_address_is_home_address",
+      "work_schedule"
+    ]
+  },
+  "types": {
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
+    "contract_duration": "text",
+    "contract_duration_type": "radio",
+    "contract_end_date": "date",
+    "contract_duration_fixed_term_reason": "textarea",
+    "has_probation_period": "radio",
+    "probation_length": "number",
+    "work_schedule": "radio",
+    "work_hours_per_week": "number",
+    "annual_gross_salary": "money",
+    "part_time_salary_confirmation": "checkbox",
+    "has_signing_bonus": "radio",
+    "signing_bonus_amount": "money",
+    "has_bonus": "radio",
+    "bonus_amount": "money",
+    "bonus_details": "textarea",
+    "has_commissions": "radio",
+    "commissions_details": "textarea",
+    "commissions_ack": "checkbox",
+    "equity_compensation.offer_equity_compensation": "radio",
+    "equity_compensation.number_of_stock_options": "text",
+    "equity_compensation.equity_cliff": "number",
+    "equity_compensation.equity_vesting_period": "number",
+    "equity_compensation.equity_description": "textarea",
+    "allowances": "textarea",
+    "available_pto": "number",
+    "role_description": "textarea",
+    "experience_level": "radio",
+    "confidentiality_agreement": "number",
+    "work_address_is_home_address": "radio",
+    "non_compete_clause_apply": "radio",
+    "non_compete_clause_halt_period_months": "number",
+    "non_compete_clause_compensation_amount": "number",
+    "non_compete_clause_location": "text",
+    "non_compete_clause_penality_amount_months": "number",
+    "additional_job_title_eligibility_check_result": "hidden"
+  },
+  "options": {
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
+    "contract_duration_type": ["fixed_term", "indefinite"],
+    "has_probation_period": ["no", "yes"],
+    "work_schedule": ["full_time", "part_time"],
+    "has_signing_bonus": ["no", "yes"],
+    "has_bonus": ["no", "yes"],
+    "has_commissions": ["no", "yes"],
+    "equity_compensation.offer_equity_compensation": ["no", "yes"],
+    "experience_level": [
+      "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+      "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+      "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+      "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+      "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow"
+    ],
+    "work_address_is_home_address": ["no", "yes"],
+    "non_compete_clause_apply": ["no", "yes"]
+  },
+  "constraints": {
+    "contract_duration": {
+      "maxLength": 255
+    },
+    "allowances": {
+      "maxLength": 1000
+    },
+    "available_pto": {
+      "minimum": 28
+    },
+    "role_description": {
+      "minLength": 100,
+      "maxLength": 5000
+    }
+  },
+  "scenarios": {
+    "contract_duration_type=fixed_term": {
+      "addedVisible": [
+        "contract_duration_fixed_term_reason",
+        "contract_end_date"
+      ],
+      "removedVisible": [],
+      "addedRequired": [
+        "contract_duration_fixed_term_reason",
+        "contract_end_date"
+      ],
+      "removedRequired": []
+    },
+    "has_probation_period=yes": {
+      "addedVisible": ["probation_length"],
+      "removedVisible": [],
+      "addedRequired": ["probation_length"],
+      "removedRequired": []
+    },
+    "work_schedule=full_time": {
+      "addedVisible": ["work_hours_per_week"],
+      "removedVisible": [],
+      "addedRequired": ["work_hours_per_week"],
+      "removedRequired": []
+    },
+    "work_schedule=part_time": {
+      "addedVisible": ["part_time_salary_confirmation", "work_hours_per_week"],
+      "removedVisible": [],
+      "addedRequired": ["part_time_salary_confirmation", "work_hours_per_week"],
+      "removedRequired": []
+    },
+    "has_signing_bonus=yes": {
+      "addedVisible": ["signing_bonus_amount"],
+      "removedVisible": [],
+      "addedRequired": ["signing_bonus_amount"],
+      "removedRequired": []
+    },
+    "has_bonus=yes": {
+      "addedVisible": ["bonus_amount", "bonus_details"],
+      "removedVisible": [],
+      "addedRequired": ["bonus_details"],
+      "removedRequired": []
+    },
+    "has_commissions=yes": {
+      "addedVisible": ["commissions_ack", "commissions_details"],
+      "removedVisible": [],
+      "addedRequired": ["commissions_ack", "commissions_details"],
+      "removedRequired": []
+    },
+    "equity_compensation.offer_equity_compensation=yes": {
+      "addedVisible": [
+        "equity_compensation.equity_cliff",
+        "equity_compensation.equity_description",
+        "equity_compensation.equity_vesting_period",
+        "equity_compensation.number_of_stock_options"
+      ],
+      "removedVisible": [],
+      "addedRequired": ["equity_compensation.equity_description"],
+      "removedRequired": []
+    },
+    "non_compete_clause_apply=yes": {
+      "addedVisible": [
+        "non_compete_clause_compensation_amount",
+        "non_compete_clause_halt_period_months",
+        "non_compete_clause_location",
+        "non_compete_clause_penality_amount_months"
+      ],
+      "removedVisible": [],
+      "addedRequired": [
+        "non_compete_clause_compensation_amount",
+        "non_compete_clause_halt_period_months",
+        "non_compete_clause_location",
+        "non_compete_clause_penality_amount_months"
+      ],
+      "removedRequired": []
+    }
+  }
+}

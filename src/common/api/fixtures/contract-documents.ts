@@ -7,6 +7,17 @@ export const mockEmptyContractDocumentsResponse = {
   },
 };
 
+export const mockContractDocumentResponse = {
+  data: {
+    contract_document: {
+      name: '2026-09-16_Company_Grace_Unsigned.pdf',
+      status: 'awaiting_signatures',
+      content: 'data:application/pdf;base64,JVBERi0xLjQKJeLjz9MKCg==',
+      signatories: [],
+    },
+  },
+};
+
 export const mockContractDocumentsResponse = {
   data: {
     contract_documents: [

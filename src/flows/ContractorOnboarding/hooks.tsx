@@ -27,7 +27,6 @@ import {
   useCountriesSchemaField,
   CONTRACT_PRODUCT_TITLES,
   useHasCompanySignedContract,
-  useCompanyOpenTasks,
   useSetContractOrigin,
   useGetContractOriginSchema,
   useGetInvoiceScheduleSchema,
@@ -38,6 +37,8 @@ import {
   usePreviewContractorInvoice,
   useGetExistingInvoiceSchedule,
 } from '@/src/flows/ContractorOnboarding/api';
+import { useCompanyOpenTasks } from '@/src/common/api/companies';
+import { buildInvoiceScheduleFormValues } from '@/src/common/invoice-schedules';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
   useCreateContractorContractDocument,
@@ -139,8 +140,6 @@ export const useContractorOnboarding = ({
   options,
   initialValues: onboardingInitialValues,
 }: useContractorOnboardingProps) => {
-  const excludeProducts = options?.excludeProducts || [];
-
   const onContractReviewedRef = useRef(options?.onContractReviewed);
 
   useEffect(() => {
@@ -382,6 +381,9 @@ export const useContractorOnboarding = ({
 
   const {
     form: selectContractorSubscriptionForm,
+    handleValidation: handleSubscriptionValidation,
+    onValuesChange: onSubscriptionValuesChange,
+    parseFormValues: parseSubscriptionFormValues,
     isLoading: isLoadingContractorSubscriptions,
     contractorSubscriptions,
     filteredContractorSubscriptions,
@@ -395,7 +397,7 @@ export const useContractorOnboarding = ({
       queryOptions: {
         enabled: isPricingPlanEnabled,
       },
-      excludeProducts: excludeProducts,
+      excludeProducts: options?.excludeProducts,
       jsfModify: options?.jsfModify?.pricing_plan,
     },
   );
@@ -410,7 +412,9 @@ export const useContractorOnboarding = ({
   }, [contractorSubscriptions]);
 
   const shouldIncludeEligibilityQuestionnaire = useMemo(() => {
-    if (hasEligibilityQuestionnaireSubmitted) return false;
+    if (hasEligibilityQuestionnaireSubmitted) {
+      return false;
+    }
     return selectedProduct === corProductIdentifier;
   }, [hasEligibilityQuestionnaireSubmitted, selectedProduct]);
 
@@ -644,11 +648,20 @@ export const useContractorOnboarding = ({
     );
   }, [skipSteps, selectedPricingPlan]);
 
+  // As in the Remote platform, invoice schedules are only offered during onboarding for CM and CM+: Contractor of
+  // Record invoice schedules can only be created once the contractor is active.
   useEffect(() => {
+    const isContractorOfRecord = selectedPricingPlan === corProductIdentifier;
+
     setIncludeInvoiceSchedule(
-      options?.features?.includes('create_invoice_schedule') ?? false,
+      !isContractorOfRecord &&
+        (options?.features?.includes('create_invoice_schedule') ?? false),
     );
-  }, [options?.features]);
+
+    if (isContractorOfRecord) {
+      setIncludeCreateInvoiceSchedule(false);
+    }
+  }, [options?.features, selectedPricingPlan]);
 
   const eligibilityFields = useMemo(() => {
     return {
@@ -732,7 +745,10 @@ export const useContractorOnboarding = ({
       queryOptions: {
         enabled: isSignatureSchemaEnabled,
       },
-      jsfModify: buildContractPreviewJsfModify(options, fieldValues),
+      jsfModify: buildContractPreviewJsfModify(
+        options?.jsfModify?.contract_preview,
+        fieldValues,
+      ),
     },
   });
 
@@ -766,8 +782,18 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const createInvoiceScheduleSavedValues = useMemo(
+    () =>
+      existingInvoiceSchedule
+        ? buildInvoiceScheduleFormValues(existingInvoiceSchedule)
+        : { ...onboardingInitialValues },
+    [existingInvoiceSchedule, onboardingInitialValues],
+  );
+
   const {
     data: createInvoiceScheduleForm,
+    handleValidation: handleCreateInvoiceScheduleValidation,
+    parseFormValues: parseCreateInvoiceScheduleValues,
     isLoading: isLoadingCreateInvoiceScheduleForm,
   } = useGetCreateInvoiceScheduleSchema({
     enabled:
@@ -775,12 +801,8 @@ export const useContractorOnboarding = ({
       stepState.currentStep.name === 'create_invoice_schedule',
     employmentId: internalEmploymentId,
     jsfModify: options?.jsfModify?.create_invoice_schedule,
-    // The schema hides item rows 2..10 until the row before them is filled in, and that
-    // conditional is evaluated against the values handed to createHeadlessForm. Calling
-    // handleValidation on change (see checkFieldUpdates) validates but does not re-derive
-    // field visibility, so without the current values here every row past the first stays
-    // hidden for good.
-    fieldValues,
+    includeFieldsets: true,
+    initialValues: createInvoiceScheduleSavedValues,
   });
 
   const {
@@ -841,7 +863,7 @@ export const useContractorOnboarding = ({
     basic_information: basicInformationForm?.meta['x-jsf-fieldsets'],
     contract_origin: null,
     invoice_schedule: null,
-    create_invoice_schedule: null,
+    create_invoice_schedule: createInvoiceScheduleForm?.meta['x-jsf-fieldsets'],
     pricing_plan: null,
     contract_details: contractorOnboardingDetailsForm?.meta['x-jsf-fieldsets'],
     eligibility_questionnaire: null,
@@ -888,7 +910,9 @@ export const useContractorOnboarding = ({
   // memoize file conversion to avoid re-converting the file on every render
   // noticed performance issues when not doing memoizing individually
   const convertedIr35File = useMemo(() => {
-    if (!ir35File?.content) return null;
+    if (!ir35File?.content) {
+      return null;
+    }
     return dataURLtoFile(ir35File.content as unknown as string, ir35File.name);
   }, [ir35File?.content, ir35File?.name]);
 
@@ -942,36 +966,14 @@ export const useContractorOnboarding = ({
     existingInvoiceSchedule,
   ]);
 
-  const createInvoiceScheduleInitialValues = useMemo(() => {
-    // If an existing schedule exists, transform it to form values
-    if (existingInvoiceSchedule) {
-      const formValues: Record<string, unknown> = {
-        currency: existingInvoiceSchedule.currency,
-        periodicity: existingInvoiceSchedule.periodicity,
-        start_date: existingInvoiceSchedule.start_date,
-        number: existingInvoiceSchedule.number,
-        note: existingInvoiceSchedule.note,
-        nr_occurrences: existingInvoiceSchedule.nr_occurrences,
-      };
-
-      existingInvoiceSchedule.items?.forEach((item, index: number) => {
-        const itemNumber = index + 1;
-        formValues[`item_${itemNumber}_description`] = item.description;
-        formValues[`item_${itemNumber}_amount`] = item.amount;
-      });
-
-      return getInitialValues(stepFields.create_invoice_schedule, formValues);
-    }
-
-    const initialValues = {
-      ...onboardingInitialValues,
-    };
-    return getInitialValues(stepFields.create_invoice_schedule, initialValues);
-  }, [
-    stepFields.create_invoice_schedule,
-    onboardingInitialValues,
-    existingInvoiceSchedule,
-  ]);
+  const createInvoiceScheduleInitialValues = useMemo(
+    () =>
+      getInitialValues(
+        stepFields.create_invoice_schedule,
+        createInvoiceScheduleSavedValues,
+      ),
+    [stepFields.create_invoice_schedule, createInvoiceScheduleSavedValues],
+  );
 
   const contractDetailsInitialValues = useMemo(() => {
     const hardcodedValues = {
@@ -1219,13 +1221,7 @@ export const useContractorOnboarding = ({
       selectContractorSubscriptionForm &&
       stepState.currentStep.name === 'pricing_plan'
     ) {
-      return await parseJSFToValidate(
-        values,
-        selectContractorSubscriptionForm?.fields,
-        {
-          isPartialValidation: false,
-        },
-      );
+      return await parseSubscriptionFormValues(values);
     }
 
     if (
@@ -1263,13 +1259,7 @@ export const useContractorOnboarding = ({
       createInvoiceScheduleForm &&
       stepState.currentStep.name === 'create_invoice_schedule'
     ) {
-      return await parseJSFToValidate(
-        values,
-        createInvoiceScheduleForm?.fields,
-        {
-          isPartialValidation: false,
-        },
-      );
+      return await parseCreateInvoiceScheduleValues(values);
     }
 
     return {};
@@ -1713,12 +1703,7 @@ export const useContractorOnboarding = ({
         selectContractorSubscriptionForm &&
         stepState.currentStep.name === 'pricing_plan'
       ) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          selectContractorSubscriptionForm?.fields,
-          { isPartialValidation: false },
-        );
-        return selectContractorSubscriptionForm?.handleValidation(parsedValues);
+        return handleSubscriptionValidation(values);
       }
 
       if (
@@ -1761,12 +1746,7 @@ export const useContractorOnboarding = ({
         createInvoiceScheduleForm &&
         stepState.currentStep.name === 'create_invoice_schedule'
       ) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          createInvoiceScheduleForm?.fields,
-          { isPartialValidation: false },
-        );
-        return createInvoiceScheduleForm?.handleValidation(parsedValues);
+        return handleCreateInvoiceScheduleValidation(values);
       }
 
       return null;
@@ -1778,16 +1758,21 @@ export const useContractorOnboarding = ({
       contractorOnboardingDetailsForm,
       signatureSchemaForm,
       selectContractorSubscriptionForm,
+      handleSubscriptionValidation,
       eligibilityQuestionnaireForm,
       contractOriginForm,
       invoiceScheduleForm,
       createInvoiceScheduleForm,
+      handleCreateInvoiceScheduleValidation,
     ],
   );
 
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
       setFieldValues(values);
+      if (stepState.currentStep.name === 'pricing_plan') {
+        await onSubscriptionValuesChange(values);
+      }
       // new steps or refactor ones should rely on json-schema-form-mutability
       // instead of passing fieldValues
       const stepsUsingHandleValidation = [
@@ -1802,7 +1787,13 @@ export const useContractorOnboarding = ({
         await handleValidation(values);
       }
     },
-    [setFieldValues, includeInvoiceSchedule, stepState, handleValidation],
+    [
+      setFieldValues,
+      includeInvoiceSchedule,
+      stepState,
+      handleValidation,
+      onSubscriptionValuesChange,
+    ],
   );
 
   const isLoading = initialLoading || shouldHandleReadOnlyEmployment;

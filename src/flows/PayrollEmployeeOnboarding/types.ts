@@ -75,7 +75,11 @@ export type PayrollEmployeeOnboardingFlowProps = {
    * when to supply it explicitly.
    */
   jurisdiction?: string;
-  /** Optional. Pre-populate form fields. */
+  /**
+   * Optional. Pre-populate form fields, keyed by step (e.g. `personal_details`).
+   * Values the employee already saved (personal details, home address, bank
+   * account, federal taxes and state taxes) take precedence over these.
+   */
   initialValues?: Record<string, unknown>;
   options?: Omit<FlowOptions, 'jsfModify' | 'jsonSchemaVersion'>;
   render: (props: PayrollEmployeeOnboardingRenderProps) => React.ReactNode;

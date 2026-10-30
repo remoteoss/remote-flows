@@ -71,6 +71,30 @@ describe('ZendeskTriggerButton', () => {
       expect(onClick).toHaveBeenCalledWith(123456);
     });
 
+    it('does not submit the surrounding form when clicked', async () => {
+      const onSubmit = vi.fn();
+
+      render(
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            onSubmit();
+          }}
+        >
+          <ZendeskTriggerButton zendeskId={123456}>
+            Open Article
+          </ZendeskTriggerButton>
+        </form>,
+        { wrapper: TestProviders },
+      );
+
+      const button = screen.getByRole('button', { name: 'Open Article' });
+      expect(button).toHaveAttribute('type', 'button');
+
+      await userEvent.click(button);
+      expect(onSubmit).not.toHaveBeenCalled();
+    });
+
     it('applies custom className', () => {
       render(
         <ZendeskTriggerButton zendeskId={123456} className='custom-class'>

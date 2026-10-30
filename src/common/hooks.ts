@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import equal from 'fast-deep-equal';
 import debounce from 'lodash/debounce';
 
 export function useDebounce(
@@ -25,4 +26,12 @@ export function useDebounce(
     },
     [debouncedFn],
   );
+}
+
+export function useDeepStable<T>(value: T): T {
+  const [stable, setStable] = useState(value);
+  if (!equal(stable, value)) {
+    setStable(value);
+  }
+  return stable;
 }

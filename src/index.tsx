@@ -13,8 +13,6 @@ export {
   EstimationResults,
   SummaryResults,
   useCostCalculatorCountries,
-  // useCostCalculatorContext is deprecated but partners already use it, offering them a export for now to avoid breaking changes
-  // oxlint-disable-next-line typescript/no-deprecated
   useCostCalculatorContext,
 } from '@/src/flows/CostCalculator';
 
@@ -36,8 +34,11 @@ export type {
 } from '@/src/flows/InvoiceSchedule';
 
 export {
+  ContractDocumentBackButton,
   ContractDocumentFlow,
   ContractDocumentForm,
+  ContractDocumentPreviewForm,
+  ContractDocumentReviewButton,
   ContractDocumentSubmitButton,
   useContractDocument,
 } from '@/src/flows/ContractDocument';
@@ -45,11 +46,32 @@ export {
 export type {
   ContractDocumentContractDetailsPayload,
   ContractDocumentContractDetailsResponse,
+  ContractDocumentContractPreviewPayload,
+  ContractDocumentContractPreviewResponse,
   ContractDocumentFlowProps,
   ContractDocumentOptions,
   ContractDocumentStepKeys,
   UseContractDocumentOptions,
 } from '@/src/flows/ContractDocument';
+
+export {
+  TimeOffFlow,
+  useTimeOff,
+  useTimeOffRequest,
+} from '@/src/flows/TimeOff';
+
+export type {
+  TimeOffFlowProps,
+  TimeOffRenderProps,
+  TimeOffRequest,
+  TimeOffRequestDetail,
+  TimeOffRequestError,
+  TimeOffRequestIdFormValues,
+  TimeOffReviewStepProps,
+  TimeOffStepKeys,
+  UseTimeOffOptions,
+  UseTimeOffRequestOptions,
+} from '@/src/flows/TimeOff';
 
 export {
   ContractAmendmentConfirmationForm,
@@ -253,6 +275,7 @@ export type {
   DailyScheduleEditBag,
   DailyScheduleEditState,
   DailyScheduleEditActions,
+  DailyScheduleSaveResult,
   DailyScheduleEditFormRow,
   DailyScheduleRenderProps,
   DailyScheduleContainerProps,

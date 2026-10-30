@@ -1,38 +1,42 @@
 const { buildGatewayURL } = require('./utils.js');
 const { fetchCompanyManagerToken } = require('./jwt_auth.js');
 
-async function fetchAccessToken() {
+async function requestAccessToken() {
   const {
     VITE_CLIENT_ID,
-    VITE_CLIENT_SECRET,
+    REMOTE_CLIENT_SECRET,
     VITE_REMOTE_GATEWAY,
-    VITE_REFRESH_TOKEN,
+    REMOTE_REFRESH_TOKEN,
     VITE_USER_ID,
   } = process.env;
 
   // Local dev has no interactively-obtained refresh token; fall back to the
   // JWT-bearer assertion flow (same as fetchCompanyManagerToken) using
   // VITE_USER_ID instead.
-  if (VITE_REMOTE_GATEWAY === 'local' && !VITE_REFRESH_TOKEN && VITE_USER_ID) {
+  if (
+    VITE_REMOTE_GATEWAY === 'local' &&
+    !REMOTE_REFRESH_TOKEN &&
+    VITE_USER_ID
+  ) {
     return fetchCompanyManagerToken();
   }
 
   // for local development, we don't need a client secret
   if (
     !VITE_CLIENT_ID ||
-    (!VITE_CLIENT_SECRET && VITE_REMOTE_GATEWAY !== 'local') ||
+    (!REMOTE_CLIENT_SECRET && VITE_REMOTE_GATEWAY !== 'local') ||
     !VITE_REMOTE_GATEWAY ||
-    !VITE_REFRESH_TOKEN
+    !REMOTE_REFRESH_TOKEN
   ) {
     throw new Error(
-      'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, or VITE_REFRESH_TOKEN',
+      'Missing VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, or REMOTE_REFRESH_TOKEN',
     );
   }
 
   const gatewayUrl = buildGatewayURL();
 
   const encodedCredentials = Buffer.from(
-    `${VITE_CLIENT_ID}:${VITE_CLIENT_SECRET}`,
+    `${VITE_CLIENT_ID}:${REMOTE_CLIENT_SECRET}`,
   ).toString('base64');
 
   const response = await fetch(`${gatewayUrl}/auth/oauth2/token`, {
@@ -43,7 +47,7 @@ async function fetchAccessToken() {
     },
     body: new URLSearchParams({
       grant_type: 'refresh_token',
-      refresh_token: VITE_REFRESH_TOKEN,
+      refresh_token: REMOTE_REFRESH_TOKEN,
     }),
   });
 
@@ -56,25 +60,25 @@ async function fetchAccessToken() {
   return { accessToken: data.access_token, expiresIn: data.expires_in };
 }
 
-async function fetchClientCredentialsAccessToken() {
-  const { VITE_CLIENT_ID, VITE_CLIENT_SECRET, VITE_REMOTE_GATEWAY } =
+async function requestClientCredentialsAccessToken() {
+  const { VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, VITE_REMOTE_GATEWAY } =
     process.env;
 
   // for local development, we don't need a client secret
   if (
     !VITE_CLIENT_ID ||
-    (!VITE_CLIENT_SECRET && VITE_REMOTE_GATEWAY !== 'local') ||
+    (!REMOTE_CLIENT_SECRET && VITE_REMOTE_GATEWAY !== 'local') ||
     !VITE_REMOTE_GATEWAY
   ) {
     throw new Error(
-      'Missing VITE_CLIENT_ID, VITE_CLIENT_SECRET, or VITE_REMOTE_GATEWAY',
+      'Missing VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, or VITE_REMOTE_GATEWAY',
     );
   }
 
   const gatewayUrl = buildGatewayURL();
 
   const encodedCredentials = Buffer.from(
-    `${VITE_CLIENT_ID}:${VITE_CLIENT_SECRET}`,
+    `${VITE_CLIENT_ID}:${REMOTE_CLIENT_SECRET}`,
   ).toString('base64');
 
   const response = await fetch(`${gatewayUrl}/auth/oauth2/token`, {
@@ -96,6 +100,51 @@ async function fetchClientCredentialsAccessToken() {
   const data = await response.json();
   return { accessToken: data.access_token, expiresIn: data.expires_in };
 }
+
+const EXPIRY_MARGIN_SECONDS = 60;
+
+const cacheClearers = [];
+
+function clearTokenCaches() {
+  cacheClearers.forEach((clear) => clear());
+}
+
+function cacheUntilExpiry(requestToken) {
+  let cached;
+  cacheClearers.push(() => {
+    cached = undefined;
+  });
+  return async () => {
+    const hit = cached;
+    if (hit && Date.now() < hit.refreshAt) {
+      const { accessToken } = await hit.token;
+      return {
+        accessToken,
+        expiresIn: Math.floor((hit.expiresAt - Date.now()) / 1000),
+      };
+    }
+    const token = requestToken();
+    const entry = { token, refreshAt: Infinity, expiresAt: Infinity };
+    cached = entry;
+    try {
+      const { accessToken, expiresIn } = await token;
+      const expiresAt = Date.now() + expiresIn * 1000;
+      entry.expiresAt = expiresAt;
+      entry.refreshAt = expiresAt - EXPIRY_MARGIN_SECONDS * 1000;
+      return { accessToken, expiresIn };
+    } catch (error) {
+      if (cached === entry) {
+        cached = undefined;
+      }
+      throw error;
+    }
+  };
+}
+
+const fetchAccessToken = cacheUntilExpiry(requestAccessToken);
+const fetchClientCredentialsAccessToken = cacheUntilExpiry(
+  requestClientCredentialsAccessToken,
+);
 
 // Express route handler
 async function getToken(req, res) {
@@ -124,4 +173,5 @@ module.exports = {
   getToken,
   fetchAccessToken,
   fetchClientCredentialsAccessToken,
+  clearTokenCaches,
 };

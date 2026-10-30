@@ -23,9 +23,9 @@ const SCHEMA_VERSIONS_PATH = path.join(
   __dirname,
   '../src/components/JsonSchemaComparison/schemaVersions.ts',
 );
-const ONBOARDING_CONSTANTS_PATH = path.join(
+const ONBOARDING_VERSIONS_PATH = path.join(
   __dirname,
-  '../example/src/flows/Onboarding/constants.ts',
+  '../example/src/flows/Onboarding/jsonSchemaVersions.ts',
 );
 // Committed (not /tmp) so it's a durable, machine-readable record of the gap
 // over time -- e.g. to later correlate against which countries matter most
@@ -129,14 +129,14 @@ function generateSchemaVersionsFile(
   );
 }
 
-/** Extract ONBOARDING_OPTIONS.jsonSchemaVersionByCountry[COUNTRY].contract_details from example/constants.ts */
+/** Extract ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY[COUNTRY].contract_details from example/jsonSchemaVersions.ts */
 function extractInUseVersions(source: string): Record<string, number> {
   const blockMatch = source.match(
-    /jsonSchemaVersionByCountry:\s*\{([\s\S]*?)\n {2}\},\n {2}jsfModify/,
+    /ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY\s*=\s*\{([\s\S]*?)\n\};/,
   );
   if (!blockMatch) {
     throw new Error(
-      'Could not find jsonSchemaVersionByCountry block in example/src/flows/Onboarding/constants.ts',
+      'Could not find ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY in example/src/flows/Onboarding/jsonSchemaVersions.ts',
     );
   }
   const block = blockMatch[1];
@@ -207,7 +207,7 @@ function main() {
 
   const latestVersions = computeCountryContractVersions(beRepoPath);
   const onboardingConstants = fs.readFileSync(
-    ONBOARDING_CONSTANTS_PATH,
+    ONBOARDING_VERSIONS_PATH,
     'utf-8',
   );
   const inUseVersions = extractInUseVersions(onboardingConstants);

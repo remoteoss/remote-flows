@@ -20,10 +20,18 @@ export function categorizeFile(
   filePath: string,
 ): 'js' | 'css' | 'types' | 'sourcemap' | 'other' {
   const ext = extname(filePath);
-  if (ext === '.css') return 'css';
-  if (ext === '.js' || ext === '.mjs') return 'js';
-  if (ext === '.map') return 'sourcemap';
-  if (ext === '.ts' || filePath.endsWith('.d.ts')) return 'types';
+  if (ext === '.css') {
+    return 'css';
+  }
+  if (ext === '.js' || ext === '.mjs') {
+    return 'js';
+  }
+  if (ext === '.map') {
+    return 'sourcemap';
+  }
+  if (ext === '.ts' || filePath.endsWith('.d.ts')) {
+    return 'types';
+  }
   return 'other';
 }
 

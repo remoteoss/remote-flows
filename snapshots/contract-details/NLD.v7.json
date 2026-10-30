@@ -1,0 +1,263 @@
+{
+  "fingerprintVersion": 1,
+  "base": {
+    "visible": [
+      "additional_job_title_eligibility_check_result",
+      "additional_job_title_eligibility_check_slug",
+      "annual_gross_salary",
+      "available_pto",
+      "available_pto_type",
+      "confidentiality_acknowledgment",
+      "contract_duration",
+      "contract_duration_type",
+      "employee_travel_required",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_notice_period",
+      "has_signing_bonus",
+      "holiday_allowance",
+      "holiday_allowance_payment_frequency",
+      "it_equipment",
+      "notice_period",
+      "probation_length",
+      "role_description",
+      "role_is_onsite",
+      "role_requires_license",
+      "salary_overview",
+      "sick_leave_pay.sick_leave_pay_cap_70",
+      "sick_leave_pay.sick_leave_percentage",
+      "skills_and_qualifications",
+      "supplemental_benefits_eligible",
+      "work_address.is_home_address",
+      "work_address_is_home_address",
+      "work_equipment_ack",
+      "work_hours_per_week",
+      "work_schedule"
+    ],
+    "required": [
+      "annual_gross_salary",
+      "available_pto",
+      "available_pto_type",
+      "confidentiality_acknowledgment",
+      "contract_duration_type",
+      "employee_travel_required",
+      "equity_compensation.offer_equity_compensation",
+      "experience_level",
+      "has_bonus",
+      "has_commissions",
+      "has_signing_bonus",
+      "holiday_allowance",
+      "holiday_allowance_payment_frequency",
+      "notice_period",
+      "probation_length",
+      "role_description",
+      "sick_leave_pay.sick_leave_pay_cap_70",
+      "sick_leave_pay.sick_leave_percentage",
+      "skills_and_qualifications",
+      "supplemental_benefits_eligible",
+      "work_address.is_home_address",
+      "work_equipment_ack",
+      "work_hours_per_week",
+      "work_schedule"
+    ]
+  },
+  "types": {
+    "contract_duration": "text",
+    "contract_duration_type": "radio",
+    "contract_duration_type_ack": "checkbox",
+    "contract_end_date": "date",
+    "work_schedule": "radio",
+    "work_hours_per_week": "number",
+    "default_weekly_hours": "number",
+    "probation_length": "radio",
+    "has_notice_period": "radio",
+    "notice_period": "number",
+    "available_pto_type": "radio",
+    "available_pto": "number",
+    "sick_leave_pay.sick_leave_percentage": "radio",
+    "sick_leave_pay.sick_leave_pay_cap_70": "radio",
+    "sick_leave_pay.sick_leave_pay_cap_100": "radio",
+    "sick_leave_pay.sick_leave_pay_internal": "textarea",
+    "role_description": "textarea",
+    "role_is_onsite": "radio",
+    "role_requires_license": "radio",
+    "employer_acknowledges_risk": "checkbox",
+    "additional_job_title_eligibility_check_slug": "hidden",
+    "experience_level": "radio",
+    "skills_and_qualifications": "textarea",
+    "work_address_is_home_address": "radio",
+    "work_address.is_home_address": "radio",
+    "work_address.address": "text",
+    "work_address.address_line_2": "text",
+    "work_address.city": "text",
+    "work_address.postal_code": "text",
+    "employee_travel_required": "radio",
+    "salary_overview": "radio",
+    "annual_gross_salary": "money",
+    "extreme_salary_warning": "hidden",
+    "extreme_salary_acknowledgement": "checkbox",
+    "part_time_salary_confirmation": "checkbox",
+    "holiday_allowance": "select",
+    "holiday_allowance_payment_frequency": "select",
+    "has_signing_bonus": "radio",
+    "signing_bonus_amount": "money",
+    "has_bonus": "radio",
+    "bonus_amount": "money",
+    "bonus_details": "textarea",
+    "has_commissions": "radio",
+    "commissions_details": "textarea",
+    "commissions_ack": "checkbox",
+    "equity_compensation.offer_equity_compensation": "radio",
+    "equity_compensation.number_of_stock_options": "text",
+    "equity_compensation.equity_cliff": "number",
+    "equity_compensation.equity_vesting_period": "number",
+    "equity_compensation.equity_description": "textarea",
+    "non_compete_clause_apply": "radio",
+    "non_compete_clause_halt_period_months": "number",
+    "non_solicitation_clause_halt_period_months": "number",
+    "it_equipment": "radio",
+    "work_equipment_ack": "checkbox",
+    "confidentiality_acknowledgment": "checkbox",
+    "supplemental_benefits_eligible": "radio",
+    "additional_job_title_eligibility_check_result": "hidden"
+  },
+  "options": {
+    "contract_duration_type": ["fixed_term", "indefinite"],
+    "work_schedule": ["full_time", "part_time"],
+    "probation_length": ["0", "1", "2"],
+    "has_notice_period": ["no", "yes"],
+    "available_pto_type": ["fixed", "unlimited"],
+    "sick_leave_pay.sick_leave_percentage": ["100%", "70%", "internal"],
+    "sick_leave_pay.sick_leave_pay_cap_70": ["no", "yes"],
+    "role_is_onsite": ["no", "yes"],
+    "role_requires_license": ["no", "yes"],
+    "experience_level": [
+      "Level 2 - Entry Level - Employees who perform operational tasks with an average level of complexity. They perform their functions with limited autonomy",
+      "Level 3 - Associate - Employees who perform independently tasks and/or with coordination and control functions",
+      "Level 4 - Mid-Senior level - Employees with high professional functions, executive management responsibilities, who supervise the production with an initiative and operational autonomy within the responsibilities delegated to them",
+      "Level 5 - Director - Directors perform functions of an ongoing nature that are of significant importance for the development and implementation of the company's objectives",
+      "Level 6 - Executive - An Executive is responsible for running an organization. They create plans to help their organizations grow"
+    ],
+    "work_address_is_home_address": ["no", "yes"],
+    "work_address.is_home_address": ["no", "yes"],
+    "employee_travel_required": ["no", "yes"],
+    "salary_overview": ["salary_overview"],
+    "holiday_allowance": ["On top of salary", "Within the salary"],
+    "holiday_allowance_payment_frequency": ["monthly", "yearly"],
+    "has_signing_bonus": ["no", "yes"],
+    "has_bonus": ["no", "yes"],
+    "has_commissions": ["no", "yes"],
+    "equity_compensation.offer_equity_compensation": ["no", "yes"],
+    "it_equipment": ["no", "yes"],
+    "supplemental_benefits_eligible": ["no", "yes"]
+  },
+  "constraints": {
+    "contract_duration": {
+      "maxLength": 255
+    },
+    "work_hours_per_week": {
+      "minimum": 36,
+      "maximum": 40
+    },
+    "available_pto": {
+      "minimum": 0
+    },
+    "role_description": {
+      "minLength": 100,
+      "maxLength": 5000
+    },
+    "skills_and_qualifications": {
+      "maxLength": 1000
+    },
+    "annual_gross_salary": {
+      "minimum": 0
+    }
+  },
+  "scenarios": {
+    "contract_duration_type=fixed_term": {
+      "addedVisible": ["contract_end_date"],
+      "removedVisible": [],
+      "addedRequired": ["contract_end_date"],
+      "removedRequired": []
+    },
+    "contract_duration_type=indefinite": {
+      "addedVisible": [
+        "contract_duration_type_ack",
+        "non_compete_clause_apply"
+      ],
+      "removedVisible": [],
+      "addedRequired": [
+        "contract_duration_type_ack",
+        "non_compete_clause_apply"
+      ],
+      "removedRequired": []
+    },
+    "work_schedule=part_time": {
+      "addedVisible": ["default_weekly_hours", "part_time_salary_confirmation"],
+      "removedVisible": [],
+      "addedRequired": [
+        "default_weekly_hours",
+        "part_time_salary_confirmation"
+      ],
+      "removedRequired": []
+    },
+    "sick_leave_pay.sick_leave_percentage=100%": {
+      "addedVisible": ["sick_leave_pay.sick_leave_pay_cap_100"],
+      "removedVisible": ["sick_leave_pay.sick_leave_pay_cap_70"],
+      "addedRequired": ["sick_leave_pay.sick_leave_pay_cap_100"],
+      "removedRequired": ["sick_leave_pay.sick_leave_pay_cap_70"]
+    },
+    "sick_leave_pay.sick_leave_percentage=internal": {
+      "addedVisible": ["sick_leave_pay.sick_leave_pay_internal"],
+      "removedVisible": ["sick_leave_pay.sick_leave_pay_cap_70"],
+      "addedRequired": ["sick_leave_pay.sick_leave_pay_internal"],
+      "removedRequired": ["sick_leave_pay.sick_leave_pay_cap_70"]
+    },
+    "work_address.is_home_address=no": {
+      "addedVisible": [
+        "work_address.address",
+        "work_address.address_line_2",
+        "work_address.city",
+        "work_address.postal_code"
+      ],
+      "removedVisible": [],
+      "addedRequired": [
+        "work_address.address",
+        "work_address.city",
+        "work_address.postal_code"
+      ],
+      "removedRequired": []
+    },
+    "has_signing_bonus=yes": {
+      "addedVisible": ["signing_bonus_amount"],
+      "removedVisible": [],
+      "addedRequired": ["signing_bonus_amount"],
+      "removedRequired": []
+    },
+    "has_bonus=yes": {
+      "addedVisible": ["bonus_amount", "bonus_details"],
+      "removedVisible": [],
+      "addedRequired": ["bonus_details"],
+      "removedRequired": []
+    },
+    "has_commissions=yes": {
+      "addedVisible": ["commissions_ack", "commissions_details"],
+      "removedVisible": [],
+      "addedRequired": ["commissions_ack", "commissions_details"],
+      "removedRequired": []
+    },
+    "equity_compensation.offer_equity_compensation=yes": {
+      "addedVisible": [
+        "equity_compensation.equity_cliff",
+        "equity_compensation.equity_description",
+        "equity_compensation.equity_vesting_period",
+        "equity_compensation.number_of_stock_options"
+      ],
+      "removedVisible": [],
+      "addedRequired": ["equity_compensation.equity_description"],
+      "removedRequired": []
+    }
+  }
+}

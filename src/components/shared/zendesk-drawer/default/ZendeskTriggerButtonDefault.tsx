@@ -31,7 +31,11 @@ export function ZendeskTriggerButtonDefault({
   }
 
   return (
-    <button onClick={handleClick} className={cn(baseClassName, className)}>
+    <button
+      type='button'
+      onClick={handleClick}
+      className={cn(baseClassName, className)}
+    >
       {children}
     </button>
   );

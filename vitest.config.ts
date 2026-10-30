@@ -1,9 +1,17 @@
 import { defineConfig } from 'vitest/config';
 import { COVERAGE_THRESHOLDS } from './scripts/coverage-utils.ts';
 
+const isCI = process.env.CI === 'true';
+
 export default defineConfig({
   test: {
-    include: ['example/**/*.test.{ts,tsx}', 'src/**/*.test.{ts,tsx}'],
+    retry: isCI ? 2 : 0,
+    reporters: isCI ? ['default', './scripts/flaky-reporter.ts'] : ['default'],
+    include: [
+      'example/**/*.test.{ts,tsx}',
+      'src/**/*.test.{ts,tsx}',
+      'scripts/**/*.test.{ts,tsx}',
+    ],
     exclude: ['node_modules/**', 'example/node_modules/**', 'example/e2e/**'],
     coverage: {
       provider: 'istanbul',

@@ -31,6 +31,7 @@ import {
 import Flag from 'react-flagpack';
 import React, { useState } from 'react';
 import { RemoteFlows } from './RemoteFlows';
+import { getUrlParam } from './utils/urlState';
 import { AlertError } from './AlertError';
 import { ReviewContractorOnboardingStep } from './ReviewContractorOnboardingStep';
 import { PricingPlanCard } from './components/PricingPlanCard';
@@ -821,7 +822,9 @@ export const ContractorOnboardingWithProps = ({
 export const ContractorOnboardingForm = () => {
   const [formData, setFormData] = useState<ContractorOnboardingFormData>({
     employmentId:
-      import.meta.env.VITE_CONTRACTOR_MANAGEMENT_EMPLOYMENT_ID || '', // use your own employment ID
+      getUrlParam('employmentId') ||
+      import.meta.env.VITE_CONTRACTOR_MANAGEMENT_EMPLOYMENT_ID ||
+      '', // use your own employment ID
     externalId: '',
     partnerExternalId: '',
   });

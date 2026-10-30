@@ -51,7 +51,9 @@ export const calculateMinTerminationDate = (
     // Since cutoffDate is a date-only string with no time component, the converted Date will be set to midnight
     ?.map((cycle) => parseISO(cycle.input_cutoff_date!));
 
-  if (!currentMonthCutoffDates?.length) return today;
+  if (!currentMonthCutoffDates?.length) {
+    return today;
+  }
 
   switch (payFrequency) {
     /**
@@ -71,13 +73,15 @@ export const calculateMinTerminationDate = (
      * - any other case return today
      */
     case PAYROLL_CYCLES.SEMI_MONTHLY:
-      if (isAfter(normalizedToday, currentMonthCutoffDates[1]))
+      if (isAfter(normalizedToday, currentMonthCutoffDates[1])) {
         return endOfMonth(today);
+      }
       if (
         isAfter(normalizedToday, currentMonthCutoffDates[0]) &&
         isBefore(normalizedToday, normalizedMidMonthDate)
-      )
+      ) {
         return midMonthDate;
+      }
       return today;
 
     default:

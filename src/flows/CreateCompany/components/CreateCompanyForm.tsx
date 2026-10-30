@@ -21,6 +21,8 @@ export function CreateCompanyForm({
 }: CreateCompanyFormProps) {
   const { formId, createCompanyBag } = useCreateCompanyContext();
   const prevValuesRef = useRef(defaultValues);
+  const checkFieldUpdatesRef = useRef(createCompanyBag.checkFieldUpdates);
+  checkFieldUpdatesRef.current = createCompanyBag.checkFieldUpdates;
 
   const resolver = useJsonSchemasValidationFormResolver(
     createCompanyBag.handleValidation,
@@ -39,7 +41,7 @@ export function CreateCompanyForm({
         (key) => values[key] !== prevValuesRef.current[key],
       );
       if (hasChanged) {
-        createCompanyBag?.checkFieldUpdates(values);
+        checkFieldUpdatesRef.current(values);
         prevValuesRef.current = { ...values };
       }
     });

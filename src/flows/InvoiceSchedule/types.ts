@@ -12,6 +12,7 @@ export type InvoiceScheduleFormValues = FieldValues & {
   start_date?: string;
   number?: string;
   note?: string;
+  end_type?: 'never' | 'multiple';
   nr_occurrences?: number;
 };
 
@@ -42,4 +43,8 @@ export type UseInvoiceScheduleOptions = {
    * Modify the generated JSON-schema form fields.
    */
   jsfModify?: JSFModify;
+  /**
+   * Default values for the form fields.
+   */
+  defaultValues?: Record<string, unknown>;
 };

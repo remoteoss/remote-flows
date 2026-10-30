@@ -1,6 +1,9 @@
 import {
+  ContractDocumentBackButton,
   ContractDocumentFlow,
   ContractDocumentForm,
+  ContractDocumentPreviewForm,
+  ContractDocumentReviewButton,
   ContractDocumentSubmitButton,
   NormalizedFieldError,
 } from '@remoteoss/remote-flows';
@@ -15,6 +18,7 @@ function CreateContractDocument({ employmentId }: { employmentId: string }) {
     apiError: string;
     fieldErrors: NormalizedFieldError[];
   }>({ apiError: '', fieldErrors: [] });
+  const [isSigned, setIsSigned] = useState(false);
 
   return (
     <ContractDocumentFlow
@@ -22,6 +26,18 @@ function CreateContractDocument({ employmentId }: { employmentId: string }) {
       render={(contractDocumentBag) => {
         if (contractDocumentBag.isLoading) {
           return <div>Loading contract document...</div>;
+        }
+
+        if (isSigned) {
+          return (
+            <div className='card'>
+              <h1 className='heading'>Contract signed</h1>
+              <p>
+                Contract document {contractDocumentBag.contractDocumentId} is
+                signed and has been sent to the contractor for their signature.
+              </p>
+            </div>
+          );
         }
 
         const { steps, stepState } = contractDocumentBag;
@@ -71,10 +87,29 @@ function CreateContractDocument({ employmentId }: { employmentId: string }) {
                   </ContractDocumentSubmitButton>
                 </>
               ) : (
-                <p>
-                  Contract document {contractDocumentBag.contractDocumentId}. To
-                  be continued…
-                </p>
+                <>
+                  <ContractDocumentPreviewForm
+                    onSuccess={() => setIsSigned(true)}
+                    onError={({ error, fieldErrors }) =>
+                      setErrors({ apiError: error.message, fieldErrors })
+                    }
+                  />
+                  <AlertError errors={errors} />
+                  <div className='buttons-container'>
+                    <ContractDocumentBackButton className='back-button'>
+                      Back
+                    </ContractDocumentBackButton>
+                    <ContractDocumentReviewButton
+                      className='submit-button'
+                      onClick={() =>
+                        setErrors({ apiError: '', fieldErrors: [] })
+                      }
+                      render={({ reviewCompleted }) =>
+                        reviewCompleted ? 'Sign contract' : 'Review contract'
+                      }
+                    />
+                  </div>
+                </>
               )}
             </div>
           </>

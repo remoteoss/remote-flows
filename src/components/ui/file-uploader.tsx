@@ -5,7 +5,9 @@ import { cn } from '@/src/lib/utils';
 
 // Convert accept string to readable format (e.g., ".pdf, .doc" -> "PDF, DOC")
 const getAcceptedFormats = (accept?: string) => {
-  if (!accept) return null;
+  if (!accept) {
+    return null;
+  }
   return accept
     .split(',')
     .map((ext) => ext.trim().toUpperCase())
@@ -38,7 +40,6 @@ export function FileUploader({
     if (externalFiles && externalFiles !== syncedRef.current) {
       syncedRef.current = externalFiles;
       // effect is okay here, we just track with a ref to avoid unnecessary re-renders
-      // oxlint-disable-next-line react-hooks/set-state-in-effect
       setFiles(externalFiles);
     }
   }, [externalFiles]);

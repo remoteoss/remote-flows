@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { skipToken, useQuery } from '@tanstack/react-query';
 import {
   getV1CompaniesCompanyIdLegalEntities,
   getV1EmploymentsEmploymentIdOnboardingSteps,
@@ -10,21 +10,22 @@ export const useGPOnboardingSteps = (employmentId: string | undefined) => {
   const { client } = useClient();
   return useQuery({
     queryKey: ['gp-onboarding-steps', employmentId],
-    enabled: !!employmentId,
     retry: false,
-    queryFn: async () => {
-      const response = await getV1EmploymentsEmploymentIdOnboardingSteps({
-        client: client as Client,
-        headers: { Authorization: `` },
-        path: { employment_id: employmentId as string },
-      });
+    queryFn: employmentId
+      ? async () => {
+          const response = await getV1EmploymentsEmploymentIdOnboardingSteps({
+            client: client as Client,
+            headers: { Authorization: `` },
+            path: { employment_id: employmentId },
+          });
 
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch onboarding steps');
-      }
+          if (response.error || !response.data) {
+            throw new Error('Failed to fetch onboarding steps');
+          }
 
-      return response.data;
-    },
+          return response.data;
+        }
+      : skipToken,
     select: (data) => data.data.steps,
   });
 };

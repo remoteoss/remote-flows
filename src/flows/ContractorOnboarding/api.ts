@@ -1,13 +1,8 @@
 import { useMemo } from 'react';
 import {
-  CompanyAction,
-  getV1CompaniesCompanyIdActions,
-  getV1ContractorsEmploymentsEmploymentIdContractDocumentsId,
   getV1ContractorsEmploymentsEmploymentIdContractorSubscriptions,
   ManageContractorPlusSubscriptionOperationsParams,
   postV1ContractorsEmploymentsEmploymentIdContractorPlusSubscription,
-  postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign,
-  SignContractDocument,
   EligibilityQuestionnaireJsonSchemaResponse,
   getV1ContractorsSchemasEligibilityQuestionnaire,
   SubmitEligibilityQuestionnaireRequest,
@@ -20,8 +15,13 @@ import {
 } from '@/src/client';
 import { useClient } from '@/src/context';
 import { useCreateContractorContractDocument } from '@/src/common/contract-documents/api';
-export { useCreateContractorContractDocument } from '@/src/common/contract-documents/api';
-import { signatureSchema } from '@/src/flows/ContractorOnboarding/json-schemas/signature';
+export {
+  useCreateContractorContractDocument,
+  useGetContractDocumentSignatureSchema,
+  useGetShowContractDocument,
+  useHasCompanySignedContract,
+  useSignContractDocument,
+} from '@/src/common/contract-documents/api';
 import { contractOriginSchema } from '@/src/flows/ContractorOnboarding/json-schemas/contractOrigin';
 import { invoiceScheduleSchema } from '@/src/flows/ContractorOnboarding/json-schemas/invoiceSchedule';
 import { selectContractorSubscriptionStepSchema } from '@/src/flows/ContractorOnboarding/json-schemas/selectContractorSubscriptionStep';
@@ -30,9 +30,11 @@ import {
   FlowOptions,
   JSFModify,
 } from '@/src/flows/types';
-import { clearBase64Data } from '@/src/lib/utils';
 import { Client } from '@/src/client/client';
+// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
+import { useDeepStable } from '@/src/common/hooks';
+import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import {
@@ -46,7 +48,7 @@ import {
   IR35_FILE_SUBTYPE,
   ProductType,
 } from '@/src/flows/ContractorOnboarding/constants';
-import { $TSFixMe, JSFField } from '@/src/types/remoteFlows';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 import { mutationToPromise } from '@/src/lib/mutations';
 import {
   useDownloadFile,
@@ -60,138 +62,8 @@ import {
   selectCountryStepSchema,
 } from '@/src/common/selectCountryStep';
 import { shouldIncludeProduct } from '@/src/flows/ContractorOnboarding/utils';
-import { useCompanyPricingPlans, hasCompany } from '@/src/common/api/companies';
-import { useIdentity } from '@/src/common/api/identity';
+import { useCompanyPricingPlans } from '@/src/common/api/companies';
 
-/**
- * Get the contract document signature schema
- * @param fieldValues - The field values
- * @param options - The options
- * @returns The contract document signature schema
- */
-export const useGetContractDocumentSignatureSchema = ({
-  fieldValues,
-  options,
-}: {
-  fieldValues: FieldValues;
-  options?: { queryOptions?: { enabled?: boolean }; jsfModify?: JSFModify };
-}) => {
-  return useQuery({
-    queryKey: [
-      'contract-document-signature',
-      fieldValues.review_completed,
-      options?.jsfModify,
-    ],
-    queryFn: async () => {
-      return createHeadlessForm(signatureSchema, fieldValues, {
-        jsfModify: options?.jsfModify,
-      });
-    },
-    enabled: options?.queryOptions?.enabled,
-  });
-};
-
-/**
- * Signs the contract document
- * @param employmentId - The employment ID
- * @param contractDocumentId - The contract document ID
- * @param payload - The payload
- * @returns The signed contract document
- */
-export const useSignContractDocument = () => {
-  const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({
-      employmentId,
-      contractDocumentId,
-      payload,
-    }: {
-      employmentId: string;
-      contractDocumentId: string;
-      payload: SignContractDocument;
-    }) => {
-      return postV1ContractorsEmploymentsEmploymentIdContractDocumentsContractDocumentIdSign(
-        {
-          client: client as Client,
-          body: payload,
-          path: {
-            employment_id: employmentId,
-            contract_document_id: contractDocumentId,
-          },
-        },
-      );
-    },
-  });
-};
-
-/**
- * Get the contract document for a given employment and contract document ID
- * @param employmentId - The employment ID
- * @param contractDocumentId - The contract document ID
- * @returns The contract document
- */
-export const useGetShowContractDocument = ({
-  employmentId,
-  contractDocumentId,
-  options,
-}: {
-  employmentId: string;
-  contractDocumentId: string;
-  options?: { queryOptions?: { enabled?: boolean }; jsfModify?: JSFModify };
-}) => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['contract-document', employmentId, contractDocumentId],
-    queryFn: async () => {
-      return getV1ContractorsEmploymentsEmploymentIdContractDocumentsId({
-        client: client as Client,
-        path: { employment_id: employmentId, id: contractDocumentId },
-      });
-    },
-    enabled: options?.queryOptions?.enabled,
-    select: ({ data }) => {
-      return {
-        ...data?.data,
-        contract_document: {
-          ...data?.data?.contract_document,
-          content: clearBase64Data(
-            data?.data?.contract_document?.content as $TSFixMe,
-          ),
-        },
-      };
-    },
-  });
-};
-
-export const useHasCompanySignedContract = ({
-  employmentId,
-  contractDocumentId,
-  options,
-}: {
-  employmentId: string;
-  contractDocumentId: string;
-  options?: { queryOptions?: { enabled?: boolean } };
-}) => {
-  const { data: documentPreviewPdf } = useGetShowContractDocument({
-    employmentId,
-    contractDocumentId,
-    options: {
-      queryOptions: {
-        enabled: options?.queryOptions?.enabled,
-      },
-    },
-  });
-
-  const hasCompanySignedContract =
-    documentPreviewPdf?.contract_document?.signatories?.some(
-      (signatory) =>
-        signatory.type === 'company' && signatory.status === 'signed',
-    );
-
-  return {
-    hasCompanySignedContract,
-  };
-};
 /**
  * Get the contractor subscriptions for the given employment id
  * @param employmentId - The employment ID
@@ -262,27 +134,31 @@ const useEorSubscription = (options?: { enabled?: boolean }) => {
     (plan) => plan.product.name === 'EOR Monthly',
   );
 
-  const eorSubscription = eorPricingPlan
-    ? {
-        product: {
-          identifier: eorProductIdentifier,
-          short_name: 'EOR',
-        },
-        currency: eorPricingPlan.price.currency,
-        price: {
-          amount: convertFromCents(eorPricingPlan.price.amount),
-        },
-        features: [
-          'Contract between Remote and employee',
-          'Remote manages onboarding, payroll, and compliance',
-          'Manages taxes, benefits, and time-off tracking',
-          'Handles contracts, transfers, and terminations',
-        ],
-        description: 'Enables hiring in countries without a local entity',
-        label: 'Employer of Record',
-        value: eorProductIdentifier,
-      }
-    : null;
+  const eorSubscription = useMemo(
+    () =>
+      eorPricingPlan
+        ? {
+            product: {
+              identifier: eorProductIdentifier,
+              short_name: 'EOR',
+            },
+            currency: eorPricingPlan.price.currency,
+            price: {
+              amount: convertFromCents(eorPricingPlan.price.amount),
+            },
+            features: [
+              'Contract between Remote and employee',
+              'Remote manages onboarding, payroll, and compliance',
+              'Manages taxes, benefits, and time-off tracking',
+              'Handles contracts, transfers, and terminations',
+            ],
+            description: 'Enables hiring in countries without a local entity',
+            label: 'Employer of Record',
+            value: eorProductIdentifier,
+          }
+        : null,
+    [eorPricingPlan],
+  );
 
   return { eorSubscription, isLoading: isLoadingPricingPlans };
 };
@@ -319,6 +195,9 @@ const addEorToFieldOptions = (
   return fieldOptions;
 };
 
+const withoutSubscriptionRequired = (existingRequired: string[]) =>
+  existingRequired.filter((fieldName) => fieldName !== 'subscription');
+
 export const useContractorSubscriptionSchemaField = (
   employmentId: string,
   selectedCountry: SelectedCountry,
@@ -338,15 +217,17 @@ export const useContractorSubscriptionSchemaField = (
     },
   });
 
+  const excludeProducts = useDeepStable(options?.excludeProducts);
+
   const filteredContractorSubscriptions = useMemo(
     () =>
       contractorSubscriptions?.filter((subscription) =>
         shouldIncludeProduct(
           subscription.product.identifier ?? '',
-          options?.excludeProducts,
+          excludeProducts,
         ),
       ) ?? [],
-    [contractorSubscriptions, options?.excludeProducts],
+    [contractorSubscriptions, excludeProducts],
   );
 
   // maximum number of subscriptions
@@ -366,7 +247,7 @@ export const useContractorSubscriptionSchemaField = (
   const showEorSubscription =
     (isMissingSubscriptions || isEligibilityQuestionnaireBlocked) &&
     selectedCountry?.eor_onboarding &&
-    !options?.excludeProducts?.includes('eor');
+    !excludeProducts?.includes('eor');
 
   const { eorSubscription, isLoading: isLoadingEorSubscription } =
     useEorSubscription({
@@ -377,30 +258,7 @@ export const useContractorSubscriptionSchemaField = (
     filteredContractorSubscriptions.length > 0 ||
     (showEorSubscription && eorSubscription !== null);
 
-  const form = createHeadlessForm(
-    selectContractorSubscriptionStepSchema.data.schema,
-    {},
-    {
-      ...options,
-      jsfModify: {
-        ...options?.jsfModify,
-        // If no filtered subscriptions are available, make the subscription field optional
-        required: hasAvailableOptions
-          ? options?.jsfModify?.required
-          : (existingRequired: string[]) =>
-              existingRequired.filter(
-                (fieldName: string) => fieldName !== 'subscription',
-              ),
-      },
-    },
-  );
-
-  const field: JSFField | undefined = form.fields.find(
-    (field) => field.name === 'subscription',
-  ) as JSFField | undefined;
-
-  if (field) {
-    // Start with contractor management options
+  const subscriptionOptions = useMemo(() => {
     const contractorOptions = filteredContractorSubscriptions.map((opts) => {
       const product = opts.product;
       const price = opts.price.amount;
@@ -444,16 +302,14 @@ export const useContractorSubscriptionSchemaField = (
       };
     });
 
-    // Sort contractor options
     contractorOptions.sort((a, b) => a.label.localeCompare(b.label));
 
-    // Build otherSubscriptions (EOR) with separator metadata
     const otherOptions: $TSFixMe[] = [];
     if (showEorSubscription) {
       addEorToFieldOptions(
         otherOptions as unknown as $TSFixMe[],
         eorSubscription,
-        options?.excludeProducts,
+        excludeProducts,
       );
 
       // Add separator metadata to first "other" option
@@ -468,13 +324,60 @@ export const useContractorSubscriptionSchemaField = (
       }
     }
 
-    // Combine all options into the single field
-    field.options = [...contractorOptions, ...otherOptions];
-  }
+    return [...contractorOptions, ...otherOptions];
+  }, [
+    filteredContractorSubscriptions,
+    isEligibilityQuestionnaireBlocked,
+    showEorSubscription,
+    eorSubscription,
+    excludeProducts,
+  ]);
+
+  const schema = useMemo(() => {
+    const baseSchema = selectContractorSubscriptionStepSchema.data.schema;
+    return {
+      ...baseSchema,
+      properties: {
+        ...baseSchema.properties,
+        subscription: {
+          ...baseSchema.properties.subscription,
+          oneOf: subscriptionOptions.map(
+            ({ label, value, description, ...presentation }) => ({
+              const: value,
+              title: label,
+              description,
+              'x-jsf-presentation': presentation,
+            }),
+          ),
+        },
+      },
+    };
+  }, [subscriptionOptions]);
+
+  const jsfModify = useMemo(
+    () => ({
+      ...options?.jsfModify,
+      // If no filtered subscriptions are available, make the subscription field optional
+      required: hasAvailableOptions
+        ? options?.jsfModify?.required
+        : withoutSubscriptionRequired,
+    }),
+    [options?.jsfModify, hasAvailableOptions],
+  );
+
+  const { form, handleValidation, onValuesChange, parseFormValues } =
+    useHeadlessForm({
+      schema,
+      options: { jsfModify },
+      strategy: 'buildOnce',
+    });
 
   return {
     isLoading: isLoading || isLoadingEorSubscription,
     form,
+    handleValidation,
+    onValuesChange,
+    parseFormValues,
     contractorSubscriptions,
     filteredContractorSubscriptions,
     refetch,
@@ -724,7 +627,9 @@ export const useGetInvoiceScheduleSchema = ({
   jsfModify?: JSFModify;
 }) => {
   return useMemo(() => {
-    if (!enabled) return null;
+    if (!enabled) {
+      return null;
+    }
     return createHeadlessForm(
       invoiceScheduleSchema,
       {},
@@ -776,25 +681,4 @@ export const useCountriesSchemaField = (
     selectCountryForm,
     countries,
   };
-};
-
-export const useCompanyOpenTasks = ({
-  options,
-}: {
-  options?: { queryOptions?: { enabled?: boolean } };
-} = {}) => {
-  const { data: identity } = useIdentity();
-  const companyId = hasCompany(identity) ? (identity?.company?.id ?? '') : '';
-  const { client } = useClient();
-
-  return useQuery({
-    queryKey: ['company-open-tasks', companyId],
-    queryFn: () =>
-      getV1CompaniesCompanyIdActions({
-        client: client as Client,
-        path: { company_id: companyId },
-      }),
-    select: ({ data }) => data?.data?.actions ?? ([] as CompanyAction[]),
-    enabled: (options?.queryOptions?.enabled ?? true) && !!companyId,
-  });
 };

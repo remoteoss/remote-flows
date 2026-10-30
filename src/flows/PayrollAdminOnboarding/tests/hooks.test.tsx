@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/src/tests/server';
 import { usePayrollAdminOnboarding } from '@/src/flows/PayrollAdminOnboarding/hooks';
@@ -114,5 +114,125 @@ describe('usePayrollAdminOnboarding — legal entities', () => {
     });
     expect(result.current.legalEntities).toEqual([]);
     expect(result.current.legalEntityId).toBeUndefined();
+  });
+});
+
+describe('usePayrollAdminOnboarding — creating the employment', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
+
+  it('fetches onboarding steps only with the created employment id', async () => {
+    const onboardingStepsPaths: string[] = [];
+    server.use(
+      http.get('*/v1/companies/*/legal-entities', () =>
+        HttpResponse.json(legalEntitiesResponse([gpEnabledLegalEntity])),
+      ),
+      http.get('*/v1/countries/*/global_payroll_basic_information', () =>
+        HttpResponse.json({ data: { type: 'object', properties: {} } }),
+      ),
+      http.post('*/v1/employments', () =>
+        HttpResponse.json({ data: { employment: { id: 'emp-1' } } }),
+      ),
+      http.get('*/v1/employments/*/onboarding-steps', ({ request }) => {
+        onboardingStepsPaths.push(new URL(request.url).pathname);
+        return HttpResponse.json({ data: { steps: [] } });
+      }),
+    );
+
+    const { result } = renderHook(
+      () =>
+        usePayrollAdminOnboarding({
+          companyId: 'company-1',
+          countryCode: 'GBR',
+        }),
+      { wrapper: TestProviders },
+    );
+
+    await waitFor(() => {
+      expect(result.current.legalEntityId).toBe('le-1');
+    });
+
+    await act(() => result.current.onSubmit({ country_code: 'GBR' }));
+
+    await waitFor(() => {
+      expect(result.current.apiSteps).toEqual([]);
+    });
+    expect(onboardingStepsPaths).toEqual([
+      '/v1/employments/emp-1/onboarding-steps',
+    ]);
+  });
+});
+
+describe('usePayrollAdminOnboarding — returning to a saved step', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
+
+  const conditionalSchema = {
+    type: 'object',
+    properties: {
+      kind: {
+        type: 'string',
+        title: 'Kind',
+        oneOf: [
+          { const: 'a', title: 'A' },
+          { const: 'b', title: 'B' },
+        ],
+        'x-jsf-presentation': { inputType: 'select' },
+      },
+      detail: {
+        type: 'string',
+        title: 'Detail',
+        oneOf: [
+          { const: 'x', title: 'X' },
+          { const: 'y', title: 'Y' },
+        ],
+        'x-jsf-presentation': { inputType: 'select' },
+      },
+    },
+    required: ['kind'],
+    allOf: [
+      {
+        if: { properties: { kind: { const: 'a' } }, required: ['kind'] },
+        then: { required: ['detail'] },
+        else: { properties: { detail: false } },
+      },
+    ],
+  };
+
+  it('shows conditional fields and validates saved values without any edit', async () => {
+    server.use(
+      http.get('*/v1/companies/*/legal-entities', () =>
+        HttpResponse.json(legalEntitiesResponse([gpEnabledLegalEntity])),
+      ),
+      http.get('*/v1/countries/*/global_payroll_contract_details', () =>
+        HttpResponse.json({ data: conditionalSchema }),
+      ),
+      http.get('*/v1/employments/*/onboarding-steps', () =>
+        HttpResponse.json({ data: { steps: [] } }),
+      ),
+    );
+
+    const { result } = renderHook(
+      () =>
+        usePayrollAdminOnboarding({
+          companyId: 'company-1',
+          countryCode: 'FRA',
+          employmentId: 'emp-1',
+          initialValues: { contract_details: { kind: 'a', detail: 'x' } },
+        }),
+      { wrapper: TestProviders },
+    );
+
+    await waitFor(() => {
+      expect(result.current.fields.length).toBeGreaterThan(0);
+    });
+
+    const detail = result.current.fields.find((f) => f.name === 'detail');
+    expect(detail?.isVisible).toBe(true);
+    expect(
+      await result.current.handleValidation({ kind: 'a', detail: 'x' }),
+    ).toEqual({ formErrors: undefined });
   });
 });

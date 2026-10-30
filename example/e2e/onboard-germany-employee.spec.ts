@@ -27,9 +27,7 @@ test.describe('Onboard Germany employee', () => {
     // as the employment is created there, not when the user reaches the Benefits step.
     const benefitsSchemaPromise = watchForBenefitsSchema(page);
 
-    await fillOnboardingIntroductionForm(page, {
-      company_id: '460201ed-a8c0-4e75-89dc-6d5eae35f65e',
-    });
+    await fillOnboardingIntroductionForm(page, {});
 
     let stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Select Country');
@@ -97,6 +95,10 @@ test.describe('Onboard Germany employee', () => {
     await expect(stepTitle).toHaveText('Benefits');
 
     await fillOnboardingBenefitsStepDynamically(page, benefitsSchemaPromise);
+
+    stepTitle = page.getByTestId('onboarding-step-title');
+    await expect(stepTitle).toHaveText('Preview Employment Agreement');
+    await page.click('.submit-button');
 
     stepTitle = page.getByTestId('onboarding-step-title');
     await expect(stepTitle).toHaveText('Review');

@@ -1239,3 +1239,35 @@ button.reset-button {
   display: block;
   padding-left: 20px;
 }
+
+.RemoteFlows__RequestIdStep > * + *,
+.RemoteFlows__ReviewStep > * + * {
+  margin-top: 1rem;
+}
+
+.RemoteFlows__ReviewStep__Details {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.RemoteFlows__ReviewStep__Item {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 16px;
+  padding: 12px 16px;
+}
+
+.RemoteFlows__ReviewStep__Item + .RemoteFlows__ReviewStep__Item {
+  border-top: 1px solid #e2e8f0;
+}
+
+.RemoteFlows__ReviewStep__Label {
+  color: #4b5563;
+}
+
+.RemoteFlows__ReviewStep__Value {
+  color: #1e293b;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}

@@ -1,9 +1,12 @@
+import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useClient } from '@/src/context';
 import { Client } from '@/src/client/client';
 import { FieldValues } from 'react-hook-form';
 import { FlowOptions } from '@/src/flows/types';
+// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
+import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { companyBasicInformationStepSchema } from '@/src/flows/CreateCompany/json-schemas/companyBasicInformationStep';
 import { useQuery } from '@tanstack/react-query';
 import { getV1CompanyCurrencies } from '@/src/client';
@@ -104,6 +107,9 @@ export const useUpdateCompanyRequest = () => {
   });
 };
 
+const toOneOf = (options: { label: string; value: string }[] = []) =>
+  options.map(({ label, value }) => ({ const: value, title: label }));
+
 /**
  * Hook to create the select country form with populated country and currency options
  * @param options - Flow options including jsfModify and queryOptions
@@ -132,33 +138,41 @@ export const useCountriesSchemaField = (
   const { data: currencies, isLoading: isLoadingCurrencies } =
     useCompanyCurrencies(options?.queryOptions);
 
-  const companyBasicInformationForm = createHeadlessForm(
-    companyBasicInformationStepSchema.data.schema,
-    {},
-    options,
-  );
+  const schema = useMemo(() => {
+    const baseSchema = companyBasicInformationStepSchema.data.schema;
+    return {
+      ...baseSchema,
+      properties: {
+        ...baseSchema.properties,
+        country_code: {
+          ...baseSchema.properties.country_code,
+          oneOf: toOneOf(countries),
+        },
+        desired_currency: {
+          ...baseSchema.properties.desired_currency,
+          oneOf: toOneOf(currencies),
+        },
+      },
+    };
+  }, [countries, currencies]);
 
-  if (countries) {
-    const countryField = companyBasicInformationForm.fields.find(
-      (field) => field.name === 'country_code',
-    );
-    if (countryField) {
-      countryField.options = countries;
-    }
-  }
-
-  if (currencies) {
-    const currencyField = companyBasicInformationForm.fields.find(
-      (field) => field.name === 'desired_currency',
-    );
-    if (currencyField) {
-      currencyField.options = currencies;
-    }
-  }
+  const {
+    form: companyBasicInformationForm,
+    handleValidation,
+    onValuesChange,
+    parseFormValues,
+  } = useHeadlessForm({
+    schema,
+    options: { jsfModify: options?.jsfModify },
+    strategy: 'buildOnce',
+  });
 
   return {
     isLoading: isLoadingCountries || isLoadingCurrencies,
     companyBasicInformationForm,
+    handleValidation,
+    onValuesChange,
+    parseFormValues,
   };
 };
 

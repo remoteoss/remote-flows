@@ -28,56 +28,66 @@
  * example/e2e/ (Playwright's testDir / CI).
  *
  * Usage (from repo root):
- *   npm run seed:onboarding -- --country=DEU
- *   npm run seed:onboarding -- --country=ESP --basic-info-version=4
+ *   pnpm run seed:onboarding --country=DEU
+ *   pnpm run seed:onboarding --country=ESP --basic-info-version=4
+ *
+ * Pass --type=contractor to instead create a contractor employment from the
+ * contractor_basic_information schema and stop there, mirroring the
+ * basic_information step of src/flows/ContractorOnboarding/hooks.tsx.
+ * ir35 (GBR) and nationality_status (SAU/KWT/OMN/QAT/BHR) aren't in that
+ * schema - ContractorOnboarding's jsfModify adds them client-side and the
+ * hook writes them to the contractor contract document after creating the
+ * employment - so this does the same with fixed answers that avoid the IR35
+ * SDS upload and the non-national warning.
+ *
+ *   pnpm run seed:onboarding --country=GBR --type=contractor --env=sandbox
  *
  * By default this proxies through a locally running `example` dev server
  * (BASE_URL, `example/.env`'s VITE_REMOTE_GATEWAY decides which gateway that
  * is - easy to lose track of).
  *
- * Pass --env=sandbox|production|staging|partners to instead talk to that
- * gateway directly, with no dev server required: credentials come from
- * .env.<env> at the repo root (VITE_CLIENT_ID, VITE_CLIENT_SECRET,
- * VITE_REMOTE_GATEWAY=<env>, VITE_REFRESH_TOKEN - same shape as
- * example/.env), and auth reuses example/api/{utils,get_token,proxy}.js
- * verbatim so there's one source of truth for how tokens get minted. Optional
- * VITE_APP_URL=<deployed app URL> in that same file gets you a ready-to-click
- * link (with ?employmentId= prefilled) in the final output.
+ * Pass --env=<name> to instead talk to a gateway directly, with no dev server
+ * required: credentials come from .env.<name> at the repo root
+ * (VITE_CLIENT_ID, REMOTE_CLIENT_SECRET, VITE_REMOTE_GATEWAY, REMOTE_REFRESH_TOKEN
+ * - same shape as example/.env). The file name only picks the credentials;
+ * VITE_REMOTE_GATEWAY inside it picks the gateway. So .env.sandbox (local-dev
+ * sandbox client) and .env.review (the deployed demo app's sandbox client)
+ * both point at sandbox but create employments under different companies -
+ * seed with --env=review for anything you'll open on the deployed app. Auth
+ * reuses example/api/{utils,get_token,proxy}.js verbatim so there's one
+ * source of truth for how tokens get minted. Optional VITE_APP_URL=<deployed
+ * app URL> in that same file gets you a ready-to-click link (with
+ * ?employmentId= prefilled) in the final output.
  *
- *   npm run seed:onboarding -- --country=DEU --env=sandbox
+ *   pnpm run seed:onboarding --country=DEU --env=sandbox
+ *   pnpm run seed:onboarding --country=DEU --env=review
+ *
+ * Pass --debug to log every request and response: URL, request body, status,
+ * timing, response headers (x-request-id, traceparent, ... - what you need to
+ * find the request in Sentry/Honeycomb) and full response body, plus a curl
+ * command to replay it (Authorization redacted). Failures always print the
+ * response headers, with or without --debug.
+ *
+ *   pnpm run seed:onboarding --country=IND --env=partners --debug
  */
-import { createHeadlessForm } from '@remoteoss/remote-json-schema-form-kit';
-import { faker } from '@faker-js/faker';
 import dotenv from 'dotenv';
+import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  ONBOARDING_JSON_SCHEMA_VERSION,
+  ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY,
+} from '../example/src/flows/Onboarding/jsonSchemaVersions';
+import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
+import { fillSchema, findSafeStartDate, HolidayDate } from './fill-schema';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 
-type FormSchema = Parameters<typeof createHeadlessForm>[0];
-type HeadlessFormOptions = NonNullable<
-  Parameters<typeof createHeadlessForm>[1]
->;
-type FormValues = Record<string, unknown>;
-type HttpMethod = 'GET' | 'POST';
+type FormSchema = Record<string, unknown>;
+type HttpMethod = 'GET' | 'POST' | 'PATCH';
 type AuthHeaders = Record<string, string>;
-
-interface FieldOption {
-  value: unknown;
-  meta?: { countryCode?: string };
-}
-
-interface SeedField {
-  name: string;
-  inputType?: string;
-  required?: boolean;
-  isVisible?: boolean;
-  multiple?: boolean;
-  options?: FieldOption[];
-  const?: unknown;
-}
 
 interface ApiOptions {
   query?: Record<string, string | number | boolean | undefined>;
@@ -89,6 +99,7 @@ class ApiError extends Error {
     message: string,
     readonly status: number,
     readonly body: unknown,
+    readonly headers: Record<string, string>,
   ) {
     super(message);
   }
@@ -98,7 +109,9 @@ function parseArgs(argv: string[]): Record<string, string | true> {
   const args: Record<string, string | true> = {};
   for (const raw of argv) {
     const match = raw.match(/^--([^=]+)(?:=(.*))?$/);
-    if (match) args[match[1]] = match[2] ?? true;
+    if (match) {
+      args[match[1]] = match[2] ?? true;
+    }
   }
   return args;
 }
@@ -109,13 +122,24 @@ const stringArg = (key: string): string | undefined => {
   return typeof value === 'string' ? value : undefined;
 };
 const COUNTRY = (stringArg('country') || 'DEU').toUpperCase();
-const BASIC_INFO_VERSION = Number(stringArg('basic-info-version') || 4);
+const TYPE = stringArg('type') || 'employee';
+if (TYPE !== 'employee' && TYPE !== 'contractor') {
+  throw new Error(`--type must be employee or contractor (got ${TYPE}).`);
+}
+const BASIC_INFO_VERSION = Number(
+  stringArg('basic-info-version') ||
+    (TYPE === 'contractor'
+      ? 1
+      : ONBOARDING_JSON_SCHEMA_VERSION.employment_basic_information),
+);
 if ('env' in args && stringArg('env') === undefined) {
   throw new Error(
     '--env requires a value, e.g. --env=sandbox (got a bare --env flag).',
   );
 }
 const ENV = stringArg('env');
+const FILL_CONTRACT_DETAILS = args['contract-details'] === true;
+const DEBUG = args.debug === true;
 
 let BASE_URL: string;
 let getAuthHeaders = async (
@@ -125,7 +149,10 @@ let getAuthHeaders = async (
 
 if (ENV) {
   const envFile = path.resolve(__dirname, '..', `.env.${ENV}`);
-  dotenv.config({ path: envFile });
+  if (!existsSync(envFile)) {
+    throw new Error(`--env=${ENV}: ${envFile} does not exist.`);
+  }
+  dotenv.config({ path: envFile, override: true });
   const { buildGatewayURL } = require('../example/api/utils.js') as {
     buildGatewayURL: () => string | undefined;
   };
@@ -142,9 +169,7 @@ if (ENV) {
 
   const gatewayURL = buildGatewayURL();
   if (!gatewayURL) {
-    throw new Error(
-      `Unknown --env=${ENV}, or ${envFile} is missing/doesn't set VITE_REMOTE_GATEWAY.`,
-    );
+    throw new Error(`${envFile} doesn't set VITE_REMOTE_GATEWAY.`);
   }
   BASE_URL = gatewayURL;
   console.log(`Environment: ${ENV} -> ${BASE_URL} (from ${envFile})`);
@@ -169,31 +194,94 @@ async function api<T = unknown>(
 ): Promise<T> {
   const url = new URL(BASE_URL + urlPath);
   for (const [key, value] of Object.entries(query || {})) {
-    if (value !== undefined) url.searchParams.set(key, String(value));
+    if (value !== undefined) {
+      url.searchParams.set(key, String(value));
+    }
   }
-  const res = await fetch(url, {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(await getAuthHeaders(method, urlPath)),
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(await getAuthHeaders(method, urlPath)),
+  };
+  const requestBody = body ? JSON.stringify(body) : undefined;
+  if (DEBUG) {
+    logRequest(method, url, headers, requestBody);
+  }
+  const startedAt = performance.now();
+  const res = await fetch(url, { method, headers, body: requestBody });
   const text = await res.text();
+  const responseHeaders = Object.fromEntries(res.headers.entries());
   let json: unknown;
   try {
     json = text ? JSON.parse(text) : undefined;
   } catch {
     json = text;
   }
+  if (DEBUG) {
+    logResponse(res, responseHeaders, json, performance.now() - startedAt);
+  }
   if (!res.ok) {
     throw new ApiError(
       `${method} ${urlPath} -> ${res.status}`,
       res.status,
       json,
+      responseHeaders,
     );
   }
   return json as T;
+}
+
+const redactHeaders = (headers: Record<string, string>) =>
+  Object.fromEntries(
+    Object.entries(headers).map(([key, value]) => [
+      key,
+      key.toLowerCase() === 'authorization' ? 'Bearer <redacted>' : value,
+    ]),
+  );
+
+const shellQuote = (value: string) => `'${value.replace(/'/g, `'\\''`)}'`;
+
+function logRequest(
+  method: HttpMethod,
+  url: URL,
+  headers: Record<string, string>,
+  requestBody: string | undefined,
+) {
+  const safeHeaders = redactHeaders(headers);
+  console.log(`\n[debug] --> ${method} ${url}`);
+  console.log('[debug] request headers:', JSON.stringify(safeHeaders, null, 2));
+  if (requestBody) {
+    console.log(
+      '[debug] request body:',
+      JSON.stringify(JSON.parse(requestBody), null, 2),
+    );
+  }
+  const curl = [
+    `curl -X ${method} ${shellQuote(url.toString())}`,
+    ...Object.entries(safeHeaders).map(
+      ([key, value]) => `-H ${shellQuote(`${key}: ${value}`)}`,
+    ),
+    ...(requestBody ? [`--data ${shellQuote(requestBody)}`] : []),
+  ].join(' \\\n    ');
+  console.log(`[debug] replay:\n  ${curl}`);
+}
+
+function logResponse(
+  res: Response,
+  responseHeaders: Record<string, string>,
+  json: unknown,
+  elapsedMs: number,
+) {
+  console.log(
+    `[debug] <-- ${res.status} ${res.statusText} (${Math.round(elapsedMs)}ms)`,
+  );
+  console.log(
+    '[debug] response headers:',
+    JSON.stringify(responseHeaders, null, 2),
+  );
+  console.log(
+    '[debug] response body:',
+    typeof json === 'string' ? json : JSON.stringify(json, null, 2),
+  );
 }
 
 async function fetchSchema(
@@ -205,103 +293,105 @@ async function fetchSchema(
   }).then((res) => res.data);
 }
 
-/** First option whose value/label reads as "no" - collapses conditional sub-fields (file
- * uploads, free-text detail boxes) that a generic filler can't produce plausible data for. */
-function preferNoOption(options: FieldOption[]): FieldOption {
-  return (
-    options.find((o) => String(o.value).toLowerCase() === 'no') || options[0]
+function fetchHolidays(country: string, year: string): Promise<HolidayDate[]> {
+  return api<{ data?: HolidayDate[] }>(
+    'GET',
+    `/v1/countries/${country}/holidays/${year}`,
+  ).then((res) => res.data ?? []);
+}
+
+const CONTRACTOR_NATIONALITY_COUNTRIES = ['SAU', 'KWT', 'OMN', 'QAT', 'BHR'];
+
+function contractorContractDocumentSeed(): Record<string, string> | undefined {
+  if (COUNTRY === 'GBR') {
+    return { ir_35: 'exempt' };
+  }
+  if (CONTRACTOR_NATIONALITY_COUNTRIES.includes(COUNTRY)) {
+    return { nationality: 'national' };
+  }
+  return undefined;
+}
+
+async function seedContractor() {
+  console.log(`Fetching contractor_basic_information schema for ${COUNTRY}...`);
+  const basicInfoSchema = await fetchSchema(
+    'contractor_basic_information',
+    BASIC_INFO_VERSION,
   );
-}
-
-function fakeValueFor(field: SeedField): unknown {
-  const { inputType, options, multiple, name, const: constValue } = field;
-
-  if (options?.length) {
-    if (inputType === 'radio' || inputType === 'select') {
-      return preferNoOption(options).value;
-    }
-    if (inputType === 'countries' || multiple) {
-      return [faker.helpers.arrayElement(options).value];
-    }
-    if (inputType === 'tel') {
-      // options here are per-country dialing patterns (e.g. pattern:
-      // '^(+49)[0-9]{6,}$', meta.countryCode: '49'), not user-facing choices -
-      // any one produces a validly-formatted number, regardless of the
-      // employment's own country.
-      const option = options.find((o) => o.meta?.countryCode) || options[0];
-      return `+${option.meta?.countryCode}${faker.string.numeric(9)}`;
-    }
-    return preferNoOption(options).value;
+  const startDate = await findSafeStartDate(COUNTRY, fetchHolidays);
+  const { values: basicInformation, skipped } = fillSchema(basicInfoSchema, {
+    provisional_start_date: startDate,
+  });
+  console.log(
+    'basic_information payload:',
+    JSON.stringify(basicInformation, null, 2),
+  );
+  if (skipped.length) {
+    console.log('Skipped (unfillable) fields:', skipped.join(', '));
   }
 
-  switch (inputType) {
-    case 'email':
-      return name === 'work_email'
-        ? faker.internet.email({ provider: 'remote-e2e-test.com' })
-        : faker.internet.email();
-    case 'tel':
-      return `+1${faker.string.numeric(9)}`;
-    case 'date': {
-      const d = new Date();
-      d.setDate(d.getDate() + 21);
-      return d.toISOString().slice(0, 10);
-    }
-    case 'number':
-      return faker.number.int({ min: 5, max: 30 });
-    case 'money':
-      return faker.number.int({ min: 3_000_000, max: 8_000_000 });
-    case 'textarea':
-      return faker.lorem.sentence();
-    case 'checkbox':
-      // No enumerated options: this is a single acknowledgement toggle. RHF
-      // holds a plain `true` here, which parseFormValuesToAPI (src/components/
-      // form/utils.ts) swaps for `field.const` (e.g. "acknowledged") at submit
-      // time when the schema is const-based - mirror that instead of sending
-      // the raw RHF value, or the API rejects it as a type mismatch.
-      return constValue ?? true;
-    case 'file':
-      return null;
-    default:
-      return faker.lorem.words({ min: 2, max: 4 });
-  }
-}
-
-/** Progressively fills a JSF schema: fill whatever's required+visible, recompute (new
- * conditionally-required fields may appear), repeat until stable. Mirrors what the real
- * multi-step form does field-by-field, but against the schema directly instead of the DOM. */
-function fillSchema(
-  schema: FormSchema,
-  seedValues: FormValues = {},
-): { values: FormValues; skipped: string[] } {
-  const values: FormValues = { ...seedValues };
-  const skipped: string[] = [];
-  for (let round = 0; round < 8; round++) {
-    const { fields } = createHeadlessForm(schema, {
-      initialValues: values as HeadlessFormOptions['initialValues'],
-    });
-    const missing = (fields as unknown as SeedField[]).filter(
-      (f) => f.required && f.isVisible && values[f.name] === undefined,
+  console.log('\nCreating contractor employment...');
+  const created = await api<{ data?: { employment?: { id?: string } } }>(
+    'POST',
+    '/v1/employments',
+    {
+      query: { json_schema_version: BASIC_INFO_VERSION },
+      body: {
+        basic_information: basicInformation,
+        type: 'contractor',
+        country_code: COUNTRY,
+      },
+    },
+  );
+  const employmentId = created?.data?.employment?.id;
+  if (!employmentId) {
+    throw new Error(
+      `Could not find employment id in response: ${JSON.stringify(created)}`,
     );
-    if (missing.length === 0) break;
-    for (const field of missing) {
-      if (field.inputType === 'file') {
-        skipped.push(field.name);
-        continue;
-      }
-      values[field.name] = fakeValueFor(field);
-    }
   }
-  return { values, skipped };
+  console.log(`Employment created: ${employmentId}`);
+
+  const contractDocument = contractorContractDocumentSeed();
+  if (contractDocument) {
+    console.log(
+      `\nSetting ${Object.keys(contractDocument).join(', ')} on the contract document...`,
+    );
+    await api(
+      'POST',
+      `/v1/contractors/employments/${employmentId}/contract-documents`,
+      { body: { contract_document: contractDocument } },
+    );
+  }
+
+  console.log(
+    `\nDone. Contractor employment ${employmentId} for ${COUNTRY} has basic_information filled in.`,
+  );
+  const appUrl = process.env.VITE_APP_URL || (ENV ? undefined : BASE_URL);
+  if (appUrl) {
+    console.log(
+      `\nOpen this link (Employment ID is prefilled via ?employmentId=):\n\n` +
+        `  ${appUrl}/?demo=contract-onboarding&employmentId=${employmentId}\n`,
+    );
+  } else {
+    console.log(
+      `\nOpen your app's contractor onboarding demo and enter this Employment ID ` +
+        `(?employmentId=${employmentId} also works as a query param).\n` +
+        `Tip: set VITE_APP_URL=<your deployed app URL> in .env.${ENV} to get a ready-to-click link next time.`,
+    );
+  }
 }
 
-async function main() {
+async function seedEmployee() {
   console.log(`Fetching employment_basic_information schema for ${COUNTRY}...`);
   const basicInfoSchema = await fetchSchema(
     'employment_basic_information',
     BASIC_INFO_VERSION,
   );
-  const { values: basicInformation, skipped: basicSkipped } =
-    fillSchema(basicInfoSchema);
+  const startDate = await findSafeStartDate(COUNTRY, fetchHolidays);
+  const { values: basicInformation, skipped: basicSkipped } = fillSchema(
+    basicInfoSchema,
+    { job_title: 'Software Engineer', provisional_start_date: startDate },
+  );
   console.log(
     'basic_information payload:',
     JSON.stringify(basicInformation, null, 2),
@@ -363,8 +453,9 @@ async function main() {
       'engagement_agreement_details payload:',
       JSON.stringify(engagementDetails, null, 2),
     );
-    if (skipped.length)
+    if (skipped.length) {
       console.log('Skipped (unfillable) fields:', skipped.join(', '));
+    }
 
     await api(
       'POST',
@@ -376,8 +467,12 @@ async function main() {
     console.log('engagement_agreement_details submitted.');
   }
 
+  if (FILL_CONTRACT_DETAILS) {
+    await submitContractDetails(employmentId);
+  }
+
   console.log(
-    `\nDone. Employment ${employmentId} for ${COUNTRY} is now sitting at contract_details.`,
+    `\nDone. Employment ${employmentId} for ${COUNTRY} is now ${FILL_CONTRACT_DETAILS ? 'past' : 'sitting at'} contract_details.`,
   );
   const appUrl = process.env.VITE_APP_URL || (ENV ? undefined : BASE_URL);
   if (appUrl) {
@@ -396,10 +491,74 @@ async function main() {
   }
 }
 
+async function submitContractDetails(employmentId: string) {
+  const version =
+    ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY[
+      COUNTRY as keyof typeof ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY
+    ]?.contract_details ?? 1;
+  console.log(
+    `\nFetching contract_details v${version} schema for ${COUNTRY}...`,
+  );
+  const schema = await api<{ data: FormSchema }>(
+    'GET',
+    `/v1/countries/${COUNTRY}/contract_details`,
+    {
+      query: {
+        skip_benefits: true,
+        employment_id: employmentId,
+        json_schema_version: version,
+      },
+    },
+  ).then((res) => res.data);
+  const { values, skipped, errors } = fillSchema(
+    schema,
+    CONTRACT_DETAILS_SEEDS[COUNTRY],
+  );
+  console.log('contract_details payload:', JSON.stringify(values, null, 2));
+  if (skipped.length) {
+    console.log('Skipped (unfillable) fields:', skipped.join(', '));
+  }
+  if (Object.keys(errors).length) {
+    throw new Error(
+      `Could not fill contract_details values that pass validation: ${JSON.stringify(errors)}`,
+    );
+  }
+
+  await api('PATCH', `/v1/employments/${employmentId}`, {
+    query: {
+      skip_benefits: true,
+      employment_basic_information_json_schema_version: BASIC_INFO_VERSION,
+      contract_details_json_schema_version: version,
+    },
+    body: {
+      contract_details: values,
+      pricing_plan_details: { frequency: 'monthly' },
+    },
+  });
+  console.log('contract_details submitted.');
+}
+
+function main() {
+  return TYPE === 'contractor' ? seedContractor() : seedEmployee();
+}
+
 main().catch((err: unknown) => {
   console.error('\nFailed:', err instanceof Error ? err.message : err);
-  if (err instanceof ApiError && err.body) {
-    console.error(JSON.stringify(err.body, null, 2));
+  if (err instanceof ApiError) {
+    if (err.body) {
+      console.error(
+        typeof err.body === 'string'
+          ? err.body
+          : JSON.stringify(err.body, null, 2),
+      );
+    }
+    console.error('Response headers:', JSON.stringify(err.headers, null, 2));
+  }
+  if (err instanceof Error && 'cause' in err && err.cause) {
+    console.error('Caused by:', err.cause);
+  }
+  if (DEBUG && err instanceof Error) {
+    console.error(err.stack);
   }
   process.exit(1);
 });

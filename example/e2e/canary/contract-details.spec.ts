@@ -1,0 +1,180 @@
+import { readFileSync } from 'node:fs';
+import { expect, Page, test } from '@playwright/test';
+
+type KeptEmployment = {
+  country: string;
+  employmentId: string;
+  companyId: string;
+  version: number | 'latest';
+  sent: Record<string, unknown>;
+  knownUnsavedFields: string[];
+};
+
+const employmentsFile = process.env.SCHEMA_CANARY_EMPLOYMENTS;
+if (!employmentsFile) {
+  throw new Error(
+    'Set SCHEMA_CANARY_EMPLOYMENTS to the file written by pnpm run schema-canary --keep-submitted=<file>',
+  );
+}
+const employments = JSON.parse(
+  readFileSync(employmentsFile, 'utf8'),
+) as KeptEmployment[];
+
+const MAX_STEPS_BEFORE_CONTRACT_DETAILS = 4;
+
+const JOB_TITLE_CHECK_FIELDS = [
+  'additional_job_title_eligibility_check_result',
+  'additional_job_title_eligibility_check_slug',
+];
+
+function withoutJobTitleCheck(contractDetails: Record<string, unknown>) {
+  return Object.fromEntries(
+    Object.entries(contractDetails).filter(
+      ([field]) => !JOB_TITLE_CHECK_FIELDS.includes(field),
+    ),
+  );
+}
+
+function fieldErrors(page: Page) {
+  return page
+    .locator('[data-slot="form-message"]')
+    .evaluateAll((messages) =>
+      messages.map(
+        (message) =>
+          `${message.closest('[data-field]')?.getAttribute('data-field')}: ${message.textContent}`,
+      ),
+    );
+}
+
+const NOT_PERSISTED_ACKNOWLEDGEMENTS = ['ack_non_eligible_job_titles'];
+
+async function acknowledgeAgain(page: Page) {
+  for (const field of NOT_PERSISTED_ACKNOWLEDGEMENTS) {
+    const box = page.locator(
+      `[data-field="${field}"] [role="checkbox"][data-state="unchecked"]`,
+    );
+    if ((await box.count()) === 0) {
+      continue;
+    }
+    await box.click();
+    test.info().annotations.push({
+      type: 'acknowledged-again',
+      description: `${field} is not persisted, so it was ticked again`,
+    });
+  }
+}
+
+async function continueUntilContractDetails(page: Page) {
+  const stepTitle = page.getByTestId('onboarding-step-title');
+  for (let step = 0; step < MAX_STEPS_BEFORE_CONTRACT_DETAILS; step++) {
+    await expect(stepTitle).not.toBeEmpty();
+    const current = await stepTitle.innerText();
+    if (current === 'Contract Details') {
+      return;
+    }
+    await test.step(`continue past ${current}`, async () => {
+      await acknowledgeAgain(page);
+      await page.locator('.submit-button').click();
+      try {
+        await expect(stepTitle).not.toHaveText(current);
+      } catch (error) {
+        throw new Error(
+          `${current} did not move on. Field errors: ${JSON.stringify(await fieldErrors(page))}\n${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    });
+  }
+  await expect(stepTitle).toHaveText('Contract Details');
+}
+
+async function answerKnownUnsavedFields(
+  page: Page,
+  fields: string[],
+  sent: Record<string, unknown>,
+) {
+  for (const field of fields) {
+    if (!(field in sent)) {
+      continue;
+    }
+    const container = page.locator(`[data-field="${field}"]`);
+    await expect(
+      container.locator('[data-slot="form-message"]'),
+      `${field} is listed in KNOWN_UNSAVED_FIELDS but came back filled in, so remove it from the list`,
+    ).toBeVisible();
+    const radio = container.locator(
+      `[role="radio"][value="${String(sent[field])}"]`,
+    );
+    await expect(
+      radio,
+      `${field} can only be answered again when it is a radio`,
+    ).toHaveCount(1);
+    await radio.click();
+    test.info().annotations.push({
+      type: 'known-unsaved-field',
+      description: `${field} came back empty and was answered again`,
+    });
+  }
+}
+
+for (const {
+  country,
+  employmentId,
+  companyId,
+  version,
+  sent,
+  knownUnsavedFields,
+} of employments) {
+  test(`${country}@${version} re-submits the saved contract details unchanged`, async ({
+    page,
+  }) => {
+    const versionParams =
+      version === 'latest'
+        ? `&countryCode=${country}&contractDetailsVersion=latest`
+        : '';
+    await page.goto(
+      `/?demo=onboarding-basic&employmentId=${employmentId}${versionParams}`,
+    );
+    await page.locator('#companyId').fill(companyId);
+    await page.locator('.onboarding-form-button').click();
+
+    await continueUntilContractDetails(page);
+    await expect(
+      page.locator('[data-field]').first(),
+      'the contract details form rendered no fields',
+    ).toBeVisible();
+
+    if (knownUnsavedFields.length > 0) {
+      await page.locator('.submit-button').click();
+      await answerKnownUnsavedFields(page, knownUnsavedFields, sent);
+    }
+
+    const patch = page.waitForRequest(
+      (request) =>
+        request.method() === 'PATCH' &&
+        new URL(request.url()).pathname === `/v1/employments/${employmentId}`,
+      { timeout: 30_000 },
+    );
+    await page.locator('.submit-button').click();
+    const request = await patch.catch(async () => {
+      throw new Error(
+        `Continue on contract details sent no PATCH. Field errors: ${JSON.stringify(await fieldErrors(page))}`,
+      );
+    });
+    const response = await request.response();
+
+    expect(
+      response?.ok(),
+      `PATCH /v1/employments/${employmentId} returned ${response?.status()}: ${await response?.text()}`,
+    ).toBe(true);
+    const browserSent = (
+      request.postDataJSON() as { contract_details: Record<string, unknown> }
+    ).contract_details;
+    expect(
+      withoutJobTitleCheck(browserSent),
+      'the browser sent different contract_details than the canary saved',
+    ).toEqual(withoutJobTitleCheck(sent));
+    await expect(page.getByTestId('onboarding-step-title')).not.toHaveText(
+      'Contract Details',
+    );
+  });
+}

@@ -437,4 +437,143 @@ describe('FieldSetField', () => {
       );
     });
   });
+
+  describe('fieldsets without visible content', () => {
+    const noContentProps = { description: '', label: 'Employee schedule' };
+
+    it('hides a fieldset whose only field is hidden', () => {
+      const { container } = renderWithFormContext({
+        ...noContentProps,
+        fields: [
+          {
+            name: 'schedule_type',
+            label: 'Schedule type',
+            type: 'hidden',
+            inputType: 'hidden',
+          } as $TSFixMe,
+        ],
+      });
+
+      expect(container.querySelector('fieldset')).toHaveAttribute('hidden');
+      expect(screen.queryByRole('group')).not.toBeInTheDocument();
+    });
+
+    it('hides a fieldset whose fields are all invisible or deprecated', () => {
+      const { container } = renderWithFormContext({
+        ...noContentProps,
+        fields: [
+          {
+            name: 'daily_schedule',
+            label: 'Daily schedule',
+            type: 'text',
+            inputType: 'text',
+            isVisible: false,
+          } as $TSFixMe,
+          {
+            name: 'old_field',
+            label: 'Old field',
+            type: 'text',
+            inputType: 'text',
+            deprecated: true,
+          } as $TSFixMe,
+        ],
+      });
+
+      expect(container.querySelector('fieldset')).toHaveAttribute('hidden');
+    });
+
+    it('hides a fieldset whose only children are empty nested fieldsets', () => {
+      const { container } = renderWithFormContext({
+        ...noContentProps,
+        fields: [
+          {
+            name: 'nested',
+            label: 'Nested',
+            type: 'fieldset',
+            inputType: 'fieldset',
+            fields: [
+              {
+                name: 'schedule_type',
+                label: 'Schedule type',
+                type: 'hidden',
+                inputType: 'hidden',
+              },
+            ],
+          } as $TSFixMe,
+        ],
+      });
+
+      expect(container.querySelector('fieldset')).toHaveAttribute('hidden');
+    });
+
+    it('keeps a fieldset visible when a nested fieldset has a visible field', () => {
+      const { container } = renderWithFormContext({
+        ...noContentProps,
+        fields: [
+          {
+            name: 'nested',
+            label: 'Nested',
+            type: 'fieldset',
+            inputType: 'fieldset',
+            fields: [
+              {
+                name: 'schedule_type',
+                label: 'Schedule type',
+                type: 'text',
+                inputType: 'text',
+              },
+            ],
+          } as $TSFixMe,
+        ],
+      });
+
+      expect(container.querySelector('fieldset')).not.toHaveAttribute('hidden');
+    });
+
+    it('keeps an inset fieldset visible when it has a toggle', () => {
+      const { container } = renderWithFormContext({
+        ...noContentProps,
+        variant: 'inset',
+        features: { toggle: { enabled: true, defaultExpanded: false } },
+        fields: [],
+      });
+
+      expect(container.querySelector('fieldset')).not.toHaveAttribute('hidden');
+    });
+
+    it('hides a fieldset whose only field is a forced value with nothing to show, even with a custom component', () => {
+      const { container } = renderWithFormContext({
+        ...noContentProps,
+        fields: [
+          {
+            name: 'schedule_type',
+            label: 'Schedule type',
+            type: 'select',
+            inputType: 'select',
+            const: 'flexible',
+            default: 'flexible',
+            Component: () => <div>Custom</div>,
+          } as $TSFixMe,
+        ],
+      });
+
+      expect(container.querySelector('fieldset')).toHaveAttribute('hidden');
+    });
+
+    it('keeps a fieldset visible when a field can be shown', () => {
+      renderWithFormContext({
+        ...noContentProps,
+        fields: [
+          {
+            name: 'schedule_type',
+            label: 'Schedule type',
+            type: 'text',
+            inputType: 'text',
+          } as $TSFixMe,
+        ],
+      });
+
+      expect(screen.getByRole('group')).toBeInTheDocument();
+    });
+  });
 });

@@ -1,7 +1,17 @@
 import {
+  ContractorInvoiceSchedule,
+  ContractorInvoiceScheduleItem,
+} from '@/src/client';
+import {
+  END_TYPE_MULTIPLE,
+  END_TYPE_NEVER,
   INVOICE_ITEM_SLOTS,
   ONE_TIME_PERIODICITY,
   ONE_TIME_PERSISTED_PERIODICITY,
+  SEMI_MONTHLY_CUSTOM_CYCLE,
+  SEMI_MONTHLY_CYCLE_GAP_DAYS,
+  SEMI_MONTHLY_DEFAULT_CYCLE,
+  SEMI_MONTHLY_DEFAULT_CYCLE_DAYS,
   SEMI_MONTHLY_PERIODICITY,
 } from '@/src/common/invoice-schedules/constants';
 
@@ -24,6 +34,81 @@ export function buildInvoiceItems(values: Record<string, unknown>) {
     }
   }
   return items;
+}
+
+type InvoiceScheduleFormSource = Pick<
+  ContractorInvoiceSchedule,
+  | 'currency'
+  | 'periodicity'
+  | 'start_date'
+  | 'number'
+  | 'note'
+  | 'nr_occurrences'
+  | 'custom_days'
+> & {
+  items?: Pick<ContractorInvoiceScheduleItem, 'description' | 'amount'>[];
+};
+
+function buildSemiMonthlySettings(
+  schedule: Pick<InvoiceScheduleFormSource, 'periodicity' | 'custom_days'>,
+) {
+  if (
+    schedule.periodicity !== SEMI_MONTHLY_PERIODICITY ||
+    !schedule.custom_days
+  ) {
+    return undefined;
+  }
+
+  const [first, second] = schedule.custom_days;
+  const isCustomCycle =
+    first !== SEMI_MONTHLY_DEFAULT_CYCLE_DAYS[0] &&
+    second === first + SEMI_MONTHLY_CYCLE_GAP_DAYS;
+
+  return isCustomCycle
+    ? {
+        invoicing_cycle: SEMI_MONTHLY_CUSTOM_CYCLE,
+        first_invoice_day: String(first),
+      }
+    : { invoicing_cycle: SEMI_MONTHLY_DEFAULT_CYCLE };
+}
+
+/**
+ * Turns a saved invoice schedule into form values in API units, with item amounts in cents.
+ * @param schedule - The schedule as the API returns it
+ * @returns Values keyed by form field name, ready to seed the form
+ */
+export function buildInvoiceScheduleFormValues(
+  schedule: InvoiceScheduleFormSource,
+) {
+  const isOneTime =
+    schedule.periodicity === ONE_TIME_PERSISTED_PERIODICITY &&
+    schedule.nr_occurrences === 1;
+
+  const values: Record<string, unknown> = {
+    currency: schedule.currency,
+    periodicity: isOneTime ? ONE_TIME_PERIODICITY : schedule.periodicity,
+    start_date: schedule.start_date,
+    number: schedule.number,
+    note: schedule.note,
+    end_type: isOneTime
+      ? undefined
+      : schedule.nr_occurrences
+        ? END_TYPE_MULTIPLE
+        : END_TYPE_NEVER,
+    nr_occurrences: isOneTime ? undefined : schedule.nr_occurrences,
+  };
+
+  const semiMonthlySettings = buildSemiMonthlySettings(schedule);
+  if (semiMonthlySettings) {
+    values.semi_monthly_settings = semiMonthlySettings;
+  }
+
+  schedule.items?.forEach((item, index) => {
+    values[`item_${index + 1}_description`] = item.description;
+    values[`item_${index + 1}_amount`] = item.amount;
+  });
+
+  return values;
 }
 
 /**
@@ -59,29 +144,50 @@ export function buildRecurrence(values: Record<string, unknown>): {
 /**
  * Resolves the two calendar days a semi-monthly schedule generates invoices on.
  *
- * Only meaningful for `semi_monthly`, and optional even then: omit it and the API derives the
- * cycle from `start_date` (that day, and the day 14 days apart from it). Both days are needed
- * to override, so a half-filled pair is treated as "use the default".
+ * Only meaningful for `semi_monthly`. The default cycle is the 15th and the last day of the
+ * month; a custom cycle is the chosen first day and the day 14 days after it.
  *
- * @param values - Form values containing `periodicity` and optionally the two day fields
- */
-/**
- * Note `custom_days` is not yet in the generated client's create params — it arrives with
- * the next `npm run openapi-ts` once the API change exposing it is deployed. Until then the
- * payload carries it and the API ignores it, so a semi-monthly schedule falls back to the
- * cycle derived from `start_date` — the behaviour before this field existed.
+ * @param values - Form values containing `periodicity` and the `semi_monthly_settings` group
  */
 export function buildCustomDays(
   values: Record<string, unknown>,
 ): [number, number] | undefined {
-  if (values.periodicity !== SEMI_MONTHLY_PERIODICITY) return undefined;
+  if (values.periodicity !== SEMI_MONTHLY_PERIODICITY) {
+    return undefined;
+  }
 
-  const first = Number(values.custom_day_1);
-  const second = Number(values.custom_day_2);
+  const settings = values.semi_monthly_settings as
+    | Record<string, unknown>
+    | undefined;
 
-  if (!first || !second) return undefined;
+  if (!settings) {
+    return undefined;
+  }
 
-  return [first, second];
+  if (settings.invoicing_cycle !== SEMI_MONTHLY_CUSTOM_CYCLE) {
+    return SEMI_MONTHLY_DEFAULT_CYCLE_DAYS;
+  }
+
+  const first = Number(settings.first_invoice_day);
+
+  if (!first) {
+    return undefined;
+  }
+
+  return [first, first + SEMI_MONTHLY_CYCLE_GAP_DAYS];
+}
+
+/**
+ * Formats a day of the month as an ordinal, e.g. 1 → "1st", 22 → "22nd", 13 → "13th".
+ */
+export function toOrdinal(day: number): string {
+  const lastTwoDigits = day % 100;
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 13) {
+    return `${day}th`;
+  }
+
+  const suffixes: Record<number, string> = { 1: 'st', 2: 'nd', 3: 'rd' };
+  return `${day}${suffixes[day % 10] ?? 'th'}`;
 }
 
 /**

@@ -15,7 +15,7 @@ describe('useContractorOnboarding jsonSchemaVersion', () => {
       let capturedRequest: Request | null = null;
       server.use(
         http.get(
-          '*/v1/countries/*/contractor_basic_information*',
+          '*/v1/countries/PRT/contractor_basic_information*',
           ({ request }) => {
             capturedRequest = request;
             return HttpResponse.json(mockContractorBasicInformationSchema);
@@ -46,7 +46,7 @@ describe('useContractorOnboarding jsonSchemaVersion', () => {
       let capturedRequest: Request | null = null;
       server.use(
         http.get(
-          '*/v1/countries/*/contractor_basic_information*',
+          '*/v1/countries/DEU/contractor_basic_information*',
           ({ request }) => {
             capturedRequest = request;
             return HttpResponse.json(mockContractorBasicInformationSchema);
@@ -81,7 +81,7 @@ describe('useContractorOnboarding jsonSchemaVersion', () => {
       let capturedRequest: Request | null = null;
       server.use(
         http.get(
-          '*/v1/countries/*/contractor_basic_information*',
+          '*/v1/countries/USA/contractor_basic_information*',
           ({ request }) => {
             capturedRequest = request;
             return HttpResponse.json(mockContractorBasicInformationSchema);

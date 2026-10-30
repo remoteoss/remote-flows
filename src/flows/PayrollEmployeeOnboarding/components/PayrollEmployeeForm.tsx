@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import { Form } from '@/src/components/ui/form';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
@@ -24,6 +25,13 @@ export function PayrollEmployeeForm({
     defaultValues: defaultValues ?? {},
     checkFieldUpdates: employeeBag.setFieldValues,
   });
+
+  const { setFieldValues } = employeeBag;
+  // The form only reports values on change, so conditional fields would
+  // otherwise be evaluated against empty values until the first edit.
+  useEffect(() => {
+    setFieldValues(form.getValues());
+  }, [form, setFieldValues]);
 
   return (
     <Form {...form} key={`form-${employeeBag.stepState.currentStep.name}`}>

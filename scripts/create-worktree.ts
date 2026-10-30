@@ -5,14 +5,15 @@
  * switching branches in the main checkout.
  *
  * Usage:
- *   npm run worktree -- --branch <name> [--base <ref>]   Create a worktree with a new branch
- *   npm run worktree -- --branch <name> --existing       Create a worktree for an existing branch (e.g. review a PR)
- *   npm run worktree -- --pr <number>                    Create a worktree for a PR's branch
+ *   pnpm run worktree --branch <name> [--base <ref>]   Create a worktree with a new branch
+ *   pnpm run worktree --branch <name> --existing       Create a worktree for an existing branch (e.g. review a PR)
+ *   pnpm run worktree --pr <number>                    Create a worktree for a PR's branch
  */
 import { execSync } from 'child_process';
 import {
   existsSync,
   copyFileSync,
+  mkdirSync,
   readdirSync,
   readFileSync,
   writeFileSync,
@@ -59,16 +60,21 @@ function resolvePrBranch(pr: string, cwd: string): string {
   return sh(`gh pr view ${pr} --json headRefName -q .headRefName`, cwd);
 }
 
-function seedNodeModules(source: string, worktreePath: string, dir: string) {
+function seedNodeModules(
+  source: string,
+  worktreePath: string,
+  dir: string,
+  installCommand: string,
+) {
   const sourceDir = path.join(source, dir);
   const targetDir = path.join(worktreePath, dir);
   const sourceNodeModules = path.join(sourceDir, 'node_modules');
 
   if (!existsSync(sourceNodeModules)) {
     log.warn(
-      `Source ${dir || 'root'}/node_modules not found. Falling back to npm install...`,
+      `Source ${dir || 'root'}/node_modules not found. Falling back to ${installCommand}...`,
     );
-    shInherit('npm install', targetDir);
+    shInherit(installCommand, targetDir);
     return;
   }
 
@@ -80,13 +86,13 @@ function seedNodeModules(source: string, worktreePath: string, dir: string) {
       );
     } catch {
       log.warn(
-        `Clone-on-write copy failed for ${dir}/node_modules, npm install will do a full install.`,
+        `Clone-on-write copy failed for ${dir}/node_modules, ${installCommand} will do a full install.`,
       );
     }
   }
 
   log.info(`Installing dependencies in ${dir || 'root'}...`);
-  shInherit('npm install', targetDir);
+  shInherit(installCommand, targetDir);
 }
 
 function listWorktreePaths(root: string): string[] {
@@ -204,6 +210,16 @@ async function main() {
     log.info('Copied CLAUDE.local.md');
   }
 
+  const claudeSettingsLocal = path.join(root, '.claude', 'settings.local.json');
+  if (existsSync(claudeSettingsLocal)) {
+    mkdirSync(path.join(worktreePath, '.claude'), { recursive: true });
+    copyFileSync(
+      claudeSettingsLocal,
+      path.join(worktreePath, '.claude', 'settings.local.json'),
+    );
+    log.info('Copied .claude/settings.local.json');
+  }
+
   const gatewayEnvFiles = readdirSync(root).filter((name) =>
     name.startsWith('.env.'),
   );
@@ -212,14 +228,14 @@ async function main() {
     log.info(`Copied ${name}`);
   }
 
-  seedNodeModules(root, worktreePath, '');
-  seedNodeModules(root, worktreePath, 'example');
+  seedNodeModules(root, worktreePath, '', 'pnpm install');
+  seedNodeModules(root, worktreePath, 'example', 'pnpm install');
 
   log.success(`Worktree ready at ${worktreePath}`);
   log.info(`  cd ${worktreePath}`);
-  log.info('  npm run dev            # watch-build the library');
+  log.info('  pnpm run dev           # watch-build the library');
   log.info(
-    `  cd example && npm run dev   # run the example app at http://localhost:${port}`,
+    `  cd example && pnpm run dev   # run the example app at http://localhost:${port}`,
   );
 }
 

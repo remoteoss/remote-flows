@@ -64,12 +64,16 @@ export function ContractDocumentForm({
 
   const handleSubmit = async (values: FieldValues) => {
     try {
-      const payload = await contractDocumentBag.parseFormValues(values);
+      const payload = (await contractDocumentBag.parseFormValues(
+        values,
+      )) as ContractDocumentContractDetailsPayload;
       await onSubmit?.(payload);
 
       const response = await contractDocumentBag.onSubmit(values);
       if (response?.data) {
-        await onSuccess?.(response.data);
+        await onSuccess?.(
+          response.data as ContractDocumentContractDetailsResponse,
+        );
       }
       contractDocumentBag.next();
     } catch (error: unknown) {
