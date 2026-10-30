@@ -1,8 +1,15 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { TimeOffFlow, TimeOffReviewStepProps } from '@/src/index';
-import { timeOffRequestResponse } from '@/src/flows/TimeOff/tests/fixtures';
+import {
+  TimeOffApproveButtonProps,
+  TimeOffFlow,
+  TimeOffReviewStepProps,
+} from '@/src/index';
+import {
+  timeOffErrorResponse,
+  timeOffRequestResponse,
+} from '@/src/flows/TimeOff/tests/fixtures';
 import { server } from '@/src/tests/server';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
@@ -72,6 +79,53 @@ function mockTimeOffRequest(
   );
   return requestedIds;
 }
+
+function renderApproval(
+  approveButtonProps: Partial<TimeOffApproveButtonProps> = {},
+) {
+  return render(
+    <TimeOffFlow
+      timeOffId='timeoff-123'
+      render={({
+        timeOffBag,
+        components: { RequestIdStep, NextButton, ReviewStep, ApproveButton },
+      }) =>
+        timeOffBag.stepState.currentStep.name === 'request_id' ? (
+          <>
+            <RequestIdStep />
+            <NextButton>Next</NextButton>
+          </>
+        ) : (
+          <ReviewStep>
+            <ApproveButton approverId={null} {...approveButtonProps}>
+              Approve
+            </ApproveButton>
+          </ReviewStep>
+        )
+      }
+    />,
+    { wrapper: TestProviders },
+  );
+}
+
+function mockApproval(...responses: Array<() => Response | Promise<Response>>) {
+  const bodies: unknown[] = [];
+  server.use(
+    http.post('*/v1/timeoff/:id/approve', async ({ request }) => {
+      bodies.push(await request.json());
+      return responses[bodies.length - 1]();
+    }),
+  );
+  return bodies;
+}
+
+const approvedResponse =
+  (timeoff: Partial<typeof timeOffRequestResponse.data.timeoff>) => () =>
+    HttpResponse.json({
+      data: {
+        timeoff: { ...timeOffRequestResponse.data.timeoff, ...timeoff },
+      },
+    });
 
 describe('TimeOffFlow', () => {
   beforeEach(() => {
@@ -248,4 +302,120 @@ describe('TimeOffFlow', () => {
     expect(screen.getByText('status: Requested')).toBeInTheDocument();
     expect(screen.queryByText('Status')).not.toBeInTheDocument();
   });
+
+  it.each([
+    ['approved', 'Approved'],
+    ['taken', 'Taken'],
+  ] as const)(
+    'approves the request and shows the %s status the API answers with',
+    async (status, label) => {
+      mockTimeOffRequest();
+      const bodies = mockApproval(approvedResponse({ status }));
+      const onSuccess = vi.fn();
+      renderApproval({ onSuccess });
+
+      fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+      fireEvent.click(await screen.findByRole('button', { name: 'Approve' }));
+
+      expect(await screen.findByText(label)).toBeInTheDocument();
+      expect(onSuccess).toHaveBeenCalledWith({
+        ...timeOffRequestResponse.data.timeoff,
+        status,
+      });
+      expect(bodies).toEqual([{ approver_id: null }]);
+    },
+  );
+
+  it('sends one approval for repeated clicks and the given approver', async () => {
+    mockTimeOffRequest();
+    let respond: (response: Response) => void = () => {};
+    const bodies = mockApproval(
+      () =>
+        new Promise<Response>((resolve) => {
+          respond = resolve;
+        }),
+    );
+    renderApproval({ approverId: 'manager-1' });
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+    const approve = await screen.findByRole('button', { name: 'Approve' });
+    fireEvent.click(approve);
+    fireEvent.click(approve);
+
+    await waitFor(() => expect(approve).toBeDisabled());
+    fireEvent.click(approve);
+    respond(approvedResponse({ status: 'approved' })());
+
+    expect(await screen.findByText('Approved')).toBeInTheDocument();
+    expect(bodies).toEqual([{ approver_id: 'manager-1' }]);
+  });
+
+  it.each([
+    ['documented', timeOffErrorResponse],
+    ['nested under error', { error: timeOffErrorResponse }],
+  ])(
+    'reports a 422 approval %s as rejected and lets the user approve again',
+    async (_, body) => {
+      mockTimeOffRequest();
+      const bodies = mockApproval(
+        () => HttpResponse.json(body, { status: 422 }),
+        approvedResponse({ status: 'approved' }),
+      );
+      const onError = vi.fn();
+      const onSuccess = vi.fn();
+      renderApproval({ onError, onSuccess });
+
+      fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+      const approve = await screen.findByRole('button', { name: 'Approve' });
+      fireEvent.click(approve);
+
+      await waitFor(() =>
+        expect(onError).toHaveBeenCalledWith({
+          reason: 'rejected',
+          status: 422,
+          message: timeOffErrorResponse.message,
+          fieldErrors: timeOffErrorResponse.field_errors,
+        }),
+      );
+      expect(screen.getByText('Requested')).toBeInTheDocument();
+      await waitFor(() => expect(approve).toBeEnabled());
+
+      fireEvent.click(approve);
+
+      expect(await screen.findByText('Approved')).toBeInTheDocument();
+      expect(onSuccess).toHaveBeenCalledTimes(1);
+      expect(bodies).toHaveLength(2);
+    },
+  );
+
+  it.each([
+    [404, 'not_found', { error: { message: 'Not Found' } }, 'Not Found'],
+    [401, 'unauthorized', { message: 'Unauthorized' }, 'Unauthorized'],
+    [
+      429,
+      'request_failed',
+      { message: 'Too Many Requests' },
+      'Too Many Requests',
+    ],
+  ])(
+    'reports a %i approval response as %s',
+    async (status, reason, body, message) => {
+      mockTimeOffRequest();
+      mockApproval(() => HttpResponse.json(body, { status }));
+      const onError = vi.fn();
+      renderApproval({ onError });
+
+      fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+      fireEvent.click(await screen.findByRole('button', { name: 'Approve' }));
+
+      await waitFor(() =>
+        expect(onError).toHaveBeenCalledWith({
+          reason,
+          status,
+          message,
+          fieldErrors: [],
+        }),
+      );
+    },
+  );
 });

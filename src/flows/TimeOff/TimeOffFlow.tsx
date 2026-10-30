@@ -1,4 +1,5 @@
 import { useId } from 'react';
+import { ApproveButton } from '@/src/flows/TimeOff/components/ApproveButton';
 import { BackButton } from '@/src/flows/TimeOff/components/BackButton';
 import { NextButton } from '@/src/flows/TimeOff/components/NextButton';
 import { RequestIdStep } from '@/src/flows/TimeOff/components/RequestIdStep';
@@ -25,6 +26,7 @@ export const TimeOffFlow = ({ timeOffId, render }: TimeOffFlowProps) => {
           ReviewStep,
           RetryButton,
           BackButton,
+          ApproveButton,
         },
       })}
     </TimeOffContext.Provider>
