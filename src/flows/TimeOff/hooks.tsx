@@ -37,6 +37,10 @@ export const useTimeOff = ({
   )?.trim();
   const enteredTimeOffId = (fieldValues.timeoff_id ?? timeOffId)?.trim();
 
+  const { timeOffRequest, isLoading, error, refetch } = useTimeOffRequest({
+    timeOffId: stepState.currentStep.name === 'review' ? timeOffId : undefined,
+  });
+
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
       setFieldValues(values);
@@ -74,6 +78,22 @@ export const useTimeOff = ({
      * Whether the request ID step holds a non-blank ID, so the flow can move on.
      */
     hasRequestId: Boolean(enteredTimeOffId),
+    /**
+     * The time-off request under review, loaded once the flow reaches the review step.
+     */
+    timeOffRequest,
+    /**
+     * Whether the time-off request under review is loading for the first time.
+     */
+    isLoading,
+    /**
+     * Why the time-off request under review failed to load, or `null`.
+     */
+    timeOffRequestError: error,
+    /**
+     * Loads the time-off request under review again, e.g. to retry after an error.
+     */
+    refetchTimeOffRequest: refetch,
     /**
      * Moves to the next step.
      */

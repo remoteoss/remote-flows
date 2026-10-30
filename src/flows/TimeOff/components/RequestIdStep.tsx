@@ -17,7 +17,7 @@ export function RequestIdStep() {
       <form
         id={formId}
         onSubmit={form.handleSubmit(timeOffBag.next)}
-        className='space-y-4 RemoteFlows__RequestIdStep'
+        className='RemoteFlows__RequestIdStep'
       >
         <JSONSchemaFormFields fields={timeOffBag.fields} />
       </form>

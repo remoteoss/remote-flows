@@ -2,7 +2,7 @@ import React, { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import { Timeoff } from '@/src/client';
 import { useTimeOff } from '@/src/flows/TimeOff/hooks';
 
-export type TimeOffStepKeys = 'request_id' | 'time_off';
+export type TimeOffStepKeys = 'request_id' | 'review';
 
 /**
  * Values the request ID step collects.
@@ -39,14 +39,49 @@ export type TimeOffRequestError = {
   status: number | undefined;
 };
 
+/**
+ * One detail of a time-off request, labelled and formatted for display.
+ */
+export type TimeOffRequestDetail = {
+  name:
+    | 'leave_policy'
+    | 'status'
+    | 'start_date'
+    | 'end_date'
+    | 'duration'
+    | 'notes'
+    | 'cancel_reason';
+  label: string;
+  value: string;
+};
+
+export type TimeOffReviewStepProps = {
+  /**
+   * Replaces the default rendering of the loaded request's details. Nothing renders until the
+   * request is loaded: use `timeOffBag.isLoading` and `timeOffBag.timeOffRequestError` for the other states.
+   */
+  render?: (props: {
+    timeOffRequest: TimeOffRequest;
+    details: TimeOffRequestDetail[];
+  }) => React.ReactNode;
+  /**
+   * Rendered under the loaded request's details, e.g. actions on the request.
+   */
+  children?: React.ReactNode;
+};
+
+type TimeOffButtonProps = PropsWithChildren<
+  ButtonHTMLAttributes<HTMLButtonElement>
+>;
+
 export type TimeOffRenderProps = {
   timeOffBag: ReturnType<typeof useTimeOff>;
   components: {
     RequestIdStep: React.ComponentType;
-    NextButton: React.ComponentType<
-      PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>
-    >;
-    TimeOffStep: React.ComponentType;
+    NextButton: React.ComponentType<TimeOffButtonProps>;
+    ReviewStep: React.ComponentType<TimeOffReviewStepProps>;
+    RetryButton: React.ComponentType<TimeOffButtonProps>;
+    BackButton: React.ComponentType<TimeOffButtonProps>;
   };
 };
 
