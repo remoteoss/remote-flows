@@ -1,0 +1,12 @@
+<main class="Playground">
+  <h1>{{ name }}</h1>
+  <form class="Playground__Form" (submit)="onSubmit($event)">
+    @for (view of store.fields(); track view.name) {
+    <rf-field [view]="view" />
+    }
+    <button type="submit" class="Playground__Submit">Submit</button>
+  </form>
+  @if (store.submitted(); as result) {
+  <pre class="Playground__Result">{{ result | json }}</pre>
+  }
+</main>
