@@ -1,4 +1,9 @@
-const MATRIX_SKIPPED_COUNTRIES = new Set(['FRA', 'ITA']);
+export const BACKEND_CODE_BY_SDK_CODE: Record<string, string> = {
+  FRA: 'FRA_SAS',
+  ITA: 'ITA_APL',
+};
+
+const UP_TO_DATE_UNTOUCHED = new Set(['FRA']);
 
 const CODE_CELL = 2;
 const CONTRACT_DETAILS_CELL = 3;
@@ -25,8 +30,8 @@ export function updateVersionMatrix(
       return line;
     }
     const code = cells[CODE_CELL].trim();
-    const latest = latestCounts[code];
-    if (latest === undefined || MATRIX_SKIPPED_COUNTRIES.has(code)) {
+    const latest = latestCounts[BACKEND_CODE_BY_SDK_CODE[code] ?? code];
+    if (latest === undefined) {
       return line;
     }
     const pinnedMatch = /^v(\d+)$/.exec(cells[CONTRACT_DETAILS_CELL].trim());
@@ -35,10 +40,12 @@ export function updateVersionMatrix(
       return line;
     }
     cells[PLATFORM_CELL] = withCellValue(cells[PLATFORM_CELL], `v${latest}`);
-    cells[UP_TO_DATE_CELL] = withCellValue(
-      cells[UP_TO_DATE_CELL],
-      Number(pinnedMatch[1]) >= latest ? 'Yes' : 'No',
-    );
+    if (!UP_TO_DATE_UNTOUCHED.has(code)) {
+      cells[UP_TO_DATE_CELL] = withCellValue(
+        cells[UP_TO_DATE_CELL],
+        Number(pinnedMatch[1]) >= latest ? 'Yes' : 'No',
+      );
+    }
     return cells.join('|');
   });
   return { content: content.join('\n'), unreadableRows };

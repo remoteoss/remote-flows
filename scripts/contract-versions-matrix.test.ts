@@ -39,17 +39,40 @@ describe('updateVersionMatrix', () => {
     );
   });
 
-  it('leaves FRA and ITA, countries without a row and non-table lines alone', () => {
-    const readme = `Intro line\n${matrix(
-      '| France  | FRA  | v1               | v2              | Yes        | -            |',
+  it('reads the platform version for FRA and ITA from their backend codes', () => {
+    const readme = matrix(
       '| Italy   | ITA  | v2               | v2              | Yes        | -            |',
+    );
+
+    const { content } = updateVersionMatrix(readme, { ITA: 5, ITA_APL: 3 });
+
+    expect(content).toBe(
+      matrix(
+        '| Italy   | ITA  | v2               | v3              | No         | -            |',
+      ),
+    );
+  });
+
+  it('updates the platform version for France but keeps its documented Up to date', () => {
+    const readme = matrix(
+      '| France  | FRA  | v1               | v2              | Yes        | -            |',
+    );
+
+    const { content } = updateVersionMatrix(readme, { FRA: 6, FRA_SAS: 3 });
+
+    expect(content).toBe(
+      matrix(
+        '| France  | FRA  | v1               | v3              | Yes        | -            |',
+      ),
+    );
+  });
+
+  it('leaves countries without a backend version and non-table lines alone', () => {
+    const readme = `Intro line\n${matrix(
+      '| Albania | ALB  | v4               | v4              | Yes        | -            |',
     )}`;
 
-    const { content } = updateVersionMatrix(readme, {
-      FRA: 6,
-      ITA: 5,
-      ZZZ: 3,
-    });
+    const { content } = updateVersionMatrix(readme, { ZZZ: 3 });
 
     expect(content).toBe(readme);
   });

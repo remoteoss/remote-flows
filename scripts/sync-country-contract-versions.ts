@@ -15,7 +15,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { updateVersionMatrix } from './contract-versions-matrix';
+import {
+  BACKEND_CODE_BY_SDK_CODE,
+  updateVersionMatrix,
+} from './contract-versions-matrix';
 import { countryLabel } from './country-names';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -155,10 +158,18 @@ function buildVersionComparison(
   latestVersions: Record<string, VersionOption[]>,
   inUseVersions: Record<string, number>,
 ): { country: string; inUse: number; latest: number; gap: number }[] {
+  const sdkCodeByBackendCode = Object.fromEntries(
+    Object.entries(BACKEND_CODE_BY_SDK_CODE).map(([sdk, backend]) => [
+      backend,
+      sdk,
+    ]),
+  );
   return Object.entries(latestVersions)
+    .filter(([country]) => !(country in BACKEND_CODE_BY_SDK_CODE))
     .map(([country, opts]) => {
       const latest = opts.length;
-      const inUse = inUseVersions[country] ?? 1; // undefined => flow uses v1
+      const inUse =
+        inUseVersions[sdkCodeByBackendCode[country] ?? country] ?? 1; // undefined => flow uses v1
       return { country, inUse, latest, gap: latest - inUse };
     })
     .sort((a, b) => b.gap - a.gap || a.country.localeCompare(b.country));
