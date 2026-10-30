@@ -1,5 +1,6 @@
 import React, { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 import {
+  DeclineTimeoffParams,
   NullableApproverId,
   Timeoff,
   TimeoffErrorResponse,
@@ -63,6 +64,14 @@ export type TimeOffApproveOptions = {
   approverId: NullableApproverId;
 };
 
+export type TimeOffDeclineOptions = {
+  /**
+   * Sent unchanged as `decline_reason`, which the API requires: why the request is declined, or
+   * `null` to give no reason.
+   */
+  declineReason: DeclineTimeoffParams['decline_reason'];
+};
+
 /**
  * One detail of a time-off request, labelled and formatted for display.
  */
@@ -111,6 +120,19 @@ export type TimeOffApproveButtonProps = Omit<TimeOffButtonProps, 'onError'> &
     onError?: (error: TimeOffDecisionError) => void;
   };
 
+export type TimeOffDeclineButtonProps = Omit<TimeOffButtonProps, 'onError'> &
+  TimeOffDeclineOptions & {
+    /**
+     * Called with the request as the API returns it once declined. Read the outcome from its
+     * `status` rather than assuming `declined`.
+     */
+    onSuccess?: (timeOffRequest: TimeOffRequest) => void | Promise<void>;
+    /**
+     * Called when the decline fails. The button is enabled again so the user can retry.
+     */
+    onError?: (error: TimeOffDecisionError) => void;
+  };
+
 export type TimeOffRenderProps = {
   timeOffBag: ReturnType<typeof useTimeOff>;
   components: {
@@ -120,6 +142,7 @@ export type TimeOffRenderProps = {
     RetryButton: React.ComponentType<TimeOffButtonProps>;
     BackButton: React.ComponentType<TimeOffButtonProps>;
     ApproveButton: React.ComponentType<TimeOffApproveButtonProps>;
+    DeclineButton: React.ComponentType<TimeOffDeclineButtonProps>;
   };
 };
 

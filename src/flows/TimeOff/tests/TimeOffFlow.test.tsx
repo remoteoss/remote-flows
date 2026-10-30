@@ -3,10 +3,12 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import {
   TimeOffApproveButtonProps,
+  TimeOffDeclineButtonProps,
   TimeOffFlow,
   TimeOffReviewStepProps,
 } from '@/src/index';
 import {
+  declineReasonErrorResponse,
   timeOffErrorResponse,
   timeOffRequestResponse,
 } from '@/src/flows/TimeOff/tests/fixtures';
@@ -119,7 +121,56 @@ function mockApproval(...responses: Array<() => Response | Promise<Response>>) {
   return bodies;
 }
 
-const approvedResponse =
+function renderDecline(
+  declineButtonProps: Partial<TimeOffDeclineButtonProps> = {},
+  { withApproval = false } = {},
+) {
+  return render(
+    <TimeOffFlow
+      timeOffId='timeoff-123'
+      render={({
+        timeOffBag,
+        components: {
+          RequestIdStep,
+          NextButton,
+          ReviewStep,
+          ApproveButton,
+          DeclineButton,
+        },
+      }) =>
+        timeOffBag.stepState.currentStep.name === 'request_id' ? (
+          <>
+            <RequestIdStep />
+            <NextButton>Next</NextButton>
+          </>
+        ) : (
+          <ReviewStep>
+            {withApproval && (
+              <ApproveButton approverId={null}>Approve</ApproveButton>
+            )}
+            <DeclineButton declineReason={null} {...declineButtonProps}>
+              Decline
+            </DeclineButton>
+          </ReviewStep>
+        )
+      }
+    />,
+    { wrapper: TestProviders },
+  );
+}
+
+function mockDecline(...responses: Array<() => Response | Promise<Response>>) {
+  const bodies: unknown[] = [];
+  server.use(
+    http.post('*/v1/timeoff/:id/decline', async ({ request }) => {
+      bodies.push(await request.json());
+      return responses[bodies.length - 1]();
+    }),
+  );
+  return bodies;
+}
+
+const decisionResponse =
   (timeoff: Partial<typeof timeOffRequestResponse.data.timeoff>) => () =>
     HttpResponse.json({
       data: {
@@ -310,7 +361,7 @@ describe('TimeOffFlow', () => {
     'approves the request and shows the %s status the API answers with',
     async (status, label) => {
       mockTimeOffRequest();
-      const bodies = mockApproval(approvedResponse({ status }));
+      const bodies = mockApproval(decisionResponse({ status }));
       const onSuccess = vi.fn();
       renderApproval({ onSuccess });
 
@@ -344,7 +395,7 @@ describe('TimeOffFlow', () => {
 
     await waitFor(() => expect(approve).toBeDisabled());
     fireEvent.click(approve);
-    respond(approvedResponse({ status: 'approved' })());
+    respond(decisionResponse({ status: 'approved' })());
 
     expect(await screen.findByText('Approved')).toBeInTheDocument();
     expect(bodies).toEqual([{ approver_id: 'manager-1' }]);
@@ -359,7 +410,7 @@ describe('TimeOffFlow', () => {
       mockTimeOffRequest();
       const bodies = mockApproval(
         () => HttpResponse.json(body, { status: 422 }),
-        approvedResponse({ status: 'approved' }),
+        decisionResponse({ status: 'approved' }),
       );
       const onError = vi.fn();
       const onSuccess = vi.fn();
@@ -407,6 +458,149 @@ describe('TimeOffFlow', () => {
 
       fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
       fireEvent.click(await screen.findByRole('button', { name: 'Approve' }));
+
+      await waitFor(() =>
+        expect(onError).toHaveBeenCalledWith({
+          reason,
+          status,
+          message,
+          fieldErrors: [],
+        }),
+      );
+    },
+  );
+
+  it.each([
+    ['declined', 'Declined', {}],
+    [
+      'approved',
+      'Approved',
+      { timeoff_type: 'public_holiday', automatic: true },
+    ],
+  ] as const)(
+    'declines the request and shows the %s status the API answers with',
+    async (status, label, timeoff) => {
+      mockTimeOffRequest(timeoff);
+      const bodies = mockDecline(decisionResponse({ ...timeoff, status }));
+      const onSuccess = vi.fn();
+      renderDecline({ onSuccess });
+
+      fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+      fireEvent.click(await screen.findByRole('button', { name: 'Decline' }));
+
+      expect(await screen.findByText(label)).toBeInTheDocument();
+      expect(onSuccess).toHaveBeenCalledWith({
+        ...timeOffRequestResponse.data.timeoff,
+        ...timeoff,
+        status,
+      });
+      expect(bodies).toEqual([{ decline_reason: null }]);
+    },
+  );
+
+  it('sends one decline for repeated clicks and the given reason', async () => {
+    mockTimeOffRequest();
+    let respond: (response: Response) => void = () => {};
+    const bodies = mockDecline(
+      () =>
+        new Promise<Response>((resolve) => {
+          respond = resolve;
+        }),
+    );
+    renderDecline({ declineReason: 'Business purposes' });
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+    const decline = await screen.findByRole('button', { name: 'Decline' });
+    fireEvent.click(decline);
+    fireEvent.click(decline);
+
+    await waitFor(() => expect(decline).toBeDisabled());
+    fireEvent.click(decline);
+    respond(decisionResponse({ status: 'declined' })());
+
+    expect(await screen.findByText('Declined')).toBeInTheDocument();
+    expect(bodies).toEqual([{ decline_reason: 'Business purposes' }]);
+  });
+
+  it('disables approval while a decline is being sent', async () => {
+    mockTimeOffRequest();
+    let respond: (response: Response) => void = () => {};
+    mockDecline(
+      () =>
+        new Promise<Response>((resolve) => {
+          respond = resolve;
+        }),
+    );
+    renderDecline({}, { withApproval: true });
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+    const approve = await screen.findByRole('button', { name: 'Approve' });
+    fireEvent.click(screen.getByRole('button', { name: 'Decline' }));
+
+    await waitFor(() => expect(approve).toBeDisabled());
+    respond(decisionResponse({ status: 'declined' })());
+
+    expect(await screen.findByText('Declined')).toBeInTheDocument();
+    await waitFor(() => expect(approve).toBeEnabled());
+  });
+
+  it.each([
+    ['documented', declineReasonErrorResponse],
+    ['nested under error', { error: declineReasonErrorResponse }],
+  ])(
+    'reports a 422 decline %s as rejected and lets the user decline again',
+    async (_, body) => {
+      mockTimeOffRequest();
+      const bodies = mockDecline(
+        () => HttpResponse.json(body, { status: 422 }),
+        decisionResponse({ status: 'declined' }),
+      );
+      const onError = vi.fn();
+      const onSuccess = vi.fn();
+      renderDecline({ onError, onSuccess });
+
+      fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+      const decline = await screen.findByRole('button', { name: 'Decline' });
+      fireEvent.click(decline);
+
+      await waitFor(() =>
+        expect(onError).toHaveBeenCalledWith({
+          reason: 'rejected',
+          status: 422,
+          message: declineReasonErrorResponse.message,
+          fieldErrors: declineReasonErrorResponse.field_errors,
+        }),
+      );
+      expect(screen.getByText('Requested')).toBeInTheDocument();
+      await waitFor(() => expect(decline).toBeEnabled());
+
+      fireEvent.click(decline);
+
+      expect(await screen.findByText('Declined')).toBeInTheDocument();
+      expect(onSuccess).toHaveBeenCalledTimes(1);
+      expect(bodies).toHaveLength(2);
+    },
+  );
+
+  it.each([
+    [404, 'not_found', { error: { message: 'Not Found' } }, 'Not Found'],
+    [401, 'unauthorized', { message: 'Unauthorized' }, 'Unauthorized'],
+    [
+      429,
+      'request_failed',
+      { message: 'Too Many Requests' },
+      'Too Many Requests',
+    ],
+  ])(
+    'reports a %i decline response as %s',
+    async (status, reason, body, message) => {
+      mockTimeOffRequest();
+      mockDecline(() => HttpResponse.json(body, { status }));
+      const onError = vi.fn();
+      renderDecline({ onError });
+
+      fireEvent.click(await screen.findByRole('button', { name: 'Next' }));
+      fireEvent.click(await screen.findByRole('button', { name: 'Decline' }));
 
       await waitFor(() =>
         expect(onError).toHaveBeenCalledWith({

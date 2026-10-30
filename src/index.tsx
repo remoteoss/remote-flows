@@ -63,6 +63,8 @@ export {
 export type {
   TimeOffApproveButtonProps,
   TimeOffApproveOptions,
+  TimeOffDeclineButtonProps,
+  TimeOffDeclineOptions,
   TimeOffDecisionError,
   TimeOffFlowProps,
   TimeOffRenderProps,

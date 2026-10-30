@@ -5,9 +5,11 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import {
+  DeclineTimeoffParams,
   getV1TimeoffId,
   NullableApproverId,
   postV1TimeoffTimeoffIdApprove,
+  postV1TimeoffTimeoffIdDecline,
   TimeoffErrorResponse,
   TimeoffResponse,
 } from '@/src/client';
@@ -122,6 +124,41 @@ export const useApproveTimeOffRequest = () => {
         },
         path: { timeoff_id: timeOffId },
         body: { approver_id: approverId },
+      }),
+    onSuccess: (response, { timeOffId }) => {
+      if (!response.data) {
+        return;
+      }
+      queryClient.setQueryData(
+        timeOffRequestOptions(client as Client, timeOffId).queryKey,
+        response.data,
+      );
+    },
+  });
+};
+
+/**
+ * Declines one time-off request with `POST /v1/timeoff/{timeoff_id}/decline`, then caches the
+ * request the API returns so the request under review shows its new status.
+ */
+export const useDeclineTimeOffRequest = () => {
+  const { client } = useClient();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      timeOffId,
+      declineReason,
+    }: {
+      timeOffId: string;
+      declineReason: DeclineTimeoffParams['decline_reason'];
+    }) =>
+      postV1TimeoffTimeoffIdDecline({
+        client: client as Client,
+        headers: {
+          Authorization: ``,
+        },
+        path: { timeoff_id: timeOffId },
+        body: { decline_reason: declineReason },
       }),
     onSuccess: (response, { timeOffId }) => {
       if (!response.data) {
