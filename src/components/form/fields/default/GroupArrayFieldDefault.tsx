@@ -6,6 +6,7 @@ import { GroupArrayComponentProps } from '@/src/types/remoteFlows';
 export function GroupArrayFieldDefault({
   name,
   label,
+  hideLabel,
   description,
   addFieldText,
   rows,
@@ -29,7 +30,7 @@ export function GroupArrayFieldDefault({
       aria-describedby={describedBy || undefined}
       className='grid gap-4 RemoteFlows__GroupArrayField'
     >
-      <p className='text-sm font-semibold'>{label}</p>
+      {hideLabel ? null : <p className='text-sm font-semibold'>{label}</p>}
       {description ? (
         <BaseFormDescription
           as='div'

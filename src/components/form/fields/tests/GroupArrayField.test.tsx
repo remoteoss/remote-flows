@@ -90,6 +90,13 @@ describe('GroupArrayField', () => {
     expect(screen.getAllByLabelText('Amount')[0]).toHaveValue('2500');
   });
 
+  it('leaves the visible label out when the label is hidden, keeping the group name', () => {
+    renderGroup({ hideLabel: true });
+
+    expect(screen.queryByText('Items')).not.toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Items' })).toBeVisible();
+  });
+
   it('shows the description', () => {
     renderGroup({ description: 'Everything you are billing for' });
 

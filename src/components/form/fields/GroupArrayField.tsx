@@ -14,6 +14,7 @@ import { BaseTypes } from './types';
 type GroupArrayFieldProps = {
   name: string;
   label: string;
+  hideLabel?: boolean;
   description?: ReactNode;
   addFieldText?: string;
   minItems?: number;
@@ -25,6 +26,7 @@ type GroupArrayFieldProps = {
 export function GroupArrayField({
   name,
   label,
+  hideLabel,
   description,
   addFieldText = 'Add item',
   minItems = 0,
@@ -79,6 +81,7 @@ export function GroupArrayField({
     <Component
       name={name}
       label={label}
+      hideLabel={hideLabel}
       description={description}
       addFieldText={addFieldText}
       error={error}
