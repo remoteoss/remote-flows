@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
+import { defaultComponents } from '@remoteoss/remote-flows/default-components';
 import { JsonSchemaPlaygroundFlow } from '@remoteoss/remote-flows/internals';
+import { CurrencyNumberInput } from './CurrencyNumberInput';
 import { FRANCE_WAGE_PORTAGE_INITIAL_VALUES } from './initialValues';
 import { RemoteFlows } from '../../RemoteFlows';
 import { SCHEMAS } from './schemas';
@@ -28,7 +30,10 @@ export const JsonSchemaPlayground = () => {
   }, []);
 
   return (
-    <RemoteFlows proxy={{ url: window.location.origin }}>
+    <RemoteFlows
+      proxy={{ url: window.location.origin }}
+      components={{ ...defaultComponents, number: CurrencyNumberInput }}
+    >
       <JsonSchemaPlaygroundFlow
         defaultSchema={selectedSchema}
         schemas={SCHEMAS}
