@@ -5,6 +5,8 @@ import { ContractorInvoicePreview } from '@/src/common/invoice-schedules/types';
 import { useInvoiceScheduleContext } from '@/src/flows/InvoiceSchedule/context';
 import { cn, handleStepError } from '@/src/lib/utils';
 import { NormalizedFieldError } from '@/src/lib/mutations';
+import { InvoiceScheduleFormValues } from '@/src/flows/InvoiceSchedule/types';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type InvoiceSchedulePreviewButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -45,14 +47,12 @@ export function InvoiceSchedulePreviewButton({
 }: InvoiceSchedulePreviewButtonProps) {
   const [preview, setPreview] = useState<ContractorInvoicePreview | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const { invoiceScheduleBag } = useInvoiceScheduleContext();
+  const { formId, invoiceScheduleBag } = useInvoiceScheduleContext();
   const { components } = useFormFields();
 
-  const handlePreview = async () => {
+  const generatePreview = async (values: InvoiceScheduleFormValues) => {
     try {
-      const previewDocument = await invoiceScheduleBag.previewInvoice(
-        invoiceScheduleBag.fieldValues,
-      );
+      const previewDocument = await invoiceScheduleBag.previewInvoice(values);
 
       if (previewDocument) {
         setPreview(previewDocument);
@@ -63,6 +63,19 @@ export function InvoiceSchedulePreviewButton({
       // No field meta: this flow's `meta.fields` is the flat field list, not the per-step
       // `NestedMeta` the onboarding step passes, so errors keep their raw field names.
       onError?.(handleStepError(error));
+    }
+  };
+
+  const handlePreview = () => {
+    const form = formId ? document.getElementById(formId) : null;
+    if (form) {
+      const submitEvent = new Event('submit', {
+        bubbles: true,
+        cancelable: true,
+      });
+      (submitEvent as $TSFixMe).isPreviewSubmission = true;
+      (submitEvent as $TSFixMe).previewCallback = generatePreview;
+      form.dispatchEvent(submitEvent);
     }
   };
 

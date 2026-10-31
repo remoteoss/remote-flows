@@ -64,6 +64,11 @@ export function ContractorOnboardingForm({
   ) => {
     const nativeEvent = event?.nativeEvent as $TSFixMe;
 
+    if (nativeEvent?.isPreviewSubmission) {
+      await nativeEvent.previewCallback(values);
+      return;
+    }
+
     if (nativeEvent?.isDraftSubmission) {
       const { onSuccess, onError } = nativeEvent.draftCallbacks;
 

@@ -4939,6 +4939,27 @@ describe('ContractorOnboardingFlow', () => {
       expect(previewRequestBody).not.toHaveProperty('nr_occurrences');
     });
 
+    it('should validate the form instead of previewing when a required field is missing', async () => {
+      const employmentId = generateUniqueEmploymentId();
+      let previewCalls = 0;
+
+      server.use(
+        http.post(`*/v1/employments/*/contractor-invoices/preview`, () => {
+          previewCalls += 1;
+          return HttpResponse.json({ data: {} });
+        }),
+      );
+
+      await goToFilledCreateInvoiceSchedule(employmentId, {
+        item1Description: '',
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /^preview$/i }));
+
+      expect(await screen.findByText(/Required field/i)).toBeInTheDocument();
+      expect(previewCalls).toBe(0);
+    });
+
     it('should add the data URI prefix when the invoice preview comes back as bare base64', async () => {
       const employmentId = generateUniqueEmploymentId();
 
