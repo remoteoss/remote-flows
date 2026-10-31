@@ -10,784 +10,896 @@
       "version": 4,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ALB/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ALB",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ALB/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ALB",
       "version": 4,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ALB/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ALB",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/ALB/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ARG",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ARG/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ARG",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ARG/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ARG",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ARG/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ARG",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/ARG/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ARM",
       "version": 3,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ARM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ARM",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ARM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ARM",
       "version": 3,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ARM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ARM",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/ARM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "AUS",
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/AUS/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "AUS",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/AUS/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "AUS",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/AUS/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "AUS",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/AUS/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "AUT",
       "version": 8,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/AUT/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "AUT",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/AUT/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "AUT",
       "version": 8,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/AUT/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "AUT",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/AUT/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BGD",
       "version": 8,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BGD/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BGD",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BGD/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BGD",
       "version": 8,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BGD/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BGD",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/BGD/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BEL",
       "version": 8,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BEL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BEL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BEL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BEL",
       "version": 8,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BEL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BEL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/BEL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BOL",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BOL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BOL",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BOL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BOL",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BOL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BOL",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/BOL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BIH",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BIH/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BIH",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BIH/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BIH",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BIH/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BIH",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/BIH/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BRA",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BRA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BRA",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BRA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BRA",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BRA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BRA",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/BRA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BGR",
       "version": 8,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BGR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BGR",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BGR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BGR",
       "version": 8,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/BGR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "BGR",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/BGR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CAN",
       "version": 8,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CAN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CAN",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CAN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CAN",
       "version": 8,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CAN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CAN",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/CAN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CHL",
       "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CHL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CHL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CHL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CHL",
       "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CHL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CHL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/CHL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CHN",
       "version": 8,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CHN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CHN",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CHN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CHN",
       "version": 8,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CHN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CHN",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/CHN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "COL",
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/COL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "COL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/COL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "COL",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/COL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "COL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/COL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CRI",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CRI/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CRI",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CRI/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CRI",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CRI/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CRI",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/CRI/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HRV",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/HRV/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HRV",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/HRV/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HRV",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/HRV/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HRV",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/HRV/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CYP",
       "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CYP/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CYP",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CYP/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CYP",
       "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CYP/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CYP",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/CYP/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CZE",
       "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CZE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CZE",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CZE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CZE",
       "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CZE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CZE",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/CZE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "DNK",
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/DNK/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "DNK",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/DNK/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "DNK",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/DNK/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "DNK",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/DNK/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "DOM",
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/DOM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "DOM",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/DOM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "DOM",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/DOM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "DOM",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/DOM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ECU",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ECU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ECU",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ECU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ECU",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ECU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ECU",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/ECU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "EGY",
       "version": 6,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/EGY/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "EGY",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/EGY/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "EGY",
       "version": 6,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/EGY/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "EGY",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/EGY/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SLV",
       "version": 4,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SLV/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SLV",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SLV/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SLV",
       "version": 4,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SLV/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SLV",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/SLV/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "EST",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/EST/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "EST",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/EST/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "EST",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/EST/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "EST",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/EST/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "FIN",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/FIN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "FIN",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/FIN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "FIN",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/FIN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "FIN",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/FIN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "FRA",
       "version": 1,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/FRA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "FRA",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/FRA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "FRA",
       "version": 1,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/FRA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "FRA",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/FRA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "GEO",
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/GEO/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "GEO",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/GEO/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "GEO",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/GEO/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "GEO",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/GEO/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "DEU",
@@ -822,1764 +934,2016 @@
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/GRC/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "GRC",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/GRC/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "GRC",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/GRC/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "GRC",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/GRC/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "GTM",
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/GTM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "GTM",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/GTM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "GTM",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/GTM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "GTM",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/GTM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HND",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/HND/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HND",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/HND/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HND",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/HND/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HND",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/HND/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HKG",
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/HKG/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HKG",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/HKG/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HKG",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/HKG/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HKG",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/HKG/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HUN",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/HUN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HUN",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/HUN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HUN",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/HUN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "HUN",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/HUN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ISL",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ISL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ISL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ISL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ISL",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ISL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ISL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/ISL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "IND",
       "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/IND/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "IND",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/IND/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "IND",
       "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/IND/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "IND",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/IND/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "IDN",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/IDN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "IDN",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/IDN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "IDN",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/IDN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "IDN",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/IDN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "IRL",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/IRL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "IRL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/IRL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "IRL",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/IRL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "IRL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/IRL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ISR",
       "version": 8,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ISR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ISR",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ISR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ISR",
       "version": 8,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ISR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ISR",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/ISR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ITA",
       "version": 2,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ITA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ITA",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ITA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ITA",
       "version": 2,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ITA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ITA",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/ITA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "JAM",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/JAM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "JAM",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/JAM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "JAM",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/JAM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "JAM",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/JAM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "JPN",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/JPN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "JPN",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/JPN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "JPN",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/JPN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "JPN",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/JPN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "KEN",
       "version": 8,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/KEN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "KEN",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/KEN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "KEN",
       "version": 8,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/KEN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "KEN",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/KEN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "XKX",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/XKX/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "XKX",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/XKX/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "XKX",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/XKX/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "XKX",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/XKX/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LVA",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/LVA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LVA",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/LVA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LVA",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/LVA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LVA",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/LVA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LBN",
       "version": 4,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/LBN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LBN",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/LBN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LBN",
       "version": 4,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/LBN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LBN",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/LBN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LTU",
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/LTU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LTU",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/LTU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LTU",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/LTU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LTU",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/LTU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LUX",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/LUX/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LUX",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/LUX/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LUX",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/LUX/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LUX",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/LUX/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MYS",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MYS/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MYS",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MYS/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MYS",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MYS/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MYS",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/MYS/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MLT",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MLT/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MLT",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MLT/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MLT",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MLT/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MLT",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/MLT/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MUS",
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MUS/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MUS",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MUS/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MUS",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MUS/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MUS",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/MUS/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MEX",
       "version": 9,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MEX/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MEX",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MEX/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MEX",
       "version": 9,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MEX/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MEX",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/MEX/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MDA",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MDA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MDA",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MDA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MDA",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MDA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MDA",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/MDA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MAR",
       "version": 8,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MAR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MAR",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MAR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MAR",
       "version": 8,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MAR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MAR",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/MAR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NLD",
       "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/NLD/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NLD",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/NLD/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NLD",
       "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/NLD/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NLD",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/NLD/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NZL",
       "version": 8,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/NZL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NZL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/NZL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NZL",
       "version": 8,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/NZL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NZL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/NZL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NIC",
       "version": 4,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/NIC/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NIC",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/NIC/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NIC",
       "version": 4,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/NIC/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NIC",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/NIC/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NGA",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/NGA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NGA",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/NGA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NGA",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/NGA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NGA",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/NGA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MKD",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MKD/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MKD",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MKD/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MKD",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/MKD/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "MKD",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/MKD/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NOR",
       "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/NOR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NOR",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/NOR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NOR",
       "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/NOR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "NOR",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/NOR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PAK",
       "version": 4,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PAK/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PAK",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PAK/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PAK",
       "version": 4,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PAK/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PAK",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/PAK/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PAN",
+      "version": 7,
+      "strategy": "buildOnce",
+      "check": "pinned",
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PAN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
+    },
+    {
+      "country": "PAN",
+      "version": "latest",
+      "strategy": "buildOnce",
+      "check": "latest",
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PAN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
+    },
+    {
+      "country": "PAN",
+      "version": 7,
+      "strategy": "buildOnce",
+      "check": "submit",
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PAN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
+    },
+    {
+      "country": "PAN",
+      "version": "latest",
+      "strategy": "buildOnce",
+      "check": "latest-submit",
+      "outcome": "fail",
+      "error": "GET /v1/countries/PAN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
+    },
+    {
+      "country": "PRY",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
-    },
-    {
-      "country": "PAN",
-      "version": "latest",
-      "strategy": "rebuild",
-      "check": "latest",
-      "outcome": "pass"
-    },
-    {
-      "country": "PAN",
-      "version": 1,
-      "strategy": "rebuild",
-      "check": "submit",
-      "outcome": "pass"
-    },
-    {
-      "country": "PAN",
-      "version": "latest",
-      "strategy": "rebuild",
-      "check": "latest-submit",
-      "outcome": "pass"
-    },
-    {
-      "country": "PRY",
-      "version": 1,
-      "strategy": "rebuild",
-      "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PRY/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PRY",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PRY/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PRY",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PRY/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PRY",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/PRY/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PER",
       "version": 4,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PER/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PER",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PER/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PER",
       "version": 4,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PER/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PER",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/PER/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PHL",
       "version": 9,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PHL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PHL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PHL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PHL",
       "version": 9,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PHL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PHL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/PHL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "POL",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/POL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "POL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/POL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "POL",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/POL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "POL",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/POL/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PRT",
       "version": 9,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PRT/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PRT",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PRT/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PRT",
       "version": 9,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PRT/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PRT",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/PRT/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "PRI",
+      "version": 6,
+      "strategy": "buildOnce",
+      "check": "pinned",
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PRI/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
+    },
+    {
+      "country": "PRI",
+      "version": "latest",
+      "strategy": "buildOnce",
+      "check": "latest",
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PRI/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
+    },
+    {
+      "country": "PRI",
+      "version": 6,
+      "strategy": "buildOnce",
+      "check": "submit",
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/PRI/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
+    },
+    {
+      "country": "PRI",
+      "version": "latest",
+      "strategy": "buildOnce",
+      "check": "latest-submit",
+      "outcome": "fail",
+      "error": "GET /v1/countries/PRI/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
+    },
+    {
+      "country": "ROU",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
-    },
-    {
-      "country": "PRI",
-      "version": "latest",
-      "strategy": "rebuild",
-      "check": "latest",
-      "outcome": "pass"
-    },
-    {
-      "country": "PRI",
-      "version": 1,
-      "strategy": "rebuild",
-      "check": "submit",
-      "outcome": "pass"
-    },
-    {
-      "country": "PRI",
-      "version": "latest",
-      "strategy": "rebuild",
-      "check": "latest-submit",
-      "outcome": "pass"
-    },
-    {
-      "country": "ROU",
-      "version": 1,
-      "strategy": "rebuild",
-      "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ROU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ROU",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ROU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ROU",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ROU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ROU",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/ROU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SAU",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SAU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SAU",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SAU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SAU",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SAU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SAU",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/SAU/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SRB",
       "version": 9,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SRB/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SRB",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SRB/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SRB",
       "version": 9,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SRB/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SRB",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/SRB/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SGP",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SGP/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SGP",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SGP/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SGP",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SGP/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SGP",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/SGP/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SVK",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SVK/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SVK",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SVK/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SVK",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SVK/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SVK",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/SVK/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SVN",
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SVN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SVN",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SVN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SVN",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SVN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SVN",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/SVN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ZAF",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ZAF/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ZAF",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ZAF/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ZAF",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ZAF/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ZAF",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/ZAF/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "KOR",
       "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/KOR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "KOR",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/KOR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "KOR",
       "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/KOR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "KOR",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/KOR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ESP",
       "version": 8,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ESP/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ESP",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ESP/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ESP",
       "version": 8,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ESP/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ESP",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/ESP/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LKA",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/LKA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LKA",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/LKA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LKA",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/LKA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "LKA",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/LKA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SWE",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SWE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SWE",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SWE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SWE",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/SWE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "SWE",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/SWE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CHE",
       "version": 2,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CHE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CHE",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CHE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CHE",
       "version": 2,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/CHE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "CHE",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/CHE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "TWN",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/TWN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "TWN",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/TWN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "TWN",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/TWN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "TWN",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/TWN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "THA",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/THA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "THA",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/THA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "THA",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/THA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "THA",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/THA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "TUN",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/TUN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "TUN",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/TUN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "TUN",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/TUN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "TUN",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/TUN/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "TUR",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/TUR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "TUR",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/TUR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "TUR",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/TUR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "TUR",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/TUR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "UGA",
       "version": 5,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/UGA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "UGA",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/UGA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "UGA",
       "version": 5,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/UGA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "UGA",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/UGA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "UKR",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/UKR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "UKR",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/UKR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "UKR",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/UKR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "UKR",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/UKR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ARE",
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ARE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ARE",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ARE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ARE",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ARE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ARE",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/ARE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "GBR",
       "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/GBR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "GBR",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/GBR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "GBR",
       "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/GBR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "GBR",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/GBR/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "USA",
       "version": 9,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/USA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "USA",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/USA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "USA",
       "version": 9,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/USA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "USA",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/USA/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "URY",
       "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/URY/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "URY",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/URY/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "URY",
       "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/URY/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "URY",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/URY/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "VNM",
       "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/VNM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "VNM",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/VNM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "VNM",
       "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/VNM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "VNM",
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/VNM/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ZWE",
       "version": 1,
       "strategy": "rebuild",
       "check": "pinned",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ZWE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ZWE",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ZWE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ZWE",
       "version": 1,
       "strategy": "rebuild",
       "check": "submit",
-      "outcome": "pass"
+      "outcome": "seed-error",
+      "error": "employment seeding failed: GET /v1/countries/ZWE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     },
     {
       "country": "ZWE",
       "version": "latest",
       "strategy": "rebuild",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "GET /v1/countries/ZWE/engagement_agreement_details -> {\"message\":\"Form not available for requested country\"}"
     }
   ]
 }
