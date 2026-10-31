@@ -1,6 +1,8 @@
 import { useFormFields } from '@/src/context';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 import { useContractorOnboardingContext } from '@/src/flows/ContractorOnboarding/context';
 import { ButtonHTMLAttributes, useState } from 'react';
+import { FieldValues } from 'react-hook-form';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { handleStepError } from '@/src/lib/utils';
 import { ContractorInvoicePreview } from '@/src/flows/ContractorOnboarding/types';
@@ -43,16 +45,14 @@ export const PreviewInvoiceButton = ({
 }: PreviewInvoiceButtonProps) => {
   const [preview, setPreview] = useState<ContractorInvoicePreview | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const { contractorOnboardingBag } = useContractorOnboardingContext();
+  const { contractorOnboardingBag, formId } = useContractorOnboardingContext();
 
   const { components } = useFormFields();
 
-  const handlePreview = async () => {
+  const generatePreview = async (values: FieldValues) => {
     try {
       const previewDocument =
-        await contractorOnboardingBag.previewContractorInvoice(
-          contractorOnboardingBag.fieldValues,
-        );
+        await contractorOnboardingBag.previewContractorInvoice(values);
       if (previewDocument) {
         setPreview(previewDocument);
         setIsOpen(true);
@@ -64,6 +64,19 @@ export const PreviewInvoiceButton = ({
         contractorOnboardingBag.meta?.fields?.create_invoice_schedule,
       );
       onError?.(structuredError);
+    }
+  };
+
+  const handlePreview = () => {
+    const form = document.getElementById(formId);
+    if (form) {
+      const submitEvent = new Event('submit', {
+        bubbles: true,
+        cancelable: true,
+      });
+      (submitEvent as $TSFixMe).isPreviewSubmission = true;
+      (submitEvent as $TSFixMe).previewCallback = generatePreview;
+      form.dispatchEvent(submitEvent);
     }
   };
 

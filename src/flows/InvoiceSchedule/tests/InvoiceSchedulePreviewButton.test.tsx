@@ -37,6 +37,19 @@ function renderFlow({
   );
 }
 
+async function fillValidInvoice() {
+  await fillSelect('currency', 'EUR');
+  await fillSelect('periodicity', 'monthly');
+  await fillDatePickerByTestId('2100-01-01', 'start_date');
+  fireEvent.change(screen.getByLabelText(/Item 1 description/i), {
+    target: { value: 'Design work' },
+  });
+  fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
+    target: { value: '2500.50' },
+  });
+  fireEvent.click(screen.getByRole('radio', { name: 'No end date' }));
+}
+
 describe('InvoiceSchedulePreviewButton', () => {
   beforeEach(() => {
     queryClient.clear();
@@ -72,15 +85,7 @@ describe('InvoiceSchedulePreviewButton', () => {
     await waitFor(() => {
       expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
     });
-    await fillSelect('currency', 'EUR');
-    await fillSelect('periodicity', 'monthly');
-    await fillDatePickerByTestId('2100-01-01', 'start_date');
-    fireEvent.change(screen.getByLabelText(/Item 1 description/i), {
-      target: { value: 'Design work' },
-    });
-    fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
-      target: { value: '2500.50' },
-    });
+    await fillValidInvoice();
 
     fireEvent.click(screen.getByRole('button', { name: /Preview invoice/i }));
 
@@ -113,6 +118,7 @@ describe('InvoiceSchedulePreviewButton', () => {
     expect(screen.queryByText(/Invoice Preview/i)).not.toBeInTheDocument();
     expect(screen.queryByTitle('invoice-preview.pdf')).not.toBeInTheDocument();
 
+    await fillValidInvoice();
     fireEvent.click(screen.getByRole('button', { name: /Preview invoice/i }));
 
     expect(
@@ -155,11 +161,37 @@ describe('InvoiceSchedulePreviewButton', () => {
       expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
     });
 
+    await fillValidInvoice();
     fireEvent.click(screen.getByRole('button', { name: /Preview invoice/i }));
 
     await waitFor(() => {
       expect(onError).toHaveBeenCalled();
     });
     expect(screen.queryByText(/Invoice Preview/i)).not.toBeInTheDocument();
+  });
+
+  it('validates the form instead of calling the API when required fields are missing', async () => {
+    let previewCalls = 0;
+    server.use(
+      http.post('*/v1/employments/:id/contractor-invoices/preview', () => {
+        previewCalls += 1;
+        return HttpResponse.json({ data: {} });
+      }),
+    );
+
+    const onSuccess = vi.fn();
+    renderFlow({ employmentId: 'employment-grace', onSuccess });
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Preview invoice/i }));
+
+    expect(
+      (await screen.findAllByText(/Required field/i)).length,
+    ).toBeGreaterThan(0);
+    expect(previewCalls).toBe(0);
+    expect(onSuccess).not.toHaveBeenCalled();
   });
 });
