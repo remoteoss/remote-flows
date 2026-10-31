@@ -50,6 +50,19 @@ export function ContractorOnboardingForm({
   }, [form.setValue, formRef]);
 
   useEffect(() => {
+    const triggerRef = formRef?.trigger;
+    if (!triggerRef) {
+      return;
+    }
+    triggerRef.current = form.trigger;
+    return () => {
+      if (triggerRef.current === form.trigger) {
+        triggerRef.current = undefined;
+      }
+    };
+  }, [form.trigger, formRef]);
+
+  useEffect(() => {
     // When the employmentId is set,
     // we need to run the checkFieldUpdates to update fieldValues in useStepState
     if (contractorOnboardingBag.employmentId) {

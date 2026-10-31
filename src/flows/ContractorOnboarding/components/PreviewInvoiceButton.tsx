@@ -43,11 +43,15 @@ export const PreviewInvoiceButton = ({
 }: PreviewInvoiceButtonProps) => {
   const [preview, setPreview] = useState<ContractorInvoicePreview | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const { contractorOnboardingBag } = useContractorOnboardingContext();
+  const { contractorOnboardingBag, formRef } = useContractorOnboardingContext();
 
   const { components } = useFormFields();
 
   const handlePreview = async () => {
+    const triggerValidation = formRef?.trigger?.current;
+    if (triggerValidation && !(await triggerValidation())) {
+      return;
+    }
     try {
       const previewDocument =
         await contractorOnboardingBag.previewContractorInvoice(

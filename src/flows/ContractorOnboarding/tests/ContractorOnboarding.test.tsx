@@ -5046,6 +5046,126 @@ describe('ContractorOnboardingFlow', () => {
       ).toBe(true);
     });
 
+    describe('preview button', () => {
+      const emptyItem = { item1Description: '', item1Amount: '' };
+
+      const trackPreviewRequests = () => {
+        const previewRequest = vi.fn();
+        server.use(
+          http.post(`*/v1/employments/*/contractor-invoices/preview`, () => {
+            previewRequest();
+            return HttpResponse.json({
+              data: {
+                contractor_invoice_preview: {
+                  name: 'invoice-preview.pdf',
+                  content: 'data:application/pdf;base64,JVBERi0xLjQK',
+                },
+              },
+            });
+          }),
+        );
+        return previewRequest;
+      };
+
+      it('validates the create invoice form', async () => {
+        trackPreviewRequests();
+        await goToFilledCreateInvoiceSchedule(
+          generateUniqueEmploymentId(),
+          emptyItem,
+        );
+
+        expect(screen.queryByText('Required field')).not.toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('button', { name: /^preview$/i }));
+
+        expect((await screen.findAllByText('Required field')).length).toBe(2);
+        expect(screen.getByLabelText(/Item 1 description/i)).toHaveAttribute(
+          'aria-invalid',
+          'true',
+        );
+        expect(screen.getByLabelText(/Item 1 amount/i)).toHaveAttribute(
+          'aria-invalid',
+          'true',
+        );
+      });
+
+      it('does not proceed with invalid form', async () => {
+        const previewRequest = trackPreviewRequests();
+        await goToFilledCreateInvoiceSchedule(
+          generateUniqueEmploymentId(),
+          emptyItem,
+        );
+
+        const onSuccessCallsBeforePreview = mockOnSuccess.mock.calls.length;
+        fireEvent.click(screen.getByRole('button', { name: /^preview$/i }));
+
+        await screen.findAllByText('Required field');
+        expect(previewRequest).not.toHaveBeenCalled();
+        expect(mockOnSuccess).toHaveBeenCalledTimes(
+          onSuccessCallsBeforePreview,
+        );
+        expect(
+          screen.queryByTitle('invoice-preview.pdf'),
+        ).not.toBeInTheDocument();
+        expect(
+          screen.getByText('Step: Create Invoice Schedule'),
+        ).toBeInTheDocument();
+      });
+
+      it('proceeds with valid form', async () => {
+        const previewRequest = trackPreviewRequests();
+        await goToFilledCreateInvoiceSchedule(generateUniqueEmploymentId());
+
+        fireEvent.click(screen.getByRole('button', { name: /^preview$/i }));
+
+        expect(
+          await screen.findByTitle('invoice-preview.pdf'),
+        ).toBeInTheDocument();
+        expect(previewRequest).toHaveBeenCalledTimes(1);
+        expect(mockOnSuccess).toHaveBeenCalledWith({
+          name: 'invoice-preview.pdf',
+          content: 'data:application/pdf;base64,JVBERi0xLjQK',
+        });
+        expect(screen.queryByText('Required field')).not.toBeInTheDocument();
+      });
+    });
+
+    it('preview validation via useContractorOnboarding hook', async () => {
+      const previewRequest = vi.fn();
+      server.use(
+        http.post(`*/v1/employments/*/contractor-invoices/preview`, () => {
+          previewRequest();
+          return HttpResponse.json({
+            data: {
+              contractor_invoice_preview: {
+                name: 'invoice-preview.pdf',
+                content: 'data:application/pdf;base64,JVBERi0xLjQK',
+              },
+            },
+          });
+        }),
+      );
+
+      await goToFilledCreateInvoiceSchedule(generateUniqueEmploymentId(), {
+        item1Description: '',
+        item1Amount: '',
+      });
+
+      const bag = (
+        mockRender.mock.lastCall?.[0] as ContractorOnboardingRenderProps
+      ).contractorOnboardingBag;
+
+      await expect(
+        bag.previewContractorInvoice(bag.fieldValues),
+      ).rejects.toMatchObject({
+        error: expect.any(Error),
+        fieldErrors: expect.arrayContaining([
+          expect.objectContaining({ messages: ['Required field'] }),
+        ]),
+      });
+      expect(previewRequest).not.toHaveBeenCalled();
+    });
+
     it('creates a one-off schedule as monthly with a single occurrence when "One time" is chosen', async () => {
       const employmentId = generateUniqueEmploymentId();
       let createRequestBody: Record<string, unknown> | undefined;

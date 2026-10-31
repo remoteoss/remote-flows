@@ -1,5 +1,6 @@
 import { FieldErrors, FieldValues, Resolver } from 'react-hook-form';
 import type { ValidationError } from 'yup';
+import type { FieldError } from '@/src/lib/mutations';
 import type {
   FormErrors,
   ValidationResult,
@@ -81,6 +82,20 @@ export function iterateFormErrors(
     },
     {} as FieldErrors,
   );
+}
+
+export function getValidationFieldErrors(
+  result: ValidationResult | null,
+): FieldError[] {
+  const formErrors =
+    result && 'formErrors' in result ? result.formErrors : undefined;
+
+  return Object.entries(iterateFormErrors(formErrors))
+    .filter(([field]) => !field.endsWith('.value'))
+    .map(([field, fieldError]) => ({
+      field,
+      messages: [String(fieldError?.message ?? '')],
+    }));
 }
 
 export const useJsonSchemasValidationFormResolver = <

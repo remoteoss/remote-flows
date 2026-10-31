@@ -1,4 +1,5 @@
-import React, { useId } from 'react';
+import React, { useId, useMemo, useRef } from 'react';
+import { UseFormTrigger } from 'react-hook-form';
 import { InvoiceScheduleContext } from '@/src/flows/InvoiceSchedule/context';
 import { useInvoiceSchedule } from '@/src/flows/InvoiceSchedule/hooks';
 import { UseInvoiceScheduleOptions } from '@/src/flows/InvoiceSchedule/types';
@@ -37,6 +38,10 @@ const InvoiceScheduleFlowContent = ({
   render,
 }: InvoiceScheduleFlowProps) => {
   const formId = useId();
+  const triggerRef = useRef<
+    UseFormTrigger<Record<string, unknown>> | undefined
+  >(undefined);
+  const formRef = useMemo(() => ({ trigger: triggerRef }), []);
   const invoiceScheduleBag = useInvoiceSchedule({
     employmentId,
     jsfModify,
@@ -48,6 +53,7 @@ const InvoiceScheduleFlowContent = ({
       value={{
         formId,
         invoiceScheduleBag,
+        formRef,
       }}
     >
       {render(invoiceScheduleBag)}

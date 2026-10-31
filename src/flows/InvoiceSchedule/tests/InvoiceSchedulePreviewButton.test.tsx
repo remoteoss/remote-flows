@@ -37,6 +37,22 @@ function renderFlow({
   );
 }
 
+async function fillValidInvoice() {
+  await waitFor(() => {
+    expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
+  });
+  await fillSelect('currency', 'EUR');
+  await fillSelect('periodicity', 'monthly');
+  fireEvent.click(screen.getByRole('radio', { name: 'No end date' }));
+  await fillDatePickerByTestId('2100-01-01', 'start_date');
+  fireEvent.change(screen.getByLabelText(/Item 1 description/i), {
+    target: { value: 'Design work' },
+  });
+  fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
+    target: { value: '2500.50' },
+  });
+}
+
 describe('InvoiceSchedulePreviewButton', () => {
   beforeEach(() => {
     queryClient.clear();
@@ -69,18 +85,7 @@ describe('InvoiceSchedulePreviewButton', () => {
     const onSuccess = vi.fn();
     renderFlow({ employmentId: 'employment-grace', onSuccess });
 
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
-    });
-    await fillSelect('currency', 'EUR');
-    await fillSelect('periodicity', 'monthly');
-    await fillDatePickerByTestId('2100-01-01', 'start_date');
-    fireEvent.change(screen.getByLabelText(/Item 1 description/i), {
-      target: { value: 'Design work' },
-    });
-    fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
-      target: { value: '2500.50' },
-    });
+    await fillValidInvoice();
 
     fireEvent.click(screen.getByRole('button', { name: /Preview invoice/i }));
 
@@ -104,9 +109,7 @@ describe('InvoiceSchedulePreviewButton', () => {
   it('shows the returned PDF in a drawer', async () => {
     renderFlow({ employmentId: 'employment-grace' });
 
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
-    });
+    await fillValidInvoice();
 
     // The drawer is opened by the preview itself, not by the trigger, so nothing is on
     // screen until the PDF comes back.
@@ -151,9 +154,7 @@ describe('InvoiceSchedulePreviewButton', () => {
     const onError = vi.fn();
     renderFlow({ employmentId: 'employment-grace', onError });
 
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
-    });
+    await fillValidInvoice();
 
     fireEvent.click(screen.getByRole('button', { name: /Preview invoice/i }));
 
@@ -161,5 +162,79 @@ describe('InvoiceSchedulePreviewButton', () => {
       expect(onError).toHaveBeenCalled();
     });
     expect(screen.queryByText(/Invoice Preview/i)).not.toBeInTheDocument();
+  });
+
+  it('validates the form and does not preview while it is invalid', async () => {
+    const previewRequest = vi.fn();
+    server.use(
+      http.post('*/v1/employments/:id/contractor-invoices/preview', () => {
+        previewRequest();
+        return HttpResponse.json({
+          data: {
+            contractor_invoice_preview: {
+              name: 'invoice-preview.pdf',
+              content: 'data:application/pdf;base64,JVBERi0xLjQK',
+            },
+          },
+        });
+      }),
+    );
+
+    const onSuccess = vi.fn();
+    const onError = vi.fn();
+    renderFlow({ employmentId: 'employment-grace', onSuccess, onError });
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
+    });
+    expect(screen.queryByText('Required field')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /Preview invoice/i }));
+
+    expect(
+      (await screen.findAllByText('Required field')).length,
+    ).toBeGreaterThan(0);
+    expect(screen.getByLabelText(/Item 1 description/i)).toHaveAttribute(
+      'aria-invalid',
+      'true',
+    );
+    expect(previewRequest).not.toHaveBeenCalled();
+    expect(onSuccess).not.toHaveBeenCalled();
+    expect(onError).not.toHaveBeenCalled();
+    expect(screen.queryByTitle('invoice-preview.pdf')).not.toBeInTheDocument();
+  });
+
+  it('rejects invalid values from the headless previewInvoice without calling the API', async () => {
+    const previewRequest = vi.fn();
+    server.use(
+      http.post('*/v1/employments/:id/contractor-invoices/preview', () => {
+        previewRequest();
+        return HttpResponse.json({ data: {} });
+      }),
+    );
+
+    let bag: $TSFixMe;
+    render(
+      <InvoiceScheduleFlow
+        employmentId='employment-grace'
+        render={(invoiceScheduleBag) => {
+          bag = invoiceScheduleBag;
+          return null;
+        }}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    await waitFor(() => {
+      expect(bag?.isLoading).toBe(false);
+    });
+
+    await expect(bag.previewInvoice({})).rejects.toMatchObject({
+      error: expect.any(Error),
+      fieldErrors: expect.arrayContaining([
+        expect.objectContaining({ messages: ['Required field'] }),
+      ]),
+    });
+    expect(previewRequest).not.toHaveBeenCalled();
   });
 });

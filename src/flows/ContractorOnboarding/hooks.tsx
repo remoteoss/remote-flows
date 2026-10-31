@@ -73,6 +73,7 @@ import {
 } from '@/src/flows/Onboarding/api';
 import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
 import { useStepState } from '@/src/flows/useStepState';
+import { getValidationFieldErrors } from '@/src/components/form/validationResolver';
 import { mutationToPromise } from '@/src/lib/mutations';
 import {
   clearBase64Data,
@@ -1619,6 +1620,16 @@ export const useContractorOnboarding = ({
       throw createStructuredError('Employment ID is required');
     }
 
+    const fieldErrors = getValidationFieldErrors(
+      await handleCreateInvoiceScheduleValidation(values),
+    );
+    if (fieldErrors.length > 0) {
+      throw {
+        ...createStructuredError('Please resolve the errors in the form'),
+        fieldErrors,
+      };
+    }
+
     // fieldValues are the raw, unparsed form values (e.g. money fields still
     // in display units) — run them through the same parsing/type-coercion
     // pipeline a real submit would use before building the preview payload.
@@ -1846,7 +1857,8 @@ export const useContractorOnboarding = ({
 
     /**
      * Previews a contractor invoice as a draft PDF from the given (typically
-     * unsaved) form values, without persisting anything.
+     * unsaved) form values, without persisting anything. Invalid values reject
+     * with `fieldErrors` before any request is sent.
      * @param values - Form values to build the preview from
      * @returns {Promise<{name: string; content: string} | undefined>}
      */

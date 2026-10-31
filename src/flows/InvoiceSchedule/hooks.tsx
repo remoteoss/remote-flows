@@ -10,6 +10,7 @@ import { buildInvoiceSchedulePayload } from '@/src/common/invoice-schedules/util
 import { useEmploymentQuery } from '@/src/common/api/employment';
 import { useDeepStable } from '@/src/common/hooks';
 import { getInitialValues } from '@/src/components/form/utils';
+import { getValidationFieldErrors } from '@/src/components/form/validationResolver';
 import {
   InvoiceScheduleFormValues,
   InvoiceSchedulePayload,
@@ -128,6 +129,15 @@ export const useInvoiceSchedule = ({
       values: InvoiceScheduleFormValues,
     ): Promise<ContractorInvoicePreview | undefined> => {
       assertEmploymentId();
+      const fieldErrors = getValidationFieldErrors(
+        await handleValidation(values),
+      );
+      if (fieldErrors.length > 0) {
+        throw {
+          ...createStructuredError('Please resolve the errors in the form'),
+          fieldErrors,
+        };
+      }
       const parsed = await parseValues(values);
 
       const response = await previewContractorInvoiceAsync({
@@ -150,6 +160,7 @@ export const useInvoiceSchedule = ({
     [
       assertEmploymentId,
       employmentId,
+      handleValidation,
       parseValues,
       previewContractorInvoiceAsync,
     ],
@@ -198,7 +209,8 @@ export const useInvoiceSchedule = ({
     /**
      * Renders the current form values as a draft invoice PDF without creating anything.
      * Resolves to a `data:application/pdf;base64,…` document, or `undefined` if the API
-     * returned none. `InvoiceSchedulePreviewButton` wires this up for you.
+     * returned none. Invalid values reject with `fieldErrors` before any request is sent.
+     * `InvoiceSchedulePreviewButton` wires this up for you.
      */
     previewInvoice,
     /**

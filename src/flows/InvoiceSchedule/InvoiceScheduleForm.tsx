@@ -35,13 +35,26 @@ export function InvoiceScheduleForm({
   onSuccess,
   onError,
 }: InvoiceScheduleFormProps) {
-  const { formId, invoiceScheduleBag } = useInvoiceScheduleContext();
+  const { formId, invoiceScheduleBag, formRef } = useInvoiceScheduleContext();
 
   const form = useJSONSchemaForm({
     handleValidation: invoiceScheduleBag.handleValidation,
     checkFieldUpdates: invoiceScheduleBag.checkFieldUpdates,
     defaultValues: invoiceScheduleBag.initialValues,
   });
+
+  useEffect(() => {
+    const triggerRef = formRef?.trigger;
+    if (!triggerRef) {
+      return;
+    }
+    triggerRef.current = form.trigger;
+    return () => {
+      if (triggerRef.current === form.trigger) {
+        triggerRef.current = undefined;
+      }
+    };
+  }, [form.trigger, formRef]);
 
   useEffect(() => {
     invoiceScheduleBag.checkFieldUpdates(form.getValues());

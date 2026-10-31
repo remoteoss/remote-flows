@@ -1,4 +1,4 @@
-import { UseFormSetValue } from 'react-hook-form';
+import { UseFormSetValue, UseFormTrigger } from 'react-hook-form';
 import { useId, useRef, useMemo } from 'react';
 import { OnboardingBack } from '@/src/flows/ContractorOnboarding/components/OnboardingBack';
 import { SelectCountryStep } from '@/src/flows/ContractorOnboarding/components/SelectCountryStep';
@@ -36,7 +36,13 @@ export const ContractorOnboardingFlow = ({
   const setValueRef = useRef<
     UseFormSetValue<Record<string, unknown>> | undefined
   >(undefined);
-  const formRef = useMemo(() => ({ setValue: setValueRef }), []);
+  const triggerRef = useRef<
+    UseFormTrigger<Record<string, unknown>> | undefined
+  >(undefined);
+  const formRef = useMemo(
+    () => ({ setValue: setValueRef, trigger: triggerRef }),
+    [],
+  );
 
   const contractorOnboardingBag = useContractorOnboarding({
     options: {
