@@ -293,7 +293,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ROU: {
     // Romania
-    contract_details: 1,
+    contract_details: 6,
   },
   SAU: {
     // Saudi Arabia
@@ -333,7 +333,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   TUR: {
     // Turkey
-    contract_details: 1,
+    contract_details: 7,
   },
   TWN: {
     // Taiwan

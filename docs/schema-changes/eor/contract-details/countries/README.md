@@ -101,7 +101,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Poland](./POL.md)               | POL  | v5               | v5              | Yes        | October 2026 |
 | [Portugal](./PRT.md)             | PRT  | v9               | v9              | Yes        | October 2026 |
 | [Puerto Rico](./PRI.md)          | PRI  | v6               | v6              | Yes        | October 2026 |
-| Romania                          | ROU  | v1               | v6              | No         | -            |
+| [Romania](./ROU.md)              | ROU  | v6               | v6              | Yes        | October 2026 |
 | [Saudi Arabia](./SAU.md)         | SAU  | v5               | v5              | Yes        | October 2026 |
 | [Serbia](./SRB.md)               | SRB  | v9               | v9              | Yes        | October 2026 |
 | [Singapore](./SGP.md)            | SGP  | v5               | v5              | Yes        | October 2026 |
@@ -116,7 +116,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | Taiwan                           | TWN  | v1               | v5              | No         | -            |
 | [Thailand](./THA.md)             | THA  | v5               | v5              | Yes        | October 2026 |
 | Tunisia                          | TUN  | v1               | v8              | No         | -            |
-| Turkey                           | TUR  | v1               | v7              | No         | -            |
+| [Turkey](./TUR.md)               | TUR  | v7               | v7              | Yes        | October 2026 |
 | [Uganda](./UGA.md)               | UGA  | v5               | v5              | Yes        | October 2026 |
 | Ukraine                          | UKR  | v1               | v7              | No         | -            |
 | [United Arab Emirates](./ARE.md) | ARE  | v6               | v7              | No         | October 2026 |
