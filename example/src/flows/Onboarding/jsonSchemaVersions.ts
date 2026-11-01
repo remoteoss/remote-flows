@@ -5,7 +5,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION = {
 export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   ALB: {
     // Albania
-    contract_details: 4,
+    contract_details: 5,
   },
   ARE: {
     // United Arab Emirates
@@ -257,7 +257,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   NZL: {
     // New Zealand
-    contract_details: 8,
+    contract_details: 9,
   },
   PAK: {
     // Pakistan
