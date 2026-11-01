@@ -4,11 +4,35 @@ Schema versions for employee onboarding in Australia.
 
 ## Current Version
 
-**Contract Details:** v6
+**Contract Details:** v7
 
 ## Contract Details
 
-### v6 - Current
+### v7 - Current
+
+**Type of change:** compliance
+
+**What changed:**
+
+- The probation period is blocked for employments with a recognized seniority date, the same way the fixed-term contract seniority block already works. For those employments `probation_length` is locked to `0`, and any other submitted value is rejected. Most submissions need no change; if your UI lets users enter a probation period, expect this rejection for employees with recognized prior service.
+- `probation_length` no longer accepts `null`: its type is now `number` only. It is still required for indefinite contracts and still not allowed for fixed-term ones, so send a number (0 to 6) or omit the field instead of sending `null`.
+- The "Waiving the probation period is possible but discouraged" warning shown when `probation_length` is `0` now also carries a help-center link about probation periods. Presentation only, no action required.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      AUS: { contract_details: 7 },
+    },
+  }}
+/>
+```
+
+---
+
+### v6
 
 **What changed:**
 
