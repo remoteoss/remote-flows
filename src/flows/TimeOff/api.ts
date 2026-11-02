@@ -6,7 +6,10 @@ import {
 } from '@tanstack/react-query';
 import {
   DeclineTimeoffParams,
+  getV1Timeoff,
+  GetV1TimeoffData,
   getV1TimeoffId,
+  ListTimeoffResponse,
   NullableApproverId,
   postV1TimeoffTimeoffIdApprove,
   postV1TimeoffTimeoffIdDecline,
@@ -18,6 +21,7 @@ import { useClient } from '@/src/context';
 import {
   TimeOffDecisionError,
   TimeOffRequestError,
+  TimeOffRequestsError,
 } from '@/src/flows/TimeOff/types';
 import { isMutationError } from '@/src/lib/mutations';
 
@@ -67,6 +71,62 @@ export const useGetTimeOffRequest = (timeOffId: string | undefined) => {
     ...timeOffRequestOptions(client as Client, timeOffId ?? ''),
     enabled: Boolean(timeOffId),
     select: (data) => data.data.timeoff,
+  });
+};
+
+const getTimeOffRequestsErrorReason = (
+  status: number | undefined,
+): TimeOffRequestsError['reason'] => {
+  if (status === 401 || status === 403) {
+    return 'unauthorized';
+  }
+  if (status === 400 || status === 422) {
+    return 'rejected';
+  }
+  return 'request_failed';
+};
+
+type TimeOffRequestsQuery = Pick<
+  NonNullable<GetV1TimeoffData['query']>,
+  'status' | 'page' | 'page_size'
+>;
+
+/**
+ * One page of time-off requests, from `GET /v1/timeoff`.
+ */
+export const timeOffRequestsOptions = (
+  client: Client,
+  query: TimeOffRequestsQuery,
+) =>
+  queryOptions<ListTimeoffResponse, TimeOffRequestsError>({
+    queryKey: ['timeoff-requests', query] as const,
+    retry: false,
+    queryFn: async () => {
+      const response = await getV1Timeoff({
+        client,
+        headers: {
+          Authorization: ``,
+        },
+        query,
+      });
+
+      if (response.error || !response.data) {
+        const status = response.response?.status;
+        throw {
+          reason: getTimeOffRequestsErrorReason(status),
+          status,
+        } satisfies TimeOffRequestsError;
+      }
+
+      return response.data;
+    },
+  });
+
+export const useGetTimeOffRequests = (query: TimeOffRequestsQuery) => {
+  const { client } = useClient();
+  return useQuery({
+    ...timeOffRequestsOptions(client as Client, query),
+    select: (data) => data.data ?? {},
   });
 };
 

@@ -4,6 +4,7 @@ import {
   NullableApproverId,
   Timeoff,
   TimeoffErrorResponse,
+  TimeoffStatus,
 } from '@/src/client';
 import { useTimeOff } from '@/src/flows/TimeOff/hooks';
 
@@ -30,6 +31,21 @@ export type UseTimeOffRequestOptions = {
   timeOffId?: string;
 };
 
+export type UseTimeOffRequestsOptions = {
+  /**
+   * Only lists requests in this status. Defaults to `requested`, the requests awaiting a decision.
+   */
+  status?: TimeoffStatus;
+  /**
+   * The page to load, from `1`. The API returns the first page when omitted.
+   */
+  page?: number;
+  /**
+   * How many requests a page holds. The API documents `1` to `100` and uses `20` when omitted.
+   */
+  pageSize?: number;
+};
+
 /**
  * A time-off request as `GET /v1/timeoff/{id}` returns it.
  */
@@ -41,6 +57,16 @@ export type TimeOffRequest = Timeoff;
  */
 export type TimeOffRequestError = {
   reason: 'not_found' | 'unauthorized' | 'request_failed';
+  status: number | undefined;
+};
+
+/**
+ * Why a page of time-off requests failed to load: `unauthorized` when the token is rejected,
+ * `rejected` when the API refuses the status or paging values with a `400` or `422`,
+ * `request_failed` for anything else.
+ */
+export type TimeOffRequestsError = {
+  reason: 'unauthorized' | 'rejected' | 'request_failed';
   status: number | undefined;
 };
 

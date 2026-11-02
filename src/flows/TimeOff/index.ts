@@ -1,5 +1,5 @@
 export { TimeOffFlow } from './TimeOffFlow';
-export { useTimeOff, useTimeOffRequest } from './hooks';
+export { useTimeOff, useTimeOffRequest, useTimeOffRequests } from './hooks';
 export type {
   TimeOffApproveButtonProps,
   TimeOffApproveOptions,
@@ -12,8 +12,10 @@ export type {
   TimeOffRequestDetail,
   TimeOffRequestError,
   TimeOffRequestIdFormValues,
+  TimeOffRequestsError,
   TimeOffReviewStepProps,
   TimeOffStepKeys,
   UseTimeOffOptions,
   UseTimeOffRequestOptions,
+  UseTimeOffRequestsOptions,
 } from './types';

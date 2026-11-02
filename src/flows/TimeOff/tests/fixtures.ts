@@ -1,4 +1,8 @@
-import { TimeoffErrorResponse, TimeoffResponse } from '@/src/client';
+import {
+  ListTimeoffResponse,
+  TimeoffErrorResponse,
+  TimeoffResponse,
+} from '@/src/client';
 
 export const timeOffRequestResponse: TimeoffResponse = {
   data: {
@@ -27,6 +31,24 @@ export const timeOffRequestResponse: TimeoffResponse = {
         leave_type: 'paid_time_off',
       },
     },
+  },
+};
+
+export const timeOffRequestsResponse: ListTimeoffResponse = {
+  data: {
+    current_page: 1,
+    total_count: 21,
+    total_pages: 2,
+    timeoffs: [timeOffRequestResponse.data.timeoff],
+  },
+};
+
+export const emptyTimeOffRequestsResponse: ListTimeoffResponse = {
+  data: {
+    current_page: 1,
+    total_count: 0,
+    total_pages: 0,
+    timeoffs: [],
   },
 };
 
