@@ -4,11 +4,35 @@ Schema versions for employee onboarding in Argentina.
 
 ## Current Version
 
-**Contract Details:** v5
+**Contract Details:** v6
 
 ## Contract Details
 
-### v5 - Current
+### v6 - Current
+
+**Type of change:** compliance
+
+**What changed:**
+
+- The probation period is blocked for employments with a recognized seniority date, the same way the fixed-term contract seniority block already works. For those employments, `has_probation_period` must be `"no"` and `probation_length` must be `0`; any other value is rejected on submit. No action is required for other employments.
+- `has_probation_period` no longer has an `N/A` (`null`) option and no longer accepts `null`. It is still required for indefinite contracts and must be omitted for fixed-term contracts, together with `probation_length`.
+- `probation_length` no longer accepts `null`: send a number from 1 to 6 when `has_probation_period` is `"yes"`, and omit the field otherwise.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      ARG: { contract_details: 6 },
+    },
+  }}
+/>
+```
+
+---
+
+### v5
 
 **Type of change:** compliance
 
