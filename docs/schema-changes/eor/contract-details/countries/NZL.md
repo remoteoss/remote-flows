@@ -4,11 +4,35 @@ Schema versions for employee onboarding in New Zealand.
 
 ## Current Version
 
-**Contract Details:** v8
+**Contract Details:** v9
 
 ## Contract Details
 
-### v8 - Current
+### v9 - Current
+
+**Type of change:** compliance
+
+**What changed:**
+
+- Adds `contract_duration_fixed_term_reason_ack`, a required checkbox that confirms the fixed-term reason is accurate and the role really ends on the end date. It is required only when `contract_duration_type` is `fixed_term` and must not be sent otherwise. Submit it with the value `"acknowledged"`, or fixed-term submissions are rejected.
+- `contract_end_date` now has a `maxDate` of two years from today in `x-jsf-presentation` (previously no upper bound), so the form rejects a later end date. Indefinite contracts are unaffected.
+- Existing contracts are unaffected.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      NZL: { contract_details: 9 },
+    },
+  }}
+/>
+```
+
+---
+
+### v8
 
 **What changed:**
 
