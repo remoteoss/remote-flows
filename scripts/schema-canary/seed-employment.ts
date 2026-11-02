@@ -152,7 +152,10 @@ async function completePreContractSteps(
       'engagement_agreement_details',
     );
   } catch (error) {
-    if (!(error instanceof FetchSchemaError) || error.status !== 404) {
+    if (
+      !(error instanceof FetchSchemaError) ||
+      (error.status !== 404 && error.status !== 422)
+    ) {
       throw error;
     }
     // No engagement_agreement_details form for this country - fine, skip.
