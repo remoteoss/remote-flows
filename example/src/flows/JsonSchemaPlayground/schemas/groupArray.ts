@@ -8,6 +8,8 @@ export const GROUP_ARRAY_SCHEMA = {
     properties: {
       items: {
         title: 'Items',
+        description:
+          'Add every line you want on the order. Each line needs a description and a quantity.',
         type: 'array',
         minItems: 1,
         maxItems: 5,

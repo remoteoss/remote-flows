@@ -1,10 +1,12 @@
 import { CirclePlusIcon, Trash2Icon } from 'lucide-react';
 import { Button } from '@/src/components/ui/button';
+import { BaseFormDescription } from '@/src/components/ui/form';
 import { GroupArrayComponentProps } from '@/src/types/remoteFlows';
 
 export function GroupArrayFieldDefault({
   name,
   label,
+  description,
   addFieldText,
   rows,
   canAdd,
@@ -12,15 +14,31 @@ export function GroupArrayFieldDefault({
   error,
 }: GroupArrayComponentProps) {
   const errorId = `${name}-error`;
+  const descriptionId = `${name}-description`;
+  const describedBy = [
+    description ? descriptionId : null,
+    error ? errorId : null,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <div
       role='group'
       aria-label={label}
-      aria-describedby={error ? errorId : undefined}
+      aria-describedby={describedBy || undefined}
       className='grid gap-4 RemoteFlows__GroupArrayField'
     >
       <p className='text-sm font-semibold'>{label}</p>
+      {description ? (
+        <BaseFormDescription
+          as='div'
+          id={descriptionId}
+          className='RemoteFlows__GroupArrayField__Description'
+        >
+          {description}
+        </BaseFormDescription>
+      ) : null}
       {rows.map((row) => (
         <div
           key={row.id}
