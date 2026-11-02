@@ -1547,7 +1547,7 @@
     },
     {
       "country": "NZL",
-      "version": 8,
+      "version": 9,
       "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
@@ -1561,7 +1561,7 @@
     },
     {
       "country": "NZL",
-      "version": 8,
+      "version": 9,
       "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
