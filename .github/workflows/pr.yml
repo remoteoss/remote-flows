@@ -425,7 +425,7 @@ jobs:
           VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
         run: |
           mkdir -p out
-          codes=$(printf '%s' "$PR_TITLE" | sed -nE 's/.*[Bb]ump ([A-Z, ]+) contract_details.*/\1/p' | tr -c 'A-Z\n' ' ')
+          codes=$(printf '%s' "$PR_TITLE" | sed -nE 's/.*[Bb]ump ([A-Za-z_, ]+) contract_details.*/\1/p' | grep -oE '\b[A-Z]{3}(_[A-Z]+)?\b' | tr '\n' ' ')
           if [ -z "$codes" ]; then
             echo "No country codes found in the PR title, nothing to seed."
             exit 0
