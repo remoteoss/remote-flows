@@ -4,34 +4,11 @@ Schema versions for employee onboarding in Albania.
 
 ## Current Version
 
-**Contract Details:** v5
+**Contract Details:** v4
 
 ## Contract Details
 
-### v5 - Current
-
-**Type of change:** compliance
-
-**What changed:**
-
-- The probation period is blocked for employments with a recognized seniority date, the same way the fixed-term contract seniority block works. For those employments `has_probation_period` must be `"no"` and `probation_length` must be `0`, and any other value is rejected unless a Remote Admin makes the request. Other submissions need no change.
-- `probation_length` no longer has custom `x-jsf-errorMessage` texts for `minimum` and `maximum`. The bounds (1 to 3 months) are unchanged, so your form will show the engine's default messages instead.
-
-**Migration:**
-
-```tsx
-<OnboardingFlow
-  options={{
-    jsonSchemaVersionByCountry: {
-      ALB: { contract_details: 5 },
-    },
-  }}
-/>
-```
-
----
-
-### v4
+### v4 - Current
 
 **Type of change:** compliance
 

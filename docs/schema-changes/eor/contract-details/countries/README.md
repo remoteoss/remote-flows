@@ -33,7 +33,7 @@ Click a country name to open its migration guide. Countries without a link are o
 
 | Country                          | Code | Contract Details | Remote platform | Up to date | Last Updated  |
 | -------------------------------- | ---- | ---------------- | --------------- | ---------- | ------------- |
-| [Albania](./ALB.md)              | ALB  | v5               | v5              | Yes        | November 2026 |
+| [Albania](./ALB.md)              | ALB  | v4               | v5              | No         | October 2026  |
 | [Argentina](./ARG.md)            | ARG  | v5               | v6              | No         | October 2026  |
 | [Armenia](./ARM.md)              | ARM  | v3               | v4              | No         | October 2026  |
 | [Australia](./AUS.md)            | AUS  | v6               | v7              | No         | October 2026  |

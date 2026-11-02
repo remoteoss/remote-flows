@@ -5,7 +5,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION = {
 export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   ALB: {
     // Albania
-    contract_details: 5,
+    contract_details: 4,
   },
   ARE: {
     // United Arab Emirates
