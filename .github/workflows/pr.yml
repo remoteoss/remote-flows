@@ -457,11 +457,14 @@ jobs:
               return;
             }
             const body = fs.readFileSync('out/seed-links.md', 'utf8');
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+              },
+            );
             const existing = comments.find(
               (comment) =>
                 comment.user.type === 'Bot' &&
