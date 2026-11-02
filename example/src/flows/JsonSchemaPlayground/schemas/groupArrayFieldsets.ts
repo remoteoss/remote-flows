@@ -35,7 +35,7 @@ export const GROUP_ARRAY_FIELDSETS_SCHEMA = {
         },
       },
       items: {
-        title: 'Items',
+        title: 'Line items',
         type: 'array',
         minItems: 1,
         maxItems: 5,
@@ -53,6 +53,7 @@ export const GROUP_ARRAY_FIELDSETS_SCHEMA = {
         'x-jsf-presentation': {
           inputType: 'group-array',
           addFieldText: 'Add item',
+          hideLabel: true,
         },
       },
       team: {
