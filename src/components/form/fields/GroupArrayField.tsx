@@ -16,6 +16,7 @@ type GroupArrayFieldProps = {
   label: string;
   hideLabel?: boolean;
   description?: ReactNode;
+  additionalProps?: Record<string, unknown>;
   addFieldText?: string;
   minItems?: number;
   maxItems?: number;
@@ -28,6 +29,7 @@ export function GroupArrayField({
   label,
   hideLabel,
   description,
+  additionalProps,
   addFieldText = 'Add item',
   minItems = 0,
   maxItems,
@@ -71,6 +73,10 @@ export function GroupArrayField({
         <FieldComponent
           key={fieldName}
           {...omit(field, 'WrapperComponent')}
+          additionalProps={{
+            ...additionalProps,
+            ...field.additionalProps,
+          }}
           name={fieldName}
           component={components?.[field.type as keyof Components]}
         />
