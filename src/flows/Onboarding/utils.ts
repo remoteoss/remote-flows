@@ -218,6 +218,8 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'MLT',
   'PAN',
   'PRI',
+  'ROU',
+  'TUR',
 ];
 
 /**
