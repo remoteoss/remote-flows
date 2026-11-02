@@ -20,7 +20,9 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "define": {
-              "process.env.RF_INTERNAL_DEV": "'false'"
+              "process.env.RF_INTERNAL_DEV": "'false'",
+              "process.env.VERSION": "'angular-spike'",
+              "process.env.REMOTE_GATEWAY_URL": "''"
             },
             "assets": [
               {
@@ -28,7 +30,9 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css"]
+            "styles": [
+              "src/styles.scss"
+            ]
           },
           "configurations": {
             "production": {
@@ -64,7 +68,10 @@
               "buildTarget": "angular:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "proxyConfig": "proxy.conf.js"
+          }
         }
       }
     }

@@ -15,18 +15,18 @@ export class FieldOutlet {
   private readonly components = inject(FIELD_COMPONENTS);
 
   protected readonly component = computed(() => {
-    const { name, fieldData } = this.view();
+    const { key, fieldData } = this.view();
     const component = this.components[fieldData.inputType];
     if (!component) {
       throw new Error(
-        `Component not found for inputType "${fieldData.inputType}" on field ${name}`,
+        `Component not found for inputType "${fieldData.inputType}" on field ${key}`,
       );
     }
     return component;
   });
 
   protected readonly inputs = computed(() => {
-    const { field, fieldState, fieldData } = this.view();
-    return { field, fieldState, fieldData };
+    const { field, fieldState, fieldData, children, group } = this.view();
+    return { field, fieldState, fieldData, children, group };
   });
 }

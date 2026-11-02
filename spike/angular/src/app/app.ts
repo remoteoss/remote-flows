@@ -1,20 +1,43 @@
-import { JsonPipe } from '@angular/common';
-import { Component } from '@angular/core';
-import { SIMPLE_USER_PROFILE_SCHEMA } from '../../../../example/src/flows/JsonSchemaPlayground/schemas/simpleUserProfile';
-import { FieldOutlet } from './field-outlet';
-import { createFormStore } from './form-store';
+import { Component, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { CreateInvoiceDemo } from './create-invoice-demo';
 
 @Component({
   selector: 'app-root',
-  imports: [FieldOutlet, JsonPipe],
-  templateUrl: './app.html',
+  imports: [
+    CreateInvoiceDemo,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+  ],
+  template: `
+    <main class="rf-page">
+      <h1>Create invoice schedule</h1>
+      @if (employmentId(); as id) {
+        <app-create-invoice [employmentId]="id" />
+      } @else {
+        <form class="rf-form" (submit)="start($event, input.value)">
+          <mat-form-field appearance="outline">
+            <mat-label>Contractor employment id</mat-label>
+            <input matInput #input [value]="initial" />
+          </mat-form-field>
+          <div class="rf-actions">
+            <button mat-flat-button type="submit">Continue</button>
+          </div>
+        </form>
+      }
+    </main>
+  `,
 })
 export class App {
-  protected readonly name = SIMPLE_USER_PROFILE_SCHEMA.name;
-  protected readonly store = createFormStore(SIMPLE_USER_PROFILE_SCHEMA.schema);
+  protected readonly initial =
+    new URLSearchParams(window.location.search).get('employmentId') ?? '';
+  protected readonly employmentId = signal(this.initial);
 
-  protected onSubmit(event: Event) {
+  protected start(event: Event, value: string) {
     event.preventDefault();
-    void this.store.submit();
+    this.employmentId.set(value.trim());
   }
 }

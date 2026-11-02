@@ -15,19 +15,45 @@ export type FieldState = {
   touched: boolean;
 };
 
+export type FieldStatement = {
+  title: string | null;
+  description: string | null;
+  severity: string;
+};
+
 export type FieldData = {
   label: string;
+  hideLabel: boolean;
   description: string | null;
   inputType: string;
   required: boolean;
   options: FieldOption[];
+  additionalProps: Record<string, unknown>;
+  statement: FieldStatement | null;
+};
+
+export type GroupArrayRow = {
+  id: number;
+  index: number;
+  canRemove: boolean;
+  remove: () => void;
+  fields: FieldView[];
+};
+
+export type GroupArrayView = {
+  addFieldText: string;
+  canAdd: boolean;
+  add: () => void;
+  rows: GroupArrayRow[];
 };
 
 export type FieldView = {
-  name: string;
+  key: string;
   field: FieldBinding;
   fieldState: FieldState;
   fieldData: FieldData;
+  children: FieldView[];
+  group: GroupArrayView | null;
 };
 
 export type FieldComponents = Partial<Record<string, Type<FieldComponent>>>;
@@ -41,4 +67,6 @@ export abstract class FieldComponent {
   readonly field = input.required<FieldBinding>();
   readonly fieldState = input.required<FieldState>();
   readonly fieldData = input.required<FieldData>();
+  readonly children = input<FieldView[]>([]);
+  readonly group = input<GroupArrayView | null>(null);
 }
