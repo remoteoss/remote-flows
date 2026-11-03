@@ -1339,7 +1339,7 @@ button.reset-button {
   display: flex;
   align-items: center;
   align-self: flex-start;
-  min-height: 46px;
+  min-height: 54px;
   margin-top: 28px;
 }
 
