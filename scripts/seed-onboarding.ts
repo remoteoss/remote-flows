@@ -185,6 +185,12 @@ if (ENV) {
   dotenv.config({ path: path.resolve(__dirname, '..', 'example', '.env') });
   const PORT = process.env.PORT || 3001;
   BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+  const bypassToken = process.env.VERCEL_BYPASS_TOKEN;
+  if (bypassToken) {
+    getAuthHeaders = async () => ({
+      'x-vercel-protection-bypass': bypassToken,
+    });
+  }
 }
 
 async function api<T = unknown>(
