@@ -12,7 +12,7 @@ import {
   Input,
   Label,
 } from '@remoteoss/remote-flows/internals';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, CheckIcon, EyeIcon, XIcon } from 'lucide-react';
 import { RemoteFlows } from './RemoteFlows';
 import './css/main.css';
 
@@ -66,6 +66,7 @@ export function TimeOffList() {
             components: {
               StatusFilter,
               ListStep,
+              ViewButton,
               ListRetryButton,
               PreviousPageButton,
               NextPageButton,
@@ -99,7 +100,69 @@ export function TimeOffList() {
                   {timeOffListBag.isEmpty && (
                     <p>No time-off requests with this status.</p>
                   )}
-                  <ListStep />
+                  {outcome && (
+                    <Alert className='mb-4'>
+                      <AlertDescription>
+                        {DECISION_LABELS[outcome.decision]}. The request is now{' '}
+                        {outcome.status}.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  {decisionError && (
+                    <Alert variant='destructive' className='mb-4'>
+                      <AlertCircle />
+                      <AlertDescription>
+                        {getDecisionErrorMessage(decisionError)}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  <ListStep
+                    renderActions={({ timeOffRequest }) => (
+                      <>
+                        <ViewButton
+                          aria-label='View'
+                          title='View'
+                          onClick={clearDecision}
+                        >
+                          <EyeIcon />
+                        </ViewButton>
+                        {timeOffRequest.status === 'requested' && (
+                          <>
+                            <DeclineButton
+                              aria-label='Decline'
+                              title='Decline'
+                              declineReason={null}
+                              onClick={clearDecision}
+                              onSuccess={(declinedTimeOffRequest) =>
+                                setOutcome({
+                                  decision: 'decline',
+                                  status: declinedTimeOffRequest.status,
+                                })
+                              }
+                              onError={setDecisionError}
+                            >
+                              <XIcon />
+                            </DeclineButton>
+                            <ApproveButton
+                              aria-label='Approve'
+                              title='Approve'
+                              approverId={null}
+                              onClick={clearDecision}
+                              onSuccess={(approvedTimeOffRequest) =>
+                                setOutcome({
+                                  decision: 'approve',
+                                  status: approvedTimeOffRequest.status,
+                                })
+                              }
+                              onError={setDecisionError}
+                            >
+                              <CheckIcon />
+                            </ApproveButton>
+                          </>
+                        )}
+                      </>
+                    )}
+                  />
                   <div className='buttons-container'>
                     {timeOffListBag.timeOffRequestsError ? (
                       <ListRetryButton className='submit-button'>
