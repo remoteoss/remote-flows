@@ -378,6 +378,72 @@ describe('TimeOffListFlow', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('renders only the markup a partner gives each listed request', async () => {
+    const approvedIds: string[] = [];
+    server.use(
+      http.get('*/v1/timeoff', () =>
+        HttpResponse.json({
+          data: {
+            ...timeOffRequestsResponse.data,
+            timeoffs: [
+              listedTimeOff('timeoff-1', 'Paid leave'),
+              {
+                ...listedTimeOff('timeoff-2', 'Sick leave'),
+                status: 'approved',
+              },
+            ],
+          },
+        }),
+      ),
+      http.post('*/v1/timeoff/:id/approve', ({ params }) => {
+        approvedIds.push(params.id as string);
+        return HttpResponse.json({
+          data: {
+            timeoff: {
+              ...listedTimeOff(params.id as string, 'Paid leave'),
+              status: 'approved',
+            },
+          },
+        });
+      }),
+    );
+    render(
+      <TimeOffListFlow
+        render={({ components: { ListStep, ApproveButton } }) => (
+          <table>
+            <tbody>
+              <ListStep
+                renderItem={({ listedDetails, canDecide }) => (
+                  <tr>
+                    <td>{listedDetails[0].value}</td>
+                    <td>
+                      {canDecide && <ApproveButton approverId='manager-1' />}
+                    </td>
+                  </tr>
+                )}
+              />
+            </tbody>
+          </table>
+        )}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    expect(
+      await screen.findByRole('cell', { name: 'Sick leave' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('cell', { name: 'Paid leave' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('list')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Approve' }));
+
+    await waitFor(() => {
+      expect(approvedIds).toEqual(['timeoff-1']);
+    });
+  });
+
   it('lists the first page again when the status filter is cleared', async () => {
     mockTimeOffRequests();
     const { result } = renderHook(() => useTimeOffList(), {

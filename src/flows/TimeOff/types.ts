@@ -145,25 +145,44 @@ export type TimeOffReviewStepProps = {
   children?: React.ReactNode;
 };
 
+/**
+ * One listed time-off request, with what a row of the list shows.
+ */
+export type TimeOffListItem = {
+  timeOffRequest: TimeOffRequest;
+  /**
+   * Every detail of the request, labelled and formatted for display.
+   */
+  details: TimeOffRequestDetail[];
+  /**
+   * The details a row of the list shows by default: type, status, dates and duration.
+   */
+  listedDetails: TimeOffRequestDetail[];
+  /**
+   * Whether the request awaits a decision, so it can be approved or declined.
+   */
+  canDecide: boolean;
+};
+
 export type TimeOffListStepProps = {
   /**
    * Replaces the default content of each listed request, which stays the control that opens it
    * for review. Nothing renders until a page is loaded: use `timeOffListBag.isLoadingTimeOffRequests`,
    * `timeOffListBag.isEmpty` and `timeOffListBag.timeOffRequestsError` for the other states.
    */
-  render?: (props: {
-    timeOffRequest: TimeOffRequest;
-    details: TimeOffRequestDetail[];
-  }) => React.ReactNode;
+  render?: (item: TimeOffListItem) => React.ReactNode;
   /**
    * Replaces the actions rendered at the end of each listed request: `ViewButton`, then
-   * `DeclineButton` and `ApproveButton` for requests in `requested`, with no decline reason and a
+   * `DeclineButton` and `ApproveButton` when the request `canDecide`, with no decline reason and a
    * `null` approver. `ViewButton`, `ApproveButton` and `DeclineButton` rendered here act on that request.
    */
-  renderActions?: (props: {
-    timeOffRequest: TimeOffRequest;
-    details: TimeOffRequestDetail[];
-  }) => React.ReactNode;
+  renderActions?: (item: TimeOffListItem) => React.ReactNode;
+  /**
+   * Replaces the whole markup of the list: only what it returns for each listed request renders,
+   * one after the other, with no list or row element around it. `ViewButton`, `ApproveButton` and
+   * `DeclineButton` rendered here act on that request.
+   */
+  renderItem?: (item: TimeOffListItem) => React.ReactNode;
 };
 
 type TimeOffButtonProps = PropsWithChildren<

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { TimeoffStatus } from '@/src/client';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
@@ -24,6 +24,7 @@ import {
   UseTimeOffRequestsOptions,
 } from '@/src/flows/TimeOff/types';
 import {
+  getTimeOffListItems,
   LIST_STEPS,
   LIST_STEPS_ARRAY,
   STEPS,
@@ -267,6 +268,10 @@ export const useTimeOffList = ({ pageSize }: UseTimeOffListOptions = {}) => {
     error: timeOffRequestsError,
     refetch: refetchTimeOffRequests,
   } = useTimeOffRequests({ status, page, pageSize });
+  const timeOffListItems = useMemo(
+    () => getTimeOffListItems(timeOffRequests),
+    [timeOffRequests],
+  );
 
   if (isEmpty && page && totalPages !== undefined && page > totalPages) {
     setPage(totalPages || undefined);
@@ -325,6 +330,10 @@ export const useTimeOffList = ({ pageSize }: UseTimeOffListOptions = {}) => {
      * The time-off requests of the loaded page, empty until it loads.
      */
     timeOffRequests,
+    /**
+     * The time-off requests of the loaded page with what a row of the list shows, empty until it loads.
+     */
+    timeOffListItems,
     /**
      * Whether the loaded page holds no time-off request.
      */
