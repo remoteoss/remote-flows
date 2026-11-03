@@ -117,7 +117,7 @@ export function TimeOffList() {
                     </Alert>
                   )}
                   <ListStep
-                    renderActions={({ timeOffRequest }) => (
+                    renderActions={({ canDecide }) => (
                       <>
                         <ViewButton
                           aria-label='View'
@@ -126,7 +126,7 @@ export function TimeOffList() {
                         >
                           <EyeIcon />
                         </ViewButton>
-                        {timeOffRequest.status === 'requested' && (
+                        {canDecide && (
                           <>
                             <DeclineButton
                               aria-label='Decline'
