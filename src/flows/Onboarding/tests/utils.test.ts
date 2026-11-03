@@ -9,6 +9,7 @@ import {
   getJobTitleEligibilityValues,
   JOB_TITLE_ELIGIBILITY_SLUG_FIELD,
   usesJsfV1ContractDetails,
+  withoutProhibitedTaxServicingCountries,
 } from '../utils';
 
 describe('getContractDetailsSchemaVersion', () => {
@@ -461,6 +462,81 @@ describe('getJobTitleEligibilityValues', () => {
     ).toEqual({
       additional_job_title_eligibility_check_slug: null,
       additional_job_title_eligibility_check_result: 'yes',
+    });
+  });
+});
+
+describe('withoutProhibitedTaxServicingCountries', () => {
+  const buildSchema = () => ({
+    properties: {
+      tax_servicing_countries: {
+        type: 'array',
+        items: { enum: ['Afghanistan', 'Germany', 'Russia', 'Spain'] },
+        'x-jsf-presentation': {
+          options: [
+            { label: 'Afghanistan', value: 'Afghanistan' },
+            { label: 'Germany', value: 'Germany' },
+            { label: 'Russia', value: 'Russia' },
+            { label: 'Spain', value: 'Spain' },
+          ],
+          $meta: {
+            regions: {
+              Asia: ['Afghanistan'],
+              Europe: ['Germany', 'Russia', 'Spain'],
+            },
+            subregions: {
+              'Southern Asia': ['Afghanistan'],
+              'Western Europe': ['Germany'],
+            },
+          },
+        },
+      },
+      full_name: { type: 'string' },
+    },
+  });
+
+  it('removes prohibited countries from the enum, the options and the areas', () => {
+    expect(withoutProhibitedTaxServicingCountries(buildSchema())).toEqual({
+      properties: {
+        tax_servicing_countries: {
+          type: 'array',
+          items: { enum: ['Germany', 'Spain'] },
+          'x-jsf-presentation': {
+            options: [
+              { label: 'Germany', value: 'Germany' },
+              { label: 'Spain', value: 'Spain' },
+            ],
+            $meta: {
+              regions: { Asia: [], Europe: ['Germany', 'Spain'] },
+              subregions: {
+                'Southern Asia': [],
+                'Western Europe': ['Germany'],
+              },
+            },
+          },
+        },
+        full_name: { type: 'string' },
+      },
+    });
+  });
+
+  it('returns the schema untouched when it has no tax_servicing_countries field', () => {
+    const schema = { properties: { full_name: { type: 'string' } } };
+
+    expect(withoutProhibitedTaxServicingCountries(schema)).toBe(schema);
+  });
+
+  it('keeps a schema that only has an enum', () => {
+    const schema = {
+      properties: {
+        tax_servicing_countries: { items: { enum: ['Cuba', 'France'] } },
+      },
+    };
+
+    expect(withoutProhibitedTaxServicingCountries(schema)).toEqual({
+      properties: {
+        tax_servicing_countries: { items: { enum: ['France'] } },
+      },
     });
   });
 });
