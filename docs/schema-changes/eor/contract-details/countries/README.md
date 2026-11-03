@@ -66,10 +66,10 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Guatemala](./GTM.md)            | GTM  | v6               | v6              | Yes        | October 2026  |
 | Honduras                         | HND  | v1               | v6              | No         | -             |
 | [Hong Kong](./HKG.md)            | HKG  | v6               | v6              | Yes        | October 2026  |
-| Hungary                          | HUN  | v1               | v4              | No         | -             |
+| [Hungary](./HUN.md)              | HUN  | v4               | v4              | Yes        | November 2026 |
 | [Iceland](./ISL.md)              | ISL  | v5               | v5              | Yes        | October 2026  |
 | [India](./IND.md)                | IND  | v7               | v7              | Yes        | October 2026  |
-| Indonesia                        | IDN  | v1               | v5              | No         | -             |
+| [Indonesia](./IDN.md)            | IDN  | v5               | v5              | Yes        | November 2026 |
 | [Ireland](./IRL.md)              | IRL  | v5               | v5              | Yes        | October 2026  |
 | [Israel](./ISR.md)               | ISR  | v8               | v8              | Yes        | October 2026  |
 | Italy                            | ITA  | v2               | v2              | Yes        | -             |
