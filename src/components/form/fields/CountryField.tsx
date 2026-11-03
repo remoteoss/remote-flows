@@ -73,11 +73,7 @@ export function CountryField({
               onChange: (value: $TSFixMe) => {
                 const finalValue =
                   isGrouped && Array.isArray(value)
-                    ? applyGroupedCountryRules(
-                        Array.isArray(fieldValue) ? fieldValue : [],
-                        value,
-                        options,
-                      )
+                    ? applyGroupedCountryRules(value, options)
                     : value;
                 field.onChange(finalValue);
                 onChange?.(finalValue);

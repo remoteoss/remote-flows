@@ -99,7 +99,7 @@ Available component types include:
 - `radio` - Radio button groups
 - `checkbox` - Checkbox fields
 - `date` - Date picker fields
-- `countries` - Country selection fields
+- `countries` - Country selection fields. When an option carries `$meta.type` (`global`, `region`, `subregion` or `country`, as in basic information v5), the component gets `field.value` already matched to option values (saved display labels swapped for option values), and `field.onChange` applies the selection rules (Global replaces everything, a region drops its own subregions and countries). Pass it the full new selection and render what `field.value` holds.
 - `file` - File upload fields
 - `work-schedule` - Work schedule fields
 - `fieldsetToggle` - Fieldset toggle buttons

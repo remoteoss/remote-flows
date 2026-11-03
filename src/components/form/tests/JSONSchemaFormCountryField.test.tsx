@@ -86,4 +86,74 @@ describe('JSONSchemaForm - countries input', () => {
 
     expect(form.handleValidation(latestValues).formErrors).toBeUndefined();
   });
+
+  it('hands per-option $meta from the schema to the field and applies the grouped rules', async () => {
+    const user = userEvent.setup();
+    const groupedSchema = {
+      type: 'object',
+      properties: {
+        tax_servicing_countries: {
+          title: 'Tax servicing countries',
+          type: 'array',
+          items: { enum: ['global-Global', 'region-Europe', 'France'] },
+          'x-jsf-presentation': {
+            inputType: 'countries',
+            options: [
+              {
+                label: 'Global',
+                value: 'global-Global',
+                $meta: { type: 'global' },
+              },
+              {
+                label: 'Europe',
+                value: 'region-Europe',
+                $meta: { type: 'region' },
+              },
+              {
+                label: 'France',
+                value: 'France',
+                $meta: { type: 'country', region: 'Europe' },
+              },
+            ],
+          },
+        },
+      },
+      'x-jsf-order': ['tax_servicing_countries'],
+      'x-rmt-meta': { jsfOldVersion: true },
+    };
+    const form = createHeadlessForm(groupedSchema, {});
+    expect(
+      (form.fields[0].options as { $meta?: unknown }[]).map(
+        (option) => option.$meta,
+      ),
+    ).toEqual([
+      { type: 'global' },
+      { type: 'region' },
+      { type: 'country', region: 'Europe' },
+    ]);
+
+    let latestValues: Record<string, unknown> = {};
+    const TestComponent = () => {
+      const methods = useForm({
+        defaultValues: { tax_servicing_countries: [] },
+      });
+      latestValues = methods.watch();
+      return (
+        <FormProvider {...methods}>
+          <JSONSchemaFormFields fields={form.fields} />
+        </FormProvider>
+      );
+    };
+    render(<TestComponent />);
+
+    await user.click(screen.getByRole('combobox'));
+    await user.click(await screen.findByRole('option', { name: 'France' }));
+    await user.click(await screen.findByRole('option', { name: 'Europe' }));
+
+    await waitFor(() => {
+      expect(latestValues).toEqual({
+        tax_servicing_countries: ['region-Europe'],
+      });
+    });
+  });
 });

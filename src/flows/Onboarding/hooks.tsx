@@ -19,6 +19,7 @@ import {
   JOB_TITLE_ELIGIBILITY_RESULT_FIELD,
 } from '@/src/flows/Onboarding/utils';
 import { prettifyFormValues } from '@/src/lib/utils';
+import { matchSavedCountryFields } from '@/src/components/form/fields/groupedCountrySelection';
 import {
   getInitialValues,
   enableAckFields,
@@ -909,9 +910,12 @@ export const useOnboarding = ({
 
   const basicInformationInitialValues = useMemo(
     () =>
-      getInitialValues(
+      matchSavedCountryFields(
         stepFields.basic_information,
-        basicInformationSavedValues,
+        getInitialValues(
+          stepFields.basic_information,
+          basicInformationSavedValues,
+        ),
       ),
     [stepFields.basic_information, basicInformationSavedValues],
   );

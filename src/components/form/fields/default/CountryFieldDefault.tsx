@@ -10,9 +10,10 @@ import { FormItem } from '@/src/components/ui/form';
 import { MultiSelect } from '@/src/components/ui/multi-select';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { CountryComponentProps } from '@/src/types/fields';
+import { isGroupedCountryOptions } from '@/src/components/form/fields/groupedCountrySelection';
 import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 
-const V5_CATEGORIES: Record<string, string> = {
+const GROUPED_CATEGORIES: Record<string, string> = {
   global: 'Global',
   region: 'Regions',
   subregion: 'Subregions',
@@ -30,9 +31,7 @@ export function CountryFieldDefault({
     (Array.isArray(fieldData.jsonType)
       ? fieldData.jsonType.includes('array')
       : fieldData.jsonType === 'array');
-  const isGrouped = Boolean(
-    fieldData.options?.some((option) => option.$meta?.type),
-  );
+  const isGrouped = isGroupedCountryOptions(fieldData.options);
   const handleChange = (rawValues: $TSFixMe[]) => {
     const values = rawValues.map(({ value }) => value);
     field.onChange(isMultiple ? values : (values[0] ?? ''));
@@ -52,12 +51,14 @@ export function CountryFieldDefault({
     // oxlint-disable-next-line react-hooks/set-state-in-effect
     setSelected(
       values
-        .map((value) =>
-          fieldData.options?.find((option) => option.value === value),
+        .map(
+          (value) =>
+            fieldData.options?.find((option) => option.value === value) ??
+            (isGrouped ? { value, label: value } : undefined),
         )
         .filter(Boolean) as $TSFixMe[],
     );
-  }, [field.value, fieldData.options]);
+  }, [field.value, fieldData.options, isGrouped]);
 
   const groupOptions =
     isMultiple && !isGrouped
@@ -86,7 +87,7 @@ export function CountryFieldDefault({
       value: option.value,
       label: option.label,
       category: isGrouped
-        ? V5_CATEGORIES[option.$meta?.type ?? 'country']
+        ? (GROUPED_CATEGORIES[option.$meta?.type ?? 'country'] ?? 'Countries')
         : 'Countries',
     })) || []),
   ];

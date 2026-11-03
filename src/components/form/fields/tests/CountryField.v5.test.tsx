@@ -75,31 +75,45 @@ describe('CountryField with grouped options (basic information v5)', () => {
     );
   });
 
-  it('follows the selection rules and submits prefixed values', () => {
+  it('lets Global replace everything and submits prefixed values', () => {
     render(<Harness />);
     pick('France');
     pick('Japan');
     expect(submitted()).toEqual(['France', 'Japan']);
 
-    pick('Europe');
-    expect(submitted()).toEqual(['Japan', 'region-Europe']);
-
     pick('Global');
     expect(submitted()).toEqual(['global-Global']);
-
-    pick('Japan');
-    expect(submitted()).toEqual(['Japan']);
   });
 
-  it('drops Global and the subregions of a chosen region', () => {
+  it('lets a region drop its own subregions and countries', () => {
     render(<Harness />);
+    pick('Japan');
+    pick('France');
     pick('Europe - Western Europe');
+    expect(submitted()).toEqual(['Japan', 'subregion-Western Europe']);
+
     pick('Europe');
+    expect(submitted()).toEqual(['Japan', 'region-Europe']);
+  });
+
+  it('lets a subregion drop its own countries', () => {
+    render(<Harness />);
+    pick('France');
+    pick('Japan');
+    pick('Europe - Western Europe');
+    expect(submitted()).toEqual(['Japan', 'subregion-Western Europe']);
+  });
+
+  it('drops a narrower option added while its region or Global is selected', () => {
+    render(<Harness />);
+    pick('Europe');
+    pick('France');
+    pick('Europe - Western Europe');
     expect(submitted()).toEqual(['region-Europe']);
 
     pick('Global');
-    pick('France');
-    expect(submitted()).toEqual(['France']);
+    pick('Japan');
+    expect(submitted()).toEqual(['global-Global']);
   });
 
   it('shows a saved display label as selected', () => {
@@ -151,5 +165,96 @@ describe('CountryField with grouped options (basic information v5)', () => {
       ]),
     );
     expect(submitted()).toEqual(['global-Global']);
+  });
+
+  it('applies the rules to every value added at once', () => {
+    const Custom = vi.fn().mockReturnValue(null);
+    (useFormFields as $TSFixMe).mockReturnValue({
+      components: { countries: Custom },
+    });
+    render(<Harness />);
+    const lastField = () => Custom.mock.calls.at(-1)?.[0].field;
+
+    act(() => lastField().onChange(['France', 'Japan', 'region-Europe']));
+    expect(submitted()).toEqual(['Japan', 'region-Europe']);
+
+    act(() =>
+      lastField().onChange([
+        'France',
+        'Japan',
+        'global-Global',
+        'region-Europe',
+      ]),
+    );
+    expect(submitted()).toEqual(['global-Global']);
+  });
+
+  it('keeps a saved value that matches no option and shows it as a removable chip', () => {
+    render(
+      <Harness
+        defaultValues={{ tax_servicing_countries: ['Atlantis', 'Japan'] }}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'remove Atlantis' }));
+    expect(submitted()).toEqual(['Japan']);
+  });
+
+  it('keeps an unmatched saved value when another option is picked', () => {
+    render(
+      <Harness defaultValues={{ tax_servicing_countries: ['Atlantis'] }} />,
+    );
+    pick('France');
+    expect(submitted()).toEqual(['Atlantis', 'France']);
+  });
+
+  it('works as a single select', () => {
+    const SingleHarness = () => {
+      const methods = useForm({ defaultValues: { country: 'France' } });
+      return (
+        <FormProvider {...methods}>
+          <CountryField
+            {...props}
+            name='country'
+            multiple={false}
+            jsonType='string'
+          />
+          <output data-testid='value'>
+            {JSON.stringify(methods.watch('country'))}
+          </output>
+        </FormProvider>
+      );
+    };
+    render(<SingleHarness />);
+    pick('Japan');
+    expect(submitted()).toEqual('Japan');
+  });
+
+  it('passes value and onChange through unchanged for options without $meta.type', () => {
+    const Custom = vi.fn().mockReturnValue(null);
+    (useFormFields as $TSFixMe).mockReturnValue({
+      components: { countries: Custom },
+    });
+    const plain = [
+      { label: 'Europe - Western Europe', value: 'Europe - Western Europe' },
+      { label: 'Japan', value: 'Japan' },
+    ];
+    const PlainHarness = () => {
+      const methods = useForm({
+        defaultValues: { tax_servicing_countries: ['Europe - Western Europe'] },
+      });
+      return (
+        <FormProvider {...methods}>
+          <CountryField {...props} options={plain} />
+          <output data-testid='value'>
+            {JSON.stringify(methods.watch('tax_servicing_countries'))}
+          </output>
+        </FormProvider>
+      );
+    };
+    render(<PlainHarness />);
+    const field = Custom.mock.calls.at(-1)?.[0].field;
+    expect(field.value).toEqual(['Europe - Western Europe']);
+    act(() => field.onChange(['Japan', 'Global']));
+    expect(submitted()).toEqual(['Japan', 'Global']);
   });
 });
