@@ -77,7 +77,7 @@ export function TimeOffList() {
               DeclineButton,
             },
           }) => (
-            <div className='onboarding-form-container'>
+            <div className='onboarding-form-container time-off-list-container'>
               <h2 className='text-lg font-semibold mb-4'>Time-off requests</h2>
               {timeOffListBag.stepState.currentStep.name === 'list' && (
                 <>
