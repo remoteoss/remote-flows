@@ -39,12 +39,12 @@ export function matchSavedCountryFields(
 }
 
 /**
- * Same rules as Dragon's tax servicing countries field, applied to the whole
+ * Same rules as the platform's own tax servicing countries field, applied to the whole
  * new selection so every added value is handled (select-all, paste):
  * Global replaces everything, a region drops its own subregions and countries,
  * and a subregion drops its own countries. A narrower option added while its
  * region or subregion is already selected is dropped, so the selection never
- * overlaps. Dragon also greys out such options; the default component does not.
+ * overlaps. The platform also greys out such options; the default component does not.
  * Values that match no option are kept.
  */
 export function applyGroupedCountryRules(
