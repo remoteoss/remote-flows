@@ -19,36 +19,6 @@ const V5_CATEGORIES: Record<string, string> = {
   country: 'Countries',
 };
 
-const stripPrefix = (value: string) =>
-  value.replace(/^(region|subregion)-/, '');
-
-// Choosing Global replaces everything, choosing a region drops its own
-// subregions and countries, and choosing anything narrower drops Global.
-function applyGroupedSelectionRules(
-  previous: CountryOption[],
-  next: CountryOption[],
-): CountryOption[] {
-  const added = next.find(
-    (option) => !previous.some((item) => item.value === option.value),
-  );
-  const type = added?.$meta?.type;
-  if (!added || !type) return next;
-  if (type === 'global') return [added];
-
-  const withoutGlobal = next.filter((item) => item.$meta?.type !== 'global');
-  if (type !== 'region') return withoutGlobal;
-
-  const regionName = stripPrefix(added.value);
-  return withoutGlobal.filter(
-    (item) =>
-      item === added ||
-      !(
-        (item.$meta?.type === 'subregion' || item.$meta?.type === 'country') &&
-        item.$meta?.region === regionName
-      ),
-  );
-}
-
 export function CountryFieldDefault({
   field,
   fieldState,
@@ -64,12 +34,9 @@ export function CountryFieldDefault({
     fieldData.options?.some((option) => option.$meta?.type),
   );
   const handleChange = (rawValues: $TSFixMe[]) => {
-    const finalValues = isGrouped
-      ? applyGroupedSelectionRules(selected, rawValues)
-      : rawValues;
-    const values = finalValues.map(({ value }) => value);
+    const values = rawValues.map(({ value }) => value);
     field.onChange(isMultiple ? values : (values[0] ?? ''));
-    setSelected(finalValues);
+    setSelected(rawValues);
   };
 
   useEffect(() => {
@@ -85,17 +52,12 @@ export function CountryFieldDefault({
     // oxlint-disable-next-line react-hooks/set-state-in-effect
     setSelected(
       values
-        .map(
-          (value) =>
-            fieldData.options?.find((option) => option.value === value) ??
-            // The API returns saved values as display labels
-            (isGrouped
-              ? fieldData.options?.find((option) => option.label === value)
-              : undefined),
+        .map((value) =>
+          fieldData.options?.find((option) => option.value === value),
         )
         .filter(Boolean) as $TSFixMe[],
     );
-  }, [field.value, fieldData.options, isGrouped]);
+  }, [field.value, fieldData.options]);
 
   const groupOptions =
     isMultiple && !isGrouped

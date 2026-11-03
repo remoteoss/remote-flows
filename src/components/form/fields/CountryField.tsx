@@ -1,10 +1,16 @@
 import { useFormFields, useTransformer } from '@/src/context';
+import { CountryOption } from '@/src/types/fields';
 import { Components, JSFField, $TSFixMe } from '@/src/types/remoteFlows';
 import { useFormContext } from 'react-hook-form';
 import { FormField } from '../../ui/form';
+import {
+  applyGroupedCountryRules,
+  isGroupedCountryOptions,
+  matchSavedCountryValues,
+} from './groupedCountrySelection';
 
 type CountryFieldProps = JSFField & {
-  options: Array<{ value: string; label: string }>;
+  options: CountryOption[];
   onChange?: (value: $TSFixMe) => void;
   $meta: {
     regions: Record<string, string[]>;
@@ -13,6 +19,10 @@ type CountryFieldProps = JSFField & {
   component?: Components['countries'];
 };
 
+/**
+ * A `components.countries` override gets `field.value` as option values and a
+ * `field.onChange` that already applies the Global/region selection rules.
+ */
 export function CountryField({
   label,
   name,
@@ -39,6 +49,11 @@ export function CountryField({
           throw new Error(`Country component not found for field ${name}`);
         }
 
+        const isGrouped = isGroupedCountryOptions(options);
+        const fieldValue = isGrouped
+          ? matchSavedCountryValues(field.value, options)
+          : field.value;
+
         const customSelectFieldProps = {
           label,
           name,
@@ -54,9 +69,18 @@ export function CountryField({
           <Component
             field={{
               ...field,
+              value: fieldValue,
               onChange: (value: $TSFixMe) => {
-                field.onChange(value);
-                onChange?.(value);
+                const finalValue =
+                  isGrouped && Array.isArray(value)
+                    ? applyGroupedCountryRules(
+                        Array.isArray(fieldValue) ? fieldValue : [],
+                        value,
+                        options,
+                      )
+                    : value;
+                field.onChange(finalValue);
+                onChange?.(finalValue);
               },
             }}
             fieldState={fieldState}

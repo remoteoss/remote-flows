@@ -2,7 +2,7 @@ import { useFormFields } from '@/src/context';
 import { taxServicingCountriesOptionsV5 } from '@/src/flows/Onboarding/tests/fixtures/basicInformation';
 import { CountryFieldDefault } from '@/src/components/form/fields/default/CountryFieldDefault';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { array } from 'yup';
 import { CountryField } from '../CountryField';
@@ -126,5 +126,30 @@ describe('CountryField with grouped options (basic information v5)', () => {
       'fieldData',
       'fieldState',
     ]);
+  });
+
+  it('gives a partner component matched values and a change handler that applies the rules', () => {
+    const Custom = vi.fn().mockReturnValue(null);
+    (useFormFields as $TSFixMe).mockReturnValue({
+      components: { countries: Custom },
+    });
+    render(
+      <Harness
+        defaultValues={{
+          tax_servicing_countries: ['Europe - Western Europe', 'Japan'],
+        }}
+      />,
+    );
+    const lastField = () => Custom.mock.calls.at(-1)?.[0].field;
+    expect(lastField().value).toEqual(['subregion-Western Europe', 'Japan']);
+
+    act(() =>
+      lastField().onChange([
+        'subregion-Western Europe',
+        'Japan',
+        'global-Global',
+      ]),
+    );
+    expect(submitted()).toEqual(['global-Global']);
   });
 });
