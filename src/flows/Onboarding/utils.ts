@@ -220,6 +220,8 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'PRI',
   'ROU',
   'TUR',
+  'MKD',
+  'PRY',
 ];
 
 /**

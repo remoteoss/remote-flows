@@ -225,7 +225,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   MKD: {
     // North Macedonia
-    contract_details: 1,
+    contract_details: 6,
   },
   MLT: {
     // Malta
@@ -289,7 +289,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   PRY: {
     // Paraguay
-    contract_details: 1,
+    contract_details: 8,
   },
   ROU: {
     // Romania
