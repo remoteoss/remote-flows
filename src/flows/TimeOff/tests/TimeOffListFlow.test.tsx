@@ -290,6 +290,93 @@ describe('TimeOffListFlow', () => {
     ]);
   });
 
+  it('ends each listed request with View, Decline and Approve, deciding on that request without opening it', async () => {
+    const queries = mockTimeOffRequests();
+    const requestedIds = mockTimeOffRequest();
+    const approvals: { id: string; body: unknown }[] = [];
+    server.use(
+      http.post('*/v1/timeoff/:id/approve', async ({ params, request }) => {
+        approvals.push({ id: params.id as string, body: await request.json() });
+        return HttpResponse.json({
+          data: {
+            timeoff: {
+              ...listedTimeOff(params.id as string, 'Approved leave'),
+              status: 'approved',
+            },
+          },
+        });
+      }),
+    );
+    renderFlow();
+
+    await screen.findByRole('button', { name: /requested leave, page 1/ });
+    expect(screen.getByRole('button', { name: 'Decline' })).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Approve' }));
+
+    await waitFor(() => {
+      expect(queries).toEqual(['?status=requested', '?status=requested']);
+    });
+    expect(approvals).toEqual([
+      { id: 'timeoff-1', body: { approver_id: null } },
+    ]);
+    expect(requestedIds).toEqual([]);
+
+    fireEvent.click(screen.getByRole('button', { name: 'View' }));
+
+    expect(await screen.findByText('Reviewed leave')).toBeInTheDocument();
+    expect(requestedIds).toEqual(['timeoff-1']);
+  });
+
+  it('renders the actions a partner gives each listed request', async () => {
+    mockTimeOffRequests();
+    const declines: { id: string; body: unknown }[] = [];
+    server.use(
+      http.post('*/v1/timeoff/:id/decline', async ({ params, request }) => {
+        declines.push({ id: params.id as string, body: await request.json() });
+        return HttpResponse.json({
+          data: {
+            timeoff: {
+              ...listedTimeOff(params.id as string, 'Declined leave'),
+              status: 'declined',
+            },
+          },
+        });
+      }),
+    );
+    const onSuccess = vi.fn();
+    render(
+      <TimeOffListFlow
+        render={({ components: { ListStep, DeclineButton } }) => (
+          <ListStep
+            renderActions={({ timeOffRequest }) => (
+              <DeclineButton
+                declineReason={`Overlaps for ${timeOffRequest.id}`}
+                onSuccess={onSuccess}
+              >
+                Reject
+              </DeclineButton>
+            )}
+          />
+        )}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Reject' }));
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 'timeoff-1', status: 'declined' }),
+      );
+    });
+    expect(declines).toEqual([
+      { id: 'timeoff-1', body: { decline_reason: 'Overlaps for timeoff-1' } },
+    ]);
+    expect(
+      screen.queryByRole('button', { name: 'View' }),
+    ).not.toBeInTheDocument();
+  });
+
   it('lists the first page again when the status filter is cleared', async () => {
     mockTimeOffRequests();
     const { result } = renderHook(() => useTimeOffList(), {

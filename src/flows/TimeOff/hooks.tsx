@@ -32,24 +32,17 @@ import {
 import { useStepState } from '@/src/flows/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 
-export const useTimeOffRequestReview = ({
-  timeOffId,
-  isReviewing,
-}: {
-  timeOffId: string | undefined;
-  isReviewing: boolean;
-}) => {
-  const { timeOffRequest, isLoading, error, refetch } = useTimeOffRequest({
-    timeOffId: isReviewing ? timeOffId : undefined,
-  });
-
+const useTimeOffDecisions = () => {
   const approveTimeOffRequestMutation = useApproveTimeOffRequest();
   const { mutateAsyncOrThrow: approveTimeOffRequestAsync } = mutationToPromise(
     approveTimeOffRequestMutation,
   );
 
-  const approve = useCallback(
-    async ({ approverId }: TimeOffApproveOptions) => {
+  const approveTimeOffRequest = useCallback(
+    async ({
+      timeOffId,
+      approverId,
+    }: TimeOffApproveOptions & { timeOffId: string | undefined }) => {
       try {
         if (!timeOffId) {
           throw new Error('No time-off request to approve.');
@@ -66,7 +59,7 @@ export const useTimeOffRequestReview = ({
         throw getTimeOffDecisionError(error);
       }
     },
-    [approveTimeOffRequestAsync, timeOffId],
+    [approveTimeOffRequestAsync],
   );
 
   const declineTimeOffRequestMutation = useDeclineTimeOffRequest();
@@ -74,8 +67,11 @@ export const useTimeOffRequestReview = ({
     declineTimeOffRequestMutation,
   );
 
-  const decline = useCallback(
-    async ({ declineReason }: TimeOffDeclineOptions) => {
+  const declineTimeOffRequest = useCallback(
+    async ({
+      timeOffId,
+      declineReason,
+    }: TimeOffDeclineOptions & { timeOffId: string | undefined }) => {
       try {
         if (!timeOffId) {
           throw new Error('No time-off request to decline.');
@@ -92,7 +88,41 @@ export const useTimeOffRequestReview = ({
         throw getTimeOffDecisionError(error);
       }
     },
-    [declineTimeOffRequestAsync, timeOffId],
+    [declineTimeOffRequestAsync],
+  );
+
+  return {
+    approveTimeOffRequest,
+    declineTimeOffRequest,
+    isSubmitting:
+      approveTimeOffRequestMutation.isPending ||
+      declineTimeOffRequestMutation.isPending,
+  };
+};
+
+export const useTimeOffRequestReview = ({
+  timeOffId,
+  isReviewing,
+}: {
+  timeOffId: string | undefined;
+  isReviewing: boolean;
+}) => {
+  const { timeOffRequest, isLoading, error, refetch } = useTimeOffRequest({
+    timeOffId: isReviewing ? timeOffId : undefined,
+  });
+  const { approveTimeOffRequest, declineTimeOffRequest, isSubmitting } =
+    useTimeOffDecisions();
+
+  const approve = useCallback(
+    ({ approverId }: TimeOffApproveOptions) =>
+      approveTimeOffRequest({ timeOffId, approverId }),
+    [approveTimeOffRequest, timeOffId],
+  );
+
+  const decline = useCallback(
+    ({ declineReason }: TimeOffDeclineOptions) =>
+      declineTimeOffRequest({ timeOffId, declineReason }),
+    [declineTimeOffRequest, timeOffId],
   );
 
   return {
@@ -125,9 +155,7 @@ export const useTimeOffRequestReview = ({
     /**
      * Whether a decision on the time-off request under review is being sent.
      */
-    isSubmitting:
-      approveTimeOffRequestMutation.isPending ||
-      declineTimeOffRequestMutation.isPending,
+    isSubmitting,
   };
 };
 
@@ -248,6 +276,7 @@ export const useTimeOffList = ({ pageSize }: UseTimeOffListOptions = {}) => {
     timeOffId,
     isReviewing: stepState.currentStep.name === 'review',
   });
+  const listedTimeOffDecisions = useTimeOffDecisions();
 
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
@@ -360,6 +389,21 @@ export const useTimeOffList = ({ pageSize }: UseTimeOffListOptions = {}) => {
      */
     timeOffId,
     ...timeOffRequestReview,
+    /**
+     * Approves one of the listed time-off requests without opening it. Resolves with the request
+     * as the API returns it. Rejects with a `TimeOffDecisionError`.
+     */
+    approveTimeOffRequest: listedTimeOffDecisions.approveTimeOffRequest,
+    /**
+     * Declines one of the listed time-off requests without opening it. Resolves with the request
+     * as the API returns it. Rejects with a `TimeOffDecisionError`.
+     */
+    declineTimeOffRequest: listedTimeOffDecisions.declineTimeOffRequest,
+    /**
+     * Whether a decision on the request under review or on a listed request is being sent.
+     */
+    isSubmitting:
+      timeOffRequestReview.isSubmitting || listedTimeOffDecisions.isSubmitting,
     /**
      * Moves back to the list, on the page and status it showed.
      */

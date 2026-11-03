@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { XIcon } from 'lucide-react';
 import { useFormFields } from '@/src/context';
 import { useTimeOffReviewContext } from '@/src/flows/TimeOff/context';
 import {
@@ -27,6 +28,7 @@ export function DeclineButton({
 
   return (
     <CustomButton
+      aria-label={children ? undefined : 'Decline'}
       {...props}
       type='button'
       className={cn('RemoteFlows__ReviewStep__DeclineButton', props.className)}
@@ -51,7 +53,7 @@ export function DeclineButton({
         await onSuccess?.(timeOffRequest);
       }}
     >
-      {children}
+      {children ?? <XIcon />}
     </CustomButton>
   );
 }

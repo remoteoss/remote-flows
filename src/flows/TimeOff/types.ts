@@ -155,6 +155,15 @@ export type TimeOffListStepProps = {
     timeOffRequest: TimeOffRequest;
     details: TimeOffRequestDetail[];
   }) => React.ReactNode;
+  /**
+   * Replaces the actions rendered at the end of each listed request: `ViewButton`, then
+   * `DeclineButton` and `ApproveButton` for requests in `requested`, with no decline reason and a
+   * `null` approver. `ViewButton`, `ApproveButton` and `DeclineButton` rendered here act on that request.
+   */
+  renderActions?: (props: {
+    timeOffRequest: TimeOffRequest;
+    details: TimeOffRequestDetail[];
+  }) => React.ReactNode;
 };
 
 type TimeOffButtonProps = PropsWithChildren<
@@ -214,6 +223,7 @@ export type TimeOffListRenderProps = {
   components: {
     StatusFilter: React.ComponentType;
     ListStep: React.ComponentType<TimeOffListStepProps>;
+    ViewButton: React.ComponentType<TimeOffButtonProps>;
     ListRetryButton: React.ComponentType<TimeOffButtonProps>;
     PreviousPageButton: React.ComponentType<TimeOffButtonProps>;
     NextPageButton: React.ComponentType<TimeOffButtonProps>;

@@ -1,4 +1,10 @@
-import { useTimeOffListContext } from '@/src/flows/TimeOff/context';
+import { ApproveButton } from '@/src/flows/TimeOff/components/ApproveButton';
+import { DeclineButton } from '@/src/flows/TimeOff/components/DeclineButton';
+import { ViewButton } from '@/src/flows/TimeOff/components/ViewButton';
+import {
+  TimeOffReviewContext,
+  useTimeOffListContext,
+} from '@/src/flows/TimeOff/context';
 import {
   TimeOffListStepProps,
   TimeOffRequestDetail,
@@ -13,7 +19,7 @@ const LISTED_DETAILS: TimeOffRequestDetail['name'][] = [
   'duration',
 ];
 
-export function ListStep({ render }: TimeOffListStepProps) {
+export function ListStep({ render, renderActions }: TimeOffListStepProps) {
   const { timeOffListBag } = useTimeOffListContext();
   const { timeOffRequests } = timeOffListBag;
 
@@ -50,6 +56,46 @@ export function ListStep({ render }: TimeOffListStepProps) {
                       </span>
                     ))}
             </button>
+            <TimeOffReviewContext.Provider
+              value={{
+                timeOffBag: {
+                  ...timeOffListBag,
+                  timeOffRequest,
+                  approve: ({ approverId }) =>
+                    timeOffListBag.approveTimeOffRequest({
+                      timeOffId: timeOffRequest.id,
+                      approverId,
+                    }),
+                  decline: ({ declineReason }) =>
+                    timeOffListBag.declineTimeOffRequest({
+                      timeOffId: timeOffRequest.id,
+                      declineReason,
+                    }),
+                },
+              }}
+            >
+              <div className='RemoteFlows__ListStep__Actions'>
+                {renderActions ? (
+                  renderActions({ timeOffRequest, details })
+                ) : (
+                  <>
+                    <ViewButton />
+                    {timeOffRequest.status === 'requested' && (
+                      <>
+                        <DeclineButton
+                          declineReason={null}
+                          className='RemoteFlows__ListStep__DeclineButton'
+                        />
+                        <ApproveButton
+                          approverId={null}
+                          className='RemoteFlows__ListStep__ApproveButton'
+                        />
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            </TimeOffReviewContext.Provider>
           </li>
         );
       })}
