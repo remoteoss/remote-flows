@@ -104,6 +104,8 @@ describe('usesJsfV1ContractDetails', () => {
     'PRI',
     'ROU',
     'TUR',
+    'MKD',
+    'PRY',
     'JPN',
     'LKA',
     'HUN',
