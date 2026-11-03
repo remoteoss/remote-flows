@@ -502,13 +502,17 @@ type TaxServicingCountriesField = {
 const isAllowedTaxServicingCountry = (country: string) =>
   !PROHIBITED_TAX_SERVICING_COUNTRIES.includes(country);
 
+const HIDDEN_TAX_SERVICING_AREAS = ['Antarctica'];
+
 const filterAreas = (areas?: Record<string, string[]>) =>
   areas &&
   Object.fromEntries(
-    Object.entries(areas).map(([area, countries]) => [
-      area,
-      countries.filter(isAllowedTaxServicingCountry),
-    ]),
+    Object.entries(areas)
+      .filter(([area]) => !HIDDEN_TAX_SERVICING_AREAS.includes(area))
+      .map(([area, countries]) => [
+        area,
+        countries.filter(isAllowedTaxServicingCountry),
+      ]),
   );
 
 export const withoutProhibitedTaxServicingCountries = <

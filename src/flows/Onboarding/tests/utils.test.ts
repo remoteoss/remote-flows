@@ -481,10 +481,12 @@ describe('withoutProhibitedTaxServicingCountries', () => {
           ],
           $meta: {
             regions: {
+              Antarctica: ['Antarctica'],
               Asia: ['Afghanistan'],
               Europe: ['Germany', 'Russia', 'Spain'],
             },
             subregions: {
+              Antarctica: ['Antarctica'],
               'Southern Asia': ['Afghanistan'],
               'Western Europe': ['Germany'],
             },
