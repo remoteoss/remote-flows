@@ -81,8 +81,6 @@ Schema versions for employee onboarding in Japan.
 
 **What changed:**
 
-No changelog was published for this version; the changes below come from comparing the schemas.
-
 - Baseline on the previous form engine (`x-rmt-meta.jsfOldVersion` is `true`)
 - `notice_period_days` is now fixed at 30 (`const: 30`, `default: 30`) instead of accepting any value of at least 30. Partners with a custom UI must send exactly `30`; any other value is rejected
 - `contract_duration_type` gains a description about fixed-term agreements in Japan

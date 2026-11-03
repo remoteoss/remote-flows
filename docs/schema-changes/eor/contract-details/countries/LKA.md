@@ -103,8 +103,6 @@ Schema versions for employee onboarding in Sri Lanka.
 
 **What changed:**
 
-No changelog was published for this version; the changes below come from comparing the schemas.
-
 - Baseline on the previous form engine (`x-rmt-meta.jsfOldVersion` is `true`)
 - Adds the required `compensation_currency_code` field. It only offers `LKR`, defaults to `LKR` and is read-only. Partners with a custom UI must send `LKR`
 - Adds the hidden `payout_currency_code` field, fixed to `LKR`
@@ -133,8 +131,6 @@ No changelog was published for this version; the changes below come from compari
 
 **What changed:**
 
-No changelog was published for this version; the changes below come from comparing the schemas.
-
 - Adds the required `notice_period_choice` field: `recommended` (1 month) or `custom`
 - `notice_period` is now hidden and fixed at 1 when `notice_period_choice` is `recommended`. When it is `custom`, `notice_period` is shown as a number input with a minimum of 0 and is required. Partners with a custom UI must render `notice_period_choice` and send `notice_period` accordingly
 
@@ -157,8 +153,6 @@ No changelog was published for this version; the changes below come from compari
 **Type of change:** technical
 
 **What changed:**
-
-No changelog was published for this version; the changes below come from comparing the schemas.
 
 - Removes the required `has_variable_bonus` field. Stop sending it
 - `variable_bonus_details` no longer depends on `has_variable_bonus`: it is always available and optional (up to 1000 characters)
