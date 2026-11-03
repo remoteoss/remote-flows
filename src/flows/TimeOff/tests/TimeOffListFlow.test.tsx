@@ -365,9 +365,10 @@ describe('TimeOffListFlow', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Reject' }));
 
     await waitFor(() => {
-      expect(onSuccess).toHaveBeenCalledWith(
-        expect.objectContaining({ id: 'timeoff-1', status: 'declined' }),
-      );
+      expect(onSuccess).toHaveBeenCalledWith({
+        ...listedTimeOff('timeoff-1', 'Declined leave'),
+        status: 'declined',
+      });
     });
     expect(declines).toEqual([
       { id: 'timeoff-1', body: { decline_reason: 'Overlaps for timeoff-1' } },
