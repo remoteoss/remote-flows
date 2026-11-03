@@ -2,6 +2,7 @@ import {
   END_TYPE_MULTIPLE,
   END_TYPE_NEVER,
   INVOICE_ITEM_SLOTS,
+  INVOICE_TEXT_MAX_LENGTH,
   ONE_TIME_PERIODICITY_OPTION,
   PLACEHOLDER_OPTION,
   RECURRING_PERIODICITY_OPTIONS,
@@ -20,6 +21,7 @@ function invoiceItemProperties() {
     properties[`item_${slot}_description`] = {
       title: `Item ${slot} description`,
       type: 'string',
+      maxLength: INVOICE_TEXT_MAX_LENGTH,
       'x-jsf-presentation': {
         inputType: 'text',
       },
@@ -568,6 +570,7 @@ export function buildCreateInvoiceScheduleSchema({
         description: 'Shown on generated invoices.',
         title: 'Additional notes',
         type: 'string',
+        maxLength: INVOICE_TEXT_MAX_LENGTH,
         'x-jsf-presentation': {
           inputType: 'textarea',
         },
