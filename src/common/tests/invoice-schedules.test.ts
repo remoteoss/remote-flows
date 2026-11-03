@@ -16,18 +16,17 @@ const baseValues = {
   currency: 'USD',
   periodicity: 'monthly',
   start_date: '2026-10-01',
-  item_1_description: 'Design work',
-  item_1_amount: 250000,
+  items: [{ description: 'Design work', amount: 250000 }],
 };
 
 describe('buildInvoiceItems', () => {
-  it('collects the filled slots in order', () => {
+  it('collects the filled rows in order', () => {
     expect(
       buildInvoiceItems({
-        item_1_description: 'First',
-        item_1_amount: 100,
-        item_2_description: 'Second',
-        item_2_amount: 200,
+        items: [
+          { description: 'First', amount: 100 },
+          { description: 'Second', amount: 200 },
+        ],
       }),
     ).toEqual([
       { description: 'First', amount: 100 },
@@ -35,25 +34,20 @@ describe('buildInvoiceItems', () => {
     ]);
   });
 
-  it('skips slots missing either half of the pair', () => {
+  it('skips rows missing either half of the pair', () => {
     expect(
       buildInvoiceItems({
-        item_1_description: 'First',
-        item_1_amount: 100,
-        item_2_description: 'No amount',
-        item_3_amount: 300,
+        items: [
+          { description: 'First', amount: 100 },
+          { description: 'No amount' },
+          { amount: 300 },
+        ],
       }),
     ).toEqual([{ description: 'First', amount: 100 }]);
   });
 
-  it('collects up to ten slots', () => {
-    const values: Record<string, unknown> = {};
-    for (let slot = 1; slot <= 12; slot++) {
-      values[`item_${slot}_description`] = `Item ${slot}`;
-      values[`item_${slot}_amount`] = slot;
-    }
-
-    expect(buildInvoiceItems(values)).toHaveLength(10);
+  it('returns no items when the form has none', () => {
+    expect(buildInvoiceItems({})).toEqual([]);
   });
 });
 
@@ -517,7 +511,7 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     it('accepts a note and an item description of 255 characters', async () => {
       const result = await validate({
         note: 'a'.repeat(255),
-        item_1_description: 'a'.repeat(255),
+        items: [{ description: 'a'.repeat(255), amount: 250000 }],
       });
 
       expect(result.formErrors).toBeUndefined();
@@ -530,9 +524,11 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     });
 
     it('rejects an item description longer than 255 characters', async () => {
-      const result = await validate({ item_1_description: 'a'.repeat(256) });
+      const result = await validate({
+        items: [{ description: 'a'.repeat(256), amount: 250000 }],
+      });
 
-      expect(result.formErrors).toHaveProperty('item_1_description');
+      expect(result.formErrors).toHaveProperty('items');
     });
   });
 
@@ -674,8 +670,7 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     const result = await form.handleValidation({
       periodicity: 'monthly',
       start_date: '2026-10-01',
-      item_1_description: 'Design work',
-      item_1_amount: 250000,
+      items: [{ description: 'Design work', amount: 250000 }],
     });
 
     expect(result?.formErrors).toHaveProperty('currency');
@@ -683,7 +678,7 @@ describe('buildCreateInvoiceScheduleSchema', () => {
 });
 
 describe('buildInvoiceScheduleFormValues', () => {
-  it('maps a saved schedule to form values, one slot per item, amounts untouched', () => {
+  it('maps a saved schedule to form values, one row per item, amounts untouched', () => {
     expect(
       buildInvoiceScheduleFormValues({
         currency: 'EUR',
@@ -705,10 +700,10 @@ describe('buildInvoiceScheduleFormValues', () => {
       note: null,
       end_type: 'multiple',
       nr_occurrences: 3,
-      item_1_description: 'Design work',
-      item_1_amount: 250000,
-      item_2_description: 'Hosting',
-      item_2_amount: 7500,
+      items: [
+        { description: 'Design work', amount: 250000 },
+        { description: 'Hosting', amount: 7500 },
+      ],
     });
   });
 
