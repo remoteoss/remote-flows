@@ -9,8 +9,45 @@ import {
 import { FormItem } from '@/src/components/ui/form';
 import { MultiSelect } from '@/src/components/ui/multi-select';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { CountryComponentProps } from '@/src/types/fields';
+import { CountryComponentProps, CountryOption } from '@/src/types/fields';
 import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
+
+const V5_CATEGORIES: Record<string, string> = {
+  global: 'Global',
+  region: 'Regions',
+  subregion: 'Subregions',
+  country: 'Countries',
+};
+
+const stripPrefix = (value: string) =>
+  value.replace(/^(region|subregion)-/, '');
+
+// Choosing Global replaces everything, choosing a region drops its own
+// subregions and countries, and choosing anything narrower drops Global.
+function applyGroupedSelectionRules(
+  previous: CountryOption[],
+  next: CountryOption[],
+): CountryOption[] {
+  const added = next.find(
+    (option) => !previous.some((item) => item.value === option.value),
+  );
+  const type = added?.$meta?.type;
+  if (!added || !type) return next;
+  if (type === 'global') return [added];
+
+  const withoutGlobal = next.filter((item) => item.$meta?.type !== 'global');
+  if (type !== 'region') return withoutGlobal;
+
+  const regionName = stripPrefix(added.value);
+  return withoutGlobal.filter(
+    (item) =>
+      item === added ||
+      !(
+        (item.$meta?.type === 'subregion' || item.$meta?.type === 'country') &&
+        item.$meta?.region === regionName
+      ),
+  );
+}
 
 export function CountryFieldDefault({
   field,
@@ -23,10 +60,16 @@ export function CountryFieldDefault({
     (Array.isArray(fieldData.jsonType)
       ? fieldData.jsonType.includes('array')
       : fieldData.jsonType === 'array');
+  const isGrouped = Boolean(
+    fieldData.options?.some((option) => option.$meta?.type),
+  );
   const handleChange = (rawValues: $TSFixMe[]) => {
-    const values = rawValues.map(({ value }) => value);
+    const finalValues = isGrouped
+      ? applyGroupedSelectionRules(selected, rawValues)
+      : rawValues;
+    const values = finalValues.map(({ value }) => value);
     field.onChange(isMultiple ? values : (values[0] ?? ''));
-    setSelected(rawValues);
+    setSelected(finalValues);
   };
 
   useEffect(() => {
@@ -42,31 +85,37 @@ export function CountryFieldDefault({
     // oxlint-disable-next-line react-hooks/set-state-in-effect
     setSelected(
       values
-        .map((value) =>
-          fieldData.options?.find((option) => option.value === value),
+        .map(
+          (value) =>
+            fieldData.options?.find((option) => option.value === value) ??
+            // The API returns saved values as display labels
+            (isGrouped
+              ? fieldData.options?.find((option) => option.label === value)
+              : undefined),
         )
         .filter(Boolean) as $TSFixMe[],
     );
-  }, [field.value, fieldData.options]);
+  }, [field.value, fieldData.options, isGrouped]);
 
-  const groupOptions = isMultiple
-    ? [
-        ...Object.entries(fieldData.$meta?.regions || {}).map(
-          ([key, value]) => ({
-            value,
-            label: key,
-            category: 'Regions',
-          }),
-        ),
-        ...Object.entries(fieldData.$meta?.subregions || {}).map(
-          ([key, value]) => ({
-            value,
-            label: key,
-            category: 'Subregions',
-          }),
-        ),
-      ]
-    : [];
+  const groupOptions =
+    isMultiple && !isGrouped
+      ? [
+          ...Object.entries(fieldData.$meta?.regions || {}).map(
+            ([key, value]) => ({
+              value,
+              label: key,
+              category: 'Regions',
+            }),
+          ),
+          ...Object.entries(fieldData.$meta?.subregions || {}).map(
+            ([key, value]) => ({
+              value,
+              label: key,
+              category: 'Subregions',
+            }),
+          ),
+        ]
+      : [];
 
   const countryOptions = [
     ...groupOptions,
@@ -74,7 +123,9 @@ export function CountryFieldDefault({
       ...option,
       value: option.value,
       label: option.label,
-      category: 'Countries',
+      category: isGrouped
+        ? V5_CATEGORIES[option.$meta?.type ?? 'country']
+        : 'Countries',
     })) || []),
   ];
   return (

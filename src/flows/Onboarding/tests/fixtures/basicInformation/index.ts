@@ -3,3 +3,4 @@ export * from './v3-portugal';
 export * from './v3-korea';
 export * from './v3-germany';
 export * from './v3-france';
+export * from './v5-tax-servicing-countries';

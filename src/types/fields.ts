@@ -118,7 +118,22 @@ export type UploadedFileReference = {
   sub_type?: string | null;
 };
 
-type FieldCountryDataProps = Omit<FieldDataProps, 'meta'> & {
+/**
+ * What an option in the countries field is. Only present when the schema lists
+ * Global, regions and subregions as options of their own (basic information v5).
+ */
+export type CountryOptionType = 'global' | 'region' | 'subregion' | 'country';
+
+export type CountryOption = NonNullable<FieldDataProps['options']>[number] & {
+  $meta?: {
+    type?: CountryOptionType;
+    region?: string | null;
+    subregion?: string | null;
+  };
+};
+
+type FieldCountryDataProps = Omit<FieldDataProps, 'meta' | 'options'> & {
+  options?: CountryOption[];
   $meta: {
     regions: Record<string, string[]>;
     subregions: Record<string, string[]>;
