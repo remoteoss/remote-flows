@@ -82,7 +82,7 @@ Schema versions for employee onboarding in North Macedonia.
 
 ### v3
 
-**Type of change:** technical
+**Type of change:** product
 
 **What changed:**
 
