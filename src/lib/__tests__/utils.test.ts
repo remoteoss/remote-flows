@@ -325,6 +325,95 @@ describe('utils lib', () => {
       });
     });
 
+    it('handles group-array field with one prettified entry per row', () => {
+      const values = {
+        items: [
+          { description: 'Design', amount: 150000 },
+          { description: 'Build', amount: 250000 },
+        ],
+      };
+      const fields: JSFFields = [
+        {
+          name: 'items',
+          type: 'group-array',
+          label: 'Items',
+          fields: [
+            { name: 'description', type: 'text', label: 'Description' },
+            {
+              name: 'amount',
+              type: 'money',
+              label: 'Amount',
+              currency: 'EUR',
+            },
+          ],
+        },
+      ];
+      expect(prettifyFormValues(values, fields)).toEqual({
+        items: {
+          '0': {
+            description: {
+              prettyValue: 'Design',
+              label: 'Description',
+              inputType: 'text',
+            },
+            amount: {
+              prettyValue: 1500,
+              label: 'Amount',
+              inputType: 'money',
+              currency: 'EUR',
+            },
+          },
+          '1': {
+            description: {
+              prettyValue: 'Build',
+              label: 'Description',
+              inputType: 'text',
+            },
+            amount: {
+              prettyValue: 2500,
+              label: 'Amount',
+              inputType: 'money',
+              currency: 'EUR',
+            },
+          },
+        },
+      });
+    });
+
+    it('reads group-array row field names from nameKey and omits an empty list', () => {
+      const fields: JSFFields = [
+        {
+          name: 'items',
+          type: 'group-array',
+          label: 'Items',
+          fields: () => [
+            {
+              name: 'items.description',
+              nameKey: 'description',
+              type: 'text',
+              label: 'Description',
+            },
+          ],
+        },
+      ];
+      expect(
+        prettifyFormValues({ items: [{ description: 'Design' }] }, fields),
+      ).toEqual({
+        items: {
+          '0': {
+            description: {
+              prettyValue: 'Design',
+              label: 'Description',
+              inputType: 'text',
+            },
+          },
+        },
+      });
+      expect(prettifyFormValues({ items: [] }, fields)).toEqual({
+        items: undefined,
+      });
+    });
+
     it('handles unknown field types', () => {
       const values = { custom: 'value' };
       const fields: JSFFields = [

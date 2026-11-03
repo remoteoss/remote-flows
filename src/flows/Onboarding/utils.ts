@@ -222,6 +222,8 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'TUR',
   'JPN',
   'LKA',
+  'HUN',
+  'IDN',
 ];
 
 /**

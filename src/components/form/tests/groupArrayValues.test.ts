@@ -90,6 +90,15 @@ describe('group-array values', () => {
         ],
       });
     });
+
+    it('reads blank values in a row as missing', async () => {
+      const parsed = await parseJSFToValidate(
+        { items: [{ description: '', amount: '' }] },
+        buildFields(),
+      );
+
+      expect(parsed).toEqual({ items: [{}] });
+    });
   });
 
   describe('multiple selects', () => {

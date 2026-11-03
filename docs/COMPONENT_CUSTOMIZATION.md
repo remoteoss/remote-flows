@@ -103,6 +103,7 @@ Available component types include:
 - `file` - File upload fields
 - `work-schedule` - Work schedule fields
 - `fieldsetToggle` - Fieldset toggle buttons
+- `group-array` - Repeatable groups of fields, with add and remove
 - `statement` - Statement/information display
 - `table` - Table components
 - `drawer` - Drawer components
@@ -129,6 +130,7 @@ and their typescript definitions
 - `TelFieldComponentProps`: for the tel component
 - `TimeFieldComponentProps`: for the timefield component
 - `ForcedValueComponentProps`: for the forced value component
+- `GroupArrayComponentProps`: for the group-array component
 
 > **Tip:** Check [src/default-components.ts](../src/default-components.ts) to see the default implementations. You can use these as a starting point or reference when building your own custom components.
 
@@ -396,6 +398,48 @@ type JSFCustomComponentProps = {
   // ... additional JSON Schema Form props
 };
 ```
+
+### GroupArrayComponentProps
+
+For the `group-array` component, a repeatable group of fields such as the invoice items of an invoice schedule. The SDK keeps the rows in the form and hands you each row's inputs already rendered, so you only decide the layout.
+
+```tsx
+import { GroupArrayComponentProps } from '@remoteoss/remote-flows';
+
+const CustomGroupArray = ({
+  label,
+  hideLabel,
+  description,
+  addFieldText,
+  rows,
+  canAdd,
+  add,
+  error,
+}: GroupArrayComponentProps) => (
+  <fieldset>
+    {hideLabel ? null : <legend>{label}</legend>}
+    {description}
+    {rows.map((row) => (
+      <div key={row.id}>
+        {row.fields}
+        {row.canRemove ? (
+          <button type='button' onClick={row.remove}>
+            Remove
+          </button>
+        ) : null}
+      </div>
+    ))}
+    {error ? <p role='alert'>{error}</p> : null}
+    {canAdd ? (
+      <button type='button' onClick={add}>
+        {addFieldText}
+      </button>
+    ) : null}
+  </fieldset>
+);
+```
+
+`canAdd` and `row.canRemove` already account for the schema's `maxItems` and `minItems`. Row errors show on the row's own inputs, and `error` is the error of the group itself.
 
 ### ZendeskTriggerButtonComponentProps
 

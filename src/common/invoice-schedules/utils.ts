@@ -5,7 +5,6 @@ import {
 import {
   END_TYPE_MULTIPLE,
   END_TYPE_NEVER,
-  INVOICE_ITEM_SLOTS,
   ONE_TIME_PERIODICITY,
   ONE_TIME_PERSISTED_PERIODICITY,
   SEMI_MONTHLY_CUSTOM_CYCLE,
@@ -16,24 +15,19 @@ import {
 } from '@/src/common/invoice-schedules/constants';
 
 /**
- * Builds invoice items array from form values
- * Collects up to 10 invoice items (item_1 through item_10)
- * @param values - Form values containing item_N_description and item_N_amount fields
+ * Builds the invoice items array from the form's `items` rows
+ * @param values - Form values containing the `items` rows
  * @returns Array of invoice items with description and amount
  */
 export function buildInvoiceItems(values: Record<string, unknown>) {
-  const items = [];
-  for (let i = 1; i <= INVOICE_ITEM_SLOTS; i++) {
-    const description = values[`item_${i}_description`];
-    const amount = values[`item_${i}_amount`];
-    if (typeof description === 'string' && typeof amount === 'number') {
-      items.push({
-        description,
-        amount: amount,
-      });
-    }
-  }
-  return items;
+  const rows = Array.isArray(values.items) ? values.items : [];
+
+  return rows
+    .filter(
+      (row): row is { description: string; amount: number } =>
+        typeof row?.description === 'string' && typeof row?.amount === 'number',
+    )
+    .map(({ description, amount }) => ({ description, amount }));
 }
 
 type InvoiceScheduleFormSource = Pick<
@@ -103,10 +97,12 @@ export function buildInvoiceScheduleFormValues(
     values.semi_monthly_settings = semiMonthlySettings;
   }
 
-  schedule.items?.forEach((item, index) => {
-    values[`item_${index + 1}_description`] = item.description;
-    values[`item_${index + 1}_amount`] = item.amount;
-  });
+  if (schedule.items?.length) {
+    values.items = schedule.items.map(({ description, amount }) => ({
+      description,
+      amount,
+    }));
+  }
 
   return values;
 }

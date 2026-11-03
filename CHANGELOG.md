@@ -1,5 +1,37 @@
 # @remoteoss/remote-flows
 
+## 1.68.0
+
+### Minor Changes
+
+#### Features
+
+- load one time-off request through useTimeOffRequest (PBYR-5033) (#1773) [#1773](https://github.com/remoteoss/remote-flows/pull/1773)
+- review the selected request in a composable step (PBYR-5034) (#1774) [#1774](https://github.com/remoteoss/remote-flows/pull/1774)
+- approve the reviewed request and expose its outcome (PBYR-5102) (#1780) [#1780](https://github.com/remoteoss/remote-flows/pull/1780)
+- decline the reviewed request (#1781) [#1781](https://github.com/remoteoss/remote-flows/pull/1781)
+- add a group-array field for repeatable groups of fields (#1777) [#1777](https://github.com/remoteoss/remote-flows/pull/1777)
+- support a group-array inside heading groups and object fieldsets (#1779) [#1779](https://github.com/remoteoss/remote-flows/pull/1779)
+- add icons to the default group-array add and remove buttons (#1801) [#1801](https://github.com/remoteoss/remote-flows/pull/1801)
+- support a description on the group-array field (#1803) [#1803](https://github.com/remoteoss/remote-flows/pull/1803)
+- let a group-array hide its visible label (#1805) [#1805](https://github.com/remoteoss/remote-flows/pull/1805)
+- hand a group-array's extra props to its row inputs (#1806) [#1806](https://github.com/remoteoss/remote-flows/pull/1806)
+- load paginated time-off requests through useTimeOffRequests (#1802) [#1802](https://github.com/remoteoss/remote-flows/pull/1802)
+
+#### Fixes
+
+- validate the form before previewing an invoice (#1818) [#1818](https://github.com/remoteoss/remote-flows/pull/1818)
+
+#### Chores
+
+- sync COUNTRY_CONTRACT_VERSIONS with backend (#1797) [#1797](https://github.com/remoteoss/remote-flows/pull/1797)
+- bump PAN, PRI contract_details schema versions (#1789) [#1789](https://github.com/remoteoss/remote-flows/pull/1789)
+- share the multiple select to multi-select rule across field renderers (#1778) [#1778](https://github.com/remoteoss/remote-flows/pull/1778)
+- bump ROU, TUR contract_details schema versions (#1819) [#1819](https://github.com/remoteoss/remote-flows/pull/1819)
+- bump NZL contract_details schema version (#1822) [#1822](https://github.com/remoteoss/remote-flows/pull/1822)
+- update contract details schema canary report (#1807) [#1807](https://github.com/remoteoss/remote-flows/pull/1807)
+- update contract details schema canary report (#1825) [#1825](https://github.com/remoteoss/remote-flows/pull/1825)
+
 ## 1.67.0
 
 ### Minor Changes
