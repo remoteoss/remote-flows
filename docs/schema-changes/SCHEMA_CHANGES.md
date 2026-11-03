@@ -12,7 +12,7 @@ Schema versions for the Basic Information step in employee onboarding flows.
 
 - **[v6](./eor/basic-information/v6/v6.md)** - **Latest, recommended for all new integrations**
   - Limits `seniority_date` to at most 5 years before `provisional_start_date`
-- [v5](./eor/basic-information/v5/v5.md) - `tax_servicing_countries` accepts region, subregion and "Global" values; the default field still renders country names
+- [v5](./eor/basic-information/v5/v5.md) - `tax_servicing_countries` accepts region, subregion and "Global" values; the default field lists regions, subregions and countries as plain options
 - [v4](./eor/basic-information/v4/v4.md) - Earlier version
   - Adds a login email fieldset which determines how users can log in
 - [v3](./eor/basic-information/v3/v3.md) (SDK 1.23.0+) - Earlier version
