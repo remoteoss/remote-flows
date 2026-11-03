@@ -78,7 +78,7 @@ export function ContractDetailsStep({
   const shouldShowDisclaimer = isCMOrCMPlus(subscription);
 
   return (
-    <div className='space-y-4'>
+    <div className='RemoteFlows__ContractDetailsStep'>
       <ContractorOnboardingForm
         defaultValues={initialValues}
         onSubmit={handleSubmit}

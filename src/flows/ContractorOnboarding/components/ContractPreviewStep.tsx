@@ -68,7 +68,7 @@ export function ContractPreviewStep({
     contractorOnboardingBag.initialValues.contract_preview;
 
   return (
-    <div className='space-y-4'>
+    <div className='RemoteFlows__ContractPreviewStep'>
       <ContractorOnboardingForm
         defaultValues={initialValues}
         onSubmit={handleSubmit}

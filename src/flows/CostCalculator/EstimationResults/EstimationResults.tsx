@@ -61,7 +61,7 @@ const EstimationResultsHeader = ({
             }
           />
         </div>
-        <div className='space-y-1'>
+        <div className='RemoteFlows__EstimationResultsHeader__Content'>
           <h2
             data-testid='estimation-results-header-title'
             className='RemoteFlows__EstimationResultsHeader__Title text-lg font-medium leading-none text-[#181818]'
@@ -170,7 +170,7 @@ function OnboardingTimeline({
           </div>
         </AccordionTrigger>
         <AccordionContent className='px-0 pb-4'>
-          <ul className='RemoteFlows__OnboardingTimeline__List list-disc list-inside space-y-2'>
+          <ul className='RemoteFlows__OnboardingTimeline__List list-disc list-inside'>
             {data.steps.map((step) => (
               <li key={step.id}>
                 <strong className='font-medium text-[#09090B]'>

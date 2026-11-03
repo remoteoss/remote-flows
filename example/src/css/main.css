@@ -1240,9 +1240,35 @@ button.reset-button {
   padding-left: 20px;
 }
 
+.RemoteFlows__ContractAmendmentForm > * + *,
+.RemoteFlows__ContractDetailsStep > * + *,
+.RemoteFlows__ContractDocumentForm > * + *,
+.RemoteFlows__ContractDocumentForm__Container > * + *,
+.RemoteFlows__ContractDocumentPreviewForm > * + *,
+.RemoteFlows__CostCalculatorForm > * + *,
+.RemoteFlows__DailyScheduleForm > * + *,
+.RemoteFlows__InvoiceScheduleForm > * + *,
+.RemoteFlows__OnboardingForm > * + *,
+.RemoteFlows__PayrollAdminForm > * + *,
+.RemoteFlows__PayrollEmployeeForm > * + *,
 .RemoteFlows__RequestIdStep > * + *,
-.RemoteFlows__ReviewStep > * + * {
+.RemoteFlows__ReviewStep > * + *,
+.RemoteFlows__TerminationForm > * + * {
   margin-top: 1rem;
+}
+
+.RemoteFlows__SummaryResults__AccordionRows > * + * {
+  margin-top: 0.75rem;
+}
+
+.RemoteFlows__ContractPreviewHeader > * + *,
+.RemoteFlows__OnboardingTimeline__List > * + * {
+  margin-top: 0.5rem;
+}
+
+.RemoteFlows__EstimationResultsHeader__Content > * + *,
+.RemoteFlows__SummaryHeader__Content > * + * {
+  margin-top: 0.25rem;
 }
 
 .RemoteFlows__ReviewStep__Details {

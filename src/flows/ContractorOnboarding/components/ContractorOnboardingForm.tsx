@@ -106,7 +106,7 @@ export function ContractorOnboardingForm({
       <form
         id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}
-        className='space-y-4 RemoteFlows__OnboardingForm'
+        className='RemoteFlows__OnboardingForm'
       >
         <JSONSchemaFormFields
           components={components}
