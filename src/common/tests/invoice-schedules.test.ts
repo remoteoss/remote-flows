@@ -500,6 +500,42 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     });
   });
 
+  describe('text length limits', () => {
+    const validate = async (values: Record<string, unknown>) => {
+      const form = createHeadlessForm(
+        buildCreateInvoiceScheduleSchema({ currencies: ['USD'] }) as $TSFixMe,
+        {},
+      );
+      return form.handleValidation({
+        ...baseValues,
+        periodicity: ONE_TIME_PERIODICITY,
+        start_date: '2099-01-01',
+        ...values,
+      });
+    };
+
+    it('accepts a note and an item description of 255 characters', async () => {
+      const result = await validate({
+        note: 'a'.repeat(255),
+        item_1_description: 'a'.repeat(255),
+      });
+
+      expect(result.formErrors).toBeUndefined();
+    });
+
+    it('rejects a note longer than 255 characters', async () => {
+      const result = await validate({ note: 'a'.repeat(256) });
+
+      expect(result.formErrors).toHaveProperty('note');
+    });
+
+    it('rejects an item description longer than 255 characters', async () => {
+      const result = await validate({ item_1_description: 'a'.repeat(256) });
+
+      expect(result.formErrors).toHaveProperty('item_1_description');
+    });
+  });
+
   describe('end date choice', () => {
     const buildForm = (options = {}) =>
       createHeadlessForm(
