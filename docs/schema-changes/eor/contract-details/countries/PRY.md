@@ -60,7 +60,7 @@ Schema versions for employee onboarding in Paraguay.
 
 ### v6
 
-**Type of change:** product
+**Type of change:** compliance
 
 **What changed:**
 
@@ -153,8 +153,6 @@ Schema versions for employee onboarding in Paraguay.
 **Type of change:** technical
 
 **What changed:**
-
-No changelog was published for this version; the changes below come from comparing the schemas.
 
 - The schema is marked as the previous form engine version (`x-rmt-meta.jsfOldVersion` is `true`)
 - Removes the `non_compete_clause_compensation` checkbox. When `non_compete_clause_apply` is `"yes"`, the new `non_compete_clause_compensation_percentage` (at least 100% of monthly base salary) is required, and the new `non_compete_clause_compensation_amount` is computed from it and the annual gross salary. Partners using a custom UI must submit the percentage instead of the checkbox

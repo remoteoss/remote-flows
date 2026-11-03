@@ -10,7 +10,7 @@ Schema versions for employee onboarding in North Macedonia.
 
 ### v6 - Current
 
-**Type of change:** product
+**Type of change:** compliance
 
 **What changed:**
 
@@ -60,8 +60,6 @@ Schema versions for employee onboarding in North Macedonia.
 
 **What changed:**
 
-No changelog was published for this version; the changes below come from comparing the schemas.
-
 - The schema is marked as the previous form engine version (`x-rmt-meta.jsfOldVersion` is `true`)
 - Removes `post_termination_restrictions`. The clauses are no longer asked behind that question: `non_compete_clause_apply`, `non_solicitation_employees` and `non_solicitation_customers` are now always required, each `"yes"` or `"no"` (the `null` / N/A option is removed). `non_interference_apply` is optional and also accepts `null`. Partners using a custom UI must render and submit them
 - Removes the `has_non_compete_clause_compensation` checkbox. When `non_compete_clause_apply` is `"yes"`, `non_compete_clause_halt_period_months` (1 to 24 months) and the new `non_compete_clause_compensation_percentage` (at least 1% of monthly base salary) are required, and the new `non_compete_clause_compensation_amount` is computed from them and the annual gross salary
@@ -88,8 +86,6 @@ No changelog was published for this version; the changes below come from compari
 
 **What changed:**
 
-No changelog was published for this version; the changes below come from comparing the schemas.
-
 - Adds required `notice_period_choice`: `"recommended"` (1 month) or `"custom"`. With `"recommended"`, `notice_period` is hidden, read-only and fixed to `1`. With `"custom"`, `notice_period` (1 to 3 months) is shown and required. Partners using a custom UI must render and submit `notice_period_choice`
 - `notice_period` now defaults to `1` and its description is reworded
 
@@ -112,8 +108,6 @@ No changelog was published for this version; the changes below come from compari
 **Type of change:** technical
 
 **What changed:**
-
-No changelog was published for this version; the changes below come from comparing the schemas.
 
 - Renames the required bonus question `has_variable_bonus` to `has_bonus` (`"yes"` / `"no"`). Partners using a custom UI must submit `has_bonus` instead of `has_variable_bonus`
 
