@@ -256,8 +256,8 @@ export const useTimeOffList = ({ pageSize }: UseTimeOffListOptions = {}) => {
         values as TimeOffStatusFilterFormValues;
       if (selectedStatus) {
         setStatus(selectedStatus);
-        setPage(undefined);
       }
+      setPage(undefined);
     },
     [onValuesChange],
   );

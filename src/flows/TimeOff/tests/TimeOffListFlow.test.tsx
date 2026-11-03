@@ -1,6 +1,13 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  renderHook,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import { TimeOffListFlow } from '@/src/index';
+import { TimeOffListFlow, useTimeOffList } from '@/src/index';
 import {
   emptyTimeOffRequestsResponse,
   timeOffRequestResponse,
@@ -281,5 +288,31 @@ describe('TimeOffListFlow', () => {
       '?status=requested&page=2',
       '?status=requested&page=1',
     ]);
+  });
+
+  it('lists the first page again when the status filter is cleared', async () => {
+    mockTimeOffRequests();
+    const { result } = renderHook(() => useTimeOffList(), {
+      wrapper: TestProviders,
+    });
+
+    await waitFor(() => {
+      expect(result.current.currentPage).toBe(1);
+    });
+    act(() => {
+      result.current.nextPage();
+    });
+    await waitFor(() => {
+      expect(result.current.currentPage).toBe(2);
+    });
+
+    await act(async () => {
+      await result.current.checkFieldUpdates({ status: undefined });
+    });
+
+    await waitFor(() => {
+      expect(result.current.currentPage).toBe(1);
+    });
+    expect(result.current.status).toBe('requested');
   });
 });
