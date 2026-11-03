@@ -1,6 +1,7 @@
 import {
   END_TYPE_MULTIPLE,
   END_TYPE_NEVER,
+  INVOICE_TEXT_MAX_LENGTH,
   MAX_INVOICE_ITEMS,
   ONE_TIME_PERIODICITY_OPTION,
   PLACEHOLDER_OPTION,
@@ -28,6 +29,7 @@ function invoiceItemsProperty() {
           title: 'Description',
           type: 'string',
           minLength: 1,
+          maxLength: INVOICE_TEXT_MAX_LENGTH,
           'x-jsf-presentation': {
             inputType: 'text',
           },
@@ -542,6 +544,7 @@ export function buildCreateInvoiceScheduleSchema({
         description: 'Shown on generated invoices.',
         title: 'Additional notes',
         type: 'string',
+        maxLength: INVOICE_TEXT_MAX_LENGTH,
         'x-jsf-presentation': {
           inputType: 'textarea',
         },

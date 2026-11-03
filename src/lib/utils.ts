@@ -1,7 +1,7 @@
 import { cn as mergeClasses, type ClassValue } from 'cn';
 import { ValidationError } from 'yup';
 import DOMPurify from 'dompurify';
-import { JSFFields, NestedMeta } from '@/src/types/remoteFlows';
+import { $TSFixMe, JSFFields, NestedMeta } from '@/src/types/remoteFlows';
 import {
   NormalizedFieldError,
   normalizeFieldErrors,
@@ -253,6 +253,30 @@ export function prettifyFormValues(
           }
 
           return [key, prettiedFieldset];
+        }
+
+        if (field?.type === 'group-array') {
+          const rowFields: JSFFields = (
+            typeof field.fields === 'function' ? field.fields() : field.fields
+          ).map((rowField: $TSFixMe) => ({
+            ...rowField,
+            name: rowField.nameKey || rowField.name,
+          }));
+          const rows = Array.isArray(value) ? value : [];
+
+          if (rows.length === 0) {
+            return [key, undefined];
+          }
+
+          return [
+            key,
+            Object.fromEntries(
+              rows.map((row, index): [string, unknown] => [
+                String(index),
+                prettifyFormValues(row, rowFields, options),
+              ]),
+            ),
+          ];
         }
 
         if (field?.type === 'money') {

@@ -1,9 +1,9 @@
-import { useTimeOffContext } from '@/src/flows/TimeOff/context';
+import { useTimeOffReviewContext } from '@/src/flows/TimeOff/context';
 import { TimeOffReviewStepProps } from '@/src/flows/TimeOff/types';
 import { getTimeOffRequestDetails } from '@/src/flows/TimeOff/utils';
 
 export function ReviewStep({ render, children }: TimeOffReviewStepProps) {
-  const { timeOffBag } = useTimeOffContext();
+  const { timeOffBag } = useTimeOffReviewContext();
   const { timeOffRequest } = timeOffBag;
 
   if (!timeOffRequest) {

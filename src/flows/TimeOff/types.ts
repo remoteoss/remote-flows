@@ -4,10 +4,13 @@ import {
   NullableApproverId,
   Timeoff,
   TimeoffErrorResponse,
+  TimeoffStatus,
 } from '@/src/client';
-import { useTimeOff } from '@/src/flows/TimeOff/hooks';
+import { useTimeOff, useTimeOffList } from '@/src/flows/TimeOff/hooks';
 
 export type TimeOffStepKeys = 'request_id' | 'review';
+
+export type TimeOffListStepKeys = 'list' | 'review';
 
 /**
  * Values the request ID step collects.
@@ -23,11 +26,40 @@ export type UseTimeOffOptions = {
   timeOffId?: string;
 };
 
+/**
+ * Values the status filter of the time-off list collects.
+ */
+export type TimeOffStatusFilterFormValues = {
+  status?: TimeoffStatus;
+};
+
+export type UseTimeOffListOptions = {
+  /**
+   * How many requests a page of the list holds. The API documents `1` to `100` and uses `20` when omitted.
+   */
+  pageSize?: number;
+};
+
 export type UseTimeOffRequestOptions = {
   /**
    * The time-off request to load. Nothing loads while it is blank.
    */
   timeOffId?: string;
+};
+
+export type UseTimeOffRequestsOptions = {
+  /**
+   * Only lists requests in this status. Defaults to `requested`, the requests awaiting a decision.
+   */
+  status?: TimeoffStatus;
+  /**
+   * The page to load, from `1`. The API returns the first page when omitted.
+   */
+  page?: number;
+  /**
+   * How many requests a page holds. The API documents `1` to `100` and uses `20` when omitted.
+   */
+  pageSize?: number;
 };
 
 /**
@@ -41,6 +73,16 @@ export type TimeOffRequest = Timeoff;
  */
 export type TimeOffRequestError = {
   reason: 'not_found' | 'unauthorized' | 'request_failed';
+  status: number | undefined;
+};
+
+/**
+ * Why a page of time-off requests failed to load: `unauthorized` when the token is rejected,
+ * `rejected` when the API refuses the status or paging values with a `400` or `422`,
+ * `request_failed` for anything else.
+ */
+export type TimeOffRequestsError = {
+  reason: 'unauthorized' | 'rejected' | 'request_failed';
   status: number | undefined;
 };
 
@@ -103,6 +145,18 @@ export type TimeOffReviewStepProps = {
   children?: React.ReactNode;
 };
 
+export type TimeOffListStepProps = {
+  /**
+   * Replaces the default content of each listed request, which stays the control that opens it
+   * for review. Nothing renders until a page is loaded: use `timeOffListBag.isLoadingTimeOffRequests`,
+   * `timeOffListBag.isEmpty` and `timeOffListBag.timeOffRequestsError` for the other states.
+   */
+  render?: (props: {
+    timeOffRequest: TimeOffRequest;
+    details: TimeOffRequestDetail[];
+  }) => React.ReactNode;
+};
+
 type TimeOffButtonProps = PropsWithChildren<
   ButtonHTMLAttributes<HTMLButtonElement>
 >;
@@ -153,4 +207,24 @@ export type TimeOffFlowProps = {
    */
   timeOffId?: string;
   render: (props: TimeOffRenderProps) => React.ReactNode;
+};
+
+export type TimeOffListRenderProps = {
+  timeOffListBag: ReturnType<typeof useTimeOffList>;
+  components: {
+    StatusFilter: React.ComponentType;
+    ListStep: React.ComponentType<TimeOffListStepProps>;
+    ListRetryButton: React.ComponentType<TimeOffButtonProps>;
+    PreviousPageButton: React.ComponentType<TimeOffButtonProps>;
+    NextPageButton: React.ComponentType<TimeOffButtonProps>;
+    ReviewStep: React.ComponentType<TimeOffReviewStepProps>;
+    RetryButton: React.ComponentType<TimeOffButtonProps>;
+    BackButton: React.ComponentType<TimeOffButtonProps>;
+    ApproveButton: React.ComponentType<TimeOffApproveButtonProps>;
+    DeclineButton: React.ComponentType<TimeOffDeclineButtonProps>;
+  };
+};
+
+export type TimeOffListFlowProps = UseTimeOffListOptions & {
+  render: (props: TimeOffListRenderProps) => React.ReactNode;
 };
