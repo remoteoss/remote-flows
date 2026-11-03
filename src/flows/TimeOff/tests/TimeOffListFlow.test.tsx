@@ -224,4 +224,62 @@ describe('TimeOffListFlow', () => {
       await screen.findByRole('button', { name: /requested leave, page 1/ }),
     ).toBeInTheDocument();
   });
+
+  it('moves back to the last page when a decision empties the page under review', async () => {
+    let totalPages = 2;
+    const queries: string[] = [];
+    server.use(
+      http.get('*/v1/timeoff', ({ request }) => {
+        const { search, searchParams } = new URL(request.url);
+        queries.push(search);
+        const page = Number(searchParams.get('page') ?? 1);
+        return HttpResponse.json({
+          data: {
+            ...timeOffRequestsResponse.data,
+            current_page: page,
+            total_pages: totalPages,
+            timeoffs:
+              page > totalPages
+                ? []
+                : [listedTimeOff(`timeoff-${page}`, `Leave, page ${page}`)],
+          },
+        });
+      }),
+      http.post('*/v1/timeoff/:id/approve', ({ params }) => {
+        totalPages = 1;
+        return HttpResponse.json({
+          data: {
+            timeoff: {
+              ...listedTimeOff(params.id as string, 'Reviewed leave'),
+              status: 'approved',
+            },
+          },
+        });
+      }),
+    );
+    mockTimeOffRequest();
+    renderFlow();
+
+    await screen.findByRole('button', { name: /Leave, page 1/ });
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    fireEvent.click(
+      await screen.findByRole('button', { name: /Leave, page 2/ }),
+    );
+    fireEvent.click(await screen.findByRole('button', { name: 'Approve' }));
+    expect(await screen.findByText('Approved')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+
+    expect(
+      await screen.findByRole('button', { name: /Leave, page 1/ }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('No time-off requests')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Previous' })).toBeDisabled();
+    expect(queries).toEqual([
+      '?status=requested',
+      '?status=requested&page=2',
+      '?status=requested&page=2',
+      '?status=requested&page=1',
+    ]);
+  });
 });

@@ -240,6 +240,10 @@ export const useTimeOffList = ({ pageSize }: UseTimeOffListOptions = {}) => {
     refetch: refetchTimeOffRequests,
   } = useTimeOffRequests({ status, page, pageSize });
 
+  if (isEmpty && page && totalPages !== undefined && page > totalPages) {
+    setPage(totalPages || undefined);
+  }
+
   const timeOffRequestReview = useTimeOffRequestReview({
     timeOffId,
     isReviewing: stepState.currentStep.name === 'review',
