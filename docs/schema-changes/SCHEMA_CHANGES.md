@@ -10,19 +10,24 @@ This documentation tracks JSON schema version changes across the Remote Flows SD
 
 Schema versions for the Basic Information step in employee onboarding flows.
 
-- **Latest: [v3](./eor/basic-information/v3/v3.md)** (SDK 1.23.0+) - **Recommended for all new integrations**
+- [v6](./eor/basic-information/v6/v6.md) - Latest
+  - Limits `seniority_date` to at most 5 years before `provisional_start_date`
+- [v5](./eor/basic-information/v5/v5.md) - `tax_servicing_countries` accepts region, subregion and "Global" values; the SDK has no UI for it yet
+- **[v4](./eor/basic-information/v4/v4.md)** - **Recommended for all new integrations**
+  - Adds a login email fieldset which determines how users can log in
+- [v3](./eor/basic-information/v3/v3.md) (SDK 1.23.0+) - Earlier version
   - Removes unused manager/department fields
   - Adds Argentina acknowledgement field
   - Better seniority field coverage (KOR, BRA, JPN)
 - [v1](./basic-information/v1.md) (SDK 1.0.0+) - Legacy version, maintained for backward compatibility
 
-**Quick Start (v3):**
+**Quick Start (v4):**
 
 ```tsx
 <OnboardingFlow
   options={{
     jsonSchemaVersion: {
-      employment_basic_information: 3,
+      employment_basic_information: 4,
     },
   }}
 />
