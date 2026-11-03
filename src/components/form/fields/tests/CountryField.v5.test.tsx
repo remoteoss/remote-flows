@@ -91,6 +91,17 @@ describe('CountryField with grouped options (basic information v5)', () => {
     expect(submitted()).toEqual(['Japan']);
   });
 
+  it('drops Global and a region's subregions as the rules say', () => {
+    render(<Harness />);
+    pick('Europe - Western Europe');
+    pick('Europe');
+    expect(submitted()).toEqual(['region-Europe']);
+
+    pick('Global');
+    pick('France');
+    expect(submitted()).toEqual(['France']);
+  });
+
   it('shows a saved display label as selected', () => {
     render(
       <Harness
