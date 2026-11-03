@@ -9,7 +9,7 @@ import {
 import { FormItem } from '@/src/components/ui/form';
 import { MultiSelect } from '@/src/components/ui/multi-select';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { CountryComponentProps, CountryOption } from '@/src/types/fields';
+import { CountryComponentProps } from '@/src/types/fields';
 import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 
 const V5_CATEGORIES: Record<string, string> = {
