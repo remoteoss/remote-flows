@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { useFormFields } from '@/src/context';
-import { useTimeOffContext } from '@/src/flows/TimeOff/context';
+import { useTimeOffReviewContext } from '@/src/flows/TimeOff/context';
 import {
   TimeOffApproveButtonProps,
   TimeOffDecisionError,
@@ -16,7 +16,7 @@ export function ApproveButton({
   onError,
   ...props
 }: TimeOffApproveButtonProps) {
-  const { timeOffBag } = useTimeOffContext();
+  const { timeOffBag } = useTimeOffReviewContext();
   const { components } = useFormFields();
   const isApprovingRef = useRef(false);
 

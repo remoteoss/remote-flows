@@ -6,7 +6,10 @@ import { NextButton } from '@/src/flows/TimeOff/components/NextButton';
 import { RequestIdStep } from '@/src/flows/TimeOff/components/RequestIdStep';
 import { RetryButton } from '@/src/flows/TimeOff/components/RetryButton';
 import { ReviewStep } from '@/src/flows/TimeOff/components/ReviewStep';
-import { TimeOffContext } from '@/src/flows/TimeOff/context';
+import {
+  TimeOffContext,
+  TimeOffReviewContext,
+} from '@/src/flows/TimeOff/context';
 import { useTimeOff } from '@/src/flows/TimeOff/hooks';
 import { TimeOffFlowProps } from '@/src/flows/TimeOff/types';
 
@@ -19,18 +22,20 @@ export const TimeOffFlow = ({ timeOffId, render }: TimeOffFlowProps) => {
 
   return (
     <TimeOffContext.Provider value={{ formId, timeOffBag }}>
-      {render({
-        timeOffBag,
-        components: {
-          RequestIdStep,
-          NextButton,
-          ReviewStep,
-          RetryButton,
-          BackButton,
-          ApproveButton,
-          DeclineButton,
-        },
-      })}
+      <TimeOffReviewContext.Provider value={{ timeOffBag }}>
+        {render({
+          timeOffBag,
+          components: {
+            RequestIdStep,
+            NextButton,
+            ReviewStep,
+            RetryButton,
+            BackButton,
+            ApproveButton,
+            DeclineButton,
+          },
+        })}
+      </TimeOffReviewContext.Provider>
     </TimeOffContext.Provider>
   );
 };

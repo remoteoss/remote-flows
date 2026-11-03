@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { useFormFields } from '@/src/context';
-import { useTimeOffContext } from '@/src/flows/TimeOff/context';
+import { useTimeOffReviewContext } from '@/src/flows/TimeOff/context';
 import {
   TimeOffDeclineButtonProps,
   TimeOffDecisionError,
@@ -16,7 +16,7 @@ export function DeclineButton({
   onError,
   ...props
 }: TimeOffDeclineButtonProps) {
-  const { timeOffBag } = useTimeOffContext();
+  const { timeOffBag } = useTimeOffReviewContext();
   const { components } = useFormFields();
   const isDecliningRef = useRef(false);
 

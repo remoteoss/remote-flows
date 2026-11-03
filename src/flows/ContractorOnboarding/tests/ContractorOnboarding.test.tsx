@@ -4397,38 +4397,35 @@ describe('ContractorOnboardingFlow', () => {
       ).toBeInTheDocument();
     });
 
-    it('reveals the second item row once the first has a description and an amount', async () => {
+    it('adds a second item row from the add item button', async () => {
       const employmentId = generateUniqueEmploymentId();
       await goToFilledCreateInvoiceSchedule(employmentId);
 
-      // fillCreateInvoiceSchedule() already filled item 1, so row 2 should be reachable.
-      await waitFor(
-        () => {
-          expect(
-            screen.getByLabelText(/Item 2 description/i),
-          ).toBeInTheDocument();
-        },
-        { timeout: 10000 },
-      );
+      expect(screen.getAllByLabelText(/^Description/i)).toHaveLength(1);
+
+      fireEvent.click(screen.getByRole('button', { name: /add item/i }));
+
+      await waitFor(() => {
+        expect(screen.getAllByLabelText(/^Description/i)).toHaveLength(2);
+      });
     });
 
-    // The reveal is driven by the values handed to `createHeadlessForm`, which only match the
-    // conditional's `integer` because money fields are converted to cents on the way in. An
-    // amount with cents used to stay a decimal and leave this step stuck at one item.
-    it('reveals the second item row when the first amount has cents', async () => {
+    it('removes an item row with its remove button', async () => {
       const employmentId = generateUniqueEmploymentId();
-      await goToFilledCreateInvoiceSchedule(employmentId, {
-        item1Amount: '2500.50',
+      await goToFilledCreateInvoiceSchedule(employmentId);
+
+      fireEvent.click(screen.getByRole('button', { name: /add item/i }));
+      await waitFor(() => {
+        expect(screen.getAllByLabelText(/^Description/i)).toHaveLength(2);
       });
 
-      await waitFor(
-        () => {
-          expect(
-            screen.getByLabelText(/Item 2 description/i),
-          ).toBeInTheDocument();
-        },
-        { timeout: 10000 },
+      fireEvent.click(
+        screen.getByRole('button', { name: /remove invoice items 2/i }),
       );
+
+      await waitFor(() => {
+        expect(screen.getAllByLabelText(/^Description/i)).toHaveLength(1);
+      });
     });
 
     it('should skip invoice schedule when "Skip for now" is selected', async () => {
@@ -4590,9 +4587,8 @@ describe('ContractorOnboardingFlow', () => {
         expect(createScheduleSection).toHaveTextContent('currency: EUR');
         expect(createScheduleSection).toHaveTextContent('periodicity: monthly');
         expect(createScheduleSection).toHaveTextContent(
-          'item_1_description: Salary',
+          'items: {"description":"Salary","amount":"2500"}',
         );
-        expect(createScheduleSection).toHaveTextContent('item_1_amount: 2500');
       });
     });
 
@@ -4708,14 +4704,14 @@ describe('ContractorOnboardingFlow', () => {
 
       expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
       expect(screen.getByLabelText(/Start date/i)).toHaveValue('2100-01-01');
-      expect(screen.getByLabelText(/Item 1 description/i)).toHaveValue(
+      expect(screen.getAllByLabelText(/^Description/i)[0]).toHaveValue(
         'salary',
       );
-      expect(screen.getByLabelText(/Item 1 amount/i)).toHaveValue('2500');
-      expect(screen.getByLabelText(/Item 2 description/i)).toHaveValue(
+      expect(screen.getAllByLabelText(/^Amount/i)[0]).toHaveValue('2500');
+      expect(screen.getAllByLabelText(/^Description/i)[1]).toHaveValue(
         'another',
       );
-      expect(screen.getByLabelText(/Item 2 amount/i)).toHaveValue('7500');
+      expect(screen.getAllByLabelText(/^Amount/i)[1]).toHaveValue('7500');
 
       [
         'Invoicing details',
@@ -4726,7 +4722,7 @@ describe('ContractorOnboardingFlow', () => {
         expect(screen.getByText(heading)).toBeInTheDocument();
       });
 
-      fireEvent.change(screen.getByLabelText(/Item 1 amount/i), {
+      fireEvent.change(screen.getAllByLabelText(/^Amount/i)[0], {
         target: { value: '3000' },
       });
 
@@ -4742,13 +4738,8 @@ describe('ContractorOnboardingFlow', () => {
         expect(createScheduleSection).toHaveTextContent('currency: EUR');
         expect(createScheduleSection).toHaveTextContent('periodicity: weekly');
         expect(createScheduleSection).toHaveTextContent(
-          'item_1_description: salary',
+          'items: {"description":"salary","amount":"3000"}, {"description":"another","amount":7500}',
         );
-        expect(createScheduleSection).toHaveTextContent('item_1_amount: 3000');
-        expect(createScheduleSection).toHaveTextContent(
-          'item_2_description: another',
-        );
-        expect(createScheduleSection).toHaveTextContent('item_2_amount: 7500');
       });
     });
 
