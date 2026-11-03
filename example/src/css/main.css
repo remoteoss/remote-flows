@@ -1304,3 +1304,37 @@ button.reset-button {
 .RemoteFlows__ListStep__Value__leave_policy {
   font-weight: 500;
 }
+
+/* ===== GROUP ARRAY (repeatable rows) ===== */
+.group-array {
+  border: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.group-array legend {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 14px;
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+.group-array-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.group-array-row-fields {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: 16px;
+}
+
+.group-array-row .button-inline {
+  margin-top: 28px;
+}
