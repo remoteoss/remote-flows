@@ -104,6 +104,8 @@ describe('usesJsfV1ContractDetails', () => {
     'PRI',
     'ROU',
     'TUR',
+    'JPN',
+    'LKA',
     'HUN',
     'IDN',
   ])('should return true for %s', (countryCode) => {

@@ -74,7 +74,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Israel](./ISR.md)               | ISR  | v8               | v8              | Yes        | October 2026  |
 | Italy                            | ITA  | v2               | v2              | Yes        | -             |
 | [Jamaica](./JAM.md)              | JAM  | v5               | v5              | Yes        | October 2026  |
-| Japan                            | JPN  | v1               | v5              | No         | -             |
+| [Japan](./JPN.md)                | JPN  | v5               | v5              | Yes        | November 2026 |
 | [Kenya](./KEN.md)                | KEN  | v8               | v8              | Yes        | October 2026  |
 | Kosovo                           | XKX  | v1               | v3              | No         | -             |
 | Latvia                           | LVA  | v1               | v6              | No         | -             |
@@ -110,7 +110,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [South Africa](./ZAF.md)         | ZAF  | v5               | v5              | Yes        | October 2026  |
 | [South Korea](./KOR.md)          | KOR  | v7               | v6              | Yes        | October 2026  |
 | [Spain](./ESP.md)                | ESP  | v8               | v8              | Yes        | October 2026  |
-| Sri Lanka                        | LKA  | v1               | v8              | No         | -             |
+| [Sri Lanka](./LKA.md)            | LKA  | v8               | v8              | Yes        | November 2026 |
 | [Sweden](./SWE.md)               | SWE  | v5               | v5              | Yes        | October 2026  |
 | [Switzerland](./CHE.md)          | CHE  | v2               | v8              | No         | March 2026    |
 | Taiwan                           | TWN  | v1               | v5              | No         | -             |
