@@ -439,8 +439,12 @@ jobs:
           } > out/seed-links.md
           for code in $codes; do
             if pnpm run seed:onboarding --country="$code" > "out/seed-$code.log" 2>&1; then
-              link=$(grep -oE 'https?://[^ ]*employmentId=[^ ]*' "out/seed-$code.log" | tail -n 1)
-              echo "- **$code**: $link" >> out/seed-links.md
+              link=$({ grep -oE 'https?://[^ ]*employmentId=[^ ]*' "out/seed-$code.log" || true; } | tail -n 1)
+              if [ -n "$link" ]; then
+                echo "- **$code**: $link" >> out/seed-links.md
+              else
+                echo "- **$code**: seeded, but no link was found, see the workflow run logs" >> out/seed-links.md
+              fi
             else
               echo "- **$code**: seeding failed, see the workflow run logs" >> out/seed-links.md
               tail -n 20 "out/seed-$code.log"
