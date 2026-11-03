@@ -219,6 +219,7 @@ export type {
   ZendeskTriggerButtonComponentProps,
   DrawerComponentProps,
   PDFPreviewComponentProps,
+  GroupArrayComponentProps,
   // oxlint-disable-next-line typescript/no-deprecated
   Meta,
   NestedMeta,
