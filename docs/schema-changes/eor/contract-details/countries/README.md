@@ -76,7 +76,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Jamaica](./JAM.md)              | JAM  | v5               | v5              | Yes        | October 2026  |
 | [Japan](./JPN.md)                | JPN  | v5               | v5              | Yes        | November 2026 |
 | [Kenya](./KEN.md)                | KEN  | v8               | v8              | Yes        | October 2026  |
-| Kosovo                           | XKX  | v1               | v3              | No         | -             |
+| [Kosovo](./XKX.md)               | XKX  | v3               | v3              | Yes        | November 2026 |
 | Latvia                           | LVA  | v1               | v6              | No         | -             |
 | [Lebanon](./LBN.md)              | LBN  | v4               | v4              | Yes        | October 2026  |
 | [Lithuania](./LTU.md)            | LTU  | v6               | v6              | Yes        | October 2026  |
@@ -124,7 +124,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [United States](./USA.md)        | USA  | v9               | v9              | Yes        | October 2026  |
 | [Uruguay](./URY.md)              | URY  | v6               | v6              | Yes        | October 2026  |
 | [Vietnam](./VNM.md)              | VNM  | v7               | v7              | Yes        | October 2026  |
-| Zimbabwe                         | ZWE  | v1               | v6              | No         | -             |
+| [Zimbabwe](./ZWE.md)             | ZWE  | v6               | v6              | Yes        | November 2026 |
 
 ## How to Use
 
