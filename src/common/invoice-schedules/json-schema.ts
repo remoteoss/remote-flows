@@ -12,6 +12,7 @@ import {
   SEMI_MONTHLY_DEFAULT_CYCLE_DAYS,
   SEMI_MONTHLY_PERIODICITY,
 } from '@/src/common/invoice-schedules/constants';
+import { SecondInvoiceDayField } from '@/src/common/invoice-schedules/components/SecondInvoiceDayField';
 import { toOrdinal } from '@/src/common/invoice-schedules/utils';
 
 function invoiceItemsProperty() {
@@ -168,18 +169,9 @@ function semiMonthlySettingsProperty() {
       second_invoice_day: {
         title: 'Second invoice raised on',
         type: 'string',
-        readOnly: true,
         'x-jsf-presentation': {
-          inputType: 'text',
-        },
-        'x-jsf-logic-computedAttrs': {
-          const: 'second_invoice_day_value',
-          default: 'second_invoice_day_value',
-          'x-jsf-presentation': {
-            statement: {
-              description: '{{second_invoice_day_label}}',
-            },
-          },
+          inputType: 'select',
+          Component: SecondInvoiceDayField,
         },
       },
     },
@@ -195,7 +187,7 @@ function semiMonthlySettingsProperty() {
           properties: { invoicing_cycle: { const: SEMI_MONTHLY_CUSTOM_CYCLE } },
           required: ['invoicing_cycle'],
         },
-        then: { required: ['first_invoice_day', 'second_invoice_day'] },
+        then: { required: ['first_invoice_day'] },
         else: {
           properties: { first_invoice_day: false, second_invoice_day: false },
         },
@@ -620,28 +612,6 @@ export function buildCreateInvoiceScheduleSchema({
       computedValues: {
         currency_selected: {
           rule: { var: 'currency' },
-        },
-        second_invoice_day_value: {
-          rule: { cat: [SECOND_INVOICE_DAY_RULE] },
-        },
-        second_invoice_day_label: {
-          rule: {
-            cat: [
-              SECOND_INVOICE_DAY_RULE,
-              {
-                if: [
-                  { '==': [SECOND_INVOICE_DAY_RULE, 21] },
-                  'st',
-                  { '==': [SECOND_INVOICE_DAY_RULE, 22] },
-                  'nd',
-                  { '==': [SECOND_INVOICE_DAY_RULE, 23] },
-                  'rd',
-                  'th',
-                ],
-              },
-              ' of the month',
-            ],
-          },
         },
         ...scheduleSummaryComputedValues,
       },

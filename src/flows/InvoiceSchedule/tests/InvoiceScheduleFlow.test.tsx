@@ -908,6 +908,41 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     });
   });
 
+  it('draws the second invoice day as a disabled select that follows the first day', async () => {
+    renderFlow();
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'semi_monthly');
+    fireEvent.click(await screen.findByRole('radio', { name: 'Custom cycle' }));
+
+    const second = await screen.findByRole('combobox', {
+      name: 'Second invoice raised on',
+    });
+    expect(second).toBeDisabled();
+    expect(second).toHaveTextContent('15th of the month');
+
+    await fillSelect('semi_monthly_settings.first_invoice_day', '4');
+
+    await waitFor(() => {
+      expect(second).toHaveTextContent('18th of the month');
+    });
+    expect(second).toBeDisabled();
+  });
+
+  it('does not show the second invoice day for the default cycle', async () => {
+    renderFlow();
+
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'semi_monthly');
+    fireEvent.click(
+      await screen.findByRole('radio', {
+        name: /15th and last day of the month/,
+      }),
+    );
+
+    expect(screen.queryByText('Second invoice raised on')).toBeNull();
+  });
+
   it('rejects a start date that is not a day of the selected cycle', async () => {
     const request = captureCreateRequest();
     const onSuccess = vi.fn();
