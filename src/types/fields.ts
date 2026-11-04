@@ -132,6 +132,11 @@ export type CountryComponentProps = FieldComponentProps & {
 type DatePickerDataProps = Omit<FieldDataProps, 'meta'> & {
   minDate?: string;
   maxDate?: string;
+  /**
+   * Days of the month that can be picked. 31 stands for the last day of the month.
+   * Every day is allowed when this is empty or missing.
+   */
+  allowedDays?: number[] | null;
 };
 
 export type DatePickerComponentProps = FieldComponentProps & {

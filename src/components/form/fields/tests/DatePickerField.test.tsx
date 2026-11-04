@@ -289,4 +289,30 @@ describe('DatePickerField Component', () => {
       );
     });
   });
+  describe('DatePickerField - allowedDays functionality', () => {
+    const openCalendar = (allowedDays: number[] | null) => {
+      renderWithFormContext({
+        ...defaultProps,
+        minDate: '2099-01-01',
+        allowedDays,
+      } as DatePickerFieldProps);
+      fireEvent.click(screen.getByRole('button'));
+    };
+
+    it('only enables the allowed days and the last day of the month for 31', () => {
+      openCalendar([15, 31]);
+
+      expect(screen.getByRole('gridcell', { name: '15' })).toBeEnabled();
+      expect(
+        screen.getAllByRole('gridcell', { name: '31' }).at(-1),
+      ).toBeEnabled();
+      expect(screen.getByRole('gridcell', { name: '14' })).toBeDisabled();
+    });
+
+    it('enables every day when no days are restricted', () => {
+      openCalendar(null);
+
+      expect(screen.getByRole('gridcell', { name: '14' })).toBeEnabled();
+    });
+  });
 });

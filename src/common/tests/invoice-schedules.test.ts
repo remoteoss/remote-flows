@@ -456,6 +456,44 @@ describe('buildCreateInvoiceScheduleSchema', () => {
       ).toBeUndefined();
     });
 
+    describe('allowed days for the date picker', () => {
+      const allowedDays = async (
+        values: ReturnType<typeof semiMonthlyValues>,
+      ) => {
+        const form = buildForm();
+        await form.handleValidation(values);
+        return form.fields.find(
+          (field: $TSFixMe) => field.name === 'start_date',
+        )?.allowedDays;
+      };
+
+      it('allows the 15th and month end for the default cycle', async () => {
+        expect(await allowedDays(semiMonthlyValues('2099-01-15'))).toEqual([
+          15, 31,
+        ]);
+      });
+
+      it('allows the chosen day and the one 14 days later for a custom cycle', async () => {
+        expect(
+          await allowedDays(
+            semiMonthlyValues('2099-01-03', {
+              invoicing_cycle: 'custom_cycle',
+              first_invoice_day: '3',
+            }),
+          ),
+        ).toEqual([3, 17]);
+      });
+
+      it('allows every day for any other frequency', async () => {
+        expect(
+          await allowedDays({
+            ...semiMonthlyValues('2099-01-03'),
+            periodicity: 'monthly',
+          }),
+        ).toBeFalsy();
+      });
+    });
+
     it('accepts either day of a custom cycle', async () => {
       const custom = {
         invoicing_cycle: 'custom_cycle',

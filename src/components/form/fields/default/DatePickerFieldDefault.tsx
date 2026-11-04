@@ -8,7 +8,7 @@ import {
 } from '@/src/components/ui/form';
 import { DatePickerComponentProps } from '@/src/types/fields';
 import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, isLastDayOfMonth } from 'date-fns';
 import {
   Popover,
   PopoverContent,
@@ -24,7 +24,7 @@ export function DatePickerFieldDefault({
   fieldData,
   fieldState,
 }: DatePickerComponentProps) {
-  const { name, label, description, minDate, maxDate } = fieldData;
+  const { name, label, description, minDate, maxDate, allowedDays } = fieldData;
   const minDateValue = minDate ? new Date(minDate) : undefined;
   const maxDateValue = maxDate ? new Date(maxDate) : undefined;
   const [open, setOpen] = useState(false);
@@ -90,6 +90,13 @@ export function DatePickerFieldDefault({
               }
               if (maxDateValue && date > maxDateValue) {
                 return true;
+              }
+              if (allowedDays?.length) {
+                const lastDayOfMonth = allowedDays.includes(31);
+                return !(
+                  allowedDays.includes(date.getDate()) ||
+                  (lastDayOfMonth && isLastDayOfMonth(date))
+                );
               }
               return false;
             }}
