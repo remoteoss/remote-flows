@@ -57,7 +57,6 @@ export function DatePickerField({
           transformHtml,
           ...(minDateValue && { minDate: minDateValue.toISOString() }),
           ...(maxDateValue && { maxDate: maxDateValue.toISOString() }),
-          allowedDays,
           isDateDisabled: (date: Date) =>
             isDateDisabled(date, {
               minDate: minDateValue,
