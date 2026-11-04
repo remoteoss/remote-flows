@@ -16,7 +16,7 @@ export const MultiSelectFieldDefault = ({
   fieldData,
 }: FieldComponentProps) => {
   const [selected, setSelected] = useState<Option[]>([]);
-  const { name, label, description, options } = fieldData;
+  const { name, label, description, options, disabled } = fieldData;
   const selectedOptions =
     selected ||
     options?.filter((option) => field.value?.includes(option.value));
@@ -38,6 +38,7 @@ export const MultiSelectFieldDefault = ({
         <MultiSelect
           options={options || []}
           selected={selectedOptions}
+          disabled={disabled}
           onChange={(rawValues: Option[]) => {
             const values = rawValues.map(({ value }) => value);
             field.onChange(values); // This triggers the wrapped onChange from MultiSelectField
