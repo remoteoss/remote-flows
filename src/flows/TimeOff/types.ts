@@ -166,8 +166,8 @@ export type TimeOffListItem = {
 
 export type TimeOffListStepProps = {
   /**
-   * Replaces the default content of each listed request, which stays the control that opens it
-   * for review. Nothing renders until a page is loaded: use `timeOffListBag.isLoadingTimeOffRequests`,
+   * Replaces the default content of each listed request, rendered before its actions. Nothing
+   * renders until a page is loaded: use `timeOffListBag.isLoadingTimeOffRequests`,
    * `timeOffListBag.isEmpty` and `timeOffListBag.timeOffRequestsError` for the other states.
    */
   render?: (item: TimeOffListItem) => React.ReactNode;
@@ -175,6 +175,8 @@ export type TimeOffListStepProps = {
    * Replaces the actions rendered at the end of each listed request: `ViewButton`, then
    * `DeclineButton` and `ApproveButton` when the request `canDecide`, with no decline reason and a
    * `null` approver. `ViewButton`, `ApproveButton` and `DeclineButton` rendered here act on that request.
+   * Without `ViewButton`, the request opens for review only through
+   * `timeOffListBag.selectTimeOffRequest`.
    */
   renderActions?: (item: TimeOffListItem) => React.ReactNode;
   /**

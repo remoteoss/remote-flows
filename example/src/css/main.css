@@ -1295,20 +1295,14 @@ button.reset-button {
   border-top: 1px solid #e2e8f0;
 }
 
-.RemoteFlows__ListStep__SelectButton {
+.RemoteFlows__ListStep__Details {
   display: grid;
   flex: 1;
   min-width: 0;
   grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
   gap: 12px;
   padding: 12px 16px;
-  text-align: left;
   color: #1e293b;
-  cursor: pointer;
-}
-
-.RemoteFlows__ListStep__SelectButton:hover {
-  background-color: #f8fafc;
 }
 
 .RemoteFlows__ListStep__Value__leave_policy {

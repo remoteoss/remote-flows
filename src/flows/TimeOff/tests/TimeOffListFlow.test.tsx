@@ -126,21 +126,21 @@ describe('TimeOffListFlow', () => {
 
     expect(screen.getByText('Loading time-off requests')).toBeInTheDocument();
     expect(
-      await screen.findByRole('button', { name: /requested leave, page 1/ }),
+      await screen.findByText('requested leave, page 1'),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Previous' })).toBeDisabled();
 
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     expect(
-      await screen.findByRole('button', { name: /requested leave, page 2/ }),
+      await screen.findByText('requested leave, page 2'),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
 
     await fillSelect('Status', 'approved');
 
     expect(
-      await screen.findByRole('button', { name: /approved leave, page 1/ }),
+      await screen.findByText('approved leave, page 1'),
     ).toBeInTheDocument();
     expect(queries).toEqual([
       '?status=requested',
@@ -177,18 +177,17 @@ describe('TimeOffListFlow', () => {
     const requestedIds = mockTimeOffRequest();
     renderFlow();
 
-    await screen.findByRole('button', { name: /requested leave, page 1/ });
+    await screen.findByText('requested leave, page 1');
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
-    fireEvent.click(
-      await screen.findByRole('button', { name: /requested leave, page 2/ }),
-    );
+    await screen.findByText('requested leave, page 2');
+    fireEvent.click(screen.getByRole('button', { name: 'View' }));
 
     expect(await screen.findByText('Reviewed leave')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Back' }));
 
     expect(
-      await screen.findByRole('button', { name: /requested leave, page 2/ }),
+      await screen.findByText('requested leave, page 2'),
     ).toBeInTheDocument();
     expect(requestedIds).toEqual(['timeoff-2']);
     expect(queries).toEqual(['?status=requested', '?status=requested&page=2']);
@@ -213,9 +212,8 @@ describe('TimeOffListFlow', () => {
     );
     renderFlow();
 
-    fireEvent.click(
-      await screen.findByRole('button', { name: /requested leave, page 1/ }),
-    );
+    await screen.findByText('requested leave, page 1');
+    fireEvent.click(screen.getByRole('button', { name: 'View' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Approve' }));
 
     expect(await screen.findByText('Approved')).toBeInTheDocument();
@@ -228,7 +226,7 @@ describe('TimeOffListFlow', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Back' }));
 
     expect(
-      await screen.findByRole('button', { name: /requested leave, page 1/ }),
+      await screen.findByText('requested leave, page 1'),
     ).toBeInTheDocument();
   });
 
@@ -267,19 +265,16 @@ describe('TimeOffListFlow', () => {
     mockTimeOffRequest();
     renderFlow();
 
-    await screen.findByRole('button', { name: /Leave, page 1/ });
+    await screen.findByText('Leave, page 1');
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
-    fireEvent.click(
-      await screen.findByRole('button', { name: /Leave, page 2/ }),
-    );
+    await screen.findByText('Leave, page 2');
+    fireEvent.click(screen.getByRole('button', { name: 'View' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Approve' }));
     expect(await screen.findByText('Approved')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Back' }));
 
-    expect(
-      await screen.findByRole('button', { name: /Leave, page 1/ }),
-    ).toBeInTheDocument();
+    expect(await screen.findByText('Leave, page 1')).toBeInTheDocument();
     expect(screen.queryByText('No time-off requests')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Previous' })).toBeDisabled();
     expect(queries).toEqual([
@@ -309,7 +304,10 @@ describe('TimeOffListFlow', () => {
     );
     renderFlow();
 
-    await screen.findByRole('button', { name: /requested leave, page 1/ });
+    await screen.findByText('requested leave, page 1');
+    expect(
+      screen.queryByRole('button', { name: /requested leave/ }),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Decline' })).toBeEnabled();
     fireEvent.click(screen.getByRole('button', { name: 'Approve' }));
 

@@ -62,13 +62,7 @@ export function ListStep({
           key={item.timeOffRequest.id}
           className={`RemoteFlows__ListStep__Item RemoteFlows__ListStep__Item--${item.timeOffRequest.status}`}
         >
-          <button
-            type='button'
-            className='RemoteFlows__ListStep__SelectButton'
-            onClick={() =>
-              timeOffListBag.selectTimeOffRequest(item.timeOffRequest.id)
-            }
-          >
+          <div className='RemoteFlows__ListStep__Details'>
             {render
               ? render(item)
               : item.listedDetails.map((detail) => (
@@ -79,7 +73,7 @@ export function ListStep({
                     {detail.value}
                   </span>
                 ))}
-          </button>
+          </div>
           <TimeOffReviewContext.Provider value={{ timeOffBag }}>
             <div className='RemoteFlows__ListStep__Actions'>
               {renderActions ? (
