@@ -168,13 +168,13 @@ function semiMonthlySettingsProperty() {
       second_invoice_day: {
         title: 'Second invoice raised on',
         type: 'string',
-        readOnly: true,
         oneOf: dayOptions(
           1 + SEMI_MONTHLY_CYCLE_GAP_DAYS,
           14 + SEMI_MONTHLY_CYCLE_GAP_DAYS,
         ),
         'x-jsf-presentation': {
           inputType: 'select',
+          disabled: true,
         },
         'x-jsf-logic-computedAttrs': {
           default: 'second_invoice_day_value',

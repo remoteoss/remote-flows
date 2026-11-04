@@ -343,7 +343,7 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     expect(currency?.options?.[0]?.disabled).toBe(true);
   });
 
-  it('offers the second invoice day as a read-only select that follows the first', async () => {
+  it('offers the second invoice day as a disabled select that follows the first', async () => {
     const form = createHeadlessForm(
       buildCreateInvoiceScheduleSchema() as $TSFixMe,
       {},
@@ -366,13 +366,13 @@ describe('buildCreateInvoiceScheduleSchema', () => {
 
     expect({
       inputType: second.inputType,
-      readOnly: second.readOnly,
+      disabled: second.disabled,
       default: second.default,
       firstOption: second.options[0].value,
       lastOption: second.options.at(-1).value,
     }).toEqual({
       inputType: 'select',
-      readOnly: true,
+      disabled: true,
       default: '17',
       firstOption: '15',
       lastOption: '28',

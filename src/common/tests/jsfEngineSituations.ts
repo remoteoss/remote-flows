@@ -122,7 +122,7 @@ const monthlyAllowanceSchema: Schema = {
   },
 };
 
-const readOnlySelectSchema: Schema = {
+const lockedSelectSchema: Schema = {
   type: 'object',
   additionalProperties: false,
   properties: {
@@ -140,12 +140,11 @@ const readOnlySelectSchema: Schema = {
     second_day: {
       title: 'Second day',
       type: 'string',
-      readOnly: true,
       oneOf: [
         { const: '15', title: '15th of the month' },
         { const: '16', title: '16th of the month' },
       ],
-      'x-jsf-presentation': { inputType: 'select' },
+      'x-jsf-presentation': { inputType: 'select', disabled: true },
       'x-jsf-logic-computedAttrs': { default: 'second_day_value' },
     },
   },
@@ -261,8 +260,8 @@ export const chooseInGroup = async (
 export const SITUATIONS: Situation[] = [
   {
     situation:
-      'read-only select follows the default computed from another field',
-    schema: readOnlySelectSchema,
+      'disabled select follows the default computed from another field',
+    schema: lockedSelectSchema,
     fill: async (user) => {
       await user.selectOptions(await screen.findByTestId('first_day'), '2');
     },

@@ -22,8 +22,8 @@ export function SelectFieldDefault({
   fieldState,
   fieldData,
 }: FieldComponentProps) {
-  const { name, label, description, options, required, readOnly } = fieldData;
-  const isClearable = !required && !readOnly && Boolean(field.value);
+  const { name, label, description, options, required, disabled } = fieldData;
+  const isClearable = !required && !disabled && Boolean(field.value);
 
   const clearValue = (event: React.MouseEvent<HTMLButtonElement>) => {
     field.onChange('');
@@ -42,7 +42,7 @@ export function SelectFieldDefault({
         <div className='relative'>
           <Select
             value={field.value || ''}
-            disabled={readOnly}
+            disabled={disabled}
             onValueChange={(value: string) => {
               field.onChange(value);
             }}

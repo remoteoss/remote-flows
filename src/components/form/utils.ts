@@ -128,6 +128,10 @@ const trimStringValues = (values: Record<string, $TSFixMe>) =>
  * @param {Object} values - List with form values { name: value }.
  * @param {Array} fields - Respective form fields configuration.
  */
+export function isFieldLocked(field: $TSFixMe) {
+  return Boolean(field.readOnly || field.disabled);
+}
+
 function prefillReadOnlyFields(
   values: Record<string, $TSFixMe>,
   fields: $TSFixMe[],
@@ -149,7 +153,7 @@ function prefillReadOnlyFields(
       return;
     }
 
-    if (field.readOnly && field.default !== undefined) {
+    if (isFieldLocked(field) && field.default !== undefined) {
       newValues[fieldName!] = field.default;
     } else {
       newValues[fieldName!] = values[fieldName!];

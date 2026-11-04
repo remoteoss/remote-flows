@@ -212,7 +212,7 @@ Choosing the semi-monthly frequency reveals a "Semi-monthly" group with an **Inv
 radio. The default is the 15th and the last day of the month. **Custom cycle** reveals
 **First invoice raised on** (1st to 14th) and a disabled **Second invoice raised on** select
 (15th to 28th) that shows the day 14 days after the first. It is derived in the schema (a
-read-only field with a computed `default`), so it needs no form code. The group is sent as `custom_days`: `[15, 31]` for the default cycle
+disabled field with a computed `default`), so it needs no form code. The group is sent as `custom_days`: `[15, 31]` for the default cycle
 (the API treats 31 as the last day of the month) and `[first, first + 14]` for a custom one.
 
 The start date must fall on one of the cycle's days: the 15th or the last day of the month for the default cycle, or the first or second day for a custom one. Any other date fails validation on `start_date` with "Choose a date that matches the selected invoicing cycle". The date picker is not restricted to those days, so the error appears after a date is picked.

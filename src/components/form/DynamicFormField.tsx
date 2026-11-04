@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { FieldExtra } from '@/src/components/form/FieldExtra';
 import { Statement } from '@/src/components/form/Statement';
+import { isFieldLocked } from '@/src/components/form/utils';
 import { StatementComponentProps } from '@/src/types/fields';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
@@ -14,19 +15,19 @@ type DynamicFormFieldProps = {
   component?: React.ComponentType<$TSFixMe>;
 };
 
-function useReadOnlyDefault(name: string, field: $TSFixMe) {
+function useLockedDefault(name: string, locked: boolean, field: $TSFixMe) {
   const { getValues, setValue } = useFormContext();
-  const { readOnly, default: computedDefault } = field;
+  const { default: computedDefault } = field;
 
   useEffect(() => {
     if (
-      readOnly &&
+      locked &&
       computedDefault !== undefined &&
       !equal(getValues(name), computedDefault)
     ) {
       setValue(name, computedDefault, { shouldDirty: true });
     }
-  }, [readOnly, computedDefault, name, getValues, setValue]);
+  }, [locked, computedDefault, name, getValues, setValue]);
 }
 
 export function DynamicFormField({
@@ -35,7 +36,9 @@ export function DynamicFormField({
   FieldComponent,
   component,
 }: DynamicFormFieldProps) {
-  useReadOnlyDefault(name, field);
+  const locked = isFieldLocked(field);
+
+  useLockedDefault(name, locked, field);
 
   return (
     <>
@@ -43,6 +46,7 @@ export function DynamicFormField({
         {...omit(field, 'WrapperComponent')}
         name={name}
         component={component}
+        disabled={locked}
       />
       {field.statement ? (
         <Statement {...(field.statement as StatementComponentProps['data'])} />
