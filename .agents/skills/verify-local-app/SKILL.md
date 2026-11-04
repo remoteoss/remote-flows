@@ -26,7 +26,8 @@ file name only picks the credentials.
 
 Use the env the user named. If they didn't, ask which one rather than guessing
 — different envs are different companies, and the result only means something
-against the one they care about.
+against the one they care about. When no one can be asked (a verifier turn with
+no way to prompt), use `.env.sandbox` and say so in the report.
 
 Reading `.env*` files directly is denied by permission settings, so check keys
 with a `node -e` one-liner that loads `<repo root>/.env.<name>` with `dotenv`
