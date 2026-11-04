@@ -1,3 +1,4 @@
+import equal from 'fast-deep-equal';
 import omit from 'lodash.omit';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -21,7 +22,7 @@ function useReadOnlyDefault(name: string, field: $TSFixMe) {
     if (
       readOnly &&
       computedDefault !== undefined &&
-      getValues(name) !== computedDefault
+      !equal(getValues(name), computedDefault)
     ) {
       setValue(name, computedDefault, { shouldDirty: true });
     }
