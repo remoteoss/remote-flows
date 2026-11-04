@@ -361,7 +361,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   XKX: {
     // Kosovo
-    contract_details: 1,
+    contract_details: 3,
   },
   ZAF: {
     // South Africa
@@ -369,6 +369,6 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ZWE: {
     // Zimbabwe
-    contract_details: 1,
+    contract_details: 6,
   },
 };
