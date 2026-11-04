@@ -94,7 +94,10 @@ export function InvoiceScheduleForm({
         onSubmit={form.handleSubmit(handleSubmit)}
         className='space-y-4 RemoteFlows__InvoiceScheduleForm'
       >
-        <JSONSchemaFormFields fields={invoiceScheduleBag.fields} />
+        <JSONSchemaFormFields
+          fields={invoiceScheduleBag.fields}
+          fieldValues={invoiceScheduleBag.fieldValues}
+        />
       </form>
     </Form>
   );

@@ -124,7 +124,7 @@ and their typescript definitions
 - `FileComponentProps`: for custom file field components
 - `CountryComponentProps`: for country field components
 - `TextFieldComponentProps`: for textfield components
-- `DatePickerComponentProps`: for datepicker components
+- `DatePickerComponentProps`: for datepicker components. When `fieldData.filterDate` is set, only the days it returns `true` for can be picked
 - `WorkScheduleComponentProps`: for workschedule components
 - `PDFPreviewComponentProps`: for the pdf viewer component
 - `TelFieldComponentProps`: for the tel component

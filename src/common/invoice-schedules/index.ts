@@ -21,6 +21,7 @@ export {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
   buildRecurrence,
+  isSemiMonthlyCycleDay,
   toOrdinal,
 } from './utils';
 

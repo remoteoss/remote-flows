@@ -12,7 +12,10 @@ import {
   SEMI_MONTHLY_DEFAULT_CYCLE_DAYS,
   SEMI_MONTHLY_PERIODICITY,
 } from '@/src/common/invoice-schedules/constants';
-import { toOrdinal } from '@/src/common/invoice-schedules/utils';
+import {
+  isSemiMonthlyCycleDay,
+  toOrdinal,
+} from '@/src/common/invoice-schedules/utils';
 
 function invoiceItemsProperty() {
   return {
@@ -525,6 +528,18 @@ export function buildCreateInvoiceScheduleSchema({
         'x-jsf-presentation': {
           inputType: 'date',
           minDate: new Date().toISOString().slice(0, 10),
+          calculateDynamicProperties: (values: Record<string, unknown>) =>
+            values?.periodicity === SEMI_MONTHLY_PERIODICITY
+              ? {
+                  filterDate: (date: Date) =>
+                    isSemiMonthlyCycleDay(
+                      date,
+                      values.semi_monthly_settings as
+                        | Record<string, unknown>
+                        | undefined,
+                    ),
+                }
+              : { filterDate: undefined },
         },
         'x-jsf-logic-validations': [START_DATE_MATCHES_CYCLE_VALIDATION],
       },

@@ -88,6 +88,18 @@ describe('DatePickerField Component', () => {
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
 
+  it('disables the days the filter rejects', () => {
+    renderWithFormContext({
+      ...defaultProps,
+      filterDate: (date: Date) => date.getDate() === 15,
+    } as DatePickerFieldProps);
+
+    fireEvent.click(screen.getByRole('button'));
+
+    expect(screen.getByRole('gridcell', { name: '15' })).toBeEnabled();
+    expect(screen.getByRole('gridcell', { name: '14' })).toBeDisabled();
+  });
+
   it('renders custom date picker component when provided', () => {
     const CustomDatePickerField = vi
       .fn()

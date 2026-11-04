@@ -132,6 +132,10 @@ export type CountryComponentProps = FieldComponentProps & {
 type DatePickerDataProps = Omit<FieldDataProps, 'meta'> & {
   minDate?: string;
   maxDate?: string;
+  /**
+   * When set, only the days it returns `true` for can be picked.
+   */
+  filterDate?: (date: Date) => boolean;
 };
 
 export type DatePickerComponentProps = FieldComponentProps & {

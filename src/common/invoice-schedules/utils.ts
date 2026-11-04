@@ -1,3 +1,4 @@
+import { isLastDayOfMonth } from 'date-fns';
 import {
   ContractorInvoiceSchedule,
   ContractorInvoiceScheduleItem,
@@ -171,6 +172,29 @@ export function buildCustomDays(
   }
 
   return [first, first + SEMI_MONTHLY_CYCLE_GAP_DAYS];
+}
+
+/**
+ * Tells whether a date falls on one of the days a semi-monthly cycle generates invoices on.
+ *
+ * The default cycle is the 15th and the last day of the month; a custom cycle is the chosen
+ * first day and the day 14 days after it.
+ *
+ * @param date - The calendar day being checked
+ * @param settings - The `semi_monthly_settings` group of the form values
+ */
+export function isSemiMonthlyCycleDay(
+  date: Date,
+  settings?: Record<string, unknown>,
+): boolean {
+  const day = date.getDate();
+
+  if (settings?.invoicing_cycle === SEMI_MONTHLY_CUSTOM_CYCLE) {
+    const first = Number(settings.first_invoice_day);
+    return day === first || day === first + SEMI_MONTHLY_CYCLE_GAP_DAYS;
+  }
+
+  return day === SEMI_MONTHLY_DEFAULT_CYCLE_DAYS[0] || isLastDayOfMonth(date);
 }
 
 /**

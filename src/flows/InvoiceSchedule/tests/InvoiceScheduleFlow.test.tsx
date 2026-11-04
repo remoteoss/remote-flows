@@ -928,6 +928,85 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     expect(request.body).toBeUndefined();
   });
 
+  describe('start date calendar', () => {
+    function renderWithFilterSpy() {
+      const filters: Array<((date: Date) => boolean) | undefined> = [];
+      render(
+        <InvoiceScheduleFlow
+          employmentId='employment-grace'
+          render={(bag) => (bag.isLoading ? null : <InvoiceScheduleForm />)}
+        />,
+        {
+          wrapper: ({ children }) => (
+            <TestProviders
+              components={{
+                date: ({ field, fieldData }: $TSFixMe) => {
+                  if (field.name === 'start_date') {
+                    filters.push(fieldData.filterDate);
+                  }
+                  return <input data-testid={field.name} readOnly />;
+                },
+              }}
+            >
+              {children}
+            </TestProviders>
+          ),
+        },
+      );
+      return () => filters[filters.length - 1];
+    }
+
+    it('only offers the 15th and the last day of the month for the default cycle', async () => {
+      const latestFilter = renderWithFilterSpy();
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
+      });
+      expect(latestFilter()).toBeUndefined();
+
+      await fillSelect('periodicity', 'semi_monthly');
+
+      await waitFor(() => {
+        expect(latestFilter()).toBeInstanceOf(Function);
+      });
+      expect(latestFilter()?.(new Date(2100, 0, 15))).toBe(true);
+      expect(latestFilter()?.(new Date(2100, 0, 31))).toBe(true);
+      expect(latestFilter()?.(new Date(2100, 0, 16))).toBe(false);
+      expect(latestFilter()?.(new Date(2100, 0, 1))).toBe(false);
+    });
+
+    it('follows the custom cycle days', async () => {
+      const latestFilter = renderWithFilterSpy();
+
+      await fillSelect('periodicity', 'semi_monthly');
+      fireEvent.click(
+        await screen.findByRole('radio', { name: 'Custom cycle' }),
+      );
+      await fillSelect('semi_monthly_settings.first_invoice_day', '3');
+
+      await waitFor(() => {
+        expect(latestFilter()?.(new Date(2100, 0, 17))).toBe(true);
+      });
+      expect(latestFilter()?.(new Date(2100, 0, 3))).toBe(true);
+      expect(latestFilter()?.(new Date(2100, 0, 15))).toBe(false);
+    });
+
+    it('lifts the restriction when the frequency changes away from semi-monthly', async () => {
+      const latestFilter = renderWithFilterSpy();
+
+      await fillSelect('periodicity', 'semi_monthly');
+      await waitFor(() => {
+        expect(latestFilter()).toBeInstanceOf(Function);
+      });
+
+      await fillSelect('periodicity', 'monthly');
+
+      await waitFor(() => {
+        expect(latestFilter()).toBeUndefined();
+      });
+    });
+  });
+
   it('does not offer the semi-monthly cycle for another frequency', async () => {
     const request = captureCreateRequest();
     const onSuccess = vi.fn();

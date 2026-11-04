@@ -24,7 +24,7 @@ export function DatePickerFieldDefault({
   fieldData,
   fieldState,
 }: DatePickerComponentProps) {
-  const { name, label, description, minDate, maxDate } = fieldData;
+  const { name, label, description, minDate, maxDate, filterDate } = fieldData;
   const minDateValue = minDate ? new Date(minDate) : undefined;
   const maxDateValue = maxDate ? new Date(maxDate) : undefined;
   const [open, setOpen] = useState(false);
@@ -89,6 +89,9 @@ export function DatePickerFieldDefault({
                 return true;
               }
               if (maxDateValue && date > maxDateValue) {
+                return true;
+              }
+              if (filterDate && !filterDate(date)) {
                 return true;
               }
               return false;

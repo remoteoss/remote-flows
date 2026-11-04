@@ -7,6 +7,7 @@ import {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
   buildRecurrence,
+  isSemiMonthlyCycleDay,
   toOrdinal,
 } from '@/src/common/invoice-schedules';
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
@@ -773,5 +774,43 @@ describe('buildInvoiceScheduleFormValues', () => {
     expect(values.periodicity).toBe(ONE_TIME_PERIODICITY);
     expect(values.end_type).toBeUndefined();
     expect(values.nr_occurrences).toBeUndefined();
+  });
+});
+
+describe('isSemiMonthlyCycleDay', () => {
+  it('accepts the 15th and the last day of the month for the default cycle', () => {
+    expect(isSemiMonthlyCycleDay(new Date(2026, 10, 15))).toBe(true);
+    expect(isSemiMonthlyCycleDay(new Date(2026, 10, 30))).toBe(true);
+    expect(isSemiMonthlyCycleDay(new Date(2026, 11, 31))).toBe(true);
+    expect(
+      isSemiMonthlyCycleDay(new Date(2026, 10, 15), {
+        invoicing_cycle: 'default_cycle',
+      }),
+    ).toBe(true);
+  });
+
+  it('rejects any other day for the default cycle', () => {
+    expect(isSemiMonthlyCycleDay(new Date(2026, 10, 1))).toBe(false);
+    expect(isSemiMonthlyCycleDay(new Date(2026, 10, 16))).toBe(false);
+    expect(isSemiMonthlyCycleDay(new Date(2026, 10, 29))).toBe(false);
+  });
+
+  it('takes the last day of a short month, leap years included', () => {
+    expect(isSemiMonthlyCycleDay(new Date(2027, 1, 28))).toBe(true);
+    expect(isSemiMonthlyCycleDay(new Date(2027, 1, 27))).toBe(false);
+    expect(isSemiMonthlyCycleDay(new Date(2028, 1, 29))).toBe(true);
+    expect(isSemiMonthlyCycleDay(new Date(2028, 1, 28))).toBe(false);
+  });
+
+  it('accepts the chosen first day and the one 14 days after it for a custom cycle', () => {
+    const settings = {
+      invoicing_cycle: 'custom_cycle',
+      first_invoice_day: '3',
+    };
+
+    expect(isSemiMonthlyCycleDay(new Date(2026, 10, 3), settings)).toBe(true);
+    expect(isSemiMonthlyCycleDay(new Date(2026, 10, 17), settings)).toBe(true);
+    expect(isSemiMonthlyCycleDay(new Date(2026, 10, 15), settings)).toBe(false);
+    expect(isSemiMonthlyCycleDay(new Date(2026, 10, 30), settings)).toBe(false);
   });
 });
