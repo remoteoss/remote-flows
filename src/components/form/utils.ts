@@ -149,8 +149,8 @@ function prefillReadOnlyFields(
       return;
     }
 
-    if (field.readOnly && field.defaultValue) {
-      newValues[fieldName!] = field.defaultValue;
+    if (field.readOnly && field.default !== undefined) {
+      newValues[fieldName!] = field.default;
     } else {
       newValues[fieldName!] = values[fieldName!];
     }

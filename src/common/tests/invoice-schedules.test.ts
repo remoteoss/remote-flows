@@ -343,6 +343,42 @@ describe('buildCreateInvoiceScheduleSchema', () => {
     expect(currency?.options?.[0]?.disabled).toBe(true);
   });
 
+  it('offers the second invoice day as a read-only select that follows the first', async () => {
+    const form = createHeadlessForm(
+      buildCreateInvoiceScheduleSchema() as $TSFixMe,
+      {},
+    );
+
+    await form.handleValidation({
+      periodicity: 'semi_monthly',
+      semi_monthly_settings: {
+        invoicing_cycle: 'custom_cycle',
+        first_invoice_day: '3',
+      },
+    });
+
+    const settings = (form.fields as $TSFixMe[]).find(
+      (f) => f.name === 'semi_monthly_settings',
+    );
+    const second = settings.fields.find(
+      (f: $TSFixMe) => f.name === 'second_invoice_day',
+    );
+
+    expect({
+      inputType: second.inputType,
+      readOnly: second.readOnly,
+      default: second.default,
+      firstOption: second.options[0].value,
+      lastOption: second.options.at(-1).value,
+    }).toEqual({
+      inputType: 'select',
+      readOnly: true,
+      default: '17',
+      firstOption: '15',
+      lastOption: '28',
+    });
+  });
+
   describe('fieldsets', () => {
     const buildForm = (options = {}) =>
       createHeadlessForm(
