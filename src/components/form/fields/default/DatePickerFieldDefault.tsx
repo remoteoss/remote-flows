@@ -8,7 +8,7 @@ import {
 } from '@/src/components/ui/form';
 import { DatePickerComponentProps } from '@/src/types/fields';
 import { CalendarIcon } from 'lucide-react';
-import { format, isLastDayOfMonth } from 'date-fns';
+import { format } from 'date-fns';
 import {
   Popover,
   PopoverContent,
@@ -16,6 +16,7 @@ import {
 } from '@/src/components/ui/popover';
 import { cn } from '@/src/lib/utils';
 import { Calendar } from '@/src/components/ui/calendar';
+import { buildIsDateDisabled } from '@/src/components/form/utils';
 import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 import { useState } from 'react';
 
@@ -27,6 +28,13 @@ export function DatePickerFieldDefault({
   const { name, label, description, minDate, maxDate, allowedDays } = fieldData;
   const minDateValue = minDate ? new Date(minDate) : undefined;
   const maxDateValue = maxDate ? new Date(maxDate) : undefined;
+  const isDateDisabled =
+    fieldData.isDateDisabled ??
+    buildIsDateDisabled({
+      minDate: minDateValue,
+      maxDate: maxDateValue,
+      allowedDays,
+    });
   const [open, setOpen] = useState(false);
 
   const currentYear = new Date().getFullYear();
@@ -84,22 +92,7 @@ export function DatePickerFieldDefault({
                 ? new Date(field.value)
                 : (maxDateValue ?? minDateValue)
             }
-            disabled={(date: Date) => {
-              if (minDateValue && date < minDateValue) {
-                return true;
-              }
-              if (maxDateValue && date > maxDateValue) {
-                return true;
-              }
-              if (allowedDays?.length) {
-                const lastDayOfMonth = allowedDays.includes(31);
-                return !(
-                  allowedDays.includes(date.getDate()) ||
-                  (lastDayOfMonth && isLastDayOfMonth(date))
-                );
-              }
-              return false;
-            }}
+            disabled={isDateDisabled}
           />
         </PopoverContent>
       </Popover>

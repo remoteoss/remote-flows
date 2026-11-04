@@ -132,6 +132,14 @@ and their typescript definitions
 - `ForcedValueComponentProps`: for the forced value component
 - `GroupArrayComponentProps`: for the group-array component
 
+### Date picker restrictions
+
+`DatePickerComponentProps.fieldData.isDateDisabled` returns `true` for the days that can't be picked: outside `minDate` / `maxDate`, or not one of the days a field allows, such as the semi-monthly invoice cycle days. A custom `date` component has to pass it to its calendar, otherwise the calendar stays unrestricted and only the form validation catches wrong dates.
+
+```tsx
+<Calendar disabled={fieldData.isDateDisabled} />
+```
+
 > **Tip:** Check [src/default-components.ts](../src/default-components.ts) to see the default implementations. You can use these as a starting point or reference when building your own custom components.
 
 ### Important Notes

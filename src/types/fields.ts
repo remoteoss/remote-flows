@@ -137,6 +137,11 @@ type DatePickerDataProps = Omit<FieldDataProps, 'meta'> & {
    * Every day is allowed when this is empty or missing.
    */
   allowedDays?: number[] | null;
+  /**
+   * Whether a day can't be picked: outside `minDate` / `maxDate` or not one of `allowedDays`.
+   * Pass it to your calendar's disabled matcher to get the same restrictions as the default picker.
+   */
+  isDateDisabled?: (date: Date) => boolean;
 };
 
 export type DatePickerComponentProps = FieldComponentProps & {

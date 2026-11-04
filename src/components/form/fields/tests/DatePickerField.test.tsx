@@ -324,4 +324,56 @@ describe('DatePickerField Component', () => {
       expect(screen.getByRole('gridcell', { name: '14' })).toBeEnabled();
     });
   });
+
+  describe('DatePickerField - isDateDisabled for custom components', () => {
+    const renderCustom = (props: Record<string, unknown>) => {
+      const customDate = vi.fn(() => null);
+      (useFormFields as $TSFixMe).mockReturnValue({
+        components: { date: customDate },
+      });
+      renderWithFormContext({
+        ...defaultProps,
+        ...props,
+      } as DatePickerFieldProps);
+      const calls = customDate.mock.calls as unknown as Array<
+        [{ fieldData: { isDateDisabled: (date: Date) => boolean } }]
+      >;
+      return calls[0][0].fieldData.isDateDisabled;
+    };
+
+    it('disables days before the min date and after the max date', () => {
+      const isDateDisabled = renderCustom({
+        minDate: '2099-03-10',
+        maxDate: '2099-03-20',
+      });
+
+      expect(isDateDisabled(new Date(2099, 2, 9))).toBe(true);
+      expect(isDateDisabled(new Date(2099, 2, 10, 12))).toBe(false);
+      expect(isDateDisabled(new Date(2099, 2, 20, 12))).toBe(false);
+      expect(isDateDisabled(new Date(2099, 2, 21))).toBe(true);
+    });
+
+    it('only allows the listed days and the last day of the month for 31', () => {
+      const isDateDisabled = renderCustom({
+        minDate: '2090-01-01',
+        allowedDays: [15, 31],
+      });
+
+      expect(isDateDisabled(new Date(2099, 10, 15))).toBe(false);
+      expect(isDateDisabled(new Date(2099, 10, 30))).toBe(false);
+      expect(isDateDisabled(new Date(2099, 10, 29))).toBe(true);
+      expect(isDateDisabled(new Date(2100, 1, 28))).toBe(false);
+      expect(isDateDisabled(new Date(2096, 1, 29))).toBe(false);
+      expect(isDateDisabled(new Date(2096, 1, 28))).toBe(true);
+    });
+
+    it('allows every day inside the range when no days are restricted', () => {
+      const isDateDisabled = renderCustom({
+        minDate: '2099-01-01',
+        allowedDays: null,
+      });
+
+      expect(isDateDisabled(new Date(2099, 5, 14))).toBe(false);
+    });
+  });
 });
