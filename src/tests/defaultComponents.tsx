@@ -42,6 +42,7 @@ export const defaultComponents = {
           id={field.name}
           data-testid={field.name}
           value={field.value}
+          disabled={fieldData.disabled}
           onChange={(e) => {
             field?.onChange?.(e.target.value);
           }}

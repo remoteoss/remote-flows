@@ -133,6 +133,17 @@ describe('SelectField Component', () => {
     expect(screen.queryByLabelText('Clear Test Field')).not.toBeInTheDocument();
   });
 
+  it('disables the default select and hides its clear button when disabled', () => {
+    renderWithFormContext(
+      { ...defaultProps, required: false, disabled: true } as SelectFieldProps,
+      { testField: 'option2' },
+    );
+
+    expect(screen.getByRole('combobox')).toBeDisabled();
+    expect(screen.getByRole('combobox')).toHaveTextContent('Option 2');
+    expect(screen.queryByLabelText('Clear Test Field')).not.toBeInTheDocument();
+  });
+
   it('renders custom select component when provided', () => {
     const CustomSelectField = vi
       .fn()

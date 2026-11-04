@@ -332,6 +332,7 @@ type FieldComponentProps = {
     label?: string;
     description?: string;
     descriptionSuffix?: React.ReactNode;
+    disabled?: boolean;
     placeholder?: string;
     options?: Array<{
       value: string;

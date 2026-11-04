@@ -919,12 +919,12 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
       name: 'Second invoice raised on',
     });
     expect(second).toBeDisabled();
-    expect(second).toHaveTextContent('15th of the month');
+    expect(second).toHaveValue('15');
 
     await fillSelect('semi_monthly_settings.first_invoice_day', '4');
 
     await waitFor(() => {
-      expect(second).toHaveTextContent('18th of the month');
+      expect(second).toHaveValue('18');
     });
     expect(second).toBeDisabled();
   });

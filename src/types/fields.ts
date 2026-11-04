@@ -68,6 +68,11 @@ export type FieldDataProps = Partial<JSFField> & {
    */
   descriptionSuffix?: React.ReactNode;
   /**
+   * True when the field is shown but the user can't change it. A custom `select` component
+   * should render itself disabled.
+   */
+  disabled?: boolean;
+  /**
    * Optional HTML transformer function passed from RemoteFlows context.
    * Use this in custom field components to transform HTML descriptions into React components.
    * @example

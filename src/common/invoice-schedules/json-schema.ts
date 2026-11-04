@@ -169,6 +169,7 @@ function semiMonthlySettingsProperty() {
       second_invoice_day: {
         title: 'Second invoice raised on',
         type: 'string',
+        oneOf: dayOptions(15, 28),
         'x-jsf-presentation': {
           inputType: 'select',
           Component: SecondInvoiceDayField,
