@@ -259,7 +259,12 @@ function endDateConditionals() {
   ];
 }
 
-const SUMMARY_PERIODICITIES = ['weekly', 'bi_weekly', 'monthly'];
+const SUMMARY_PERIODICITIES = [
+  'weekly',
+  'bi_weekly',
+  SEMI_MONTHLY_PERIODICITY,
+  'monthly',
+];
 
 function scheduleSummaryProperty() {
   return {
@@ -280,19 +285,65 @@ function scheduleSummaryProperty() {
       'x-jsf-presentation': {
         statement: {
           description:
-            'This schedule will create a <strong>{{schedule_frequency}}</strong> recurring invoice{{schedule_end}}, starting <strong>{{schedule_start}}</strong>.',
+            'This schedule will create a <strong>{{schedule_frequency}}</strong> recurring invoice{{schedule_end}}{{schedule_cycle}}, starting <strong>{{schedule_start}}</strong>.',
         },
       },
     },
   };
 }
 
+const FIRST_INVOICE_DAY_VAR = {
+  '+': [{ var: 'semi_monthly_settings.first_invoice_day' }],
+};
+
+function ordinalSuffix(day: unknown) {
+  return {
+    if: [
+      { in: [day, [1, 21, 31]] },
+      'st',
+      { in: [day, [2, 22]] },
+      'nd',
+      { in: [day, [3, 23]] },
+      'rd',
+      'th',
+    ],
+  };
+}
+
 const scheduleSummaryComputedValues = {
+  schedule_cycle: {
+    rule: {
+      if: [
+        { '!=': [{ var: 'periodicity' }, SEMI_MONTHLY_PERIODICITY] },
+        '',
+        {
+          '==': [
+            { var: 'semi_monthly_settings.invoicing_cycle' },
+            SEMI_MONTHLY_CUSTOM_CYCLE,
+          ],
+        },
+        {
+          cat: [
+            ', issued on the ',
+            FIRST_INVOICE_DAY_VAR,
+            ordinalSuffix(FIRST_INVOICE_DAY_VAR),
+            ' and the ',
+            SECOND_INVOICE_DAY_RULE,
+            ordinalSuffix(SECOND_INVOICE_DAY_RULE),
+            ' of each month',
+          ],
+        },
+        ', issued on the 15th and the last day of each month',
+      ],
+    },
+  },
   schedule_frequency: {
     rule: {
       if: [
         { '==': [{ var: 'periodicity' }, 'bi_weekly'] },
         'bi-weekly',
+        { '==': [{ var: 'periodicity' }, SEMI_MONTHLY_PERIODICITY] },
+        'semi-monthly',
         { var: 'periodicity' },
       ],
     },
