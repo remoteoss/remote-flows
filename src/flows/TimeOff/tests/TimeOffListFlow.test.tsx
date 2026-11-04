@@ -5,6 +5,7 @@ import {
   renderHook,
   screen,
   waitFor,
+  within,
 } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { TimeOffListFlow, useTimeOffList } from '@/src/index';
@@ -180,7 +181,7 @@ describe('TimeOffListFlow', () => {
     await screen.findByText('requested leave, page 1');
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     await screen.findByText('requested leave, page 2');
-    fireEvent.click(screen.getByRole('button', { name: 'View' }));
+    fireEvent.click(screen.getByRole('button', { name: /^View/ }));
 
     expect(await screen.findByText('Reviewed leave')).toBeInTheDocument();
 
@@ -213,7 +214,7 @@ describe('TimeOffListFlow', () => {
     renderFlow();
 
     await screen.findByText('requested leave, page 1');
-    fireEvent.click(screen.getByRole('button', { name: 'View' }));
+    fireEvent.click(screen.getByRole('button', { name: /^View/ }));
     fireEvent.click(await screen.findByRole('button', { name: 'Approve' }));
 
     expect(await screen.findByText('Approved')).toBeInTheDocument();
@@ -268,7 +269,7 @@ describe('TimeOffListFlow', () => {
     await screen.findByText('Leave, page 1');
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     await screen.findByText('Leave, page 2');
-    fireEvent.click(screen.getByRole('button', { name: 'View' }));
+    fireEvent.click(screen.getByRole('button', { name: /^View/ }));
     fireEvent.click(await screen.findByRole('button', { name: 'Approve' }));
     expect(await screen.findByText('Approved')).toBeInTheDocument();
 
@@ -306,10 +307,10 @@ describe('TimeOffListFlow', () => {
 
     await screen.findByText('requested leave, page 1');
     expect(
-      screen.queryByRole('button', { name: /requested leave/ }),
+      screen.queryByRole('button', { name: /^requested leave/ }),
     ).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Decline' })).toBeEnabled();
-    fireEvent.click(screen.getByRole('button', { name: 'Approve' }));
+    expect(screen.getByRole('button', { name: /^Decline/ })).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: /^Approve/ }));
 
     await waitFor(() => {
       expect(queries).toEqual(['?status=requested', '?status=requested']);
@@ -319,10 +320,42 @@ describe('TimeOffListFlow', () => {
     ]);
     expect(requestedIds).toEqual([]);
 
-    fireEvent.click(screen.getByRole('button', { name: 'View' }));
+    fireEvent.click(screen.getByRole('button', { name: /^View/ }));
 
     expect(await screen.findByText('Reviewed leave')).toBeInTheDocument();
     expect(requestedIds).toEqual(['timeoff-1']);
+  });
+
+  it('names each listed action after its request', async () => {
+    server.use(
+      http.get('*/v1/timeoff', () =>
+        HttpResponse.json({
+          data: {
+            ...timeOffRequestsResponse.data,
+            timeoffs: [
+              listedTimeOff('timeoff-1', 'Paid leave'),
+              listedTimeOff('timeoff-2', 'Sick leave'),
+            ],
+          },
+        }),
+      ),
+    );
+    renderFlow();
+
+    await screen.findByText('Sick leave');
+
+    expect(
+      within(screen.getByRole('list'))
+        .getAllByRole('button')
+        .map((button) => button.getAttribute('aria-label')),
+    ).toEqual([
+      'View Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Decline Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Approve Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'View Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Decline Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Approve Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+    ]);
   });
 
   it('renders the actions a partner gives each listed request', async () => {
@@ -372,7 +405,7 @@ describe('TimeOffListFlow', () => {
       { id: 'timeoff-1', body: { decline_reason: 'Overlaps for timeoff-1' } },
     ]);
     expect(
-      screen.queryByRole('button', { name: 'View' }),
+      screen.queryByRole('button', { name: /^View/ }),
     ).not.toBeInTheDocument();
   });
 

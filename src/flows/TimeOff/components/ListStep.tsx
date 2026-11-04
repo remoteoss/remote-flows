@@ -20,6 +20,7 @@ export function ListStep({
 
   const rows = timeOffListBag.timeOffListItems.map((item) => ({
     item,
+    requestLabel: item.listedDetails.map((detail) => detail.value).join(', '),
     timeOffBag: {
       ...timeOffListBag,
       timeOffRequest: item.timeOffRequest,
@@ -57,7 +58,7 @@ export function ListStep({
 
   return (
     <ul className='RemoteFlows__ListStep'>
-      {rows.map(({ item, timeOffBag }) => (
+      {rows.map(({ item, requestLabel, timeOffBag }) => (
         <li
           key={item.timeOffRequest.id}
           className={`RemoteFlows__ListStep__Item RemoteFlows__ListStep__Item--${item.timeOffRequest.status}`}
@@ -80,15 +81,17 @@ export function ListStep({
                 renderActions(item)
               ) : (
                 <>
-                  <ViewButton />
+                  <ViewButton aria-label={`View ${requestLabel}`} />
                   {item.canDecide && (
                     <>
                       <DeclineButton
                         declineReason={null}
+                        aria-label={`Decline ${requestLabel}`}
                         className='RemoteFlows__ListStep__DeclineButton'
                       />
                       <ApproveButton
                         approverId={null}
+                        aria-label={`Approve ${requestLabel}`}
                         className='RemoteFlows__ListStep__ApproveButton'
                       />
                     </>
