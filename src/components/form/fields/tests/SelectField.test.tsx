@@ -133,6 +133,48 @@ describe('SelectField Component', () => {
     expect(screen.queryByLabelText('Clear Test Field')).not.toBeInTheDocument();
   });
 
+  describe('read-only state', () => {
+    it('shows the value but cannot be opened or cleared', () => {
+      renderWithFormContext(
+        { ...defaultProps, required: false, readOnly: true },
+        { testField: 'option2' },
+      );
+
+      const select = screen.getByRole('combobox');
+      expect(select).toHaveTextContent('Option 2');
+      expect(select).toBeDisabled();
+
+      fireEvent.click(select);
+
+      expect(screen.queryByText('Option 1')).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText('Clear Test Field'),
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows the forced value of a read-only field', () => {
+      renderWithFormContext({
+        ...defaultProps,
+        readOnly: true,
+        const: 'option1',
+        default: 'option1',
+      } as SelectFieldProps);
+
+      expect(screen.getByRole('combobox')).toHaveTextContent('Option 1');
+    });
+
+    it('passes readOnly to a custom select component', () => {
+      const CustomSelectField = vi.fn().mockImplementation(() => null);
+      (useFormFields as $TSFixMe).mockReturnValue({
+        components: { select: CustomSelectField },
+      });
+
+      renderWithFormContext({ ...defaultProps, readOnly: true });
+
+      expect(CustomSelectField.mock.calls[0][0].fieldData.readOnly).toBe(true);
+    });
+  });
+
   it('renders custom select component when provided', () => {
     const CustomSelectField = vi
       .fn()

@@ -68,6 +68,11 @@ export type FieldDataProps = Partial<JSFField> & {
    */
   descriptionSuffix?: React.ReactNode;
   /**
+   * True when the schema marks the field `readOnly`. Show its value but don't let the user
+   * change it; the SDK keeps the value in sync, so a custom component only needs to disable itself.
+   */
+  readOnly?: boolean;
+  /**
    * Optional HTML transformer function passed from RemoteFlows context.
    * Use this in custom field components to transform HTML descriptions into React components.
    * @example

@@ -29,6 +29,42 @@ describe('checkFieldHasForcedValue', () => {
     );
   });
 
+  describe('read-only cases', () => {
+    it('keeps the input of a read-only field that has an inputType', () => {
+      expect(
+        checkFieldHasForcedValue({
+          type: 'select',
+          inputType: 'select',
+          readOnly: true,
+          const: '15',
+          default: '15',
+        }),
+      ).toBe(false);
+    });
+
+    it('still treats a read-only field without an inputType as forced', () => {
+      expect(
+        checkFieldHasForcedValue({
+          type: 'text',
+          readOnly: true,
+          const: 'a',
+          default: 'a',
+        }),
+      ).toBe(true);
+    });
+
+    it('still treats a forced field that is not read-only as forced', () => {
+      expect(
+        checkFieldHasForcedValue({
+          type: 'select',
+          inputType: 'select',
+          const: '15',
+          default: '15',
+        }),
+      ).toBe(true);
+    });
+  });
+
   it('does not treat checkbox fields as forced', () => {
     expect(
       checkFieldHasForcedValue({

@@ -105,6 +105,7 @@ const Select = ({ field, fieldData, fieldState }: FieldComponentProps) => {
           value={value || ''}
           onChange={(e) => onChange(e.target.value)}
           {...fieldProps}
+          disabled={fieldProps.disabled || fieldData.readOnly}
         >
           <option value='' disabled>
             Select an option

@@ -332,6 +332,7 @@ type FieldComponentProps = {
     label?: string;
     description?: string;
     descriptionSuffix?: React.ReactNode;
+    readOnly?: boolean;
     placeholder?: string;
     options?: Array<{
       value: string;
@@ -356,6 +357,20 @@ const CustomInput = ({ field, fieldData }: FieldComponentProps) => (
         Render it, otherwise your users lose the toggle. */}
     {fieldData.descriptionSuffix}
   </div>
+);
+```
+
+`fieldData.readOnly` is `true` when the schema marks the field `readOnly`. The SDK keeps the field's value in sync, and your component should show that value without letting the user change it. The default select renders disabled, so it can't be opened, and it has no clear button. A custom `select` component honours read-only only if it reads this prop. For example, in the Create invoice schedule form, "Second invoice raised on" (Semi-monthly, Custom cycle) is a read-only select:
+
+```tsx
+const CustomSelect = ({ field, fieldData }: FieldComponentProps) => (
+  <select {...field} disabled={fieldData.readOnly}>
+    {fieldData.options?.map((option) => (
+      <option key={option.value} value={option.value}>
+        {option.label}
+      </option>
+    ))}
+  </select>
 );
 ```
 

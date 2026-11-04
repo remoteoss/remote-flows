@@ -19,6 +19,11 @@ import { useInvoiceSchedule } from '@/src/flows/InvoiceSchedule/hooks';
 import { InvoiceScheduleForm } from '@/src/flows/InvoiceSchedule/InvoiceScheduleForm';
 import { InvoiceScheduleSubmitButton } from '@/src/flows/InvoiceSchedule/InvoiceScheduleSubmitButton';
 import { employmentDefaultResponse } from '@/src/flows/Onboarding/tests/fixtures';
+import {
+  buildCreateInvoiceScheduleSchema,
+  toOrdinal,
+} from '@/src/common/invoice-schedules';
+import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
 function renderFlow({
@@ -784,6 +789,68 @@ describe('InvoiceScheduleFlow partner usage', () => {
   });
 });
 
+describe('InvoiceSchedule second invoice day', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
+
+  async function chooseCustomCycle() {
+    renderFlow();
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'semi_monthly');
+    fireEvent.click(await screen.findByRole('radio', { name: 'Custom cycle' }));
+  }
+
+  it('renders a disabled select', async () => {
+    await chooseCustomCycle();
+
+    const secondDay = await screen.findByRole('combobox', {
+      name: 'Second invoice raised on',
+    });
+    expect(secondDay).toBeDisabled();
+    expect(secondDay).toHaveDisplayValue('15th of the month');
+
+    const schema = buildCreateInvoiceScheduleSchema();
+    const options =
+      schema.properties.semi_monthly_settings.properties.second_invoice_day
+        .oneOf;
+    expect(options).toEqual(
+      Array.from({ length: 14 }, (_, index) => ({
+        const: String(15 + index),
+        title: `${toOrdinal(15 + index)} of the month`,
+      })),
+    );
+
+    const form = createHeadlessForm(schema as $TSFixMe, {});
+    await form.handleValidation({
+      periodicity: 'semi_monthly',
+      semi_monthly_settings: {
+        invoicing_cycle: 'custom_cycle',
+        first_invoice_day: '1',
+      },
+    });
+    const settings = form.fields.find(
+      (field) => field.name === 'semi_monthly_settings',
+    ) as $TSFixMe;
+    const field = settings.fields.find(
+      (f: $TSFixMe) => f.name === 'second_invoice_day',
+    );
+    expect(field.const).toBe('15');
+    expect(typeof field.const).toBe(typeof options[0].const);
+  });
+
+  it('follows the first day', async () => {
+    await chooseCustomCycle();
+    await fillSelect('semi_monthly_settings.first_invoice_day', '4');
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('combobox', { name: 'Second invoice raised on' }),
+      ).toHaveDisplayValue('18th of the month');
+    });
+  });
+});
+
 describe('InvoiceScheduleFlow creating a schedule', () => {
   beforeEach(() => {
     queryClient.clear();
@@ -888,13 +955,11 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
 
     await fillScheduleDetails();
     await fillSelect('periodicity', 'semi_monthly');
-    await fillDatePickerByTestId('2100-01-17', 'start_date');
+    await fillDatePickerByTestId('2100-01-18', 'start_date');
     chooseNoEndDate();
 
     fireEvent.click(await screen.findByRole('radio', { name: 'Custom cycle' }));
-    await fillSelect('semi_monthly_settings.first_invoice_day', '3');
-
-    expect(await screen.findByText('17th of the month')).toBeInTheDocument();
+    await fillSelect('semi_monthly_settings.first_invoice_day', '4');
 
     fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
 
@@ -902,10 +967,12 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
       expect(onSuccess).toHaveBeenCalled();
     });
 
-    expect(request.body.contractor_invoice_schedules[0]).toMatchObject({
+    const schedule = request.body.contractor_invoice_schedules[0];
+    expect(schedule).toMatchObject({
       periodicity: 'semi_monthly',
-      custom_days: [3, 17],
+      custom_days: [4, 18],
     });
+    expect(JSON.stringify(schedule)).not.toContain('second_invoice_day');
   });
 
   it('rejects a start date that is not a day of the selected cycle', async () => {

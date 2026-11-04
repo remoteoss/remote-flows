@@ -935,7 +935,8 @@ export function checkFieldHasForcedValue(field: $TSFixMe) {
   return (
     isForceValue(field) && // Only accepts a specific value that is also prefilled, meaning it's not critical
     field.type !== 'checkbox' && // Because checkbox must always be visible
-    field.type !== 'hidden' // Because hidden inputs shouldn't be visible
+    field.type !== 'hidden' && // Because hidden inputs shouldn't be visible
+    !(field.readOnly === true && field.inputType) // Because a read-only input shows its value disabled
   );
 }
 
