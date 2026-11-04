@@ -16,7 +16,6 @@ import {
 } from '@/src/components/ui/popover';
 import { cn } from '@/src/lib/utils';
 import { Calendar } from '@/src/components/ui/calendar';
-import { buildIsDateDisabled } from '@/src/components/form/utils';
 import { HelpCenter } from '@/src/components/shared/zendesk-drawer/HelpCenter';
 import { useState } from 'react';
 
@@ -25,16 +24,10 @@ export function DatePickerFieldDefault({
   fieldData,
   fieldState,
 }: DatePickerComponentProps) {
-  const { name, label, description, minDate, maxDate, allowedDays } = fieldData;
+  const { name, label, description, minDate, maxDate, isDateDisabled } =
+    fieldData;
   const minDateValue = minDate ? new Date(minDate) : undefined;
   const maxDateValue = maxDate ? new Date(maxDate) : undefined;
-  const isDateDisabled =
-    fieldData.isDateDisabled ??
-    buildIsDateDisabled({
-      minDate: minDateValue,
-      maxDate: maxDateValue,
-      allowedDays,
-    });
   const [open, setOpen] = useState(false);
 
   const currentYear = new Date().getFullYear();
