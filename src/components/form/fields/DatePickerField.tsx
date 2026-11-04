@@ -10,6 +10,11 @@ export type DatePickerFieldProps = JSFField & {
   component?: Components['date'];
 };
 
+function toValidDate(value: string) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? undefined : date;
+}
+
 export function DatePickerField({
   description,
   label,
@@ -24,16 +29,16 @@ export function DatePickerField({
   const { control } = useFormContext();
   const transformHtml = useTransformer();
 
-  let minDateValue: Date;
+  let minDateValue: Date | undefined;
   if (rest.meta?.mot && typeof rest.meta.mot === 'number') {
     minDateValue = getMinStartDate(rest.meta.mot);
   } else if (typeof minDate === 'string') {
-    minDateValue = new Date(`${minDate}T00:00:00`);
+    minDateValue = toValidDate(`${minDate}T00:00:00`);
   }
 
   let maxDateValue: Date | undefined;
   if (maxDate) {
-    maxDateValue = new Date(`${maxDate}T23:59:59`);
+    maxDateValue = toValidDate(`${maxDate}T23:59:59`);
   }
 
   return (

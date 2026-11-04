@@ -217,6 +217,24 @@ describe('DatePickerField Component', () => {
     expect(screen.getByText('Test Field')).toBeInTheDocument();
   });
 
+  it.each(['NaN', 'NaNDec 08 2026', ''])(
+    'drops an unparseable minDate (%j) instead of throwing',
+    (minDate) => {
+      const CustomDatePickerField = vi.fn().mockReturnValue(null);
+
+      renderWithFormContext({
+        ...defaultProps,
+        minDate,
+        maxDate: 'NaN',
+        component: CustomDatePickerField,
+      });
+
+      const { fieldData } = CustomDatePickerField.mock.calls[0][0];
+      expect(fieldData).not.toHaveProperty('maxDate');
+      expect(fieldData.minDate).toBeUndefined();
+    },
+  );
+
   it('handles undefined meta.mot gracefully', () => {
     const propsWithoutMot = {
       ...defaultProps,
