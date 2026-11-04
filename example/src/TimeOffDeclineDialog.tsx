@@ -32,7 +32,14 @@ export function TimeOffDeclineDialog({
   const [declineReason, setDeclineReason] = useState('');
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!disabled) {
+          setOpen(nextOpen);
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button type='button' className='back-button' disabled={disabled}>
           Decline
@@ -59,6 +66,7 @@ export function TimeOffDeclineDialog({
           <Button
             type='button'
             className='back-button'
+            disabled={disabled}
             onClick={() => setOpen(false)}
           >
             Cancel
