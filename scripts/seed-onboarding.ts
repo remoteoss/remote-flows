@@ -440,7 +440,7 @@ async function seedEmployee() {
   try {
     engagementSchema = await fetchSchema('engagement_agreement_details');
   } catch (err) {
-    if (err instanceof ApiError && err.status === 404) {
+    if (err instanceof ApiError && (err.status === 404 || err.status === 422)) {
       console.log(
         `No engagement_agreement_details schema for ${COUNTRY} - skipping.`,
       );
