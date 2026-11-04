@@ -484,6 +484,17 @@ describe('buildCreateInvoiceScheduleSchema', () => {
         ).toEqual([3, 17]);
       });
 
+      it('leaves every day open while the custom first day is missing', async () => {
+        expect(
+          await allowedDays(
+            semiMonthlyValues('2099-01-03', {
+              invoicing_cycle: 'custom_cycle',
+              first_invoice_day: '',
+            }),
+          ),
+        ).toBeFalsy();
+      });
+
       it('allows every day for any other frequency', async () => {
         expect(
           await allowedDays({

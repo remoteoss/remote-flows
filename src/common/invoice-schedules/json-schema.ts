@@ -638,10 +638,18 @@ export function buildCreateInvoiceScheduleSchema({
                   SEMI_MONTHLY_CUSTOM_CYCLE,
                 ],
               },
-              [
-                { '+': [{ var: 'semi_monthly_settings.first_invoice_day' }] },
-                SECOND_INVOICE_DAY_RULE,
-              ],
+              {
+                if: [
+                  { var: 'semi_monthly_settings.first_invoice_day' },
+                  [
+                    {
+                      '+': [{ var: 'semi_monthly_settings.first_invoice_day' }],
+                    },
+                    SECOND_INVOICE_DAY_RULE,
+                  ],
+                  null,
+                ],
+              },
               SEMI_MONTHLY_DEFAULT_CYCLE_DAYS,
             ],
           },

@@ -290,10 +290,13 @@ describe('DatePickerField Component', () => {
     });
   });
   describe('DatePickerField - allowedDays functionality', () => {
-    const openCalendar = (allowedDays: number[] | null) => {
+    const openCalendar = (
+      allowedDays: number[] | null,
+      minDate = '2099-01-01',
+    ) => {
       renderWithFormContext({
         ...defaultProps,
-        minDate: '2099-01-01',
+        minDate,
         allowedDays,
       } as DatePickerFieldProps);
       fireEvent.click(screen.getByRole('button'));
@@ -306,6 +309,13 @@ describe('DatePickerField Component', () => {
       const thirtyFirsts = screen.getAllByRole('gridcell', { name: '31' });
       expect(thirtyFirsts[thirtyFirsts.length - 1]).toBeEnabled();
       expect(screen.getByRole('gridcell', { name: '14' })).toBeDisabled();
+    });
+
+    it('treats the 28th as the last day of a non-leap February', () => {
+      openCalendar([15, 31], '2099-02-01');
+
+      expect(screen.getAllByRole('gridcell', { name: '28' })[0]).toBeEnabled();
+      expect(screen.getByRole('gridcell', { name: '27' })).toBeDisabled();
     });
 
     it('enables every day when no days are restricted', () => {
