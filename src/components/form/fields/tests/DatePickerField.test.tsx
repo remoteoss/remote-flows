@@ -303,9 +303,8 @@ describe('DatePickerField Component', () => {
       openCalendar([15, 31]);
 
       expect(screen.getByRole('gridcell', { name: '15' })).toBeEnabled();
-      expect(
-        screen.getAllByRole('gridcell', { name: '31' }).at(-1),
-      ).toBeEnabled();
+      const thirtyFirsts = screen.getAllByRole('gridcell', { name: '31' });
+      expect(thirtyFirsts[thirtyFirsts.length - 1]).toBeEnabled();
       expect(screen.getByRole('gridcell', { name: '14' })).toBeDisabled();
     });
 
