@@ -6,6 +6,7 @@ import {
   type FieldSetToggleComponentProps,
   type FileComponentProps,
   type ForcedValueComponentProps,
+  type GroupArrayComponentProps,
   type PDFPreviewComponentProps,
   type TelFieldComponentProps,
   type TimeFieldComponentProps,
@@ -493,6 +494,50 @@ const TimeField = ({
   );
 };
 
+// Each row's inputs arrive already rendered in `row.fields`; you only decide the layout and the buttons.
+const GroupArray = ({
+  label,
+  hideLabel,
+  description,
+  addFieldText,
+  rows,
+  canAdd,
+  add,
+  error,
+}: GroupArrayComponentProps) => (
+  <fieldset className='group-array' aria-label={hideLabel ? label : undefined}>
+    {hideLabel ? null : <legend>{label}</legend>}
+    {description ? (
+      <div className='input-description'>{description}</div>
+    ) : null}
+    {rows.map((row) => (
+      <div key={row.id} className='group-array-row'>
+        <div className='group-array-row-fields'>{row.fields}</div>
+        {row.canRemove ? (
+          <button
+            type='button'
+            className='button-inline'
+            aria-label={`Remove ${label} ${row.index + 1}`}
+            onClick={row.remove}
+          >
+            Remove
+          </button>
+        ) : null}
+      </div>
+    ))}
+    {error ? (
+      <p role='alert' className='error-message'>
+        {error}
+      </p>
+    ) : null}
+    {canAdd ? (
+      <button type='button' className='button-inline' onClick={add}>
+        {addFieldText}
+      </button>
+    ) : null}
+  </fieldset>
+);
+
 const ZendeskTriggerButton = ({
   zendeskId,
   onClick,
@@ -538,6 +583,7 @@ export const components: Components = {
   fieldsetToggle: FieldsetToggle,
   file: FileUploadField,
   forcedValue: ForcedValue,
+  'group-array': GroupArray,
   date: DatePickerInput,
   pdfViewer: PDFPreview,
   tel: TelField,
