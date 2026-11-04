@@ -1127,3 +1127,132 @@ describe('InvoiceScheduleFlow creating a schedule', () => {
     });
   });
 });
+
+describe('InvoiceSchedule', () => {
+  beforeEach(() => {
+    queryClient.clear();
+  });
+
+  async function chooseCustomCycle() {
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'semi_monthly');
+    fireEvent.click(await screen.findByRole('radio', { name: 'Custom cycle' }));
+    await screen.findByLabelText('First invoice raised on');
+  }
+
+  function secondInvoiceDay() {
+    return screen.queryByRole('group', { name: 'Second invoice raised on' });
+  }
+
+  it('second invoice date is read-only for semi-monthly custom cycle', async () => {
+    renderFlow();
+    await chooseCustomCycle();
+
+    const second = secondInvoiceDay();
+    expect(second).toBeInTheDocument();
+    expect(second).toHaveTextContent('15th of the month');
+    expect(
+      screen
+        .getByLabelText('First invoice raised on')
+        .compareDocumentPosition(second!),
+    ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+
+    ['textbox', 'combobox', 'spinbutton'].forEach((role) => {
+      expect(
+        screen.queryByRole(role, { name: 'Second invoice raised on' }),
+      ).not.toBeInTheDocument();
+    });
+    expect(
+      second!.querySelector('input, select, textarea, button'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('second invoice date follows the first invoice date', async () => {
+    renderFlow();
+    await chooseCustomCycle();
+
+    expect(secondInvoiceDay()).toHaveTextContent('15th of the month');
+
+    await fillSelect('semi_monthly_settings.first_invoice_day', '3');
+    await waitFor(() => {
+      expect(secondInvoiceDay()).toHaveTextContent('17th of the month');
+    });
+
+    await fillSelect('semi_monthly_settings.first_invoice_day', '7');
+    await waitFor(() => {
+      expect(secondInvoiceDay()).toHaveTextContent('21st of the month');
+    });
+  });
+
+  it('second invoice date hidden outside custom cycle', async () => {
+    renderFlow();
+    await fillScheduleDetails();
+    await fillSelect('periodicity', 'semi_monthly');
+
+    expect(
+      await screen.findByRole('radio', {
+        name: '15th and last day of the month',
+      }),
+    ).toBeChecked();
+    expect(secondInvoiceDay()).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('radio', { name: 'Custom cycle' }));
+    await waitFor(() => {
+      expect(secondInvoiceDay()).toBeInTheDocument();
+    });
+
+    fireEvent.click(
+      screen.getByRole('radio', { name: '15th and last day of the month' }),
+    );
+    await waitFor(() => {
+      expect(secondInvoiceDay()).not.toBeInTheDocument();
+    });
+
+    for (const periodicity of ['one_time', 'weekly', 'bi_weekly', 'monthly']) {
+      await fillSelect('periodicity', periodicity);
+      await waitFor(() => {
+        expect(screen.queryByText('Invoicing cycle')).not.toBeInTheDocument();
+      });
+      expect(
+        screen.queryByText('Second invoice raised on'),
+      ).not.toBeInTheDocument();
+    }
+  });
+
+  it('submits custom semi-monthly cycle payload', async () => {
+    const captured: { body?: $TSFixMe } = {};
+    server.use(
+      http.post('*/v1/contractor-invoice-schedules', async ({ request }) => {
+        captured.body = await request.json();
+        return HttpResponse.json({
+          data: { successes: [{ id: 'schedule-1' }], failures: [] },
+        });
+      }),
+    );
+    const onSuccess = vi.fn();
+    renderFlow({ onSuccess });
+
+    await chooseCustomCycle();
+    await fillDatePickerByTestId('2100-01-15', 'start_date');
+    chooseNoEndDate();
+
+    fireEvent.click(screen.getByRole('button', { name: /Create schedule/i }));
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalled();
+    });
+
+    expect(captured.body).toEqual({
+      contractor_invoice_schedules: [
+        {
+          employment_id: 'employment-grace',
+          currency: 'EUR',
+          periodicity: 'semi_monthly',
+          start_date: '2100-01-15',
+          items: [{ description: 'Design work', amount: 250000 }],
+          custom_days: [1, 15],
+        },
+      ],
+    });
+  });
+});
