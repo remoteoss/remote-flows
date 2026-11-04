@@ -6,9 +6,11 @@ import {
   TimeoffErrorResponse,
   TimeoffStatus,
 } from '@/src/client';
-import { useTimeOff } from '@/src/flows/TimeOff/hooks';
+import { useTimeOff, useTimeOffList } from '@/src/flows/TimeOff/hooks';
 
 export type TimeOffStepKeys = 'request_id' | 'review';
+
+export type TimeOffListStepKeys = 'list' | 'review';
 
 /**
  * Values the request ID step collects.
@@ -22,6 +24,20 @@ export type UseTimeOffOptions = {
    * The time-off request to open, when the host already knows it.
    */
   timeOffId?: string;
+};
+
+/**
+ * Values the status filter of the time-off list collects.
+ */
+export type TimeOffStatusFilterFormValues = {
+  status?: TimeoffStatus;
+};
+
+export type UseTimeOffListOptions = {
+  /**
+   * How many requests a page of the list holds. The API documents `1` to `100` and uses `20` when omitted.
+   */
+  pageSize?: number;
 };
 
 export type UseTimeOffRequestOptions = {
@@ -129,6 +145,18 @@ export type TimeOffReviewStepProps = {
   children?: React.ReactNode;
 };
 
+export type TimeOffListStepProps = {
+  /**
+   * Replaces the default content of each listed request, which stays the control that opens it
+   * for review. Nothing renders until a page is loaded: use `timeOffListBag.isLoadingTimeOffRequests`,
+   * `timeOffListBag.isEmpty` and `timeOffListBag.timeOffRequestsError` for the other states.
+   */
+  render?: (props: {
+    timeOffRequest: TimeOffRequest;
+    details: TimeOffRequestDetail[];
+  }) => React.ReactNode;
+};
+
 type TimeOffButtonProps = PropsWithChildren<
   ButtonHTMLAttributes<HTMLButtonElement>
 >;
@@ -179,4 +207,24 @@ export type TimeOffFlowProps = {
    */
   timeOffId?: string;
   render: (props: TimeOffRenderProps) => React.ReactNode;
+};
+
+export type TimeOffListRenderProps = {
+  timeOffListBag: ReturnType<typeof useTimeOffList>;
+  components: {
+    StatusFilter: React.ComponentType;
+    ListStep: React.ComponentType<TimeOffListStepProps>;
+    ListRetryButton: React.ComponentType<TimeOffButtonProps>;
+    PreviousPageButton: React.ComponentType<TimeOffButtonProps>;
+    NextPageButton: React.ComponentType<TimeOffButtonProps>;
+    ReviewStep: React.ComponentType<TimeOffReviewStepProps>;
+    RetryButton: React.ComponentType<TimeOffButtonProps>;
+    BackButton: React.ComponentType<TimeOffButtonProps>;
+    ApproveButton: React.ComponentType<TimeOffApproveButtonProps>;
+    DeclineButton: React.ComponentType<TimeOffDeclineButtonProps>;
+  };
+};
+
+export type TimeOffListFlowProps = UseTimeOffListOptions & {
+  render: (props: TimeOffListRenderProps) => React.ReactNode;
 };

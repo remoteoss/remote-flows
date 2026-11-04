@@ -61,6 +61,7 @@ import {
   getBasicInformationSchemaVersion,
   getBenefitOffersSchemaVersion,
   withJobTitleEligibilityRiskAcknowledgement,
+  withoutProhibitedTaxServicingCountries,
 } from '@/src/flows/Onboarding/utils';
 // oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
@@ -452,7 +453,8 @@ export const useBasicInformationSchema = ({
       return response;
     },
     enabled: options?.queryOptions?.enabled,
-    select: ({ data }) => data?.data,
+    select: ({ data }) =>
+      data?.data && withoutProhibitedTaxServicingCountries(data.data),
   });
 
   const { form, handleValidation, onValuesChange, parseFormValues } =

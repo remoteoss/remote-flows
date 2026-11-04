@@ -375,7 +375,7 @@ export async function parseFormValuesToAPI(
             ) || [],
           );
 
-          acc[field.name] = parsedFieldValues;
+          acc[field.name] = parsedFieldValues.map(removeEmptyValues);
           break;
         }
 

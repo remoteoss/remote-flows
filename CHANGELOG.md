@@ -1,5 +1,24 @@
 # @remoteoss/remote-flows
 
+## 1.69.0
+
+### Minor Changes
+
+#### Features
+
+- add Request ID and Time-off list submenus with an empty list flow (#1804) [#1804](https://github.com/remoteoss/remote-flows/pull/1804)
+- browse, review and decide time-off requests in TimeOffListFlow (#1811) [#1811](https://github.com/remoteoss/remote-flows/pull/1811)
+- add invoice items with a repeatable group-array field (#1798) [#1798](https://github.com/remoteoss/remote-flows/pull/1798)
+
+#### Fixes
+
+- cap note and item description at 255 characters (#1838) [#1838](https://github.com/remoteoss/remote-flows/pull/1838)
+- prettify the rows of a group-array field in form meta (#1826) [#1826](https://github.com/remoteoss/remote-flows/pull/1826)
+
+#### Chores
+
+- bump-contract-details: HUN, IDN (#1828) [#1828](https://github.com/remoteoss/remote-flows/pull/1828)
+
 ## 1.68.0
 
 ### Minor Changes

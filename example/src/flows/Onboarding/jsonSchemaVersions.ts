@@ -149,11 +149,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   HUN: {
     // Hungary
-    contract_details: 1,
+    contract_details: 4,
   },
   IDN: {
     // Indonesia
-    contract_details: 1,
+    contract_details: 5,
   },
   IND: {
     // India
@@ -181,7 +181,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   JPN: {
     // Japan
-    contract_details: 1,
+    contract_details: 5,
   },
   KEN: {
     // Kenya
@@ -197,7 +197,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   LKA: {
     // Sri Lanka
-    contract_details: 1,
+    contract_details: 8,
   },
   LTU: {
     // Lithuania
@@ -225,7 +225,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   MKD: {
     // North Macedonia
-    contract_details: 1,
+    contract_details: 6,
   },
   MLT: {
     // Malta
@@ -289,7 +289,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   PRY: {
     // Paraguay
-    contract_details: 1,
+    contract_details: 8,
   },
   ROU: {
     // Romania
@@ -361,7 +361,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   XKX: {
     // Kosovo
-    contract_details: 1,
+    contract_details: 3,
   },
   ZAF: {
     // South Africa
@@ -369,6 +369,6 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ZWE: {
     // Zimbabwe
-    contract_details: 1,
+    contract_details: 6,
   },
 };

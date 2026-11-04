@@ -193,6 +193,7 @@ export const useApproveTimeOffRequest = () => {
         timeOffRequestOptions(client as Client, timeOffId).queryKey,
         response.data,
       );
+      void queryClient.invalidateQueries({ queryKey: ['timeoff-requests'] });
     },
   });
 };
@@ -228,6 +229,7 @@ export const useDeclineTimeOffRequest = () => {
         timeOffRequestOptions(client as Client, timeOffId).queryKey,
         response.data,
       );
+      void queryClient.invalidateQueries({ queryKey: ['timeoff-requests'] });
     },
   });
 };

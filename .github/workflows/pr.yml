@@ -338,6 +338,8 @@ jobs:
   deploy-remote-flows:
     name: Deploy Remote Flows Preview
     runs-on: ubuntu-latest
+    outputs:
+      preview-url: ${{ steps.vercel-remote-flows.outputs.preview-url }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -386,6 +388,107 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-comment: true
           scope: ${{ secrets.VERCEL_ORG_ID }}
+
+  seed-preview-links:
+    name: Seed Preview Employments
+    runs-on: ubuntu-latest
+    needs: [deploy-remote-flows]
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (contains(github.head_ref, 'bump-contract-details') ||
+      contains(github.event.pull_request.labels.*.name, 'seed-preview'))
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Use Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.15.0'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Seed one employment per country
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PREVIEW_URL: ${{ needs.deploy-remote-flows.outputs.preview-url }}
+          BASE_URL: ${{ needs.deploy-remote-flows.outputs.preview-url }}
+          VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
+        run: |
+          mkdir -p out
+          codes=$(printf '%s' "$PR_TITLE" | sed -nE 's/.*[Bb]ump ([A-Za-z_, ]+) contract_details.*/\1/p' | { grep -oE '\b[A-Z]{3}(_[A-Z]+)?\b' || true; } | tr '\n' ' ')
+          if [ -z "$codes" ]; then
+            echo "No country codes found in the PR title, nothing to seed."
+            exit 0
+          fi
+          {
+            echo "<!-- preview-seed-links -->"
+            echo "### Preview employments"
+            echo
+            echo "Seeded through ${PREVIEW_URL}. Each link opens onboarding with the employment prefilled: continue through Select Country and Basic Information to reach Contract Details."
+            echo
+          } > out/seed-links.md
+          for code in $codes; do
+            if pnpm run seed:onboarding --country="$code" > "out/seed-$code.log" 2>&1; then
+              link=$({ grep -oE 'https?://[^ ]*employmentId=[^ ]*' "out/seed-$code.log" || true; } | tail -n 1)
+              if [ -n "$link" ]; then
+                echo "- **$code**: $link" >> out/seed-links.md
+              else
+                echo "- **$code**: seeded, but no link was found, see the workflow run logs" >> out/seed-links.md
+              fi
+            else
+              echo "- **$code**: seeding failed, see the workflow run logs" >> out/seed-links.md
+              tail -n 20 "out/seed-$code.log"
+            fi
+          done
+
+      - name: Post links on the PR
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            if (!fs.existsSync('out/seed-links.md')) {
+              return;
+            }
+            const body = fs.readFileSync('out/seed-links.md', 'utf8');
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+              },
+            );
+            const existing = comments.find(
+              (comment) =>
+                comment.user.type === 'Bot' &&
+                comment.body.includes('<!-- preview-seed-links -->'),
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
 
   e2e-tests:
     name: E2E Tests
