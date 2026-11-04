@@ -1028,28 +1028,29 @@ export function fieldsetHasVisibleContent(
 
 const LAST_DAY_OF_MONTH = 31;
 
-export function buildIsDateDisabled({
-  minDate,
-  maxDate,
-  allowedDays,
-}: {
-  minDate?: Date;
-  maxDate?: Date;
-  allowedDays?: number[] | null;
-}) {
-  return (date: Date) => {
-    if (minDate && date < minDate) {
-      return true;
-    }
-    if (maxDate && date > maxDate) {
-      return true;
-    }
-    if (allowedDays?.length) {
-      return !(
-        allowedDays.includes(date.getDate()) ||
-        (allowedDays.includes(LAST_DAY_OF_MONTH) && isLastDayOfMonth(date))
-      );
-    }
-    return false;
-  };
+export function isDateDisabled(
+  date: Date,
+  {
+    minDate,
+    maxDate,
+    allowedDays,
+  }: {
+    minDate?: Date;
+    maxDate?: Date;
+    allowedDays?: number[] | null;
+  },
+) {
+  if (minDate && date < minDate) {
+    return true;
+  }
+  if (maxDate && date > maxDate) {
+    return true;
+  }
+  if (allowedDays?.length) {
+    return !(
+      allowedDays.includes(date.getDate()) ||
+      (allowedDays.includes(LAST_DAY_OF_MONTH) && isLastDayOfMonth(date))
+    );
+  }
+  return false;
 }

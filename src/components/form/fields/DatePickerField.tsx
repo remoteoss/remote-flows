@@ -3,10 +3,7 @@ import { FormField } from '@/src/components/ui/form';
 
 import { useFormFields, useTransformer } from '@/src/context';
 import { Components, JSFField, $TSFixMe } from '@/src/types/remoteFlows';
-import {
-  buildIsDateDisabled,
-  getMinStartDate,
-} from '@/src/components/form/utils';
+import { getMinStartDate, isDateDisabled } from '@/src/components/form/utils';
 
 export type DatePickerFieldProps = JSFField & {
   allowedDays?: number[] | null;
@@ -61,11 +58,12 @@ export function DatePickerField({
           ...(minDateValue && { minDate: minDateValue.toISOString() }),
           ...(maxDateValue && { maxDate: maxDateValue.toISOString() }),
           allowedDays,
-          isDateDisabled: buildIsDateDisabled({
-            minDate: minDateValue,
-            maxDate: maxDateValue,
-            allowedDays,
-          }),
+          isDateDisabled: (date: Date) =>
+            isDateDisabled(date, {
+              minDate: minDateValue,
+              maxDate: maxDateValue,
+              allowedDays,
+            }),
           ...rest,
         };
         return (
