@@ -75,3 +75,12 @@ export type { InvoiceScheduleFormSource } from './invoiceSchedules/utils';
 export { clearBase64Data, formatCurrency } from './format';
 export { createClient } from './createClient';
 export type { AuthResponse, CreateClientOptions } from './createClient';
+export { contractorCurrenciesOptions } from './api/contractorCurrencies';
+export { employmentOptions } from './api/employment';
+export {
+  createInvoiceScheduleMutation,
+  invoiceSchedulesOptions,
+  previewContractorInvoiceMutation,
+  skipInvoiceScheduleMutation,
+  updateInvoiceScheduleMutation,
+} from './api/invoiceSchedules';

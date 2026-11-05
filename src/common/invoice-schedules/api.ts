@@ -1,27 +1,19 @@
 import { useMemo } from 'react';
 import { useMutation, useQuery, queryOptions } from '@tanstack/react-query';
-import { FieldValues } from 'react-hook-form';
-import {
-  BulkContractorInvoiceScheduleCreateParams,
-  ContractorInvoiceScheduleCreateParams,
-  getV1ContractorInvoiceSchedules,
-  patchV1ContractorInvoiceSchedulesId2,
-  postV1ContractorInvoiceSchedules,
-  postV1EmploymentsEmploymentIdContractorInvoicesPreview,
-  PreviewContractorInvoiceParams,
-  UpdateScheduleContractorInvoiceParams,
-} from '@/src/client';
 import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
 import { INVOICE_SCHEDULE_STATUS } from '@/src/common/invoice-schedules/constants';
 import { buildCreateInvoiceScheduleSchema } from '@/src/common/invoice-schedules/json-schema';
-import {
-  buildInvoicePreviewPayload,
-  buildInvoiceSchedulePayload,
-} from '@/src/common/invoice-schedules/utils';
 import { JSFModify } from '@/src/flows/types';
+import {
+  createInvoiceScheduleMutation,
+  invoiceSchedulesOptions as invoiceSchedulesOptionsCore,
+  previewContractorInvoiceMutation,
+  skipInvoiceScheduleMutation,
+  updateInvoiceScheduleMutation,
+} from '@remoteoss/remote-flows-core';
 
 type UseGetCreateInvoiceScheduleSchemaParams = {
   enabled?: boolean;
@@ -101,26 +93,8 @@ export const useGetCreateInvoiceScheduleSchema = ({
  * @param employmentId - The employment ID
  * @returns Query options for contractor invoice schedules
  */
-export const invoiceSchedulesOptions = (
-  client: Client,
-  employmentId: string,
-) => {
-  return queryOptions({
-    queryKey: ['contractor-invoice-schedules', employmentId] as const,
-    queryFn: async () => {
-      const response = await getV1ContractorInvoiceSchedules({
-        client,
-        query: { employment_id: employmentId },
-      });
-
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch invoice schedules');
-      }
-
-      return response;
-    },
-  });
-};
+export const invoiceSchedulesOptions = (client: Client, employmentId: string) =>
+  queryOptions(invoiceSchedulesOptionsCore(client, employmentId));
 
 /**
  * Get the last invoice schedule for an employment that matches specific statuses.
@@ -162,29 +136,7 @@ export const useGetExistingInvoiceSchedule = ({
  */
 export const useCreateInvoiceSchedule = () => {
   const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({
-      employmentId,
-      values,
-    }: {
-      employmentId: string;
-      values: FieldValues;
-    }) => {
-      const payload: BulkContractorInvoiceScheduleCreateParams = {
-        contractor_invoice_schedules: [
-          {
-            employment_id: employmentId,
-            ...buildInvoiceSchedulePayload(values),
-          } as ContractorInvoiceScheduleCreateParams,
-        ],
-      };
-
-      return postV1ContractorInvoiceSchedules({
-        client: client as Client,
-        body: payload,
-      });
-    },
-  });
+  return useMutation(createInvoiceScheduleMutation(client as Client));
 };
 
 /**
@@ -195,24 +147,7 @@ export const useCreateInvoiceSchedule = () => {
  */
 export const useUpdateInvoiceSchedule = () => {
   const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({
-      scheduleId,
-      values,
-    }: {
-      scheduleId: string;
-      values: FieldValues;
-    }) => {
-      const payload: UpdateScheduleContractorInvoiceParams =
-        buildInvoiceSchedulePayload(values);
-
-      return patchV1ContractorInvoiceSchedulesId2({
-        client: client as Client,
-        path: { id: scheduleId },
-        body: payload,
-      });
-    },
-  });
+  return useMutation(updateInvoiceScheduleMutation(client as Client));
 };
 
 /**
@@ -222,19 +157,7 @@ export const useUpdateInvoiceSchedule = () => {
  */
 export const useSkipInvoiceSchedule = () => {
   const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({ scheduleId }: { scheduleId: string }) => {
-      const payload: UpdateScheduleContractorInvoiceParams = {
-        status: 'deleted',
-      };
-
-      return patchV1ContractorInvoiceSchedulesId2({
-        client: client as Client,
-        path: { id: scheduleId },
-        body: payload,
-      });
-    },
-  });
+  return useMutation(skipInvoiceScheduleMutation(client as Client));
 };
 
 /**
@@ -245,23 +168,5 @@ export const useSkipInvoiceSchedule = () => {
  */
 export const usePreviewContractorInvoice = () => {
   const { client } = useClient();
-  return useMutation({
-    mutationFn: async ({
-      employmentId,
-      values,
-    }: {
-      employmentId: string;
-      values: FieldValues;
-    }) => {
-      const payload = buildInvoicePreviewPayload(
-        values,
-      ) as PreviewContractorInvoiceParams;
-
-      return postV1EmploymentsEmploymentIdContractorInvoicesPreview({
-        client: client as Client,
-        path: { employment_id: employmentId },
-        body: payload,
-      });
-    },
-  });
+  return useMutation(previewContractorInvoiceMutation(client as Client));
 };

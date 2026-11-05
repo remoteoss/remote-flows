@@ -13,6 +13,8 @@ const mockPutV1EmploymentsEmploymentIdBenefitOffers = vi.fn();
 const mockPostV1EmploymentsEmploymentIdContractEligibility = vi.fn();
 
 // Mock the client functions
+vi.mock('@remoteoss/remote-flows-core/client/sdk.gen', () => ({}));
+
 vi.mock('@/src/client', () => ({
   getV1CountriesCountryCodeForm: (...args: $TSFixMe[]) =>
     mockGetV1CountriesCountryCodeForm(...args),
