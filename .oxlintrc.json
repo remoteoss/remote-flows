@@ -93,6 +93,16 @@
             ],
             "patterns": [
               {
+                "group": [
+                  "react/**",
+                  "react-dom/**",
+                  "react-hook-form/**",
+                  "@tanstack/react-query/**",
+                  "@tanstack/angular-query-experimental/**"
+                ],
+                "message": "packages/core must stay framework-neutral: no React or framework adapters, including their subpaths."
+              },
+              {
                 "group": ["@/*", "**/src/**"],
                 "message": "packages/core cannot import from the React package. Move what it needs into core instead."
               }
