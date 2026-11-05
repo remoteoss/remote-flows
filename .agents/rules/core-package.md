@@ -9,7 +9,7 @@ paths:
 
 ## Philosophy: Core Holds What Every Framework Needs
 
-`packages/core` (`@remoteoss/remote-flows-core`) is a private workspace package. It holds the framework-neutral logic that the React package, and later an Angular package, both need: the form engine, value conversion, schemas and payload builders, the generated API client, and the options for API calls. The React package bundles it, so partners never install core and `src/index.tsx` stays the only public surface. See `plans/angular-support.md` for the plan and the status of the move.
+`packages/core` (`@remoteoss/remote-flows-core`) is a private workspace package. It holds the framework-neutral logic that the React package, and later an Angular package, both need: the form engine, value conversion, schemas and payload builders, the generated API client, and the options for API calls. The React package bundles it, so partners never install core and it adds no entry points: the public ones are the `exports` in `package.json`. See `plans/angular-support.md` for the plan and the status of the move.
 
 ## Where New Code Goes
 
@@ -65,4 +65,4 @@ Tests for core code sit next to it as `*.test.ts`. They can't import from `src/`
 
 - `pnpm run type-check` runs both the root config and `packages/core/tsconfig.json`.
 - A change that only touches `packages/` still runs the bundle size check, and the schema canary runs for the form engine files (`headlessForm.ts`, `form.ts`, `fieldHelpers.ts`, `fieldTypes.ts`, `money.ts`).
-- Core exports are not public API. Only `src/index.tsx` is.
+- Core exports are not public API. Only what `package.json` `exports` publishes is (`src/index.tsx`, `src/internals.ts`, `src/default-components.ts`, `src/styles.ts` and the flow entry points). A core function reaches partners only if one of those re-exports it.
