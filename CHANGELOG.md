@@ -1,5 +1,40 @@
 # @remoteoss/remote-flows
 
+## 1.70.0
+
+### Minor Changes
+
+#### Features
+
+- hide prohibited jurisdictions from tax servicing countries (#1842) [#1842](https://github.com/remoteoss/remote-flows/pull/1842)
+- approve, decline or view a request from the time-off list (#1847) [#1847](https://github.com/remoteoss/remote-flows/pull/1847)
+- show the schedule summary for semi-monthly schedules (#1859) [#1859](https://github.com/remoteoss/remote-flows/pull/1859)
+- only offer start dates that match the semi-monthly cycle (#1853) [#1853](https://github.com/remoteoss/remote-flows/pull/1853)
+
+#### Fixes
+
+- skip the engagement step on a 422 in seed:onboarding (#1852) [#1852](https://github.com/remoteoss/remote-flows/pull/1852)
+- keep prohibited tax servicing countries out of seeded employments (#1876) [#1876](https://github.com/remoteoss/remote-flows/pull/1876)
+
+#### Docs
+
+- show how to render a group-array with a custom component (#1848) [#1848](https://github.com/remoteoss/remote-flows/pull/1848)
+- pin example to basic information v5 and document it (#1841) [#1841](https://github.com/remoteoss/remote-flows/pull/1841)
+- pin example to basic information v6 and document it (#1843) [#1843](https://github.com/remoteoss/remote-flows/pull/1843)
+
+#### Chores
+
+- bump JPN, LKA contract_details schema versions (#1829) [#1829](https://github.com/remoteoss/remote-flows/pull/1829)
+- seed preview employments and comment the links on bump PRs (#1824) [#1824](https://github.com/remoteoss/remote-flows/pull/1824)
+- bump MKD, PRY contract_details schema versions (#1837) [#1837](https://github.com/remoteoss/remote-flows/pull/1837)
+- update contract details schema canary report (#1846) [#1846](https://github.com/remoteoss/remote-flows/pull/1846)
+- bump-contract-details: XKX, ZWE (#1851) [#1851](https://github.com/remoteoss/remote-flows/pull/1851)
+- update contract details schema canary report (#1860) [#1860](https://github.com/remoteoss/remote-flows/pull/1860)
+- bump-contract-details: TUN, BIH (#1875) [#1875](https://github.com/remoteoss/remote-flows/pull/1875)
+- bump-contract-details: ARG, ARM (#1873) [#1873](https://github.com/remoteoss/remote-flows/pull/1873)
+- bump json-schema-form-kit to 1.2.5 and json-schema-form to 1.2.21 (#1855) [#1855](https://github.com/remoteoss/remote-flows/pull/1855)
+- bump-contract-details: AUT, DOM (#1874) [#1874](https://github.com/remoteoss/remote-flows/pull/1874)
+
 ## 1.69.0
 
 ### Minor Changes
