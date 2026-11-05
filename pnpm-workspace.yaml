@@ -2,3 +2,5 @@ allowBuilds:
   '@parcel/watcher': false
   esbuild: false
   msw: false
+minimumReleaseAgeExclude:
+  - '@remoteoss/*'

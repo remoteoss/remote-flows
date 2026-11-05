@@ -21,6 +21,11 @@ export const INVOICE_SCHEDULE_STATUS = {
 export const MAX_INVOICE_ITEMS = 10;
 
 /**
+ * Longest text the backend accepts for an invoice item description and for the schedule note.
+ */
+export const INVOICE_TEXT_MAX_LENGTH = 255;
+
+/**
  * The recurring cadences the API's `periodicity` enum accepts.
  */
 export const RECURRING_PERIODICITY_OPTIONS = [

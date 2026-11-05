@@ -1271,3 +1271,105 @@ button.reset-button {
   font-weight: 500;
   overflow-wrap: anywhere;
 }
+
+.RemoteFlows__StatusFilter {
+  margin-bottom: 1rem;
+}
+
+.time-off-list-container {
+  max-width: 600px;
+}
+
+.RemoteFlows__ListStep {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.RemoteFlows__ListStep__Item {
+  display: flex;
+  align-items: center;
+}
+
+.RemoteFlows__ListStep__Item + .RemoteFlows__ListStep__Item {
+  border-top: 1px solid #e2e8f0;
+}
+
+.RemoteFlows__ListStep__Details {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
+  gap: 12px;
+  padding: 12px 16px;
+  color: #1e293b;
+}
+
+.RemoteFlows__ListStep__Value__leave_policy {
+  font-weight: 500;
+}
+
+.RemoteFlows__ListStep__Actions {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: flex-end;
+  gap: 4px;
+  width: 116px;
+  padding-right: 12px;
+}
+
+.RemoteFlows__ListStep__Actions button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 6px;
+  background-color: transparent;
+  color: #4b5563;
+}
+
+.RemoteFlows__ListStep__Actions button:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+/* ===== GROUP ARRAY (repeatable rows) ===== */
+.group-array {
+  border: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.group-array legend {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 14px;
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+.group-array-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.group-array-row-fields {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: 16px;
+}
+
+.group-array-row .button-inline {
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+  min-height: 54px;
+  margin-top: 28px;
+}
+
+.group-array > .button-inline {
+  justify-self: start;
+}

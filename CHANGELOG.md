@@ -1,5 +1,91 @@
 # @remoteoss/remote-flows
 
+## 1.70.0
+
+### Minor Changes
+
+#### Features
+
+- hide prohibited jurisdictions from tax servicing countries (#1842) [#1842](https://github.com/remoteoss/remote-flows/pull/1842)
+- approve, decline or view a request from the time-off list (#1847) [#1847](https://github.com/remoteoss/remote-flows/pull/1847)
+- show the schedule summary for semi-monthly schedules (#1859) [#1859](https://github.com/remoteoss/remote-flows/pull/1859)
+- only offer start dates that match the semi-monthly cycle (#1853) [#1853](https://github.com/remoteoss/remote-flows/pull/1853)
+
+#### Fixes
+
+- skip the engagement step on a 422 in seed:onboarding (#1852) [#1852](https://github.com/remoteoss/remote-flows/pull/1852)
+- keep prohibited tax servicing countries out of seeded employments (#1876) [#1876](https://github.com/remoteoss/remote-flows/pull/1876)
+
+#### Docs
+
+- show how to render a group-array with a custom component (#1848) [#1848](https://github.com/remoteoss/remote-flows/pull/1848)
+- pin example to basic information v5 and document it (#1841) [#1841](https://github.com/remoteoss/remote-flows/pull/1841)
+- pin example to basic information v6 and document it (#1843) [#1843](https://github.com/remoteoss/remote-flows/pull/1843)
+
+#### Chores
+
+- bump JPN, LKA contract_details schema versions (#1829) [#1829](https://github.com/remoteoss/remote-flows/pull/1829)
+- seed preview employments and comment the links on bump PRs (#1824) [#1824](https://github.com/remoteoss/remote-flows/pull/1824)
+- bump MKD, PRY contract_details schema versions (#1837) [#1837](https://github.com/remoteoss/remote-flows/pull/1837)
+- update contract details schema canary report (#1846) [#1846](https://github.com/remoteoss/remote-flows/pull/1846)
+- bump-contract-details: XKX, ZWE (#1851) [#1851](https://github.com/remoteoss/remote-flows/pull/1851)
+- update contract details schema canary report (#1860) [#1860](https://github.com/remoteoss/remote-flows/pull/1860)
+- bump-contract-details: TUN, BIH (#1875) [#1875](https://github.com/remoteoss/remote-flows/pull/1875)
+- bump-contract-details: ARG, ARM (#1873) [#1873](https://github.com/remoteoss/remote-flows/pull/1873)
+- bump json-schema-form-kit to 1.2.5 and json-schema-form to 1.2.21 (#1855) [#1855](https://github.com/remoteoss/remote-flows/pull/1855)
+- bump-contract-details: AUT, DOM (#1874) [#1874](https://github.com/remoteoss/remote-flows/pull/1874)
+
+## 1.69.0
+
+### Minor Changes
+
+#### Features
+
+- add Request ID and Time-off list submenus with an empty list flow (#1804) [#1804](https://github.com/remoteoss/remote-flows/pull/1804)
+- browse, review and decide time-off requests in TimeOffListFlow (#1811) [#1811](https://github.com/remoteoss/remote-flows/pull/1811)
+- add invoice items with a repeatable group-array field (#1798) [#1798](https://github.com/remoteoss/remote-flows/pull/1798)
+
+#### Fixes
+
+- cap note and item description at 255 characters (#1838) [#1838](https://github.com/remoteoss/remote-flows/pull/1838)
+- prettify the rows of a group-array field in form meta (#1826) [#1826](https://github.com/remoteoss/remote-flows/pull/1826)
+
+#### Chores
+
+- bump-contract-details: HUN, IDN (#1828) [#1828](https://github.com/remoteoss/remote-flows/pull/1828)
+
+## 1.68.0
+
+### Minor Changes
+
+#### Features
+
+- load one time-off request through useTimeOffRequest (PBYR-5033) (#1773) [#1773](https://github.com/remoteoss/remote-flows/pull/1773)
+- review the selected request in a composable step (PBYR-5034) (#1774) [#1774](https://github.com/remoteoss/remote-flows/pull/1774)
+- approve the reviewed request and expose its outcome (PBYR-5102) (#1780) [#1780](https://github.com/remoteoss/remote-flows/pull/1780)
+- decline the reviewed request (#1781) [#1781](https://github.com/remoteoss/remote-flows/pull/1781)
+- add a group-array field for repeatable groups of fields (#1777) [#1777](https://github.com/remoteoss/remote-flows/pull/1777)
+- support a group-array inside heading groups and object fieldsets (#1779) [#1779](https://github.com/remoteoss/remote-flows/pull/1779)
+- add icons to the default group-array add and remove buttons (#1801) [#1801](https://github.com/remoteoss/remote-flows/pull/1801)
+- support a description on the group-array field (#1803) [#1803](https://github.com/remoteoss/remote-flows/pull/1803)
+- let a group-array hide its visible label (#1805) [#1805](https://github.com/remoteoss/remote-flows/pull/1805)
+- hand a group-array's extra props to its row inputs (#1806) [#1806](https://github.com/remoteoss/remote-flows/pull/1806)
+- load paginated time-off requests through useTimeOffRequests (#1802) [#1802](https://github.com/remoteoss/remote-flows/pull/1802)
+
+#### Fixes
+
+- validate the form before previewing an invoice (#1818) [#1818](https://github.com/remoteoss/remote-flows/pull/1818)
+
+#### Chores
+
+- sync COUNTRY_CONTRACT_VERSIONS with backend (#1797) [#1797](https://github.com/remoteoss/remote-flows/pull/1797)
+- bump PAN, PRI contract_details schema versions (#1789) [#1789](https://github.com/remoteoss/remote-flows/pull/1789)
+- share the multiple select to multi-select rule across field renderers (#1778) [#1778](https://github.com/remoteoss/remote-flows/pull/1778)
+- bump ROU, TUR contract_details schema versions (#1819) [#1819](https://github.com/remoteoss/remote-flows/pull/1819)
+- bump NZL contract_details schema version (#1822) [#1822](https://github.com/remoteoss/remote-flows/pull/1822)
+- update contract details schema canary report (#1807) [#1807](https://github.com/remoteoss/remote-flows/pull/1807)
+- update contract details schema canary report (#1825) [#1825](https://github.com/remoteoss/remote-flows/pull/1825)
+
 ## 1.67.0
 
 ### Minor Changes

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { BaseSyntheticEvent, useEffect } from 'react';
 import { JSONSchemaFormFields } from '@/src/components/form/JSONSchemaForm';
 import { useJSONSchemaForm } from '@/src/components/form/useJSONSchemaForm';
 import { Form } from '@/src/components/ui/form';
@@ -10,6 +10,7 @@ import {
 } from '@/src/flows/InvoiceSchedule/types';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { isStructuredError } from '@/src/lib/utils';
+import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type InvoiceScheduleFormProps = Partial<{
   /**
@@ -48,7 +49,17 @@ export function InvoiceScheduleForm({
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSubmit = async (values: InvoiceScheduleFormValues) => {
+  const handleSubmit = async (
+    values: InvoiceScheduleFormValues,
+    event?: BaseSyntheticEvent,
+  ) => {
+    const nativeEvent = event?.nativeEvent as $TSFixMe;
+
+    if (nativeEvent?.isPreviewSubmission) {
+      await nativeEvent.previewCallback(values);
+      return;
+    }
+
     try {
       const payload = await invoiceScheduleBag.parseFormValues(values);
 

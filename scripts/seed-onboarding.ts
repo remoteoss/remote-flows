@@ -185,6 +185,12 @@ if (ENV) {
   dotenv.config({ path: path.resolve(__dirname, '..', 'example', '.env') });
   const PORT = process.env.PORT || 3001;
   BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+  const bypassToken = process.env.VERCEL_BYPASS_TOKEN;
+  if (bypassToken) {
+    getAuthHeaders = async () => ({
+      'x-vercel-protection-bypass': bypassToken,
+    });
+  }
 }
 
 async function api<T = unknown>(
@@ -434,7 +440,7 @@ async function seedEmployee() {
   try {
     engagementSchema = await fetchSchema('engagement_agreement_details');
   } catch (err) {
-    if (err instanceof ApiError && err.status === 404) {
+    if (err instanceof ApiError && (err.status === 404 || err.status === 422)) {
       console.log(
         `No engagement_agreement_details schema for ${COUNTRY} - skipping.`,
       );

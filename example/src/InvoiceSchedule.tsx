@@ -4,10 +4,12 @@ import {
   InvoiceSchedulePreviewButton,
   InvoiceScheduleSubmitButton,
 } from '@remoteoss/remote-flows';
+import { defaultComponents } from '@remoteoss/remote-flows/default-components';
 import { Alert, AlertDescription } from '@remoteoss/remote-flows/internals';
 import { AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 import { EmploymentIdForm } from './components/EmploymentIdForm';
+import { components } from './Components';
 import { RemoteFlows } from './RemoteFlows';
 import './css/main.css';
 
@@ -99,13 +101,21 @@ function CreateInvoiceSchedule({ employmentId }: { employmentId: string }) {
   );
 }
 
+const invoiceScheduleComponents = {
+  ...defaultComponents,
+  'group-array': components['group-array'],
+};
+
 export function InvoiceSchedule() {
   // The flow is told which contractor it is acting on; sourcing that id is the consumer's
   // job. This demo asks for it, the way the Termination demo does.
   const [employmentId, setEmploymentId] = useState<string | null>(null);
 
   return (
-    <RemoteFlows proxy={{ url: window.location.origin }}>
+    <RemoteFlows
+      proxy={{ url: window.location.origin }}
+      components={invoiceScheduleComponents}
+    >
       <div style={{ width: 640, padding: 20, margin: '80px auto' }}>
         {employmentId ? (
           <CreateInvoiceSchedule employmentId={employmentId} />

@@ -220,6 +220,16 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'PRI',
   'ROU',
   'TUR',
+  'MKD',
+  'PRY',
+  'JPN',
+  'LKA',
+  'HUN',
+  'IDN',
+  'XKX',
+  'ZWE',
+  'TUN',
+  'BIH',
 ];
 
 /**
@@ -469,4 +479,99 @@ export const getJobTitleEligibilityStatement = (
   }
 
   return null;
+};
+
+export const PROHIBITED_TAX_SERVICING_COUNTRIES = [
+  'Afghanistan',
+  'Belarus',
+  'Cuba',
+  'Iran',
+  'Iraq',
+  'Myanmar (Burma)',
+  'North Korea',
+  'Russia',
+  'Syria',
+  'Venezuela',
+];
+
+type TaxServicingCountriesJsonSchema = {
+  properties?: Record<string, unknown>;
+};
+
+type TaxServicingCountriesField = {
+  items?: { enum?: string[] };
+  'x-jsf-presentation'?: {
+    options?: Array<{ value: string }>;
+    $meta?: {
+      regions?: Record<string, string[]>;
+      subregions?: Record<string, string[]>;
+    };
+  };
+};
+
+const isAllowedTaxServicingCountry = (country: string) =>
+  !PROHIBITED_TAX_SERVICING_COUNTRIES.includes(country);
+
+const HIDDEN_TAX_SERVICING_AREAS = ['Antarctica'];
+
+const filterAreas = (areas?: Record<string, string[]>) =>
+  areas &&
+  Object.fromEntries(
+    Object.entries(areas)
+      .filter(([area]) => !HIDDEN_TAX_SERVICING_AREAS.includes(area))
+      .map(([area, countries]) => [
+        area,
+        countries.filter(isAllowedTaxServicingCountry),
+      ]),
+  );
+
+export const withoutProhibitedTaxServicingCountries = <
+  T extends TaxServicingCountriesJsonSchema,
+>(
+  schema: T,
+): T => {
+  const field = schema.properties?.tax_servicing_countries as
+    | TaxServicingCountriesField
+    | undefined;
+  if (!field) {
+    return schema;
+  }
+
+  const presentation = field['x-jsf-presentation'];
+  const meta = presentation?.$meta;
+
+  return {
+    ...schema,
+    properties: {
+      ...schema.properties,
+      tax_servicing_countries: {
+        ...field,
+        ...(field.items?.enum && {
+          items: {
+            ...field.items,
+            enum: field.items.enum.filter(isAllowedTaxServicingCountry),
+          },
+        }),
+        ...(presentation && {
+          'x-jsf-presentation': {
+            ...presentation,
+            ...(presentation.options && {
+              options: presentation.options.filter((option) =>
+                isAllowedTaxServicingCountry(option.value),
+              ),
+            }),
+            ...(meta && {
+              $meta: {
+                ...meta,
+                ...(meta.regions && { regions: filterAreas(meta.regions) }),
+                ...(meta.subregions && {
+                  subregions: filterAreas(meta.subregions),
+                }),
+              },
+            }),
+          },
+        }),
+      },
+    },
+  };
 };

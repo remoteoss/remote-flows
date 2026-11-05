@@ -1,6 +1,7 @@
 import { useRef } from 'react';
+import { CheckIcon } from 'lucide-react';
 import { useFormFields } from '@/src/context';
-import { useTimeOffContext } from '@/src/flows/TimeOff/context';
+import { useTimeOffReviewContext } from '@/src/flows/TimeOff/context';
 import {
   TimeOffApproveButtonProps,
   TimeOffDecisionError,
@@ -16,7 +17,7 @@ export function ApproveButton({
   onError,
   ...props
 }: TimeOffApproveButtonProps) {
-  const { timeOffBag } = useTimeOffContext();
+  const { timeOffBag } = useTimeOffReviewContext();
   const { components } = useFormFields();
   const isApprovingRef = useRef(false);
 
@@ -27,6 +28,7 @@ export function ApproveButton({
 
   return (
     <CustomButton
+      aria-label={children ? undefined : 'Approve'}
       {...props}
       type='button'
       className={cn('RemoteFlows__ReviewStep__ApproveButton', props.className)}
@@ -51,7 +53,7 @@ export function ApproveButton({
         await onSuccess?.(timeOffRequest);
       }}
     >
-      {children}
+      {children ?? <CheckIcon />}
     </CustomButton>
   );
 }

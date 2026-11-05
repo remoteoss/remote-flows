@@ -456,6 +456,55 @@ describe('buildCreateInvoiceScheduleSchema', () => {
       ).toBeUndefined();
     });
 
+    describe('allowed days for the date picker', () => {
+      const allowedDays = async (
+        values: ReturnType<typeof semiMonthlyValues>,
+      ) => {
+        const form = buildForm();
+        await form.handleValidation(values);
+        return form.fields.find(
+          (field: $TSFixMe) => field.name === 'start_date',
+        )?.allowedDays;
+      };
+
+      it('allows the 15th and month end for the default cycle', async () => {
+        expect(await allowedDays(semiMonthlyValues('2099-01-15'))).toEqual([
+          15, 31,
+        ]);
+      });
+
+      it('allows the chosen day and the one 14 days later for a custom cycle', async () => {
+        expect(
+          await allowedDays(
+            semiMonthlyValues('2099-01-03', {
+              invoicing_cycle: 'custom_cycle',
+              first_invoice_day: '3',
+            }),
+          ),
+        ).toEqual([3, 17]);
+      });
+
+      it('leaves every day open while the custom first day is missing', async () => {
+        expect(
+          await allowedDays(
+            semiMonthlyValues('2099-01-03', {
+              invoicing_cycle: 'custom_cycle',
+              first_invoice_day: '',
+            }),
+          ),
+        ).toBeFalsy();
+      });
+
+      it('allows every day for any other frequency', async () => {
+        expect(
+          await allowedDays({
+            ...semiMonthlyValues('2099-01-03'),
+            periodicity: 'monthly',
+          }),
+        ).toBeFalsy();
+      });
+    });
+
     it('accepts either day of a custom cycle', async () => {
       const custom = {
         invoicing_cycle: 'custom_cycle',
@@ -491,6 +540,44 @@ describe('buildCreateInvoiceScheduleSchema', () => {
       };
 
       expect(await startDateError(values)).toBeUndefined();
+    });
+  });
+
+  describe('text length limits', () => {
+    const validate = async (values: Record<string, unknown>) => {
+      const form = createHeadlessForm(
+        buildCreateInvoiceScheduleSchema({ currencies: ['USD'] }) as $TSFixMe,
+        {},
+      );
+      return form.handleValidation({
+        ...baseValues,
+        periodicity: ONE_TIME_PERIODICITY,
+        start_date: '2099-01-01',
+        ...values,
+      });
+    };
+
+    it('accepts a note and an item description of 255 characters', async () => {
+      const result = await validate({
+        note: 'a'.repeat(255),
+        items: [{ description: 'a'.repeat(255), amount: 250000 }],
+      });
+
+      expect(result.formErrors).toBeUndefined();
+    });
+
+    it('rejects a note longer than 255 characters', async () => {
+      const result = await validate({ note: 'a'.repeat(256) });
+
+      expect(result.formErrors).toHaveProperty('note');
+    });
+
+    it('rejects an item description longer than 255 characters', async () => {
+      const result = await validate({
+        items: [{ description: 'a'.repeat(256), amount: 250000 }],
+      });
+
+      expect(result.formErrors).toHaveProperty('items');
     });
   });
 

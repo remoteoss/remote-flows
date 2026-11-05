@@ -3,12 +3,18 @@ import { FormField } from '@/src/components/ui/form';
 
 import { useFormFields, useTransformer } from '@/src/context';
 import { Components, JSFField, $TSFixMe } from '@/src/types/remoteFlows';
-import { getMinStartDate } from '@/src/components/form/utils';
+import { getMinStartDate, isDateDisabled } from '@/src/components/form/utils';
 
 export type DatePickerFieldProps = JSFField & {
+  allowedDays?: number[] | null;
   onChange?: (value: $TSFixMe) => void;
   component?: Components['date'];
 };
+
+function toValidDate(value: string) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? undefined : date;
+}
 
 export function DatePickerField({
   description,
@@ -16,6 +22,7 @@ export function DatePickerField({
   name,
   minDate,
   maxDate,
+  allowedDays,
   onChange,
   component,
   ...rest
@@ -24,16 +31,16 @@ export function DatePickerField({
   const { control } = useFormContext();
   const transformHtml = useTransformer();
 
-  let minDateValue: Date;
+  let minDateValue: Date | undefined;
   if (rest.meta?.mot && typeof rest.meta.mot === 'number') {
     minDateValue = getMinStartDate(rest.meta.mot);
   } else if (typeof minDate === 'string') {
-    minDateValue = new Date(`${minDate}T00:00:00`);
+    minDateValue = toValidDate(`${minDate}T00:00:00`);
   }
 
   let maxDateValue: Date | undefined;
   if (maxDate) {
-    maxDateValue = new Date(`${maxDate}T23:59:59`);
+    maxDateValue = toValidDate(`${maxDate}T23:59:59`);
   }
 
   return (
@@ -55,6 +62,12 @@ export function DatePickerField({
           transformHtml,
           ...(minDateValue && { minDate: minDateValue.toISOString() }),
           ...(maxDateValue && { maxDate: maxDateValue.toISOString() }),
+          isDateDisabled: (date: Date) =>
+            isDateDisabled(date, {
+              minDate: minDateValue,
+              maxDate: maxDateValue,
+              allowedDays,
+            }),
           ...rest,
         };
         return (
