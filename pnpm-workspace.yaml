@@ -3,5 +3,4 @@ allowBuilds:
   esbuild: false
   msw: false
 minimumReleaseAgeExclude:
-  - '@remoteoss/json-schema-form@1.2.21'
-  - '@remoteoss/remote-json-schema-form-kit@1.2.5'
+  - '@remoteoss/*'
