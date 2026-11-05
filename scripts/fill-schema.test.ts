@@ -1,3 +1,4 @@
+import { PROHIBITED_TAX_SERVICING_COUNTRIES } from '@/src/flows/Onboarding/utils';
 import { fillSchema, findSafeStartDate, HolidayDate } from './fill-schema';
 
 describe('findSafeStartDate', () => {
@@ -93,6 +94,28 @@ describe('fillSchema', () => {
     expect((values.role_description as string).length).toBeGreaterThanOrEqual(
       100,
     );
+  });
+
+  it('never picks a prohibited tax servicing country', () => {
+    const countries = [...PROHIBITED_TAX_SERVICING_COUNTRIES, 'Portugal'];
+    const { values, errors } = fillSchema({
+      type: 'object',
+      properties: {
+        tax_servicing_countries: {
+          type: 'array',
+          title: 'Tax servicing countries',
+          items: { enum: countries },
+          'x-jsf-presentation': {
+            inputType: 'countries',
+            options: countries.map((value) => ({ value, label: value })),
+          },
+        },
+      },
+      required: ['tax_servicing_countries'],
+    });
+
+    expect(errors).toEqual({});
+    expect(values.tax_servicing_countries).toEqual(['Portugal']);
   });
 
   it('fills the fields inside a fieldset', () => {
