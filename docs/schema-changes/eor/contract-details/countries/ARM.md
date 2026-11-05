@@ -4,11 +4,36 @@ Schema versions for employee onboarding in Armenia.
 
 ## Current Version
 
-**Contract Details:** v3
+**Contract Details:** v4
 
 ## Contract Details
 
-### v3 - Current
+### v4 - Current
+
+**Type of change:** compliance
+
+**What changed:**
+
+- The probation period is blocked for employments with a recognized seniority date, the same way it already is for fixed-term contracts. For such an employment, `probation_length` must be `0`; any other submitted value is rejected.
+- `probation_length` gets a help-center link about probation periods (presentation only).
+
+**Migration:**
+
+No action is required for most submissions. For employments with a recognized seniority date, send `probation_length: 0`.
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      ARM: { contract_details: 4 },
+    },
+  }}
+/>
+```
+
+---
+
+### v3
 
 **Type of change:** compliance
 
