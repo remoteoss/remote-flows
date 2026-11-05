@@ -53,7 +53,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Cyprus](./CYP.md)                 | CYP  | v7               | v7              | Yes        | October 2026  |
 | [Czech Republic](./CZE.md)         | CZE  | v7               | v7              | Yes        | October 2026  |
 | [Denmark](./DNK.md)                | DNK  | v6               | v6              | Yes        | October 2026  |
-| [Dominican Republic](./DOM.md)     | DOM  | v6               | v7              | No         | October 2026  |
+| [Dominican Republic](./DOM.md)     | DOM  | v7               | v7              | Yes        | November 2026 |
 | Ecuador                            | ECU  | v1               | v7              | No         | -             |
 | [Egypt](./EGY.md)                  | EGY  | v6               | v6              | Yes        | October 2026  |
 | [El Salvador](./SLV.md)            | SLV  | v4               | v4              | Yes        | October 2026  |
