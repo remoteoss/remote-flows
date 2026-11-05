@@ -14,7 +14,7 @@ export type JSFFieldset = {
  * Reference to a file already uploaded, as returned by the API on `GET` for `inputType: file`
  * fields. Sent back unchanged on the next submit to keep the file instead of re-uploading it.
  *
- * A custom `inputType: file` component (see {@link FileComponentProps}) can receive one of these
+ * A custom `inputType: file` component can receive one of these
  * in place of a real `File` for a field that already had a file attached — it carries no binary
  * content and doesn't implement the `Blob`/`File` interface.
  */
