@@ -81,10 +81,13 @@ Moving code to core is only safe through the `@/*` alias while core is private a
 
 This is the riskiest public decision, so it gets its own spike before anything is published.
 
-- **Question:** should each field expose an Angular `FormControl` so that Material, PrimeNG and Spartan work without custom error-state code?
-- **Constraint:** Signal Forms are newer than the proposed floor of 20 and still experimental, so they are not an option while the floor is 20. The candidates are a classic `FormControl`, a `ControlValueAccessor`, or the `ngControl` pattern.
-- **Compare** the current `field`/`fieldState`/`fieldData` contract against a control-based one on the invoice form.
-- **State model:** the spike's `form-store.ts` (values, touched, validation, group-array rows) is about 250 lines of signal-based state, and React gets the same from `react-hook-form`. Decide whether neutral parts of it move into core or each framework reimplements them, so field behavior cannot drift between the two.
+- **Question:** should each field component receive a real Reactive Forms `FormControl` (from `@angular/forms`) instead of the custom `field`/`fieldState`/`fieldData` shape? Material, PrimeNG and Spartan read a control's `touched`, `invalid` and `errors`, so with a real control their own error display (`mat-error`) works without custom error-state code. This is also why the spike's Material error display did not work.
+- **Constraint:** Signal Forms are newer than the proposed floor of 20 and still experimental, so they are not an option while the floor is 20. Reactive Forms are stable and are the baseline. Template-driven forms (`ngModel`) are a poor fit for schema-driven forms.
+- **Who owns the state.** Compare two options on the invoice form:
+  - **Core drives the controls (starting point).** The form engine stays the source of truth for values, validation and conditional fields. Each `FormControl` is synced from it, errors are written with `setErrors`, and group-array rows map to a `FormArray`. Behavior stays identical to React, which uses `react-hook-form` the same way. The cost is keeping two states in sync.
+  - **A `FormGroup` owns the state.** Core's validation is attached as a validator. This is more idiomatic Angular, but part of the validation and conditional-field logic would live in Angular, so React and Angular could behave differently.
+- **What the spike must prove** for the first option: no sync loops or lost focus while typing, rows added and removed in a `FormArray`, fields that appear and disappear, nested row errors, and a stable `touched` state after submit.
+- **Shared state logic.** The spike's `form-store.ts` (values, touched, validation, group-array rows) is about 250 lines of signal-based state, and React gets the same from `react-hook-form`. Decide whether the neutral parts move into core or each framework reimplements them, so field behavior cannot drift between the two.
 - **Also decide:** the provider shape (`provideRemoteFlows(withComponents(...), ...)` features), reusing the app's `QueryClient`, and whether flows ship as components with outputs and template slots as well as inject functions.
 - **Compatibility:** check behavior with and without zone.js (the spike has no zone.js and no zoneless provider, which only works because Angular 22 is zoneless by default; Angular 20.2 and later needs `provideZonelessChangeDetection()`).
 - **Minimum Angular version:** signal inputs and `linkedSignal` need 19 or later. Proposed floor is 20, built on 20 and tested on 22.
