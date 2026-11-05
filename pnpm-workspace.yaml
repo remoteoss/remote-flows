@@ -4,3 +4,5 @@ allowBuilds:
   msw: false
 minimumReleaseAgeExclude:
   - '@remoteoss/*'
+overrides:
+  '@remoteoss/json-schema-form@^1.2.21': 1.0.0-dev.20261105064847

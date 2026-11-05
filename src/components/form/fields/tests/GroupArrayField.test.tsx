@@ -113,10 +113,11 @@ describe('GroupArrayField', () => {
       },
     });
 
-    // The form kit only applies computed attributes to the group itself, never to the
-    // fields inside its rows, so the group hands its extra props to every input in every
-    // row. Two rows with two inputs each means all four receive the currency, including the
-    // description inputs that have no use for it.
+    // Extra props set on the group itself (for example computed on the group) are handed to
+    // every input in every row. Two rows with two inputs each means all four receive the
+    // currency, including the description inputs that have no use for it. A schema that only
+    // wants one field to receive it can instead compute it on that field inside the items,
+    // which the engine now applies; both paths are supported.
     expect(
       screen.getAllByTestId('row-currency').map((node) => node.textContent),
     ).toEqual(['EUR', 'EUR', 'EUR', 'EUR']);
@@ -143,6 +144,40 @@ describe('GroupArrayField', () => {
     });
 
     expect(screen.getByTestId('row-currency')).toHaveTextContent('USD');
+  });
+
+  it('hands a field its own additional props in every row, and only that field', () => {
+    renderGroup({
+      rows: [
+        { description: 'Design work', amount: '2500' },
+        { description: 'Hosting', amount: '75' },
+      ],
+      fields: [
+        { name: 'description', label: 'Description', type: 'text' },
+        {
+          name: 'amount',
+          label: 'Amount',
+          type: 'text',
+          additionalProps: { currency: 'EUR' },
+        },
+      ],
+      components: {
+        text: ({ fieldData }: $TSFixMe) => (
+          <output data-testid={`${fieldData.name}-currency`}>
+            {fieldData.metadata.currency}
+          </output>
+        ),
+      },
+    });
+
+    // The engine applies a computed attribute declared on a field inside the items to that
+    // field only, so just the amount inputs get the currency and the descriptions don't.
+    expect(
+      screen.getAllByTestId(/amount-currency/).map((n) => n.textContent),
+    ).toEqual(['EUR', 'EUR']);
+    expect(
+      screen.getAllByTestId(/description-currency/).map((n) => n.textContent),
+    ).toEqual(['', '']);
   });
 
   it('shows the description', () => {

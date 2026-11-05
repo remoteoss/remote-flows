@@ -162,6 +162,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@remoteoss/json-schema-form@^1.2.21': 1.0.0-dev.20261105064847
+
 importers:
 
   .:
@@ -194,8 +197,8 @@ importers:
         specifier: 1.1.14
         version: 1.1.14(@types/react@19.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@remoteoss/json-schema-form':
-        specifier: 1.2.21
-        version: 1.2.21
+        specifier: 1.0.0-dev.20261105064847
+        version: 1.0.0-dev.20261105064847
       '@remoteoss/remote-json-schema-form-kit':
         specifier: 1.2.5
         version: 1.2.5
@@ -1608,8 +1611,8 @@ packages:
     resolution: {integrity: sha512-HDyw74FhHAB2mgmvHlu0oBX6WVAabJ4cj3oVaOa6KM0S8H2S0mpmp7aE00HRCxiJhgrlhqyXG1LNznsvPCfEQQ==}
     engines: {node: '>=18.14.0'}
 
-  '@remoteoss/json-schema-form@1.2.21':
-    resolution: {integrity: sha512-TzgvKsKhLyJ3Zy7zH8YWNC/4Xoit3CH2jEIXmLEhdC8RZeozIm5lpDYesH/pZVycik0i7a/B+QfOz4YbA9J12A==}
+  '@remoteoss/json-schema-form@1.0.0-dev.20261105064847':
+    resolution: {integrity: sha512-GDogxzjtQF8CIUlD443+ynAt+siT1DaY46hZ/jkqkf91ibyUIhtt5aSdEVaJaaRemx7BrimNvGXAtUQWXsbRxA==}
     engines: {node: '>=18.14.0'}
 
   '@remoteoss/remote-json-schema-form-kit@1.2.5':
@@ -4767,13 +4770,13 @@ snapshots:
       randexp: 0.5.3
       yup: 0.30.0
 
-  '@remoteoss/json-schema-form@1.2.21':
+  '@remoteoss/json-schema-form@1.0.0-dev.20261105064847':
     dependencies:
       json-logic-js: 2.0.5
 
   '@remoteoss/remote-json-schema-form-kit@1.2.5':
     dependencies:
-      '@remoteoss/json-schema-form': 1.2.21
+      '@remoteoss/json-schema-form': 1.0.0-dev.20261105064847
       '@remoteoss/json-schema-form-v0-deprecated': '@remoteoss/json-schema-form@0.12.5-beta.0'
       date-fns: 4.4.0
 

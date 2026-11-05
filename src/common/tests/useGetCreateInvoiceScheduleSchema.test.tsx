@@ -38,7 +38,10 @@ describe('useGetCreateInvoiceScheduleSchema', () => {
     await waitFor(() => expect(result.current.data).not.toBeNull());
 
     const items = result.current.data?.fields.find((f) => f.name === 'items');
-    expect(items?.additionalProps).toEqual({ currency: 'EUR' });
+    const amount = items?.fields?.find(
+      (f: { name: string }) => f.name === 'amount',
+    );
+    expect(amount?.additionalProps).toEqual({ currency: 'EUR' });
   });
 
   describe('start_date minimum', () => {
