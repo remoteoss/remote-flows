@@ -6,8 +6,8 @@
  *
  * The WorkWeekScheduleContainer is already wrapped in hooks.tsx, so this
  * component receives WorkWeekScheduleRenderProps directly from the render prop.
- * Enable it with the `work_week_schedule` feature. The schema does not hand
- * the field a title, so, as with the daily schedule, the wording is yours.
+ * Enable it with the `work_week_schedule` feature. The wording below is
+ * hardcoded, as in the daily schedule example.
  */
 
 import { useState } from 'react';
