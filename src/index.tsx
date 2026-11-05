@@ -71,6 +71,7 @@ export type {
   TimeOffDecisionError,
   TimeOffFlowProps,
   TimeOffListFlowProps,
+  TimeOffListItem,
   TimeOffListRenderProps,
   TimeOffListStepKeys,
   TimeOffListStepProps,

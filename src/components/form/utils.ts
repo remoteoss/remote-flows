@@ -2,7 +2,12 @@ import { Field } from '@/src/flows/types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { JSFFields } from '@/src/types/remoteFlows';
 import { convertFilesToBase64 } from '@/src/lib/files';
-import { addBusinessDays, isWeekend, nextMonday } from 'date-fns';
+import {
+  addBusinessDays,
+  isLastDayOfMonth,
+  isWeekend,
+  nextMonday,
+} from 'date-fns';
 import equal from 'fast-deep-equal';
 import { getNestedValue } from '@/src/lib/utils';
 import { UploadedFileReference } from '@/src/types/fields';
@@ -1019,4 +1024,33 @@ export function fieldsetHasVisibleContent(
 
     return true;
   });
+}
+
+const LAST_DAY_OF_MONTH = 31;
+
+export function isDateDisabled(
+  date: Date,
+  {
+    minDate,
+    maxDate,
+    allowedDays,
+  }: {
+    minDate?: Date;
+    maxDate?: Date;
+    allowedDays?: number[] | null;
+  },
+) {
+  if (minDate && date < minDate) {
+    return true;
+  }
+  if (maxDate && date > maxDate) {
+    return true;
+  }
+  if (allowedDays?.length) {
+    return !(
+      allowedDays.includes(date.getDate()) ||
+      (allowedDays.includes(LAST_DAY_OF_MONTH) && isLastDayOfMonth(date))
+    );
+  }
+  return false;
 }

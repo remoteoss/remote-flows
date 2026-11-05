@@ -1,6 +1,7 @@
 import { createHeadlessForm } from '@remoteoss/remote-json-schema-form-kit';
 import { faker } from '@faker-js/faker';
 import RandExp from 'randexp';
+import { withoutProhibitedTaxServicingCountries } from '@/src/flows/Onboarding/utils';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
 type FormValues = Record<string, unknown>;
@@ -368,12 +369,13 @@ export function fillSchema(
   seedValues: FormValues = {},
   { maxAttempts = 50, seed }: { maxAttempts?: number; seed?: number } = {},
 ): FillSchemaResult {
+  const allowedSchema = withoutProhibitedTaxServicingCountries(schema);
   if (seed === undefined) {
-    return fill(schema, seedValues, maxAttempts);
+    return fill(allowedSchema, seedValues, maxAttempts);
   }
   faker.seed(seed);
   try {
-    return fill(schema, seedValues, maxAttempts);
+    return fill(allowedSchema, seedValues, maxAttempts);
   } finally {
     faker.seed();
   }

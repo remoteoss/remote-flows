@@ -5,6 +5,7 @@ import {
   renderHook,
   screen,
   waitFor,
+  within,
 } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { TimeOffListFlow, useTimeOffList } from '@/src/index';
@@ -126,21 +127,21 @@ describe('TimeOffListFlow', () => {
 
     expect(screen.getByText('Loading time-off requests')).toBeInTheDocument();
     expect(
-      await screen.findByRole('button', { name: /requested leave, page 1/ }),
+      await screen.findByText('requested leave, page 1'),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Previous' })).toBeDisabled();
 
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
 
     expect(
-      await screen.findByRole('button', { name: /requested leave, page 2/ }),
+      await screen.findByText('requested leave, page 2'),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
 
     await fillSelect('Status', 'approved');
 
     expect(
-      await screen.findByRole('button', { name: /approved leave, page 1/ }),
+      await screen.findByText('approved leave, page 1'),
     ).toBeInTheDocument();
     expect(queries).toEqual([
       '?status=requested',
@@ -177,18 +178,17 @@ describe('TimeOffListFlow', () => {
     const requestedIds = mockTimeOffRequest();
     renderFlow();
 
-    await screen.findByRole('button', { name: /requested leave, page 1/ });
+    await screen.findByText('requested leave, page 1');
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
-    fireEvent.click(
-      await screen.findByRole('button', { name: /requested leave, page 2/ }),
-    );
+    await screen.findByText('requested leave, page 2');
+    fireEvent.click(screen.getByRole('button', { name: /^View/ }));
 
     expect(await screen.findByText('Reviewed leave')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Back' }));
 
     expect(
-      await screen.findByRole('button', { name: /requested leave, page 2/ }),
+      await screen.findByText('requested leave, page 2'),
     ).toBeInTheDocument();
     expect(requestedIds).toEqual(['timeoff-2']);
     expect(queries).toEqual(['?status=requested', '?status=requested&page=2']);
@@ -213,9 +213,8 @@ describe('TimeOffListFlow', () => {
     );
     renderFlow();
 
-    fireEvent.click(
-      await screen.findByRole('button', { name: /requested leave, page 1/ }),
-    );
+    await screen.findByText('requested leave, page 1');
+    fireEvent.click(screen.getByRole('button', { name: /^View/ }));
     fireEvent.click(await screen.findByRole('button', { name: 'Approve' }));
 
     expect(await screen.findByText('Approved')).toBeInTheDocument();
@@ -228,7 +227,7 @@ describe('TimeOffListFlow', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Back' }));
 
     expect(
-      await screen.findByRole('button', { name: /requested leave, page 1/ }),
+      await screen.findByText('requested leave, page 1'),
     ).toBeInTheDocument();
   });
 
@@ -267,19 +266,16 @@ describe('TimeOffListFlow', () => {
     mockTimeOffRequest();
     renderFlow();
 
-    await screen.findByRole('button', { name: /Leave, page 1/ });
+    await screen.findByText('Leave, page 1');
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
-    fireEvent.click(
-      await screen.findByRole('button', { name: /Leave, page 2/ }),
-    );
+    await screen.findByText('Leave, page 2');
+    fireEvent.click(screen.getByRole('button', { name: /^View/ }));
     fireEvent.click(await screen.findByRole('button', { name: 'Approve' }));
     expect(await screen.findByText('Approved')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Back' }));
 
-    expect(
-      await screen.findByRole('button', { name: /Leave, page 1/ }),
-    ).toBeInTheDocument();
+    expect(await screen.findByText('Leave, page 1')).toBeInTheDocument();
     expect(screen.queryByText('No time-off requests')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Previous' })).toBeDisabled();
     expect(queries).toEqual([
@@ -288,6 +284,195 @@ describe('TimeOffListFlow', () => {
       '?status=requested&page=2',
       '?status=requested&page=1',
     ]);
+  });
+
+  it('ends each listed request with View, Decline and Approve, deciding on that request without opening it', async () => {
+    const queries = mockTimeOffRequests();
+    const requestedIds = mockTimeOffRequest();
+    const approvals: { id: string; body: unknown }[] = [];
+    server.use(
+      http.post('*/v1/timeoff/:id/approve', async ({ params, request }) => {
+        approvals.push({ id: params.id as string, body: await request.json() });
+        return HttpResponse.json({
+          data: {
+            timeoff: {
+              ...listedTimeOff(params.id as string, 'Approved leave'),
+              status: 'approved',
+            },
+          },
+        });
+      }),
+    );
+    renderFlow();
+
+    await screen.findByText('requested leave, page 1');
+    expect(
+      screen.queryByRole('button', { name: /^requested leave/ }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Decline/ })).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: /^Approve/ }));
+
+    await waitFor(() => {
+      expect(queries).toEqual(['?status=requested', '?status=requested']);
+    });
+    expect(approvals).toEqual([
+      { id: 'timeoff-1', body: { approver_id: null } },
+    ]);
+    expect(requestedIds).toEqual([]);
+
+    fireEvent.click(screen.getByRole('button', { name: /^View/ }));
+
+    expect(await screen.findByText('Reviewed leave')).toBeInTheDocument();
+    expect(requestedIds).toEqual(['timeoff-1']);
+  });
+
+  it('names each listed action after its request', async () => {
+    server.use(
+      http.get('*/v1/timeoff', () =>
+        HttpResponse.json({
+          data: {
+            ...timeOffRequestsResponse.data,
+            timeoffs: [
+              listedTimeOff('timeoff-1', 'Paid leave'),
+              listedTimeOff('timeoff-2', 'Sick leave'),
+            ],
+          },
+        }),
+      ),
+    );
+    renderFlow();
+
+    await screen.findByText('Sick leave');
+
+    expect(
+      within(screen.getByRole('list'))
+        .getAllByRole('button')
+        .map((button) => button.getAttribute('aria-label')),
+    ).toEqual([
+      'View Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Decline Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Approve Paid leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'View Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Decline Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+      'Approve Sick leave, Requested, Nov 16, 2026, Nov 17, 2026, 16 hours',
+    ]);
+  });
+
+  it('renders the actions a partner gives each listed request', async () => {
+    mockTimeOffRequests();
+    const declines: { id: string; body: unknown }[] = [];
+    server.use(
+      http.post('*/v1/timeoff/:id/decline', async ({ params, request }) => {
+        declines.push({ id: params.id as string, body: await request.json() });
+        return HttpResponse.json({
+          data: {
+            timeoff: {
+              ...listedTimeOff(params.id as string, 'Declined leave'),
+              status: 'declined',
+            },
+          },
+        });
+      }),
+    );
+    const onSuccess = vi.fn();
+    render(
+      <TimeOffListFlow
+        render={({ components: { ListStep, DeclineButton } }) => (
+          <ListStep
+            renderActions={({ timeOffRequest }) => (
+              <DeclineButton
+                declineReason={`Overlaps for ${timeOffRequest.id}`}
+                onSuccess={onSuccess}
+              >
+                Reject
+              </DeclineButton>
+            )}
+          />
+        )}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Reject' }));
+
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalledWith({
+        ...listedTimeOff('timeoff-1', 'Declined leave'),
+        status: 'declined',
+      });
+    });
+    expect(declines).toEqual([
+      { id: 'timeoff-1', body: { decline_reason: 'Overlaps for timeoff-1' } },
+    ]);
+    expect(
+      screen.queryByRole('button', { name: /^View/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('renders only the markup a partner gives each listed request', async () => {
+    const approvedIds: string[] = [];
+    server.use(
+      http.get('*/v1/timeoff', () =>
+        HttpResponse.json({
+          data: {
+            ...timeOffRequestsResponse.data,
+            timeoffs: [
+              listedTimeOff('timeoff-1', 'Paid leave'),
+              {
+                ...listedTimeOff('timeoff-2', 'Sick leave'),
+                status: 'approved',
+              },
+            ],
+          },
+        }),
+      ),
+      http.post('*/v1/timeoff/:id/approve', ({ params }) => {
+        approvedIds.push(params.id as string);
+        return HttpResponse.json({
+          data: {
+            timeoff: {
+              ...listedTimeOff(params.id as string, 'Paid leave'),
+              status: 'approved',
+            },
+          },
+        });
+      }),
+    );
+    render(
+      <TimeOffListFlow
+        render={({ components: { ListStep, ApproveButton } }) => (
+          <table>
+            <tbody>
+              <ListStep
+                renderItem={({ listedDetails, canDecide }) => (
+                  <tr>
+                    <td>{listedDetails[0].value}</td>
+                    <td>
+                      {canDecide && <ApproveButton approverId='manager-1' />}
+                    </td>
+                  </tr>
+                )}
+              />
+            </tbody>
+          </table>
+        )}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    expect(
+      await screen.findByRole('cell', { name: 'Sick leave' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('cell', { name: 'Paid leave' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('list')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Approve' }));
+
+    await waitFor(() => {
+      expect(approvedIds).toEqual(['timeoff-1']);
+    });
   });
 
   it('lists the first page again when the status filter is cleared', async () => {

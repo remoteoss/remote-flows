@@ -663,29 +663,51 @@ describe('InvoiceScheduleFlow schedule summary', () => {
     );
   });
 
-  it.each(['one_time', 'semi_monthly'])(
-    'does not sum up a %s schedule',
-    async (periodicity) => {
-      renderFlow();
+  it('does not sum up a one-off schedule', async () => {
+    renderFlow();
 
-      await fillSelect('periodicity', 'weekly');
-      await expectSummary(
-        'This schedule will create a weekly recurring invoice, starting \u2014.',
-      );
+    await fillSelect('periodicity', 'weekly');
+    await expectSummary(
+      'This schedule will create a weekly recurring invoice, starting \u2014.',
+    );
 
-      await fillSelect('periodicity', periodicity);
+    await fillSelect('periodicity', 'one_time');
 
-      await waitFor(() => {
-        expect(
-          screen
-            .queryAllByRole('alert')
-            .some((alert) =>
-              alert.textContent?.startsWith('This schedule will create a'),
-            ),
-        ).toBe(false);
-      });
-    },
-  );
+    await waitFor(() => {
+      expect(
+        screen
+          .queryAllByRole('alert')
+          .some((alert) =>
+            alert.textContent?.startsWith('This schedule will create a'),
+          ),
+      ).toBe(false);
+    });
+  });
+
+  it('names the days a semi-monthly schedule is issued on, for the default and a custom cycle', async () => {
+    renderFlow();
+
+    await fillSelect('periodicity', 'semi_monthly');
+    await setStartDate('2026-11-15');
+    fireEvent.click(screen.getByRole('radio', { name: 'No end date' }));
+
+    await expectSummary(
+      'This schedule will create a semi-monthly recurring invoice with no end date, issued on the 15th and the last day of each month, starting November 15, 2026.',
+    );
+
+    fireEvent.click(await screen.findByRole('radio', { name: 'Custom cycle' }));
+    await fillSelect('semi_monthly_settings.first_invoice_day', '1');
+
+    await expectSummary(
+      'This schedule will create a semi-monthly recurring invoice with no end date, issued on the 1st and the 15th of each month, starting November 15, 2026.',
+    );
+
+    await fillSelect('semi_monthly_settings.first_invoice_day', '7');
+
+    await expectSummary(
+      'This schedule will create a semi-monthly recurring invoice with no end date, issued on the 7th and the 21st of each month, starting November 15, 2026.',
+    );
+  });
 });
 
 describe('InvoiceScheduleFlow partner usage', () => {

@@ -1,58 +1,107 @@
-import { useTimeOffListContext } from '@/src/flows/TimeOff/context';
+import { ApproveButton } from '@/src/flows/TimeOff/components/ApproveButton';
+import { DeclineButton } from '@/src/flows/TimeOff/components/DeclineButton';
+import { ViewButton } from '@/src/flows/TimeOff/components/ViewButton';
 import {
+  TimeOffReviewContext,
+  useTimeOffListContext,
+} from '@/src/flows/TimeOff/context';
+import {
+  TimeOffApproveOptions,
+  TimeOffDeclineOptions,
   TimeOffListStepProps,
-  TimeOffRequestDetail,
 } from '@/src/flows/TimeOff/types';
-import { getTimeOffRequestDetails } from '@/src/flows/TimeOff/utils';
 
-const LISTED_DETAILS: TimeOffRequestDetail['name'][] = [
-  'leave_policy',
-  'status',
-  'start_date',
-  'end_date',
-  'duration',
-];
-
-export function ListStep({ render }: TimeOffListStepProps) {
+export function ListStep({
+  render,
+  renderActions,
+  renderItem,
+}: TimeOffListStepProps) {
   const { timeOffListBag } = useTimeOffListContext();
-  const { timeOffRequests } = timeOffListBag;
 
-  if (timeOffRequests.length === 0) {
+  const rows = timeOffListBag.timeOffListItems.map((item) => ({
+    item,
+    requestLabel: item.listedDetails.map((detail) => detail.value).join(', '),
+    timeOffBag: {
+      ...timeOffListBag,
+      timeOffRequest: item.timeOffRequest,
+      approve: ({ approverId }: TimeOffApproveOptions) =>
+        timeOffListBag.approveTimeOffRequest({
+          timeOffId: item.timeOffRequest.id,
+          approverId,
+        }),
+      decline: ({ declineReason }: TimeOffDeclineOptions) =>
+        timeOffListBag.declineTimeOffRequest({
+          timeOffId: item.timeOffRequest.id,
+          declineReason,
+        }),
+    },
+  }));
+
+  if (rows.length === 0) {
     return null;
+  }
+
+  if (renderItem) {
+    return (
+      <>
+        {rows.map(({ item, timeOffBag }) => (
+          <TimeOffReviewContext.Provider
+            key={item.timeOffRequest.id}
+            value={{ timeOffBag }}
+          >
+            {renderItem(item)}
+          </TimeOffReviewContext.Provider>
+        ))}
+      </>
+    );
   }
 
   return (
     <ul className='RemoteFlows__ListStep'>
-      {timeOffRequests.map((timeOffRequest) => {
-        const details = getTimeOffRequestDetails(timeOffRequest);
-        return (
-          <li
-            key={timeOffRequest.id}
-            className={`RemoteFlows__ListStep__Item RemoteFlows__ListStep__Item--${timeOffRequest.status}`}
-          >
-            <button
-              type='button'
-              className='RemoteFlows__ListStep__SelectButton'
-              onClick={() =>
-                timeOffListBag.selectTimeOffRequest(timeOffRequest.id)
-              }
-            >
-              {render
-                ? render({ timeOffRequest, details })
-                : details
-                    .filter((detail) => LISTED_DETAILS.includes(detail.name))
-                    .map((detail) => (
-                      <span
-                        key={detail.name}
-                        className={`RemoteFlows__ListStep__Value RemoteFlows__ListStep__Value__${detail.name}`}
-                      >
-                        {detail.value}
-                      </span>
-                    ))}
-            </button>
-          </li>
-        );
-      })}
+      {rows.map(({ item, requestLabel, timeOffBag }) => (
+        <li
+          key={item.timeOffRequest.id}
+          className={`RemoteFlows__ListStep__Item RemoteFlows__ListStep__Item--${item.timeOffRequest.status}`}
+        >
+          <div className='RemoteFlows__ListStep__Details'>
+            {render
+              ? render(item)
+              : item.listedDetails.map((detail) => (
+                  <span
+                    key={detail.name}
+                    className={`RemoteFlows__ListStep__Value RemoteFlows__ListStep__Value__${detail.name}`}
+                  >
+                    {detail.value}
+                  </span>
+                ))}
+          </div>
+          <TimeOffReviewContext.Provider value={{ timeOffBag }}>
+            <div className='RemoteFlows__ListStep__Actions'>
+              {renderActions ? (
+                renderActions(item)
+              ) : (
+                <>
+                  <ViewButton aria-label={`View ${requestLabel}`} />
+                  {item.canDecide && (
+                    <>
+                      <DeclineButton
+                        declineReason={null}
+                        aria-label={`Decline ${requestLabel}`}
+                        className='RemoteFlows__ListStep__DeclineButton'
+                      />
+                      <ApproveButton
+                        approverId={null}
+                        aria-label={`Approve ${requestLabel}`}
+                        className='RemoteFlows__ListStep__ApproveButton'
+                      />
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          </TimeOffReviewContext.Provider>
+        </li>
+      ))}
     </ul>
   );
 }

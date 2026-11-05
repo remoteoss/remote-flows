@@ -8,6 +8,7 @@ import { PreviousPageButton } from '@/src/flows/TimeOff/components/PreviousPageB
 import { RetryButton } from '@/src/flows/TimeOff/components/RetryButton';
 import { ReviewStep } from '@/src/flows/TimeOff/components/ReviewStep';
 import { StatusFilter } from '@/src/flows/TimeOff/components/StatusFilter';
+import { ViewButton } from '@/src/flows/TimeOff/components/ViewButton';
 import {
   TimeOffListContext,
   TimeOffReviewContext,
@@ -29,6 +30,7 @@ export const TimeOffListFlow = ({ pageSize, render }: TimeOffListFlowProps) => {
           components: {
             StatusFilter,
             ListStep,
+            ViewButton,
             ListRetryButton,
             PreviousPageButton,
             NextPageButton,
