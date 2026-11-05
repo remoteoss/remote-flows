@@ -6,11 +6,15 @@
  *
  * The WorkWeekScheduleContainer is already wrapped in hooks.tsx, so this
  * component receives WorkWeekScheduleRenderProps directly from the render prop.
- * Enable it with the `work_week_schedule` feature.
+ * Enable it with the `work_week_schedule` feature. The schema does not hand
+ * the field a title, so, as with the daily schedule, the wording is yours.
  */
 
 import { useState } from 'react';
-import { type WorkWeekScheduleRenderProps } from '@remoteoss/remote-flows';
+import {
+  buildWorkWeekScheduleSummary,
+  type WorkWeekScheduleRenderProps,
+} from '@remoteoss/remote-flows';
 
 const TIME_FIELDS = [
   { key: 'start_time', label: 'Start' },
@@ -22,6 +26,7 @@ const TIME_FIELDS = [
 export function CustomWorkWeekSchedule({
   summary,
   config,
+  savedScheduleError,
   editBag,
 }: WorkWeekScheduleRenderProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -50,19 +55,26 @@ export function CustomWorkWeekSchedule({
       </div>
 
       {!isEditing && (
-        <p className='text-sm text-gray-600'>
+        <div className='text-sm text-gray-600'>
           {summary.isDefined ? (
-            <>
-              <strong>{summary.startTime}</strong> to{' '}
-              <strong>{summary.endTime}</strong>, break{' '}
-              <strong>{summary.breakStartTime}</strong> to{' '}
-              <strong>{summary.breakEndTime}</strong> (
-              <strong>{summary.workingHours}h</strong> per day)
-            </>
+            buildWorkWeekScheduleSummary(summary).map((line) => (
+              <p key={line.key}>
+                {line.segments.map((segment, index) =>
+                  segment.bold ? (
+                    <strong key={index}>{segment.text}</strong>
+                  ) : (
+                    segment.text
+                  ),
+                )}
+              </p>
+            ))
           ) : (
-            'No working hours defined yet.'
+            <p>No working hours defined yet.</p>
           )}
-        </p>
+          {savedScheduleError && (
+            <p className='text-red-600'>{savedScheduleError}</p>
+          )}
+        </div>
       )}
 
       {isEditing && (
@@ -106,8 +118,9 @@ export function CustomWorkWeekSchedule({
             </button>
             <button
               type='button'
-              onClick={() => {
-                if (actions.save()) {
+              onClick={async () => {
+                const { saved } = await actions.save();
+                if (saved) {
                   setIsEditing(false);
                 }
               }}

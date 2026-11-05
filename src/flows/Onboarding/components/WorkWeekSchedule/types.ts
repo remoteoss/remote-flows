@@ -28,6 +28,17 @@ export type WorkWeekScheduleEditState = {
   error: string | null;
 };
 
+export type WorkWeekScheduleSaveResult =
+  | { saved: true }
+  | { saved: false; reason: 'invalid_schedule' };
+
+export type WorkWeekScheduleSummarySegment = { text: string; bold?: boolean };
+
+export type WorkWeekScheduleSummaryLine = {
+  key: string;
+  segments: WorkWeekScheduleSummarySegment[];
+};
+
 export type WorkWeekScheduleEditBag = {
   state: WorkWeekScheduleEditState;
   actions: {
@@ -36,14 +47,18 @@ export type WorkWeekScheduleEditBag = {
       value: string,
     ) => void;
     reset: () => void;
-    save: () => boolean;
+    /** Validates and saves the draft. Resolves with whether it saved and, if not, why. */
+    save: () => Promise<WorkWeekScheduleSaveResult>;
   };
 };
 
 export type WorkWeekScheduleRenderProps = {
-  label: string;
-  description?: string;
+  /** The saved schedule, for a read-only summary. */
   summary: WorkWeekScheduleSummary;
+  /** The schedule bounds from the schema (earliest start, latest end, minimum break). */
   config: WorkWeekScheduleConfig;
+  /** The validation error of the saved schedule, or null when it is valid or not defined yet. */
+  savedScheduleError: string | null;
+  /** The edit form API with state and actions. */
   editBag: WorkWeekScheduleEditBag;
 };

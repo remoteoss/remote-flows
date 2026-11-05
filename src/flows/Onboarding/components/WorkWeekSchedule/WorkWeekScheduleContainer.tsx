@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   WorkWeekScheduleConfig,
   WorkWeekScheduleRenderProps,
+  WorkWeekScheduleSaveResult,
   WorkWeekScheduleValue,
 } from '@/src/flows/Onboarding/components/WorkWeekSchedule/types';
 import {
@@ -10,8 +11,6 @@ import {
 } from '@/src/flows/Onboarding/components/WorkWeekSchedule/utils';
 
 type WorkWeekScheduleContainerProps = {
-  label: string;
-  description?: string;
   value?: WorkWeekScheduleValue;
   setValue: (value: WorkWeekScheduleValue) => void;
   workScheduleConfig?: WorkWeekScheduleConfig;
@@ -24,8 +23,6 @@ type WorkWeekScheduleContainerProps = {
  * and one break for the whole week.
  */
 export const WorkWeekScheduleContainer = ({
-  label,
-  description,
   value,
   setValue,
   render,
@@ -42,27 +39,30 @@ export const WorkWeekScheduleContainer = ({
 
   const workingHours = calculateWorkingHours(draft, subtract);
 
-  const save = () => {
+  const save = async (): Promise<WorkWeekScheduleSaveResult> => {
     const validationError = getWorkWeekScheduleError(draft, config);
     setError(validationError);
     if (validationError) {
-      return false;
+      return { saved: false, reason: 'invalid_schedule' };
     }
     setValue({ ...draft, working_hours: workingHours });
-    return true;
+    return { saved: true };
   };
 
+  const isDefined = Boolean(saved.start_time && saved.end_time);
+
   return render({
-    label,
-    description,
     config,
+    savedScheduleError: isDefined
+      ? getWorkWeekScheduleError(saved, config)
+      : null,
     summary: {
       startTime: saved.start_time,
       endTime: saved.end_time,
       breakStartTime: saved.lunch_start_time,
       breakEndTime: saved.lunch_end_time,
       workingHours: saved.working_hours ?? 0,
-      isDefined: Boolean(saved.start_time && saved.end_time),
+      isDefined,
     },
     editBag: {
       state: { draft, workingHours, error },

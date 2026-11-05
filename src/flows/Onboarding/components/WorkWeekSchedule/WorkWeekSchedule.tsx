@@ -11,6 +11,7 @@ import {
 import { Input } from '@/src/components/ui/input';
 import { Label } from '@/src/components/ui/label';
 import { WorkWeekScheduleRenderProps } from '@/src/flows/Onboarding/components/WorkWeekSchedule/types';
+import { buildWorkWeekScheduleSummary } from '@/src/flows/Onboarding/components/WorkWeekSchedule/utils';
 
 const TIME_FIELDS = [
   { key: 'start_time', label: 'Start' },
@@ -20,9 +21,8 @@ const TIME_FIELDS = [
 ] as const;
 
 export const WorkWeekSchedule = ({
-  label,
-  description,
   summary,
+  savedScheduleError,
   editBag,
 }: WorkWeekScheduleRenderProps) => {
   const [open, setOpen] = useState(false);
@@ -38,28 +38,28 @@ export const WorkWeekSchedule = ({
   return (
     <div className='flex flex-col gap-3 RemoteFlows__WorkWeekSchedule'>
       <div className='flex items-center gap-2'>
-        <p className='text-sm font-medium'>{label}</p>
+        <p className='text-sm font-medium'>Weekly work schedule</p>
         <Badge variant='secondary'>employee&apos;s timezone</Badge>
       </div>
       {summary.isDefined ? (
         <div className='flex flex-col gap-1 text-sm text-gray-500'>
-          <p>
-            From <strong>{summary.startTime}</strong> to{' '}
-            <strong>{summary.endTime}</strong>
-          </p>
-          <p>
-            Break from <strong>{summary.breakStartTime}</strong> to{' '}
-            <strong>{summary.breakEndTime}</strong>
-          </p>
-          <p>
-            <strong>{summary.workingHours} hours</strong> per day
-          </p>
+          {buildWorkWeekScheduleSummary(summary).map((line) => (
+            <p key={line.key}>
+              {line.segments.map((segment, index) =>
+                segment.bold ? (
+                  <strong key={index}>{segment.text}</strong>
+                ) : (
+                  segment.text
+                ),
+              )}
+            </p>
+          ))}
         </div>
       ) : (
         <p className='text-sm text-gray-500'>No working hours defined yet.</p>
       )}
-      {description ? (
-        <p className='text-xs text-gray-500'>{description}</p>
+      {savedScheduleError ? (
+        <p className='text-destructive text-sm'>{savedScheduleError}</p>
       ) : null}
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
@@ -104,8 +104,9 @@ export const WorkWeekSchedule = ({
             </Button>
             <Button
               type='button'
-              onClick={() => {
-                if (actions.save()) {
+              onClick={async () => {
+                const { saved } = await actions.save();
+                if (saved) {
                   setOpen(false);
                 }
               }}

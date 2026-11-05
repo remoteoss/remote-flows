@@ -1,5 +1,7 @@
 import {
   WorkWeekScheduleConfig,
+  WorkWeekScheduleSummary,
+  WorkWeekScheduleSummaryLine,
   WorkWeekScheduleValue,
 } from '@/src/flows/Onboarding/components/WorkWeekSchedule/types';
 
@@ -93,4 +95,43 @@ export function calculateWeeklyHours({
       ? (partTimeDays?.length ?? 0)
       : FULL_TIME_WORK_DAYS;
   return Number((days * workingHours).toFixed(2));
+}
+
+/**
+ * Turns a saved schedule into display lines, so a custom UI can reuse the
+ * default wording without its markup.
+ */
+export function buildWorkWeekScheduleSummary(
+  summary: WorkWeekScheduleSummary,
+): WorkWeekScheduleSummaryLine[] {
+  if (!summary.isDefined) {
+    return [];
+  }
+  return [
+    {
+      key: 'hours',
+      segments: [
+        { text: 'From ' },
+        { text: summary.startTime ?? '', bold: true },
+        { text: ' to ' },
+        { text: summary.endTime ?? '', bold: true },
+      ],
+    },
+    {
+      key: 'break',
+      segments: [
+        { text: 'Break from ' },
+        { text: summary.breakStartTime ?? '', bold: true },
+        { text: ' to ' },
+        { text: summary.breakEndTime ?? '', bold: true },
+      ],
+    },
+    {
+      key: 'total',
+      segments: [
+        { text: `${summary.workingHours} hours`, bold: true },
+        { text: ' per day' },
+      ],
+    },
+  ];
 }
