@@ -26,6 +26,17 @@ export type {
   $TSFixMe,
   Field,
   JSFFields,
+  FieldValues,
   JSFFieldset,
+  JSFModify,
+  JSONSchemaFormResultWithFieldsets,
   UploadedFileReference,
 } from './types';
+export {
+  buildHeadlessForm,
+  createHeadlessForm,
+  findFieldsByType,
+  parseValuesForValidation,
+  withFieldsetObjects,
+} from './headlessForm';
+export type { HeadlessFormOptions, HeadlessFormStrategy } from './headlessForm';
