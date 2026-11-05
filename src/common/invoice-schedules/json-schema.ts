@@ -41,6 +41,15 @@ function invoiceItemsProperty() {
           'x-jsf-presentation': {
             inputType: 'money',
           },
+          // Computed on the amount itself (inside the array items), so the engine hands the
+          // selected currency straight to every row's amount input.
+          'x-jsf-logic-computedAttrs': {
+            'x-jsf-presentation': {
+              additionalProps: {
+                currency: 'currency_selected',
+              },
+            },
+          },
         },
       },
       'x-jsf-order': ['description', 'amount'],
@@ -49,13 +58,6 @@ function invoiceItemsProperty() {
       inputType: 'group-array',
       addFieldText: 'Add item',
       hideLabel: true,
-    },
-    'x-jsf-logic-computedAttrs': {
-      'x-jsf-presentation': {
-        additionalProps: {
-          currency: 'currency_selected',
-        },
-      },
     },
   };
 }
