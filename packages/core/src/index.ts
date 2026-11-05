@@ -73,3 +73,5 @@ export {
 export type { ContractorInvoicePreview } from './invoiceSchedules/types';
 export type { InvoiceScheduleFormSource } from './invoiceSchedules/utils';
 export { clearBase64Data, formatCurrency } from './format';
+export { createClient } from './createClient';
+export type { AuthResponse, CreateClientOptions } from './createClient';
