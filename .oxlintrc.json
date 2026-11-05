@@ -52,7 +52,6 @@
     {
       "files": [
         "scripts/**",
-        "packages/core/src/headlessForm.ts",
         "src/common/createHeadlessForm.tsx",
         "src/common/headlessForm.ts",
         "src/common/useHeadlessForm.ts",
@@ -62,6 +61,83 @@
       ],
       "rules": {
         "no-restricted-imports": "off"
+      }
+    },
+    {
+      "files": ["packages/core/src/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "react",
+                "message": "packages/core must stay framework-neutral: no React."
+              },
+              {
+                "name": "react-dom",
+                "message": "packages/core must stay framework-neutral: no React."
+              },
+              {
+                "name": "react-hook-form",
+                "message": "packages/core must stay framework-neutral: no react-hook-form. Use the plain types in core instead."
+              },
+              {
+                "name": "@tanstack/react-query",
+                "message": "packages/core must stay framework-neutral: use @tanstack/query-core, never a framework adapter."
+              },
+              {
+                "name": "@tanstack/angular-query-experimental",
+                "message": "packages/core must stay framework-neutral: use @tanstack/query-core, never a framework adapter."
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@/*", "**/src/**"],
+                "message": "packages/core cannot import from the React package. Move what it needs into core instead."
+              }
+            ]
+          }
+        ],
+        "no-restricted-globals": [
+          "error",
+          {
+            "name": "window",
+            "message": "packages/core must not use browser APIs. Take what it needs as a parameter."
+          },
+          {
+            "name": "document",
+            "message": "packages/core must not use browser APIs. Take what it needs as a parameter."
+          },
+          {
+            "name": "navigator",
+            "message": "packages/core must not use browser APIs. Take what it needs as a parameter."
+          },
+          {
+            "name": "location",
+            "message": "packages/core must not use browser APIs. Take what it needs as a parameter."
+          },
+          {
+            "name": "localStorage",
+            "message": "packages/core must not use browser APIs. Take what it needs as a parameter."
+          },
+          {
+            "name": "sessionStorage",
+            "message": "packages/core must not use browser APIs. Take what it needs as a parameter."
+          },
+          {
+            "name": "File",
+            "message": "packages/core must not use browser APIs. Take a converter as a parameter, like convertFiles."
+          },
+          {
+            "name": "FileReader",
+            "message": "packages/core must not use browser APIs. Take a converter as a parameter, like convertFiles."
+          },
+          {
+            "name": "process",
+            "message": "packages/core must not read process.env. Take the setting as a parameter, like logModifyWarnings."
+          }
+        ]
       }
     },
     {
