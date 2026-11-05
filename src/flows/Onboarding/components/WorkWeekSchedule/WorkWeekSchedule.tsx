@@ -31,7 +31,7 @@ export const WorkWeekSchedule = ({
 
   const handleOpenChange = (next: boolean) => {
     if (!next) {
-      actions.reset();
+      actions.close();
     }
     setOpen(next);
   };
@@ -88,16 +88,32 @@ export const WorkWeekSchedule = ({
                   type='time'
                   value={state.draft[key] ?? ''}
                   onChange={(e) => actions.update(key, e.target.value)}
+                  onBlur={() => actions.handleBlur(key)}
+                  aria-invalid={Boolean(state.getFieldError(key))}
                 />
+                {state.getFieldError(key) ? (
+                  <p className='text-destructive text-xs'>
+                    {state.getFieldError(key)}
+                  </p>
+                ) : null}
               </div>
             ))}
           </div>
-          <p className='text-sm'>
-            {labels.workingHours}: <strong>{state.workingHours}</strong>
-          </p>
-          {state.error ? (
-            <p className='text-destructive text-sm'>{state.error}</p>
-          ) : null}
+          <div className='flex flex-col gap-1 text-sm text-gray-500'>
+            <p className='font-medium text-foreground'>Preview</p>
+            {buildWorkWeekScheduleSummary(state.unsavedSummary).map((line) => (
+              <p key={line.key}>
+                {line.segments.map((segment, index) =>
+                  segment.bold ? (
+                    <strong key={index}>{segment.text}</strong>
+                  ) : (
+                    segment.text
+                  ),
+                )}
+              </p>
+            ))}
+          </div>
+
           <div className='flex gap-4 justify-end'>
             <Button
               type='button'

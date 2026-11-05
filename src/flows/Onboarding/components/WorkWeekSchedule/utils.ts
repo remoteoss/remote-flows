@@ -37,10 +37,29 @@ export function calculateWorkingHours(
   return Number(((end - start - breakMinutes) / MINUTES_IN_HOUR).toFixed(2));
 }
 
-export function getWorkWeekScheduleError(
+export const WORK_WEEK_SCHEDULE_TIME_FIELDS = [
+  'start_time',
+  'end_time',
+  'lunch_start_time',
+  'lunch_end_time',
+] as const;
+
+export type WorkWeekScheduleTimeField =
+  (typeof WORK_WEEK_SCHEDULE_TIME_FIELDS)[number];
+
+export type WorkWeekScheduleFieldErrors = Partial<
+  Record<WorkWeekScheduleTimeField, string>
+>;
+
+/**
+ * Validates a schedule against the schema bounds and returns one message per
+ * time field that is wrong.
+ */
+export function getWorkWeekScheduleFieldErrors(
   schedule: WorkWeekScheduleValue,
   config: WorkWeekScheduleConfig,
-) {
+): WorkWeekScheduleFieldErrors {
+  const errors: WorkWeekScheduleFieldErrors = {};
   const start = timeToMinutes(schedule.start_time);
   const end = timeToMinutes(schedule.end_time);
   const breakStart = timeToMinutes(schedule.lunch_start_time);
@@ -48,37 +67,56 @@ export function getWorkWeekScheduleError(
   const minStart = timeToMinutes(config.minStartTime);
   const maxEnd = timeToMinutes(config.maxEndTime);
 
-  if (start === null || end === null) {
-    return 'Start and end time are required.';
+  if (start === null) {
+    errors.start_time = 'Start time is required.';
+  } else if (minStart !== null && start < minStart) {
+    errors.start_time = `Working hours cannot start before ${config.minStartTime}.`;
   }
-  if (end <= start) {
-    return 'End time must be later than start time.';
+
+  if (end === null) {
+    errors.end_time = 'End time is required.';
+  } else if (start !== null && end <= start) {
+    errors.end_time = 'End time must be later than start time.';
+  } else if (maxEnd !== null && end > maxEnd) {
+    errors.end_time = `Working hours cannot end after ${config.maxEndTime}.`;
   }
-  if (minStart !== null && start < minStart) {
-    return `Working hours cannot start before ${config.minStartTime}.`;
+
+  if (breakStart === null) {
+    errors.lunch_start_time = 'Break start time is required.';
+  } else if (start !== null && breakStart < start) {
+    errors.lunch_start_time =
+      'The rest break must start at or after the working hours start time.';
   }
-  if (maxEnd !== null && end > maxEnd) {
-    return `Working hours cannot end after ${config.maxEndTime}.`;
-  }
-  if (breakStart === null || breakEnd === null) {
-    return 'Break start and end time are required.';
-  }
-  if (breakStart < start) {
-    return 'The rest break must start at or after the working hours start time.';
-  }
-  if (breakEnd > end) {
-    return 'The rest break must end at or before the working hours end time.';
-  }
-  if (breakEnd <= breakStart) {
-    return 'Break end time must be later than break start time.';
-  }
-  if (
+
+  if (breakEnd === null) {
+    errors.lunch_end_time = 'Break end time is required.';
+  } else if (end !== null && breakEnd > end) {
+    errors.lunch_end_time =
+      'The rest break must end at or before the working hours end time.';
+  } else if (breakStart !== null && breakEnd <= breakStart) {
+    errors.lunch_end_time =
+      'Break end time must be later than break start time.';
+  } else if (
+    breakStart !== null &&
     config.minBreakMinutes &&
     breakEnd - breakStart < config.minBreakMinutes
   ) {
-    return `The rest break must be at least ${config.minBreakMinutes} minutes.`;
+    errors.lunch_end_time = `The rest break must be at least ${config.minBreakMinutes} minutes.`;
   }
-  return null;
+
+  return errors;
+}
+
+/** The first validation error of a schedule, or null when it is valid. */
+export function getWorkWeekScheduleError(
+  schedule: WorkWeekScheduleValue,
+  config: WorkWeekScheduleConfig,
+) {
+  const errors = getWorkWeekScheduleFieldErrors(schedule, config);
+  const firstField = WORK_WEEK_SCHEDULE_TIME_FIELDS.find(
+    (field) => errors[field],
+  );
+  return firstField ? (errors[firstField] ?? null) : null;
 }
 
 export function calculateWeeklyHours({

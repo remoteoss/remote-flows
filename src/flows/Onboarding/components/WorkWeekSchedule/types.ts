@@ -1,3 +1,5 @@
+import { WorkWeekScheduleTimeField } from '@/src/flows/Onboarding/components/WorkWeekSchedule/utils';
+
 export type WorkWeekScheduleValue = {
   start_time?: string;
   end_time?: string;
@@ -33,9 +35,20 @@ export type WorkWeekScheduleSummary = {
 };
 
 export type WorkWeekScheduleEditState = {
+  /** The schedule as it is being edited. */
   draft: WorkWeekScheduleValue;
+  /** Working hours per day of the draft. */
   workingHours: number;
+  /** Live preview of the draft, in the same shape as the saved summary. */
+  unsavedSummary: WorkWeekScheduleSummary;
+  /** Whether the draft differs from the saved schedule, i.e. closing would discard edits. */
+  hasUnsavedChanges: boolean;
+  /** The first validation error after a failed save, or null. */
   error: string | null;
+  /** Whether any field has a validation error right now. */
+  hasFieldErrors: boolean;
+  /** The validation error of one field. Shown once the field was blurred or a save failed. */
+  getFieldError: (field: WorkWeekScheduleTimeField) => string | undefined;
 };
 
 export type WorkWeekScheduleSaveResult =
@@ -52,13 +65,13 @@ export type WorkWeekScheduleSummaryLine = {
 export type WorkWeekScheduleEditBag = {
   state: WorkWeekScheduleEditState;
   actions: {
-    update: (
-      field: keyof Omit<WorkWeekScheduleValue, 'working_hours'>,
-      value: string,
-    ) => void;
-    reset: () => void;
+    update: (field: WorkWeekScheduleTimeField, value: string) => void;
+    /** Marks a field as touched so its error shows (call from onBlur). */
+    handleBlur: (field: WorkWeekScheduleTimeField) => void;
     /** Validates and saves the draft. Resolves with whether it saved and, if not, why. */
     save: () => Promise<WorkWeekScheduleSaveResult>;
+    /** Discards unsaved edits (resets the draft to the last saved schedule). */
+    close: () => void;
   };
 };
 

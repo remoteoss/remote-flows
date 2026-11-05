@@ -722,7 +722,11 @@ export const useOnboarding = ({
                     return {
                       default: total,
                       const: total,
-                      statement: { title: `Total of ${total} hours per week.` },
+                      statement: {
+                        title: `Total of <b>${total} hours</b> per week.`,
+                        description:
+                          'Predefined from the employee schedule above.',
+                      },
                     };
                   },
                 },

@@ -4,11 +4,15 @@ import {
   WorkWeekScheduleLabels,
   WorkWeekScheduleRenderProps,
   WorkWeekScheduleSaveResult,
+  WorkWeekScheduleSummary,
   WorkWeekScheduleValue,
 } from '@/src/flows/Onboarding/components/WorkWeekSchedule/types';
 import {
   calculateWorkingHours,
   getWorkWeekScheduleError,
+  getWorkWeekScheduleFieldErrors,
+  WORK_WEEK_SCHEDULE_TIME_FIELDS,
+  WorkWeekScheduleTimeField,
 } from '@/src/flows/Onboarding/components/WorkWeekSchedule/utils';
 
 type SchemaField = { name: string; label?: string };
@@ -23,6 +27,23 @@ type WorkWeekScheduleContainerProps = {
   'x-jsf-presentation'?: { workScheduleConfig?: WorkWeekScheduleConfig };
   render: (props: WorkWeekScheduleRenderProps) => React.ReactNode;
 };
+
+const toSummary = (
+  schedule: WorkWeekScheduleValue,
+  workingHours: number,
+): WorkWeekScheduleSummary => ({
+  startTime: schedule.start_time,
+  endTime: schedule.end_time,
+  breakStartTime: schedule.lunch_start_time,
+  breakEndTime: schedule.lunch_end_time,
+  workingHours,
+  isDefined: Boolean(schedule.start_time && schedule.end_time),
+});
+
+const isSameSchedule = (a: WorkWeekScheduleValue, b: WorkWeekScheduleValue) =>
+  WORK_WEEK_SCHEDULE_TIME_FIELDS.every(
+    (field) => (a[field] ?? '') === (b[field] ?? ''),
+  );
 
 /**
  * Headless container for the `work_week_schedule` field: one start/end time
@@ -55,18 +76,28 @@ export const WorkWeekScheduleContainer = ({
   const subtract = config.subtractBreaksFromWorkHours ?? true;
   const saved: WorkWeekScheduleValue = value ?? {};
   const [draft, setDraft] = useState<WorkWeekScheduleValue>(saved);
-  const [error, setError] = useState<string | null>(null);
+  const [touched, setTouched] = useState<WorkWeekScheduleTimeField[]>([]);
+  const [saveAttempted, setSaveAttempted] = useState(false);
 
   const workingHours = calculateWorkingHours(draft, subtract);
+  const fieldErrors = getWorkWeekScheduleFieldErrors(draft, config);
+  const hasFieldErrors = Object.keys(fieldErrors).length > 0;
 
   const save = async (): Promise<WorkWeekScheduleSaveResult> => {
-    const validationError = getWorkWeekScheduleError(draft, config);
-    setError(validationError);
-    if (validationError) {
+    setSaveAttempted(true);
+    if (hasFieldErrors) {
       return { saved: false, reason: 'invalid_schedule' };
     }
     setValue({ ...draft, working_hours: workingHours });
+    setSaveAttempted(false);
+    setTouched([]);
     return { saved: true };
+  };
+
+  const close = () => {
+    setDraft(saved);
+    setTouched([]);
+    setSaveAttempted(false);
   };
 
   const isDefined = Boolean(saved.start_time && saved.end_time);
@@ -77,26 +108,31 @@ export const WorkWeekScheduleContainer = ({
     savedScheduleError: isDefined
       ? getWorkWeekScheduleError(saved, config)
       : null,
-    summary: {
-      startTime: saved.start_time,
-      endTime: saved.end_time,
-      breakStartTime: saved.lunch_start_time,
-      breakEndTime: saved.lunch_end_time,
-      workingHours: saved.working_hours ?? 0,
-      isDefined,
-    },
+    summary: toSummary(saved, saved.working_hours ?? 0),
     editBag: {
-      state: { draft, workingHours, error },
+      state: {
+        draft,
+        workingHours,
+        unsavedSummary: toSummary(draft, workingHours),
+        hasUnsavedChanges: !isSameSchedule(draft, saved),
+        error: saveAttempted ? getWorkWeekScheduleError(draft, config) : null,
+        hasFieldErrors,
+        getFieldError: (field) =>
+          saveAttempted || touched.includes(field)
+            ? fieldErrors[field]
+            : undefined,
+      },
       actions: {
         update: (field, fieldValue) => {
-          setError(null);
           setDraft((current) => ({ ...current, [field]: fieldValue }));
         },
-        reset: () => {
-          setError(null);
-          setDraft(saved);
+        handleBlur: (field) => {
+          setTouched((current) =>
+            current.includes(field) ? current : [...current, field],
+          );
         },
         save,
+        close,
       },
     },
   });

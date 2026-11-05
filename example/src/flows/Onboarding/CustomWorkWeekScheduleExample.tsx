@@ -11,6 +11,7 @@
  */
 
 import { useState } from 'react';
+import { cn } from '@remoteoss/remote-flows/internals';
 import {
   buildWorkWeekScheduleSummary,
   type WorkWeekScheduleRenderProps,
@@ -34,7 +35,13 @@ export function CustomWorkWeekSchedule({
   const { state, actions } = editBag;
 
   const closeEditor = () => {
-    actions.reset();
+    if (
+      state.hasUnsavedChanges &&
+      !window.confirm('Discard your unsaved changes?')
+    ) {
+      return;
+    }
+    actions.close();
     setIsEditing(false);
   };
 
@@ -97,8 +104,18 @@ export function CustomWorkWeekSchedule({
                   type='time'
                   value={state.draft[key] ?? ''}
                   onChange={(e) => actions.update(key, e.target.value)}
-                  className='border rounded px-2 py-1 bg-white'
+                  onBlur={() => actions.handleBlur(key)}
+                  aria-invalid={Boolean(state.getFieldError(key))}
+                  className={cn(
+                    'border rounded px-2 py-1 bg-white',
+                    state.getFieldError(key) && 'border-red-500',
+                  )}
                 />
+                {state.getFieldError(key) && (
+                  <span className='text-red-600 text-xs'>
+                    {state.getFieldError(key)}
+                  </span>
+                )}
               </label>
             ))}
           </div>
@@ -106,9 +123,8 @@ export function CustomWorkWeekSchedule({
           <p className='text-sm text-gray-600'>
             {labels.workingHours} per day:{' '}
             <strong>{state.workingHours}h</strong>
+            {state.hasUnsavedChanges && ` (saved: ${summary.workingHours}h)`}
           </p>
-
-          {state.error && <p className='text-red-600 text-sm'>{state.error}</p>}
 
           <div className='flex gap-2'>
             <button
