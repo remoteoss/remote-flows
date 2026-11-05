@@ -4,7 +4,8 @@
     "lib": ["es2022"],
     "types": [],
     "paths": {},
-    "noEmit": true
+    "noEmit": true,
+    "jsx": null
   },
   "include": ["src", "types"],
   "exclude": ["src/**/*.test.ts"]
