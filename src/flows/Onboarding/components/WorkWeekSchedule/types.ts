@@ -13,6 +13,16 @@ export type WorkWeekScheduleConfig = {
   subtractBreaksFromWorkHours?: boolean;
 };
 
+export type WorkWeekScheduleLabels = {
+  title: string;
+  description?: string;
+  startTime: string;
+  endTime: string;
+  breakStartTime: string;
+  breakEndTime: string;
+  workingHours: string;
+};
+
 export type WorkWeekScheduleSummary = {
   startTime?: string;
   endTime?: string;
@@ -53,6 +63,8 @@ export type WorkWeekScheduleEditBag = {
 };
 
 export type WorkWeekScheduleRenderProps = {
+  /** The title, description and field labels from the schema, with defaults when the schema does not provide them. */
+  labels: WorkWeekScheduleLabels;
   /** The saved schedule, for a read-only summary. */
   summary: WorkWeekScheduleSummary;
   /** The schedule bounds from the schema (earliest start, latest end, minimum break). */

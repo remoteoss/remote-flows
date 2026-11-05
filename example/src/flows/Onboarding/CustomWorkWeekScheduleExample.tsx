@@ -6,8 +6,8 @@
  *
  * The WorkWeekScheduleContainer is already wrapped in hooks.tsx, so this
  * component receives WorkWeekScheduleRenderProps directly from the render prop.
- * Enable it with the `work_week_schedule` feature. The wording below is
- * hardcoded, as in the daily schedule example.
+ * Enable it with the `work_week_schedule` feature. The titles and field labels
+ * come from the schema through `labels`.
  */
 
 import { useState } from 'react';
@@ -17,13 +17,14 @@ import {
 } from '@remoteoss/remote-flows';
 
 const TIME_FIELDS = [
-  { key: 'start_time', label: 'Start' },
-  { key: 'end_time', label: 'End' },
-  { key: 'lunch_start_time', label: 'Break starts' },
-  { key: 'lunch_end_time', label: 'Break ends' },
+  { key: 'start_time', labelKey: 'startTime' },
+  { key: 'end_time', labelKey: 'endTime' },
+  { key: 'lunch_start_time', labelKey: 'breakStartTime' },
+  { key: 'lunch_end_time', labelKey: 'breakEndTime' },
 ] as const;
 
 export function CustomWorkWeekSchedule({
+  labels,
   summary,
   config,
   savedScheduleError,
@@ -44,7 +45,7 @@ export function CustomWorkWeekSchedule({
       </div>
 
       <div className='flex justify-between items-center mb-4'>
-        <h3 className='text-lg font-semibold'>Weekly work schedule</h3>
+        <h3 className='text-lg font-semibold'>{labels.title}</h3>
         <button
           type='button'
           onClick={() => (isEditing ? closeEditor() : setIsEditing(true))}
@@ -89,9 +90,9 @@ export function CustomWorkWeekSchedule({
           </p>
 
           <div className='grid grid-cols-2 gap-4'>
-            {TIME_FIELDS.map(({ key, label }) => (
+            {TIME_FIELDS.map(({ key, labelKey }) => (
               <label key={key} className='flex flex-col gap-1 text-sm'>
-                {label}
+                {labels[labelKey]}
                 <input
                   type='time'
                   value={state.draft[key] ?? ''}
@@ -103,7 +104,8 @@ export function CustomWorkWeekSchedule({
           </div>
 
           <p className='text-sm text-gray-600'>
-            Working hours per day: <strong>{state.workingHours}h</strong>
+            {labels.workingHours} per day:{' '}
+            <strong>{state.workingHours}h</strong>
           </p>
 
           {state.error && <p className='text-red-600 text-sm'>{state.error}</p>}

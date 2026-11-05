@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   WorkWeekScheduleConfig,
+  WorkWeekScheduleLabels,
   WorkWeekScheduleRenderProps,
   WorkWeekScheduleSaveResult,
   WorkWeekScheduleValue,
@@ -10,7 +11,12 @@ import {
   getWorkWeekScheduleError,
 } from '@/src/flows/Onboarding/components/WorkWeekSchedule/utils';
 
+type SchemaField = { name: string; label?: string };
+
 type WorkWeekScheduleContainerProps = {
+  label?: string;
+  description?: string;
+  fields?: SchemaField[];
   value?: WorkWeekScheduleValue;
   setValue: (value: WorkWeekScheduleValue) => void;
   workScheduleConfig?: WorkWeekScheduleConfig;
@@ -23,6 +29,9 @@ type WorkWeekScheduleContainerProps = {
  * and one break for the whole week.
  */
 export const WorkWeekScheduleContainer = ({
+  label,
+  description,
+  fields,
   value,
   setValue,
   render,
@@ -32,6 +41,17 @@ export const WorkWeekScheduleContainer = ({
     fieldProps.workScheduleConfig ??
     fieldProps['x-jsf-presentation']?.workScheduleConfig ??
     {};
+  const labelOf = (name: string, fallback: string) =>
+    fields?.find((field) => field.name === name)?.label ?? fallback;
+  const labels: WorkWeekScheduleLabels = {
+    title: label ?? 'Weekly work schedule',
+    description,
+    startTime: labelOf('start_time', 'Start time'),
+    endTime: labelOf('end_time', 'End time'),
+    breakStartTime: labelOf('lunch_start_time', 'Break starts'),
+    breakEndTime: labelOf('lunch_end_time', 'Break ends'),
+    workingHours: labelOf('working_hours', 'Working hours'),
+  };
   const subtract = config.subtractBreaksFromWorkHours ?? true;
   const saved: WorkWeekScheduleValue = value ?? {};
   const [draft, setDraft] = useState<WorkWeekScheduleValue>(saved);
@@ -52,6 +72,7 @@ export const WorkWeekScheduleContainer = ({
   const isDefined = Boolean(saved.start_time && saved.end_time);
 
   return render({
+    labels,
     config,
     savedScheduleError: isDefined
       ? getWorkWeekScheduleError(saved, config)

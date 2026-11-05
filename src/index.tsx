@@ -287,6 +287,7 @@ export { WorkWeekScheduleContainer } from '@/src/flows/Onboarding/components/Wor
 export type {
   WorkWeekScheduleValue,
   WorkWeekScheduleConfig,
+  WorkWeekScheduleLabels,
   WorkWeekScheduleSummary,
   WorkWeekScheduleEditBag,
   WorkWeekScheduleRenderProps,

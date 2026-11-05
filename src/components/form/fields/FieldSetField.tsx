@@ -172,6 +172,10 @@ export function FieldSetField({
       <Component
         {...props}
         name={name}
+        label={label}
+        description={description}
+        fields={fields}
+        meta={meta}
         value={watch(name)}
         setValue={(value: unknown) => {
           setValue(name, value);
