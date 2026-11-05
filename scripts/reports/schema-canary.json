@@ -567,7 +567,7 @@
     },
     {
       "country": "DOM",
-      "version": 6,
+      "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
@@ -581,7 +581,7 @@
     },
     {
       "country": "DOM",
-      "version": 6,
+      "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
