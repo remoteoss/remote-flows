@@ -146,6 +146,40 @@ describe('GroupArrayField', () => {
     expect(screen.getByTestId('row-currency')).toHaveTextContent('USD');
   });
 
+  it('hands a field its own additional props in every row, and only that field', () => {
+    renderGroup({
+      rows: [
+        { description: 'Design work', amount: '2500' },
+        { description: 'Hosting', amount: '75' },
+      ],
+      fields: [
+        { name: 'description', label: 'Description', type: 'text' },
+        {
+          name: 'amount',
+          label: 'Amount',
+          type: 'text',
+          additionalProps: { currency: 'EUR' },
+        },
+      ],
+      components: {
+        text: ({ fieldData }: $TSFixMe) => (
+          <output data-testid={`${fieldData.name}-currency`}>
+            {fieldData.metadata.currency}
+          </output>
+        ),
+      },
+    });
+
+    // The engine applies a computed attribute declared on a field inside the items to that
+    // field only, so just the amount inputs get the currency and the descriptions don't.
+    expect(
+      screen.getAllByTestId(/amount-currency/).map((n) => n.textContent),
+    ).toEqual(['EUR', 'EUR']);
+    expect(
+      screen.getAllByTestId(/description-currency/).map((n) => n.textContent),
+    ).toEqual(['', '']);
+  });
+
   it('shows the description', () => {
     renderGroup({ description: 'Everything you are billing for' });
 
