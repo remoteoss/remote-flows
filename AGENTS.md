@@ -18,7 +18,7 @@ pnpm run dev                # tsdown watch build (example/ picks it up, see belo
 pnpm run build              # production bundle (tsdown)
 pnpm run test               # vitest (jsdom). Single test: pnpm exec vitest run path/to/file.test.tsx
 pnpm run test:coverage      # coverage with thresholds from scripts/coverage-utils
-pnpm run type-check         # tsc --noEmit
+pnpm run type-check         # tsc --noEmit for the root and for packages/core (stricter: no DOM or Node types)
 pnpm run lint               # oxlint
 pnpm run format             # oxfmt
 pnpm run check-format       # oxfmt --check (CI gate)
@@ -67,6 +67,10 @@ flows/<FlowName>/
 
 Flows are exposed two ways: the prebuilt `<FlowNameFlow render={...}>` component, **and** the `useFlowName()` headless hook for fully custom UIs. Both surfaces must stay in sync.
 
+### Core package
+
+`packages/core` is a private workspace package (`@remoteoss/remote-flows-core`) with the framework-neutral logic: the form engine, value conversion, the invoice schedule schema and payload builders, the generated API client, the client factory and the options for API calls. The build bundles it into `@remoteoss/remote-flows`, so partners never install it and `src/index.tsx` is still the only public surface. Put new plain logic there, and anything using React, the DOM or the build environment in `src/`, passing environment-specific pieces into core as parameters. Lint and `packages/core/tsconfig.json` enforce the boundary. Many old files in `src/` are now thin re-exports of core. Read [core-package](.agents/rules/core-package.md) before adding code to either side, and `plans/angular-support.md` for why it exists.
+
 ### Multi-step state
 
 [src/flows/useStepState.ts](src/flows/useStepState.ts) is the shared step-state primitive used across multi-step flows (Onboarding, ContractorOnboarding, CreateCompany, Termination). It tracks `currentStep`, transitions, and per-step values. Consumers switch on `flowBag.stepState.currentStep.name`.
@@ -108,6 +112,7 @@ Path-scoped rules live in `.agents/rules/`. Claude Code loads each one when you 
 | [component-pattern](.agents/rules/component-pattern.md)                                                                                                | `src/components/**`                                                                                                                                                          |
 | [component-documentation](.agents/rules/component-documentation.md)                                                                                    | `src/types/remoteFlows.ts`, `src/index.tsx`, `docs/COMPONENT_CUSTOMIZATION.md`                                                                                               |
 | [testing](.agents/rules/testing.md)                                                                                                                    | `**/*.test.{ts,tsx}`, `src/tests/**`, `example/e2e/**`                                                                                                                       |
+| [core-package](.agents/rules/core-package.md)                                                                                                          | `packages/core/**`, `src/client/**`                                                                                                                                          |
 | [theming](.agents/rules/theming.md)                                                                                                                    | `src/styles/**`, `src/lib/applyTheme.ts`, `**/*.css`                                                                                                                         |
 | [partner-facing-ui](.agents/rules/partner-facing-ui.md)                                                                                                | `src/flows/**`, `example/src/**`                                                                                                                                             |
 | [package-exports](.agents/rules/package-exports.md)                                                                                                    | `package.json`, `tsdown.config.ts`, `.sizelimit.json`, `src/index.tsx`, `src/internals.ts`, `src/default-components.ts`, `src/styles.ts`, `.github/workflows/size-check.yml` |
