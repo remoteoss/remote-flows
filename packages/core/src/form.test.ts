@@ -1,4 +1,4 @@
-import { parseJSFToValidate } from './formValues';
+import { parseJSFToValidate } from './form';
 
 describe('parseJSFToValidate file conversion', () => {
   const fileField = {

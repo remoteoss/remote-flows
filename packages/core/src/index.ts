@@ -19,8 +19,8 @@ export {
   parseFormValuesToAPI,
   parseJSFToValidate,
   parseSubmitValues,
-} from './formValues';
-export type { FileConverter } from './formValues';
+} from './form';
+export type { FileConverter } from './form';
 export { getNestedValue } from './object';
 export type {
   $TSFixMe,
