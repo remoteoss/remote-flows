@@ -1,13 +1,5 @@
 import { createClient } from './createClient';
 
-vi.mock('./client/client', () => ({
-  createClient: vi.fn((config) => config),
-}));
-
-vi.mock('./client/client.gen', () => ({
-  client: { getConfig: vi.fn(() => ({ headers: {} })) },
-}));
-
 describe('createClient', () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -17,15 +9,13 @@ describe('createClient', () => {
     const config = createClient(undefined, {
       baseUrl: 'https://gateway.example.com',
       version: '9.9.9',
-    });
+    }).getConfig();
 
-    expect(config).toMatchObject({
-      baseUrl: 'https://gateway.example.com',
-      headers: {
-        'X-Client-Name': 'remote-flows-sdk',
-        'X-Client-Version': '9.9.9',
-      },
-    });
+    const headers = config.headers as Headers;
+
+    expect(config.baseUrl).toBe('https://gateway.example.com');
+    expect(headers.get('X-Client-Name')).toBe('remote-flows-sdk');
+    expect(headers.get('X-Client-Version')).toBe('9.9.9');
   });
 
   it('sends requests to a valid proxy with its headers', () => {
@@ -33,12 +23,10 @@ describe('createClient', () => {
       baseUrl: 'https://gateway.example.com',
       proxy: { url: 'https://proxy.example.com', headers: { 'X-Team': 'a' } },
       version: '1.0.0',
-    });
+    }).getConfig();
 
-    expect(config).toMatchObject({
-      baseUrl: 'https://proxy.example.com',
-      headers: { 'X-Team': 'a' },
-    });
+    expect(config.baseUrl).toBe('https://proxy.example.com');
+    expect((config.headers as Headers).get('X-Team')).toBe('a');
   });
 
   it('falls back to the base URL and logs when the proxy URL is invalid', () => {
@@ -48,12 +36,12 @@ describe('createClient', () => {
       baseUrl: 'https://gateway.example.com',
       proxy: { url: 'not a url', headers: { 'X-Team': 'a' } },
       version: '1.0.0',
-    });
+    }).getConfig();
 
     expect(error).toHaveBeenCalledWith(
       'Invalid proxy URL provided. Using default base URL.',
     );
-    expect(config).toMatchObject({ baseUrl: 'https://gateway.example.com' });
-    expect(config).not.toMatchObject({ headers: { 'X-Team': 'a' } });
+    expect(config.baseUrl).toBe('https://gateway.example.com');
+    expect((config.headers as Headers).get('X-Team')).toBeNull();
   });
 });
