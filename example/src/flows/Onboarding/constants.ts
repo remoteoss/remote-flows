@@ -1,5 +1,6 @@
 import { JSFModifyField } from '@remoteoss/remote-flows';
 import { CustomDailySchedule } from './CustomDailyScheduleExample';
+import { CustomWorkWeekSchedule } from './CustomWorkWeekScheduleExample';
 import {
   ONBOARDING_JSON_SCHEMA_VERSION,
   ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY,
@@ -39,6 +40,11 @@ export const ONBOARDING_OPTIONS = {
         daily_schedule: {
           presentation: {
             Component: CustomDailySchedule,
+          },
+        },
+        work_week_schedule: {
+          presentation: {
+            Component: CustomWorkWeekSchedule,
           },
         },
       },
