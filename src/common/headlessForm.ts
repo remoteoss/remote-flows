@@ -18,6 +18,9 @@ type FieldNode = {
   fields?: unknown;
 };
 
+export const toOneOf = (options: { label: string; value: string }[] = []) =>
+  options.map(({ label, value }) => ({ const: value, title: label }));
+
 const isPlainObject = (value: unknown): value is FieldValues =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
