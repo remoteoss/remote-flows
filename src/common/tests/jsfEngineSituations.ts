@@ -211,6 +211,25 @@ const equitySchema: Schema = {
   'x-jsf-order': ['annual_gross_salary', 'equity_compensation'],
 };
 
+const bankDetailsSchema: Schema = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    annual_gross_salary: money('Annual gross salary'),
+    account_holder: {
+      title: 'Account holder',
+      description: 'Plain account holder help',
+      type: 'string',
+      'x-jsf-presentation': {
+        inputType: 'text',
+        description: 'As printed on the <strong>bank statement</strong>',
+      },
+    },
+  },
+  required: ['account_holder'],
+  'x-jsf-order': ['annual_gross_salary', 'account_holder'],
+};
+
 export const chooseInGroup = async (
   user: UserEvent,
   group: RegExp,
@@ -295,6 +314,45 @@ export const SITUATIONS: Situation[] = [
       );
       expect(screen.getByText('Required field')).toBeInTheDocument();
       expect(submitted).toEqual({});
+    },
+  },
+  {
+    situation: 'description from x-jsf-presentation is shown',
+    schema: bankDetailsSchema,
+    fill: async () => {
+      await screen.findByLabelText('Account holder');
+    },
+    assert: async () => {
+      expect(screen.getByText('bank statement')).toBeInTheDocument();
+      expect(screen.queryByText('Plain account holder help')).toBeNull();
+    },
+  },
+  {
+    situation: 'required text left blank fails and is left out',
+    schema: bankDetailsSchema,
+    fill: async (user) => {
+      await user.type(await screen.findByLabelText('Account holder'), '   ');
+      await user.click(screen.getByRole('button', { name: 'Validate' }));
+    },
+    assert: async (submitted) => {
+      expect(await screen.findByText('Required field')).toBeInTheDocument();
+      expect(submitted).toEqual({});
+    },
+  },
+  {
+    situation: 'value of a field hidden again is left out',
+    schema: signingBonusSchema,
+    fill: async (user) => {
+      await chooseInGroup(user, /Offer a signing bonus/i, 'Yes');
+      await user.type(
+        await screen.findByLabelText('Signing bonus amount'),
+        '1000',
+      );
+      await chooseInGroup(user, /Offer a signing bonus/i, 'No');
+    },
+    assert: async (submitted) => {
+      expect(screen.queryByLabelText('Signing bonus amount')).toBeNull();
+      expect(submitted).toEqual({ has_signing_bonus: 'no' });
     },
   },
 ];
