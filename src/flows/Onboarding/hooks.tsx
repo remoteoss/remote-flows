@@ -56,6 +56,9 @@ import { useErrorReporting } from '@/src/components/error-handling/useErrorRepor
 import { useEmploymentQuery } from '@/src/common/api/employment';
 import { DailyScheduleContainer } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleContainer';
 import { DailySchedule } from '@/src/flows/Onboarding/components/DailySchedule/DailySchedule';
+import { WorkWeekScheduleContainer } from '@/src/flows/Onboarding/components/WorkWeekSchedule/WorkWeekScheduleContainer';
+import { WorkWeekSchedule } from '@/src/flows/Onboarding/components/WorkWeekSchedule/WorkWeekSchedule';
+import { calculateWeeklyHours } from '@/src/flows/Onboarding/components/WorkWeekSchedule/utils';
 import { useJobTitleEligibilityCheck } from '@/src/flows/Onboarding/hooks/useJobTitleEligibilityCheck';
 
 type OnboardingHookProps = Omit<OnboardingFlowProps, 'render'>;
@@ -598,6 +601,12 @@ export const useOnboarding = ({
     options?.features?.includes('daily_schedule'),
   );
 
+  const workWeekScheduleField =
+    options?.jsfModify?.contract_details?.fields?.work_week_schedule;
+  const isWorkWeekScheduleEnabled = Boolean(
+    options?.features?.includes('work_week_schedule'),
+  );
+
   const roleDescriptionField =
     options?.jsfModify?.contract_details?.fields?.role_description;
 
@@ -676,6 +685,50 @@ export const useOnboarding = ({
               },
             }
           : {}),
+        ...(isWorkWeekScheduleEnabled
+          ? {
+              work_week_schedule: {
+                ...(workWeekScheduleField as $TSFixMe),
+                presentation: {
+                  ...(workWeekScheduleField as $TSFixMe)?.presentation,
+                  Component: (props: $TSFixMe) => {
+                    const CustomComponent = (workWeekScheduleField as $TSFixMe)
+                      ?.presentation?.Component;
+
+                    return (
+                      <WorkWeekScheduleContainer
+                        {...props}
+                        render={(renderProps) =>
+                          CustomComponent ? (
+                            <CustomComponent {...renderProps} />
+                          ) : (
+                            <WorkWeekSchedule {...renderProps} />
+                          )
+                        }
+                      />
+                    );
+                  },
+                },
+              },
+              work_hours_per_week: {
+                presentation: {
+                  calculateDynamicProperties: (values: FieldValues) => {
+                    const total = calculateWeeklyHours({
+                      workingHours:
+                        values.work_week_schedule?.working_hours ?? 0,
+                      workSchedule: values.work_schedule,
+                      partTimeDays: values.work_days_for_part_time_worker,
+                    });
+                    return {
+                      default: total,
+                      const: total,
+                      statement: { title: `Total of ${total} hours per week.` },
+                    };
+                  },
+                },
+              },
+            }
+          : {}),
         ...(isDailyScheduleEnabled
           ? {
               daily_schedule: {
@@ -716,6 +769,8 @@ export const useOnboarding = ({
       useSplitSalaryDescription,
       isDailyScheduleEnabled,
       dailyScheduleField,
+      isWorkWeekScheduleEnabled,
+      workWeekScheduleField,
       isJobTitleEligibilityEnabled,
       roleDescriptionField,
       employment?.country?.name,

@@ -66,6 +66,7 @@ type OnboardingFeatures =
   | 'pre_onboarding_requirements'
   | 'split_salary_description'
   | 'daily_schedule'
+  | 'work_week_schedule'
   | 'job_title_eligibility';
 
 /**

@@ -282,6 +282,14 @@ export {
   calculateTotalWeeklyHours,
 } from '@/src/flows/Onboarding/components/DailySchedule/utils';
 export { DailyScheduleContainer } from '@/src/flows/Onboarding/components/DailySchedule/DailyScheduleContainer';
+export { WorkWeekScheduleContainer } from '@/src/flows/Onboarding/components/WorkWeekSchedule/WorkWeekScheduleContainer';
+export type {
+  WorkWeekScheduleValue,
+  WorkWeekScheduleConfig,
+  WorkWeekScheduleSummary,
+  WorkWeekScheduleEditBag,
+  WorkWeekScheduleRenderProps,
+} from '@/src/flows/Onboarding/components/WorkWeekSchedule/types';
 export { WEEKDAY_LABELS } from '@/src/flows/Onboarding/components/DailySchedule/constants';
 export type {
   DailyScheduleValue,
