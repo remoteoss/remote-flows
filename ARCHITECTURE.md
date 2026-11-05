@@ -735,9 +735,9 @@ pnpm run openapi-ts:local  # From local gateway
 
 **Generated files** (never hand-edit):
 
-- `src/client/types.gen.ts` - TypeScript types
-- `src/client/sdk.gen.ts` - SDK functions
-- `src/client/schemas.gen.ts` - Zod schemas
+- `packages/core/src/client/types.gen.ts` - TypeScript types
+- `packages/core/src/client/sdk.gen.ts` - SDK functions
+- `packages/core/src/client/schemas.gen.ts` - Zod schemas
 
 **Usage:**
 
@@ -751,7 +751,7 @@ const { data } = await GetEmployment({
 });
 ```
 
-**Linting:** `.oxlintrc.json` ignores `src/client/**/*.gen.ts` from lint checks.
+**Linting:** `.oxlintrc.json` ignores `packages/core/src/client/**/*.gen.ts` from lint checks.
 
 ### 4.3 Mutation Normalization
 

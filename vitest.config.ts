@@ -25,7 +25,7 @@ export default defineConfig({
         'packages/*/src/**/*.test.{ts,tsx}',
         'src/tests/**/*.{ts,tsx}',
         'src/**/tests/*.{ts,tsx}',
-        'src/client/**/*.{ts,tsx}',
+        'packages/core/src/client/**/*.{ts,tsx}',
         'src/components/JsonSchemaComparison/**/*.{ts,tsx}',
         'src/flows/JsonSchemaPlayground/**/*.{ts,tsx}',
       ],

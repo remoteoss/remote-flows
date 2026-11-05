@@ -3,7 +3,7 @@
     "browser": true,
     "es2020": true
   },
-  "ignorePatterns": ["dist", "src/client/**/*.gen.ts"],
+  "ignorePatterns": ["dist", "packages/core/src/client/**/*.gen.ts"],
   "plugins": ["react", "react-hooks", "typescript"],
   "rules": {
     "no-console": [
@@ -44,7 +44,7 @@
   },
   "overrides": [
     {
-      "files": ["src/client/**"],
+      "files": ["packages/core/src/client/**"],
       "rules": {
         "typescript/no-deprecated": "off"
       }
