@@ -124,6 +124,7 @@ const STARTS_ON_CUSTOM_CYCLE_DAY = {
 };
 
 const START_DATE_MATCHES_CYCLE_VALIDATION = 'start_date_matches_cycle';
+const START_DATE_ALLOWED_DAYS_VALUE = 'start_date_allowed_days';
 
 function dayOptions(from: number, to: number) {
   return Array.from({ length: to - from + 1 }, (_, index) => ({
@@ -578,6 +579,11 @@ export function buildCreateInvoiceScheduleSchema({
           minDate: new Date().toISOString().slice(0, 10),
         },
         'x-jsf-logic-validations': [START_DATE_MATCHES_CYCLE_VALIDATION],
+        'x-jsf-logic-computedAttrs': {
+          'x-jsf-presentation': {
+            allowedDays: START_DATE_ALLOWED_DAYS_VALUE,
+          },
+        },
       },
       semi_monthly_settings: semiMonthlySettingsProperty(),
       items: invoiceItemsProperty(),
@@ -671,6 +677,33 @@ export function buildCreateInvoiceScheduleSchema({
       computedValues: {
         currency_selected: {
           rule: { var: 'currency' },
+        },
+        [START_DATE_ALLOWED_DAYS_VALUE]: {
+          rule: {
+            if: [
+              { '!=': [{ var: 'periodicity' }, SEMI_MONTHLY_PERIODICITY] },
+              null,
+              {
+                '==': [
+                  { var: 'semi_monthly_settings.invoicing_cycle' },
+                  SEMI_MONTHLY_CUSTOM_CYCLE,
+                ],
+              },
+              {
+                if: [
+                  { var: 'semi_monthly_settings.first_invoice_day' },
+                  [
+                    {
+                      '+': [{ var: 'semi_monthly_settings.first_invoice_day' }],
+                    },
+                    SECOND_INVOICE_DAY_RULE,
+                  ],
+                  null,
+                ],
+              },
+              SEMI_MONTHLY_DEFAULT_CYCLE_DAYS,
+            ],
+          },
         },
         second_invoice_day_value: {
           rule: { cat: [SECOND_INVOICE_DAY_RULE] },
