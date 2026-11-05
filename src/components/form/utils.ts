@@ -6,14 +6,14 @@ import {
 } from '@remoteoss/remote-flows-core';
 import type { $TSFixMe, JSFFields } from '@remoteoss/remote-flows-core';
 
-export function parseFormValuesToAPI(
+export async function parseFormValuesToAPI(
   formValues: Record<string, $TSFixMe> = {},
   fields: $TSFixMe[],
 ) {
   return parseFormValuesToAPICore(formValues, fields, convertFilesToBase64);
 }
 
-export function parseSubmitValues(
+export async function parseSubmitValues(
   formValues: Record<string, $TSFixMe>,
   fields: $TSFixMe[],
   config?: { keepInvisibleValues?: boolean },
@@ -24,7 +24,7 @@ export function parseSubmitValues(
   });
 }
 
-export function parseJSFToValidate(
+export async function parseJSFToValidate(
   formValues: Record<string, $TSFixMe>,
   fields: JSFFields,
   config: { isPartialValidation: boolean } = {
