@@ -9,8 +9,11 @@ import {
   nextMonday,
 } from 'date-fns';
 import equal from 'fast-deep-equal';
-import { getNestedValue } from '@/src/lib/utils';
-import { convertFromCents, convertToCents } from '@remoteoss/remote-flows-core';
+import {
+  convertFromCents,
+  convertToCents,
+  getNestedValue,
+} from '@remoteoss/remote-flows-core';
 import { UploadedFileReference } from '@/src/types/fields';
 
 const textInputTypes = {
