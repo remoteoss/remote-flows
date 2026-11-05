@@ -10,6 +10,17 @@ export {
   isMultiSelect,
   resolveFieldDynamicProperties,
 } from './fieldHelpers';
+export {
+  enableAckFields,
+  getFieldsWithFlatFieldsets,
+  getInitialValues,
+  getMinStartDate,
+  isDateDisabled,
+  parseFormValuesToAPI,
+  parseJSFToValidate,
+  parseSubmitValues,
+} from './formValues';
+export type { FileConverter } from './formValues';
 export { getNestedValue } from './object';
 export type {
   $TSFixMe,
