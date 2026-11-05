@@ -1,91 +1,17 @@
-/**
- * Invoice schedule status values
- * Based on ContractorInvoiceScheduleStatus from the API
- */
-export const INVOICE_SCHEDULE_STATUS = {
-  PENDING_CONTRACTOR_ACTION: 'pending_contractor_action',
-  PROCESSING: 'processing',
-  PENDING_COMPANY_ACTION: 'pending_company_action',
-  ACTIVE: 'active',
-  INACTIVE: 'inactive',
-  COMPLETED: 'completed',
-  GENERATION_FAILED_UNRELATED_TO_WITHDRAWAL_METHOD:
-    'generation_failed_unrelated_to_withdrawal_method',
-  DELETED: 'deleted',
-} as const;
-
-/**
- * Most invoice items one schedule can carry.
- * Matches the public API's `maxItems: 10` on the create-schedule `items`.
- */
-export const MAX_INVOICE_ITEMS = 10;
-
-/**
- * Longest text the backend accepts for an invoice item description and for the schedule note.
- */
-export const INVOICE_TEXT_MAX_LENGTH = 255;
-
-/**
- * The recurring cadences the API's `periodicity` enum accepts.
- */
-export const RECURRING_PERIODICITY_OPTIONS = [
-  { const: 'weekly', title: 'Weekly' },
-  { const: 'bi_weekly', title: 'Bi-weekly' },
-  { const: 'semi_monthly', title: 'Semi-monthly' },
-  { const: 'monthly', title: 'Monthly' },
-] as const;
-
-/**
- * A one-off schedule is not a periodicity on the API — it is `nr_occurrences: 1`
- * paired with any cadence. We surface it as a periodicity choice because that is how
- * both the Remote platform and users think about it, and collapse it back to
- * `monthly` + `nr_occurrences: 1` when building the payload.
- *
- * See `buildInvoiceSchedulePayload`.
- */
-export const ONE_TIME_PERIODICITY = 'one_time';
-
-/**
- * The only periodicity for which `custom_days` is meaningful.
- */
-export const SEMI_MONTHLY_PERIODICITY = 'semi_monthly';
-
-export const SEMI_MONTHLY_DEFAULT_CYCLE = 'default_cycle';
-export const SEMI_MONTHLY_CUSTOM_CYCLE = 'custom_cycle';
-
-/**
- * The backend treats 31 as "the end of the month": a shorter month issues on its last day.
- */
-export const SEMI_MONTHLY_DEFAULT_CYCLE_DAYS: [number, number] = [15, 31];
-
-/**
- * A custom cycle's second invoice is always this many days after the first.
- */
-export const SEMI_MONTHLY_CYCLE_GAP_DAYS = 14;
-
-export const ONE_TIME_PERIODICITY_OPTION = {
-  const: ONE_TIME_PERIODICITY,
-  title: 'One time',
-} as const;
-
-/**
- * The cadence a one-off schedule is persisted as. Arbitrary but harmless: the schedule
- * completes after its single invoice, so it never recurs.
- */
-export const ONE_TIME_PERSISTED_PERIODICITY = 'monthly';
-
-/**
- * Value used by the stand-in option shown while a dependent list has not loaded.
- *
- * Non-empty on purpose: Radix's `Select.Item` rejects an empty value, since it reserves
- * that for clearing the selection. The option is instead marked `disabled` so it cannot be
- * chosen, which is what keeps it from ever being submitted.
- */
-export const PLACEHOLDER_OPTION = 'placeholder';
-
-/**
- * Values of the form-only `end_type` field. It never reaches the API: "never" omits
- * `nr_occurrences` and "multiple" sends the count.
- */
-export const END_TYPE_NEVER = 'never';
-export const END_TYPE_MULTIPLE = 'multiple';
+export {
+  INVOICE_SCHEDULE_STATUS,
+  MAX_INVOICE_ITEMS,
+  INVOICE_TEXT_MAX_LENGTH,
+  RECURRING_PERIODICITY_OPTIONS,
+  ONE_TIME_PERIODICITY,
+  SEMI_MONTHLY_PERIODICITY,
+  SEMI_MONTHLY_DEFAULT_CYCLE,
+  SEMI_MONTHLY_CUSTOM_CYCLE,
+  SEMI_MONTHLY_DEFAULT_CYCLE_DAYS,
+  SEMI_MONTHLY_CYCLE_GAP_DAYS,
+  ONE_TIME_PERIODICITY_OPTION,
+  ONE_TIME_PERSISTED_PERIODICITY,
+  PLACEHOLDER_OPTION,
+  END_TYPE_NEVER,
+  END_TYPE_MULTIPLE,
+} from '@remoteoss/remote-flows-core';
