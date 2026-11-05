@@ -43,6 +43,7 @@ function SelectCountryWithModal({
 }: PayrollAdminOnboardingRenderProps) {
   const { SelectCountryStep, SubmitButton } = components;
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const countryOptions = adminBag.fields[0]?.options as unknown[] | undefined;
 
   if (adminBag.stepState.currentStep.name !== 'select_country') {
     return <p>Step: {adminBag.stepState.currentStep.name}</p>;
@@ -52,7 +53,7 @@ function SelectCountryWithModal({
     <>
       <SelectCountryStep />
       <SubmitButton>Continue</SubmitButton>
-      <p>{`Countries: ${adminBag.fields[0]?.options?.length ?? 0}`}</p>
+      <p>{`Countries: ${countryOptions?.length ?? 0}`}</p>
       <button
         type='button'
         onClick={async () => {
