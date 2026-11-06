@@ -158,7 +158,7 @@ function prefillReadOnlyFields(
       return;
     }
 
-    /*  const fieldValue = values[fieldName!];
+    const fieldValue = values[fieldName!];
 
     if (
       field.type === supportedTypes.FIELDSET &&
@@ -168,7 +168,7 @@ function prefillReadOnlyFields(
     ) {
       newValues[fieldName!] = prefillReadOnlyFields(fieldValue, field.fields);
       return;
-    } */
+    }
 
     if (isFieldLocked(field) && field.default !== undefined) {
       newValues[fieldName!] = field.default;
