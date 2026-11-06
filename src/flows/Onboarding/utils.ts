@@ -228,6 +228,9 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'IDN',
   'XKX',
   'ZWE',
+  'TUN',
+  'BIH',
+  'CHE',
 ];
 
 /**

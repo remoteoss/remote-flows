@@ -1,1 +1,3 @@
 allowBuilds: {}
+minimumReleaseAgeExclude:
+  - '@remoteoss/*'

@@ -24,7 +24,8 @@ export function DatePickerFieldDefault({
   fieldData,
   fieldState,
 }: DatePickerComponentProps) {
-  const { name, label, description, minDate, maxDate } = fieldData;
+  const { name, label, description, minDate, maxDate, isDateDisabled } =
+    fieldData;
   const minDateValue = minDate ? new Date(minDate) : undefined;
   const maxDateValue = maxDate ? new Date(maxDate) : undefined;
   const [open, setOpen] = useState(false);
@@ -84,15 +85,7 @@ export function DatePickerFieldDefault({
                 ? new Date(field.value)
                 : (maxDateValue ?? minDateValue)
             }
-            disabled={(date: Date) => {
-              if (minDateValue && date < minDateValue) {
-                return true;
-              }
-              if (maxDateValue && date > maxDateValue) {
-                return true;
-              }
-              return false;
-            }}
+            disabled={isDateDisabled}
           />
         </PopoverContent>
       </Popover>

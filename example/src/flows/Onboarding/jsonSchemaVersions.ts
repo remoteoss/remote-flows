@@ -13,11 +13,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ARG: {
     // Argentina
-    contract_details: 5,
+    contract_details: 6,
   },
   ARM: {
     // Armenia
-    contract_details: 3,
+    contract_details: 4,
   },
   AUS: {
     // Australia
@@ -41,7 +41,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   BIH: {
     // Bosnia and Herzegovina
-    contract_details: 1,
+    contract_details: 7,
   },
   BOL: {
     // Bolivia
@@ -57,7 +57,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CHE: {
     // Switzerland
-    contract_details: 2,
+    contract_details: 8,
   },
   CHL: {
     // Chile
@@ -65,7 +65,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CHN: {
     // China
-    contract_details: 8,
+    contract_details: 9,
   },
   COL: {
     // Colombia
@@ -93,7 +93,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   DOM: {
     // Dominican Republic
-    contract_details: 6,
+    contract_details: 7,
   },
   ECU: {
     // Ecuador
@@ -329,7 +329,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   TUN: {
     // Tunisia
-    contract_details: 1,
+    contract_details: 8,
   },
   TUR: {
     // Turkey
