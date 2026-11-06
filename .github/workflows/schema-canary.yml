@@ -17,8 +17,6 @@ on:
       - 'src/components/form/utils.ts'
       - 'src/flows/Onboarding/utils.ts'
       - 'packages/core/src/form/**'
-      - 'packages/core/src/fieldHelpers.ts'
-      - 'packages/core/src/fieldTypes.ts'
       - 'packages/core/src/money.ts'
       - 'scripts/contract-details-seeds.ts'
       - 'scripts/fill-schema.ts'

@@ -4,8 +4,8 @@ import {
   isWeekend,
   nextMonday,
 } from 'date-fns';
-import { supportedTypes } from '../fieldTypes';
-import { isForceValue, isMultiSelect } from '../fieldHelpers';
+import { supportedTypes } from './fieldTypes';
+import { isForceValue, isMultiSelect } from './fieldHelpers';
 import { convertFromCents, convertToCents } from '../money';
 import type { $TSFixMe, Field, JSFFields } from '../types';
 
