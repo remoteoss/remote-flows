@@ -45,6 +45,21 @@ For each API operation, core exports a factory that takes the client and returns
 
 Core does not depend on TanStack. `queryOptions` and `mutationOptions` come from the framework packages, so wrap the object with `queryOptions(...)` in the React package when you need a typed key.
 
+### Selectors: response rules live next to the query
+
+Anything that reads a query's response and isn't specific to one caller is a plain function in core, exported from the same file as the query's factory: unwrapping `data?.data`, picking codes out of a list, or a business rule such as which invoice schedule statuses count as editable (`selectContractorCurrencies` in `api/contractorCurrencies.ts`, `selectExistingInvoiceSchedule` in `api/invoiceSchedules.ts`). A selector takes the raw response, and its type comes from the factory's return type. The factory itself stays unselected, so each caller can add its own `select`.
+
+The React hook passes the selector as `select: selectX` and never writes the rule inline. Use a module-level function, so React Query keeps a stable reference and reuses the result. A second framework then reuses the rule instead of rewriting it. Test each selector in the `*.test.ts` next to its API file.
+
+### Binding the client in the React package
+
+`src/lib/withClient.ts` turns a core factory into a hook in one line, so a factory is declared once per operation, in the flow's `api.ts`:
+
+- `withClient(factory)` returns a hook that reads the client from context and passes the remaining arguments through: `export const useInvoiceSchedulesOptions = withClient(invoiceSchedulesOptions)`, used as `useQuery({ ...useInvoiceSchedulesOptions(id), enabled, select })`.
+- `createClientMutation(factory)` returns a hook that gives the mutation plus a memoized `mutateAsyncOrThrow`: `export const useCreateInvoiceSchedule = createClientMutation(createInvoiceScheduleMutation)`. Flow hooks use that `mutateAsyncOrThrow` and read `isPending` from the same object, and don't wrap the mutation in `mutationToPromise` again.
+
+Both pass extra arguments to the factory, so a factory that takes `(client, countryCode)` works the same way. What doesn't fit: a hook that takes other mutations as arguments, and a mutation whose logic isn't in core yet. Move the logic to core first, as a plain function that receives its dependencies as arguments.
+
 ## Old Locations Are Temporary
 
 Files such as `src/client/*.ts`, `src/lib/utils.ts`, `src/common/headlessForm.ts` and `src/components/form/utils.ts` only re-export from core or wrap it. Don't add new logic there. In new code, import moved things from `@remoteoss/remote-flows-core`. A final cleanup removes the re-exports.
