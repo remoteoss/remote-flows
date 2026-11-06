@@ -13,10 +13,7 @@ import type {
   $TSFixMe,
 } from '../types';
 
-export function findFieldsByType(
-  fields: Record<string, $TSFixMe>,
-  type: string,
-) {
+function findFieldsByType(fields: Record<string, $TSFixMe>, type: string) {
   const fieldsNames = [];
   for (const [key, value] of Object.entries(fields)) {
     // old schemas use type, new schemas use inputType

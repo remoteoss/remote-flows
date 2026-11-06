@@ -241,7 +241,7 @@ function getValueToAPITransformer(type: string, convertFiles: FileConverter) {
   return baseFieldTypesTransformations[type]?.transformValueToAPI;
 }
 
-export async function parseFormValuesToAPI(
+async function parseFormValuesToAPI(
   formValues: Record<string, $TSFixMe> = {},
   fields: $TSFixMe[],
   convertFiles: FileConverter,
@@ -516,7 +516,7 @@ function cleanUnderscoreFields(
   return obj;
 }
 
-export async function parseSubmitValues(
+async function parseSubmitValues(
   formValues: Record<string, $TSFixMe>,
   fields: $TSFixMe[],
   config: { keepInvisibleValues?: boolean; convertFiles: FileConverter },
