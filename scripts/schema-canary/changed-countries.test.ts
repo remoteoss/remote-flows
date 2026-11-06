@@ -1,4 +1,7 @@
+import { readFileSync } from 'node:fs';
 import {
+  OTHER_INPUT_PREFIXES,
+  OTHER_INPUTS,
   basicInfoVersionChanged,
   changedCountries,
   parsePinnedVersions,
@@ -100,6 +103,11 @@ describe('touchesOtherInputs', () => {
   it.each([
     'pnpm-lock.yaml',
     'src/common/createHeadlessForm.tsx',
+    'packages/core/src/form/headlessForm.ts',
+    'packages/core/src/form/form.ts',
+    'packages/core/src/form/fieldHelpers.ts',
+    'packages/core/src/form/fieldTypes.ts',
+    'packages/core/src/money.ts',
     'scripts/schema-canary.ts',
     'scripts/schema-canary/lib.ts',
     'example/src/flows/Onboarding/constants.ts',
@@ -114,5 +122,32 @@ describe('touchesOtherInputs', () => {
         file,
       ]),
     ).toBe(true);
+  });
+});
+
+describe('canary input list', () => {
+  it('matches the pull_request paths in the workflow', () => {
+    const workflow = readFileSync(
+      '.github/workflows/schema-canary.yml',
+      'utf8',
+    );
+    const block = workflow.slice(
+      workflow.indexOf('pull_request:'),
+      workflow.indexOf('concurrency:'),
+    );
+    const paths = [...block.matchAll(/- '([^']+)'/g)].map((match) => match[1]);
+
+    const files = paths.filter((path) => !path.includes('**'));
+    const prefixes = paths
+      .filter((path) => path.includes('**'))
+      .map((path) => path.replace('**', ''));
+
+    expect(
+      [
+        ...OTHER_INPUTS,
+        'example/src/flows/Onboarding/jsonSchemaVersions.ts',
+      ].sort(),
+    ).toEqual(files.sort());
+    expect([...OTHER_INPUT_PREFIXES].sort()).toEqual(prefixes.sort());
   });
 });
