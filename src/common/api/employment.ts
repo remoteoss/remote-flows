@@ -1,5 +1,4 @@
 import {
-  getV1EmploymentsEmploymentId,
   GetV1EmploymentsEmploymentIdResponse,
   getV2EmploymentsEmploymentIdBasicInformation,
   GetV2EmploymentsEmploymentIdBasicInformationResponse,
@@ -9,6 +8,7 @@ import { useClient } from '@/src/context';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { Client } from '@/src/client/client';
+import { employmentOptions } from '@remoteoss/remote-flows-core';
 
 /**
  * Hook to retrieve employment details for a specific employment ID.
@@ -32,18 +32,7 @@ export const useEmploymentQuery = ({
 > => {
   const { client } = useClient();
   return useQuery({
-    queryKey: ['employment', employmentId],
-    retry: false,
-    queryFn: () => {
-      return getV1EmploymentsEmploymentId({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: { employment_id: employmentId },
-        query: queryParams,
-      });
-    },
+    ...employmentOptions(client as Client, employmentId, queryParams),
     enabled: !!employmentId && enabled,
     select: ({ data }) => data?.data?.employment,
   });

@@ -37,10 +37,8 @@ export type {
   JSONSchemaFormResultWithFieldsets,
   UploadedFileReference,
 } from './types';
-export { INVOICE_SCHEDULE_STATUS } from './domains/invoice-schedule/constants';
 export { buildCreateInvoiceScheduleSchema } from './domains/invoice-schedule/jsonSchema';
 export {
-  buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
   buildInvoiceScheduleFormValues,
 } from './domains/invoice-schedule/utils';
@@ -48,3 +46,17 @@ export type { ContractorInvoicePreview } from './domains/invoice-schedule/types'
 export { clearBase64Data, formatCurrency } from './format';
 export { createClient } from './createClient';
 export type { AuthResponse, CreateClientOptions } from './createClient';
+export {
+  contractorCurrenciesOptions,
+  selectContractorCurrencies,
+  selectContractorCurrencyCodes,
+} from './api/contractorCurrencies';
+export { employmentOptions } from './api/employment';
+export {
+  createInvoiceScheduleMutation,
+  invoiceSchedulesOptions,
+  previewContractorInvoiceMutation,
+  selectExistingInvoiceSchedule,
+  skipInvoiceScheduleMutation,
+  updateInvoiceScheduleMutation,
+} from './api/invoiceSchedules';

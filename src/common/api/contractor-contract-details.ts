@@ -1,11 +1,13 @@
 import { useMemo } from 'react';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
+import { getV1CountriesCountryCodeContractorContractDetails } from '@/src/client';
 import {
-  getV1CountriesCountryCodeContractorContractDetails,
-  getV1ContractorsEmploymentsEmploymentIdContractorCurrencies,
-} from '@/src/client';
+  contractorCurrenciesOptions,
+  selectContractorCurrencies,
+} from '@remoteoss/remote-flows-core';
 import { useClient } from '@/src/context';
+import { withClient } from '@/src/lib/withClient';
 import { Client } from '@/src/client/client';
 // oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
@@ -15,31 +17,22 @@ import {
 } from '@/src/flows/types';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 
+export const useContractorCurrenciesOptions = withClient(
+  contractorCurrenciesOptions,
+);
+
 export const useContractorCurrencies = ({
   employmentId,
   options,
 }: {
   employmentId: string;
   options?: { queryOptions?: { enabled?: boolean } };
-}) => {
-  const { client } = useClient();
-  return useQuery({
-    queryKey: ['contractor-currencies', employmentId],
-    queryFn: async () => {
-      return getV1ContractorsEmploymentsEmploymentIdContractorCurrencies({
-        client: client as Client,
-        path: { employment_id: employmentId },
-        query: {
-          restrict_to_guaranteed_pay_out_currencies: false,
-        },
-      });
-    },
+}) =>
+  useQuery({
+    ...useContractorCurrenciesOptions(employmentId),
     enabled: options?.queryOptions?.enabled,
-    select: ({ data }) => {
-      return data?.data;
-    },
+    select: selectContractorCurrencies,
   });
-};
 
 /**
  * Get the contractor onboarding details schema for a given country
