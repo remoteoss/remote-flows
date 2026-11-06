@@ -20,24 +20,24 @@ since.
 
 Each fact carries a label that says where it comes from:
 
-| Label         | Meaning                                                                |
-| ------------- | ---------------------------------------------------------------------- |
-| **[types]**   | A generated type in `types.gen.ts` (field names, optionality, unions). |
-| **[doc]**     | Generated JSDoc, copied from the OpenAPI descriptions.                 |
-| **[sdk]**     | Code the SDK wrote itself in `src/flows/TimeOff/`.                     |
-| **[assumed]** | An assumption we checked against the client and did not find in it.    |
+| Label         | Meaning                                                                                        |
+| ------------- | ---------------------------------------------------------------------------------------------- |
+| **[types]**   | A generated type in `types.gen.ts` (field names, optionality, unions).                         |
+| **[doc]**     | Generated JSDoc, copied from the OpenAPI descriptions.                                         |
+| **[sdk]**     | Code the SDK wrote itself in `src/flows/TimeOff/`.                                             |
+| **[assumed]** | A value or behaviour we expected the API to have, which the generated client does not confirm. |
 
 ## Operations at a glance
 
-| Operation            | Method and route                                 | Generated function                      | Used by the SDK                                     |
-| -------------------- | ------------------------------------------------ | --------------------------------------- | --------------------------------------------------- |
-| Show one request     | `GET /v1/timeoff/{id}`                           | `getV1TimeoffId`                        | Yes, `TimeOff/api.ts`                               |
-| List requests        | `GET /v1/timeoff`                                | `getV1Timeoff`                          | Yes, `TimeOff/api.ts`                               |
-| List time off types  | `GET /v1/timeoff/types`                          | `getV1TimeoffTypes`                     | No                                                  |
-| Approve a request    | `POST /v1/timeoff/{timeoff_id}/approve`          | `postV1TimeoffTimeoffIdApprove`         | Yes, `TimeOff/api.ts`                               |
-| Decline a request    | `POST /v1/timeoff/{timeoff_id}/decline`          | `postV1TimeoffTimeoffIdDecline`         | Yes, `TimeOff/api.ts`                               |
-| Leave policy summary | `GET /v1/leave-policies/summary/{employment_id}` | `getV1LeavePoliciesSummaryEmploymentId` | Yes, `src/common/api/timeoff.ts` (Termination flow) |
-| Leave policy details | `GET /v1/leave-policies/details/{employment_id}` | `getV1LeavePoliciesDetailsEmploymentId` | No                                                  |
+| Operation            | Method and route                                 | Generated function                      | Used by the SDK                                                          |
+| -------------------- | ------------------------------------------------ | --------------------------------------- | ------------------------------------------------------------------------ |
+| Show one request     | `GET /v1/timeoff/{id}`                           | `getV1TimeoffId`                        | Yes, `TimeOff/api.ts`                                                    |
+| List requests        | `GET /v1/timeoff`                                | `getV1Timeoff`                          | Yes, `TimeOff/api.ts` and `src/common/api/timeoff.ts` (Termination flow) |
+| List time off types  | `GET /v1/timeoff/types`                          | `getV1TimeoffTypes`                     | No                                                                       |
+| Approve a request    | `POST /v1/timeoff/{timeoff_id}/approve`          | `postV1TimeoffTimeoffIdApprove`         | Yes, `TimeOff/api.ts`                                                    |
+| Decline a request    | `POST /v1/timeoff/{timeoff_id}/decline`          | `postV1TimeoffTimeoffIdDecline`         | Yes, `TimeOff/api.ts`                                                    |
+| Leave policy summary | `GET /v1/leave-policies/summary/{employment_id}` | `getV1LeavePoliciesSummaryEmploymentId` | Yes, `src/common/api/timeoff.ts` (Termination flow)                      |
+| Leave policy details | `GET /v1/leave-policies/details/{employment_id}` | `getV1LeavePoliciesDetailsEmploymentId` | No                                                                       |
 
 Generated type names for each operation **[types]**:
 
@@ -76,8 +76,8 @@ The JSDoc scopes table, category `time_and_attendance` ("Manage timeoffs")
 | Leave policy summary, details | `timeoff:read`  | `timeoff:write`                    |
 | Approve, decline              | none (`-`)      | `timeoff:write`                    |
 
-So reads work with `timeoff:read` or `timeoff:write`. Approving and declining
-need `timeoff:write`.
+According to that JSDoc, reads accept `timeoff:read` or `timeoff:write`, and
+approving and declining need `timeoff:write`.
 
 One mismatch inside the generated client: the request types of the show, list
 and types operations declare a required `headers.Authorization: string`, and its
@@ -276,19 +276,21 @@ No in-scope operation declares 403 or 409. The 429 entries use
 
 ## Specific contract points
 
-| Point                       | What the client says                                                                                                                                                                                                                              |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `approver_id` on approve    | Required key, nullable value (`string \| null`) **[types]**. No meaning of `null` is documented **[doc]**.                                                                                                                                        |
-| `decline_reason` on decline | Required key, nullable value (`string \| null`) **[types]**. No length or content rule is documented.                                                                                                                                             |
-| `taken` status              | In the enum: "the approved time off has been taken (the dates have passed)" **[doc]**. Nothing says what approving a request whose dates have passed returns.                                                                                     |
-| `public_holiday`            | A value of `ResponseTimeoffType`, `TimeoffType` and the leave policy `leave_policy_variant_id` unions **[types]**, and the example given for `automatic: true` records **[doc]**. It is not a status and not a decline reason.                    |
-| V1/V2 variants              | No in-scope operation has a second variant. The only time-off pair is the update route: `patchV1TimeoffId2` (PATCH) and `patchV1TimeoffId` (PUT), both on `/v1/timeoff/{id}` with the same JSDoc. Nothing says which to use. (Out of scope here.) |
-| Pagination                  | `page` and `page_size`, both optional `number`, with no default or maximum **[types]**. Other list endpoints in the same file say "defaults to 20, limited to 100"; the time-off list does not.                                                   |
-| Several approvers           | A record has one `approver_id` and one `approved_at` **[types]**. Nothing defines a list of approvers, approval steps or an approval chain.                                                                                                       |
+| Point                       | What the client says                                                                                                                                                                                                           |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `approver_id` on approve    | Required key, nullable value (`string \| null`) **[types]**. No meaning of `null` is documented **[doc]**.                                                                                                                     |
+| `decline_reason` on decline | Required key, nullable value (`string \| null`) **[types]**. No length or content rule is documented.                                                                                                                          |
+| `taken` status              | In the enum: "the approved time off has been taken (the dates have passed)" **[doc]**. Nothing says what approving a request whose dates have passed returns.                                                                  |
+| `public_holiday`            | A value of `ResponseTimeoffType`, `TimeoffType` and the leave policy `leave_policy_variant_id` unions **[types]**, and the example given for `automatic: true` records **[doc]**. It is not a status and not a decline reason. |
+| V1/V2 variants              | No in-scope operation has a second variant.                                                                                                                                                                                    |
+| Pagination                  | `page` and `page_size`, both optional `number`, with no default or maximum **[types]**. Other list endpoints in the same file say "defaults to 20, limited to 100"; the time-off list does not.                                |
+| Several approvers           | A record has one `approver_id` and one `approved_at` **[types]**. Nothing defines a list of approvers, approval steps or an approval chain.                                                                                    |
 
 ## Discrepancies
 
-Differences between the assumed contract and the generated client.
+Differences between what we expected the API to have and what the generated
+client says. The "Assumed" column and the **[assumed]** label mark a value or
+behaviour we expected, which the generated client does not confirm.
 
 | Area                      | Assumed                                                                                                                 | Generated client                                                                                                                                                                                                                       |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
