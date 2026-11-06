@@ -5,7 +5,7 @@ import { ButtonHTMLAttributes, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { NormalizedFieldError } from '@/src/lib/mutations';
 import { handleStepError } from '@/src/lib/utils';
-import { ContractorInvoicePreview } from '@/src/flows/ContractorOnboarding/types';
+import type { ContractorInvoicePreview } from '@remoteoss/remote-flows-core';
 import { Drawer } from '@/src/components/shared/drawer/Drawer';
 
 type PreviewInvoiceButtonProps = Omit<

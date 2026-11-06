@@ -15,12 +15,12 @@ import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
-import { INVOICE_SCHEDULE_STATUS } from '@/src/common/invoice-schedules/constants';
-import { buildCreateInvoiceScheduleSchema } from '@/src/common/invoice-schedules/json-schema';
 import {
+  buildCreateInvoiceScheduleSchema,
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
-} from '@/src/common/invoice-schedules/utils';
+  INVOICE_SCHEDULE_STATUS,
+} from '@remoteoss/remote-flows-core';
 import { JSFModify } from '@/src/flows/types';
 
 type UseGetCreateInvoiceScheduleSchemaParams = {
