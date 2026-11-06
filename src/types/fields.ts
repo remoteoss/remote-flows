@@ -104,20 +104,6 @@ export type FileComponentProps = FieldComponentProps & {
   fieldData: FieldFileDataProps;
 };
 
-/**
- * Reference to a file already uploaded, as returned by the API on `GET` for `inputType: file`
- * fields. Sent back unchanged on the next submit to keep the file instead of re-uploading it.
- *
- * A custom `inputType: file` component (see {@link FileComponentProps}) can receive one of these
- * in place of a real `File` for a field that already had a file attached — it carries no binary
- * content and doesn't implement the `Blob`/`File` interface.
- */
-export type UploadedFileReference = {
-  name: string;
-  id: string;
-  sub_type?: string | null;
-};
-
 type FieldCountryDataProps = Omit<FieldDataProps, 'meta'> & {
   $meta: {
     regions: Record<string, string[]>;
@@ -276,3 +262,5 @@ export type TimeFieldDataProps = FieldDataProps & {
 export type TimeFieldComponentProps = FieldComponentProps & {
   fieldData: TimeFieldDataProps;
 };
+
+export type { UploadedFileReference } from '@remoteoss/remote-flows-core';
