@@ -1,6 +1,6 @@
+import { ONE_TIME_PERIODICITY } from './constants';
+import { buildCreateInvoiceScheduleSchema } from './jsonSchema';
 import {
-  buildCreateInvoiceScheduleSchema,
-  ONE_TIME_PERIODICITY,
   buildCustomDays,
   buildInvoiceItems,
   buildInvoiceScheduleFormValues,
@@ -8,9 +8,9 @@ import {
   buildInvoiceSchedulePayload,
   buildRecurrence,
   toOrdinal,
-} from '@/src/common/invoice-schedules';
-import { createHeadlessForm } from '@/src/common/createHeadlessForm';
-import { $TSFixMe } from '@/src/types/remoteFlows';
+} from './utils';
+import { createHeadlessForm } from '../../form/headlessForm';
+import type { $TSFixMe } from '../../types';
 
 const baseValues = {
   currency: 'USD',
