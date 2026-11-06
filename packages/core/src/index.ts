@@ -7,7 +7,7 @@ export {
   isFieldSkipped,
   isForceValue,
   resolveFieldDynamicProperties,
-} from './fieldHelpers';
+} from './form/fieldHelpers';
 export {
   enableAckFields,
   getFieldsWithFlatFieldsets,
