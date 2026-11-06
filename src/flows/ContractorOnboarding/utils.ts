@@ -176,11 +176,3 @@ export const getBasicInformationSchemaVersion = (options?: {
     options?.jsonSchemaVersion?.employment_basic_information || DEFAULT_VERSION
   );
 };
-
-// Invoice-schedule payload builders are shared with the standalone InvoiceSchedule flow and
-// live in src/common/invoice-schedules. Re-exported here so existing imports keep resolving.
-export {
-  buildInvoiceItems,
-  buildInvoicePreviewPayload,
-  buildInvoiceSchedulePayload,
-} from '@/src/common/invoice-schedules/utils';

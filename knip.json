@@ -1,0 +1,14 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": ["src/index.tsx"],
+      "project": ["src/**/*.{ts,tsx}"],
+      "ignore": ["src/client/**"]
+    },
+    "packages/core": {
+      "project": ["src/**/*.ts"],
+      "includeEntryExports": true
+    }
+  }
+}

@@ -4,11 +4,11 @@ import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
-import { INVOICE_SCHEDULE_STATUS } from '@/src/common/invoice-schedules/constants';
-import { buildCreateInvoiceScheduleSchema } from '@/src/common/invoice-schedules/json-schema';
 import { JSFModify } from '@/src/flows/types';
 import {
+  buildCreateInvoiceScheduleSchema,
   createInvoiceScheduleMutation,
+  INVOICE_SCHEDULE_STATUS,
   invoiceSchedulesOptions as invoiceSchedulesOptionsCore,
   previewContractorInvoiceMutation,
   skipInvoiceScheduleMutation,

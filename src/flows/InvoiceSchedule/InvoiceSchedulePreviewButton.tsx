@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes, useState } from 'react';
 import { Drawer } from '@/src/components/shared/drawer/Drawer';
 import { useFormFields } from '@/src/context';
-import { ContractorInvoicePreview } from '@/src/common/invoice-schedules/types';
+import type { ContractorInvoicePreview } from '@remoteoss/remote-flows-core';
 import { useInvoiceScheduleContext } from '@/src/flows/InvoiceSchedule/context';
 import { cn, handleStepError } from '@/src/lib/utils';
 import { NormalizedFieldError } from '@/src/lib/mutations';
