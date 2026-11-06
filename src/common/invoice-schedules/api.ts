@@ -1,16 +1,16 @@
 import { useMemo } from 'react';
-import { useMutation, useQuery, queryOptions } from '@tanstack/react-query';
-import { Client } from '@/src/client/client';
-import { useClient } from '@/src/context';
+import { useQuery } from '@tanstack/react-query';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
-import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
+import { useContractorCurrenciesOptions } from '@/src/common/api/contractor-contract-details';
 import { JSFModify } from '@/src/flows/types';
+import { createClientMutation, withClient } from '@/src/lib/withClient';
 import {
   buildCreateInvoiceScheduleSchema,
   createInvoiceScheduleMutation,
-  INVOICE_SCHEDULE_STATUS,
   invoiceSchedulesOptions as invoiceSchedulesOptionsCore,
   previewContractorInvoiceMutation,
+  selectContractorCurrencyCodes,
+  selectExistingInvoiceSchedule,
   skipInvoiceScheduleMutation,
   updateInvoiceScheduleMutation,
 } from '@remoteoss/remote-flows-core';
@@ -48,11 +48,10 @@ export const useGetCreateInvoiceScheduleSchema = ({
   includeFieldsets,
   initialValues,
 }: UseGetCreateInvoiceScheduleSchemaParams) => {
-  const { data: currencies, isLoading } = useContractorCurrencies({
-    employmentId: employmentId as string,
-    options: {
-      queryOptions: { enabled: enabled && Boolean(employmentId) },
-    },
+  const { data: currencies, isLoading } = useQuery({
+    ...useContractorCurrenciesOptions(employmentId as string),
+    enabled: enabled && Boolean(employmentId),
+    select: selectContractorCurrencyCodes,
   });
 
   const schema = useMemo(() => {
@@ -63,9 +62,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
     }
 
     return buildCreateInvoiceScheduleSchema({
-      currencies: currencies.map(
-        (currency: { code: string; source: string }) => currency.code,
-      ),
+      currencies,
       isContractorOfRecord,
       includeFieldsets,
     });
@@ -87,14 +84,9 @@ export const useGetCreateInvoiceScheduleSchema = ({
   };
 };
 
-/**
- * Query options factory for fetching invoice schedules by employment id
- * @param client - The API client
- * @param employmentId - The employment ID
- * @returns Query options for contractor invoice schedules
- */
-export const invoiceSchedulesOptions = (client: Client, employmentId: string) =>
-  queryOptions(invoiceSchedulesOptionsCore(client, employmentId));
+export const useInvoiceSchedulesOptions = withClient(
+  invoiceSchedulesOptionsCore,
+);
 
 /**
  * Get the last invoice schedule for an employment that matches specific statuses.
@@ -111,20 +103,10 @@ export const useGetExistingInvoiceSchedule = ({
   employmentId: string;
   options?: { queryOptions?: { enabled?: boolean } };
 }) => {
-  const { client } = useClient();
   return useQuery({
-    ...invoiceSchedulesOptions(client as Client, employmentId),
+    ...useInvoiceSchedulesOptions(employmentId),
     enabled: options?.queryOptions?.enabled,
-    select: (response) => {
-      // Find the first invoice schedule that matches the editing criteria
-      return response.data?.data?.contractor_invoice_schedules?.find(
-        (invoice) =>
-          invoice.status ===
-            INVOICE_SCHEDULE_STATUS.PENDING_CONTRACTOR_ACTION ||
-          invoice.status === INVOICE_SCHEDULE_STATUS.PROCESSING ||
-          invoice.status === INVOICE_SCHEDULE_STATUS.PENDING_COMPANY_ACTION,
-      );
-    },
+    select: selectExistingInvoiceSchedule,
   });
 };
 
@@ -134,10 +116,9 @@ export const useGetExistingInvoiceSchedule = ({
  * @param values - The form values containing invoice schedule data
  * @returns The created invoice schedules
  */
-export const useCreateInvoiceSchedule = () => {
-  const { client } = useClient();
-  return useMutation(createInvoiceScheduleMutation(client as Client));
-};
+export const useCreateInvoiceSchedule = createClientMutation(
+  createInvoiceScheduleMutation,
+);
 
 /**
  * Updates an existing contractor invoice schedule
@@ -145,20 +126,18 @@ export const useCreateInvoiceSchedule = () => {
  * @param values - The form values containing invoice schedule data
  * @returns The updated invoice schedule
  */
-export const useUpdateInvoiceSchedule = () => {
-  const { client } = useClient();
-  return useMutation(updateInvoiceScheduleMutation(client as Client));
-};
+export const useUpdateInvoiceSchedule = createClientMutation(
+  updateInvoiceScheduleMutation,
+);
 
 /**
  * Skips (cancels) an existing contractor invoice schedule by marking it as deleted.
  * @param scheduleId - The invoice schedule ID
  * @returns The updated invoice schedule
  */
-export const useSkipInvoiceSchedule = () => {
-  const { client } = useClient();
-  return useMutation(skipInvoiceScheduleMutation(client as Client));
-};
+export const useSkipInvoiceSchedule = createClientMutation(
+  skipInvoiceScheduleMutation,
+);
 
 /**
  * Previews a contractor invoice as a draft PDF, without persisting it.
@@ -166,7 +145,6 @@ export const useSkipInvoiceSchedule = () => {
  * @param values - The form values containing invoice details
  * @returns The base64-encoded PDF preview
  */
-export const usePreviewContractorInvoice = () => {
-  const { client } = useClient();
-  return useMutation(previewContractorInvoiceMutation(client as Client));
-};
+export const usePreviewContractorInvoice = createClientMutation(
+  previewContractorInvoiceMutation,
+);

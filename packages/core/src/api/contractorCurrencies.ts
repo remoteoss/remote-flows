@@ -15,3 +15,15 @@ export const contractorCurrenciesOptions = (
       },
     }),
 });
+
+type ContractorCurrenciesResponse = Awaited<
+  ReturnType<ReturnType<typeof contractorCurrenciesOptions>['queryFn']>
+>;
+
+export const selectContractorCurrencies = ({
+  data,
+}: ContractorCurrenciesResponse) => data?.data;
+
+export const selectContractorCurrencyCodes = (
+  response: ContractorCurrenciesResponse,
+) => selectContractorCurrencies(response)?.map((currency) => currency.code);

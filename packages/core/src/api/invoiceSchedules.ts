@@ -11,6 +11,7 @@ import type {
   UpdateScheduleContractorInvoiceParams,
 } from '../client/types.gen';
 import type { Client } from '../client/client';
+import { INVOICE_SCHEDULE_STATUS } from '../domains/invoice-schedule/constants';
 import {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
@@ -35,6 +36,23 @@ export const invoiceSchedulesOptions = (
     return response;
   },
 });
+
+type InvoiceSchedulesResponse = Awaited<
+  ReturnType<ReturnType<typeof invoiceSchedulesOptions>['queryFn']>
+>;
+
+const EDITABLE_STATUSES: string[] = [
+  INVOICE_SCHEDULE_STATUS.PENDING_CONTRACTOR_ACTION,
+  INVOICE_SCHEDULE_STATUS.PROCESSING,
+  INVOICE_SCHEDULE_STATUS.PENDING_COMPANY_ACTION,
+];
+
+export const selectExistingInvoiceSchedule = (
+  response: InvoiceSchedulesResponse,
+) =>
+  response.data?.data?.contractor_invoice_schedules?.find((schedule) =>
+    EDITABLE_STATUSES.includes(schedule.status),
+  );
 
 export const createInvoiceScheduleMutation = (client: Client) => ({
   mutationFn: async ({

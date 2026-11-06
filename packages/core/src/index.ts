@@ -47,12 +47,17 @@ export type { ContractorInvoicePreview } from './domains/invoice-schedule/types'
 export { clearBase64Data, formatCurrency } from './format';
 export { createClient } from './createClient';
 export type { AuthResponse, CreateClientOptions } from './createClient';
-export { contractorCurrenciesOptions } from './api/contractorCurrencies';
+export {
+  contractorCurrenciesOptions,
+  selectContractorCurrencies,
+  selectContractorCurrencyCodes,
+} from './api/contractorCurrencies';
 export { employmentOptions } from './api/employment';
 export {
   createInvoiceScheduleMutation,
   invoiceSchedulesOptions,
   previewContractorInvoiceMutation,
+  selectExistingInvoiceSchedule,
   skipInvoiceScheduleMutation,
   updateInvoiceScheduleMutation,
 } from './api/invoiceSchedules';
