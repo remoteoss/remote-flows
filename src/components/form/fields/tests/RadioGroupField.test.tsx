@@ -82,6 +82,13 @@ describe('RadioGroupField Component', () => {
     expect(screen.getByText('Option 2')).toBeInTheDocument();
   });
 
+  it('disables every option when the field is disabled', () => {
+    renderWithFormContext({ ...defaultProps, disabled: true });
+
+    expect(screen.getByLabelText('Option 1')).toBeDisabled();
+    expect(screen.getByLabelText('Option 2')).toBeDisabled();
+  });
+
   it('handles radio selection change correctly', () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
