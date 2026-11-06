@@ -1,117 +1,16 @@
-import { FieldValues } from 'react-hook-form';
-import {
-  createHeadlessForm as baseCreateHeadlessForm,
-  modify,
-} from '@remoteoss/remote-json-schema-form-kit';
-import { convertToCents } from '@/src/components/form/utils';
+import { createHeadlessForm as createHeadlessFormCore } from '@remoteoss/remote-flows-core';
+import type { FieldValues } from '@remoteoss/remote-flows-core';
 import {
   JSFModify,
   JSONSchemaFormResultWithFieldsets,
 } from '@/src/flows/types';
-import { findFieldsByType } from '@/src/flows/utils';
-import { JSFFieldset } from '@/src/types/remoteFlows';
 
-/*
- * Creates a headless form from a JSON Schema, useful to avoid code duplication when creating headless forms.
- * @param jsfSchema - The JSON Schema
- * @param fieldValues - The field values
- * @param options - The options
- * @returns The headless form
- */
 export const createHeadlessForm = (
   jsfSchema: Record<string, unknown>,
   fieldValues?: FieldValues,
   options?: { jsfModify?: JSFModify; transformMoneyFields?: boolean },
-): JSONSchemaFormResultWithFieldsets => {
-  const transformMoneyFields = options?.transformMoneyFields ?? true;
-  if (options && options.jsfModify) {
-    const { required, allOf, ...modifyConfig } = options.jsfModify;
-    // muteLogging: true suppresses the generic library log; we surface the
-    // actual warnings ourselves when present so they're actionable.
-    const { schema, warnings } = modify(jsfSchema, {
-      ...modifyConfig,
-      muteLogging: true,
-    } as Parameters<typeof modify>[1]);
-    if (warnings && warnings.length > 0) {
-      // FIELD_TO_CHANGE_NOT_FOUND is expected noise, not a bug: some field
-      // customizations (e.g. equity_compensation) are shared across every
-      // onboarding contract details schema even though not every country's schema defines
-      // that field. Only surface the warning types that do indicate a real
-      // misconfiguration, and only in this repo's own dev build (see
-      // RF_INTERNAL_DEV in tsdown.config.ts) — never to consumers of the
-      // published package.
-      const actionableWarnings = warnings.filter(
-        (warning) => warning?.type !== 'FIELD_TO_CHANGE_NOT_FOUND',
-      );
-      if (
-        actionableWarnings.length > 0 &&
-        process.env.RF_INTERNAL_DEV === 'true'
-      ) {
-        console.warn('jsfModify warnings:', actionableWarnings);
-      }
-    }
-    jsfSchema = schema;
-
-    if (required) {
-      const baseRequired = Array.isArray(schema.required)
-        ? schema.required
-        : [];
-
-      if (typeof required === 'function') {
-        // Function: allows full control over required fields
-        jsfSchema.required = required(baseRequired);
-      } else {
-        // Array: merge with existing required fields (backwards compatible)
-        jsfSchema.required = [...baseRequired, ...required];
-      }
-    }
-
-    if (allOf) {
-      jsfSchema.allOf = [
-        ...(Array.isArray(schema.allOf) ? schema.allOf : []),
-        ...allOf,
-      ];
-    }
-  }
-
-  let moneyFieldsData: Record<string, number | null> = {};
-
-  if (fieldValues && transformMoneyFields) {
-    const moneyFields = findFieldsByType(jsfSchema.properties || {}, 'money');
-    moneyFieldsData = moneyFields.reduce<Record<string, number | null>>(
-      (acc, field) => {
-        acc[field] = convertToCents(fieldValues[field]);
-        return acc;
-      },
-      {},
-    );
-  }
-
-  /**
-   * We create a deep copy of the field values to avoid modifying the original object.
-   * This problem is caused by json-schema-form-v0.
-   */
-  const initialValues = JSON.parse(
-    JSON.stringify({
-      ...fieldValues,
-      ...moneyFieldsData,
-    }),
-  );
-
-  return {
-    meta: {
-      // Support for both x-jsf-fieldsets and x-rmt-flatFieldsets
-      // before x-jsf-fieldsets was used, but it was migrated to x-rmt-flatFieldsets
-      // this allows to everything to keep working as expected without renaming the whole thing
-      'x-jsf-fieldsets':
-        (jsfSchema['x-jsf-fieldsets'] as JSFFieldset) ||
-        (jsfSchema['x-rmt-flatFieldsets'] as JSFFieldset),
-      'x-jsf-presentation': jsfSchema['x-jsf-presentation'] as
-        | Record<string, unknown>
-        | undefined,
-    },
-    ...baseCreateHeadlessForm(jsfSchema, {
-      initialValues,
-    }),
-  };
-};
+): JSONSchemaFormResultWithFieldsets =>
+  createHeadlessFormCore(jsfSchema, fieldValues, {
+    ...options,
+    logModifyWarnings: process.env.RF_INTERNAL_DEV === 'true',
+  });

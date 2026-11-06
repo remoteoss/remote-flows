@@ -1,9 +1,4 @@
-import { JSFFieldset } from '@/src/types/remoteFlows';
-import type {
-  ModifyConfig,
-  FormResult as FormResultNext,
-  FormResultLegacy,
-} from '@remoteoss/remote-json-schema-form-kit';
+import type { JSFModify } from '@remoteoss/remote-flows-core';
 import type { NormalizedFieldError } from '@/src/lib/mutations';
 
 type Success<T> = {
@@ -41,19 +36,6 @@ export type JSONSchemaFormType =
   // Benefits forms
   | 'benefit_renewal_request';
 
-export type JSFModify = ModifyConfig & {
-  /**
-   * allows to specify additional required fields for the form.
-   * Can be either an array of field names to add, or a function that receives
-   * the existing required fields and returns a new array.
-   */
-  required?: string[] | ((existingRequired: string[]) => string[]);
-  /**
-   * allows to specify additional allOf rules for the form.
-   */
-  allOf?: unknown[];
-};
-
 export type FlowOptions = {
   jsfModify?: JSFModify;
   jsonSchemaVersion?: {
@@ -67,15 +49,6 @@ export type FlowOptions = {
     benefit_offers_form_schema?: number;
     contractor_contract_details_form_schema?: number;
     employment_basic_information?: number | 'latest';
-  };
-};
-
-type FormResult = FormResultNext | FormResultLegacy;
-
-export type JSONSchemaFormResultWithFieldsets = FormResult & {
-  meta: {
-    'x-jsf-fieldsets': JSFFieldset;
-    'x-jsf-presentation'?: Record<string, unknown>;
   };
 };
 
@@ -114,3 +87,8 @@ export type JSFModifyField = {
 };
 
 export type { Field } from '@remoteoss/remote-flows-core';
+
+export type {
+  JSFModify,
+  JSONSchemaFormResultWithFieldsets,
+} from '@remoteoss/remote-flows-core';
