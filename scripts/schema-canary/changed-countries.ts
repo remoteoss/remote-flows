@@ -12,10 +12,6 @@ export const OTHER_INPUTS = [
   'src/common/headlessForm.ts',
   'src/components/form/utils.ts',
   'src/flows/Onboarding/utils.ts',
-  'packages/core/src/headlessForm.ts',
-  'packages/core/src/form.ts',
-  'packages/core/src/fieldHelpers.ts',
-  'packages/core/src/fieldTypes.ts',
   'packages/core/src/money.ts',
   'example/src/flows/Onboarding/constants.ts',
   'example/playwright.canary.config.ts',
@@ -26,6 +22,7 @@ export const OTHER_INPUTS = [
   '.github/workflows/schema-canary.yml',
 ];
 export const OTHER_INPUT_PREFIXES = [
+  'packages/core/src/form/',
   'scripts/schema-canary/',
   'example/e2e/canary/',
   '.github/actions/schema-canary-browser/',
