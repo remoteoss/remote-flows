@@ -57,7 +57,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CHE: {
     // Switzerland
-    contract_details: 2,
+    contract_details: 8,
   },
   CHL: {
     // Chile
@@ -65,7 +65,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CHN: {
     // China
-    contract_details: 8,
+    contract_details: 9,
   },
   COL: {
     // Colombia
