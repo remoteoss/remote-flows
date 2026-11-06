@@ -24,7 +24,7 @@ export function DatePickerFieldDefault({
   fieldData,
   fieldState,
 }: DatePickerComponentProps) {
-  const { name, label, description, minDate, maxDate } = fieldData;
+  const { name, label, description, minDate, maxDate, disabled } = fieldData;
   const minDateValue = minDate ? new Date(minDate) : undefined;
   const maxDateValue = maxDate ? new Date(maxDate) : undefined;
   const [open, setOpen] = useState(false);
@@ -44,7 +44,7 @@ export function DatePickerFieldDefault({
       <FormLabel className='RemoteFlows__DatePickerField__Label'>
         {label}
       </FormLabel>
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={(next) => !disabled && setOpen(next)}>
         <PopoverTrigger asChild>
           <FormControl>
             <div>
@@ -56,6 +56,7 @@ export function DatePickerFieldDefault({
                   !field.value && 'text-muted-foreground',
                 )}
                 data-testid={`date-picker-button-${name}`}
+                disabled={disabled}
               >
                 {field.value && <>{format(field.value, 'yyyy-MM-dd')}</>}
                 <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
