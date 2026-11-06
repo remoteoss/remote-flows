@@ -25,7 +25,7 @@ pnpm run check-format       # oxfmt --check (CI gate)
 pnpm run check-exports      # @arethetypeswrong/cli — verifies the package.json exports map
 pnpm run size               # bundle analysis → out/bundle-analysis.json
 pnpm run size:check         # fails if .sizelimit.json thresholds are exceeded
-pnpm run openapi-ts         # regenerate src/client/* from production gateway OpenAPI
+pnpm run openapi-ts         # regenerate packages/core/src/client/* from production gateway OpenAPI
 pnpm run openapi-ts:local   # regenerate from local gateway (openapi-ts.config.local.ts)
 pnpm run ci                 # full local CI: build + check-format + check-exports + lint + type-check + test (not `pnpm ci`, which is pnpm's clean install)
 pnpm run ci:digest <pr>     # summary of a PR's failing CI checks (failure type, error lines, next step, every failing Playwright spec) - run it before reading raw job logs
@@ -73,7 +73,7 @@ Flows are exposed two ways: the prebuilt `<FlowNameFlow render={...}>` component
 
 ### Generated API client
 
-`src/client/` is **fully generated** by `@hey-api/openapi-ts` from [openapi-ts.config.ts](openapi-ts.config.ts) (production gateway) or `openapi-ts.config.local.ts` (local gateway). Never hand-edit `*.gen.ts`. After schema changes, run `pnpm run openapi-ts` and commit the regenerated files. Import types from `src/client/types.gen.ts` and SDK functions from `src/client/sdk.gen.ts`. `.oxlintrc.json` ignores `src/client/**/*.gen.ts` from lint.
+`packages/core/src/client/` is **fully generated** by `@hey-api/openapi-ts` from [openapi-ts.config.ts](openapi-ts.config.ts) (production gateway) or `openapi-ts.config.local.ts` (local gateway). Never hand-edit `*.gen.ts`. After schema changes, run `pnpm run openapi-ts` and commit the regenerated files. Import types from `@/src/client/types.gen` and SDK functions from `@/src/client/sdk.gen`; those files only re-export the generated ones from core. `.oxlintrc.json` ignores `packages/core/src/client/**/*.gen.ts` from lint.
 
 ### Forms
 
@@ -133,7 +133,7 @@ Path-scoped rules live in `.agents/rules/`. Claude Code loads each one when you 
 ## Things that look broken but aren't
 
 - `dist/` is checked into the working tree during dev (it's gitignored, but `prepare` runs `build`); don't be alarmed by churn there.
-- `src/client/*.gen.ts` regenerates wholesale — diffs will be large after `pnpm run openapi-ts` runs.
+- `packages/core/src/client/*.gen.ts` regenerates wholesale — diffs will be large after `pnpm run openapi-ts` runs.
 - The error boundary's `useParentErrorBoundary` defaults to `true` in code but `false` in the README example; the README documents the recommended consumer config, not the default.
 
 ## Agent configuration
