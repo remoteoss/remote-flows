@@ -188,6 +188,4 @@ export type InvoiceScheduleResponse = {
   invoiceSchedulePreference: string;
 };
 
-// Shared with the standalone InvoiceSchedule flow, so it lives in
-// src/common/invoice-schedules. Re-exported here so existing imports keep resolving.
-export type { ContractorInvoicePreview } from '@/src/common/invoice-schedules/types';
+export type { ContractorInvoicePreview } from '@remoteoss/remote-flows-core';

@@ -30,15 +30,17 @@ import {
   useSetContractOrigin,
   useGetContractOriginSchema,
   useGetInvoiceScheduleSchema,
-  useGetCreateInvoiceScheduleSchema,
-  useCreateInvoiceSchedule,
-  useUpdateInvoiceSchedule,
-  useSkipInvoiceSchedule,
-  usePreviewContractorInvoice,
-  useGetExistingInvoiceSchedule,
 } from '@/src/flows/ContractorOnboarding/api';
+import {
+  useCreateInvoiceSchedule,
+  useGetCreateInvoiceScheduleSchema,
+  useGetExistingInvoiceSchedule,
+  usePreviewContractorInvoice,
+  useSkipInvoiceSchedule,
+  useUpdateInvoiceSchedule,
+} from '@/src/common/invoice-schedules/api';
 import { useCompanyOpenTasks } from '@/src/common/api/companies';
-import { buildInvoiceScheduleFormValues } from '@/src/common/invoice-schedules';
+import { buildInvoiceScheduleFormValues } from '@remoteoss/remote-flows-core';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
   useCreateContractorContractDocument,
