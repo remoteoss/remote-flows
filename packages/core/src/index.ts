@@ -1,5 +1,4 @@
 export { convertFromCents, convertToCents, round } from './money';
-export { supportedTypes } from './fieldTypes';
 export {
   checkFieldHasForcedValue,
   fieldsetHasVisibleContent,
@@ -7,7 +6,6 @@ export {
   getFieldRenderType,
   isFieldSkipped,
   isForceValue,
-  isMultiSelect,
   resolveFieldDynamicProperties,
 } from './fieldHelpers';
 export {
@@ -15,13 +13,20 @@ export {
   getFieldsWithFlatFieldsets,
   getInitialValues,
   getMinStartDate,
+  getNestedValue,
   isDateDisabled,
-  parseFormValuesToAPI,
   parseJSFToValidate,
-  parseSubmitValues,
-} from './form';
-export type { FileConverter } from './form';
-export { getNestedValue } from './object';
+} from './form/form';
+export {
+  buildHeadlessForm,
+  createHeadlessForm,
+  parseValuesForValidation,
+  withFieldsetObjects,
+} from './form/headlessForm';
+export type {
+  HeadlessFormOptions,
+  HeadlessFormStrategy,
+} from './form/headlessForm';
 export type {
   $TSFixMe,
   Field,
@@ -32,19 +37,11 @@ export type {
   JSONSchemaFormResultWithFieldsets,
   UploadedFileReference,
 } from './types';
-export {
-  buildHeadlessForm,
-  createHeadlessForm,
-  findFieldsByType,
-  parseValuesForValidation,
-  withFieldsetObjects,
-} from './headlessForm';
-export type { HeadlessFormOptions, HeadlessFormStrategy } from './headlessForm';
-export { INVOICE_SCHEDULE_STATUS } from './invoiceSchedules/constants';
-export { buildCreateInvoiceScheduleSchema } from './invoiceSchedules/jsonSchema';
+export { INVOICE_SCHEDULE_STATUS } from './domains/invoice-schedule/constants';
+export { buildCreateInvoiceScheduleSchema } from './domains/invoice-schedule/jsonSchema';
 export {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
   buildInvoiceScheduleFormValues,
-} from './invoiceSchedules/utils';
-export type { ContractorInvoicePreview } from './invoiceSchedules/types';
+} from './domains/invoice-schedule/utils';
+export type { ContractorInvoicePreview } from './domains/invoice-schedule/types';

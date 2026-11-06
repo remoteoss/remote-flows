@@ -1,5 +1,5 @@
 import { parseValuesForValidation } from './headlessForm';
-import type { JSONSchemaFormResultWithFieldsets } from './types';
+import type { JSONSchemaFormResultWithFieldsets } from '../types';
 
 describe('parseValuesForValidation', () => {
   it('converts selected files with the converter it is given', async () => {

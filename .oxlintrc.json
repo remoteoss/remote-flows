@@ -52,7 +52,7 @@
     {
       "files": [
         "scripts/**",
-        "packages/core/src/headlessForm.ts",
+        "packages/core/src/form/headlessForm.ts",
         "src/common/createHeadlessForm.tsx",
         "src/common/headlessForm.ts",
         "src/common/useHeadlessForm.ts",
