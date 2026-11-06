@@ -95,5 +95,42 @@ describe('parseJSFToValidate', () => {
         }),
       ).toEqual({ first_day: '2', second_day: '16' });
     });
+
+    it('replaces a stale value inside a grouped fieldset', async () => {
+      const groupedReadOnlySchema = {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          settings: {
+            title: 'Settings',
+            type: 'object',
+            additionalProperties: false,
+            'x-jsf-presentation': { inputType: 'fieldset' },
+            properties: {
+              first_day: readOnlySchema.properties.first_day,
+              second_day: readOnlySchema.properties.second_day,
+            },
+          },
+        },
+        'x-jsf-logic': {
+          computedValues: {
+            second_day_value: {
+              rule: { cat: [{ '+': [{ var: 'settings.first_day' }, 14] }] },
+            },
+          },
+        },
+        'x-rmt-meta': { jsfVersion: '1' },
+      };
+      const form = createHeadlessForm(groupedReadOnlySchema as $TSFixMe, {});
+      const values = { settings: { first_day: '2', second_day: '15' } };
+
+      await form.handleValidation(values);
+
+      expect(
+        await parseJSFToValidate(values, form.fields as $TSFixMe[], {
+          isPartialValidation: false,
+        }),
+      ).toEqual({ settings: { first_day: '2', second_day: '16' } });
+    });
   });
 });

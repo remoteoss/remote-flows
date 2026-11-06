@@ -158,10 +158,22 @@ function prefillReadOnlyFields(
       return;
     }
 
+    /*  const fieldValue = values[fieldName!];
+
+    if (
+      field.type === supportedTypes.FIELDSET &&
+      typeof fieldValue === 'object' &&
+      fieldValue !== null &&
+      !Array.isArray(fieldValue)
+    ) {
+      newValues[fieldName!] = prefillReadOnlyFields(fieldValue, field.fields);
+      return;
+    } */
+
     if (isFieldLocked(field) && field.default !== undefined) {
       newValues[fieldName!] = field.default;
     } else {
-      newValues[fieldName!] = values[fieldName!];
+      newValues[fieldName!] = fieldValue;
     }
   });
 
