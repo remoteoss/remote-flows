@@ -14,7 +14,7 @@ import type { Client } from '../client/client';
 import {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
-} from '../invoiceSchedules/utils';
+} from '../domains/invoice-schedule/utils';
 import type { FieldValues } from '../types';
 
 export const invoiceSchedulesOptions = (

@@ -40,7 +40,6 @@ export type {
 export { INVOICE_SCHEDULE_STATUS } from './domains/invoice-schedule/constants';
 export { buildCreateInvoiceScheduleSchema } from './domains/invoice-schedule/jsonSchema';
 export {
-  buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
   buildInvoiceScheduleFormValues,
 } from './domains/invoice-schedule/utils';
