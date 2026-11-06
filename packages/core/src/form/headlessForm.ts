@@ -2,7 +2,7 @@ import {
   createHeadlessForm as baseCreateHeadlessForm,
   modify,
 } from '@remoteoss/remote-json-schema-form-kit';
-import { convertToCents } from './money';
+import { convertToCents } from '../money';
 import { parseJSFToValidate } from './form';
 import type { FileConverter } from './form';
 import type {
@@ -11,12 +11,9 @@ import type {
   JSFModify,
   JSONSchemaFormResultWithFieldsets,
   $TSFixMe,
-} from './types';
+} from '../types';
 
-export function findFieldsByType(
-  fields: Record<string, $TSFixMe>,
-  type: string,
-) {
+function findFieldsByType(fields: Record<string, $TSFixMe>, type: string) {
   const fieldsNames = [];
   for (const [key, value] of Object.entries(fields)) {
     // old schemas use type, new schemas use inputType
