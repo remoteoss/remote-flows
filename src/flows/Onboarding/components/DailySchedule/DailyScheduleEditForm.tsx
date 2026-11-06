@@ -30,7 +30,7 @@ export const DailyScheduleEditForm = ({
   };
 
   return (
-    <div className='space-y-4 RemoteFlows__DailyScheduleForm'>
+    <div className='RemoteFlows__DailyScheduleForm'>
       <p className='text-gray-600 text-sm mb-4 RemoteFlows__DailyScheduleForm__Description'>
         The times displayed are in the employee&apos;s time zone in the 24-hour
         format.

@@ -88,12 +88,12 @@ export function ContractDocumentForm({
   };
 
   return (
-    <div className='space-y-4'>
+    <div className='RemoteFlows__ContractDocumentForm__Container'>
       <Form {...form}>
         <form
           id={formId}
           onSubmit={form.handleSubmit(handleSubmit)}
-          className='space-y-4 RemoteFlows__ContractDocumentForm'
+          className='RemoteFlows__ContractDocumentForm'
         >
           <JSONSchemaFormFields
             components={components}

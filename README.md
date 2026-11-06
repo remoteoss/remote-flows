@@ -280,6 +280,25 @@ All components expose CSS classes prefixed with `RemoteFlows__` for targeted sty
 }
 ```
 
+### Spacing
+
+The flows don't add space between the fields of a form or the blocks of a step: spacing is up to your CSS. Earlier versions added it with Tailwind `space-y-*` classes. Target the container's `RemoteFlows__` class instead:
+
+```css
+.RemoteFlows__OnboardingForm > * + *,
+.RemoteFlows__CostCalculatorForm > * + * {
+  margin-top: 1rem;
+}
+```
+
+Containers you can space this way:
+
+- Forms: `RemoteFlows__OnboardingForm` (Onboarding, Contractor Onboarding and Create Company), `RemoteFlows__CostCalculatorForm`, `RemoteFlows__TerminationForm`, `RemoteFlows__ContractAmendmentForm`, `RemoteFlows__InvoiceScheduleForm`, `RemoteFlows__ContractDocumentForm`, `RemoteFlows__ContractDocumentPreviewForm`, `RemoteFlows__PayrollAdminForm`, `RemoteFlows__PayrollEmployeeForm`, `RemoteFlows__DailyScheduleForm`
+- Steps: `RemoteFlows__ContractDetailsStep`, `RemoteFlows__ContractPreviewStep`, `RemoteFlows__ContractDocumentForm__Container`, `RemoteFlows__ContractPreviewHeader`
+- Cost Calculator results: `RemoteFlows__EstimationResultsHeader__Content`, `RemoteFlows__SummaryHeader__Content`, `RemoteFlows__SummaryResults__AccordionRows`, `RemoteFlows__OnboardingTimeline__List`
+
+[`example/src/css/main.css`](example/src/css/main.css) has the spacing the example app uses for each of them.
+
 ## Advanced Usage
 
 For complete control over rendering, use our hooks directly. They handle the business logic while you control the UI:
