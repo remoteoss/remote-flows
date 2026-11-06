@@ -40,7 +40,10 @@ import {
   useUpdateInvoiceSchedule,
 } from '@/src/common/invoice-schedules/api';
 import { useCompanyOpenTasks } from '@/src/common/api/companies';
-import { buildInvoiceScheduleFormValues } from '@remoteoss/remote-flows-core';
+import {
+  buildInvoiceScheduleFormValues,
+  type ContractorInvoicePreview,
+} from '@remoteoss/remote-flows-core';
 import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
   useCreateContractorContractDocument,
@@ -87,7 +90,6 @@ import {
   buildBasicInformationJsfModify,
   buildContractPreviewJsfModify,
 } from '@/src/flows/ContractorOnboarding/jsfModify';
-import { ContractorInvoicePreview } from '@/src/flows/ContractorOnboarding/types';
 import { useUploadFile } from '@/src/common/api/files';
 import { dataURLtoFile } from '@/src/lib/files';
 import {

@@ -187,5 +187,3 @@ export type InvoiceScheduleFormPayload = {
 export type InvoiceScheduleResponse = {
   invoiceSchedulePreference: string;
 };
-
-export type { ContractorInvoicePreview } from '@remoteoss/remote-flows-core';
