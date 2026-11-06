@@ -9,7 +9,7 @@ export function TimeFieldDefault({
   fieldState,
   fieldData,
 }: TimeFieldComponentProps) {
-  const { name, label, description } = fieldData;
+  const { name, label, description, disabled } = fieldData;
   return (
     <FormItem
       data-field={name}
@@ -28,6 +28,7 @@ export function TimeFieldDefault({
           }}
           className='RemoteFlows__TimeField__Input'
           placeholder={label}
+          disabled={disabled}
         />
       </FormControl>
       {(description || fieldData.meta?.helpCenter) && (

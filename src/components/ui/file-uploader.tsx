@@ -21,6 +21,7 @@ type FileUploaderProps = {
   accept?: string;
   files?: File[];
   id?: string;
+  disabled?: boolean;
 };
 
 export function FileUploader({
@@ -30,6 +31,7 @@ export function FileUploader({
   accept,
   files: externalFiles,
   id,
+  disabled,
 }: FileUploaderProps) {
   const syncedRef = useRef<File[] | undefined>(undefined);
 
@@ -79,8 +81,14 @@ export function FileUploader({
         aria-label='File upload'
         multiple={multiple}
         accept={accept}
+        disabled={disabled}
       />
-      <Button type='button' onClick={handleClick} className='gap-2'>
+      <Button
+        type='button'
+        onClick={handleClick}
+        className='gap-2'
+        disabled={disabled}
+      >
         <Upload className='h-4 w-4' />
         Choose File
       </Button>
@@ -110,6 +118,7 @@ export function FileUploader({
               type='button'
               variant='ghost'
               onClick={() => onRemoveFile(file)}
+              disabled={disabled}
             >
               <X />
             </Button>
