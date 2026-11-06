@@ -607,18 +607,6 @@ export const useGetContractOriginSchema = ({
   });
 };
 
-// Invoice-schedule API hooks are shared with the standalone InvoiceSchedule flow and live in
-// src/common/invoice-schedules. Re-exported here so existing imports keep resolving.
-export {
-  invoiceSchedulesOptions,
-  useCreateInvoiceSchedule,
-  useGetCreateInvoiceScheduleSchema,
-  useGetExistingInvoiceSchedule,
-  usePreviewContractorInvoice,
-  useSkipInvoiceSchedule,
-  useUpdateInvoiceSchedule,
-} from '@/src/common/invoice-schedules/api';
-
 export const useGetInvoiceScheduleSchema = ({
   enabled,
   jsfModify,
