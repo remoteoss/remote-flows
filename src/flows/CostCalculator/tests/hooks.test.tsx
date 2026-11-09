@@ -214,4 +214,19 @@ describe('useCostCalculator', () => {
       },
     ]);
   });
+
+  it('should keep a hidden and optional region field when the country has no regions', async () => {
+    const { result } = await renderCostCalculatorWithOptions();
+
+    const regionField = result.current.fields.find(
+      (field) => field.name === 'region',
+    );
+    expect(regionField?.isVisible).toBe(false);
+    expect(regionField?.required).toBe(false);
+
+    const { formErrors } = await act(() =>
+      result.current.handleValidation({ ...validValues, region: 'AST' }),
+    );
+    expect(formErrors).toEqual({});
+  });
 });

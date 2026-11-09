@@ -46,6 +46,8 @@ const toCountryOneOf = (countries: CostCalculatorCountry[] = []) =>
     'x-jsf-presentation': countryDetails,
   }));
 
+const hiddenRegion = { if: {}, then: { properties: { region: false } } };
+
 /**
  * Build the cost calculator schema with the options and rules that depend on API data.
  */
@@ -66,7 +68,7 @@ export function buildCostCalculatorSchema({
     ...baseSchema,
     properties: {
       country: { ...country, oneOf: toCountryOneOf(countries) },
-      ...(hasRegions && { region: { ...region, oneOf: toOneOf(regions) } }),
+      region: { ...region, oneOf: toOneOf(regions) },
       currency: { ...currency, oneOf: toOneOf(currencies) },
       ...otherProperties,
       management: {
@@ -91,9 +93,7 @@ export function buildCostCalculatorSchema({
       ...(hasRegions ? ['region'] : []),
       ...(includeEstimationTitle ? ['estimation_title'] : []),
     ],
-    'x-jsf-order': baseSchema['x-jsf-order'].filter(
-      (name) => hasRegions || name !== 'region',
-    ),
+    allOf: [...baseSchema.allOf, ...(hasRegions ? [] : [hiddenRegion])],
   };
 }
 
