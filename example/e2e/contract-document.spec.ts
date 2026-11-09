@@ -86,6 +86,23 @@ test.describe('Contract document', () => {
       },
     ]);
 
+    await page.route(
+      (url) => CONTRACT_DOCUMENTS_PATH.test(url.pathname),
+      async (route) => {
+        const request = route.request();
+        if (request.method() !== 'POST') {
+          await route.continue();
+          return;
+        }
+        await route.continue({
+          postData: JSON.stringify({
+            ...request.postDataJSON(),
+            skip_ai_checks: true,
+          }),
+        });
+      },
+    );
+
     const contractDocumentCreated = page.waitForResponse(
       (response) =>
         response.request().method() === 'POST' &&
