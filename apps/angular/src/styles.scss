@@ -1,0 +1,102 @@
+@use '@angular/material' as mat;
+
+html {
+  color-scheme: light;
+  @include mat.theme(
+    (
+      color: mat.$azure-palette,
+      typography: (
+        plain-family: system-ui,
+        brand-family: system-ui,
+      ),
+      density: 0,
+    )
+  );
+}
+
+body {
+  margin: 0;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-large);
+}
+
+.rf-page {
+  max-width: 40rem;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.rf-mode {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}
+
+.rf-form {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.rf-full {
+  width: 100%;
+}
+
+.rf-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.rf-error {
+  color: var(--mat-sys-error);
+  font: var(--mat-sys-body-small);
+  margin: 0.25rem 0;
+}
+
+.rf-statement {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  margin: 0 0 1rem;
+  border-radius: var(--mat-sys-corner-small);
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  font: var(--mat-sys-body-medium);
+
+  &[data-severity='success'] {
+    background: var(--mat-sys-tertiary-container);
+    color: var(--mat-sys-on-tertiary-container);
+  }
+}
+
+.rf-radio {
+  margin-bottom: 1rem;
+}
+
+.rf-radio__label {
+  font: var(--mat-sys-label-large);
+}
+
+.rf-fieldset {
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--mat-sys-corner-small);
+  margin: 0 0 1rem;
+}
+
+.rf-group {
+  margin-bottom: 1rem;
+}
+
+.rf-group__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 0.75rem;
+}
+
+.rf-group__fields {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 0.75rem;
+}

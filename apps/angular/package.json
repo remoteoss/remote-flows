@@ -12,9 +12,12 @@
     "type-check": "tsc -p tsconfig.app.json --noEmit"
   },
   "dependencies": {
+    "@angular/cdk": "20.2.14",
     "@angular/common": "20.3.9",
     "@angular/compiler": "20.3.9",
     "@angular/core": "20.3.9",
+    "@angular/forms": "20.3.9",
+    "@angular/material": "20.2.14",
     "@angular/platform-browser": "20.3.9",
     "@remoteoss/remote-flows-core": "workspace:*",
     "@tanstack/angular-query-experimental": "5.107.1",
