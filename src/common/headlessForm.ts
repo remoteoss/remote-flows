@@ -13,6 +13,9 @@ import type {
 export type { HeadlessFormOptions, HeadlessFormStrategy };
 export { withFieldsetObjects } from '@remoteoss/remote-flows-core';
 
+export const toOneOf = (options: { label: string; value: string }[] = []) =>
+  options.map(({ label, value }) => ({ const: value, title: label }));
+
 export function buildHeadlessForm(
   schema: Record<string, unknown>,
   strategy: HeadlessFormStrategy,

@@ -230,6 +230,9 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'ZWE',
   'TUN',
   'BIH',
+  'CHE',
+  'ECU',
+  'UKR',
 ];
 
 /**

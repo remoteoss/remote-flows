@@ -16,7 +16,7 @@ export const CheckboxFieldDefault = ({
   fieldState,
   fieldData,
 }: FieldComponentProps) => {
-  const { name, label, description, options, multiple } = fieldData;
+  const { name, label, description, options, multiple, disabled } = fieldData;
 
   return (
     <FormItem
@@ -36,6 +36,7 @@ export const CheckboxFieldDefault = ({
                     field.onChange(checked === true, option.value);
                   }}
                   checked={field.value?.includes(option.value)}
+                  disabled={disabled}
                   className='RemoteFlows__CheckBox__Input'
                 />
                 <FormLabel
@@ -54,6 +55,7 @@ export const CheckboxFieldDefault = ({
                   field.onChange(checked === true, null);
                 }}
                 checked={field.value}
+                disabled={disabled}
                 className='RemoteFlows__CheckBox__Input'
               />
               <FormLabel
