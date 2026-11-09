@@ -63,9 +63,13 @@ const trimStringValues = (values: Record<string, $TSFixMe>) =>
     {},
   );
 
+export function isFieldLocked(field: $TSFixMe) {
+  return Boolean(field.readOnly || field.disabled);
+}
+
 /**
- * Given a list of form values, modify the ones that are readOnly,
- * based on their field config, by adding its defaultValue.
+ * Given a list of form values, modify the ones that are readOnly or disabled,
+ * based on their field config, by adding its default.
  * This is needed to support readOnly fields that are also conditional
  * based on the "pivotName" workaround.
  * @param {Object} values - List with form values { name: value }.
@@ -92,10 +96,22 @@ function prefillReadOnlyFields(
       return;
     }
 
-    if (field.readOnly && field.defaultValue) {
-      newValues[fieldName!] = field.defaultValue;
+    const fieldValue = values[fieldName!];
+
+    if (
+      field.type === supportedTypes.FIELDSET &&
+      typeof fieldValue === 'object' &&
+      fieldValue !== null &&
+      !Array.isArray(fieldValue)
+    ) {
+      newValues[fieldName!] = prefillReadOnlyFields(fieldValue, field.fields);
+      return;
+    }
+
+    if (isFieldLocked(field) && field.default !== undefined) {
+      newValues[fieldName!] = field.default;
     } else {
-      newValues[fieldName!] = values[fieldName!];
+      newValues[fieldName!] = fieldValue;
     }
   });
 
