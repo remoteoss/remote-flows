@@ -139,6 +139,7 @@
     "zod": "4.6.6"
   },
   "devDependencies": {
+    "@remoteoss/remote-flows-core": "workspace:*",
     "@arethetypeswrong/cli": "0.18.5",
     "@faker-js/faker": "^10.6.0",
     "@hey-api/openapi-ts": "0.0.0-next-20260824173136",
