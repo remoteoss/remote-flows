@@ -7,6 +7,7 @@ import { FlowOptions } from '@/src/flows/types';
 // oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
+import { toOneOf } from '@/src/common/headlessForm';
 import { companyBasicInformationStepSchema } from '@/src/flows/CreateCompany/json-schemas/companyBasicInformationStep';
 import { useQuery } from '@tanstack/react-query';
 import { getV1CompanyCurrencies } from '@/src/client';
@@ -106,9 +107,6 @@ export const useUpdateCompanyRequest = () => {
     },
   });
 };
-
-const toOneOf = (options: { label: string; value: string }[] = []) =>
-  options.map(({ label, value }) => ({ const: value, title: label }));
 
 /**
  * Hook to create the select country form with populated country and currency options

@@ -233,3 +233,33 @@ describe.each(ENGINES)('buildOnce lifecycle on $engine', ({ meta }) => {
     );
   });
 });
+
+describe.each(ENGINES)('schema ownership on $engine', ({ meta }) => {
+  it.each(STRATEGIES)(
+    'leaves the given schema untouched on $strategy',
+    async ({ strategy }) => {
+      const user = userEvent.setup();
+      const schema = structuredClone(
+        meta
+          ? { ...signingBonusSchema, 'x-rmt-meta': meta }
+          : signingBonusSchema,
+      );
+      const untouchedSchema = structuredClone(schema);
+      render(
+        <Harness
+          schema={schema}
+          strategy={strategy}
+          options={renamedBonus('Bonus')}
+        />,
+        { wrapper: TestProviders },
+      );
+
+      await chooseInGroup(user, /Offer a signing bonus/i, 'Yes');
+      await user.type(await screen.findByLabelText('Bonus'), '1000');
+      await user.click(screen.getByRole('button', { name: 'Validate' }));
+      await chooseInGroup(user, /Offer a signing bonus/i, 'No');
+
+      expect(schema).toEqual(untouchedSchema);
+    },
+  );
+});

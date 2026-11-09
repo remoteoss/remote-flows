@@ -120,7 +120,12 @@ export const usePayrollAdminOnboarding = ({
   };
 
   // Country-picker schema for the select_country step, before a country is chosen.
-  const countrySelectSchemaQuery = useGPCountrySelectSchema(fieldValues);
+  const {
+    form: countrySelectForm,
+    isLoading: isLoadingCountrySelect,
+    handleValidation: handleCountrySelectValidation,
+    parseFormValues: parseCountrySelectFormValues,
+  } = useGPCountrySelectSchema();
 
   const savedStepValues = {
     ...(initialValues?.[
@@ -144,10 +149,10 @@ export const usePayrollAdminOnboarding = ({
   const isSelectCountryPhase =
     currentStep === 'select_country' && !internalCountryCode;
   const currentSchema = isSelectCountryPhase
-    ? countrySelectSchemaQuery.data
+    ? countrySelectForm
     : currentSchemaQuery.data;
   const isLoadingSchema = isSelectCountryPhase
-    ? countrySelectSchemaQuery.isLoading
+    ? isLoadingCountrySelect
     : currentSchemaQuery.isLoading;
 
   const createEmploymentMutation = useGPCreateEmployment();
@@ -201,6 +206,9 @@ export const usePayrollAdminOnboarding = ({
 
   const handleValidation = useCallback(
     async (values: FieldValues) => {
+      if (isSelectCountryPhase) {
+        return handleCountrySelectValidation(values);
+      }
       if (!currentSchema) {
         return null;
       }
@@ -211,11 +219,14 @@ export const usePayrollAdminOnboarding = ({
       );
       return currentSchema.handleValidation(parsedValues);
     },
-    [currentSchema],
+    [isSelectCountryPhase, handleCountrySelectValidation, currentSchema],
   );
 
   const parseFormValues = useCallback(
     async (values: FieldValues): Promise<Record<string, unknown>> => {
+      if (isSelectCountryPhase) {
+        return parseCountrySelectFormValues(values);
+      }
       if (!currentSchema) {
         return values;
       }
@@ -223,7 +234,7 @@ export const usePayrollAdminOnboarding = ({
         isPartialValidation: false,
       });
     },
-    [currentSchema],
+    [isSelectCountryPhase, parseCountrySelectFormValues, currentSchema],
   );
 
   const onSubmit = useCallback(

@@ -38,23 +38,23 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Armenia](./ARM.md)                | ARM  | v4               | v4              | Yes        | November 2026 |
 | [Australia](./AUS.md)              | AUS  | v6               | v7              | No         | October 2026  |
 | [Austria](./AUT.md)                | AUT  | v8               | v9              | No         | October 2026  |
-| [Bangladesh](./BGD.md)             | BGD  | v8               | v8              | Yes        | October 2026  |
+| [Bangladesh](./BGD.md)             | BGD  | v9               | v9              | Yes        | November 2026 |
 | [Belgium](./BEL.md)                | BEL  | v8               | v8              | Yes        | October 2026  |
 | Bolivia                            | BOL  | v1               | v5              | No         | -             |
-| [Bosnia and Herzegovina](./BIH.md) | BIH  | v7               | v6              | Yes        | November 2026 |
+| [Bosnia and Herzegovina](./BIH.md) | BIH  | v7               | v7              | Yes        | November 2026 |
 | [Brazil](./BRA.md)                 | BRA  | v5               | v5              | Yes        | October 2026  |
 | [Bulgaria](./BGR.md)               | BGR  | v8               | v8              | Yes        | October 2026  |
 | [Canada](./CAN.md)                 | CAN  | v8               | v8              | Yes        | October 2026  |
 | [Chile](./CHL.md)                  | CHL  | v7               | v7              | Yes        | October 2026  |
-| [China](./CHN.md)                  | CHN  | v8               | v8              | Yes        | October 2026  |
-| [Colombia](./COL.md)               | COL  | v6               | v6              | Yes        | October 2026  |
+| [China](./CHN.md)                  | CHN  | v9               | v9              | Yes        | November 2026 |
+| [Colombia](./COL.md)               | COL  | v7               | v7              | Yes        | November 2026 |
 | [Costa Rica](./CRI.md)             | CRI  | v5               | v5              | Yes        | October 2026  |
 | Croatia                            | HRV  | v1               | v6              | No         | -             |
 | [Cyprus](./CYP.md)                 | CYP  | v7               | v7              | Yes        | October 2026  |
 | [Czech Republic](./CZE.md)         | CZE  | v7               | v7              | Yes        | October 2026  |
 | [Denmark](./DNK.md)                | DNK  | v6               | v6              | Yes        | October 2026  |
 | [Dominican Republic](./DOM.md)     | DOM  | v7               | v7              | Yes        | November 2026 |
-| Ecuador                            | ECU  | v1               | v7              | No         | -             |
+| [Ecuador](./ECU.md)                | ECU  | v7               | v7              | Yes        | November 2026 |
 | [Egypt](./EGY.md)                  | EGY  | v6               | v6              | Yes        | October 2026  |
 | [El Salvador](./SLV.md)            | SLV  | v4               | v4              | Yes        | October 2026  |
 | [Estonia](./EST.md)                | EST  | v5               | v5              | Yes        | October 2026  |
@@ -70,7 +70,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Iceland](./ISL.md)                | ISL  | v5               | v5              | Yes        | October 2026  |
 | [India](./IND.md)                  | IND  | v7               | v7              | Yes        | October 2026  |
 | [Indonesia](./IDN.md)              | IDN  | v5               | v5              | Yes        | November 2026 |
-| [Ireland](./IRL.md)                | IRL  | v5               | v5              | Yes        | October 2026  |
+| [Ireland](./IRL.md)                | IRL  | v5               | v6              | No         | October 2026  |
 | [Israel](./ISR.md)                 | ISR  | v8               | v8              | Yes        | October 2026  |
 | Italy                              | ITA  | v2               | v2              | Yes        | -             |
 | [Jamaica](./JAM.md)                | JAM  | v5               | v5              | Yes        | October 2026  |
@@ -88,7 +88,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | Moldova                            | MDA  | v1               | v6              | No         | -             |
 | [Morocco](./MAR.md)                | MAR  | v8               | v8              | Yes        | October 2026  |
 | [Netherlands](./NLD.md)            | NLD  | v7               | v7              | Yes        | October 2026  |
-| [New Zealand](./NZL.md)            | NZL  | v9               | v9              | Yes        | November 2026 |
+| [New Zealand](./NZL.md)            | NZL  | v9               | v10             | No         | November 2026 |
 | [Nicaragua](./NIC.md)              | NIC  | v4               | v4              | Yes        | October 2026  |
 | [Nigeria](./NGA.md)                | NGA  | v5               | v5              | Yes        | October 2026  |
 | [North Macedonia](./MKD.md)        | MKD  | v6               | v6              | Yes        | November 2026 |
@@ -112,16 +112,16 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Spain](./ESP.md)                  | ESP  | v8               | v8              | Yes        | October 2026  |
 | [Sri Lanka](./LKA.md)              | LKA  | v8               | v8              | Yes        | November 2026 |
 | [Sweden](./SWE.md)                 | SWE  | v5               | v5              | Yes        | October 2026  |
-| [Switzerland](./CHE.md)            | CHE  | v2               | v8              | No         | March 2026    |
+| [Switzerland](./CHE.md)            | CHE  | v8               | v9              | No         | November 2026 |
 | Taiwan                             | TWN  | v1               | v5              | No         | -             |
 | [Thailand](./THA.md)               | THA  | v5               | v5              | Yes        | October 2026  |
 | [Tunisia](./TUN.md)                | TUN  | v8               | v8              | Yes        | November 2026 |
 | [Turkey](./TUR.md)                 | TUR  | v7               | v7              | Yes        | October 2026  |
 | [Uganda](./UGA.md)                 | UGA  | v5               | v5              | Yes        | October 2026  |
-| Ukraine                            | UKR  | v1               | v7              | No         | -             |
+| [Ukraine](./UKR.md)                | UKR  | v7               | v7              | Yes        | November 2026 |
 | [United Arab Emirates](./ARE.md)   | ARE  | v6               | v7              | No         | October 2026  |
-| [United Kingdom](./GBR.md)         | GBR  | v7               | v7              | Yes        | October 2026  |
-| [United States](./USA.md)          | USA  | v9               | v9              | Yes        | October 2026  |
+| [United Kingdom](./GBR.md)         | GBR  | v7               | v8              | No         | October 2026  |
+| [United States](./USA.md)          | USA  | v9               | v11             | No         | October 2026  |
 | [Uruguay](./URY.md)                | URY  | v6               | v6              | Yes        | October 2026  |
 | [Vietnam](./VNM.md)                | VNM  | v7               | v7              | Yes        | October 2026  |
 | [Zimbabwe](./ZWE.md)               | ZWE  | v6               | v6              | Yes        | November 2026 |

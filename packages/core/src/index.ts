@@ -16,6 +16,7 @@ export {
   getInitialValues,
   getMinStartDate,
   isDateDisabled,
+  isFieldLocked,
   parseFormValuesToAPI,
   parseJSFToValidate,
   parseSubmitValues,
