@@ -31,6 +31,8 @@ The page prints which one is running.
 
 ## Deploy
 
-Create a Vercel project with `apps/angular` as the root directory and set the same variables as the `.env.<name>` file of the environment you target (`VITE_CLIENT_ID`, `REMOTE_CLIENT_SECRET`, `VITE_REMOTE_GATEWAY`, `REMOTE_REFRESH_TOKEN`).
+Import the repo in Vercel as its own project, with `apps/angular` as the root directory and "Include source files outside of the Root Directory" turned on. Vercel then deploys every branch. `ignoreCommand` in `vercel.json` skips pushes that touch nothing under `apps/angular`, `packages/core` or the lockfile and workspace files.
+
+Set the same variables as the `.env.<name>` file of the environment you target (`VITE_CLIENT_ID`, `REMOTE_CLIENT_SECRET`, `VITE_REMOTE_GATEWAY`, `REMOTE_REFRESH_TOKEN`).
 
 The proxy in `api/` calls the gateway with a user token, so keep the deployment behind Vercel's password protection.

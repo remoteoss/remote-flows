@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "github": { "enabled": false },
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ../../packages/core ../../pnpm-lock.yaml ../../pnpm-workspace.yaml",
   "installCommand": "cd ../.. && corepack pnpm install --frozen-lockfile --ignore-scripts",
   "buildCommand": "corepack pnpm run build",
   "outputDirectory": "dist/browser",
