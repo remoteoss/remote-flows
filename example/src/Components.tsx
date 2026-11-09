@@ -11,6 +11,7 @@ import {
   type TelFieldComponentProps,
   type TimeFieldComponentProps,
   type ZendeskTriggerButtonComponentProps,
+  ZendeskTriggerButton as RemoteFlowsZendeskTriggerButton,
 } from '@remoteoss/remote-flows';
 import { cn, FileUploader } from '@remoteoss/remote-flows/internals';
 import { splitAccordionDescription } from './utils/transformHtml';
@@ -30,6 +31,21 @@ const renderDescription = (
   }
 
   return <p className='input-description'>{desc}</p>;
+};
+
+const renderHelpCenter = (meta: FieldComponentProps['fieldData']['meta']) => {
+  if (!meta?.helpCenter?.id || !meta.helpCenter.callToAction) {
+    return null;
+  }
+
+  return (
+    <RemoteFlowsZendeskTriggerButton
+      className='text-sm'
+      zendeskId={meta.helpCenter.id}
+    >
+      {meta.helpCenter.callToAction}
+    </RemoteFlowsZendeskTriggerButton>
+  );
 };
 
 // you can define HTML button attributes or event props that exist in your Button like variant, size, etc.
@@ -81,6 +97,7 @@ const Input = ({ field, fieldData, fieldState }: FieldComponentProps) => {
       )}
 
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderHelpCenter(fieldData.meta)}
       {/* extra controls owned by the SDK, e.g. the salary currency conversion toggle
           when the split_salary_description feature is enabled */}
       {fieldData.descriptionSuffix}
@@ -136,6 +153,7 @@ const Select = ({ field, fieldData, fieldState }: FieldComponentProps) => {
       </div>
 
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderHelpCenter(fieldData.meta)}
 
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
@@ -253,6 +271,7 @@ export const Countries = ({
       </div>
 
       {renderDescription(fieldData.description, fieldData.transformHtml)}
+      {renderHelpCenter(fieldData.meta)}
 
       {fieldState.error && (
         <p className='error-message'>{fieldState.error.message}</p>
@@ -564,6 +583,7 @@ const ZendeskTriggerButton = ({
 
   return (
     <button
+      type='button'
       onClick={handleClick}
       className={cn('zendesk-custom-button', className)}
     >
