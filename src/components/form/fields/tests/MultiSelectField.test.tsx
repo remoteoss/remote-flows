@@ -86,6 +86,16 @@ describe('MultiSelectField Component', () => {
     // MultiSelect should show placeholder text when no options are selected
   });
 
+  it('disables the field and its remove buttons when the field is disabled', () => {
+    renderWithFormContext(
+      { ...defaultProps, disabled: true },
+      { testField: ['option1'] },
+    );
+
+    expect(screen.getByRole('combobox')).toBeDisabled();
+    expect(screen.queryByLabelText('remove Option 1')).not.toBeInTheDocument();
+  });
+
   it('handles multi-selection correctly', async () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 

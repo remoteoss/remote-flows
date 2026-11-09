@@ -62,6 +62,12 @@ describe('TimeField Component', () => {
     expect(screen.getByText('Select start time')).toBeInTheDocument();
   });
 
+  it('disables the input when the field is disabled', () => {
+    renderWithFormContext({ ...defaultProps, disabled: true });
+
+    expect(screen.getByPlaceholderText('Start Time')).toBeDisabled();
+  });
+
   it('handles time change correctly', () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
