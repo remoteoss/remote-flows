@@ -128,7 +128,7 @@
       "maxLength": 5000
     },
     "annual_gross_salary": {
-      "minimum": 1230000
+      "minimum": 1476000
     },
     "telecommuting_expenses": {
       "minimum": 17000

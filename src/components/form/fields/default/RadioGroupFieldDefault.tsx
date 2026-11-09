@@ -17,7 +17,7 @@ export const RadioGroupFieldDefault = ({
   fieldData,
   fieldState,
 }: RadioGroupComponentProps) => {
-  const { name, label, description, options } = fieldData;
+  const { name, label, description, options, disabled } = fieldData;
   return (
     <fieldset
       className={cn('space-y-3', `RemoteFlows__RadioGroupField__Item__${name}`)}
@@ -39,6 +39,7 @@ export const RadioGroupFieldDefault = ({
               field.onChange(value);
             }}
             value={field.value}
+            disabled={disabled}
             className='flex flex-col'
           >
             {options?.map((option) => (
@@ -54,7 +55,7 @@ export const RadioGroupFieldDefault = ({
                         'RemoteFlows__RadioField__Input',
                         option.recommended && 'mt-1',
                       )}
-                      disabled={option.disabled}
+                      disabled={disabled || option.disabled}
                     />
                   </FormControl>
                   <div>
