@@ -93,6 +93,16 @@ describe('SelectField Component', () => {
     expect(mockOnChange).toHaveBeenCalledTimes(1);
   });
 
+  it('disables a disabled select and hides its clear button', () => {
+    renderWithFormContext(
+      { ...defaultProps, required: false, disabled: true },
+      { testField: 'option1' },
+    );
+
+    expect(screen.getByRole('combobox')).toBeDisabled();
+    expect(screen.queryByLabelText('Clear Test Field')).not.toBeInTheDocument();
+  });
+
   it('does not offer to clear a required select', () => {
     renderWithFormContext(defaultProps);
 
