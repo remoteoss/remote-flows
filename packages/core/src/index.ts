@@ -15,6 +15,7 @@ export {
   getMinStartDate,
   getNestedValue,
   isDateDisabled,
+  isFieldLocked,
   parseJSFToValidate,
 } from './form/form';
 export {

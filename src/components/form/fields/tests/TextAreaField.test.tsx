@@ -66,6 +66,12 @@ describe('TextAreaField Component', () => {
     expect(screen.getByText('This is a test field')).toBeInTheDocument();
   });
 
+  it('disables the textarea when the field is disabled', () => {
+    renderWithFormContext({ ...defaultProps, disabled: true });
+
+    expect(screen.getByPlaceholderText('Test Field')).toBeDisabled();
+  });
+
   it('handles textarea change correctly', () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 

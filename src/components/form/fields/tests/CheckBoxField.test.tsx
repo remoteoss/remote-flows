@@ -66,6 +66,12 @@ describe('CheckBoxField Component', () => {
     expect(screen.getByText('This is a test field')).toBeInTheDocument();
   });
 
+  it('disables the checkbox when the field is disabled', () => {
+    renderWithFormContext({ ...defaultProps, disabled: true });
+
+    expect(screen.getByRole('checkbox')).toBeDisabled();
+  });
+
   it('handles checkbox change correctly', () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 

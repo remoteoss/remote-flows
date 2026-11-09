@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import type { FieldValues } from 'react-hook-form';
 import {
@@ -12,6 +13,8 @@ import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 // oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
 import { createHeadlessForm } from '@/src/common/createHeadlessForm';
+import { toOneOf } from '@/src/common/headlessForm';
+import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { JSONSchemaFormResultWithFieldsets } from '@/src/flows/types';
 import { countriesOptions } from '@/src/common/api/countries';
 import { gpSelectCountrySchema } from '@/src/flows/PayrollAdminOnboarding/json-schemas/selectCountryStep';
@@ -62,26 +65,33 @@ export const useGPFormSchema = (
   });
 };
 
-export const useGPCountrySelectSchema = (
-  fieldValues: FieldValues,
-): ReturnType<typeof useQuery<JSONSchemaFormResultWithFieldsets>> => {
+export const useGPCountrySelectSchema = () => {
   const { client } = useClient();
-  return useQuery({
+  const { data: countries, isLoading } = useQuery({
     ...countriesOptions(client as Client, 'gp-admin'),
-    select: (response) => {
-      const countries = response?.data?.data ?? [];
-      const schema = {
-        ...gpSelectCountrySchema,
-        properties: {
-          country_code: {
-            ...gpSelectCountrySchema.properties.country_code,
-            oneOf: countries.map((c) => ({ const: c.code, title: c.name })),
-          },
-        },
-      };
-      return createHeadlessForm(schema, fieldValues);
-    },
+    select: (response) =>
+      response.data?.data?.map((country) => ({
+        label: country.name,
+        value: country.code,
+      })) ?? [],
   });
+
+  const schema = useMemo(
+    () => ({
+      ...gpSelectCountrySchema,
+      properties: {
+        country_code: {
+          ...gpSelectCountrySchema.properties.country_code,
+          oneOf: toOneOf(countries),
+        },
+      },
+    }),
+    [countries],
+  );
+
+  const headlessForm = useHeadlessForm({ schema, strategy: 'buildOnce' });
+
+  return { ...headlessForm, isLoading };
 };
 
 export const useGPCreateEmployment = () => {

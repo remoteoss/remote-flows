@@ -122,6 +122,43 @@ const monthlyAllowanceSchema: Schema = {
   },
 };
 
+const lockedSelectSchema: Schema = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    annual_gross_salary: money('Annual gross salary'),
+    first_day: {
+      title: 'First day',
+      type: 'string',
+      default: '1',
+      oneOf: [
+        { const: '1', title: '1st of the month' },
+        { const: '2', title: '2nd of the month' },
+      ],
+      'x-jsf-presentation': { inputType: 'select' },
+    },
+    second_day: {
+      title: 'Second day',
+      type: 'string',
+      oneOf: [
+        { const: '15', title: '15th of the month' },
+        { const: '16', title: '16th of the month' },
+      ],
+      'x-jsf-presentation': { inputType: 'select', disabled: true },
+      'x-jsf-logic-computedAttrs': { default: 'second_day_value' },
+    },
+  },
+  required: ['first_day', 'second_day'],
+  'x-jsf-order': ['annual_gross_salary', 'first_day', 'second_day'],
+  'x-jsf-logic': {
+    computedValues: {
+      second_day_value: {
+        rule: { cat: [{ '+': [{ var: 'first_day' }, 14] }] },
+      },
+    },
+  },
+};
+
 const standardHoursSchema: Schema = {
   type: 'object',
   additionalProperties: false,
@@ -211,6 +248,25 @@ const equitySchema: Schema = {
   'x-jsf-order': ['annual_gross_salary', 'equity_compensation'],
 };
 
+const bankDetailsSchema: Schema = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    annual_gross_salary: money('Annual gross salary'),
+    account_holder: {
+      title: 'Account holder',
+      description: 'Plain account holder help',
+      type: 'string',
+      'x-jsf-presentation': {
+        inputType: 'text',
+        description: 'As printed on the <strong>bank statement</strong>',
+      },
+    },
+  },
+  required: ['account_holder'],
+  'x-jsf-order': ['annual_gross_salary', 'account_holder'],
+};
+
 export const chooseInGroup = async (
   user: UserEvent,
   group: RegExp,
@@ -221,6 +277,20 @@ export const chooseInGroup = async (
 };
 
 export const SITUATIONS: Situation[] = [
+  {
+    situation:
+      'disabled select follows the default computed from another field',
+    schema: lockedSelectSchema,
+    fill: async (user) => {
+      await user.selectOptions(await screen.findByTestId('first_day'), '2');
+    },
+    assert: async (submitted) => {
+      await waitFor(() =>
+        expect(screen.getByTestId('second_day')).toHaveValue('16'),
+      );
+      expect(submitted.second_day).toBe('16');
+    },
+  },
   {
     situation: 'forced value computed from an empty field stays read-only',
     schema: standardHoursSchema,
@@ -295,6 +365,45 @@ export const SITUATIONS: Situation[] = [
       );
       expect(screen.getByText('Required field')).toBeInTheDocument();
       expect(submitted).toEqual({});
+    },
+  },
+  {
+    situation: 'description from x-jsf-presentation is shown',
+    schema: bankDetailsSchema,
+    fill: async () => {
+      await screen.findByLabelText('Account holder');
+    },
+    assert: async () => {
+      expect(screen.getByText('bank statement')).toBeInTheDocument();
+      expect(screen.queryByText('Plain account holder help')).toBeNull();
+    },
+  },
+  {
+    situation: 'required text left blank fails and is left out',
+    schema: bankDetailsSchema,
+    fill: async (user) => {
+      await user.type(await screen.findByLabelText('Account holder'), '   ');
+      await user.click(screen.getByRole('button', { name: 'Validate' }));
+    },
+    assert: async (submitted) => {
+      expect(await screen.findByText('Required field')).toBeInTheDocument();
+      expect(submitted).toEqual({});
+    },
+  },
+  {
+    situation: 'value of a field hidden again is left out',
+    schema: signingBonusSchema,
+    fill: async (user) => {
+      await chooseInGroup(user, /Offer a signing bonus/i, 'Yes');
+      await user.type(
+        await screen.findByLabelText('Signing bonus amount'),
+        '1000',
+      );
+      await chooseInGroup(user, /Offer a signing bonus/i, 'No');
+    },
+    assert: async (submitted) => {
+      expect(screen.queryByLabelText('Signing bonus amount')).toBeNull();
+      expect(submitted).toEqual({ has_signing_bonus: 'no' });
     },
   },
 ];
