@@ -91,6 +91,7 @@ export function CountryFieldDefault({
           selected={selected}
           onChange={handleChange}
           multiple={isMultiple}
+          disabled={fieldData.disabled}
         />
       </FormControl>
       {fieldData.description && (

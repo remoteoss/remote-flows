@@ -90,6 +90,12 @@ describe('CountryField Component', () => {
     }));
   });
 
+  it('disables the field when it is disabled', () => {
+    renderWithFormContext({ ...defaultProps, disabled: true });
+
+    expect(screen.getByRole('combobox')).toBeDisabled();
+  });
+
   it('renders the default implementation correctly', () => {
     renderWithFormContext(defaultProps);
 

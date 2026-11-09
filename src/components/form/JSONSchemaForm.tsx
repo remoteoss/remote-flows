@@ -6,6 +6,7 @@ import { FieldExtra } from '@/src/components/form/FieldExtra';
 import { Statement } from '@/src/components/form/Statement';
 import { FormFieldNameProvider } from '@/src/components/ui/form';
 import { ForcedValueField } from '@/src/components/form/fields/ForcedValueField';
+import { DynamicFormField } from '@/src/components/form/DynamicFormField';
 import {
   Components,
   JSFFieldset,
@@ -171,22 +172,13 @@ export const JSONSchemaFormFields = ({
           );
         }
 
-        const fieldProps = omit(field, 'WrapperComponent');
         return wrapWithCustomWrapper(
-          <>
-            <FieldComponent
-              {...fieldProps}
-              component={
-                components && components[fieldType as keyof Components]
-              }
-            />
-            {field.statement ? (
-              <Statement
-                {...(field.statement as StatementComponentProps['data'])}
-              />
-            ) : null}
-            <FieldExtra extra={field.extra} />
-          </>,
+          <DynamicFormField
+            field={field}
+            name={field.name as string}
+            FieldComponent={FieldComponent}
+            component={components && components[fieldType as keyof Components]}
+          />,
           field,
           field.name as string,
         );
