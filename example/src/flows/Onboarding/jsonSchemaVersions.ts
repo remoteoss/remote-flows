@@ -33,7 +33,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   BGD: {
     // Bangladesh
-    contract_details: 8,
+    contract_details: 9,
   },
   BGR: {
     // Bulgaria
@@ -69,7 +69,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   COL: {
     // Colombia
-    contract_details: 6,
+    contract_details: 7,
   },
   CRI: {
     // Costa Rica

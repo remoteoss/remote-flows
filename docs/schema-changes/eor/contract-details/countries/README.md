@@ -38,7 +38,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Armenia](./ARM.md)                | ARM  | v4               | v4              | Yes        | November 2026 |
 | [Australia](./AUS.md)              | AUS  | v6               | v7              | No         | October 2026  |
 | [Austria](./AUT.md)                | AUT  | v8               | v9              | No         | October 2026  |
-| [Bangladesh](./BGD.md)             | BGD  | v8               | v9              | No         | October 2026  |
+| [Bangladesh](./BGD.md)             | BGD  | v9               | v9              | Yes        | November 2026 |
 | [Belgium](./BEL.md)                | BEL  | v8               | v8              | Yes        | October 2026  |
 | Bolivia                            | BOL  | v1               | v5              | No         | -             |
 | [Bosnia and Herzegovina](./BIH.md) | BIH  | v7               | v7              | Yes        | November 2026 |
@@ -47,7 +47,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Canada](./CAN.md)                 | CAN  | v8               | v8              | Yes        | October 2026  |
 | [Chile](./CHL.md)                  | CHL  | v7               | v7              | Yes        | October 2026  |
 | [China](./CHN.md)                  | CHN  | v9               | v9              | Yes        | November 2026 |
-| [Colombia](./COL.md)               | COL  | v6               | v7              | No         | October 2026  |
+| [Colombia](./COL.md)               | COL  | v7               | v7              | Yes        | November 2026 |
 | [Costa Rica](./CRI.md)             | CRI  | v5               | v5              | Yes        | October 2026  |
 | Croatia                            | HRV  | v1               | v6              | No         | -             |
 | [Cyprus](./CYP.md)                 | CYP  | v7               | v7              | Yes        | October 2026  |
