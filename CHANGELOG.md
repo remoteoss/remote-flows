@@ -1,5 +1,26 @@
 # @remoteoss/remote-flows
 
+## 1.70.1
+
+### Patch Changes
+
+#### Fixes
+
+- report limit changes as info instead of breaking (#1886) [#1886](https://github.com/remoteoss/remote-flows/pull/1886)
+- keep read-only fields on their computed default (#1862) [#1862](https://github.com/remoteoss/remote-flows/pull/1862)
+
+#### Docs
+
+- enter the time-off decline reason in a modal (#1861) [#1861](https://github.com/remoteoss/remote-flows/pull/1861)
+
+#### Chores
+
+- update contract details schema canary report (#1880) [#1880](https://github.com/remoteoss/remote-flows/pull/1880)
+- update contract details schema canary report (#1883) [#1883](https://github.com/remoteoss/remote-flows/pull/1883)
+- update contract details schema canary report (#1885) [#1885](https://github.com/remoteoss/remote-flows/pull/1885)
+- bump-contract-details: CHN, CHE (#1904) [#1904](https://github.com/remoteoss/remote-flows/pull/1904)
+- update contract details schema canary report (#1907) [#1907](https://github.com/remoteoss/remote-flows/pull/1907)
+
 ## 1.70.0
 
 ### Minor Changes

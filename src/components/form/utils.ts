@@ -49,6 +49,7 @@ export {
   getInitialValues,
   getMinStartDate,
   isDateDisabled,
+  isFieldLocked,
   isFieldSkipped,
   isForceValue,
   isMultiSelect,

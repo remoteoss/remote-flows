@@ -4,11 +4,34 @@ Schema versions for employee onboarding in Bangladesh.
 
 ## Current Version
 
-**Contract Details:** v8
+**Contract Details:** v9
 
 ## Contract Details
 
-### v8 - Current
+### v9 - Current
+
+**Type of change:** compliance
+
+**What changed:**
+
+- The probation period is blocked for employments with a recognized seniority date, the same way fixed-term contracts already are (see v7). For such an employment, `has_probation_period` only accepts `"no"` (or can be omitted) and `probation_length` only accepts `0` (or can be omitted); any other submitted value is rejected, unless the request is made by a Remote Admin. This applies to indefinite and fixed-term contracts.
+- `has_probation_period` is now a radio (`"yes"` / `"no"`) without the `N/A` option, and `probation_length` is a plain number input. Partners with a custom UI should send `has_probation_period: "no"` for employees with a recognized seniority date.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      BGD: { contract_details: 9 },
+    },
+  }}
+/>
+```
+
+---
+
+### v8
 
 **Type of change:** compliance
 
