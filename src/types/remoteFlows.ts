@@ -1,4 +1,9 @@
 import { ReactNode } from 'react';
+import type {
+  $TSFixMe,
+  JSFFields,
+  JSFFieldset,
+} from '@remoteoss/remote-flows-core';
 import { AnySchema } from 'yup';
 import { ThemeProviderProps } from '@/src/types/theme';
 import { HelpCenterArticle } from '@/src/client';
@@ -22,15 +27,6 @@ import {
 type AuthResponse = {
   accessToken: string;
   expiresIn: number;
-};
-
-export type JSFFields = Record<string, unknown>[];
-
-export type JSFFieldset = {
-  [x: string]: {
-    propertiesByName: string[];
-    title: string;
-  };
 };
 
 export type JSFField = {
@@ -304,9 +300,6 @@ export type RemoteFlowsSDKProps = Omit<ThemeProviderProps, 'children'> & {
   transformHtmlToComponents?: (htmlContent: string) => ReactNode;
 };
 
-// oxlint-disable-next-line typescript/no-explicit-any
-export type $TSFixMe = any;
-
 // Extend the global Window interface to include RemoteFlowsSDK
 declare global {
   interface Window {
@@ -336,3 +329,5 @@ export type Meta = Record<string, MetaValues>;
 export interface NestedMeta {
   [key: string]: MetaValues | NestedMeta;
 }
+
+export type { $TSFixMe, JSFFields, JSFFieldset };
