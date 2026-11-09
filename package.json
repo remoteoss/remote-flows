@@ -8,7 +8,8 @@
   "scripts": {
     "audit": "pnpm audit --audit-level=high",
     "build": "NODE_ENV=production tsdown --config-loader unrun",
-    "ci": "pnpm run build && pnpm run check-format && pnpm run check-exports && pnpm run lint && pnpm run type-check && pnpm run test",
+    "ci": "pnpm run build && pnpm run check-format && pnpm run check-exports && pnpm run check-core-exports && pnpm run lint && pnpm run type-check && pnpm run test",
+    "check-core-exports": "knip --workspace packages/core --include exports",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm --exclude-entrypoints index.css styles.css --profile node16 && pnpm run check-flow-subpaths && pnpm run check-single-schema-form",
     "check-flow-subpaths": "tsx scripts/check-flow-subpaths.ts",
     "check-single-schema-form": "tsx scripts/check-single-schema-form.ts",
@@ -139,10 +140,10 @@
     "zod": "4.6.6"
   },
   "devDependencies": {
-    "@remoteoss/remote-flows-core": "workspace:*",
     "@arethetypeswrong/cli": "0.18.5",
     "@faker-js/faker": "^10.6.0",
     "@hey-api/openapi-ts": "0.0.0-next-20260824173136",
+    "@remoteoss/remote-flows-core": "workspace:*",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.3",
     "@testing-library/user-event": "14.6.8",
@@ -164,6 +165,7 @@
     "glob": "13.0.6",
     "gzip-size": "7.0.0",
     "jsdom": "30.1.3",
+    "knip": "6.44.1",
     "lodash": "4.18.1",
     "msw": "3.0.3",
     "oxfmt": "0.74.0",
