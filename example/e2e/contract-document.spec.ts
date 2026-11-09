@@ -92,7 +92,12 @@ test.describe('Contract document', () => {
         CONTRACT_DOCUMENTS_PATH.test(new URL(response.url()).pathname),
     );
     await page.getByRole('button', { name: 'Next Step' }).click();
-    if (!(await contractDocumentCreated).ok()) {
+    const created = await contractDocumentCreated;
+    expect(
+      created.status(),
+      `POST ${new URL(created.url()).pathname} returned ${created.status()}`,
+    ).toBeLessThan(500);
+    if (!created.ok()) {
       await clickAndWaitForSave(
         page,
         page.getByRole('button', { name: 'Continue anyway' }),
