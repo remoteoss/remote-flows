@@ -5,7 +5,6 @@ import { $TSFixMe } from '@/src/types/remoteFlows';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { countries, currencies, estimation, regionFields } from './fixtures';
-import { parseJSFToValidate } from '@/src/components/form/utils';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 import { ValidationError } from 'yup';
 
@@ -126,22 +125,52 @@ describe('useCostCalculator', () => {
         ...overrides,
       } as CostCalculatorEstimationFormValues;
 
-      await expect(
-        act(() => result.current.handleValidation(values)),
-      ).resolves.toEqual({ formErrors });
-
-      const parsedValues = await parseJSFToValidate(
-        values,
-        result.current.fields,
+      const validation = await act(() =>
+        result.current.handleValidation(values),
       );
+
+      expect(validation.formErrors).toEqual(formErrors);
       // oxlint-disable-next-line typescript/no-deprecated
-      const yupErrorPaths = await result.current.validationSchema
-        .validate(parsedValues, { abortEarly: false })
-        .then(() => [])
-        .catch((error: ValidationError) =>
-          error.inner.map((innerError) => innerError.path),
-        );
-      expect(yupErrorPaths).toEqual(Object.keys(formErrors));
+      expect(validation.yupError.inner.map((error) => error.path)).toEqual(
+        Object.keys(formErrors),
+      );
     },
   );
+
+  it('should resolve the deprecated yupError like the Yup validation did', async () => {
+    const { result } = await renderCostCalculatorWithOptions();
+
+    // oxlint-disable-next-line typescript/no-deprecated
+    const { yupError: validYupError } = await act(() =>
+      result.current.handleValidation(validValues),
+    );
+    expect(validYupError).toBeInstanceOf(ValidationError);
+    expect(validYupError.inner).toEqual([]);
+    expect(validYupError.value).toEqual(validValues);
+
+    // oxlint-disable-next-line typescript/no-deprecated
+    const { formErrors, yupError } = await act(() =>
+      result.current.handleValidation({
+        ...validValues,
+        management: { management_fee: '1000' },
+      } as CostCalculatorEstimationFormValues),
+    );
+    expect(formErrors).toEqual({
+      management: { management_fee: 'Management fee cannot exceed 699 USD' },
+    });
+    expect(yupError.errors).toEqual(['Management fee cannot exceed 699 USD']);
+    expect(
+      yupError.inner.map(({ path, type, message }) => ({
+        path,
+        type,
+        message,
+      })),
+    ).toEqual([
+      {
+        path: 'management.management_fee',
+        type: 'max',
+        message: 'Management fee cannot exceed 699 USD',
+      },
+    ]);
+  });
 });

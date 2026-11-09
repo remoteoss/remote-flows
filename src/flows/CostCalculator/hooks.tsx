@@ -9,6 +9,7 @@ import type {
 import { parseJSFToValidate } from '@/src/components/form/utils';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ValidationError } from 'yup';
 import {
   buildCostCalculatorSchema,
   buildPayload,
@@ -487,12 +488,31 @@ export const useCostCalculator = (
     const parsedValues = await parseJSFToValidate(values, allFields);
     const regionFieldsResult =
       jsonSchemaRegionFields?.handleValidation(parsedValues);
+    const regionYupError = (
+      regionFieldsResult as { yupError?: ValidationError } | undefined
+    )?.yupError;
+
+    let staticYupError: ValidationError;
+    try {
+      await validationSchema.validate(parsedValues, { abortEarly: false });
+      staticYupError = new ValidationError([], values);
+    } catch (error) {
+      staticYupError = error as ValidationError;
+    }
 
     return {
       formErrors: {
         ...staticFieldsResult?.formErrors,
         ...regionFieldsResult?.formErrors,
       },
+      /**
+       * Yup errors of the deprecated `validationSchema`, merged with the region fields errors.
+       * @deprecated Use `formErrors`. `yupError` will be removed in the next major version.
+       */
+      yupError: new ValidationError(
+        [...staticYupError.inner, ...(regionYupError?.inner ?? [])],
+        { ...staticYupError.value, ...regionYupError?.value },
+      ),
     };
   }
 
