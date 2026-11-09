@@ -1,3 +1,4 @@
+import { toOneOf } from '@/src/common/headlessForm';
 import { JSFModify } from '@/src/flows/types';
 
 export const selectCountryStepSchema = {
@@ -44,10 +45,7 @@ export const buildSelectCountryJsfModify = (
       ...jsfModify?.fields,
       country: {
         ...resolvedCountryModification,
-        oneOf: (countries ?? []).map(({ value, label }) => ({
-          const: value,
-          title: label,
-        })),
+        oneOf: toOneOf(countries),
       },
     },
   };

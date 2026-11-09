@@ -10,19 +10,19 @@ export default defineConfig({
     include: [
       'example/**/*.test.{ts,tsx}',
       'src/**/*.test.{ts,tsx}',
-      'packages/*/src/**/*.test.{ts,tsx}',
+      'packages/*/src/**/*.test.ts',
       'scripts/**/*.test.{ts,tsx}',
     ],
     exclude: ['node_modules/**', 'example/node_modules/**', 'example/e2e/**'],
     coverage: {
       provider: 'istanbul',
       reporter: ['text', 'json', 'html', 'lcov'],
-      include: ['src/**/*.{ts,tsx}', 'packages/*/src/**/*.{ts,tsx}'],
+      include: ['src/**/*.{ts,tsx}', 'packages/*/src/**/*.ts'],
       exclude: [
         'node_modules',
         'example/e2e',
         'src/**/*.test.{ts,tsx}',
-        'packages/*/src/**/*.test.{ts,tsx}',
+        'packages/*/src/**/*.test.ts',
         'src/tests/**/*.{ts,tsx}',
         'src/**/tests/*.{ts,tsx}',
         'src/client/**/*.{ts,tsx}',

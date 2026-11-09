@@ -216,23 +216,6 @@ export async function fingerprintSchema(
   };
 }
 
-function isTightened(
-  key: (typeof CONSTRAINT_KEYS)[number],
-  before: Constraints[typeof key],
-  after: Constraints[typeof key],
-): boolean {
-  if (before === after) {
-    return false;
-  }
-  if (key === 'minimum' || key === 'minLength') {
-    return after !== undefined && (before === undefined || after > before);
-  }
-  if (key === 'maximum' || key === 'maxLength') {
-    return after !== undefined && (before === undefined || after < before);
-  }
-  return after !== undefined;
-}
-
 function splitScenario(scenario: string) {
   const separator = scenario.lastIndexOf('=');
   return {
@@ -300,7 +283,7 @@ export function diffFingerprints(
     for (const key of CONSTRAINT_KEYS) {
       if (before[key] !== after[key]) {
         add(
-          isTightened(key, before[key], after[key]) ? 'breaking' : 'info',
+          'info',
           `\`${name}\` ${key} changed from ${before[key] ?? 'unset'} to ${after[key] ?? 'unset'}`,
         );
       }
@@ -311,8 +294,8 @@ export function diffFingerprints(
       continue;
     }
     for (const key of CONSTRAINT_KEYS) {
-      if (isTightened(key, undefined, after[key])) {
-        add('breaking', `\`${name}\` has a new ${key}: ${after[key]}`);
+      if (after[key] !== undefined) {
+        add('info', `\`${name}\` has a new ${key}: ${after[key]}`);
       }
     }
   }
