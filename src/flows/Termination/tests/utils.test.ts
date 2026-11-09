@@ -1,6 +1,14 @@
-import { addDays, addHours, endOfMonth, setDate, subDays } from 'date-fns';
+import {
+  addDays,
+  addHours,
+  endOfMonth,
+  format,
+  setDate,
+  subDays,
+} from 'date-fns';
 
 import {
+  buildInitialValues,
   calculateMinTerminationDate,
   calculateProposedTerminationDateStatement,
 } from '../utils';
@@ -470,6 +478,21 @@ describe('Termination utils', () => {
           severity: 'info',
         },
       });
+    });
+  });
+
+  describe('buildInitialValues', () => {
+    it('keeps only the date of a proposed termination date given with a time', () => {
+      const proposedTerminationDate = new Date(2026, 10, 9, 18, 30);
+
+      const initialValues = buildInitialValues(
+        { proposed_termination_date: proposedTerminationDate.toISOString() },
+        false,
+      );
+
+      expect(initialValues.proposed_termination_date).toBe(
+        format(proposedTerminationDate, 'yyyy-MM-dd'),
+      );
     });
   });
 });
