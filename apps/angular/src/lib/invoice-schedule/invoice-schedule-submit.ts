@@ -2,7 +2,7 @@ import { Directive, inject } from '@angular/core';
 import { INVOICE_SCHEDULE_CONTEXT } from './invoice-schedule-context';
 
 @Directive({
-  selector: '[rfInvoiceScheduleSubmit]',
+  selector: 'button[rfInvoiceScheduleSubmit]',
   host: {
     type: 'submit',
     '[attr.form]': 'context.formId',
