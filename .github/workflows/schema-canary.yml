@@ -14,7 +14,6 @@ on:
       - 'pnpm-lock.yaml'
       - 'src/common/createHeadlessForm.tsx'
       - 'src/common/headlessForm.ts'
-      - 'packages/core/src/**'
       - 'src/components/form/utils.ts'
       - 'src/flows/Onboarding/utils.ts'
       - 'packages/core/src/form/**'
