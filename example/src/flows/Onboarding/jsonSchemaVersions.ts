@@ -97,7 +97,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ECU: {
     // Ecuador
-    contract_details: 1,
+    contract_details: 7,
   },
   EGY: {
     // Egypt
@@ -345,7 +345,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   UKR: {
     // Ukraine
-    contract_details: 1,
+    contract_details: 7,
   },
   URY: {
     // Uruguay
