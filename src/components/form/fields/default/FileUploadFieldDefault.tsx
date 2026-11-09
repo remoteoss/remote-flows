@@ -15,7 +15,7 @@ export function FileUploadFieldDefault({
   fieldState,
   fieldData,
 }: FileComponentProps) {
-  const { name, label, description, multiple, accept } = fieldData;
+  const { name, label, description, multiple, accept, disabled } = fieldData;
 
   return (
     <FormItem
@@ -30,6 +30,7 @@ export function FileUploadFieldDefault({
           className={cn('RemoteFlows__FileUpload__Input')}
           accept={accept}
           files={field.value}
+          disabled={disabled}
         />
       </FormControl>
       {(description || fieldData.meta?.helpCenter) && (
