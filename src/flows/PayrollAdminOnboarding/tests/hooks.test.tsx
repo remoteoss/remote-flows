@@ -164,6 +164,85 @@ describe('usePayrollAdminOnboarding — creating the employment', () => {
   });
 });
 
+describe('usePayrollAdminOnboarding — select country step', () => {
+  beforeEach(() => {
+    queryClient.clear();
+    server.use(
+      http.get('*/v1/companies/*/legal-entities', () =>
+        HttpResponse.json(legalEntitiesResponse([gpEnabledLegalEntity])),
+      ),
+    );
+  });
+
+  const renderSelectCountryStep = async () => {
+    const { result } = renderHook(
+      () => usePayrollAdminOnboarding({ companyId: 'company-1' }),
+      { wrapper: TestProviders },
+    );
+
+    await waitFor(() => {
+      expect(result.current.fields[0]?.options).toHaveLength(4);
+    });
+
+    return result;
+  };
+
+  it('requires a country from the offered list', async () => {
+    const result = await renderSelectCountryStep();
+
+    expect(result.current.fields[0].options).toEqual([
+      { value: 'PRT', label: 'Portugal' },
+      { value: 'ESP', label: 'Spain' },
+      { value: 'DEU', label: 'Germany' },
+      { value: 'FRA', label: 'France' },
+    ]);
+    await expect(
+      act(() => result.current.handleValidation({ country_code: '' })),
+    ).resolves.toMatchObject({
+      formErrors: { country_code: 'Required field' },
+    });
+    await expect(
+      act(() => result.current.handleValidation({ country_code: 'XXX' })),
+    ).resolves.toMatchObject({
+      formErrors: { country_code: 'The option "XXX" is not valid.' },
+    });
+    await expect(
+      act(() => result.current.handleValidation({ country_code: 'PRT' })),
+    ).resolves.toEqual({});
+  });
+
+  it('creates the employment with the selected country only', async () => {
+    let employmentBody: unknown;
+    server.use(
+      http.get('*/v1/countries/*/global_payroll_basic_information', () =>
+        HttpResponse.json({ data: { type: 'object', properties: {} } }),
+      ),
+      http.post('*/v1/employments', async ({ request }) => {
+        employmentBody = await request.json();
+        return HttpResponse.json({ data: { employment: { id: 'emp-1' } } });
+      }),
+      http.get('*/v1/employments/*/onboarding-steps', () =>
+        HttpResponse.json({ data: { steps: [] } }),
+      ),
+    );
+    const result = await renderSelectCountryStep();
+
+    await act(() =>
+      result.current.onSubmit({ country_code: 'PRT', region: 'lisbon' }),
+    );
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(employmentBody).toEqual({
+      type: 'global_payroll_employee',
+      country_code: 'PRT',
+      engaged_by_entity_slug: 'le-1',
+      basic_information: { country_code: 'PRT' },
+    });
+  });
+});
+
 describe('usePayrollAdminOnboarding — returning to a saved step', () => {
   beforeEach(() => {
     queryClient.clear();
