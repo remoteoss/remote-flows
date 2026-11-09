@@ -247,8 +247,12 @@ export const useCostCalculator = (
   }, []);
 
   const onHiringBudgetChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setHiringBudget(event.target.value as HiringBudget);
+    (value: string | React.ChangeEvent<HTMLInputElement>) => {
+      setHiringBudget(
+        (typeof value === 'string'
+          ? value
+          : value.target.value) as HiringBudget,
+      );
     },
     [],
   );
