@@ -16,7 +16,8 @@
             "tsConfig": "tsconfig.app.json",
             "index": "src/index.html",
             "styles": ["src/styles.css"],
-            "outputPath": "dist"
+            "outputPath": "dist",
+            "allowedCommonJsDependencies": ["fast-deep-equal"]
           },
           "configurations": {
             "zoneless": { "optimization": true, "outputHashing": "all" },
