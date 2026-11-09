@@ -38,6 +38,7 @@ Read each changed file in full, not just the diff hunks — via `Read` when the 
 - Changes to `src/index.tsx` exports, prop signatures, or hook return shapes — flag as **breaking** unless purely additive (public API is contract-bound; see AGENTS.md)
 - Mutation error handling that skips `mutationToPromise`/`mutateAsyncOrThrow`, or accesses `normalizedErrors`/`fieldErrors`/`rawError`/`response` without narrowing via `isMutationError(error)` first, or that swallows the error instead of re-throwing
 - New React Query usage that doesn't fit either the `queryOptions` factory or custom-hook pattern (see `.agents/rules/react-query-abstractions.md`)
+- New logic added to a re-export file (`src/client/*.ts`, `src/lib/utils.ts`, `src/common/headlessForm.ts`, `src/components/form/utils.ts`), React/DOM/`process` use added to `packages/core`, plain logic added to `src/` that belongs in core, or a core dependency missing from the root `dependencies` (see `.agents/rules/core-package.md`)
 - Hand-edits to `packages/core/src/client/*.gen.ts` (must be regenerated via `pnpm run openapi-ts`, never hand-edited)
 - HTML from API responses rendered without `sanitizeHtml()` (or DOMPurify)
 - `any` types outside genuine workarounds using `$TSFixMe`
