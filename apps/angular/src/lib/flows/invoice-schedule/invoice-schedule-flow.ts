@@ -12,13 +12,13 @@ let flowCount = 0;
     {
       provide: INVOICE_SCHEDULE_CONTEXT,
       useFactory: () => {
-        const flow = inject(InvoiceScheduleFlow);
+        const flow = inject(InvoiceScheduleFlowComponent);
         return { formId: flow.formId, bag: flow.bag };
       },
     },
   ],
 })
-export class InvoiceScheduleFlow {
+export class InvoiceScheduleFlowComponent {
   readonly employmentId = input.required<string>();
 
   readonly formId = `rf-invoice-schedule-form-${flowCount++}`;

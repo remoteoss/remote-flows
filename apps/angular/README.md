@@ -6,14 +6,14 @@ Private Angular 20 app that shows the create invoice schedule form for a contrac
 
 `src/lib` is the code that would become `@remoteoss/remote-flows-angular`. The app imports it through that name (a path alias in `tsconfig.json`), so moving it into a package later means moving the folder and dropping the alias. `src/app` is what a partner writes.
 
-| Folder                     | What it holds                                                                                                                                                                                     |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/lib/core`             | Framework-free logic: the form engine wrapper, the field tree, path helpers. Candidates for `packages/core`                                                                                       |
-| `src/lib/forms`            | The Reactive Forms layer: the field contract, the outlet that picks a component per field type, the store that syncs controls with the engine                                                     |
-| `src/lib/invoice-schedule` | The flow: `injectInvoiceSchedule` (the headless bag), plus `InvoiceScheduleFlow`, `InvoiceScheduleForm` and the `rfInvoiceScheduleSubmit` directive                                               |
-| `src/app`                  | The partner's code: `app.ts` is the shell, `pages/create-invoice` is the page (layout, loading state, notices, success message), and `fields` holds the Material field components the page brings |
+| Folder                           | What it holds                                                                                                                                                                                     |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/lib/core`                   | Framework-free logic: the form engine wrapper, the field tree, path helpers. Candidates for `packages/core`                                                                                       |
+| `src/lib/forms`                  | The Reactive Forms layer: the field contract, the outlet that picks a component per field type, the store that syncs controls with the engine                                                     |
+| `src/lib/flows/invoice-schedule` | The flow: `injectInvoiceSchedule` (the headless bag), and the components behind the single `InvoiceScheduleFlow` import: the flow, the form and the `rfInvoiceScheduleSubmit` directive           |
+| `src/app`                        | The partner's code: `app.ts` is the shell, `pages/create-invoice` is the page (layout, loading state, notices, success message), and `fields` holds the Material field components the page brings |
 
-The pieces mirror the React flow. `InvoiceScheduleFlow` provides the state to everything inside it, like `InvoiceScheduleFlow` does with a context. `InvoiceScheduleForm` renders the fields. `rfInvoiceScheduleSubmit` goes on the partner's own button and wires `type`, `form` and `disabled`. The partner reads the bag from a template reference (`#flow="rfInvoiceScheduleFlow"`) where React uses the `render` prop.
+The pieces mirror the React flow. `InvoiceScheduleFlow` is one import that brings in three pieces. The flow component provides the state to everything inside it, like React's `InvoiceScheduleFlow` does with a context, and the form component renders the fields. `rfInvoiceScheduleSubmit` goes on the partner's own button and wires `type`, `form` and `disabled`. The partner reads the bag from a template reference (`#flow="rfInvoiceScheduleFlow"`) where React uses the `render` prop.
 
 Each field component gets a real `FormControl` (a `FormGroup` for a fieldset, a `FormArray` for the items list) and the field's metadata. Core's form engine stays the source of truth: values flow from the controls into the engine, its errors flow back with `setErrors`, and Material shows them through `mat-error`.
 

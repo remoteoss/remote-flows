@@ -11,8 +11,8 @@ import {
   selectContractorCurrencyCodes,
   selectEmployment,
 } from '@remoteoss/remote-flows-core';
-import { REMOTE_CLIENT } from '../provide-remote-flows';
-import { createFormStore } from '../forms/form-store';
+import { REMOTE_CLIENT } from '../../provide-remote-flows';
+import { createFormStore } from '../../forms/form-store';
 
 type InvoiceScheduleOptions = {
   employmentId: Signal<string>;

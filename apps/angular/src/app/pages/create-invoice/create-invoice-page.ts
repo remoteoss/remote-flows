@@ -1,21 +1,11 @@
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {
-  InvoiceScheduleFlow,
-  InvoiceScheduleForm,
-  InvoiceScheduleSubmit,
-} from '@remoteoss/remote-flows-angular';
+import { InvoiceScheduleFlow } from '@remoteoss/remote-flows-angular';
 
 @Component({
   selector: 'app-create-invoice-page',
-  imports: [
-    InvoiceScheduleFlow,
-    InvoiceScheduleForm,
-    InvoiceScheduleSubmit,
-    MatButtonModule,
-    MatProgressSpinnerModule,
-  ],
+  imports: [InvoiceScheduleFlow, MatButtonModule, MatProgressSpinnerModule],
   template: `
     <h1>Create invoice schedule</h1>
     @if (employmentId) {

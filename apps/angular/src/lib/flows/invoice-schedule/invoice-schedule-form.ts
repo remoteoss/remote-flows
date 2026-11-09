@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FieldOutlet } from '../forms/field-outlet';
+import { FieldOutlet } from '../../forms/field-outlet';
 import { INVOICE_SCHEDULE_CONTEXT } from './invoice-schedule-context';
 
 @Component({
@@ -18,7 +18,7 @@ import { INVOICE_SCHEDULE_CONTEXT } from './invoice-schedule-context';
     </form>
   `,
 })
-export class InvoiceScheduleForm {
+export class InvoiceScheduleFormComponent {
   protected readonly context = inject(INVOICE_SCHEDULE_CONTEXT);
 
   protected submit(event: Event) {

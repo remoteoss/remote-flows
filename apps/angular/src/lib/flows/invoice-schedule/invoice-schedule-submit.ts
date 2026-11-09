@@ -9,6 +9,6 @@ import { INVOICE_SCHEDULE_CONTEXT } from './invoice-schedule-context';
     '[disabled]': 'context.bag.isSubmitting()',
   },
 })
-export class InvoiceScheduleSubmit {
+export class InvoiceScheduleSubmitDirective {
   protected readonly context = inject(INVOICE_SCHEDULE_CONTEXT);
 }

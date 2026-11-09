@@ -8,8 +8,11 @@ export type {
 } from './forms/field-contract';
 export { FieldOutlet } from './forms/field-outlet';
 export type { FieldMeta, FieldOption, FieldStatement } from './core/field-tree';
-export { InvoiceScheduleFlow } from './invoice-schedule/invoice-schedule-flow';
-export { InvoiceScheduleForm } from './invoice-schedule/invoice-schedule-form';
-export { InvoiceScheduleSubmit } from './invoice-schedule/invoice-schedule-submit';
-export { injectInvoiceSchedule } from './invoice-schedule/inject-invoice-schedule';
-export type { InvoiceScheduleBag } from './invoice-schedule/invoice-schedule-context';
+export {
+  InvoiceScheduleFlow,
+  InvoiceScheduleFlowComponent,
+  InvoiceScheduleFormComponent,
+  InvoiceScheduleSubmitDirective,
+  injectInvoiceSchedule,
+} from './flows/invoice-schedule';
+export type { InvoiceScheduleBag } from './flows/invoice-schedule';
