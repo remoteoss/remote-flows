@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import {
   contractorCurrenciesOptions,
@@ -20,7 +20,7 @@ import { REMOTE_CLIENT } from './providers';
     } @else if (currencies.isError()) {
       <pre>{{ currencies.error().message }}</pre>
     } @else {
-      <pre>{{ currencies.data() | json }}</pre>
+      <pre>{{ result() | json }}</pre>
     }
   `,
 })
@@ -35,6 +35,13 @@ export class App {
   readonly currencies = injectQuery(() => ({
     ...contractorCurrenciesOptions(this.client, this.employmentId ?? ''),
     enabled: !!this.employmentId,
-    select: selectContractorCurrencies,
   }));
+
+  readonly result = computed(() => {
+    const response = this.currencies.data();
+    if (!response) {
+      return undefined;
+    }
+    return response.error ?? selectContractorCurrencies(response);
+  });
 }
