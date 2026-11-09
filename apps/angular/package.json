@@ -1,0 +1,35 @@
+{
+  "name": "@remoteoss/example-angular",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "start:zone": "ng serve -c zone",
+    "start:api": "node api/dev_server.js",
+    "build": "ng build -c zoneless",
+    "build:zone": "ng build -c zone",
+    "type-check": "tsc -p tsconfig.app.json --noEmit"
+  },
+  "dependencies": {
+    "@angular/common": "20.3.9",
+    "@angular/compiler": "20.3.9",
+    "@angular/core": "20.3.9",
+    "@angular/platform-browser": "20.3.9",
+    "@remoteoss/remote-flows-core": "workspace:*",
+    "@tanstack/angular-query-experimental": "5.107.1",
+    "axios": "1.20.0",
+    "dotenv": "18.0.8",
+    "express": "5.3.0",
+    "jsonwebtoken": "9.0.3",
+    "rxjs": "7.8.2",
+    "tslib": "2.8.1",
+    "zone.js": "0.15.1"
+  },
+  "devDependencies": {
+    "@angular/build": "20.3.9",
+    "@angular/cli": "20.3.9",
+    "@angular/compiler-cli": "20.3.9",
+    "typescript": "5.9.3"
+  }
+}

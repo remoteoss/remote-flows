@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ../../packages/core ../../pnpm-lock.yaml ../../pnpm-workspace.yaml",
+  "installCommand": "cd ../.. && corepack pnpm install --frozen-lockfile --ignore-scripts",
+  "buildCommand": "corepack pnpm run build",
+  "outputDirectory": "dist/browser",
+  "rewrites": [
+    { "source": "/v1/(.*)", "destination": "/api" },
+    { "source": "/v2/(.*)", "destination": "/api" }
+  ]
+}

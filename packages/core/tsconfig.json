@@ -1,8 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "lib": ["es2022", "webworker"],
+    "lib": ["es2022", "webworker", "webworker.iterable"],
     "types": [],
+    "ignoreDeprecations": null,
     "paths": {},
     "noEmit": true,
     "jsx": null
