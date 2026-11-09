@@ -5,6 +5,7 @@ import omitBy from 'lodash.omitby';
 import isNull from 'lodash.isnull';
 import { format, isFuture, parseISO, subDays } from 'date-fns';
 import { useMemo } from 'react';
+import { FieldValues } from 'react-hook-form';
 import {
   CreateOffboardingParams,
   TerminationDetailsParams,
@@ -443,8 +444,8 @@ export const useTermination = ({
       | PaidTimeOffFormValues;
   };
 
-  const checkFieldUpdates = async (values: TerminationFormValues) => {
-    setFieldValues(values);
+  const checkFieldUpdates = async (values: FieldValues) => {
+    setFieldValues(values as TerminationFormValues);
     await onValuesChange(values);
   };
 
