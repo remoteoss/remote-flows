@@ -8,9 +8,9 @@ import {
 import { HeadlessFormOptions } from '@remoteoss/remote-flows-core';
 import { ENGINE_ERROR } from './control-state';
 import { ArrayView, FieldView } from './field-contract';
-import { FieldNode } from './field-tree';
-import { createFormEngine } from './form-engine';
-import { getIn, Path } from './path';
+import { FieldNode } from '../core/field-tree';
+import { createFormEngine } from '../core/form-engine';
+import { getIn, Path } from '../core/path';
 
 type Values = Record<string, unknown>;
 type Schema = Record<string, unknown>;

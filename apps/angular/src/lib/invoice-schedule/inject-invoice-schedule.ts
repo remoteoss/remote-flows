@@ -11,18 +11,18 @@ import {
   selectContractorCurrencyCodes,
   selectEmployment,
 } from '@remoteoss/remote-flows-core';
-import { REMOTE_CLIENT } from '../providers';
-import { createFormStore } from './form-store';
+import { REMOTE_CLIENT } from '../provide-remote-flows';
+import { createFormStore } from '../forms/form-store';
 
-type CreateInvoiceOptions = {
+type InvoiceScheduleOptions = {
   employmentId: Signal<string>;
   defaultValues?: Record<string, unknown>;
 };
 
-export function injectCreateInvoice({
+export function injectInvoiceSchedule({
   employmentId,
   defaultValues,
-}: CreateInvoiceOptions) {
+}: InvoiceScheduleOptions) {
   const client = inject(REMOTE_CLIENT);
 
   const employment = injectQuery(() => ({

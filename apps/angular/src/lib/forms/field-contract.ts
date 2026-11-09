@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
 import { controlState } from './control-state';
-import { FieldMeta } from './field-tree';
+import { FieldMeta } from '../core/field-tree';
 
 export type RowView = {
   id: AbstractControl;

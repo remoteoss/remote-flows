@@ -8,8 +8,8 @@ import { MatSelectModule } from '@angular/material/select';
 import {
   FieldComponent,
   FieldComponents,
-} from '../remote-flows/field-contract';
-import { FieldOutlet } from '../remote-flows/field-outlet';
+  FieldOutlet,
+} from '@remoteoss/remote-flows-angular';
 
 @Component({
   selector: 'app-input-field',
