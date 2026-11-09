@@ -5,7 +5,7 @@
   "buildCommand": "corepack pnpm run build",
   "outputDirectory": "dist/browser",
   "rewrites": [
-    { "source": "/v1/:path*", "destination": "/api" },
-    { "source": "/v2/:path*", "destination": "/api" }
+    { "source": "/v1/(.*)", "destination": "/api" },
+    { "source": "/v2/(.*)", "destination": "/api" }
   ]
 }
