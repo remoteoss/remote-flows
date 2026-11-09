@@ -74,6 +74,12 @@ describe('TextField Component', () => {
     expect(screen.getByText('This is a test field')).toBeInTheDocument();
   });
 
+  it('disables the input when the field is disabled', () => {
+    renderWithFormContext({ ...defaultProps, disabled: true });
+
+    expect(screen.getByPlaceholderText('Test Field')).toBeDisabled();
+  });
+
   it('renders the help center link from meta', () => {
     renderWithFormContext({
       ...defaultProps,
