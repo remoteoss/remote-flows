@@ -31,7 +31,7 @@ The page prints which one is running.
 
 ## Deploy
 
-Import the repo in Vercel as its own project, with `apps/angular` as the root directory and "Include source files outside of the Root Directory" turned on. Vercel then deploys every branch. `ignoreCommand` in `vercel.json` skips pushes that touch nothing under `apps/angular`, `packages/core` or the lockfile and workspace files.
+The Vercel project is named `remote-flows-angular`. To recreate it, import the repo in Vercel as its own project, with `apps/angular` as the root directory and "Include source files outside of the Root Directory" turned on. Vercel then deploys every branch. `ignoreCommand` in `vercel.json` skips pushes that touch nothing under `apps/angular`, `packages/core` or the lockfile and workspace files.
 
 Set the same variables as the `.env.<name>` file of the environment you target (`VITE_CLIENT_ID`, `REMOTE_CLIENT_SECRET`, `VITE_REMOTE_GATEWAY`, `REMOTE_REFRESH_TOKEN`).
 
