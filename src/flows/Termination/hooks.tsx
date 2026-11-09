@@ -73,7 +73,10 @@ export const useTermination = ({
     employment?.probation_period_end_date,
   );
 
-  const minTerminationDate = calculateMinTerminationDate(payrollCalendars);
+  const minTerminationDate = useMemo(
+    () => calculateMinTerminationDate(payrollCalendars),
+    [payrollCalendars],
+  );
   const minDate = useMemo(
     () =>
       isEmployeeInProbationPeriod
@@ -111,12 +114,19 @@ export const useTermination = ({
     [fieldValues, initialValues],
   );
 
-  const proposedTerminationDateStatement =
-    calculateProposedTerminationDateStatement({
+  const proposedTerminationDateStatement = useMemo(
+    () =>
+      calculateProposedTerminationDateStatement({
+        minTerminationDate,
+        isEmployeeInProbationPeriod,
+        selectedDate: parseISO(formValues.proposed_termination_date),
+      }),
+    [
       minTerminationDate,
       isEmployeeInProbationPeriod,
-      selectedDate: parseISO(formValues.proposed_termination_date),
-    });
+      formValues.proposed_termination_date,
+    ],
+  );
 
   const customFields = useMemo(() => {
     const originalTerminationReasonOptions =
@@ -198,7 +208,7 @@ export const useTermination = ({
           ...(formValues.termination_reason === 'cancellation_before_start_date'
             ? {
                 'x-jsf-errorMessage': {
-                  maximum:
+                  maxDate:
                     "The proposed termination date must be before the employee's start date.",
                 },
               }
@@ -307,18 +317,23 @@ export const useTermination = ({
     proposedTerminationDateStatement,
   ]);
 
-  const { data: terminationHeadlessForm, isLoading: isLoadingTermination } =
-    useTerminationSchema({
-      formValues: formValues,
-      jsfModify: {
-        ...options?.jsfModify,
-        fields: {
-          ...options?.jsfModify?.fields,
-          ...customFields?.fields,
-        },
+  const {
+    form: terminationHeadlessForm,
+    handleValidation,
+    onValuesChange,
+    parseFormValues: parseStepFormValues,
+    isLoading: isLoadingTermination,
+  } = useTerminationSchema({
+    initialValues,
+    jsfModify: {
+      ...options?.jsfModify,
+      fields: {
+        ...options?.jsfModify?.fields,
+        ...customFields?.fields,
       },
-      step: stepState.currentStep.name,
-    });
+    },
+    step: stepState.currentStep.name,
+  });
 
   const entireTerminationSchema = createHeadlessForm(jsonSchema.data.schema);
 
@@ -422,19 +437,15 @@ export const useTermination = ({
       })) as TerminationFormValues;
     }
 
-    if (terminationHeadlessForm) {
-      return (await parseJSFToValidate(
-        values,
-        terminationHeadlessForm?.fields,
-        {
-          isPartialValidation: true,
-        },
-      )) as
-        | EmployeeCommunicationFormValues
-        | TerminationDetailsFormValues
-        | PaidTimeOffFormValues;
-    }
-    return {} as $TSFixMe;
+    return (await parseStepFormValues(values)) as
+      | EmployeeCommunicationFormValues
+      | TerminationDetailsFormValues
+      | PaidTimeOffFormValues;
+  };
+
+  const checkFieldUpdates = async (values: TerminationFormValues) => {
+    setFieldValues(values);
+    await onValuesChange(values);
   };
 
   return {
@@ -481,21 +492,13 @@ export const useTermination = ({
      * @param values - Form values to validate
      * @returns Validation result or null if no schema is available
      */
-    handleValidation: async (values: TerminationFormValues) => {
-      if (terminationHeadlessForm) {
-        const parsedValues = await parseJSFToValidate(
-          values,
-          terminationHeadlessForm?.fields,
-        );
-        return terminationHeadlessForm?.handleValidation(parsedValues);
-      }
-      return null;
-    },
+    handleValidation: (values: TerminationFormValues) =>
+      handleValidation(values),
     /**
      * Function to update the current form field values
      * @param values - New form values to set
      */
-    checkFieldUpdates: setFieldValues,
+    checkFieldUpdates,
     /**
      * Function to parse form values before submission
      * @param values - Form values to parse

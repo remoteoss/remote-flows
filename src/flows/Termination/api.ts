@@ -20,8 +20,7 @@ import {
   formatAsDecimal,
 } from '@/src/lib/time';
 import { Client } from '@/src/client/client';
-// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
-import { createHeadlessForm } from '@/src/common/createHeadlessForm';
+import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { schema } from '@/src/flows/Termination/json-schemas/schema';
 
@@ -296,24 +295,28 @@ export const useCreateTermination = () => {
 };
 
 export const useTerminationSchema = ({
-  formValues,
+  initialValues,
   jsfModify,
   step,
 }: {
-  formValues?: TerminationFormValues;
+  initialValues?: TerminationFormValues;
   jsfModify?: JSFModify;
   step?: string;
 }) => {
-  return useQuery({
+  const { data: jsfSchema, isLoading } = useQuery({
     queryKey: ['rmt-flows-termination-schema', step],
     queryFn: () => {
       return schema[step as keyof typeof schema] ?? defaultSchema;
     },
-    select: ({ data }) => {
-      const jsfSchema = data?.schema || {};
-      return createHeadlessForm(jsfSchema, formValues || {}, {
-        jsfModify,
-      });
-    },
+    select: ({ data }) => data.schema,
   });
+
+  const headlessForm = useHeadlessForm({
+    schema: jsfSchema,
+    initialValues,
+    options: { jsfModify },
+    strategy: 'buildOnce',
+  });
+
+  return { ...headlessForm, isLoading };
 };
