@@ -19,3 +19,10 @@ export const employmentOptions = (
       query: queryParams,
     }),
 });
+
+type EmploymentResponse = Awaited<
+  ReturnType<ReturnType<typeof employmentOptions>['queryFn']>
+>;
+
+export const selectEmployment = (response: EmploymentResponse) =>
+  response.data?.data?.employment;
