@@ -1,10 +1,38 @@
 import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
+import type { CostCalculatorEstimationFormValues } from '@/src/flows/CostCalculator/types';
 import { server } from '@/src/tests/server';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { countries, currencies, estimation, regionFields } from './fixtures';
+import { parseJSFToValidate } from '@/src/components/form/utils';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
+import { ValidationError } from 'yup';
+
+const validValues = {
+  country: 'POL',
+  currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
+  currency_code: 'USD',
+  salary: '50000',
+  salary_converted: 'salary',
+  salary_conversion: '',
+  estimation_title: 'Test estimation',
+} as const;
+
+async function renderCostCalculatorWithOptions() {
+  const hook = renderHook(() => useCostCalculator(), {
+    wrapper: TestProviders,
+  });
+
+  await waitFor(() => {
+    const countryField = hook.result.current.fields.find(
+      (field) => field.name === 'country',
+    );
+    expect((countryField?.options as unknown[] | undefined)?.length).toBe(3);
+  });
+
+  return hook;
+}
 
 describe('useCostCalculator', () => {
   beforeEach(() => {
@@ -27,16 +55,7 @@ describe('useCostCalculator', () => {
   });
 
   it('should load regions when a country with regions is selected', async () => {
-    const { result } = renderHook(() => useCostCalculator(), {
-      wrapper: TestProviders,
-    });
-
-    await waitFor(() => {
-      const countryField = result.current.fields.find(
-        (field) => field.name === 'country',
-      );
-      expect(countryField?.onChange).toBeDefined();
-    });
+    const { result } = await renderCostCalculatorWithOptions();
 
     const countryField: $TSFixMe = result.current.fields.find(
       (field) => field.name === 'country',
@@ -61,47 +80,68 @@ describe('useCostCalculator', () => {
     expect(regionField?.required).toBe(true);
   });
 
-  it('should not return errors when valid data is passed to handleValidation', async () => {
-    const { result } = renderHook(() => useCostCalculator(), {
-      wrapper: TestProviders,
-    });
-    const validValues = {
-      country: 'PRT',
-      currency: 'USD',
-      currency_code: 'USD',
-      salary: '500000',
-      salary_converted: 'salary',
-      salary_conversion: '',
-      estimation_title: 'Test estimation',
-    } as const;
+  it('should keep the select options after validating', async () => {
+    const { result } = await renderCostCalculatorWithOptions();
 
-    await expect(
-      result.current.handleValidation(validValues),
-    ).resolves.toMatchObject({
-      formErrors: {},
-    });
+    await act(() => result.current.handleValidation(validValues));
+
+    const countryField = result.current.fields.find(
+      (field) => field.name === 'country',
+    );
+    expect((countryField?.options as unknown[] | undefined)?.length).toBe(3);
   });
 
-  it('should return an error when invalid data is passed to handleValidation', async () => {
-    const { result } = renderHook(() => useCostCalculator(), {
-      wrapper: TestProviders,
-    });
-    const invalidValues = {
-      country: 'PRT',
-      currency: 'USD',
-      currency_code: 'USD',
-      salary: '',
-      salary_converted: 'salary',
-      salary_conversion: '',
-      estimation_title: 'Test estimation',
-    } as const;
-
-    await expect(
-      result.current.handleValidation(invalidValues),
-    ).resolves.toMatchObject({
-      formErrors: {
-        salary: 'Required field',
+  it.each([
+    ['a valid salary', {}, {}],
+    ['a zero salary', { salary: '0' }, {}],
+    ['a decimal salary', { salary: '50000.55' }, {}],
+    ['an empty salary', { salary: '' }, { salary: 'Required field' }],
+    [
+      'a salary that is not a number',
+      { salary: 'abc' },
+      { salary: 'The value must be a number' },
+    ],
+    [
+      'a converted salary and no salary',
+      {
+        salary: '',
+        salary_converted: 'salary_conversion',
+        salary_conversion: '40000',
       },
-    });
-  });
+      {},
+    ],
+    [
+      'an empty converted salary',
+      { salary_converted: 'salary_conversion', salary_conversion: '' },
+      { salary_conversion: 'Required field' },
+    ],
+    ['an empty country', { country: '' }, { country: 'Required field' }],
+    ['an empty currency', { currency: '' }, { currency: 'Required field' }],
+  ])(
+    'should validate %s like the deprecated validationSchema',
+    async (_, overrides, formErrors) => {
+      const { result } = await renderCostCalculatorWithOptions();
+      const values = {
+        ...validValues,
+        ...overrides,
+      } as CostCalculatorEstimationFormValues;
+
+      await expect(
+        act(() => result.current.handleValidation(values)),
+      ).resolves.toEqual({ formErrors });
+
+      const parsedValues = await parseJSFToValidate(
+        values,
+        result.current.fields,
+      );
+      // oxlint-disable-next-line typescript/no-deprecated
+      const yupErrorPaths = await result.current.validationSchema
+        .validate(parsedValues, { abortEarly: false })
+        .then(() => [])
+        .catch((error: ValidationError) =>
+          error.inner.map((innerError) => innerError.path),
+        );
+      expect(yupErrorPaths).toEqual(Object.keys(formErrors));
+    },
+  );
 });
