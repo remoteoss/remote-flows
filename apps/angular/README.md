@@ -1,22 +1,26 @@
 # Angular app
 
-Private Angular 20 app that consumes `@remoteoss/remote-flows-core` through the workspace link. It loads the contractor currencies of an employment, using core's query options and client factory. It is not published.
+Private Angular 20 app that shows the create invoice schedule form for a contractor, using `@remoteoss/remote-flows-core` through the workspace link. It is not published.
+
+The form uses Angular Material and Reactive Forms. Each field component receives a real `FormControl` (a `FormGroup` for a fieldset, a `FormArray` for the items list) and the field's metadata. Core's form engine stays the source of truth: values flow from the controls into the engine, its errors flow back with `setErrors`, and Material shows them through `mat-error`. The code that could move into a package is in `src/app/remote-flows`, and the Material components are in `src/app/fields`.
+
+Only creating a schedule is covered. Preview, update and skip are not, and API errors are not shown yet.
 
 ## Run it locally
 
 From the repo root, once: `pnpm install`.
 
-Seed an employment on the environment you will use, then start the API proxy and the app in two terminals:
+Seed a contractor on the environment you will use, then start the API proxy and the app in two terminals:
 
 ```bash
-pnpm run seed:onboarding --type=contractor --country=PRT --env=sandbox
+pnpm run seed:onboarding --type=contractor --country=PRT --env=review
 
 cd apps/angular
-pnpm run start:api --env=sandbox   # reads .env.sandbox at the repo root, serves the proxy on :3002
-pnpm run start                     # zoneless, http://localhost:4200
+pnpm run start:api --env=review   # reads .env.review at the repo root, serves the proxy on :3002
+pnpm run start                    # zoneless, http://localhost:4200
 ```
 
-Open `http://localhost:4200/?employmentId=<id>`. `API_PORT` changes the proxy port.
+Open `http://localhost:4200/?employmentId=<id>`. `API_PORT` changes the proxy port. Creating a schedule is real on that environment, so use a seeded contractor.
 
 ## Zoneless and zone.js
 

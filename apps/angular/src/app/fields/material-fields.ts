@@ -112,13 +112,16 @@ export class SelectField extends FieldComponent {
   );
 }
 
+let radioCount = 0;
+
 @Component({
   selector: 'app-radio-field',
   imports: [ReactiveFormsModule, MatRadioModule],
   template: `
     <div class="rf-radio">
-      <div class="rf-radio__label">{{ meta().label }}</div>
+      <div class="rf-radio__label" [id]="labelId">{{ meta().label }}</div>
       <mat-radio-group
+        [attr.aria-labelledby]="labelId"
         [formControl]="formControl()"
         (change)="formControl().markAsTouched()"
       >
@@ -134,7 +137,9 @@ export class SelectField extends FieldComponent {
     </div>
   `,
 })
-export class RadioField extends FieldComponent {}
+export class RadioField extends FieldComponent {
+  protected readonly labelId = `rf-radio-label-${radioCount++}`;
+}
 
 @Component({
   selector: 'app-statement-field',
@@ -176,15 +181,20 @@ export class FieldsetField extends FieldComponent {}
         @if (!meta().hideLabel) {
           <h3>{{ meta().label }}</h3>
         }
-        @for (row of array.rows; track row.id) {
+        @for (row of array.rows; track row.id; let index = $index) {
           <div class="rf-group__row">
             <div class="rf-group__fields">
-              @for (child of row.fields; track child.key) {
+              @for (child of row.fields; track child.control ?? child.key) {
                 <rf-field [view]="child" />
               }
             </div>
             @if (row.canRemove) {
-              <button mat-stroked-button type="button" (click)="row.remove()">
+              <button
+                mat-stroked-button
+                type="button"
+                [attr.aria-label]="'Remove item ' + (index + 1)"
+                (click)="row.remove()"
+              >
                 Remove
               </button>
             }

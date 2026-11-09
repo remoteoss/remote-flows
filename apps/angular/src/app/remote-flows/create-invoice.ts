@@ -65,6 +65,7 @@ export function injectCreateInvoice({
   });
 
   const createdScheduleId = signal<string | null>(null);
+  const isValidating = signal(false);
 
   const isLoading = computed(
     () =>
@@ -74,19 +75,27 @@ export function injectCreateInvoice({
   );
 
   async function onSubmit() {
-    createdScheduleId.set(null);
-    const { hasErrors } = await store.submit();
-    if (hasErrors) {
+    if (isValidating() || createSchedule.isPending()) {
       return;
     }
-    const values = await store.parse();
-    const response = await createSchedule.mutateAsync({
-      employmentId: employmentId(),
-      values,
-    });
-    const id = response.data?.data?.successes?.[0]?.id;
-    if (id) {
-      createdScheduleId.set(id);
+    createdScheduleId.set(null);
+    isValidating.set(true);
+    try {
+      const { hasErrors } = await store.submit();
+      if (hasErrors) {
+        return;
+      }
+      const values = await store.parse();
+      const response = await createSchedule.mutateAsync({
+        employmentId: employmentId(),
+        values,
+      });
+      const id = response.data?.data?.successes?.[0]?.id;
+      if (id) {
+        createdScheduleId.set(id);
+      }
+    } finally {
+      isValidating.set(false);
     }
   }
 
@@ -94,7 +103,7 @@ export function injectCreateInvoice({
     fields: store.fields,
     isContractorOfRecord,
     isLoading,
-    isSubmitting: createSchedule.isPending,
+    isSubmitting: computed(() => isValidating() || createSchedule.isPending()),
     createdScheduleId,
     onSubmit,
   };
