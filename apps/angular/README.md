@@ -33,6 +33,8 @@ The page prints which one is running.
 
 The Vercel project is named `remote-flows-angular`. To recreate it, import the repo in Vercel as its own project, with `apps/angular` as the root directory and "Include source files outside of the Root Directory" turned on. Vercel then deploys every branch. `ignoreCommand` in `vercel.json` skips pushes that touch nothing under `apps/angular`, `packages/core` or the lockfile and workspace files.
 
+An empty commit is skipped by `ignoreCommand`. To rebuild without changing the app, use "Redeploy" in the Vercel dashboard. Environment variable changes only apply to new deployments.
+
 Set the same variables as the `.env.<name>` file of the environment you target (`VITE_CLIENT_ID`, `REMOTE_CLIENT_SECRET`, `VITE_REMOTE_GATEWAY`, `REMOTE_REFRESH_TOKEN`).
 
 The proxy in `api/` calls the gateway with a user token, so keep the deployment behind Vercel's password protection.
