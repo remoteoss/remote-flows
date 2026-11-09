@@ -1,20 +1,19 @@
 import { MinimalRegion } from '@/src/client';
-import { jsonSchema } from '@/src/flows/CostCalculator/jsonSchema';
 import type {
   CostCalculatorEstimationFormValues,
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
   UseCostCalculatorOptions,
 } from '@/src/flows/CostCalculator/types';
-import type { JSFModify } from '@/src/flows/types';
 
 import { parseJSFToValidate } from '@/src/components/form/utils';
-import { iterateErrors } from '@/src/components/form/validationResolver';
-// oxlint-disable-next-line no-restricted-imports -- TODO: move onto useHeadlessForm, see docs/USE_HEADLESS_FORM_ROLLOUT.md
-import { createHeadlessForm } from '@/src/common/createHeadlessForm';
+import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { string, ValidationError } from 'yup';
-import { buildPayload, buildValidationSchema } from './utils';
+import {
+  buildCostCalculatorSchema,
+  buildPayload,
+  buildValidationSchema,
+} from './utils';
 import {
   useCompanyCurrencies,
   useCostCalculatorCountries,
@@ -39,15 +38,9 @@ type CostCalculatorCountry = {
   currency: string;
 };
 
-type JSFValidationError = {
-  formErrors: Record<
-    string,
-    {
-      type: string;
-      message: string;
-    }
-  >;
-  yupError: ValidationError;
+type ModifyFieldAttrs = Record<string, unknown> & {
+  presentation?: Record<string, unknown>;
+  'x-jsf-presentation'?: Record<string, unknown>;
 };
 
 export const defaultEstimationOptions: CostCalculatorEstimationOptions = {
@@ -82,8 +75,21 @@ type UseCostCalculatorParams = {
   version?: CostCalculatorVersion;
 };
 
-const useStaticSchema = (options?: { jsfModify?: JSFModify }) => {
-  return createHeadlessForm(jsonSchema.data.schema, undefined, options);
+const withPresentation = (
+  field: unknown,
+  presentation: Record<string, unknown>,
+) => {
+  const attrs = (
+    typeof field === 'object' && field !== null ? field : {}
+  ) as ModifyFieldAttrs;
+  return {
+    ...attrs,
+    presentation: {
+      ...attrs['x-jsf-presentation'],
+      ...attrs.presentation,
+      ...presentation,
+    },
+  };
 };
 
 type HiringBudget = 'my_hiring_budget' | 'employee_annual_salary';
@@ -195,6 +201,69 @@ export const useCostCalculator = (
     };
   }, [employeeBillingCurrency, employerBillingCurrency]);
 
+  const regions = useMemo(
+    () =>
+      selectedCountry?.childRegions.map((region) => ({
+        value: region.slug,
+        label: region.name,
+      })) ?? [],
+    [selectedCountry],
+  );
+
+  const onCurrencyChangeRef = useRef(options?.onCurrencyChange);
+  useEffect(() => {
+    onCurrencyChangeRef.current = options?.onCurrencyChange;
+  }, [options?.onCurrencyChange]);
+
+  /**
+   * If the selected country has no child regions and has additional fields,
+   * set the current region to the country's region slug and fetch the region fields.
+   * @param country
+   */
+  const onCountryChange = useCallback(
+    (country: string) => {
+      const currentCountry = countries?.find(({ value }) => value === country);
+
+      if (
+        currentCountry &&
+        currentCountry.childRegions.length === 0 &&
+        currentCountry.hasAdditionalFields
+      ) {
+        setSelectedRegion(currentCountry.regionSlug);
+      } else {
+        setSelectedRegion(undefined);
+      }
+      setSelectedCountry(currentCountry);
+    },
+    [countries],
+  );
+
+  /**
+   * Update the selected region and fetch the region fields.
+   * @param region
+   */
+  const onRegionChange = useCallback((region: string) => {
+    setSelectedRegion(region);
+  }, []);
+
+  const onHiringBudgetChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setHiringBudget(event.target.value as HiringBudget);
+    },
+    [],
+  );
+
+  const onChangeCurrency = useCallback(
+    (currency: string) => {
+      const selectedCurrency = currencies?.find(
+        (c) => c.value === currency,
+      )?.label;
+      setEmployerBillingCurrency(selectedCurrency);
+      onCurrencyChangeRef.current?.(selectedCurrency || '');
+    },
+    [currencies],
+  );
+
   const showManagementField = estimationOptions.showManagementFee;
   const showEstimationTitleField = estimationOptions.includeEstimationTitle;
   const useSplitSalaryDescription =
@@ -238,6 +307,7 @@ export const useCostCalculator = (
           ...options?.jsfModify?.fields?.hiring_budget,
           presentation: {
             hidden: version == 'marketing',
+            onChange: onHiringBudgetChange,
           },
         },
         management: {
@@ -297,6 +367,7 @@ export const useCostCalculator = (
     getCurrencies,
     salaryField,
     hiringBudget,
+    onHiringBudgetChange,
     salaryFieldPresentation?.salary_conversion_properties?.label,
     salaryFieldPresentation?.salary_conversion_properties?.description,
     options?.jsfModify?.fields?.hiring_budget,
@@ -310,14 +381,50 @@ export const useCostCalculator = (
     useSplitSalaryDescription,
   ]);
 
-  const fieldsJSONSchema = useStaticSchema({
-    jsfModify: {
-      fields: {
-        ...options?.jsfModify?.fields,
-        ...customFields?.fields,
+  const schema = useMemo(
+    () =>
+      buildCostCalculatorSchema({
+        countries,
+        currencies,
+        regions,
+        employerBillingCurrency: employerBillingCurrency || 'USD',
+        includeEstimationTitle: estimationOptions.includeEstimationTitle,
+      }),
+    [
+      countries,
+      currencies,
+      regions,
+      employerBillingCurrency,
+      estimationOptions.includeEstimationTitle,
+    ],
+  );
+
+  const {
+    form: staticForm,
+    handleValidation: handleStaticValidation,
+    parseFormValues: parseStaticFormValues,
+  } = useHeadlessForm({
+    schema,
+    options: {
+      jsfModify: {
+        fields: {
+          ...options?.jsfModify?.fields,
+          ...customFields.fields,
+          country: withPresentation(options?.jsfModify?.fields?.country, {
+            onChange: onCountryChange,
+          }),
+          region: withPresentation(options?.jsfModify?.fields?.region, {
+            onChange: onRegionChange,
+          }),
+          currency: withPresentation(options?.jsfModify?.fields?.currency, {
+            onChange: onChangeCurrency,
+          }),
+        },
       },
     },
+    strategy: 'buildOnce',
   });
+  const staticFields = staticForm?.fields ?? [];
 
   useEffect(() => {
     // Initialize selectedCountry from defaultRegion
@@ -353,162 +460,35 @@ export const useCostCalculator = (
     );
   }
 
-  /**
-   * If the selected country has no child regions and has additional fields,
-   * set the current region to the country's region slug and fetch the region fields.
-   * @param country
-   */
-  function onCountryChange(country: string) {
-    const currentCountry = countries?.find(({ value }) => value === country);
-
-    if (
-      currentCountry &&
-      currentCountry.childRegions.length === 0 &&
-      currentCountry.hasAdditionalFields
-    ) {
-      setSelectedRegion(currentCountry.regionSlug);
-    } else {
-      setSelectedRegion(undefined);
-    }
-    setSelectedCountry(currentCountry);
-  }
-
-  /**
-   * Update the selected region and fetch the region fields.
-   * @param region
-   */
-  function onRegionChange(region: string) {
-    setSelectedRegion(region);
-  }
-
-  function onHiringBudgetChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setHiringBudget(event.target.value as HiringBudget);
-  }
-
-  function onChangeCurrency(currency: string) {
-    const selectedCurrency = currencies?.find(
-      (c) => c.value === currency,
-    )?.label;
-    setEmployerBillingCurrency(selectedCurrency);
-    options?.onCurrencyChange?.(selectedCurrency || '');
-  }
-
-  const regionField = fieldsJSONSchema.fields.find(
-    (field) => field.name === 'region',
-  );
-
-  if (regionField) {
-    const regions =
-      selectedCountry?.childRegions.map((region) => ({
-        value: region.slug,
-        label: region.name,
-      })) ?? [];
-    regionField.options = regions;
-    regionField.isVisible = regions.length > 0;
-    regionField.required = regions.length > 0;
-    regionField.onChange = onRegionChange;
-    regionField.schema =
-      regions.length > 0
-        ? string()
-            .transform((value) => (typeof value === 'string' ? value : ''))
-            .required('Region is required')
-        : string();
-  }
-
-  if (currencies) {
-    const currencyField = fieldsJSONSchema.fields.find(
-      (field) => field.name === 'currency',
-    );
-    if (currencyField) {
-      currencyField.options = currencies;
-      currencyField.onChange = onChangeCurrency;
-    }
-  }
-
-  const hiringBudgetField = fieldsJSONSchema.fields.find(
-    (field) => field.name === 'hiring_budget',
-  );
-  if (hiringBudgetField) {
-    hiringBudgetField.onChange = onHiringBudgetChange;
-  }
-
-  if (countries) {
-    const countryField = fieldsJSONSchema.fields.find(
-      (field) => field.name === 'country',
-    );
-    if (countryField) {
-      countryField.options = countries;
-      countryField.onChange = onCountryChange;
-    }
-  }
-
   const resetForm = () => {
     setSelectedCountry(undefined);
     setSelectedRegion(defaultRegion);
   };
 
   const allFields = [
-    ...fieldsJSONSchema.fields.filter((field) => field.name !== 'management'),
+    ...staticFields.filter((field) => field.name !== 'management'),
     ...(jsonSchemaRegionFields?.fields || []),
-    ...fieldsJSONSchema.fields.filter((field) => field.name === 'management'),
+    ...staticFields.filter((field) => field.name === 'management'),
   ];
 
-  const validationSchema = buildValidationSchema(
-    fieldsJSONSchema.fields,
-    employerBillingCurrency || 'USD',
-    estimationOptions.includeEstimationTitle,
-  );
+  const validationSchema = buildValidationSchema({
+    regions,
+    employerBillingCurrency: employerBillingCurrency || 'USD',
+    includeEstimationTitle: estimationOptions.includeEstimationTitle,
+  });
 
   async function handleValidation(values: CostCalculatorEstimationFormValues) {
-    let errors: JSFValidationError | null = null;
-
     options?.onValidation?.(values);
+    const staticFieldsResult = await handleStaticValidation(values);
     const parsedValues = await parseJSFToValidate(values, allFields);
-
-    // 1. validate static fields first using Yup validate function
-    try {
-      await validationSchema.validate(parsedValues, {
-        abortEarly: false,
-      });
-      errors = {
-        formErrors: {},
-        yupError: new ValidationError([], values),
-      };
-    } catch (error) {
-      const iterateResult = iterateErrors(error as ValidationError);
-
-      errors = {
-        // convert the errors to a format that can be used in the form
-        formErrors: Object.entries(iterateResult).reduce(
-          (acc, [key, value]) => ({ ...acc, [key]: value.message }),
-          {},
-        ),
-        yupError: error as ValidationError,
-      };
-    }
-
-    // 2. validate json schema fields using the handleValidation (from json-schema-form)
-    const handleValidationResult =
+    const regionFieldsResult =
       jsonSchemaRegionFields?.handleValidation(parsedValues);
-
-    // 3. combine the errors from both validations
-    const combinedInnerErrors = [
-      ...(errors?.yupError.inner || []),
-      ...((handleValidationResult as { yupError: ValidationError })?.yupError
-        ?.inner || []),
-    ];
-    const combinedValues = {
-      ...(errors?.yupError?.value || {}),
-      ...((handleValidationResult as { yupError: ValidationError })?.yupError
-        ?.value || {}),
-    };
 
     return {
       formErrors: {
-        ...(errors?.formErrors || {}),
-        ...(handleValidationResult?.formErrors || {}),
+        ...staticFieldsResult?.formErrors,
+        ...regionFieldsResult?.formErrors,
       },
-      yupError: new ValidationError(combinedInnerErrors, combinedValues),
     };
   }
 
@@ -528,8 +508,10 @@ export const useCostCalculator = (
      */
     fields: allFields,
     /**
-     * Validation schema for the cost calculator form
+     * Yup validation schema for the cost calculator form.
+     * @deprecated Use `handleValidation`, which validates the form against its JSON Schema. `validationSchema` will be removed in the next major version.
      */
+    // oxlint-disable-next-line typescript/no-deprecated
     validationSchema,
     /**
      * Function to parse form values before submission
@@ -569,9 +551,8 @@ export const useCostCalculator = (
         estimation_title,
       };
 
-      const parsedStaticFields = await parseJSFToValidate(
+      const parsedStaticFields = await parseStaticFormValues(
         jsonSchemaStaticFieldValues,
-        fieldsJSONSchema.fields,
       );
 
       const parsedRegionFields = await parseJSFToValidate(

@@ -2,7 +2,7 @@ export const jsonSchema = {
   data: {
     version: 7,
     schema: {
-      'x-rmt-meta': { jsfOldVersion: true },
+      'x-rmt-meta': { jsfVersion: '1' },
       additionalProperties: false,
       properties: {
         country: {
@@ -21,6 +21,9 @@ export const jsonSchema = {
           oneOf: [],
           'x-jsf-presentation': {
             inputType: 'select',
+          },
+          'x-jsf-errorMessage': {
+            required: 'Region is required',
           },
         },
         currency: {
@@ -110,8 +113,12 @@ export const jsonSchema = {
             management_fee: {
               title: 'Desired monthly management fee',
               type: 'integer',
+              minimum: 0,
               'x-jsf-presentation': {
                 inputType: 'money',
+              },
+              'x-jsf-errorMessage': {
+                minimum: 'Management fee must be greater than or equal to 0',
               },
             },
             _expanded: {
@@ -129,15 +136,26 @@ export const jsonSchema = {
           },
         },
       },
-      required: [
-        'country',
-        'currency',
-        'salary',
-        'salary_conversion',
-        'salary_converted',
+      required: ['country', 'currency', 'salary_converted'],
+      allOf: [
+        {
+          if: {
+            properties: { salary_converted: { const: 'salary' } },
+            required: ['salary_converted'],
+          },
+          then: { required: ['salary'] },
+        },
+        {
+          if: {
+            properties: { salary_converted: { const: 'salary_conversion' } },
+            required: ['salary_converted'],
+          },
+          then: { required: ['salary_conversion'] },
+        },
       ],
       type: 'object',
       'x-jsf-order': [
+        'hiring_budget',
         'country',
         'region',
         'currency',
