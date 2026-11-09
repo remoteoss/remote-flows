@@ -30,7 +30,7 @@ import {
 import { mutationToPromise } from '@/src/lib/mutations';
 export type CostCalculatorVersion = 'standard' | 'marketing';
 
-type CostCalculatorCountry = {
+export type CostCalculatorCountry = {
   value: string;
   label: string;
   childRegions: MinimalRegion[];
@@ -529,6 +529,7 @@ export const useCostCalculator = (
     },
     /**
      * Array of form fields from the cost calculator schema + dynamic region fields like benefits, age, etc.
+     * The country options also carry `childRegions`, `hasAdditionalFields`, `regionSlug` and `currency`: these are deprecated and will be removed in the next major version.
      */
     fields: allFields,
     /**

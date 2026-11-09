@@ -173,4 +173,45 @@ describe('useCostCalculator', () => {
       },
     ]);
   });
+
+  it('should keep the country details on the country options', async () => {
+    const { result } = await renderCostCalculatorWithOptions();
+
+    const countryField = result.current.fields.find(
+      (field) => field.name === 'country',
+    );
+
+    expect(countryField?.options).toEqual([
+      {
+        label: 'Poland',
+        value: 'POL',
+        childRegions: [],
+        hasAdditionalFields: false,
+        regionSlug: 'POL',
+        currency: 'PLN',
+      },
+      {
+        label: 'Spain',
+        value: 'ESP',
+        childRegions: [
+          { slug: 'AST', name: 'Asturias' },
+          { slug: 'CAN', name: 'Canary Islands' },
+        ],
+        hasAdditionalFields: true,
+        regionSlug: 'ESP',
+        currency: 'EUR',
+      },
+      {
+        label: 'United States',
+        value: 'USA',
+        childRegions: [
+          { slug: 'CA', name: 'California' },
+          { slug: 'NY', name: 'New York' },
+        ],
+        hasAdditionalFields: true,
+        regionSlug: 'USA',
+        currency: 'USD',
+      },
+    ]);
+  });
 });

@@ -5,7 +5,11 @@ import type {
 
 import { number, object, string } from 'yup';
 import { toOneOf } from '@/src/common/headlessForm';
-import { CostCalculatorVersion, defaultEstimationOptions } from './hooks';
+import {
+  CostCalculatorCountry,
+  CostCalculatorVersion,
+  defaultEstimationOptions,
+} from './hooks';
 import type {
   CostCalculatorEstimationOptions,
   CostCalculatorEstimationSubmitValues,
@@ -17,7 +21,7 @@ import { jsonSchema } from '@/src/flows/CostCalculator/jsonSchema';
 type SelectOption = { label: string; value: string };
 
 type CostCalculatorSchemaParams = {
-  countries?: SelectOption[];
+  countries?: CostCalculatorCountry[];
   currencies?: SelectOption[];
   regions: SelectOption[];
   employerBillingCurrency: string;
@@ -34,6 +38,13 @@ function getManagementFeeLimit(employerBillingCurrency: string) {
     message: `Management fee cannot exceed ${maximum / 100} ${employerBillingCurrency}`,
   };
 }
+
+const toCountryOneOf = (countries: CostCalculatorCountry[] = []) =>
+  countries.map(({ label, value, ...countryDetails }) => ({
+    const: value,
+    title: label,
+    'x-jsf-presentation': countryDetails,
+  }));
 
 /**
  * Build the cost calculator schema with the options and rules that depend on API data.
@@ -54,7 +65,7 @@ export function buildCostCalculatorSchema({
   return {
     ...baseSchema,
     properties: {
-      country: { ...country, oneOf: toOneOf(countries) },
+      country: { ...country, oneOf: toCountryOneOf(countries) },
       ...(hasRegions && { region: { ...region, oneOf: toOneOf(regions) } }),
       currency: { ...currency, oneOf: toOneOf(currencies) },
       ...otherProperties,
