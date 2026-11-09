@@ -346,16 +346,16 @@ export const useContractorOnboarding = ({
     mutationToPromise(setContractOriginMutation);
 
   const { mutateAsyncOrThrow: createInvoiceScheduleMutationAsync } =
-    mutationToPromise(createInvoiceScheduleMutation);
+    createInvoiceScheduleMutation;
 
   const { mutateAsyncOrThrow: updateInvoiceScheduleMutationAsync } =
-    mutationToPromise(updateInvoiceScheduleMutation);
+    updateInvoiceScheduleMutation;
 
   const { mutateAsyncOrThrow: skipInvoiceScheduleMutationAsync } =
-    mutationToPromise(skipInvoiceScheduleMutation);
+    skipInvoiceScheduleMutation;
 
   const { mutateAsyncOrThrow: previewContractorInvoiceMutationAsync } =
-    mutationToPromise(previewContractorInvoiceMutation);
+    previewContractorInvoiceMutation;
 
   // if the employment is loaded, country code has not been set yet
   // we set the internal country code with the employment country code
