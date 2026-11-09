@@ -122,6 +122,43 @@ const monthlyAllowanceSchema: Schema = {
   },
 };
 
+const lockedSelectSchema: Schema = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    annual_gross_salary: money('Annual gross salary'),
+    first_day: {
+      title: 'First day',
+      type: 'string',
+      default: '1',
+      oneOf: [
+        { const: '1', title: '1st of the month' },
+        { const: '2', title: '2nd of the month' },
+      ],
+      'x-jsf-presentation': { inputType: 'select' },
+    },
+    second_day: {
+      title: 'Second day',
+      type: 'string',
+      oneOf: [
+        { const: '15', title: '15th of the month' },
+        { const: '16', title: '16th of the month' },
+      ],
+      'x-jsf-presentation': { inputType: 'select', disabled: true },
+      'x-jsf-logic-computedAttrs': { default: 'second_day_value' },
+    },
+  },
+  required: ['first_day', 'second_day'],
+  'x-jsf-order': ['annual_gross_salary', 'first_day', 'second_day'],
+  'x-jsf-logic': {
+    computedValues: {
+      second_day_value: {
+        rule: { cat: [{ '+': [{ var: 'first_day' }, 14] }] },
+      },
+    },
+  },
+};
+
 const standardHoursSchema: Schema = {
   type: 'object',
   additionalProperties: false,
@@ -221,6 +258,20 @@ export const chooseInGroup = async (
 };
 
 export const SITUATIONS: Situation[] = [
+  {
+    situation:
+      'disabled select follows the default computed from another field',
+    schema: lockedSelectSchema,
+    fill: async (user) => {
+      await user.selectOptions(await screen.findByTestId('first_day'), '2');
+    },
+    assert: async (submitted) => {
+      await waitFor(() =>
+        expect(screen.getByTestId('second_day')).toHaveValue('16'),
+      );
+      expect(submitted.second_day).toBe('16');
+    },
+  },
   {
     situation: 'forced value computed from an empty field stays read-only',
     schema: standardHoursSchema,

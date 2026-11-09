@@ -5,6 +5,7 @@ import { baseFields } from '@/src/components/form/fields/baseFields';
 import { cn } from '@/src/lib/utils';
 import { $TSFixMe, Components } from '@/src/types/remoteFlows';
 import { FieldExtra } from '@/src/components/form/FieldExtra';
+import { DynamicFormField } from '@/src/components/form/DynamicFormField';
 import { Statement } from '@/src/components/form/Statement';
 import { useFormFields } from '@/src/context';
 import { ZendeskTriggerButton } from '@/src/components/shared/zendesk-drawer/ZendeskTriggerButton';
@@ -376,21 +377,13 @@ export function FieldSetField({
                 );
               }
 
-              const fieldProps = omit(field, 'WrapperComponent');
               return wrapWithCustomWrapper(
-                <>
-                  <FieldComponent
-                    {...fieldProps}
-                    name={fieldKey}
-                    component={components?.[fieldType as keyof Components]}
-                  />
-                  {field.statement ? (
-                    <Statement
-                      {...(field.statement as StatementComponentProps['data'])}
-                    />
-                  ) : null}
-                  <FieldExtra extra={field.extra} />
-                </>,
+                <DynamicFormField
+                  field={field}
+                  name={fieldKey}
+                  FieldComponent={FieldComponent}
+                  component={components?.[fieldType as keyof Components]}
+                />,
                 fieldKey,
               );
             })}
