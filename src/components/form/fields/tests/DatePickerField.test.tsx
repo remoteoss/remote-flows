@@ -75,6 +75,12 @@ describe('DatePickerField Component', () => {
     expect(screen.getByText('This is a test field')).toBeInTheDocument();
   });
 
+  it('disables the date button when the field is disabled', () => {
+    renderWithFormContext({ ...defaultProps, disabled: true });
+
+    expect(screen.getByRole('button')).toBeDisabled();
+  });
+
   it('handles date selection correctly', () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
