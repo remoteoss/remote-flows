@@ -8,6 +8,7 @@
     },
     "packages/core": {
       "project": ["src/**/*.ts"],
+      "ignore": ["src/client/**"],
       "includeEntryExports": true
     }
   }

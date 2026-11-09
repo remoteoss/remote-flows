@@ -7,8 +7,8 @@ import { resolve } from 'path';
  */
 function cleanupApiEorPrefix() {
   const files = [
-    resolve(process.cwd(), 'src/client/sdk.gen.ts'),
-    resolve(process.cwd(), 'src/client/types.gen.ts'),
+    resolve(process.cwd(), 'packages/core/src/client/sdk.gen.ts'),
+    resolve(process.cwd(), 'packages/core/src/client/types.gen.ts'),
   ];
 
   let totalReplacements = 0;

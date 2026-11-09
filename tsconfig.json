@@ -33,6 +33,5 @@
     "vitest-setup.ts",
     "scripts",
     "tsdown.config.ts"
-  ],
-  "exclude": ["packages/core/types"]
+  ]
 }

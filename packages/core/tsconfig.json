@@ -1,12 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "lib": ["es2022"],
+    "lib": ["es2022", "webworker"],
     "types": [],
     "paths": {},
     "noEmit": true,
     "jsx": null
   },
-  "include": ["src", "types"],
+  "include": ["src"],
   "exclude": ["src/**/*.test.ts"]
 }
