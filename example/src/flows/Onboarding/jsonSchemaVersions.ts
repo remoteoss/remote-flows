@@ -33,7 +33,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   BGD: {
     // Bangladesh
-    contract_details: 8,
+    contract_details: 9,
   },
   BGR: {
     // Bulgaria
@@ -57,7 +57,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CHE: {
     // Switzerland
-    contract_details: 2,
+    contract_details: 8,
   },
   CHL: {
     // Chile
@@ -65,11 +65,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   CHN: {
     // China
-    contract_details: 8,
+    contract_details: 9,
   },
   COL: {
     // Colombia
-    contract_details: 6,
+    contract_details: 7,
   },
   CRI: {
     // Costa Rica
@@ -97,7 +97,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   ECU: {
     // Ecuador
-    contract_details: 1,
+    contract_details: 7,
   },
   EGY: {
     // Egypt
@@ -345,7 +345,7 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   UKR: {
     // Ukraine
-    contract_details: 1,
+    contract_details: 7,
   },
   URY: {
     // Uruguay

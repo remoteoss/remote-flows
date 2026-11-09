@@ -69,6 +69,12 @@ describe('NumberField Component', () => {
     expect(screen.getByText('This is a test field')).toBeInTheDocument();
   });
 
+  it('disables the input when the field is disabled', () => {
+    renderWithFormContext({ ...defaultProps, disabled: true });
+
+    expect(screen.getByPlaceholderText('Test Field')).toBeDisabled();
+  });
+
   it('handles input change correctly', () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 

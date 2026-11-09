@@ -150,6 +150,13 @@ describe('TelField Component - Split UI', () => {
     });
   });
 
+  it('disables the country code and the phone number when the field is disabled', () => {
+    renderWithFormContext({ ...defaultProps, disabled: true });
+
+    expect(screen.getByLabelText('Country code')).toBeDisabled();
+    expect(screen.getByLabelText('Phone number')).toBeDisabled();
+  });
+
   describe('Country Selection', () => {
     it('displays all country options in select', async () => {
       const user = userEvent.setup();
