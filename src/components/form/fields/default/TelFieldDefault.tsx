@@ -26,6 +26,7 @@ export function TelFieldDefault({
     onChangePhoneNumber,
     currentCountry,
     nationalPhoneNumber,
+    disabled,
   } = fieldData;
 
   const selectedCountryCode = currentCountry
@@ -46,6 +47,7 @@ export function TelFieldDefault({
         <div className='w-[180px]'>
           <Select
             value={selectedCountryCode}
+            disabled={disabled}
             onValueChange={(value) => {
               const country = options?.find(
                 (opt) => `${opt.label}-${opt.meta?.countryCode}` === value,
@@ -98,6 +100,7 @@ export function TelFieldDefault({
             placeholder="Employee's phone number *"
             aria-invalid={Boolean(fieldState.error)}
             aria-label='Phone number'
+            disabled={disabled}
           />
         </div>
       </div>

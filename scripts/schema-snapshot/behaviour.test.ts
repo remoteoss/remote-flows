@@ -270,25 +270,25 @@ describe.each(['buildOnce', 'rebuild'] as const)(
       ]);
     });
 
-    it('flags a tightened length limit', async () => {
+    it('treats a tightened length limit as informational', async () => {
       const before = await fingerprint(buildSchema({ maxLength: 20 }));
       const after = await fingerprint(buildSchema({ maxLength: 10 }));
 
       expect(diffFingerprints(before, after)).toEqual([
         {
-          severity: 'breaking',
+          severity: 'info',
           message: '`reference` maxLength changed from 20 to 10',
         },
       ]);
     });
 
-    it('flags a new limit on an existing field', async () => {
+    it('treats a new limit on an existing field as informational', async () => {
       const before = await fingerprint(buildSchema());
       const after = await fingerprint(buildSchema({ maxLength: 10 }));
 
       expect(diffFingerprints(before, after)).toEqual([
         {
-          severity: 'breaking',
+          severity: 'info',
           message: '`reference` has a new maxLength: 10',
         },
       ]);
@@ -460,7 +460,7 @@ describe.each(['buildOnce', 'rebuild'] as const)(
       ]);
     });
 
-    it('flags a changed pattern', async () => {
+    it('treats a changed pattern as informational', async () => {
       const withPattern = (pattern: string) =>
         buildSchema({
           extraProperties: { reference: text('Reference', { pattern }) },
@@ -470,7 +470,7 @@ describe.each(['buildOnce', 'rebuild'] as const)(
 
       expect(diffFingerprints(before, after)).toEqual([
         {
-          severity: 'breaking',
+          severity: 'info',
           message: '`reference` pattern changed from ^A to ^B',
         },
       ]);

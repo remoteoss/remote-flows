@@ -6,14 +6,10 @@ import {
   TimeOffRequestError,
   TimeOffRequestsError,
 } from '@remoteoss/remote-flows';
-import {
-  Alert,
-  AlertDescription,
-  Input,
-  Label,
-} from '@remoteoss/remote-flows/internals';
+import { Alert, AlertDescription } from '@remoteoss/remote-flows/internals';
 import { AlertCircle, CheckIcon, EyeIcon, XIcon } from 'lucide-react';
 import { RemoteFlows } from './RemoteFlows';
+import { TimeOffDeclineDialog } from './TimeOffDeclineDialog';
 import './css/main.css';
 
 const LIST_ERROR_MESSAGES: Record<TimeOffRequestsError['reason'], string> = {
@@ -49,12 +45,10 @@ export function TimeOffList() {
   } | null>(null);
   const [decisionError, setDecisionError] =
     useState<TimeOffDecisionError | null>(null);
-  const [declineReason, setDeclineReason] = useState('');
 
   const clearDecision = () => {
     setOutcome(null);
     setDecisionError(null);
-    setDeclineReason('');
   };
 
   return (
@@ -223,50 +217,34 @@ export function TimeOffList() {
                       </Alert>
                     )}
                     {timeOffListBag.timeOffRequest?.status === 'requested' && (
-                      <>
-                        <div className='mb-4'>
-                          <Label htmlFor='decline-reason' className='mb-2'>
-                            Decline reason (optional)
-                          </Label>
-                          <Input
-                            id='decline-reason'
-                            value={declineReason}
-                            onChange={(event) =>
-                              setDeclineReason(event.target.value)
-                            }
-                          />
-                        </div>
-                        <div className='buttons-container'>
-                          <DeclineButton
-                            className='back-button'
-                            declineReason={declineReason.trim() || null}
-                            onClick={() => setDecisionError(null)}
-                            onSuccess={(timeOffRequest) =>
-                              setOutcome({
-                                decision: 'decline',
-                                status: timeOffRequest.status,
-                              })
-                            }
-                            onError={setDecisionError}
-                          >
-                            Decline
-                          </DeclineButton>
-                          <ApproveButton
-                            className='submit-button'
-                            approverId={null}
-                            onClick={() => setDecisionError(null)}
-                            onSuccess={(timeOffRequest) =>
-                              setOutcome({
-                                decision: 'approve',
-                                status: timeOffRequest.status,
-                              })
-                            }
-                            onError={setDecisionError}
-                          >
-                            Approve
-                          </ApproveButton>
-                        </div>
-                      </>
+                      <div className='buttons-container'>
+                        <TimeOffDeclineDialog
+                          DeclineButton={DeclineButton}
+                          disabled={timeOffListBag.isSubmitting}
+                          onClick={() => setDecisionError(null)}
+                          onSuccess={(timeOffRequest) =>
+                            setOutcome({
+                              decision: 'decline',
+                              status: timeOffRequest.status,
+                            })
+                          }
+                          onError={setDecisionError}
+                        />
+                        <ApproveButton
+                          className='submit-button'
+                          approverId={null}
+                          onClick={() => setDecisionError(null)}
+                          onSuccess={(timeOffRequest) =>
+                            setOutcome({
+                              decision: 'approve',
+                              status: timeOffRequest.status,
+                            })
+                          }
+                          onError={setDecisionError}
+                        >
+                          Approve
+                        </ApproveButton>
+                      </div>
                     )}
                   </ReviewStep>
                   <div className='buttons-container'>

@@ -4,11 +4,35 @@ Schema versions for employee onboarding in Colombia.
 
 ## Current Version
 
-**Contract Details:** v6
+**Contract Details:** v7
 
 ## Contract Details
 
-### v6 - Current
+### v7 - Current
+
+**Type of change:** compliance, product
+
+**What changed:**
+
+- The probation period is blocked for employments with a recognized seniority date, the same way fixed-term contracts already are. For such an employment, `probation_length` is locked to `0` and any other submitted value is rejected, unless the request is made by a Remote Admin. Partners with a custom UI should send `probation_length: 0` for employees with a recognized seniority date.
+- The custom "Must be smaller or equal to 2 months" error message on `probation_length` is replaced by the default maximum message. The maximum itself is unchanged.
+- `probation_length` gains a help center link about probation periods in `x-jsf-presentation.meta.helpCenter`.
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      COL: { contract_details: 7 },
+    },
+  }}
+/>
+```
+
+---
+
+### v6
 
 **What changed:**
 
