@@ -15,7 +15,7 @@ export function TextAreaFieldDefault({
   fieldState,
   fieldData,
 }: FieldComponentProps) {
-  const { name, label, description, maxLength } = fieldData;
+  const { name, label, description, maxLength, disabled } = fieldData;
   const valueLength = field.value?.length ?? 0;
   return (
     <FormItem
@@ -35,6 +35,7 @@ export function TextAreaFieldDefault({
             'RemoteFlows__TextArea__Input',
           )}
           placeholder={label}
+          disabled={disabled}
         />
       </FormControl>
       {(description || maxLength) && (

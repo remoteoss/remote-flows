@@ -66,6 +66,13 @@ describe('FileUploadField Component', () => {
     expect(screen.getByText('This is a test field')).toBeInTheDocument();
   });
 
+  it('disables the picker when the field is disabled', () => {
+    renderWithFormContext({ ...defaultProps, disabled: true });
+
+    expect(screen.getByRole('button')).toBeDisabled();
+    expect(screen.getByLabelText('File upload')).toBeDisabled();
+  });
+
   it('handles file upload change correctly', async () => {
     renderWithFormContext({ ...defaultProps, onChange: mockOnChange });
 
