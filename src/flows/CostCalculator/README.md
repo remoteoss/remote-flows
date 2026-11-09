@@ -619,6 +619,33 @@ Note: The spread in currency conversion accounts for foreign exchange risk (curr
 
 The options.jsfModify props accepts the same props that the [modify](https://json-schema-form.vercel.app/?path=/docs/api-reference-modify--docs#config-methods) function from the json-schema-form library
 
+The form runs on json-schema-form v1, so `description` must be a string. To add a help center link to a field, pass its Zendesk article id and link text in `x-jsf-presentation.meta.helpCenter` instead of putting JSX in the description:
+
+```tsx
+<CostCalculatorFlow
+  options={{
+    jsfModify: {
+      fields: {
+        currency: {
+          description:
+            "Select the currency you want to be invoiced in for this employee's services.",
+          'x-jsf-presentation': {
+            meta: {
+              helpCenter: {
+                id: zendeskArticles.remoteFxRate,
+                callToAction: 'Learn more ↗',
+              },
+            },
+          },
+        },
+      },
+    },
+  }}
+/>
+```
+
+The default field components render the link with `ZendeskTriggerButton`. Custom field components receive it as `fieldData.meta.helpCenter` and render it themselves.
+
 ### CostCalculatorForm
 
 It renders the form and the fields of the cost calculator
@@ -826,8 +853,8 @@ The `useCostCalculator` hook provides access to the underlying functionality of 
 | ------------------ | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | `stepState`        | `{ current: number; total: number; isLastStep: boolean }`                                                            | Information about the current step in multi-step forms                                                                   |
 | `fields`           | `Field[]`                                                                                                            | Array of form field definitions with metadata ([json-schema-form](https://github.com/remoteoss/json-schema-form) format) |
-| `validationSchema` | `yup.Schema`                                                                                                         | Yup validation schema for the form                                                                                       |
-| `handleValidation` | `Function`                                                                                                           | Function to handle custom field validation                                                                               |
+| `validationSchema` | `yup.Schema`                                                                                                         | Deprecated. Yup validation schema for the form, kept until the next major version. Use `handleValidation` instead        |
+| `handleValidation` | `Function`                                                                                                           | Validates the form values against the JSON Schema and resolves to `{ formErrors }`                                       |
 | `isSubmitting`     | `boolean`                                                                                                            | Whether the form is currently submitting                                                                                 |
 | `isLoading`        | `boolean`                                                                                                            | Whether any required data is still loading                                                                               |
 | `onSubmit`         | `(values: CostCalculatorEstimationSubmitValues) => Promise<Result<CostCalculatorEstimateResponse, EstimationError>>` | Function to submit the form data to the Remote API                                                                       |
