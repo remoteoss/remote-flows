@@ -52,6 +52,7 @@
     {
       "files": [
         "scripts/**",
+        "spike/angular/src/**",
         "src/common/createHeadlessForm.tsx",
         "src/common/headlessForm.ts",
         "src/common/useHeadlessForm.ts",
