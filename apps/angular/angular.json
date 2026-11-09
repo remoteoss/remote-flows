@@ -15,7 +15,7 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "index": "src/index.html",
-            "styles": ["src/styles.css"],
+            "styles": ["src/styles.scss"],
             "outputPath": "dist",
             "allowedCommonJsDependencies": ["fast-deep-equal"]
           },

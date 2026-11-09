@@ -1,0 +1,101 @@
+import { computed, inject, signal, Signal } from '@angular/core';
+import {
+  injectMutation,
+  injectQuery,
+} from '@tanstack/angular-query-experimental';
+import {
+  buildCreateInvoiceScheduleSchema,
+  contractorCurrenciesOptions,
+  createInvoiceScheduleMutation,
+  employmentOptions,
+  selectContractorCurrencyCodes,
+  selectEmployment,
+} from '@remoteoss/remote-flows-core';
+import { REMOTE_CLIENT } from '../providers';
+import { createFormStore } from './form-store';
+
+type CreateInvoiceOptions = {
+  employmentId: Signal<string>;
+  defaultValues?: Record<string, unknown>;
+};
+
+export function injectCreateInvoice({
+  employmentId,
+  defaultValues,
+}: CreateInvoiceOptions) {
+  const client = inject(REMOTE_CLIENT);
+
+  const employment = injectQuery(() => ({
+    ...employmentOptions(client, employmentId()),
+    enabled: Boolean(employmentId()),
+    select: selectEmployment,
+  }));
+
+  const currencies = injectQuery(() => ({
+    ...contractorCurrenciesOptions(client, employmentId()),
+    enabled: Boolean(employmentId()),
+    select: selectContractorCurrencyCodes,
+  }));
+
+  const createSchedule = injectMutation(() =>
+    createInvoiceScheduleMutation(client),
+  );
+
+  const isContractorOfRecord = computed(
+    () =>
+      (employment.data() as { contractor_type?: string } | undefined)
+        ?.contractor_type === 'cor',
+  );
+
+  const schema = computed(() => {
+    const codes = currencies.data();
+    if (!codes) {
+      return undefined;
+    }
+    return buildCreateInvoiceScheduleSchema({
+      currencies: codes,
+      isContractorOfRecord: isContractorOfRecord(),
+      includeFieldsets: false,
+    });
+  });
+
+  const store = createFormStore({
+    schema: schema as Signal<Record<string, unknown> | undefined>,
+    defaultValues,
+  });
+
+  const createdScheduleId = signal<string | null>(null);
+
+  const isLoading = computed(
+    () =>
+      !employmentId() ||
+      employment.isPending() ||
+      (currencies.isPending() && !schema()),
+  );
+
+  async function onSubmit() {
+    createdScheduleId.set(null);
+    const { hasErrors } = await store.submit();
+    if (hasErrors) {
+      return;
+    }
+    const values = await store.parse();
+    const response = await createSchedule.mutateAsync({
+      employmentId: employmentId(),
+      values,
+    });
+    const id = response.data?.data?.successes?.[0]?.id;
+    if (id) {
+      createdScheduleId.set(id);
+    }
+  }
+
+  return {
+    fields: store.fields,
+    isContractorOfRecord,
+    isLoading,
+    isSubmitting: createSchedule.isPending,
+    createdScheduleId,
+    onSubmit,
+  };
+}
