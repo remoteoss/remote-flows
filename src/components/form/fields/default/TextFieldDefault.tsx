@@ -16,6 +16,7 @@ export function TextFieldDefault({
     descriptionSuffix,
     maxLength,
     includeErrorMessage,
+    disabled,
   } = fieldData;
 
   const descriptionNode = (description || fieldData.meta?.helpCenter) && (
@@ -46,6 +47,7 @@ export function TextFieldDefault({
           className='RemoteFlows__TextField__Input'
           placeholder={label}
           maxLength={maxLength}
+          disabled={disabled}
         />
       </FormControl>
       {descriptionSuffix ? (

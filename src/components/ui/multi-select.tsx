@@ -30,6 +30,7 @@ interface MultiSelectProps {
   onChange: (options: Option[]) => void;
   placeholder?: string;
   multiple?: boolean;
+  disabled?: boolean;
 }
 
 export function MultiSelect({
@@ -38,6 +39,7 @@ export function MultiSelect({
   onChange,
   placeholder,
   multiple = true,
+  disabled = false,
   ...props
 }: MultiSelectProps) {
   const [open, setOpen] = useState(false);
@@ -60,7 +62,11 @@ export function MultiSelect({
   );
 
   return (
-    <Popover open={open} onOpenChange={setOpen} {...props}>
+    <Popover
+      open={open}
+      onOpenChange={(next) => !disabled && setOpen(next)}
+      {...props}
+    >
       <PopoverTrigger>
         <Button
           variant='outline'
@@ -68,6 +74,7 @@ export function MultiSelect({
           aria-expanded={open}
           className='w-full justify-between font-normal'
           type='button'
+          disabled={disabled}
         >
           <div className='flex gap-1 flex-wrap overflow-x-auto max-h-[2.5rem] items-center'>
             {selected.length > 0 ? (
@@ -79,24 +86,26 @@ export function MultiSelect({
                     className='mr-1 mb-1'
                   >
                     {option.label}
-                    <div
-                      role='button'
-                      tabIndex={0}
-                      aria-label={`remove ${option.label}`}
-                      className='ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer'
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleUnselect(option);
-                        }
-                      }}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                      }}
-                      onClick={() => handleUnselect(option)}
-                    >
-                      <X className='h-3 w-3 text-muted-foreground hover:text-foreground' />
-                    </div>
+                    {!disabled && (
+                      <div
+                        role='button'
+                        tabIndex={0}
+                        aria-label={`remove ${option.label}`}
+                        className='ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer'
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleUnselect(option);
+                          }
+                        }}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
+                        onClick={() => handleUnselect(option)}
+                      >
+                        <X className='h-3 w-3 text-muted-foreground hover:text-foreground' />
+                      </div>
+                    )}
                   </Badge>
                 );
               })

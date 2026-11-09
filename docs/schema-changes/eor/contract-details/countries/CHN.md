@@ -4,11 +4,34 @@ Schema versions for employee onboarding in China.
 
 ## Current Version
 
-**Contract Details:** v8
+**Contract Details:** v9
 
 ## Contract Details
 
-### v8 - Current
+### v9 - Current
+
+**Type of change:** compliance
+
+**What changed:**
+
+- The probation period is blocked when the employee's seniority date is recognized, the same way fixed-term contracts already are (see v7). For such employments `has_probation_period` must be `"no"` and `probation_length` must be 0 or omitted; any other submitted value is rejected, unless the request is made by a Remote Admin. Part-time contracts keep their existing locked `"no"`
+- No field changes in the schema itself: the rule is enforced when the contract details are submitted. Partners with a custom UI should send `has_probation_period: "no"` for employees with a recognized seniority date
+
+**Migration:**
+
+```tsx
+<OnboardingFlow
+  options={{
+    jsonSchemaVersionByCountry: {
+      CHN: { contract_details: 9 },
+    },
+  }}
+/>
+```
+
+---
+
+### v8
 
 **What changed:**
 
