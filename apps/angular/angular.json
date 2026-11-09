@@ -1,0 +1,49 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": { "packageManager": "pnpm", "analytics": false },
+  "projects": {
+    "angular": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.app.json",
+            "index": "src/index.html",
+            "styles": ["src/styles.css"],
+            "outputPath": "dist"
+          },
+          "configurations": {
+            "zoneless": { "optimization": true, "outputHashing": "all" },
+            "zone": {
+              "optimization": true,
+              "outputHashing": "all",
+              "polyfills": ["zone.js"],
+              "fileReplacements": [
+                {
+                  "replace": "src/app/app.config.ts",
+                  "with": "src/app/app.config.zone.ts"
+                }
+              ]
+            }
+          },
+          "defaultConfiguration": "zoneless"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": { "proxyConfig": "proxy.conf.js" },
+          "configurations": {
+            "zoneless": { "buildTarget": "angular:build:zoneless" },
+            "zone": { "buildTarget": "angular:build:zone" }
+          },
+          "defaultConfiguration": "zoneless"
+        }
+      }
+    }
+  }
+}

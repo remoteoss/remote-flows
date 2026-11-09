@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "github": { "enabled": false },
+  "installCommand": "cd ../.. && corepack pnpm install --frozen-lockfile --ignore-scripts",
+  "buildCommand": "corepack pnpm run build",
+  "outputDirectory": "dist/browser",
+  "rewrites": [
+    { "source": "/v1/:path*", "destination": "/api" },
+    { "source": "/v2/:path*", "destination": "/api" }
+  ]
+}
