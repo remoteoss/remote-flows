@@ -6,22 +6,22 @@ Ship an Angular package that offers the same flows as the React package, startin
 
 ## Status
 
-Phase 1 and most of Phase 2 are done, as a stack of draft PRs. Each is a behavior-preserving move, and none is merged yet.
+Phase 1 and most of Phase 2 are done, as a stack of open PRs. Each is a behavior-preserving move, and none is merged yet.
 
 | Step                                                                                                               | PR                                | State                                               |
 | ------------------------------------------------------------------------------------------------------------------ | --------------------------------- | --------------------------------------------------- |
-| Phase 1: pnpm workspace and an empty private `packages/core`                                                       | #1887                             | Draft                                               |
-| Phase 2.1: shared helpers (money, nested value, plain types, field helpers, value conversion, currency and base64) | #1888, #1889, #1890, #1891, #1897 | Draft                                               |
+| Phase 1: pnpm workspace and an empty private `packages/core`                                                       | #1887                             | Open                                                |
+| Phase 2.1: shared helpers (money, nested value, plain types, field helpers, value conversion, currency and base64) | #1888, #1889, #1890, #1891, #1897 | Open                                                |
 | Phase 2.1: helpers that stay in React (`stripHtml`, `prettifyFormValues`, sanitizers, yup helpers)                 | n/a                               | Stay: they need the DOM, DOMPurify or yup           |
-| Phase 2.2: form engine                                                                                             | #1893                             | Draft                                               |
-| Phase 2.3: invoice schedule schema, constants and payload builders                                                 | #1894                             | Draft                                               |
-| Phase 2.4: generated API client moves into core                                                                    | #1898                             | Draft                                               |
-| Phase 2.5: query and mutation options for the invoice flow                                                         | #1901                             | Draft                                               |
-| Phase 2.6: client factory takes explicit config                                                                    | #1900                             | Draft                                               |
-| Phase 2.7: lint boundary and type boundary                                                                         | #1895, #1896                      | Draft                                               |
-| CI path filters for `packages/`                                                                                    | #1899                             | Draft                                               |
-| Schema canary input list kept in sync with the workflow, with a test                                               | #1903                             | Draft                                               |
-| Agent rules for `packages/core`                                                                                    | #1902                             | Draft                                               |
+| Phase 2.2: form engine                                                                                             | #1893                             | Open                                                |
+| Phase 2.3: invoice schedule schema, constants and payload builders                                                 | #1894                             | Open                                                |
+| Phase 2.4: generated API client moves into core                                                                    | #1898                             | Open                                                |
+| Phase 2.5: query and mutation options for the invoice flow                                                         | #1901                             | Open                                                |
+| Phase 2.6: client factory takes explicit config                                                                    | #1900                             | Open                                                |
+| Phase 2.7: lint boundary and type boundary                                                                         | #1895, #1896                      | Open                                                |
+| CI path filters for `packages/`                                                                                    | #1899                             | Open                                                |
+| Schema canary input list kept in sync with the workflow, with a test                                               | #1903                             | Open                                                |
+| Agent rules for `packages/core`                                                                                    | #1902                             | Open                                                |
 | Phase 2.9: a private Angular app that consumes core, deployed as a Vercel preview                                  | #1913                             | Draft                                               |
 | Phase 2.8: bundle budget for core                                                                                  | n/a                               | Partly measured in #1913, see Phase 2 step 8        |
 | Final cleanup: remove the re-export files and rewrite imports                                                      | n/a                               | Not started: best done right after the stack merges |
@@ -180,7 +180,7 @@ This is the riskiest public decision, so it gets its own spike before anything i
 ## Risks
 
 - **The helper split (Phase 2, step 1) was the largest cost.** Those utilities are used across React, so mistakes show up as bundle size or behavior changes. Watch size and tests on every PR.
-- **Stack depth.** The extraction is a stack of 16 draft PRs, with the Angular app (#1913) on top. A change requested at the bottom means rebasing everything above it, so review and merge from the bottom in small batches.
+- **Stack depth.** The extraction is a stack of 16 open PRs, with the draft Angular app (#1913) on top. A change requested at the bottom means rebasing everything above it, so review and merge from the bottom in small batches.
 - **Legacy test mocks.** A few tests replace the whole `@/src/client` module. Moving code behind that module can change what such a test exercises (it happened once, in the Onboarding JSON schema version test). Replacing those mocks with MSW is a separate cleanup.
 - **The generated client now lives in core.** It is 1.5 MB of generated code, regeneration diffs are large, and the CI job that checks codegen only runs when `package.json` or the lockfile changes, so a wrong output path would not be caught by CI. The path was checked by running `pnpm run openapi-ts` locally.
 - **The type boundary is looser than lint for a few names.** The generated client needs the Fetch API types, so core's type-check uses the web-worker library. `File`, `FileReader`, `location` and `navigator` then exist as types and are blocked only by the lint rule. `globalThis.window` is caught by the type check, not by lint.
