@@ -155,6 +155,11 @@ from the bag: `employment.has_active_withdrawal_method` is `false` when they hav
 schedule can still be created, and Remote reaches out to the contractor to get one added. The
 example app shows one.
 
+The form does not link to the company's invoice number sequence either. To let a customer create
+one, render your own link next to the form and open a magic link from `useMagicLink` with the path
+`/dashboard/company-settings/invoice-number-sequence` for a company admin (`user_id`). The example
+app shows one. Magic links need to be enabled for your integration.
+
 For a weekly, bi-weekly, semi-monthly or monthly schedule the form also shows a sentence that sums it up,
 for example "This schedule will create a weekly recurring invoice that ends after one
 occurrence, starting October 30, 2026." A semi-monthly one also names the days it is issued on. It is not shown for a one-off schedule.

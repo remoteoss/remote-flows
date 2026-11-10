@@ -3,15 +3,52 @@ import {
   InvoiceScheduleForm,
   InvoiceSchedulePreviewButton,
   InvoiceScheduleSubmitButton,
+  useMagicLink,
 } from '@remoteoss/remote-flows';
 import { defaultComponents } from '@remoteoss/remote-flows/default-components';
-import { Alert, AlertDescription } from '@remoteoss/remote-flows/internals';
+import {
+  Alert,
+  AlertDescription,
+  Button,
+} from '@remoteoss/remote-flows/internals';
 import { AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 import { EmploymentIdForm } from './components/EmploymentIdForm';
 import { components } from './Components';
 import { RemoteFlows } from './RemoteFlows';
 import './css/main.css';
+
+const INVOICE_NUMBER_SEQUENCE_PATH =
+  '/dashboard/company-settings/invoice-number-sequence';
+
+function InvoiceNumberSequenceLink() {
+  const magicLink = useMagicLink();
+
+  const openInvoiceNumberSequence = async () => {
+    const response = await magicLink.mutateAsync({
+      user_id: import.meta.env.VITE_USER_ID,
+      path: INVOICE_NUMBER_SEQUENCE_PATH,
+    });
+    window.open(response?.data?.data?.url, '_blank', 'noopener,noreferrer');
+  };
+
+  return (
+    <p className='text-sm'>
+      You can also{' '}
+      <Button
+        type='button'
+        variant='link'
+        size='link'
+        className='h-auto p-0 align-baseline'
+        disabled={magicLink.isPending}
+        onClick={openInvoiceNumberSequence}
+      >
+        create an invoice number sequence
+      </Button>{' '}
+      that applies to all contractors.
+    </p>
+  );
+}
 
 function CreateInvoiceSchedule({ employmentId }: { employmentId: string }) {
   const [createdScheduleId, setCreatedScheduleId] = useState<string | null>(
@@ -80,6 +117,8 @@ function CreateInvoiceSchedule({ employmentId }: { employmentId: string }) {
               }}
               onError={({ error }) => setError(error.message)}
             />
+
+            <InvoiceNumberSequenceLink />
 
             {error && <p>{error}</p>}
 
