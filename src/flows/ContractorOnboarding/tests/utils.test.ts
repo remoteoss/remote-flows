@@ -131,6 +131,21 @@ describe('buildInvoiceSchedulePrefill', () => {
     ).toEqual({});
   });
 
+  it('skips the frequency when payments are due on completion of services', () => {
+    expect(
+      buildInvoiceSchedulePrefill(
+        {
+          payment_terms: {
+            payment_terms_type: 'completion_of_services',
+            invoicing_frequency: 'weekly',
+            compensation_currency_code: 'EUR',
+          },
+        },
+        currencies,
+      ),
+    ).toEqual({ currency: 'EUR' });
+  });
+
   it('returns nothing when there are no payment terms', () => {
     expect(buildInvoiceSchedulePrefill(undefined, currencies)).toEqual({});
     expect(buildInvoiceSchedulePrefill({}, currencies)).toEqual({});

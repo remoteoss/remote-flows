@@ -4416,6 +4416,7 @@ describe('ContractorOnboardingFlow', () => {
 
     const fillContractDetailsAndGoToCreateInvoiceSchedule = async (
       employmentContractDetails: Record<string, unknown> | null,
+      { completionOfServices = false } = {},
     ) => {
       const employmentId = generateUniqueEmploymentId();
 
@@ -4467,6 +4468,11 @@ describe('ContractorOnboardingFlow', () => {
         invoicingFrequency: 'weekly',
         compensationCurrencyCode: 'EUR',
       });
+      if (completionOfServices) {
+        fireEvent.click(
+          screen.getByRole('radio', { name: /completion of services/i }),
+        );
+      }
       screen.getByText(/Next Step/i).click();
 
       await screen.findByText('Step: Contract Preview');
@@ -4484,9 +4490,8 @@ describe('ContractorOnboardingFlow', () => {
 
       await screen.findByText('Step: Create Invoice Schedule');
       await waitFor(() => {
-        expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+        expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
       });
-      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
     };
 
     it('prefills the invoice currency and frequency chosen in this session when the employment does not carry them yet', async () => {
@@ -4506,6 +4511,15 @@ describe('ContractorOnboardingFlow', () => {
 
       expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
       expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
+    });
+
+    it('does not prefill the invoice frequency when the contract is paid on completion of services', async () => {
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(null, {
+        completionOfServices: true,
+      });
+
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('');
     });
 
     // The Remote platform only offers invoice schedules during contractor onboarding for CM and CM+: Contractor of Record

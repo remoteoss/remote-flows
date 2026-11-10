@@ -195,9 +195,17 @@ export function buildInvoiceSchedulePrefill(
   currencies: string[] | undefined,
 ) {
   const paymentTerms = contractDetails?.payment_terms as
-    | { invoicing_frequency?: unknown; compensation_currency_code?: unknown }
+    | {
+        payment_terms_type?: unknown;
+        invoicing_frequency?: unknown;
+        compensation_currency_code?: unknown;
+      }
     | undefined;
-  const frequency = paymentTerms?.invoicing_frequency;
+  const paymentTermsType = paymentTerms?.payment_terms_type;
+  const frequency =
+    paymentTermsType === undefined || paymentTermsType === 'pay_period'
+      ? paymentTerms?.invoicing_frequency
+      : undefined;
   const currency = paymentTerms?.compensation_currency_code;
 
   return {
