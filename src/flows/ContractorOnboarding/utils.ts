@@ -1,3 +1,4 @@
+import equal from 'fast-deep-equal';
 import { Step } from '@/src/flows/useStepState';
 import {
   ProductType,
@@ -216,4 +217,15 @@ export function buildInvoiceSchedulePrefill(
     ...(typeof currency === 'string' &&
       currencies?.includes(currency) && { currency }),
   };
+}
+
+export function getEditedFields(
+  values: Record<string, unknown>,
+  defaults: Record<string, unknown> | undefined,
+) {
+  return Object.fromEntries(
+    Object.entries(values).filter(
+      ([key, value]) => !equal(value, defaults?.[key]),
+    ),
+  );
 }

@@ -62,6 +62,7 @@ import {
 import {
   buildInvoiceSchedulePrefill,
   buildSteps,
+  getEditedFields,
   reviewStepAllowedEmploymentStatus,
   disabledInviteButtonEmploymentStatus,
   StepKeys,
@@ -73,7 +74,7 @@ import {
   useUpdateEmployment,
 } from '@/src/flows/Onboarding/api';
 import { FlowOptions, JSFModify, JSONSchemaFormType } from '@/src/flows/types';
-import { useStepState } from '@/src/flows/useStepState';
+import { useStepState } from '@/src/flows/ContractorOnboarding/useStepState';
 import { mutationToPromise } from '@/src/lib/mutations';
 import {
   clearBase64Data,
@@ -233,6 +234,7 @@ export const useContractorOnboarding = ({
     nextStep,
     goToStep,
     setStepValues,
+    setStepEdits,
   } = useStepState(steps);
 
   useEffect(() => {
@@ -1385,28 +1387,6 @@ export const useContractorOnboarding = ({
             throw createStructuredError('Contract document ID not found');
           }
           setInternalContractDocumentId(contractDocumentId);
-          const savedInvoiceSchedule =
-            stepState.values?.create_invoice_schedule;
-          if (
-            savedInvoiceSchedule &&
-            Object.keys(savedInvoiceSchedule).length > 0
-          ) {
-            const {
-              periodicity: _periodicity,
-              currency: _currency,
-              ...editedFields
-            } = savedInvoiceSchedule;
-            setStepValues({
-              ...stepState.values,
-              create_invoice_schedule: {
-                ...editedFields,
-                ...buildInvoiceSchedulePrefill(
-                  { ...employment?.contract_details, ...values },
-                  currencies?.map(({ code }: { code: string }) => code),
-                ),
-              },
-            } as Record<StepKeys, FieldValues>);
-          }
 
           return response;
         } catch (error) {
@@ -1652,6 +1632,7 @@ export const useContractorOnboarding = ({
       invoice_schedule: {},
       create_invoice_schedule: {},
     } as Record<StepKeys, FieldValues>);
+    setStepEdits('create_invoice_schedule', undefined);
     goToStep('invoice_schedule');
   };
 
@@ -1811,6 +1792,12 @@ export const useContractorOnboarding = ({
   const checkFieldUpdates = useCallback(
     async (values: FieldValues) => {
       setFieldValues(values);
+      if (stepState.currentStep.name === 'create_invoice_schedule') {
+        setStepEdits(
+          'create_invoice_schedule',
+          getEditedFields(values, createInvoiceScheduleInitialValues),
+        );
+      }
       if (stepState.currentStep.name === 'pricing_plan') {
         await onSubscriptionValuesChange(values);
       }
@@ -1830,6 +1817,8 @@ export const useContractorOnboarding = ({
     },
     [
       setFieldValues,
+      setStepEdits,
+      createInvoiceScheduleInitialValues,
       includeInvoiceSchedule,
       stepState,
       handleValidation,

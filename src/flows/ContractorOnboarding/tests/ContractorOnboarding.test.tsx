@@ -4556,6 +4556,45 @@ describe('ContractorOnboardingFlow', () => {
       });
     });
 
+    it('keeps the invoice frequency edited by the user when the contract details currency changes', async () => {
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(null);
+
+      fireEvent.change(screen.getByLabelText(/Frequency/i), {
+        target: { value: 'monthly' },
+      });
+
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Invoice schedule');
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Contract Preview');
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Contract Details');
+
+      await fillContractDetails({
+        invoicingFrequency: 'weekly',
+        compensationCurrencyCode: 'USD',
+      });
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Contract Preview');
+      await fillSignature();
+      screen.getByText(/Continue/i).click();
+
+      await screen.findByText('Step: Invoice schedule');
+      fireEvent.click(
+        await screen.findByRole('radio', {
+          name: /create invoice schedule now/i,
+        }),
+      );
+      fireEvent.click(screen.getByRole('button', { name: /continue/i }));
+
+      await screen.findByText('Step: Create Invoice Schedule');
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
+      });
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('monthly');
+    });
+
     // The Remote platform only offers invoice schedules during contractor onboarding for CM and CM+: Contractor of Record
     // invoice schedules can only be created once the contractor is active.
     it('offers the invoice schedule step for Contractor Management but not for Contractor of Record', async () => {
