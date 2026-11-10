@@ -1779,14 +1779,14 @@ export const useContractorOnboarding = ({
       if (stepState.currentStep.name === 'pricing_plan') {
         await onSubscriptionValuesChange(values);
       }
-      // new steps or refactor ones should rely on json-schema-form-mutability
-      // instead of passing fieldValues
       if (stepState.currentStep.name === 'invoice_schedule') {
         updateCreateInvoiceScheduleVisibility(
           values.invoice_schedule_preference,
         );
       }
 
+      // new steps or refactor ones should rely on json-schema-form-mutability
+      // instead of passing fieldValues
       const stepsUsingHandleValidation = [
         'invoice_schedule',
         'create_invoice_schedule',
