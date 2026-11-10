@@ -156,6 +156,7 @@ describe('TerminationFlow', () => {
     vi.clearAllMocks();
     mockRender.mockReset();
     queryClient.clear();
+    offboardingRequest = null;
 
     server.use(
       http.get('*/v1/payroll-calendars*', () => {
@@ -1018,6 +1019,106 @@ describe('TerminationFlow', () => {
 
       expect(await screen.findByText('Required field')).toBeInTheDocument();
       expect(mockOnSubmitStep).toHaveBeenCalledTimes(1);
+    });
+
+    function mockContractDurationType(contractDurationType?: string) {
+      server.use(
+        http.get('*/v1/employments/*', () => {
+          return HttpResponse.json({
+            data: {
+              employment: {
+                ...employment.data.employment,
+                contract_details: {
+                  ...employment.data.employment.contract_details,
+                  contract_duration_type: contractDurationType,
+                },
+              },
+            },
+          });
+        }),
+      );
+    }
+
+    it.each([
+      ['indefinite', false],
+      ['fixed', true],
+      [undefined, true],
+    ])(
+      'should offer the end of fixed-term contract reason when the contract duration type is %s: %s',
+      async (contractDurationType, isOffered) => {
+        mockContractDurationType(contractDurationType);
+        render(
+          <TerminationFlow {...defaultProps} initialValues={prefilledValues} />,
+          { wrapper: TestProviders },
+        );
+        await screen.findByLabelText(/Employee's personal email/i);
+        await goToNextStep(
+          /Step: Termination Details/i,
+          /Termination reason details/i,
+        );
+
+        const terminationReasonOptions = lastTerminationBag().fields.find(
+          (field) => field.name === 'termination_reason',
+        )?.options as { value: string }[];
+        expect(
+          terminationReasonOptions
+            .map(({ value }) => value)
+            .includes('end_of_fixed_term_contract'),
+        ).toBe(isOffered);
+      },
+    );
+
+    it('should send the chosen fixed-term reason as the termination reason', async () => {
+      mockContractDurationType('fixed');
+      render(
+        <TerminationFlow {...defaultProps} initialValues={prefilledValues} />,
+        { wrapper: TestProviders },
+      );
+      await screen.findByLabelText(/Employee's personal email/i);
+      await goToNextStep(
+        /Step: Termination Details/i,
+        /Termination reason details/i,
+      );
+
+      await fillSelect('Termination reason', 'end_of_fixed_term_contract');
+      expect(
+        await screen.findByText('End of fixed-term termination reason'),
+      ).toBeInTheDocument();
+      screen.getByText(/Next Step/i).click();
+      expect(await screen.findByText('Required field')).toBeInTheDocument();
+
+      await fillSelect(
+        'end_of_fixed_term_contract_termination_reason',
+        'end_of_fixed_term_contract_redundancy',
+      );
+      screen.getByText(/Next Step/i).click();
+      await screen.findByText(/Step: Paid Time Off/i);
+      await screen.findByText('Check remaining paid time off');
+      screen.getByText(/Next Step/i).click();
+      await screen.findByText(/Step: Additional Information/i);
+      await fillAdditionalDetails();
+      screen.getByText(/Send termination/i).click();
+
+      await waitFor(() => {
+        expect(offboardingRequest).not.toBeNull();
+      });
+      expect(offboardingRequest).toEqual({
+        employment_id: '2ef4068b-11c7-4942-bb3c-70606c83688e',
+        termination_details: {
+          acknowledge_termination_procedure: true,
+          agrees_to_pto_amount: true,
+          confidential: false,
+          customer_informed_employee: false,
+          personal_email: 'ze@remote.com',
+          proposed_termination_date: today,
+          reason_description: 'whatever text',
+          risk_assessment_reasons: ['sick_leave'],
+          termination_reason: 'end_of_fixed_term_contract_redundancy',
+          termination_reason_files: [],
+          will_challenge_termination: false,
+        },
+        type: 'termination',
+      });
     });
 
     it('should validate the proposed termination date against the first available date and the start date', async () => {

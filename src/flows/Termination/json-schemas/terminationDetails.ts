@@ -9,6 +9,24 @@ export const terminationDetailsSchema = {
         {
           if: {
             properties: {
+              termination_reason: {
+                const: 'end_of_fixed_term_contract',
+              },
+            },
+            required: ['termination_reason'],
+          },
+          then: {
+            required: ['end_of_fixed_term_contract_termination_reason'],
+          },
+          else: {
+            properties: {
+              end_of_fixed_term_contract_termination_reason: false,
+            },
+          },
+        },
+        {
+          if: {
+            properties: {
               will_challenge_termination: {
                 const: 'yes',
               },
@@ -78,11 +96,58 @@ export const terminationDetailsSchema = {
               title: 'Dissatisfaction with EOR service',
             },
             {
-              const: 'end_of_fixed_term_contract_compliance_issue',
+              const: 'end_of_fixed_term_contract',
               title: 'End of fixed-term contract',
             },
             {
               const: 'other',
+              title: 'Other',
+            },
+          ],
+          'x-jsf-presentation': {
+            inputType: 'select',
+          },
+        },
+        end_of_fixed_term_contract_termination_reason: {
+          title: 'End of fixed-term termination reason',
+          type: 'string',
+          oneOf: [
+            {
+              const: 'end_of_fixed_term_contract_redundancy',
+              title: 'Redundancy',
+            },
+            {
+              const:
+                'end_of_fixed_term_contract_local_regulations_max_term_reached',
+              title: 'Local regulations (max term reached)',
+            },
+            {
+              const: 'end_of_fixed_term_contract_operational_reasons',
+              title: 'Operational reasons',
+            },
+            {
+              const: 'end_of_fixed_term_contract_misconduct',
+              title: 'Misconduct',
+            },
+            {
+              const: 'end_of_fixed_term_contract_performance',
+              title: 'Performance',
+            },
+            {
+              const: 'end_of_fixed_term_contract_values',
+              title: 'Values',
+            },
+            {
+              const: 'end_of_fixed_term_contract_compliance_issue',
+              title: 'Compliance issue',
+            },
+            {
+              const:
+                'end_of_fixed_term_contract_incapacity_to_perform_inherent_duties',
+              title: 'Incapacity to perform inherent duties',
+            },
+            {
+              const: 'end_of_fixed_term_contract_other',
               title: 'Other',
             },
           ],
@@ -242,6 +307,7 @@ export const terminationDetailsSchema = {
       type: 'object',
       'x-jsf-order': [
         'termination_reason',
+        'end_of_fixed_term_contract_termination_reason',
         'reason_description',
         'additional_comments',
         'termination_reason_files',

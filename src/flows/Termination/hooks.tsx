@@ -91,6 +91,9 @@ export const useTermination = ({
     isFuture(parseISO(employment.provisional_start_date)),
   );
 
+  const isIndefiniteContract =
+    employment?.contract_details?.contract_duration_type === 'indefinite';
+
   const employmentValues = {
     personal_email: employment?.basic_information?.email as string,
   } as Partial<TerminationFormValues>;
@@ -143,7 +146,11 @@ export const useTermination = ({
         )
       : originalTerminationReasonOptions.filter(
           (option: $TSFixMe) =>
-            option.const !== 'cancellation_before_start_date',
+            option.const !== 'cancellation_before_start_date' &&
+            !(
+              isIndefiniteContract &&
+              option.const === 'end_of_fixed_term_contract'
+            ),
         );
 
     return {
@@ -309,6 +316,7 @@ export const useTermination = ({
     formValues.proposed_termination_date,
     hasFutureStartDate,
     isCancellationBeforeStartDate,
+    isIndefiniteContract,
     minDate,
     options?.jsfModify?.fields?.acknowledge_termination_procedure_fees_info,
     options?.jsfModify?.fields?.acknowledge_termination_procedure_info,
@@ -384,11 +392,18 @@ export const useTermination = ({
         parsedRadioValues,
         'customer_informed_employee_date',
         'customer_informed_employee_description',
+        'end_of_fixed_term_contract_termination_reason',
       );
+
+      const terminationReason =
+        parsedValues.termination_reason === 'end_of_fixed_term_contract'
+          ? parsedValues.end_of_fixed_term_contract_termination_reason
+          : parsedValues.termination_reason;
 
       const terminationDetails: TerminationDetailsParams = omitBy(
         {
           ...normalizedValues,
+          termination_reason: terminationReason,
           ...employeeAwareness,
         },
         isNull,

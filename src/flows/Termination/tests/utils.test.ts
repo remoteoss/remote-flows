@@ -494,5 +494,19 @@ describe('Termination utils', () => {
         format(proposedTerminationDate, 'yyyy-MM-dd'),
       );
     });
+
+    it('splits a fixed-term termination reason into the reason and its fixed-term reason', () => {
+      const initialValues = buildInitialValues(
+        { termination_reason: 'end_of_fixed_term_contract_compliance_issue' },
+        false,
+      );
+
+      expect(initialValues.termination_reason).toBe(
+        'end_of_fixed_term_contract',
+      );
+      expect(initialValues.end_of_fixed_term_contract_termination_reason).toBe(
+        'end_of_fixed_term_contract_compliance_issue',
+      );
+    });
   });
 });
