@@ -1,4 +1,4 @@
-import { useMagicLink } from '@remoteoss/remote-flows';
+import { useIdentity, useMagicLink } from '@remoteoss/remote-flows';
 import {
   Card,
   CardContent,
@@ -18,17 +18,11 @@ const MagicLinkTestContent = () => {
   const [customPath, setCustomPath] = useState(
     '/dashboard/company-settings/payments',
   );
-  const [userId, setUserId] = useState('');
+  const { data: identity } = useIdentity();
+  const userId = identity && 'user' in identity ? identity.user.id : '';
   const [status, setStatus] = useState<StatusType>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    fetch('/v1/identity/current')
-      .then((res) => res.json())
-      .then((body) => setUserId(body?.data?.user?.id ?? ''))
-      .catch(() => setUserId(''));
-  }, []);
 
   useEffect(() => {
     return () => {
