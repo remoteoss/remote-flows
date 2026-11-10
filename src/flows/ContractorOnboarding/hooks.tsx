@@ -718,6 +718,7 @@ export const useContractorOnboarding = ({
   const {
     data: contractorOnboardingDetailsForm,
     isLoading: isLoadingContractorOnboardingDetailsForm,
+    currencies,
   } = useContractorContractDetailsSchema({
     countryCode: internalCountryCode as string,
     fieldValues: fieldValues,
@@ -786,19 +787,6 @@ export const useContractorOnboarding = ({
     },
   });
 
-  const isCreateInvoiceScheduleStep =
-    includeInvoiceSchedule &&
-    stepState.currentStep.name === 'create_invoice_schedule';
-
-  const { data: contractorCurrencies } = useContractorCurrencies({
-    employmentId: internalEmploymentId as string,
-    options: {
-      queryOptions: {
-        enabled: isCreateInvoiceScheduleStep && Boolean(internalEmploymentId),
-      },
-    },
-  });
-
   const createInvoiceScheduleSavedValues = useMemo(
     () =>
       existingInvoiceSchedule
@@ -806,7 +794,7 @@ export const useContractorOnboarding = ({
         : {
             ...buildInvoiceSchedulePrefill(
               employment?.contract_details,
-              contractorCurrencies?.map(({ code }: { code: string }) => code),
+              currencies?.map(({ code }: { code: string }) => code),
             ),
             ...onboardingInitialValues,
           },
@@ -814,7 +802,7 @@ export const useContractorOnboarding = ({
       existingInvoiceSchedule,
       onboardingInitialValues,
       employment?.contract_details,
-      contractorCurrencies,
+      currencies,
     ],
   );
 
