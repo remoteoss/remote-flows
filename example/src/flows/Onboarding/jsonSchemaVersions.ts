@@ -141,11 +141,11 @@ export const ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY = {
   },
   HND: {
     // Honduras
-    contract_details: 1,
+    contract_details: 6,
   },
   HRV: {
     // Croatia
-    contract_details: 1,
+    contract_details: 6,
   },
   HUN: {
     // Hungary
