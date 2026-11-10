@@ -202,8 +202,9 @@ Submits the request ID form and moves to `review`. Disabled while the field is b
 
 ### ReviewStep
 
-Shows the loaded request. It renders nothing while the request is loading or failed to load,
-so render those states yourself (see [Loading and errors](#loading-and-errors)).
+Shows the loaded request. It renders nothing while the request is loading or failed to load
+the first time, so render those states yourself (see [Loading and errors](#loading-and-errors)).
+A failed reload keeps the request shown, next to `timeOffRequestError`.
 
 By default it renders a list of the request's details: type, status, start date, end date and
 duration, plus the notes and the cancellation reason when the request has them.
@@ -535,12 +536,12 @@ Neither can approve or decline: decisions go through the flows or their bags.
 
 ## Requests and authentication
 
-| Request                                                           | Sent when                                                                         | Scope (generated API docs)        |
-| ----------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------- |
-| `GET /v1/timeoff/{id}`                                            | The flow reaches `review`, `RetryButton`, `useTimeOffRequest`                     | `timeoff:read` or `timeoff:write` |
-| `GET /v1/timeoff`                                                 | The list flow shows the `list` step, changes page or status, `useTimeOffRequests` | `timeoff:read` or `timeoff:write` |
-| `POST /v1/timeoff/{timeoff_id}/approve` with `{ approver_id }`    | `ApproveButton`, `approve`, `approveTimeOffRequest`                               | `timeoff:write`                   |
-| `POST /v1/timeoff/{timeoff_id}/decline` with `{ decline_reason }` | `DeclineButton`, `decline`, `declineTimeOffRequest`                               | `timeoff:write`                   |
+| Request                                                           | Sent when                                                                                                                           | Scope (generated API docs)        |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| `GET /v1/timeoff/{id}`                                            | The flow reaches `review`, `RetryButton`, `useTimeOffRequest`                                                                       | `timeoff:read` or `timeoff:write` |
+| `GET /v1/timeoff`                                                 | The list flow or `useTimeOffRequests` mounts, the page or status changes, and again after a decision (refetch through invalidation) | `timeoff:read` or `timeoff:write` |
+| `POST /v1/timeoff/{timeoff_id}/approve` with `{ approver_id }`    | `ApproveButton`, `approve`, `approveTimeOffRequest`                                                                                 | `timeoff:write`                   |
+| `POST /v1/timeoff/{timeoff_id}/decline` with `{ decline_reason }` | `DeclineButton`, `decline`, `declineTimeOffRequest`                                                                                 | `timeoff:write`                   |
 
 The list sends only `status`, `page` (once the user changes page) and `page_size` (when you
 pass `pageSize`). According to the generated API docs, a token with only `timeoff:read` can load
@@ -555,8 +556,7 @@ or Refresh Token flow) and a Customer API token. See
 
 **You don't choose a time-off version.** The SDK has a single path: the same `/v1/timeoff`
 routes for every company and employment, with no prop, option or header to pick a version. The
-generated API client has no second variant of these routes either. Any difference between the
-time-off versions a company can be on is handled behind the API.
+generated API client has no second variant of these routes either.
 
 **One decision per request.** A request has one `approver_id` and one `approved_at`. The SDK
 sends one approval and treats its answer as the outcome: it does not model approval steps, a
@@ -601,6 +601,8 @@ the sandbox yet. Until it is, these points are expected but unconfirmed:
 - The default and largest `page_size`, and whether a Customer API token works on the read routes,
   whose generated header description names only the company-scoped access token.
 - The `field_errors` codes a `422` carries.
+- Whether these routes behave the same whatever time-off version a company is on, with any
+  difference handled by the API.
 
 ## Current limitations
 
