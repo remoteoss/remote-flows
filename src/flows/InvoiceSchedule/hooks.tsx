@@ -18,6 +18,7 @@ import {
 import { clearBase64Data, createStructuredError } from '@/src/lib/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { $TSFixMe } from '@/src/types/remoteFlows';
+import { InvoiceNumberSequenceLink } from '@/src/flows/InvoiceSchedule/components/InvoiceNumberSequenceLink';
 import { Fields } from '@remoteoss/remote-json-schema-form-kit';
 
 /**
@@ -57,7 +58,12 @@ export const useInvoiceSchedule = ({
   });
 
   const fields = useMemo(
-    () => (schemaForm?.fields ?? []) as Fields,
+    () =>
+      ((schemaForm?.fields ?? []) as Fields).map((field) =>
+        field.name === 'number'
+          ? { ...field, descriptionSuffix: <InvoiceNumberSequenceLink /> }
+          : field,
+      ) as Fields,
     [schemaForm?.fields],
   );
 

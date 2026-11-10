@@ -90,6 +90,61 @@ describe('InvoiceScheduleFlow', () => {
     expect(screen.queryByTestId('employment_id')).not.toBeInTheDocument();
   });
 
+  it('opens the invoice number sequence page with a magic link for the signed-in admin', async () => {
+    const magicLinkBody = vi.fn();
+    server.use(
+      http.post('*/v1/magic-link', async ({ request }) => {
+        magicLinkBody(await request.json());
+        return HttpResponse.json({
+          data: { url: 'https://remote.test/magic/abc' },
+        });
+      }),
+    );
+    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+
+    renderFlow();
+
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: 'create an invoice number sequence',
+      }),
+    );
+
+    await waitFor(() => {
+      expect(open).toHaveBeenCalledWith(
+        'https://remote.test/magic/abc',
+        '_blank',
+        'noopener,noreferrer',
+      );
+    });
+    expect(magicLinkBody).toHaveBeenCalledWith({
+      user_id: 'ffabca18-20fc-489d-995b-bf76eebc6882',
+      path: '/dashboard/company-settings/invoice-number-sequence',
+    });
+
+    open.mockRestore();
+  });
+
+  it('does not offer the sequence link when the token has no user', async () => {
+    server.use(
+      http.get('*/v1/identity/current', () =>
+        HttpResponse.json({ data: { client_id: 'client-id' } }),
+      ),
+    );
+
+    renderFlow();
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
+    });
+
+    expect(
+      screen.queryByRole('button', {
+        name: 'create an invoice number sequence',
+      }),
+    ).not.toBeInTheDocument();
+  });
+
   it('renders the fields flat, without the onboarding step headings', async () => {
     renderFlow();
 
