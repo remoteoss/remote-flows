@@ -44,6 +44,25 @@ export const useInvoiceSchedule = ({
   const isContractorOfRecord =
     (employment as $TSFixMe)?.contractor_type === 'cor';
 
+  const stableJsfModify = useDeepStable(jsfModify);
+
+  const modifyWithSequenceLink = useMemo(
+    () => ({
+      ...stableJsfModify,
+      fields: {
+        ...stableJsfModify?.fields,
+        number: {
+          ...stableJsfModify?.fields?.number,
+          presentation: {
+            ...stableJsfModify?.fields?.number?.presentation,
+            description: () => <InvoiceNumberSequenceLink />,
+          },
+        },
+      },
+    }),
+    [stableJsfModify],
+  );
+
   const {
     data: schemaForm,
     handleValidation,
@@ -53,17 +72,12 @@ export const useInvoiceSchedule = ({
   } = useGetCreateInvoiceScheduleSchema({
     enabled: true,
     employmentId,
-    jsfModify,
+    jsfModify: modifyWithSequenceLink,
     isContractorOfRecord,
   });
 
   const fields = useMemo(
-    () =>
-      ((schemaForm?.fields ?? []) as Fields).map((field) =>
-        field.name === 'number'
-          ? { ...field, descriptionSuffix: <InvoiceNumberSequenceLink /> }
-          : field,
-      ) as Fields,
+    () => (schemaForm?.fields ?? []) as Fields,
     [schemaForm?.fields],
   );
 

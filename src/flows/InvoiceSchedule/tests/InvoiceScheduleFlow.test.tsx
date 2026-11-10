@@ -125,6 +125,56 @@ describe('InvoiceScheduleFlow', () => {
     open.mockRestore();
   });
 
+  it('renders the sequence link with the partner button component, as an inline button', async () => {
+    const CustomButton = ({ children, ...props }: $TSFixMe) => (
+      <button data-testid='partner-button' {...props}>
+        {children}
+      </button>
+    );
+
+    render(
+      <InvoiceScheduleFlow
+        employmentId='employment-grace'
+        render={(bag) => (bag.isLoading ? null : <InvoiceScheduleForm />)}
+      />,
+      {
+        wrapper: ({ children }) => (
+          <TestProviders components={{ button: CustomButton }}>
+            {children}
+          </TestProviders>
+        ),
+      },
+    );
+
+    const button = await screen.findByTestId('partner-button');
+
+    expect(button).toHaveTextContent('create an invoice number sequence');
+    expect(button).toHaveAttribute('data-type', 'inline');
+    expect(button).toHaveAttribute('data-external', 'true');
+    expect(button.querySelector('svg')).not.toBeInTheDocument();
+  });
+
+  it('draws the external link icon on the sequence link with the default button', async () => {
+    renderFlow();
+
+    const button = await screen.findByRole('button', {
+      name: 'create an invoice number sequence',
+    });
+
+    expect(button.querySelector('svg')).toBeInTheDocument();
+    expect(button).not.toHaveAttribute('data-external');
+  });
+
+  it('explains that later invoices are numbered from the invoice number', async () => {
+    renderFlow();
+
+    expect(
+      await screen.findByText(
+        "We'll automatically number all invoices after the first one based on this number.",
+      ),
+    ).toBeInTheDocument();
+  });
+
   it('does not offer the sequence link when the token has no user', async () => {
     server.use(
       http.get('*/v1/identity/current', () =>
