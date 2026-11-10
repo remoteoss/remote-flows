@@ -33,6 +33,7 @@ export const jsonSchema = {
         ...paidTimeOffSchema.data.schema['x-jsf-order'],
         ...additionalInformationSchema.data.schema['x-jsf-order'],
       ],
+      'x-jsf-logic': terminationDetailsSchema.data.schema['x-jsf-logic'],
       'x-rmt-meta': {
         jsfOldVersion: true,
       },

@@ -142,12 +142,20 @@ function toDateOnly(date: string) {
   return isValid(parsedDate) ? format(parsedDate, 'yyyy-MM-dd') : date;
 }
 
+function isFixedTermTerminationReason(
+  reason?: string,
+): reason is `end_of_fixed_term_contract_${string}` {
+  return Boolean(reason?.startsWith('end_of_fixed_term_contract_'));
+}
+
 export function buildInitialValues(
   stepsInitialValues: Partial<TerminationFormValues>,
   hasFutureStartDate: boolean,
 ): TerminationFormValues {
-  const { proposed_termination_date: proposedTerminationDate } =
-    stepsInitialValues;
+  const {
+    proposed_termination_date: proposedTerminationDate,
+    termination_reason: terminationReason,
+  } = stepsInitialValues;
   const initialValues: TerminationFormValues = {
     confidential: '',
     customer_informed_employee: '',
@@ -169,6 +177,12 @@ export function buildInitialValues(
     ...stepsInitialValues,
     ...(proposedTerminationDate
       ? { proposed_termination_date: toDateOnly(proposedTerminationDate) }
+      : {}),
+    ...(isFixedTermTerminationReason(terminationReason)
+      ? {
+          termination_reason: 'end_of_fixed_term_contract',
+          end_of_fixed_term_contract_termination_reason: terminationReason,
+        }
       : {}),
     ...(hasFutureStartDate
       ? { termination_reason: 'cancellation_before_start_date' }

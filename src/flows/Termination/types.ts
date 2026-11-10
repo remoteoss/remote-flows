@@ -22,7 +22,9 @@ export type TerminationDetailsFormValues = {
   risk_assessment_reasons: TerminationDetailsParams['risk_assessment_reasons'];
   termination_reason:
     | TerminationDetailsParams['termination_reason']
+    | 'end_of_fixed_term_contract'
     | undefined;
+  end_of_fixed_term_contract_termination_reason?: TerminationDetailsParams['termination_reason'];
   termination_reason_files: TerminationDetailsParams['termination_reason_files'];
   additional_comments: string | null;
   will_challenge_termination: string;
