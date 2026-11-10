@@ -4414,7 +4414,9 @@ describe('ContractorOnboardingFlow', () => {
       expect(screen.getByLabelText(/Frequency/i)).toHaveValue('');
     });
 
-    it('prefills the invoice currency and frequency chosen in this session when the employment does not carry them yet', async () => {
+    const fillContractDetailsAndGoToCreateInvoiceSchedule = async (
+      employmentContractDetails: Record<string, unknown> | null,
+    ) => {
       const employmentId = generateUniqueEmploymentId();
 
       server.use(
@@ -4427,7 +4429,7 @@ describe('ContractorOnboardingFlow', () => {
                 ...mockContractorEmploymentResponse.data.employment,
                 id: employmentId,
                 status: 'created',
-                contract_details: null,
+                contract_details: employmentContractDetails,
               },
             },
           }),
@@ -4484,6 +4486,25 @@ describe('ContractorOnboardingFlow', () => {
       await waitFor(() => {
         expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
       });
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
+    };
+
+    it('prefills the invoice currency and frequency chosen in this session when the employment does not carry them yet', async () => {
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(null);
+
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
+    });
+
+    it('prefers the invoice currency and frequency chosen in this session over the ones saved on the employment', async () => {
+      await fillContractDetailsAndGoToCreateInvoiceSchedule({
+        payment_terms: {
+          invoicing_frequency: 'monthly',
+          compensation_currency_code: 'USD',
+        },
+      });
+
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
       expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
     });
 
