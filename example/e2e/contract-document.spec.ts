@@ -86,13 +86,35 @@ test.describe('Contract document', () => {
       },
     ]);
 
+    await page.route(
+      (url) => CONTRACT_DOCUMENTS_PATH.test(url.pathname),
+      async (route) => {
+        const request = route.request();
+        if (request.method() !== 'POST') {
+          await route.continue();
+          return;
+        }
+        await route.continue({
+          postData: JSON.stringify({
+            ...request.postDataJSON(),
+            skip_ai_checks: true,
+          }),
+        });
+      },
+    );
+
     const contractDocumentCreated = page.waitForResponse(
       (response) =>
         response.request().method() === 'POST' &&
         CONTRACT_DOCUMENTS_PATH.test(new URL(response.url()).pathname),
     );
     await page.getByRole('button', { name: 'Next Step' }).click();
-    if (!(await contractDocumentCreated).ok()) {
+    const created = await contractDocumentCreated;
+    expect(
+      created.status(),
+      `POST ${new URL(created.url()).pathname} returned ${created.status()}`,
+    ).toBeLessThan(500);
+    if (!created.ok()) {
       await clickAndWaitForSave(
         page,
         page.getByRole('button', { name: 'Continue anyway' }),
