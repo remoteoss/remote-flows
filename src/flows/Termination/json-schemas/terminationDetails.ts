@@ -27,6 +27,126 @@ export const terminationDetailsSchema = {
         {
           if: {
             properties: {
+              termination_reason: {
+                const: 'compliance_issue',
+              },
+            },
+            required: ['termination_reason'],
+          },
+          then: {
+            properties: {
+              termination_reason: {
+                'x-jsf-presentation': {
+                  statement: {
+                    title: 'Compliance-related termination',
+                    description:
+                      'Describe the compliance issue in the details field and upload any supporting documents so we can assess the risk and advise you quickly.',
+                    severity: 'warning',
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          if: {
+            properties: {
+              termination_reason: {
+                const: 'gross_misconduct',
+              },
+            },
+            required: ['termination_reason'],
+          },
+          then: {
+            properties: {
+              termination_reason: {
+                'x-jsf-presentation': {
+                  statement: {
+                    title: 'Misconduct-related termination',
+                    description:
+                      'Describe the misconduct in the details field and upload any supporting documents so we can assess the risk and advise you quickly.',
+                    severity: 'warning',
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          if: {
+            properties: {
+              termination_reason: {
+                const: 'performance',
+              },
+            },
+            required: ['termination_reason'],
+          },
+          then: {
+            properties: {
+              termination_reason: {
+                'x-jsf-presentation': {
+                  statement: {
+                    title: 'Performance-related termination',
+                    description:
+                      'Describe the performance concerns in the details field and upload any supporting documents so we can assess the risk and advise you quickly.',
+                    severity: 'warning',
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          if: {
+            properties: {
+              termination_reason: {
+                const: 'job_abandonment',
+              },
+            },
+            required: ['termination_reason'],
+          },
+          then: {
+            properties: {
+              termination_reason: {
+                'x-jsf-presentation': {
+                  statement: {
+                    title: 'Job abandonment termination',
+                    description:
+                      "Tell us how many days the employee has been absent and whether you've tried to reach them. We'll also contact their emergency contact to check for any personal issues, and keep you updated throughout.",
+                    severity: 'warning',
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          if: {
+            properties: {
+              termination_reason: {
+                const: 'workforce_reduction',
+              },
+            },
+            required: ['termination_reason'],
+          },
+          then: {
+            properties: {
+              termination_reason: {
+                'x-jsf-presentation': {
+                  statement: {
+                    title: 'Workforce reduction termination',
+                    description:
+                      'Explain the reason for the reduction, why this employee was selected, and the criteria you used, so we can assess the risk and advise you quickly.',
+                    severity: 'warning',
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          if: {
+            properties: {
               will_challenge_termination: {
                 const: 'yes',
               },
@@ -243,7 +363,15 @@ export const terminationDetailsSchema = {
           'x-jsf-presentation': {
             inputType: 'checkbox',
             direction: 'column',
+            statement: {
+              description:
+                'Claims can still be raised even if none of the above apply.',
+              severity: 'info',
+            },
           },
+          'x-jsf-logic-validations': [
+            'risk_assessment_reasons_none_of_these_exclusive',
+          ],
         },
         will_challenge_termination: {
           description: '',
@@ -318,6 +446,40 @@ export const terminationDetailsSchema = {
         'proposed_termination_date_info',
         'proposed_termination_date',
       ],
+      'x-jsf-logic': {
+        validations: {
+          risk_assessment_reasons_none_of_these_exclusive: {
+            errorMessage:
+              '"None of these" cannot be selected together with other options.',
+            rule: {
+              if: [
+                {
+                  in: ['none_of_these', { var: 'risk_assessment_reasons' }],
+                },
+                {
+                  '!': [
+                    {
+                      or: [
+                        'sick_leave',
+                        'family_leave',
+                        'pregnant_or_breastfeeding',
+                        'requested_medical_or_family_leave',
+                        'disabled_or_health_condition',
+                        'member_of_union_or_works_council',
+                        'caring_responsibilities',
+                        'reported_concerns_with_workplace',
+                      ].map((reason) => ({
+                        in: [reason, { var: 'risk_assessment_reasons' }],
+                      })),
+                    },
+                  ],
+                },
+                true,
+              ],
+            },
+          },
+        },
+      },
       'x-rmt-meta': {
         jsfVersion: '1',
       },
