@@ -65,12 +65,9 @@ export function CreateInvoiceScheduleStep({
     }
   };
 
-  const stepValues =
-    contractorOnboardingBag.stepState.values?.create_invoice_schedule;
   const initialValues =
-    stepValues && Object.keys(stepValues).length > 0
-      ? stepValues
-      : contractorOnboardingBag.initialValues.create_invoice_schedule;
+    contractorOnboardingBag.stepState.values?.create_invoice_schedule ||
+    contractorOnboardingBag.initialValues.create_invoice_schedule;
 
   return (
     <ContractorOnboardingForm

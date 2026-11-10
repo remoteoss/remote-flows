@@ -1385,10 +1385,28 @@ export const useContractorOnboarding = ({
             throw createStructuredError('Contract document ID not found');
           }
           setInternalContractDocumentId(contractDocumentId);
-          setStepValues({
-            ...stepState.values,
-            create_invoice_schedule: {},
-          } as Record<StepKeys, FieldValues>);
+          const savedInvoiceSchedule =
+            stepState.values?.create_invoice_schedule;
+          if (
+            savedInvoiceSchedule &&
+            Object.keys(savedInvoiceSchedule).length > 0
+          ) {
+            const {
+              periodicity: _periodicity,
+              currency: _currency,
+              ...editedFields
+            } = savedInvoiceSchedule;
+            setStepValues({
+              ...stepState.values,
+              create_invoice_schedule: {
+                ...editedFields,
+                ...buildInvoiceSchedulePrefill(
+                  { ...employment?.contract_details, ...values },
+                  currencies?.map(({ code }: { code: string }) => code),
+                ),
+              },
+            } as Record<StepKeys, FieldValues>);
+          }
 
           return response;
         } catch (error) {
