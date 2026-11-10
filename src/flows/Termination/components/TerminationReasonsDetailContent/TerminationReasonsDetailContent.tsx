@@ -46,7 +46,7 @@ const terminationReasonsList = [
       'The employee has failed to appear for work; the Employer has been unsuccessful in establishing communications with the employee and does not know the employee’s whereabouts.',
   },
   {
-    label: 'Dissatisfaction with EOR service',
+    label: 'Dissatisfaction with Remote service',
     description: (
       <span>
         We’re sorry to see you go. If there is anything we can do to improve or

@@ -177,7 +177,7 @@ export const terminationDetailsSchema = {
           oneOf: [
             {
               const: 'gross_misconduct',
-              title: 'Gross misconduct',
+              title: 'Misconduct',
             },
             {
               const: 'performance',
@@ -185,7 +185,7 @@ export const terminationDetailsSchema = {
             },
             {
               const: 'workforce_reduction',
-              title: 'Workforce Reduction',
+              title: 'Workforce reduction',
             },
             {
               const: 'values',
@@ -197,7 +197,7 @@ export const terminationDetailsSchema = {
             },
             {
               const: 'incapacity_to_perform_inherent_duties',
-              title: 'Incapacity To perform inherent duties',
+              title: 'Incapacity to perform inherent duties',
             },
             {
               const: 'mutual_agreement',
@@ -205,7 +205,7 @@ export const terminationDetailsSchema = {
             },
             {
               const: 'cancellation_before_start_date',
-              title: 'Decision to cancel hiring before the employee starts',
+              title: 'Decision to cancel hiring before the employee started',
             },
             {
               const: 'job_abandonment',
@@ -213,7 +213,7 @@ export const terminationDetailsSchema = {
             },
             {
               const: 'dissatisfaction_with_remote_service',
-              title: 'Dissatisfaction with EOR service',
+              title: 'Dissatisfaction with Remote service',
             },
             {
               const: 'end_of_fixed_term_contract',
@@ -296,7 +296,7 @@ export const terminationDetailsSchema = {
         termination_reason_files: {
           description:
             'Please upload any supporting documents regarding the termination reason.',
-          title: 'Termination reason files',
+          title: 'Termination reason documents',
           type: 'string',
           'x-jsf-presentation': {
             inputType: 'file',
