@@ -289,4 +289,37 @@ describe('useCostCalculator', () => {
       result.current.fields.find((field) => field.name === 'currency')?.label,
     ).toBe('Billing Currency');
   });
+
+  it('should load the fields when a jsfModify function returns a new component on each call', async () => {
+    const CurrencySelect = () => null;
+    const options = {
+      jsfModify: {
+        fields: {
+          currency: () => ({
+            presentation: {
+              Component: (props: object) => <CurrencySelect {...props} />,
+            },
+          }),
+        },
+      },
+    };
+
+    const { result } = renderHook(
+      () =>
+        useCostCalculator({
+          estimationOptions: defaultEstimationOptions,
+          options,
+        }),
+      { wrapper: TestProviders },
+    );
+
+    await waitFor(() => {
+      const currencyField = result.current.fields.find(
+        (field) => field.name === 'currency',
+      );
+      expect(
+        (currencyField?.options as unknown[] | undefined)?.length,
+      ).toBeGreaterThan(0);
+    });
+  });
 });

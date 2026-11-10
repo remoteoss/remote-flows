@@ -412,6 +412,35 @@ export const useCostCalculator = (
     ],
   );
 
+  const selectFields = useMemo(
+    () => ({
+      country: withPresentation(
+        options?.jsfModify?.fields?.country,
+        schema.properties.country,
+        { onChange: onCountryChange },
+      ),
+      region: withPresentation(
+        options?.jsfModify?.fields?.region,
+        schema.properties.region,
+        { onChange: onRegionChange },
+      ),
+      currency: withPresentation(
+        options?.jsfModify?.fields?.currency,
+        schema.properties.currency,
+        { onChange: onChangeCurrency },
+      ),
+    }),
+    [
+      options?.jsfModify?.fields?.country,
+      options?.jsfModify?.fields?.region,
+      options?.jsfModify?.fields?.currency,
+      schema,
+      onCountryChange,
+      onRegionChange,
+      onChangeCurrency,
+    ],
+  );
+
   const {
     form: staticForm,
     handleValidation: handleStaticValidation,
@@ -423,21 +452,7 @@ export const useCostCalculator = (
         fields: {
           ...options?.jsfModify?.fields,
           ...customFields.fields,
-          country: withPresentation(
-            options?.jsfModify?.fields?.country,
-            schema.properties.country,
-            { onChange: onCountryChange },
-          ),
-          region: withPresentation(
-            options?.jsfModify?.fields?.region,
-            schema.properties.region,
-            { onChange: onRegionChange },
-          ),
-          currency: withPresentation(
-            options?.jsfModify?.fields?.currency,
-            schema.properties.currency,
-            { onChange: onChangeCurrency },
-          ),
+          ...selectFields,
         },
       },
     },
