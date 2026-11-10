@@ -4490,7 +4490,7 @@ describe('ContractorOnboardingFlow', () => {
 
       await screen.findByText('Step: Create Invoice Schedule');
       await waitFor(() => {
-        expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
       });
     };
 
