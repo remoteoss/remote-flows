@@ -507,7 +507,7 @@ export const useCostCalculator = (
       },
       /**
        * Yup errors of the deprecated `validationSchema`, merged with the region fields errors.
-       * @deprecated Use `formErrors`. `yupError` will be removed in the next major version.
+       * @deprecated Use `formErrors`. `yupError` is kept in 2.x and removed in 3.0.0.
        */
       yupError: new ValidationError(
         [...staticYupError.inner, ...(regionYupError?.inner ?? [])],
@@ -529,12 +529,12 @@ export const useCostCalculator = (
     },
     /**
      * Array of form fields from the cost calculator schema + dynamic region fields like benefits, age, etc.
-     * The country options also carry `childRegions`, `hasAdditionalFields`, `regionSlug` and `currency`: these are deprecated and will be removed in the next major version.
+     * The country options also carry `childRegions`, `hasAdditionalFields`, `regionSlug` and `currency`: these are deprecated, kept in 2.x and removed in 3.0.0.
      */
     fields: allFields,
     /**
      * Yup validation schema for the cost calculator form.
-     * @deprecated Use `handleValidation`, which validates the form against its JSON Schema. `validationSchema` will be removed in the next major version.
+     * @deprecated Use `handleValidation`, which validates the form against its JSON Schema. `validationSchema` is kept in 2.x and removed in 3.0.0.
      */
     // oxlint-disable-next-line typescript/no-deprecated
     validationSchema,
