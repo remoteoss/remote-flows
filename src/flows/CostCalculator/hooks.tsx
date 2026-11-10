@@ -22,6 +22,7 @@ import {
   useRegionFields,
 } from '@/src/flows/CostCalculator/api';
 import { $TSFixMe, JSFField, Meta } from '@/src/types/remoteFlows';
+import type { JSFModify } from '@/src/flows/types';
 import { SalaryField } from '@/src/flows/CostCalculator/components/SalaryField';
 import {
   FieldSetField,
@@ -38,6 +39,8 @@ export type CostCalculatorCountry = {
   regionSlug: string;
   currency: string;
 };
+
+type FieldModification = NonNullable<JSFModify['fields']>[string];
 
 type ModifyFieldAttrs = Record<string, unknown> & {
   presentation?: Record<string, unknown>;
@@ -77,11 +80,16 @@ type UseCostCalculatorParams = {
 };
 
 const withPresentation = (
-  field: unknown,
+  field: FieldModification,
+  fieldSchema: object,
   presentation: Record<string, unknown>,
 ) => {
+  const fieldModification =
+    typeof field === 'function' ? field(fieldSchema) : field;
   const attrs = (
-    typeof field === 'object' && field !== null ? field : {}
+    typeof fieldModification === 'object' && fieldModification !== null
+      ? fieldModification
+      : {}
   ) as ModifyFieldAttrs;
   return {
     ...attrs,
@@ -415,15 +423,21 @@ export const useCostCalculator = (
         fields: {
           ...options?.jsfModify?.fields,
           ...customFields.fields,
-          country: withPresentation(options?.jsfModify?.fields?.country, {
-            onChange: onCountryChange,
-          }),
-          region: withPresentation(options?.jsfModify?.fields?.region, {
-            onChange: onRegionChange,
-          }),
-          currency: withPresentation(options?.jsfModify?.fields?.currency, {
-            onChange: onChangeCurrency,
-          }),
+          country: withPresentation(
+            options?.jsfModify?.fields?.country,
+            schema.properties.country,
+            { onChange: onCountryChange },
+          ),
+          region: withPresentation(
+            options?.jsfModify?.fields?.region,
+            schema.properties.region,
+            { onChange: onRegionChange },
+          ),
+          currency: withPresentation(
+            options?.jsfModify?.fields?.currency,
+            schema.properties.currency,
+            { onChange: onChangeCurrency },
+          ),
         },
       },
     },

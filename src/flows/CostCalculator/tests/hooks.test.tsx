@@ -1,4 +1,7 @@
-import { useCostCalculator } from '@/src/flows/CostCalculator/hooks';
+import {
+  defaultEstimationOptions,
+  useCostCalculator,
+} from '@/src/flows/CostCalculator/hooks';
 import type { CostCalculatorEstimationFormValues } from '@/src/flows/CostCalculator/types';
 import { server } from '@/src/tests/server';
 import { $TSFixMe } from '@/src/types/remoteFlows';
@@ -228,5 +231,56 @@ describe('useCostCalculator', () => {
       result.current.handleValidation({ ...validValues, region: 'AST' }),
     );
     expect(formErrors).toEqual({});
+  });
+
+  it('should apply a jsfModify function on the country, region and currency fields', async () => {
+    const { result } = renderHook(
+      () =>
+        useCostCalculator({
+          estimationOptions: defaultEstimationOptions,
+          options: {
+            jsfModify: {
+              fields: {
+                country: (attrs) => ({
+                  title: `${attrs.title} of employment`,
+                }),
+                region: (attrs) => ({ title: `${attrs.title} of employment` }),
+                currency: (attrs) => ({ title: `Billing ${attrs.title}` }),
+              },
+            },
+          },
+        }),
+      { wrapper: TestProviders },
+    );
+
+    await waitFor(() => {
+      const countryField = result.current.fields.find(
+        (field) => field.name === 'country',
+      );
+      expect((countryField?.options as unknown[] | undefined)?.length).toBe(3);
+    });
+
+    const countryField: $TSFixMe = result.current.fields.find(
+      (field) => field.name === 'country',
+    );
+    expect(countryField?.label).toBe('Country of employment');
+
+    act(() => {
+      countryField?.onChange?.('ESP');
+    });
+
+    await waitFor(() => {
+      const regionField: $TSFixMe = result.current.fields.find(
+        (field) => field.name === 'region',
+      );
+      expect(regionField?.options?.length).toBeGreaterThan(0);
+    });
+
+    expect(
+      result.current.fields.find((field) => field.name === 'region')?.label,
+    ).toBe('Region of employment');
+    expect(
+      result.current.fields.find((field) => field.name === 'currency')?.label,
+    ).toBe('Billing Currency');
   });
 });
