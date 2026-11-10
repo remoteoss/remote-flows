@@ -1775,6 +1775,12 @@ export const useContractorOnboarding = ({
       }
       // new steps or refactor ones should rely on json-schema-form-mutability
       // instead of passing fieldValues
+      if (stepState.currentStep.name === 'invoice_schedule') {
+        setIncludeCreateInvoiceSchedule(
+          values.invoice_schedule_preference === 'schedule',
+        );
+      }
+
       const stepsUsingHandleValidation = [
         'invoice_schedule',
         'create_invoice_schedule',

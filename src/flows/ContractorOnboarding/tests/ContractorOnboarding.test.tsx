@@ -4386,6 +4386,75 @@ describe('ContractorOnboardingFlow', () => {
       await waitFor(() => expect(visibleSteps()).toContain('invoice_schedule'));
     });
 
+    it('hides and shows the create invoice schedule step as the preference radio changes, before submitting', async () => {
+      const recordVisibleSteps = vi.fn();
+      const visibleSteps = (): string[] =>
+        recordVisibleSteps.mock.lastCall?.[0] ?? [];
+
+      const MultiStepFormWithVisibleSteps = (props: $TSFixMe) => {
+        recordVisibleSteps(
+          (props.contractorOnboardingBag.steps ?? [])
+            .filter((step: $TSFixMe) => step.visible)
+            .map((step: $TSFixMe) => step.name),
+        );
+
+        return <MultiStepFormWithoutCountry {...props} />;
+      };
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithVisibleSteps),
+      );
+
+      render(
+        <RemoteFlowContext.Provider value={{ client: apiClient }}>
+          <ContractorOnboardingFlow
+            employmentId={generateUniqueEmploymentId()}
+            skipSteps={['select_country']}
+            options={{
+              features: ['create_invoice_schedule'],
+            }}
+            {...defaultProps}
+          />
+        </RemoteFlowContext.Provider>,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText('Step: Basic Information');
+      await fillBasicInformation();
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Pricing Plan');
+      await fillContractorSubscription('Contractor Management');
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Contract Origin');
+      await fillContractOrigin('Without an agreement');
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Invoice schedule');
+
+      fireEvent.click(
+        await screen.findByRole('radio', {
+          name: /create invoice schedule now/i,
+        }),
+      );
+      await waitFor(() =>
+        expect(visibleSteps()).toContain('create_invoice_schedule'),
+      );
+
+      fireEvent.click(screen.getByRole('radio', { name: /skip for now/i }));
+      await waitFor(() =>
+        expect(visibleSteps()).not.toContain('create_invoice_schedule'),
+      );
+
+      fireEvent.click(
+        screen.getByRole('radio', { name: /create invoice schedule now/i }),
+      );
+      await waitFor(() =>
+        expect(visibleSteps()).toContain('create_invoice_schedule'),
+      );
+    });
+
     it('explains that the invoice date is when the invoice is created, not when the contractor is paid', async () => {
       const employmentId = generateUniqueEmploymentId();
       await goToFilledCreateInvoiceSchedule(employmentId);
