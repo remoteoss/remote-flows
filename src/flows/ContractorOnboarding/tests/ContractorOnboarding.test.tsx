@@ -4359,14 +4359,12 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       render(
-        <RemoteFlowContext.Provider value={{ client: apiClient }}>
-          <ContractorOnboardingFlow
-            employmentId={employmentId}
-            skipSteps={['select_country']}
-            options={{ features: ['create_invoice_schedule'] }}
-            {...defaultProps}
-          />
-        </RemoteFlowContext.Provider>,
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          skipSteps={['select_country']}
+          options={{ features: ['create_invoice_schedule'] }}
+          {...defaultProps}
+        />,
         { wrapper: TestProviders },
       );
 
@@ -4441,14 +4439,12 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       render(
-        <RemoteFlowContext.Provider value={{ client: apiClient }}>
-          <ContractorOnboardingFlow
-            employmentId={employmentId}
-            skipSteps={['select_country']}
-            options={{ features: ['create_invoice_schedule'] }}
-            {...defaultProps}
-          />
-        </RemoteFlowContext.Provider>,
+        <ContractorOnboardingFlow
+          employmentId={employmentId}
+          skipSteps={['select_country']}
+          options={{ features: ['create_invoice_schedule'] }}
+          {...defaultProps}
+        />,
         { wrapper: TestProviders },
       );
 
