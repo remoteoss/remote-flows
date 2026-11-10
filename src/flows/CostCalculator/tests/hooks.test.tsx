@@ -11,6 +11,8 @@ import { countries, currencies, estimation, regionFields } from './fixtures';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 import { ValidationError } from 'yup';
 
+type FieldSchema = { title: string };
+
 const validValues = {
   country: 'POL',
   currency: 'usd-1dee66d1-9c32-4ef8-93c6-6ae1ee6308c8',
@@ -241,11 +243,15 @@ describe('useCostCalculator', () => {
           options: {
             jsfModify: {
               fields: {
-                country: (attrs) => ({
-                  title: `${attrs.title} of employment`,
+                country: ({ title }: FieldSchema) => ({
+                  title: `${title} of employment`,
                 }),
-                region: (attrs) => ({ title: `${attrs.title} of employment` }),
-                currency: (attrs) => ({ title: `Billing ${attrs.title}` }),
+                region: ({ title }: FieldSchema) => ({
+                  title: `${title} of employment`,
+                }),
+                currency: ({ title }: FieldSchema) => ({
+                  title: `Billing ${title}`,
+                }),
               },
             },
           },
