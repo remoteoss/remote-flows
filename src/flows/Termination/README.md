@@ -352,3 +352,7 @@ These fields render SDK content through `x-jsf-presentation.Component`. Pass you
 `risk_assesment_info` and `proposed_termination_date_info` take a `className` in `x-jsf-presentation`, and `proposed_termination_date_info` also a `zendeskTriggerButtonClassName` for its help link.
 
 Validation of `proposed_termination_date` follows the dates the date picker allows: a date before the first available termination date, or on or after the employee's start date when cancelling before the start, fails validation.
+
+Choosing `end_of_fixed_term_contract` in `termination_reason` shows the required `end_of_fixed_term_contract_termination_reason` select, with the fixed-term reasons the API accepts. Its value is sent as `termination_reason`, and the field itself is not sent. An initial `termination_reason` that is one of those fixed-term reasons preselects both fields. Fixed-term reasons are not offered when the employment's `contract_details.contract_duration_type` is `indefinite`.
+
+`risk_assessment_reasons` doesn't accept `none_of_these` together with another reason.
