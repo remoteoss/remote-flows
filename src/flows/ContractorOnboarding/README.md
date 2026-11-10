@@ -158,7 +158,7 @@ Lets the employer choose whether to set up a recurring invoice schedule now (`sc
 
 ### CreateInvoiceScheduleStep
 
-Collects the invoice schedule details: currency, periodicity, start date, up to 10 invoice items, invoice number, note, and number of occurrences. When an invoice schedule already exists for the employment, this same step is prefilled and submitting it updates the existing schedule instead of creating a new one.
+Collects the invoice schedule details: currency, periodicity, start date, up to 10 invoice items, invoice number, note, and number of occurrences. When an invoice schedule already exists for the employment, this same step is prefilled and submitting it updates the existing schedule instead of creating a new one. Otherwise, currency and periodicity default to the invoicing frequency and compensation currency from the contract details step, when the contractor can be invoiced in them.
 
 **Props:**
 

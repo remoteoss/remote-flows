@@ -3,6 +3,7 @@ import {
   ProductType,
   PRODUCT_IDENTIFIER_MAP,
 } from '@/src/flows/ContractorOnboarding/constants';
+import { RECURRING_PERIODICITY_OPTIONS } from '@/src/common/invoice-schedules';
 import { Employment } from '@/src/flows/Onboarding/types';
 
 export {
@@ -184,3 +185,27 @@ export {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
 } from '@/src/common/invoice-schedules/utils';
+
+const RECURRING_PERIODICITIES: string[] = RECURRING_PERIODICITY_OPTIONS.map(
+  ({ const: value }) => value,
+);
+
+export function buildInvoiceSchedulePrefill(
+  contractDetails: Record<string, unknown> | undefined,
+  currencies: string[] | undefined,
+) {
+  const paymentTerms = contractDetails?.payment_terms as
+    | { invoicing_frequency?: unknown; compensation_currency_code?: unknown }
+    | undefined;
+  const frequency = paymentTerms?.invoicing_frequency;
+  const currency = paymentTerms?.compensation_currency_code;
+
+  return {
+    ...(typeof frequency === 'string' &&
+      RECURRING_PERIODICITIES.includes(frequency) && {
+        periodicity: frequency,
+      }),
+    ...(typeof currency === 'string' &&
+      currencies?.includes(currency) && { currency }),
+  };
+}

@@ -39,7 +39,10 @@ import {
 } from '@/src/flows/ContractorOnboarding/api';
 import { useCompanyOpenTasks } from '@/src/common/api/companies';
 import { buildInvoiceScheduleFormValues } from '@/src/common/invoice-schedules';
-import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
+import {
+  useContractorContractDetailsSchema,
+  useContractorCurrencies,
+} from '@/src/common/api/contractor-contract-details';
 import {
   useCreateContractorContractDocument,
   useGetContractDocuments,
@@ -60,6 +63,7 @@ import {
   ContractorOnboardingHookOptions,
 } from '@/src/flows/ContractorOnboarding/types';
 import {
+  buildInvoiceSchedulePrefill,
   buildSteps,
   reviewStepAllowedEmploymentStatus,
   disabledInviteButtonEmploymentStatus,
@@ -782,12 +786,36 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const isCreateInvoiceScheduleStep =
+    includeInvoiceSchedule &&
+    stepState.currentStep.name === 'create_invoice_schedule';
+
+  const { data: contractorCurrencies } = useContractorCurrencies({
+    employmentId: internalEmploymentId as string,
+    options: {
+      queryOptions: {
+        enabled: isCreateInvoiceScheduleStep && Boolean(internalEmploymentId),
+      },
+    },
+  });
+
   const createInvoiceScheduleSavedValues = useMemo(
     () =>
       existingInvoiceSchedule
         ? buildInvoiceScheduleFormValues(existingInvoiceSchedule)
-        : { ...onboardingInitialValues },
-    [existingInvoiceSchedule, onboardingInitialValues],
+        : {
+            ...buildInvoiceSchedulePrefill(
+              employment?.contract_details,
+              contractorCurrencies?.map(({ code }: { code: string }) => code),
+            ),
+            ...onboardingInitialValues,
+          },
+    [
+      existingInvoiceSchedule,
+      onboardingInitialValues,
+      employment?.contract_details,
+      contractorCurrencies,
+    ],
   );
 
   const {

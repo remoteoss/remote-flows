@@ -4332,6 +4332,90 @@ describe('ContractorOnboardingFlow', () => {
       await fillCreateInvoiceSchedule(values);
     };
 
+    const goToEmptyCreateInvoiceSchedule = async (
+      paymentTerms: Record<string, unknown>,
+    ) => {
+      const employmentId = generateUniqueEmploymentId();
+
+      server.use(
+        http.get(`*/v1/employments/${employmentId}`, () =>
+          HttpResponse.json({
+            ...mockContractorEmploymentResponse,
+            data: {
+              ...mockContractorEmploymentResponse.data,
+              employment: {
+                ...mockContractorEmploymentResponse.data.employment,
+                id: employmentId,
+                status: 'created',
+                contract_details: { payment_terms: paymentTerms },
+              },
+            },
+          }),
+        ),
+      );
+
+      mockRender.mockImplementation(
+        createMockRenderImplementation(MultiStepFormWithoutCountry),
+      );
+
+      render(
+        <RemoteFlowContext.Provider value={{ client: apiClient }}>
+          <ContractorOnboardingFlow
+            employmentId={employmentId}
+            skipSteps={['select_country']}
+            options={{ features: ['create_invoice_schedule'] }}
+            {...defaultProps}
+          />
+        </RemoteFlowContext.Provider>,
+        { wrapper: TestProviders },
+      );
+
+      await screen.findByText('Step: Basic Information');
+      await fillBasicInformation();
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Pricing Plan');
+      await fillContractorSubscription('Contractor Management');
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Contract Origin');
+      await fillContractOrigin('Without an agreement');
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Invoice schedule');
+      fireEvent.click(
+        await screen.findByRole('radio', {
+          name: /create invoice schedule now/i,
+        }),
+      );
+      fireEvent.click(screen.getByRole('button', { name: /continue/i }));
+
+      await screen.findByText('Step: Create Invoice Schedule');
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
+      });
+    };
+
+    it('prefills the invoice currency and frequency from the contract details', async () => {
+      await goToEmptyCreateInvoiceSchedule({
+        invoicing_frequency: 'weekly',
+        compensation_currency_code: 'EUR',
+      });
+
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
+    });
+
+    it('leaves the currency and frequency empty when the contract details values are not offered', async () => {
+      await goToEmptyCreateInvoiceSchedule({
+        invoicing_frequency: 'yearly',
+        compensation_currency_code: 'ZZZ',
+      });
+
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('');
+    });
+
     // The Remote platform only offers invoice schedules during contractor onboarding for CM and CM+: Contractor of Record
     // invoice schedules can only be created once the contractor is active.
     it('offers the invoice schedule step for Contractor Management but not for Contractor of Record', async () => {
