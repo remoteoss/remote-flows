@@ -65,10 +65,14 @@ export function CreateInvoiceScheduleStep({
     }
   };
 
+  const stepValues =
+    contractorOnboardingBag.stepState.values?.create_invoice_schedule;
   const initialValues =
-    contractorOnboardingBag.stepState.values?.create_invoice_schedule ||
-    contractorOnboardingBag.initialValues.create_invoice_schedule;
+    stepValues && Object.keys(stepValues).length > 0
+      ? stepValues
+      : contractorOnboardingBag.initialValues.create_invoice_schedule;
 
+  console.log('DBG', JSON.stringify({ stepValues, bagInitial: contractorOnboardingBag.initialValues.create_invoice_schedule?.currency, used: initialValues?.currency }));
   return (
     <ContractorOnboardingForm
       components={components}
