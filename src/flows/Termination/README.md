@@ -310,7 +310,7 @@ It renders the back button for the form and supports all standard `<button>` ele
 
 The options.jsfModify props accepts the same props that the [modify](https://json-schema-form.vercel.app/?path=/docs/api-reference-modify--docs#config-methods) function from the json-schema-form library
 
-The step forms run on json-schema-form v1, which copies the schema when it builds and validates the form. A field's `description` must be a string: a React element there no longer renders, and a function is dropped. To render your own content, pass a component in `x-jsf-presentation.description` instead. The default field components render it in place of the description:
+The step forms run on json-schema-form v1, which copies the schema when it builds and validates the form. A field's `description` must be a string: a React element there makes the form throw "Deep clone failed" while it is built, so the step doesn't render, and a function is dropped. To render your own content, pass a component in `x-jsf-presentation.description` instead. The default field components render it in place of the description:
 
 ```tsx
 const TerminationReasonDetailsDescription = () => (
