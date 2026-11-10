@@ -39,10 +39,7 @@ import {
 } from '@/src/flows/ContractorOnboarding/api';
 import { useCompanyOpenTasks } from '@/src/common/api/companies';
 import { buildInvoiceScheduleFormValues } from '@/src/common/invoice-schedules';
-import {
-  useContractorContractDetailsSchema,
-  useContractorCurrencies,
-} from '@/src/common/api/contractor-contract-details';
+import { useContractorContractDetailsSchema } from '@/src/common/api/contractor-contract-details';
 import {
   useCreateContractorContractDocument,
   useGetContractDocuments,
@@ -787,13 +784,18 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const inSessionContractDetails = stepState.values?.contract_details;
+
   const createInvoiceScheduleSavedValues = useMemo(
     () =>
       existingInvoiceSchedule
         ? buildInvoiceScheduleFormValues(existingInvoiceSchedule)
         : {
             ...buildInvoiceSchedulePrefill(
-              employment?.contract_details,
+              {
+                ...employment?.contract_details,
+                ...inSessionContractDetails,
+              },
               currencies?.map(({ code }: { code: string }) => code),
             ),
             ...onboardingInitialValues,
@@ -802,6 +804,7 @@ export const useContractorOnboarding = ({
       existingInvoiceSchedule,
       onboardingInitialValues,
       employment?.contract_details,
+      inSessionContractDetails,
       currencies,
     ],
   );
