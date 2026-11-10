@@ -112,6 +112,8 @@ await onboardingBag.parseFormValues(values);
 
 The SDK builds its forms from JSON Schemas with [json-schema-form](https://github.com/remoteoss/json-schema-form) (JSF). The schemas the SDK ships itself (for example the country pickers and the Cost Calculator form) are moving from JSF v0 to JSF v1, one flow at a time.
 
+The migration ships as a major release. The current major version of `@remoteoss/remote-flows` is 1.x, so the Cost Calculator and the other flows migrated after the select country steps ship in the next major version, 2.0.0. The two select country steps below already run on JSF v1 in 1.x, in the releases named in their sections.
+
 Most of what changes fails silently. Nothing breaks at build time or in a type check. Instead, your users can hit a field that is never valid, a submit button that never enables, or an error message that never shows. **Before you update, search your code for the identifiers listed in each flow below.** Don't wait for a compiler error.
 
 If you only use the SDK's prebuilt flows and default components, without `jsfModify`, you have nothing to change.
@@ -123,7 +125,7 @@ If you only use the SDK's prebuilt flows and default components, without `jsfMod
 - **Who is affected**:
   - **Headless consumers**: you render your own UI from the flow bag (`fields`, `handleValidation`, `parseFormValues`, ...) or the headless hook.
   - **Everyone using the flow**: the change applies to the prebuilt UI too.
-- **Deprecated**: still works, but stop using it. Removal: to be decided by the SDK team.
+- **Deprecated**: still works, but stop using it. Kept in 2.x, removed in 3.0.0.
 
 ### Replacement patterns
 
@@ -321,20 +323,24 @@ const hasPreview = countriesFromApi.find(
 
 ### Cost Calculator
 
-The Cost Calculator form (`CostCalculatorFlow` and `useCostCalculator`) runs on JSF v1 and is validated by its JSON Schema instead of Yup. Countries, currencies and regions go into the schema as `oneOf`, and the change handlers go through `jsfModify`.
+Ships in 2.0.0. The Cost Calculator form (`CostCalculatorFlow` and `useCostCalculator`) runs on JSF v1 and is validated by its JSON Schema instead of Yup. Countries, currencies and regions go into the schema as `oneOf`, and the change handlers go through `jsfModify`. `yupError`, `validationSchema` and the extra country option properties are kept as deprecated compatibility values, so most headless code keeps working while you move off them.
 
-**Search for:** `yupError`, `validationSchema`, `management.management_fee`, `childRegions`, `hasAdditionalFields`, `regionSlug`, the `currency` property of a country option, `name === 'region'`, `isVisible` on the region field, and any `description` you pass through `jsfModify`.
+**Search for:** `yupError`, `validationSchema`, `management.management_fee`, `childRegions`, `hasAdditionalFields`, `regionSlug`, the `currency` property of a country option, code that reads the `region` field's `options`, `label`, `description` or `onChange`, code that reads `fields` by index, `.required` on the `salary` and `salary_conversion` fields, `.schema`, `scopedJsonSchema`, `computedAttributes`, `errorMessage`, and any `description` you pass through `jsfModify`.
 
-| Change                                                                                                                                                                                                                             | Type         | Who is affected         |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ----------------------- |
-| `handleValidation` errors come from `formErrors`. `yupError` is still returned but deprecated. Removal: to be decided by the SDK team.                                                                                             | Deprecated   | Headless consumers      |
-| The management fee error is nested at `formErrors.management.management_fee`. Before, it was at the `'management.management_fee'` key.                                                                                             | Breaking     | Headless consumers      |
-| A country or currency that is not in the options fails with `The option "<value>" is not valid.` Before, any value passed.                                                                                                         | Breaking     | Headless consumers      |
-| The country options are `{ label, value }`. `childRegions`, `hasAdditionalFields`, `regionSlug` and `currency` are still on them but deprecated. Removal: to be decided by the SDK team. Use `useCostCalculatorCountries` instead. | Deprecated   | Headless consumers      |
-| When the selected country has no regions, `fields` has no `region` field. Before, it was there with `isVisible: false`.                                                                                                            | Breaking     | Headless consumers      |
-| `validationSchema` (Yup) is kept but deprecated. Use `handleValidation`. Removal: to be decided by the SDK team.                                                                                                                   | Deprecated   | Headless consumers      |
-| A `description` passed through `jsfModify` must be a string. Use `x-jsf-presentation.meta.helpCenter` for help center links (see [Field descriptions](#field-descriptions-x-jsf-presentationdescription)).                         | Breaking     | Everyone using the flow |
-| The management fee maximum no longer rejects every fee when the billing currency has no base rate.                                                                                                                                 | Non-breaking | Everyone using the flow |
+| Change                                                                                                                                                                                                                                                                                                                    | Type         | Who is affected         |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ----------------------- |
+| `handleValidation` still resolves to `{ formErrors, yupError }`. `yupError` is deprecated: read `formErrors`. Kept in 2.x, removed in 3.0.0.                                                                                                                                                                              | Deprecated   | Headless consumers      |
+| `validationSchema` (Yup) is still on the bag but deprecated: use `handleValidation`. Kept in 2.x, removed in 3.0.0.                                                                                                                                                                                                       | Deprecated   | Headless consumers      |
+| The country options still carry `childRegions`, `hasAdditionalFields`, `regionSlug` and `currency` next to `label` and `value`, but these four are deprecated: read them from `useCostCalculatorCountries`. Kept in 2.x, removed in 3.0.0.                                                                                | Deprecated   | Headless consumers      |
+| The management fee error is nested at `formErrors.management.management_fee`. Before, it was at the `'management.management_fee'` key. The deprecated `yupError.inner` still uses the `management.management_fee` path.                                                                                                   | Breaking     | Headless consumers      |
+| A country, currency or region that is not in the options fails with `The option "<value>" is not valid.` Before, any value passed.                                                                                                                                                                                        | Breaking     | Headless consumers      |
+| When the selected country has no regions, `fields` still has a hidden `region` field (`isVisible: false`, `required: false`, not validated, left out by `parseFormValues`). It no longer has `options`, `label`, `description` or `onChange`. Before, it had `options: []` and `label: 'Region'`.                         | Breaking     | Headless consumers      |
+| The hidden `salary_conversion` and `salary_converted` fields come after `estimation_title` in `fields`. Before, they came right after `hiring_budget`, before `country`. Find fields by `name`, not by position.                                                                                                          | Breaking     | Headless consumers      |
+| A `description` passed through `jsfModify` must be a string. A JSX description now breaks rendering with `Objects are not valid as a React child`; before, it was rendered. Use `x-jsf-presentation.meta.helpCenter` for help center links (see [Field descriptions](#field-descriptions-x-jsf-presentationdescription)). | Breaking     | Everyone using the flow |
+| `salary.required` and `salary_conversion.required` are `false` until the first `handleValidation`. After it, the field that `salary_converted` names is `true` and the other one is `false`. Before, both were always `true`.                                                                                             | Breaking     | Headless consumers      |
+| The fields are JSF v1 field objects. `schema` (the per-field Yup schema), `scopedJsonSchema` and `computedAttributes` are gone from every field. `errorMessage` is only on fields with their own messages (`management_fee`, and `region` when the country has regions); before, every field had one, empty.              | Breaking     | Headless consumers      |
+| `management_fee` has `minimum: 0` and, when the billing currency has a base rate, a `maximum` (for example `69900` for USD, with the error `Management fee cannot exceed 699 USD`). `hiring_budget` has `enum`.                                                                                                           | Non-breaking | Headless consumers      |
+| The management fee maximum no longer rejects every fee when the billing currency has no base rate.                                                                                                                                                                                                                        | Non-breaking | Everyone using the flow |
 
 **Before:**
 
@@ -342,8 +348,8 @@ The Cost Calculator form (`CostCalculatorFlow` and `useCostCalculator`) runs on 
 const { formErrors, yupError } =
   await costCalculatorBag.handleValidation(values);
 const feeError = formErrors['management.management_fee'];
-const regionField = costCalculatorBag.fields.find((f) => f.name === 'region');
-const showRegion = regionField.isVisible;
+const hasErrors = yupError.inner.length > 0;
+const salaryConversion = costCalculatorBag.fields[1];
 const regions = selectedCountryOption.childRegions;
 ```
 
@@ -352,8 +358,10 @@ const regions = selectedCountryOption.childRegions;
 ```ts
 const { formErrors } = await costCalculatorBag.handleValidation(values);
 const feeError = formErrors?.management?.management_fee;
-const regionField = costCalculatorBag.fields.find((f) => f.name === 'region');
-const showRegion = Boolean(regionField?.isVisible);
+const hasErrors = Boolean(formErrors && Object.keys(formErrors).length > 0);
+const salaryConversion = costCalculatorBag.fields.find(
+  (field) => field.name === 'salary_conversion',
+);
 const { data: countries } = useCostCalculatorCountries({
   includePremiumBenefits,
 });
@@ -362,7 +370,7 @@ const regions = countries?.find((c) => c.value === country)?.childRegions;
 
 ### Termination
 
-To be completed. The Termination detail steps (termination details, employee communication, paid time off, additional information) are being migrated. This section will be filled in when that change ships.
+To be completed when the Termination change is reviewed. The Termination detail steps (termination details, employee communication, paid time off, additional information) are being migrated, and this section will list what changes for them.
 
 ---
 
