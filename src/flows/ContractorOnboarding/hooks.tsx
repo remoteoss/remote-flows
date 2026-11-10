@@ -199,6 +199,13 @@ export const useContractorOnboarding = ({
   const [includeCreateInvoiceSchedule, setIncludeCreateInvoiceSchedule] =
     useState<boolean>(false);
 
+  const updateCreateInvoiceScheduleVisibility = useCallback(
+    (invoiceSchedulePreference: unknown) => {
+      setIncludeCreateInvoiceSchedule(invoiceSchedulePreference === 'schedule');
+    },
+    [],
+  );
+
   const [pendingNavigationStep, setPendingNavigationStep] =
     useState<StepKeys | null>(null);
 
@@ -1518,10 +1525,9 @@ export const useContractorOnboarding = ({
       }
 
       case 'invoice_schedule': {
-        // Show create_invoice_schedule step only when user selects 'schedule'
-        const shouldShowCreateStep =
-          values.invoice_schedule_preference === 'schedule';
-        setIncludeCreateInvoiceSchedule(shouldShowCreateStep);
+        updateCreateInvoiceScheduleVisibility(
+          values.invoice_schedule_preference,
+        );
 
         return {
           data: {
@@ -1773,6 +1779,12 @@ export const useContractorOnboarding = ({
       if (stepState.currentStep.name === 'pricing_plan') {
         await onSubscriptionValuesChange(values);
       }
+      if (stepState.currentStep.name === 'invoice_schedule') {
+        updateCreateInvoiceScheduleVisibility(
+          values.invoice_schedule_preference,
+        );
+      }
+
       // new steps or refactor ones should rely on json-schema-form-mutability
       // instead of passing fieldValues
       const stepsUsingHandleValidation = [
@@ -1793,6 +1805,7 @@ export const useContractorOnboarding = ({
       stepState,
       handleValidation,
       onSubscriptionValuesChange,
+      updateCreateInvoiceScheduleVisibility,
     ],
   );
 
