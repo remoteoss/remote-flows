@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 import { getV1CountriesCountryCodeForm } from '@/src/client';
 import { ONBOARDING_JSON_SCHEMA_VERSION } from '../example/src/flows/Onboarding/jsonSchemaVersions';
+import { parseBasicInfoOverrides } from './fill-schema';
 import { createEnvClient } from './schema-canary/auth';
 import {
   archiveEmployment,
@@ -70,7 +71,11 @@ const client = createEnvClient(gatewayUrl, fetchAccessToken);
 let employmentId: string | undefined;
 try {
   if (form === 'contract_details') {
-    ({ employmentId } = await seedEmploymentForCountry(client, country));
+    ({ employmentId } = await seedEmploymentForCountry(
+      client,
+      country,
+      parseBasicInfoOverrides(args['basic-info']),
+    ));
   }
   const response = await getV1CountriesCountryCodeForm({
     client,
