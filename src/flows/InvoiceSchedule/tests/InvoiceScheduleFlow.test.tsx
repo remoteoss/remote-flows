@@ -187,12 +187,13 @@ describe('InvoiceScheduleFlow', () => {
 
       renderFlow();
 
-      expect(
-        await screen.findByText(/Text\/Invoice count/),
-      ).toBeInTheDocument();
+      const statement = (
+        await screen.findByText(/Text\/Invoice count/)
+      ).closest('[role="alert"]') as HTMLElement;
       expect(
         screen.queryByRole('button', { name: /Edit sequence/ }),
       ).not.toBeInTheDocument();
+      expect(statement.querySelector('.mt-1')).toBeNull();
     });
 
     it('renders the edit sequence button with the partner button component', async () => {
