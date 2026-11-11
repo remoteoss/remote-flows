@@ -4556,6 +4556,38 @@ describe('ContractorOnboardingFlow', () => {
       });
     });
 
+    it('keeps the invoice currency the user picked when they go back and resubmit unchanged contract details', async () => {
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(null);
+
+      await fillSelect('currency', 'USD');
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
+
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Invoice schedule');
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Contract Preview');
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Contract Details');
+
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Contract Preview');
+      screen.getByText(/Continue/i).click();
+
+      await screen.findByText('Step: Invoice schedule');
+      fireEvent.click(
+        await screen.findByRole('radio', {
+          name: /create invoice schedule now/i,
+        }),
+      );
+      fireEvent.click(screen.getByRole('button', { name: /continue/i }));
+
+      await screen.findByText('Step: Create Invoice Schedule');
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
+      });
+    });
+
     // The Remote platform only offers invoice schedules during contractor onboarding for CM and CM+: Contractor of Record
     // invoice schedules can only be created once the contractor is active.
     it('offers the invoice schedule step for Contractor Management but not for Contractor of Record', async () => {
