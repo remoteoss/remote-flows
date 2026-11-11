@@ -64,10 +64,26 @@ async function fetchSchema(
 
 export type SeededEmployment = { employmentId: string; companyId: string };
 
-/** Creates a sandbox employment for `country` up to contract_details and returns its employment and company ids. */
+/** Parses `field=value,field=value` into string overrides for the seeded basic information. */
+export function parseBasicInfoOverrides(raw: string | undefined) {
+  const overrides: Record<string, string> = {};
+  for (const pair of raw ? raw.split(',') : []) {
+    const separator = pair.indexOf('=');
+    if (separator < 1) {
+      throw new Error(
+        `Basic information overrides expect <field>=<value> pairs separated by commas (got "${pair}").`,
+      );
+    }
+    overrides[pair.slice(0, separator)] = pair.slice(separator + 1);
+  }
+  return overrides;
+}
+
+/** Creates a sandbox employment for `country` up to contract_details and returns its employment and company ids. `basicInfoOverrides` replaces the generated basic information answers. */
 export async function seedEmploymentForCountry(
   client: Client,
   country: string,
+  basicInfoOverrides: Record<string, string> = {},
 ): Promise<SeededEmployment> {
   const basicInfoSchema = await fetchSchema(
     client,
@@ -84,6 +100,7 @@ export async function seedEmploymentForCountry(
   const { values: basicInformation } = fillSchema(basicInfoSchema, {
     job_title: 'Software Engineer',
     provisional_start_date: startDate,
+    ...basicInfoOverrides,
   });
 
   const created = await postV1Employments({

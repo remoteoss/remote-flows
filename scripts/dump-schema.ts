@@ -9,6 +9,7 @@ import { ONBOARDING_JSON_SCHEMA_VERSION } from '../example/src/flows/Onboarding/
 import { createEnvClient } from './schema-canary/auth';
 import {
   archiveEmployment,
+  parseBasicInfoOverrides,
   seedEmploymentForCountry,
 } from './schema-canary/seed-employment';
 
@@ -70,7 +71,11 @@ const client = createEnvClient(gatewayUrl, fetchAccessToken);
 let employmentId: string | undefined;
 try {
   if (form === 'contract_details') {
-    ({ employmentId } = await seedEmploymentForCountry(client, country));
+    ({ employmentId } = await seedEmploymentForCountry(
+      client,
+      country,
+      parseBasicInfoOverrides(args['basic-info']),
+    ));
   }
   const response = await getV1CountriesCountryCodeForm({
     client,
