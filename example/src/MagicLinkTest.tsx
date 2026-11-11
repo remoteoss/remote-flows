@@ -18,7 +18,7 @@ const MagicLinkTestContent = () => {
   const [customPath, setCustomPath] = useState(
     '/dashboard/company-settings/payments',
   );
-  const { data: identity } = useIdentity();
+  const { data: identity, isLoading: isLoadingIdentity } = useIdentity();
   const userId = identity && 'user' in identity ? identity.user.id : '';
   const [status, setStatus] = useState<StatusType>('idle');
   const [errorMessage, setErrorMessage] = useState('');
@@ -102,7 +102,7 @@ const MagicLinkTestContent = () => {
               />
               <Button
                 onClick={() => generateMagicLink(customPath)}
-                disabled={status === 'loading' || !userId}
+                disabled={status === 'loading' || isLoadingIdentity}
               >
                 {status === 'loading' ? (
                   <>
