@@ -1400,6 +1400,7 @@ export const useContractorOnboarding = ({
           const savedInvoiceSchedule =
             stepState.values?.create_invoice_schedule;
           if (
+            !existingInvoiceSchedule &&
             savedInvoiceSchedule &&
             Object.keys(savedInvoiceSchedule).length > 0
           ) {
