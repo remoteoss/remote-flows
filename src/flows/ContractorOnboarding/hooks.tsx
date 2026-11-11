@@ -61,6 +61,7 @@ import {
 } from '@/src/flows/ContractorOnboarding/types';
 import {
   buildInvoiceSchedulePrefill,
+  syncInvoiceSchedulePrefill,
   buildSteps,
   reviewStepAllowedEmploymentStatus,
   disabledInviteButtonEmploymentStatus,
@@ -784,6 +785,24 @@ export const useContractorOnboarding = ({
     },
   });
 
+  const submittedContractDetailsRef = useRef<FieldValues | undefined>(
+    undefined,
+  );
+
+  const currencyCodes = useMemo(
+    () => currencies?.map(({ code }: { code: string }) => code),
+    [currencies],
+  );
+
+  const getInvoiceSchedulePrefill = useCallback(
+    (contractDetails?: FieldValues) =>
+      buildInvoiceSchedulePrefill(
+        { ...employment?.contract_details, ...contractDetails },
+        currencyCodes,
+      ),
+    [employment?.contract_details, currencyCodes],
+  );
+
   const inSessionContractDetails = stepState.values?.contract_details;
 
   const createInvoiceScheduleSavedValues = useMemo(
@@ -791,21 +810,14 @@ export const useContractorOnboarding = ({
       existingInvoiceSchedule
         ? buildInvoiceScheduleFormValues(existingInvoiceSchedule)
         : {
-            ...buildInvoiceSchedulePrefill(
-              {
-                ...employment?.contract_details,
-                ...inSessionContractDetails,
-              },
-              currencies?.map(({ code }: { code: string }) => code),
-            ),
+            ...getInvoiceSchedulePrefill(inSessionContractDetails),
             ...onboardingInitialValues,
           },
     [
       existingInvoiceSchedule,
       onboardingInitialValues,
-      employment?.contract_details,
+      getInvoiceSchedulePrefill,
       inSessionContractDetails,
-      currencies,
     ],
   );
 
@@ -1391,36 +1403,16 @@ export const useContractorOnboarding = ({
             savedInvoiceSchedule &&
             Object.keys(savedInvoiceSchedule).length > 0
           ) {
-            const currencyCodes = currencies?.map(
-              ({ code }: { code: string }) => code,
-            );
-            const previousPrefill = buildInvoiceSchedulePrefill(
-              {
-                ...employment?.contract_details,
-                ...stepState.values?.contract_details,
-              },
-              currencyCodes,
-            );
-            const nextPrefill = buildInvoiceSchedulePrefill(
-              { ...employment?.contract_details, ...values },
-              currencyCodes,
-            );
-            const refreshed: Record<string, unknown> = {
-              ...savedInvoiceSchedule,
-            };
-            for (const field of ['periodicity', 'currency'] as const) {
-              if (previousPrefill[field] !== nextPrefill[field]) {
-                delete refreshed[field];
-                if (nextPrefill[field] !== undefined) {
-                  refreshed[field] = nextPrefill[field];
-                }
-              }
-            }
             setStepValues({
               ...stepState.values,
-              create_invoice_schedule: refreshed,
+              create_invoice_schedule: syncInvoiceSchedulePrefill(
+                savedInvoiceSchedule,
+                getInvoiceSchedulePrefill(submittedContractDetailsRef.current),
+                getInvoiceSchedulePrefill(values),
+              ),
             } as Record<StepKeys, FieldValues>);
           }
+          submittedContractDetailsRef.current = values;
 
           return response;
         } catch (error) {

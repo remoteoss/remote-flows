@@ -3,6 +3,7 @@ import {
   getBasicInformationSchemaVersion,
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePrefill,
+  syncInvoiceSchedulePrefill,
 } from '../utils';
 import { corProductIdentifier, eorProductIdentifier } from '../constants';
 
@@ -149,5 +150,39 @@ describe('buildInvoiceSchedulePrefill', () => {
   it('returns nothing when there are no payment terms', () => {
     expect(buildInvoiceSchedulePrefill(undefined, currencies)).toEqual({});
     expect(buildInvoiceSchedulePrefill({}, currencies)).toEqual({});
+  });
+});
+
+describe('syncInvoiceSchedulePrefill', () => {
+  const saved = { currency: 'USD', periodicity: 'weekly', note: 'keep me' };
+
+  it('keeps the saved values when the prefill did not change', () => {
+    expect(
+      syncInvoiceSchedulePrefill(
+        saved,
+        { currency: 'EUR', periodicity: 'weekly' },
+        { currency: 'EUR', periodicity: 'weekly' },
+      ),
+    ).toEqual(saved);
+  });
+
+  it('replaces only the field whose prefill changed', () => {
+    expect(
+      syncInvoiceSchedulePrefill(
+        saved,
+        { currency: 'EUR', periodicity: 'weekly' },
+        { currency: 'GBP', periodicity: 'weekly' },
+      ),
+    ).toEqual({ currency: 'GBP', periodicity: 'weekly', note: 'keep me' });
+  });
+
+  it('clears the field when the new prefill no longer offers it', () => {
+    expect(
+      syncInvoiceSchedulePrefill(
+        saved,
+        { currency: 'EUR', periodicity: 'weekly' },
+        { currency: 'EUR' },
+      ),
+    ).toEqual({ currency: 'USD', note: 'keep me' });
   });
 });

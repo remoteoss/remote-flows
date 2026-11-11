@@ -4556,6 +4556,43 @@ describe('ContractorOnboardingFlow', () => {
       });
     });
 
+    it('prefills the invoice currency changed in the contract details when the user navigated Back before submitting', async () => {
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(null);
+
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Invoice schedule');
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Contract Preview');
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Contract Details');
+
+      await fillContractDetails({
+        invoicingFrequency: 'weekly',
+        compensationCurrencyCode: 'USD',
+      });
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Contract Origin');
+      screen.getByText(/Next Step/i).click();
+      await screen.findByText('Step: Contract Details');
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Contract Preview');
+      screen.getByText(/Continue/i).click();
+
+      await screen.findByText('Step: Invoice schedule');
+      fireEvent.click(
+        await screen.findByRole('radio', {
+          name: /create invoice schedule now/i,
+        }),
+      );
+      fireEvent.click(screen.getByRole('button', { name: /continue/i }));
+
+      await screen.findByText('Step: Create Invoice Schedule');
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
+      });
+    });
+
     it('keeps the invoice currency the user picked when they go back and resubmit unchanged contract details', async () => {
       await fillContractDetailsAndGoToCreateInvoiceSchedule(null);
 

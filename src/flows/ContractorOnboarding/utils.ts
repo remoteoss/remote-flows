@@ -217,3 +217,22 @@ export function buildInvoiceSchedulePrefill(
       currencies?.includes(currency) && { currency }),
   };
 }
+
+const PREFILLED_FIELDS = ['periodicity', 'currency'] as const;
+
+export function syncInvoiceSchedulePrefill(
+  savedValues: Record<string, unknown>,
+  previousPrefill: ReturnType<typeof buildInvoiceSchedulePrefill>,
+  nextPrefill: ReturnType<typeof buildInvoiceSchedulePrefill>,
+) {
+  const synced = { ...savedValues };
+  for (const field of PREFILLED_FIELDS) {
+    if (previousPrefill[field] !== nextPrefill[field]) {
+      delete synced[field];
+      if (nextPrefill[field] !== undefined) {
+        synced[field] = nextPrefill[field];
+      }
+    }
+  }
+  return synced;
+}
