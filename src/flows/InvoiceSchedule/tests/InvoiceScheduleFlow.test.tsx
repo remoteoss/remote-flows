@@ -90,6 +90,54 @@ describe('InvoiceScheduleFlow', () => {
     expect(screen.queryByTestId('employment_id')).not.toBeInTheDocument();
   });
 
+  describe('when the company has an invoice number sequence', () => {
+    function useSequence(enabled: boolean) {
+      server.use(
+        http.get('*/v1/contractor-invoice-sequence', () =>
+          HttpResponse.json({
+            data: {
+              contractor_invoice_sequence: {
+                id: 'sequence-1',
+                enabled,
+                fields: [
+                  { type: 'text', text: 'INV' },
+                  { type: 'invoice_counter', initial_number: 1 },
+                ],
+              },
+            },
+          }),
+        ),
+      );
+    }
+
+    it('replaces the invoice number input with the sequence', async () => {
+      useSequence(true);
+      renderFlow();
+
+      expect(
+        await screen.findByText(/Text\/Invoice count/),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /Invoice numbers will follow your invoice number sequence/,
+        ),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByLabelText(/Invoice number/i),
+      ).not.toBeInTheDocument();
+    });
+
+    it('keeps the invoice number input when the sequence is off', async () => {
+      useSequence(false);
+      renderFlow();
+
+      expect(
+        await screen.findByLabelText(/Invoice number/i),
+      ).toBeInTheDocument();
+      expect(screen.queryByText(/Text\/Invoice count/)).not.toBeInTheDocument();
+    });
+  });
+
   it('opens the invoice number sequence page with a magic link for the signed-in admin', async () => {
     const magicLinkBody = vi.fn();
     server.use(

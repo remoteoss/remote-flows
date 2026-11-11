@@ -160,6 +160,10 @@ numbers invoices for all contractors. The link opens that page, logged in, throu
 for the admin who authorized the token. It is left out when the token has no user, and magic links
 need to be enabled for your integration.
 
+When the company already has an invoice number sequence, the invoice number input is replaced by
+a statement that names the sequence, for example "Text/Invoice count", because invoices are
+numbered from it. It has no link to edit the sequence.
+
 For a weekly, bi-weekly, semi-monthly or monthly schedule the form also shows a sentence that sums it up,
 for example "This schedule will create a weekly recurring invoice that ends after one
 occurrence, starting October 30, 2026." A semi-monthly one also names the days it is issued on. It is not shown for a one-off schedule.

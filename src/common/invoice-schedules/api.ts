@@ -5,6 +5,7 @@ import {
   BulkContractorInvoiceScheduleCreateParams,
   ContractorInvoiceScheduleCreateParams,
   getV1ContractorInvoiceSchedules,
+  getV1ContractorInvoiceSequence,
   patchV1ContractorInvoiceSchedulesId2,
   postV1ContractorInvoiceSchedules,
   postV1EmploymentsEmploymentIdContractorInvoicesPreview,
@@ -20,8 +21,29 @@ import { buildCreateInvoiceScheduleSchema } from '@/src/common/invoice-schedules
 import {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
+  describeInvoiceNumberSequence,
 } from '@/src/common/invoice-schedules/utils';
 import { JSFModify } from '@/src/flows/types';
+
+/**
+ * The company's invoice number sequence as text, or null when it has none or it is off.
+ * A failed request counts as no sequence, so the form still renders.
+ */
+const useInvoiceNumberSequenceText = ({ enabled }: { enabled?: boolean }) => {
+  const { client } = useClient();
+  return useQuery({
+    queryKey: ['contractor-invoice-sequence'],
+    enabled,
+    retry: false,
+    queryFn: () => getV1ContractorInvoiceSequence({ client: client as Client }),
+    select: (response) => {
+      const sequence = response.data?.data?.contractor_invoice_sequence;
+      return sequence?.enabled && sequence.fields.length
+        ? describeInvoiceNumberSequence(sequence.fields)
+        : null;
+    },
+  });
+};
 
 type UseGetCreateInvoiceScheduleSchemaParams = {
   enabled?: boolean;
@@ -63,7 +85,15 @@ export const useGetCreateInvoiceScheduleSchema = ({
     },
   });
 
+  const { data: invoiceNumberSequence, isLoading: isLoadingSequence } =
+    useInvoiceNumberSequenceText({ enabled });
+
   const schema = useMemo(() => {
+    // The form is built once, so wait until the sequence is known.
+    if (isLoadingSequence) {
+      return undefined;
+    }
+
     // Callers know their employment up front, so there is always a currency list on the
     // way — render nothing until it arrives rather than a currency field with no options.
     if (!enabled || !currencies) {
@@ -76,8 +106,16 @@ export const useGetCreateInvoiceScheduleSchema = ({
       ),
       isContractorOfRecord,
       includeFieldsets,
+      invoiceNumberSequence: invoiceNumberSequence ?? undefined,
     });
-  }, [enabled, currencies, isContractorOfRecord, includeFieldsets]);
+  }, [
+    enabled,
+    currencies,
+    isContractorOfRecord,
+    includeFieldsets,
+    invoiceNumberSequence,
+    isLoadingSequence,
+  ]);
 
   const headlessForm = useHeadlessForm({
     schema,
@@ -91,7 +129,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
     handleValidation: headlessForm.handleValidation,
     onValuesChange: headlessForm.onValuesChange,
     parseFormValues: headlessForm.parseFormValues,
-    isLoading,
+    isLoading: isLoading || isLoadingSequence,
   };
 };
 
