@@ -4332,6 +4332,23 @@ describe('ContractorOnboardingFlow', () => {
       await fillCreateInvoiceSchedule(values);
     };
 
+    const signContract = async () => {
+      await waitFor(() => {
+        expect(
+          screen.queryByRole('button', { name: /^Review$/i }) ??
+            screen.queryByLabelText(/Enter full name/i),
+        ).toBeInTheDocument();
+      });
+      if (screen.queryByRole('button', { name: /^Review$/i })) {
+        await fillSignature();
+      }
+    };
+
+    const continueFromContractPreview = async () => {
+      await signContract();
+      (await screen.findByText(/Continue/i)).click();
+    };
+
     const continueToCreateInvoiceSchedule = async () => {
       await screen.findByText('Step: Invoice schedule');
       fireEvent.click(
@@ -4428,7 +4445,10 @@ describe('ContractorOnboardingFlow', () => {
     });
 
     const fillContractDetailsAndGoToCreateInvoiceSchedule = async (
-      employmentContractDetails: Record<string, unknown> | null,
+      employmentContractDetails:
+        | Record<string, unknown>
+        | null
+        | (() => Record<string, unknown> | null),
       { completionOfServices = false, compensationCurrencyCode = 'EUR' } = {},
     ) => {
       const employmentId = generateUniqueEmploymentId();
@@ -4443,7 +4463,10 @@ describe('ContractorOnboardingFlow', () => {
                 ...mockContractorEmploymentResponse.data.employment,
                 id: employmentId,
                 status: 'created',
-                contract_details: employmentContractDetails,
+                contract_details:
+                  typeof employmentContractDetails === 'function'
+                    ? employmentContractDetails()
+                    : employmentContractDetails,
               },
             },
           }),
@@ -4490,8 +4513,7 @@ describe('ContractorOnboardingFlow', () => {
 
       await screen.findByText('Step: Contract Preview');
       await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
-      await fillSignature();
-      screen.getByText(/Continue/i).click();
+      await continueFromContractPreview();
 
       await continueToCreateInvoiceSchedule();
       await waitFor(() => {
@@ -4541,8 +4563,7 @@ describe('ContractorOnboardingFlow', () => {
       screen.getByText(/Next Step/i).click();
 
       await screen.findByText('Step: Contract Preview');
-      await fillSignature();
-      screen.getByText(/Continue/i).click();
+      await continueFromContractPreview();
 
       await continueToCreateInvoiceSchedule();
       await waitFor(() => {
@@ -4566,7 +4587,7 @@ describe('ContractorOnboardingFlow', () => {
       screen.getByText(/Next Step/i).click();
 
       await screen.findByText('Step: Contract Preview');
-      screen.getByText(/Continue/i).click();
+      await continueFromContractPreview();
 
       await continueToCreateInvoiceSchedule();
       await waitFor(() => {
@@ -4635,6 +4656,39 @@ describe('ContractorOnboardingFlow', () => {
       );
     });
 
+    it('updates an existing invoice schedule when the employment already reflects the submitted contract details', async () => {
+      mockExistingInvoiceSchedule();
+      let contractDocumentCreated = false;
+      const onRequest = ({ request }: { request: Request }) => {
+        if (
+          request.method === 'POST' &&
+          /\/contract-documents$/.test(new URL(request.url).pathname)
+        ) {
+          contractDocumentCreated = true;
+        }
+      };
+      server.events.on('request:start', onRequest);
+
+      try {
+        await fillContractDetailsAndGoToCreateInvoiceSchedule(
+          () => ({
+            payment_terms: {
+              invoicing_frequency: 'weekly',
+              compensation_currency_code: contractDocumentCreated
+                ? 'USD'
+                : 'EUR',
+            },
+          }),
+          { compensationCurrencyCode: 'USD' },
+        );
+      } finally {
+        server.events.removeListener('request:start', onRequest);
+      }
+
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
+    });
+
     it('updates an existing invoice schedule when the contract details change after the schedule step was opened', async () => {
       mockExistingInvoiceSchedule();
 
@@ -4649,8 +4703,7 @@ describe('ContractorOnboardingFlow', () => {
       screen.getByText(/Next Step/i).click();
 
       await screen.findByText('Step: Contract Preview');
-      await fillSignature();
-      screen.getByText(/Continue/i).click();
+      await continueFromContractPreview();
 
       await continueToCreateInvoiceSchedule();
       await waitFor(() => {
@@ -4673,7 +4726,7 @@ describe('ContractorOnboardingFlow', () => {
       screen.getByText(/Next Step/i).click();
 
       await screen.findByText('Step: Contract Preview');
-      screen.getByText(/Continue/i).click();
+      await continueFromContractPreview();
 
       await continueToCreateInvoiceSchedule();
       await waitFor(() => {
