@@ -140,26 +140,33 @@ const FormControl = React.forwardRef<
     ...props,
   };
 
+  const childRef = React.isValidElement(children)
+    ? (children as { ref?: React.Ref<HTMLElement> }).ref
+    : undefined;
+
+  const mergedRef = React.useCallback(
+    (node: HTMLElement | null) => {
+      [ref, childRef].forEach((target) => {
+        if (typeof target === 'function') {
+          target(node);
+        } else if (target) {
+          target.current = node;
+        }
+      });
+    },
+    [ref, childRef],
+  );
+
   if (!React.isValidElement(children)) {
     return <>{children}</>;
   }
-
-  const childRef = (children as { ref?: React.Ref<HTMLElement> }).ref;
 
   return React.cloneElement(
     children as React.ReactElement<Record<string, unknown>>,
     {
       ...(children.props as object),
       ...controlProps,
-      ref: (node: HTMLElement | null) => {
-        [ref, childRef].forEach((target) => {
-          if (typeof target === 'function') {
-            target(node);
-          } else if (target) {
-            target.current = node;
-          }
-        });
-      },
+      ref: ref || childRef ? mergedRef : null,
     },
   );
 });
