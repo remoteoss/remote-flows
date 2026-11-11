@@ -96,6 +96,8 @@
     "confidentiality_agreement": "number",
     "non_compete_clause_apply": "radio",
     "non_compete_clause_halt_period_months": "number",
+    "non_compete_clause_compensation_amount": "money",
+    "non_compete_clause_compensation_percentage": "number",
     "non_solicitation_employees": "radio",
     "non_solicitation_employees_number_of_months": "number",
     "non_solicitation_customers": "radio",
@@ -222,9 +224,15 @@
       "removedRequired": []
     },
     "non_compete_clause_apply=yes": {
-      "addedVisible": ["non_compete_clause_halt_period_months"],
+      "addedVisible": [
+        "non_compete_clause_compensation_percentage",
+        "non_compete_clause_halt_period_months"
+      ],
       "removedVisible": [],
-      "addedRequired": ["non_compete_clause_halt_period_months"],
+      "addedRequired": [
+        "non_compete_clause_compensation_percentage",
+        "non_compete_clause_halt_period_months"
+      ],
       "removedRequired": []
     },
     "non_solicitation_employees=yes": {
