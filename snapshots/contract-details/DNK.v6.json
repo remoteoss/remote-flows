@@ -24,6 +24,7 @@
       "role_requires_license",
       "salary_overview",
       "work_address_is_home_address",
+      "work_days_per_week",
       "work_hours_per_week",
       "work_schedule"
     ],
@@ -53,6 +54,7 @@
     "contract_duration_type": "radio",
     "contract_end_date": "date",
     "work_schedule": "radio",
+    "work_days_per_week": "number",
     "work_hours_per_week": "number",
     "probation_length": "number",
     "available_pto": "number",
@@ -121,6 +123,10 @@
   "constraints": {
     "contract_duration": {
       "maxLength": 255
+    },
+    "work_days_per_week": {
+      "minimum": 1,
+      "maximum": 7
     },
     "work_hours_per_week": {
       "minimum": 37,
