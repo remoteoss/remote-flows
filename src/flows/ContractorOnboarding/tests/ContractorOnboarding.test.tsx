@@ -4429,7 +4429,7 @@ describe('ContractorOnboardingFlow', () => {
 
     const fillContractDetailsAndGoToCreateInvoiceSchedule = async (
       employmentContractDetails: Record<string, unknown> | null,
-      { completionOfServices = false } = {},
+      { completionOfServices = false, compensationCurrencyCode = 'EUR' } = {},
     ) => {
       const employmentId = generateUniqueEmploymentId();
 
@@ -4479,7 +4479,7 @@ describe('ContractorOnboardingFlow', () => {
       await screen.findByText('Step: Contract Details');
       await fillContractDetails({
         invoicingFrequency: 'weekly',
-        compensationCurrencyCode: 'EUR',
+        compensationCurrencyCode,
       });
       if (completionOfServices) {
         fireEvent.click(
@@ -4495,7 +4495,9 @@ describe('ContractorOnboardingFlow', () => {
 
       await continueToCreateInvoiceSchedule();
       await waitFor(() => {
-        expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+        expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue(
+          compensationCurrencyCode,
+        );
       });
     };
 
@@ -4572,7 +4574,7 @@ describe('ContractorOnboardingFlow', () => {
       });
     });
 
-    it('keeps the existing invoice schedule values when the contract details change', async () => {
+    const mockExistingInvoiceSchedule = () =>
       server.use(
         http.get('*/v1/contractor-invoice-schedules', () =>
           HttpResponse.json({
@@ -4600,7 +4602,43 @@ describe('ContractorOnboardingFlow', () => {
         ),
       );
 
-      await fillContractDetailsAndGoToCreateInvoiceSchedule(null);
+    const savedPaymentTerms = {
+      payment_terms: {
+        invoicing_frequency: 'weekly',
+        compensation_currency_code: 'EUR',
+      },
+    };
+
+    it('keeps the existing invoice schedule when the contract details are unchanged', async () => {
+      mockExistingInvoiceSchedule();
+
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(savedPaymentTerms);
+
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
+      expect(screen.getAllByLabelText(/^Description/i)[0]).toHaveValue(
+        'salary',
+      );
+    });
+
+    it('updates an existing invoice schedule currency when the contract details currency changed before the schedule step was opened', async () => {
+      mockExistingInvoiceSchedule();
+
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(savedPaymentTerms, {
+        compensationCurrencyCode: 'USD',
+      });
+
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
+      expect(screen.getAllByLabelText(/^Description/i)[0]).toHaveValue(
+        'salary',
+      );
+    });
+
+    it('updates an existing invoice schedule when the contract details change after the schedule step was opened', async () => {
+      mockExistingInvoiceSchedule();
+
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(savedPaymentTerms);
 
       await goBackToContractDetails();
 
@@ -4616,9 +4654,12 @@ describe('ContractorOnboardingFlow', () => {
 
       await continueToCreateInvoiceSchedule();
       await waitFor(() => {
-        expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+        expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
       });
-      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('monthly');
+      expect(screen.getAllByLabelText(/^Description/i)[0]).toHaveValue(
+        'salary',
+      );
     });
 
     it('keeps the invoice currency the user picked when they go back and resubmit unchanged contract details', async () => {
