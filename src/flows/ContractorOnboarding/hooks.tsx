@@ -1391,20 +1391,34 @@ export const useContractorOnboarding = ({
             savedInvoiceSchedule &&
             Object.keys(savedInvoiceSchedule).length > 0
           ) {
-            const {
-              periodicity: _periodicity,
-              currency: _currency,
-              ...editedFields
-            } = savedInvoiceSchedule;
+            const currencyCodes = currencies?.map(
+              ({ code }: { code: string }) => code,
+            );
+            const previousPrefill = buildInvoiceSchedulePrefill(
+              {
+                ...employment?.contract_details,
+                ...stepState.values?.contract_details,
+              },
+              currencyCodes,
+            );
+            const nextPrefill = buildInvoiceSchedulePrefill(
+              { ...employment?.contract_details, ...values },
+              currencyCodes,
+            );
+            const refreshed: Record<string, unknown> = {
+              ...savedInvoiceSchedule,
+            };
+            for (const field of ['periodicity', 'currency'] as const) {
+              if (previousPrefill[field] !== nextPrefill[field]) {
+                delete refreshed[field];
+                if (nextPrefill[field] !== undefined) {
+                  refreshed[field] = nextPrefill[field];
+                }
+              }
+            }
             setStepValues({
               ...stepState.values,
-              create_invoice_schedule: {
-                ...editedFields,
-                ...buildInvoiceSchedulePrefill(
-                  { ...employment?.contract_details, ...values },
-                  currencies?.map(({ code }: { code: string }) => code),
-                ),
-              },
+              create_invoice_schedule: refreshed,
             } as Record<StepKeys, FieldValues>);
           }
 
