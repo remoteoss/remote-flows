@@ -808,7 +808,11 @@ export const useContractorOnboarding = ({
   const createInvoiceScheduleSavedValues = useMemo(
     () =>
       existingInvoiceSchedule
-        ? buildInvoiceScheduleFormValues(existingInvoiceSchedule)
+        ? syncInvoiceSchedulePrefill(
+            buildInvoiceScheduleFormValues(existingInvoiceSchedule),
+            getInvoiceSchedulePrefill(),
+            getInvoiceSchedulePrefill(inSessionContractDetails),
+          )
         : {
             ...getInvoiceSchedulePrefill(inSessionContractDetails),
             ...onboardingInitialValues,
@@ -1400,7 +1404,6 @@ export const useContractorOnboarding = ({
           const savedInvoiceSchedule =
             stepState.values?.create_invoice_schedule;
           if (
-            !existingInvoiceSchedule &&
             savedInvoiceSchedule &&
             Object.keys(savedInvoiceSchedule).length > 0
           ) {
