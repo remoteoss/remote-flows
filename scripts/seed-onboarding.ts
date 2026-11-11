@@ -141,6 +141,11 @@ function parseBasicInfoOverrides(raw: string | undefined) {
   return overrides;
 }
 
+if ('basic-info' in args && !stringArg('basic-info')) {
+  throw new Error(
+    '--basic-info requires a value, e.g. --basic-info=has_seniority_date=yes (got an empty --basic-info flag).',
+  );
+}
 const BASIC_INFO_OVERRIDES = parseBasicInfoOverrides(stringArg('basic-info'));
 const COUNTRY = (stringArg('country') || 'DEU').toUpperCase();
 const TYPE = stringArg('type') || 'employee';
