@@ -1,9 +1,9 @@
+import { RECURRING_PERIODICITY_OPTIONS } from '@/src/common/invoice-schedules';
 import { Step } from '@/src/flows/useStepState';
 import {
   ProductType,
   PRODUCT_IDENTIFIER_MAP,
 } from '@/src/flows/ContractorOnboarding/constants';
-import { RECURRING_PERIODICITY_OPTIONS } from '@/src/common/invoice-schedules';
 import { Employment } from '@/src/flows/Onboarding/types';
 
 export {
@@ -190,10 +190,14 @@ const RECURRING_PERIODICITIES: string[] = RECURRING_PERIODICITY_OPTIONS.map(
   ({ const: value }) => value,
 );
 
+type InvoiceSchedulePrefill = Partial<
+  Record<'periodicity' | 'currency', string>
+>;
+
 export function buildInvoiceSchedulePrefill(
   contractDetails: Record<string, unknown> | undefined,
   currencies: string[] | undefined,
-) {
+): InvoiceSchedulePrefill {
   const paymentTerms = contractDetails?.payment_terms as
     | {
         payment_terms_type?: unknown;
@@ -222,8 +226,8 @@ const PREFILLED_FIELDS = ['periodicity', 'currency'] as const;
 
 export function syncInvoiceSchedulePrefill(
   savedValues: Record<string, unknown>,
-  previousPrefill: ReturnType<typeof buildInvoiceSchedulePrefill>,
-  nextPrefill: ReturnType<typeof buildInvoiceSchedulePrefill>,
+  previousPrefill: InvoiceSchedulePrefill,
+  nextPrefill: InvoiceSchedulePrefill,
 ) {
   const synced = { ...savedValues };
   for (const field of PREFILLED_FIELDS) {

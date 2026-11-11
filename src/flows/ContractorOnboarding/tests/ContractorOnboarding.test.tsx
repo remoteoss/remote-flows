@@ -4332,6 +4332,27 @@ describe('ContractorOnboardingFlow', () => {
       await fillCreateInvoiceSchedule(values);
     };
 
+    const continueToCreateInvoiceSchedule = async () => {
+      await screen.findByText('Step: Invoice schedule');
+      fireEvent.click(
+        await screen.findByRole('radio', {
+          name: /create invoice schedule now/i,
+        }),
+      );
+      fireEvent.click(screen.getByRole('button', { name: /continue/i }));
+
+      await screen.findByText('Step: Create Invoice Schedule');
+    };
+
+    const goBackToContractDetails = async () => {
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Invoice schedule');
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Contract Preview');
+      screen.getByRole('button', { name: 'Back' }).click();
+      await screen.findByText('Step: Contract Details');
+    };
+
     const goToEmptyCreateInvoiceSchedule = async (
       paymentTerms: Record<string, unknown>,
     ) => {
@@ -4380,15 +4401,7 @@ describe('ContractorOnboardingFlow', () => {
       await fillContractOrigin('Without an agreement');
       screen.getByText(/Next Step/i).click();
 
-      await screen.findByText('Step: Invoice schedule');
-      fireEvent.click(
-        await screen.findByRole('radio', {
-          name: /create invoice schedule now/i,
-        }),
-      );
-      fireEvent.click(screen.getByRole('button', { name: /continue/i }));
-
-      await screen.findByText('Step: Create Invoice Schedule');
+      await continueToCreateInvoiceSchedule();
       await waitFor(() => {
         expect(screen.getByLabelText(/Invoice currency/i)).toBeInTheDocument();
       });
@@ -4480,15 +4493,7 @@ describe('ContractorOnboardingFlow', () => {
       await fillSignature();
       screen.getByText(/Continue/i).click();
 
-      await screen.findByText('Step: Invoice schedule');
-      fireEvent.click(
-        await screen.findByRole('radio', {
-          name: /create invoice schedule now/i,
-        }),
-      );
-      fireEvent.click(screen.getByRole('button', { name: /continue/i }));
-
-      await screen.findByText('Step: Create Invoice Schedule');
+      await continueToCreateInvoiceSchedule();
       await waitFor(() => {
         expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
       });
@@ -4525,12 +4530,7 @@ describe('ContractorOnboardingFlow', () => {
     it('prefills the invoice currency changed in the contract details after leaving the create invoice schedule step', async () => {
       await fillContractDetailsAndGoToCreateInvoiceSchedule(null);
 
-      screen.getByRole('button', { name: 'Back' }).click();
-      await screen.findByText('Step: Invoice schedule');
-      screen.getByRole('button', { name: 'Back' }).click();
-      await screen.findByText('Step: Contract Preview');
-      screen.getByRole('button', { name: 'Back' }).click();
-      await screen.findByText('Step: Contract Details');
+      await goBackToContractDetails();
 
       await fillContractDetails({
         invoicingFrequency: 'weekly',
@@ -4542,15 +4542,7 @@ describe('ContractorOnboardingFlow', () => {
       await fillSignature();
       screen.getByText(/Continue/i).click();
 
-      await screen.findByText('Step: Invoice schedule');
-      fireEvent.click(
-        await screen.findByRole('radio', {
-          name: /create invoice schedule now/i,
-        }),
-      );
-      fireEvent.click(screen.getByRole('button', { name: /continue/i }));
-
-      await screen.findByText('Step: Create Invoice Schedule');
+      await continueToCreateInvoiceSchedule();
       await waitFor(() => {
         expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
       });
@@ -4559,12 +4551,7 @@ describe('ContractorOnboardingFlow', () => {
     it('prefills the invoice currency changed in the contract details when the user navigated Back before submitting', async () => {
       await fillContractDetailsAndGoToCreateInvoiceSchedule(null);
 
-      screen.getByRole('button', { name: 'Back' }).click();
-      await screen.findByText('Step: Invoice schedule');
-      screen.getByRole('button', { name: 'Back' }).click();
-      await screen.findByText('Step: Contract Preview');
-      screen.getByRole('button', { name: 'Back' }).click();
-      await screen.findByText('Step: Contract Details');
+      await goBackToContractDetails();
 
       await fillContractDetails({
         invoicingFrequency: 'weekly',
@@ -4579,18 +4566,59 @@ describe('ContractorOnboardingFlow', () => {
       await screen.findByText('Step: Contract Preview');
       screen.getByText(/Continue/i).click();
 
-      await screen.findByText('Step: Invoice schedule');
-      fireEvent.click(
-        await screen.findByRole('radio', {
-          name: /create invoice schedule now/i,
-        }),
-      );
-      fireEvent.click(screen.getByRole('button', { name: /continue/i }));
-
-      await screen.findByText('Step: Create Invoice Schedule');
+      await continueToCreateInvoiceSchedule();
       await waitFor(() => {
         expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
       });
+    });
+
+    it('keeps the existing invoice schedule values when the contract details change', async () => {
+      server.use(
+        http.get('*/v1/contractor-invoice-schedules', () =>
+          HttpResponse.json({
+            data: {
+              total_count: 1,
+              current_page: 1,
+              total_pages: 1,
+              contractor_invoice_schedules: [
+                {
+                  id: '345b0f1b-5254-4f17-b235-528bc9529055',
+                  status: 'pending_contractor_action',
+                  number: '1234',
+                  items: [{ description: 'salary', amount: 250000 }],
+                  currency: 'EUR',
+                  start_date: '2100-01-01',
+                  note: 'note',
+                  total_amount: 250000,
+                  periodicity: 'weekly',
+                  nr_occurrences: null,
+                  next_invoice_at: null,
+                },
+              ],
+            },
+          }),
+        ),
+      );
+
+      await fillContractDetailsAndGoToCreateInvoiceSchedule(null);
+
+      await goBackToContractDetails();
+
+      await fillContractDetails({
+        invoicingFrequency: 'monthly',
+        compensationCurrencyCode: 'USD',
+      });
+      screen.getByText(/Next Step/i).click();
+
+      await screen.findByText('Step: Contract Preview');
+      await fillSignature();
+      screen.getByText(/Continue/i).click();
+
+      await continueToCreateInvoiceSchedule();
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+      });
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
     });
 
     it('keeps the invoice currency the user picked when they go back and resubmit unchanged contract details', async () => {
@@ -4599,27 +4627,14 @@ describe('ContractorOnboardingFlow', () => {
       await fillSelect('currency', 'USD');
       expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
 
-      screen.getByRole('button', { name: 'Back' }).click();
-      await screen.findByText('Step: Invoice schedule');
-      screen.getByRole('button', { name: 'Back' }).click();
-      await screen.findByText('Step: Contract Preview');
-      screen.getByRole('button', { name: 'Back' }).click();
-      await screen.findByText('Step: Contract Details');
+      await goBackToContractDetails();
 
       screen.getByText(/Next Step/i).click();
 
       await screen.findByText('Step: Contract Preview');
       screen.getByText(/Continue/i).click();
 
-      await screen.findByText('Step: Invoice schedule');
-      fireEvent.click(
-        await screen.findByRole('radio', {
-          name: /create invoice schedule now/i,
-        }),
-      );
-      fireEvent.click(screen.getByRole('button', { name: /continue/i }));
-
-      await screen.findByText('Step: Create Invoice Schedule');
+      await continueToCreateInvoiceSchedule();
       await waitFor(() => {
         expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
       });
