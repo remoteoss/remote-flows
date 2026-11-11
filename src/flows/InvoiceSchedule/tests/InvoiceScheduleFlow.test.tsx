@@ -119,12 +119,98 @@ describe('InvoiceScheduleFlow', () => {
       ).toBeInTheDocument();
       expect(
         screen.getByText(
-          /Invoice numbers will follow your invoice number sequence/,
+          /Contractor invoice numbers will follow your set invoice number sequence/,
         ),
       ).toBeInTheDocument();
       expect(
         screen.queryByLabelText(/Invoice number/i),
       ).not.toBeInTheDocument();
+    });
+
+    it('opens the sequence page with a magic link from the edit sequence button', async () => {
+      useSequence(true);
+      const magicLinkBody = vi.fn();
+      server.use(
+        http.post('*/v1/magic-link', async ({ request }) => {
+          magicLinkBody(await request.json());
+          return HttpResponse.json({
+            data: { url: 'https://remote.test/magic/edit' },
+          });
+        }),
+      );
+      const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+
+      renderFlow();
+
+      fireEvent.click(
+        await screen.findByRole('button', { name: /Edit sequence/ }),
+      );
+
+      await waitFor(() => {
+        expect(open).toHaveBeenCalledWith(
+          'https://remote.test/magic/edit',
+          '_blank',
+          'noopener,noreferrer',
+        );
+      });
+      expect(magicLinkBody).toHaveBeenCalledWith({
+        user_id: 'ffabca18-20fc-489d-995b-bf76eebc6882',
+        path: '/dashboard/company-settings/invoice-number-sequence',
+      });
+
+      open.mockRestore();
+    });
+
+    it('offers no edit sequence button when the token has no user', async () => {
+      useSequence(true);
+      server.use(
+        http.get('*/v1/identity/current', () =>
+          HttpResponse.json({ data: { client_id: 'client-id' } }),
+        ),
+      );
+
+      renderFlow();
+
+      expect(
+        await screen.findByText(/Text\/Invoice count/),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /Edit sequence/ }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('renders the banner with the partner invoiceNumberSequence component', async () => {
+      useSequence(true);
+      const CustomSequence = ({ data }: $TSFixMe) => (
+        <div data-testid='partner-sequence'>
+          {data.title} | {data.sequence} |{' '}
+          {data.onEdit ? 'editable' : 'read only'}
+        </div>
+      );
+
+      render(
+        <InvoiceScheduleFlow
+          employmentId='employment-grace'
+          render={(bag) => (bag.isLoading ? null : <InvoiceScheduleForm />)}
+        />,
+        {
+          wrapper: ({ children }) => (
+            <TestProviders
+              components={{ invoiceNumberSequence: CustomSequence }}
+            >
+              {children}
+            </TestProviders>
+          ),
+        },
+      );
+
+      const banner = await screen.findByTestId('partner-sequence');
+
+      await waitFor(() => {
+        expect(banner).toHaveTextContent(
+          'Contractor invoice numbers will follow your set invoice number sequence | Text/Invoice count | editable',
+        );
+      });
     });
 
     it('keeps the invoice number input when the sequence is off', async () => {

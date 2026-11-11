@@ -508,13 +508,15 @@ function invoiceNumberSequenceProperty(sequence: string) {
     'x-jsf-presentation': {
       inputType: 'hidden',
       statement: {
-        title: 'Invoice numbers will follow your invoice number sequence',
+        title:
+          'Contractor invoice numbers will follow your set invoice number sequence',
         description: `Your current sequence is: <strong>${sequence}</strong>`,
         inputType: 'statement',
         severity: 'info',
       },
       meta: {
         ignoreValue: true,
+        invoiceNumberSequence: sequence,
       },
     },
   };

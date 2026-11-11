@@ -3,6 +3,7 @@ import omit from 'lodash.omit';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { FieldExtra } from '@/src/components/form/FieldExtra';
+import { InvoiceNumberSequence } from '@/src/components/form/InvoiceNumberSequence';
 import { Statement } from '@/src/components/form/Statement';
 import { isFieldLocked } from '@/src/components/form/utils';
 import { StatementComponentProps } from '@/src/types/fields';
@@ -49,7 +50,16 @@ export function DynamicFormField({
         disabled={locked}
       />
       {field.statement ? (
-        <Statement {...(field.statement as StatementComponentProps['data'])} />
+        field.meta?.invoiceNumberSequence ? (
+          <InvoiceNumberSequence
+            title={field.statement.title as string | undefined}
+            sequence={field.meta.invoiceNumberSequence as string}
+          />
+        ) : (
+          <Statement
+            {...(field.statement as StatementComponentProps['data'])}
+          />
+        )
       ) : null}
       <FieldExtra extra={field.extra} />
     </>

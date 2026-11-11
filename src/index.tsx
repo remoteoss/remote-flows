@@ -244,6 +244,7 @@ export type {
   UploadedFileReference,
   CountryComponentProps,
   StatementComponentProps,
+  InvoiceNumberSequenceComponentProps,
   ForcedValueComponentProps,
   TextFieldComponentProps,
   DatePickerComponentProps,

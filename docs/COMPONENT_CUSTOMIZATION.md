@@ -105,6 +105,7 @@ Available component types include:
 - `fieldsetToggle` - Fieldset toggle buttons
 - `group-array` - Repeatable groups of fields, with add and remove
 - `statement` - Statement/information display
+- `invoiceNumberSequence` - Banner that replaces the invoice number input when the company numbers invoices from a sequence, with an edit link
 - `table` - Table components
 - `drawer` - Drawer components
 - `forcedValue` - Forced value components
@@ -119,6 +120,7 @@ and their typescript definitions
 - `FieldComponentProps`: For all form field components (generic field component type)
 - `ButtonComponentProps`: For custom button components
 - `StatementComponentProps`: For custom statement components
+- `InvoiceNumberSequenceComponentProps`: For custom invoice number sequence components
 - `ZendeskDrawerComponentProps`: For custom zendesk drawer
 - `ZendeskTriggerButtonComponentProps`: For custom zendesk trigger button
 - `FileComponentProps`: for custom file field components

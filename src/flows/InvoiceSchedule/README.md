@@ -162,7 +162,9 @@ need to be enabled for your integration.
 
 When the company already has an invoice number sequence, the invoice number input is replaced by
 a statement that names the sequence, for example "Text/Invoice count", because invoices are
-numbered from it. It has no link to edit the sequence.
+numbered from it, with an "Edit sequence" button that opens the sequence page, logged in, through a
+magic link. The button is left out when the token has no user. Override the banner with the
+`invoiceNumberSequence` component, which receives the title, the sequence text and an `onEdit` callback.
 
 For a weekly, bi-weekly, semi-monthly or monthly schedule the form also shows a sentence that sums it up,
 for example "This schedule will create a weekly recurring invoice that ends after one

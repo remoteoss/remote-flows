@@ -17,6 +17,7 @@ import {
   FileComponentProps,
   ForcedValueComponentProps,
   StatementComponentProps,
+  InvoiceNumberSequenceComponentProps,
   TextFieldComponentProps,
   WorkScheduleComponentProps,
   TelFieldComponentProps,
@@ -198,6 +199,7 @@ export type Components = {
   date?: React.ComponentType<DatePickerComponentProps>;
   countries?: React.ComponentType<CountryComponentProps>;
   statement?: React.ComponentType<StatementComponentProps>;
+  invoiceNumberSequence?: React.ComponentType<InvoiceNumberSequenceComponentProps>;
   forcedValue?: React.ComponentType<ForcedValueComponentProps>;
   button?: React.ComponentType<ButtonComponentProps>;
   fieldsetToggle?: React.ComponentType<FieldSetToggleComponentProps>;
