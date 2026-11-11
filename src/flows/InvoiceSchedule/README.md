@@ -162,7 +162,7 @@ need to be enabled for your integration.
 
 When the company already has an invoice number sequence, the invoice number input is replaced by
 a statement that names the sequence, for example "Text/Invoice count", because invoices are
-numbered from it, with an "Edit sequence" button under it that opens the sequence page, logged in,
+numbered from it, with an "Edit sequence" button inside it that opens the sequence page, logged in,
 through a magic link. The button is rendered with your `button` component and is left out when the
 token has no user.
 

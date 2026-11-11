@@ -4,6 +4,7 @@ import {
   screen,
   waitFor,
   fireEvent,
+  within,
 } from '@testing-library/react';
 import { useEffect, useState } from 'react';
 import { http, HttpResponse } from 'msw';
@@ -125,6 +126,21 @@ describe('InvoiceScheduleFlow', () => {
       expect(
         screen.queryByLabelText(/Invoice number/i),
       ).not.toBeInTheDocument();
+    });
+
+    it('shows the edit sequence button inside the sequence statement', async () => {
+      useSequence(true);
+      renderFlow();
+
+      const statement = (
+        await screen.findByText(/Text\/Invoice count/)
+      ).closest('[role="alert"]') as HTMLElement;
+
+      expect(
+        await within(statement).findByRole('button', {
+          name: /Edit sequence/,
+        }),
+      ).toBeInTheDocument();
     });
 
     it('opens the sequence page with a magic link from the edit sequence button', async () => {

@@ -8,18 +8,18 @@ export function InvoiceNumberSequence({
   description,
 }: JSFCustomComponentProps) {
   return (
-    <div className='space-y-2'>
-      <Statement
-        title={label}
-        description={description as string}
-        severity='info'
-      />
-      <MagicLinkButton
-        path={INVOICE_NUMBER_SEQUENCE_PATH}
-        className='h-auto p-0 align-baseline text-xs underline RemoteFlows__InvoiceNumberSequenceEdit'
-      >
-        Edit sequence
-      </MagicLinkButton>
-    </div>
+    <Statement
+      title={label}
+      description={description as string}
+      severity='info'
+      action={
+        <MagicLinkButton
+          path={INVOICE_NUMBER_SEQUENCE_PATH}
+          className='h-auto p-0 align-baseline text-xs underline RemoteFlows__InvoiceNumberSequenceEdit'
+        >
+          Edit sequence
+        </MagicLinkButton>
+      }
+    />
   );
 }
