@@ -6,10 +6,10 @@ import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 import { getV1CountriesCountryCodeForm } from '@/src/client';
 import { ONBOARDING_JSON_SCHEMA_VERSION } from '../example/src/flows/Onboarding/jsonSchemaVersions';
+import { parseBasicInfoOverrides } from './fill-schema';
 import { createEnvClient } from './schema-canary/auth';
 import {
   archiveEmployment,
-  parseBasicInfoOverrides,
   seedEmploymentForCountry,
 } from './schema-canary/seed-employment';
 
