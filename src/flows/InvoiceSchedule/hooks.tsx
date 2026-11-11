@@ -18,7 +18,7 @@ import {
 import { clearBase64Data, createStructuredError } from '@/src/lib/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { InvoiceNumberSequenceLink } from '@/src/flows/InvoiceSchedule/components/InvoiceNumberSequenceLink';
+import { InvoiceNumberSequenceLink } from '@/src/common/invoice-schedules/components/InvoiceNumberSequence/InvoiceNumberSequenceLink';
 import { Fields } from '@remoteoss/remote-json-schema-form-kit';
 
 /**

@@ -3,7 +3,7 @@ import { Statement } from '@/src/components/form/Statement';
 import { MagicLinkButton } from '@/src/components/shared/magic-link/MagicLinkButton';
 import { JSFCustomComponentProps } from '@/src/types/remoteFlows';
 
-export function InvoiceNumberSequence({
+export function InvoiceNumberSequenceBanner({
   label,
   description,
 }: JSFCustomComponentProps) {

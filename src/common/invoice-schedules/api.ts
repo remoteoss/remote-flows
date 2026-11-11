@@ -21,7 +21,7 @@ import {
   buildCreateInvoiceScheduleSchema,
   INVOICE_NUMBER_SEQUENCE_FIELD,
 } from '@/src/common/invoice-schedules/json-schema';
-import { InvoiceNumberSequence } from '@/src/components/form/InvoiceNumberSequence';
+import { InvoiceNumberSequenceBanner } from '@/src/common/invoice-schedules/components/InvoiceNumberSequence/InvoiceNumberSequenceBanner';
 import {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
@@ -135,7 +135,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
         [INVOICE_NUMBER_SEQUENCE_FIELD]: {
           ...field,
           presentation: {
-            Component: InvoiceNumberSequence,
+            Component: InvoiceNumberSequenceBanner,
             ...field?.presentation,
           },
         },
