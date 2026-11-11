@@ -144,9 +144,23 @@ const FormControl = React.forwardRef<
     return <>{children}</>;
   }
 
+  const childRef = (children as { ref?: React.Ref<HTMLElement> }).ref;
+
   return React.cloneElement(
     children as React.ReactElement<Record<string, unknown>>,
-    { ...(children.props as object), ...controlProps, ref },
+    {
+      ...(children.props as object),
+      ...controlProps,
+      ref: (node: HTMLElement | null) => {
+        [ref, childRef].forEach((target) => {
+          if (typeof target === 'function') {
+            target(node);
+          } else if (target) {
+            target.current = node;
+          }
+        });
+      },
+    },
   );
 });
 
