@@ -18,7 +18,6 @@ import {
 import { clearBase64Data, createStructuredError } from '@/src/lib/utils';
 import { mutationToPromise } from '@/src/lib/mutations';
 import { $TSFixMe } from '@/src/types/remoteFlows';
-import { InvoiceNumberSequenceLink } from '@/src/common/invoice-schedules/components/InvoiceNumberSequence/InvoiceNumberSequenceLink';
 import { Fields } from '@remoteoss/remote-json-schema-form-kit';
 
 /**
@@ -44,25 +43,6 @@ export const useInvoiceSchedule = ({
   const isContractorOfRecord =
     (employment as $TSFixMe)?.contractor_type === 'cor';
 
-  const stableJsfModify = useDeepStable(jsfModify);
-
-  const modifyWithSequenceLink = useMemo(
-    () => ({
-      ...stableJsfModify,
-      fields: {
-        ...stableJsfModify?.fields,
-        number: {
-          ...stableJsfModify?.fields?.number,
-          presentation: {
-            ...stableJsfModify?.fields?.number?.presentation,
-            description: () => <InvoiceNumberSequenceLink />,
-          },
-        },
-      },
-    }),
-    [stableJsfModify],
-  );
-
   const {
     data: schemaForm,
     handleValidation,
@@ -72,7 +52,7 @@ export const useInvoiceSchedule = ({
   } = useGetCreateInvoiceScheduleSchema({
     enabled: true,
     employmentId,
-    jsfModify: modifyWithSequenceLink,
+    jsfModify,
     isContractorOfRecord,
   });
 
