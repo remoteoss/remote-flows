@@ -86,7 +86,12 @@ import {
   ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY,
 } from '../example/src/flows/Onboarding/jsonSchemaVersions';
 import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
-import { fillSchema, findSafeStartDate, HolidayDate } from './fill-schema';
+import {
+  fillSchema,
+  findSafeStartDate,
+  HolidayDate,
+  parseBasicInfoOverrides,
+} from './fill-schema';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
@@ -127,20 +132,6 @@ const stringArg = (key: string): string | undefined => {
   const value = args[key];
   return typeof value === 'string' ? value : undefined;
 };
-function parseBasicInfoOverrides(raw: string | undefined) {
-  const overrides: Record<string, string> = {};
-  for (const pair of raw ? raw.split(',') : []) {
-    const separator = pair.indexOf('=');
-    if (separator < 1) {
-      throw new Error(
-        `--basic-info expects <field>=<value> pairs separated by commas (got "${pair}").`,
-      );
-    }
-    overrides[pair.slice(0, separator)] = pair.slice(separator + 1);
-  }
-  return overrides;
-}
-
 if ('basic-info' in args && !stringArg('basic-info')) {
   throw new Error(
     '--basic-info requires a value, e.g. --basic-info=has_seniority_date=yes (got an empty --basic-info flag).',
