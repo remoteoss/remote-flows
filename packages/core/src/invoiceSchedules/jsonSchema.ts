@@ -14,6 +14,8 @@ import {
 } from './constants';
 import { toOrdinal } from './utils';
 
+export const INVOICE_NUMBER_SEQUENCE_FIELD = 'invoice_number_sequence';
+
 function invoiceItemsProperty() {
   return {
     title: 'Invoice items',
@@ -426,7 +428,7 @@ function startDateConditional() {
   };
 }
 
-function invoiceFieldsets() {
+function invoiceFieldsets(numberFieldName: string) {
   return {
     invoicing_details: {
       title: 'Invoicing details',
@@ -445,7 +447,7 @@ function invoiceFieldsets() {
         'start_date',
         'end_type',
         'nr_occurrences',
-        'number',
+        numberFieldName,
         'schedule_summary',
       ],
     },
@@ -492,7 +494,27 @@ type CreateInvoiceScheduleSchemaOptions = {
    * Invoicing preferences, Summary). Off by default: the standalone flow renders them flat.
    */
   includeFieldsets?: boolean;
+  /**
+   * The company's invoice number sequence, as text. When set, the invoice number input gives
+   * way to a statement, since the platform numbers invoices from the sequence.
+   */
+  invoiceNumberSequence?: string;
 };
+
+function invoiceNumberSequenceProperty(sequence: string) {
+  return {
+    type: 'null',
+    title:
+      'Contractor invoice numbers will follow your set invoice number sequence',
+    description: `Your current sequence is: <strong>${sequence}</strong>`,
+    'x-jsf-presentation': {
+      inputType: 'hidden',
+      meta: {
+        ignoreValue: true,
+      },
+    },
+  };
+}
 
 /**
  * Builds the create-invoice-schedule JSON schema.
@@ -505,7 +527,12 @@ export function buildCreateInvoiceScheduleSchema({
   currencies,
   isContractorOfRecord = false,
   includeFieldsets = false,
+  invoiceNumberSequence,
 }: CreateInvoiceScheduleSchemaOptions = {}) {
+  const numberFieldName = invoiceNumberSequence
+    ? INVOICE_NUMBER_SEQUENCE_FIELD
+    : 'number';
+
   return {
     type: 'object',
     'x-jsf-presentation': {
@@ -585,15 +612,23 @@ export function buildCreateInvoiceScheduleSchema({
       },
       semi_monthly_settings: semiMonthlySettingsProperty(),
       items: invoiceItemsProperty(),
-      number: {
-        description: 'Optional identifier shown on generated invoices.',
-        title: 'Invoice number',
-        type: 'string',
-        maxLength: 10,
-        'x-jsf-presentation': {
-          inputType: 'text',
-        },
-      },
+      ...(invoiceNumberSequence
+        ? {
+            [INVOICE_NUMBER_SEQUENCE_FIELD]: invoiceNumberSequenceProperty(
+              invoiceNumberSequence,
+            ),
+          }
+        : {
+            number: {
+              description: 'Optional identifier shown on generated invoices.',
+              title: 'Invoice number',
+              type: 'string',
+              maxLength: 10,
+              'x-jsf-presentation': {
+                inputType: 'text',
+              },
+            },
+          }),
       schedule_summary: scheduleSummaryProperty(),
       note: {
         description: 'Shown on generated invoices.',
@@ -631,7 +666,9 @@ export function buildCreateInvoiceScheduleSchema({
       },
     },
     required: ['currency', 'periodicity', 'start_date', 'items'],
-    ...(includeFieldsets ? { 'x-jsf-fieldsets': invoiceFieldsets() } : {}),
+    ...(includeFieldsets
+      ? { 'x-jsf-fieldsets': invoiceFieldsets(numberFieldName) }
+      : {}),
     'x-jsf-order': [
       'currency',
       'items',
@@ -641,7 +678,7 @@ export function buildCreateInvoiceScheduleSchema({
       'start_date',
       'end_type',
       'nr_occurrences',
-      'number',
+      numberFieldName,
       'schedule_summary',
       'note',
     ],

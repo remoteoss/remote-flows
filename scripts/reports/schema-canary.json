@@ -147,7 +147,7 @@
     },
     {
       "country": "BGD",
-      "version": 8,
+      "version": 9,
       "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
@@ -161,7 +161,7 @@
     },
     {
       "country": "BGD",
-      "version": 8,
+      "version": 9,
       "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
@@ -399,7 +399,7 @@
     },
     {
       "country": "COL",
-      "version": 6,
+      "version": 7,
       "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
@@ -413,7 +413,7 @@
     },
     {
       "country": "COL",
-      "version": 6,
+      "version": 7,
       "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
@@ -595,29 +595,29 @@
     },
     {
       "country": "ECU",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 7,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "ECU",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "ECU",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 7,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
     {
       "country": "ECU",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest-submit",
       "outcome": "pass"
     },
@@ -2387,29 +2387,29 @@
     },
     {
       "country": "UKR",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 7,
+      "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
     },
     {
       "country": "UKR",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest",
       "outcome": "pass"
     },
     {
       "country": "UKR",
-      "version": 1,
-      "strategy": "rebuild",
+      "version": 7,
+      "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
     },
     {
       "country": "UKR",
       "version": "latest",
-      "strategy": "rebuild",
+      "strategy": "buildOnce",
       "check": "latest-submit",
       "outcome": "pass"
     },

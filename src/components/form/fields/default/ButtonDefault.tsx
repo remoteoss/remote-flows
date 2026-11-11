@@ -1,12 +1,31 @@
+import { ExternalLink } from 'lucide-react';
 import { Button } from '@/src/components/ui/button';
 import { ButtonComponentProps } from '@/src/types/remoteFlows';
 
 export const ButtonDefault = (props: ButtonComponentProps) => {
-  const { 'data-type': dataType, ...buttonProps } = props;
+  const {
+    'data-type': dataType,
+    'data-external': dataExternal,
+    children,
+    ...buttonProps
+  } = props;
+
+  const content = dataExternal ? (
+    <>
+      {children}
+      <ExternalLink className='size-3' aria-hidden />
+    </>
+  ) : (
+    children
+  );
 
   if (dataType === 'inline') {
-    return <Button size='link' variant='link' {...buttonProps} />;
+    return (
+      <Button size='link' variant='link' {...buttonProps}>
+        {content}
+      </Button>
+    );
   }
 
-  return <Button {...buttonProps} />;
+  return <Button {...buttonProps}>{content}</Button>;
 };

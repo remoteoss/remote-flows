@@ -41,11 +41,18 @@ export {
   withFieldsetObjects,
 } from './headlessForm';
 export type { HeadlessFormOptions, HeadlessFormStrategy } from './headlessForm';
-export { INVOICE_SCHEDULE_STATUS } from './invoiceSchedules/constants';
-export { buildCreateInvoiceScheduleSchema } from './invoiceSchedules/jsonSchema';
+export {
+  INVOICE_NUMBER_SEQUENCE_PATH,
+  INVOICE_SCHEDULE_STATUS,
+} from './invoiceSchedules/constants';
+export {
+  buildCreateInvoiceScheduleSchema,
+  INVOICE_NUMBER_SEQUENCE_FIELD,
+} from './invoiceSchedules/jsonSchema';
 export {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
   buildInvoiceScheduleFormValues,
+  describeInvoiceNumberSequence,
 } from './invoiceSchedules/utils';
 export type { ContractorInvoicePreview } from './invoiceSchedules/types';

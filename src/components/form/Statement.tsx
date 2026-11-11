@@ -4,7 +4,12 @@ import { StatementComponentProps } from '@/src/types/fields';
 
 type StatementProps = StatementComponentProps['data'];
 
-export function Statement({ title, description, severity }: StatementProps) {
+export function Statement({
+  title,
+  description,
+  severity,
+  action,
+}: StatementProps) {
   const { components } = useFormFields();
 
   const Component = components.statement;
@@ -19,6 +24,7 @@ export function Statement({ title, description, severity }: StatementProps) {
         title: title ? sanitizeHtml(title) : undefined,
         description: sanitizeHtml(description),
         severity,
+        action,
       }}
     />
   );
