@@ -203,7 +203,6 @@ export type {
 export type * from '@/src/flows/CostCalculator/types';
 
 export { useMagicLink } from '@/src/common/api';
-export { useIdentity } from '@/src/common/api/identity';
 export {
   useEmploymentQuery,
   useDiscardEmploymentMutation,
@@ -266,7 +265,6 @@ export type {
   CostCalculatorEmployment,
   Currency,
   Company,
-  IdentityCurrentResponse,
 } from './client/types.gen';
 
 export type { $TSFixMe, JSFCustomComponentProps } from './types/remoteFlows';
