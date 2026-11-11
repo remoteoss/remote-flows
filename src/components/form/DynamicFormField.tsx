@@ -52,8 +52,7 @@ export function DynamicFormField({
       {field.statement ? (
         field.meta?.invoiceNumberSequence ? (
           <InvoiceNumberSequence
-            title={field.statement.title as string | undefined}
-            sequence={field.meta.invoiceNumberSequence as string}
+            {...(field.statement as StatementComponentProps['data'])}
           />
         ) : (
           <Statement

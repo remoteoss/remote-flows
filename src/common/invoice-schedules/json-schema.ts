@@ -516,7 +516,7 @@ function invoiceNumberSequenceProperty(sequence: string) {
       },
       meta: {
         ignoreValue: true,
-        invoiceNumberSequence: sequence,
+        invoiceNumberSequence: true,
       },
     },
   };

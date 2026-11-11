@@ -60,13 +60,6 @@ export const lazyDefaultComponents: Components = {
       }),
     ),
   ),
-  invoiceNumberSequence: lazy(() =>
-    import('./components/form/fields/default/InvoiceNumberSequenceDefault').then(
-      (m) => ({
-        default: m.InvoiceNumberSequenceDefault,
-      }),
-    ),
-  ),
   'group-array': lazy(() =>
     import('./components/form/fields/default/GroupArrayFieldDefault').then(
       (m) => ({

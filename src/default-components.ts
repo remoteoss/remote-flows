@@ -5,7 +5,6 @@ import { GroupArrayFieldDefault } from '@/src/components/form/fields/default/Gro
 import { TextAreaFieldDefault } from '@/src/components/form/fields/default/TextAreaFieldDefault';
 import { SelectFieldDefault } from '@/src/components/form/fields/default/SelectFieldDefault';
 import { CountryFieldDefault } from '@/src/components/form/fields/default/CountryFieldDefault';
-import { InvoiceNumberSequenceDefault } from '@/src/components/form/fields/default/InvoiceNumberSequenceDefault';
 import { StatementDefault } from '@/src/components/form/fields/default/StatementDefault';
 import { DatePickerFieldDefault } from '@/src/components/form/fields/default/DatePickerFieldDefault';
 import { NumberFieldDefault } from '@/src/components/form/fields/default/NumberFieldDefault';
@@ -42,7 +41,6 @@ export const defaultComponents: Components = {
   file: FileUploadFieldDefault,
   forcedValue: ForcedValueFieldDefault,
   'group-array': GroupArrayFieldDefault,
-  invoiceNumberSequence: InvoiceNumberSequenceDefault,
   // TODO: we have doubts multi-select, it's actually used
   'multi-select': MultiSelectFieldDefault,
   number: NumberFieldDefault,

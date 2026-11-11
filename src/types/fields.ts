@@ -152,26 +152,6 @@ export type WorkScheduleComponentProps = FieldComponentProps & {
 };
 
 /**
- * Props for custom invoice number sequence components, shown in place of the invoice number
- * input when the company numbers its invoices from a sequence.
- */
-export type InvoiceNumberSequenceComponentProps = {
-  data: {
-    title: string;
-    /**
-     * The parts of the sequence, e.g. `Text/Date format/Invoice count`.
-     */
-    sequence: string;
-    /**
-     * Opens the page where the sequence is edited. Undefined when the token has no user to
-     * log in as, so there is no link to offer.
-     */
-    onEdit?: () => void;
-    isEditing: boolean;
-  };
-};
-
-/**
  * Props for custom statement components.
  */
 export type StatementComponentProps = {

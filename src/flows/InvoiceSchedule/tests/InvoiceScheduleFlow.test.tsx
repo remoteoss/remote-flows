@@ -179,13 +179,12 @@ describe('InvoiceScheduleFlow', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('renders the banner with the partner invoiceNumberSequence component', async () => {
+    it('renders the edit sequence button with the partner button component', async () => {
       useSequence(true);
-      const CustomSequence = ({ data }: $TSFixMe) => (
-        <div data-testid='partner-sequence'>
-          {data.title} | {data.sequence} |{' '}
-          {data.onEdit ? 'editable' : 'read only'}
-        </div>
+      const CustomButton = ({ children, ...props }: $TSFixMe) => (
+        <button data-testid='partner-button' {...props}>
+          {children}
+        </button>
       );
 
       render(
@@ -195,22 +194,18 @@ describe('InvoiceScheduleFlow', () => {
         />,
         {
           wrapper: ({ children }) => (
-            <TestProviders
-              components={{ invoiceNumberSequence: CustomSequence }}
-            >
+            <TestProviders components={{ button: CustomButton }}>
               {children}
             </TestProviders>
           ),
         },
       );
 
-      const banner = await screen.findByTestId('partner-sequence');
+      const button = await screen.findByTestId('partner-button');
 
-      await waitFor(() => {
-        expect(banner).toHaveTextContent(
-          'Contractor invoice numbers will follow your set invoice number sequence | Text/Invoice count | editable',
-        );
-      });
+      expect(button).toHaveTextContent('Edit sequence');
+      expect(button).toHaveAttribute('data-type', 'inline');
+      expect(button).toHaveAttribute('data-external', 'true');
     });
 
     it('keeps the invoice number input when the sequence is off', async () => {
