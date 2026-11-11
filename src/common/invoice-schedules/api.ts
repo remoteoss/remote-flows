@@ -17,7 +17,11 @@ import { useClient } from '@/src/context';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
 import { INVOICE_SCHEDULE_STATUS } from '@/src/common/invoice-schedules/constants';
-import { buildCreateInvoiceScheduleSchema } from '@/src/common/invoice-schedules/json-schema';
+import {
+  buildCreateInvoiceScheduleSchema,
+  INVOICE_NUMBER_SEQUENCE_FIELD,
+} from '@/src/common/invoice-schedules/json-schema';
+import { InvoiceNumberSequence } from '@/src/components/form/InvoiceNumberSequence';
 import {
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
@@ -117,10 +121,32 @@ export const useGetCreateInvoiceScheduleSchema = ({
     isLoadingSequence,
   ]);
 
+  const modifyWithSequenceBanner = useMemo(() => {
+    if (!invoiceNumberSequence) {
+      return jsfModify;
+    }
+
+    const field = jsfModify?.fields?.[INVOICE_NUMBER_SEQUENCE_FIELD];
+
+    return {
+      ...jsfModify,
+      fields: {
+        ...jsfModify?.fields,
+        [INVOICE_NUMBER_SEQUENCE_FIELD]: {
+          ...field,
+          presentation: {
+            Component: InvoiceNumberSequence,
+            ...field?.presentation,
+          },
+        },
+      },
+    };
+  }, [jsfModify, invoiceNumberSequence]);
+
   const headlessForm = useHeadlessForm({
     schema,
     initialValues,
-    options: { jsfModify },
+    options: { jsfModify: modifyWithSequenceBanner },
     strategy: 'buildOnce',
   });
 

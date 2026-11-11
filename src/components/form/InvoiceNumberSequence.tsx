@@ -1,14 +1,19 @@
 import { INVOICE_NUMBER_SEQUENCE_PATH } from '@/src/common/invoice-schedules/constants';
 import { Statement } from '@/src/components/form/Statement';
 import { MagicLinkButton } from '@/src/components/shared/magic-link/MagicLinkButton';
-import { StatementComponentProps } from '@/src/types/fields';
+import { JSFCustomComponentProps } from '@/src/types/remoteFlows';
 
-export function InvoiceNumberSequence(
-  statement: StatementComponentProps['data'],
-) {
+export function InvoiceNumberSequence({
+  label,
+  description,
+}: JSFCustomComponentProps) {
   return (
     <div className='space-y-2'>
-      <Statement {...statement} />
+      <Statement
+        title={label}
+        description={description as string}
+        severity='info'
+      />
       <MagicLinkButton
         path={INVOICE_NUMBER_SEQUENCE_PATH}
         className='h-auto p-0 align-baseline text-xs underline RemoteFlows__InvoiceNumberSequenceEdit'
