@@ -31,7 +31,6 @@ export const useInvoiceSchedule = ({
   employmentId,
   jsfModify,
   defaultValues,
-  onMagicLinkError,
 }: UseInvoiceScheduleOptions) => {
   // `contractor_type` is not on the employments list payload, so the individual employment is
   // fetched purely to tell Contractor of Record apart.
@@ -55,7 +54,6 @@ export const useInvoiceSchedule = ({
     employmentId,
     jsfModify,
     isContractorOfRecord,
-    onMagicLinkError,
   });
 
   const fields = useMemo(
