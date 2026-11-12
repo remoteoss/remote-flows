@@ -26,14 +26,17 @@ function renderFlow({
   employmentId = 'employment-grace',
   onSuccess,
   onError,
+  onMagicLinkError,
 }: {
   employmentId?: string;
   onSuccess?: (data: $TSFixMe) => void;
   onError?: (error: $TSFixMe) => void;
+  onMagicLinkError?: (error: $TSFixMe) => void;
 } = {}) {
   return render(
     <InvoiceScheduleFlow
       employmentId={employmentId}
+      onMagicLinkError={onMagicLinkError}
       render={(bag) =>
         bag.isLoading ? null : (
           <>
@@ -177,6 +180,38 @@ describe('InvoiceScheduleFlow', () => {
       open.mockRestore();
     });
 
+    it('calls onMagicLinkError when the edit sequence magic link request fails', async () => {
+      useSequence(true);
+      server.use(
+        http.post('*/v1/magic-link', () =>
+          HttpResponse.json({ message: 'Nope' }, { status: 422 }),
+        ),
+      );
+      const onMagicLinkError = vi.fn();
+      const tab = { location: { href: '' }, opener: {}, close: vi.fn() };
+      const open = vi
+        .spyOn(window, 'open')
+        .mockImplementation(() => tab as unknown as Window);
+
+      renderFlow({ onMagicLinkError });
+
+      fireEvent.click(
+        await screen.findByRole('button', { name: /Edit sequence/ }),
+      );
+
+      await waitFor(() => {
+        expect(onMagicLinkError).toHaveBeenCalledTimes(1);
+      });
+      expect(onMagicLinkError).toHaveBeenCalledWith({
+        error: expect.any(Error),
+        rawError: expect.anything(),
+        fieldErrors: [],
+      });
+      expect(tab.close).toHaveBeenCalledTimes(1);
+
+      open.mockRestore();
+    });
+
     it('offers no edit sequence button when the token has no user', async () => {
       useSequence(true);
       server.use(
@@ -301,18 +336,19 @@ describe('InvoiceScheduleFlow', () => {
     open.mockRestore();
   });
 
-  it('closes the blank tab when the magic link request fails', async () => {
+  it('closes the blank tab and calls onMagicLinkError when the magic link request fails', async () => {
     server.use(
       http.post('*/v1/magic-link', () =>
         HttpResponse.json({ message: 'Nope' }, { status: 422 }),
       ),
     );
     const tab = { location: { href: '' }, opener: {}, close: vi.fn() };
+    const onMagicLinkError = vi.fn();
     const open = vi
       .spyOn(window, 'open')
       .mockImplementation(() => tab as unknown as Window);
 
-    renderFlow();
+    renderFlow({ onMagicLinkError });
 
     fireEvent.click(
       await screen.findByRole('button', {
@@ -322,6 +358,12 @@ describe('InvoiceScheduleFlow', () => {
 
     await waitFor(() => {
       expect(tab.close).toHaveBeenCalledTimes(1);
+    });
+    expect(onMagicLinkError).toHaveBeenCalledTimes(1);
+    expect(onMagicLinkError).toHaveBeenCalledWith({
+      error: expect.any(Error),
+      rawError: expect.anything(),
+      fieldErrors: [],
     });
     expect(tab.location.href).toBe('');
     expect(open).toHaveBeenCalledTimes(1);

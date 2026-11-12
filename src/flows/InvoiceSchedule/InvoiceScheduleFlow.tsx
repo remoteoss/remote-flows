@@ -17,6 +17,10 @@ export type InvoiceScheduleFlowProps = {
    * Default values for the form fields.
    */
   defaultValues?: Record<string, unknown>;
+  /**
+   * Called when opening the invoice number sequence page fails. The link stays on screen.
+   */
+  onMagicLinkError?: UseInvoiceScheduleOptions['onMagicLinkError'];
   render: (
     invoiceScheduleBag: ReturnType<typeof useInvoiceSchedule>,
   ) => React.ReactNode;
@@ -34,6 +38,7 @@ const InvoiceScheduleFlowContent = ({
   employmentId,
   jsfModify,
   defaultValues,
+  onMagicLinkError,
   render,
 }: InvoiceScheduleFlowProps) => {
   const formId = useId();
@@ -41,6 +46,7 @@ const InvoiceScheduleFlowContent = ({
     employmentId,
     jsfModify,
     defaultValues,
+    onMagicLinkError,
   });
 
   return (
