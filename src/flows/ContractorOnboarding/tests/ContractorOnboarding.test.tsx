@@ -4517,9 +4517,7 @@ describe('ContractorOnboardingFlow', () => {
 
       await continueToCreateInvoiceSchedule();
       await waitFor(() => {
-        expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue(
-          compensationCurrencyCode,
-        );
+        expect(screen.getByLabelText(/Invoice currency/i)).not.toHaveValue('');
       });
     };
 
@@ -4642,54 +4640,21 @@ describe('ContractorOnboardingFlow', () => {
       );
     });
 
-    it('updates an existing invoice schedule currency when the contract details currency changed before the schedule step was opened', async () => {
+    it('keeps the existing invoice schedule when the contract details currency changed before the schedule step was opened', async () => {
       mockExistingInvoiceSchedule();
 
       await fillContractDetailsAndGoToCreateInvoiceSchedule(savedPaymentTerms, {
         compensationCurrencyCode: 'USD',
       });
 
-      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
       expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
       expect(screen.getAllByLabelText(/^Description/i)[0]).toHaveValue(
         'salary',
       );
     });
 
-    it('updates an existing invoice schedule when the employment already reflects the submitted contract details', async () => {
-      mockExistingInvoiceSchedule();
-      let contractDocumentCreated = false;
-      const onRequest = ({ request }: { request: Request }) => {
-        if (
-          request.method === 'POST' &&
-          /\/contract-documents$/.test(new URL(request.url).pathname)
-        ) {
-          contractDocumentCreated = true;
-        }
-      };
-      server.events.on('request:start', onRequest);
-
-      try {
-        await fillContractDetailsAndGoToCreateInvoiceSchedule(
-          () => ({
-            payment_terms: {
-              invoicing_frequency: 'weekly',
-              compensation_currency_code: contractDocumentCreated
-                ? 'USD'
-                : 'EUR',
-            },
-          }),
-          { compensationCurrencyCode: 'USD' },
-        );
-      } finally {
-        server.events.removeListener('request:start', onRequest);
-      }
-
-      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
-      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
-    });
-
-    it('updates an existing invoice schedule when the contract details change after the schedule step was opened', async () => {
+    it('keeps the existing invoice schedule when the contract details change after the schedule step was opened', async () => {
       mockExistingInvoiceSchedule();
 
       await fillContractDetailsAndGoToCreateInvoiceSchedule(savedPaymentTerms);
@@ -4707,9 +4672,12 @@ describe('ContractorOnboardingFlow', () => {
 
       await continueToCreateInvoiceSchedule();
       await waitFor(() => {
-        expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('USD');
+        expect(screen.getAllByLabelText(/^Description/i)[0]).toHaveValue(
+          'salary',
+        );
       });
-      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('monthly');
+      expect(screen.getByLabelText(/Invoice currency/i)).toHaveValue('EUR');
+      expect(screen.getByLabelText(/Frequency/i)).toHaveValue('weekly');
       expect(screen.getAllByLabelText(/^Description/i)[0]).toHaveValue(
         'salary',
       );

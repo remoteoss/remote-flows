@@ -788,8 +788,6 @@ export const useContractorOnboarding = ({
   const submittedContractDetailsRef = useRef<FieldValues | undefined>(
     undefined,
   );
-  const [contractDetailsBaseline, setContractDetailsBaseline] =
-    useState<FieldValues>();
 
   const currencyCodes = useMemo(
     () => currencies?.map(({ code }: { code: string }) => code),
@@ -810,11 +808,7 @@ export const useContractorOnboarding = ({
   const createInvoiceScheduleSavedValues = useMemo(
     () =>
       existingInvoiceSchedule
-        ? syncInvoiceSchedulePrefill(
-            buildInvoiceScheduleFormValues(existingInvoiceSchedule),
-            getInvoiceSchedulePrefill(contractDetailsBaseline),
-            getInvoiceSchedulePrefill(inSessionContractDetails),
-          )
+        ? buildInvoiceScheduleFormValues(existingInvoiceSchedule)
         : {
             ...getInvoiceSchedulePrefill(inSessionContractDetails),
             ...onboardingInitialValues,
@@ -823,7 +817,6 @@ export const useContractorOnboarding = ({
       existingInvoiceSchedule,
       onboardingInitialValues,
       getInvoiceSchedulePrefill,
-      contractDetailsBaseline,
       inSessionContractDetails,
     ],
   );
@@ -1407,6 +1400,7 @@ export const useContractorOnboarding = ({
           const savedInvoiceSchedule =
             stepState.values?.create_invoice_schedule;
           if (
+            !existingInvoiceSchedule &&
             savedInvoiceSchedule &&
             Object.keys(savedInvoiceSchedule).length > 0
           ) {
@@ -1419,13 +1413,6 @@ export const useContractorOnboarding = ({
               ),
             } as Record<StepKeys, FieldValues>);
           }
-          const previousContractDetails = {
-            ...employment?.contract_details,
-            ...submittedContractDetailsRef.current,
-          };
-          setContractDetailsBaseline(
-            (baseline) => baseline ?? previousContractDetails,
-          );
           submittedContractDetailsRef.current = values;
 
           return response;
