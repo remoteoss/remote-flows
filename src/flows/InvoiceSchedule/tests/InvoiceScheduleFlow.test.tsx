@@ -148,6 +148,40 @@ describe('InvoiceScheduleFlow', () => {
         });
       }),
     );
+    const tab = { location: { href: '' }, opener: {}, close: vi.fn() };
+    const open = vi
+      .spyOn(window, 'open')
+      .mockImplementation(() => tab as unknown as Window);
+
+    renderFlow();
+
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: 'create an invoice number sequence',
+      }),
+    );
+
+    expect(open).toHaveBeenCalledWith('', '_blank');
+    await waitFor(() => {
+      expect(tab.location.href).toBe('https://remote.test/magic/abc');
+    });
+    expect(tab.opener).toBeNull();
+    expect(tab.close).not.toHaveBeenCalled();
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(magicLinkBody).toHaveBeenCalledWith({
+      user_id: 'ffabca18-20fc-489d-995b-bf76eebc6882',
+      path: '/dashboard/company-settings/invoice-number-sequence',
+    });
+
+    open.mockRestore();
+  });
+
+  it('opens the magic link in a new tab when the blank tab was blocked', async () => {
+    server.use(
+      http.post('*/v1/magic-link', () =>
+        HttpResponse.json({ data: { url: 'https://remote.test/magic/abc' } }),
+      ),
+    );
     const open = vi.spyOn(window, 'open').mockImplementation(() => null);
 
     renderFlow();
@@ -165,10 +199,34 @@ describe('InvoiceScheduleFlow', () => {
         'noopener,noreferrer',
       );
     });
-    expect(magicLinkBody).toHaveBeenCalledWith({
-      user_id: 'ffabca18-20fc-489d-995b-bf76eebc6882',
-      path: '/dashboard/company-settings/invoice-number-sequence',
+
+    open.mockRestore();
+  });
+
+  it('closes the blank tab and reports the error when the magic link request fails', async () => {
+    server.use(
+      http.post('*/v1/magic-link', () =>
+        HttpResponse.json({ message: 'Nope' }, { status: 422 }),
+      ),
+    );
+    const tab = { location: { href: '' }, opener: {}, close: vi.fn() };
+    const open = vi
+      .spyOn(window, 'open')
+      .mockImplementation(() => tab as unknown as Window);
+
+    renderFlow();
+
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: 'create an invoice number sequence',
+      }),
+    );
+
+    await waitFor(() => {
+      expect(tab.close).toHaveBeenCalledTimes(1);
     });
+    expect(tab.location.href).toBe('');
+    expect(open).toHaveBeenCalledTimes(1);
 
     open.mockRestore();
   });

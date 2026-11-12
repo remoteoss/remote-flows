@@ -1,6 +1,8 @@
 import { useMagicLink } from '@/src/common/api';
 import { useIdentity } from '@/src/common/api/identity';
 import { useFormFields } from '@/src/context';
+import { NormalizedFieldError, mutationToPromise } from '@/src/lib/mutations';
+import { handleStepError } from '@/src/lib/utils';
 import { ReactNode } from 'react';
 
 export function useMagicLinkUserId() {
@@ -16,6 +18,11 @@ type MagicLinkButtonProps = {
   children?: ReactNode;
   className?: string;
   disabled?: boolean;
+  onError?: (error: {
+    error: Error;
+    rawError: Record<string, unknown>;
+    fieldErrors: NormalizedFieldError[];
+  }) => void;
 };
 
 export function MagicLinkButton({
@@ -23,6 +30,7 @@ export function MagicLinkButton({
   children,
   className,
   disabled,
+  onError,
 }: MagicLinkButtonProps) {
   const { components } = useFormFields();
   const userId = useMagicLinkUserId();
@@ -37,12 +45,31 @@ export function MagicLinkButton({
     return null;
   }
 
-  const openPage = async () => {
-    const response = await magicLink.mutateAsync({ user_id: userId, path });
-    const url = response.data?.data?.url;
+  const { mutateAsyncOrThrow } = mutationToPromise(magicLink);
 
-    if (url) {
-      window.open(url, '_blank', 'noopener,noreferrer');
+  const openPage = async () => {
+    const tab = window.open('', '_blank');
+    if (tab) {
+      tab.opener = null;
+    }
+
+    try {
+      const response = await mutateAsyncOrThrow({ user_id: userId, path });
+      const url = response?.data.url;
+
+      if (!url) {
+        tab?.close();
+        return;
+      }
+
+      if (tab) {
+        tab.location.href = url;
+      } else {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }
+    } catch (error: unknown) {
+      tab?.close();
+      onError?.(handleStepError(error));
     }
   };
 
