@@ -10,6 +10,12 @@ export function useMagicLinkUserId() {
   return identity && 'user' in identity ? identity.user.id : undefined;
 }
 
+export type MagicLinkErrorHandler = (error: {
+  error: Error;
+  rawError: Record<string, unknown>;
+  fieldErrors: NormalizedFieldError[];
+}) => void;
+
 type MagicLinkButtonProps = {
   /**
    * Page in Remote to open, logged in as the admin who authorized the token.
@@ -18,11 +24,7 @@ type MagicLinkButtonProps = {
   children?: ReactNode;
   className?: string;
   disabled?: boolean;
-  onError?: (error: {
-    error: Error;
-    rawError: Record<string, unknown>;
-    fieldErrors: NormalizedFieldError[];
-  }) => void;
+  onError?: MagicLinkErrorHandler;
 };
 
 export function MagicLinkButton({

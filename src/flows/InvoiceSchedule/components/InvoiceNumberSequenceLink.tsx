@@ -1,8 +1,8 @@
 import {
   MagicLinkButton,
+  MagicLinkErrorHandler,
   useMagicLinkUserId,
 } from '@/src/components/shared/magic-link/MagicLinkButton';
-import { MagicLinkErrorHandler } from '@/src/flows/InvoiceSchedule/types';
 
 export const INVOICE_NUMBER_SEQUENCE_PATH =
   '/dashboard/company-settings/invoice-number-sequence';

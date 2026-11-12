@@ -1,7 +1,7 @@
 import { FieldValues } from 'react-hook-form';
 import { BulkContractorInvoiceScheduleCreateResponse } from '@/src/client';
 import { JSFModify } from '@/src/flows/types';
-import { NormalizedFieldError } from '@/src/lib/mutations';
+import { MagicLinkErrorHandler } from '@/src/components/shared/magic-link/MagicLinkButton';
 
 /**
  * Values the invoice-schedule form collects. The contractor is not among them — the flow is
@@ -34,12 +34,6 @@ export type InvoiceSchedulePayload = {
 
 export type InvoiceScheduleResponse =
   BulkContractorInvoiceScheduleCreateResponse;
-
-export type MagicLinkErrorHandler = (error: {
-  error: Error;
-  rawError: Record<string, unknown>;
-  fieldErrors: NormalizedFieldError[];
-}) => void;
 
 export type UseInvoiceScheduleOptions = {
   /**
