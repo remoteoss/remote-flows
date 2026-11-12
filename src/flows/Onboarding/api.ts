@@ -269,71 +269,6 @@ export const useJSONSchemaForm = ({
   });
 };
 
-export const useLegacyContractDetailsSchema = ({
-  countryCode,
-  fieldValues,
-  options,
-  query = {},
-  jsonSchemaVersion,
-}: {
-  countryCode: string;
-  fieldValues: FieldValues;
-  options?: FlowOptions & { queryOptions?: { enabled?: boolean } };
-  query?: Record<string, unknown>;
-  jsonSchemaVersion?: number | 'latest';
-}): { data: JSONSchemaFormResultWithFieldsets | null; isLoading: boolean } => {
-  const { client } = useClient();
-  const jsonSchemaQueryParam = jsonSchemaVersion
-    ? {
-        json_schema_version: jsonSchemaVersion,
-      }
-    : {};
-  const { data: schema, isLoading } = useQuery({
-    queryKey: [
-      'onboarding-legacy-contract-details-schema',
-      countryCode,
-      jsonSchemaVersion,
-      query,
-    ],
-    retry: false,
-    queryFn: async () => {
-      const response = await getV1CountriesCountryCodeForm({
-        client: client as Client,
-        headers: {
-          Authorization: ``,
-        },
-        path: {
-          country_code: countryCode,
-          form: 'contract_details',
-        },
-        query: {
-          skip_benefits: true,
-          ...query,
-          ...jsonSchemaQueryParam,
-        },
-      });
-
-      if (response.error || !response.data) {
-        throw new Error('Failed to fetch onboarding schema');
-      }
-
-      return response;
-    },
-    enabled: options?.queryOptions?.enabled,
-    select: ({ data }) =>
-      withJobTitleEligibilityRiskAcknowledgement(data?.data || {}),
-  });
-
-  const { form } = useHeadlessForm({
-    schema,
-    values: fieldValues,
-    options: { jsfModify: options?.jsfModify },
-    strategy: CONTRACT_DETAILS_STRATEGY.legacy,
-  });
-
-  return { data: form, isLoading };
-};
-
 export const useContractDetailsSchema = ({
   countryCode,
   initialValues,
@@ -397,7 +332,7 @@ export const useContractDetailsSchema = ({
     schema,
     initialValues,
     options: { jsfModify: options?.jsfModify },
-    strategy: CONTRACT_DETAILS_STRATEGY.jsfV1,
+    strategy: CONTRACT_DETAILS_STRATEGY,
   });
 
   return { data: form, isLoading, handleValidation, parseFormValues };
