@@ -203,7 +203,7 @@ describe('InvoiceScheduleFlow', () => {
     open.mockRestore();
   });
 
-  it('closes the blank tab and reports the error when the magic link request fails', async () => {
+  it('closes the blank tab when the magic link request fails', async () => {
     server.use(
       http.post('*/v1/magic-link', () =>
         HttpResponse.json({ message: 'Nope' }, { status: 422 }),
