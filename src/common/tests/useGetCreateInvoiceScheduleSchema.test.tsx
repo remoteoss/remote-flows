@@ -41,6 +41,31 @@ describe('useGetCreateInvoiceScheduleSchema', () => {
     expect(items?.additionalProps).toEqual({ currency: 'EUR' });
   });
 
+  it('has the identity behind the number field link loaded by the time the schema is ready', async () => {
+    const { result } = renderForm();
+
+    await waitFor(() => expect(result.current.data).not.toBeNull());
+
+    expect(result.current.isLoading).toBe(false);
+    expect(queryClient.getQueryData(['identity'])).toBeDefined();
+  });
+
+  it('does not request the identity while disabled', async () => {
+    const { result } = renderHook(
+      () =>
+        useGetCreateInvoiceScheduleSchema({
+          enabled: false,
+          employmentId: 'employment-grace',
+        }),
+      { wrapper: TestProviders },
+    );
+
+    expect(result.current.isLoading).toBe(false);
+    expect(queryClient.getQueryState(['identity'])?.fetchStatus).not.toBe(
+      'fetching',
+    );
+  });
+
   describe('start_date minimum', () => {
     function utcDate(offsetDays: number) {
       const date = new Date();
