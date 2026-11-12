@@ -4453,6 +4453,46 @@ describe('ContractorOnboardingFlow', () => {
       ).toBeInTheDocument();
     });
 
+    it('links to the invoice number sequence page from the invoice number field', async () => {
+      await goToFilledCreateInvoiceSchedule(generateUniqueEmploymentId());
+
+      expect(
+        await screen.findByRole('button', {
+          name: 'create an invoice number sequence',
+        }),
+      ).toBeInTheDocument();
+    });
+
+    it('replaces the invoice number input with the invoice number sequence', async () => {
+      server.use(
+        http.get('*/v1/contractor-invoice-sequence', () =>
+          HttpResponse.json({
+            data: {
+              contractor_invoice_sequence: {
+                id: 'sequence-1',
+                enabled: true,
+                fields: [
+                  { type: 'text', text: 'INV' },
+                  { type: 'invoice_counter', initial_number: 1 },
+                ],
+              },
+            },
+          }),
+        ),
+      );
+
+      await goToFilledCreateInvoiceSchedule(generateUniqueEmploymentId(), {
+        invoiceNumber: '',
+      });
+
+      expect(
+        await screen.findByText(/Text\/Invoice count/),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByLabelText(/Invoice number/i),
+      ).not.toBeInTheDocument();
+    });
+
     it('adds a second item row from the add item button', async () => {
       const employmentId = generateUniqueEmploymentId();
       await goToFilledCreateInvoiceSchedule(employmentId);
