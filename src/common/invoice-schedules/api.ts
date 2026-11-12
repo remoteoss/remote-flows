@@ -92,14 +92,14 @@ export const useGetCreateInvoiceScheduleSchema = ({
     },
   });
 
-  const { isLoading: isLoadingIdentity } = useIdentity({ enabled });
+  const { isLoading: isLoadingIdentity } = useIdentity();
 
   const { data: invoiceNumberSequence, isLoading: isLoadingSequence } =
     useInvoiceNumberSequenceText({ enabled });
 
   const schema = useMemo(() => {
     // The form is built once, so wait until the sequence and the token's user are known.
-    if (isLoadingSequence || isLoadingIdentity) {
+    if (isLoadingSequence || (enabled && isLoadingIdentity)) {
       return undefined;
     }
 
@@ -171,7 +171,8 @@ export const useGetCreateInvoiceScheduleSchema = ({
     handleValidation: headlessForm.handleValidation,
     onValuesChange: headlessForm.onValuesChange,
     parseFormValues: headlessForm.parseFormValues,
-    isLoading: isLoading || isLoadingSequence || isLoadingIdentity,
+    isLoading:
+      isLoading || isLoadingSequence || Boolean(enabled && isLoadingIdentity),
   };
 };
 
