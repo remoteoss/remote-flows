@@ -240,6 +240,7 @@ const JSF_V1_CONTRACT_DETAILS_COUNTRIES = [
   'TWN',
   'BOL',
   'SVK',
+  'EGY',
 ];
 
 /**
