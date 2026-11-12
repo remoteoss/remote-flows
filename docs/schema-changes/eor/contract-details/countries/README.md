@@ -27,9 +27,9 @@ Click a country name to open its migration guide. Countries without a link are o
 
 ## Version Matrix
 
-**Remote platform** is the Contract Details version Remote's own platform uses for that country, usually the newest one available.
+**Remote platform** is the newest Contract Details version for that country that returns a different schema from the version before it. A version that only changes the schema behind a feature flag is left out until the flag launches, because without the flag it returns the same schema as the previous version.
 
-**Up to date** is Yes when the Contract Details version is the same as, or newer than, the Remote platform version, except France, which is marked up to date even though the platform lists v2. Last Updated is `-` for countries that haven't been upgraded or documented yet.
+**Up to date** is Yes when the Contract Details version is the same as, or newer than, the Remote platform version. Last Updated is `-` for countries that haven't been upgraded or documented yet.
 
 | Country                            | Code | Contract Details | Remote platform | Up to date | Last Updated  |
 | ---------------------------------- | ---- | ---------------- | --------------- | ---------- | ------------- |
@@ -59,7 +59,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [El Salvador](./SLV.md)            | SLV  | v4               | v4              | Yes        | October 2026  |
 | [Estonia](./EST.md)                | EST  | v5               | v5              | Yes        | October 2026  |
 | [Finland](./FIN.md)                | FIN  | v5               | v5              | Yes        | October 2026  |
-| France                             | FRA  | v1               | v2              | Yes        | -             |
+| France                             | FRA  | v1               | v1              | Yes        | -             |
 | [Georgia](./GEO.md)                | GEO  | v6               | v6              | Yes        | October 2026  |
 | [Germany](./DEU.md)                | DEU  | v9               | v9              | Yes        | October 2026  |
 | [Greece](./GRC.md)                 | GRC  | v6               | v6              | Yes        | October 2026  |
@@ -70,7 +70,7 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Iceland](./ISL.md)                | ISL  | v5               | v5              | Yes        | October 2026  |
 | [India](./IND.md)                  | IND  | v7               | v7              | Yes        | October 2026  |
 | [Indonesia](./IDN.md)              | IDN  | v5               | v5              | Yes        | November 2026 |
-| [Ireland](./IRL.md)                | IRL  | v5               | v6              | No         | October 2026  |
+| [Ireland](./IRL.md)                | IRL  | v5               | v5              | Yes        | October 2026  |
 | [Israel](./ISR.md)                 | ISR  | v8               | v8              | Yes        | October 2026  |
 | Italy                              | ITA  | v2               | v2              | Yes        | -             |
 | [Jamaica](./JAM.md)                | JAM  | v5               | v5              | Yes        | October 2026  |
@@ -120,8 +120,8 @@ Click a country name to open its migration guide. Countries without a link are o
 | [Uganda](./UGA.md)                 | UGA  | v5               | v5              | Yes        | October 2026  |
 | [Ukraine](./UKR.md)                | UKR  | v7               | v7              | Yes        | November 2026 |
 | [United Arab Emirates](./ARE.md)   | ARE  | v6               | v7              | No         | October 2026  |
-| [United Kingdom](./GBR.md)         | GBR  | v7               | v8              | No         | October 2026  |
-| [United States](./USA.md)          | USA  | v9               | v11             | No         | October 2026  |
+| [United Kingdom](./GBR.md)         | GBR  | v7               | v7              | Yes        | October 2026  |
+| [United States](./USA.md)          | USA  | v9               | v9              | Yes        | October 2026  |
 | [Uruguay](./URY.md)                | URY  | v6               | v6              | Yes        | October 2026  |
 | [Vietnam](./VNM.md)                | VNM  | v7               | v7              | Yes        | October 2026  |
 | [Zimbabwe](./ZWE.md)               | ZWE  | v6               | v6              | Yes        | November 2026 |
