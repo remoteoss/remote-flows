@@ -27,7 +27,7 @@ Click a country name to open its migration guide. Countries without a link are o
 
 ## Version Matrix
 
-**Remote platform** is the newest Contract Details version for that country that returns a different schema from the version before it. A version that only changes the schema behind a feature flag is left out until the flag launches, because without the flag it returns the same schema as the previous version.
+**Remote platform** is the Contract Details version Remote's own platform uses for that country, usually the newest one available.
 
 **Up to date** is Yes when the Contract Details version is the same as, or newer than, the Remote platform version. Last Updated is `-` for countries that haven't been upgraded or documented yet.
 
