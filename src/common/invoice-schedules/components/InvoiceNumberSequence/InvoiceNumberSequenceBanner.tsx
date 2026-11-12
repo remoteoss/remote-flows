@@ -10,7 +10,11 @@ export function InvoiceNumberSequenceBanner({
   label,
   description,
 }: JSFCustomComponentProps) {
-  const userId = useMagicLinkUserId();
+  const { userId, isLoading } = useMagicLinkUserId();
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <Statement

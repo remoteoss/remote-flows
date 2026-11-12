@@ -8,7 +8,11 @@ const INTRO =
   "We'll automatically number all invoices after the first one based on this number.";
 
 export function InvoiceNumberSequenceLink() {
-  const userId = useMagicLinkUserId();
+  const { userId, isLoading } = useMagicLinkUserId();
+
+  if (isLoading) {
+    return null;
+  }
 
   if (!userId) {
     return <>{INTRO}</>;

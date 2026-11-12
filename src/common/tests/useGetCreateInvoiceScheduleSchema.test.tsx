@@ -1,8 +1,4 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { delay, http, HttpResponse } from 'msw';
-import { useIdentity } from '@/src/common/api/identity';
-import { server } from '@/src/tests/server';
-import { identityMock } from '@/src/common/api/fixtures/identity';
 import { useGetCreateInvoiceScheduleSchema } from '@/src/common/invoice-schedules';
 import { queryClient, TestProviders } from '@/src/tests/testHelpers';
 
@@ -34,28 +30,6 @@ describe('useGetCreateInvoiceScheduleSchema', () => {
       minItems: 1,
       maxItems: 10,
     });
-  });
-
-  it('does not report loading while disabled, even with the identity request pending', () => {
-    server.use(
-      http.get('*/v1/identity/current', async () => {
-        await delay('infinite');
-        return HttpResponse.json(identityMock);
-      }),
-    );
-
-    const { result } = renderHook(
-      () => {
-        useIdentity();
-        return useGetCreateInvoiceScheduleSchema({
-          enabled: false,
-          employmentId: 'employment-grace',
-        });
-      },
-      { wrapper: TestProviders },
-    );
-
-    expect(result.current.isLoading).toBe(false);
   });
 
   it('hands the selected currency to the item amounts', async () => {

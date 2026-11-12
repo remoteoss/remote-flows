@@ -7,7 +7,7 @@ import {
   within,
 } from '@testing-library/react';
 import { useEffect, useState } from 'react';
-import { delay, http, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { identityMock } from '@/src/common/api/fixtures/identity';
 import { server } from '@/src/tests/server';
 import {
@@ -425,10 +425,14 @@ describe('InvoiceScheduleFlow', () => {
     ).toBeInTheDocument();
   });
 
-  it('has the sequence link in place as soon as the form renders', async () => {
+  it('shows no sequence copy until the identity is known', async () => {
+    let releaseIdentity: () => void = () => undefined;
+    const identityGate = new Promise<void>((resolve) => {
+      releaseIdentity = resolve;
+    });
     server.use(
       http.get('*/v1/identity/current', async () => {
-        await delay(200);
+        await identityGate;
         return HttpResponse.json(identityMock);
       }),
     );
@@ -438,7 +442,15 @@ describe('InvoiceScheduleFlow', () => {
     await screen.findByLabelText(/Invoice currency/i);
 
     expect(
-      screen.getByRole('button', { name: 'create an invoice number sequence' }),
+      screen.queryByText(/automatically number all invoices/),
+    ).not.toBeInTheDocument();
+
+    releaseIdentity();
+
+    expect(
+      await screen.findByRole('button', {
+        name: 'create an invoice number sequence',
+      }),
     ).toBeInTheDocument();
   });
 

@@ -16,7 +16,6 @@ import { Client } from '@/src/client/client';
 import { useClient } from '@/src/context';
 import { useDeepStable } from '@/src/common/hooks';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
-import { useIdentity } from '@/src/common/api/identity';
 import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
 import { INVOICE_SCHEDULE_STATUS } from '@/src/common/invoice-schedules/constants';
 import {
@@ -92,14 +91,12 @@ export const useGetCreateInvoiceScheduleSchema = ({
     },
   });
 
-  const { isLoading: isLoadingIdentity } = useIdentity();
-
   const { data: invoiceNumberSequence, isLoading: isLoadingSequence } =
     useInvoiceNumberSequenceText({ enabled });
 
   const schema = useMemo(() => {
-    // The form is built once, so wait until the sequence and the token's user are known.
-    if (isLoadingSequence || (enabled && isLoadingIdentity)) {
+    // The form is built once, so wait until the sequence is known.
+    if (isLoadingSequence) {
       return undefined;
     }
 
@@ -124,7 +121,6 @@ export const useGetCreateInvoiceScheduleSchema = ({
     includeFieldsets,
     invoiceNumberSequence,
     isLoadingSequence,
-    isLoadingIdentity,
   ]);
 
   const stableJsfModify = useDeepStable(jsfModify);
@@ -171,8 +167,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
     handleValidation: headlessForm.handleValidation,
     onValuesChange: headlessForm.onValuesChange,
     parseFormValues: headlessForm.parseFormValues,
-    isLoading:
-      isLoading || isLoadingSequence || Boolean(enabled && isLoadingIdentity),
+    isLoading: isLoading || isLoadingSequence,
   };
 };
 
