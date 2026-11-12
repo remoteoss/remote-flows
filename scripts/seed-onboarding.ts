@@ -62,6 +62,12 @@
  *   pnpm run seed:onboarding --country=DEU --env=sandbox
  *   pnpm run seed:onboarding --country=DEU --env=review
  *
+ * Pass --basic-info=<field>=<value>,<field>=<value> to force basic_information
+ * answers instead of letting the filler pick them. Values are sent as strings
+ * and kept as given, e.g. to create an employee with a recognised seniority date:
+ *
+ *   pnpm run seed:onboarding --country=DNK --env=sandbox --basic-info=has_seniority_date=yes,seniority_date=2024-01-15
+ *
  * Pass --debug to log every request and response: URL, request body, status,
  * timing, response headers (x-request-id, traceparent, ... - what you need to
  * find the request in Sentry/Honeycomb) and full response body, plus a curl
@@ -80,7 +86,12 @@ import {
   ONBOARDING_JSON_SCHEMA_VERSION_BY_COUNTRY,
 } from '../example/src/flows/Onboarding/jsonSchemaVersions';
 import { CONTRACT_DETAILS_SEEDS } from './contract-details-seeds';
-import { fillSchema, findSafeStartDate, HolidayDate } from './fill-schema';
+import {
+  fillSchema,
+  findSafeStartDate,
+  HolidayDate,
+  parseBasicInfoOverrides,
+} from './fill-schema';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
@@ -121,6 +132,12 @@ const stringArg = (key: string): string | undefined => {
   const value = args[key];
   return typeof value === 'string' ? value : undefined;
 };
+if ('basic-info' in args && !stringArg('basic-info')) {
+  throw new Error(
+    '--basic-info requires a value, e.g. --basic-info=has_seniority_date=yes (got an empty --basic-info flag).',
+  );
+}
+const BASIC_INFO_OVERRIDES = parseBasicInfoOverrides(stringArg('basic-info'));
 const COUNTRY = (stringArg('country') || 'DEU').toUpperCase();
 const TYPE = stringArg('type') || 'employee';
 if (TYPE !== 'employee' && TYPE !== 'contractor') {
@@ -327,6 +344,7 @@ async function seedContractor() {
   const startDate = await findSafeStartDate(COUNTRY, fetchHolidays);
   const { values: basicInformation, skipped } = fillSchema(basicInfoSchema, {
     provisional_start_date: startDate,
+    ...BASIC_INFO_OVERRIDES,
   });
   console.log(
     'basic_information payload:',
@@ -396,7 +414,11 @@ async function seedEmployee() {
   const startDate = await findSafeStartDate(COUNTRY, fetchHolidays);
   const { values: basicInformation, skipped: basicSkipped } = fillSchema(
     basicInfoSchema,
-    { job_title: 'Software Engineer', provisional_start_date: startDate },
+    {
+      job_title: 'Software Engineer',
+      provisional_start_date: startDate,
+      ...BASIC_INFO_OVERRIDES,
+    },
   );
   console.log(
     'basic_information payload:',
