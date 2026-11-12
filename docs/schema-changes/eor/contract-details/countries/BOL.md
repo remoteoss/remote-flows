@@ -33,7 +33,7 @@ Schema versions for employee onboarding in Bolivia.
 
 ### v4
 
-**Type of change:** product
+**Type of change:** compliance
 
 **What changed:**
 

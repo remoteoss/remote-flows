@@ -34,7 +34,7 @@ Schema versions for employee onboarding in Taiwan.
 
 ### v4
 
-**Type of change:** product
+**Type of change:** compliance
 
 **What changed:**
 

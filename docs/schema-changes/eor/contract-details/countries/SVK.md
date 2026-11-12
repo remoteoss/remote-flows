@@ -34,7 +34,7 @@ Schema versions for employee onboarding in Slovakia.
 
 ### v5
 
-**Type of change:** product
+**Type of change:** compliance
 
 **What changed:**
 
