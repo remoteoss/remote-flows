@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import {
   useCreateInvoiceSchedule,
@@ -32,6 +32,7 @@ export const useInvoiceSchedule = ({
   employmentId,
   jsfModify,
   defaultValues,
+  onMagicLinkError,
 }: UseInvoiceScheduleOptions) => {
   // `contractor_type` is not on the employments list payload, so the individual employment is
   // fetched purely to tell Contractor of Record apart.
@@ -46,6 +47,14 @@ export const useInvoiceSchedule = ({
 
   const stableJsfModify = useDeepStable(jsfModify);
 
+  const magicLinkErrorRef = useRef(onMagicLinkError);
+  useEffect(() => {
+    magicLinkErrorRef.current = onMagicLinkError;
+  }, [onMagicLinkError]);
+  const handleMagicLinkError = useCallback<
+    NonNullable<UseInvoiceScheduleOptions['onMagicLinkError']>
+  >((error) => magicLinkErrorRef.current?.(error), []);
+
   const modifyWithSequenceLink = useMemo(
     () => ({
       ...stableJsfModify,
@@ -55,12 +64,14 @@ export const useInvoiceSchedule = ({
           ...stableJsfModify?.fields?.number,
           presentation: {
             ...stableJsfModify?.fields?.number?.presentation,
-            description: () => <InvoiceNumberSequenceLink />,
+            description: () => (
+              <InvoiceNumberSequenceLink onError={handleMagicLinkError} />
+            ),
           },
         },
       },
     }),
-    [stableJsfModify],
+    [stableJsfModify, handleMagicLinkError],
   );
 
   const {

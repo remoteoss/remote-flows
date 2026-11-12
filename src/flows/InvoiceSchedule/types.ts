@@ -1,6 +1,7 @@
 import { FieldValues } from 'react-hook-form';
 import { BulkContractorInvoiceScheduleCreateResponse } from '@/src/client';
 import { JSFModify } from '@/src/flows/types';
+import { NormalizedFieldError } from '@/src/lib/mutations';
 
 /**
  * Values the invoice-schedule form collects. The contractor is not among them — the flow is
@@ -34,6 +35,12 @@ export type InvoiceSchedulePayload = {
 export type InvoiceScheduleResponse =
   BulkContractorInvoiceScheduleCreateResponse;
 
+export type MagicLinkErrorHandler = (error: {
+  error: Error;
+  rawError: Record<string, unknown>;
+  fieldErrors: NormalizedFieldError[];
+}) => void;
+
 export type UseInvoiceScheduleOptions = {
   /**
    * The contractor to create the schedule for.
@@ -47,4 +54,8 @@ export type UseInvoiceScheduleOptions = {
    * Default values for the form fields.
    */
   defaultValues?: Record<string, unknown>;
+  /**
+   * Called when opening the invoice number sequence page fails. The link stays on screen.
+   */
+  onMagicLinkError?: MagicLinkErrorHandler;
 };

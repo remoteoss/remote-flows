@@ -94,12 +94,13 @@ export function CreateInvoiceSchedule({
 
 ### InvoiceScheduleFlow
 
-| Prop            | Type                      | Required | Description                                                            |
-| --------------- | ------------------------- | -------- | ---------------------------------------------------------------------- |
-| `employmentId`  | `string`                  | Yes      | The contractor the schedule is created for.                            |
-| `render`        | `(bag) => ReactNode`      | Yes      | Render prop receiving the flow bag.                                    |
-| `jsfModify`     | `JSFModify`               | No       | Modify the generated JSON-schema fields (labels, order, presentation). |
-| `defaultValues` | `Record<string, unknown>` | No       | Default form values.                                                   |
+| Prop               | Type                                         | Required | Description                                                            |
+| ------------------ | -------------------------------------------- | -------- | ---------------------------------------------------------------------- |
+| `employmentId`     | `string`                                     | Yes      | The contractor the schedule is created for.                            |
+| `render`           | `(bag) => ReactNode`                         | Yes      | Render prop receiving the flow bag.                                    |
+| `jsfModify`        | `JSFModify`                                  | No       | Modify the generated JSON-schema fields (labels, order, presentation). |
+| `defaultValues`    | `Record<string, unknown>`                    | No       | Default form values.                                                   |
+| `onMagicLinkError` | `({ error, rawError, fieldErrors }) => void` | No       | Called when opening the invoice number sequence page fails.            |
 
 ### InvoiceScheduleForm
 
@@ -158,7 +159,8 @@ example app shows one.
 Under the invoice number the form links to the company's invoice number sequence page, which
 numbers invoices for all contractors. The link opens that page, logged in, through a magic link
 for the admin who authorized the token. It is left out when the token has no user, and magic links
-need to be enabled for your integration.
+need to be enabled for your integration. If the request fails, the link stays on screen and
+`onMagicLinkError` is called, so you can show your own message.
 
 When the company already has an invoice number sequence, the invoice number input is replaced by
 a statement that names the sequence, for example "Text/Invoice count", because invoices are

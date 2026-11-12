@@ -2,6 +2,7 @@ import {
   MagicLinkButton,
   useMagicLinkUserId,
 } from '@/src/components/shared/magic-link/MagicLinkButton';
+import { MagicLinkErrorHandler } from '@/src/flows/InvoiceSchedule/types';
 
 export const INVOICE_NUMBER_SEQUENCE_PATH =
   '/dashboard/company-settings/invoice-number-sequence';
@@ -9,7 +10,13 @@ export const INVOICE_NUMBER_SEQUENCE_PATH =
 const INTRO =
   "We'll automatically number all invoices after the first one based on this number.";
 
-export function InvoiceNumberSequenceLink() {
+type InvoiceNumberSequenceLinkProps = {
+  onError?: MagicLinkErrorHandler;
+};
+
+export function InvoiceNumberSequenceLink({
+  onError,
+}: InvoiceNumberSequenceLinkProps) {
   const userId = useMagicLinkUserId();
 
   if (!userId) {
@@ -21,6 +28,7 @@ export function InvoiceNumberSequenceLink() {
       {INTRO} You can also{' '}
       <MagicLinkButton
         path={INVOICE_NUMBER_SEQUENCE_PATH}
+        onError={onError}
         className='h-auto p-0 align-baseline text-xs underline RemoteFlows__InvoiceNumberSequenceLink'
       >
         create an invoice number sequence
