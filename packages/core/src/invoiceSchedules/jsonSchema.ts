@@ -11,8 +11,8 @@ import {
   SEMI_MONTHLY_DEFAULT_CYCLE,
   SEMI_MONTHLY_DEFAULT_CYCLE_DAYS,
   SEMI_MONTHLY_PERIODICITY,
-} from '@/src/common/invoice-schedules/constants';
-import { toOrdinal } from '@/src/common/invoice-schedules/utils';
+} from './constants';
+import { toOrdinal } from './utils';
 
 export const INVOICE_NUMBER_SEQUENCE_FIELD = 'invoice_number_sequence';
 

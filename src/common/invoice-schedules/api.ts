@@ -17,18 +17,16 @@ import { useClient } from '@/src/context';
 import { useDeepStable } from '@/src/common/hooks';
 import { useHeadlessForm } from '@/src/common/useHeadlessForm';
 import { useContractorCurrencies } from '@/src/common/api/contractor-contract-details';
-import { INVOICE_SCHEDULE_STATUS } from '@/src/common/invoice-schedules/constants';
-import {
-  buildCreateInvoiceScheduleSchema,
-  INVOICE_NUMBER_SEQUENCE_FIELD,
-} from '@/src/common/invoice-schedules/json-schema';
 import { InvoiceNumberSequenceLink } from '@/src/common/invoice-schedules/components/InvoiceNumberSequence/InvoiceNumberSequenceLink';
 import { InvoiceNumberSequenceBanner } from '@/src/common/invoice-schedules/components/InvoiceNumberSequence/InvoiceNumberSequenceBanner';
 import {
+  buildCreateInvoiceScheduleSchema,
   buildInvoicePreviewPayload,
   buildInvoiceSchedulePayload,
   describeInvoiceNumberSequence,
-} from '@/src/common/invoice-schedules/utils';
+  INVOICE_NUMBER_SEQUENCE_FIELD,
+  INVOICE_SCHEDULE_STATUS,
+} from '@remoteoss/remote-flows-core';
 import { JSFModify } from '@/src/flows/types';
 
 /**

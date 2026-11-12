@@ -1,6 +1,6 @@
+import { ONE_TIME_PERIODICITY } from './constants';
+import { buildCreateInvoiceScheduleSchema } from './jsonSchema';
 import {
-  buildCreateInvoiceScheduleSchema,
-  ONE_TIME_PERIODICITY,
   buildCustomDays,
   buildInvoiceItems,
   buildInvoiceScheduleFormValues,
@@ -8,9 +8,9 @@ import {
   buildInvoiceSchedulePayload,
   buildRecurrence,
   toOrdinal,
-} from '@/src/common/invoice-schedules';
-import { createHeadlessForm } from '@/src/common/createHeadlessForm';
-import { $TSFixMe } from '@/src/types/remoteFlows';
+} from './utils';
+import { createHeadlessForm } from '../headlessForm';
+import type { $TSFixMe } from '../types';
 
 const baseValues = {
   currency: 'USD',
@@ -230,18 +230,41 @@ describe('toOrdinal', () => {
 });
 
 describe('buildInvoicePreviewPayload', () => {
-  it('omits the recurrence fields, which the preview endpoint rejects', () => {
-    expect(
-      buildInvoicePreviewPayload({
-        ...baseValues,
-        periodicity: 'weekly',
-        nr_occurrences: 3,
-      }),
-    ).toEqual({
-      currency: 'USD',
-      start_date: '2026-10-01',
-      items: [{ description: 'Design work', amount: 250000 }],
+  it('builds the base payload from currency, start_date and items', () => {
+    const payload = buildInvoicePreviewPayload({
+      currency: 'EUR',
+      start_date: '2026-06-01',
+      items: [{ description: 'Consulting work', amount: 250000 }],
     });
+
+    expect(payload).toEqual({
+      currency: 'EUR',
+      start_date: '2026-06-01',
+      items: [{ description: 'Consulting work', amount: 250000 }],
+    });
+  });
+
+  it('includes number and note only when present', () => {
+    const payload = buildInvoicePreviewPayload({
+      currency: 'EUR',
+      start_date: '2026-06-01',
+      number: '1234',
+      note: 'A note',
+    });
+
+    expect(payload).toMatchObject({ number: '1234', note: 'A note' });
+  });
+
+  it('omits periodicity and nr_occurrences even when present in values', () => {
+    const payload = buildInvoicePreviewPayload({
+      currency: 'EUR',
+      start_date: '2026-06-01',
+      periodicity: 'monthly',
+      nr_occurrences: 5,
+    });
+
+    expect(payload).not.toHaveProperty('periodicity');
+    expect(payload).not.toHaveProperty('nr_occurrences');
   });
 });
 
