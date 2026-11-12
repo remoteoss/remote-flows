@@ -1,20 +1,13 @@
 import { useMagicLink } from '@/src/common/api';
 import { useIdentity } from '@/src/common/api/identity';
 import { useFormFields } from '@/src/context';
-import { NormalizedFieldError, mutationToPromise } from '@/src/lib/mutations';
-import { handleStepError } from '@/src/lib/utils';
+import { mutationToPromise } from '@/src/lib/mutations';
 import { ReactNode } from 'react';
 
 export function useMagicLinkUserId() {
   const { data: identity } = useIdentity();
   return identity && 'user' in identity ? identity.user.id : undefined;
 }
-
-export type MagicLinkErrorHandler = (error: {
-  error: Error;
-  rawError: Record<string, unknown>;
-  fieldErrors: NormalizedFieldError[];
-}) => void;
 
 type MagicLinkButtonProps = {
   /**
@@ -24,7 +17,6 @@ type MagicLinkButtonProps = {
   children?: ReactNode;
   className?: string;
   disabled?: boolean;
-  onError?: MagicLinkErrorHandler;
 };
 
 export function MagicLinkButton({
@@ -32,7 +24,6 @@ export function MagicLinkButton({
   children,
   className,
   disabled,
-  onError,
 }: MagicLinkButtonProps) {
   const { components } = useFormFields();
   const userId = useMagicLinkUserId();
@@ -71,7 +62,7 @@ export function MagicLinkButton({
       }
     } catch (error: unknown) {
       tab?.close();
-      onError?.(handleStepError(error));
+      console.error(error);
     }
   };
 

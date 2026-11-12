@@ -1,4 +1,4 @@
-import { createElement, useCallback, useEffect, useMemo, useRef } from 'react';
+import { createElement, useMemo } from 'react';
 import { useMutation, useQuery, queryOptions } from '@tanstack/react-query';
 import { FieldValues } from 'react-hook-form';
 import {
@@ -27,9 +27,7 @@ import {
   INVOICE_NUMBER_SEQUENCE_FIELD,
   INVOICE_SCHEDULE_STATUS,
 } from '@remoteoss/remote-flows-core';
-import { MagicLinkErrorHandler } from '@/src/components/shared/magic-link/MagicLinkButton';
 import { JSFModify } from '@/src/flows/types';
-import { JSFCustomComponentProps } from '@/src/types/remoteFlows';
 
 /**
  * The company's invoice number sequence as text, or null when it has none or it is off.
@@ -68,10 +66,6 @@ type UseGetCreateInvoiceScheduleSchemaParams = {
    * rows a saved schedule needs are visible before the step mounts.
    */
   initialValues?: Record<string, unknown>;
-  /**
-   * Called when opening the invoice number sequence page fails.
-   */
-  onMagicLinkError?: MagicLinkErrorHandler;
 };
 
 /**
@@ -87,7 +81,6 @@ export const useGetCreateInvoiceScheduleSchema = ({
   isContractorOfRecord,
   includeFieldsets,
   initialValues,
-  onMagicLinkError,
 }: UseGetCreateInvoiceScheduleSchemaParams) => {
   const { data: currencies, isLoading } = useContractorCurrencies({
     employmentId: employmentId as string,
@@ -130,23 +123,6 @@ export const useGetCreateInvoiceScheduleSchema = ({
 
   const stableJsfModify = useDeepStable(jsfModify);
 
-  const magicLinkErrorRef = useRef(onMagicLinkError);
-  useEffect(() => {
-    magicLinkErrorRef.current = onMagicLinkError;
-  }, [onMagicLinkError]);
-  const handleMagicLinkError = useCallback<MagicLinkErrorHandler>(
-    (error) => magicLinkErrorRef.current?.(error),
-    [],
-  );
-  const SequenceBanner = useMemo(
-    () => (props: JSFCustomComponentProps) =>
-      createElement(InvoiceNumberSequenceBanner, {
-        ...props,
-        onError: handleMagicLinkError,
-      }),
-    [handleMagicLinkError],
-  );
-
   const modifyWithSequenceUi = useMemo(() => {
     const bannerField =
       stableJsfModify?.fields?.[INVOICE_NUMBER_SEQUENCE_FIELD];
@@ -159,10 +135,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
           ...stableJsfModify?.fields?.number,
           presentation: {
             ...stableJsfModify?.fields?.number?.presentation,
-            description: () =>
-              createElement(InvoiceNumberSequenceLink, {
-                onError: handleMagicLinkError,
-              }),
+            description: () => createElement(InvoiceNumberSequenceLink),
           },
         },
         ...(invoiceNumberSequence
@@ -170,7 +143,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
               [INVOICE_NUMBER_SEQUENCE_FIELD]: {
                 ...bannerField,
                 presentation: {
-                  Component: SequenceBanner,
+                  Component: InvoiceNumberSequenceBanner,
                   ...bannerField?.presentation,
                 },
               },
@@ -178,12 +151,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
           : {}),
       },
     };
-  }, [
-    stableJsfModify,
-    invoiceNumberSequence,
-    handleMagicLinkError,
-    SequenceBanner,
-  ]);
+  }, [stableJsfModify, invoiceNumberSequence]);
 
   const headlessForm = useHeadlessForm({
     schema,
