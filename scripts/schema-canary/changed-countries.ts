@@ -20,6 +20,7 @@ const OTHER_INPUTS = [
   '.github/workflows/schema-canary.yml',
 ];
 const OTHER_INPUT_PREFIXES = [
+  'packages/core/src/',
   'scripts/schema-canary/',
   'example/e2e/canary/',
   '.github/actions/schema-canary-browser/',

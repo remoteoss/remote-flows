@@ -100,6 +100,7 @@ describe('touchesOtherInputs', () => {
   it.each([
     'pnpm-lock.yaml',
     'src/common/createHeadlessForm.tsx',
+    'packages/core/src/headlessForm.ts',
     'scripts/schema-canary.ts',
     'scripts/schema-canary/lib.ts',
     'example/src/flows/Onboarding/constants.ts',

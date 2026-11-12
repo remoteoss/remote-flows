@@ -1,4 +1,4 @@
-import { useMagicLink } from '@remoteoss/remote-flows';
+import { useIdentity, useMagicLink } from '@remoteoss/remote-flows';
 import {
   Card,
   CardContent,
@@ -18,7 +18,8 @@ const MagicLinkTestContent = () => {
   const [customPath, setCustomPath] = useState(
     '/dashboard/company-settings/payments',
   );
-  const [userId, setUserId] = useState(import.meta.env.VITE_USER_ID || '');
+  const { data: identity, isLoading: isLoadingIdentity } = useIdentity();
+  const userId = identity && 'user' in identity ? identity.user.id : '';
   const [status, setStatus] = useState<StatusType>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -39,7 +40,7 @@ const MagicLinkTestContent = () => {
 
     if (!userId) {
       setStatus('error');
-      setErrorMessage('User ID is required');
+      setErrorMessage('The token has no user, so there is nobody to log in as');
       return;
     }
 
@@ -52,8 +53,10 @@ const MagicLinkTestContent = () => {
         user_id: userId,
       });
 
-      if (response.data) {
-        window.open(response.data.data.url, '_blank', 'noopener,noreferrer');
+      const url = response.data?.data?.url;
+
+      if (url) {
+        window.open(url, '_blank', 'noopener,noreferrer');
         setStatus('success');
         timeoutRef.current = setTimeout(() => {
           setStatus('idle');
@@ -61,7 +64,9 @@ const MagicLinkTestContent = () => {
         }, 3000);
       } else {
         setStatus('error');
-        setErrorMessage('No URL returned from API');
+        setErrorMessage(
+          `Magic link request failed (${response.response?.status ?? 'no response'}): ${JSON.stringify(response.error)}`,
+        );
       }
     } catch (error) {
       setStatus('error');
@@ -83,23 +88,6 @@ const MagicLinkTestContent = () => {
         </CardHeader>
         <CardContent className='space-y-4'>
           <div className='space-y-2'>
-            <label htmlFor='userId' className='text-sm font-medium'>
-              User ID
-            </label>
-            <input
-              id='userId'
-              type='text'
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-              placeholder='Enter user ID'
-              className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
-            />
-            <p className='text-xs text-gray-500'>
-              This is pre-filled from VITE_USER_ID environment variable
-            </p>
-          </div>
-
-          <div className='space-y-2'>
             <label htmlFor='customPath' className='text-sm font-medium'>
               Custom Path
             </label>
@@ -114,7 +102,7 @@ const MagicLinkTestContent = () => {
               />
               <Button
                 onClick={() => generateMagicLink(customPath)}
-                disabled={status === 'loading' || !userId}
+                disabled={status === 'loading' || isLoadingIdentity}
               >
                 {status === 'loading' ? (
                   <>
@@ -155,7 +143,7 @@ const MagicLinkTestContent = () => {
 
 export const MagicLinkTest = () => {
   return (
-    <RemoteFlows authType='refresh-token'>
+    <RemoteFlows proxy={{ url: window.location.origin }}>
       <MagicLinkTestContent />
     </RemoteFlows>
   );
