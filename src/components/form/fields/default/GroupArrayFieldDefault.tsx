@@ -57,6 +57,7 @@ export function GroupArrayFieldDefault({
               size='icon'
               aria-label={`Remove ${label} ${row.index + 1}`}
               className='mt-8 RemoteFlows__GroupArrayField__Remove'
+              onMouseDown={(event) => event.preventDefault()}
               onClick={row.remove}
             >
               <Trash2Icon />
@@ -80,6 +81,7 @@ export function GroupArrayFieldDefault({
             variant='ghost'
             size='sm'
             className='RemoteFlows__GroupArrayField__Add'
+            onMouseDown={(event) => event.preventDefault()}
             onClick={add}
           >
             <CirclePlusIcon />
