@@ -92,7 +92,7 @@ export const useGetCreateInvoiceScheduleSchema = ({
     },
   });
 
-  const { isLoading: isLoadingIdentity } = useIdentity();
+  const { isLoading: isLoadingIdentity } = useIdentity({ enabled });
 
   const { data: invoiceNumberSequence, isLoading: isLoadingSequence } =
     useInvoiceNumberSequenceText({ enabled });
