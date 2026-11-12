@@ -199,7 +199,12 @@ describe('InvoiceScheduleFlow', () => {
       );
 
       await waitFor(() => {
-        expect(consoleError).toHaveBeenCalledWith(expect.any(Error));
+        expect(consoleError).toHaveBeenCalledWith(
+          expect.objectContaining({
+            error: expect.objectContaining({ message: 'Nope' }),
+            rawError: { message: 'Nope' },
+          }),
+        );
       });
       expect(tab.close).toHaveBeenCalledTimes(1);
 
@@ -356,7 +361,12 @@ describe('InvoiceScheduleFlow', () => {
     await waitFor(() => {
       expect(tab.close).toHaveBeenCalledTimes(1);
     });
-    expect(consoleError).toHaveBeenCalledWith(expect.any(Error));
+    expect(consoleError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: expect.objectContaining({ message: 'Nope' }),
+        rawError: { message: 'Nope' },
+      }),
+    );
     expect(tab.location.href).toBe('');
     expect(open).toHaveBeenCalledTimes(1);
 
