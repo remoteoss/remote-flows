@@ -43,6 +43,8 @@ interface ListResponse {
   };
 }
 
+class GatewayBlockedError extends Error {}
+
 const PAGE_SIZE = 100;
 const RETRY_ATTEMPTS = 8;
 const RETRY_WAIT_MS = 120_000;
@@ -99,9 +101,12 @@ async function api<T>(
     try {
       return await apiOnce<T>(method, urlPath, query);
     } catch (error) {
-      const blocked = /\b(403|429)\b/.test(String(error));
-      if (!blocked || attempt >= RETRY_ATTEMPTS) {
+      const blocked = /(?:HTTP|->) (?:403|429)\b/.test(String(error));
+      if (!blocked) {
         throw error;
+      }
+      if (attempt >= RETRY_ATTEMPTS) {
+        throw new GatewayBlockedError(String(error));
       }
       console.error(
         `blocked (attempt ${attempt}/${RETRY_ATTEMPTS}), waiting ${RETRY_WAIT_MS / 1000}s`,
@@ -172,15 +177,20 @@ async function main() {
     return;
   }
 
+  let aborted = false;
   const results = await mapWithConcurrency(
     employments,
     CONCURRENCY,
     async (e) => {
+      if (aborted) {
+        return { id: e.id, error: 'skipped: gateway kept blocking requests' };
+      }
       try {
         await api('DELETE', `/v1/sandbox/employments/${e.id}`);
         console.log(`archived ${e.id}`);
         return { id: e.id, error: undefined };
       } catch (error) {
+        aborted = aborted || error instanceof GatewayBlockedError;
         const message = error instanceof Error ? error.message : String(error);
         console.error(`FAILED   ${e.id}: ${message}`);
         return { id: e.id, error: message };
