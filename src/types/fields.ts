@@ -159,6 +159,10 @@ export type StatementComponentProps = {
     title?: string;
     description: string;
     severity: 'warning' | 'error' | 'success' | 'info' | undefined;
+    /**
+     * Content shown under the description, such as a link. Render it where it fits.
+     */
+    action?: React.ReactNode;
   };
 };
 

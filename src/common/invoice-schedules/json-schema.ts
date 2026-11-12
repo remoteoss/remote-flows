@@ -14,7 +14,7 @@ import {
 } from '@/src/common/invoice-schedules/constants';
 import { toOrdinal } from '@/src/common/invoice-schedules/utils';
 
-const INVOICE_NUMBER_SEQUENCE_FIELD = 'invoice_number_sequence';
+export const INVOICE_NUMBER_SEQUENCE_FIELD = 'invoice_number_sequence';
 
 function invoiceItemsProperty() {
   return {
@@ -504,15 +504,11 @@ type CreateInvoiceScheduleSchemaOptions = {
 function invoiceNumberSequenceProperty(sequence: string) {
   return {
     type: 'null',
-    title: 'Invoice number sequence',
+    title:
+      'Contractor invoice numbers will follow your set invoice number sequence',
+    description: `Your current sequence is: <strong>${sequence}</strong>`,
     'x-jsf-presentation': {
       inputType: 'hidden',
-      statement: {
-        title: 'Invoice numbers will follow your invoice number sequence',
-        description: `Your current sequence is: <strong>${sequence}</strong>`,
-        inputType: 'statement',
-        severity: 'info',
-      },
       meta: {
         ignoreValue: true,
       },

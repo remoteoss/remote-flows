@@ -1,10 +1,8 @@
+import { INVOICE_NUMBER_SEQUENCE_PATH } from '@/src/common/invoice-schedules/constants';
 import {
   MagicLinkButton,
   useMagicLinkUserId,
 } from '@/src/components/shared/magic-link/MagicLinkButton';
-
-export const INVOICE_NUMBER_SEQUENCE_PATH =
-  '/dashboard/company-settings/invoice-number-sequence';
 
 const INTRO =
   "We'll automatically number all invoices after the first one based on this number.";
