@@ -182,6 +182,22 @@ describe('GroupArrayField', () => {
     ).toHaveFocus();
   });
 
+  it('stops the add and remove buttons from taking focus on mouse down', () => {
+    renderGroup({
+      addFieldText: 'Add line',
+      rows: [{ description: 'First', amount: '1' }],
+    });
+
+    expect(
+      fireEvent.mouseDown(screen.getByRole('button', { name: 'Add line' })),
+    ).toBe(false);
+    expect(
+      fireEvent.mouseDown(
+        screen.getByRole('button', { name: 'Remove Items 1' }),
+      ),
+    ).toBe(false);
+  });
+
   it('removes the row whose remove button is pressed', () => {
     const { getItems } = renderGroup({
       rows: [
