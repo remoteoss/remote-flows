@@ -1,10 +1,5 @@
 import { server } from '@/src/tests/server';
-import {
-  render,
-  screen,
-  waitFor,
-  waitForElementToBeRemoved,
-} from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { $TSFixMe } from '@/src/types/remoteFlows';
 import { ContractorOnboardingFlow } from '@/src/flows/ContractorOnboarding/ContractorOnboarding';
@@ -546,7 +541,9 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
@@ -571,7 +568,9 @@ describe('ContractorOnboardingFlow', () => {
     render(<ContractorOnboardingFlow {...defaultProps} />, {
       wrapper: TestProviders,
     });
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
     await fillCountry('PRT');
   });
 
@@ -579,7 +578,9 @@ describe('ContractorOnboardingFlow', () => {
     render(<ContractorOnboardingFlow {...defaultProps} />, {
       wrapper: TestProviders,
     });
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await screen.findByText(/Step: Select Country/i);
 
@@ -598,7 +599,9 @@ describe('ContractorOnboardingFlow', () => {
       wrapper: TestProviders,
     });
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillCountry('PRT');
 
@@ -611,7 +614,9 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillContractorSubscription();
 
@@ -642,7 +647,9 @@ describe('ContractorOnboardingFlow', () => {
       wrapper: TestProviders,
     });
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
     await fillCountry('PRT');
 
     await screen.findByText(/Step: Basic Information/i);
@@ -658,7 +665,9 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillContractorSubscription();
 
@@ -723,7 +732,9 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
@@ -768,7 +779,9 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
@@ -818,7 +831,9 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillBasicInformation();
 
@@ -826,7 +841,9 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillContractorSubscription();
 
@@ -895,14 +912,18 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
     await fillBasicInformation();
 
     let nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
     await fillContractorSubscription();
 
     nextButton = screen.getByText(/Next Step/i);
@@ -924,7 +945,9 @@ describe('ContractorOnboardingFlow', () => {
     nextButton = screen.getByText(/Next Step/i);
     nextButton.click();
     await screen.findByText(/Step: Contract Preview/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     const previousButton = screen.getByText(/Back/i);
     previousButton.click();
@@ -982,7 +1005,9 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillBasicInformation();
 
@@ -990,7 +1015,9 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillContractorSubscription();
 
@@ -1006,7 +1033,9 @@ describe('ContractorOnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Preview/i);
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillSignature();
 
@@ -1200,7 +1229,9 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillBasicInformation();
 
@@ -1248,7 +1279,9 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillBasicInformation();
 
@@ -1297,7 +1330,9 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillBasicInformation();
 
@@ -1330,7 +1365,9 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillBasicInformation();
 
@@ -1338,7 +1375,9 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillContractorSubscription();
 
@@ -1354,7 +1393,9 @@ describe('ContractorOnboardingFlow', () => {
 
     await screen.findByText(/Step: Contract Preview/i);
 
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillSignature();
 
@@ -1441,7 +1482,9 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillBasicInformation();
 
@@ -1449,7 +1492,9 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillContractorSubscription('Contractor Management');
 
@@ -1553,7 +1598,9 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillBasicInformation();
 
@@ -1634,7 +1681,9 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillContractorSubscription();
 
@@ -1679,7 +1728,9 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillBasicInformation();
 
@@ -1687,7 +1738,9 @@ describe('ContractorOnboardingFlow', () => {
     nextButton.click();
 
     await screen.findByText(/Step: Pricing Plan/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillContractorSubscription('Contractor Management');
 
@@ -1742,7 +1795,9 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
@@ -1922,7 +1977,9 @@ describe('ContractorOnboardingFlow', () => {
     );
 
     await screen.findByText(/Step: Basic Information/i);
-    await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+    );
 
     await fillBasicInformation();
 
@@ -2032,7 +2089,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       await waitFor(() => {
         expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
@@ -2096,7 +2155,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       // Fill basic information with IR35
       await fillBasicInformation();
@@ -2168,7 +2229,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       // Verify IR35 field is pre-filled with the value from employment
       await waitFor(() => {
@@ -2195,7 +2258,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       await waitFor(() => {
         expect(screen.getByLabelText(/Full name/i)).toBeInTheDocument();
@@ -2254,7 +2319,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       // Verify IR35 field is pre-filled
       await waitFor(() => {
@@ -2319,7 +2386,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       // Fill basic information
       await fillBasicInformation();
@@ -2365,7 +2434,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       await fillBasicInformation();
 
@@ -2373,7 +2444,9 @@ describe('ContractorOnboardingFlow', () => {
       nextButton.click();
 
       await screen.findByText(/Step: Pricing Plan/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       await fillContractorSubscription('Contractor of Record');
 
@@ -2412,7 +2485,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       await fillBasicInformation();
 
@@ -2421,7 +2496,9 @@ describe('ContractorOnboardingFlow', () => {
 
       await screen.findByText(/Step: Pricing Plan/i);
 
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       await fillContractorSubscription('Contractor of Record');
 
@@ -3168,7 +3245,9 @@ describe('ContractorOnboardingFlow', () => {
       nextButton.click();
 
       await screen.findByText(/Step: Pricing Plan/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       const eorOption = screen.queryByRole('radio', {
         name: /Employer of Record/i,
@@ -3335,7 +3414,9 @@ describe('ContractorOnboardingFlow', () => {
 
       // Navigate to contract details step
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       await fillBasicInformation();
 
@@ -3420,7 +3501,9 @@ describe('ContractorOnboardingFlow', () => {
 
       // Navigate through the flow
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       await fillBasicInformation();
 
@@ -3520,7 +3603,9 @@ describe('ContractorOnboardingFlow', () => {
 
       // Navigate through the flow
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       await fillBasicInformation();
 
@@ -3602,7 +3687,9 @@ describe('ContractorOnboardingFlow', () => {
 
       // Navigate through the flow to contract details
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       await fillBasicInformation();
 
@@ -3679,7 +3766,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       // Navigate through all previous steps
       await fillBasicInformation();
@@ -3805,7 +3894,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       await fillBasicInformation();
       let nextButton = screen.getByText(/Next Step/i);
@@ -3824,7 +3915,9 @@ describe('ContractorOnboardingFlow', () => {
       nextButton.click();
 
       await screen.findByText(/Step: Contract Preview/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
       const countBeforeSigning = getContractDocumentCallCount;
 
       await fillSignature();
@@ -3898,7 +3991,9 @@ describe('ContractorOnboardingFlow', () => {
 
       // Navigate through the flow
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       await fillBasicInformation();
 
@@ -3975,7 +4070,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       await fillBasicInformation();
 
@@ -4050,7 +4147,9 @@ describe('ContractorOnboardingFlow', () => {
 
       // Navigate to contract details step
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       await fillBasicInformation();
 
@@ -4191,7 +4290,9 @@ describe('ContractorOnboardingFlow', () => {
       );
 
       await screen.findByText(/Step: Basic Information/i);
-      await waitForElementToBeRemoved(() => screen.getByTestId('spinner'));
+      await waitFor(() =>
+        expect(screen.queryByTestId('spinner')).not.toBeInTheDocument(),
+      );
 
       expect(actionsSpy).not.toHaveBeenCalled();
     });
