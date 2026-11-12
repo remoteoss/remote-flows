@@ -34,6 +34,7 @@ pnpm run flaky:digest [--runs=30] [--min-hits=1]  # tests that retried or failed
 pnpm run seed:onboarding --country=XXX  # create an onboarding via API up to (not including) contract_details; needs example dev server + example/.env
 pnpm run seed:onboarding --country=XXX --env=sandbox  # same, but talks to the gateway directly using .env.sandbox at repo root (see scripts/seed-onboarding.ts) - no dev server needed
 pnpm run seed:onboarding --country=XXX --env=review   # same, using .env.review - the deployed demo app's credentials; use this for employments you'll open on the deployed app
+pnpm run archive:employments --env=review [--status=active,incomplete] [--apply]  # sandbox only: archive a company's employments by status (default active); dry run unless --apply
 cd example && PORT=<port> npm run dev:env -- --env=<name>   # run the example app on .env.<name> from repo root only, ignoring example/.env - used by the verify-local-app skill
 ```
 
