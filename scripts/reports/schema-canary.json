@@ -1011,7 +1011,8 @@
       "version": "latest",
       "strategy": "buildOnce",
       "check": "latest-submit",
-      "outcome": "pass"
+      "outcome": "fail",
+      "error": "POST /v1/employments -> \"Internal Server Error\""
     },
     {
       "country": "IDN",
