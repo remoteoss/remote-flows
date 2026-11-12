@@ -7,7 +7,8 @@ import {
   within,
 } from '@testing-library/react';
 import { useEffect, useState } from 'react';
-import { http, HttpResponse } from 'msw';
+import { delay, http, HttpResponse } from 'msw';
+import { identityMock } from '@/src/common/api/fixtures/identity';
 import { server } from '@/src/tests/server';
 import {
   queryClient,
@@ -419,8 +420,25 @@ describe('InvoiceScheduleFlow', () => {
 
     expect(
       await screen.findByText(
-        "We'll automatically number all invoices after the first one based on this number.",
+        /We'll automatically number all invoices after the first one based on this number\./,
       ),
+    ).toBeInTheDocument();
+  });
+
+  it('has the sequence link in place as soon as the form renders', async () => {
+    server.use(
+      http.get('*/v1/identity/current', async () => {
+        await delay(200);
+        return HttpResponse.json(identityMock);
+      }),
+    );
+
+    renderFlow();
+
+    await screen.findByLabelText(/Invoice currency/i);
+
+    expect(
+      screen.getByRole('button', { name: 'create an invoice number sequence' }),
     ).toBeInTheDocument();
   });
 
