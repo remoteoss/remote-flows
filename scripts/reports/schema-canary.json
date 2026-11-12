@@ -427,7 +427,7 @@
     },
     {
       "country": "CRI",
-      "version": 5,
+      "version": 6,
       "strategy": "buildOnce",
       "check": "pinned",
       "outcome": "pass"
@@ -441,7 +441,7 @@
     },
     {
       "country": "CRI",
-      "version": 5,
+      "version": 6,
       "strategy": "buildOnce",
       "check": "submit",
       "outcome": "pass"
